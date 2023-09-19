@@ -39,11 +39,25 @@
 	text-indent: 16px;
 	line-height: 62px;
 	font-size: large;
+
+	.back-button {
+		position: fixed;
+		top: 8px;
+		left: -16px;
+
+		button {
+			color: var(--color-sidebar-text-alternative);
+		}
+
+		button:hover {
+			color: var(--color-sidebar-menu-hover-text);
+		}
+	}
 }
 
 .chatbox-header-with-help {
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
 }
 

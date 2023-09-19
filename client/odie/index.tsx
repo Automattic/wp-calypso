@@ -1,8 +1,7 @@
-import { Button } from '@automattic/components';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState } from 'react';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import SplitButton from 'calypso/components/split-button';
+import BackButton from 'calypso/components/back-button';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -31,7 +30,6 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		botSetting,
 		lastNudge,
 		chat,
-		clearChat,
 		setMessages,
 		isLoading,
 		setIsLoading,
@@ -40,14 +38,13 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		isVisible,
 		setIsVisible,
 		isHelpCenterVisible,
-		setIsHelpCenterVisible,
-		onSearchDoc,
-		onContactUs,
+		onSearchDoc: onBackButton,
 	} = useOdieAssistantContext();
 	const hasHelpCenter = helpCenter !== null;
 	const [ input, setInput ] = useState( '' );
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const { data: chatData } = useOdieGetChatPollQuery( chat.chat_id ?? null );
+	const translate = useTranslate();
 
 	const dispatch = useDispatch();
 
@@ -173,42 +170,8 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 					'chatbox-header-with-help': hasHelpCenter,
 				} ) }
 			>
+				{ ! isHelpCenterVisible && <BackButton onClick={ onBackButton } /> }
 				<span>{ botName }</span>
-				{ ! isHelpCenterVisible && (
-					<SplitButton
-						className="chatbox-help-center-btn"
-						label="Contact us"
-						primary
-						onClick={ onContactUs }
-					>
-						<PopoverMenuItem onClick={ onSearchDoc } icon="search">
-							Search
-						</PopoverMenuItem>
-						<PopoverMenuItem onClick={ clearChat } icon="refresh">
-							Clear conversation
-						</PopoverMenuItem>
-						<PopoverMenuItem
-							onClick={ () => {
-								setIsVisible( false );
-							} }
-							icon="chevron-down"
-						>
-							Hide Help center
-						</PopoverMenuItem>
-					</SplitButton>
-				) }
-				{ isHelpCenterVisible && (
-					<Button
-						primary
-						className="chatbox-help-center-btn"
-						onClick={ () => {
-							setIsHelpCenterVisible( false );
-						} }
-						type="button"
-					>
-						Ask Wapuu
-					</Button>
-				) }
 			</div>
 
 			{ hasHelpCenter && isHelpCenterVisible && (
@@ -230,14 +193,15 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 						<div className="chatbox-input-area">
 							<FormTextInputWithAction
 								className="reader-sidebar-tags__text-input"
-								placeholder="Enter message"
-								action="Send"
+								placeholder={ translate( 'Enter message', {
+									context:
+										'Placeholder text for the input field where the user can type a message to a chat bot',
+								} ) }
+								action={ translate( 'Send', {
+									context: 'Button label for sending a message to a chat bot',
+								} ) }
 								onAction={ handleSendMessage }
 								onChange={ handleMessageChange }
-								inputRef={ undefined }
-								disabled={ undefined }
-								isError={ undefined }
-								isValid={ undefined }
 								clearOnSubmit
 							/>
 						</div>
