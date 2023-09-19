@@ -214,12 +214,6 @@ export const useComparisonData = () => {
 						url: links.cdn,
 						info: allChecked,
 					},
-					{
-						id: 'lazy_image_loading',
-						name: translate( 'Lazy loading images' ),
-						url: links.lazy_image_loading,
-						info: allChecked,
-					},
 				],
 			},
 			{
