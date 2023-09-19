@@ -14,7 +14,7 @@ const setUrlParam = ( url: URL, paramName: string, paramValue?: string | null ):
 	}
 };
 
-const getStatsPurchaseURL = (
+const getStatsCheckoutURL = (
 	siteSlug: string,
 	product: string,
 	redirectUrl: string,
@@ -153,7 +153,7 @@ const gotoCheckoutPage = ( {
 	// Allow some time for the event to be recorded before redirecting.
 	setTimeout(
 		() =>
-			( window.location.href = getStatsPurchaseURL(
+			( window.location.href = getStatsCheckoutURL(
 				siteSlug,
 				product,
 				redirectUrl,
