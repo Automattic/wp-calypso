@@ -1170,9 +1170,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/newspack-blocks@npm:^1.75.0-alpha.2":
-  version: 1.75.0-alpha.2
-  resolution: "@automattic/newspack-blocks@npm:1.75.0-alpha.2"
+"@automattic/newspack-blocks@npm:^1.75.0-alpha.3":
+  version: 1.75.0-alpha.3
+  resolution: "@automattic/newspack-blocks@npm:1.75.0-alpha.3"
   dependencies:
     "@stripe/stripe-js": ^1.54.2
     classnames: ^2.3.2
@@ -1183,7 +1183,7 @@ __metadata:
     redux-saga: ^1.2.3
     regenerator-runtime: ^0.14.0
     swiper: 9.3.2
-  checksum: 80e0b3dff7d949d9cf03ff13ea706a9f3e4e0c0940e37e1aa8d74afaacaa2c0f1b702f0d54ce4e5200ee267b3b83f7983063a1f4b16bdae2f9c4d5ae96d74d8b
+  checksum: 24b7b30bf6b9fc3ef11566afa6e23f6102f7b735c6f88aad38abfa8d40a3204a1ce28f66be488f493bc3627af4f3cc1859555e1cbb34ac8da4269b56344fd782
   languageName: node
   linkType: hard
 
@@ -1884,7 +1884,7 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/newspack-blocks": ^1.75.0-alpha.2
+    "@automattic/newspack-blocks": ^1.75.0-alpha.3
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
