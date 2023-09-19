@@ -1,5 +1,5 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wp from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 
 export interface DomainData {
 	primary_domain: boolean;
@@ -128,11 +128,7 @@ export function getSiteDomainsQueryObject< TError = unknown, TData = SiteDomains
 ): UseQueryOptions< SiteDomainsQueryFnData, TError, TData > {
 	return {
 		queryKey: [ 'site-domains', siteIdOrSlug ],
-		queryFn: () =>
-			wpcomRequest< SiteDomainsQueryFnData >( {
-				path: `/sites/${ siteIdOrSlug }/domains`,
-				apiVersion: '1.2',
-			} ),
+		queryFn: () => wp.req.get( { path: `/sites/${ siteIdOrSlug }/domains`, apiVersion: '1.2' } ),
 		staleTime: 1000 * 60 * 5, // 5 minutes
 		...options,
 		meta: { persist: false, ...options.meta },

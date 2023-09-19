@@ -1,6 +1,6 @@
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import wp from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 
 interface UpdateContactInfoVariables {
 	type: 'update-contact-info';
@@ -26,10 +26,9 @@ export function useDomainsBulkActionsMutation<
 		mutationFn: ( variables ) => {
 			switch ( variables.type ) {
 				case 'set-auto-renew':
-					return wpcomRequest( {
+					return wp.req.post( {
 						path: `/domains/bulk-actions/${ variables.type }`,
 						apiNamespace: 'wpcom/v2',
-						method: 'POST',
 						body: {
 							domains: variables.domains,
 							auto_renew: variables.autoRenew,
@@ -37,10 +36,9 @@ export function useDomainsBulkActionsMutation<
 					} );
 
 				case 'update-contact-info':
-					return wpcomRequest( {
+					return wp.req.post( {
 						path: `/domains/bulk-actions/${ variables.type }`,
 						apiNamespace: 'wpcom/v2',
-						method: 'POST',
 						body: {
 							domains: variables.domains,
 							transfer_lock: variables.transferLock,

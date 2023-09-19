@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wp from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 
 export interface BulkDomainUpdateStatus {
 	results: {
@@ -50,11 +50,7 @@ export const getBulkDomainUpdateStatusQueryKey = () => {
 export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 	return useQuery( {
 		queryFn: () =>
-			wpcomRequest< BulkDomainUpdateStatusQueryFnData >( {
-				path: '/domains/bulk-actions',
-				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
-			} ),
+			wp.req.get( { path: '/domains/bulk-actions', apiNamespace: 'wpcom/v2', apiVersion: '2' } ),
 		select: ( data ) => {
 			// get top-level info about recent jobs
 			const allJobs: JobStatus[] = Object.keys( data ).map( ( jobId ) => {
