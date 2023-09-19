@@ -6,6 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import wrapSettingsForm from '../wrap-settings-form';
@@ -68,6 +69,9 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )(
 		updateFields,
 	}: NewsletterSettingsFormProps ) => {
 		const siteId = useSelector( getSelectedSiteId );
+		const isJetpackSite = useSelector( ( state ) => {
+			return isJetpackSiteSelector( state, siteId, { treatAtomicAsJetpackSite: false } );
+		} );
 
 		const isSubscriptionsModuleActive = useSelector( ( state ) => {
 			if ( ! siteId ) {
@@ -76,7 +80,10 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )(
 			return isJetpackModuleActive( state, siteId, 'subscriptions' );
 		} );
 
-		const disabled = ! isSubscriptionsModuleActive || isRequestingSettings || isSavingSettings;
+		const isSubscriptionModuleInactive =
+			Boolean( isJetpackSite ) && isSubscriptionsModuleActive === false;
+
+		const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
 		const savedSubscriptionOptions = settings?.subscription_options;
 
 		return (
