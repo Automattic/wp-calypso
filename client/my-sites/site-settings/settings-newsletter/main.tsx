@@ -69,19 +69,21 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )(
 		updateFields,
 	}: NewsletterSettingsFormProps ) => {
 		const siteId = useSelector( getSelectedSiteId );
-		const isJetpackSite = useSelector( ( state ) => {
-			return isJetpackSiteSelector( state, siteId, { treatAtomicAsJetpackSite: false } );
-		} );
 
-		const isSubscriptionsModuleActive = useSelector( ( state ) => {
+		const isSubscriptionModuleInactive = useSelector( ( state ) => {
 			if ( ! siteId ) {
 				return null;
 			}
-			return isJetpackModuleActive( state, siteId, 'subscriptions' );
-		} );
 
-		const isSubscriptionModuleInactive =
-			Boolean( isJetpackSite ) && isSubscriptionsModuleActive === false;
+			const isJetpackSite = isJetpackSiteSelector( state, siteId, {
+				treatAtomicAsJetpackSite: false,
+			} );
+
+			return (
+				Boolean( isJetpackSite ) &&
+				isJetpackModuleActive( state, siteId, 'subscriptions' ) === false
+			);
+		} );
 
 		const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
 		const savedSubscriptionOptions = settings?.subscription_options;
