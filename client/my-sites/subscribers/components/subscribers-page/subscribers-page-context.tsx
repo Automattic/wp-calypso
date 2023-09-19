@@ -10,7 +10,7 @@ import useManySubsSite from '../../hooks/use-many-subs-site';
 import { useSubscribersQuery } from '../../queries';
 
 type SubscribersPageProviderProps = {
-	siteId: number | undefined;
+	siteId: number | null;
 	filterOption: SubscribersFilterBy;
 	pageNumber: number;
 	searchTerm: string;
@@ -39,7 +39,7 @@ type SubscribersPageContextProps = {
 	showAddSubscribersModal: boolean;
 	setShowAddSubscribersModal: ( show: boolean ) => void;
 	addSubscribersCallback: () => void;
-	siteId?: number;
+	siteId: number | null;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
