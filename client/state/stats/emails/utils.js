@@ -222,10 +222,9 @@ export function parseEmailListData( list ) {
  * @param {Array} userContentLinks - the array of user content links for the given data
  * @returns {Array|null} - Array of data objects
  */
-export function parseEmailLinksData( internalLinks, userContentLinks ) {
-	if ( ! Array.isArray( internalLinks ) || ! Array.isArray( userContentLinks ) ) {
-		return [];
-	}
+export function parseEmailLinksData( internalLinks = [], userContentLinks = [] ) {
+	const validatedInternalLinks = Array.isArray( internalLinks ) ? internalLinks : [];
+	const validatedUserContentLinks = Array.isArray( userContentLinks ) ? userContentLinks : [];
 
 	const stringMap = {
 		'post-url': translate( 'Post URL', { context: 'Email link type' } ),
@@ -235,11 +234,10 @@ export function parseEmailLinksData( internalLinks, userContentLinks ) {
 	};
 
 	// filter out links that are not in the stringMap
-	const filteredInternalLinks = internalLinks
-		.filter( ( link ) => stringMap[ link[ 0 ] ] )
-		.sort( ( a, b ) => b[ 1 ] - a[ 1 ] );
+	const filteredInternalLinks = validatedInternalLinks.filter( ( link ) => stringMap[ link[ 0 ] ] );
+
 	// Get count of all links where the first element is not a key of stringMap
-	const otherInternalLinksCount = internalLinks.reduce( ( count, link ) => {
+	const otherInternalLinksCount = validatedInternalLinks.reduce( ( count, link ) => {
 		if ( ! stringMap[ link[ 0 ] ] ) {
 			count += parseInt( link[ 1 ], 10 );
 		}
@@ -261,7 +259,7 @@ export function parseEmailLinksData( internalLinks, userContentLinks ) {
 	}
 
 	// add user content links
-	userContentLinks.forEach( ( link ) => {
+	validatedUserContentLinks.forEach( ( link ) => {
 		mappedLinks.push( {
 			label: link[ 0 ],
 			link: link[ 0 ],
