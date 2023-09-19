@@ -79,7 +79,7 @@ const NavigatorLaunchpadList = ( { checklists, setCurrentView }: NavigatorLaunch
 };
 
 const FloatingNavigator = ( { siteSlug }: FloatingNavigatorProps ) => {
-	const activeChecklistSlug = select( LaunchpadNavigator.register() ).getActiveChecklistSlug();
+	const activeChecklistSlug = select( LaunchpadNavigator.store ).getActiveChecklistSlug() || null;
 	const {
 		data: { available_checklists },
 	} = useLaunchpadNavigator( siteSlug, activeChecklistSlug );
