@@ -8,8 +8,8 @@ export const JetpackFeatures = ( {
 	col2Features,
 }: {
 	className?: string;
-	col1Features?: string[];
-	col2Features?: string[];
+	col1Features: string[];
+	col2Features: string[];
 } ) => {
 	const translate = useTranslate();
 
