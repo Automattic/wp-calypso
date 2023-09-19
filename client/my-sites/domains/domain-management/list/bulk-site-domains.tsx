@@ -95,7 +95,14 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 								action: () => {
 									sendNudge( {
 										nudge: 'dns-settings',
-										initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
+										initialMessage: translate(
+											'I see you want to change your DNS settings for your domain %(domain)s. That’s a complex thing, but I can guide you and help you at any moment.',
+											{
+												args: {
+													domain: domain.name,
+												},
+											}
+										) as string,
 										context: { domain: domain.domain },
 									} );
 								},
@@ -104,7 +111,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 
 						if ( action === 'set-primary-address' && site ) {
 							return {
-								message: 'Set domain as the primary site address',
+								message: translate( 'Set domain as the primary site address' ),
 								action: async () => {
 									try {
 										await dispatch( setPrimaryDomain( site.ID, domain.domain ) );
