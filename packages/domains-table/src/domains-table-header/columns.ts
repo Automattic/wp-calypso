@@ -1,6 +1,6 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { I18N } from 'i18n-calypso';
-import { getSimpleSortFunctionBy, getSiteSortFunctions, getStatusSortFunctions } from '../utils';
+import { getSimpleSortFunctionBy, getStatusSortFunctions } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableColumn } from '.';
 
@@ -50,7 +50,7 @@ export const allSitesViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: getSiteSortFunctions(),
+		sortFunctions: [ getSimpleSortFunctionBy( 'blog_name' ) ],
 	},
 	{
 		name: 'expire_renew',

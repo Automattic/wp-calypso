@@ -3,6 +3,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 
 export interface DomainData {
 	primary_domain: boolean;
+	blog_name: string;
 	blog_id: number;
 	subscription_id: string;
 	can_manage_dns_records: boolean;
