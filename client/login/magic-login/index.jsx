@@ -319,6 +319,13 @@ class MagicLogin extends Component {
 						rel="noopener noreferrer"
 					/>
 				),
+				wpAccountLink: (
+					<a
+						href={ localizeUrl( 'https://support.gravatar.com/why-wordpress-com/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
 			},
 		};
 
@@ -326,7 +333,7 @@ class MagicLogin extends Component {
 			<div className="grav-powered-magic-login__tos">
 				{ isGravatarOAuth2Client( oauth2Client )
 					? translate(
-							`By clicking "Continue", you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a WordPress.com account if you don't already have one.`,
+							`By clicking "Continue", you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
 							textOptions
 					  )
 					: translate(
