@@ -145,6 +145,7 @@ export class AuthFormHeader extends Component {
 				'jetpack-boost': 'Jetpack Boost',
 				default: 'Jetpack',
 			};
+
 			const pluginName = pluginNames[ this.props.authQuery.plugin_name ] || pluginNames.default;
 			const translateParams = {
 				components: {
