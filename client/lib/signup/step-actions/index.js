@@ -5,6 +5,7 @@ import {
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	isEcommerce,
 	isDomainTransfer,
+	isPlan,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
@@ -506,13 +507,18 @@ function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
 	return plugins?.find( ( plugin ) => plugin.product_term === term ) || null;
 }
 
-export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	const { cartItem } = stepProvidedItems;
+function getPlanCartItem( cartItems ) {
+	// A null planCartItem represents a free plan
+	return cartItems?.find( ( item ) => isPlan( item ) ) ?? null;
+}
 
+export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+	const { cartItems } = stepProvidedItems;
+	const planCartItem = getPlanCartItem( cartItems );
 	/**
 	 * If the user selected the free option, then we should abort the checkout part.
 	 */
-	if ( ! cartItem ) {
+	if ( ! planCartItem ) {
 		defer( callback );
 		return;
 	}
@@ -528,7 +534,7 @@ export function addWithThemePlanToCart( callback, dependencies, stepProvidedItem
 				reduxStore.dispatch,
 				themeSlug,
 				dependencies.siteSlug,
-				cartItem
+				planCartItem
 			).then( () => {} );
 		} else {
 			addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore );
@@ -606,9 +612,9 @@ async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { addOnItem, emailItem, siteSlug, plugin, billing_period: billingPeriod } = dependencies;
-	const { cartItem, lastKnownFlow } = stepProvidedItems;
-	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
+	const { emailItem, siteSlug, plugin, billing_period: billingPeriod } = dependencies;
+	const { cartItems, lastKnownFlow } = stepProvidedItems;
+	if ( cartItems === null && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		defer( callback );
 
@@ -620,8 +626,10 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 		pluginItem = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
 	}
 
-	const providedDependencies = { cartItem };
-	const newCartItems = [ cartItem, addOnItem, emailItem, pluginItem ].filter( ( item ) => item );
+	const providedDependencies = { cartItems };
+	const newCartItems = [ ...( cartItems ? cartItems : [] ), emailItem, pluginItem ].filter(
+		( item ) => item
+	);
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 		lastKnownFlow,
 	} );
@@ -1218,29 +1226,29 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		isDomainTransfer( signupDependencies.domainItem );
 
 	if ( isPaidPlan ) {
-		const cartItem = undefined;
+		const cartItems = [ undefined ];
 		submitSignupStep(
-			{ stepName, cartItem, wasSkipped: true },
-			{ cartItem, ...dependenciesFromDefaults }
+			{ stepName, cartItems, wasSkipped: true },
+			{ cartItems, ...dependenciesFromDefaults }
 		);
 		recordExcludeStepEvent( stepName, sitePlanSlug );
-		fulfilledDependencies.push( 'cartItem' );
+		fulfilledDependencies.push( 'cartItems' );
 	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
-		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
+		const cartItems = [ getCartItemForPlan( defaultDependencies.cartItem ) ];
 		submitSignupStep(
-			{ stepName, cartItem, wasSkipped: true },
-			{ cartItem, ...dependenciesFromDefaults }
+			{ stepName, cartItems, wasSkipped: true },
+			{ cartItems, ...dependenciesFromDefaults }
 		);
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
-		fulfilledDependencies.push( 'cartItem' );
+		fulfilledDependencies.push( 'cartItems' );
 	} else if ( isTransferSelectedInDomainTransferFlow ) {
-		const cartItem = null;
+		const cartItems = null;
 		submitSignupStep(
-			{ stepName, cartItem, wasSkipped: true },
-			{ cartItem, ...dependenciesFromDefaults }
+			{ stepName, cartItems, wasSkipped: true },
+			{ cartItems, ...dependenciesFromDefaults }
 		);
 		recordExcludeStepEvent( stepName, sitePlanSlug );
-		fulfilledDependencies.push( 'cartItem' );
+		fulfilledDependencies.push( 'cartItems' );
 	}
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
@@ -1269,7 +1277,7 @@ export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nex
 	}
 }
 
-export const buildUpgradeFunction = ( planProps, cartItem, addOnItem ) => {
+export const buildUpgradeFunction = ( planProps, cartItems ) => {
 	const {
 		additionalStepData,
 		flowName,
@@ -1281,11 +1289,12 @@ export const buildUpgradeFunction = ( planProps, cartItem, addOnItem ) => {
 		goToNextStep,
 		submitSignupStep,
 	} = planProps;
+	const planCartItem = getPlanCartItem( cartItems );
 
-	if ( cartItem ) {
+	if ( planCartItem ) {
 		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
-			product_slug: cartItem.product_slug,
-			free_trial: cartItem.free_trial,
+			product_slug: planCartItem.product_slug,
+			free_trial: planCartItem.free_trial,
 			from_section: stepSectionName ? stepSectionName : 'default',
 		} );
 
@@ -1294,9 +1303,9 @@ export const buildUpgradeFunction = ( planProps, cartItem, addOnItem ) => {
 		// activated at the end of the checkout process.
 		if (
 			flowName === 'ecommerce' &&
-			planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
+			planHasFeature( planCartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
 		) {
-			cartItem.extra = Object.assign( cartItem.extra || {}, {
+			planCartItem.extra = Object.assign( planCartItem.extra || {}, {
 				is_store_signup: true,
 			} );
 		}
@@ -1309,27 +1318,23 @@ export const buildUpgradeFunction = ( planProps, cartItem, addOnItem ) => {
 	const step = {
 		stepName,
 		stepSectionName,
-		cartItem,
+		cartItems,
 		...additionalStepData,
 	};
 
-	if ( selectedSite && flowName === 'site-selected' && ! cartItem ) {
-		submitSignupStep( step, {
-			cartItem,
-			...( addOnItem && { addOnItem } ),
-		} );
+	if ( selectedSite && flowName === 'site-selected' && ! planCartItem ) {
+		submitSignupStep( step, { cartItems } );
 		goToNextStep();
 		return;
 	}
 
 	const signupVals = {
-		cartItem,
+		cartItems,
 		...( themeSlugWithRepo && { themeSlugWithRepo } ),
 		...( launchSite && { comingSoon: 0 } ),
-		...( addOnItem && { addOnItem } ),
 	};
 
-	if ( cartItem && isEcommerce( cartItem ) ) {
+	if ( planCartItem && isEcommerce( planCartItem ) ) {
 		signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
 	}
 	submitSignupStep( step, signupVals );

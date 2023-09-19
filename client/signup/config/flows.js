@@ -32,7 +32,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem;
+	return dependencies.cartItem || dependencies.domainItem || dependencies.cartItems;
 }
 
 function getSiteDestination( dependencies ) {

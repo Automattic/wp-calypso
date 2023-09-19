@@ -98,10 +98,7 @@ export interface PlansFeaturesMainProps {
 	basePlansPath?: string;
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
-	onUpgradeClick?: (
-		cartItemForPlan?: MinimalRequestCartProduct | null,
-		storageAddOnProduct?: MinimalRequestCartProduct | null
-	) => void;
+	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -320,7 +317,11 @@ const PlansFeaturesMain = ( {
 		};
 
 		if ( onUpgradeClick ) {
-			onUpgradeClick( cartItemForPlan, storageAddOnItemForPlan );
+			const cartItems = [
+				...( cartItemForPlan ? [ cartItemForPlan ] : [] ),
+				...( storageAddOnItemForPlan ? [ storageAddOnItemForPlan ] : [] ),
+			];
+			onUpgradeClick( cartItems );
 			return;
 		}
 

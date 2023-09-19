@@ -3,6 +3,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainMapping,
+	isPlan,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
@@ -95,7 +96,10 @@ import './style.scss';
 const debug = debugModule( 'calypso:signup' );
 
 function dependenciesContainCartItem( dependencies ) {
-	return !! ( dependencies && ( dependencies.cartItem || dependencies.domainItem ) );
+	return !! (
+		dependencies &&
+		( dependencies.cartItem || dependencies.domainItem || dependencies.cartItems )
+	);
 }
 
 function addLoadingScreenClassNamesToBody() {
@@ -481,11 +485,15 @@ class Signup extends Component {
 		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
 		const cartItem = get( dependencies, 'cartItem' );
+		const cartItems = get( dependencies, 'cartItems' );
 		const domainItem = get( dependencies, 'domainItem' );
 		const selectedDesign = get( dependencies, 'selectedDesign' );
 		const intent = get( dependencies, 'intent' );
 		const startingPoint = get( dependencies, 'startingPoint' );
 		const signupDomainOrigin = get( dependencies, 'signupDomainOrigin' );
+		const planProductSlug = cartItems?.length
+			? cartItems.find( ( item ) => isPlan( item ) )?.product_slug
+			: cartItem?.product_slug;
 
 		const debugProps = {
 			isNewishUser,
@@ -511,7 +519,7 @@ class Signup extends Component {
 				siteId,
 				isNewUser,
 				hasCartItems,
-				planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
+				planProductSlug,
 				domainProductSlug:
 					undefined !== domainItem && domainItem.is_domain_registration
 						? domainItem.product_slug
