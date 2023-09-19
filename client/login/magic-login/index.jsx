@@ -100,14 +100,12 @@ class MagicLogin extends Component {
 
 			if ( ! prevProps.showCheckYourEmail && showCheckYourEmail ) {
 				this.props.recordTracksEvent(
-					`calypso_${ this.props.oauth2Client.name }_magic_login_email_verification`
+					`calypso_${ oauth2Client.name }_magic_login_email_verification`
 				);
 			}
 
 			if ( prevProps.showCheckYourEmail && ! showCheckYourEmail ) {
-				this.props.recordTracksEvent(
-					`calypso_${ this.props.oauth2Client.name }_magic_login_email_form`
-				);
+				this.props.recordTracksEvent( `calypso_${ oauth2Client.name }_magic_login_email_form` );
 			}
 		}
 	}
