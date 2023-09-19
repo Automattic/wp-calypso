@@ -9,13 +9,13 @@ import {
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
+	isDelisted,
 } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to fetch themes for the specified site and query.
- *
  * @param  {number|string} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
  * @param  {Object}        query         Theme query
  * @param  {string}        query.search  Search string
@@ -73,7 +73,9 @@ export function requestThemes( siteId, query = {}, locale ) {
 			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
 				let themes;
 				if ( siteId === 'wporg' ) {
-					themes = map( rawThemes, normalizeWporgTheme );
+					themes = rawThemes
+						.filter( ( theme ) => ! isDelisted( theme ) )
+						.map( rawThemes, normalizeWporgTheme );
 				} else if ( siteId === 'wpcom' ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
 				} else {
