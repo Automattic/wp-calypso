@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Gridicon, ShortenedNumber, WordPressLogo } from '@automattic/components';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
@@ -295,10 +296,15 @@ export default function SiteStatusContent( {
 			}
 
 			if ( hasBoost ) {
+				const { origin, pathname } = getUrlParts( adminUrl ?? '' );
 				return (
 					<a
 						className="sites-overview__column-action-button"
-						href={ `${ adminUrl }?page=my-jetpack#/add-boost` }
+						href={
+							adminUrl
+								? `${ origin }${ pathname }?page=my-jetpack#/add-boost`
+								: `https://${ siteUrl }/wp-admin/admin.php?page=jetpack`
+						}
 						target="_blank"
 						rel="noreferrer"
 					>
