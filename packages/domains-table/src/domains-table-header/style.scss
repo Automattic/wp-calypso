@@ -9,6 +9,22 @@
 	font-weight: 500;
 	color: var(--color-neutral-60);
 	border-bottom: 1px solid #f0f0f0;
+
+	position: sticky;
+	top: var(--masterbar-height);
+	background: var(--color-surface-backdrop);
+	z-index: 1;
+
+	th {
+		padding: 16px 0;
+		color: var(--studio-gray-60);
+		vertical-align: middle;
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 500;
+		line-height: 20px;
+	}
+
 	.button-plain {
 		text-align: left;
 		line-height: 20px;

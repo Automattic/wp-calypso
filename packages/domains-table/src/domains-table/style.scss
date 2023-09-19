@@ -40,23 +40,6 @@
 		}
 	}
 
-	thead {
-		position: sticky;
-		top: var(--masterbar-height);
-		background: var(--color-surface-backdrop);
-		z-index: 9999;
-	}
-
-	th {
-		padding: 16px 0;
-		color: var(--studio-gray-60);
-		vertical-align: middle;
-		font-size: $font-body-small;
-		font-style: normal;
-		font-weight: 500;
-		line-height: 20px;
-	}
-
 	.domains-table__bulk-action-container {
 		width: 0;
 		min-width: fit-content;
