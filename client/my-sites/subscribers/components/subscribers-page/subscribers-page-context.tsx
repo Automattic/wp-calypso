@@ -65,11 +65,11 @@ export const SubscribersPageProvider = ( {
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
 	const hasManySubscribers = useManySubsSite( siteId );
 
-	filterOption =
+	const subscriberType =
 		filterOption === SubscribersFilterBy.All && hasManySubscribers
 			? SubscribersFilterBy.WPCOM
 			: filterOption;
-	const grandTotalQueryResult = useSubscribersQuery( { siteId, filterOption } );
+	const grandTotalQueryResult = useSubscribersQuery( { siteId, filterOption: subscriberType } );
 	const grandTotal = grandTotalQueryResult.data?.total || 0;
 
 	const dispatch = useDispatch();
