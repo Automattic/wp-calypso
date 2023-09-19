@@ -161,10 +161,8 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	/**
 	 * Remove any query parameters from the path before using it to
 	 * identify which screen the user is seeing.
-	 *
-	 * @returns {string} Path to current screen.
 	 */
-	const getCurrentPath = () => {
+	const getCurrentPath = (): string => {
 		let currentPath = path;
 		const queryStartPosition = currentPath.indexOf( '?' );
 		if ( queryStartPosition > -1 ) {
@@ -175,10 +173,8 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 
 	/**
 	 * Check the current path and returns an appropriate title.
-	 *
-	 * @returns {string} Header text for current screen.
 	 */
-	const getHeaderText = () => {
+	const getHeaderText = (): string => {
 		switch ( section ) {
 			case 'payments':
 				return translate( 'Payments' );
