@@ -95,11 +95,8 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			// Treat the site info from WPCOM as default values for the site, and the info from Odyssey as the source of truth.
 			// This is because the site info from WPCOM is more complete, but the info from Odyssey is more up-to-date.
 			// For example, `options.is_commercial` is not present in the Odyssey site info, but is a remote option value stored in WPCOM.
-			const sites = [ action.site ];
-			const initialNextState = SITES_RECEIVE === action.type ? {} : state;
-
 			return reduce(
-				sites,
+				[ action.site ],
 				( memo, site ) => {
 					// Bypass if site object hasn't changed
 					if ( isEqual( memo[ site.ID ], site ) ) {
@@ -119,7 +116,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 					};
 					return memo;
 				},
-				initialNextState || {}
+				state
 			);
 		}
 
