@@ -6,6 +6,7 @@ import {
 	isEcommerce,
 	isDomainTransfer,
 	isPlan,
+	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
@@ -508,8 +509,12 @@ function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
 }
 
 function getPlanCartItem( cartItems ) {
-	// A null planCartItem represents a free plan
-	return cartItems?.find( ( item ) => isPlan( item ) ) ?? null;
+	// A null planCartItem corresponds to a free plan. It seems like this is case throughout
+	// the signup/plans onboarding codebase. There are, however, tests in client/signup/steps/plans/test/index.jsx
+	// that represent a free plan as a non null cart item. This is why we check for both cases here. When we
+	// conduct a more thorough investigation and determine that PLAN_FREE is no longer, in fact, used to represent
+	// free plans in signup/onboarding, we can remove PLAN_FREE check.
+	return cartItems?.find( ( item ) => isPlan( item ) || item.product_slug === PLAN_FREE ) ?? null;
 }
 
 export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
@@ -614,7 +619,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
 	const { emailItem, siteSlug, plugin, billing_period: billingPeriod } = dependencies;
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
-	if ( cartItems === null && isEmpty( emailItem ) ) {
+	if ( isEmpty( cartItems ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		defer( callback );
 
@@ -1226,7 +1231,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		isDomainTransfer( signupDependencies.domainItem );
 
 	if ( isPaidPlan ) {
-		const cartItems = [ undefined ];
+		const cartItems = undefined;
 		submitSignupStep(
 			{ stepName, cartItems, wasSkipped: true },
 			{ cartItems, ...dependenciesFromDefaults }

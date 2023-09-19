@@ -444,15 +444,9 @@ export default class SignupFlowController {
 
 	_getNeedsToGoThroughCheckout() {
 		const progress = getSignupDependencyProgress( this._reduxStore.getState() );
-
-		if ( progress?.plans ) {
-			return (
-				!! progress.plans?.cartItem ||
-				progress.plans?.cartItems?.find( ( item: MinimalRequestCartProduct ) => isPlan( item ) )
-			);
-		}
-
-		return false;
+		return progress?.plans?.cartItems?.find( ( item: MinimalRequestCartProduct ) =>
+			isPlan( item )
+		);
 	}
 
 	_destination( dependencies: Dependencies ): string {

@@ -144,7 +144,7 @@ export class PlansStep extends Component {
 					<PlansComparison
 						isInSignup={ true }
 						intervalType={ intervalType }
-						onSelectPlan={ ( cartItem ) => this.onSelectPlan( [ cartItem ] ) }
+						onSelectPlan={ ( cartItems ) => this.onSelectPlan( cartItems ) }
 						selectedSiteId={ selectedSite?.ID || undefined }
 						selectedDomainConnection={ selectedDomainConnection }
 					/>

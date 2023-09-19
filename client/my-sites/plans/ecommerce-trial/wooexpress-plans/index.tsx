@@ -4,6 +4,7 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	getPlanPath,
 	getPlans,
+	isPlan,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
@@ -96,8 +97,9 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	] );
 
 	const onUpgradeClick = useCallback(
-		( cartItem?: MinimalRequestCartProduct | null ) => {
-			const upgradePlanSlug = cartItem?.product_slug ?? PLAN_FREE;
+		( cartItems?: MinimalRequestCartProduct[] | null ) => {
+			const upgradePlanSlug =
+				cartItems?.find( ( item ) => isPlan( item ) )?.product_slug ?? PLAN_FREE;
 
 			triggerTracksEvent?.( upgradePlanSlug );
 

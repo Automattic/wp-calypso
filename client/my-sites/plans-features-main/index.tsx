@@ -595,7 +595,8 @@ const PlansFeaturesMain = ( {
 					} }
 					onPlanSelected={ () => {
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
+						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
+						onUpgradeClick?.( cartItems );
 					} }
 				/>
 			) }
@@ -617,7 +618,8 @@ const PlansFeaturesMain = ( {
 						}
 						invalidateDomainSuggestionCache();
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
+						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
+						onUpgradeClick?.( cartItems );
 					} }
 				/>
 			) }
