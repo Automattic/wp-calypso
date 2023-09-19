@@ -9,6 +9,7 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useSelector, useDispatch } from 'calypso/state';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
+import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 
 interface Props {
@@ -23,27 +24,31 @@ const MasterBar = styled.div`
 	padding: 24px 0 0 24px;
 `;
 
-const Header = styled.h1`
-	font-size: 2rem;
+const Header = styled.h1< { isMobile: boolean } >`
+	font-size: ${ ( { isMobile } ) => ( isMobile ? '2rem' : '2.75rem' ) };
+	line-height: ${ ( { isMobile } ) => ( isMobile ? '32px' : '52px' ) };
 	text-align: center;
 	margin: 16px 0;
 `;
 
 const Content = styled.div< { isMobile: boolean } >`
 	margin: 0 auto;
-	padding: 24px;
+	padding: 24px ${ ( { isMobile } ) => ( isMobile ? '9px' : '24px' ) };
 	color: var( --studio-gray-5 );
-	max-width: 877px;
+	max-width: min( 95vw, 877px );
 	text-align: center;
 	.hundred-year-plan-thank-you__thank-you-text-container {
 		margin: 24px ${ ( { isMobile } ) => ( isMobile ? '24px' : '80px' ) };
 	}
 `;
 
-const Highlight = styled.p`
+const Highlight = styled.div`
 	margin-bottom: 32px;
 	text-align: center;
 	font-size: 16px;
+	p {
+		margin: 0;
+	}
 `;
 
 const ButtonBar = styled.div< { isMobile: boolean } >`
@@ -77,6 +82,9 @@ const CustomizedWordPressLogo = styled( WordPressLogo )`
 export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isUserJoinedWithinADay = useSelector( ( state ) =>
+		isUserRegistrationDaysWithinRange( state, null, 0, 1 )
+	);
 	const receipt = useSelector( ( state ) => getReceiptById( state, receiptId ) );
 	const isReceiptLoading = ! receipt.hasLoadedFromServer || receipt.isRequesting;
 	useEffect( () => {
@@ -110,23 +118,37 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 				{ ! isReceiptLoading && (
 					<Content isMobile={ isMobile }>
 						<div className="hundred-year-plan-thank-you__thank-you-text-container">
-							<Header className="wp-brand-font">
-								{ translate( 'Thank you for trusting us' ) }
+							<Header className="wp-brand-font" isMobile={ isMobile }>
+								{ translate( 'Your legacy is in safe hands' ) }
 							</Header>
 							<Highlight>
-								{ translate(
-									'Your 100-year legacy begins now. Experience the dedicated premium support team and exclusive benefits tailored just for you. We are thrilled to stand by your side for the next century.'
-								) }
+								<p>
+									{ translate(
+										"Congratulations on securing the 100-Year Plan. We've applied your exclusive, tailor-made benefits to %(siteSlug)s.",
+										{ args: { siteSlug } }
+									) }
+								</p>
+								<p>
+									{ translate(
+										'If you have any questions or need assistance with anything at all, our dedicated Premier Support team are standing by to help.'
+									) }
+								</p>
 							</Highlight>
 							<ButtonBar isMobile={ isMobile }>
 								<StyledButton dark onClick={ () => page( `/plans/my-plan/${ siteSlug }` ) }>
 									{ translate( 'View plan benefits' ) }
 								</StyledButton>
-								<StyledButton
-									onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }
-								>
-									{ translate( 'Start building site ' ) }
-								</StyledButton>
+								{ isUserJoinedWithinADay ? (
+									<StyledButton onClick={ () => page( '/help' ) }>
+										{ translate( 'Access premium support' ) }
+									</StyledButton>
+								) : (
+									<StyledButton
+										onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }
+									>
+										{ translate( 'Start building' ) }
+									</StyledButton>
+								) }
 							</ButtonBar>
 						</div>
 						<video
