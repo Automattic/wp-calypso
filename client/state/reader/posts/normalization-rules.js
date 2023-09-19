@@ -1,4 +1,4 @@
-import { filter, flow } from 'lodash';
+import { flow } from 'lodash';
 import addImageWrapperElement from 'calypso/lib/post-normalizer/rule-add-image-wrapper-element';
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';
@@ -78,7 +78,7 @@ const hasShortContent = ( post ) => getCharacterCount( post ) <= PHOTO_ONLY_MAX_
  * @returns {Object}            The classified post
  */
 export function classifyPost( post ) {
-	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );
+	const imagesForGallery = getImagesFromPostToDisplay( post, GALLERY_MIN_IMAGES + 1 );
 	let displayType = DISPLAY_TYPES.UNCLASSIFIED;
 
 	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
