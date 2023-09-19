@@ -172,7 +172,5 @@ describe( 'Credit card payment method', () => {
 		await waitFor( () => {
 			expect( screen.getByText( /Something seems to be missing/i ) );
 		} );
-		// For debugging
-		screen.debug();
 	} );
 } );
