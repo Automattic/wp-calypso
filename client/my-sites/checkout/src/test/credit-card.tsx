@@ -21,6 +21,7 @@ import {
 	createCreditCardMethod,
 } from 'calypso/my-sites/checkout/src/payment-methods/credit-card';
 import { actions } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/store';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { createTestReduxStore, fetchStripeConfiguration, stripeConfiguration } from './util';
 import type { CardStoreType } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/types';
 
@@ -67,7 +68,18 @@ function ResetCreditCardStoreFields() {
 	} );
 }
 
+jest.mock( 'calypso/state/notices/actions' );
+
 describe( 'Credit card payment method', () => {
+	beforeEach( () => {
+		( errorNotice as jest.Mock ).mockImplementation( ( value ) => {
+			return {
+				type: 'errorNotice',
+				value,
+			};
+		} );
+	} );
+
 	it( 'renders a credit card option', async () => {
 		const store = createCreditCardPaymentMethodStore( {} );
 		const paymentMethod = getPaymentMethod( store );
@@ -169,8 +181,8 @@ describe( 'Credit card payment method', () => {
 		await user.click( await screen.findByText( activePayButtonText ) );
 
 		// Verify the error message overlay appears
-		await waitFor( () => {
-			expect( screen.getByText( /Something seems to be missing/i ) );
-		} );
+		expect( errorNotice ).toHaveBeenCalledWith(
+			expect.stringMatching( /Something seems to be missing/ )
+		);
 	} );
 } );
