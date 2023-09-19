@@ -1,6 +1,5 @@
 import checklistSiteTitle from 'calypso/layout/guided-tours/tours/checklist-site-title-tour/meta';
 import jetpackChecklist from 'calypso/layout/guided-tours/tours/jetpack-checklist-tour/meta';
-import jetpackLazyImages from 'calypso/layout/guided-tours/tours/jetpack-lazy-images-tour/meta';
 import jetpackMonitoring from 'calypso/layout/guided-tours/tours/jetpack-monitoring-tour/meta';
 import jetpackPluginUpdates from 'calypso/layout/guided-tours/tours/jetpack-plugin-updates-tour/meta';
 import jetpackSignIn from 'calypso/layout/guided-tours/tours/jetpack-sign-in-tour/meta';
@@ -12,7 +11,6 @@ import mediaBasicsTour from 'calypso/layout/guided-tours/tours/media-basics-tour
 export default [
 	checklistSiteTitle,
 	jetpackChecklist,
-	jetpackLazyImages,
 	jetpackMonitoring,
 	jetpackPluginUpdates,
 	jetpackSignIn,
