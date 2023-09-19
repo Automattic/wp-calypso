@@ -50,7 +50,7 @@ import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
 import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
-import useObservableForOddie from './hooks/use-observable-for-oddie';
+import useObservableForOdie from './hooks/use-observable-for-odie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -243,7 +243,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
-	const observableForOddieRef = useObservableForOddie();
+	const observableForOdieRef = useObservableForOdie();
 
 	const toggleShowPlansComparisonGrid = () => {
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
@@ -690,7 +690,7 @@ const PlansFeaturesMain = ( {
 							toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
 							planTypeSelectorProps={ planTypeSelectorProps }
 							ref={ plansComparisonGridRef }
-							observableForOddieRef={ observableForOddieRef }
+							observableForOdieRef={ observableForOdieRef }
 						/>
 					</div>
 				</>

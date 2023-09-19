@@ -98,8 +98,8 @@ export interface PlanFeatures2023GridProps {
 	// temporary
 	toggleShowPlansComparisonGrid: () => void;
 	planTypeSelectorProps: PlanTypeSelectorProps;
-	// temporary: callback ref to scroll Oddie-AI Assistant into view once "Compare plans" button is clicked
-	observableForOddieRef: ( observableElement: Element | null ) => void;
+	// temporary: callback ref to scroll Odie AI Assistant into view once "Compare plans" button is clicked
+	observableForOdieRef: ( observableElement: Element | null ) => void;
 }
 
 interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
@@ -699,7 +699,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			toggleShowPlansComparisonGrid,
 			showPlansComparisonGrid,
 			showUpgradeableStorage,
-			observableForOddieRef,
+			observableForOdieRef,
 		} = this.props;
 
 		return (
@@ -743,7 +743,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								? translate( 'Hide comparison' )
 								: translate( 'Compare plans' )
 						}
-						ref={ observableForOddieRef }
+						ref={ observableForOdieRef }
 					/>
 				) }
 				{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (

@@ -2,10 +2,10 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useOdieAssistantContext } from 'calypso/odie/context';
 
 /**
- * Returns a callback for setting an observable node to show the Oddie AI assistant
+ * Returns a callback for setting an observable node to show the Odie AI assistant
  * when it's intersected in view
  */
-const useObservableForOddie = () => {
+const useObservableForOdie = () => {
 	const {
 		isVisible: isOdieVisible,
 		setIsVisible: setIsOdieVisible,
@@ -48,4 +48,4 @@ const useObservableForOddie = () => {
 	}, [] );
 };
 
-export default useObservableForOddie;
+export default useObservableForOdie;
