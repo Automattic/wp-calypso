@@ -9,7 +9,6 @@ import {
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
-	isDelisted,
 } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
@@ -73,9 +72,7 @@ export function requestThemes( siteId, query = {}, locale ) {
 			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
 				let themes;
 				if ( siteId === 'wporg' ) {
-					themes = rawThemes
-						.filter( ( theme ) => ! isDelisted( theme ) )
-						.map( rawThemes, normalizeWporgTheme );
+					themes = map( rawThemes, normalizeWporgTheme );
 				} else if ( siteId === 'wpcom' ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
 				} else {

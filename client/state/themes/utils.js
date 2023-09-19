@@ -272,5 +272,5 @@ export function filterDelistedTaxonomyTermSlugs( filters ) {
  * @returns {boolean}         True if theme is delisted
  */
 export function isDelisted( theme ) {
-	return DELISTED_WPORG_THEMES.includes( theme.slug );
+	return DELISTED_WPORG_THEMES.includes( theme.id );
 }
