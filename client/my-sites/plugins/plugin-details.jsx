@@ -309,7 +309,7 @@ function PluginDetails( props ) {
 		'This plugin is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.',
 		{
 			components: {
-				a: <a href="https://wordpress.org/documentation/article/wordpress-org-and-wordpress-com/" />,
+				a: <a href="https://wordpress.com/go/website-building/wordpress-com-vs-wordpress-org/" />,
 			},
 		}
 	);
