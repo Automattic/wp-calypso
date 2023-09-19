@@ -73,12 +73,15 @@ class MagicLogin extends Component {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
 		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
-			this.props.recordTracksEvent( `calypso_${ this.props.oauth2Client.name }_magic_login` );
+			this.props.recordTracksEvent(
+				`calypso_${ this.props.oauth2Client.name }_magic_login_email_form`
+			);
 		}
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { oauth2Client, emailRequested, localeSuggestions, path } = this.props;
+		const { oauth2Client, emailRequested, localeSuggestions, path, showCheckYourEmail } =
+			this.props;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			if ( prevProps.isSendingEmail && emailRequested ) {
@@ -93,6 +96,18 @@ class MagicLogin extends Component {
 				if ( userLocale ) {
 					page( addLocaleToPath( path, userLocale.locale ) );
 				}
+			}
+
+			if ( ! prevProps.showCheckYourEmail && showCheckYourEmail ) {
+				this.props.recordTracksEvent(
+					`calypso_${ this.props.oauth2Client.name }_magic_login_email_verification`
+				);
+			}
+
+			if ( prevProps.showCheckYourEmail && ! showCheckYourEmail ) {
+				this.props.recordTracksEvent(
+					`calypso_${ this.props.oauth2Client.name }_magic_login_email_form`
+				);
 			}
 		}
 	}
