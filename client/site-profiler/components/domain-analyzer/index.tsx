@@ -41,7 +41,7 @@ export default function DomainAnalyzer( props: Props ) {
 						/>
 					</div>
 					<div className="col-2">
-						<Button isBusy={ isBusy } type="submit">
+						<Button isBusy={ isBusy } type="submit" className="button-action">
 							{ translate( 'Check site' ) }
 						</Button>
 					</div>
