@@ -28,7 +28,7 @@ import { allSitesViewColumns, siteSpecificViewColumns } from '../domains-table-h
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
 import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
-import { shouldHideOwnerColumn } from '../utils';
+import { shouldHideOwnerColumn, sortDomains } from '../utils';
 import { canBulkUpdate } from '../utils/can-bulk-update';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { ResponseDomain } from '../utils/types';
@@ -215,30 +215,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		: siteSpecificViewColumns( translate, domainStatusPurchaseActions );
 
 	const sortedDomains = useMemo( () => {
-		const selectedColumnDefinition = domainsTableColumns.find(
-			( column ) => column.name === sortKey
-		);
-
-		const getFullDomainData = ( domain: PartialDomainData ) =>
-			fetchedSiteDomains?.[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
-
-		return domains?.sort( ( first, second ) => {
-			let result = 0;
-
-			const fullFirst = getFullDomainData( first );
-			const fullSecond = getFullDomainData( second );
-			if ( ! fullFirst || ! fullSecond ) {
-				return result;
-			}
-
-			for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
-				result = sortFunction( fullFirst, fullSecond, sortDirection === 'asc' ? 1 : -1 );
-				if ( result !== 0 ) {
-					break;
-				}
-			}
-			return result;
-		} );
+		return sortDomains( domains, fetchedSiteDomains, domainsTableColumns, sortKey, sortDirection );
 	}, [ fetchedSiteDomains, domains, sortKey, sortDirection, domainsTableColumns ] );
 
 	const filteredData = useFuzzySearch( {

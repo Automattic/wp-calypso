@@ -1,5 +1,6 @@
-import { DomainData } from '@automattic/data-stores';
+import { DomainData, PartialDomainData } from '@automattic/data-stores';
 import { I18N } from 'i18n-calypso';
+import { DomainsTableColumn } from './domains-table-header/index';
 import { createSiteDomainObject } from './utils/assembler';
 import {
 	DomainStatusPurchaseActions,
@@ -72,3 +73,34 @@ export const countDomainsRequiringAttention = (
 			domainStatus.statusClass
 		)
 	).length;
+
+export const sortDomains = (
+	domains: PartialDomainData[] | undefined,
+	domainData: Record< number, DomainData[] >,
+	columns: DomainsTableColumn[] | undefined,
+	sortKey: string,
+	sortDirection: 'asc' | 'desc'
+) => {
+	const selectedColumnDefinition = ( columns || [] ).find( ( column ) => column.name === sortKey );
+
+	const getFullDomainData = ( domain: PartialDomainData ) =>
+		domainData?.[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
+
+	return domains?.sort( ( first, second ) => {
+		let result = 0;
+
+		const fullFirst = getFullDomainData( first );
+		const fullSecond = getFullDomainData( second );
+		if ( ! fullFirst || ! fullSecond ) {
+			return result;
+		}
+
+		for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
+			result = sortFunction( fullFirst, fullSecond, sortDirection === 'asc' ? 1 : -1 );
+			if ( result !== 0 ) {
+				break;
+			}
+		}
+		return result;
+	} );
+};
