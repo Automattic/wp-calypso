@@ -3,10 +3,11 @@ import './styles.scss';
 
 interface Props {
 	domain: string;
+	onCheckAnotherSite?: () => void;
 }
 
 export default function HeadingInformation( props: Props ) {
-	const { domain } = props;
+	const { domain, onCheckAnotherSite } = props;
 
 	return (
 		<div className="heading-information">
@@ -17,7 +18,11 @@ export default function HeadingInformation( props: Props ) {
 			</summary>
 			<footer>
 				<Button className="button-action">Transfer domain</Button>
-				<Button variant="link">Check another site</Button>
+				{ onCheckAnotherSite && (
+					<Button variant="link" onClick={ onCheckAnotherSite }>
+						Check another site
+					</Button>
+				) }
 			</footer>
 		</div>
 	);

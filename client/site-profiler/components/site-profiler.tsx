@@ -21,15 +21,17 @@ export default function SiteProfiler() {
 
 	return (
 		<>
-			<LayoutBlock>
-				<DomainAnalyzer onFormSubmit={ onFormSubmit } isBusy={ isFetching } />
-			</LayoutBlock>
+			{ ! data && (
+				<LayoutBlock>
+					<DomainAnalyzer onFormSubmit={ onFormSubmit } isBusy={ isFetching } />
+				</LayoutBlock>
+			) }
 
 			{ data && (
 				<LayoutBlock>
 					{ data && (
 						<LayoutBlockSection>
-							<HeadingInformation domain={ domain } />
+							<HeadingInformation domain={ domain } onCheckAnotherSite={ () => setDomain( '' ) } />
 						</LayoutBlockSection>
 					) }
 					{ data && (
