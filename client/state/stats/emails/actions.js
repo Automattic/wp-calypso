@@ -71,7 +71,7 @@ function emailStatsAlltimeTransform( stats ) {
 		countries: parseEmailCountriesData( stats.countries?.data, stats[ 'countries-info' ] ),
 		devices: parseEmailListData( stats.devices?.data ),
 		clients: parseEmailListData( stats.clients?.data ),
-		links: parseEmailLinksData( stats.links?.data ),
+		links: parseEmailLinksData( stats.links?.data, stats[ 'user-content-links' ]?.data ),
 		rate: {
 			opens_rate: stats.opens_rate,
 			total_opens: stats.total_opens,
