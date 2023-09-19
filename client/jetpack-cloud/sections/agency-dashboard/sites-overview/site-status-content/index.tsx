@@ -298,7 +298,7 @@ export default function SiteStatusContent( {
 				return (
 					<a
 						className="sites-overview__column-action-button"
-						href={ adminUrl }
+						href={ `${ adminUrl }?page=my-jetpack#/add-boost` }
 						target="_blank"
 						rel="noreferrer"
 					>
