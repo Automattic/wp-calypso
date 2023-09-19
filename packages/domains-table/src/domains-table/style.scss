@@ -2,7 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 @media ( max-width: 480px ) {
-	.bulk-domains-main {
+	.is-bulk-domains-page main {
 		overflow-y: hidden;
 		/*
 		 * The 47px value comes from https://github.com/Automattic/wp-calypso/blob/d7e2ada/client/my-sites/sidebar/style.scss#L751.
@@ -32,7 +32,7 @@
 	--domains-table-toolbar-height: 40px;
 
 	table {
-		margin-top: 30px;
+		margin-top: 14px; /* 30px - 16px of the table heading padding */
 		border-collapse: collapse;
 
 		tr {
@@ -40,8 +40,15 @@
 		}
 	}
 
+	thead {
+		position: sticky;
+		top: var(--masterbar-height);
+		background: var(--color-surface-backdrop);
+		z-index: 9999;
+	}
+
 	th {
-		padding-bottom: 16px;
+		padding: 16px 0;
 		color: var(--studio-gray-60);
 		vertical-align: middle;
 		font-size: $font-body-small;

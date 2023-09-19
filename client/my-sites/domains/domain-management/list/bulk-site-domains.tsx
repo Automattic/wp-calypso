@@ -72,8 +72,8 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
-			<Main className="bulk-domains-main">
-				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+			<Main>
+				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				<DomainsTable
 					isFetchingDomains={ isLoading }
