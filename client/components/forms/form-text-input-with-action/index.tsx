@@ -1,22 +1,22 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import classNames from 'classnames';
 import { useState, useCallback, FC, ReactNode } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
-import FormTextInput from '../form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 import './style.scss';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
 interface FormTextInputWithActionProps {
 	className?: string;
 	action?: ReactNode;
 	inputRef?: ( instance: HTMLInputElement | null ) => void;
-	onFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-	onBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-	onKeyDown?: ( e: React.KeyboardEvent< HTMLInputElement > ) => void;
-	onChange?: ( value: string, e: React.ChangeEvent< HTMLInputElement > ) => void;
-	onAction?: ( value: string, e: React.SyntheticEvent ) => void;
+	onFocus?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
+	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
+	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
+	onChange?: ( value: string, event: React.ChangeEvent< HTMLInputElement > ) => void;
+	onAction?: ( value: string, event: React.SyntheticEvent ) => void;
 	defaultValue?: string;
 	disabled?: boolean;
 	isError?: boolean;
@@ -45,33 +45,33 @@ const FormTextInputWithAction: FC< FormTextInputWithActionProps > = ( {
 	const [ value, setValue ] = useState( defaultValue );
 
 	const handleFocus = useCallback(
-		( e: React.FocusEvent< HTMLInputElement > ) => {
+		( event: React.FocusEvent< HTMLInputElement > ) => {
 			setFocused( true );
-			onFocus( e );
+			onFocus( event );
 		},
 		[ onFocus ]
 	);
 
 	const handleBlur = useCallback(
-		( e: React.FocusEvent< HTMLInputElement > ) => {
+		( event: React.FocusEvent< HTMLInputElement > ) => {
 			setFocused( false );
-			onBlur( e );
+			onBlur( event );
 		},
 		[ onBlur ]
 	);
 
 	const handleChange = useCallback(
-		( e: React.ChangeEvent< HTMLInputElement > ) => {
-			setValue( e.target.value );
-			onChange( e.target.value, e );
+		( event: React.ChangeEvent< HTMLInputElement > ) => {
+			setValue( event.target.value );
+			onChange( event.target.value, event );
 		},
 		[ onChange ]
 	);
 
 	const handleAction = useCallback(
-		( e: React.SyntheticEvent ) => {
+		( event: React.SyntheticEvent ) => {
 			if ( value ) {
-				onAction( value, e );
+				onAction( value, event );
 				clearOnSubmit && setValue( '' );
 			}
 		},
@@ -79,10 +79,10 @@ const FormTextInputWithAction: FC< FormTextInputWithActionProps > = ( {
 	);
 
 	const handleKeyDown = useCallback(
-		( e: React.KeyboardEvent< HTMLInputElement > ) => {
-			onKeyDown( e );
-			if ( e.key === 'Enter' && value ) {
-				handleAction( e );
+		( event: React.KeyboardEvent< HTMLInputElement > ) => {
+			onKeyDown( event );
+			if ( event.key === 'Enter' && value ) {
+				handleAction( event );
 			}
 		},
 		[ handleAction, onKeyDown, value ]
