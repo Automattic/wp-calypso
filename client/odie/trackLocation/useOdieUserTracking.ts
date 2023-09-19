@@ -66,14 +66,15 @@ const useOdieUserTracking = (): OdieUserTracking[] => {
 
 	useEffect( () => {
 		const intervalId = setInterval( updateUserLocations, 1000 ); // Check for URL change every second
+		const wpcomNode = document.getElementById( 'wpcom' );
 
 		window.addEventListener( 'beforeunload', updateUserLocations );
-		document.addEventListener( 'click', recordClick );
+		wpcomNode?.addEventListener( 'click', recordClick );
 
 		return () => {
 			clearInterval( intervalId );
 			window.removeEventListener( 'beforeunload', updateUserLocations );
-			document.removeEventListener( 'click', recordClick );
+			wpcomNode?.removeEventListener( 'click', recordClick );
 		};
 	}, [] );
 

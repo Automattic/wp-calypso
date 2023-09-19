@@ -196,6 +196,7 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 								placeholder={ translate( 'Enter message', {
 									context:
 										'Placeholder text for the input field where the user can type a message to a chat bot',
+									textOnly: true,
 								} ) }
 								action={ translate( 'Send', {
 									context: 'Button label for sending a message to a chat bot',
