@@ -34,11 +34,6 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
 
-const noticeOptions = {
-	duration: 5000,
-	id: `domain-transfer-notification`,
-};
-
 export default function TransferDomainToAnyUser( {
 	domains,
 	hasSiteDomainsLoaded,
@@ -74,10 +69,9 @@ export default function TransferDomainToAnyUser( {
 			},
 			onError() {
 				dispatch(
-					errorNotice(
-						translate( 'An error occurred while initiating the domain transfer.' ),
-						noticeOptions
-					)
+					errorNotice( translate( 'An error occurred while initiating the domain transfer.' ), {
+						duration: 5000,
+					} )
 				);
 			},
 		}
