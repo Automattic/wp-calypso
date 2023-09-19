@@ -8,6 +8,7 @@ import {
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
 	isStarterPlan,
+	is100YearPlan,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -93,6 +94,16 @@ export default function getPlanFeatures(
 			String( translate( 'Unlimited products or services for your online store' ) ),
 			String( translate( 'eCommerce marketing tools for emails and social networks' ) ),
 		].filter( isValueTruthy );
+	}
+
+	if ( is100YearPlan( productSlug ) ) {
+		return [
+			String( translate( 'Century-long domain registration' ) ),
+			String( translate( 'Enhanced ownership protocols' ) ),
+			String( translate( 'Top-tier managed WordPress hosting' ) ),
+			String( translate( '24/7 Premier Support' ) ),
+			String( translate( 'Peace of mind' ) ),
+		];
 	}
 
 	return [];
