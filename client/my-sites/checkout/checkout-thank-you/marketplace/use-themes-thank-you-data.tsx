@@ -12,7 +12,10 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 import MasterbarStyled from './masterbar-styled';
 
-export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
+export function useThemesThankYouData(
+	themeSlugs: string[],
+	onboardingFlow: boolean
+): ThankYouData {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
@@ -50,7 +53,7 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 			.filter( ( theme ) => theme )
 			.map( ( theme ) => ( {
 				stepKey: `theme_information_${ theme.id }`,
-				stepSection: <ThankYouThemeSection theme={ theme } />,
+				stepSection: <ThankYouThemeSection theme={ theme } onboardingFlow={ onboardingFlow } />,
 			} ) ),
 	};
 

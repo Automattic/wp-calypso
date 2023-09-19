@@ -105,7 +105,13 @@ const ThemeNameSectionWrapper = styled.div`
 	flex-wrap: wrap;
 `;
 
-export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
+export const ThankYouThemeSection = ( {
+	theme,
+	onboardingFlow,
+}: {
+	theme: any;
+	onboardingFlow: boolean;
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -140,7 +146,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 			return;
 		}
 		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
-		dispatch( activate( theme.id, siteId, 'marketplace-thank-you' ) );
+		dispatch( activate( theme.id, siteId, 'marketplace-thank-you', false, false, onboardingFlow ) );
 	};
 
 	return (
