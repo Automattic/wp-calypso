@@ -86,7 +86,8 @@ export interface DomainData {
 		| 'cancelled'
 		| 'completed'
 		| 'pending_start'
-		| 'pending_async';
+		| 'pending_async'
+		| null;
 	last_transfer_error: string;
 	has_private_registration: boolean;
 	is_pending_icann_verification: boolean;

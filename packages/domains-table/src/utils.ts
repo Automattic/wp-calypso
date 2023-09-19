@@ -76,12 +76,13 @@ export const getStatusSortFunctions = (
 		const isPurchased = domainStatusPurchaseActions?.isPurchasedDomain?.( responseDomain );
 		const isCreditCardExpiring =
 			domainStatusPurchaseActions?.isCreditCardExpiring?.( responseDomain );
-		const { listStatusWeight } = resolveDomainStatus( responseDomain, {
-			translate,
-			isPurchasedDomain: isPurchased,
-			isCreditCardExpiring: isCreditCardExpiring,
-			getMappingErrors: true,
-		} );
+		const { listStatusWeight } =
+			resolveDomainStatus( responseDomain, {
+				translate,
+				isPurchasedDomain: isPurchased,
+				isCreditCardExpiring: isCreditCardExpiring,
+				getMappingErrors: true,
+			} ) ?? {};
 		return listStatusWeight ?? 0;
 	};
 
