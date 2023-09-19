@@ -69,13 +69,13 @@ const StyledButton = styled( Button )`
 	text-align: center;
 	background-color: none;
 	background: none;
-	color: var( --studio-black );
+	color: var( --studio-gray-0 );
 `;
-const StyledDarkButton = styled( StyledButton )`
+const StyledLightButton = styled( StyledButton )`
 	border: 1px solid var( --gray-gray-0, #f6f7f7 );
 	background-color: var( --studio-black );
 	background: linear-gradient( #c1c0d3, #e3e2f3, #c1c0d3 );
-	color: var( --studio-gray-0 );
+	color: var( --studio-black );
 `;
 
 const CustomizedWordPressLogo = styled( WordPressLogo )`
@@ -139,12 +139,9 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 								</p>
 							</Highlight>
 							<ButtonBar isMobile={ isMobile }>
-								<StyledDarkButton onClick={ () => page( `/plans/my-plan/${ siteSlug }` ) }>
-									{ translate( 'View plan benefits' ) }
-								</StyledDarkButton>
 								{ isUserJoinedWithinADay ? (
-									<StyledButton onClick={ () => page( '/help' ) }>
-										{ translate( 'Access premium support' ) }
+									<StyledButton onClick={ () => page( `/plans/my-plan/${ siteSlug }` ) }>
+										{ translate( 'View plan benefits' ) }
 									</StyledButton>
 								) : (
 									<StyledButton
@@ -153,6 +150,9 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 										{ translate( 'Start building' ) }
 									</StyledButton>
 								) }
+								<StyledLightButton onClick={ () => page( '/help' ) }>
+									{ translate( 'Access premium support' ) }
+								</StyledLightButton>
 							</ButtonBar>
 						</div>
 						<video
