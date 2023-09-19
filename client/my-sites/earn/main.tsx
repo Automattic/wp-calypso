@@ -2,7 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
@@ -171,35 +170,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return currentPath;
 	};
 
-	/**
-	 * Check the current path and returns an appropriate title.
-	 */
-	const getHeaderText = (): string => {
-		switch ( section ) {
-			case 'payments':
-				return translate( 'Payments' );
-			case 'ads-earnings':
-			case 'ads-payments':
-			case 'ads-settings':
-				return translate( 'Ads' );
-
-			case 'refer-a-friend':
-				return translate( 'Refer-a-Friend Program' );
-
-			default:
-				return '';
-		}
-	};
-
-	const getHeaderCake = () => {
-		const headerText = getHeaderText();
-		return (
-			headerText && (
-				<HeaderCake backHref={ `/earn/${ site?.slug ?? '' }` }>{ headerText }</HeaderCake>
-			)
-		);
-	};
-
 	const getEarnSectionNav = () => {
 		const currentPath = getCurrentPath();
 
@@ -268,7 +238,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				align="left"
 			/>
 			{ getEarnSectionNav() }
-			{ getHeaderCake() }
 			{ isAdSection( section ) && getAdSectionNav() }
 			{ getComponent( section ) }
 		</Main>
