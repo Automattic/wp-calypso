@@ -194,7 +194,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		);
 	};
 
-	const getAdSectionNav = () => {
+	const getAdsHeader = () => {
 		const currentPath = getCurrentPath();
 
 		return (
@@ -242,7 +242,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				align="left"
 			/>
 			{ getEarnSectionNav() }
-			{ isAdSection( section ) && getAdSectionNav() }
+			{ isAdSection( section ) && getAdsHeader() }
 			{ getComponent( section ) }
 		</Main>
 	);
