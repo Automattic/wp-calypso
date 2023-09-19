@@ -15,6 +15,7 @@
 .domains-table-filter {
 	display: flex;
 	justify-content: space-between;
+	background: var(--color-surface-backdrop);
 
 	@media ( max-width: 480px ) {
 		flex-direction: column;
