@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -59,19 +59,23 @@ const ButtonBar = styled.div< { isMobile: boolean } >`
 	flex-direction: ${ ( { isMobile } ) => ( isMobile ? 'column' : 'row' ) };
 `;
 
-const StyledButton = styled< ButtonProps & { dark?: boolean } >( Button )`
+const StyledButton = styled( Button )`
 	border-radius: 4px;
-	border: ${ ( { dark } ) => ( dark ? '1px solid var( --gray-gray-0, #f6f7f7 )' : 'none' ) };
 	box-shadow: 0px 1px 2px 0px rgba( 0, 0, 0, 0.05 );
 	font-size: 14px;
 	font-weight: 500;
 	line-height: 20px;
 	letter-spacing: 0.32px;
 	text-align: center;
-	background-color: ${ ( { dark } ) => ( dark ? 'var(--studio-black)' : 'none' ) };
-	background: ${ ( { dark } ) =>
-		! dark ? 'linear-gradient( #c1c0d3, #e3e2f3, #c1c0d3 )' : 'none' };
-	color: ${ ( { dark } ) => ( dark ? 'var(--studio-gray-0)' : 'var(--studio-black)' ) };
+	background-color: none;
+	background: none;
+	color: var( --studio-black );
+`;
+const StyledDarkButton = styled( StyledButton )`
+	border: 1px solid var( --gray-gray-0, #f6f7f7 );
+	background-color: var( --studio-black );
+	background: linear-gradient( #c1c0d3, #e3e2f3, #c1c0d3 );
+	color: var( --studio-gray-0 );
 `;
 
 const CustomizedWordPressLogo = styled( WordPressLogo )`
@@ -135,9 +139,9 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 								</p>
 							</Highlight>
 							<ButtonBar isMobile={ isMobile }>
-								<StyledButton dark onClick={ () => page( `/plans/my-plan/${ siteSlug }` ) }>
+								<StyledDarkButton onClick={ () => page( `/plans/my-plan/${ siteSlug }` ) }>
 									{ translate( 'View plan benefits' ) }
-								</StyledButton>
+								</StyledDarkButton>
 								{ isUserJoinedWithinADay ? (
 									<StyledButton onClick={ () => page( '/help' ) }>
 										{ translate( 'Access premium support' ) }
