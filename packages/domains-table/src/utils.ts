@@ -1,5 +1,11 @@
 import { DomainData, SiteDetails } from '@automattic/data-stores';
-import { ResolveDomainStatusReturn } from './utils/resolve-domain-status';
+import { I18N } from 'i18n-calypso';
+import { createSiteDomainObject } from './utils/assembler';
+import {
+	DomainStatusPurchaseActions,
+	ResolveDomainStatusReturn,
+	resolveDomainStatus,
+} from './utils/resolve-domain-status';
 
 export const getSimpleSortFunctionBy =
 	( column: keyof DomainData ) => ( first: DomainData, second: DomainData, sortOrder: number ) => {
@@ -59,6 +65,33 @@ export const getSiteSortFunctions = () => {
 		},
 		getSimpleSortFunctionBy( 'domain' ),
 	];
+};
+
+export const getStatusSortFunctions = (
+	translate: I18N[ 'translate' ],
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions
+) => {
+	const getStatusWeight = ( domain: DomainData ) => {
+		const responseDomain = createSiteDomainObject( domain );
+		const isPurchased = domainStatusPurchaseActions?.isPurchasedDomain?.( responseDomain );
+		const isCreditCardExpiring =
+			domainStatusPurchaseActions?.isCreditCardExpiring?.( responseDomain );
+		const { listStatusWeight } = resolveDomainStatus( responseDomain, {
+			translate,
+			isPurchasedDomain: isPurchased,
+			isCreditCardExpiring: isCreditCardExpiring,
+			getMappingErrors: true,
+		} );
+		return listStatusWeight ?? 0;
+	};
+
+	const compareStatus = ( first: DomainData, second: DomainData, sortOrder: number ) => {
+		const firstStatusWeight = getStatusWeight( first );
+		const secondStatusWeight = getStatusWeight( second );
+		return ( firstStatusWeight - secondStatusWeight ) * sortOrder;
+	};
+
+	return [ compareStatus, getReverseSimpleSortFunctionBy( 'domain' ) ];
 };
 
 export const shouldHideOwnerColumn = ( domains: DomainData[] ) => {

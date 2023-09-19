@@ -1,5 +1,7 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { getSimpleSortFunctionBy, getSiteSortFunctions } from '../utils';
+import { I18N } from 'i18n-calypso';
+import { getSimpleSortFunctionBy, getSiteSortFunctions, getStatusSortFunctions } from '../utils';
+import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableColumn } from '.';
 
 const domainLabel = ( count: number, isBulkSelection: boolean ) =>
@@ -20,7 +22,10 @@ const domainLabel = ( count: number, isBulkSelection: boolean ) =>
 				{ count }
 		  );
 
-export const allSitesViewColumns: DomainsTableColumn[] = [
+export const allSitesViewColumns = (
+	translate: I18N[ 'translate' ],
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions
+): DomainsTableColumn[] => [
 	{
 		name: 'domain',
 		label: domainLabel,
@@ -61,12 +66,15 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		isSortable: true,
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
-		sortFunctions: [],
+		sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
 	},
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
 
-export const siteSpecificViewColumns: DomainsTableColumn[] = [
+export const siteSpecificViewColumns = (
+	translate: I18N[ 'translate' ],
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions
+): DomainsTableColumn[] => [
 	{
 		name: 'domain',
 		label: domainLabel,
@@ -104,7 +112,7 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		isSortable: true,
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
-		sortFunctions: [],
+		sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
 	},
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
