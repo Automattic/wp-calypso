@@ -42,7 +42,7 @@ export const allSitesViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
 	},
 	{
 		name: 'site',
@@ -96,7 +96,7 @@ export const siteSpecificViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
 	},
 	{
 		name: 'email',
