@@ -65,7 +65,14 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						if ( action === 'manage-dns-settings' ) {
 							sendNudge( {
 								nudge: 'dns-settings',
-								initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
+								initialMessage: translate(
+									'I see you want to change your DNS settings for your domain %(domain)s. That’s a complex thing, but I can guide you and help you at any moment.',
+									{
+										args: {
+											domain: domain.name,
+										},
+									}
+								) as string,
 								context: { domain: domain.domain },
 							} );
 						}
