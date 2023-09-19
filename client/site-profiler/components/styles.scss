@@ -96,14 +96,14 @@
 		border-radius: 100%;
 		padding: 8px;
 		position: relative;
-		top: -2px;
+		top: -5px;
 
 		svg {
 			fill: #fff;
 		}
 
 		&.green {
-			background: var(--studio-green-50);
+			background: var(--studio-green-30);
 		}
 
 		&.blue {
