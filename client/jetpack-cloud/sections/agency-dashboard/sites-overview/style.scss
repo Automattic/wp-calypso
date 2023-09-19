@@ -166,6 +166,10 @@
 		color: var(--studio-white);
 	}
 
+	&:visited:not(:hover) {
+		color: var(--studio-gray-80);
+	}
+
 	&.is-selected {
 		background: var(--studio-jetpack-green-50);
 		color: var(--studio-white);
