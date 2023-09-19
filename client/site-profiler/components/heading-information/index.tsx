@@ -1,42 +1,43 @@
-import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import StatusCtaInfo from '../heading-information/status-cta-info';
+import StatusIcon from '../heading-information/status-icon';
+import StatusInfo from '../heading-information/status-info';
+import type { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
 import './styles.scss';
 
 interface Props {
 	domain: string;
+	conversionAction?: CONVERSION_ACTION;
 	onCheckAnotherSite?: () => void;
 }
 
 export default function HeadingInformation( props: Props ) {
-	const { domain, onCheckAnotherSite } = props;
+	const { domain, conversionAction, onCheckAnotherSite } = props;
 
 	return (
 		<div className="heading-information">
 			<summary>
 				<h5>Who Hosts This Site?</h5>
 				<div className="domain">
-					<span className="status-icon green">
-						<Gridicon icon="checkmark" size={ 18 } />
-					</span>
-					<span className="status-icon blue">
-						<Gridicon icon="checkmark" size={ 18 } />
-					</span>
-					<span className="status-icon red">
-						<Gridicon icon="cross" size={ 18 } />
-					</span>
+					<StatusIcon conversionAction={ conversionAction } />
 					{ domain }
 				</div>
-				<p>Nice! This site and its domain are fully hosted on WordPress.com!</p>
+				<StatusInfo conversionAction={ conversionAction } />
 			</summary>
 			<footer>
-				<p>
-					If you own this site, host it with <strong>WordPress.com</strong> and benefit from one of
-					the best hosting platforms in the world.
-				</p>
+				<StatusCtaInfo conversionAction={ conversionAction } />
 				<div className="cta-wrapper">
-					<Button className="button-action">Migrate site</Button>
-					<Button className="button-action">Transfer domain</Button>
-					<Button className="button-action">Transfer domain for free</Button>
+					{ conversionAction === 'register-domain' && (
+						<Button className="button-action">Register domain</Button>
+					) }
+					{ ( conversionAction === 'transfer-domain' ||
+						conversionAction === 'transfer-domain-hosting' ) && (
+						<Button className="button-action">Transfer domain</Button>
+					) }
+					{ conversionAction === 'transfer-hosting' && (
+						<Button className="button-action">Migrate site</Button>
+					) }
+
 					{ onCheckAnotherSite && (
 						<Button variant="link" onClick={ onCheckAnotherSite }>
 							Check another site
