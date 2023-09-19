@@ -128,18 +128,18 @@ export const siteSpecificViewColumns = (
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
 export const applyColumnSort = (
-	domains: PartialDomainData[] | undefined,
+	domains: PartialDomainData[],
 	domainData: Record< number, DomainData[] >,
-	columns: DomainsTableColumn[] | undefined,
+	columns: DomainsTableColumn[],
 	sortKey: string,
 	sortDirection: 'asc' | 'desc'
 ) => {
-	const selectedColumnDefinition = ( columns || [] ).find( ( column ) => column.name === sortKey );
+	const selectedColumnDefinition = columns.find( ( column ) => column.name === sortKey );
 
 	const getFullDomainData = ( domain: PartialDomainData ) =>
-		domainData?.[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
+		domainData[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
 
-	return domains?.sort( ( first, second ) => {
+	return [ ...domains ].sort( ( first, second ) => {
 		let result = 0;
 
 		const fullFirst = getFullDomainData( first );
@@ -148,7 +148,7 @@ export const applyColumnSort = (
 			return result;
 		}
 
-		for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
+		for ( const sortFunction of selectedColumnDefinition?.sortFunctions ?? [] ) {
 			result = sortFunction( fullFirst, fullSecond, sortDirection === 'asc' ? 1 : -1 );
 			if ( result !== 0 ) {
 				break;

@@ -219,6 +219,10 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		: siteSpecificViewColumns( translate, domainStatusPurchaseActions );
 
 	const sortedDomains = useMemo( () => {
+		if ( ! domains ) {
+			return;
+		}
+
 		return applyColumnSort(
 			domains,
 			fetchedSiteDomains,

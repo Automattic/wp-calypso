@@ -45,7 +45,7 @@ export type ResolveDomainStatusReturn = {
 };
 
 export type ResolveDomainStatusOptionsBag = {
-	siteSlug?: string | null;
+	siteSlug?: string;
 	currentRoute?: string | null;
 	getMappingErrors?: boolean | null;
 	translate: I18N[ 'translate' ];
@@ -63,7 +63,7 @@ export type DomainStatusPurchaseActions = {
 export function resolveDomainStatus(
 	domain: ResponseDomain,
 	{
-		siteSlug = null,
+		siteSlug,
 		getMappingErrors = false,
 		currentRoute = null,
 		translate,
@@ -136,7 +136,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( getMappingErrors && siteSlug !== null ) {
+			if ( getMappingErrors ) {
 				const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 
 				const hasMappingError =
@@ -289,7 +289,7 @@ export function resolveDomainStatus(
 				if ( domain.isRenewable ) {
 					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
 
-					if ( isPurchasedDomain && siteSlug && domain.currentUserIsOwner ) {
+					if ( isPurchasedDomain && domain.currentUserIsOwner ) {
 						noticeText.push( ' ' );
 						noticeText.push(
 							translate(
@@ -324,7 +324,7 @@ export function resolveDomainStatus(
 				} else if ( domain.isRedeemable ) {
 					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
 
-					if ( isPurchasedDomain && siteSlug && domain.currentUserIsOwner ) {
+					if ( isPurchasedDomain && domain.currentUserIsOwner ) {
 						noticeText.push( ' ' );
 						noticeText.push(
 							translate(
@@ -382,7 +382,7 @@ export function resolveDomainStatus(
 
 				let callToAction;
 
-				if ( isPurchasedDomain && siteSlug && domain.currentUserIsOwner ) {
+				if ( isPurchasedDomain && domain.currentUserIsOwner ) {
 					callToAction = {
 						onClick: onRenewNowClick,
 						label: translate( 'Renew now' ),
