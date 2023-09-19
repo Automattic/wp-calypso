@@ -20,7 +20,6 @@ import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from 'calypso/my-sites/checkout/src/payment-methods/credit-card';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { createTestReduxStore, fetchStripeConfiguration, stripeConfiguration } from './util';
 import type { CardStoreType } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/types';
 
@@ -97,18 +96,7 @@ function CompleteCreditCardFields() {
 	return <button onClick={ completeFields }>Mark credit fields as complete</button>;
 }
 
-jest.mock( 'calypso/state/notices/actions' );
-
 describe( 'Credit card payment method', () => {
-	beforeEach( () => {
-		( errorNotice as jest.Mock ).mockImplementation( ( value ) => {
-			return {
-				type: 'errorNotice',
-				value,
-			};
-		} );
-	} );
-
 	it( 'renders a credit card option', async () => {
 		render( <TestWrapper /> );
 		await waitFor( () => {
@@ -173,7 +161,6 @@ describe( 'Credit card payment method', () => {
 		await user.type( screen.getAllByLabelText( /Cardholder name/i )[ 1 ], customerName );
 		await user.type( screen.getByLabelText( /Card number/i ), cardNumber );
 		await user.type( screen.getByLabelText( /Expiry date/i ), cardExpiry );
-		//await user.type( screen.getAllByLabelText( /Security code/i )[ 0 ], '' );
 
 		// Try to submit the form
 		await user.click( await screen.findByText( activePayButtonText ) );
