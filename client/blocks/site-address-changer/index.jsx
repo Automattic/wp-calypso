@@ -36,6 +36,7 @@ export class SiteAddressChanger extends Component {
 		currentDomainSuffix: PropTypes.string.isRequired,
 		currentDomain: PropTypes.object.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		onSiteAddressChanged: PropTypes.func,
 
 		// `connect`ed
 		isSiteAddressChangeRequesting: PropTypes.bool,
