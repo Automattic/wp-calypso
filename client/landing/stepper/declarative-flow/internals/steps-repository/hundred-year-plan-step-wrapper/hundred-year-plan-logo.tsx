@@ -1,6 +1,12 @@
-export default function () {
+export default function ( { width }: { width?: number } ) {
 	return (
-		<svg xmlns="http://www.w3.org/2000/svg" width="61" height="88" viewBox="0 0 61 88" fill="none">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width={ width || 61 }
+			height={ ( ( width || 61 ) * 88 ) / 61 }
+			viewBox="0 0 61 88"
+			fill="none"
+		>
 			<g clipPath="url(#clip0_1031_13381)">
 				<path
 					d="M5.61961 0.25H55.3804C58.2078 0.25 60.5 2.573 60.5 5.43137V56.885C60.5 73.6438 47.056 87.2469 30.5 87.2469C13.944 87.25 0.5 73.6438 0.5 56.8881V5.43137C0.5 2.573 2.79532 0.25 5.61961 0.25Z"
