@@ -12,6 +12,7 @@ import { useFuzzySearch } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
 import { useQueries } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import {
 	useCallback,
@@ -208,8 +209,10 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 			return selectedDomainsCopy;
 		} );
 	}, [ domains ] );
-
-	const domainsTableColumns = isAllSitesView ? allSitesViewColumns : siteSpecificViewColumns;
+	const translate = useTranslate();
+	const domainsTableColumns = isAllSitesView
+		? allSitesViewColumns( translate, domainStatusPurchaseActions )
+		: siteSpecificViewColumns( translate, domainStatusPurchaseActions );
 
 	const sortedDomains = useMemo( () => {
 		const selectedColumnDefinition = domainsTableColumns.find(
@@ -283,7 +286,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 			selectedColumn.supportsOrderSwitching &&
 			sortDirection === 'asc'
 				? 'desc'
-				: selectedColumn.initialSortDirection );
+				: 'asc' );
 
 		setSort( {
 			sortKey: selectedColumn.name,
