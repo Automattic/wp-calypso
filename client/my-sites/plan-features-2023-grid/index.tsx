@@ -21,7 +21,6 @@ import {
 } from '@automattic/components';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, ForwardedRef, forwardRef, createRef } from 'react';
@@ -34,6 +33,7 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
+import ComparisonGridToggle from '../plans-features-main/components/comparison-grid-toggle';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
@@ -736,13 +736,15 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					</PlansGridContextProvider>
 				</div>
 				{ ! hidePlansFeatureComparison && (
-					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-						<Button onClick={ toggleShowPlansComparisonGrid } ref={ observableForOddieRef }>
-							{ showPlansComparisonGrid
+					<ComparisonGridToggle
+						onClick={ toggleShowPlansComparisonGrid }
+						label={
+							showPlansComparisonGrid
 								? translate( 'Hide comparison' )
-								: translate( 'Compare plans' ) }
-						</Button>
-					</div>
+								: translate( 'Compare plans' )
+						}
+						ref={ observableForOddieRef }
+					/>
 				) }
 				{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (
 					<div
@@ -772,11 +774,10 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								showLegacyStorageFeature={ showLegacyStorageFeature }
 								showUpgradeableStorage={ showUpgradeableStorage }
 							/>
-							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-								<Button onClick={ toggleShowPlansComparisonGrid }>
-									{ translate( 'Hide comparison' ) }
-								</Button>
-							</div>
+							<ComparisonGridToggle
+								onClick={ toggleShowPlansComparisonGrid }
+								label={ translate( 'Hide comparison' ) }
+							/>
 						</PlansGridContextProvider>
 					</div>
 				) : null }
