@@ -29,7 +29,7 @@ export default function SiteProfiler() {
 				<LayoutBlock>
 					{ data && (
 						<LayoutBlockSection>
-							<HeadingInformation />
+							<HeadingInformation domain={ domain } />
 						</LayoutBlockSection>
 					) }
 					{ data && (
