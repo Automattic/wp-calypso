@@ -63,7 +63,7 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 
 			dispatch(
 				successNotice(
-					translate( 'The domain will be disconnected from this site a few minutes.' )
+					translate( 'The domain will be disconnected from this site in a few minutes.' )
 				)
 			);
 			setDisconnecting( false );
