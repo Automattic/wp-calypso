@@ -14,7 +14,7 @@ const setUrlParam = ( url: URL, paramName: string, paramValue?: string | null ):
 	}
 };
 
-export const getStatsPurchaseURL = (
+const getStatsPurchaseURL = (
 	siteSlug: string,
 	product: string,
 	redirectUrl: string,
