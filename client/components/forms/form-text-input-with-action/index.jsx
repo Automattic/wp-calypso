@@ -111,7 +111,7 @@ FormTextInputWithAction.propTypes = {
 	onFocus: PropTypes.func,
 	onBlur: PropTypes.func,
 	onKeyDown: PropTypes.func,
-	OnChange: PropTypes.func,
+	onChange: PropTypes.func,
 	onAction: PropTypes.func,
 	defaultValue: PropTypes.string,
 	disabled: PropTypes.bool,
