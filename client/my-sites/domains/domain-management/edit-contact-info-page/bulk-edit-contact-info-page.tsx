@@ -333,21 +333,18 @@ export default function BulkEditContactInfoPage( {
 					</div>
 				) }
 				{ domainsWithUnmodifiableContactInfo && domainsWithUnmodifiableContactInfo.length > 0 && (
-					<div
-						className="edit-contact-info-page__sidebar"
-						style={ { marginBottom: '8px', background: 'transparent' } }
-					>
+					<div className="edit-contact-info-page__sidebar" style={ { marginBottom: '8px' } }>
 						<div className="edit-contact-info-page__sidebar-title">
 							<p>
 								<strong>{ translate( 'The following domain fields will not be updated:' ) }</strong>
 							</p>
 						</div>
 						<div className="edit-contact-info-page__sidebar-content">
-							<ul style={ { listStyleType: 'none', margin: 0 } }>
+							<ul>
 								{ domainsWithUnmodifiableContactInfo.map( ( domain ) => (
 									<li key={ domain.domain }>
 										<strong>{ domain.domain }</strong>
-										<ul style={ { listStylePosition: 'inside' } }>
+										<ul style={ { listStyleType: 'circle' } }>
 											{ domain.whois_update_unmodifiable_fields.map( ( field: string ) => (
 												<li key={ field }>{ getFieldMapping( field ) }</li>
 											) ) }
