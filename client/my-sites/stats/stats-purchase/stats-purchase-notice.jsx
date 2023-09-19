@@ -14,10 +14,7 @@ import './styles.scss';
 const getStatsPurchaseURL = ( siteId, isOdysseyStats, productType = 'commercial' ) => {
 	const purchasePath = `/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
 
-	if ( ! isOdysseyStats ) {
-		return purchasePath;
-	}
-	return `https://wordpress.com${ purchasePath }`;
+	return purchasePath;
 };
 
 const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
@@ -27,7 +24,7 @@ const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked' )
 		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
 
-	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
+	setTimeout( () => page( upgradeUrl ), 250 );
 };
 
 const StatsCommercialOwned = ( { siteSlug } ) => {
