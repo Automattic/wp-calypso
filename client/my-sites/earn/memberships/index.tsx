@@ -1,11 +1,9 @@
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, ReactNode } from 'react';
 import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
-import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
@@ -49,13 +47,9 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	);
 	const connectUrl: string = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
 
-	const {
-		commission,
-		currency,
-		forecast,
-		last_month: lastMonth,
-		total,
-	} = useSelector( ( state ) => getEarningsWithDefaultsForSiteId( state, site?.ID ) );
+	const { commission } = useSelector( ( state ) =>
+		getEarningsWithDefaultsForSiteId( state, site?.ID )
+	);
 
 	const navigateToLaunchpad = useCallback( () => {
 		const shouldGoToLaunchpad = query?.stripe_connect_success === 'launchpad';
@@ -64,57 +58,6 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			window.location.assign( `/setup/${ siteIntent }/launchpad?siteSlug=${ site?.slug }` );
 		}
 	}, [ query, site ] );
-
-	function renderEarnings() {
-		if ( ! site ) {
-			return <LoadingEllipsis />;
-		}
-
-		return (
-			<div>
-				<SectionHeader label={ translate( 'Earnings' ) } />
-				<QueryMembershipsEarnings siteId={ site.ID } />
-				<Card>
-					<div className="memberships__module-content module-content">
-						<ul className="memberships__earnings-breakdown-list">
-							<li className="memberships__earnings-breakdown-item">
-								<span className="memberships__earnings-breakdown-label">
-									{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
-								</span>
-								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( total, currency ) }
-								</span>
-							</li>
-							<li className="memberships__earnings-breakdown-item">
-								<span className="memberships__earnings-breakdown-label">
-									{ translate( 'Last 30 days', { context: 'Sum of earnings over last 30 days' } ) }
-								</span>
-								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( lastMonth, currency ) }
-								</span>
-							</li>
-							<li className="memberships__earnings-breakdown-item">
-								<span className="memberships__earnings-breakdown-label">
-									{ translate( 'Next month', {
-										context: 'Forecast for the subscriptions due in the next 30 days',
-									} ) }
-								</span>
-								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( forecast, currency ) }
-								</span>
-							</li>
-						</ul>
-					</div>
-					<CommissionFees
-						commission={ commission }
-						iconSize={ 12 }
-						siteSlug={ site?.slug }
-						className="memberships__earnings-breakdown-notes"
-					/>
-				</Card>
-			</div>
-		);
-	}
 
 	function onCloseDisconnectStripeAccount( reason: string | undefined ) {
 		if ( reason === 'disconnect' ) {
@@ -220,7 +163,6 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		return (
 			<div>
 				{ renderNotices() }
-				{ renderEarnings() }
 				{ renderManagePlans() }
 				{ renderSettings() }
 			</div>
@@ -409,7 +351,6 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 
 	return (
 		<div>
-			<QueryMembershipsEarnings siteId={ site.ID } />
 			<QueryMembershipsSettings siteId={ site.ID } source={ source } />
 			{ connectedAccountId && renderStripeConnected() }
 			{ connectUrl && renderConnectStripe() }
