@@ -6,6 +6,8 @@ import FormTextInput from '../form-text-input';
 
 import './style.scss';
 
+const noop = () => {};
+
 interface FormTextInputWithActionProps {
 	className?: string;
 	action?: ReactNode;
@@ -27,11 +29,11 @@ const FormTextInputWithAction: FC< FormTextInputWithActionProps > = ( {
 	className,
 	action,
 	inputRef,
-	onFocus = () => {},
-	onBlur = () => {},
-	onKeyDown = () => {},
-	onChange = () => {},
-	onAction = () => {},
+	onFocus = noop,
+	onBlur = noop,
+	onKeyDown = noop,
+	onChange = noop,
+	onAction = noop,
 	defaultValue = '',
 	disabled,
 	isError,
