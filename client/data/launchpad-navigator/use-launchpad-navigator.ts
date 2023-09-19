@@ -7,13 +7,17 @@ interface AvailableChecklist {
 	title: string;
 }
 
+interface AvailableChecklists {
+	[ checklist_slug: string ]: AvailableChecklist;
+}
+
 interface LaunchpadNavigatorResponse {
-	available_checklists: AvailableChecklist[];
+	available_checklists: AvailableChecklists;
 	current_checklist: string | null;
 }
 
 const defaultResponse: LaunchpadNavigatorResponse = {
-	available_checklists: [],
+	available_checklists: {},
 	current_checklist: null,
 };
 
