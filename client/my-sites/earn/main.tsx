@@ -194,25 +194,29 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		);
 	};
 
-	const getAdSectionNav = () => {
+	const getAdsHeader = () => {
 		const currentPath = getCurrentPath();
 
 		return (
-			<SectionNav selectedText={ getAdSelectedText() }>
-				<NavTabs>
-					{ getAdTabs().map( ( filterItem ) => {
-						return (
-							<NavItem
-								key={ filterItem.id }
-								path={ filterItem.path }
-								selected={ filterItem.path === currentPath }
-							>
-								{ filterItem.title }
-							</NavItem>
-						);
-					} ) }
-				</NavTabs>
-			</SectionNav>
+			<div className="earn__ads-header">
+				<h2 className="formatted-header__title wp-brand-font">{ translate( 'Ads Dashboard' ) }</h2>
+
+				<SectionNav selectedText={ getAdSelectedText() }>
+					<NavTabs>
+						{ getAdTabs().map( ( filterItem ) => {
+							return (
+								<NavItem
+									key={ filterItem.id }
+									path={ filterItem.path }
+									selected={ filterItem.path === currentPath }
+								>
+									{ filterItem.title }
+								</NavItem>
+							);
+						} ) }
+					</NavTabs>
+				</SectionNav>
+			</div>
 		);
 	};
 
@@ -238,7 +242,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				align="left"
 			/>
 			{ getEarnSectionNav() }
-			{ isAdSection( section ) && getAdSectionNav() }
+			{ isAdSection( section ) && getAdsHeader() }
 			{ getComponent( section ) }
 		</Main>
 	);
