@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useMemo, useState } from 'react';
@@ -37,7 +36,6 @@ interface BulkSiteDomainsProps {
 }
 
 export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
-	const isMobile = useMobileBreakpoint();
 	const site = useSelector( getSelectedSite );
 	const userCanSetPrimaryDomains = useSelector(
 		( state ) => ! currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
@@ -129,20 +127,20 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 							setChangeSiteAddressSourceDomain( domain );
 						}
 					} }
+					footer={
+						<>
+							{ ! isLoading && (
+								<EmptyDomainsListCard
+									selectedSite={ site }
+									hasDomainCredit={ !! hasDomainCredit }
+									isCompact={ hasNonWpcomDomains }
+									hasNonWpcomDomains={ hasNonWpcomDomains }
+								/>
+							) }
+							<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
+						</>
+					}
 				/>
-				{ ! isMobile && (
-					<>
-						{ ! isLoading && (
-							<EmptyDomainsListCard
-								selectedSite={ site }
-								hasDomainCredit={ !! hasDomainCredit }
-								isCompact={ hasNonWpcomDomains }
-								hasNonWpcomDomains={ hasNonWpcomDomains }
-							/>
-						) }
-						<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
-					</>
-				) }
 				{ changeSiteAddressSourceDomain && (
 					<SiteAddressChanger
 						currentDomain={ changeSiteAddressSourceDomain }
