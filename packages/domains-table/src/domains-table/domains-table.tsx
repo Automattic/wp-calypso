@@ -24,11 +24,15 @@ import {
 	ReactNode,
 } from 'react';
 import { DomainsTableFilter } from '../domains-table-filters/index';
-import { allSitesViewColumns, siteSpecificViewColumns } from '../domains-table-header/columns';
+import {
+	allSitesViewColumns,
+	siteSpecificViewColumns,
+	applyColumnSort,
+} from '../domains-table-header/columns';
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
 import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
-import { shouldHideOwnerColumn, sortDomains } from '../utils';
+import { shouldHideOwnerColumn } from '../utils';
 import { canBulkUpdate } from '../utils/can-bulk-update';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { ResponseDomain } from '../utils/types';
@@ -215,7 +219,13 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		: siteSpecificViewColumns( translate, domainStatusPurchaseActions );
 
 	const sortedDomains = useMemo( () => {
-		return sortDomains( domains, fetchedSiteDomains, domainsTableColumns, sortKey, sortDirection );
+		return applyColumnSort(
+			domains,
+			fetchedSiteDomains,
+			domainsTableColumns,
+			sortKey,
+			sortDirection
+		);
 	}, [ fetchedSiteDomains, domains, sortKey, sortDirection, domainsTableColumns ] );
 
 	const filteredData = useFuzzySearch( {
