@@ -69,7 +69,9 @@ const Info = styled.div< { isMobile: boolean } >`
 
 const Title = styled.div`
 	color: var( --studio-gray-0 );
-	font-feature-settings: 'clig' off, 'liga' off;
+	font-feature-settings:
+		'clig' off,
+		'liga' off;
 	/* Xl/Serif */
 	font-family: Recoleta;
 	font-size: 32px;
@@ -95,7 +97,9 @@ const Description = styled.div< { isMobile: boolean } >`
 `;
 const Price = styled.div`
 	color: var( --studio-gray-0 );
-	font-feature-settings: 'clig' off, 'liga' off;
+	font-feature-settings:
+		'clig' off,
+		'liga' off;
 
 	/* Lg/Medium */
 	font-family: 'SF Pro Display', sans-serif;

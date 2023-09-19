@@ -167,7 +167,7 @@ const buildApp = ( environment ) => {
 					i18n_default_locale_slug: 'en',
 					favicon_url: 'http://favicon.url/',
 					enable_all_sections: true,
-				}[ key ] )
+				} )[ key ]
 		);
 
 		appFactory = require( '../index' ).default;

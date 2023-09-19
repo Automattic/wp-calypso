@@ -159,7 +159,7 @@ export type ShoppingCartState = {
 			loadingError: string;
 			loadingErrorType: ShoppingCartError;
 	  }
- );
+);
 
 export interface WithShoppingCartProps {
 	shoppingCartManager: UseShoppingCart;

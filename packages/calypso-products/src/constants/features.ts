@@ -421,7 +421,7 @@ export const FEATURE_SHIPPING_INTEGRATIONS = 'shipping-integrations';
 export const FEATURE_50GB_STORAGE_ADD_ON = '50gb-storage-add-on';
 export const FEATURE_100GB_STORAGE_ADD_ON = '100gb-storage-add-on';
 
-export const WPCOM_STORAGE_ADD_ONS = <const>[
+export const WPCOM_STORAGE_ADD_ONS = < const >[
 	FEATURE_50GB_STORAGE_ADD_ON,
 	FEATURE_100GB_STORAGE_ADD_ON,
 ];

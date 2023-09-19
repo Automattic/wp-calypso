@@ -16,10 +16,13 @@ jest.mock( 'calypso/signup/config/flows-pure', () =>
 // to ensure jest waits for the test to finish.
 async function testCreateSite( cb, ...args ) {
 	return new Promise( ( resolve ) => {
-		createSiteWithCart( ( response ) => {
-			cb( response );
-			resolve();
-		}, ...args );
+		createSiteWithCart(
+			( response ) => {
+				cb( response );
+				resolve();
+			},
+			...args
+		);
 	} );
 }
 

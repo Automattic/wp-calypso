@@ -250,7 +250,7 @@ export interface BearerTokenErrorResponse {
 			{
 				code: string;
 				message: string;
-			}
+			},
 		];
 	};
 }

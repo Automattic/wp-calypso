@@ -12,7 +12,7 @@ type Props = (
 			alwaysExpanded: true;
 			title?: string;
 	  }
- ) & {
+) & {
 	children: ReactNode;
 };
 

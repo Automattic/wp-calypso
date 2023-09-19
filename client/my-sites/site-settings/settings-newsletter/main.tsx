@@ -57,56 +57,53 @@ type NewsletterSettingsFormProps = {
 	updateFields: ( fields: Fields ) => void;
 };
 
-const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )(
-	( {
-		fields,
-		handleAutosavingToggle,
-		handleSubmitForm,
-		handleToggle,
-		isRequestingSettings,
-		isSavingSettings,
-		settings,
-		updateFields,
-	}: NewsletterSettingsFormProps ) => {
-		const siteId = useSelector( getSelectedSiteId );
+const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
+	fields,
+	handleAutosavingToggle,
+	handleSubmitForm,
+	handleToggle,
+	isRequestingSettings,
+	isSavingSettings,
+	settings,
+	updateFields,
+}: NewsletterSettingsFormProps ) => {
+	const siteId = useSelector( getSelectedSiteId );
 
-		const isSubscriptionModuleInactive = useSelector( ( state ) => {
-			if ( ! siteId ) {
-				return null;
-			}
+	const isSubscriptionModuleInactive = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
 
-			const isJetpackSite = isJetpackSiteSelector( state, siteId, {
-				treatAtomicAsJetpackSite: false,
-			} );
-
-			return (
-				Boolean( isJetpackSite ) &&
-				isJetpackModuleActive( state, siteId, 'subscriptions' ) === false
-			);
+		const isJetpackSite = isJetpackSiteSelector( state, siteId, {
+			treatAtomicAsJetpackSite: false,
 		} );
 
-		const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
-		const savedSubscriptionOptions = settings?.subscription_options;
-
 		return (
-			<>
-				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-				<form onSubmit={ handleSubmitForm }>
-					<NewsletterSettingsSection
-						fields={ fields }
-						handleAutosavingToggle={ handleAutosavingToggle }
-						handleToggle={ handleToggle }
-						handleSubmitForm={ handleSubmitForm }
-						disabled={ disabled }
-						isSavingSettings={ isSavingSettings }
-						savedSubscriptionOptions={ savedSubscriptionOptions }
-						updateFields={ updateFields }
-					/>
-				</form>
-			</>
+			Boolean( isJetpackSite ) && isJetpackModuleActive( state, siteId, 'subscriptions' ) === false
 		);
-	}
-);
+	} );
+
+	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
+	const savedSubscriptionOptions = settings?.subscription_options;
+
+	return (
+		<>
+			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
+			<form onSubmit={ handleSubmitForm }>
+				<NewsletterSettingsSection
+					fields={ fields }
+					handleAutosavingToggle={ handleAutosavingToggle }
+					handleToggle={ handleToggle }
+					handleSubmitForm={ handleSubmitForm }
+					disabled={ disabled }
+					isSavingSettings={ isSavingSettings }
+					savedSubscriptionOptions={ savedSubscriptionOptions }
+					updateFields={ updateFields }
+				/>
+			</form>
+		</>
+	);
+} );
 
 const NewsletterSettings = () => {
 	const translate = useTranslate();

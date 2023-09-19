@@ -118,8 +118,9 @@ export default function BulkEditContactInfoPage( {
 	);
 
 	const currentRoute = useSelector( getCurrentRoute );
-	const isRequestingWhois = useSelector( ( state: IAppState ) =>
-		selectedDomains?.some( ( domain ) => isRequestingWhoisSelector( state, domain.domain ) )
+	const isRequestingWhois = useSelector(
+		( state: IAppState ) =>
+			selectedDomains?.some( ( domain ) => isRequestingWhoisSelector( state, domain.domain ) )
 	);
 
 	const isDataLoading = () =>

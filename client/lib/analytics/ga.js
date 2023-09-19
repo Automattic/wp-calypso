@@ -76,31 +76,28 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
  * {string} label Is the string that will appear as the event label.
  * {string} value Is a non-negative integer that will appear as the event value.
  */
-export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction( function recordEvent(
-	category,
-	action,
-	label,
-	value
-) {
-	if ( 'undefined' !== typeof value && ! isNaN( Number( String( value ) ) ) ) {
-		value = Math.round( Number( String( value ) ) ); // GA requires an integer value.
-		// https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#eventValue
+export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction(
+	function recordEvent( category, action, label, value ) {
+		if ( 'undefined' !== typeof value && ! isNaN( Number( String( value ) ) ) ) {
+			value = Math.round( Number( String( value ) ) ); // GA requires an integer value.
+			// https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#eventValue
+		}
+
+		let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
+
+		if ( 'undefined' !== typeof label ) {
+			debugText += ' [Option Label: ' + label + ']';
+		}
+
+		if ( 'undefined' !== typeof value ) {
+			debugText += ' [Option Value: ' + value + ']';
+		}
+
+		gaDebug( debugText );
+
+		fireGoogleAnalyticsEvent( category, action, label, value );
 	}
-
-	let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
-
-	if ( 'undefined' !== typeof label ) {
-		debugText += ' [Option Label: ' + label + ']';
-	}
-
-	if ( 'undefined' !== typeof value ) {
-		debugText += ' [Option Value: ' + value + ']';
-	}
-
-	gaDebug( debugText );
-
-	fireGoogleAnalyticsEvent( category, action, label, value );
-} );
+);
 
 /**
  * Wrap Google Analytics with debugging, possible analytics supression, and initialization

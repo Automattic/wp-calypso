@@ -294,7 +294,7 @@ export class CartCheckoutPage {
 
 		const cvvFrame = ( await (
 			await this.page.waitForSelector( selectors.cardCVVFrame )
-		 ).contentFrame() ) as Frame;
+		).contentFrame() ) as Frame;
 		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput );
 		await cvvInput.fill( paymentDetails.cvv );
 	}
