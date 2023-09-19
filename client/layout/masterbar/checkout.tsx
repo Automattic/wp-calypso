@@ -87,7 +87,7 @@ const CheckoutMasterbar = ( {
 
 	const initialMessage =
 		'Customer is contacting us from the checkout pre-sales flow.\n' +
-		`Product${ responseCart.products.length > 1 && 's' } they're attempting to purchase: ` +
+		`Product${ responseCart.products?.length > 1 ? 's' : '' } they're attempting to purchase: ` +
 		responseCart.products.map( ( product ) => product.product_name ).join( ', ' );
 
 	const handleClick = () => {
