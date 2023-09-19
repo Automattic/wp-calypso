@@ -27,6 +27,13 @@
 	footer {
 		background: var(--studio-gray-0);
 		padding: 1rem 1.5rem;
+
+		p {
+			margin-bottom: 1rem;
+		}
+	}
+
+	.cta-wrapper {
 		display: flex;
 		gap: 1rem;
 	}

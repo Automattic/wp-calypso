@@ -89,4 +89,29 @@
 			max-width: 300px;
 		}
 	}
+
+	.status-icon {
+		display: inline-flex;
+		margin-right: 0.5rem;
+		border-radius: 100%;
+		padding: 8px;
+		position: relative;
+		top: -2px;
+
+		svg {
+			fill: #fff;
+		}
+
+		&.green {
+			background: var(--studio-green-50);
+		}
+
+		&.blue {
+			background: var(--wp-admin-theme-color);
+		}
+
+		&.red {
+			background: var(--studio-red-50);
+		}
+	}
 }
