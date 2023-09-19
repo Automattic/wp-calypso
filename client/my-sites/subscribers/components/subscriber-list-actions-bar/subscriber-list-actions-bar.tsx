@@ -8,6 +8,7 @@ import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import { useSubscribersFilterOptions } from 'calypso/landing/subscriptions/hooks';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
+import useManySubsSite from '../../hooks/use-many-subs-site';
 import './style.scss';
 import { useRecordSort } from '../../tracks';
 
@@ -26,10 +27,12 @@ const ListActionsBar = () => {
 		setSortTerm,
 		filterOption,
 		setFilterOption,
+		siteId,
 	} = useSubscribersPage();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 	const recordSort = useRecordSort();
-	const filterOptions = useSubscribersFilterOptions();
+	const hasManySubscribers = useManySubsSite( siteId );
+	const filterOptions = useSubscribersFilterOptions( hasManySubscribers );
 	const selectedText = translate( 'Subscribers: %s', {
 		args: getOptionLabel( filterOptions, filterOption ) || '',
 	} );
@@ -55,14 +58,16 @@ const ListActionsBar = () => {
 				initialSelected={ filterOption }
 			/>
 
-			<SortControls
-				options={ sortOptions }
-				value={ sortTerm }
-				onChange={ ( term ) => {
-					setSortTerm( term );
-					recordSort( { sort_field: term } );
-				} }
-			/>
+			{ ! hasManySubscribers && (
+				<SortControls
+					options={ sortOptions }
+					value={ sortTerm }
+					onChange={ ( term ) => {
+						setSortTerm( term );
+						recordSort( { sort_field: term } );
+					} }
+				/>
+			) }
 		</div>
 	);
 };

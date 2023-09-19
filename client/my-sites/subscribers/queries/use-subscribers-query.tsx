@@ -23,15 +23,22 @@ const useSubscribersQuery = ( {
 }: SubscriberQueryParams ) => {
 	return useQuery< SubscriberEndpointResponse >( {
 		queryKey: getSubscribersCacheKey( siteId, page, perPage, search, sortTerm, filterOption ),
-		queryFn: () =>
-			wpcom.req.get( {
-				path: `/sites/${ siteId }/subscribers?per_page=${ perPage }&page=${ page }${
+		queryFn: () => {
+			// When user_type is set to 'all', we use the 'subscribers' endpoint, which has aggregation.
+			// This is a temporary solution until we have a better way to handle this.
+			const pathRoute =
+				filterOption === SubscribersFilterBy.All ? 'subscribers' : 'subscribers_by_user_type';
+			const userTypeField = filterOption === SubscribersFilterBy.All ? 'filter' : 'user_type';
+
+			return wpcom.req.get( {
+				path: `/sites/${ siteId }/${ pathRoute }?per_page=${ perPage }&page=${ page }${
 					search ? `&search=${ encodeURIComponent( search ) }` : ''
 				}${ sortTerm ? `&sort=${ sortTerm }` : '' }${
-					filterOption ? `&filter=${ filterOption }` : ''
+					filterOption ? `&${ userTypeField }=${ filterOption }` : ''
 				}`,
 				apiNamespace: 'wpcom/v2',
-			} ),
+			} );
+		},
 		enabled: !! siteId,
 		keepPreviousData: true,
 	} );
