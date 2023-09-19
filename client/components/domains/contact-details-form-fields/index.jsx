@@ -69,6 +69,7 @@ export class ContactDetailsFormFields extends Component {
 		shouldForceRenderOnPropChange: PropTypes.bool,
 		updateWpcomEmailCheckboxDisabled: PropTypes.bool,
 		onUpdateWpcomEmailCheckboxChange: PropTypes.func,
+		updateWpcomEmailCheckboxHidden: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -92,6 +93,7 @@ export class ContactDetailsFormFields extends Component {
 		userCountryCode: 'US',
 		shouldForceRenderOnPropChange: false,
 		updateWpcomEmailCheckboxDisabled: false,
+		updateWpcomEmailCheckboxHidden: false,
 	};
 
 	constructor( props ) {
@@ -474,19 +476,23 @@ export class ContactDetailsFormFields extends Component {
 				) }
 			>
 				<Input label={ this.props.translate( 'Email' ) } { ...emailInputFieldProps } />
-				<FormLabel
-					className={ classNames( 'email-text-input-with-checkbox__checkbox-label', {
-						'is-disabled': this.props.updateWpcomEmailCheckboxDisabled,
-					} ) }
-				>
-					<FormCheckbox
-						name="update-wpcom-email"
-						disabled={ this.props.updateWpcomEmailCheckboxDisabled }
-						onChange={ this.handleUpdateWpcomEmailCheckboxChanged }
-						checked={ this.state.updateWpcomEmail && ! this.props.updateWpcomEmailCheckboxDisabled }
-					/>
-					<span>{ this.props.translate( 'Apply contact update to My Account email.' ) }</span>
-				</FormLabel>
+				{ ! this.props.updateWpcomEmailCheckboxHidden && (
+					<FormLabel
+						className={ classNames( 'email-text-input-with-checkbox__checkbox-label', {
+							'is-disabled': this.props.updateWpcomEmailCheckboxDisabled,
+						} ) }
+					>
+						<FormCheckbox
+							name="update-wpcom-email"
+							disabled={ this.props.updateWpcomEmailCheckboxDisabled }
+							onChange={ this.handleUpdateWpcomEmailCheckboxChanged }
+							checked={
+								this.state.updateWpcomEmail && ! this.props.updateWpcomEmailCheckboxDisabled
+							}
+						/>
+						<span>{ this.props.translate( 'Apply contact update to My Account email.' ) }</span>
+					</FormLabel>
+				) }
 			</div>
 		);
 	}
