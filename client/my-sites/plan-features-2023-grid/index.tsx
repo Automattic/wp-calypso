@@ -93,12 +93,13 @@ export interface PlanFeatures2023GridProps {
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	showOdie?: () => void;
 	// temporary
 	showPlansComparisonGrid: boolean;
 	// temporary
 	toggleShowPlansComparisonGrid: () => void;
 	planTypeSelectorProps: PlanTypeSelectorProps;
+	// temporary: callback ref to scroll Oddie-AI Assistant into view once "Compare plans" button is clicked
+	observableForOddieRef: ( observableElement: Element | null ) => void;
 }
 
 interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
@@ -113,29 +114,7 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 }
 
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
-	observer: IntersectionObserver | null = null;
 	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
-
-	componentDidMount() {
-		this.observer = new IntersectionObserver( ( entries ) => {
-			entries.forEach( ( entry ) => {
-				if ( entry.isIntersecting ) {
-					this.props.showOdie?.();
-					this.observer?.disconnect();
-				}
-			} );
-		} );
-
-		if ( this.buttonRef.current ) {
-			this.observer.observe( this.buttonRef.current );
-		}
-	}
-
-	componentWillUnmount() {
-		if ( this.observer ) {
-			this.observer.disconnect();
-		}
-	}
 
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
@@ -720,6 +699,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			toggleShowPlansComparisonGrid,
 			showPlansComparisonGrid,
 			showUpgradeableStorage,
+			observableForOddieRef,
 		} = this.props;
 
 		return (
@@ -757,7 +737,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				</div>
 				{ ! hidePlansFeatureComparison && (
 					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-						<Button onClick={ toggleShowPlansComparisonGrid } ref={ this.buttonRef }>
+						<Button onClick={ toggleShowPlansComparisonGrid } ref={ observableForOddieRef }>
 							{ showPlansComparisonGrid
 								? translate( 'Hide comparison' )
 								: translate( 'Compare plans' ) }
