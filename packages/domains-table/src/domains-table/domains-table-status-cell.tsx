@@ -38,6 +38,10 @@ export const DomainsTableStatusCell = ( {
 	} );
 
 	const getActionName = ( status: DomainUpdateStatus ) => {
+		if ( 'message' in status ) {
+			return status.message;
+		}
+
 		switch ( status.action ) {
 			case 'set_auto_renew':
 				return translate( 'Change auto-renew mode' );
@@ -72,10 +76,12 @@ export const DomainsTableStatusCell = ( {
 									<span className="domains-bulk-update-status-popover-item-indicator__pending" />
 									<span>{ getActionName( update ) }</span>
 								</div>
-								<span className="domains-bulk-update-status-popover-item-date">
-									{ ' ' }
-									{ getTime( update.created_at ) }
-								</span>
+								{ update.created_at && (
+									<span className="domains-bulk-update-status-popover-item-date">
+										{ ' ' }
+										{ getTime( update.created_at ) }
+									</span>
+								) }
 							</div>
 						) ) }
 					</div>

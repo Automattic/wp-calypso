@@ -33,6 +33,16 @@ import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { ResponseDomain } from '../utils/types';
 import { DomainAction } from './domains-table-row-actions';
 
+type DomainActionDescription = {
+	message?: string;
+	action: () => void | Promise< void >;
+};
+
+type OnDomainAction = (
+	action: DomainAction,
+	domain: ResponseDomain
+) => DomainActionDescription | void;
+
 interface BaseDomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
@@ -44,7 +54,7 @@ interface BaseDomainsTableProps {
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
-	onDomainAction?( action: DomainAction, domain: ResponseDomain ): void;
+	onDomainAction?: OnDomainAction;
 	userCanSetPrimaryDomains?: boolean;
 	shouldDisplayContactInfoBulkAction?: boolean;
 	isFetchingDomains?: boolean;
@@ -55,6 +65,13 @@ export type DomainsTablePropsNoChildren =
 	| ( BaseDomainsTableProps & { isAllSitesView: false; siteSlug: string | null } );
 
 export type DomainsTableProps = DomainsTablePropsNoChildren & { children: ReactNode | ReactNode[] };
+
+interface DomainsTableUpdatingDomain {
+	action: DomainAction;
+	domain: string;
+	created_at: number;
+	message?: string;
+}
 
 type Value = {
 	isFetchingDomains?: boolean;
@@ -88,7 +105,8 @@ type Value = {
 	handleRestartDomainStatusPolling: () => void;
 	showBulkActions: boolean;
 	setShowBulkActions: ( showBulkActions: boolean ) => void;
-	onDomainAction: BaseDomainsTableProps[ 'onDomainAction' ];
+	onDomainAction( ...parameters: Parameters< OnDomainAction > ): void;
+	updatingDomain: DomainsTableUpdatingDomain | null;
 	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
 	shouldDisplayContactInfoBulkAction: boolean;
 	domainsTableColumns: DomainsTableColumn[];
@@ -248,6 +266,8 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		[ setSelectedDomains, selectedDomains ]
 	);
 
+	const [ updatingDomain, setUpdatingDomain ] = useState< Value[ 'updatingDomain' ] >( null );
+
 	if ( ! domains ) {
 		return null;
 	}
@@ -362,7 +382,27 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		handleRestartDomainStatusPolling,
 		showBulkActions,
 		setShowBulkActions,
-		onDomainAction,
+		onDomainAction: async ( actionType, domain ) => {
+			const actionDescription = onDomainAction?.( actionType, domain );
+
+			if ( ! actionDescription ) {
+				return;
+			}
+
+			const { action, message } = actionDescription;
+
+			setUpdatingDomain( {
+				action: actionType,
+				domain: domain.domain,
+				created_at: new Date().valueOf() / 1000,
+				message,
+			} );
+
+			await action();
+
+			setUpdatingDomain( null );
+		},
+		updatingDomain,
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction,
 		domainsTableColumns,

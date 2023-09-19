@@ -18,7 +18,7 @@ import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-mak
 import { ResponseDomain } from '../utils/types';
 import { useDomainsTable } from './domains-table';
 
-export type DomainAction = 'change-site-address' | 'manage-dns-settings' | 'set-primary';
+export type DomainAction = 'change-site-address' | 'manage-dns-settings' | 'set-primary-address';
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem >, 'href' > {
 	href?: string;
@@ -43,7 +43,7 @@ export const DomainsTableRowActions = ( {
 	isSiteOnFreePlan,
 	isSimpleSite,
 }: DomainsTableRowActionsProps ) => {
-	const { onDomainAction, userCanSetPrimaryDomains = false } = useDomainsTable();
+	const { onDomainAction, userCanSetPrimaryDomains = false, updatingDomain } = useDomainsTable();
 	const { __ } = useI18n();
 
 	const canViewDetails = domain.type !== domainTypes.WPCOM;
@@ -95,9 +95,10 @@ export const DomainsTableRowActions = ( {
 			canMakePrimarySiteAddress && (
 				<MenuItemLink
 					onClick={ () => {
-						onDomainAction?.( 'set-primary', domain );
+						onDomainAction?.( 'set-primary-address', domain );
 						onClose?.();
 					} }
+					disabled={ updatingDomain?.action === 'set-primary-address' }
 				>
 					{ __( 'Make primary site address' ) }
 				</MenuItemLink>
