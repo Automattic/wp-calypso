@@ -68,7 +68,7 @@ Since rounding errors are common in floating point math, sometimes a price is pr
 
 ## setDefaultLocale()
 
-`setDefaultLocale( locale: string ): void`
+`setDefaultLocale( locale: string | undefined ): void`
 
 A function that can be used to set a default locale for use by `formatCurrency()` and `getCurrencyObject()`. Note that this is global and will override any browser locale that is set! Use it with care.
 
