@@ -1,3 +1,4 @@
+import { PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -15,10 +16,7 @@ export default function WPCOMAtomicHosting() {
 	const dispatch = useDispatch();
 	const title = translate( 'Create a new WordPress.com site' );
 
-	const plansToBeDisplayed = [
-		'JETPACK_HOSTING_WPCOM_BUSINESS',
-		'JETPACK_HOSTING_WPCOM_ECOMMERCE',
-	]; // Get the plans from the API
+	const plansToBeDisplayed = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
 	useEffect( () => {
 		// Track page view

@@ -1,16 +1,15 @@
+import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components';
+import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import FeatureItem from './feature-item';
 
 import './style.scss';
-
-// FIXME: These should be imported from a shared file when available
-const JETPACK_HOSTING_WPCOM_BUSINESS = 'JETPACK_HOSTING_WPCOM_BUSINESS';
-const JETPACK_HOSTING_WPCOM_ECOMMERCE = 'JETPACK_HOSTING_WPCOM_ECOMMERCE';
 
 interface PlanInfo {
 	title: string;
@@ -28,12 +27,13 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 	const translate = useTranslate();
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
+	const { data: agencyProducts } = useProductsQuery();
 
 	const getLogo = ( planSlug: string ) => {
 		switch ( planSlug ) {
-			case JETPACK_HOSTING_WPCOM_BUSINESS:
+			case PLAN_BUSINESS:
 				return <CloudLogo />;
-			case JETPACK_HOSTING_WPCOM_ECOMMERCE:
+			case PLAN_ECOMMERCE:
 				return <WooLogo />;
 			default:
 				return null;
@@ -42,9 +42,9 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 
 	const getCTAEventName = ( planSlug: string ) => {
 		switch ( planSlug ) {
-			case JETPACK_HOSTING_WPCOM_BUSINESS:
+			case PLAN_BUSINESS:
 				return 'calypso_jetpack_agency_dashboard_wpcom_atomic_hosting_business_cta_click';
-			case JETPACK_HOSTING_WPCOM_ECOMMERCE:
+			case PLAN_ECOMMERCE:
 				return 'calypso_jetpack_agency_dashboard_wpcom_atomic_hosting_ecommerce_cta_click';
 			default:
 				return null;
@@ -52,11 +52,16 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 	};
 
 	const getPlanInfo = ( planSlug: string ): PlanInfo => {
-		// FIXME: This is a placeholder until we have the real data
+		const plan = getPlan( planSlug );
+		const productId = plan?.getProductId?.();
+		const agencyProduct = agencyProducts?.find(
+			( agencyProduct ) => agencyProduct.product_id === productId
+		);
+
 		return {
-			title: 'Plan Title',
-			description: 'Plan description goes here',
-			price: '$25',
+			title: plan?.getTitle?.().toString() || '',
+			description: plan?.getPlanTagline?.().toString() || '',
+			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
 			interval: 'month',
 			wpcomFeatures: [
 				{ text: 'Feature 1', tooltipText: 'Tooltip for Feature 1' },
@@ -66,7 +71,7 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 				{ text: 'Feature 5', tooltipText: 'Tooltip for Feature 5' },
 			],
 			jetpackFeatures:
-				planSlug === JETPACK_HOSTING_WPCOM_BUSINESS
+				planSlug === PLAN_BUSINESS
 					? [
 							{ text: 'Feature 1', tooltipText: 'Tooltip for Feature 1' },
 							{ text: 'Feature 2', tooltipText: 'Tooltip for Feature 2' },
