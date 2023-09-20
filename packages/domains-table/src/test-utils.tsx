@@ -64,6 +64,7 @@ export function testDomain(
 
 	const fullDomain: DomainData = {
 		...defaultPartialDomain,
+		blog_name: 'Example',
 		primary_domain: false,
 		subscription_id: '',
 		can_manage_dns_records: false,
