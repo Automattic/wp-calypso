@@ -23,7 +23,7 @@ import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, ForwardedRef, forwardRef, createRef } from 'react';
+import { Component, ForwardedRef, forwardRef } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -114,8 +114,6 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 }
 
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
-	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
-
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
 		// Do not render the spotlight plan if it exists
