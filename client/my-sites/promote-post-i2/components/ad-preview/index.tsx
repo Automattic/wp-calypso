@@ -1,31 +1,58 @@
-import { useEffect, useRef } from 'react';
 import './style.scss';
+import { useEffect } from 'react';
 
 interface Props {
 	htmlCode: string;
+	templateFormat: string;
 	isLoading?: boolean;
 }
 
-export default function AdPreview( { htmlCode, isLoading }: Props ) {
-	const shadowHost = useRef< HTMLDivElement >( null );
-
+export default function AdPreview( { htmlCode, isLoading, templateFormat }: Props ) {
 	useEffect( () => {
-		if ( ! isLoading && htmlCode && shadowHost.current ) {
-			const shadowRoot = shadowHost.current.attachShadow( { mode: 'open' } );
-			shadowRoot.innerHTML = `
-          <div class="viewer viewer__receipt}">
-            ${ htmlCode }
-          </div>`;
+		if ( ! isLoading && templateFormat === 'html5_v2' ) {
+			// we only need this listener to resize the iframe for html5_v2 templates
+			window.addEventListener( 'message', function ( msg ) {
+				if ( typeof msg.data !== 'object' ) {
+					return;
+				}
+
+				if ( msg.data.type !== 'wa-inline-frame' ) {
+					return;
+				}
+
+				const iframes = document.getElementsByTagName( 'iframe' );
+
+				for ( let i = 0; i < iframes.length; i++ ) {
+					if ( iframes[ i ].contentWindow === msg.source ) {
+						// Set the frame height. Use next highest int to fix rounding issues with Firefox.
+						iframes[ i ].style.height = Math.ceil( msg.data.height ) + 'px';
+
+						// Exit loop.
+						break;
+					}
+				}
+			} );
 		}
-	}, [ isLoading ] );
+	}, [ isLoading, templateFormat ] );
 
 	if ( isLoading ) {
-		return <div className="promote-post-ad-preview__loading" />;
+		return (
+			<div className="campaign-item-details__preview-content">
+				<div className="promote-post-ad-preview__loading" />
+			</div>
+		);
 	}
 
+	if ( templateFormat === 'html5_v2' ) {
+		return (
+			<div className="campaign-item-details__preview-content-v02">
+				<iframe srcDoc={ htmlCode } title="adPreview" width="100%" height="200" />
+			</div>
+		);
+	}
 	return (
-		<div>
-			<div ref={ shadowHost } />
+		<div className="campaign-item-details__preview-content">
+			<iframe srcDoc={ htmlCode } title="adPreview" width="300" height="250" />
 		</div>
 	);
 }
