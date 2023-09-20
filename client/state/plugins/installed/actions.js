@@ -490,7 +490,7 @@ function installPluginHelper(
 					.then( successCallback )
 					.catch( errorCallback );
 			}
-			if ( error.name === 'ActivationErrorError' ) {
+			if ( [ 'ActivationErrorError', 'ActivationError' ].includes( error.name ) ) {
 				return doUpdate( plugin )
 					.then( doAutoupdates )
 					.then( successCallback )

@@ -1,4 +1,5 @@
 import page from 'page';
+import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/agency-dashboard/sidebar';
 import LicenseSelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/license-select-partner-key';
 import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
@@ -12,7 +13,6 @@ import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/prim
 import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
 import Prices from 'calypso/jetpack-cloud/sections/partner-portal/primary/prices';
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
-import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import {
 	LicenseFilter,
 	LicenseSortDirection,

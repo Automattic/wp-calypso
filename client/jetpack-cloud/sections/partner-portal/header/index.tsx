@@ -9,16 +9,5 @@ export default function Header() {
 	const translate = useTranslate();
 	const title = translate( 'Security, performance, and growth tools for WordPress' );
 
-	return (
-		<>
-			<JetpackComMasterbar />
-			<div className={ classNames( 'header' ) }>
-				<FormattedHeader
-					className="header__main-title"
-					headerText={ preventWidows( title ) }
-					align="center"
-				/>
-			</div>
-		</>
-	);
+	return <></>;
 }

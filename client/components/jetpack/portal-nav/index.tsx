@@ -96,7 +96,7 @@ export default function PortalNav( { className = '' }: Props ) {
 					selectedText={ selectedText }
 					className={ classnames( 'portal-nav', className ) }
 				>
-					<NavTabs label={ translate( 'Portal' ) }>
+					{ /* <NavTabs label={ translate( 'Portal' ) }>
 						{ showDashboard && (
 							<NavItem
 								path={ dashboardLink }
@@ -120,7 +120,7 @@ export default function PortalNav( { className = '' }: Props ) {
 						>
 							{ translate( 'Licensing' ) }
 						</NavItem>
-					</NavTabs>
+					</NavTabs> */ }
 				</SectionNav>
 			) }
 		</>

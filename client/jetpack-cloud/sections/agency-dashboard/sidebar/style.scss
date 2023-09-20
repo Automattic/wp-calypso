@@ -1,25 +1,36 @@
-@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.sidebar__site-selector .site-selector__actions {
-	// Leave room for the chat support button + horizontal padding
-	// on mobile screens
-	max-width: calc(100% - 80px - 32px);
+.sidebar__navigation {
+	li {
+		color: #1d2327 !important;
+		font-size: rem(12px);
 
-	@include breakpoint-deprecated( ">660px" ) {
-		max-width: initial;
+		&.is-active {
+			border-radius: 4px;
+			background: rgba(0, 135, 16, 0.1);
+
+			.components-button {
+				color: var(--studio-green-50);
+			}
+		}
 	}
 }
 
-.sidebar__site-selector .site-selector__actions .split-button {
-	display: flex;
+.sidebar__navigation-group-description {
+	color: #6f6f6f !important;
+	font-size: rem(12px);
+	margin-bottom: 16px !important;
 
-	.split-button__main {
-		flex-grow: 1;
+	div {
+		padding-block: 0;
 	}
+}
 
-	.split-button__toggle {
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
+.sidebar__navigation-sub-menu {
+	.components-navigation__back-button {
+		margin-bottom: 8px !important;
+		color: #171717 !important;
+		font-size: rem(16px);
+		font-weight: 600;
 	}
 }

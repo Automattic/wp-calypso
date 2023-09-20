@@ -50,7 +50,7 @@ const JetpackCloudMasterBar: React.FC = () => {
 			</a>
 			<AsyncLoad require="calypso/components/jetpack/portal-nav" placeholder={ null } />
 			{ headerTitle && <h1 className="masterbar__item-title">{ headerTitle }</h1> }
-			<ProfileDropdown />
+			{ /* <ProfileDropdown /> */ }
 		</Masterbar>
 	);
 };
