@@ -16,6 +16,8 @@ import {
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
+	'ai-assembler': () => import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
+
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ '../declarative-flow/site-setup-flow' ),
 
