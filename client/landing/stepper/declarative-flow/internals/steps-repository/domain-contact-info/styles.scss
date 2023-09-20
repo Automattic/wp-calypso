@@ -5,39 +5,58 @@ $font-family: "SF Pro Text", $sans;
 $heading-font-family: "SF Pro Display", $sans;
 
 .domain-contact-info {
-	.domain-contact-info__terms {
-		padding-left: 24px;
-		position: relative;
-		font-size: $font-body-small;
+	max-width: 700px;
+	margin: 0 auto;
+	padding: 16px 24px;
 
-		margin-left: 0;
-		margin-top: 10px;
+	.domain-contact-info-header {
+		margin: 0 auto;
 
-		> svg {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 16px;
-			height: 16px;
+		.formatted-header__subtitle {
+			text-align: center !important;
+		}
+	}
 
-			.rtl & {
-				left: auto;
-				right: 0;
+	.domain-contact-info-form {
+		&__terms {
+			padding-left: 24px;
+			position: relative;
+			font-size: $font-body-small;
+
+			margin-left: 0;
+			margin-top: 10px;
+
+			> svg {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 16px;
+				height: 16px;
+
+				.rtl & {
+					left: auto;
+					right: 0;
+				}
+			}
+
+			p {
+				font-size: $font-body-small;
+				margin: 0;
+				word-break: break-word;
 			}
 		}
 
-		p {
-			font-size: $font-body-small;
-			margin: 0;
-			word-break: break-word;
+		.contact-details-form-fields__contact-details {
+			margin-bottom: 15px;
+		}
+		.contact-details-form-fields__extra-fields {
+			margin-bottom: 40px;
+		}
+		.contact-details-form-fields > div:last-child {
+			margin: 0 auto;
+		}
+		.contact-details-form-fields__submit-button {
+			padding: 8px 60px;
 		}
 	}
-
-	.contact-details-form-fields__contact-details {
-		margin-bottom: 15px;
-	}
-	.contact-details-form-fields__extra-fields {
-		margin-bottom: 20px;
-	}
-
 }

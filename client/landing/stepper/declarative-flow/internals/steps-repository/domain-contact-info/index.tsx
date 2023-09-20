@@ -25,15 +25,13 @@ export default function DomainContactInfo( { navigation }: StepProps ) {
 	return (
 		<StepContainer
 			hideBack
-			stepName="domain-contact-info"
+			stepName="domain-contact-info-header"
 			isLargeSkipLayout={ false }
 			formattedHeader={
 				<FormattedHeader
-					id="domain-contact-info__header"
+					className="domain-contact-info-header"
 					headerText={ __( 'Enter your contact information' ) }
-					subHeaderText={ __(
-						'Domain owners are required to provide correct contact information.'
-					) }
+					subHeaderText={ __( 'Domain owners are required to provide correct information.' ) }
 				/>
 			}
 			stepContent={ <ContactInfo onSubmit={ submit } /> }
@@ -108,7 +106,7 @@ function ContactInfo( {
 	}
 
 	return (
-		<form className="domain-contact-info">
+		<form className="domain-contact-info-form">
 			<ContactDetailsFormFields
 				eventFormName="Edit Contact Info"
 				contactDetails={ {
@@ -134,7 +132,7 @@ function ContactInfo( {
 				updateWpcomEmailCheckboxHidden={ true }
 				cancelHidden={ true }
 			>
-				<div className="domain-contact-info__terms">
+				<div className="domain-contact-info-form__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
 						{ translate(
