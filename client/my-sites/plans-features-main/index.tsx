@@ -688,43 +688,45 @@ const PlansFeaturesMain = ( {
 						) }
 						data-e2e-plans="wpcom"
 					>
-						<PlanFeatures2023Grid
-							gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
-							gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
-							gridPlanForSpotlight={ gridPlanForSpotlight }
-							paidDomainName={ paidDomainName }
-							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
-							onUpgradeClick={ handleUpgradeClick }
-							flowName={ flowName }
-							selectedFeature={ selectedFeature }
-							selectedPlan={ selectedPlan }
-							siteId={ siteId }
-							isReskinned={ isReskinned }
-							intervalType={ intervalType }
-							hidePlansFeatureComparison={ hidePlansFeatureComparison }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
-							currentSitePlanSlug={ sitePlanSlug }
-							planActionOverrides={ planActionOverrides }
-							intent={ intent }
-							showLegacyStorageFeature={ showLegacyStorageFeature }
-							showUpgradeableStorage={ showUpgradeableStorage }
-							stickyRowOffset={ masterbarHeight }
-							usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-							allFeaturesList={ FEATURES_LIST }
-							showPlansComparisonGrid={ showPlansComparisonGrid }
-							toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
-							planTypeSelectorProps={ planTypeSelectorProps }
-							ref={ plansComparisonGridRef }
-							observableForOdieRef={ observableForOdieRef }
-							onStorageAddOnClick={ ( addOnSlug ) =>
-								recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
-									add_on_slug: addOnSlug,
-								} )
-							}
-						/>
+						<div className="plans-wrapper">
+							<PlanFeatures2023Grid
+								gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
+								gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
+								gridPlanForSpotlight={ gridPlanForSpotlight }
+								paidDomainName={ paidDomainName }
+								wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+								isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+								isInSignup={ isInSignup }
+								isLaunchPage={ isLaunchPage }
+								onUpgradeClick={ handleUpgradeClick }
+								flowName={ flowName }
+								selectedFeature={ selectedFeature }
+								selectedPlan={ selectedPlan }
+								siteId={ siteId }
+								isReskinned={ isReskinned }
+								intervalType={ intervalType }
+								hidePlansFeatureComparison={ hidePlansFeatureComparison }
+								hideUnavailableFeatures={ hideUnavailableFeatures }
+								currentSitePlanSlug={ sitePlanSlug }
+								planActionOverrides={ planActionOverrides }
+								intent={ intent }
+								showLegacyStorageFeature={ showLegacyStorageFeature }
+								showUpgradeableStorage={ showUpgradeableStorage }
+								stickyRowOffset={ masterbarHeight }
+								usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+								allFeaturesList={ FEATURES_LIST }
+								showPlansComparisonGrid={ showPlansComparisonGrid }
+								toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
+								planTypeSelectorProps={ planTypeSelectorProps }
+								ref={ plansComparisonGridRef }
+								observableForOdieRef={ observableForOdieRef }
+								onStorageAddOnClick={ ( addOnSlug ) =>
+									recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
+										add_on_slug: addOnSlug,
+									} )
+								}
+							/>
+						</div>
 					</div>
 				</>
 			) }
