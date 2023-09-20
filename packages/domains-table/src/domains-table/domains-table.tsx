@@ -280,10 +280,6 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 
 	const [ updatingDomain, setUpdatingDomain ] = useState< Value[ 'updatingDomain' ] >( null );
 
-	if ( ! domains ) {
-		return null;
-	}
-
 	const onSortChange = ( selectedColumn: DomainsTableColumn, direction?: 'asc' | 'desc' ) => {
 		if ( ! selectedColumn.isSortable ) {
 			return;
@@ -304,7 +300,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 	};
 
 	const hasSelectedDomains = selectedDomains.size > 0;
-	const selectableDomains = domains.filter( canBulkUpdate );
+	const selectableDomains = ( domains || [] ).filter( canBulkUpdate );
 	const canSelectAnyDomains = selectableDomains.length > 0;
 	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
@@ -333,14 +329,14 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
 			// filter out unselectable domains from bulk selection
-			setSelectedDomains( new Set( domains.filter( canBulkUpdate ).map( getDomainId ) ) );
+			setSelectedDomains( new Set( ( domains || [] ).filter( canBulkUpdate ).map( getDomainId ) ) );
 		} else {
 			setSelectedDomains( new Set() );
 		}
 	};
 
 	const handleAutoRenew = ( enable: boolean ) => {
-		const domainsToBulkUpdate = domains
+		const domainsToBulkUpdate = ( domains || [] )
 			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
 			.map( ( domain ) => domain.domain );
 		setAutoRenew( domainsToBulkUpdate, enable );
@@ -348,7 +344,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 	};
 
 	const handleUpdateContactInfo = () => {
-		const domainsToBulkUpdate = domains.filter( ( domain ) =>
+		const domainsToBulkUpdate = ( domains || [] ).filter( ( domain ) =>
 			selectedDomains.has( getDomainId( domain ) )
 		);
 
