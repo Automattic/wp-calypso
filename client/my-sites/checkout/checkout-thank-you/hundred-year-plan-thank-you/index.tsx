@@ -16,20 +16,23 @@ import { hideMasterbar } from 'calypso/state/ui/actions';
 import './styles.scss';
 
 const HOUR_IN_MS = 1000 * 60;
-
-export const LoadingPlaceHolder = styled.div`
-	margin: 0;
-	background: #c1c0d3;
-	border-radius: 2px;
-	content: '';
-	display: inline-block;
-	width: 77px;
-	height: 10px;
-	-webkit-animation: pulse-light 0.8s ease-in-out infinite;
-	animation: pulse-light 0.8s ease-in-out infinite;
-	opacity: 0.5;
+const VideoContainer = styled.div< { isMobile: boolean } >`
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+	height: 55vh;
+	video {
+		transform: translatez( 0 );
+		position: ${ ( { isMobile } ) => ( isMobile ? 'absolute' : 'initial' ) };
+		top: -125%;
+		bottom: -100%;
+		left: -100%;
+		right: -100%;
+		margin: auto;
+		min-width: ${ ( { isMobile } ) => ( isMobile ? '305%' : '100%' ) };
+		min-height: ${ ( { isMobile } ) => ( isMobile ? '100%' : 'unset' ) };
+	}
 `;
-
 interface Props {
 	siteSlug: string;
 	receiptId: number;
@@ -180,19 +183,12 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 								{ translate( 'Your legacy is in safe hands' ) }
 							</Header>
 							<Highlight isMobile={ isMobile }>
-								<p>
-									{ translate(
-										"Congratulations on securing the 100-Year Plan. We've applied your exclusive, tailor-made benefits to %(purchasedDomain)s.",
-										{
-											args: { purchasedDomain: domainPurchase?.meta ?? '' },
-										}
-									) }
-								</p>
-								<p>
-									{ translate(
-										'If you have any questions or need assistance with anything at all, our dedicated Premier Support team are standing by to help.'
-									) }
-								</p>
+								{ translate(
+									'Your 100-year legacy for %(purchasedDomain)s begins now. Our dedicated premium support team will reach out via your email shortly to schedule a welcome session, and walk you through the benefits tailored just for you. We are thrilled to stand by your side for the next century.',
+									{
+										args: { purchasedDomain: domainPurchase?.meta ?? '' },
+									}
+								) }
 							</Highlight>
 							{ siteCreatedTimeStamp && (
 								<ButtonBar isMobile={ isMobile }>
@@ -210,16 +206,18 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 								</ButtonBar>
 							) }
 						</div>
-						<video
-							src="https://wpcom.files.wordpress.com/2023/08/century-100-banner.mp4"
-							preload="auto"
-							width="100%"
-							height="auto"
-							muted
-							playsInline
-							autoPlay
-							loop
-						/>
+						<VideoContainer isMobile={ isMobile }>
+							<video
+								src="https://wpcom.files.wordpress.com/2023/08/century-100-banner.mp4"
+								preload="auto"
+								width="100%"
+								height="auto"
+								muted
+								playsInline
+								autoPlay
+								loop
+							/>
+						</VideoContainer>
 					</Content>
 				</>
 			) }
