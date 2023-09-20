@@ -32,13 +32,3 @@ export * from './utils';
 export type { SelectItem } from './select-items';
 export type { SelectItemAlt } from './select-items-alt';
 export type { MShotsOptions } from './mshots-image';
-
-// Due to TypeScript complaining when building we need to export the type and the function separately.
-import {
-	hexToRgb,
-	LINK_IN_BIO_DOMAIN_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-	ECOMMERCE_FLOW,
-	WOOEXPRESS_FLOW,
-} from './utils';
-export { hexToRgb, LINK_IN_BIO_DOMAIN_FLOW, LINK_IN_BIO_TLD_FLOW, ECOMMERCE_FLOW, WOOEXPRESS_FLOW };
