@@ -10,6 +10,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import useDomainTransferRequestUpdate from 'calypso/data/domains/transfers/use-domain-transfer-request-update';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -27,7 +28,7 @@ import {
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { useSelector } from 'calypso/state';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import TransferUnavailableNotice from '../transfer-unavailable-notice';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
@@ -52,6 +53,7 @@ export default function TransferDomainToAnyUser( {
 	const [ email, setEmail ] = useState( '' );
 	const [ isValidEmail, setIsValidEmail ] = useState( true );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const [ submitSuccess, setSubmitSuccess ] = useState( false );
 
 	const currentRoute = useSelector( getCurrentRoute );
 
@@ -60,12 +62,7 @@ export default function TransferDomainToAnyUser( {
 		selectedDomainName,
 		{
 			onSuccess() {
-				dispatch(
-					successNotice(
-						translate( 'A domain transfer request has been sent to the receiving user.' ),
-						{ duration: 10000, isPersistent: true }
-					)
-				);
+				setSubmitSuccess( true );
 			},
 			onError() {
 				dispatch(
@@ -139,11 +136,29 @@ export default function TransferDomainToAnyUser( {
 
 		return (
 			<Card className="transfer-domain-to-any-user__card">
+				{ submitSuccess && (
+					<Notice
+						text={ translate(
+							'A domain transfer request has been emailed to the recipient’s address.'
+						) }
+						status="is-success"
+						onDismissClick={ () => {
+							setSubmitSuccess( false );
+							setEmail( '' );
+						} }
+					/>
+				) }
 				<p>
 					{ translate(
 						'You can transfer the domain to any WordPress.com user, even if they do not have a site. If the user does not have a WordPress.com account, they will be prompted to create one.'
 					) }
 				</p>
+				<p>
+					{ translate(
+						'The recipient will need to provide updated contact information and accept the request before the domain transfer can be completed.'
+					) }
+				</p>
+
 				<form onSubmit={ handleSubmit }>
 					<FormFieldset>
 						<FormLabel>{ translate( 'Enter domain recipient’s email for transfer' ) }</FormLabel>
