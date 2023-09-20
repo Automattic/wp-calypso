@@ -1,55 +1,25 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import useRequestContactVerificationCode from 'calypso/state/jetpack-agency-dashboard/hooks/use-request-contact-verification-code';
-import useResendVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-resend-contact-verification-code';
 import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-validate-contact-verification-code';
-import {
-	RequestVerificationCodeParams,
-	ValidateVerificationCodeParams,
-	ResendVerificationCodeParams,
-} from '../sites-overview/types';
+import type { ValidateVerificationCodeParams } from '../../sites-overview/types';
 
-export function useRequestVerificationCode(): {
-	mutate: ( params: RequestVerificationCodeParams ) => void;
-	isError: boolean;
-	isLoading: boolean;
-	isSuccess: boolean;
-	isVerified: boolean;
-} {
-	const [ isAlreadyVerifed, setIsAlreadyVerifed ] = useState( false );
-
-	const data = useRequestContactVerificationCode( {
-		retry: false,
-		onError: async ( error ) => {
-			// Add the contact to the list of contacts if already verified
-			if (
-				error?.code &&
-				[ 'existing_verified_email_contact', 'existing_verified_sms_contact' ].includes(
-					error.code
-				)
-			) {
-				setIsAlreadyVerifed( true );
-			}
-		},
-	} );
-	return { ...data, isVerified: isAlreadyVerifed };
-}
-
-const verificationErrorMessages: { [ key: string ]: string } = {
-	jetpack_agency_contact_invalid_verification_code: translate( 'Invalid Code' ),
-	jetpack_agency_contact_expired_verification_code: translate( 'Code Expired' ),
-};
-
-export function useValidateVerificationCode(): {
+export default function useValidateVerificationCode(): {
 	mutate: ( params: ValidateVerificationCodeParams ) => void;
 	isLoading: boolean;
 	isSuccess: boolean;
 	isError: boolean;
 	errorMessage?: string;
 	isVerified: boolean;
+	data: any;
 } {
 	const queryClient = useQueryClient();
+	const translate = useTranslate();
+
+	const verificationErrorMessages: { [ key: string ]: string } = {
+		jetpack_agency_contact_invalid_verification_code: translate( 'Invalid Code' ),
+		jetpack_agency_contact_expired_verification_code: translate( 'Code Expired' ),
+	};
 
 	const [ isAlreadyVerifed, setIsAlreadyVerifed ] = useState( false );
 
@@ -84,7 +54,7 @@ export function useValidateVerificationCode(): {
 				...( type === 'email' && {
 					// Replace if it exists, otherwise add it
 					emails: [
-						...oldContacts.emails.filter(
+						...( oldContacts.emails || [] ).filter(
 							( email: { email_address: string } ) => email.email_address !== params.value
 						),
 						newEmailItem,
@@ -93,7 +63,7 @@ export function useValidateVerificationCode(): {
 				...( type === 'sms' && {
 					// Replace if it exists, otherwise add it
 					sms_numbers: [
-						...oldContacts.sms_numbers.filter(
+						...( oldContacts.sms_numbers || [] ).filter(
 							( sms: { sms_number: string } ) => sms.sms_number !== params.value
 						),
 						newSMSItem,
@@ -126,17 +96,4 @@ export function useValidateVerificationCode(): {
 		}
 	}
 	return { ...data, errorMessage, isVerified: data.isSuccess || isAlreadyVerifed };
-}
-
-export function useResendVerificationCode(): {
-	mutate: ( params: ResendVerificationCodeParams ) => void;
-	isLoading: boolean;
-	isSuccess: boolean;
-	isError: boolean;
-} {
-	return useResendVerificationCodeMutation( {
-		retry: () => {
-			return false;
-		},
-	} );
 }
