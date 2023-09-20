@@ -2,10 +2,10 @@ import {
 	DomainUpdateStatus,
 	useBulkDomainUpdateStatusQuery,
 	getBulkDomainUpdateStatusQueryKey,
+	BulkDomainUpdateStatusQueryFnData,
 } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useDomainsTable } from './domains-table/domains-table';
 
 const defaultResult = {
 	completedJobs: [],
@@ -17,14 +17,14 @@ const BulkDomainUpdateStatusRetryInterval = {
 	Disabled: -1,
 };
 
-export const useDomainBulkUpdateStatus = () => {
+export const useDomainBulkUpdateStatus = (
+	fetchBulkActionStatus?: () => Promise< BulkDomainUpdateStatusQueryFnData >
+) => {
 	const queryClient = useQueryClient();
 
 	const [ statusUpdateInterval, setStatusUpdateInterval ] = useState(
 		BulkDomainUpdateStatusRetryInterval.Disabled
 	);
-
-	const { fetchBulkActionStatus } = useDomainsTable();
 
 	const { data: bulkStatusUpdates = defaultResult, isFetched } = useBulkDomainUpdateStatusQuery(
 		statusUpdateInterval,

@@ -1,24 +1,29 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import Notice from 'calypso/components/notice'; //eslint-disable-line no-restricted-imports
 import NoticeAction from 'calypso/components/notice/notice-action'; //eslint-disable-line no-restricted-imports
-import wp from 'calypso/lib/wp'; //eslint-disable-line no-restricted-imports
 import { StatusPopover } from '../status-popover/index';
 import { useDomainsTable } from './domains-table';
 
 export const DomainsTableBulkUpdateNotice = () => {
 	const translate = useTranslate();
-	const { completedJobs, handleRestartDomainStatusPolling } = useDomainsTable();
+	const { completedJobs, handleRestartDomainStatusPolling, deleteBulkActionStatus } =
+		useDomainsTable();
 	const [ dismissedJobs, setDismissedJobs ] = useState< string[] >( [] );
 
 	const handleDismissNotice = async ( jobId: string ) => {
 		setDismissedJobs( dismissedJobs.concat( [ jobId ] ) );
-		await wp.req.post( {
-			path: '/domains/bulk-actions',
-			apiNamespace: 'wpcom/v2',
-			apiVersion: '2',
-			method: 'DELETE',
-		} );
+		if ( deleteBulkActionStatus ) {
+			await deleteBulkActionStatus();
+		} else {
+			await wpcomRequest< void >( {
+				path: '/domains/bulk-actions',
+				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+				method: 'DELETE',
+			} );
+		}
 		handleRestartDomainStatusPolling();
 	};
 

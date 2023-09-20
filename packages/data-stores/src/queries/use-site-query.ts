@@ -1,6 +1,6 @@
 import { SiteDetails } from '@automattic/data-stores/src/site';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
-import wp from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
+import wpcomRequest from 'wpcom-proxy-request';
 
 export function useSiteQuery< TError = unknown, TData = SiteDetails >(
 	sourceSiteSlug: string | number | null | undefined,
@@ -8,7 +8,10 @@ export function useSiteQuery< TError = unknown, TData = SiteDetails >(
 ) {
 	return useQuery( {
 		queryKey: getSiteQueryKey( sourceSiteSlug ),
-		queryFn: () => wp.req.get( { path: '/sites/' + encodeURIComponent( sourceSiteSlug ?? '' ) } ),
+		queryFn: () =>
+			wpcomRequest< SiteDetails >( {
+				path: '/sites/' + encodeURIComponent( sourceSiteSlug ?? '' ),
+			} ),
 		meta: {
 			persist: false,
 		},

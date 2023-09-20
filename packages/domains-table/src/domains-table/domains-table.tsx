@@ -10,6 +10,7 @@ import {
 	BulkUpdateVariables,
 	AllDomainsQueryFnData,
 	BulkDomainUpdateStatusQueryFnData,
+	AllDomainsQueryArgs,
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
@@ -62,7 +63,7 @@ interface BaseDomainsTableProps {
 
 	// These props allow table users to provide their own fetching functions. This is used for
 	// testing and for Calypso to provide functions that handle authentication in a special way.
-	fetchAllDomains?: () => Promise< AllDomainsQueryFnData >;
+	fetchAllDomains?: ( queryArgs?: AllDomainsQueryArgs ) => Promise< AllDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
@@ -92,7 +93,7 @@ type Value = {
 		value: ( ( prevState: DomainsTableFilter ) => DomainsTableFilter ) | DomainsTableFilter
 	) => void;
 	filteredData: PartialDomainData[];
-	fetchAllDomains?: () => Promise< AllDomainsQueryFnData >;
+	fetchAllDomains?: ( queryArgs?: AllDomainsQueryArgs ) => Promise< AllDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
@@ -209,7 +210,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 	);
 
 	const { completedJobs, domainResults, handleRestartDomainStatusPolling } =
-		useDomainBulkUpdateStatus();
+		useDomainBulkUpdateStatus( fetchBulkActionStatus );
 
 	useLayoutEffect( () => {
 		if ( ! domains ) {
