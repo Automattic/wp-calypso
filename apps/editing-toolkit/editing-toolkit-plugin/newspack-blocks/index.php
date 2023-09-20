@@ -59,7 +59,7 @@ function newspack_blocks_block_args( $args, $name ) {
 		true
 	);
 
-	if ( 'homepage-articles' === $name ) {
+	if ( 'homepage-articles' === $name || 'carousel' === $name ) {
 		wp_localize_script(
 			'blog-posts-block-editor',
 			'newspack_blocks_data',
@@ -68,6 +68,7 @@ function newspack_blocks_block_args( $args, $name ) {
 				'specific_posts_rest_url' => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
 				// Define URL to core one to make autocomplete working for newspack-blocks installed via ETK.
 				'authors_rest_url'        => rest_url() . 'wp/v2/users',
+				'custom_taxonomies'       => array(),
 			)
 		);
 	}
