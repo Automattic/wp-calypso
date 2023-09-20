@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
+import { getFixedDomainSearch, extractDomainFromInput } from 'calypso/lib/domains';
 import HostingInto from 'calypso/site-profiler/components/hosting-into';
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
 import DomainAnalyzer from './domain-analyzer';
@@ -15,7 +16,7 @@ export default function SiteProfiler() {
 	const { data: hostingProviderData } = useHostingProviderQuery( domain );
 
 	const onFormSubmit = ( domain: string ) => {
-		setDomain( domain );
+		setDomain( getFixedDomainSearch( extractDomainFromInput( domain ) ) );
 	};
 
 	return (
