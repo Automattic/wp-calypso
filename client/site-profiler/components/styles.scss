@@ -41,4 +41,34 @@
 			color: var(--wp-admin-theme-color-darker-20);
 		}
 	}
+
+	.result-list {
+		margin: 0;
+		list-style: none;
+
+		ul {
+			margin: 0;
+			list-style: none;
+		}
+
+		& > li {
+			display: flex;
+			padding: 1rem 0;
+			border-top: solid 1px var(--studio-gray-5);
+			gap: 2rem;
+
+			&:first-child {
+				border: none;
+			}
+
+			.name {
+				min-width: 200px;
+				text-transform: uppercase;
+			}
+		}
+
+		.col {
+			max-width: 300px;
+		}
+	}
 }

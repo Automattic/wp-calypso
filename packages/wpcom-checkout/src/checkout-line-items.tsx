@@ -710,8 +710,8 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 
 		return (
 			<>
-				{ premiumLabel } <DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( 'billed annually' ) }
+				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
+				{ ! product.is_included_for_100yearplan && <>: { translate( 'billed annually' ) }</> }
 			</>
 		);
 	}

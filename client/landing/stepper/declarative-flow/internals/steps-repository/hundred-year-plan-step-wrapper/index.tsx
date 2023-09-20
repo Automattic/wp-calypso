@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, type ReactElement, PropsWithChildren } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { SMALL_BREAKPOINT } from './constants';
 import HundredYearPlanLogo from './hundred-year-plan-logo';
 import InfoModal from './info-modal';
@@ -21,13 +22,15 @@ type Props = {
 	stepName: string;
 	flowName: string;
 	stepContent: ReactElement;
+	justifyStepContent?: string;
 	formattedHeader?: ReactElement;
 };
 
-const FlexWrapper = styled.div`
+const FlexWrapper = styled.div< { justifyStepContent?: string } >`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: ${ ( props ) => props.justifyStepContent || 'initial' };
 	width: 100%;
 `;
 
@@ -36,6 +39,7 @@ const Container = styled.div< { isMobile: boolean } >`
 	flex-direction: ${ ( props ) => ( props.isMobile ? 'column' : 'row' ) };
 	width: 100%;
 	min-height: 100vh;
+	padding-top: 0;
 `;
 
 const InfoColumnContainer = styled.div< { isMobile: boolean } >`
@@ -151,6 +155,8 @@ const StyledFoldableCard = styled( FoldableCard )`
 			}
 			.gridicons-chevron-down {
 				fill: var( --studio-gray-0 );
+				height: 16px;
+				width: 16px;
 			}
 			.foldable-card__action.foldable-card__expand {
 				.screen-reader-text {
@@ -211,7 +217,7 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 					<WordPressLogo size={ 24 } />
 				</WordPressLogoWrapper>
 
-				<HundredYearPlanLogo />
+				<HundredYearPlanLogo width={ isMobile ? 40 : undefined } />
 				<Info isMobile={ isMobile }>
 					<Title>{ planTitle }</Title>
 					<Description isMobile={ isMobile }>
@@ -240,12 +246,14 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 }
 
 function HundredYearPlanStepWrapper( props: Props ) {
-	const { stepContent, stepName, flowName, formattedHeader } = props;
+	const { stepContent, stepName, flowName, formattedHeader, justifyStepContent } = props;
 
 	const isMobile = useBreakpoint( `<${ SMALL_BREAKPOINT }px` );
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
+
+	usePresalesChat( 'wpcom' );
 
 	return (
 		<StepContainer
@@ -256,12 +264,15 @@ function HundredYearPlanStepWrapper( props: Props ) {
 			hideFormattedHeader={ true }
 			shouldStickyNavButtons={ false }
 			stepContent={
-				<Container isMobile={ isMobile }>
+				<Container
+					className={ `hundred-year-plan-step-wrapper ${ stepName }` }
+					isMobile={ isMobile }
+				>
 					{ isOpen && <InfoModal onClose={ closeModal } /> }
 					<InfoColumnWrapper isMobile={ isMobile }>
 						<InfoColumn isMobile={ isMobile } openModal={ openModal } />
 					</InfoColumnWrapper>
-					<FlexWrapper>
+					<FlexWrapper justifyStepContent={ justifyStepContent }>
 						<div className="step-container__header">{ formattedHeader }</div>
 						{ stepContent }
 					</FlexWrapper>

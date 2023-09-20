@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -44,7 +43,7 @@ class RequestLoginEmailForm extends Component {
 		sendEmailLogin: PropTypes.func.isRequired,
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
 
-		showTos: PropTypes.bool,
+		tosComponent: PropTypes.node,
 		headerText: PropTypes.string,
 		hideSubHeaderText: PropTypes.bool,
 		inputPlaceholder: PropTypes.string,
@@ -111,7 +110,7 @@ class RequestLoginEmailForm extends Component {
 			emailRequested,
 			showCheckYourEmail,
 			translate,
-			showTos,
+			tosComponent,
 			headerText,
 			hideSubHeaderText,
 			inputPlaceholder,
@@ -137,32 +136,6 @@ class RequestLoginEmailForm extends Component {
 			typeof requestError === 'string' && requestError.length
 				? requestError
 				: translate( 'Unable to complete request' );
-
-		const tos = (
-			<div className="magic-login__tos">
-				{ this.props.translate(
-					`By clicking "Continue", you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a WordPress.com account if you don't already have one.`,
-					{
-						components: {
-							tosLink: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							privacyLink: (
-								<a
-									href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-				) }
-			</div>
-		);
 
 		return (
 			<div className="magic-login__form">
@@ -209,7 +182,7 @@ class RequestLoginEmailForm extends Component {
 							onChange={ this.onUsernameOrEmailFieldChange }
 							placeholder={ inputPlaceholder }
 						/>
-						{ showTos && tos }
+						{ tosComponent }
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
 								{ submitButtonLabel || translate( 'Get Link' ) }

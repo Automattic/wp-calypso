@@ -31,6 +31,7 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isRequestingWhoisSelector from 'calypso/state/selectors/is-requesting-whois';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { IAppState } from 'calypso/state/types';
+import { createBulkAction, fetchSiteDomains } from '../domains-table-fetch-functions';
 import EditContactInfoFormCard from '../edit-contact-info/form-card';
 import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
 import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
@@ -71,7 +72,9 @@ export default function BulkEditContactInfoPage( {
 			: [];
 
 	const allSiteDomains = useQueries( {
-		queries: allSiteIds.map( ( siteId ) => getSiteDomainsQueryObject( siteId ) ),
+		queries: allSiteIds.map( ( siteId ) =>
+			getSiteDomainsQueryObject( siteId, { queryFn: () => fetchSiteDomains( siteId ) } )
+		),
 	} ).flatMap( ( { data } ) => data?.domains || [] );
 
 	const selectedDomains = Array.isArray( selectedDomainsArg )
@@ -135,12 +138,12 @@ export default function BulkEditContactInfoPage( {
 
 	const { updateContactInfo } = useDomainsBulkActionsMutation( {
 		onSuccess: goToDomainsList,
+		mutationFn: createBulkAction,
 	} );
 
 	const handleSubmitButtonClick = (
 		newContactDetails: Record< string, string >,
 		transferLock: boolean
-		// updateWpcomEmail: boolean
 	) => {
 		const domainNames = selectedDomains?.map( ( domain ) => domain.domain );
 
@@ -334,18 +337,21 @@ export default function BulkEditContactInfoPage( {
 					</div>
 				) }
 				{ domainsWithUnmodifiableContactInfo && domainsWithUnmodifiableContactInfo.length > 0 && (
-					<div className="edit-contact-info-page__sidebar" style={ { marginBottom: '8px' } }>
+					<div
+						className="edit-contact-info-page__sidebar"
+						style={ { marginBottom: '8px', background: 'transparent' } }
+					>
 						<div className="edit-contact-info-page__sidebar-title">
 							<p>
 								<strong>{ translate( 'The following domain fields will not be updated:' ) }</strong>
 							</p>
 						</div>
 						<div className="edit-contact-info-page__sidebar-content">
-							<ul>
+							<ul style={ { listStyleType: 'none', margin: 0 } }>
 								{ domainsWithUnmodifiableContactInfo.map( ( domain ) => (
 									<li key={ domain.domain }>
 										<strong>{ domain.domain }</strong>
-										<ul style={ { listStyleType: 'circle' } }>
+										<ul style={ { listStylePosition: 'inside' } }>
 											{ domain.whois_update_unmodifiable_fields.map( ( field: string ) => (
 												<li key={ field }>{ getFieldMapping( field ) }</li>
 											) ) }

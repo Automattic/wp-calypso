@@ -74,7 +74,9 @@ const useSiteMenuItems = () => {
 		return menuItems.map( ( menuItem ) => {
 			if ( menuItem.icon === 'dashicons-admin-settings' && Array.isArray( menuItem.children ) ) {
 				// Check if the 'Newsletter' submenu already exists.
-				const newsletterExists = menuItem.children.some( ( child ) => child.slug === 'newsletter' );
+				const newsletterExists = menuItem.children.some(
+					( child ) => child.url && child.url.startsWith( '/settings/newsletter/' )
+				);
 
 				if ( ! newsletterExists ) {
 					return {

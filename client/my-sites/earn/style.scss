@@ -50,3 +50,17 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 		font-weight: 600;
 	}
 }
+
+// Override heading/SectionNav styles for Ads Dashboard
+.earn__ads-header {
+	margin: 20px 0;
+
+	h2.formatted-header__title {
+		margin: 0 0 20px;
+	}
+}
+
+h3.highlight-cards-heading,
+h3.ads__table-header-title {
+	font-size: 1.25rem;
+}

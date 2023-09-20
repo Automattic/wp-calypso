@@ -210,6 +210,10 @@ class DomainRow extends PureComponent {
 			return null;
 		}
 
+		if ( domain.isMoveToNewSitePending ) {
+			return null;
+		}
+
 		if ( hasGSuiteWithUs( domain ) ) {
 			const gSuiteMailboxCount = getGSuiteMailboxCount( domain );
 
@@ -342,7 +346,7 @@ class DomainRow extends PureComponent {
 			return null;
 		}
 
-		if ( ! showDomainDetails ) {
+		if ( ! showDomainDetails || ( domain && domain.isMoveToNewSitePending ) ) {
 			return <div className="domain-row__action-cell"></div>;
 		}
 

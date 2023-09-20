@@ -18,7 +18,7 @@ import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-mak
 import { ResponseDomain } from '../utils/types';
 import { useDomainsTable } from './domains-table';
 
-export type DomainAction = 'manage-dns-settings' | 'set-primary';
+export type DomainAction = 'change-site-address' | 'manage-dns-settings' | 'set-primary-address';
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem >, 'href' > {
 	href?: string;
@@ -32,6 +32,7 @@ interface DomainsTableRowActionsProps {
 	isAllSitesView: boolean;
 	canSetPrimaryDomainForSite: boolean;
 	isSiteOnFreePlan: boolean;
+	isSimpleSite: boolean;
 }
 
 export const DomainsTableRowActions = ( {
@@ -40,8 +41,9 @@ export const DomainsTableRowActions = ( {
 	isAllSitesView,
 	canSetPrimaryDomainForSite,
 	isSiteOnFreePlan,
+	isSimpleSite,
 }: DomainsTableRowActionsProps ) => {
-	const { onDomainAction, userCanSetPrimaryDomains = false } = useDomainsTable();
+	const { onDomainAction, userCanSetPrimaryDomains = false, updatingDomain } = useDomainsTable();
 	const { __ } = useI18n();
 
 	const canViewDetails = domain.type !== domainTypes.WPCOM;
@@ -68,6 +70,7 @@ export const DomainsTableRowActions = ( {
 		domain.pointsToWpcom;
 	const canTransferToWPCOM =
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
+	const canChangeSiteAddress = ! isAllSitesView && isSimpleSite;
 
 	const getActions = ( onClose?: () => void ) => {
 		return [
@@ -92,9 +95,10 @@ export const DomainsTableRowActions = ( {
 			canMakePrimarySiteAddress && (
 				<MenuItemLink
 					onClick={ () => {
-						onDomainAction?.( 'set-primary', domain );
+						onDomainAction?.( 'set-primary-address', domain );
 						onClose?.();
 					} }
+					disabled={ updatingDomain?.action === 'set-primary-address' }
 				>
 					{ __( 'Make primary site address' ) }
 				</MenuItemLink>
@@ -109,6 +113,16 @@ export const DomainsTableRowActions = ( {
 			canConnectDomainToASite && (
 				<MenuItemLink href={ domainManagementTransferToOtherSiteLink( siteSlug, domain.domain ) }>
 					{ __( 'Connect to an existing site' ) }
+				</MenuItemLink>
+			),
+			canChangeSiteAddress && (
+				<MenuItemLink
+					onClick={ () => {
+						onDomainAction?.( 'change-site-address', domain );
+						onClose?.();
+					} }
+				>
+					{ __( 'Change site address' ) }
 				</MenuItemLink>
 			),
 		];

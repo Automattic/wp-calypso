@@ -552,6 +552,25 @@ $image-height: 47px;
 .layout.is-section-login.is-grav-powered-login-page {
 	background-color: #e7e9ea;
 
+	&.is-wp-job-manager {
+		.login a,
+		.login__form-change-username {
+			color: #2404eb;
+		}
+
+		.form-button.is-primary {
+			&,
+			&:disabled {
+				background-color: #2404eb;
+			}
+
+			&:hover:not(&:disabled),
+			&:focus {
+				background-color: darken(#2404eb, 10%);
+			}
+		}
+	}
+
 	.layout__content {
 		padding: 0;
 	}

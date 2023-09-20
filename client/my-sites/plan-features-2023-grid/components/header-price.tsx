@@ -156,7 +156,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 								rawPrice={ introOffer.rawPrice }
 								displayPerMonthNotation={ false }
 								isLargeCurrency={ isLargeCurrency }
-								isSmallestUnit={ true }
+								isSmallestUnit={ false }
 								priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							/>
 						</>

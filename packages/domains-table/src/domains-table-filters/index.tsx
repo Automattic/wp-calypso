@@ -1,11 +1,10 @@
 import { Gridicon, SelectDropdown } from '@automattic/components';
 import SearchControl, { SearchIcon } from '@automattic/search';
-import { isMobile } from '@automattic/viewport';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { DropdownMenu, MenuGroup, MenuItem, ToggleControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactNode } from 'react';
 import { useDomainsTable } from '../domains-table/domains-table';
-
 import './style.scss';
 
 export interface DomainsTableFilter {
@@ -20,6 +19,8 @@ interface DomainsTableFiltersProps {
 
 export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersProps ) => {
 	const { __ } = useI18n();
+
+	const isMobile = useMobileBreakpoint();
 
 	const {
 		sortKey,
@@ -60,8 +61,6 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 			);
 		} );
 
-	const isMobileDevice = isMobile();
-
 	return (
 		<div className="domains-table-filter">
 			<SearchControl
@@ -73,7 +72,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 				placeholder={ __( 'Search by domain…' ) }
 				disableAutocorrect={ true }
 			/>
-			{ isMobileDevice && (
+			{ isMobile && (
 				<>
 					<div className="domains-table-mobile-cards-controls">
 						<SelectDropdown

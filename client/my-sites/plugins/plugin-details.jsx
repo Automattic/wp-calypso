@@ -1,3 +1,4 @@
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
@@ -304,6 +305,23 @@ function PluginDetails( props ) {
 		);
 	}
 
+	const downloadText = translate(
+		'This plugin is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.',
+		{
+			components: {
+				a: (
+					<a
+						href={ localizeUrl(
+							'https://wordpress.com/go/website-building/wordpress-com-vs-wordpress-org/'
+						) }
+						target="_blank"
+						rel="noreferrer noopener"
+					/>
+				),
+			},
+		}
+	);
+
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
@@ -391,10 +409,25 @@ function PluginDetails( props ) {
 					</div>
 
 					<div className="plugin-details__actions">
-						<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+						<div className="plugin-details__sidebar">
+							<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 
-						{ ! showPlaceholder && ! requestingPluginsForSites && (
-							<PluginDetailsSidebar plugin={ fullPlugin } />
+							{ ! showPlaceholder && ! requestingPluginsForSites && (
+								<PluginDetailsSidebar plugin={ fullPlugin } />
+							) }
+						</div>
+
+						{ ! showPlaceholder && ! requestingPluginsForSites && isWporgPluginFetched && (
+							<Card className="plugin-details-download-card">
+								<Gridicon icon="cloud-download" size={ 48 } />
+								<p>{ downloadText }</p>
+								<Button
+									href={ `https://downloads.wordpress.org/plugin/${ fullPlugin?.slug || '' }.zip` }
+									rel="nofollow"
+								>
+									{ translate( 'Download' ) }
+								</Button>
+							</Card>
 						) }
 					</div>
 				</div>

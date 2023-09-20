@@ -178,6 +178,29 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.REGISTERED:
+			if ( domain.isMoveToNewSitePending ) {
+				return {
+					statusText: translate( 'Pending' ),
+					statusClass: 'status-warning',
+					status: translate( 'Pending' ),
+					icon: 'info',
+					noticeText: translate(
+						"This domain is being disconnected. It should be updated within a few minutes. Once the disconnect is complete, you'll be able to manage it {{a}}here{{/a}}.",
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit( '', domain.domain, currentRoute ) }
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					),
+					listStatusWeight: 400,
+				};
+			}
+
 			if ( domain.aftermarketAuction ) {
 				const statusMessage = translate( 'Expired', { context: 'domain status' } );
 				return {

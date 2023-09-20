@@ -6,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { useDomainRow } from '../use-domain-row';
+import { canBulkUpdate } from '../utils/can-bulk-update';
 import { domainInfoContext } from '../utils/constants';
 import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
@@ -15,6 +16,7 @@ import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
+import { DomainsTableStatusCTA } from './domains-table-status-cta';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
@@ -39,7 +41,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		handleSelectDomain,
 		isAllSitesView,
 		hideOwnerColumn,
-		domainStatusPurchaseActions,
+		domainStatus,
 		pendingUpdates,
 	} = useDomainRow( domain );
 	const { canSelectAnyDomains, domainsTableColumns } = useDomainsTable();
@@ -82,7 +84,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
-				{ canSelectAnyDomains && ! domain.wpcom_domain && (
+				{ canSelectAnyDomains && canBulkUpdate( domain ) && (
 					<CheckboxControl
 						__nextHasNoMarginBottom
 						checked={ isSelected }
@@ -143,11 +145,19 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 								<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 							) : (
 								<DomainsTableStatusCell
-									siteSlug={ siteSlug }
-									currentDomainData={ currentDomainData }
-									domainStatusPurchaseActions={ domainStatusPurchaseActions }
+									domainStatus={ domainStatus }
 									pendingUpdates={ pendingUpdates }
 								/>
+							) }
+						</td>
+					);
+				}
+
+				if ( column.name === 'status_action' ) {
+					return (
+						<td key={ column.name }>
+							{ ! domainStatus?.callToAction || isLoadingRowDetails ? null : (
+								<DomainsTableStatusCTA callToAction={ domainStatus.callToAction } />
 							) }
 						</td>
 					);
@@ -174,6 +184,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 										false
 									}
 									isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+									isSimpleSite={ ! site?.is_wpcom_atomic }
 								/>
 							) }
 						</td>

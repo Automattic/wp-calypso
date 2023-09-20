@@ -53,6 +53,7 @@ export function testDomain(
 			maximum_mailbox_count: 0,
 		},
 		email_forwards_count: 0,
+		tld_maintenance_end_time: 0,
 	};
 
 	const partialOnlyDefaults = Object.entries( defaults ).filter( ( [ key ] ) =>
@@ -63,6 +64,7 @@ export function testDomain(
 
 	const fullDomain: DomainData = {
 		...defaultPartialDomain,
+		blog_name: 'Example',
 		primary_domain: false,
 		subscription_id: '',
 		can_manage_dns_records: false,
@@ -84,7 +86,7 @@ export function testDomain(
 		email_forwards_count: 0,
 		expiry_soon: false,
 		expired: false,
-		auto_renewing: 0,
+		auto_renewing: false,
 		pending_registration: false,
 		pending_registration_time: '',
 		has_email_forward_dns_records: null,

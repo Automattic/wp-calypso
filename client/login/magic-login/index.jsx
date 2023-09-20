@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
-import { addLocaleToPath } from '@automattic/i18n-utils';
+import { addLocaleToPath, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -71,6 +71,10 @@ class MagicLogin extends Component {
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
+
+		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
+			this.props.recordTracksEvent( `calypso_${ this.props.oauth2Client.name }_magic_login` );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -202,6 +206,42 @@ class MagicLogin extends Component {
 		const { usernameOrEmail, resendEmailCountdown } = this.state;
 		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 
+		const emailTextOptions = {
+			components: {
+				sendEmailButton: (
+					<button
+						onClick={ () => {
+							resendEmail( usernameOrEmail, {
+								redirectTo: query?.redirect_to,
+								requestLoginEmailFormFlow: true,
+								createAccount: true,
+								flow: oauth2Client.name,
+								showGlobalNotices: true,
+							} );
+
+							this.props.recordTracksEvent(
+								`calypso_${ oauth2Client.name }_magic_login_click_resend_email`
+							);
+						} }
+						disabled={ isSendingEmail }
+					/>
+				),
+				showMagicLoginButton: (
+					<button
+						className="grav-powered-magic-login__show-magic-login"
+						onClick={ () => {
+							this.resetResendEmailCountdown();
+							showMagicLogin();
+
+							this.props.recordTracksEvent(
+								`calypso_${ oauth2Client.name }_magic_login_click_use_different_email`
+							);
+						} }
+					/>
+				),
+			},
+		};
+
 		return (
 			<>
 				<div className="grav-powered-magic-login__content">
@@ -224,48 +264,56 @@ class MagicLogin extends Component {
 					<div className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-verification">
 						<div>{ translate( 'Are you having issues receiving it?' ) }</div>
 						<div>
-							{ translate(
-								'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
-								{
-									components: {
-										sendEmailButton: (
-											<button
-												onClick={ () =>
-													resendEmail( usernameOrEmail, {
-														redirectTo: query?.redirect_to,
-														requestLoginEmailFormFlow: true,
-														createAccount: true,
-														flow: oauth2Client.name,
-														showGlobalNotices: true,
-													} )
-												}
-												disabled={ isSendingEmail || !! resendEmailCountdown }
-											/>
-										),
-										showMagicLoginButton: (
-											<button
-												className="grav-powered-magic-login__show-magic-login"
-												onClick={ () => {
-													this.resetResendEmailCountdown();
-													showMagicLogin();
-												} }
-											/>
-										),
-									},
-								}
-							) }
+							{ resendEmailCountdown === 0
+								? translate(
+										'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
+										emailTextOptions
+								  )
+								: translate(
+										'{{showMagicLoginButton}}Use a different email address{{/showMagicLoginButton}}.',
+										emailTextOptions
+								  ) }
 						</div>
-						{ resendEmailCountdown !== 0 && (
-							<div>
-								{ translate( '%(resendEmailCountdown)s seconds remaining', {
-									args: { resendEmailCountdown },
-								} ) }
-								...
-							</div>
-						) }
 					</div>
 				</div>
 			</>
+		);
+	}
+
+	renderGravPoweredMagicLoginTos() {
+		const { oauth2Client, translate } = this.props;
+
+		const textOptions = {
+			components: {
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				privacyLink: (
+					<a
+						href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		};
+
+		return (
+			<div className="grav-powered-magic-login__tos">
+				{ isGravatarOAuth2Client( oauth2Client )
+					? translate(
+							`By clicking "Continue", you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a WordPress.com account if you don't already have one.`,
+							textOptions
+					  )
+					: translate(
+							`By clicking "Continue", you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.`,
+							textOptions
+					  ) }
+			</div>
 		);
 	}
 
@@ -287,39 +335,34 @@ class MagicLogin extends Component {
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 					<RequestLoginEmailForm
 						flow={ oauth2Client.name }
-						headerText={ translate( 'Welcome to %(clientTitle)s', {
-							args: { clientTitle: oauth2Client.title },
-						} ) }
+						headerText={ translate( 'Sign in with your email' ) }
 						hideSubHeaderText
 						inputPlaceholder={ translate( 'Enter your email address' ) }
-						submitButtonLabel={ translate( 'Continue' ) }
-						showTos
+						submitButtonLabel={ translate( 'Send me login link' ) }
+						tosComponent={ this.renderGravPoweredMagicLoginTos() }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
 					/>
-					{
-						// Show the login link for proxied A12s only
-						window.configData?.env_id !== 'production' && (
-							<>
-								<hr className="grav-powered-magic-login__divider" />
-								<div className="grav-powered-magic-login__footer">
-									<div>
-										{ translate(
-											'Do you prefer {{a}}logging in via password or Google/Apple instead{{/a}}?',
-											{
-												components: {
-													a: <a href={ loginUrl } />,
-												},
-											}
-										) }
-									</div>
-								</div>
-							</>
-						)
-					}
+					<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
+					<div className="grav-powered-magic-login__login-page-link">
+						{ translate( '{{a}}Sign in another way{{/a}}', {
+							components: {
+								a: (
+									<a
+										href={ loginUrl }
+										onClick={ () =>
+											this.props.recordTracksEvent(
+												`calypso_${ oauth2Client.name }_magic_login_click_login_page_link`
+											)
+										}
+									/>
+								),
+							},
+						} ) }
+					</div>
 				</div>
-				<div className="grav-powered-magic-login__gravatar-info">
-					{ ! isGravatar && (
+				{ ! isGravatar && (
+					<div className="grav-powered-magic-login__gravatar-info">
 						<div className="grav-powered-magic-login__gravatar-info-heading">
 							<img
 								src="https://gravatar.com/images/grav-logo-blue.svg"
@@ -329,28 +372,31 @@ class MagicLogin extends Component {
 							/>
 							{ translate( 'You will be logging in via Gravatar' ) }
 						</div>
-					) }
-					<div className="grav-powered-magic-login__gravatar-info-items">
-						<div>
-							<Gridicon icon="checkmark" size={ 18 } color="#646970" />
-							{ translate(
-								'Gravatar accounts and profiles are free. You can log in to thousands of sites across the web with one Gravatar account.'
-							) }
-						</div>
-						<div>
-							<Gridicon icon="checkmark" size={ 18 } color="#646970" />
-							{ translate( 'Control what information is shared on your public profile.' ) }
-						</div>
-						<div>
-							<Gridicon icon="checkmark" size={ 18 } color="#646970" />
-							{ translate( "Have questions? Please see Gravatar's {{a}}documentation here{{/a}}.", {
-								components: {
-									a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
-								},
-							} ) }
+						<div className="grav-powered-magic-login__gravatar-info-items">
+							<div>
+								<Gridicon icon="checkmark" size={ 18 } color="#646970" />
+								{ translate(
+									'Gravatar accounts and profiles are free. You can log in to thousands of sites across the web with one Gravatar account.'
+								) }
+							</div>
+							<div>
+								<Gridicon icon="checkmark" size={ 18 } color="#646970" />
+								{ translate( 'Control what information is shared on your public profile.' ) }
+							</div>
+							<div>
+								<Gridicon icon="checkmark" size={ 18 } color="#646970" />
+								{ translate(
+									"Have questions? Please see Gravatar's {{a}}documentation here{{/a}}.",
+									{
+										components: {
+											a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
+										},
+									}
+								) }
+							</div>
 						</div>
 					</div>
-				</div>
+				) }
 			</>
 		);
 	}

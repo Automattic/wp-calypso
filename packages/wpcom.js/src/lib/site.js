@@ -422,6 +422,7 @@ class Site {
 		const statFields = [ 'client', 'device', 'country', 'rate' ];
 		if ( statType === 'clicks' ) {
 			statFields.push( 'link' );
+			statFields.push( 'user-content-link' );
 		}
 		return Promise.all(
 			statFields.map( ( field ) => this.wpcom.req.get( `${ basePath }/${ field }`, fn ) )

@@ -1,16 +1,35 @@
+import { DomainData, PartialDomainData } from '@automattic/data-stores';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { getSimpleSortFunctionBy, getSiteSortFunctions } from '../utils';
+import { I18N } from 'i18n-calypso';
+import { getSimpleSortFunctionBy, getStatusSortFunctions } from '../utils';
+import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableColumn } from '.';
 
-export const allSitesViewColumns: DomainsTableColumn[] = [
-	{
-		name: 'domain',
-		label: ( count: number ) =>
-			sprintf(
+const domainLabel = ( count: number, isBulkSelection: boolean ) =>
+	isBulkSelection
+		? sprintf(
+				/* translators: Heading which displays the number of selected domains in a table */
+				_n(
+					'%(count)d domain selected',
+					'%(count)d domains selected',
+					count,
+					__i18n_text_domain__
+				),
+				{ count }
+		  )
+		: sprintf(
 				/* translators: Heading which displays the number of domains in a table */
 				_n( '%(count)d domain', '%(count)d domains', count, __i18n_text_domain__ ),
 				{ count }
-			),
+		  );
+
+export const allSitesViewColumns = (
+	translate: I18N[ 'translate' ],
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions
+): DomainsTableColumn[] => [
+	{
+		name: 'domain',
+		label: domainLabel,
 		sortLabel: __( 'Domain', __i18n_text_domain__ ),
 		isSortable: true,
 		initialSortDirection: 'asc',
@@ -24,7 +43,7 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
 	},
 	{
 		name: 'site',
@@ -32,7 +51,7 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: getSiteSortFunctions(),
+		sortFunctions: [ getSimpleSortFunctionBy( 'blog_name' ) ],
 	},
 	{
 		name: 'expire_renew',
@@ -40,7 +59,7 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ) ],
 	},
 	{
 		name: 'status',
@@ -48,20 +67,23 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		isSortable: true,
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
-		sortFunctions: [],
+		sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
+	},
+	{
+		name: 'status_action',
+		label: null,
+		isSortable: false,
 	},
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
 
-export const siteSpecificViewColumns: DomainsTableColumn[] = [
+export const siteSpecificViewColumns = (
+	translate: I18N[ 'translate' ],
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions
+): DomainsTableColumn[] => [
 	{
 		name: 'domain',
-		label: ( count: number ) =>
-			sprintf(
-				/* translators: Heading which displays the number of domains in a table */
-				_n( '%(count)d domain', '%(count)d domains', count, __i18n_text_domain__ ),
-				{ count }
-			),
+		label: domainLabel,
 		sortLabel: __( 'Domain', __i18n_text_domain__ ),
 		isSortable: true,
 		initialSortDirection: 'asc',
@@ -75,7 +97,7 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
 	},
 	{
 		name: 'email',
@@ -88,7 +110,7 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ) ],
 	},
 	{
 		name: 'status',
@@ -96,7 +118,42 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		isSortable: true,
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
-		sortFunctions: [],
+		sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
+	},
+	{
+		name: 'status_action',
+		label: null,
+		isSortable: false,
 	},
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
+export const applyColumnSort = (
+	domains: PartialDomainData[],
+	domainData: Record< number, DomainData[] >,
+	columns: DomainsTableColumn[],
+	sortKey: string,
+	sortDirection: 'asc' | 'desc'
+) => {
+	const selectedColumnDefinition = columns.find( ( column ) => column.name === sortKey );
+
+	const getFullDomainData = ( domain: PartialDomainData ) =>
+		domainData[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
+
+	return [ ...domains ].sort( ( first, second ) => {
+		let result = 0;
+
+		const fullFirst = getFullDomainData( first );
+		const fullSecond = getFullDomainData( second );
+		if ( ! fullFirst || ! fullSecond ) {
+			return result;
+		}
+
+		for ( const sortFunction of selectedColumnDefinition?.sortFunctions ?? [] ) {
+			result = sortFunction( fullFirst, fullSecond, sortDirection === 'asc' ? 1 : -1 );
+			if ( result !== 0 ) {
+				break;
+			}
+		}
+		return result;
+	} );
+};

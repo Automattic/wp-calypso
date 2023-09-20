@@ -83,7 +83,12 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						siteId,
 						path,
 						backupFiles.filter( shouldAddChildNode ).map( ( childItem: FileBrowserItem ) => {
-							return { id: childItem.id ?? '', path: childItem.name, type: childItem.type };
+							return {
+								id: childItem.id ?? '',
+								path: childItem.name,
+								type: childItem.type,
+								totalItems: childItem.totalItems,
+							};
 						} )
 					)
 				);

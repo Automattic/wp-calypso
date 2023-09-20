@@ -349,6 +349,18 @@
 }
 
 // Custom layout width for the bulk domains pages
-.main.bulk-domains-main {
-	max-width: 1224px;
+.is-bulk-domains-page {
+	.layout__content {
+		overflow: unset;
+	}
+
+	main {
+		max-width: 1224px;
+	}
+
+	.empty-domains-list-card {
+		@include breakpoint-deprecated( "<480px" ) {
+			box-shadow: none;
+		}
+	}
 }
