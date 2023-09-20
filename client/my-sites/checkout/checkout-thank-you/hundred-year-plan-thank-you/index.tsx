@@ -5,23 +5,44 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useEffect } from 'react';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useSelector, useDispatch } from 'calypso/state';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
-import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import { getSiteId, getSiteOptions } from 'calypso/state/sites/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
+
+const HOUR_IN_MS = 1000 * 60;
+
+export const LoadingPlaceHolder = styled.div`
+	margin: 0;
+	background: #c1c0d3;
+	border-radius: 2px;
+	content: '';
+	display: inline-block;
+	width: 77px;
+	height: 10px;
+	-webkit-animation: pulse-light 0.8s ease-in-out infinite;
+	animation: pulse-light 0.8s ease-in-out infinite;
+	opacity: 0.5;
+`;
+
+function SiteSlugWithLoader( { siteSlug }: { siteSlug?: string } ) {
+	return siteSlug ? siteSlug : <LoadingPlaceHolder />;
+}
 
 interface Props {
 	siteSlug: string;
 	receiptId: number;
 }
 
-const PageContainer = styled.div``;
 const MasterBar = styled.div`
 	height: 48px;
 	width: 100%;
 	padding: 24px 0 0 24px;
+	box-sizing: border-box;
 `;
 
 const Header = styled.h1< { isMobile: boolean } >`
@@ -61,21 +82,39 @@ const ButtonBar = styled.div< { isMobile: boolean } >`
 
 const StyledButton = styled( Button )`
 	border-radius: 4px;
-	box-shadow: 0px 1px 2px 0px rgba( 0, 0, 0, 0.05 );
 	font-size: 14px;
 	font-weight: 500;
 	line-height: 20px;
 	letter-spacing: 0.32px;
 	text-align: center;
-	background-color: none;
 	background: none;
+	box-shadow: none;
+	outline-offset: 3px;
 	color: var( --studio-gray-0 );
+	&:focus {
+		outline: 2px solid var( --studio-gray-0 );
+	}
+	&:hover {
+		opacity: 85%;
+		color: var( --studio-gray-0 );
+	}
 `;
+
 const StyledLightButton = styled( StyledButton )`
 	border: 1px solid var( --gray-gray-0, #f6f7f7 );
 	background-color: var( --studio-black );
 	background: linear-gradient( #c1c0d3, #e3e2f3, #c1c0d3 );
 	color: var( --studio-black );
+	border: none;
+
+	&:hover {
+		opacity: 85%;
+		color: var( --studio-black );
+	}
+
+	&:focus {
+		outline: 2px solid #d6d5e7;
+	}
 `;
 
 const CustomizedWordPressLogo = styled( WordPressLogo )`
@@ -83,13 +122,21 @@ const CustomizedWordPressLogo = styled( WordPressLogo )`
 	fill: var( --studio-white );
 `;
 
+function isSiteCreatedWithinLastHour( createdTime: string ): boolean {
+	return Date.now() - new Date( createdTime ).getTime() < HOUR_IN_MS;
+}
+
 export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const isUserJoinedWithinADay = useSelector( ( state ) =>
-		isUserRegistrationDaysWithinRange( state, null, 0, 1 )
-	);
+
 	const receipt = useSelector( ( state ) => getReceiptById( state, receiptId ) );
+	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
+	const siteCreatedTimeStamp = useSelector(
+		( state ) => getSiteOptions( state, siteId ?? 0 )?.created_at
+	);
+	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ?? 0 ) );
+	const domainPurchase = sitePurchases?.find( ( purchase ) => purchase.isDomain );
 	const isReceiptLoading = ! receipt.hasLoadedFromServer || receipt.isRequesting;
 	useEffect( () => {
 		dispatch( hideMasterbar() );
@@ -102,8 +149,10 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 		page( '/' );
 	}
 	const isMobile = useMobileBreakpoint();
+
 	return (
 		<>
+			<QuerySitePurchases siteId={ siteId } />
 			<Global
 				styles={ css`
 					body.is-section-checkout,
@@ -113,33 +162,34 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 				` }
 			/>
 			<MasterBar>
-				<div>
-					{ ' ' }
-					<CustomizedWordPressLogo size={ 24 } />
-				</div>
+				<CustomizedWordPressLogo size={ 24 } />
 			</MasterBar>
-			<PageContainer>
-				{ ! isReceiptLoading && (
-					<Content isMobile={ isMobile }>
-						<div className="hundred-year-plan-thank-you__thank-you-text-container">
-							<Header className="wp-brand-font" isMobile={ isMobile }>
-								{ translate( 'Your legacy is in safe hands' ) }
-							</Header>
-							<Highlight>
-								<p>
-									{ translate(
-										"Congratulations on securing the 100-Year Plan. We've applied your exclusive, tailor-made benefits to %(siteSlug)s.",
-										{ args: { siteSlug } }
-									) }
-								</p>
-								<p>
-									{ translate(
-										'If you have any questions or need assistance with anything at all, our dedicated Premier Support team are standing by to help.'
-									) }
-								</p>
-							</Highlight>
+			{ ! isReceiptLoading && (
+				<Content isMobile={ isMobile }>
+					<div className="hundred-year-plan-thank-you__thank-you-text-container">
+						<Header className="wp-brand-font" isMobile={ isMobile }>
+							{ translate( 'Your legacy is in safe hands' ) }
+						</Header>
+						<Highlight>
+							<p>
+								{ translate(
+									"Congratulations on securing the 100-Year Plan. We've applied your exclusive, tailor-made benefits to {{siteSlugWithLoader}}{{/siteSlugWithLoader}}.",
+									{
+										components: {
+											siteSlugWithLoader: <SiteSlugWithLoader siteSlug={ domainPurchase?.meta } />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									'If you have any questions or need assistance with anything at all, our dedicated Premier Support team are standing by to help.'
+								) }
+							</p>
+						</Highlight>
+						{ siteCreatedTimeStamp && (
 							<ButtonBar isMobile={ isMobile }>
-								{ isUserJoinedWithinADay ? (
+								{ isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
 									<StyledButton onClick={ () => page( `/plans/my-plan/${ siteSlug }` ) }>
 										{ translate( 'View plan benefits' ) }
 									</StyledButton>
@@ -154,19 +204,20 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 									{ translate( 'Access premium support' ) }
 								</StyledLightButton>
 							</ButtonBar>
-						</div>
-						<video
-							src="https://wpcom.files.wordpress.com/2023/08/century-100-banner.mp4"
-							preload="metadata"
-							width="100%"
-							height="auto"
-							muted
-							playsInline
-							autoPlay
-						/>
-					</Content>
-				) }
-			</PageContainer>
+						) }
+					</div>
+					<video
+						src="https://wpcom.files.wordpress.com/2023/08/century-100-banner.mp4"
+						preload="auto"
+						width="100%"
+						height="auto"
+						muted
+						playsInline
+						autoPlay
+						loop
+					/>
+				</Content>
+			) }
 		</>
 	);
 }
