@@ -16,8 +16,10 @@ export default function SiteProfiler() {
 	const { data, isFetching } = useDomainAnalyzerQuery( domain );
 	const { data: hostingProviderData } = useHostingProviderQuery( domain );
 	const conversionAction = useDefineConversionAction(
+		domain,
 		data?.is_domain_available,
 		data?.whois.name_server,
+		data?.whois.registrar,
 		hostingProviderData?.hosting_provider
 	);
 
