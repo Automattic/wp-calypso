@@ -3,7 +3,7 @@ import { Icon, page as pageIcon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { RefObject } from 'react';
 import WapuuAvatar from 'calypso/assets/images/odie/wapuu-avatar.svg';
-import AsyncLoad from '../../components/async-load';
+import AsyncLoad from 'calypso/components/async-load';
 import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
 import { LikeDislikeButtons } from './like-dislike-buttons';
