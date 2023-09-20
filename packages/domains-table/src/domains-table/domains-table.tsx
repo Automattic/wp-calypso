@@ -367,7 +367,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		Object.values< DomainData[] >( fetchedSiteDomains ).flat()
 	);
 
-	const currentUsersOwnsAllSelectedDomains = Array.from( selectedDomains ).some( ( selected ) =>
+	const currentUsersOwnsAllSelectedDomains = ! Array.from( selectedDomains ).some( ( selected ) =>
 		( domains || [] ).find(
 			( domain ) =>
 				`${ domain.domain }${ domain.blog_id }` === selected && ! domain.current_user_is_owner

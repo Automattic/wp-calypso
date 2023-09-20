@@ -69,7 +69,7 @@ export function BulkActionsToolbar( {
 	return (
 		<div className="domains-table-bulk-actions-toolbar">
 			{ shouldDisplayContactInfoBulkAction && (
-				<Button onClick={ onUpdateContactInfo } disabled={ canUpdateContactInfo }>
+				<Button onClick={ onUpdateContactInfo } disabled={ ! canUpdateContactInfo }>
 					<img
 						className="domains-table-bulk-actions-toolbar__icon"
 						src={ contactIcon }
