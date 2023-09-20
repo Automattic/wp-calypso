@@ -7,6 +7,9 @@ import {
 	useDomainsBulkActionsMutation,
 	DomainUpdateStatus,
 	JobStatus,
+	BulkUpdateVariables,
+	AllDomainsQueryFnData,
+	BulkDomainUpdateStatusQueryFnData,
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
@@ -52,17 +55,21 @@ interface BaseDomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
-
-	// Detailed domain data is fetched on demand. The ability to customise fetching
-	// is provided to allow for testing.
-	fetchSiteDomains?: (
-		siteIdOrSlug: number | string | null | undefined
-	) => Promise< SiteDomainsQueryFnData >;
-	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	onDomainAction?: OnDomainAction;
 	userCanSetPrimaryDomains?: boolean;
 	shouldDisplayContactInfoBulkAction?: boolean;
 	isFetchingDomains?: boolean;
+
+	// These props allow table users to provide their own fetching functions. This is used for
+	// testing and for Calypso to provide functions that handle authentication in a special way.
+	fetchAllDomains?: () => Promise< AllDomainsQueryFnData >;
+	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
+	fetchSiteDomains?: (
+		siteIdOrSlug: number | string | null | undefined
+	) => Promise< SiteDomainsQueryFnData >;
+	createBulkAction?: ( variables: BulkUpdateVariables ) => Promise< void >;
+	fetchBulkActionStatus?: () => Promise< BulkDomainUpdateStatusQueryFnData >;
+	deleteBulkActionStatus?: () => Promise< void >;
 }
 
 export type DomainsTablePropsNoChildren =
@@ -85,7 +92,14 @@ type Value = {
 		value: ( ( prevState: DomainsTableFilter ) => DomainsTableFilter ) | DomainsTableFilter
 	) => void;
 	filteredData: PartialDomainData[];
+	fetchAllDomains?: () => Promise< AllDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
+	fetchSiteDomains?: (
+		siteIdOrSlug: number | string | null | undefined
+	) => Promise< SiteDomainsQueryFnData >;
+	createBulkAction?: ( variables: BulkUpdateVariables ) => Promise< void >;
+	fetchBulkActionStatus?: () => Promise< BulkDomainUpdateStatusQueryFnData >;
+	deleteBulkActionStatus?: () => Promise< void >;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	hideOwnerColumn: boolean;
@@ -100,9 +114,6 @@ type Value = {
 	onSortChange: ( selectedColumn: DomainsTableColumn, direction?: 'asc' | 'desc' ) => void;
 	handleSelectDomain: ( domain: PartialDomainData ) => void;
 	onDomainsRequiringAttentionChange: ( domainsRequiringAttention: number ) => void;
-	fetchSiteDomains?: (
-		siteIdOrSlug: number | string | null | undefined
-	) => Promise< SiteDomainsQueryFnData >;
 	selectedDomains: Set< string >;
 	hasSelectedDomains: boolean;
 	completedJobs: JobStatus[];
@@ -124,8 +135,12 @@ export const useDomainsTable = () => useContext( Context ) as Value;
 export const DomainsTable = ( props: DomainsTableProps ) => {
 	const {
 		domains: allDomains,
-		fetchSiteDomains,
+		fetchAllDomains,
 		fetchSite,
+		fetchSiteDomains,
+		createBulkAction,
+		fetchBulkActionStatus,
+		deleteBulkActionStatus,
 		isAllSitesView,
 		domainStatusPurchaseActions,
 		children,
@@ -189,7 +204,9 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		return fetchedSiteDomains;
 	}, [ allSiteDomains ] );
 
-	const { setAutoRenew } = useDomainsBulkActionsMutation();
+	const { setAutoRenew } = useDomainsBulkActionsMutation(
+		createBulkAction && { mutationFn: createBulkAction }
+	);
 
 	const { completedJobs, domainResults, handleRestartDomainStatusPolling } =
 		useDomainBulkUpdateStatus();
@@ -352,7 +369,12 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 	const value: Value = {
 		filter,
 		setFilter,
+		fetchAllDomains,
 		fetchSite,
+		fetchSiteDomains,
+		createBulkAction,
+		fetchBulkActionStatus,
+		deleteBulkActionStatus,
 		isAllSitesView,
 		domainStatusPurchaseActions,
 		hideOwnerColumn,
@@ -367,7 +389,6 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		onSortChange,
 		handleSelectDomain,
 		onDomainsRequiringAttentionChange,
-		fetchSiteDomains,
 		filteredData,
 		selectedDomains,
 		hasSelectedDomains,
