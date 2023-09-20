@@ -70,7 +70,7 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 				<div className="new-mailbox-upsell__cta">
 					<Button
 						onClick={ () =>
-							recordTracksEvent( 'calypso_mailboxes_new_mailbox_upsell_click', {
+							recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {
 								context: isFreeTrialNow ? 'free' : 'paid',
 								provider,
 							} )
