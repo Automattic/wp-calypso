@@ -45,6 +45,7 @@ import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
+import DatePickerNew from './stats-date-picker-new';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
@@ -186,6 +187,9 @@ class StatsSite extends Component {
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
+		// For the new date picker
+		const isNewDatePickerEnabled = config.isEnabled( 'stats/date-picker' );
+
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
 		// For period option links
@@ -253,14 +257,21 @@ class StatsSite extends Component {
 								url={ `/stats/${ period }/${ slug }` }
 								queryParams={ context.query }
 							>
-								<DatePicker
-									period={ period }
-									date={ date }
-									query={ query }
-									statsType="statsTopPosts"
-									showQueryDate
-									isShort
-								/>
+								{ ' ' }
+								{ isNewDatePickerEnabled ? (
+									<DatePickerNew
+									// NewDatePicker component
+									/>
+								) : (
+									<DatePicker
+										period={ period }
+										date={ date }
+										query={ query }
+										statsType="statsTopPosts"
+										showQueryDate
+										isShort
+									/>
+								) }
 							</StatsPeriodNavigation>
 							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
 						</StatsPeriodHeader>
