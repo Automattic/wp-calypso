@@ -58,7 +58,7 @@
 		"domains/kracken-ui/max-characters-filter": false,
 		"domains/kracken-ui/pagination": true,
 		"domains/bulk-actions-table": true,
-		"domains/bulk-actions-contact-info-editing": false,
+		"domains/bulk-actions-contact-info-editing": true,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"domains/transfer-to-any-user": true,
