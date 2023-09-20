@@ -23,6 +23,14 @@ import { hasDomainCredit as hasDomainCreditSelector } from 'calypso/state/sites/
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { domainManagementList } from '../../paths';
 import DomainHeader from '../components/domain-header';
+import {
+	createBulkAction,
+	deleteBulkActionStatus,
+	fetchAllDomains,
+	fetchBulkActionStatus,
+	fetchSite,
+	fetchSiteDomains,
+} from '../domains-table-fetch-functions';
 import EmptyDomainsListCard from './empty-domains-list-card';
 import { filterDomainsByOwner } from './helpers';
 import { ManageAllDomainsCTA } from './manage-domains-cta';
@@ -41,7 +49,9 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		( state ) => ! currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 	const hasDomainCredit = useSelector( ( state ) => hasDomainCreditSelector( state, site?.ID ) );
-	const { data, isLoading, refetch } = useSiteDomainsQuery( site?.ID );
+	const { data, isLoading, refetch } = useSiteDomainsQuery( site?.ID, {
+		queryFn: () => fetchSiteDomains( site?.ID ),
+	} );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
 	const dispatch = useDispatch();
@@ -140,6 +150,12 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 							<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
 						</>
 					}
+					fetchAllDomains={ fetchAllDomains }
+					fetchSite={ fetchSite }
+					fetchSiteDomains={ fetchSiteDomains }
+					createBulkAction={ createBulkAction }
+					fetchBulkActionStatus={ fetchBulkActionStatus }
+					deleteBulkActionStatus={ deleteBulkActionStatus }
 				/>
 				{ changeSiteAddressSourceDomain && (
 					<SiteAddressChanger

@@ -31,6 +31,7 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isRequestingWhoisSelector from 'calypso/state/selectors/is-requesting-whois';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { IAppState } from 'calypso/state/types';
+import { createBulkAction, fetchSiteDomains } from '../domains-table-fetch-functions';
 import EditContactInfoFormCard from '../edit-contact-info/form-card';
 import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
 import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
@@ -71,7 +72,9 @@ export default function BulkEditContactInfoPage( {
 			: [];
 
 	const allSiteDomains = useQueries( {
-		queries: allSiteIds.map( ( siteId ) => getSiteDomainsQueryObject( siteId ) ),
+		queries: allSiteIds.map( ( siteId ) =>
+			getSiteDomainsQueryObject( siteId, { queryFn: () => fetchSiteDomains( siteId ) } )
+		),
 	} ).flatMap( ( { data } ) => data?.domains || [] );
 
 	const selectedDomains = Array.isArray( selectedDomainsArg )
@@ -135,6 +138,7 @@ export default function BulkEditContactInfoPage( {
 
 	const { updateContactInfo } = useDomainsBulkActionsMutation( {
 		onSuccess: goToDomainsList,
+		mutationFn: createBulkAction,
 	} );
 
 	const handleSubmitButtonClick = (

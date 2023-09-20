@@ -8,6 +8,14 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useOdieAssistantContext } from 'calypso/odie/context';
 import DomainHeader from '../components/domain-header';
+import {
+	createBulkAction,
+	deleteBulkActionStatus,
+	fetchAllDomains,
+	fetchBulkActionStatus,
+	fetchSite,
+	fetchSiteDomains,
+} from '../domains-table-fetch-functions';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
 
@@ -17,7 +25,7 @@ interface BulkAllDomainsProps {
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
-	const { domains, isLoading } = useDomainsTable();
+	const { domains, isLoading } = useDomainsTable( fetchAllDomains );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
 
@@ -77,6 +85,12 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 							} );
 						}
 					} }
+					fetchAllDomains={ fetchAllDomains }
+					fetchSite={ fetchSite }
+					fetchSiteDomains={ fetchSiteDomains }
+					createBulkAction={ createBulkAction }
+					fetchBulkActionStatus={ fetchBulkActionStatus }
+					deleteBulkActionStatus={ deleteBulkActionStatus }
 				/>
 			</Main>
 			<UsePresalesChat />
