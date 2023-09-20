@@ -105,6 +105,7 @@ export default function BulkEditContactInfoPage( {
 		} ) ?? false;
 
 	const [ showAllSelectedDomains, setShowAllSelectedDomains ] = useState( false );
+	const [ showConfirmationNotice, setShowConfirmationNotice ] = useState( false );
 	const domainListElementId = useId();
 
 	const reduxDomains: ResponseDomain[] | undefined = useSelector(
@@ -143,12 +144,17 @@ export default function BulkEditContactInfoPage( {
 
 	const handleSubmitButtonClick = (
 		newContactDetails: Record< string, string >,
-		transferLock: boolean
+		transferLock: boolean,
+		requiresConfirmation: boolean
 	) => {
 		const domainNames = selectedDomains?.map( ( domain ) => domain.domain );
 
 		if ( domainNames ) {
 			updateContactInfo( domainNames, transferLock, newContactDetails );
+		}
+
+		if ( requiresConfirmation ) {
+			setShowConfirmationNotice( true );
 		}
 
 		return 'cancel';
