@@ -49,7 +49,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		dispatch(
 			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', migrationTrackingProps )
 		);
-	}, [] );
+	}, [ dispatch, migrationTrackingProps ] );
 
 	return (
 		<div

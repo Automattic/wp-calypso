@@ -24,7 +24,7 @@ export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props
 			plugins_info: isMigrateFromWp ? 'wpcom_migration_plugin' : 'jetpack',
 			...migrationTrackingProps,
 		} );
-	}, [] );
+	}, [ isMigrateFromWp, migrationTrackingProps ] );
 
 	function renderTitle() {
 		return isMigrateFromWp

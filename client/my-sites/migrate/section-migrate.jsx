@@ -95,7 +95,7 @@ export class SectionMigrate extends Component {
 		}
 
 		wpcom.site( this.props.sourceSite.ID ).pluginsList( ( error, data ) => {
-			if ( data.plugins ) {
+			if ( data && data.plugins ) {
 				this.setState( { sourceSitePlugins: data.plugins } );
 			}
 		} );
@@ -109,6 +109,9 @@ export class SectionMigrate extends Component {
 					...data.themes.filter( ( theme ) => ! theme.active ),
 				];
 				this.setState( { sourceSiteThemes } );
+			} )
+			.catch( ( err ) => {
+				/* suppress this error for now */
 			} );
 	};
 

@@ -5,7 +5,7 @@ import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import classnames from 'classnames';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -49,7 +49,27 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	const sourceSiteSlug = sourceSite?.slug ?? '';
 
 	/**
-	 ↓ Effects
+	 ↓ Functions
+	 */
+	const showConfirmDialogOrStartImport = useCallback( () => {
+		if ( showConfirmDialog ) {
+			setIsModalDetailsOpen( true );
+		} else {
+			startImport();
+		}
+	}, [ showConfirmDialog, startImport ] );
+
+	const startImportCta = useCallback( () => {
+		recordTracksEvent( 'calypso_signup_step_start', {
+			flow: 'importer',
+			step: 'importerWordpress',
+			action: 'startImport',
+		} );
+		showConfirmDialogOrStartImport();
+	}, [ showConfirmDialogOrStartImport ] );
+
+	/**
+	↓ Effects
 	 */
 	useEffect( () => {
 		const skipCta = getQueryArg( window.location.href, 'skipCta' );
@@ -57,26 +77,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 		if ( isTargetSitePlanCompatible && isMigrateFromWp && skipCta ) {
 			startImportCta();
 		}
-	}, [] );
-
-	/**
-	 ↓ Functions
-	 */
-	function showConfirmDialogOrStartImport() {
-		if ( showConfirmDialog ) {
-			setIsModalDetailsOpen( true );
-		} else {
-			startImport();
-		}
-	}
-	function startImportCta() {
-		recordTracksEvent( 'calypso_signup_step_start', {
-			flow: 'importer',
-			step: 'importerWordpress',
-			action: 'startImport',
-		} );
-		showConfirmDialogOrStartImport();
-	}
+	}, [ isMigrateFromWp, isTargetSitePlanCompatible, startImportCta ] );
 
 	return (
 		<>

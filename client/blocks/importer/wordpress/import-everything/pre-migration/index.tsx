@@ -4,7 +4,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, Title } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useRef, MutableRefObject } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
@@ -78,14 +78,16 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const showUpdatePluginInfo = typeof siteCanMigrate === 'boolean' ? ! siteCanMigrate : false;
 
-	const migrationTrackingProps = {
-		source_site_id: sourceSiteId,
-		source_site_url: sourceSiteUrl,
-		target_site_id: targetSite.ID,
-		target_site_slug: targetSite.slug,
-		is_migrate_from_wp: isMigrateFromWp,
-		is_trial: isTrial,
-	};
+	const migrationTrackingProps = useMemo( () => {
+		return {
+			source_site_id: sourceSiteId,
+			source_site_url: sourceSiteUrl,
+			target_site_id: targetSite.ID,
+			target_site_slug: targetSite.slug,
+			is_migrate_from_wp: isMigrateFromWp,
+			is_trial: isTrial,
+		};
+	}, [ isMigrateFromWp, isTrial, sourceSiteId, sourceSiteUrl, targetSite.ID, targetSite.slug ] );
 
 	const toggleCredentialsForm = () => {
 		setShowCredentials( ! showCredentials );
@@ -139,24 +141,33 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		fetchMigrationEnabledStatus();
 	};
 
+	const migrationTrackingPropsRef = useRef( migrationTrackingProps ) as MutableRefObject<
+		Omit< typeof migrationTrackingProps, 'source_site_id' >
+	>;
+
+	useEffect( () => {
+		// we omit recording source_site_id as sometimes it can be absent.
+		const { source_site_id, ...rest } = migrationTrackingProps;
+		migrationTrackingPropsRef.current = rest;
+	}, [ migrationTrackingProps ] );
+
 	// We want to record the tracks event, so we use the same condition as the one in the render function
 	// This should be better handled by using a state after the refactor
 	useEffect( () => {
 		if ( ! showUpdatePluginInfo && isTargetSitePlanCompatible ) {
-			const _migrationTrackingProps: { [ key: string ]: unknown } = { ...migrationTrackingProps };
-			// There is a case where source_site_id is 0|undefined, so we need to delete it
-			delete _migrationTrackingProps?.source_site_id;
-
 			dispatch(
-				recordTracksEvent( 'calypso_site_migration_ready_screen', _migrationTrackingProps )
+				recordTracksEvent(
+					'calypso_site_migration_ready_screen',
+					migrationTrackingPropsRef.current
+				)
 			);
 		}
-	}, [ showUpdatePluginInfo, isTargetSitePlanCompatible ] );
+	}, [ showUpdatePluginInfo, isTargetSitePlanCompatible, dispatch ] );
 
 	// Initiate the migration if initImportRun is set
 	useEffect( () => {
 		initImportRun && startImport( { type: 'without-credentials', ...migrationTrackingProps } );
-	}, [] );
+	}, [ initImportRun, migrationTrackingProps, startImport ] );
 
 	useEffect( () => {
 		if ( isTargetSitePlanCompatible && sourceSiteId ) {
@@ -173,7 +184,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		if ( sourceSite ) {
 			startImport( migrationTrackingProps );
 		}
-	}, [ continueImport, sourceSite, startImport, showUpdatePluginInfo ] );
+	}, [ continueImport, sourceSite, startImport, showUpdatePluginInfo, migrationTrackingProps ] );
 
 	function renderCredentialsFormSection() {
 		// We do not show the credentials form if we already have credentials

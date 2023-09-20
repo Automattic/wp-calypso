@@ -29,8 +29,14 @@ interface Props {
 	onChangeProtocol: ( protocol: CredentialsProtocol ) => void;
 }
 
-export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( props ) => {
-	const { sourceSite, targetSite, migrationTrackingProps, startImport } = props;
+export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( {
+	sourceSite,
+	targetSite,
+	migrationTrackingProps,
+	startImport,
+	onChangeProtocol,
+	selectedHost,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { hostname } = new URL( sourceSite.URL );
@@ -59,7 +65,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 			setShowConfirmModal( false );
 			startImport( args );
 		},
-		[ startImport ]
+		[ setMigrationConfirmed, startImport ]
 	);
 
 	const handleUpdateCredentials = () => {
@@ -116,7 +122,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	// Clear the hasMissingFields flag when there are no more errors.
 	useEffect( () => {
 		! formHasErrors && setHasMissingFields( false );
-	}, [ formErrors ] );
+	}, [ formHasErrors ] );
 
 	// validate changes to the credentials form
 	useEffect( () => {
@@ -138,11 +144,11 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 		}
 
 		setFormErrors( errors );
-	}, [ formState, formMode ] );
+	}, [ formState, formMode, translate ] );
 
 	useEffect( () => {
-		props.onChangeProtocol( formState.protocol as CredentialsProtocol );
-	}, [ formState.protocol ] );
+		onChangeProtocol( formState.protocol as CredentialsProtocol );
+	}, [ formState.protocol, onChangeProtocol ] );
 
 	useEffect( () => {
 		switch ( formSubmissionStatus ) {
@@ -150,12 +156,12 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 				startImportCallback( { type: 'with-credentials', ...migrationTrackingProps } );
 				break;
 		}
-	}, [ formSubmissionStatus, startImportCallback ] );
+	}, [ formSubmissionStatus, migrationTrackingProps, startImportCallback ] );
 
 	useEffect( () => {
 		updateError &&
 			dispatch( recordTracksEvent( 'calypso_site_migration_credentials_update_error' ) );
-	}, [ updateError ] );
+	}, [ dispatch, updateError ] );
 
 	return (
 		<>
@@ -176,7 +182,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					formErrors={ formErrors }
 					formMode={ formMode }
 					formState={ formState }
-					host={ props.selectedHost }
+					host={ selectedHost }
 					role="main"
 					onFormStateChange={ setFormState }
 					onModeChange={ setFormMode }

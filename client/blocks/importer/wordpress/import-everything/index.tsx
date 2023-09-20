@@ -49,11 +49,11 @@ interface State {
 }
 
 type ExtraParams = {
-	[ key: string ]: any;
+	[ key: string ]: unknown;
 };
 
 export class ImportEverything extends SectionMigrate {
-	componentDidUpdate( prevProps: any, prevState: State ) {
+	componentDidUpdate( prevProps: unknown, prevState: State ) {
 		super.componentDidUpdate( prevProps, prevState );
 		this.recordMigrationStatusChange( prevState );
 	}

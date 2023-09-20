@@ -14,7 +14,7 @@ interface Props {
 	selectedProtocol: 'ftp' | 'ssh';
 }
 
-export const CredentialsHelper = ( props: Props ) => {
+export const CredentialsHelper = ( { onHostChange, selectedProtocol }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -30,8 +30,8 @@ export const CredentialsHelper = ( props: Props ) => {
 	};
 
 	useEffect( () => {
-		props.onHostChange( selectedProvider );
-	}, [ selectedProvider ] );
+		onHostChange( selectedProvider );
+	}, [ selectedProvider, onHostChange ] );
 
 	const renderHelpText = () => {
 		const hostDetails = getHostInfoFromId( selectedProvider );
@@ -73,7 +73,7 @@ export const CredentialsHelper = ( props: Props ) => {
 		}
 
 		if ( hostDetails.supportLink ) {
-			const protocol = props.selectedProtocol === 'ftp' ? 'ftp' : 'sftp';
+			const protocol = selectedProtocol === 'ftp' ? 'ftp' : 'sftp';
 
 			const link =
 				hostDetails.credentialLinks && hostDetails.credentialLinks[ protocol ]
