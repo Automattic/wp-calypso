@@ -150,7 +150,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		children,
 		onDomainAction,
 		userCanSetPrimaryDomains,
-		shouldDisplayContactInfoBulkAction = true,
+		shouldDisplayContactInfoBulkAction = false,
 		isFetchingDomains,
 		currentUserCanBulkUpdateContactInfo = false,
 	} = props;
