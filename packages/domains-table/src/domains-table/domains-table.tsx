@@ -71,6 +71,7 @@ interface BaseDomainsTableProps {
 	createBulkAction?: ( variables: BulkUpdateVariables ) => Promise< void >;
 	fetchBulkActionStatus?: () => Promise< BulkDomainUpdateStatusQueryFnData >;
 	deleteBulkActionStatus?: () => Promise< void >;
+	currentUserCanBulkUpdateContactInfo?: boolean;
 }
 
 export type DomainsTablePropsNoChildren =
@@ -127,6 +128,8 @@ type Value = {
 	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
 	shouldDisplayContactInfoBulkAction: boolean;
 	domainsTableColumns: DomainsTableColumn[];
+	currentUsersOwnsAllSelectedDomains: boolean;
+	currentUserCanBulkUpdateContactInfo: boolean;
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -149,6 +152,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction = false,
 		isFetchingDomains,
+		currentUserCanBulkUpdateContactInfo = false,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -186,7 +190,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		} );
 	}, [ allDomains, isAllSitesView ] );
 
-	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
+	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) ?? [] ) ];
 	const allSiteDomains = useQueries( {
 		queries: allSiteIds.map( ( siteId ) =>
 			getSiteDomainsQueryObject( siteId, {
@@ -199,7 +203,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		for ( const { data } of allSiteDomains ) {
 			const siteId = data?.domains?.[ 0 ]?.blog_id;
 			if ( typeof siteId === 'number' ) {
-				fetchedSiteDomains[ siteId ] = data?.domains || [];
+				fetchedSiteDomains[ siteId ] = data?.domains ?? [];
 			}
 		}
 		return fetchedSiteDomains;
@@ -300,7 +304,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 	};
 
 	const hasSelectedDomains = selectedDomains.size > 0;
-	const selectableDomains = ( domains || [] ).filter( canBulkUpdate );
+	const selectableDomains = ( domains ?? [] ).filter( canBulkUpdate );
 	const canSelectAnyDomains = selectableDomains.length > 0;
 	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
@@ -329,14 +333,14 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
 			// filter out unselectable domains from bulk selection
-			setSelectedDomains( new Set( ( domains || [] ).filter( canBulkUpdate ).map( getDomainId ) ) );
+			setSelectedDomains( new Set( ( domains ?? [] ).filter( canBulkUpdate ).map( getDomainId ) ) );
 		} else {
 			setSelectedDomains( new Set() );
 		}
 	};
 
 	const handleAutoRenew = ( enable: boolean ) => {
-		const domainsToBulkUpdate = ( domains || [] )
+		const domainsToBulkUpdate = ( domains ?? [] )
 			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
 			.map( ( domain ) => domain.domain );
 		setAutoRenew( domainsToBulkUpdate, enable );
@@ -344,7 +348,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 	};
 
 	const handleUpdateContactInfo = () => {
-		const domainsToBulkUpdate = ( domains || [] ).filter( ( domain ) =>
+		const domainsToBulkUpdate = ( domains ?? [] ).filter( ( domain ) =>
 			selectedDomains.has( getDomainId( domain ) )
 		);
 
@@ -361,6 +365,12 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 
 	const hideOwnerColumn = shouldHideOwnerColumn(
 		Object.values< DomainData[] >( fetchedSiteDomains ).flat()
+	);
+
+	const currentUsersOwnsAllSelectedDomains = ! Array.from( selectedDomains ).some( ( selected ) =>
+		( domains ?? [] ).find(
+			( domain ) => getDomainId( domain ) === selected && ! domain.current_user_is_owner
+		)
 	);
 
 	const value: Value = {
@@ -389,6 +399,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		filteredData,
 		selectedDomains,
 		hasSelectedDomains,
+		currentUsersOwnsAllSelectedDomains,
 		completedJobs,
 		domainResults,
 		handleRestartDomainStatusPolling,
@@ -419,6 +430,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		shouldDisplayContactInfoBulkAction,
 		domainsTableColumns,
 		isFetchingDomains,
+		currentUserCanBulkUpdateContactInfo,
 	};
 
 	return (
