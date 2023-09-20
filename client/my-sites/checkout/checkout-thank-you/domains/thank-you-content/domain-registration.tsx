@@ -112,9 +112,10 @@ const domainRegistrationThankYouProps = ( {
 					? [ launchpadNextSteps ]
 					: [
 							...( professionalEmail ? [ professionalEmail ] : [] ),
-							...( isDomainOnly && selectedSiteId ? [ createSiteStep ] : [] ),
-							...( isActivityPubEnabled ? [ fediverseSettingsStep ] : [] ),
-							viewDomainsStep,
+							...( ! isActivityPubEnabled && isDomainOnly && selectedSiteId
+								? [ createSiteStep ]
+								: [] ),
+							...( isActivityPubEnabled ? [ fediverseSettingsStep ] : [ viewDomainsStep ] ),
 					  ],
 			},
 		],
