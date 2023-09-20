@@ -9,6 +9,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useDomainParams } from 'calypso/landing/stepper/hooks/use-domain-params';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import DomainContactInfo from './internals/steps-repository/domain-contact-info';
@@ -56,10 +57,12 @@ const domainUserTransfer: Flow = {
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = pathLocaleSlug || useLocaleSlug;
 
+		const { domain } = useDomainParams();
+
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Receive%20domain&redirect_to=/setup/${ flowName }`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Receive%20domain&redirect_to=/setup/${ flowName }`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Receive%20domain&redirect_to=/setup/${ flowName }?domain=${ domain }`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Receive%20domain&redirect_to=/setup/${ flowName }?domain=${ domain }`;
 
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
