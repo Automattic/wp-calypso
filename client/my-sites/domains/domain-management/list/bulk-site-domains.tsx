@@ -99,7 +99,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					) }
 					domainStatusPurchaseActions={ purchaseActions }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
-					isSupportSession={ isInSupportSession }
+					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
 					onDomainAction={ ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
 							return {

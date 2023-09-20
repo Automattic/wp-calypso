@@ -72,7 +72,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						'domains/bulk-actions-contact-info-editing'
 					) }
 					domainStatusPurchaseActions={ purchaseActions }
-					isSupportSession={ isInSupportSession }
+					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
 					onDomainAction={ ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
 							sendNudge( {

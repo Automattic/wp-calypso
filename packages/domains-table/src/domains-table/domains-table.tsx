@@ -71,7 +71,7 @@ interface BaseDomainsTableProps {
 	createBulkAction?: ( variables: BulkUpdateVariables ) => Promise< void >;
 	fetchBulkActionStatus?: () => Promise< BulkDomainUpdateStatusQueryFnData >;
 	deleteBulkActionStatus?: () => Promise< void >;
-	isSupportSession?: boolean;
+	currentUserCanBulkUpdateContactInfo?: boolean;
 }
 
 export type DomainsTablePropsNoChildren =
@@ -129,7 +129,7 @@ type Value = {
 	shouldDisplayContactInfoBulkAction: boolean;
 	domainsTableColumns: DomainsTableColumn[];
 	currentUsersOwnsAllSelectedDomains: boolean;
-	isSupportSession: boolean;
+	currentUserCanBulkUpdateContactInfo: boolean;
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -152,7 +152,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction = true,
 		isFetchingDomains,
-		isSupportSession = false,
+		currentUserCanBulkUpdateContactInfo = false,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -431,7 +431,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		shouldDisplayContactInfoBulkAction,
 		domainsTableColumns,
 		isFetchingDomains,
-		isSupportSession,
+		currentUserCanBulkUpdateContactInfo,
 	};
 
 	return (

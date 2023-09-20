@@ -734,10 +734,11 @@ test( 'when current user is not the owner, they cannot bulk update contact info'
 	expect( getBulkUpdateContactDetailsButton() ).toBeDisabled();
 } );
 
-test( 'when current user is in support session, they can not bulk update contact info', () => {
+test( 'when the current user is not allowed to bulk update the contact info, disable the action', () => {
 	render(
 		<DomainsTable
-			isSupportSession
+			currentUserCanBulkUpdateContactInfo={ false }
+			isAllSitesView
 			domains={ [ testPartialDomain( { domain: 'example1.com' } ) ] }
 		/>
 	);
