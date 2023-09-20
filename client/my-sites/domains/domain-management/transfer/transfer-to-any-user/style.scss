@@ -22,6 +22,43 @@
 		}
 	}
 
+	.transfer-domain-to-any-user__container {
+		.transfer-domain-to-any-user__main {
+			margin: 16px;
+		}
+		@include break-xlarge {
+			@include grid-row( 1, 1 );
+			@include grid-column( 1, 12 );
+			@include display-grid;
+			@include grid-template-columns( 12, 24px, 1fr );
+			grid-gap: 24px;
+			.transfer-domain-to-any-user__main {
+				@include grid-column( 1, 8 );
+				margin: 0;
+			}
+		}
+	}
+
+	.transfer-domain-to-any-user__input {
+		max-width: 300px;
+	}
+
+	.transfer-domain-to-any-user__notice {
+		color: var(--color-neutral-40);
+		margin: 16px 0;
+		padding: 0;
+		text-align: left;
+
+		.gridicon {
+			float: left;
+		}
+
+		p {
+			font-size: $font-body-small;
+			font-weight: 400;
+			margin-left: 24px;
+		}
+	}
 }
 
 .transfer-domain-to-any-user__notice {
