@@ -5,8 +5,6 @@ $font-family: "SF Pro Text", $sans;
 $heading-font-family: "SF Pro Display", $sans;
 
 .domain-contact-info {
-	max-width: 700px;
-	margin: 0 auto;
 	padding: 16px 24px;
 
 	.domain-contact-info-header {
@@ -46,6 +44,12 @@ $heading-font-family: "SF Pro Display", $sans;
 			}
 		}
 
+		.contact-details-form-fields {
+			padding: 0;
+			@media (max-width: $break-xlarge ) {
+				padding: 0 0 24px;
+			}
+		}
 		.contact-details-form-fields__contact-details {
 			margin-bottom: 15px;
 		}
@@ -57,6 +61,29 @@ $heading-font-family: "SF Pro Display", $sans;
 		}
 		.contact-details-form-fields__submit-button {
 			padding: 8px 60px;
+		}
+	}
+
+	&__sidebar {
+		padding: 24px;
+		background-color: var(--studio-gray-0);
+		font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		line-height: 20px;
+		&-content {
+			p {
+				margin: 0 0 1em;
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+		&-title {
+			p {
+				margin-bottom: 0.5em;
+			}
+		}
+		ul {
+			margin: 0 0 0 1em;
 		}
 	}
 }

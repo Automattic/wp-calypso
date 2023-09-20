@@ -6,6 +6,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
+import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
+import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import {
 	useDomainTransferReceive,
@@ -105,8 +107,8 @@ function ContactInfo( {
 		onSubmit?.( contactInfo );
 	}
 
-	return (
-		<form className="domain-contact-info-form">
+	const renderContent = () => {
+		return (
 			<ContactDetailsFormFields
 				eventFormName="Edit Contact Info"
 				contactDetails={ {
@@ -157,6 +159,63 @@ function ContactInfo( {
 					</p>
 				</div>
 			</ContactDetailsFormFields>
+		);
+	};
+
+	const renderSidebar = () => {
+		const supportLink = (
+			<ExternalLink
+				href={ localizeUrl(
+					'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection'
+				) }
+				target="_blank"
+				icon={ false }
+			/>
+		);
+		const icannLink = (
+			<ExternalLink
+				href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
+				target="_blank"
+				icon={ false }
+			/>
+		);
+
+		return (
+			<div className="domain-contact-info__sidebar">
+				<div className="domain-contact-info__sidebar-title">
+					<p>
+						<strong>{ translate( 'Provide accurate contact information' ) }</strong>
+					</p>
+				</div>
+				<div className="domain-contact-info__sidebar-content">
+					<p>
+						{ translate(
+							'{{icannLinkComponent}}ICANN{{/icannLinkComponent}} requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.',
+							{
+								components: {
+									icannLinkComponent: icannLink,
+								},
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Domain privacy service is included for free on applicable domains. {{supportLinkComponent}}Learn more{{/supportLinkComponent}}.',
+							{
+								components: {
+									supportLinkComponent: supportLink,
+								},
+							}
+						) }
+					</p>
+				</div>
+			</div>
+		);
+	};
+
+	return (
+		<form className="domain-contact-info-form">
+			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 		</form>
 	);
 }
