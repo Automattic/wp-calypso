@@ -1,13 +1,9 @@
 import {
 	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import ReaderExportButton from 'calypso/blocks/reader-export-button';
-import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'calypso/blocks/reader-export-button/constants';
-import ReaderImportButton from 'calypso/blocks/reader-import-button';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -16,7 +12,6 @@ import {
 	SubscriptionManagerContextProvider,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { SubscriptionsEllipsisMenu } from 'calypso/landing/subscriptions/components/subscriptions-ellipsis-menu';
-import { downloadCloud, uploadCloud } from 'calypso/reader/icons';
 import { useDispatch } from 'calypso/state';
 import { markFollowsAsStale } from 'calypso/state/reader/follows/actions';
 import './style.scss';
@@ -34,6 +29,7 @@ const useMarkFollowsAsStaleOnUnmount = () => {
 type SubscriptionsManagerWrapperProps = {
 	actionButton?: React.ReactNode;
 	children: React.ReactNode;
+	ellipsisMenuItems?: React.ReactNode;
 	headerText: string;
 	subHeaderText: string;
 };
@@ -41,6 +37,7 @@ type SubscriptionsManagerWrapperProps = {
 const SubscriptionsManagerWrapper = ( {
 	actionButton,
 	children,
+	ellipsisMenuItems,
 	headerText,
 	subHeaderText,
 }: SubscriptionsManagerWrapperProps ) => {
@@ -67,20 +64,15 @@ const SubscriptionsManagerWrapper = ( {
 					<Spacer />
 					{ actionButton }
 
-					<SubscriptionsEllipsisMenu
-						toggleTitle={ translate( 'More' ) }
-						popoverClassName="site-subscriptions-manager__import-export-popover"
-						verticalToggle
-					>
-						<VStack spacing={ 1 }>
-							<ReaderImportButton icon={ uploadCloud } iconSize={ 20 } />
-							<ReaderExportButton
-								icon={ downloadCloud }
-								iconSize={ 20 }
-								exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS }
-							/>
-						</VStack>
-					</SubscriptionsEllipsisMenu>
+					{ ellipsisMenuItems && (
+						<SubscriptionsEllipsisMenu
+							toggleTitle={ translate( 'More' ) }
+							popoverClassName="site-subscriptions-manager__import-export-popover"
+							verticalToggle
+						>
+							{ ellipsisMenuItems }
+						</SubscriptionsEllipsisMenu>
+					) }
 				</HStack>
 
 				{ children }
