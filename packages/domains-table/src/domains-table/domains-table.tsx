@@ -127,6 +127,7 @@ type Value = {
 	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
 	shouldDisplayContactInfoBulkAction: boolean;
 	domainsTableColumns: DomainsTableColumn[];
+	currentUsersOwnsAllSelectedDomains: boolean;
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -147,7 +148,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		children,
 		onDomainAction,
 		userCanSetPrimaryDomains,
-		shouldDisplayContactInfoBulkAction = false,
+		shouldDisplayContactInfoBulkAction = true,
 		isFetchingDomains,
 	} = props;
 
@@ -363,6 +364,13 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		Object.values< DomainData[] >( fetchedSiteDomains ).flat()
 	);
 
+	const currentUsersOwnsAllSelectedDomains = Array.from( selectedDomains ).some( ( selected ) =>
+		( domains || [] ).find(
+			( domain ) =>
+				`${ domain.domain }${ domain.blog_id }` === selected && ! domain.current_user_is_owner
+		)
+	);
+
 	const value: Value = {
 		filter,
 		setFilter,
@@ -389,6 +397,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		filteredData,
 		selectedDomains,
 		hasSelectedDomains,
+		currentUsersOwnsAllSelectedDomains,
 		completedJobs,
 		domainResults,
 		handleRestartDomainStatusPolling,
