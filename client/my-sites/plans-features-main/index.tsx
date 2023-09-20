@@ -218,9 +218,7 @@ const PlansFeaturesMain = ( {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
 	const [ isFreePlanFreeDomainDialogOpen, setIsFreePlanFreeDomainDialogOpen ] = useState( false );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
-	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
-	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
 	const storageAddOns = useAddOns( siteId ?? undefined, isInSignup ).filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
 	);
@@ -514,6 +512,7 @@ const PlansFeaturesMain = ( {
 			  )
 			: undefined;
 
+	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	/**
 	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
 	 * for the sticky CTA bar.
@@ -550,6 +549,10 @@ const PlansFeaturesMain = ( {
 		};
 	}, [] );
 
+	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
+	/**
+	 * Scrolls the comparison grid smoothly into view when rendered.
+	 */
 	useLayoutEffect( () => {
 		if ( showPlansComparisonGrid ) {
 			setTimeout( () => {
