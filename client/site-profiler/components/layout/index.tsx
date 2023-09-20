@@ -6,13 +6,16 @@ interface Props {
 	children: React.ReactNode;
 	className?: string;
 	isMonoBg?: boolean;
+	animate?: boolean;
 }
 
 export function LayoutBlock( props: Props ) {
-	const { children, className, isMonoBg } = props;
+	const { children, className, isMonoBg, animate = true } = props;
 
 	return (
-		<div className={ classnames( 'l-block', className, { 'is-mono-bg': isMonoBg } ) }>
+		<div
+			className={ classnames( 'l-block', className, { 'is-mono-bg': isMonoBg, animate: animate } ) }
+		>
 			<div className="l-block-content">{ children }</div>
 		</div>
 	);
