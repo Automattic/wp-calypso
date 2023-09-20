@@ -1,7 +1,9 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/onboarding/styles/mixins";
 
-@media ( max-width: 480px ) {
+$domains-table-mobile-breakpoint: 480px;
+
+@media ( max-width: $domains-table-mobile-breakpoint ) {
 	.navigation-header {
 		position: sticky;
 		/*
@@ -27,6 +29,11 @@
 	.domains-table-toolbar {
 		--domains-table-toolbar-height: 40px;
 		background: var(--color-surface-backdrop);
+
+		@media ( min-width: $domains-table-mobile-breakpoint ) {
+			position: relative;
+			z-index: 2; // Ensure the dropdown appears overtop of the sticky table header
+		}
 	}
 
 	table {
@@ -87,7 +94,7 @@
 		gap: 4px;
 		font-size: $font-body-small;
 
-		@media ( min-width: 480px) {
+		@media ( min-width: $domains-table-mobile-breakpoint ) {
 			width: 100px;
 		}
 
