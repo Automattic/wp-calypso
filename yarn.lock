@@ -1170,20 +1170,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/newspack-blocks@npm:^1.60.0":
-  version: 1.60.0
-  resolution: "@automattic/newspack-blocks@npm:1.60.0"
+"@automattic/newspack-blocks@npm:^1.74.2":
+  version: 1.74.2
+  resolution: "@automattic/newspack-blocks@npm:1.74.2"
   dependencies:
-    "@stripe/stripe-js": ^1.46.0
+    "@stripe/stripe-js": ^1.54.2
     classnames: ^2.3.2
     lodash: ^4.17.21
     newspack-components: ^2.1.0
     react: ^17.0.2
-    redux: ^4.2.0
-    redux-saga: ^1.2.2
+    redux: ^4.2.1
+    redux-saga: ^1.2.3
     regenerator-runtime: ^0.13.11
-    swiper: 8.4.5
-  checksum: 0dbb3d831d99abf3b8618f1b40b7a6fd5fc43f3303e347515717995f2a9a9ac90cc626855cb26309a554e53413e37e1c9ca06b0c7e45de81425b1aa7211797b5
+    swiper: 9.3.2
+  checksum: 2198aaddb6289162f3b9ddc9b9c79ee6e6172ca570ee1fe08a8ea75dcbea17b3f1d5fd2fe89d043e3b59bde2a7f0d27b0691e39a5738d3d9225866eb42b82531
   languageName: node
   linkType: hard
 
@@ -1884,7 +1884,7 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/newspack-blocks": ^1.60.0
+    "@automattic/newspack-blocks": ^1.74.2
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
@@ -5305,9 +5305,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redux-saga/core@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "@redux-saga/core@npm:1.2.2"
+"@redux-saga/core@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@redux-saga/core@npm:1.2.3"
   dependencies:
     "@babel/runtime": ^7.6.3
     "@redux-saga/deferred": ^1.2.1
@@ -5317,7 +5317,7 @@ __metadata:
     "@redux-saga/types": ^1.2.1
     redux: ^4.0.4
     typescript-tuple: ^2.2.1
-  checksum: 23005e1e733113654967c298204fefd2918f6d0396513d1070e21263cb8716e8189b8a51c91332e27c8e60bdb49bc608673df96e295509081ed3029cae57b1f8
+  checksum: a6a0c67eada71a1da8b83569161a32caa9671f718f5a3b158c366cc0da3e8945c103f6ef80e71c95462619547627fc270d0ae2eecb35bbd6581e70f38db1c354
   languageName: node
   linkType: hard
 
@@ -6420,10 +6420,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^1.46.0, @stripe/stripe-js@npm:^1.53.0":
-  version: 1.53.0
-  resolution: "@stripe/stripe-js@npm:1.53.0"
-  checksum: 18dcd775ba9d210415687efdb32b327a8228f90943807ad7ceef810aadda8be4fd7b50c4c2fa2e52cfca5226ec449a1025cf5b89a458d44075d71f0e2b32f07c
+"@stripe/stripe-js@npm:^1.53.0, @stripe/stripe-js@npm:^1.54.2":
+  version: 1.54.2
+  resolution: "@stripe/stripe-js@npm:1.54.2"
+  checksum: cf6ea20039fde28a0edc5562f08120ea820b1f8b8f2cf8b769aa92c0a4799a85e614f4112d8d790238960d0a3e1a194c76f6d2d941aa91acc8fbbc8920e63f02
   languageName: node
   linkType: hard
 
@@ -25850,12 +25850,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-saga@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "redux-saga@npm:1.2.2"
+"redux-saga@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "redux-saga@npm:1.2.3"
   dependencies:
-    "@redux-saga/core": ^1.2.2
-  checksum: 8ec27780f90e36fc5694b6195eedb99a17435d8d0098824b72af9ebd6bd3d1c6469b3b040028573ba93510e50cd052d264619d9c640908ddc91986fdc116ed4f
+    "@redux-saga/core": ^1.2.3
+  checksum: 201a882ea201dfdfefb61b59741d52d2b453c4a1d30c32cef76d796fe1170e66cfab63f4d51a4ec4ef624b60072e716295def9ae472eefc02cf70dcab824949b
   languageName: node
   linkType: hard
 
@@ -25868,7 +25868,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.2, redux@npm:^4.2.0, redux@npm:^4.2.1":
+"redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.2, redux@npm:^4.2.1":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
@@ -28889,13 +28889,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:8.4.5, swiper@npm:^8.4.5":
-  version: 8.4.5
-  resolution: "swiper@npm:8.4.5"
+"swiper@npm:9.3.2":
+  version: 9.3.2
+  resolution: "swiper@npm:9.3.2"
   dependencies:
-    dom7: ^4.0.4
     ssr-window: ^4.0.2
-  checksum: 8b4aaa80b34d65faa321ed0c86966f7047b17e9b208f443001ebea8cb9893c5716bab4a7500a96d48bbeda9b024424f65ae9f65589d98e6a38d4b3a6c7814e65
+  checksum: 8ed77b641d7620f92100a6fde39df7948be7932e56e31852946216ff7eef721bfc803c9a4e38bbdfa0674fbc46f5dfdd02ea1da4f0711d0fb7b69b2937bf001a
   languageName: node
   linkType: hard
 
@@ -28903,6 +28902,16 @@ __metadata:
   version: 10.1.0
   resolution: "swiper@npm:10.1.0"
   checksum: 88bdb25c960f5fce81d7e09909338ca5ac3eb6f2f4b65924565d1f8fe47365f7d5eb7458694befe27f52a651db88dcddc14c4d85609d41e18aad1676a656599e
+  languageName: node
+  linkType: hard
+
+"swiper@npm:^8.4.5":
+  version: 8.4.5
+  resolution: "swiper@npm:8.4.5"
+  dependencies:
+    dom7: ^4.0.4
+    ssr-window: ^4.0.2
+  checksum: 8b4aaa80b34d65faa321ed0c86966f7047b17e9b208f443001ebea8cb9893c5716bab4a7500a96d48bbeda9b024424f65ae9f65589d98e6a38d4b3a6c7814e65
   languageName: node
   linkType: hard
 
