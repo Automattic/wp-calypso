@@ -1,0 +1,21 @@
+.hundred-year-plan-flow-processing-screen__container {
+	background-image: url(calypso/assets/images/hundred-year-plan-onboarding/earth-stars.webp);
+	height: 100vh;
+	width: 100vw;
+	background-color: #000;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	h1 {
+		color: var(--studio-gray-0);
+		font-size: rem(44px);
+		font-style: normal;
+		font-weight: 400;
+		line-height: 52px; /* 118.182% */
+		letter-spacing: 0.2px;
+		text-align: center;
+	}
+}
