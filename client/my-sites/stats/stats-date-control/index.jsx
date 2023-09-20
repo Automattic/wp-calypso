@@ -1,12 +1,12 @@
 import React from 'react';
 
-const DatePickerNew = () => {
+const DateControl = () => {
 	return (
 		<div>
 			{ /* New Component bits go here */ }
-			NewDatePicker Component
+			New DateControl Component
 		</div>
 	);
 };
 
-export default DatePickerNew;
+export default DateControl;

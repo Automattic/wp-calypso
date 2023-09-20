@@ -44,8 +44,8 @@ import MiniCarousel from './mini-carousel';
 import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
+import DateControl from './stats-date-control';
 import DatePicker from './stats-date-picker';
-import DatePickerNew from './stats-date-picker-new';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
@@ -188,7 +188,7 @@ class StatsSite extends Component {
 		const moduleStrings = statsStrings();
 
 		// For the new date picker
-		const isNewDatePickerEnabled = config.isEnabled( 'stats/date-picker' );
+		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -250,9 +250,9 @@ class StatsSite extends Component {
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
-						{ isNewDatePickerEnabled ? (
-							<DatePickerNew
-							// NewDatePicker component
+						{ isDateControlEnabled ? (
+							<DateControl
+							// New DateControl component
 							/>
 						) : (
 							<StatsPeriodHeader>
