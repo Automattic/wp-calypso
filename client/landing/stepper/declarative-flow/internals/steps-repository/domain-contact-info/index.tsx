@@ -56,7 +56,7 @@ function ContactInfo( {
 		onSuccess() {
 			dispatch(
 				successNotice(
-					translate( 'Your domain is on its way to you, we’ll email you once it’s setup.' ),
+					translate( 'Your domain is on its way to you, we’ll email you once it’s set up.' ),
 					{
 						duration: 10000,
 						isPersistent: true,
