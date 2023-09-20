@@ -54,7 +54,7 @@ const PluginDetailsSidebar = ( {
 
 	const supportLinks = [
 		{
-			href: localizeUrl( 'https://wordpress.com/support/help-support-options/#live-chat-support' ),
+			href: localizeUrl( 'https://wordpress.com/support/help-support-options' ),
 			label: translate( 'How to get help!' ),
 		},
 		{

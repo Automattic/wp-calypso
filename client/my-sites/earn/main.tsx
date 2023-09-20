@@ -2,7 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
@@ -14,25 +13,29 @@ import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
 import WordAdsHighlightsSection from 'calypso/my-sites/stats/wordads/highlights-section';
 import { useSelector } from 'calypso/state';
-import { canAccessWordAds } from 'calypso/state/sites/selectors';
+import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
+import CustomerSection from './customers';
 import Home from './home';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
+import StatsSection from './stats';
+import { Query } from './types';
 
 type EarningsMainProps = {
-	section: string;
-	adsProgramName: string;
-	query: string;
+	section?: string;
+	query: Query;
 	path: string;
 };
 
-const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainProps ) => {
+const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const translate = useTranslate();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
+	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 
 	const layoutTitles = {
 		earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
@@ -42,7 +45,33 @@ const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainPro
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
-	const getFilters = () => {
+	const getEarnTabs = () => {
+		const pathSuffix = site?.slug ? '/' + site?.slug : '';
+		return [
+			{
+				title: translate( 'Tools' ),
+				path: '/earn' + pathSuffix,
+				id: 'earn',
+			},
+			{
+				title: translate( 'Customers' ),
+				path: '/earn/customers' + pathSuffix,
+				id: 'customers',
+			},
+			{
+				title: translate( 'Stats' ),
+				path: '/earn/stats' + pathSuffix,
+				id: 'stats',
+			},
+			{
+				title: translate( 'Settings' ),
+				path: '/earn/payments' + pathSuffix,
+				id: 'payments',
+			},
+		];
+	};
+
+	const getAdTabs = () => {
 		const pathSuffix = site?.slug ? '/' + site?.slug : '';
 		const tabs = [];
 
@@ -67,8 +96,8 @@ const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainPro
 		return tabs;
 	};
 
-	const getSelectedText = () => {
-		const selected = find( getFilters(), { path: path } );
+	const getEarnSelectedText = () => {
+		const selected = find( getEarnTabs(), { path: path } );
 		if ( selected ) {
 			return selected.title;
 		}
@@ -76,7 +105,19 @@ const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainPro
 		return '';
 	};
 
-	const getComponent = ( currentSection: string ) => {
+	const getAdSelectedText = () => {
+		const selected = find( getAdTabs(), { path: path } );
+		if ( selected ) {
+			return selected.title;
+		}
+
+		return '';
+	};
+
+	const isAdSection = ( currentSection: string | undefined ) =>
+		currentSection && currentSection.startsWith( 'ads' );
+
+	const getComponent = ( currentSection: string | undefined ) => {
 		switch ( currentSection ) {
 			case 'ads-earnings':
 				return (
@@ -102,6 +143,12 @@ const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainPro
 			case 'payments-plans':
 				return <MembershipsProductsSection />;
 
+			case 'stats':
+				return <StatsSection />;
+
+			case 'customers':
+				return <CustomerSection />;
+
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;
 
@@ -113,10 +160,8 @@ const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainPro
 	/**
 	 * Remove any query parameters from the path before using it to
 	 * identify which screen the user is seeing.
-	 *
-	 * @returns {string} Path to current screen.
 	 */
-	const getCurrentPath = () => {
+	const getCurrentPath = (): string => {
 		let currentPath = path;
 		const queryStartPosition = currentPath.indexOf( '?' );
 		if ( queryStartPosition > -1 ) {
@@ -125,46 +170,40 @@ const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainPro
 		return currentPath;
 	};
 
-	/**
-	 * Check the current path and returns an appropriate title.
-	 *
-	 * @returns {string} Header text for current screen.
-	 */
-	const getHeaderText = () => {
-		switch ( section ) {
-			case 'payments':
-				return translate( 'Payments' );
-			case 'ads-earnings':
-			case 'ads-payments':
-			case 'ads-settings':
-				return translate( 'Ads' );
-
-			case 'refer-a-friend':
-				return translate( 'Refer-a-Friend Program' );
-
-			default:
-				return '';
-		}
-	};
-
-	const getHeaderCake = () => {
-		const headerText = getHeaderText();
-		return (
-			headerText && (
-				<HeaderCake backHref={ `/earn/${ site?.slug ?? '' }` }>{ headerText }</HeaderCake>
-			)
-		);
-	};
-
-	const getSectionNav = ( currentSection: string ) => {
+	const getEarnSectionNav = () => {
 		const currentPath = getCurrentPath();
 
 		return (
-			! currentSection.startsWith( 'payments' ) &&
-			! currentSection.startsWith( 'refer-a-friend' ) && (
-				<SectionNav selectedText={ getSelectedText() }>
+			<div id="earn-navigation">
+				<SectionNav selectedText={ getEarnSelectedText() }>
 					<NavTabs>
-						{ getFilters().map( ( filterItem ) => {
+						{ getEarnTabs().map( ( tabItem ) => {
+							return (
+								<NavItem
+									key={ tabItem.id }
+									path={ tabItem.path }
+									selected={ tabItem.path === currentPath }
+								>
+									{ tabItem.title }
+								</NavItem>
+							);
+						} ) }
+					</NavTabs>
+				</SectionNav>
+			</div>
+		);
+	};
+
+	const getAdsHeader = () => {
+		const currentPath = getCurrentPath();
+
+		return (
+			<div className="earn__ads-header">
+				<h2 className="formatted-header__title wp-brand-font">{ translate( 'Ads Dashboard' ) }</h2>
+
+				<SectionNav selectedText={ getAdSelectedText() }>
+					<NavTabs>
+						{ getAdTabs().map( ( filterItem ) => {
 							return (
 								<NavItem
 									key={ filterItem.id }
@@ -177,7 +216,7 @@ const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainPro
 						} ) }
 					</NavTabs>
 				</SectionNav>
-			)
+			</div>
 		);
 	};
 
@@ -202,8 +241,8 @@ const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainPro
 				) }
 				align="left"
 			/>
-			{ getHeaderCake() }
-			{ section && getSectionNav( section ) }
+			{ getEarnSectionNav() }
+			{ isAdSection( section ) && getAdsHeader() }
 			{ getComponent( section ) }
 		</Main>
 	);

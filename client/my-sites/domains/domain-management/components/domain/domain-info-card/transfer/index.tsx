@@ -15,6 +15,7 @@ const DomainTransferInfoCard = ( { domain, selectedSite }: DomainInfoCardProps )
 		! domain.currentUserIsOwner ||
 		domain.isRedeemable ||
 		domain.pendingRegistration ||
+		domain.isMoveToNewSitePending ||
 		typesUnableToTransfer.includes( domain.type ) ||
 		domain.aftermarketAuction
 	) {
@@ -46,6 +47,7 @@ const DomainTransferInfoCard = ( { domain, selectedSite }: DomainInfoCardProps )
 				)
 			}
 			ctaText={ translate( 'Transfer' ) }
+			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
 	);
 };

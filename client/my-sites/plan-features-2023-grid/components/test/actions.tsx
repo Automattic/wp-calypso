@@ -86,7 +86,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 
 		const pricing = {
 			discountedPrice: { monthly: null, full: null },
-			originalPrice: { monthly: 20, full: 240 },
+			originalPrice: { monthly: 2000, full: 24000 },
 			currencyCode: 'USD',
 		};
 

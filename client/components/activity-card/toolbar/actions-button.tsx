@@ -12,6 +12,7 @@ import { SUCCESSFUL_BACKUP_ACTIVITIES } from 'calypso/lib/jetpack/backup-utils';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
+import { rewindRequestBackup } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -62,6 +63,8 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 	const isRestoreDisabled =
 		doesRewindNeedCredentials || isRestoreInProgress || ( ! isAtomic && areCredentialsInvalid );
 
+	const onDownloadClick = () => dispatch( rewindRequestBackup( siteId, rewindId ) );
+
 	return (
 		<>
 			<Button
@@ -107,6 +110,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 					borderless
 					compact
 					isPrimary={ false }
+					onClick={ onDownloadClick }
 					href={ backupDownloadPath( siteSlug, rewindId ) }
 					className="toolbar__download-button"
 				>

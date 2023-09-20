@@ -1,0 +1,39 @@
+@import "@automattic/onboarding/styles/mixins";
+
+.hundred-year-plan-step-wrapper.new-or-existing-site {
+	.formatted-header {
+		.formatted-header__title {
+			font-size: rem(32px);
+			@include break-small {
+				font-size: rem(44px);
+			}
+		}
+		margin: 32px 24px 0 24px;
+		@include break-small {
+			margin-top: 72px;
+		}
+	}
+
+	.select-items {
+		margin-inline-start: 16px;
+		margin-inline-end: 18px;
+
+		.select-items__item {
+			max-width: 507px;
+			@include break-small {
+				width: 100%;
+			}
+
+			@include break-medium {
+				width: 100%;
+			}
+		}
+
+		.button.select-items__item-button {
+			width: 279px;
+			@include break-small {
+				width: 140px;
+			}
+		}
+	}
+}

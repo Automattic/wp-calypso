@@ -6,7 +6,11 @@ import {
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
+import {
+	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
+	WPCOM_FEATURES_LOCKED_MODE,
+	WPCOM_FEATURES_LEGACY_CONTACT,
+} from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -734,6 +738,97 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	// Add settings for enhanced ownership: ability to enable locked mode and add the name of a person who will inherit the site.
+	enhancedOwnershipSettings() {
+		const {
+			translate,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			handleSubmitForm,
+			onChangeField,
+			eventTracker,
+			uniqueEventTracker,
+			hasLockedMode,
+			hasLegacyContact,
+		} = this.props;
+
+		// if has neither locked mode nor legacy contact, return
+		if ( ! hasLockedMode && ! hasLegacyContact ) {
+			return;
+		}
+
+		return (
+			<div className="site-settings__enhanced-ownership-container">
+				<SettingsSectionHeader
+					title={ translate( 'Control your legacy' ) }
+					id="site-settings__enhanced-ownership-header"
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+				/>
+				<Card>
+					<form>
+						{ hasLegacyContact && (
+							<FormFieldset className="site-settings__enhanced-ownership-content">
+								<FormFieldset>
+									<FormLabel htmlFor="legacycontact">{ translate( 'Legacy contact' ) }</FormLabel>
+									<FormInput
+										name="legacycontact"
+										id="legacycontact"
+										data-tip-target="legacy-contact-input"
+										value={ fields.wpcom_legacy_contact || '' }
+										onChange={ onChangeField( 'wpcom_legacy_contact' ) }
+										disabled={ isRequestingSettings }
+										onClick={ eventTracker( 'Clicked Legacy Contact Field' ) }
+										onKeyPress={ uniqueEventTracker( 'Typed in Legacy Contact Field' ) }
+									/>
+								</FormFieldset>
+								<FormSettingExplanation>
+									{ translate( 'Choose someone to look after your site when you pass away.' ) }
+								</FormSettingExplanation>
+								<FormSettingExplanation>
+									{ translate(
+										'To take ownership of the site, we ask that the person you designate contacts us at {{a}}wordpress.com/help{{/a}} with a copy of the death certificate.',
+										{
+											components: {
+												a: (
+													<a
+														href="https://wordpress.com/help"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
+									) }
+								</FormSettingExplanation>
+							</FormFieldset>
+						) }
+						{ hasLockedMode && (
+							<FormFieldset className="site-settings__enhanced-ownership-content">
+								<FormLabel>{ translate( 'Locked Mode' ) }</FormLabel>
+								<ToggleControl
+									disabled={ isRequestingSettings || isSavingSettings }
+									className="site-settings__locked-mode-toggle"
+									label={ translate( 'Enable Locked Mode' ) }
+									checked={ fields.wpcom_locked_mode }
+									onChange={ this.props.handleToggle( 'wpcom_locked_mode' ) }
+								/>
+								<FormSettingExplanation>
+									{ translate(
+										'Prevents new posts and pages from being created as well as existing posts and pages from being edited, and closes comments site wide.'
+									) }
+								</FormSettingExplanation>
+							</FormFieldset>
+						) }
+					</form>
+				</Card>
+			</div>
+		);
+	}
+
 	giftOptions() {
 		const {
 			translate,
@@ -871,6 +966,7 @@ export class SiteSettingsFormGeneral extends Component {
 				! isWpcomStagingSite
 					? this.renderLaunchSite()
 					: this.privacySettings() }
+				{ this.enhancedOwnershipSettings() }
 				{ this.builtByUpsell() }
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
@@ -977,6 +1073,8 @@ const connectComponent = connect( ( state ) => {
 		siteIsJetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
 		hasSubscriptionGifting: siteHasFeature( state, siteId, WPCOM_FEATURES_SUBSCRIPTION_GIFTING ),
+		hasLockedMode: siteHasFeature( state, siteId, WPCOM_FEATURES_LOCKED_MODE ),
+		hasLegacyContact: siteHasFeature( state, siteId, WPCOM_FEATURES_LEGACY_CONTACT ),
 		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
 		isSiteOnECommerceTrial: getIsSiteOnECommerceTrial( state, siteId ),
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
@@ -992,6 +1090,8 @@ const getFormSettings = ( settings ) => {
 		timezone_string: '',
 		blog_public: '',
 		wpcom_coming_soon: '',
+		wpcom_legacy_contact: '',
+		wpcom_locked_mode: false,
 		wpcom_public_coming_soon: '',
 		wpcom_gifting_subscription: false,
 		admin_url: '',
@@ -1010,6 +1110,8 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
+		wpcom_legacy_contact: settings.wpcom_legacy_contact,
+		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
 	};

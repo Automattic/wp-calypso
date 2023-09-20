@@ -11,6 +11,7 @@ import {
 	SITE_DOMAINS_REQUEST_FAILURE,
 	DOMAIN_CONTACT_INFO_DISCLOSE,
 	DOMAIN_CONTACT_INFO_REDACT,
+	DOMAIN_MARK_AS_PENDING_MOVE,
 } from 'calypso/state/action-types';
 import { requestSite } from 'calypso/state/sites/actions';
 import { createSiteDomainObject } from './assembler';
@@ -175,6 +176,14 @@ export function discloseDomainContactInfo( siteId, domain ) {
 export function redactDomainContactInfo( siteId, domain ) {
 	return {
 		type: DOMAIN_CONTACT_INFO_REDACT,
+		siteId,
+		domain,
+	};
+}
+
+export function markAsPendingMove( siteId, domain ) {
+	return {
+		type: DOMAIN_MARK_AS_PENDING_MOVE,
 		siteId,
 		domain,
 	};

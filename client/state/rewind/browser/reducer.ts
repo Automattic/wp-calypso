@@ -13,6 +13,7 @@ const initialState: AppState = {
 		checkState: 'unchecked',
 		childrenLoaded: false,
 		children: [],
+		totalItems: 0,
 	},
 };
 
@@ -210,6 +211,7 @@ export default ( state = initialState, { type, payload }: AnyAction ) => {
 					checkState: parentNode.checkState === 'checked' ? 'checked' : 'unchecked',
 					childrenLoaded: false,
 					children: [],
+					totalItems: childPath.totalItems,
 				} );
 			}
 

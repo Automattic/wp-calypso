@@ -95,7 +95,6 @@ export interface ChatAvailability {
 	availability: Availability;
 	is_presales_chat_open: boolean;
 	is_precancellation_chat_open: boolean;
-	no_quick_response_variation: string;
 }
 
 export interface OtherSupportAvailability {

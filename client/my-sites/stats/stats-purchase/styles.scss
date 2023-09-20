@@ -1,6 +1,8 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography.scss";
 
+$button-padding: 8px 32px;
+
 .stats-purchase-page {
 	--font-body: 16px;
 	--jp-black: #000;
@@ -15,7 +17,15 @@
 // Adjust purchase page styling for WPCOM.
 .stats-purchase-page--is-wpcom {
 	.stats-purchase-wizard {
-		font-family: $font-sf-pro-text;
+		.components-button {
+			&.is-primary {
+				background-color: var(--color-accent);
+				border-color: var(--color-accent);
+			}
+			&.is-link {
+				color: var(--color-sidebar-menu-selected-background);
+			}
+		}
 
 		li.stats-purchase-wizard__benefits-item--included,
 		.stats-purchase-wizard__benefits--included li {
@@ -25,7 +35,9 @@
 		.stats-purchase-wizard__card {
 			color: var(--studio-gray-80);
 
-			h1 {
+			// Page heading styles.
+			h1,
+			.components-panel__header h2 {
 				font-family: $font-recoleta;
 				color: var(--studio-gray-100);
 				font-size: $font-headline-small;
@@ -34,9 +46,10 @@
 				line-height: 40px;
 			}
 
-			.stats-purchase-wizard__pricing-value {
+			.components-panel__body-title button {
 				font-family: $font-sf-pro-display;
-				color: var(--studio-gray-100);
+				line-height: 30px;
+				color: var(--studio-gray-80);
 			}
 
 			.stats-purchase-wizard__pricing-cadency {
@@ -46,7 +59,14 @@
 			.button {
 				font-family: $font-sf-pro-text;
 				font-size: $font-body;
-				padding: 8px 32px;
+				padding: $button-padding;
+			}
+		}
+
+		.stats-purchase-wizard__card-title-indicator {
+			&.active {
+				background-color: var(--color-primary);
+				border-color: var(--color-primary);
 			}
 		}
 
@@ -56,10 +76,15 @@
 			.is-link {
 				color: var(--studio-yellow-80);
 			}
+
+			// TODO: improve this as naming it notice--green is not correct for WPCOM
+			&.stats-purchase-wizard__notice--green {
+				background-color: var(--studio-yellow-5);
+			}
 		}
 
-		.stats-purchase-wizard__personal-tos {
-			display: none;
+		.stats-purchase-wizard__card-grid {
+			color: var(--studio-black);
 		}
 
 		.jp-components-pricing-slider__track.jp-components-pricing-slider__track-0 {
@@ -86,6 +111,8 @@
 }
 
 .stats-purchase-wizard {
+	// Basic font family for all the text regardless of the site type.
+	font-family: $font-sf-pro-text;
 	display: flex;
 	justify-content: center;
 
@@ -142,15 +169,13 @@
 
 	.stats-purchase-wizard__average-price {
 		font-size: $font-body-small;
-		margin-bottom: 3em;
+		margin-bottom: 32px;
 		color: var(--studio-gray-80);
 		text-align: center;
 	}
 
 	.stats-purchase-wizard__benefits {
-		ul {
-			margin: 0 0 40px;
-		}
+		margin-bottom: 32px;
 
 		li {
 			margin-bottom: 8px;
@@ -206,29 +231,41 @@
 	}
 
 	.stats-purchase-wizard__pricing {
-		margin-bottom: 1.5rem;
+		margin: 32px 0;
 
 		.stats-purchase-wizard__pricing-value {
 			display: flex;
 			align-items: flex-start;
 			gap: 2px;
-			margin-bottom: -1em;
+			font-family: $font-sf-pro-display;
+			color: var(--studio-gray-100);
 		}
 
 		.stats-purchase-wizard__pricing-currency {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 24px;
+			font-size: $font-title-medium;
 			line-height: 60px;
+			line-height: 24px;
 		}
 
 		.stats-purchase-wizard__pricing-amount {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 54px;
+			font-size: $font-headline-large;
 			font-weight: 700;
+			line-height: 40px;
 		}
 
 		.stats-purchase-wizard__pricing-cadency {
+			font-size: $font-body-small;
 			color: var(--studio-gray-40);
+			margin-top: 12px;
+		}
+
+		sup {
+			color: var(--studio-black);
+			vertical-align: super;
+			font-size: $font-title-small;
+			font-style: normal;
+			font-weight: 700;
+			line-height: 20px;
 		}
 	}
 
@@ -236,6 +273,14 @@
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		grid-gap: 16px 32px;
+
+		p {
+			margin-bottom: 0;
+		}
+
+		button {
+			margin-top: 8px;
+		}
 	}
 
 	.stats-purchase-wizard__card-panel {
@@ -243,12 +288,6 @@
 
 		> div {
 			border: 0;
-		}
-
-		h2 {
-			font-weight: 700;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 36px;
 		}
 
 		.components-panel__body-title {
@@ -268,7 +307,7 @@
 
 	.stats-purchase-wizard__card-grid-action--left,
 	.stats-purchase-wizard__card-grid-action--right {
-		.components-button {
+		button {
 			width: 100%;
 			justify-content: center;
 		}
@@ -294,6 +333,11 @@
 	}
 
 	.stats-purchase-wizard__card-panel-title {
+		// Hide the remaining panel title after the opened one.
+		& + .stats-purchase-wizard__card-panel-title:not(.is-opened) {
+			display: none;
+		}
+
 		h2 > button {
 			cursor: auto;
 
@@ -320,7 +364,7 @@
 			transition: all 0.25s ease-out;
 			font-size: var(--font-body);
 			line-height: 24px;
-			padding: 8px 12px;
+			padding: $button-padding;
 			height: auto;
 
 			&:hover,
@@ -341,7 +385,7 @@
 			border-radius: 4px;
 			font-size: var(--font-body);
 			line-height: 24px;
-			padding: 8px 12px;
+			padding: $button-padding;
 			height: auto;
 		}
 
@@ -359,14 +403,25 @@
 		}
 
 		&.is-opened {
+			padding: 0 16px;
+
 			& > .components-panel__body-title {
-				margin-bottom: 8px;
+				margin-top: 0;
+				margin-bottom: 12px;
 			}
 		}
 	}
 
+	.components-panel__header {
+		margin-bottom: 28px;
+	}
+
+	.components-panel__row {
+		padding-left: 35px;
+	}
+
 	.components-panel__body-toggle.components-button {
-		padding: 16px;
+		padding: 12px 16px;
 	}
 
 	.components-panel__arrow {
@@ -410,8 +465,8 @@
 
 .stats-purchase-wizard--single {
 	h1 {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 36px;
+		font-family: $font-sf-pro-display;
+		font-size: $font-headline-small;
 		font-weight: 700;
 		line-height: 40px;
 		margin-bottom: 24px;

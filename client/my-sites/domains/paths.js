@@ -145,6 +145,13 @@ export function domainManagementAllEditSelectedContactInfo() {
 
 /**
  * @param {string} siteName
+ */
+export function domainManagementEditSelectedContactInfo( siteName ) {
+	return domainManagementRoot() + '/edit-selected-contact-info/' + siteName;
+}
+
+/**
+ * @param {string} siteName
  * @param {string} domainName
  * @param {string?} relativeTo
  */

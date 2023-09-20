@@ -9,6 +9,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
@@ -79,6 +80,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
 		requestRestore();
+
+		// Track the restore confirmation event.
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_confirm' ) );
 	}, [ dispatch, setUserHasRequestedRestore, requestRestore ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );

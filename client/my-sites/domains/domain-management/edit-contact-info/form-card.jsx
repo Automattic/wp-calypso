@@ -25,9 +25,10 @@ import {
 	getWhoisSaveError,
 	getWhoisSaveSuccess,
 } from 'calypso/state/domains/management/selectors';
-import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { createUserEmailPendingUpdate } from 'calypso/state/user-settings/thunks/create-user-email-pending-update';
 import getPreviousPath from '../../../../state/selectors/get-previous-path';
 
 import './style.scss';
@@ -46,6 +47,8 @@ class EditContactInfoFormCard extends Component {
 		showContactInfoNote: PropTypes.bool,
 		backUrl: PropTypes.string.isRequired,
 		onSubmitButtonClick: PropTypes.func, // Callback can return "cancel" to cancel the default form handling
+		bulkEdit: PropTypes.bool,
+		forceShowTransferLockOptOut: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -147,13 +150,13 @@ class EditContactInfoFormCard extends Component {
 	handleFormSubmittingComplete = () => this.setState( { formSubmitting: false } );
 
 	renderTransferLockOptOut() {
-		const { domainRegistrationAgreementUrl, translate } = this.props;
+		const { domainRegistrationAgreementUrl, translate, forceShowTransferLockOptOut } = this.props;
 		const registrationDatePlus60Days = moment
 			.utc( this.props.selectedDomain.registrationDate )
 			.add( 60, 'days' );
 		const isLocked = moment.utc().isSameOrBefore( registrationDatePlus60Days );
 
-		if ( ! isLocked ) {
+		if ( forceShowTransferLockOptOut || ! isLocked ) {
 			return (
 				<>
 					<TransferLockOptOutForm
@@ -290,41 +293,7 @@ class EditContactInfoFormCard extends Component {
 			}
 		);
 
-		const { email } = newContactDetails;
-		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
-			wp.me()
-				.settings()
-				.update( { user_email: email } )
-				.then( ( data ) => {
-					if ( data.user_email_change_pending ) {
-						this.props.infoNotice(
-							this.props.translate(
-								'There is a pending change of your WordPress.com email to %(newEmail)s. Please check your inbox for a confirmation link.',
-								{
-									args: { newEmail: data.new_user_email },
-								}
-							),
-							{
-								showDismiss: true,
-								isPersistent: true,
-								duration: null,
-							}
-						);
-					}
-				} )
-				.catch( () => {
-					this.props.errorNotice(
-						this.props.translate(
-							'There was a problem updating your WordPress.com Account email.'
-						),
-						{
-							showDismiss: true,
-							isPersistent: true,
-							duration: null,
-						}
-					);
-				} );
-		}
+		this.updateWpcomEmail( newContactDetails, updateWpcomEmail );
 	};
 
 	onWhoisUpdateSuccess = () => {
@@ -422,6 +391,7 @@ class EditContactInfoFormCard extends Component {
 				this.state.transferLock,
 				this.state.updateWpcomEmail
 			);
+			this.updateWpcomEmail( newContactDetails, this.state.updateWpcomEmail );
 			if ( result === 'cancel' ) {
 				return;
 			}
@@ -449,6 +419,9 @@ class EditContactInfoFormCard extends Component {
 	};
 
 	getIsFieldDisabled = ( name ) => {
+		if ( this.props.bulkEdit ) {
+			return false;
+		}
 		const unmodifiableFields = get(
 			this.props,
 			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
@@ -456,6 +429,13 @@ class EditContactInfoFormCard extends Component {
 		);
 		return this.state.formSubmitting || includes( unmodifiableFields, snakeCase( name ) );
 	};
+
+	updateWpcomEmail( newContactDetails, updateWpcomEmail ) {
+		const { email } = newContactDetails;
+		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
+			this.props.createUserEmailPendingUpdate( email );
+		}
+	}
 
 	shouldDisableSubmitButton() {
 		const { haveContactDetailsChanged, formSubmitting } = this.state;
@@ -469,7 +449,8 @@ class EditContactInfoFormCard extends Component {
 	}
 
 	render() {
-		const { selectedDomain, showContactInfoNote, translate } = this.props;
+		const { selectedDomain, showContactInfoNote, translate, forceShowTransferLockOptOut } =
+			this.props;
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
 		const whoisRegistrantData = this.getContactFormFieldValues();
 
@@ -504,7 +485,8 @@ class EditContactInfoFormCard extends Component {
 						updateWpcomEmailCheckboxDisabled={ updateWpcomEmailCheckboxDisabled }
 						onUpdateWpcomEmailCheckboxChange={ this.handleUpdateWpcomEmailCheckboxChange }
 					>
-						{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
+						{ ( forceShowTransferLockOptOut || canUseDesignatedAgent ) &&
+							this.renderTransferLockOptOut() }
 					</ContactDetailsFormFields>
 				</form>
 				{ this.renderDialog() }
@@ -528,9 +510,9 @@ export default connect(
 	{
 		errorNotice,
 		fetchSiteDomains,
-		infoNotice,
 		requestWhois,
 		saveWhois,
 		successNotice,
+		createUserEmailPendingUpdate,
 	}
 )( localize( EditContactInfoFormCard ) );

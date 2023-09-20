@@ -40,7 +40,7 @@ export class LoginLinks extends Component {
 		twoFactorAuthType: PropTypes.string,
 		usernameOrEmail: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
-		isGravatar: PropTypes.bool,
+		isGravPoweredClient: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -70,14 +70,17 @@ export class LoginLinks extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
 
-		const { isGravatar, query } = this.props;
+		const { isGravPoweredClient, query } = this.props;
 
 		page(
 			login( {
 				twoFactorAuthType: 'backup',
 				// Forward the "client_id" and "redirect_to" query parameters to the backup page
-				// This ensures that the signup link on the page functions properly for Gravatar users.
-				...( isGravatar && { oauth2ClientId: query?.client_id, redirectTo: query?.redirect_to } ),
+				// This ensures that the signup link on the page functions properly for Gravatar powered client's users.
+				...( isGravPoweredClient && {
+					oauth2ClientId: query?.client_id,
+					redirectTo: query?.redirect_to,
+				} ),
 			} )
 		);
 	};

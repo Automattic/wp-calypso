@@ -101,7 +101,7 @@ class DomainRow extends PureComponent {
 	renderSite() {
 		const { domain } = this.props;
 		if ( domain.isDomainOnlySite ) {
-			return null;
+			return <div className="domain-row__site-cell"></div>;
 		}
 
 		return (
@@ -207,6 +207,10 @@ class DomainRow extends PureComponent {
 		const { domain, translate } = this.props;
 
 		if ( ! [ domainTypes.MAPPED, domainTypes.REGISTERED ].includes( domain.type ) ) {
+			return null;
+		}
+
+		if ( domain.isMoveToNewSitePending ) {
 			return null;
 		}
 
@@ -342,7 +346,7 @@ class DomainRow extends PureComponent {
 			return null;
 		}
 
-		if ( ! showDomainDetails ) {
+		if ( ! showDomainDetails || ( domain && domain.isMoveToNewSitePending ) ) {
 			return <div className="domain-row__action-cell"></div>;
 		}
 

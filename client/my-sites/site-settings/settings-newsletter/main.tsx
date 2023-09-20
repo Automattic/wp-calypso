@@ -1,7 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
+import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import { useSelector } from 'calypso/state';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import wrapSettingsForm from '../wrap-settings-form';
 
@@ -62,21 +68,42 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )(
 		settings,
 		updateFields,
 	}: NewsletterSettingsFormProps ) => {
-		const disabled = isRequestingSettings || isSavingSettings;
+		const siteId = useSelector( getSelectedSiteId );
+
+		const isSubscriptionModuleInactive = useSelector( ( state ) => {
+			if ( ! siteId ) {
+				return null;
+			}
+
+			const isJetpackSite = isJetpackSiteSelector( state, siteId, {
+				treatAtomicAsJetpackSite: false,
+			} );
+
+			return (
+				Boolean( isJetpackSite ) &&
+				isJetpackModuleActive( state, siteId, 'subscriptions' ) === false
+			);
+		} );
+
+		const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
 		const savedSubscriptionOptions = settings?.subscription_options;
+
 		return (
-			<form onSubmit={ handleSubmitForm }>
-				<NewsletterSettingsSection
-					fields={ fields }
-					handleAutosavingToggle={ handleAutosavingToggle }
-					handleToggle={ handleToggle }
-					handleSubmitForm={ handleSubmitForm }
-					disabled={ disabled }
-					isSavingSettings={ isSavingSettings }
-					savedSubscriptionOptions={ savedSubscriptionOptions }
-					updateFields={ updateFields }
-				/>
-			</form>
+			<>
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
+				<form onSubmit={ handleSubmitForm }>
+					<NewsletterSettingsSection
+						fields={ fields }
+						handleAutosavingToggle={ handleAutosavingToggle }
+						handleToggle={ handleToggle }
+						handleSubmitForm={ handleSubmitForm }
+						disabled={ disabled }
+						isSavingSettings={ isSavingSettings }
+						savedSubscriptionOptions={ savedSubscriptionOptions }
+						updateFields={ updateFields }
+					/>
+				</form>
+			</>
 		);
 	}
 );
@@ -88,6 +115,7 @@ const NewsletterSettings = () => {
 		<Main>
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
 			<FormattedHeader brandFont headerText={ translate( 'Newsletter Settings' ) } align="left" />
+			<SubscriptionsModuleBanner />
 			<NewsletterSettingsForm />
 		</Main>
 	);

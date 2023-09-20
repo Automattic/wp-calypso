@@ -7,7 +7,6 @@ const defaultCheckoutContext: CheckoutContextInterface = {
 	setDisabledPaymentMethodIds: noop,
 	paymentMethodId: null,
 	setPaymentMethodId: noop,
-	transactionStatusManager: null,
 	paymentProcessors: {},
 };
 

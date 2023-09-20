@@ -15,6 +15,7 @@ import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_UPDATE,
 	SITES_RECEIVE,
+	ODYSSEY_SITE_RECEIVE,
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
@@ -40,7 +41,12 @@ import { sitesSchema, hasAllSitesListSchema } from './schema';
  * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
-	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
+	if (
+		state === null &&
+		action.type !== SITE_RECEIVE &&
+		action.type !== SITES_RECEIVE &&
+		action.type !== ODYSSEY_SITE_RECEIVE
+	) {
 		return null;
 	}
 	switch ( action.type ) {
@@ -82,6 +88,35 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 					return memo;
 				},
 				initialNextState || {}
+			);
+		}
+
+		case ODYSSEY_SITE_RECEIVE: {
+			// Treat the site info from WPCOM as default values for the site, and the info from Odyssey as the source of truth.
+			// This is because the site info from WPCOM is more complete, but the info from Odyssey is more up-to-date.
+			// For example, `options.is_commercial` is not present in the Odyssey site info, but is a remote option value stored in WPCOM.
+			return reduce(
+				[ action.site ],
+				( memo, site ) => {
+					// Bypass if site object hasn't changed
+					if ( isEqual( memo[ site.ID ], site ) ) {
+						return memo;
+					}
+
+					// Avoid mutating state
+					if ( memo === state ) {
+						memo = { ...state };
+					}
+
+					memo[ site.ID ] = {
+						...site,
+						...memo[ site.ID ],
+						options: { ...site?.options, ...memo[ site.ID ]?.options },
+						capabilities: { ...site?.capabilities, ...memo[ site.ID ]?.capabilities },
+					};
+					return memo;
+				},
+				state
 			);
 		}
 

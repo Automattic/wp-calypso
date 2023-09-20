@@ -1,3 +1,4 @@
+import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -5,6 +6,7 @@ import React, { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
@@ -71,25 +73,18 @@ const ProductCard = ( {
 	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
 
 	// Default titles for no site type selected.
-	let typeSelectionScreenLabel = translate( 'What type of site is %(site)s?', {
+	const typeSelectionScreenLabel = translate( 'Select your site type', {
 		args: {
 			site: siteSlug,
 		},
 	} );
 	let purchaseScreenLabel = personalProductTitle;
 
-	if ( ! siteSlug ) {
-		// Default to a generic label if no site slug is provided.
-		typeSelectionScreenLabel = translate( 'Which type is your site?' );
-	}
-
 	if ( siteType === TYPE_PERSONAL ) {
-		typeSelectionScreenLabel = personalLabel;
 		purchaseScreenLabel = personalProductTitle;
 	}
 
 	if ( siteType === TYPE_COMMERCIAL ) {
-		typeSelectionScreenLabel = commercialLabel;
 		purchaseScreenLabel = commercialProductTitle;
 	}
 
@@ -146,6 +141,10 @@ const ProductCard = ( {
 		/>
 	);
 
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	// The button of @automattic/components has built-in color scheme support for Calypso.
+	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
@@ -184,56 +183,68 @@ const ProductCard = ( {
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--left` }>
-											<Button variant="primary" onClick={ setPersonalSite }>
+											<ButtonComponent
+												variant="primary"
+												primary={ isWPCOMSite ? true : undefined }
+												onClick={ setPersonalSite }
+											>
 												{ personalLabel }
-											</Button>
+											</ButtonComponent>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--right` }>
-											<Button variant="primary" onClick={ setCommercialSite }>
+											<ButtonComponent
+												variant="primary"
+												primary={ isWPCOMSite ? true : undefined }
+												onClick={ setCommercialSite }
+											>
 												{ commercialLabel }
-											</Button>
+											</ButtonComponent>
 										</div>
 									</div>
 								</PanelRow>
 							</PanelBody>
-							<PanelBody
-								title={ secondStepTitleNode }
-								opened={ wizardStep === SCREEN_PURCHASE }
-								className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title` ) }
-							>
-								<PanelRow>
-									{ siteType === TYPE_PERSONAL ? (
-										<PersonalPurchase
-											subscriptionValue={ subscriptionValue }
-											setSubscriptionValue={ setSubscriptionValue }
-											defaultStartingValue={ defaultStartingValue }
-											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
-											currencyCode={ pwywProduct?.currency_code }
-											siteSlug={ siteSlug }
-											sliderSettings={ {
-												minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
-												sliderStepPrice,
-												maxSliderPrice,
-												uiEmojiHeartTier,
-												uiImageCelebrationTier,
-											} }
-											adminUrl={ adminUrl }
-											redirectUri={ redirectUri }
-											from={ from }
-										/>
-									) : (
-										<CommercialPurchase
-											planValue={ commercialProduct?.cost }
-											currencyCode={ commercialProduct?.currency_code }
-											siteSlug={ siteSlug }
-											commercialProduct={ commercialProduct }
-											adminUrl={ adminUrl }
-											redirectUri={ redirectUri }
-											from={ from }
-										/>
-									) }
-								</PanelRow>
-							</PanelBody>
+							{ siteType && wizardStep === SCREEN_PURCHASE && (
+								<PanelBody
+									title={ secondStepTitleNode }
+									opened={ wizardStep === SCREEN_PURCHASE }
+									className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title` ) }
+								>
+									<PanelRow>
+										{ siteType === TYPE_PERSONAL ? (
+											<PersonalPurchase
+												subscriptionValue={ subscriptionValue }
+												setSubscriptionValue={ setSubscriptionValue }
+												defaultStartingValue={ defaultStartingValue }
+												handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
+												currencyCode={ pwywProduct?.currency_code }
+												siteId={ siteId }
+												siteSlug={ siteSlug }
+												sliderSettings={ {
+													minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
+													sliderStepPrice,
+													maxSliderPrice,
+													uiEmojiHeartTier,
+													uiImageCelebrationTier,
+												} }
+												adminUrl={ adminUrl }
+												redirectUri={ redirectUri }
+												from={ from }
+											/>
+										) : (
+											<CommercialPurchase
+												planValue={ commercialProduct?.cost }
+												currencyCode={ commercialProduct?.currency_code }
+												siteId={ siteId }
+												siteSlug={ siteSlug }
+												commercialProduct={ commercialProduct }
+												adminUrl={ adminUrl }
+												redirectUri={ redirectUri }
+												from={ from }
+											/>
+										) }
+									</PanelRow>
+								</PanelBody>
+							) }
 						</Panel>
 					</div>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>

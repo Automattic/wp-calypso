@@ -12,3 +12,7 @@ export type Product = {
 	type?: string;
 	is_editable?: boolean;
 };
+
+export type Query = {
+	[ key: string ]: string;
+};

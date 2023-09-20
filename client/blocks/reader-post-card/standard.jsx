@@ -11,13 +11,6 @@ const StandardPost = ( { post, children, expandCard, postKey, isExpanded, site }
 
 	return (
 		<div className="reader-post-card__post">
-			<FeaturedAsset
-				post={ post }
-				canonicalMedia={ post.canonical_media }
-				postUrl={ post.URL }
-				onVideoThumbnailClick={ onVideoThumbnailClick }
-				isVideoExpanded={ isExpanded }
-			/>
 			<div className="reader-post-card__post-details">
 				<AutoDirection>
 					<h2 className="reader-post-card__title">
@@ -27,8 +20,15 @@ const StandardPost = ( { post, children, expandCard, postKey, isExpanded, site }
 					</h2>
 				</AutoDirection>
 				<ReaderExcerpt post={ post } />
-				{ children }
 			</div>
+			<FeaturedAsset
+				post={ post }
+				canonicalMedia={ post.canonical_media }
+				postUrl={ post.URL }
+				onVideoThumbnailClick={ onVideoThumbnailClick }
+				isVideoExpanded={ isExpanded }
+			/>
+			<div className="reader-post-card__post-details">{ children }</div>
 		</div>
 	);
 };

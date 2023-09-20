@@ -3,6 +3,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 
 export interface DomainData {
 	primary_domain: boolean;
+	blog_name: string;
 	blog_id: number;
 	subscription_id: string;
 	can_manage_dns_records: boolean;
@@ -25,11 +26,11 @@ export interface DomainData {
 	domain: string;
 	domain_notice_states: unknown;
 	supports_domain_connect: unknown;
-	email_forwards_count: 0;
+	email_forwards_count: number;
 	expiry: string;
 	expiry_soon: boolean;
 	expired: boolean;
-	auto_renewing: 0;
+	auto_renewing: boolean;
 	pending_registration: boolean;
 	pending_registration_time: string;
 	has_registration: boolean;
@@ -53,10 +54,12 @@ export interface DomainData {
 	google_apps_subscription: {
 		status: string;
 		is_eligible_for_introductory_offer: boolean;
+		total_user_count: number;
 	};
 	titan_mail_subscription: {
 		status: string;
 		is_eligible_for_introductory_offer: boolean;
+		maximum_mailbox_count: number;
 	};
 	pending_whois_update: boolean;
 	tld_maintenance_end_time: 0;
@@ -78,7 +81,14 @@ export interface DomainData {
 	aftermarket_auction_end: string | null;
 	nominet_pending_contact_verification_request: boolean;
 	nominet_domain_suspended: boolean;
-	transfer_status: unknown;
+	transfer_status:
+		| 'pending_owner'
+		| 'pending_registry'
+		| 'cancelled'
+		| 'completed'
+		| 'pending_start'
+		| 'pending_async'
+		| null;
 	last_transfer_error: string;
 	has_private_registration: boolean;
 	is_pending_icann_verification: boolean;
@@ -123,7 +133,9 @@ export function getSiteDomainsQueryObject< TError = unknown, TData = SiteDomains
 				path: `/sites/${ siteIdOrSlug }/domains`,
 				apiVersion: '1.2',
 			} ),
+		staleTime: 1000 * 60 * 5, // 5 minutes
 		...options,
+		meta: { persist: false, ...options.meta },
 		enabled: Boolean( siteIdOrSlug ) && options.enabled,
 	};
 }

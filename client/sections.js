@@ -249,6 +249,16 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
+		name: 'site-profiler',
+		paths: [ '/site-profiler' ],
+		module: 'calypso/site-profiler',
+		enableLoggedOut: true,
+		group: 'site-profiler',
+		isomorphic: true,
+		title: 'Site Profiler',
+		trackLoadPerformance: true,
+	},
+	{
 		name: 'domains',
 		paths: [ '/domains' ],
 		module: 'calypso/my-sites/domains',
@@ -263,6 +273,12 @@ const sections = [
 	{
 		name: 'email',
 		paths: [ '/email' ],
+		module: 'calypso/my-sites/email',
+		group: 'sites',
+	},
+	{
+		name: 'mailboxes',
+		paths: [ '/mailboxes' ],
 		module: 'calypso/my-sites/email',
 		group: 'sites',
 	},

@@ -2,6 +2,10 @@
 @import "@wordpress/base-styles/mixins";
 
 .payment-method-add {
+	&__wrapper {
+		margin-inline: 0;
+	}
+
 	&__wrapper .card-heading {
 		display: inline-block;
 		margin-top: 1rem;

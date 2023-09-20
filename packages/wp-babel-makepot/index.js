@@ -1,5 +1,5 @@
 const babel = require( '@babel/core' );
-const defaultPreset = require( './presets' ).default;
+const presets = require( './presets' );
 
 /**
  * Merge options object with existing babel-i18n plugin options.
@@ -20,7 +20,8 @@ const mergeOptions = ( preset, options = {} ) => {
 
 module.exports = ( filepath, options = {} ) => {
 	try {
-		return babel.transformFileSync( filepath, mergeOptions( defaultPreset, options ) );
+		const { preset = 'default', ...restOptions } = options;
+		return babel.transformFileSync( filepath, mergeOptions( presets[ preset ], restOptions ) );
 	} catch ( error ) {
 		console.error( filepath, error );
 	}

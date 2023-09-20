@@ -177,6 +177,14 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		);
 	};
 
+	const resetRecipe = () => {
+		setHeader( null );
+		setSections( [] );
+		setFooter( null );
+		setColorVariation( null );
+		setFontVariation( null );
+	};
+
 	return {
 		header,
 		footer,
@@ -188,6 +196,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		setSections,
 		setColorVariation,
 		setFontVariation,
+		resetRecipe,
 	};
 };
 

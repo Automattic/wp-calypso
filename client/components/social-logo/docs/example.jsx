@@ -47,6 +47,7 @@ const logos = [
 	'whatsapp',
 	'woocommerce',
 	'wordpress',
+	'x',
 	'xanga',
 	'youtube',
 ];

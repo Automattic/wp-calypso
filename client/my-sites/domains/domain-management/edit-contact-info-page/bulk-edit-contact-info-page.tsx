@@ -9,10 +9,12 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useQueries } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import page from 'page';
 import { useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QueryWhois from 'calypso/components/data/query-whois';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import ExternalLink from 'calypso/components/external-link';
 import Main from 'calypso/components/main';
@@ -25,13 +27,14 @@ import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { domainManagementList, isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isRequestingWhoisSelector from 'calypso/state/selectors/is-requesting-whois';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { IAppState } from 'calypso/state/types';
+import { createBulkAction, fetchSiteDomains } from '../domains-table-fetch-functions';
 import EditContactInfoFormCard from '../edit-contact-info/form-card';
 import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
 import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
-
 import './style.scss';
 
 interface BulkEditContactInfoPageProps {
@@ -47,7 +50,15 @@ export default function BulkEditContactInfoPage( {
 
 	const selectedDomainsArg = getQueryArg( '?' + context.querystring, 'selected' );
 
-	const { data: partialDomainsData } = useAllDomainsQuery();
+	// If there's no previous path it means we've refreshed since navigating from
+	// the domains table. Previously we relied on the domains data fetched by the table
+	// but since the user refreshed we should fetch the domains again.
+	const hasRefreshedPage = ! useSelector( getPreviousPath );
+
+	const { data: partialDomainsData } = useAllDomainsQuery(
+		{ no_wpcom: true },
+		{ refetchOnMount: hasRefreshedPage }
+	);
 
 	const allSiteIds =
 		Array.isArray( selectedDomainsArg ) && partialDomainsData
@@ -61,13 +72,37 @@ export default function BulkEditContactInfoPage( {
 			: [];
 
 	const allSiteDomains = useQueries( {
-		queries: allSiteIds.map( ( siteId ) => getSiteDomainsQueryObject( siteId ) ),
+		queries: allSiteIds.map( ( siteId ) =>
+			getSiteDomainsQueryObject( siteId, { queryFn: () => fetchSiteDomains( siteId ) } )
+		),
 	} ).flatMap( ( { data } ) => data?.domains || [] );
 
 	const selectedDomains = Array.isArray( selectedDomainsArg )
 		? allSiteDomains.filter( ( { domain } ) => selectedDomainsArg.includes( domain ) )
 		: null;
 	const firstSelectedDomain = selectedDomains?.[ 0 ];
+
+	// If all domains have the same registration agreement then we can link directly to it. Otherwise we
+	// use `''` and the form will fall back to a support page which links to all the different agreements.
+	const allDomainsShareAgreementUrl = selectedDomains?.every(
+		( domain ) =>
+			domain.domain_registration_agreement_url ===
+			firstSelectedDomain?.domain_registration_agreement_url
+	);
+	const domainRegistrationAgreementUrl =
+		( allDomainsShareAgreementUrl && firstSelectedDomain?.domain_registration_agreement_url ) || '';
+
+	const anyDomainSupportsTransferLockOptOut =
+		selectedDomains?.some( ( domain ) => {
+			if ( ! domain.transfer_lock_on_whois_update_optional ) {
+				return false;
+			}
+
+			const registrationDatePlus60Days = moment.utc( domain.registration_date ).add( 60, 'days' );
+			const isLocked = moment.utc().isSameOrBefore( registrationDatePlus60Days );
+
+			return ! isLocked;
+		} ) ?? false;
 
 	const [ showAllSelectedDomains, setShowAllSelectedDomains ] = useState( false );
 	const domainListElementId = useId();
@@ -79,7 +114,7 @@ export default function BulkEditContactInfoPage( {
 
 	const currentRoute = useSelector( getCurrentRoute );
 	const isRequestingWhois = useSelector( ( state: IAppState ) =>
-		firstSelectedDomain ? isRequestingWhoisSelector( state, firstSelectedDomain.domain ) : false
+		selectedDomains?.some( ( domain ) => isRequestingWhoisSelector( state, domain.domain ) )
 	);
 
 	const isDataLoading = () =>
@@ -103,12 +138,12 @@ export default function BulkEditContactInfoPage( {
 
 	const { updateContactInfo } = useDomainsBulkActionsMutation( {
 		onSuccess: goToDomainsList,
+		mutationFn: createBulkAction,
 	} );
 
 	const handleSubmitButtonClick = (
 		newContactDetails: Record< string, string >,
 		transferLock: boolean
-		// updateWpcomEmail: boolean
 	) => {
 		const domainNames = selectedDomains?.map( ( domain ) => domain.domain );
 
@@ -119,17 +154,29 @@ export default function BulkEditContactInfoPage( {
 		return 'cancel';
 	};
 
-	const renderHeader = () => {
-		if ( ! selectedSite ) {
-			return null;
+	const getFieldMapping = ( field: string ) => {
+		const fieldMapping: Record< string, string > = {
+			first_name: translate( 'First name' ),
+			last_name: translate( 'Last name' ),
+			organization: translate( 'Organization' ),
+			country_code: translate( 'Country' ),
+		};
+
+		if ( fieldMapping[ field ] ) {
+			return fieldMapping[ field ];
 		}
 
+		// Unrecognized field so we don't have a translation, but fallback to something readable in English at least.
+		return field.replace( /_/, ' ' ).replace( /^(.)/, ( match ) => match.toUpperCase() );
+	};
+
+	const renderHeader = () => {
 		const items = [
 			{
 				label: isUnderDomainManagementAll( currentRoute )
 					? translate( 'All Domains' )
 					: translate( 'Domains' ),
-				backLink: domainsListPath,
+				href: domainsListPath,
 			},
 			{
 				label: translate( 'Edit contact infomation' ),
@@ -156,9 +203,19 @@ export default function BulkEditContactInfoPage( {
 		);
 
 		if ( firstDomainUserCanNotManage ) {
+			// domains passed to NonOwnerCard expects name to be on the domain to properly show the message
+			// otherwise nothing is rendered.
+			const nonOwnerDomains = allSiteDomains?.map( ( domain ) => {
+				return {
+					name: domain.domain,
+					type: domain.type,
+					owner: domain.owner,
+				};
+			} );
+
 			return (
 				<NonOwnerCard
-					domains={ partialDomainsData }
+					domains={ nonOwnerDomains }
 					selectedDomainName={ firstDomainUserCanNotManage.domain }
 				/>
 			);
@@ -196,7 +253,8 @@ export default function BulkEditContactInfoPage( {
 
 		return (
 			<EditContactInfoFormCard
-				domainRegistrationAgreementUrl={ firstSelectedDomain.domain_registration_agreement_url }
+				forceShowTransferLockOptOut={ anyDomainSupportsTransferLockOptOut }
+				domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
 				selectedDomain={ getSelectedDomain( {
 					domains: reduxDomains,
 					selectedDomainName: firstSelectedDomain.domain,
@@ -205,6 +263,7 @@ export default function BulkEditContactInfoPage( {
 				showContactInfoNote={ false }
 				backUrl={ domainsListPath }
 				onSubmitButtonClick={ handleSubmitButtonClick }
+				bulkEdit={ true }
 			/>
 		);
 	};
@@ -226,6 +285,11 @@ export default function BulkEditContactInfoPage( {
 				icon={ false }
 			/>
 		);
+
+		const domainsWithUnmodifiableContactInfo =
+			selectedDomains &&
+			selectedDomains.length > 0 &&
+			selectedDomains.filter( ( domain ) => domain.whois_update_unmodifiable_fields.length > 0 );
 
 		return (
 			<>
@@ -272,6 +336,32 @@ export default function BulkEditContactInfoPage( {
 						) }
 					</div>
 				) }
+				{ domainsWithUnmodifiableContactInfo && domainsWithUnmodifiableContactInfo.length > 0 && (
+					<div
+						className="edit-contact-info-page__sidebar"
+						style={ { marginBottom: '8px', background: 'transparent' } }
+					>
+						<div className="edit-contact-info-page__sidebar-title">
+							<p>
+								<strong>{ translate( 'The following domain fields will not be updated:' ) }</strong>
+							</p>
+						</div>
+						<div className="edit-contact-info-page__sidebar-content">
+							<ul style={ { listStyleType: 'none', margin: 0 } }>
+								{ domainsWithUnmodifiableContactInfo.map( ( domain ) => (
+									<li key={ domain.domain }>
+										<strong>{ domain.domain }</strong>
+										<ul style={ { listStylePosition: 'inside' } }>
+											{ domain.whois_update_unmodifiable_fields.map( ( field: string ) => (
+												<li key={ field }>{ getFieldMapping( field ) }</li>
+											) ) }
+										</ul>
+									</li>
+								) ) }
+							</ul>
+						</div>
+					</div>
+				) }
 				<div className="edit-contact-info-page__sidebar">
 					<div className="edit-contact-info-page__sidebar-title">
 						<p>
@@ -309,6 +399,9 @@ export default function BulkEditContactInfoPage( {
 		return (
 			<>
 				{ firstSelectedDomain && <QuerySiteDomains siteId={ firstSelectedDomain.blog_id } /> }
+				{ selectedDomains?.map( ( domain ) => (
+					<QueryWhois domain={ domain.domain } key={ domain.domain } />
+				) ) }
 				<DomainMainPlaceholder goBack={ goToDomainsList } />
 			</>
 		);

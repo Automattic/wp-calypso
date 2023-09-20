@@ -11,7 +11,7 @@ import './style.scss';
 export const tabs = [
 	{ name: 'metrics', title: __( 'Metrics' ) },
 	{ name: 'php', title: __( 'PHP Logs' ) },
-	{ name: 'web', title: __( 'Webserver Logs' ) },
+	{ name: 'web', title: __( 'Web Server Logs' ) },
 ];
 
 interface SiteMonitoringTabPanelProps {
