@@ -1,4 +1,5 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { ReactNode } from 'react';
 import { DomainsTable as InternalDomainsTable, DomainsTablePropsNoChildren } from './domains-table';
 import { DomainsTableBody } from './domains-table-body';
 import { DomainsTableBulkUpdateNotice } from './domains-table-bulk-update-notice';
@@ -7,11 +8,12 @@ import { DomainsTableMobileCards } from './domains-table-mobile-cards';
 import { DomainsTableToolbar } from './domains-table-toolbar';
 import './style.scss';
 
-export function DomainsTable( props: DomainsTablePropsNoChildren ) {
+export function DomainsTable( props: DomainsTablePropsNoChildren & { footer?: ReactNode } ) {
 	const isMobile = useMobileBreakpoint();
+	const { footer, ...allProps } = props;
 
 	return (
-		<InternalDomainsTable { ...props }>
+		<InternalDomainsTable { ...allProps }>
 			<DomainsTableBulkUpdateNotice />
 			<DomainsTableToolbar />
 			{ isMobile ? (
@@ -22,6 +24,7 @@ export function DomainsTable( props: DomainsTablePropsNoChildren ) {
 					<DomainsTableBody />
 				</table>
 			) }
+			{ props.footer }
 		</InternalDomainsTable>
 	);
 }

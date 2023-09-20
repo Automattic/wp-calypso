@@ -15,7 +15,7 @@ interface SetAutoRenewVariables {
 	autoRenew: boolean;
 }
 
-type BulkUpdateVariables = UpdateContactInfoVariables | SetAutoRenewVariables;
+export type BulkUpdateVariables = UpdateContactInfoVariables | SetAutoRenewVariables;
 
 export function useDomainsBulkActionsMutation<
 	TData = unknown,

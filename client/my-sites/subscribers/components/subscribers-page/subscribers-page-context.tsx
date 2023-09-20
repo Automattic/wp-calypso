@@ -6,10 +6,11 @@ import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { successNotice } from 'calypso/state/notices/actions';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
+import useManySubsSite from '../../hooks/use-many-subs-site';
 import { useSubscribersQuery } from '../../queries';
 
 type SubscribersPageProviderProps = {
-	siteId: number | undefined;
+	siteId: number | null;
 	filterOption: SubscribersFilterBy;
 	pageNumber: number;
 	searchTerm: string;
@@ -38,6 +39,7 @@ type SubscribersPageContextProps = {
 	showAddSubscribersModal: boolean;
 	setShowAddSubscribersModal: ( show: boolean ) => void;
 	addSubscribersCallback: () => void;
+	siteId: number | null;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
@@ -60,10 +62,14 @@ export const SubscribersPageProvider = ( {
 }: SubscribersPageProviderProps ) => {
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
-
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
+	const hasManySubscribers = useManySubsSite( siteId );
 
-	const grandTotalQueryResult = useSubscribersQuery( { siteId } );
+	const subscriberType =
+		filterOption === SubscribersFilterBy.All && hasManySubscribers
+			? SubscribersFilterBy.WPCOM
+			: filterOption;
+	const grandTotalQueryResult = useSubscribersQuery( { siteId, filterOption: subscriberType } );
 	const grandTotal = grandTotalQueryResult.data?.total || 0;
 
 	const dispatch = useDispatch();
@@ -134,6 +140,7 @@ export const SubscribersPageProvider = ( {
 				showAddSubscribersModal,
 				setShowAddSubscribersModal,
 				addSubscribersCallback,
+				siteId,
 			} }
 		>
 			{ children }

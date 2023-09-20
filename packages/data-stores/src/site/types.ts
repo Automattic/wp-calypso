@@ -244,6 +244,7 @@ export interface SiteDetailsOptions {
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
+	is_commercial?: boolean | null;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];

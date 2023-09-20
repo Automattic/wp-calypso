@@ -1,5 +1,9 @@
 # Release Notes
 
+## Unreleased
+
+- Added a new color for X.
+
 ## 3.1.1
 
 - Republish unbuilt version.

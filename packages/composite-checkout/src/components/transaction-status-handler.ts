@@ -7,6 +7,13 @@ import { TransactionStatus } from '../types';
 
 const debug = debugFactory( 'composite-checkout:transaction-status-handler' );
 
+/**
+ * Helper component to take an action when the transaction status changes.
+ *
+ * For example, if the transaction status changes to "pending", this will set
+ * the form status to "submitting"; if the transaction status changes to
+ * "redirecting", this will perform the redirect.
+ */
 export default function TransactionStatusHandler( {
 	redirectToUrl,
 }: {

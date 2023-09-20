@@ -1,0 +1,30 @@
+.subscriptions-module-banner {
+	padding: 0;
+
+	.components-notice {
+		margin: 0;
+		padding-right: 12px;
+	}
+
+	.components-notice__content {
+		display: flex;
+		align-items: start;
+		justify-content: space-between;
+		margin-right: 0;
+		font-size: 0.875rem;
+	}
+
+	.components-notice__actions .components-button {
+		height: auto;
+		color: var(--color-text-inverted);
+		box-shadow: none;
+		background: var(--wp-admin-theme-color);
+
+		&:hover,
+		&:focus {
+			box-shadow: none;
+			color: var(--color-text-inverted);
+			background: var(--wp-admin-theme-color-darker-10);
+		}
+	}
+}

@@ -8,6 +8,14 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useOdieAssistantContext } from 'calypso/odie/context';
 import DomainHeader from '../components/domain-header';
+import {
+	createBulkAction,
+	deleteBulkActionStatus,
+	fetchAllDomains,
+	fetchBulkActionStatus,
+	fetchSite,
+	fetchSiteDomains,
+} from '../domains-table-fetch-functions';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
 
@@ -17,7 +25,7 @@ interface BulkAllDomainsProps {
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
-	const { domains, isLoading } = useDomainsTable();
+	const { domains, isLoading } = useDomainsTable( fetchAllDomains );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
 
@@ -65,11 +73,24 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						if ( action === 'manage-dns-settings' ) {
 							sendNudge( {
 								nudge: 'dns-settings',
-								initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
+								initialMessage: translate(
+									'I see you want to change your DNS settings for your domain %(domain)s. That’s a complex thing, but I can guide you and help you at any moment.',
+									{
+										args: {
+											domain: domain.name,
+										},
+									}
+								) as string,
 								context: { domain: domain.domain },
 							} );
 						}
 					} }
+					fetchAllDomains={ fetchAllDomains }
+					fetchSite={ fetchSite }
+					fetchSiteDomains={ fetchSiteDomains }
+					createBulkAction={ createBulkAction }
+					fetchBulkActionStatus={ fetchBulkActionStatus }
+					deleteBulkActionStatus={ deleteBulkActionStatus }
 				/>
 			</Main>
 			<UsePresalesChat />

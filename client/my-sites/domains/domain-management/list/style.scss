@@ -357,4 +357,10 @@
 	main {
 		max-width: 1224px;
 	}
+
+	.empty-domains-list-card {
+		@include breakpoint-deprecated( "<480px" ) {
+			box-shadow: none;
+		}
+	}
 }

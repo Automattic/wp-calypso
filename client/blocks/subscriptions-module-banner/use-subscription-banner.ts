@@ -4,14 +4,20 @@ import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jet
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
-export default function useSubscriptionBanner( siteId: number, isDismissed?: boolean ) {
+export default function useSubscriptionBanner( siteId?: number, isDismissed?: boolean ) {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isSubscriptionsModuleActive = useSelector( ( state ) =>
-		isJetpackModuleActive( state, siteId, 'subscriptions' )
-	);
-	const isSubscriptionsModuleActivating = useSelector( ( state ) =>
-		isActivatingJetpackModule( state, siteId, 'subscriptions' )
-	);
+	const isSubscriptionsModuleActive = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
+		return isJetpackModuleActive( state, siteId, 'subscriptions' );
+	} );
+	const isSubscriptionsModuleActivating = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
+		return isActivatingJetpackModule( state, siteId, 'subscriptions' );
+	} );
 
 	const [ showSubscriptionBanner, setShowSubscriptionBanner ] = useState( false );
 

@@ -10,6 +10,7 @@ import {
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
 import { requestSite, receiveSiteFrontPage } from 'calypso/state/sites/actions';
+import { requestAdminMenu } from '../admin-menu/actions';
 import { normalizeSettings } from './utils';
 import 'calypso/state/site-settings/init';
 import 'calypso/state/ui/init';
@@ -100,6 +101,7 @@ export function saveSiteSettings( siteId, settings = {} ) {
 					siteId,
 				} );
 				dispatch( requestSite( siteId ) );
+				dispatch( requestAdminMenu( siteId ) );
 				return body;
 			} )
 			.catch( ( error ) => {

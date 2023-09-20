@@ -77,7 +77,7 @@ const SubscriberDetails = ( {
 								{ translate( 'Receives emails for' ) }
 							</div>
 							<div className="subscriber-details__content-value">
-								{ newsletterCategoryNames
+								{ newsletterCategoryNames && newsletterCategoryNames.length > 0
 									? newsletterCategoryNames.join( ', ' )
 									: translate( 'Not subscribed to any newsletter categories' ) }
 							</div>
