@@ -12,6 +12,7 @@ import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import ErrorStep from './internals/steps-repository/error-step';
 import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
+import AISitePrompt from './internals/steps-repository/ai-site-prompt';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -62,6 +63,7 @@ const withThemeAssemblerFlow: Flow = {
 
 	useSteps() {
 		return [
+			{ slug: 'site-prompt', component: AISitePrompt },
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: ErrorStep },
