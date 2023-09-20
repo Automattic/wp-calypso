@@ -40,11 +40,11 @@ describe( 'BoostSitePerformance', () => {
 		expect( desktopScore ).toBeInTheDocument();
 	} );
 
-	test( 'renders the empty content when hasBoost is false', () => {
-		const hasBoost = false;
+	test( 'renders the empty content when there is no score', () => {
+		const hasBoost = true;
 		render(
 			<BoostSitePerformance
-				boostData={ boostData }
+				boostData={ { overall: 0, mobile: 0, desktop: 0 } }
 				hasBoost={ hasBoost }
 				siteId={ siteId }
 				siteUrlWithScheme={ siteUrlWithScheme }
@@ -57,6 +57,40 @@ describe( 'BoostSitePerformance', () => {
 		expect( emptyContent ).toBeInTheDocument();
 		const strongTag = screen.getByText( /get score/i );
 		expect( strongTag ).toHaveStyle( 'font-weight: bold' );
+	} );
+
+	test( 'renders the Optimize css button when there is a score and has boost', () => {
+		const hasBoost = true;
+		render(
+			<BoostSitePerformance
+				boostData={ boostData }
+				hasBoost={ hasBoost }
+				siteId={ siteId }
+				siteUrlWithScheme={ siteUrlWithScheme }
+				trackEvent={ trackEventMock }
+				hasError={ false }
+			/>
+		);
+
+		const button = screen.getByRole( 'link', { name: /optimize css/i } );
+		expect( button ).toBeInTheDocument();
+	} );
+
+	test( 'renders the Configure Boost button when there is a score and has no boost', () => {
+		const hasBoost = false;
+		render(
+			<BoostSitePerformance
+				boostData={ boostData }
+				hasBoost={ hasBoost }
+				siteId={ siteId }
+				siteUrlWithScheme={ siteUrlWithScheme }
+				trackEvent={ trackEventMock }
+				hasError={ false }
+			/>
+		);
+
+		const button = screen.getByRole( 'link', { name: /configure boost/i } );
+		expect( button ).toBeInTheDocument();
 	} );
 
 	test( 'calls trackEvent when button is clicked and checks if the button has href', () => {
