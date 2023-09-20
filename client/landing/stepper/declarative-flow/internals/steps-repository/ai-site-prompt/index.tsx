@@ -1,16 +1,16 @@
 import { StepContainer, NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { TextareaControl } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { FormEvent, useState } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
-import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const ActionSection = styled.div`
@@ -33,90 +33,68 @@ const StyledNextButton = styled( NextButton )`
 `;
 
 const AISitePrompt: Step = function ( props ) {
-	const { goNext, goBack, submit } = props.navigation;
+	const { goNext, goBack, submit } = props.navigation; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 	const { __ } = useI18n();
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
-	const siteSlug = useQuery().get( 'siteSlug' );
-	const siteId = useSelect(
-		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
-		[ siteSlug ]
-	);
-	const settings = useSelect(
-		( select ) =>
-			( siteId && ( select( SITE_STORE ) as SiteSelect ).getSiteSettings( siteId ) ) || {},
-		[ siteId ]
-	);
-	const onboardingProfile = settings?.woocommerce_onboarding_profile || {};
-	const [ profileChanges, setProfileChanges ] = useState< {
-		[ key: string ]: string | boolean | Array< string > | undefined;
-	} >( {} );
 
-	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const [ loading, setLoading ] = useState( false );
+	const [ prompt, setPrompt ] = useState( '' );
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
 		[]
 	);
 
-	function updateOnboardingProfile( key: string, value: string | boolean | Array< string > ) {
-		setProfileChanges( {
-			...profileChanges,
-			[ key ]: value,
-		} );
-	}
-
-	function getProfileValue( key: string ) {
-		return profileChanges[ key ] || onboardingProfile?.[ key ] || '';
-	}
-
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		if ( siteId ) {
-			const changes = {
-				...profileChanges,
-				[ 'completed' ]: true,
-			};
-			saveSiteSettings( siteId, {
-				woocommerce_onboarding_profile: {
-					...onboardingProfile,
-					...changes,
-				},
+		setLoading( true );
+		wpcomRequest( {
+			path: '/pattern-assembler/ai/v1/generate',
+			method: 'POST',
+			apiNamespace: 'wpcom/v2',
+			body: {
+				description: prompt,
+			},
+		} )
+			.then( ( response ) => {
+				console.log( 'AI response', response ); /* eslint-disable-line no-console */
+				setLoading( false );
+			} )
+			.catch( ( error ) => {
+				console.error( 'big sky error', error ); /* eslint-disable-line no-console */
+				setLoading( false );
 			} );
-		}
-		submit?.();
+		//submit?.();
 	};
 
 	function getContent() {
 		return (
 			<>
-				<div className="business-info__info-section" />
 				<div className="business-info__instructions-container">
 					<form onSubmit={ onSubmit }>
 						<TextareaControl
 							label={ __( 'Please describe your site, business and ideas in detail.' ) }
 							help={ __( 'Sharing more detail here will help AI understand your intent better.' ) }
-							value={ getProfileValue( 'ai_site_prompt' ) }
-							onChange={ ( value ) => updateOnboardingProfile( 'ai_site_prompt', value ) }
+							value={ prompt }
+							onChange={ ( value ) => setPrompt( value ) }
+							disabled={ loading }
 						/>
 
 						<ActionSection>
-							<StyledNextButton type="submit">{ __( 'Continue' ) }</StyledNextButton>
+							{ loading && <LoadingEllipsis /> }
+							{ ! loading && (
+								<StyledNextButton type="submit" disabled={ loading }>
+									{ __( 'Continue' ) }
+								</StyledNextButton>
+							) }
 						</ActionSection>
 					</form>
 				</div>
 			</>
-		);
-	}
-
-	if ( ! settings ) {
-		return (
-			<div className="business-info__info-section">
-				<LoadingEllipsis />
-			</div>
 		);
 	}
 
