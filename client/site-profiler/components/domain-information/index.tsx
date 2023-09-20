@@ -27,11 +27,16 @@ export default function DomainInformation( props: Props ) {
 			<h3>Domain information</h3>
 
 			<ul className="domain-information-details result-list">
-				{ whois.registrar_url && (
+				{ whois.registrar && (
 					<li>
 						<div className="name">Registrar</div>
 						<div>
-							<a href={ whois.registrar_url }>{ whois.registrar_url }</a>
+							{ whois.registrar_url && (
+								<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
+									{ whois.registrar }
+								</a>
+							) }
+							{ ! whois.registrar_url && <span>{ whois.registrar }</span> }
 						</div>
 					</li>
 				) }
