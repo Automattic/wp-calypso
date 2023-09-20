@@ -217,7 +217,7 @@ const PlansFeaturesMain = ( {
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
 	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
-	const storageAddOns = useAddOns( siteId ?? undefined ).filter(
+	const storageAddOns = useAddOns( siteId ?? undefined, isInSignup ).filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
 	);
 	const selectedStorageOptions = useSelect( ( select ) => {

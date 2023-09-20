@@ -35,7 +35,7 @@ import useAddOnPrices from './use-add-on-prices';
 import type { AddOnMeta } from '@automattic/data-stores';
 
 // some memoization. executes far too many times
-const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
+const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[] => {
 	const translate = useTranslate();
 
 	const addOnsActive = [
@@ -130,22 +130,25 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 		// get the list of supported features
 		const siteFeatures = getFeaturesBySiteId( state, siteId );
 		const filter = getBillingTransactionFilters( state, 'past' );
-		const filteredTransactions =
-			billingTransactions && filterTransactions( billingTransactions, filter, siteId );
-
 		const spaceUpgradesPurchased: number[] = [];
 
-		if ( filteredTransactions?.length && siteId ) {
-			for ( const transaction of filteredTransactions ) {
-				transaction.items?.length &&
-					spaceUpgradesPurchased.push(
-						...transaction.items
-							.filter( ( item ) => item.wpcom_product_slug === PRODUCT_1GB_SPACE )
-							.map( ( item ) => Number( item.licensed_quantity ) )
-					);
+		// It doesn't make sense to fetch purchase history and limit space upgrade add-ons if the user is
+		// creating a brand new site. For the time being, skip fetching transaction history in onboarding
+		// flows.
+		if ( billingTransactions && ! isInSignup ) {
+			const filteredTransactions = filterTransactions( billingTransactions, filter, siteId );
+
+			if ( filteredTransactions?.length ) {
+				for ( const transaction of filteredTransactions ) {
+					transaction.items?.length &&
+						spaceUpgradesPurchased.push(
+							...transaction.items
+								.filter( ( item ) => item.wpcom_product_slug === PRODUCT_1GB_SPACE )
+								.map( ( item ) => Number( item.licensed_quantity ) )
+						);
+				}
 			}
 		}
-
 		// Determine which Stats Add-On to show based on the site's commercial classification.
 		const isSiteMarkedCommercial = getSiteOption( state, siteId, 'is_commercial' );
 
