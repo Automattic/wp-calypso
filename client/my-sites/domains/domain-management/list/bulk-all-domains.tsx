@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
@@ -65,9 +64,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					isFetchingDomains={ isLoading }
 					domains={ domains }
 					isAllSitesView
-					shouldDisplayContactInfoBulkAction={ isEnabled(
-						'domains/bulk-actions-contact-info-editing'
-					) }
+					shouldDisplayContactInfoBulkAction
 					domainStatusPurchaseActions={ purchaseActions }
 					onDomainAction={ ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
