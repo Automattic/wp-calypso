@@ -83,16 +83,14 @@ const FloatingNavigator = ( { siteSlug }: FloatingNavigatorProps ) => {
 	const {
 		data: { available_checklists },
 	} = useLaunchpadNavigator( siteSlug, activeChecklistSlug );
+	const checklists = Object.values( available_checklists );
 
 	const [ currentView, setCurrentView ] = useState< string | null >( null );
 
 	return (
 		<Card className="launchpad-navigator__floating-navigator">
 			{ ! currentView ? (
-				<NavigatorLaunchpadList
-					checklists={ available_checklists }
-					setCurrentView={ setCurrentView }
-				/>
+				<NavigatorLaunchpadList checklists={ checklists } setCurrentView={ setCurrentView } />
 			) : (
 				<NavigatorLaunchpadView
 					siteSlug={ siteSlug }
