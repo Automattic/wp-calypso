@@ -218,12 +218,9 @@ class ThemeSheet extends Component {
 		const { defaultOption, secondaryOption, themeId } = this.props;
 		const selectedStyleVariation = this.getSelectedStyleVariation();
 		if ( selectedStyleVariation ) {
-			this.props.setThemePreviewOptions(
-				themeId,
-				defaultOption,
-				secondaryOption,
-				selectedStyleVariation
-			);
+			this.props.setThemePreviewOptions( themeId, defaultOption, secondaryOption, {
+				styleVariation: selectedStyleVariation,
+			} );
 		}
 
 		defaultOption.action && defaultOption.action( themeId );
@@ -366,7 +363,7 @@ class ThemeSheet extends Component {
 				this.props.themeId,
 				this.props.defaultOption,
 				this.props.secondaryOption,
-				this.getSelectedStyleVariation()
+				{ styleVariation: this.getSelectedStyleVariation() }
 			);
 			return preview.action( this.props.themeId );
 		}
@@ -943,14 +940,20 @@ class ThemeSheet extends Component {
 		const { getUrl, key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
+		const {
+			isActive,
+			isExternallyManagedTheme,
+			isLoggedIn,
+			tabFilter,
+			selectedStyleVariationSlug: styleVariationSlug,
+		} = this.props;
 
 		return (
 			<Button
 				className="theme__sheet-primary-button"
 				href={
 					getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
-						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
+						? getUrl( this.props.themeId, { tabFilter, styleVariationSlug } )
 						: null
 				}
 				onClick={ () => {
@@ -983,19 +986,6 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	appendSelectedStyleVariationToUrl = ( url ) => {
-		const { selectedStyleVariationSlug } = this.props;
-		if ( ! selectedStyleVariationSlug ) {
-			return url;
-		}
-
-		const [ base, query ] = url.split( '?' );
-		const params = new URLSearchParams( query );
-
-		params.set( 'style_variation', selectedStyleVariationSlug );
-		return `${ base }${ params.toString().length ? `?${ params.toString() }` : '' }`;
-	};
-
 	getSelectedStyleVariation = () => {
 		const { selectedStyleVariationSlug, styleVariations } = this.props;
 		return styleVariations.find( ( variation ) => variation.slug === selectedStyleVariationSlug );
@@ -1018,11 +1008,11 @@ class ThemeSheet extends Component {
 
 		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
 			return translate( 'Access this WooCommerce theme with a Business plan!' );
-		} else if ( isExternallyManagedTheme ) {
-			if ( ! isMarketplaceThemeSubscribed && ! isSiteEligibleForManagedExternalThemes ) {
+		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+			if ( ! isSiteEligibleForManagedExternalThemes ) {
 				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
 			}
-			return translate( 'Subscribe to this premium theme!' );
+			return translate( 'Subscribe to this theme!' );
 		}
 
 		return translate( 'Access this theme for FREE with a Premium or Business plan!' );
@@ -1041,13 +1031,13 @@ class ThemeSheet extends Component {
 			return translate(
 				'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
 			);
-		} else if ( isExternallyManagedTheme ) {
-			if ( ! isMarketplaceThemeSubscribed && ! isSiteEligibleForManagedExternalThemes ) {
+		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+			if ( ! isSiteEligibleForManagedExternalThemes ) {
 				return translate(
-					'Unlock this theme by upgrading to a Business plan and subscribing to this premium theme.'
+					'Unlock this theme by upgrading to a Business plan and subscribing to this theme.'
 				);
 			}
-			return translate( 'Subscribe to this premium theme and unlock all its features.' );
+			return translate( 'Subscribe to this theme and unlock all its features.' );
 		}
 
 		return translate(
@@ -1494,6 +1484,8 @@ export default connect(
 
 		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
 
+		const queryArgs = getCurrentQueryArguments( state );
+
 		return {
 			...theme,
 			themeId,
@@ -1502,6 +1494,7 @@ export default connect(
 			siteId,
 			siteSlug,
 			backPath,
+			tabFilter: queryArgs?.tab_filter,
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isWporg: isWporgTheme( state, themeId ),
@@ -1527,7 +1520,7 @@ export default connect(
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
 			styleVariations: theme?.style_variations || [],
-			selectedStyleVariationSlug: getCurrentQueryArguments( state )?.style_variation,
+			selectedStyleVariationSlug: queryArgs?.style_variation,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,

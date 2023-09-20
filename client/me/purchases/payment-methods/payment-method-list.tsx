@@ -6,9 +6,9 @@ import { Component } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
-import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 
 import 'calypso/me/purchases/payment-methods/style.scss';
 

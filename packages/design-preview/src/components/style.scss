@@ -270,8 +270,9 @@ $design-preview-sidebar-width: 311px;
 	display: flex;
 	width: 100%;
 	padding: 16px 20px 8px;
-	box-sizing: border-box;
-	overflow: auto;
+	box-sizing: content-box;
+	overflow-x: auto;
+	overflow-y: hidden;
 
 	> p {
 		color: var(--studio-gray-100);
@@ -314,10 +315,16 @@ $design-preview-sidebar-width: 311px;
 	}
 
 	@include break-large {
-		padding: 8px 16px 0;
-		margin: 0 -16px;
-		box-sizing: content-box;
+		padding: 0 12px;
+		margin: 8px -12px 0;
 		animation: none;
+		overflow-x: hidden;
+		overflow-y: scroll;
+
+		@supports ( scrollbar-gutter: stable ) {
+			overflow-y: auto;
+			scrollbar-gutter: stable;
+		}
 
 		> p {
 			display: block;

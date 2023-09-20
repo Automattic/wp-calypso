@@ -115,11 +115,7 @@
 }
 
 .domain-forwarding-card-notice {
-	margin: 0 16px 16px;
-
-	@include break-mobile {
-		margin: 0 24px 16px 24px;
-	}
+	margin: 0 0 16px 0;
 }
 
 .site-redirect-card__explanation,
@@ -137,80 +133,145 @@
 }
 
 .domain-forwarding-card__accordion {
+	color: var(--studio-gray-50);
 	margin-bottom: 0 !important;
+
+	.foldable-card__content {
+		font-size: 0.875rem;
+	}
 
 	.form-text-input:disabled {
 		border: 1px solid var(--color-neutral-5) !important;
 	}
 
-	.form-text-input-with-affixes__prefix,
-	.form-text-input-with-affixes__suffix {
-		padding: 0;
-		border: 0 !important;
+	.forwards-from {
+		padding-right: 30px;
 
-		.form-select {
-			border-right: 0;
-			height: 100%;
-			border-radius: 2px 0 0 2px;
-		}
-		.form-select:disabled {
-			cursor: default;
-			border-color: var(--color-neutral-5);
-		}
-		.form-select:hover:enabled {
-			border-color: var(--color-neutral-20);
-		}
-		.domain-forwarding-card__delete {
-			border-left: 0;
-			border-radius: 0 2px 2px 0;
-
-			svg {
-				margin-top: 5px;
+		&.has-subdomain-selector {
+			input.form-text-input[type="text"] {
+				@include break-wide {
+					border-left: 0;
+				}
 			}
 		}
-		.domain-forwarding-card__delete:disabled {
-			background: var(--color-neutral-0);
-			border-color: var(--color-neutral-5);
-		}
-	}
 
-	> .foldable-card__content {
-		padding: 0 !important;
-	}
+		.form-text-input-with-affixes {
+			flex-direction: column;
 
-	.form-text-input-with-affixes {
-		padding: 0 16px;
-
-		@include break-mobile {
-			padding: 0 24px;
+			@include break-wide {
+				flex-direction: row;
+			}
 		}
 
-		box-sizing: border-box;
+		.form-text-input-with-affixes__prefix {
+
+			.form-select {
+				border-bottom: 0;
+
+				@include break-wide {
+					border-bottom: 1px solid var(--color-neutral-10);
+				}
+			}
+
+			padding: 0;
+			border: 0 !important;
+		}
+
+		.form-text-input-with-affixes__suffix {
+			border: 1px solid var(--color-neutral-10);
+			border-top: 0;
+
+			@include break-wide {
+				border-top: 1px solid var(--color-neutral-10);
+				border-left: 0;
+			}
+
+			.form-label {
+				margin: 0;
+			}
+		}
+
 	}
 
-	.form-button.is-primary {
-		margin: 10px 16px 16px;
+	.forwards-to {
+		display: flex;
 
-		@include break-mobile {
-			margin: 10px 24px 24px;
+		.form-text-input-with-affixes__prefix,
+		.form-text-input-with-affixes__suffix {
+			padding: 0;
+			border: 0;
+		}
+
+		.form-text-input-with-affixes {
+			position: relative;
+		}
+
+		.form-text-input-with-affixes__suffix {
+			position: absolute;
+			right: 2px;
+			top: 2px;
+			z-index: 1;
+
+			.forwarding__clear {
+				border: 0;
+				padding: 7px 14px 7px 0;
+			}
+		}
+
+		.forwarding__checkmark {
+			padding-right: 0;
+			border: 0;
+			background: none;
+			width: 30px;
+
+			svg {
+				fill: transparent;
+			}
+
+			&.visible svg {
+				fill: var(--studio-green-40);
+			}
+		}
+
+	}
+
+	.form-label {
+		padding: 0;
+		margin-top: 15px;
+		font-weight: normal;
+
+		&:first-child {
+			margin-top: 0;
 		}
 	}
 
 	.form-fieldset {
-		margin-bottom: 0;
+		background-color: var(--studio-gray-0);
+		margin-bottom: 24px;
+		padding: 20px;
+		border-radius: 10px; /* stylelint-disable-line scales/radii */
 	}
 
 	.accordion .foldable-card {
 		box-shadow: none;
-
-		padding-left: 16px;
-
-		@include break-mobile {
-			padding-left: 24px;
-		}
+		background: none;
 
 		.foldable-card__header {
 			padding-left: 0;
+			padding-bottom: 0 !important;
+			padding-top: 5px;
+
+			.foldable-card__action {
+				position: relative;
+				width: 20px;
+				height: 20px;
+				margin-left: 10px;
+				margin-bottom: 2px;
+
+				svg {
+					fill: var(--studio-gray-40);
+				}
+			}
 		}
 
 		&.is-expanded .foldable-card__content {
@@ -218,11 +279,6 @@
 		}
 
 		.foldable-card__content {
-			padding-right: 16px;
-
-			@include break-mobile {
-				padding-right: 24px;
-			}
 
 			.form-label {
 				margin-top: 16px;
@@ -246,11 +302,53 @@
 		color: var(--studio-gray-40);
 		font-weight: 400;
 	}
-}
 
-.domain-forwarding-card__error-field {
-	height: 35px;
-	margin: 0 0 17px 24px;
+	.link-button {
+		text-underline-offset: 0.2em;
+		padding-top: 0;
+		border-color: #0675c4;
+		color: #0675c4;
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			border-color: #044b7a;
+			color: #044b7a;
+		}
+	}
+
+	.remove-redirect-button {
+		padding-bottom: 30px;
+	}
+
+	.domain-forwarding-card__error-field {
+		height: 35px;
+		margin-top: 10px;
+	}
+
+	.domain-forwarding-card__fields-row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 1rem;
+
+		&:first-child {
+			margin-bottom: 5px;
+		}
+
+		.source {
+			width: 35%;
+		}
+
+		.destination {
+			width: 65%;
+			overflow-wrap: anywhere;
+		}
+
+		.badge {
+			border-radius: 4px;
+		}
+	}
 }
 
 .ownership-verification-card {
@@ -304,3 +402,26 @@
 		}
 	}
 }
+
+.dns-records-card-notice {
+	flex-basis: 100%;
+	background-color: var(--studio-gray-0);
+	display: flex;
+	align-items: center;
+	padding: 8px;
+	gap: 8px;
+	border-radius: 2px;
+	margin-bottom: 24px;
+
+	&__icon.gridicon {
+		min-width: 18px;
+		fill: var(--studio-orange-40);
+	}
+
+	&__message {
+		font-weight: 400;
+		font-size: $font-body-small;
+		color: var(--studio-gray-80);
+	}
+}
+

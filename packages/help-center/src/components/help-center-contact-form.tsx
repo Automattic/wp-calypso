@@ -330,7 +330,6 @@ export const HelpCenterContactForm = () => {
 							}`
 						);
 					}
-
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 					submitTicket( {

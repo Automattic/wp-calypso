@@ -54,17 +54,16 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		}
 
 		.support-content-cta-right {
+			text-align: right;
 			flex: 1;
-			display: flex;
-			justify-content: flex-end;
+
+			img {
+				height: 100%;
+			}
 
 			figure {
 				margin-bottom: 0;
 				height: 100%;
-
-				img {
-					height: 100%;
-				}
 			}
 		}
 	}

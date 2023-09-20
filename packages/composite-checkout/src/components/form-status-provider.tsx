@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { FormStatusContext } from '../lib/form-status-context';
-import type { FormStatusManager, FormStatusContextInterface } from '../types';
+import type { FormStatusManager } from '../types';
 import type { ReactNode } from 'react';
 
 /**
@@ -33,9 +33,6 @@ export function FormStatusProvider( {
 	formStatusManager: FormStatusManager;
 	children: ReactNode;
 } ) {
-	const value: FormStatusContextInterface = useMemo(
-		() => formStatusManager,
-		[ formStatusManager ]
-	);
+	const value: FormStatusManager = useMemo( () => formStatusManager, [ formStatusManager ] );
 	return <FormStatusContext.Provider value={ value }>{ children }</FormStatusContext.Provider>;
 }

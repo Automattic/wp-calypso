@@ -22,17 +22,7 @@
 				margin: 0;
 			}
 
-			&__title {
-				font-size: $font-title-medium;
-				line-height: $font-title-large;
-				color: $studio-gray-100;
-				margin-bottom: rem(4px);
-			}
-
 			&__subtitle {
-				font-size: $font-body-small;
-				line-height: $font-title-small;
-				color: $studio-gray-60;
 				margin-bottom: 0;
 			}
 		}

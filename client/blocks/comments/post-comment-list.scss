@@ -8,8 +8,9 @@
 
 	.comments__toggle-expand,
 	.comments__open-post {
-		cursor: pointer;
-		margin-top: 16px;
+		margin-top: 9px;
+		margin-bottom: -7px;
+
 		&:hover {
 			color: var(--color-link);
 		}
@@ -48,11 +49,6 @@
 		}
 	}
 
-	.comments__list.is-root {
-		display: flex;
-		flex-direction: column-reverse;
-	}
-
 	.comments__form .form-fieldset {
 		margin: 0;
 	}
@@ -63,6 +59,10 @@
 			overflow: hidden;
 			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 1;
+
+			p {
+				display: inline;
+			}
 		}
 	}
 }

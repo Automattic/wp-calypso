@@ -20,16 +20,19 @@ import {
 	type PlanSlug,
 	type FeatureObject,
 	type StorageOption,
+	isBusinessPlan,
+	isEcommercePlan,
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { PricedAPIPlan } from '@automattic/data-stores';
+import type { AddOnMeta, PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
 	availableOnlyForAnnualPlans: boolean;
+	isHighlighted?: boolean;
 };
 
 // TODO clk: move to plans data store
@@ -55,19 +58,26 @@ export interface PricingMetaForGridPlan {
 		monthly: number | null;
 		full: number | null;
 	};
+	// intro offers override billing and pricing shown in the UI
+	// they are currently defined off the site plans (so not defined when siteId is not available)
+	introOffer?: PlanIntroductoryOffer | null;
 }
 
 export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
 	[ planSlug: string ]: PricedAPIPlan | null | undefined;
-};
+} | null;
 
 export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits,
+	storageAddOns,
+	currencyCode,
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
-} ) => { [ planSlug: string ]: PricingMetaForGridPlan };
+	storageAddOns: ( AddOnMeta | null )[] | null;
+	currencyCode?: string | null;
+} ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 // TODO clk: move to types. will consume plan properties
 export type GridPlan = {
@@ -91,6 +101,7 @@ export type GridPlan = {
 	} | null;
 	highlightLabel?: React.ReactNode | null;
 	pricing: PricingMetaForGridPlan;
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
 };
 
 // TODO clk: move to plans data store
@@ -126,6 +137,12 @@ interface Props {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
+
+	/**
+	 * If the subdomain generation is unsuccessful we do not show the free plan
+	 */
+	isSubdomainNotGenerated?: boolean;
+	storageAddOns: ( AddOnMeta | null )[] | null;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -133,7 +150,11 @@ const usePlanTypesWithIntent = ( {
 	selectedPlan,
 	sitePlanSlug,
 	hideEnterprisePlan,
-}: Pick< Props, 'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' > ): string[] => {
+	isSubdomainNotGenerated = false,
+}: Pick<
+	Props,
+	'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' | 'isSubdomainNotGenerated'
+> ): string[] => {
 	const isEnterpriseAvailable = ! hideEnterprisePlan;
 	const isBloggerAvailable =
 		( selectedPlan && isBloggerPlan( selectedPlan ) ) ||
@@ -208,6 +229,13 @@ const usePlanTypesWithIntent = ( {
 			planTypes = availablePlanTypes;
 	}
 
+	// Filters out the free plan  isSubdomainNotGenerated
+	// This is because, on a free plan,  a custom domain can only redirect to the hosted site.
+	// To effectively communicate this, a valid subdomain is necessary.
+	if ( isSubdomainNotGenerated ) {
+		planTypes = planTypes.filter( ( planType ) => planType !== TYPE_FREE );
+	}
+
 	return planTypes;
 };
 
@@ -222,13 +250,16 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
-}: Props ): Omit< GridPlan, 'features' >[] => {
+	isSubdomainNotGenerated,
+	storageAddOns,
+}: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
 			intent: 'default',
 			selectedPlan,
 			sitePlanSlug,
 			hideEnterprisePlan,
+			isSubdomainNotGenerated,
 		} ),
 		term,
 	} );
@@ -238,6 +269,7 @@ const useGridPlans = ( {
 			selectedPlan,
 			sitePlanSlug,
 			hideEnterprisePlan,
+			isSubdomainNotGenerated,
 		} ),
 		term,
 	} );
@@ -254,8 +286,15 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
+	const pricingMeta = usePricingMetaForGridPlans( {
+		planSlugs: availablePlanSlugs,
+		storageAddOns,
+	} );
 
-	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
+	// Null return would indicate that we are still loading the data. No grid without grid plans.
+	if ( ! pricingMeta || ! pricedAPIPlans ) {
+		return null;
+	}
 
 	return availablePlanSlugs.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
@@ -287,6 +326,9 @@ const useGridPlans = ( {
 						product_slug: planSlug,
 				  };
 
+		const storageAddOnsForPlan =
+			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
+
 		return {
 			planSlug,
 			isVisible: planSlugsForIntent.includes( planSlug ),
@@ -300,6 +342,7 @@ const useGridPlans = ( {
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
 			pricing: pricingMeta[ planSlug ],
+			storageAddOnsForPlan,
 		};
 	} );
 };

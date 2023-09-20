@@ -13,6 +13,7 @@ import {
 	COMMENTS_EDIT,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_EMPTY_SUCCESS,
+	COMMENTS_TOGGLE_INLINE_EXPANDED,
 } from '../../action-types';
 import { expandComments, setActiveReply } from '../actions';
 import { PLACEHOLDER_STATE } from '../constants';
@@ -25,6 +26,7 @@ import {
 	fetchStatus,
 	fetchStatusInitialState,
 	activeReplies,
+	inlineExpansion,
 } from '../reducer';
 
 const commentsNestedTree = [
@@ -976,6 +978,88 @@ describe( 'reducer', () => {
 						spam: 2,
 						totalComments: 6,
 						trash: 4,
+					},
+				},
+			} );
+		} );
+	} );
+	describe( '#inlineExpansion', () => {
+		test( 'toggle saves new values as true', () => {
+			const action = {
+				type: COMMENTS_TOGGLE_INLINE_EXPANDED,
+				payload: {
+					streamKey: 'abc',
+					siteId: 1234,
+					postId: 5678,
+				},
+			};
+			const state = {
+				def: {
+					123: {
+						456: false,
+					},
+				},
+			};
+			const returnedState = inlineExpansion( state, action );
+			expect( returnedState ).toStrictEqual( {
+				abc: {
+					1234: {
+						5678: true,
+					},
+				},
+				def: {
+					123: {
+						456: false,
+					},
+				},
+			} );
+		} );
+		test( 'toggle saves existing true values as false', () => {
+			const action = {
+				type: COMMENTS_TOGGLE_INLINE_EXPANDED,
+				payload: {
+					streamKey: 'def',
+					siteId: 123,
+					postId: 456,
+				},
+			};
+			const state = {
+				def: {
+					123: {
+						456: true,
+					},
+				},
+			};
+			const returnedState = inlineExpansion( state, action );
+			expect( returnedState ).toStrictEqual( {
+				def: {
+					123: {
+						456: false,
+					},
+				},
+			} );
+		} );
+		test( 'toggle saves existing false values as true', () => {
+			const action = {
+				type: COMMENTS_TOGGLE_INLINE_EXPANDED,
+				payload: {
+					streamKey: 'def',
+					siteId: 123,
+					postId: 456,
+				},
+			};
+			const state = {
+				def: {
+					123: {
+						456: false,
+					},
+				},
+			};
+			const returnedState = inlineExpansion( state, action );
+			expect( returnedState ).toStrictEqual( {
+				def: {
+					123: {
+						456: true,
 					},
 				},
 			} );

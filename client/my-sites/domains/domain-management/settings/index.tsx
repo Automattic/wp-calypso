@@ -1,7 +1,9 @@
 import { Button } from '@automattic/components';
+import { englishLocales } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
+import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -14,6 +16,7 @@ import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'ca
 import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
+import DomainDisconnectCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/disconnect';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
@@ -22,6 +25,7 @@ import DomainHeader from 'calypso/my-sites/domains/domain-management/components/
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import {
+	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
 	domainUseMyDomain,
@@ -142,6 +146,7 @@ const Settings = ( {
 				title={ translate( 'Domain security', { textOnly: true } ) }
 				subtitle={ getSslReadableStatus( domain ) }
 				key="security"
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				<DomainSecurityDetails
 					domain={ domain }
@@ -166,6 +171,7 @@ const Settings = ( {
 				title={ translate( 'Create a WordPress.com site', { textOnly: true } ) }
 				key="status"
 				expanded
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				<DomainOnlyConnectCard
 					selectedDomainName={ domain.domain }
@@ -186,7 +192,8 @@ const Settings = ( {
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
 					key="main"
-					expanded={ ! selectedSite?.options?.is_domain_only }
+					expanded={ ! selectedSite?.options?.is_domain_only && ! domain.isMoveToNewSitePending }
+					isDisabled={ domain.isMoveToNewSitePending }
 				>
 					<RegisteredDomainDetails
 						domain={ domain }
@@ -292,6 +299,7 @@ const Settings = ( {
 				subtitle={ getNameServerSectionSubtitle() }
 				expanded={ queryParams.get( 'nameservers' ) === 'true' }
 				onClose={ onClose }
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				{ domain.canManageNameServers ? (
 					<NameServersCard
@@ -310,6 +318,50 @@ const Settings = ( {
 		);
 	};
 
+	const renderDnsRecordsNotice = () => {
+		if (
+			( ! englishLocales.includes( getLocaleSlug() || '' ) &&
+				! i18n.hasTranslation(
+					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
+				) ) ||
+			areAllWpcomNameServers() ||
+			! nameservers ||
+			! nameservers.length
+		) {
+			return null;
+		}
+
+		return (
+			<div className="dns-records-card-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="dns-records-card-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="dns-records-card-notice__message">
+					{ translate(
+						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit(
+											selectedSite.slug,
+											selectedDomainName,
+											currentRoute,
+											{ nameservers: true }
+										) }
+									/>
+								),
+							},
+						}
+					) }
+				</div>
+			</div>
+		);
+	};
+
 	const renderDnsRecords = () => {
 		if (
 			! domain ||
@@ -321,21 +373,27 @@ const Settings = ( {
 		}
 
 		return (
-			<Accordion
-				title={ translate( 'DNS records', { textOnly: true } ) }
-				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
-			>
-				{ domain.canManageDnsRecords ? (
-					<DnsRecords
-						dns={ dns }
-						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite }
-						currentRoute={ currentRoute }
-					/>
-				) : (
-					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
-				) }
-			</Accordion>
+			<div className="dns-records-card">
+				<Accordion
+					title={ translate( 'DNS records', { textOnly: true } ) }
+					subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
+					isDisabled={ domain.isMoveToNewSitePending }
+				>
+					{ domain.canManageDnsRecords ? (
+						<>
+							{ renderDnsRecordsNotice() }
+							<DnsRecords
+								dns={ dns }
+								selectedDomainName={ selectedDomainName }
+								selectedSite={ selectedSite }
+								currentRoute={ currentRoute }
+							/>
+						</>
+					) : (
+						<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
+					) }
+				</Accordion>
+			</div>
 		);
 	};
 
@@ -349,11 +407,22 @@ const Settings = ( {
 			return null;
 		}
 
+		let translatedTitle;
+		if (
+			englishLocales.includes( getLocaleSlug() || '' ) ||
+			i18n.hasTranslation( 'Domain forwarding' )
+		) {
+			translatedTitle = translate( 'Domain forwarding', { textOnly: true } );
+		} else {
+			translatedTitle = translate( 'Domain Forwarding', { textOnly: true } );
+		}
+
 		return (
 			<Accordion
 				className="domain-forwarding-card__accordion"
-				title={ translate( 'Domain Forwarding', { textOnly: true } ) }
+				title={ translatedTitle }
 				subtitle={ translate( 'Forward your domain to another' ) }
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				<DomainForwardingCard domain={ domain } />
 			</Accordion>
@@ -384,7 +453,14 @@ const Settings = ( {
 
 		const getPlaceholderAccordion = () => {
 			const label = translate( 'Contact information', { textOnly: true } );
-			return <Accordion title={ label } subtitle={ label } isPlaceholder></Accordion>;
+			return (
+				<Accordion
+					title={ label }
+					subtitle={ label }
+					isPlaceholder
+					isDisabled={ domain.isMoveToNewSitePending }
+				></Accordion>
+			);
 		};
 
 		if ( ! domain || ! domains ) {
@@ -407,7 +483,11 @@ const Settings = ( {
 
 		if ( ! domain.currentUserCanManage ) {
 			return (
-				<Accordion title={ titleLabel } subtitle={ `${ privacyProtectionLabel }` }>
+				<Accordion
+					isDisabled={ domain.isMoveToNewSitePending }
+					title={ titleLabel }
+					subtitle={ `${ privacyProtectionLabel }` }
+				>
 					{ getContactsPrivacyInfo() }
 				</Accordion>
 			);
@@ -423,6 +503,7 @@ const Settings = ( {
 			<Accordion
 				title={ titleLabel }
 				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }` }
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				{ getContactsPrivacyInfo() }
 			</Accordion>
@@ -486,6 +567,7 @@ const Settings = ( {
 				subtitle={ translate( 'Additional contact verification required for your domain', {
 					textOnly: true,
 				} ) }
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				<ContactVerificationCard
 					contactInformation={ contactInformation }
@@ -498,6 +580,9 @@ const Settings = ( {
 
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
+		if ( ! domain ) {
+			return undefined;
+		}
 		return (
 			<>
 				{ renderStatusSection() }
@@ -523,6 +608,7 @@ const Settings = ( {
 				<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
 				<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
 				<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+				<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />
 			</>
 		);
 	};

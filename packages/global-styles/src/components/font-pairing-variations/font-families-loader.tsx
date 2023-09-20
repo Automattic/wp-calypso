@@ -11,11 +11,17 @@ const FONT_API_BASE = 'https://fonts-api.wp.com/css2';
 
 const FONT_AXIS = 'ital,wght@0,400;0,700;1,400;1,700';
 
+// Fix to avoid error in Google Fonts API
+const removeSingleQuotes = ( fontFamily: string ) => fontFamily.replaceAll( "'", '' );
+
 const FontFamiliesLoader = ( { fontFamilies, onLoad }: Props ) => {
 	const params = useMemo(
 		() =>
 			new URLSearchParams( [
-				...fontFamilies.map( ( { fontFamily } ) => [ 'family', `${ fontFamily }:${ FONT_AXIS }` ] ),
+				...fontFamilies.map( ( { fontFamily } ) => [
+					'family',
+					`${ removeSingleQuotes( fontFamily ) }:${ FONT_AXIS }`,
+				] ),
 				[ 'display', 'swap' ],
 			] ),
 		fontFamilies

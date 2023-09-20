@@ -1,19 +1,62 @@
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { usePlansGridContext } from '../grid-context';
 import { getStorageStringFromFeature } from '../util';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
+import type { AddOnMeta } from '@automattic/data-stores';
 
 type StorageAddOnDropdownProps = {
+	label?: string;
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
+	showPrice?: boolean;
 };
 
-export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOnDropdownProps ) => {
+type StorageAddOnOptionProps = {
+	title: string;
+	price: string | undefined;
+	showPrice: boolean;
+};
+
+const getStorageOptionPrice = (
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null,
+	storageOptionSlug: string
+) => {
+	return storageAddOnsForPlan?.find( ( addOn ) => {
+		return addOn?.featureSlugs?.includes( storageOptionSlug );
+	} )?.prices?.formattedMonthlyPrice;
+};
+
+const StorageAddOnOption = ( { title, price, showPrice }: StorageAddOnOptionProps ) => {
 	const translate = useTranslate();
+	return (
+		<>
+			{ price && showPrice ? (
+				<div>
+					<span className="storage-add-on-dropdown-option__title">{ title }</span>
+					<span className="storage-add-on-dropdown-option__price">
+						{ ` + ${ price }/${ translate( 'month' ) }` }
+					</span>
+				</div>
+			) : (
+				<span className="storage-add-on-dropdown-option__title">{ title }</span>
+			) }
+		</>
+	);
+};
+
+export const StorageAddOnDropdown = ( {
+	label = '',
+	planSlug,
+	storageOptions,
+	showPrice = false,
+}: StorageAddOnDropdownProps ) => {
+	const { gridPlansIndex } = usePlansGridContext();
+	const { storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
-	const selectedStorage = useSelect(
+	const selectedStorageOptionForPlan = useSelect(
 		( select ) => {
 			return select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug );
 		},
@@ -21,27 +64,32 @@ export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOn
 	);
 
 	// TODO: Consider transforming storageOptions outside of this component
-	const selectControlOptions = storageOptions.reduce( ( acc, storageOption ) => {
-		const title = getStorageStringFromFeature( storageOption.slug );
-		if ( title ) {
-			acc.push( {
-				key: storageOption?.slug,
-				name: title,
-			} );
-		}
-
-		return acc;
-	}, [] as { key: string; name: TranslateResult }[] );
+	const selectControlOptions = storageOptions.map( ( storageOption ) => {
+		const title = getStorageStringFromFeature( storageOption.slug ) || '';
+		const price = getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug );
+		return {
+			key: storageOption?.slug,
+			name: <StorageAddOnOption title={ title } price={ price } showPrice={ showPrice } />,
+		};
+	} );
 
 	const defaultStorageOption = storageOptions.find( ( storageOption ) => ! storageOption?.isAddOn );
-	const selectedOptionKey = selectedStorage || defaultStorageOption?.slug || '';
+	const selectedOptionKey = selectedStorageOptionForPlan || defaultStorageOption?.slug || '';
+	const selectedOptionPrice = getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey );
+	const selectedOptionTitle = getStorageStringFromFeature( selectedOptionKey ) || '';
 	const selectedOption = {
 		key: selectedOptionKey,
-		name: getStorageStringFromFeature( selectedOptionKey ),
+		name: (
+			<StorageAddOnOption
+				title={ selectedOptionTitle }
+				price={ selectedOptionPrice }
+				showPrice={ showPrice }
+			/>
+		),
 	};
 	return (
 		<CustomSelectControl
-			label={ translate( 'Storage' ) }
+			label={ label }
 			options={ selectControlOptions }
 			value={ selectedOption }
 			onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) =>

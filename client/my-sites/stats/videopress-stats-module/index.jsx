@@ -272,18 +272,20 @@ class VideoPressStatsModule extends Component {
 						<Card compact className={ cardClasses }>
 							<div className="videopress-stats-module__grid">
 								<div className="videopress-stats-module__header-row-wrapper">
-									<div className="videopress-stats-module__grid-header">Title</div>
-									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-										Impressions
+									<div className="videopress-stats-module__grid-header">
+										{ translate( 'Title' ) }
 									</div>
 									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-										Hours Watched
+										{ translate( 'Impressions' ) }
 									</div>
 									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-										Retention Rate
+										{ translate( 'Hours Watched' ) }
 									</div>
 									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-										Views
+										{ translate( 'Retention Rate' ) }
+									</div>
+									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+										{ translate( 'Views' ) }
 									</div>
 								</div>
 								{ completeVideoStats.map( ( row, index ) => (

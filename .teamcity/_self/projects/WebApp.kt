@@ -30,7 +30,7 @@ object WebApp : Project({
 object BuildDockerImage : BuildType({
 	uuid = "89fff49e-c79b-4e68-a012-a7ba405359b6"
 	name = "Docker image"
-	description = "Build docker image containing Calypso"
+	description = "Build the primary Docker image for Calypso which will be deployed to calypso.live (for PRs) or to production (on trunk)."
 
 	params {
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
@@ -57,6 +57,21 @@ object BuildDockerImage : BuildType({
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
+	}
+
+	// Normally, this build can be triggered via snapshot dependencies, such as
+	// the e2e tests. If those builds don't run (e.g. if they're disabled for certain
+	// directories), then we still want the docker image to be triggered for the
+	// deploy system. This build chain sends requests to missioncontrol which start
+	// different aspects of the deploy system. So the entire deploy system depends
+	// on this build getting triggered either here or via snapshot dependencies.
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+		}
 	}
 
 	steps {
@@ -683,9 +698,9 @@ object Translate : BuildType({
 	triggers {
 		vcs {
 			branchFilter = """
-			+:*
-			-:pull*
-		""".trimIndent()
+				+:*
+				-:pull*
+			""".trimIndent()
 		}
 	}
 

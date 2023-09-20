@@ -1,3 +1,4 @@
+import { useLaunchpad } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
@@ -42,6 +43,8 @@ const updateDesign: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
 		);
+		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
+
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				return new Promise( () => {
@@ -67,6 +70,10 @@ const updateDesign: Flow = {
 						} );
 
 						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+					}
+
+					if ( launchpadScreenOption === 'skipped' ) {
+						return window.location.assign( `/home/${ siteSlug }` );
 					}
 
 					return window.location.assign(

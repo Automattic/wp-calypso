@@ -1,6 +1,9 @@
+import { Plans, WpcomPlansUI } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
+import { PlanPrices } from 'calypso/state/plans/types';
 import {
 	getSitePlanRawPrice,
 	isPlanAvailableForPurchase,
@@ -8,6 +11,7 @@ import {
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import type { PlanSlug } from '@automattic/calypso-products';
+import type { AddOnMeta } from '@automattic/data-stores';
 import type {
 	UsePricingMetaForGridPlans,
 	PricingMetaForGridPlan,
@@ -17,6 +21,22 @@ import type { IAppState } from 'calypso/state/types';
 interface Props {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
+	storageAddOns?: ( AddOnMeta | null )[] | null;
+}
+
+function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
+	const totalPrices = { ...planPrices };
+	let key: keyof PlanPrices;
+
+	for ( key in totalPrices ) {
+		const price = totalPrices[ key ];
+
+		if ( price !== null ) {
+			totalPrices[ key ] = price + addOnPrice;
+		}
+	}
+
+	return totalPrices;
 }
 
 /*
@@ -24,41 +44,65 @@ interface Props {
  * - see PricingMetaForGridPlan type for details
  * - will migrate to data-store once dependencies are resolved (when site & plans data-stores more complete)
  */
+
 const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
+	storageAddOns,
 }: Props ) => {
+	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	const currentSitePlanSlug = useSelector( ( state: IAppState ) =>
+		getSitePlanSlug( state, selectedSiteId )
+	);
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
+	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+	const selectedStorageOptions = useSelect( ( select ) => {
+		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
+	}, [] );
 	const planPrices = useSelector( ( state: IAppState ) => {
 		return planSlugs.reduce( ( acc, planSlug ) => {
-			const selectedSiteId = getSelectedSiteId( state );
-			const currentSitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 			const availableForPurchase =
 				! currentSitePlanSlug ||
 				( selectedSiteId ? isPlanAvailableForPurchase( state, selectedSiteId, planSlug ) : false );
+			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
+			const storageAddOnPrices = storageAddOns?.find( ( addOn ) => {
+				return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
+			} )?.prices;
+			const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
+			const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
+
 			const planPricesMonthly = getPlanPrices( state, {
 				planSlug,
 				siteId: selectedSiteId || null,
 				returnMonthly: true,
+				returnSmallestUnit: true,
 			} );
 			const planPricesFull = getPlanPrices( state, {
 				planSlug,
 				siteId: selectedSiteId || null,
 				returnMonthly: false,
+				returnSmallestUnit: true,
 			} );
+			const totalPricesMonthly = getTotalPrices( planPricesMonthly, storageAddOnPriceMonthly );
+			const totalPricesFull = getTotalPrices( planPricesFull, storageAddOnPriceYearly );
 
 			// raw prices for current site's plan
 			if ( selectedSiteId && currentSitePlanSlug === planSlug ) {
+				const monthlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+					returnMonthly: true,
+					returnSmallestUnit: true,
+				} );
+				const yearlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+					returnMonthly: false,
+					returnSmallestUnit: true,
+				} );
+
 				return {
 					...acc,
 					[ planSlug ]: {
 						originalPrice: {
-							monthly: getSitePlanRawPrice( state, selectedSiteId, planSlug, {
-								returnMonthly: true,
-							} ),
-							full: getSitePlanRawPrice( state, selectedSiteId, planSlug, {
-								returnMonthly: false,
-							} ),
+							monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
+							full: yearlyPrice ? yearlyPrice + storageAddOnPriceYearly : null,
 						},
 						discountedPrice: {
 							monthly: null,
@@ -74,8 +118,8 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					...acc,
 					[ planSlug ]: {
 						originalPrice: {
-							monthly: planPricesMonthly.rawPrice,
-							full: planPricesFull.rawPrice,
+							monthly: totalPricesMonthly.rawPrice,
+							full: totalPricesFull.rawPrice,
 						},
 						discountedPrice: {
 							monthly: null,
@@ -90,34 +134,48 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				...acc,
 				[ planSlug ]: {
 					originalPrice: {
-						monthly: planPricesMonthly.rawPrice,
-						full: planPricesFull.rawPrice,
+						monthly: totalPricesMonthly.rawPrice,
+						full: totalPricesFull.rawPrice,
 					},
 					discountedPrice: {
 						monthly: withoutProRatedCredits
-							? planPricesMonthly.discountedRawPrice
-							: planPricesMonthly.planDiscountedRawPrice || planPricesMonthly.discountedRawPrice,
+							? totalPricesMonthly.discountedRawPrice
+							: totalPricesMonthly.planDiscountedRawPrice || totalPricesMonthly.discountedRawPrice,
 						full: withoutProRatedCredits
-							? planPricesFull.discountedRawPrice
-							: planPricesFull.planDiscountedRawPrice || planPricesFull.discountedRawPrice,
+							? totalPricesFull.discountedRawPrice
+							: totalPricesFull.planDiscountedRawPrice || totalPricesFull.discountedRawPrice,
 					},
 				},
 			};
 		}, {} as { [ planSlug: string ]: Pick< PricingMetaForGridPlan, 'originalPrice' | 'discountedPrice' > } );
 	} );
 
-	return planSlugs.reduce(
-		( acc, planSlug ) => ( {
+	/*
+	 * Return null until all data is ready, at least in initial state.
+	 * - For now a simple loader is shown until these are resolved
+	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
+	 */
+	if ( sitePlans.isFetching || ! pricedAPIPlans ) {
+		return null;
+	}
+
+	return planSlugs.reduce( ( acc, planSlug ) => {
+		// pricedAPIPlans - should have a definition for all plans, being the main source of API data
+		const pricedAPIPlan = pricedAPIPlans[ planSlug ];
+		// pricedAPISitePlans - unclear if all plans are included
+		const sitePlan = sitePlans.data?.[ planSlug ];
+
+		return {
 			...acc,
 			[ planSlug ]: {
 				originalPrice: planPrices[ planSlug ]?.originalPrice,
 				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
-				billingPeriod: pricedAPIPlans[ planSlug ]?.bill_period,
-				currencyCode: pricedAPIPlans[ planSlug ]?.currency_code,
+				billingPeriod: pricedAPIPlan?.bill_period,
+				currencyCode: pricedAPIPlan?.currency_code,
+				introOffer: sitePlan?.introOffer,
 			},
-		} ),
-		{} as { [ planSlug: string ]: PricingMetaForGridPlan }
-	);
+		};
+	}, {} as { [ planSlug: string ]: PricingMetaForGridPlan } );
 };
 
 export default usePricingMetaForGridPlans;

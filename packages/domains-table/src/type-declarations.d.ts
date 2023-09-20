@@ -4,3 +4,7 @@ declare module '*.svg' {
 	const url: string;
 	export default url;
 }
+
+declare module 'calypso/components/notice';
+
+declare module 'calypso/lib/wp';

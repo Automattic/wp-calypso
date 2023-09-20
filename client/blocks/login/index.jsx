@@ -97,6 +97,8 @@ class Login extends Component {
 		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
+		isGravPoweredClient: PropTypes.bool,
+		isGravPoweredLoginPage: PropTypes.bool,
 	};
 
 	state = {
@@ -168,7 +170,7 @@ class Login extends Component {
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {
 			this.props.onTwoFactorRequested( authType );
-		} else if ( this.props.isWoo ) {
+		} else if ( this.props.isWoo || this.props.isGravPoweredClient ) {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
@@ -290,7 +292,8 @@ class Login extends Component {
 			isWoo,
 			action,
 			currentQuery,
-			isGravatar,
+			isGravPoweredClient,
+			isGravPoweredLoginPage,
 			isWooCoreProfilerFlow,
 		} = this.props;
 
@@ -435,17 +438,20 @@ class Login extends Component {
 				} );
 			}
 
-			if ( isGravatar ) {
-				headerText = translate( 'Welcome back to %(clientTitle)s!', {
-					args: {
-						clientTitle: oauth2Client.title,
-					},
+			if ( isGravPoweredClient ) {
+				headerText = translate( 'Login to %(clientTitle)s', {
+					args: { clientTitle: oauth2Client.title },
 				} );
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ translate( 'Log in with your WordPress.com account' ) }
-					</p>
-				);
+
+				if ( isGravPoweredLoginPage ) {
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate(
+								'If you prefer logging in with a password, or a social media account, choose below:'
+							) }
+						</p>
+					);
+				}
 			}
 		} else if ( isWooCoreProfilerFlow ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow;
@@ -554,6 +560,9 @@ class Login extends Component {
 
 		return (
 			<div className="login__form-header-wrapper">
+				{ isGravPoweredLoginPage && (
+					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+				) }
 				{ preHeader }
 				<div className="login__form-header">{ headerText }</div>
 				{ postHeader }
@@ -598,6 +607,7 @@ class Login extends Component {
 			action,
 			isWooCoreProfilerFlow,
 			currentQuery,
+			isGravPoweredLoginPage,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -724,6 +734,7 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
+				hideSignupLink={ isGravPoweredLoginPage }
 			/>
 		);
 	}
@@ -801,7 +812,10 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: true,
-				flow: ownProps.isJetpack ? 'jetpack' : null,
+				flow:
+					( ownProps.isJetpack && 'jetpack' ) ||
+					( ownProps.isGravPoweredClient && ownProps.oauth2Client.name ) ||
+					null,
 			} ),
 	} )
 )( localize( Login ) );

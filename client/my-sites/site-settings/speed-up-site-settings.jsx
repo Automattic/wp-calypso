@@ -1,4 +1,5 @@
 import { Card, CompactCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -69,7 +70,9 @@ class SpeedUpSiteSettings extends Component {
 							) }
 							link={
 								siteIsAtomic
-									? 'https://wordpress.com/support/settings/performance-settings/#enable-site-accelerator'
+									? localizeUrl(
+											'https://wordpress.com/support/settings/performance-settings/#enable-site-accelerator'
+									  )
 									: 'https://jetpack.com/support/site-accelerator/'
 							}
 							privacyLink={ ! siteIsAtomic }
@@ -110,7 +113,9 @@ class SpeedUpSiteSettings extends Component {
 								) }
 								link={
 									siteIsAtomic
-										? 'https://wordpress.com/support/settings/performance-settings/#lazy-load-images'
+										? localizeUrl(
+												'https://wordpress.com/support/settings/performance-settings/#lazy-load-images'
+										  )
 										: 'https://jetpack.com/support/lazy-images/'
 								}
 								privacyLink={ ! siteIsAtomic }
@@ -120,9 +125,9 @@ class SpeedUpSiteSettings extends Component {
 								moduleSlug="lazy-images"
 								label={ translate( 'Lazy load images' ) }
 								description={ translate(
-									"Improve your site's speed by only loading images visible on the screen. New images will " +
-										'load just before they scroll into view. This prevents viewers from having to download ' +
-										"all the images on a page all at once, even ones they can't see."
+									'Most modern browsers already support lazy loading. ' +
+										'With over 90% of current browsers offering native support, ' +
+										'enabling this feature may be unnecessary.'
 								) }
 								disabled={ isRequestingOrSaving }
 							/>

@@ -7,15 +7,17 @@ export const NAVIGATOR_PATHS = {
 	MAIN_HEADER: '/main/header',
 	MAIN_FOOTER: '/main/footer',
 	MAIN_PATTERNS: '/main/:categorySlug',
+	SECTIONS: '/sections',
+	SECTIONS_PATTERNS: '/sections/:categorySlug',
 	STYLES: '/styles',
 	STYLES_COLORS: '/styles/colors',
 	STYLES_FONTS: '/styles/fonts',
 	ACTIVATION: '/activation',
 	CONFIRMATION: '/confirmation',
+	UPSELL: '/upsell',
 };
 
 export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
-export const INITIAL_CATEGORY = 'posts';
 
 export const INITIAL_SCREEN = 'main';
 
@@ -50,6 +52,20 @@ export const PATTERN_CATEGORIES = [
 	'services',
 	'store',
 	//'team', -- Not exist
-	'testimonials',
+	//'testimonials', -- Not exist
 	// 'text', -- Hidden
 ];
+
+export const ORDERED_PATTERN_CATEGORIES = [
+	'call-to-action',
+	'about',
+	'services',
+	'store',
+	'quotes',
+	'posts',
+	'newsletter',
+	'gallery',
+	'contact',
+];
+
+export const INITIAL_CATEGORY = ORDERED_PATTERN_CATEGORIES[ 0 ];

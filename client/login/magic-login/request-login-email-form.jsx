@@ -42,6 +42,14 @@ class RequestLoginEmailForm extends Component {
 		// mapped to dispatch
 		sendEmailLogin: PropTypes.func.isRequired,
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
+
+		tosComponent: PropTypes.node,
+		headerText: PropTypes.string,
+		hideSubHeaderText: PropTypes.bool,
+		inputPlaceholder: PropTypes.string,
+		submitButtonLabel: PropTypes.string,
+		onSendEmailLogin: PropTypes.func,
+		createAccountForNewUser: PropTypes.bool,
 	};
 
 	state = {
@@ -79,9 +87,12 @@ class RequestLoginEmailForm extends Component {
 			return;
 		}
 
+		this.props.onSendEmailLogin?.( usernameOrEmail );
+
 		this.props.sendEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
+			createAccount: this.props.createAccountForNewUser,
 			...( this.props.flow ? { flow: this.props.flow } : {} ),
 		} );
 	};
@@ -99,6 +110,11 @@ class RequestLoginEmailForm extends Component {
 			emailRequested,
 			showCheckYourEmail,
 			translate,
+			tosComponent,
+			headerText,
+			hideSubHeaderText,
+			inputPlaceholder,
+			submitButtonLabel,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -123,7 +139,9 @@ class RequestLoginEmailForm extends Component {
 
 		return (
 			<div className="magic-login__form">
-				<h1 className="magic-login__form-header">{ translate( 'Email me a login link' ) }</h1>
+				<h1 className="magic-login__form-header">
+					{ headerText || translate( 'Email me a login link' ) }
+				</h1>
 				{ requestError && (
 					<Notice
 						duration={ 10000 }
@@ -144,11 +162,11 @@ class RequestLoginEmailForm extends Component {
 					</p>
 				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
-					<p>
-						{ translate(
-							'Get a link sent to the email address associated ' +
-								'with your account to log in instantly without your password.'
-						) }
+					<p className="magic-login__form-sub-header">
+						{ ! hideSubHeaderText &&
+							translate(
+								'Get a link sent to the email address associated with your account to log in instantly without your password.'
+							) }
 					</p>
 					<FormLabel htmlFor="usernameOrEmail">
 						{ this.props.translate( 'Email Address or Username' ) }
@@ -162,11 +180,12 @@ class RequestLoginEmailForm extends Component {
 							name="usernameOrEmail"
 							ref={ this.usernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
+							placeholder={ inputPlaceholder }
 						/>
-
+						{ tosComponent }
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
-								{ translate( 'Get Link' ) }
+								{ submitButtonLabel || translate( 'Get Link' ) }
 							</FormButton>
 						</div>
 					</FormFieldset>

@@ -1,5 +1,11 @@
 import { parse as parseBlocks } from '@wordpress/blocks';
-import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
+import {
+	Button,
+	MenuItem as _MenuItem,
+	Modal,
+	NavigableMenu,
+	VisuallyHidden,
+} from '@wordpress/components';
 import { withInstanceId } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -12,6 +18,7 @@ import replacePlaceholders from '../utils/replace-placeholders';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import PatternSelectorControl from './pattern-selector-control';
 import type { PatternCategory, PatternDefinition, FormattedPattern } from '../pattern-definition';
+import type { ComponentProps, ComponentType } from 'react';
 
 interface PagePatternModalProps {
 	areTipsEnabled?: boolean;
@@ -31,6 +38,15 @@ interface PagePatternModalProps {
 interface PagePatternModalState {
 	selectedCategory: string | null;
 }
+
+// TODO: Remove this wrapper when MenuItem adds back button prop types
+type MenuItemProps = ComponentProps< typeof _MenuItem >;
+const MenuItem = _MenuItem as ComponentType<
+	MenuItemProps & {
+		variant?: ComponentProps< typeof Button >[ 'variant' ];
+		isPressed?: boolean;
+	}
+>;
 
 class PagePatternModal extends Component< PagePatternModalProps, PagePatternModalState > {
 	constructor( props: PagePatternModalProps ) {

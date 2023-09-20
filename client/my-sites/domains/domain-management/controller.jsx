@@ -4,6 +4,8 @@ import DomainManagementData from 'calypso/components/data/domain-management';
 import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
+	domainManagementAllEditSelectedContactInfo,
+	domainManagementEditSelectedContactInfo,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
@@ -18,6 +20,7 @@ import {
 	domainManagementTransferIn,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
+	domainManagementTransferToAnyUser,
 	domainManagementTransferToOtherSite,
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
@@ -29,7 +32,7 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
-		if ( isEnabled( 'domains/management' ) ) {
+		if ( isEnabled( 'domains/bulk-actions-table' ) ) {
 			pageContext.primary = (
 				<DomainManagement.BulkSiteDomains
 					analyticsPath={ domainManagementRoot( ':site' ) }
@@ -54,7 +57,7 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		if ( isEnabled( 'domains/management' ) ) {
+		if ( isEnabled( 'domains/bulk-actions-table' ) ) {
 			pageContext.primary = (
 				<>
 					<DomainManagement.BulkAllDomains
@@ -174,6 +177,32 @@ export default {
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementAllEditSelectedContactInfo( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementAllEditSelectedContactInfo() }
+				analyticsTitle="Domain Management > Edit Selected Contact Info"
+				component={ DomainManagement.BulkEditContactInfoPage }
+				context={ pageContext }
+				needsDomains
+			/>
+		);
+		next();
+	},
+
+	domainManagementEditSelectedContactInfo( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementEditSelectedContactInfo( ':site' ) }
+				analyticsTitle="Domain Management > Edit Selected Contact Info"
+				component={ DomainManagement.BulkEditContactInfoPage }
+				context={ pageContext }
+				needsDomains
 			/>
 		);
 		next();
@@ -304,6 +333,20 @@ export default {
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other User"
 				component={ DomainManagement.TransferDomainToOtherUser }
+				context={ pageContext }
+				needsDomains
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementTransferToAnyUser( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementTransferToAnyUser( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Transfer To Another User"
+				component={ DomainManagement.TransferDomainToAnyUser }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }

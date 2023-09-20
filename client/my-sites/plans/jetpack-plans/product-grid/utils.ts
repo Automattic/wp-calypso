@@ -7,8 +7,8 @@ import {
 	JETPACK_BACKUP_ADDON_PRODUCTS,
 	JETPACK_STATS_PRODUCTS,
 	PRODUCT_JETPACK_STATS_YEARLY,
-	getMonthlyPlanByYearly,
-	getYearlyPlanByMonthly,
+	findPlansKeys,
+	getPlan,
 } from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
 import slugToSelectorProduct from '../slug-to-selector-product';
@@ -22,8 +22,12 @@ export const getPlansToDisplay = ( {
 	duration: Duration;
 	currentPlanSlug: string | null;
 } ): SelectorProduct[] => {
-	const currentPlanTerms = currentPlanSlug
-		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
+	const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+	const currentPlanTerms = currentPlan
+		? findPlansKeys( {
+				type: currentPlan.type,
+				group: currentPlan.group,
+		  } )
 		: [];
 
 	let planSlugsToDisplay = SELECTOR_PLANS;

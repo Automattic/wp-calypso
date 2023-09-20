@@ -12,10 +12,6 @@
 	}
 }
 
-.rewind-flow__content {
-	margin-top: 16px;
-}
-
 .rewind-flow__title {
 	text-align: center;
 	font-size: $font-title-small;
@@ -216,5 +212,80 @@ a.rewind-flow-notice__title-warning:visited {
 		outline: thin dotted;
 		box-shadow: initial;
 		border: initial;
+	}
+}
+
+.granular-restore {
+	&.card {
+		padding: 48px;
+	}
+
+	.rewind-flow__header {
+		display: block;
+		line-height: 0;
+		margin-bottom: 8px;
+		padding-bottom: 0;
+		padding-top: 0;
+		text-align: left;
+	}
+
+	.rewind-flow__title {
+		font-size: 2.25rem;
+		line-height: 36px;
+		padding-bottom: 48px;
+		text-align: left;
+	}
+
+	.rewind-flow__primary-button {
+		margin-bottom: 0;
+	}
+
+	.rewind-flow__files {
+		color: var(--studio-gray-60);
+	}
+
+	.rewind-flow__info,
+	.rewind-flow__cta,
+	.rewind-flow__files,
+	.rewind-flow-notice__title-warning h4 {
+		font-size: 0.875rem;
+	}
+
+	.rewind-flow__cta {
+		padding: 8px 0;
+		button {
+			color: var(--studio-black);
+			text-decoration: none;
+			font-weight: 600;
+		}
+	}
+
+	.rewind-flow__expandable-files {
+		margin-bottom: 1.5em;
+
+		button {
+			color: var(--studio-black);
+		}
+
+		.rewind-flow__files {
+			margin-bottom: 0;
+		}
+	}
+
+	.rewind-flow__show-all {
+		margin-top: 16px;
+	}
+
+	.rewind-flow-notice {
+		margin-top: 32px;
+	}
+
+	li {
+		list-style: none;
+	}
+
+	ul {
+		margin-left: 0;
+		margin-bottom: 0;
 	}
 }

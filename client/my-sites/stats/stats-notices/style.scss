@@ -24,12 +24,16 @@
 			border-radius: 2px;
 		}
 
-		.notice-banner.is-info {
-			border-left-color: var(--color-accent);
+		.notice-banner {
+
+			&.is-info {
+				border-left-color: var(--color-accent);
+			}
 		}
 
 		.notice-banner__action-link > span {
 			border-bottom: 0;
+			vertical-align: middle;
 		}
 	}
 }

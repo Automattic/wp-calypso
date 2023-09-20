@@ -4,6 +4,7 @@ import {
 	getPlan,
 	isJetpackPlan,
 	isJetpackProduct,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -306,7 +307,7 @@ class CancelPurchaseButton extends Component {
 		}
 
 		const disableButtons = this.state.disabled || this.props.disabled;
-		const { isJetpack, purchaseListUrl, activeSubscriptions } = this.props;
+		const { isJetpack, isAkismet, purchaseListUrl, activeSubscriptions } = this.props;
 		const closeDialogAndProceed = () => {
 			this.closeDialog();
 			return onClick();
@@ -342,7 +343,7 @@ class CancelPurchaseButton extends Component {
 					/>
 				) }
 
-				{ isJetpack && (
+				{ ( isJetpack || isAkismet ) && (
 					<CancelJetpackForm
 						disableButtons={ disableButtons }
 						purchase={ purchase }
@@ -351,6 +352,7 @@ class CancelPurchaseButton extends Component {
 						onClose={ this.closeDialog }
 						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						isAkismet={ isAkismet }
 					/>
 				) }
 
@@ -383,6 +385,7 @@ class CancelPurchaseButton extends Component {
 export default connect(
 	( state, { purchase } ) => ( {
 		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
+		isAkismet: purchase && isAkismetProduct( purchase ),
 	} ),
 	{
 		clearPurchases,

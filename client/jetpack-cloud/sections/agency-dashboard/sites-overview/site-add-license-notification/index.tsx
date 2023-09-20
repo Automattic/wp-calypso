@@ -4,7 +4,9 @@ import Notice from 'calypso/components/notice';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { getPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { WPCOM_HOSTING } from '../lib/constants';
 import { ProductInfo } from '../types';
+import WPCOMAtomicHostingNotification from './wpcom-atomic-hosting-notification';
 
 import './style.scss';
 
@@ -25,7 +27,12 @@ export default function SiteAddLicenseNotification() {
 		return null;
 	}
 
-	const { selectedSite, selectedProducts } = licensesAdded;
+	const { selectedSite, selectedProducts, type } = licensesAdded;
+
+	if ( type === WPCOM_HOSTING ) {
+		return <WPCOMAtomicHostingNotification licensesAdded={ licensesAdded } />;
+	}
+
 	const assignedLicenses = selectedProducts.filter( ( product ) => product.status === 'fulfilled' );
 	const rejectedLicenses = selectedProducts.filter( ( product ) => product.status === 'rejected' );
 

@@ -7,7 +7,7 @@ import {
 import { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import wp from 'calypso/lib/wp';
-import { getTaxValidationResult } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
+import { getTaxValidationResult } from 'calypso/my-sites/checkout/src/lib/contact-validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
 import type {

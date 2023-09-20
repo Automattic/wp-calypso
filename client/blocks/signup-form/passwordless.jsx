@@ -20,7 +20,6 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
-		inputLabel: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
@@ -243,16 +242,14 @@ class PasswordlessSignupForm extends Component {
 	}
 
 	render() {
-		const { inputLabel, inputPlaceholder, translate } = this.props;
+		const { inputPlaceholder, translate } = this.props;
 		const { errorMessages, isSubmitting } = this.state;
 
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="email">
-							{ inputLabel || translate( 'Enter your email address' ) }
-						</FormLabel>
+						<FormLabel htmlFor="email">{ translate( 'Enter your email address' ) }</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							className="signup-form__passwordless-email"

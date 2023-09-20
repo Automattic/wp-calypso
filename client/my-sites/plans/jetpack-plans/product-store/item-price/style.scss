@@ -50,8 +50,10 @@
 	&__expiration-date {
 		color: var(--studio-gray-50);
 		font-size: 0.75rem;
-		//Mimic line-height: 24px, but with padding instead, so that the text can wrap to a new line correctly.
-		padding: 0.301rem 0 0.3rem;
+		@include break-mobile {
+			//Mimic line-height: 24px, but with padding instead, so that the text can wrap to a new line correctly.
+			padding: 0.301rem 0 0.3rem;
+		}
 	}
 
 	@include break-mobile {
@@ -91,6 +93,7 @@
 
 	.plan-price.is-discounted {
 		color: var(--studio-gray-100);
+		font-weight: 700;
 	}
 
 	.plan-price.is-discounted .plan-price__fraction {

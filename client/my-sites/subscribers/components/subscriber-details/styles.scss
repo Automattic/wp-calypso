@@ -20,8 +20,7 @@
 		}
 
 		.subscriber-details__content-column {
-			flex-basis: 33.3%;
-			flex-grow: 1;
+			flex: 1 1 0;
 			overflow: hidden;
 			word-wrap: break-word;
 		}

@@ -52,3 +52,4 @@ export const LAUNCHPAD_INTENT_BUILD = 'home-launchpad-intent-build';
 export const LAUNCHPAD_INTENT_WRITE = 'home-launchpad-intent-write';
 export const LAUNCHPAD_INTENT_FREE_NEWSLETTER = 'home-launchpad-intent-free-newsletter';
 export const LAUNCHPAD_INTENT_PAID_NEWSLETTER = 'home-launchpad-intent-paid-newsletter';
+export const LAUNCHPAD_PRE_LAUNCH = 'home-launchpad-pre-launch';

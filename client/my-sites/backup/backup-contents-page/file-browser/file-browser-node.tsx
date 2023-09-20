@@ -1,8 +1,8 @@
 import { Button, Icon } from '@wordpress/components';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useState, useEffect } from '@wordpress/element';
 import { chevronDown, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { useDispatch, useSelector } from 'calypso/state';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
@@ -21,7 +21,6 @@ interface FileBrowserNodeProps {
 	isAlternate: boolean; // This decides if the node will have a background color or not
 	setActiveNodePath: ( path: string ) => void;
 	activeNodePath: string;
-	showCheckboxes: boolean;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 }
 
@@ -32,7 +31,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	isAlternate,
 	setActiveNodePath,
 	activeNodePath,
-	showCheckboxes,
 	parentItem,
 } ) => {
 	const isRoot = path === '/';
@@ -84,9 +82,14 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					addChildNodes(
 						siteId,
 						path,
-						backupFiles
-							.filter( shouldAddChildNode )
-							.map( ( childItem: FileBrowserItem ) => childItem.name )
+						backupFiles.filter( shouldAddChildNode ).map( ( childItem: FileBrowserItem ) => {
+							return {
+								id: childItem.id ?? '',
+								path: childItem.name,
+								type: childItem.type,
+								totalItems: childItem.totalItems,
+							};
+						} )
 					)
 				);
 			}
@@ -189,7 +192,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						rewindId={ rewindId }
 						isAlternate={ childIsAlternate }
 						activeNodePath={ activeNodePath }
-						showCheckboxes={ showCheckboxes }
 						setActiveNodePath={ setActiveNodePath }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
@@ -202,13 +204,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const renderCheckbox = () => {
-		if ( ! showCheckboxes ) {
-			return;
-		}
-
 		// We don't restore WordPress and just download it individually
 		if ( item.type === 'wordpress' ) {
-			return;
+			return null;
 		}
 
 		// Mixed state will show checked but with a mixed class
@@ -270,6 +268,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					rewindId={ rewindId }
 					item={ item }
 					parentItem={ parentItem }
+					path={ path }
 				/>
 			) }
 			{ isOpen && (

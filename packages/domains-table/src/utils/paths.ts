@@ -1,7 +1,48 @@
 import { addQueryArgs } from '@wordpress/url';
 import { stringify } from 'qs';
+import { ResponseDomain } from './types';
 
 export const emailManagementAllSitesPrefix = '/email/all';
+
+export function domainManagementLink(
+	{ domain, type }: Pick< ResponseDomain, 'domain' | 'type' >,
+	siteSlug: string,
+	isAllSitesView: boolean
+) {
+	const viewSlug = domainManagementViewSlug( type );
+
+	// Encodes only real domain names and not parameter placeholders
+	if ( ! domain.startsWith( ':' ) ) {
+		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
+		// Note they are encoded twice since page.js decodes the path by default.
+		domain = encodeURIComponent( encodeURIComponent( domain ) );
+	}
+
+	if ( isAllSitesView ) {
+		return `${ domainManagementAllRoot() }/${ domain }/${ viewSlug }/${ siteSlug }`;
+	}
+
+	return `${ domainManagementRoot() }/${ domain }/${ viewSlug }/${ siteSlug }`;
+}
+
+export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
+	return `${ domainManagementAllRoot() }/${ domainName }/transfer/other-site/${ siteSlug }`;
+}
+
+function domainManagementViewSlug( type: ResponseDomain[ 'type' ] ) {
+	switch ( type ) {
+		case 'transfer':
+			return 'transfer/in';
+		case 'redirect':
+			return 'redirect';
+		default:
+			return 'edit';
+	}
+}
+
+export function domainOnlySiteCreationLink( siteSlug: string, siteId: number ) {
+	return addQueryArgs( '/start/site-selected/', { siteSlug, siteId } );
+}
 
 function resolveRootPath( relativeTo: string | null = null ) {
 	if ( relativeTo ) {
@@ -119,6 +160,29 @@ export function domainManagementEdit(
 	return domainManagementEditBase( siteName, domainName, 'edit', relativeTo, expandSections );
 }
 
+export function domainManagementTransfer(
+	siteName: string,
+	domainName: string,
+	relativeTo: string | null = null
+) {
+	return domainManagementEditBase( siteName, domainName, 'transfer', relativeTo );
+}
+
 export function isUnderEmailManagementAll( path: string ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
+}
+
+export function domainMagementDNS( siteName: string, domainName: string ) {
+	return domainManagementEditBase( siteName, domainName, 'dns' );
+}
+
+export function emailManagementEdit( siteSlug: string, domainName: string ) {
+	// Encodes only real domain names and not parameter placeholders
+	if ( domainName && ! String( domainName ).startsWith( ':' ) ) {
+		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
+		// Note they are encoded twice since page.js decodes the path by default.
+		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
+	}
+
+	return '/email/' + domainName + '/manage/' + siteSlug;
 }

@@ -139,6 +139,17 @@ export function domainManagementAllEditContactInfo() {
 	return domainManagementAllRoot() + '/edit-contact-info';
 }
 
+export function domainManagementAllEditSelectedContactInfo() {
+	return domainManagementAllRoot() + '/edit-selected-contact-info';
+}
+
+/**
+ * @param {string} siteName
+ */
+export function domainManagementEditSelectedContactInfo( siteName ) {
+	return domainManagementRoot() + '/edit-selected-contact-info/' + siteName;
+}
+
 /**
  * @param {string} siteName
  * @param {string} domainName
@@ -263,6 +274,15 @@ export function domainManagementTransferOut( siteName, domainName, relativeTo = 
  */
 export function domainManagementTransferToAnotherUser( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'other-user', relativeTo );
+}
+
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
+export function domainManagementTransferToAnyUser( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'any-user', relativeTo );
 }
 
 /**

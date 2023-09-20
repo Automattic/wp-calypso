@@ -54,11 +54,7 @@ const PatternCategoryList = ( {
 							aria-label={ label }
 							aria-describedby={ description }
 							aria-current={ isActive }
-							onClick={ () => {
-								if ( ! isActive ) {
-									onSelectCategory( name );
-								}
-							} }
+							onClick={ () => onSelectCategory( name ) }
 						>
 							<NavigatorItem active={ isActive }>{ label }</NavigatorItem>
 						</CompositeItem>

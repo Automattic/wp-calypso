@@ -5,10 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
-import {
-	stripeConfiguration,
-	mockStripeElements,
-} from 'calypso/my-sites/checkout/composite-checkout/test/util';
+import { stripeConfiguration, mockStripeElements } from 'calypso/my-sites/checkout/src/test/util';
 import { createReduxStore } from 'calypso/state';
 import { PURCHASES_SITE_FETCH_COMPLETED } from 'calypso/state/action-types';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';

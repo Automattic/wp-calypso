@@ -18,6 +18,7 @@ import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -27,7 +28,7 @@ import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
@@ -71,7 +72,7 @@ const Home = ( {
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
 
-	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
+	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
 	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
@@ -178,9 +179,17 @@ const Home = ( {
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
 			{ header }
-			{ isLoading ? (
-				<div className="customer-home__loading-placeholder"></div>
-			) : (
+			{ ! isLoading && ! layout && homeLayoutError ? (
+				<TrackComponentView
+					eventName="calypso_customer_home_my_site_view_layout_error"
+					eventProperties={ {
+						site_id: siteId,
+						error: homeLayoutError?.message ?? 'Layout is not available.',
+					} }
+				/>
+			) : null }
+			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
+			{ ! isLoading && layout && ! homeLayoutError ? (
 				<>
 					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
@@ -192,7 +201,7 @@ const Home = ( {
 						</div>
 					</div>
 				</>
-			) }
+			) : null }
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
@@ -229,7 +238,6 @@ const mapStateToProps = ( state ) => {
 		sitePlan: getSitePlan( state, siteId ),
 		siteId,
 		isJetpack: isJetpackSite( state, siteId ),
-		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isStaticHomePage:
@@ -266,4 +274,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
-export default connectHome( withTrackingTool( 'HotJar' )( Home ) );
+export default connectHome( withJetpackConnectionProblem( withTrackingTool( 'HotJar' )( Home ) ) );

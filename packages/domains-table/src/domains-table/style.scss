@@ -1,26 +1,48 @@
 @import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+
+$domains-table-mobile-breakpoint: 480px;
+
+@media ( max-width: $domains-table-mobile-breakpoint ) {
+	.navigation-header {
+		position: sticky;
+		/*
+		 * The 47px value comes from https://github.com/Automattic/wp-calypso/blob/d7e2ada/client/my-sites/sidebar/style.scss#L751.
+		 * Using 46px, which is the masterbar height CSS variable, introduces an annoying 1px scroll.
+		 * We're using this magic number elsewhere too, so a clean up would be appreciated.
+		 */
+		top: 47px;
+		z-index: 1;
+	}
+
+	.domains-table-toolbar {
+		position: sticky;
+		z-index: 1;
+	}
+
+	.domains-table {
+		padding: 0 16px;
+	}
+}
 
 .domains-table {
-	--domains-table-toolbar-height: 40px;
+	.domains-table-toolbar {
+		--domains-table-toolbar-height: 40px;
+		background: var(--color-surface-backdrop);
 
-	border-collapse: collapse;
-
-	table {
-		margin-top: 30px;
-
-		tr {
-			border-bottom: 1px solid var(--studio-gray-5);
+		@media ( min-width: $domains-table-mobile-breakpoint ) {
+			position: relative;
+			z-index: 2; // Ensure the dropdown appears overtop of the sticky table header
 		}
 	}
 
-	th {
-		padding-bottom: 16px;
-		color: var(--studio-gray-60);
-		vertical-align: middle;
-		font-size: $font-body-small;
-		font-style: normal;
-		font-weight: 500;
-		line-height: 20px;
+	table {
+		margin-top: 14px; /* 30px - 16px of the table heading padding */
+		border-collapse: collapse;
+
+		tr {
+			border-bottom: 1px solid #f0f0f0;
+		}
 	}
 
 	.domains-table__bulk-action-container {
@@ -32,6 +54,11 @@
 		}
 	}
 
+	.domains-table__action-ellipsis-column-header {
+		width: 0;
+		min-width: fit-content;
+	}
+
 	td {
 		padding: 20px 0;
 		height: 44px;
@@ -41,23 +68,280 @@
 		font-size: $font-body-small;
 		line-height: 20px;
 		font-style: normal;
-
-		a,
-		a:hover {
-			text-decoration: underline;
-			color: var(--color-link);
-		}
 	}
 
 	.domains-table__domain-name {
-		text-decoration: none;
 		color: var(--studio-gray-100);
 		font-size: $font-body;
 		line-height: 24px;
 		font-weight: 500;
 	}
 
+	a.domains-table__domain-name:hover,
+	.domains-table__add-site-link {
+		text-decoration: underline;
+		color: var(--color-link);
+	}
+
 	.domains-table__primary-domain-label {
 		margin-bottom: 4px;
+	}
+
+	.domains-table-row__status-cell {
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		font-size: $font-body-small;
+
+		@media ( min-width: $domains-table-mobile-breakpoint ) {
+			width: 100px;
+		}
+
+		svg {
+			color: currentColor;
+		}
+
+		&__status-success,
+		&__status-premium {
+			color: var(--studio-green-50);
+		}
+
+		&__status-verifying,
+		&__status-warning {
+			color: var(--studio-orange-50);
+		}
+
+		&__status-alert,
+		&__status-error {
+			color: var(--studio-red-50);
+		}
+	}
+
+	.domains-table-row__actions {
+		text-align: right;
+
+	}
+}
+
+.domains-table-row-loading-placeholder {
+	td {
+		padding-right: 16px;
+	}
+	&-checkbox-column {
+		width: 5%;
+	}
+	&-domain-column {
+		width: 25%;
+	}
+	&-owner-column {
+		width: 15%;
+	}
+	&-site-column {
+		width: 25%;
+	}
+	&-expires-column {
+		width: 25%;
+	}
+	&-status-column {
+		width: 15%;
+	}
+}
+
+.domains-table-row__actions-group {
+	.components-button {
+		&:visited {
+			color: var(--color-text);
+		}
+
+		&:hover:not(:disabled) {
+			color: var(--color-primary);
+		}
+	}
+}
+
+.domains-bulk-update-status-popover {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	color: var(--studio-gray-50);
+
+	&-item {
+		color: var(--studio-gray-100);
+
+		> div {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+	}
+
+	&-item-date {
+		margin-left: 16px;
+		font-size: smaller;
+		color: var(--studio-gray-50);
+	}
+
+	&-item-indicator {
+		border-radius: 50%;
+		height: 8px;
+		width: 8px;
+		min-height: 8px;
+		min-width: 8px;
+		flex-shrink: 0;
+
+		&__pending {
+			@extend .domains-bulk-update-status-popover-item-indicator;
+			background-color: var(--studio-orange-40);
+		}
+	}
+}
+
+.domains-table-bulk-actions-notice-popover {
+	max-height: 300px;
+	overflow-y: auto;
+	p {
+		line-height: 1.2;
+		font-size: smaller;
+	}
+}
+
+.domains-table-row__renews-on-cell {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.domains-table-row__domain-type-text {
+	display: none;
+	font-size: $font-body-extra-small;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 20px;
+
+	@include break-large {
+		display: block;
+	}
+}
+
+.domains-table-mobile-cards {
+	.domains-table-mobile-cards-select-all {
+		display: flex;
+		align-items: center;
+		span {
+			font-size: smaller;
+		}
+	}
+
+	.domains-table__bulk-action-container {
+		margin-top: 16px;
+	}
+
+	&-controls {
+		width: 100%;
+		display: flex;
+		gap: 16px;
+	}
+
+	&-sort-dropdown {
+		width: 100%;
+		flex-grow: 1;
+		.select-dropdown__container {
+			width: 100%;
+			.select-dropdown__header {
+				text-transform: capitalize;
+			}
+		}
+	}
+}
+
+.domains-table-mobile-card {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px 0;
+	border-bottom: 1px solid #f0f0f0;
+
+	&-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		.domains-table__domain-name {
+			text-align: left;
+		}
+
+		.components-base-control,
+		.components-checkbox-control__input,
+		.components-checkbox-control__checked {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	> div {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&-label {
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		color: var(--gray-gray-60);
+	}
+
+	&-registered-date {
+		font-size: $font-body-small;
+	}
+
+	&-status {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+
+	&-loading-placeholder {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 16px 0;
+		border-bottom: 1px solid #f0f0f0;
+
+		> div {
+			display: flex;
+			justify-content: space-between;
+			gap: 80px;
+		}
+
+		&-actions {
+			width: 50px;
+		}
+
+		&-status {
+			width: 120px;
+		}
+	}
+
+}
+
+a.domains-table-add-email-button {
+	font-size: $font-body-small;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 20px; /* 142.857% */
+	letter-spacing: -0.15px;
+	text-decoration: underline;
+	color: var(--color-link);
+}
+
+a.domains-table-view-email-button {
+	color: var(--studio-gray-90);
+	font-size: $font-body-small;
+	&:hover {
+		color: var(--color-link);
 	}
 }

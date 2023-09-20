@@ -7,6 +7,7 @@ import {
 	isJetpackSearchSlug,
 	isJetpackBoostSlug,
 	isJetpackVideoPressSlug,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
@@ -145,6 +146,10 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 		} else if ( ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( productSlug ) ) {
 			return translate(
 				"Once you remove your subscription, you will no longer have Jetpack's enhanced search experience."
+			);
+		} else if ( isAkismetProduct( { productSlug: productSlug } ) ) {
+			return translate(
+				"Once you remove your subscription, Akismet will no longer be blocking spam from your sites' comments and forms."
 			);
 		} else if ( hasBenefitsToShow( productSlug ) ) {
 			return translate(

@@ -3,12 +3,13 @@ import {
 	FEATURE_STATS_PAID,
 	PRODUCT_JETPACK_AI_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
 import { useSelector } from 'calypso/state';
@@ -20,6 +21,7 @@ import {
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
@@ -29,19 +31,8 @@ import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
-
-export interface AddOnMeta {
-	productSlug: string;
-	featureSlugs?: string[] | null;
-	icon: JSX.Element;
-	featured?: boolean; // irrelevant to "featureSlugs"
-	name: string | null;
-	quantity?: number;
-	description: string | null;
-	displayCost: TranslateResult | null;
-	purchased?: boolean;
-	isLoading?: boolean;
-}
+import useAddOnPrices from './use-add-on-prices';
+import type { AddOnMeta } from '@automattic/data-stores';
 
 // some memoization. executes far too many times
 const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
@@ -77,10 +68,12 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 		},
 		{
 			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 50 ),
 			icon: spaceUpgradeIcon,
 			quantity: 50,
 			name: translate( '50 GB Storage' ),
 			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
+			prices: useAddOnPrices( PRODUCT_1GB_SPACE, 50 ),
 			description: translate(
 				'Make more space for high-quality photos, videos, and other media. '
 			),
@@ -89,10 +82,12 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 		},
 		{
 			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 100 ),
 			icon: spaceUpgradeIcon,
 			quantity: 100,
 			name: translate( '100 GB Storage' ),
 			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
+			prices: useAddOnPrices( PRODUCT_1GB_SPACE, 100 ),
 			description: translate(
 				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
 			),
@@ -108,6 +103,17 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				comment:
 					'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
 			} ),
+			featured: true,
+			description: translate(
+				'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
+			),
+		},
+		{
+			productSlug: PRODUCT_JETPACK_STATS_YEARLY,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_STATS_YEARLY ),
+			icon: jetpackStatsIcon,
+			overrides: null,
+			displayCost: useAddOnDisplayCost( PRODUCT_JETPACK_STATS_YEARLY ),
 			featured: true,
 			description: translate(
 				'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
@@ -140,6 +146,9 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 			}
 		}
 
+		// Determine which Stats Add-On to show based on the site's commercial classification.
+		const isSiteMarkedCommercial = getSiteOption( state, siteId, 'is_commercial' );
+
 		return addOnsActive
 			.filter( ( addOn ) => {
 				// if a user already has purchased a storage upgrade
@@ -159,15 +168,37 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				// TODO: Remove this check once paid WPCOM stats is live.
 				// gate the Jetpack Stats add-on on a feature flag
 				if (
-					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
+					[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
+						addOn.productSlug
+					) &&
 					! config.isEnabled( 'stats/paid-wpcom-stats' )
 				) {
 					return false;
 				}
 
+				// Hide Stats Personal add-on if the site is marked as commercial.
+				if (
+					isSiteMarkedCommercial === true &&
+					PRODUCT_JETPACK_STATS_PWYW_YEARLY === addOn.productSlug
+				) {
+					return false;
+				}
+
+				// Hide Stats Commercial add-on if the site is not marked as commercial.
+				if (
+					isSiteMarkedCommercial === false &&
+					PRODUCT_JETPACK_STATS_YEARLY === addOn.productSlug
+				) {
+					return false;
+				}
+
+				// TODO: Show the Stats Commercial add-on for a commercial site that has purchased the Personal plan.
+
 				// remove Jetpack Stats add-on if the site already has a paid stats feature through a paid plan.
 				if (
-					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
+					[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
+						addOn.productSlug
+					) &&
 					siteFeatures?.active?.includes( FEATURE_STATS_PAID )
 				) {
 					return false;

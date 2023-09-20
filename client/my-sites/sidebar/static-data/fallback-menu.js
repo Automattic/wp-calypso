@@ -28,7 +28,7 @@ const WOOCOMMERCE_ICON = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3
 
 export default function buildFallbackResponse( {
 	siteDomain = '',
-	shouldShowInbox = false,
+	shouldShowMailboxes = false,
 	shouldShowLinks = false,
 	shouldShowTestimonials = false,
 	shouldShowPortfolio = false,
@@ -39,17 +39,17 @@ export default function buildFallbackResponse( {
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
 	shouldShowAddOns = false,
-	showSiteLogs = false,
+	showSiteMonitoring = false,
 } = {} ) {
-	let inbox = [];
-	if ( shouldShowInbox ) {
-		inbox = [
+	let mailboxes = [];
+	if ( shouldShowMailboxes ) {
+		mailboxes = [
 			{
 				icon: 'dashicons-email',
-				slug: 'Inbox',
-				title: translate( 'Inbox' ),
+				slug: 'mailboxes',
+				title: translate( 'My Mailboxes' ),
 				type: 'menu-item',
-				url: `/inbox/${ siteDomain }`,
+				url: `/mailboxes/${ siteDomain }`,
 			},
 		];
 	}
@@ -117,7 +117,7 @@ export default function buildFallbackResponse( {
 				},
 			],
 		},
-		...inbox,
+		...mailboxes,
 		{
 			icon: 'dashicons-admin-post',
 			slug: 'edit-php',
@@ -518,14 +518,14 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
-				...( showSiteLogs
+				...( showSiteMonitoring
 					? [
 							{
 								parent: 'tools.php',
-								slug: 'tools-site-logs',
-								title: translate( 'Site Logs' ),
+								slug: 'tools-site-monitoring',
+								title: translate( 'Site Monitoring' ),
 								type: 'submenu-item',
-								url: `/site-logs/${ siteDomain }`,
+								url: `/site-monitoring/${ siteDomain }`,
 							},
 					  ]
 					: [] ),
@@ -563,6 +563,13 @@ export default function buildFallbackResponse( {
 							},
 					  ]
 					: [] ),
+				{
+					parent: 'options-podcasting.php',
+					slug: 'options-podcasting-php',
+					title: translate( 'Podcasting' ),
+					type: 'submenu-item',
+					url: `/settings/podcasting/${ siteDomain }`,
+				},
 				{
 					parent: 'options-general.php',
 					slug: 'options-domains-php',

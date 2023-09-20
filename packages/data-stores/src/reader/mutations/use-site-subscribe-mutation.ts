@@ -11,6 +11,7 @@ type SubscribeParams = {
 	doNotInvalidateSiteSubscriptions?: boolean;
 	onSuccess?: () => void;
 	onError?: () => void;
+	subscriptionId?: number;
 };
 
 type SubscribeResponse = {
@@ -25,7 +26,7 @@ type SubscribeResponse = {
 	};
 };
 
-const buildSubscriptionDetailsCacheKey = (
+const buildSubscriptionDetailsByBlogIdQueryKey = (
 	blogId: string,
 	isLoggedIn: boolean,
 	userId?: number
@@ -74,31 +75,29 @@ const useSiteSubscribeMutation = () => {
 		},
 		onMutate: async ( params ) => {
 			const isValidBlogId = isValidId( params.blog_id );
-			let previousSiteSubscriptionDetails: SiteSubscriptionDetails | undefined;
+			let previousSiteSubscriptionDetailsByBlogId: SiteSubscriptionDetails | undefined;
 
 			if ( isValidBlogId ) {
-				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsCacheKey(
+				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsByBlogIdQueryKey(
 					String( params.blog_id ),
 					isLoggedIn,
 					userId
 				);
 				await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
 
-				previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
-					siteSubscriptionDetailsCacheKey
-				);
+				previousSiteSubscriptionDetailsByBlogId =
+					queryClient.getQueryData< SiteSubscriptionDetails >( siteSubscriptionDetailsCacheKey );
 
-				if ( previousSiteSubscriptionDetails ) {
+				if ( previousSiteSubscriptionDetailsByBlogId ) {
 					queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
-						...previousSiteSubscriptionDetails,
-						subscriber_count: previousSiteSubscriptionDetails.subscriber_count + 1,
+						...previousSiteSubscriptionDetailsByBlogId,
+						subscriber_count: previousSiteSubscriptionDetailsByBlogId.subscriber_count + 1,
 					} );
 				}
 			}
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
-
 			if ( previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsCacheKey, {
 					...previousSiteSubscriptions,
@@ -120,15 +119,18 @@ const useSiteSubscribeMutation = () => {
 				} );
 			}
 
-			return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
+			return {
+				previousSiteSubscriptions,
+				previousSiteSubscriptionDetails: previousSiteSubscriptionDetailsByBlogId,
+			};
 		},
-		onError: ( error, params, context ) => {
+		onError: ( _error, params, context ) => {
 			if ( context?.previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
 			}
 
 			if ( isValidId( params.blog_id ) && context?.previousSiteSubscriptionDetails ) {
-				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsCacheKey(
+				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsByBlogIdQueryKey(
 					String( params.blog_id ),
 					isLoggedIn,
 					userId
@@ -147,7 +149,7 @@ const useSiteSubscribeMutation = () => {
 			}
 
 			if ( isValidId( params.blog_id ) ) {
-				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsCacheKey(
+				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsByBlogIdQueryKey(
 					String( params.blog_id ),
 					isLoggedIn,
 					userId

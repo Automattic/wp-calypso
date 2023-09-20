@@ -4,10 +4,30 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 
 interface TosTextProps {
 	isAkismetPurchase: boolean;
+	is100YearPlanPurchase: boolean;
 }
 
-export default function TosText( { isAkismetPurchase }: TosTextProps ) {
+export default function TosText( { isAkismetPurchase, is100YearPlanPurchase }: TosTextProps ) {
 	const translate = useTranslate();
+
+	if ( is100YearPlanPurchase ) {
+		return (
+			<>
+				{ translate( 'You agree to our {{tosLink}}Terms of Service{{/tosLink}}.', {
+					components: {
+						tosLink: (
+							<a
+								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				} ) }
+			</>
+		);
+	}
+
 	return (
 		<>
 			{ translate(

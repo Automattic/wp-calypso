@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import languages, { LanguageSlug } from '@automattic/languages';
 import {
 	UseQueryResult,
@@ -124,10 +123,7 @@ export const getESPluginsInfiniteQueryParams = (
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 	const queryKey = getPluginsListKey( [ 'DEBUG-new-site-seach' ], options, true );
-	const groupId =
-		config.isEnabled( 'marketplace-jetpack-plugin-search' ) && options.category !== 'popular'
-			? 'marketplace'
-			: 'wporg';
+	const groupId = options.category !== 'popular' ? 'marketplace' : 'wporg';
 	const queryFn = ( { pageParam = 1 } ) =>
 		search( {
 			query: searchTerm,

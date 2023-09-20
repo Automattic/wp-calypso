@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isAkismetProduct } from '@automattic/calypso-products';
+import { is100Year, isAkismetProduct } from '@automattic/calypso-products';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { Card, Gridicon } from '@automattic/components';
@@ -19,7 +19,7 @@ import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import {
@@ -86,6 +86,7 @@ export default function PaymentMethodSelector( {
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
 	const isAkismetPurchase = purchase ? isAkismetProduct( purchase ) : false;
+	const is100YearPlanPurchase = purchase ? is100Year( purchase ) : false;
 
 	const showRedirectMessage = useCallback( () => {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
@@ -193,7 +194,10 @@ export default function PaymentMethodSelector( {
 				<div className="payment-method-selector__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
-						<TosText isAkismetPurchase={ isAkismetPurchase } />
+						<TosText
+							isAkismetPurchase={ isAkismetPurchase }
+							is100YearPlanPurchase={ is100YearPlanPurchase }
+						/>
 					</p>
 				</div>
 

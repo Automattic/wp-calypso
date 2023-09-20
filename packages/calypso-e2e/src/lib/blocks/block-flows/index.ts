@@ -20,6 +20,14 @@ export * from './youtube';
 export * from './layout-grid';
 export * from './ai-assistant';
 export * from './donations-form';
+export * from './all-form-fields';
+export * from './form-patterns';
+export * from './ad';
+export * from './paywall';
+export * from './form-ai';
+export * from './image-compare';
+export * from './map';
+export * from './gif';
 
 /* Types */
 export * from './types';

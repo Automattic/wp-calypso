@@ -1,4 +1,5 @@
 import { translate } from 'i18n-calypso';
+import titlecase from 'to-title-case';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
@@ -10,6 +11,7 @@ import {
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import renderHeaderSection from '../lib/header-section';
+import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -26,10 +28,17 @@ const exported = {
 		if ( ! isUserLoggedIn( context.store.getState() ) ) {
 			context.renderHeaderSection = renderHeaderSection;
 		}
+		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
+		const tabTitle = titlecase( getSelectedTabTitle( selectedTab ) || '' );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
-				<DocumentHead title={ translate( 'Browse Popular Blogs & Read Articles ‹ Reader' ) } />
+				<DocumentHead
+					title={ translate( 'Browse %s Blogs & Read Articles ‹ Reader', {
+						args: [ tabTitle ],
+						comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+					} ) }
+				/>
 				<AsyncLoad
 					require="calypso/reader/discover/discover-stream"
 					key="discover-page"
@@ -48,6 +57,7 @@ const exported = {
 					useCompactCards={ true }
 					showBack={ false }
 					className="is-discover-stream"
+					selectedTab={ selectedTab }
 				/>
 			</>
 		);

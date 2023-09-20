@@ -6,9 +6,8 @@
 		padding: 0;
 		margin: 0;
 		max-width: none;
-		min-height: 100vh;
 
-		.web-preview__inner {
+		.site-preview__wrapper .web-preview__inner {
 			width: 100%;
 			height: 680px;
 
@@ -20,7 +19,7 @@
 		}
 	}
 
-	.step-container__header .formatted-header {
+	.step-container .step-container__header .formatted-header {
 		margin: 16px;
 
 		.formatted-header__title {
@@ -59,6 +58,14 @@
 		&-main {
 			display: flex;
 			flex-direction: column;
+			overflow: hidden;
+		}
+
+		&-title,
+		&-description {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
 		}
 
 		&-title {
@@ -69,11 +76,13 @@
 		&-cta {
 			display: flex;
 			flex-direction: column;
-			margin-top: 24px;
+			flex-shrink: 0;
+			margin: 24px 0 32px 0;
+			gap: 16px;
 
 			@include break-small {
 				flex-direction: row-reverse;
-				margin-top: 0;
+				margin: 0 0 0 16px;
 			}
 
 			.button {
@@ -81,23 +90,10 @@
 				font-weight: 500;
 			}
 		}
-
-		&-cta-social {
-			@include break-small {
-				margin-left: 16px;
-			}
-		}
-
-		&-cta-blog {
-			margin-top: 16px;
-			margin-bottom: 80px;
-			@include break-small {
-				margin: 0;
-			}
-		}
 	}
 
 	&__footer {
+		padding-bottom: 32px;
 		text-align: center;
 
 		a.celebration-step__footer-link {

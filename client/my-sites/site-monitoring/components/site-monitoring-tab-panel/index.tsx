@@ -11,7 +11,7 @@ import './style.scss';
 export const tabs = [
 	{ name: 'metrics', title: __( 'Metrics' ) },
 	{ name: 'php', title: __( 'PHP Logs' ) },
-	{ name: 'web', title: __( 'Webserver Logs' ) },
+	{ name: 'web', title: __( 'Web Server Logs' ) },
 ];
 
 interface SiteMonitoringTabPanelProps {
@@ -24,9 +24,10 @@ export const SiteMonitoringTabPanel = ( {
 	className,
 }: SiteMonitoringTabPanelProps ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
+	const selectedText = tabs.find( ( t ) => t.name === selectedTab )?.title || selectedTab;
 	return (
 		<SectionNav
-			selectedText={ selectedTab }
+			selectedText={ selectedText }
 			className={ classnames( 'site-monitoring-tab-panel', className ) }
 		>
 			<NavTabs>

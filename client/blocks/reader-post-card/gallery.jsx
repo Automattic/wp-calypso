@@ -42,9 +42,6 @@ function PostGallery( { post, children } ) {
 
 	return (
 		<div className="reader-post-card__post">
-			<div onClick={ handleClick } role="presentation">
-				<DotPager isClickEnabled={ true }>{ listItems }</DotPager>
-			</div>
 			<div className="reader-post-card__post-details">
 				<AutoDirection>
 					<h2 className="reader-post-card__title">
@@ -54,8 +51,11 @@ function PostGallery( { post, children } ) {
 					</h2>
 				</AutoDirection>
 				<ReaderExcerpt post={ post } />
-				{ children }
 			</div>
+			<div onClick={ handleClick } role="presentation">
+				<DotPager isClickEnabled={ true }>{ listItems }</DotPager>
+			</div>
+			<div className="reader-post-card__post-details">{ children }</div>
 		</div>
 	);
 }
