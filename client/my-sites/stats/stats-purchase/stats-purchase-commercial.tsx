@@ -1,4 +1,5 @@
 import { Button as CalypsoButton } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -32,6 +33,9 @@ const CommercialPurchase = ( {
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
+	const learnMoreLink = isWPCOMSite
+		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
+		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-site-types';
 
 	return (
 		<div>
@@ -46,7 +50,7 @@ const CommercialPurchase = ( {
 				) }
 				<Button
 					variant="link"
-					href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-site-types"
+					href={ localizeUrl( learnMoreLink ) }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
