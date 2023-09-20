@@ -250,19 +250,19 @@ class StatsSite extends Component {
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
-						<StatsPeriodHeader>
-							<StatsPeriodNavigation
-								date={ date }
-								period={ period }
-								url={ `/stats/${ period }/${ slug }` }
-								queryParams={ context.query }
-							>
-								{ ' ' }
-								{ isNewDatePickerEnabled ? (
-									<DatePickerNew
-									// NewDatePicker component
-									/>
-								) : (
+						{ isNewDatePickerEnabled ? (
+							<DatePickerNew
+							// NewDatePicker component
+							/>
+						) : (
+							<StatsPeriodHeader>
+								<StatsPeriodNavigation
+									date={ date }
+									period={ period }
+									url={ `/stats/${ period }/${ slug }` }
+									queryParams={ context.query }
+								>
+									{ ' ' }
 									<DatePicker
 										period={ period }
 										date={ date }
@@ -271,10 +271,10 @@ class StatsSite extends Component {
 										showQueryDate
 										isShort
 									/>
-								) }
-							</StatsPeriodNavigation>
-							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-						</StatsPeriodHeader>
+								</StatsPeriodNavigation>
+								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+							</StatsPeriodHeader>
+						) }
 
 						<ChartTabs
 							activeTab={ getActiveTab( this.props.chartTab ) }
