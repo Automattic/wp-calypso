@@ -276,6 +276,19 @@ class EditContactInfoFormCard extends Component {
 			return;
 		}
 
+		if ( this.props.onSubmitButtonClick ) {
+			const result = this.props.onSubmitButtonClick(
+				newContactDetails,
+				this.state.transferLock,
+				this.state.updateWpcomEmail,
+				this.state.requiresConfirmation
+			);
+			this.updateWpcomEmail( newContactDetails, this.state.updateWpcomEmail );
+			if ( result === 'cancel' ) {
+				return;
+			}
+		}
+
 		this.contactFormFieldValues = newContactDetails;
 
 		this.setState(
@@ -385,18 +398,6 @@ class EditContactInfoFormCard extends Component {
 	};
 
 	handleSubmitButtonClick = ( newContactDetails ) => {
-		if ( this.props.onSubmitButtonClick ) {
-			const result = this.props.onSubmitButtonClick(
-				newContactDetails,
-				this.state.transferLock,
-				this.state.updateWpcomEmail
-			);
-			this.updateWpcomEmail( newContactDetails, this.state.updateWpcomEmail );
-			if ( result === 'cancel' ) {
-				return;
-			}
-		}
-
 		this.setState(
 			{
 				requiresConfirmation: this.requiresConfirmation( newContactDetails ),
