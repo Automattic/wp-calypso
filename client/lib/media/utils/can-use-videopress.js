@@ -1,7 +1,6 @@
 /**
  * Returns whether a site can use VideoPress.
- *
- * @param {Object} site Site object
+ * @param {import('@automattic/data-stores').SiteDetails} site Site object
  * @returns {boolean}
  */
 export function canUseVideoPress( site ) {
@@ -9,7 +8,9 @@ export function canUseVideoPress( site ) {
 	const isVideoPressEnabled = site.options && site.options.videopress_enabled;
 	const isVideoPressModuleActive =
 		! isSiteJetpack ||
-		( site.options.active_modules && site.options.active_modules.includes( 'videopress' ) );
+		( site.options &&
+			site.options.active_modules &&
+			site.options.active_modules.includes( 'videopress' ) );
 
 	return isVideoPressEnabled || isVideoPressModuleActive;
 }
