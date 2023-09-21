@@ -1100,47 +1100,6 @@ body.is-section-signup.is-white-signup,
 	}
 }
 
-.plan-features-2023-grid__toggle-plan-comparison-button-container {
-	display: flex;
-	justify-content: center;
-	margin-top: 32px;
-	margin-left: 20px;
-	margin-right: 20px;
-
-	@include plans-section-custom-mobile-breakpoint {
-		margin-left: 0;
-		margin-right: 0;
-	}
-
-	button {
-		background: var(--studio-white);
-		border: 1px solid var(--studio-gray-10);
-		border-radius: 4px;
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-		color: var(--studio-gray-100);
-		font-size: $font-body-small;
-		font-weight: 500;
-		height: 48px;
-		justify-content: center;
-		line-height: 20px;
-		padding: 0 24px;
-		width: 100%;
-		transition: border-color 0.15s ease-out;
-
-		@include plans-2023-break-small {
-			width: initial;
-			height: 40px;
-		}
-
-		&:not([disabled]):hover,
-		&:not([disabled]):focus {
-			border-color: var(--studio-gray-100);
-			box-shadow: none;
-			color: inherit;
-		}
-	}
-}
-
 /**
  * We auto-scroll to the plan comparison grid when it is shown.
  * However, on the /plans page, due to the presence of the masterbar on top,
