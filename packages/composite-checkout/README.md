@@ -89,7 +89,7 @@ A generic button component that is used internally for almost all buttons (like 
 
 ### CheckoutFormSubmit
 
-An element that will display a [CheckoutSubmitButton](#CheckoutSubmitButton) when placed inside a [CheckoutStepGroup](#CheckoutStepGroup).
+An element that will display a checkout submit button when placed inside a [CheckoutStepGroup](#CheckoutStepGroup).
 
 - `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
 - `submitButtonFooter: React.ReactNode`. Displays with the Checkout submit button.
@@ -193,17 +193,6 @@ Available props:
 - `loadingContent: ReactNode`. A component that will be displayed while checkout is loading. The default is [LoadingContent](#LoadingContent).
 - `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
 - `store?: CheckoutStepGroupStore`. A way to inject a data store for the step group created by [createCheckoutStepGroupStore](#createCheckoutStepGroupStore). If not provided, a store will be created automatically.
-
-### CheckoutSubmitButton
-
-The submit button for the form. This actually renders the submit button for the currently active payment method, but it provides the `onClick` handler to attach it to the payment processor function, a `disabled` prop when the form should be disabled, and a React Error boundary. Normally this is already rendered by [CheckoutFormSubmit](#CheckoutFormSubmit), but if you want to use it directly, you can.
-
-The props you can provide to this component are as follows.
-
-- `className?: string`. An optional className.
-- `disabled?: boolean`. The button will automatically be disabled if the [form status](#useFormStatus) is not `ready`, but you can disable it for other cases as well.
-- `onLoadError?: ( error: string ) => void`. A callback that will be called if the error boundary is triggered.
-- `validateForm?`: `() => Promise< boolean >`. A callback that will be called when the `onClick` event is triggered. If the callback is passed and its Promise resolves to a falsy value, the `onClick` handler will **not** be triggered. **No notification will be given to the user if this happens.**
 
 ### CheckoutSummaryArea
 

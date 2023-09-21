@@ -17,7 +17,6 @@ import {
 	useSetStepComplete,
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
-import CheckoutSubmitButton from './components/checkout-submit-button';
 import LoadingContent from './components/loading-content';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
@@ -55,7 +54,6 @@ export {
 	CheckoutStep,
 	CheckoutStepBody,
 	CheckoutStepGroup,
-	CheckoutSubmitButton,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
 	LoadingContent,
