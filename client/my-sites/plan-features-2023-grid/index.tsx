@@ -429,10 +429,11 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		const { cartItemForPlan, storageAddOnsForPlan } =
 			gridPlansForFeaturesGrid.find( ( gridPlan ) => gridPlan.planSlug === planSlug ) ?? {};
 
-		const selectedStorageOption =
-			selectedStorageOptions && selectedStorageOptions[ cartItemForPlan?.product_slug || '' ];
+		const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
 		const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
-			return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
+			return selectedStorageOption && addOn
+				? addOn.featureSlugs?.includes( selectedStorageOption )
+				: false;
 		} );
 
 		const storageAddOnCartItem = storageAddOn && {
