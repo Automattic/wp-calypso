@@ -63,6 +63,17 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 		}
 	};
 
+	const getProductTagline = ( planSlug: string ) => {
+		switch ( planSlug ) {
+			case PLAN_BUSINESS:
+				return translate( 'Unlock the power of WordPress with plugins and cloud tools.' );
+			case PLAN_ECOMMERCE:
+				return translate( 'Create a powerful online store with built-in premium extensions.' );
+			default:
+				return '';
+		}
+	};
+
 	const getPlanInfo = ( planSlug: string ): PlanInfo => {
 		const plan = getPlan( planSlug );
 
@@ -77,7 +88,7 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 
 		return {
 			title: plan?.getTitle?.().toString() || '',
-			description: plan?.getPlanTagline?.().toString() || '',
+			description: getProductTagline( planSlug ) || '',
 			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
 			interval: 'month',
 			wpcomFeatures: planFeaturesObject.map( ( feature ) => ( {
