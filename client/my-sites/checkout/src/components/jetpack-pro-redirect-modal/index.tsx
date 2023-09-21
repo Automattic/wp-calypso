@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { CheckoutCheckIcon } from '@automattic/composite-checkout';
 import { Modal } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -13,6 +12,7 @@ import {
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setPreference } from 'calypso/state/preferences/actions';
+import { CheckIcon } from '../check-icon';
 
 import './style.scss';
 
@@ -92,7 +92,7 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 							const id = feature.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
 							return (
 								<li key={ id }>
-									<CheckoutCheckIcon id={ id } />
+									<CheckIcon id={ id } />
 									{ feature }
 								</li>
 							);

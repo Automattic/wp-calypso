@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import { CheckoutCheckIcon, PaymentLogo } from '@automattic/composite-checkout';
+import { PaymentLogo } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import {
 	getCreditsLineItemFromCart,
@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
+import { CheckIcon } from '../../src/components/check-icon';
 import { BEFORE_SUBMIT } from './constants';
 import { formatDate } from './util';
 import type { LineItem } from '@automattic/composite-checkout';
@@ -23,7 +24,7 @@ function PurchaseModalStep( { children, id }: { children: ReactNode; id: string 
 	return (
 		<div className="purchase-modal__step">
 			<span className="purchase-modal__step-icon">
-				<CheckoutCheckIcon id={ id } />
+				<CheckIcon id={ id } />
 			</span>
 			{ children }
 		</div>
