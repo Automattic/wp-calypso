@@ -125,7 +125,10 @@ class MediaLibrary extends Component {
 
 		switch ( filter ) {
 			case 'audio':
-				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || isJetpack );
+				return ! (
+					( site && site.options && site.options.upgraded_filetypes_enabled ) ||
+					isJetpack
+				);
 
 			case 'videos':
 				return ! hasVideoUploadFeature;
