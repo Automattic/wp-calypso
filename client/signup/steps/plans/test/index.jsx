@@ -149,10 +149,11 @@ describe( 'Plans.onSelectPlan', () => {
 				goToNextStep: jest.fn(),
 			};
 			const cartItems = getCartItems( { product_slug: plan } );
+			const [ planCartItem ] = cartItems;
 			const comp = new PlansStep( myProps );
 			comp.onSelectPlan( cartItems );
 			expect( myProps.goToNextStep ).toHaveBeenCalled();
-			expect( cartItems[ 0 ].extra ).toEqual( {
+			expect( planCartItem.extra ).toEqual( {
 				is_store_signup: true,
 			} );
 		}
@@ -173,10 +174,11 @@ describe( 'Plans.onSelectPlan', () => {
 				goToNextStep: jest.fn(),
 			};
 			const cartItems = getCartItems( { product_slug: plan } );
+			const [ planCartItem ] = cartItems;
 			const comp = new PlansStep( myProps );
 			comp.onSelectPlan( cartItems );
 			expect( myProps.goToNextStep ).toHaveBeenCalled();
-			expect( cartItems[ 0 ].extra ).toEqual( undefined );
+			expect( planCartItem.extra ).toEqual( undefined );
 		}
 	);
 
@@ -189,9 +191,10 @@ describe( 'Plans.onSelectPlan', () => {
 			},
 		};
 		const cartItems = getCartItems();
+		const [ planCartItem ] = cartItems;
 		const comp = new PlansStep( myProps );
 		comp.onSelectPlan( cartItems );
-		expect( cartItems[ 0 ].extra ).toEqual( undefined );
+		expect( planCartItem.extra ).toEqual( undefined );
 	} );
 
 	test.each( [
@@ -211,9 +214,10 @@ describe( 'Plans.onSelectPlan', () => {
 		`Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (%s)`,
 		( plan ) => {
 			const cartItems = getCartItems( { product_slug: plan } );
+			const [ planCartItem ] = cartItems;
 			const comp = new PlansStep( tplProps );
 			comp.onSelectPlan( cartItems );
-			expect( cartItems[ 0 ].extra ).toEqual( undefined );
+			expect( planCartItem.extra ).toEqual( undefined );
 		}
 	);
 } );
