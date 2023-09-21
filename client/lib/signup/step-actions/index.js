@@ -5,7 +5,6 @@ import {
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	isEcommerce,
 	isDomainTransfer,
-	isPlan,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
