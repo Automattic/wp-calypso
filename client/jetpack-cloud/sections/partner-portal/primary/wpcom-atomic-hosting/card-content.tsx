@@ -2,8 +2,10 @@ import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-prod
 import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useCallback, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
+import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -107,9 +109,16 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 
 	const plan = getPlanInfo( planSlug );
 
-	const onCTAClick = useCallback( () => {
+	const { issueLicenses } = useIssueLicenses();
+
+	const onCTAClick = useCallback( async () => {
+		const productSlug =
+			planSlug === PLAN_BUSINESS ? 'wpcom-hosting-business' : 'wpcom-hosting-ecommerce';
+
+		await issueLicenses( [ productSlug ] );
 		dispatch( recordTracksEvent( getCTAEventName( planSlug ) ) );
-	}, [ dispatch, planSlug ] );
+		page.redirect( `/partner-portal/licenses` );
+	}, [ dispatch, planSlug, issueLicenses ] );
 
 	if ( ! plan ) {
 		return null;
