@@ -50,7 +50,7 @@ const MasterBar = styled.div`
 const Header = styled.h1< { isMobile: boolean } >`
 	font-size: ${ ( { isMobile } ) => ( isMobile ? '2rem' : '2.75rem' ) };
 	line-height: ${ ( { isMobile } ) => ( isMobile ? '32px' : '52px' ) };
-	text-align: 'center';
+	text-align: ${ ( { isMobile } ) => ( isMobile ? 'left' : 'center' ) };
 	margin: 16px 0;
 `;
 
@@ -67,7 +67,7 @@ const Content = styled.div< { isMobile: boolean } >`
 
 const Highlight = styled.div< { isMobile: boolean } >`
 	margin-bottom: 32px;
-	text-align: 'center';
+	text-align: ${ ( { isMobile } ) => ( isMobile ? 'left' : 'center' ) };
 	font-size: 16px;
 	p {
 		margin: 0;
