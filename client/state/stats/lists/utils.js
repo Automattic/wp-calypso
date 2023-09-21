@@ -565,7 +565,7 @@ export const normalizers = {
 		if ( ! data ) {
 			return null;
 		}
-		const adminUrl = site ? site.options.admin_url : null;
+		const adminUrl = site && site.options ? site.options.admin_url : null;
 
 		let authors = [];
 		if ( data.authors ) {
