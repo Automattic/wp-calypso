@@ -65,20 +65,18 @@ const useScreens = ( {
 						label: translate( 'Styles' ),
 						path: '/style-variations',
 						content: (
-							<div className="design-preview__sidebar-variations">
-								<div className="design-preview__sidebar-variations-grid">
-									<GlobalStylesVariations
-										key="style-variations"
-										globalStylesVariations={ variations as GlobalStylesObject[] }
-										selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
-										splitDefaultVariation={ splitDefaultVariation }
-										displayFreeLabel={ splitDefaultVariation }
-										showOnlyHoverViewDefaultVariation={ false }
-										onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
-											onSelectVariation( globalStyleVariation as StyleVariation )
-										}
-									/>
-								</div>
+							<div className="design-preview__sidebar-variations design-preview__sidebar-variations--styles">
+								<GlobalStylesVariations
+									key="style-variations"
+									globalStylesVariations={ variations as GlobalStylesObject[] }
+									selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
+									splitDefaultVariation={ splitDefaultVariation }
+									displayFreeLabel={ splitDefaultVariation }
+									showOnlyHoverViewDefaultVariation={ false }
+									onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
+										onSelectVariation( globalStyleVariation as StyleVariation )
+									}
+								/>
 							</div>
 						),
 						actionText: translate( 'Save styles' ),
