@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { jetpackBoostDesktopIcon, jetpackBoostMobileIcon } from '../../icons';
 import { getBoostRating, getBoostRatingClass } from '../lib/boost';
@@ -41,8 +41,21 @@ export default function BoostSitePerformance( {
 		'Your Overall Score is a summary of your website performance across both mobile and desktop devices.'
 	);
 
-	const optimizeCSSUrl = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`;
-	const configureBoostUrl = `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`;
+	const buttonProps = useMemo(
+		() =>
+			hasBoost
+				? {
+						label: translate( 'Optimize CSS' ),
+						href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
+						onClick: () => trackEvent( 'expandable_block_optimize_css_click' ),
+				  }
+				: {
+						label: translate( 'Configure Boost' ),
+						href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`,
+						onClick: () => trackEvent( 'expandable_block_configure_boost_click' ),
+				  },
+		[ hasBoost, siteUrlWithScheme, trackEvent, translate ]
+	);
 
 	const handleOnClick = () => {
 		// TODO - should open a modal.
@@ -119,29 +132,15 @@ export default function BoostSitePerformance( {
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">
-					{ hasBoost && (
-						<Button
-							href={ optimizeCSSUrl }
-							target="_blank"
-							onClick={ () => trackEvent( 'expandable_block_optimize_css_click' ) }
-							className="site-expanded-content__card-button"
-							compact
-						>
-							{ translate( 'Optimize CSS' ) }
-						</Button>
-					) }
-
-					{ ! hasBoost && (
-						<Button
-							href={ configureBoostUrl }
-							target="_blank"
-							onClick={ () => trackEvent( 'expandable_block_configure_boost_click' ) }
-							className="site-expanded-content__card-button"
-							compact
-						>
-							{ translate( 'Configure Boost' ) }
-						</Button>
-					) }
+					<Button
+						href={ buttonProps.href }
+						target="_blank"
+						onClick={ buttonProps.onClick }
+						className="site-expanded-content__card-button"
+						compact
+					>
+						{ buttonProps.label }
+					</Button>
 				</div>
 			</div>
 		</ExpandedCard>
