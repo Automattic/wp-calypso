@@ -2,7 +2,7 @@
 Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
-Tested up to: 6.0
+Tested up to: 6.3
 Stable tag: 2.21
 Requires PHP: 5.6.20
 License: GPLv2 or later
@@ -12,8 +12,7 @@ Enhances the editing experience in the Block Editor.
 
 == Description ==
 
-This plugin comes with a custom block to display a list of your most recent blog posts, as well as a template selector
-to give you a head start on creating new pages for your site. It also provides a way to change your font settings globally from the page editor.
+This plugin is experimental. You're welcome to try it, just be aware that it is only designed to work on the WordPress.com environment and could break after an update.
 
 == Installation ==
 
