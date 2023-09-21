@@ -6,9 +6,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
+import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSiteTitle, getSiteDomain } from 'calypso/state/sites/selectors';
-import { useActivityPubStatus } from './hooks';
 
 const DomainUpsellCard = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );

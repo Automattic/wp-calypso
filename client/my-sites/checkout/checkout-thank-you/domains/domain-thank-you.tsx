@@ -12,8 +12,8 @@ import {
 	DomainThankYouType,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import { useActivityPubStatus } from 'calypso/my-sites/site-settings/reading-fediverse-settings/hooks';
 import { useDispatch, useSelector } from 'calypso/state';
+import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
