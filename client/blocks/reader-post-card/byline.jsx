@@ -22,12 +22,11 @@ class PostByline extends Component {
 		teams: PropTypes.array,
 		showFollow: PropTypes.bool,
 		compact: PropTypes.bool,
-		showSuggestedFollows: PropTypes.bool,
+		openSuggestedFollows: PropTypes.func,
 	};
 
 	static defaultProps = {
 		showAvatar: true,
-		showSuggestedFollows: false,
 	};
 
 	recordDateClick = () => {
@@ -39,7 +38,7 @@ class PostByline extends Component {
 	};
 
 	render() {
-		const { post, site, feed, showSiteName, showAvatar, teams, compact, showSuggestedFollows } =
+		const { post, site, feed, showSiteName, showAvatar, teams, compact, openSuggestedFollows } =
 			this.props;
 		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
 		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
@@ -130,7 +129,7 @@ class PostByline extends Component {
 						teams={ teams }
 						post={ post }
 						showFollow={ true }
-						showSuggestedFollows={ showSuggestedFollows }
+						openSuggestedFollows={ openSuggestedFollows }
 					/>
 				) }
 			</div>

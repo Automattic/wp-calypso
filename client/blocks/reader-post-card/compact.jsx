@@ -14,7 +14,7 @@ const CompactPost = ( {
 	site,
 	postByline,
 	teams,
-	showSuggestedFollows,
+	openSuggestedFollows,
 } ) => {
 	const onVideoThumbnailClick =
 		post.canonical_media?.mediaType === 'video'
@@ -44,7 +44,7 @@ const CompactPost = ( {
 								teams={ teams }
 								post={ post }
 								showFollow={ true }
-								showSuggestedFollows={ showSuggestedFollows }
+								openSuggestedFollows={ openSuggestedFollows }
 							/>
 						) }
 					</div>
@@ -58,7 +58,7 @@ const CompactPost = ( {
 								teams={ teams }
 								post={ post }
 								showFollow={ true }
-								showSuggestedFollows={ showSuggestedFollows }
+								openSuggestedFollows={ openSuggestedFollows }
 							/>
 						) }
 						<FeaturedAsset
@@ -80,7 +80,7 @@ const CompactPost = ( {
 CompactPost.propTypes = {
 	post: PropTypes.object.isRequired,
 	postByline: PropTypes.object,
-	showSuggestedFollows: PropTypes.bool,
+	openSuggestedFollows: PropTypes.func,
 };
 
 export default CompactPost;

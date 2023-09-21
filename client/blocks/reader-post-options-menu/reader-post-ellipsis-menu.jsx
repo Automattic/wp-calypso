@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
-import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
@@ -40,11 +39,11 @@ class ReaderPostEllipsisMenu extends Component {
 		post: PropTypes.object,
 		feed: PropTypes.object,
 		onBlock: PropTypes.func,
+		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
 		showEditPost: PropTypes.bool,
 		showConversationFollow: PropTypes.bool,
-		showSuggestedFollows: PropTypes.bool,
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
 		position: PropTypes.string,
@@ -54,29 +53,21 @@ class ReaderPostEllipsisMenu extends Component {
 
 	static defaultProps = {
 		onBlock: noop,
+		openSuggestedFollows: noop,
 		position: 'top left',
 		showFollow: true,
 		showVisitPost: true,
 		showEditPost: true,
 		showConversationFollow: true,
-		showSuggestedFollows: false,
 		showReportPost: true,
 		showReportSite: false,
 		posts: [],
 	};
 
-	state = {
-		isSuggestedFollowsModalOpen: false,
-	};
-
 	openSuggestedFollowsModal = ( shouldOpen ) => {
 		if ( shouldOpen ) {
-			this.setState( { isSuggestedFollowsModalOpen: true } );
+			this.props.openSuggestedFollows();
 		}
-	};
-
-	onCloseSuggestedFollowModal = () => {
-		this.setState( { isSuggestedFollowsModalOpen: false } );
 	};
 
 	blockSite = () => {
@@ -144,9 +135,6 @@ class ReaderPostEllipsisMenu extends Component {
 			'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ),
 			this.props.post
 		);
-		if ( ! isMenuVisible ) {
-			this.onCloseSuggestedFollowModal();
-		}
 	};
 
 	editPost = () => {
@@ -313,15 +301,6 @@ class ReaderPostEllipsisMenu extends Component {
 						followSource={ READER_POST_OPTIONS_MENU }
 						followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
 						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
-					/>
-				) }
-
-				{ this.props.showSuggestedFollows && post.site_ID && (
-					<ReaderSuggestedFollowsDialog
-						onClose={ this.onCloseSuggestedFollowModal }
-						siteId={ +post.site_ID }
-						postId={ +post.ID }
-						isVisible={ this.state.isSuggestedFollowsModalOpen }
 					/>
 				) }
 

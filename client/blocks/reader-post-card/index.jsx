@@ -11,6 +11,7 @@ import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -57,6 +58,18 @@ class ReaderPostCard extends Component {
 		handleClick: noop,
 		isSelected: false,
 		showSiteName: true,
+	};
+
+	state = {
+		isSuggestedFollowsModalOpen: false,
+	};
+
+	openSuggestedFollowsModal = () => {
+		this.setState( { isSuggestedFollowsModalOpen: true } );
+	};
+
+	onCloseSuggestedFollowModal = () => {
+		this.setState( { isSuggestedFollowsModalOpen: false } );
 	};
 
 	propagateCardClick = () => {
@@ -191,7 +204,7 @@ class ReaderPostCard extends Component {
 				showAvatar={ ! compact }
 				teams={ teams }
 				showFollow={ true }
-				showSuggestedFollows={ isReaderSearchPage }
+				openSuggestedFollows={ this.openSuggestedFollowsModal }
 				compact={ compact }
 			/>
 		);
@@ -219,7 +232,7 @@ class ReaderPostCard extends Component {
 					postKey={ postKey }
 					postByline={ postByline }
 					onClick={ this.handleCardClick }
-					showSuggestedFollows={ isReaderSearchPage }
+					openSuggestedFollows={ this.openSuggestedFollowsModal }
 				>
 					{ readerPostActions }
 				</CompactPostCard>
@@ -262,12 +275,21 @@ class ReaderPostCard extends Component {
 			);
 		}
 
+		const showSuggestedFollows = isReaderSearchPage;
 		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
+				{ showSuggestedFollows && post.site_ID && (
+					<ReaderSuggestedFollowsDialog
+						onClose={ this.onCloseSuggestedFollowModal }
+						siteId={ +post.site_ID }
+						postId={ +post.ID }
+						isVisible={ this.state.isSuggestedFollowsModalOpen }
+					/>
+				) }
 				{ shouldShowPostCardComments && (
 					<PostCardComments
 						post={ post }
