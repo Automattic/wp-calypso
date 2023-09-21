@@ -137,19 +137,8 @@ export default function ( router ) {
 		clientRender
 	);
 
-	router(
-		`/${ langParam }/plugins/:plugin/:site_id?`,
-		maybeRedirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
-		siteSelection,
-		navigationIfLoggedIn,
-		redirectTrialSites,
-		browsePluginsOrPlugin,
-		makeLayout,
-		clientRender
-	);
-
+	// This rule needs to preceed the one below, to work
+	// when the site_id parameter is omitted.
 	router(
 		`/${ langParam }/plugins/:plugin/related/:site_id?`,
 		maybeRedirectLoggedOut,
@@ -159,6 +148,19 @@ export default function ( router ) {
 		navigationIfLoggedIn,
 		redirectTrialSites,
 		relatedPlugins,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		`/${ langParam }/plugins/:plugin/:site_id?`,
+		maybeRedirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigationIfLoggedIn,
+		redirectTrialSites,
+		browsePluginsOrPlugin,
 		makeLayout,
 		clientRender
 	);
