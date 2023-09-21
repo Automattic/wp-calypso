@@ -40,7 +40,10 @@ export default function HostingInformation( props: Props ) {
 					<div>
 						<ul>
 							{ aRecordIps.map( ( x, i ) => (
-								<li key={ i }>{ x.ip }</li>
+								<li key={ i } className="col-container">
+									<div className="col">{ x.host }</div>
+									<div className="col">{ x.ip }</div>
+								</li>
 							) ) }
 						</ul>
 					</div>
