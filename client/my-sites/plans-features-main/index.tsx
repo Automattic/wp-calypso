@@ -9,11 +9,12 @@ import {
 	PlanSlug,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
+	isPlan,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import styled from '@emotion/styled';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -220,9 +221,6 @@ const PlansFeaturesMain = ( {
 	const storageAddOns = useAddOns( siteId ?? undefined, isInSignup ).filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
 	);
-	const selectedStorageOptions = useSelect( ( select ) => {
-		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
-	}, [] );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -287,7 +285,9 @@ const PlansFeaturesMain = ( {
 		setIsFreePlanPaidDomainDialogOpen( ! isFreePlanPaidDomainDialogOpen );
 	};
 
-	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
+	const handleUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
+		const cartItemForPlan = cartItems?.find( ( item ) => isPlan( item ) ) ?? null;
+
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
@@ -304,23 +304,7 @@ const PlansFeaturesMain = ( {
 			}
 		}
 
-		const selectedStorageOption =
-			selectedStorageOptions && selectedStorageOptions[ cartItemForPlan?.product_slug || '' ];
-		const storageAddOn = storageAddOns?.find( ( addOn ) => {
-			return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
-		} );
-
-		const storageAddOnItemForPlan = storageAddOn && {
-			product_slug: storageAddOn.productSlug,
-			quantity: storageAddOn.quantity,
-			volume: 1,
-		};
-
 		if ( onUpgradeClick ) {
-			const cartItems = [
-				...( cartItemForPlan ? [ cartItemForPlan ] : [] ),
-				...( storageAddOnItemForPlan ? [ storageAddOnItemForPlan ] : [] ),
-			];
 			onUpgradeClick( cartItems );
 			return;
 		}

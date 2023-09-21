@@ -19,8 +19,10 @@ import {
 	SlackLogo,
 	TimeLogo,
 } from '@automattic/components';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, ForwardedRef, forwardRef } from 'react';
@@ -55,7 +57,7 @@ import type {
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { PlanActionOverrides } from './types';
-import type { DomainSuggestion } from '@automattic/data-stores';
+import type { DomainSuggestion, selectedStorageOptionForPlans } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
@@ -74,7 +76,7 @@ export interface PlanFeatures2023GridProps {
 	siteId?: number | null;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
-	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
+	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
@@ -100,6 +102,7 @@ export interface PlanFeatures2023GridProps {
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	// temporary: callback ref to scroll Odie AI Assistant into view once "Compare plans" button is clicked
 	observableForOdieRef: ( observableElement: Element | null ) => void;
+	selectedStorageOptions?: selectedStorageOptionForPlans;
 }
 
 interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
@@ -111,6 +114,7 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 	isPlanUpgradeCreditEligible: boolean;
 	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
 	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
+	selectedStorageOptions?: selectedStorageOptionForPlans;
 }
 
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
@@ -417,14 +421,32 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	handleUpgradeClick = ( planSlug: PlanSlug ) => {
-		const { onUpgradeClick: ownPropsOnUpgradeClick, gridPlansForFeaturesGrid } = this.props;
-		const { cartItemForPlan } =
+		const {
+			onUpgradeClick: ownPropsOnUpgradeClick,
+			gridPlansForFeaturesGrid,
+			selectedStorageOptions,
+		} = this.props;
+		const { cartItemForPlan, storageAddOnsForPlan } =
 			gridPlansForFeaturesGrid.find( ( gridPlan ) => gridPlan.planSlug === planSlug ) ?? {};
 
-		// TODO clk: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
+		const selectedStorageOption =
+			selectedStorageOptions && selectedStorageOptions[ cartItemForPlan?.product_slug || '' ];
+		const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
+			return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
+		} );
 
+		const storageAddOnCartItem = storageAddOn && {
+			product_slug: storageAddOn.productSlug,
+			quantity: storageAddOn.quantity,
+			volume: 1,
+		};
+
+		// TODO clk: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
 		if ( cartItemForPlan ) {
-			ownPropsOnUpgradeClick?.( cartItemForPlan );
+			ownPropsOnUpgradeClick?.( [
+				cartItemForPlan,
+				...( storageAddOnCartItem ? [ storageAddOnCartItem ] : [] ),
+			] );
 			return;
 		}
 
@@ -795,6 +817,10 @@ export default forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
 			gridPlans: props.gridPlansForFeaturesGrid,
 		} );
 
+		const selectedStorageOptions = useSelect( ( select ) => {
+			return select( WpcomPlansUI.store ).getSelectedStorageOptions();
+		}, [] );
+
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
 			siteId
@@ -823,6 +849,7 @@ export default forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
 					manageHref={ manageHref }
 					selectedSiteSlug={ selectedSiteSlug }
 					translate={ translate }
+					selectedStorageOptions={ selectedStorageOptions }
 				/>
 			);
 		}
