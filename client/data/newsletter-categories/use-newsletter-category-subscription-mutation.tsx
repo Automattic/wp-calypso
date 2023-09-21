@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useIsLoggedIn, requestWithSubkeyFallback } from './helpers';
+import { useIsLoggedIn, requestWithSubkeyFallback } from 'calypso/lib/request-with-subkey-fallback';
 import { NewsletterCategories, NewsletterCategoriesResponse } from './types';
 import { getSubscribedNewsletterCategoriesKey } from './use-subscribed-newsletter-categories-query';
 
