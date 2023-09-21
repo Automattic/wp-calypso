@@ -421,7 +421,11 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/subscriptions', '^/read/subscriptions/(\\d+)(/)?$' ],
+		paths: [
+			'/read/subscriptions',
+			'/read/subscriptions/comments',
+			'^/read/subscriptions/(\\d+)(/)?$',
+		],
 		module: 'calypso/reader/site-subscriptions-manager',
 		group: 'reader',
 	},
