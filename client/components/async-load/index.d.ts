@@ -8,13 +8,5 @@ declare module 'calypso/components/async-load' {
 		[ key: string ]: any;
 	}
 
-	export default class AsyncLoad extends Component< AsyncLoadProps, { component: any | null } > {
-		static propTypes: {
-			placeholder: PropTypes.node;
-			require: PropTypes.func.isRequired;
-		};
-		static defaultProps: {
-			placeholder: ReactNode;
-		};
-	}
+	export default class AsyncLoad extends Component< AsyncLoadProps, { component: any | null } > {}
 }
