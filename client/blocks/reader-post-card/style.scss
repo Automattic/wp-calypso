@@ -7,6 +7,10 @@
 	}
 }
 
+.reader-post-options-menu__popover .popover__menu .popover__menu-item {
+	display: flex;
+}
+
 .reader-post-card.card {
 	border-bottom: 5px solid var(--color-neutral-0);
 	/* stylelint-disable-next-line scales/radii */
