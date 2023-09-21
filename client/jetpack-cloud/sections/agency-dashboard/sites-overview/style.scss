@@ -154,6 +154,7 @@
 	border: 1px solid var(--studio-gray-5);
 	padding: 2px 11px;
 	cursor: pointer;
+	white-space: nowrap;
 
 	span {
 		margin: 0 0.2em;
@@ -250,7 +251,7 @@
 .fixed-host-column {
 	display: none;
 	margin-inline-end: 10px;
-	width: 40px;
+	min-width: 40px;
 	text-align: center;
 
 	.wordpress-logo {
