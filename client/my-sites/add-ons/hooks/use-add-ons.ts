@@ -124,16 +124,13 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	// if upgrade is bought - show as manage
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
-	const { billingTransactions, isLoading } = usePastBillingTransactions();
+	const { billingTransactions, isLoading } = usePastBillingTransactions( isInSignup );
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		// get the list of supported features
 		const siteFeatures = getFeaturesBySiteId( state, siteId );
 		const spaceUpgradesPurchased: number[] = [];
 
-		// It doesn't make sense to fetch purchase history and limit space upgrade add-ons if the user is
-		// creating a brand new site. For the time being, skip fetching transaction history in onboarding
-		// flows.
 		if ( billingTransactions && ! isInSignup ) {
 			const filter = getBillingTransactionFilters( state, 'past' );
 			const filteredTransactions = filterTransactions( billingTransactions, filter, siteId );
