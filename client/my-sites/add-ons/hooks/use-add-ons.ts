@@ -129,13 +129,13 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		// get the list of supported features
 		const siteFeatures = getFeaturesBySiteId( state, siteId );
-		const filter = getBillingTransactionFilters( state, 'past' );
 		const spaceUpgradesPurchased: number[] = [];
 
 		// It doesn't make sense to fetch purchase history and limit space upgrade add-ons if the user is
 		// creating a brand new site. For the time being, skip fetching transaction history in onboarding
 		// flows.
 		if ( billingTransactions && ! isInSignup ) {
+			const filter = getBillingTransactionFilters( state, 'past' );
 			const filteredTransactions = filterTransactions( billingTransactions, filter, siteId );
 
 			if ( filteredTransactions?.length ) {
