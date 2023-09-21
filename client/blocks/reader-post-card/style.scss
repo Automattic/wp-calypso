@@ -9,6 +9,23 @@
 
 .reader-post-options-menu__popover .popover__menu .popover__menu-item {
 	display: flex;
+
+	&.follow-button:hover,
+	&.follow-button:focus {
+		.follow-button__label {
+			color: var(--color-text-inverted);
+		}
+		.reader-following-feed,
+		.reader-follow-feed {
+			.following-icon-background,
+			path {
+				fill: var(--color-text-inverted);
+			}
+			.following-icon-tick {
+				stroke: var(--color-text-inverted);
+			}
+		}
+	}
 }
 
 .reader-post-card.card {
