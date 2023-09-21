@@ -112,7 +112,7 @@ function importerStatus( state = {}, action ) {
 				[ action.importerId ]: {
 					...state[ action.importerId ],
 					customData: {
-						...state[ action.importerId ].customData,
+						...state[ action.importerId ]?.customData,
 						sourceAuthors: map(
 							get( state[ action.importerId ], 'customData.sourceAuthors' ),
 							( author ) =>
