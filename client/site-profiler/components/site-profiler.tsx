@@ -18,7 +18,6 @@ export default function SiteProfiler() {
 	const conversionAction = useDefineConversionAction(
 		domain,
 		data?.is_domain_available,
-		data?.whois.name_server,
 		data?.whois.registrar,
 		hostingProviderData?.hosting_provider
 	);
