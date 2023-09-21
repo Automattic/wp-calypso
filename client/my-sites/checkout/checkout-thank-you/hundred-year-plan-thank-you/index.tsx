@@ -1,3 +1,4 @@
+import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Global, css } from '@emotion/react';
@@ -195,13 +196,16 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 					<Content isMobile={ isMobile }>
 						<div className="hundred-year-plan-thank-you__thank-you-text-container">
 							<Header className="wp-brand-font" isMobile={ isMobile }>
-								{ translate( 'Your legacy is in safe hands' ) }
+								{ translate( 'Your century-long legacy begins now' ) }
 							</Header>
 							<Highlight isMobile={ isMobile }>
 								{ translate(
-									'Your 100-year legacy for %(domain)s begins now. Our dedicated premium support team will reach out via your email shortly to schedule a welcome session, and walk you through the benefits tailored just for you. We are thrilled to stand by your side for the next century.',
+									'The %(planTitle)s for (%(domain)s) is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
 									{
-										args: { domain: registeredDomain?.domain || siteSlug },
+										args: {
+											domain: registeredDomain?.domain || siteSlug,
+											planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
+										},
 									}
 								) }
 							</Highlight>
