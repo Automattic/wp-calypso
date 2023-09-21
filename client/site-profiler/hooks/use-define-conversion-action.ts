@@ -4,6 +4,7 @@ export type CONVERSION_ACTION =
 	| 'register-domain'
 	| 'transfer-domain'
 	| 'transfer-google-domain'
+	| 'transfer-google-domain-hosting'
 	| 'transfer-hosting'
 	| 'transfer-domain-hosting'
 	| 'idle';
@@ -29,8 +30,10 @@ export default function useDefineConversionAction(
 		return 'register-domain';
 	} else if ( isA8cDomain && ! isA8cHosting ) {
 		return 'transfer-hosting';
-	} else if ( ! isA8cDomain && isGoogleRegistrar ) {
+	} else if ( ! isA8cDomain && isGoogleRegistrar && isA8cHosting ) {
 		return 'transfer-google-domain';
+	} else if ( ! isA8cDomain && isGoogleRegistrar && ! isA8cHosting ) {
+		return 'transfer-google-domain-hosting';
 	} else if ( ! isA8cDomain && isA8cHosting ) {
 		return 'transfer-domain';
 	} else if ( ! isA8cDomain && ! isA8cHosting ) {

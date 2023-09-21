@@ -10,6 +10,7 @@ export default function StatusInfo( props: Props ) {
 		case 'register-domain':
 			return <p>Nice! This site and its domain are fully hosted on WordPress.com!</p>;
 		case 'transfer-domain':
+		case 'transfer-google-domain':
 			return (
 				<p>
 					This site is hosted on <strong>WordPress.com</strong> but the domain is registered
@@ -24,6 +25,7 @@ export default function StatusInfo( props: Props ) {
 				</p>
 			);
 		case 'transfer-domain-hosting':
+		case 'transfer-google-domain-hosting':
 			return (
 				<p>
 					The hosting and domain of this site are not on <strong>WordPress.com</strong>, but they

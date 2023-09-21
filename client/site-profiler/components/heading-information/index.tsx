@@ -55,7 +55,8 @@ export default function HeadingInformation( props: Props ) {
 							Transfer domain
 						</Button>
 					) }
-					{ conversionAction === 'transfer-google-domain' && (
+					{ ( conversionAction === 'transfer-google-domain' ||
+						conversionAction === 'transfer-google-domain-hosting' ) && (
 						<Button className="button-action" onClick={ onTransferDomainFree }>
 							Transfer domain for free
 						</Button>

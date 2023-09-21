@@ -22,6 +22,7 @@ export default function StatusCtaInfo( props: Props ) {
 				</p>
 			);
 		case 'transfer-google-domain':
+		case 'transfer-google-domain-hosting':
 			return (
 				<p>
 					If you own this domain, transfer it to <strong>WordPress.com</strong> and benefit from the

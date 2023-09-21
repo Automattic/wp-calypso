@@ -19,6 +19,7 @@ export default function StatusIcon( props: Props ) {
 			case 'transfer-domain':
 			case 'transfer-hosting':
 			case 'transfer-google-domain':
+			case 'transfer-google-domain-hosting':
 			case 'transfer-domain-hosting':
 				setStatusIcon( 'cross' );
 				setStatusColor( 'red' );
