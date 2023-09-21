@@ -68,8 +68,8 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 		<a className="related-plugins-item" href={ pluginLink }>
 			<PluginIcon image={ plugin.icon } className="related-plugins-item__icon" />
 			<div className="related-plugins-item__info">
-				<h3 className="related-plugins-item__title">{ plugin.title }</h3>
-				<div className="related-plugins-item__excerpt">{ plugin.excerpt }</div>
+				<h3 className="related-plugins-item__title">{ plugin.name }</h3>
+				<div className="related-plugins-item__excerpt">{ plugin.short_description }</div>
 				<div className="related-plugins-item__details">
 					<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
 						{ ( {

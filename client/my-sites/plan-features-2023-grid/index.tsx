@@ -21,10 +21,9 @@ import {
 } from '@automattic/components';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, ForwardedRef, forwardRef, createRef } from 'react';
+import { Component, ForwardedRef, forwardRef } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -34,6 +33,7 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
+import ComparisonGridToggle from '../plans-features-main/components/comparison-grid-toggle';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
@@ -93,12 +93,13 @@ export interface PlanFeatures2023GridProps {
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	showOdie?: () => void;
 	// temporary
 	showPlansComparisonGrid: boolean;
 	// temporary
 	toggleShowPlansComparisonGrid: () => void;
 	planTypeSelectorProps: PlanTypeSelectorProps;
+	// temporary: callback ref to scroll Odie AI Assistant into view once "Compare plans" button is clicked
+	observableForOdieRef: ( observableElement: Element | null ) => void;
 }
 
 interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
@@ -113,30 +114,6 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 }
 
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
-	observer: IntersectionObserver | null = null;
-	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
-
-	componentDidMount() {
-		this.observer = new IntersectionObserver( ( entries ) => {
-			entries.forEach( ( entry ) => {
-				if ( entry.isIntersecting ) {
-					this.props.showOdie?.();
-					this.observer?.disconnect();
-				}
-			} );
-		} );
-
-		if ( this.buttonRef.current ) {
-			this.observer.observe( this.buttonRef.current );
-		}
-	}
-
-	componentWillUnmount() {
-		if ( this.observer ) {
-			this.observer.disconnect();
-		}
-	}
-
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
 		// Do not render the spotlight plan if it exists
@@ -720,6 +697,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			toggleShowPlansComparisonGrid,
 			showPlansComparisonGrid,
 			showUpgradeableStorage,
+			observableForOdieRef,
 		} = this.props;
 
 		return (
@@ -756,13 +734,15 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					</PlansGridContextProvider>
 				</div>
 				{ ! hidePlansFeatureComparison && (
-					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-						<Button onClick={ toggleShowPlansComparisonGrid } ref={ this.buttonRef }>
-							{ showPlansComparisonGrid
+					<ComparisonGridToggle
+						onClick={ toggleShowPlansComparisonGrid }
+						label={
+							showPlansComparisonGrid
 								? translate( 'Hide comparison' )
-								: translate( 'Compare plans' ) }
-						</Button>
-					</div>
+								: translate( 'Compare plans' )
+						}
+						ref={ observableForOdieRef }
+					/>
 				) }
 				{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (
 					<div
@@ -792,11 +772,10 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								showLegacyStorageFeature={ showLegacyStorageFeature }
 								showUpgradeableStorage={ showUpgradeableStorage }
 							/>
-							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-								<Button onClick={ toggleShowPlansComparisonGrid }>
-									{ translate( 'Hide comparison' ) }
-								</Button>
-							</div>
+							<ComparisonGridToggle
+								onClick={ toggleShowPlansComparisonGrid }
+								label={ translate( 'Hide comparison' ) }
+							/>
 						</PlansGridContextProvider>
 					</div>
 				) : null }

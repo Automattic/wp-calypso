@@ -33,14 +33,17 @@ import debugFactory from 'debug';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasDIFMProduct,
 	has100YearPlan as cartHas100YearPlan,
+	ObjectWithProducts,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
@@ -199,6 +202,20 @@ const OrderReviewTitle = () => {
 	return <>{ String( translate( 'Your order' ) ) }</>;
 };
 
+const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
+	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
+
+	if ( isAkismetCheckout() ) {
+		return 'akismet';
+	} else if ( isJetpackCheckout() || hasCartJetpackProductsOnly ) {
+		return 'jpCheckout';
+	}
+
+	return 'wpcom';
+};
+
 export default function WPCheckout( {
 	addItemToCart,
 	changeSelection,
@@ -248,7 +265,7 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const reduxDispatch = useReduxDispatch();
-	usePresalesChat( 'wpcom' );
+	usePresalesChat( getPresalesChatKey( responseCart ) );
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );

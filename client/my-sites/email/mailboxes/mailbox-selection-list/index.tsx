@@ -1,9 +1,10 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import {
@@ -11,6 +12,7 @@ import {
 	useGetMailboxes,
 } from 'calypso/data/emails/use-get-mailboxes';
 import errorIllustration from 'calypso/landing/browsehappy/illustration.svg';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	getEmailAddress,
 	isEmailForwardAccount,
@@ -23,10 +25,10 @@ import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
-import NewMailboxUpsell from 'calypso/my-sites/email/inbox/new-mailbox-upsell';
-import { emailManagementInbox } from 'calypso/my-sites/email/paths';
+import NewMailboxUpsell from 'calypso/my-sites/email/mailboxes/new-mailbox-upsell';
+import { emailManagementMailboxes } from 'calypso/my-sites/email/paths';
 import { recordPageView, enhanceWithSiteMainProduct } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { withEnhancers } from 'calypso/state/utils';
 import ProgressLine from './progress-line';
 
@@ -35,7 +37,13 @@ import ProgressLine from './progress-line';
  */
 import './style.scss';
 
-const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
+type Mailbox = {
+	account_type: string;
+	domain: string;
+	mailbox: string;
+};
+
+const getExternalUrl = ( mailbox: Mailbox, titanAppsUrlPrefix: string ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
 		return getTitanEmailUrl(
 			titanAppsUrlPrefix,
@@ -52,7 +60,7 @@ const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
 	return '';
 };
 
-const MailboxItemIcon = ( { mailbox } ) => {
+const MailboxItemIcon = ( { mailbox }: { mailbox: Mailbox } ) => {
 	const translate = useTranslate();
 
 	if ( isTitanMailAccount( mailbox ) ) {
@@ -68,7 +76,7 @@ const MailboxItemIcon = ( { mailbox } ) => {
 	return null;
 };
 
-const getProvider = ( mailbox ) => {
+const getProvider = ( mailbox: Mailbox ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
 		return TITAN_PROVIDER_NAME;
 	}
@@ -84,8 +92,16 @@ const getProvider = ( mailbox ) => {
 	return null;
 };
 
-const trackAppLaunchEvent = ( { mailbox, app, context } ) => {
-	const provider = getProvider( mailbox );
+const trackAppLaunchEvent = ( {
+	mailbox,
+	app,
+	context,
+}: {
+	mailbox: Mailbox;
+	app: string;
+	context: string;
+} ) => {
+	const provider = getProvider( mailbox ) ?? '';
 	recordEmailAppLaunchEvent( {
 		app,
 		context,
@@ -93,11 +109,7 @@ const trackAppLaunchEvent = ( { mailbox, app, context } ) => {
 	} );
 };
 
-MailboxItemIcon.propType = {
-	mailbox: PropTypes.object.isRequired,
-};
-
-const MailboxItem = ( { mailbox } ) => {
+const MailboxItem = ( { mailbox }: { mailbox: Mailbox } ) => {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 
 	if ( isEmailForwardAccount( mailbox ) ) {
@@ -107,7 +119,7 @@ const MailboxItem = ( { mailbox } ) => {
 	return (
 		<Card
 			onClick={ () =>
-				trackAppLaunchEvent( { mailbox, app: 'webmail', context: 'inbox-mailbox-selection' } )
+				trackAppLaunchEvent( { mailbox, app: 'webmail', context: 'mailbox-selection' } )
 			}
 			className="mailbox-selection-list__item"
 			href={ getExternalUrl( mailbox, titanAppsUrlPrefix ) }
@@ -123,12 +135,7 @@ const MailboxItem = ( { mailbox } ) => {
 	);
 };
 
-MailboxItem.propType = {
-	mailbox: PropTypes.object.isRequired,
-	key: PropTypes.string,
-};
-
-const MailboxItems = ( { mailboxes } ) => {
+const MailboxItems = ( { mailboxes }: { mailboxes: Mailbox[] } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -148,11 +155,13 @@ const MailboxItems = ( { mailboxes } ) => {
 	);
 };
 
-MailboxItems.propType = {
-	mailboxes: PropTypes.arrayOf( PropTypes.object ).isRequired,
-};
-
-const MailboxListStatus = ( { isError, statusMessage } ) => {
+const MailboxListStatus = ( {
+	isError = false,
+	statusMessage,
+}: {
+	isError?: boolean;
+	statusMessage: ReactNode;
+} ) => {
 	return (
 		<div className="mailbox-selection-list__status">
 			<div className="mailbox-selection-list__status-content">
@@ -163,18 +172,19 @@ const MailboxListStatus = ( { isError, statusMessage } ) => {
 	);
 };
 
-MailboxListStatus.propType = {
-	isError: PropTypes.bool,
-	statusMessage: PropTypes.node.isRequired,
-};
-
-const MailboxLoaderError = ( { refetchMailboxes, siteId } ) => {
+const MailboxLoaderError = ( {
+	reFetchMailboxes,
+	siteId,
+}: {
+	reFetchMailboxes: () => void;
+	siteId: number;
+} ) => {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 
 	const reloadMailboxes = () => {
 		queryClient.removeQueries( getMailboxesQueryKey( siteId ) );
-		refetchMailboxes();
+		reFetchMailboxes();
 	};
 
 	return (
@@ -202,15 +212,9 @@ const MailboxLoaderError = ( { refetchMailboxes, siteId } ) => {
 	);
 };
 
-MailboxLoaderError.propType = {
-	refetchMailboxes: PropTypes.func.isRequired,
-	siteId: PropTypes.number.isRequired,
-};
-
-const MailboxSelectionList = ( { domains } ) => {
-	const dispatch = useDispatch();
-	const selectedSite = useSelector( getSelectedSite );
-	const selectedSiteId = selectedSite?.ID ?? null;
+const MailboxSelectionList = ( { domains }: { domains: ResponseDomain[] } ) => {
+	const dispatch = useDispatch() as ThunkDispatch< any, any, AnyAction >;
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 
 	const {
@@ -218,14 +222,14 @@ const MailboxSelectionList = ( { domains } ) => {
 		isError,
 		isLoading,
 		refetch,
-	} = useGetMailboxes( selectedSiteId, {
+	} = useGetMailboxes( selectedSiteId ?? 0, {
 		retry: 2,
 	} );
 
 	useEffect( () => {
 		const recorder = withEnhancers( recordPageView, [ enhanceWithSiteMainProduct ] );
 		dispatch(
-			recorder( emailManagementInbox( ':site' ), 'Inbox', undefined, {
+			recorder( emailManagementMailboxes( ':site' ), 'Mailboxes', undefined, {
 				has_error: isError,
 				context: 'mailbox-selection-list',
 			} )
@@ -237,7 +241,7 @@ const MailboxSelectionList = ( { domains } ) => {
 	}
 
 	if ( isError ) {
-		return <MailboxLoaderError refetchMailboxes={ refetch } siteId={ selectedSiteId } />;
+		return <MailboxLoaderError reFetchMailboxes={ refetch } siteId={ selectedSiteId } />;
 	}
 
 	const mailboxes = allMailboxes.filter( ( mailbox ) => ! isEmailForwardAccount( mailbox ) );

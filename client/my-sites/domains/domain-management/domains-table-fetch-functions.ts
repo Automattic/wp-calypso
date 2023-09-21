@@ -29,10 +29,7 @@ export async function fetchSite(
 export async function fetchSiteDomains(
 	siteIdOrSlug: number | string | null | undefined
 ): Promise< SiteDomainsQueryFnData > {
-	return wp.req.get( {
-		path: `/sites/${ siteIdOrSlug }/domains`,
-		apiVersion: '1.2',
-	} );
+	return wp.req.get( `/sites/${ siteIdOrSlug }/domains`, { apiVersion: '1.2' } );
 }
 
 export async function createBulkAction( variables: BulkUpdateVariables ): Promise< void > {

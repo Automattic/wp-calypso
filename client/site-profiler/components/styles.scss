@@ -1,4 +1,5 @@
 .is-section-site-profiler .layout__content {
+	background: #fff;
 	padding: 0;
 
 	h1 {
@@ -42,6 +43,23 @@
 		}
 	}
 
+	.button-action {
+		color: #fff;
+		background: var(--wp-admin-theme-color);
+		border-radius: 4px;
+		font-size: 1rem;
+		font-weight: 500;
+		padding: 1.5rem;
+
+		&:hover {
+			color: #fff !important;
+		}
+
+		&.is-busy {
+			background-image: linear-gradient(-45deg, var(--wp-admin-theme-color) 33%, var(--wp-admin-theme-color-darker-20) 33%, var(--wp-admin-theme-color-darker-20) 70%, var(--wp-admin-theme-color) 70%);
+		}
+	}
+
 	.result-list {
 		margin: 0;
 		list-style: none;
@@ -69,6 +87,31 @@
 
 		.col {
 			max-width: 300px;
+		}
+	}
+
+	.status-icon {
+		display: inline-flex;
+		margin-right: 0.5rem;
+		border-radius: 100%;
+		padding: 8px;
+		position: relative;
+		top: -5px;
+
+		svg {
+			fill: #fff;
+		}
+
+		&.green {
+			background: var(--studio-green-30);
+		}
+
+		&.blue {
+			background: var(--wp-admin-theme-color);
+		}
+
+		&.red {
+			background: var(--studio-red-50);
 		}
 	}
 }

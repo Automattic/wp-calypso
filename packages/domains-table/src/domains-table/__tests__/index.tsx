@@ -15,6 +15,7 @@ const getBulkCheckbox = () =>
 	screen.getByRole( 'checkbox', { name: 'Select all tick boxes for domains in table' } );
 const getDomainCheckbox = ( domain: string ) =>
 	screen.getByRole( 'checkbox', { name: `Tick box for ${ domain }` } );
+const getBulkUpdateContactDetailsButton = () => screen.getByText( 'Edit contact information' );
 
 test( 'all domain names are rendered in the table', () => {
 	const { rerender } = render(
@@ -699,4 +700,60 @@ describe( 'column sorting', () => {
 		expect( getByText( secondRow, 'expiring.com' ) ).toBeInTheDocument();
 		expect( getByText( thirdRow, 'active.com' ) ).toBeInTheDocument();
 	} );
+} );
+
+test( 'when current user is the owner, they can bulk update contact info', () => {
+	render(
+		<DomainsTable
+			shouldDisplayContactInfoBulkAction
+			currentUserCanBulkUpdateContactInfo
+			domains={ [ testPartialDomain( { domain: 'example1.com', current_user_is_owner: true } ) ] }
+			isAllSitesView
+		/>
+	);
+
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+
+	fireEvent.click( firstDomainsCheckbox );
+
+	expect( getBulkUpdateContactDetailsButton() ).toBeEnabled();
+} );
+
+test( 'when current user is not the owner, they cannot bulk update contact info', () => {
+	render(
+		<DomainsTable
+			shouldDisplayContactInfoBulkAction
+			currentUserCanBulkUpdateContactInfo
+			domains={ [
+				testPartialDomain( { domain: 'example1.com', current_user_is_owner: false } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
+
+	fireEvent.click( firstDomainsCheckbox );
+	fireEvent.click( secondDomainsCheckbox );
+
+	expect( getBulkUpdateContactDetailsButton() ).toBeDisabled();
+} );
+
+test( 'when the current user is not allowed to bulk update the contact info, disable the action', () => {
+	render(
+		<DomainsTable
+			shouldDisplayContactInfoBulkAction
+			currentUserCanBulkUpdateContactInfo={ false }
+			isAllSitesView
+			domains={ [ testPartialDomain( { domain: 'example1.com' } ) ] }
+		/>
+	);
+
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+
+	fireEvent.click( firstDomainsCheckbox );
+
+	expect( getBulkUpdateContactDetailsButton() ).toBeDisabled();
 } );
