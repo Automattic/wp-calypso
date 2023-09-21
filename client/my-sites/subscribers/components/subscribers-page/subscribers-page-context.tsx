@@ -40,6 +40,7 @@ type SubscribersPageContextProps = {
 	setShowAddSubscribersModal: ( show: boolean ) => void;
 	addSubscribersCallback: () => void;
 	siteId: number | null;
+	isFetching: boolean;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
@@ -141,6 +142,7 @@ export const SubscribersPageProvider = ( {
 				setShowAddSubscribersModal,
 				addSubscribersCallback,
 				siteId,
+				isFetching: subscribersQueryResult.isFetching,
 			} }
 		>
 			{ children }

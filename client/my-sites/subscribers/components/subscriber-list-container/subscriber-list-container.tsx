@@ -19,7 +19,8 @@ const SubscriberListContainer = ( {
 	onClickView,
 	onClickUnsubscribe,
 }: SubscriberListContainerProps ) => {
-	const { grandTotal, total, perPage, page, pageChangeCallback, searchTerm } = useSubscribersPage();
+	const { grandTotal, total, perPage, page, pageChangeCallback, searchTerm, isFetching } =
+		useSubscribersPage();
 	useRecordSearch();
 
 	return (
@@ -38,11 +39,19 @@ const SubscriberListContainer = ( {
 					</div>
 					<SubscriberListActionsBar />
 
-					{ total ? (
+					{ isFetching &&
+						new Array( 10 ).fill( null ).map( ( _, index ) => (
+							<div key={ index } data-ignored={ _ }>
+								<div className="loading-placeholder big"></div>
+								<div className="loading-placeholder small"></div>
+								<div className="loading-placeholder small"></div>
+								<div className="loading-placeholder small hidden"></div>
+							</div>
+						) ) }
+					{ ! isFetching && total && (
 						<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
-					) : (
-						<NoSearchResults searchTerm={ searchTerm } />
 					) }
+					{ ! isFetching && ! total && <NoSearchResults searchTerm={ searchTerm } /> }
 
 					<Pagination
 						className="subscriber-list-container__pagination"
