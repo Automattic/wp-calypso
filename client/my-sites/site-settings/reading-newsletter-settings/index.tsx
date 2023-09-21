@@ -17,6 +17,7 @@ import { SubscribeModalSetting } from './SubscribeModalSetting';
 
 type Fields = {
 	wpcom_featured_image_in_email?: boolean;
+	wpcom_newsletter_categories?: number[];
 	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	subscription_options?: SubscriptionOptions;
@@ -27,12 +28,14 @@ type NewsletterSettingsSectionProps = {
 	fields: Fields;
 	handleAutosavingToggle: ( field: string ) => ( value: boolean ) => void;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
-	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
+	handleSubmitForm: () => void;
 	disabled?: boolean;
 	isSavingSettings: boolean;
 	savedSubscriptionOptions?: SubscriptionOptions;
 	updateFields: ( fields: Fields ) => void;
 };
+
+const defaultNewsletterCategoryIds: number[] = [];
 
 export const NewsletterSettingsSection = ( {
 	fields,
@@ -73,8 +76,13 @@ export const NewsletterSettingsSection = ( {
 					<Card className="site-settings__card">
 						<NewsletterCategoriesSettings
 							disabled={ disabled }
+							newsletterCategoryIds={
+								fields.wpcom_newsletter_categories ?? defaultNewsletterCategoryIds
+							}
 							handleAutosavingToggle={ handleAutosavingToggle }
+							handleSubmitForm={ handleSubmitForm }
 							toggleValue={ wpcom_newsletter_categories_enabled }
+							updateFields={ updateFields }
 						/>
 					</Card>
 				) }

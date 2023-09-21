@@ -19,6 +19,7 @@ export type SubscriptionOptions = {
 type Fields = {
 	subscription_options?: SubscriptionOptions;
 	wpcom_featured_image_in_email?: boolean;
+	wpcom_newsletter_categories?: number[];
 	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	sm_enabled?: boolean;
@@ -32,6 +33,7 @@ const getFormSettings = ( settings?: Fields ) => {
 	const {
 		subscription_options,
 		wpcom_featured_image_in_email,
+		wpcom_newsletter_categories,
 		wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		sm_enabled,
@@ -40,6 +42,7 @@ const getFormSettings = ( settings?: Fields ) => {
 	return {
 		...( subscription_options && { subscription_options } ),
 		wpcom_featured_image_in_email: !! wpcom_featured_image_in_email,
+		wpcom_newsletter_categories: wpcom_newsletter_categories || [],
 		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		sm_enabled: !! sm_enabled,
@@ -50,7 +53,7 @@ type NewsletterSettingsFormProps = {
 	fields: Fields;
 	handleAutosavingToggle: ( field: string ) => ( value: boolean ) => void;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
-	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
+	handleSubmitForm: () => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
 	settings: { subscription_options?: SubscriptionOptions };
