@@ -7,7 +7,7 @@ export type CONVERSION_ACTION =
 	| 'transfer-domain-hosting'
 	| 'idle';
 
-export function useDefineConversionAction(
+export default function useDefineConversionAction(
 	domain: string,
 	isDomainAvailable?: boolean,
 	registrar = '',
