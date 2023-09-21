@@ -40,8 +40,8 @@ describe( 'BoostSitePerformance', () => {
 		expect( desktopScore ).toBeInTheDocument();
 	} );
 
-	test( 'renders the empty content when there is no score', () => {
-		const hasBoost = true;
+	test( 'renders the empty content when there is no score and no boost', () => {
+		const hasBoost = false;
 		render(
 			<BoostSitePerformance
 				boostData={ { overall: 0, mobile: 0, desktop: 0 } }
@@ -74,6 +74,13 @@ describe( 'BoostSitePerformance', () => {
 
 		const button = screen.getByRole( 'link', { name: /optimize css/i } );
 		expect( button ).toBeInTheDocument();
+		expect( button ).toHaveAttribute(
+			'href',
+			`${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`
+		);
+
+		fireEvent.click( button );
+		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_optimize_css_click' );
 	} );
 
 	test( 'renders the Configure Boost button when there is a score and has no boost', () => {
@@ -91,30 +98,12 @@ describe( 'BoostSitePerformance', () => {
 
 		const button = screen.getByRole( 'link', { name: /configure boost/i } );
 		expect( button ).toBeInTheDocument();
-	} );
-
-	test( 'calls trackEvent when button is clicked and checks if the button has href', () => {
-		const hasBoost = true;
-
-		render(
-			<BoostSitePerformance
-				boostData={ boostData }
-				hasBoost={ hasBoost }
-				siteId={ siteId }
-				siteUrlWithScheme={ siteUrlWithScheme }
-				trackEvent={ trackEventMock }
-				hasError={ false }
-			/>
-		);
-
-		const button = screen.getByRole( 'link', { name: /optimize css/i } );
-		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
-			`${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`
+			`${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`
 		);
 
 		fireEvent.click( button );
-		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_optimize_css_click' );
+		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_configure_boost_click' );
 	} );
 } );
