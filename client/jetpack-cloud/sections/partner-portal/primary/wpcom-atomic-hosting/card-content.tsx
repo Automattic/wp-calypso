@@ -4,11 +4,11 @@ import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
+import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import FeatureItem from './feature-item';
-
 import './style.scss';
 
 interface PlanInfo {
@@ -20,6 +20,7 @@ interface PlanInfo {
 	jetpackFeatures: Array< { text: string; tooltipText: string } >;
 	storage: string;
 	logo: JSX.Element | null;
+	previousProductName: string;
 }
 
 export default function CardContent( { planSlug }: { planSlug: string } ) {
@@ -51,11 +52,27 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 		}
 	};
 
+	const getPreviousProductName = ( planSlug: string ) => {
+		switch ( planSlug ) {
+			case PLAN_BUSINESS:
+				return 'Premium';
+			case PLAN_ECOMMERCE:
+				return 'Business';
+			default:
+				return '';
+		}
+	};
+
 	const getPlanInfo = ( planSlug: string ): PlanInfo => {
 		const plan = getPlan( planSlug );
-		const productId = plan?.getProductId?.();
+
+		const planFeatures = plan?.get2023PricingGridSignupWpcomFeatures?.() || [];
+		const planFeaturesObject = getPlanFeaturesObject( planFeatures );
+		const jetpackFeatures = plan?.get2023PricingGridSignupJetpackFeatures?.() || [];
+		const jetpackFeaturesObject = getPlanFeaturesObject( jetpackFeatures );
+
 		const agencyProduct = agencyProducts?.find(
-			( agencyProduct ) => agencyProduct.product_id === productId
+			( agencyProduct ) => agencyProduct.product_id === plan?.getProductId?.()
 		);
 
 		return {
@@ -63,24 +80,17 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 			description: plan?.getPlanTagline?.().toString() || '',
 			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
 			interval: 'month',
-			wpcomFeatures: [
-				{ text: 'Feature 1', tooltipText: 'Tooltip for Feature 1' },
-				{ text: 'Feature 2', tooltipText: 'Tooltip for Feature 2' },
-				{ text: 'Feature 3', tooltipText: 'Tooltip for Feature 3' },
-				{ text: 'Feature 4', tooltipText: 'Tooltip for Feature 4' },
-				{ text: 'Feature 5', tooltipText: 'Tooltip for Feature 5' },
-			],
-			jetpackFeatures:
-				planSlug === PLAN_BUSINESS
-					? [
-							{ text: 'Feature 1', tooltipText: 'Tooltip for Feature 1' },
-							{ text: 'Feature 2', tooltipText: 'Tooltip for Feature 2' },
-							{ text: 'Feature 3', tooltipText: 'Tooltip for Feature 3' },
-							{ text: 'Feature 4', tooltipText: 'Tooltip for Feature 4' },
-					  ]
-					: [],
+			wpcomFeatures: planFeaturesObject.map( ( feature ) => ( {
+				text: feature?.getTitle?.()?.toString() || '',
+				tooltipText: feature?.getDescription?.()?.toString() || '',
+			} ) ),
+			jetpackFeatures: jetpackFeaturesObject.map( ( feature ) => ( {
+				text: feature?.getTitle?.()?.toString() || '',
+				tooltipText: feature?.getDescription?.()?.toString() || '',
+			} ) ),
 			storage: '50GB',
 			logo: getLogo( planSlug ),
+			previousProductName: getPreviousProductName( planSlug ),
 		};
 	};
 
@@ -116,7 +126,7 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 				<div className="wpcom-atomic-hosting__card-features">
 					<div className="wpcom-atomic-hosting__card-features-heading">
 						{ translate( 'Everything in %(previousProductName)s, plus:', {
-							args: { previousProductName: 'Product Name' }, // FIXME: This should be the plan name
+							args: { previousProductName: plan.previousProductName },
 						} ) }
 					</div>
 					{ plan.wpcomFeatures.length > 0 &&
