@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import request from 'wpcom-proxy-request';
+import { useIsLoggedIn, requestWithSubkeyFallback } from './helpers';
 import { NewsletterCategories, NewsletterCategoriesResponse } from './types';
 import { getSubscribedNewsletterCategoriesKey } from './use-subscribed-newsletter-categories-query';
 
@@ -11,16 +11,16 @@ type NewsletterCategorySubscription = {
 const useNewsletterCategorySubscriptionMutation = ( siteId: string | number ) => {
 	const queryClient = useQueryClient();
 	const subscribedCategoriesCacheKey = getSubscribedNewsletterCategoriesKey( siteId );
+	const { isLoggedIn } = useIsLoggedIn();
 
 	return useMutation( {
 		mutationFn: async ( categorySubscriptions: NewsletterCategorySubscription[] ) => {
-			return await request< NewsletterCategoriesResponse >( {
-				path: `/sites/${ siteId }/newsletter-categories/subscriptions`,
-				method: 'POST',
-				apiVersion: '2',
-				apiNamespace: 'wpcom/v2',
-				body: { categories: categorySubscriptions },
-			} );
+			return await requestWithSubkeyFallback< NewsletterCategoriesResponse >(
+				isLoggedIn,
+				`/sites/${ siteId }/newsletter-categories/subscriptions`,
+				'POST',
+				{ categories: categorySubscriptions }
+			);
 		},
 		onMutate: async ( categorySubscriptions: NewsletterCategorySubscription[] ) => {
 			await queryClient.cancelQueries( subscribedCategoriesCacheKey );
