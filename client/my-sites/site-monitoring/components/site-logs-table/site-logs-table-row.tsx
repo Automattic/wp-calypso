@@ -7,6 +7,8 @@ import { Fragment, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { LogType } from '../../logs-tab';
 import SiteLogsExpandedContent from './site-logs-expanded-content';
 import './style.scss';
@@ -22,6 +24,7 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 	const { __ } = useI18n();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const expandedId = useRef( uuidv4() ).current;
+	const locale = useSelector( getCurrentUserLocale );
 
 	const firstColumnValue = log[ columns[ 0 ] ] as string; // Get the value of the first column
 
@@ -45,7 +48,7 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 								{ log[ column ] as React.ReactNode }
 							</Badge>
 						) : (
-							renderCell( column, log[ column ], moment, siteGmtOffset )
+							renderCell( column, log[ column ], moment, siteGmtOffset, locale )
 						) }
 					</td>
 				) ) }
@@ -81,16 +84,18 @@ function renderCell(
 	column: string,
 	value: unknown,
 	moment: ReturnType< typeof useLocalizedMoment >,
-	siteGmtOffset: number
+	siteGmtOffset: number,
+	locale: string
 ) {
 	if ( value === null || value === undefined || value === '' ) {
 		return <span className="site-logs-table__empty-cell" />;
 	}
 
 	if ( ( column === 'date' || column === 'timestamp' ) && typeof value === 'string' ) {
+		const dateFormat = locale === 'en' ? 'h:mm A [on] ll' : 'h:mm A, ll';
 		const formattedDate = moment( value )
 			.utcOffset( siteGmtOffset * 60 )
-			.format( 'h:mm A [on] ll' );
+			.format( dateFormat );
 		return <span>{ formattedDate }</span>;
 	}
 
