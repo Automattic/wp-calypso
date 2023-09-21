@@ -103,11 +103,7 @@ export function hasCustomDomain( site ) {
 }
 
 export function isModuleActive( site, moduleId ) {
-	return (
-		site.options &&
-		site.options.active_modules &&
-		site.options.active_modules.indexOf( moduleId ) > -1
-	);
+	return site.options?.active_modules?.includes( moduleId );
 }
 
 /**
