@@ -78,7 +78,7 @@ $heading-font-family: "SF Pro Display", $sans;
 	&__sidebar {
 		padding: 24px;
 		background-color: var(--studio-gray-0);
-		font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: $font-body-small;
 		line-height: 20px;
 		&-content {
 			p {
