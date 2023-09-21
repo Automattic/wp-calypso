@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { useNavigate } from 'react-router-dom';
+import page from 'page';
 import StatusCtaInfo from '../heading-information/status-cta-info';
 import StatusIcon from '../heading-information/status-icon';
 import StatusInfo from '../heading-information/status-info';
@@ -13,19 +13,22 @@ interface Props {
 }
 
 export default function HeadingInformation( props: Props ) {
-	const navigate = useNavigate();
 	const { domain, conversionAction, onCheckAnotherSite } = props;
 
 	const onRegisterDomain = () => {
-		navigate( `/start/domain/domain-only?new=${ domain }&search=yes` );
+		page( `/start/domain/domain-only?new=${ domain }&search=yes` );
 	};
 
 	const onTransferDomain = () => {
-		navigate( `/setup/domain-transfer/intro?new=${ domain }&search=yes` );
+		page( `/setup/domain-transfer/intro?new=${ domain }&search=yes` );
 	};
 
 	const onMigrateSite = () => {
-		navigate( `/setup/import-hosted-site?from=${ domain }` );
+		page( `/setup/import-hosted-site?from=${ domain }` );
+	};
+
+	const onTransferDomainFree = () => {
+		page( `/setup/google-transfer/intro?new=${ domain }` );
 	};
 
 	return (
@@ -50,6 +53,11 @@ export default function HeadingInformation( props: Props ) {
 						conversionAction === 'transfer-domain-hosting' ) && (
 						<Button className="button-action" onClick={ onTransferDomain }>
 							Transfer domain
+						</Button>
+					) }
+					{ conversionAction === 'transfer-google-domain' && (
+						<Button className="button-action" onClick={ onTransferDomainFree }>
+							Transfer domain for free
 						</Button>
 					) }
 					{ conversionAction === 'transfer-hosting' && (
