@@ -20,12 +20,15 @@ import ExternalLink from 'calypso/components/external-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { domainManagementList, isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isRequestingWhoisSelector from 'calypso/state/selectors/is-requesting-whois';
@@ -47,6 +50,7 @@ export default function BulkEditContactInfoPage( {
 	context,
 }: BulkEditContactInfoPageProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const selectedDomainsArg = getQueryArg( '?' + context.querystring, 'selected' );
 
@@ -105,7 +109,7 @@ export default function BulkEditContactInfoPage( {
 		} ) ?? false;
 
 	const [ showAllSelectedDomains, setShowAllSelectedDomains ] = useState( false );
-	const [ showConfirmationNotice, setShowConfirmationNotice ] = useState( false );
+	const [ noticeMessage, setNoticeMessage ] = useState< string | undefined >();
 	const domainListElementId = useId();
 
 	const reduxDomains: ResponseDomain[] | undefined = useSelector(
@@ -134,7 +138,18 @@ export default function BulkEditContactInfoPage( {
 	);
 
 	const goToDomainsList = () => {
-		page( domainsListPath );
+		if ( noticeMessage ) {
+			dispatch(
+				successNotice( noticeMessage, {
+					showDismiss: true,
+					isPersistent: true,
+					duration: 3000,
+				} )
+			);
+		}
+		setTimeout( () => {
+			page( domainsListPath );
+		}, 3000 );
 	};
 
 	const { updateContactInfo } = useDomainsBulkActionsMutation( {
@@ -142,22 +157,17 @@ export default function BulkEditContactInfoPage( {
 		mutationFn: createBulkAction,
 	} );
 
-	const handleSubmitButtonClick = (
+	const bulkUpdateContactInfo = (
 		newContactDetails: Record< string, string >,
 		transferLock: boolean,
-		requiresConfirmation: boolean
+		noticeMessage: string
 	) => {
 		const domainNames = selectedDomains?.map( ( domain ) => domain.domain );
 
 		if ( domainNames ) {
+			setNoticeMessage( noticeMessage );
 			updateContactInfo( domainNames, transferLock, newContactDetails );
 		}
-
-		if ( requiresConfirmation ) {
-			setShowConfirmationNotice( true );
-		}
-
-		return 'cancel';
 	};
 
 	const getFieldMapping = ( field: string ) => {
@@ -257,6 +267,10 @@ export default function BulkEditContactInfoPage( {
 			);
 		}
 
+		const wwdDomains = selectedDomains?.filter(
+			( domain ) => domain.registrar === registrarNames.WWD
+		);
+
 		return (
 			<EditContactInfoFormCard
 				forceShowTransferLockOptOut={ anyDomainSupportsTransferLockOptOut }
@@ -268,8 +282,9 @@ export default function BulkEditContactInfoPage( {
 				selectedSite={ selectedSite }
 				showContactInfoNote={ false }
 				backUrl={ domainsListPath }
-				onSubmitButtonClick={ handleSubmitButtonClick }
+				bulkUpdateContactInfo={ bulkUpdateContactInfo }
 				bulkEdit={ true }
+				wwdDomains={ wwdDomains }
 			/>
 		);
 	};
