@@ -154,10 +154,6 @@ This component's props are:
 - `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
 - `validatingButtonAriaLabel:? string`. Used for the `aria-label` attribute on the next step button when `isCompleteCallback` returns an unresolved Promise.
 
-### CheckoutStepAreaWrapper
-
-A styled div, controlled by the [theme](#checkoutTheme), that's used as an inner wrapper for the [CheckoutStepGroup](#CheckoutStepGroup) component. You shouldn't need to use this manually.
-
 ### CheckoutStepBody
 
 A component that looks like a checkout step. Normally you don't need to use this directly, since [CheckoutStep](#CheckoutStep) creates this for you, but you can use it manually if you wish.

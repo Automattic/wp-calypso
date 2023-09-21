@@ -6,7 +6,6 @@ import { CheckoutProvider } from './components/checkout-provider';
 import {
 	CheckoutFormSubmit,
 	CheckoutStep,
-	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutStepGroup,
 	CheckoutSummaryArea,
@@ -54,7 +53,6 @@ export {
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
-	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutStepGroup,
 	CheckoutSubmitButton,
