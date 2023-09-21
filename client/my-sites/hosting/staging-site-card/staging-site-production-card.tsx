@@ -79,17 +79,17 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					<ConfirmationModalButton
 						onConfirm={ () => {
 							// eslint-disable-next-line no-console
-							console.log( 'Push to production' );
+							console.log( 'Pull from production' );
 						} }
-						modalTitle={ translate( 'Confirm pushing staging site to production' ) }
+						modalTitle={ translate( 'Confirm pulling changes to your staging site.' ) }
 						modalMessage={ translate(
-							'Are you sure you want to push your staging site to production? This action cannot be undone.'
+							'Are you sure you want to pull your production site to your staging site?'
 						) }
-						confirmLabel={ translate( 'Push to production' ) }
+						confirmLabel={ translate( 'Pull from production' ) }
 						cancelLabel={ translate( 'Cancel' ) }
 					>
-						<Gridicon icon="arrow-up" />
-						<span>{ translate( 'Push to production' ) }</span>
+						<Gridicon icon="arrow-down" />
+						<span>{ translate( 'Pull from production' ) }</span>
 					</ConfirmationModalButton>
 				</ActionButtons>
 			</>
