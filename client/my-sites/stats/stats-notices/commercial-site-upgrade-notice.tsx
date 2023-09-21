@@ -1,9 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import NoticeBanner from '@automattic/components/src/notice-banner';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
@@ -18,6 +21,7 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 
 const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
@@ -60,6 +64,10 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 		return null;
 	}
 
+	const learnMoreLink = isWPCOMSite
+		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
+		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
+
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
@@ -86,7 +94,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 							commercialUpgradeLink: (
 								<a
 									className="notice-banner__action-link"
-									href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+									href={ localizeUrl( learnMoreLink ) }
 									target="_blank"
 									rel="noreferrer"
 								/>

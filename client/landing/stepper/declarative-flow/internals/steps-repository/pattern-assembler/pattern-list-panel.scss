@@ -20,6 +20,13 @@
 		width: 348px;
 		padding: 24px;
 	}
+
+	.global-styles-variations__container {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+		padding-top: 4px;
+	}
 }
 
 .pattern-list-panel__title {

@@ -203,7 +203,7 @@ const usePlanTypesWithIntent = ( {
 			];
 			break;
 		case 'plans-jetpack-app':
-			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM ];
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-paid-media':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];

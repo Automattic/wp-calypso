@@ -20,6 +20,7 @@ import {
 } from 'calypso/state/domains/management/actions';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit as hasDomainCreditSelector } from 'calypso/state/sites/plans/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { domainManagementList } from '../../paths';
 import DomainHeader from '../components/domain-header';
@@ -55,6 +56,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
 	const dispatch = useDispatch();
+	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 
 	const hasNonWpcomDomains = useMemo( () => {
 		return (
@@ -97,6 +99,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					) }
 					domainStatusPurchaseActions={ purchaseActions }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
+					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
 					onDomainAction={ ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
 							return {

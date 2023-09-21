@@ -7,6 +7,8 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useOdieAssistantContext } from 'calypso/odie/context';
+import { useSelector } from 'calypso/state';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import DomainHeader from '../components/domain-header';
 import {
 	createBulkAction,
@@ -28,6 +30,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains, isLoading } = useDomainsTable( fetchAllDomains );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
+	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 
 	const item = {
 		label: translate( 'All Domains' ),
@@ -69,6 +72,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						'domains/bulk-actions-contact-info-editing'
 					) }
 					domainStatusPurchaseActions={ purchaseActions }
+					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
 					onDomainAction={ ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
 							sendNudge( {

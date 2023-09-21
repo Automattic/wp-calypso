@@ -4,7 +4,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canAddMailboxesToEmailSubscription } from 'calypso/lib/emails';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs, isUserOnTitanFreeTrial } from 'calypso/lib/titan';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
+import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import { emailManagement, emailManagementEdit } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -26,7 +26,7 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 	}
 
 	// By default, upsell CTA links to the email management landing page.
-	let upsellURL = emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } );
+	let upsellURL = emailManagement( selectedSiteSlug, null, null, { source: MAILBOXES_SOURCE } );
 
 	let isFreeTrialNow = false;
 	let provider = '';
@@ -48,7 +48,7 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 
 		if ( slug ) {
 			upsellURL = emailManagementEdit( selectedSiteSlug, domainItem.domain, slug, null, {
-				source: INBOX_SOURCE,
+				source: MAILBOXES_SOURCE,
 			} );
 		}
 	}
