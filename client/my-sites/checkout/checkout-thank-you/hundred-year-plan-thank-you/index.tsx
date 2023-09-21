@@ -4,13 +4,14 @@ import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useEffect } from 'react';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { useEffect } from 'react';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { getRegisteredDomains } from 'calypso/lib/domains';
 import { useSelector, useDispatch } from 'calypso/state';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSiteId, getSiteOptions } from 'calypso/state/sites/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import './styles.scss';
@@ -140,14 +141,23 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const receipt = useSelector( ( state ) => getReceiptById( state, receiptId ) );
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
 	const siteCreatedTimeStamp = useSelector(
 		( state ) => getSiteOptions( state, siteId ?? 0 )?.created_at
 	);
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ?? 0 ) );
-	const domainPurchase = sitePurchases?.find( ( purchase ) => purchase.isDomain );
+
+	const receipt = useSelector( ( state ) => getReceiptById( state, receiptId ) );
 	const isReceiptLoading = ! receipt.hasLoadedFromServer || receipt.isRequesting;
+
+	const siteDomains = useSelector( ( state ) =>
+		siteId ? getDomainsBySiteId( state, siteId ) : []
+	);
+	const isLoadingDomains = useSelector( ( state ) =>
+		siteId ? isRequestingSiteDomains( state, siteId ) : false
+	);
+	const registeredDomains = getRegisteredDomains( siteDomains );
+	const registeredDomain = registeredDomains.length ? registeredDomains[ 0 ] : null;
+
 	useEffect( () => {
 		dispatch( hideMasterbar() );
 		if ( isReceiptLoading && receiptId ) {
@@ -155,14 +165,18 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 		}
 	}, [ dispatch, isReceiptLoading, receiptId ] );
 
-	if ( ! isReceiptLoading && ! receipt.data?.purchases?.length ) {
+	if (
+		! isReceiptLoading &&
+		( ! receipt.data?.purchases?.length || receipt.data?.purchases[ 0 ].blogId !== siteId )
+	) {
 		page( '/' );
 	}
+
 	const isMobile = useMobileBreakpoint();
-	const isPageLoading = isReceiptLoading || ! domainPurchase?.meta;
+	const isPageLoading = isReceiptLoading || isLoadingDomains;
 	return (
 		<>
-			<QuerySitePurchases siteId={ siteId } />
+			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 			<Global
 				styles={ css`
 					body.is-section-checkout,
@@ -185,9 +199,9 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 							</Header>
 							<Highlight isMobile={ isMobile }>
 								{ translate(
-									'Your 100-year legacy for %(purchasedDomain)s begins now. Our dedicated premium support team will reach out via your email shortly to schedule a welcome session, and walk you through the benefits tailored just for you. We are thrilled to stand by your side for the next century.',
+									'Your 100-year legacy for %(domain)s begins now. Our dedicated premium support team will reach out via your email shortly to schedule a welcome session, and walk you through the benefits tailored just for you. We are thrilled to stand by your side for the next century.',
 									{
-										args: { purchasedDomain: domainPurchase?.meta ?? '' },
+										args: { domain: registeredDomain?.domain || siteSlug },
 									}
 								) }
 							</Highlight>
