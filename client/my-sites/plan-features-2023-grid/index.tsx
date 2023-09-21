@@ -57,7 +57,7 @@ import type {
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { PlanActionOverrides } from './types';
-import type { DomainSuggestion, selectedStorageOptionForPlans } from '@automattic/data-stores';
+import type { DomainSuggestion, SelectedStorageOptionForPlans } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
@@ -102,7 +102,7 @@ export interface PlanFeatures2023GridProps {
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	// temporary: callback ref to scroll Odie AI Assistant into view once "Compare plans" button is clicked
 	observableForOdieRef: ( observableElement: Element | null ) => void;
-	selectedStorageOptions?: selectedStorageOptionForPlans;
+	selectedStorageOptions?: SelectedStorageOptionForPlans;
 }
 
 interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
@@ -114,7 +114,7 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 	isPlanUpgradeCreditEligible: boolean;
 	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
 	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
-	selectedStorageOptions?: selectedStorageOptionForPlans;
+	selectedStorageOptions?: SelectedStorageOptionForPlans;
 }
 
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
