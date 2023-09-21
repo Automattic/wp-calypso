@@ -132,11 +132,11 @@ $button-padding: 8px 32px;
 		display: flex;
 		h1,
 		.components-panel__header h2 {
+			color: var(--studio-black);
 			font-family: $font-sf-pro-display;
 			font-size: $font-headline-small;
 			font-weight: 700;
 			line-height: 40px;
-			margin-bottom: 24px;
 		}
 	}
 
