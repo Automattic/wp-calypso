@@ -1,10 +1,9 @@
-import { Onboard } from '@automattic/data-stores';
 import { DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
 import { useFlowProgress, AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { parse } from 'qs';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -18,17 +17,9 @@ import { ProcessingResult } from './internals/steps-repository/processing-step/c
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const SiteIntent = Onboard.SiteIntent;
-const queryString = window.location.search.substring( 1 );
-
 const withThemeAssemblerFlow: Flow = {
 	name: AI_ASSEMBLER_FLOW,
 	useSideEffect() {
-		const selectedDesign = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-			[]
-		);
-		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = DEFAULT_ASSEMBLER_DESIGN.slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
@@ -41,24 +32,7 @@ const withThemeAssemblerFlow: Flow = {
 				console.log( `The ${ selectedTheme } theme is loading...` );
 				return;
 			}
-
-			const queryParams = parse( queryString );
-			const patternIds = queryParams.pattern_ids ? queryParams.pattern_ids.split( ',' ) : [];
-
-			setSelectedDesign( {
-				...selectedDesign,
-				slug: theme.id,
-				title: theme.name,
-				recipe: {
-					...selectedDesign?.recipe,
-					stylesheet: theme.stylesheet,
-					pattern_ids: patternIds,
-				},
-				design_type: 'assembler',
-			} );
-
-			setIntent( SiteIntent.WithThemeAssembler );
-		}, [ theme, queryString ] );
+		}, [ theme ] );
 	},
 
 	useSteps() {
@@ -81,6 +55,8 @@ const withThemeAssemblerFlow: Flow = {
 			[]
 		);
 		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const [ searchParams, setSearchParams ] = useSearchParams(); // eslint-disable-line @typescript-eslint/no-unused-vars
+
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
@@ -95,7 +71,7 @@ const withThemeAssemblerFlow: Flow = {
 			return navigate( 'processing' );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: any[] ) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
@@ -115,6 +91,19 @@ const withThemeAssemblerFlow: Flow = {
 
 				case 'patternAssembler': {
 					return navigate( 'processing' );
+				}
+
+				case 'site-prompt': {
+					// This actually passes the patterns to the pattern assembler.
+					setSearchParams(
+						( currentSearchParams ) => {
+							currentSearchParams.set( 'pattern_ids', results.join( ',' ) );
+							return currentSearchParams;
+						},
+						{ replace: false }
+					);
+
+					return navigate( 'patternAssembler' );
 				}
 
 				case 'celebration-step': {

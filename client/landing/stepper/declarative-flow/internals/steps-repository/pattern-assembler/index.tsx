@@ -65,13 +65,9 @@ import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 import './style.scss';
 
-const PatternAssembler = ( {
-	navigation,
-	flow,
-	stepName,
-	noticeOperations,
-	noticeUI,
-}: StepProps & NoticesProps ) => {
+const PatternAssembler = ( props: StepProps & NoticesProps ) => {
+	const { navigation, flow, stepName, noticeOperations, noticeUI } = props;
+
 	const translate = useTranslate();
 	const navigator = useNavigator();
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );

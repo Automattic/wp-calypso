@@ -60,15 +60,16 @@ const AISitePrompt: Step = function ( props ) {
 				description: prompt,
 			},
 		} )
-			.then( ( response ) => {
+			.then( ( response: any ) => {
 				console.log( 'AI response', response ); /* eslint-disable-line no-console */
 				setLoading( false );
+				submit?.( {}, response[ 0 ].patterns );
 			} )
 			.catch( ( error ) => {
 				console.error( 'big sky error', error ); /* eslint-disable-line no-console */
 				setLoading( false );
+				submit?.();
 			} );
-		//submit?.();
 	};
 
 	function getContent() {
