@@ -41,8 +41,8 @@ export default function BoostSitePerformance( {
 		'Your Overall Score is a summary of your website performance across both mobile and desktop devices.'
 	);
 
-	const OptimizeCSSUrl = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`;
-	const ConfigureBoostUrl = `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`;
+	const optimizeCSSUrl = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`;
+	const configureBoostUrl = `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`;
 
 	const handleOnClick = () => {
 		// TODO - should open a modal.
@@ -121,7 +121,7 @@ export default function BoostSitePerformance( {
 				<div className="site-expanded-content__card-footer">
 					{ hasBoost && (
 						<Button
-							href={ OptimizeCSSUrl }
+							href={ optimizeCSSUrl }
 							target="_blank"
 							onClick={ () => trackEvent( 'expandable_block_optimize_css_click' ) }
 							className="site-expanded-content__card-button"
@@ -133,7 +133,7 @@ export default function BoostSitePerformance( {
 
 					{ ! hasBoost && (
 						<Button
-							href={ ConfigureBoostUrl }
+							href={ configureBoostUrl }
 							target="_blank"
 							onClick={ () => trackEvent( 'expandable_block_configure_boost_click' ) }
 							className="site-expanded-content__card-button"
