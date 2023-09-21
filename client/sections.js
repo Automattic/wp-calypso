@@ -283,12 +283,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'inbox',
-		paths: [ '/inbox' ],
-		module: 'calypso/my-sites/email',
-		group: 'sites',
-	},
-	{
 		name: 'checkout',
 		paths: [ '/checkout' ],
 		module: 'calypso/my-sites/checkout',
