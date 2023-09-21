@@ -42,7 +42,7 @@
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
 		"domains/bulk-actions-table": true,
-		"domains/bulk-actions-contact-info-editing": true,
+		"domains/bulk-actions-contact-info-editing": false,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"email-accounts/enabled": true,
