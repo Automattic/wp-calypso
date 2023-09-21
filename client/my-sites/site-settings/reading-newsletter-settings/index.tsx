@@ -2,10 +2,11 @@ import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useNewsletterCategoriesFeatureEnabled } from 'calypso/data/newsletter-categories';
+import { useNewsletterCategoriesBlogSticker } from 'calypso/data/newsletter-categories';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
+import { isSimpleSite as isSimpleSiteSelector } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterCategoriesSettings } from '../newsletter-categories-settings';
 import { SubscriptionOptions } from '../settings-reading/main';
@@ -51,7 +52,8 @@ export const NewsletterSettingsSection = ( {
 		subscription_options,
 		sm_enabled,
 	} = fields;
-	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteId = useSelector( getSelectedSiteId );
+	const isSimpleSite = useSelector( isSimpleSiteSelector );
 
 	// Update subscription_options form fields when savedSubscriptionOptions changes.
 	// This makes sure the form fields hold the current value after saving.
@@ -60,21 +62,22 @@ export const NewsletterSettingsSection = ( {
 
 		// If the URL has a hash, scroll to it.
 		scrollToAnchor( { offset: 15 } );
-	}, [ savedSubscriptionOptions ] );
+	}, [ savedSubscriptionOptions, updateFields ] );
 
-	const newsletterCategoriesEnabled = useNewsletterCategoriesFeatureEnabled( { siteId } );
+	const hasNewsletterCategoriesBlogSticker = useNewsletterCategoriesBlogSticker( { siteId } );
 
 	return (
 		<>
-			{ config.isEnabled( 'settings/newsletter-categories' ) && newsletterCategoriesEnabled && (
-				<Card className="site-settings__card">
-					<NewsletterCategoriesSettings
-						disabled={ disabled }
-						handleAutosavingToggle={ handleAutosavingToggle }
-						toggleValue={ wpcom_newsletter_categories_enabled }
-					/>
-				</Card>
-			) }
+			{ config.isEnabled( 'settings/newsletter-categories' ) &&
+				( isSimpleSite || hasNewsletterCategoriesBlogSticker ) && (
+					<Card className="site-settings__card">
+						<NewsletterCategoriesSettings
+							disabled={ disabled }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							toggleValue={ wpcom_newsletter_categories_enabled }
+						/>
+					</Card>
+				) }
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				id="newsletter-settings"
