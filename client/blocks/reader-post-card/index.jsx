@@ -47,7 +47,6 @@ class ReaderPostCard extends Component {
 		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
 		hasOrganization: PropTypes.bool,
-		showFollowButton: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
 	};
@@ -58,7 +57,6 @@ class ReaderPostCard extends Component {
 		handleClick: noop,
 		isSelected: false,
 		showSiteName: true,
-		showFollowButton: true,
 	};
 
 	propagateCardClick = () => {
@@ -140,7 +138,6 @@ class ReaderPostCard extends Component {
 			hasOrganization,
 			isWPForTeamsItem,
 			teams,
-			showFollowButton,
 		} = this.props;
 
 		let isSeen = false;
@@ -175,12 +172,9 @@ class ReaderPostCard extends Component {
 				post={ post }
 				site={ site }
 				visitUrl={ post.URL }
-				showFollow={ showFollowButton }
-				showVisit={ true }
 				fullPost={ false }
 				onCommentClick={ onCommentClick }
 				showEdit={ false }
-				showSuggestedFollows={ isReaderSearchPage }
 				className="ignore-click"
 				iconSize={ 20 }
 			/>
@@ -196,7 +190,8 @@ class ReaderPostCard extends Component {
 				showSiteName={ showSiteName }
 				showAvatar={ ! compact }
 				teams={ teams }
-				showFollow={ false }
+				showFollow={ true }
+				showSuggestedFollows={ isReaderSearchPage }
 				compact={ compact }
 			/>
 		);
@@ -224,6 +219,7 @@ class ReaderPostCard extends Component {
 					postKey={ postKey }
 					postByline={ postByline }
 					onClick={ this.handleCardClick }
+					showSuggestedFollows={ isReaderSearchPage }
 				>
 					{ readerPostActions }
 				</CompactPostCard>

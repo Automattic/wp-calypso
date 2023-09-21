@@ -6,11 +6,13 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -42,6 +44,7 @@ class ReaderPostEllipsisMenu extends Component {
 		showVisitPost: PropTypes.bool,
 		showEditPost: PropTypes.bool,
 		showConversationFollow: PropTypes.bool,
+		showSuggestedFollows: PropTypes.bool,
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
 		position: PropTypes.string,
@@ -56,9 +59,24 @@ class ReaderPostEllipsisMenu extends Component {
 		showVisitPost: true,
 		showEditPost: true,
 		showConversationFollow: true,
+		showSuggestedFollows: false,
 		showReportPost: true,
 		showReportSite: false,
 		posts: [],
+	};
+
+	state = {
+		isSuggestedFollowsModalOpen: false,
+	};
+
+	openSuggestedFollowsModal = ( shouldOpen ) => {
+		if ( shouldOpen ) {
+			this.setState( { isSuggestedFollowsModalOpen: true } );
+		}
+	};
+
+	onCloseSuggestedFollowModal = () => {
+		this.setState( { isSuggestedFollowsModalOpen: false } );
 	};
 
 	blockSite = () => {
@@ -126,6 +144,9 @@ class ReaderPostEllipsisMenu extends Component {
 			'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ),
 			this.props.post
 		);
+		if ( ! isMenuVisible ) {
+			this.onCloseSuggestedFollowModal();
+		}
 	};
 
 	editPost = () => {
@@ -292,6 +313,27 @@ class ReaderPostEllipsisMenu extends Component {
 						followSource={ READER_POST_OPTIONS_MENU }
 						followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
 						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
+					/>
+				) }
+
+				{ this.props.showSuggestedFollows && post.site_ID && (
+					<ReaderSuggestedFollowsDialog
+						onClose={ this.onCloseSuggestedFollowModal }
+						siteId={ +post.site_ID }
+						postId={ +post.ID }
+						isVisible={ this.state.isSuggestedFollowsModalOpen }
+					/>
+				) }
+
+				{ this.props.showFollow && (
+					<ReaderFollowButton
+						tagName={ PopoverMenuItem }
+						siteUrl={ post.feed_URL || post.site_URL }
+						followSource={ READER_POST_OPTIONS_MENU }
+						iconSize={ 20 }
+						followLabel={ translate( 'Follow blog' ) }
+						followingLabel={ translate( 'Following blog' ) }
+						onFollowToggle={ this.openSuggestedFollowsModal }
 					/>
 				) }
 
