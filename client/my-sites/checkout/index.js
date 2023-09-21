@@ -25,6 +25,7 @@ import {
 	upsellNudge,
 	upsellRedirect,
 	akismetCheckoutThankYou,
+	hundredYearCheckoutThankYou,
 } from './controller';
 
 export default function () {
@@ -92,6 +93,14 @@ export default function () {
 		'/checkout/jetpack/thank-you/:site/:product',
 		loggedInSiteSelection,
 		jetpackCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/100-year/thank-you/:site/:receiptId',
+		loggedInSiteSelection,
+		hundredYearCheckoutThankYou,
 		makeLayout,
 		clientRender
 	);
