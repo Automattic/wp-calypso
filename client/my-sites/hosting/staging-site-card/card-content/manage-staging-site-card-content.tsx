@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -54,13 +55,16 @@ const StagingSiteLink = styled.div( {
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
-	justifyContent: 'space-between',
 
 	'@media screen and (max-width: 768px)': {
 		gap: '0.5em',
 		flexDirection: 'column',
 		'.button': { flexGrow: 1 },
 	},
+} );
+
+const ActionButtonsJustifyBetween = styled( ActionButtons )( {
+	justifyContent: 'space-between',
 } );
 
 type CardContentProps = {
@@ -80,6 +84,59 @@ export const ManageStagingSiteCardContent = ( {
 }: CardContentProps ) => {
 	{
 		const translate = useTranslate();
+		const isStagingI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
+
+		const ConfirmationPushChangesButton = () => {
+			return (
+				<ConfirmationModalButton
+					disabled={ isButtonDisabled }
+					onConfirm={ () => {
+						onPushClick();
+					} }
+					modalTitle={ translate( 'Confirm pushing changes from your staging site' ) }
+					modalMessage={ translate(
+						'Are you sure you want to push your production changes to your staging site?'
+					) }
+					confirmLabel={ translate( 'Push to staging' ) }
+					cancelLabel={ translate( 'Cancel' ) }
+				>
+					<Gridicon icon="arrow-up" />
+					<span>{ translate( 'Push to staging' ) }</span>
+				</ConfirmationModalButton>
+			);
+		};
+
+		const ConfirmationDeleteButton = () => {
+			return (
+				<ConfirmationModalButton
+					disabled={ isButtonDisabled }
+					onConfirm={ onDeleteClick }
+					isBusy={ isBusy }
+					isScary={ true }
+					modalTitle={ translate( 'Confirm staging site deletion' ) }
+					modalMessage={ translate(
+						'Are you sure you want to delete the staging site? This action cannot be undone.'
+					) }
+					confirmLabel={ translate( 'Delete staging site' ) }
+					cancelLabel={ translate( 'Cancel' ) }
+				>
+					<Gridicon icon="trash" />
+					<span>{ translate( 'Delete staging site' ) }</span>
+				</ConfirmationModalButton>
+			);
+		};
+
+		const ManageStagingSiteButton = () => {
+			return (
+				<Button
+					primary
+					href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+					disabled={ isButtonDisabled }
+				>
+					<span>{ translate( 'Manage staging site' ) }</span>
+				</Button>
+			);
+		};
 		return (
 			<>
 				<p>
@@ -109,47 +166,20 @@ export const ManageStagingSiteCardContent = ( {
 						</StagingSiteLink>
 					</SiteInfo>
 				</SiteRow>
-				<ActionButtons>
-					<LeftActionsContainer>
-						<Button
-							primary
-							href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
-							disabled={ isButtonDisabled }
-						>
-							<span>{ translate( 'Manage staging site' ) }</span>
-						</Button>
-						<ConfirmationModalButton
-							disabled={ isButtonDisabled }
-							onConfirm={ () => {
-								onPushClick();
-							} }
-							modalTitle={ translate( 'Confirm pushing changes from your staging site' ) }
-							modalMessage={ translate(
-								'Are you sure you want to push your production changes to your staging site?'
-							) }
-							confirmLabel={ translate( 'Push to staging' ) }
-							cancelLabel={ translate( 'Cancel' ) }
-						>
-							<Gridicon icon="arrow-up" />
-							<span>{ translate( 'Push to staging' ) }</span>
-						</ConfirmationModalButton>
-					</LeftActionsContainer>
-					<ConfirmationModalButton
-						disabled={ isButtonDisabled }
-						onConfirm={ onDeleteClick }
-						isBusy={ isBusy }
-						isScary={ true }
-						modalTitle={ translate( 'Confirm staging site deletion' ) }
-						modalMessage={ translate(
-							'Are you sure you want to delete the staging site? This action cannot be undone.'
-						) }
-						confirmLabel={ translate( 'Delete staging site' ) }
-						cancelLabel={ translate( 'Cancel' ) }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Delete staging site' ) }</span>
-					</ConfirmationModalButton>
-				</ActionButtons>
+				{ isStagingI3Enabled ? (
+					<ActionButtonsJustifyBetween>
+						<LeftActionsContainer>
+							<ManageStagingSiteButton />
+							<ConfirmationPushChangesButton />
+						</LeftActionsContainer>
+						<ConfirmationDeleteButton />
+					</ActionButtonsJustifyBetween>
+				) : (
+					<ActionButtons>
+						<ManageStagingSiteButton />
+						<ConfirmationDeleteButton />
+					</ActionButtons>
+				) }
 			</>
 		);
 	}

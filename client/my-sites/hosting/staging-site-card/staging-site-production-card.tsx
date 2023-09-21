@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -34,6 +35,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ loadingError, setLoadingError ] = useState( null );
+	const isStagingI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
 	const { data: productionSite, isLoading } = useProductionSiteDetail( siteId, {
 		enabled: ! disabled,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,19 +78,21 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
-					<ConfirmationModalButton
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						onConfirm={ () => {} }
-						modalTitle={ translate( 'Confirm pulling changes to your staging site.' ) }
-						modalMessage={ translate(
-							'Are you sure you want to pull your production changes to your staging site?'
-						) }
-						confirmLabel={ translate( 'Pull from production' ) }
-						cancelLabel={ translate( 'Cancel' ) }
-					>
-						<Gridicon icon="arrow-down" />
-						<span>{ translate( 'Pull from production' ) }</span>
-					</ConfirmationModalButton>
+					{ isStagingI3Enabled && (
+						<ConfirmationModalButton
+							// eslint-disable-next-line @typescript-eslint/no-empty-function
+							onConfirm={ () => {} }
+							modalTitle={ translate( 'Confirm pulling changes to your staging site.' ) }
+							modalMessage={ translate(
+								'Are you sure you want to pull your production changes to your staging site?'
+							) }
+							confirmLabel={ translate( 'Pull from production' ) }
+							cancelLabel={ translate( 'Cancel' ) }
+						>
+							<Gridicon icon="arrow-down" />
+							<span>{ translate( 'Pull from production' ) }</span>
+						</ConfirmationModalButton>
+					) }
 				</ActionButtons>
 			</>
 		);
