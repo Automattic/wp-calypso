@@ -41,9 +41,11 @@ export default function BoostSitePerformance( {
 		'Your Overall Score is a summary of your website performance across both mobile and desktop devices.'
 	);
 
+	const isEnabled = !! ( hasBoost || overallScore );
+
 	const buttonProps = useMemo(
 		() =>
-			hasBoost
+			hasBoost && overallScore
 				? {
 						label: translate( 'Optimize CSS' ),
 						href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
@@ -54,7 +56,7 @@ export default function BoostSitePerformance( {
 						href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`,
 						onClick: () => trackEvent( 'expandable_block_configure_boost_click' ),
 				  },
-		[ hasBoost, siteUrlWithScheme, trackEvent, translate ]
+		[ hasBoost, siteUrlWithScheme, trackEvent, translate, overallScore ]
 	);
 
 	const handleOnClick = () => {
@@ -64,7 +66,7 @@ export default function BoostSitePerformance( {
 	return (
 		<ExpandedCard
 			header={ translate( 'Boost site performance' ) }
-			isEnabled={ !! overallScore }
+			isEnabled={ isEnabled }
 			emptyContent={ translate(
 				'{{strong}}Get Score{{/strong}} to see your site performance scores',
 				{
@@ -73,7 +75,7 @@ export default function BoostSitePerformance( {
 			) }
 			hasError={ hasError }
 			// Allow to click on the card only if Boost is not active
-			onClick={ ! overallScore ? handleOnClick : undefined }
+			onClick={ ! isEnabled ? handleOnClick : undefined }
 		>
 			<div className="site-expanded-content__card-content-container">
 				<div className="site-expanded-content__card-content">
