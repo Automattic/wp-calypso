@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_BUSINESS, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { PLAN_BUSINESS_MONTHLY, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	Onboard,
@@ -352,7 +352,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		) || [];
 	const marketplaceProductSlug =
 		marketplaceThemeProducts.length !== 0
-			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts, PLAN_BUSINESS )
+			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts )
 			: null;
 
 	const selectedMarketplaceProduct =
@@ -445,7 +445,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		if ( themeHasWooCommerce ) {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
-			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS : '';
+			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
