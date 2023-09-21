@@ -9,7 +9,6 @@ import {
 	PlanSlug,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
-	isPlan,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -26,7 +25,10 @@ import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import {
+	planItem as getCartItemForPlan,
+	getPlanCartItem,
+} from 'calypso/lib/cart-values/cart-items';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
@@ -286,7 +288,7 @@ const PlansFeaturesMain = ( {
 	};
 
 	const handleUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
-		const cartItemForPlan = cartItems?.find( ( item ) => isPlan( item ) ) ?? null;
+		const cartItemForPlan = getPlanCartItem( cartItems );
 
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.

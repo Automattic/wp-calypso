@@ -5,8 +5,6 @@ import {
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	isEcommerce,
 	isDomainTransfer,
-	isPlan,
-	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
@@ -22,6 +20,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 	marketplaceThemeProduct,
+	getPlanCartItem,
 } from 'calypso/lib/cart-values/cart-items';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
@@ -506,20 +505,6 @@ function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
 	}
 
 	return plugins?.find( ( plugin ) => plugin.product_term === term ) || null;
-}
-
-function getPlanCartItem( cartItems ) {
-	/**
-	 * A null planCartItem corresponds to a free plan. It seems like this is case throughout the signup/plans
-	 * onboarding codebase. There are, however, tests in client/signup/steps/plans/test/index.jsx that
-	 * represent a free plan as a non null product.
-	 *
-	 * Additionally, free plans are, in fact, represented as products with product slugs elsewhere in the
-	 * codebase. This is why we check for both cases here. When we conduct a more thorough investigation and
-	 * determine that PLAN_FREE is no longer, in fact, used to represent free plans in signup/onboarding, we
-	 * can remove PLAN_FREE check. p4TIVU-aLF-p2
-	 */
-	return cartItems?.find( ( item ) => isPlan( item ) || item.product_slug === PLAN_FREE ) ?? null;
 }
 
 export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {

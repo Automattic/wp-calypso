@@ -1,4 +1,3 @@
-import { isPlan } from '@automattic/calypso-products';
 import debugModule from 'debug';
 import {
 	defer,
@@ -46,8 +45,8 @@ import {
 import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getPlanCartItem } from '../cart-values/cart-items';
 import type { Flow, Dependencies } from '../../signup/types';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugModule( 'calypso:signup' );
 
@@ -444,8 +443,13 @@ export default class SignupFlowController {
 
 	_getNeedsToGoThroughCheckout() {
 		const progress = getSignupDependencyProgress( this._reduxStore.getState() );
-		return progress?.plans?.cartItems?.find( ( item: MinimalRequestCartProduct ) =>
-			isPlan( item )
+
+		if ( ! progress?.plans?.cartItems ) {
+			return false;
+		}
+
+		return (
+			progress.plans.cartItems.length && Boolean( getPlanCartItem( progress.plans.cartItems ) )
 		);
 	}
 

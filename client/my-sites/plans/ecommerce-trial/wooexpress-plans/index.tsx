@@ -4,7 +4,6 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	getPlanPath,
 	getPlans,
-	isPlan,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
@@ -13,6 +12,7 @@ import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
@@ -98,8 +98,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 
 	const onUpgradeClick = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
-			const upgradePlanSlug =
-				cartItems?.find( ( item ) => isPlan( item ) )?.product_slug ?? PLAN_FREE;
+			const upgradePlanSlug = getPlanCartItem( cartItems )?.product_slug ?? PLAN_FREE;
 
 			triggerTracksEvent?.( upgradePlanSlug );
 
