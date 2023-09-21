@@ -66,6 +66,7 @@ const ActionButtons = styled.div( {
 type CardContentProps = {
 	stagingSite: StagingSite;
 	onDeleteClick: () => void;
+	onPushClick: () => void;
 	isButtonDisabled: boolean;
 	isBusy: boolean;
 };
@@ -73,6 +74,7 @@ type CardContentProps = {
 export const ManageStagingSiteCardContent = ( {
 	stagingSite,
 	onDeleteClick,
+	onPushClick,
 	isButtonDisabled,
 	isBusy,
 }: CardContentProps ) => {
@@ -119,8 +121,7 @@ export const ManageStagingSiteCardContent = ( {
 						<ConfirmationModalButton
 							disabled={ isButtonDisabled }
 							onConfirm={ () => {
-								// eslint-disable-next-line no-console
-								console.log( 'Push to staging site' );
+								onPushClick();
 							} }
 							modalTitle={ translate( 'Confirm pushing changes from your staging site' ) }
 							modalMessage={ translate(

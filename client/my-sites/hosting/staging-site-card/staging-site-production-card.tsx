@@ -77,13 +77,11 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
 					<ConfirmationModalButton
-						onConfirm={ () => {
-							// eslint-disable-next-line no-console
-							console.log( 'Pull from production' );
-						} }
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						onConfirm={ () => {} }
 						modalTitle={ translate( 'Confirm pulling changes to your staging site.' ) }
 						modalMessage={ translate(
-							'Are you sure you want to pull your production site to your staging site?'
+							'Are you sure you want to pull your production changes to your staging site?'
 						) }
 						confirmLabel={ translate( 'Pull from production' ) }
 						cancelLabel={ translate( 'Cancel' ) }

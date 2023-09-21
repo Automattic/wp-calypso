@@ -259,6 +259,7 @@ export const StagingSiteCard = ( {
 			<ManageStagingSiteCardContent
 				stagingSite={ stagingSite }
 				onDeleteClick={ deleteStagingSite }
+				onPushClick={ () => {} }
 				isButtonDisabled={ disabled }
 				isBusy={ isReverting }
 			/>
