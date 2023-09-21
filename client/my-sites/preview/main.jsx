@@ -62,7 +62,7 @@ class PreviewMain extends Component {
 	}
 
 	updateUrl() {
-		if ( ! this.props.site ) {
+		if ( ! this.props.site || ! this.props.site.options ) {
 			if ( this.state.previewUrl !== null ) {
 				debug( 'unloaded page' );
 				this.setState( {

@@ -62,7 +62,7 @@ class PluginRemoveButton extends Component {
 	};
 
 	getDisabledInfo = () => {
-		if ( ! this.props.site ) {
+		if ( ! this.props.site || ! this.props.site.options ) {
 			// we don't have enough info
 			return null;
 		}
