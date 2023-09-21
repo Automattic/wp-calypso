@@ -43,17 +43,25 @@ export default function BoostSitePerformance( {
 
 	const href = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`;
 
+	const isEnabled = !! hasBoost;
+
+	const handleOnClick = () => {
+		// TODO - should open a modal.
+	};
+
 	return (
 		<ExpandedCard
 			header={ translate( 'Boost site performance' ) }
-			isEnabled={ !! hasBoost }
+			isEnabled={ isEnabled }
 			emptyContent={ translate(
-				'Add {{strong}}Boost{{/strong}} to see your site performance scores',
+				'{{strong}}Get Score{{/strong}} to see your site performance scores',
 				{
 					components,
 				}
 			) }
 			hasError={ hasError }
+			// Allow to click on the card only if Boost is not active
+			onClick={ ! isEnabled ? handleOnClick : undefined }
 		>
 			<div className="site-expanded-content__card-content-container">
 				<div className="site-expanded-content__card-content">

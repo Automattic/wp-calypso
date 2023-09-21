@@ -16,12 +16,13 @@ export const DomainsTableExpiresRewnewsOnCell = ( {
 	const isExpired = domain.expiry && moment( domain.expiry ).utc().isBefore( moment().utc() );
 	const { __ } = useI18n();
 
-	const expiryDate = domain.has_registration
-		? new Intl.DateTimeFormat( localeSlug, { dateStyle: 'medium' } ).format(
-				new Date( domain.expiry )
-		  )
-		: null;
-
+	const isInvalidDate = isNaN( Date.parse( domain.expiry ) );
+	const expiryDate =
+		domain.has_registration && ! isInvalidDate
+			? new Intl.DateTimeFormat( localeSlug, { dateStyle: 'medium' } ).format(
+					new Date( domain.expiry )
+			  )
+			: null;
 	const notice = isExpired
 		? sprintf(
 				/* translators: %s - The date on which the domain was expired */

@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
 
-type useNewsletterCategoriesFeatureEnabledProps = {
-	siteId?: string | number;
+type UseNewsletterCategoriesBlogStickerProps = {
+	siteId?: number | null;
 };
 
-const useNewsletterCategoriesFeatureEnabled = ( {
+const useNewsletterCategoriesBlogSticker = ( {
 	siteId,
-}: useNewsletterCategoriesFeatureEnabledProps ): boolean => {
+}: UseNewsletterCategoriesBlogStickerProps ): boolean => {
 	const { data } = useQuery< string[] >( {
 		queryKey: [ 'blog-stickers', siteId ],
 		queryFn: () => request( { path: `/sites/${ siteId }/blog-stickers` } ),
@@ -17,4 +17,4 @@ const useNewsletterCategoriesFeatureEnabled = ( {
 	return data ? data.includes( 'newsletter-categories' ) : false;
 };
 
-export default useNewsletterCategoriesFeatureEnabled;
+export default useNewsletterCategoriesBlogSticker;

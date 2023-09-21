@@ -14,6 +14,8 @@ export function DomainsTableToolbar() {
 		selectedDomains,
 		filter,
 		setFilter,
+		currentUsersOwnsAllSelectedDomains,
+		currentUserCanBulkUpdateContactInfo,
 	} = useDomainsTable();
 
 	const isMobile = useMobileBreakpoint();
@@ -38,6 +40,9 @@ export function DomainsTableToolbar() {
 					onAutoRenew={ handleAutoRenew }
 					onUpdateContactInfo={ handleUpdateContactInfo }
 					selectedDomainCount={ selectedDomains.size }
+					canUpdateContactInfo={
+						currentUsersOwnsAllSelectedDomains && currentUserCanBulkUpdateContactInfo
+					}
 				/>
 			) : (
 				<DomainsTableFilters

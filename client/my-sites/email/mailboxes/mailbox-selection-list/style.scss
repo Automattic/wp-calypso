@@ -1,11 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-body.is-section-inbox.theme-default.color-scheme {
+body.is-section-mailboxes.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);
 }
 
-body.is-section-inbox .layout.is-section-inbox > .layout__content {
+body.is-section-mailboxes .layout.is-section-mailboxes > .layout__content {
 	padding-top: 120px;
 }
 
