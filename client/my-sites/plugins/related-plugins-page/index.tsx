@@ -7,6 +7,7 @@ import { useGetRelatedPlugins } from 'calypso/data/marketplace/use-get-related-p
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import './style.scss';
 
 export function RelatedPluginsPage( {
 	pluginSlug,
@@ -24,7 +25,7 @@ export function RelatedPluginsPage( {
 	) as UseQueryResult< RelatedPlugin[] >;
 
 	return (
-		<MainComponent wideLayout>
+		<MainComponent wideLayout className="related-plugins-page">
 			<PluginsBrowserList
 				title={ translate( 'Related Plugins' ) }
 				subtitle=""
