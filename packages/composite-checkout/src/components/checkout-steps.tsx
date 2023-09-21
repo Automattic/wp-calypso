@@ -506,7 +506,9 @@ export const CheckoutStepAreaWrapper = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		margin-bottom: 0;
+		&.checkout__step-wrapper--last-step {
+			margin-bottom: 0;
+		}
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
