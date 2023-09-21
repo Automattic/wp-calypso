@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { useNavigate } from 'react-router-dom';
 import StatusCtaInfo from '../heading-information/status-cta-info';
 import StatusIcon from '../heading-information/status-icon';
 import StatusInfo from '../heading-information/status-info';
@@ -12,7 +13,20 @@ interface Props {
 }
 
 export default function HeadingInformation( props: Props ) {
+	const navigate = useNavigate();
 	const { domain, conversionAction, onCheckAnotherSite } = props;
+
+	const onRegisterDomain = () => {
+		navigate( `/start/domain/domain-only?new=${ domain }&search=yes` );
+	};
+
+	const onTransferDomain = () => {
+		navigate( `/setup/domain-transfer/intro?new=${ domain }&search=yes` );
+	};
+
+	const onMigrateSite = () => {
+		navigate( `/setup/import-hosted-site?from=${ domain }` );
+	};
 
 	return (
 		<div className="heading-information">
@@ -28,14 +42,20 @@ export default function HeadingInformation( props: Props ) {
 				<StatusCtaInfo conversionAction={ conversionAction } />
 				<div className="cta-wrapper">
 					{ conversionAction === 'register-domain' && (
-						<Button className="button-action">Register domain</Button>
+						<Button className="button-action" onClick={ onRegisterDomain }>
+							Register domain
+						</Button>
 					) }
 					{ ( conversionAction === 'transfer-domain' ||
 						conversionAction === 'transfer-domain-hosting' ) && (
-						<Button className="button-action">Transfer domain</Button>
+						<Button className="button-action" onClick={ onTransferDomain }>
+							Transfer domain
+						</Button>
 					) }
 					{ conversionAction === 'transfer-hosting' && (
-						<Button className="button-action">Migrate site</Button>
+						<Button className="button-action" onClick={ onMigrateSite }>
+							Migrate site
+						</Button>
 					) }
 
 					{ onCheckAnotherSite && (
