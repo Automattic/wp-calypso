@@ -4,8 +4,8 @@ import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import HostingInto from 'calypso/site-profiler/components/hosting-into';
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
-import useDomainQueryParam from 'calypso/site-profiler/hooks/useDomainQueryParam';
-import { useDefineConversionAction } from 'calypso/site-profiler/hooks/use-define-conversion-action';
+import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
+import useDomainQueryParam from 'calypso/site-profiler/hooks/use-domain-query-param';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
@@ -27,7 +27,7 @@ export default function SiteProfiler() {
 		hostingProviderData?.hosting_provider
 	);
 
-	const onFormSubmit = ( value: string ) => {
+	const updateDomainQueryParam = ( value: string ) => {
 		// Update the domain query param;
 		// URL param is the source of truth
 		queryParams.set( 'domain', value );
@@ -38,7 +38,11 @@ export default function SiteProfiler() {
 		<>
 			{ ! data && (
 				<LayoutBlock>
-					<DomainAnalyzer domain={ domain } onFormSubmit={ onFormSubmit } isBusy={ isFetching } />
+					<DomainAnalyzer
+						domain={ domain }
+						onFormSubmit={ updateDomainQueryParam }
+						isBusy={ isFetching }
+					/>
 				</LayoutBlock>
 			) }
 
@@ -49,7 +53,7 @@ export default function SiteProfiler() {
 							<HeadingInformation
 								domain={ domain }
 								conversionAction={ conversionAction }
-								onCheckAnotherSite={ () => setDomain( '' ) }
+								onCheckAnotherSite={ () => updateDomainQueryParam( '' ) }
 							/>
 						</LayoutBlockSection>
 					) }
