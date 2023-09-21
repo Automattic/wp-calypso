@@ -196,6 +196,18 @@ $button-padding: 8px 32px;
 
 	.stats-purchase-wizard__persnal-checklist {
 		margin-bottom: 24px;
+
+		.components-checkbox-control__input[type="checkbox"]:checked {
+			background: var(--color-primary);
+			border-color: var(--color-primary);
+		}
+	}
+
+	.stats-purchase-single__persnal-checklist {
+		.components-checkbox-control__input[type="checkbox"]:checked {
+			background: var(--color-primary);
+			border-color: var(--color-primary);
+		}
 	}
 
 	ul {
