@@ -168,7 +168,7 @@ class Help_Center {
 			'logo'             => array(
 				'id'    => $logo_id,
 				'sizes' => array(),
-				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
+				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0] ?? '',
 			),
 			'launchpad_screen' => get_option( 'launchpad_screen' ),
 			'site_intent'      => get_option( 'site_intent' ),
