@@ -48,7 +48,7 @@ const MasterBar = styled.div`
 const Header = styled.h1< { isMobile: boolean } >`
 	font-size: ${ ( { isMobile } ) => ( isMobile ? '2rem' : '2.75rem' ) };
 	line-height: ${ ( { isMobile } ) => ( isMobile ? '32px' : '52px' ) };
-	text-align: ${ ( { isMobile } ) => ( isMobile ? 'left' : 'center' ) };
+	text-align: 'center';
 	margin: 16px 0;
 `;
 
@@ -65,7 +65,7 @@ const Content = styled.div< { isMobile: boolean } >`
 
 const Highlight = styled.div< { isMobile: boolean } >`
 	margin-bottom: 32px;
-	text-align: ${ ( { isMobile } ) => ( isMobile ? 'left' : 'center' ) };
+	text-align: 'center';
 	font-size: 16px;
 	p {
 		margin: 0;
@@ -91,6 +91,7 @@ const StyledButton = styled( Button )`
 	box-shadow: none;
 	outline-offset: 3px;
 	color: var( --studio-gray-0 );
+	padding: 10px 24px;
 	&:focus {
 		outline: 2px solid var( --studio-gray-0 );
 	}
