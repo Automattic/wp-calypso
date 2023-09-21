@@ -1,4 +1,5 @@
 import './style.scss';
+import classNames from 'classnames';
 import { useEffect } from 'react';
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 
 export default function AdPreview( { htmlCode, isLoading, templateFormat }: Props ) {
 	useEffect( () => {
-		if ( ! isLoading && templateFormat === 'html5_v2' ) {
+		if ( ! isLoading && templateFormat !== 'html5_v2' ) {
 			// we only need this listener to resize the iframe for html5_v2 templates
 			window.addEventListener( 'message', function ( msg ) {
 				if ( typeof msg.data !== 'object' ) {
@@ -43,16 +44,13 @@ export default function AdPreview( { htmlCode, isLoading, templateFormat }: Prop
 		);
 	}
 
-	if ( templateFormat === 'html5_v2' ) {
-		return (
-			<div className="campaign-item-details__preview-content-v02">
-				<iframe srcDoc={ htmlCode } title="adPreview" width="100%" height="200" />
-			</div>
-		);
-	}
+	const classes = classNames( 'campaign-item-details__preview-content', {
+		v02: templateFormat !== 'html5_v2',
+	} );
+
 	return (
-		<div className="campaign-item-details__preview-content">
-			<iframe srcDoc={ htmlCode } title="adPreview" width="300" height="250" />
+		<div className={ classes }>
+			<iframe srcDoc={ htmlCode } title="adPreview" />
 		</div>
 	);
 }

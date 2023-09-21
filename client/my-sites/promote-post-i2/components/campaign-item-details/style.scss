@@ -421,10 +421,20 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		width: 300px;
 	}
 
-	.campaign-item-details__preview-content-v02 {
+	.campaign-item-details__preview-content iframe {
+		height: 250px;
+		width: 300px;
+	}
+
+	.campaign-item-details__preview-content.v02 {
 		margin: 0 auto;
-		width: 100%;
 		min-width: 300px;
+		width: 100%;
+	}
+
+	.campaign-item-details__preview-content.v02 iframe {
+		height: 200px;
+		width: 100%;
 	}
 
 	.campaign-item-details__preview-disclosure {
