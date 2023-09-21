@@ -10,7 +10,7 @@ interface Props {
 
 export default function AdPreview( { htmlCode, isLoading, templateFormat }: Props ) {
 	useEffect( () => {
-		if ( ! isLoading && templateFormat !== 'html5_v2' ) {
+		if ( ! isLoading && templateFormat === 'html5_v2' ) {
 			// we only need this listener to resize the iframe for html5_v2 templates
 			window.addEventListener( 'message', function ( msg ) {
 				if ( typeof msg.data !== 'object' ) {
@@ -45,7 +45,7 @@ export default function AdPreview( { htmlCode, isLoading, templateFormat }: Prop
 	}
 
 	const classes = classNames( 'campaign-item-details__preview-content', {
-		v02: templateFormat !== 'html5_v2',
+		v02: templateFormat === 'html5_v2',
 	} );
 
 	return (

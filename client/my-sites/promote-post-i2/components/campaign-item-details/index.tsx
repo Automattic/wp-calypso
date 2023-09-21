@@ -610,7 +610,7 @@ export default function CampaignItemDetails( props: Props ) {
 									{ translate( 'Ad preview' ) }
 								</div>
 								<div className="campaign-item-details__preview-header-dimensions">
-									{ ! isLoading ? (
+									{ ! isLoading && format !== 'html5_v2' ? (
 										<>
 											<span>{ `${ width }x${ height }` }</span>
 										</>
