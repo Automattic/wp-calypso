@@ -55,23 +55,60 @@ function ContactInfo( {
 	const dispatch = useDispatch();
 
 	const { domainTransferReceive } = useDomainTransferReceive( domain ?? '', {
-		onSuccess() {
-			dispatch(
-				successNotice(
-					translate( 'Your domain is on its way to you, we’ll email you once it’s set up.' ),
-					{
-						duration: 10000,
-						isPersistent: true,
-					}
-				)
-			);
+		onSuccess( data ) {
+			if ( data.success ) {
+				dispatch(
+					successNotice(
+						translate(
+							'Your domain transfer is underway and will take a few minutes, we’ll email you once it’s set up.'
+						),
+						{
+							duration: 10000,
+							isPersistent: true,
+						}
+					)
+				);
+			} else {
+				dispatch(
+					errorNotice(
+						translate( 'Domain transfers are currently unavailable, please try again later.' ),
+						{
+							duration: 10000,
+						}
+					)
+				);
+			}
 		},
-		onError() {
-			dispatch(
-				errorNotice( translate( 'An error occurred while transferring the domain.' ), {
-					duration: 5000,
-				} )
-			);
+		onError( error ) {
+			if ( error.error === 'authorization_required' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'The receiving user’s email address must match the email address of the domain receipient.'
+						),
+						{
+							duration: 10000,
+						}
+					)
+				);
+			} else if ( error.error === 'invite_expired' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'The domain transfer invitation is no longer valid, please ask the domain owner to request a new transfer.'
+						),
+						{
+							duration: 10000,
+						}
+					)
+				);
+			} else {
+				dispatch(
+					errorNotice( translate( 'An error occurred while transferring the domain.' ), {
+						duration: 10000,
+					} )
+				);
+			}
 		},
 	} );
 
