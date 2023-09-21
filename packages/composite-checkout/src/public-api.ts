@@ -20,7 +20,6 @@ import {
 } from './components/checkout-steps';
 import CheckoutSubmitButton from './components/checkout-submit-button';
 import LoadingContent from './components/loading-content';
-import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
 import { useTotal } from './lib/line-items';
@@ -49,7 +48,6 @@ export type { Theme } from './lib/theme';
 // Re-export the public API
 export {
 	Button,
-	CheckoutCheckIcon,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
 	CheckoutModal,

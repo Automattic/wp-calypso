@@ -96,12 +96,6 @@ An element that will display a [CheckoutSubmitButton](#CheckoutSubmitButton) whe
 - `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
 - `validateForm?`: `() => Promise< boolean >`. A callback that will be called when the `onClick` event is triggered. If the callback is passed and its Promise resolves to a falsy value, the `onClick` handler will **not** be triggered. **No notification will be given to the user if this happens.**
 
-### CheckoutCheckIcon
-
-An icon that is displayed for each complete step.
-
-Requires an `id` prop, which is a string that is used to construct the SVG `id`.
-
 ### CheckoutErrorBoundary
 
 A [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like. There are several layers of these already built-in to `CheckoutProvider` and its children, but you may use this to manually wrap components. It has the following props.
