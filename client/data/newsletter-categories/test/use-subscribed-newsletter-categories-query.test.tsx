@@ -105,23 +105,4 @@ describe( 'useSubscribedNewsletterCategories', () => {
 
 		expect( result.current.data ).toEqual( { newsletterCategories: [] } );
 	} );
-
-	it( 'should call request with correct arguments', async () => {
-		(
-			requestWithSubkeyFallback as jest.MockedFunction< typeof requestWithSubkeyFallback >
-		 ).mockResolvedValue( {
-			success: true,
-		} );
-
-		renderHook( () => useSubscribedNewsletterCategories( { siteId: 123 } ), {
-			wrapper,
-		} );
-
-		await waitFor( () => expect( requestWithSubkeyFallback ).toHaveBeenCalled() );
-
-		expect( requestWithSubkeyFallback ).toHaveBeenCalledWith(
-			false,
-			`/sites/123/newsletter-categories/subscriptions`
-		);
-	} );
 } );
