@@ -6,7 +6,7 @@ import { Card, Gridicon } from '@automattic/components';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
-	CheckoutSubmitButton,
+	CheckoutFormSubmit,
 	checkoutTheme,
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
@@ -201,7 +201,7 @@ export default function PaymentMethodSelector( {
 					</p>
 				</div>
 
-				<CheckoutSubmitButton />
+				<CheckoutFormSubmit />
 			</Card>
 		</CheckoutProvider>
 	);
