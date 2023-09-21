@@ -190,7 +190,7 @@ function ContactInfo( {
 				<div className="domain-contact-info__sidebar-content">
 					<p>
 						{ translate(
-							'{{icannLinkComponent}}ICANN{{/icannLinkComponent}} requires accurate contact information for registrants. This information will be verified after purchase. Failure to verify your contact information will result in domain suspension.',
+							'{{icannLinkComponent}}ICANN{{/icannLinkComponent}} requires accurate contact information for registrants. This information will be verified after transfer. Failure to verify your contact information will result in domain suspension.',
 							{
 								components: {
 									icannLinkComponent: icannLink,
