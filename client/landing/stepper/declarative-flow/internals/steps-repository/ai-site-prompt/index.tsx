@@ -61,9 +61,9 @@ const AISitePrompt: Step = function ( props ) {
 			},
 		} )
 			.then( ( response: any ) => {
-				console.log( 'AI response', response ); /* eslint-disable-line no-console */
+				console.log( 'Patterns AI response', response ); /* eslint-disable-line no-console */
 				setLoading( false );
-				submit?.( {}, response[ 0 ].patterns );
+				submit?.( {}, response.pages[ 0 ].patterns );
 			} )
 			.catch( ( error ) => {
 				console.error( 'big sky error', error ); /* eslint-disable-line no-console */
