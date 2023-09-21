@@ -1,4 +1,3 @@
-import React from 'react';
 import IntervalDropdown from '../stats-interval-dropdown';
 
 const DateControl = ( { period, pathTemplate } ) => {
