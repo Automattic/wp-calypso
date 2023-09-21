@@ -1,8 +1,9 @@
-import { Gridicon } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Gridicon, Button, ConfettiAnimation } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
-import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
@@ -14,15 +15,16 @@ import {
 	TransferInfo,
 } from 'calypso/data/domains/transfers/use-domain-transfer-receive';
 import { useDomainParams } from 'calypso/landing/stepper/hooks/use-domain-params';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { errorNotice } from 'calypso/state/notices/actions';
 import type { StepProps, ProvidedDependencies } from '../../types';
 import './styles.scss';
 
 export default function DomainContactInfo( { navigation }: StepProps ) {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const translate = useTranslate();
+	const [ success, setSuccess ] = useState( false );
 
 	return (
 		<StepContainer
@@ -32,22 +34,57 @@ export default function DomainContactInfo( { navigation }: StepProps ) {
 			formattedHeader={
 				<FormattedHeader
 					className="domain-contact-info-header"
-					headerText={ __( 'Enter your contact information' ) }
-					subHeaderText={ __( 'Domain owners are required to provide correct information.' ) }
+					headerText={
+						success
+							? translate( 'Your domain transfer is underway!' )
+							: translate( 'Your contact details are needed' )
+					}
+					subHeaderText={
+						success
+							? translate(
+									'Domain transfers can take a few minutes, we’ll email you once it’s set up.'
+							  )
+							: translate(
+									'To accept a domain transfer we are required to collect your contact information.'
+							  )
+					}
 				/>
 			}
-			stepContent={ <ContactInfo onSubmit={ submit } /> }
+			stepContent={
+				<>
+					{ success && <SuccessContent /> }
+					{ ! success && <ContactInfo onSubmit={ submit } setSuccess={ setSuccess } /> }
+				</>
+			}
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
 }
 
+function SuccessContent() {
+	const translate = useTranslate();
+	useEffect( () => {
+		recordTracksEvent( 'calypso_domain_transfer_start_success' );
+	}, [] );
+
+	return (
+		<div className="domain-contact-info__success">
+			<ConfettiAnimation />
+			<Button className="domain-contact-info__success-cta" href={ domainManagementRoot() } primary>
+				{ translate( 'Manage domains' ) }
+			</Button>
+		</div>
+	);
+}
+
 function ContactInfo( {
 	onSubmit,
+	setSuccess,
 }: {
 	onSubmit:
 		| ( ( providedDependencies?: ProvidedDependencies | undefined, ...params: string[] ) => void )
 		| undefined;
+	setSuccess: React.Dispatch< React.SetStateAction< boolean > >;
 } ) {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
@@ -55,23 +92,50 @@ function ContactInfo( {
 	const dispatch = useDispatch();
 
 	const { domainTransferReceive } = useDomainTransferReceive( domain ?? '', {
-		onSuccess() {
-			dispatch(
-				successNotice(
-					translate( 'Your domain is on its way to you, we’ll email you once it’s set up.' ),
-					{
-						duration: 10000,
-						isPersistent: true,
-					}
-				)
-			);
+		onSuccess( data ) {
+			if ( data.success ) {
+				setSuccess( true );
+			} else {
+				dispatch(
+					errorNotice(
+						translate( 'Domain transfers are currently unavailable, please try again later.' ),
+						{
+							duration: 10000,
+						}
+					)
+				);
+			}
 		},
-		onError() {
-			dispatch(
-				errorNotice( translate( 'An error occurred while transferring the domain.' ), {
-					duration: 5000,
-				} )
-			);
+		onError( error ) {
+			if ( error.error === 'authorization_required' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'The receiving user’s email address must match the email address of the domain receipient.'
+						),
+						{
+							duration: 10000,
+						}
+					)
+				);
+			} else if ( error.error === 'invite_expired' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'The domain transfer invitation is no longer valid, please ask the domain owner to request a new transfer.'
+						),
+						{
+							duration: 10000,
+						}
+					)
+				);
+			} else {
+				dispatch(
+					errorNotice( translate( 'An error occurred while transferring the domain.' ), {
+						duration: 10000,
+					} )
+				);
+			}
 		},
 	} );
 

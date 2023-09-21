@@ -97,4 +97,10 @@ $heading-font-family: "SF Pro Display", $sans;
 			margin: 0 0 0 1em;
 		}
 	}
+
+	.domain-contact-info__success {
+		display: flex;
+		justify-content: center;
+		margin-top: 2em;
+	}
 }
