@@ -26,7 +26,7 @@ export function getTransferCostText( { cart, domain, availability } ) {
 	return createInterpolateElement(
 		sprintf(
 			/* translators: %s is the cost of the domain transfer formatted in the user's currency. */
-			__( '%s <small>will renew the domain for additional year</small>' ),
+			__( '%s <small>will renew the domain for an additional year</small>' ),
 			domainProductSalePrice
 		),
 		{ small: createElement( 'small' ) }
