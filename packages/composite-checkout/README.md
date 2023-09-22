@@ -241,10 +241,6 @@ An enum that holds the values of the [payment processor function return value's 
 - `.MANUAL` (the payload will be an `unknown` object that is determined by the payment processor function).
 - `.ERROR` (the payload will be a `string` that is the error message).
 
-### SubmitButtonWrapper
-
-A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the submit button that's rendered by each [CheckoutFormSubmit](#CheckoutFormSubmit) component. You shouldn't need to use this manually.
-
 ### TransactionStatus
 
 An enum that holds the values of the [transaction status](#useTransactionStatus).
