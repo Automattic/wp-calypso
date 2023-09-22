@@ -136,6 +136,8 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 					domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
 				onRenewNowClick: () =>
 					domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', currentDomainData ),
+				monthsUtilCreditCardExpires:
+					domainStatusPurchaseActions?.monthsUtilCreditCardExpires?.( currentDomainData ),
 		  } )
 		: null;
 
