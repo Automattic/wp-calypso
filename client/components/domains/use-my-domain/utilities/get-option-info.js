@@ -109,9 +109,8 @@ export function getOptionInfo( {
 			if ( availability?.is_price_limit_exceeded === true ) {
 				transferContent = {
 					...optionInfo.transferNotSupported,
-					/* translators: %s - the domain the user wanted to transfer */
 					topText: __(
-						"We're sorry but we can't transfer your domain as it is a higher tier premium name that we don't support yet."
+						"We're sorry but we can't transfer your domain as it is a high tier premium name that we don't support."
 					),
 				};
 			} else {
