@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
-import { PaymentLogo } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import {
+	PaymentLogo,
 	getCreditsLineItemFromCart,
 	getItemIntroductoryOfferDisplay,
 	LineItemSublabelAndPrice,
