@@ -95,6 +95,7 @@ An element that will display a checkout submit button when placed inside a [Chec
 - `submitButtonFooter: React.ReactNode`. Displays with the Checkout submit button.
 - `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
 - `validateForm?`: `() => Promise< boolean >`. A callback that will be called when the `onClick` event is triggered. If the callback is passed and its Promise resolves to a falsy value, the `onClick` handler will **not** be triggered. **No notification will be given to the user if this happens.**
+- `submitButton?`: `React.ReactNode`. If set, this will override the normal submit button with whatever you would like.
 
 ### CheckoutErrorBoundary
 

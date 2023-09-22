@@ -590,11 +590,13 @@ export function CheckoutFormSubmit( {
 	submitButtonHeader,
 	submitButtonFooter,
 	disableSubmitButton,
+	submitButton,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
+	submitButton?: ReactNode;
 } ) {
 	const { state } = useContext( CheckoutStepGroupContext );
 	const { activeStepNumber, totalSteps } = state;
@@ -612,11 +614,13 @@ export function CheckoutFormSubmit( {
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
-			<CheckoutSubmitButton
-				validateForm={ validateForm }
-				disabled={ isThereAnotherNumberedStep || disableSubmitButton }
-				onLoadError={ onSubmitButtonLoadError }
-			/>
+			{ submitButton || (
+				<CheckoutSubmitButton
+					validateForm={ validateForm }
+					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
+					onLoadError={ onSubmitButtonLoadError }
+				/>
+			) }
 			<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
 		</SubmitButtonWrapper>
 	);
