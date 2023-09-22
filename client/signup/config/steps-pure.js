@@ -686,7 +686,7 @@ export function generateSteps( {
 				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-			dependencies: [ 'cartItem', 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
+			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
 
