@@ -5,7 +5,9 @@ import type { WpcomClientCredentials } from '../shared-types';
 
 declare global {
 	interface Window {
-		currentUser?: CurrentUser;
+		currentUser?: CurrentUser & {
+			subscriptionManagementSubkey?: string;
+		};
 	}
 }
 
