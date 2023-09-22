@@ -56,8 +56,11 @@ export class EditorBlockToolbarComponent {
 
 		let locator: Locator;
 		if ( identifier.name ) {
-			// Accessible names don't need to have the selector built.
-			locator = editorParent.getByRole( 'button', { name: identifier.name } );
+			// Accessible names don't need to have the selector built, but needs to be narrowed
+			// to the toolbar.
+			locator = editorParent
+				.getByRole( 'toolbar', { name: 'Block tools' } )
+				.getByRole( 'button', { name: identifier.name } );
 		} else {
 			// Other identifers need to have the selector built.
 			locator = editorParent.locator( selectors.button( identifier ) );

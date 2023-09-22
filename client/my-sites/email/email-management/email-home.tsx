@@ -66,8 +66,8 @@ const LoadingPlaceholder = () => {
 interface EmailManagementHomeProps {
 	emailListInactiveHeader?: ReactNode;
 	sectionHeaderLabel?: TranslateResult;
-	selectedDomainName: string;
-	selectedEmailProviderSlug: string;
+	selectedDomainName?: string;
+	selectedEmailProviderSlug?: string;
 	selectedIntervalLength?: IntervalLength;
 	showActiveDomainList?: boolean;
 	source: string;

@@ -101,12 +101,13 @@ export type ESRelatedPluginsResult = {
 
 export type ESRelatedPlugin = {
 	categories: Array< string >;
-	excerpt?: string;
-	icon?: string;
-	marketplace_slug?: string;
+	short_description?: string;
+	icons?: string;
+	software_slug?: string;
 	product_slug?: string;
 	slug?: string;
-	title?: string;
+	name?: string;
+	rating?: number;
 	variations: {
 		monthly: { product_slug?: string; product_id?: number };
 		yearly: { product_slug?: string; product_id?: number };
@@ -115,12 +116,13 @@ export type ESRelatedPlugin = {
 
 export type RelatedPlugin = {
 	categories: Array< string >;
-	excerpt?: string;
+	short_description?: string;
 	icon?: string;
-	marketplaceSlug?: string;
+	software_slug?: string;
 	productSlug?: string;
 	slug?: string;
-	title?: string;
+	name?: string;
+	rating?: number;
 	variations?: {
 		monthly: { product_slug?: string; product_id?: number };
 		yearly: { product_slug?: string; product_id?: number };

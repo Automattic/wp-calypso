@@ -64,10 +64,10 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	);
 
 	const canActivateWordadsInstant =
-		! site?.options.wordads && canActivateWordAds && hasWordAdsFeature;
-	const canUpgradeToUseWordAds = ! site?.options.wordads && ! hasWordAdsFeature;
+		! site?.options?.wordads && canActivateWordAds && hasWordAdsFeature;
+	const canUpgradeToUseWordAds = ! site?.options?.wordads && ! hasWordAdsFeature;
 	const isWordadsInstantEligibleButNotOwner =
-		! site?.options.wordads && hasWordAdsFeature && ! canActivateWordAds;
+		! site?.options?.wordads && hasWordAdsFeature && ! canActivateWordAds;
 	const isEnrolledWithIneligiblePlan =
 		site?.options?.wordads && ! hasWordAdsFeature && wordAdsStatus === WordAdsStatus.ineligible;
 
@@ -317,9 +317,9 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			component = renderUpsell();
 		} else if ( ! canAccessAds ) {
 			component = renderEmptyContent();
-		} else if ( ! site?.options.wordads && ! ( site?.jetpack && canUpgradeToUseWordAds ) ) {
+		} else if ( ! site?.options?.wordads && ! ( site?.jetpack && canUpgradeToUseWordAds ) ) {
 			component = null;
-		} else if ( site.options.wordads && site.is_private ) {
+		} else if ( site.options?.wordads && site.is_private ) {
 			notice = renderNoticeSiteIsPrivate();
 		} else if ( isEnrolledWithIneligiblePlan ) {
 			component = renderContentWithUpsell( component );

@@ -19,10 +19,15 @@ export type TransferInfo = {
 	termsAccepted: boolean;
 };
 
+export type DomainsReceiveTransferResponse = {
+	success: boolean;
+	domain: string;
+};
+
 export function useDomainTransferReceive(
 	domainName: string,
 	queryOptions: {
-		onSuccess?: () => void;
+		onSuccess?: ( data: DomainsReceiveTransferResponse ) => void;
 		onError?: ( error: DomainsApiError ) => void;
 	}
 ) {
@@ -44,8 +49,8 @@ export function useDomainTransferReceive(
 				terms_accepted: info.termsAccepted,
 			} ),
 		...queryOptions,
-		onSuccess() {
-			queryOptions.onSuccess?.();
+		onSuccess( data: DomainsReceiveTransferResponse ) {
+			queryOptions.onSuccess?.( data );
 		},
 	} );
 

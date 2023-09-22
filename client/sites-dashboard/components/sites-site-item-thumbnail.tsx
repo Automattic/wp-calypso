@@ -89,7 +89,7 @@ export const SiteItemThumbnail = ( {
 	function renderFallback() {
 		if (
 			site.p2_thumbnail_elements &&
-			site.options.is_wpforteams_site &&
+			site.options?.is_wpforteams_site &&
 			getSiteLaunchStatus( site ) !== 'public'
 		) {
 			return (

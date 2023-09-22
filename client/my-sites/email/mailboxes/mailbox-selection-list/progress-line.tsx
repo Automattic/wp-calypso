@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 import './progress-line-style.scss';
 
-const ProgressLine = ( { statusText } ) => {
+const ProgressLine = ( { statusText }: { statusText: string } ) => {
 	return (
 		<div className="progress-line__container">
 			<div className="progress-line__status-text-container">

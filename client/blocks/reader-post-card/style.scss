@@ -756,6 +756,9 @@
 			width: 100%;
 		}
 		/* Second and third images */
+		.column-two .reader-post-card__featured-images {
+			margin-top: 0;
+		}
 		.reader-post-card__featured-images-item.column-two {
 			width: calc(50% - 1px);
 		}

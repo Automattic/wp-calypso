@@ -12,6 +12,35 @@ $button-padding: 8px 32px;
 	--stats-purchase-left-min-width: 500px;
 	--stats-purchase-left-max-width: 700px;
 	--stats-purchase-right-width: 456px;
+
+	// Apply Jetpack dedicated styling upon the Calypso theme base.
+	&:not(.stats-purchase-page--is-wpcom) {
+		.stats-purchase-wizard__persnal-checklist {
+			.components-checkbox-control__input[type="checkbox"] {
+				&:checked {
+					background-color: var(--studio-jetpack-green-50);
+					border-color: var(--studio-jetpack-green-50);
+				}
+
+				&:focus {
+					box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #fff, 0 0 0 calc(2 * var(--wp-admin-border-width-focus)) var(--studio-jetpack-green-50);
+				}
+			}
+		}
+
+		.stats-purchase-single__persnal-checklist {
+			.components-checkbox-control__input[type="checkbox"] {
+				&:checked {
+					background-color: var(--studio-jetpack-green-50);
+					border-color: var(--studio-jetpack-green-50);
+				}
+
+				&:focus {
+					box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #fff, 0 0 0 calc(2 * var(--wp-admin-border-width-focus)) var(--studio-jetpack-green-50);
+				}
+			}
+		}
+	}
 }
 
 // Adjust purchase page styling for WPCOM.
@@ -130,6 +159,14 @@ $button-padding: 8px 32px;
 
 	.stats-purchase-wizard__card {
 		display: flex;
+		h1,
+		.components-panel__header h2 {
+			color: var(--studio-black);
+			font-family: $font-sf-pro-display;
+			font-size: $font-headline-small;
+			font-weight: 700;
+			line-height: 40px;
+		}
 	}
 
 	.stats-purchase-wizard__card-inner--left {

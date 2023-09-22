@@ -34,7 +34,6 @@ import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-gri
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -51,6 +50,7 @@ import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
 import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
+import useObservableForOdie from './hooks/use-observable-for-odie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -68,7 +68,6 @@ import type {
 	PlanActionOverrides,
 } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
@@ -244,6 +243,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+	const observableForOdieRef = useObservableForOdie();
 
 	const toggleShowPlansComparisonGrid = () => {
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
@@ -253,7 +253,6 @@ const PlansFeaturesMain = ( {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
 
-	const { isVisible, setIsVisible, trackEvent } = useOdieAssistantContext();
 	const currentUserName = useSelector( getCurrentUserName );
 	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
 		useGetFreeSubdomainSuggestion(
@@ -687,19 +686,11 @@ const PlansFeaturesMain = ( {
 							stickyRowOffset={ masterbarHeight }
 							usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 							allFeaturesList={ FEATURES_LIST }
-							showOdie={ () => {
-								if ( ! isVisible ) {
-									trackEvent( 'calypso_odie_chat_toggle_visibility', {
-										visibility: true,
-										trigger: 'scroll',
-									} );
-									setIsVisible( true );
-								}
-							} }
 							showPlansComparisonGrid={ showPlansComparisonGrid }
 							toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
 							planTypeSelectorProps={ planTypeSelectorProps }
 							ref={ plansComparisonGridRef }
+							observableForOdieRef={ observableForOdieRef }
 						/>
 					</div>
 				</>

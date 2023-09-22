@@ -55,7 +55,7 @@ describe( 'BoostSitePerformance', () => {
 
 		const emptyContent = screen.getByText( /see your site performance scores/i );
 		expect( emptyContent ).toBeInTheDocument();
-		const strongTag = screen.getByText( /Boost/i );
+		const strongTag = screen.getByText( /get score/i );
 		expect( strongTag ).toHaveStyle( 'font-weight: bold' );
 	} );
 

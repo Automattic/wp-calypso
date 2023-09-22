@@ -3,6 +3,7 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
@@ -18,11 +19,7 @@ const getStatsPurchaseURL = (
 	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-wpcom-stats&from=${ from }-stats-upgrade-notice${
 		hasFreeStats ? '&productType=personal' : ''
 	}`;
-	if ( ! isOdysseyStats ) {
-		return purchasePath;
-	}
-	// We use absolute path here as it runs in Odyssey as well.
-	return `https://wordpress.com${ purchasePath }`;
+	return purchasePath;
 };
 
 const DoYouLoveJetpackStatsNotice = ( {
@@ -58,10 +55,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 					'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
 			  );
 		// Allow some time for the event to be recorded before redirecting.
-		setTimeout(
-			() => ( window.location.href = getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ),
-			250
-		);
+		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ), 250 );
 	};
 
 	useEffect( () => {
