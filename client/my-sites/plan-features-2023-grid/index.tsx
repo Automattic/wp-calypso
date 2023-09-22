@@ -102,7 +102,6 @@ export interface PlanFeatures2023GridProps {
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	// temporary: callback ref to scroll Odie AI Assistant into view once "Compare plans" button is clicked
 	observableForOdieRef: ( observableElement: Element | null ) => void;
-	selectedStorageOptions?: SelectedStorageOptionForPlans;
 }
 
 interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
