@@ -141,7 +141,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 			);
 		} else if (
 			isEnabled( 'domains/transfer-to-any-user' ) &&
-			! [ 'uk', 'fr', 'ca' ].includes( getTopLevelOfTld( selectedDomainName ) )
+			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) )
 		) {
 			options.push(
 				<ActionCard
