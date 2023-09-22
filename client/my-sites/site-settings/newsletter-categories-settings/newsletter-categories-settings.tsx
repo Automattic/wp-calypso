@@ -15,6 +15,18 @@ type NewsletterCategoriesSettingsProps = {
 	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
 };
 
+function ensureArray( value: unknown ): number[] {
+	if ( Array.isArray( value ) ) {
+		return value;
+	}
+
+	if ( typeof value === 'object' ) {
+		return Object.values( value as object );
+	}
+
+	return [];
+}
+
 const NewsletterCategoriesSettings = ( {
 	disabled,
 	handleAutosavingToggle,
@@ -24,6 +36,8 @@ const NewsletterCategoriesSettings = ( {
 	updateFields,
 }: NewsletterCategoriesSettingsProps ) => {
 	const translate = useTranslate();
+
+	const validatedNewsletterCategoryIds = ensureArray( newsletterCategoryIds );
 
 	return (
 		<div className="newsletter-categories-settings">
@@ -43,20 +57,19 @@ const NewsletterCategoriesSettings = ( {
 					taxonomy="category"
 					addTerm={ true }
 					multiple={ true }
-					selected={ newsletterCategoryIds }
+					selected={ validatedNewsletterCategoryIds }
 					onChange={ (
 						category: { ID: number },
 						{ target: { checked } }: React.ChangeEvent< HTMLInputElement >
 					) => {
 						const updatedValue = checked
-							? [ ...newsletterCategoryIds, category.ID ]
-							: newsletterCategoryIds.filter( ( id ) => id !== category.ID );
-
+							? [ ...validatedNewsletterCategoryIds, category.ID ]
+							: validatedNewsletterCategoryIds.filter( ( id ) => id !== category.ID );
 						updateFields( { wpcom_newsletter_categories: updatedValue } );
 					} }
 					onAddTermSuccess={ ( category: { ID: number } ) => {
 						updateFields( {
-							wpcom_newsletter_categories: [ ...newsletterCategoryIds, category.ID ],
+							wpcom_newsletter_categories: [ ...validatedNewsletterCategoryIds, category.ID ],
 						} );
 					} }
 					height={ 218 }
