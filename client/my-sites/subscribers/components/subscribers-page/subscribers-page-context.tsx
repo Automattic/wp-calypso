@@ -69,8 +69,6 @@ export const SubscribersPageProvider = ( {
 		filterOption === SubscribersFilterBy.All && hasManySubscribers
 			? SubscribersFilterBy.WPCOM
 			: filterOption;
-	const grandTotalQueryResult = useSubscribersQuery( { siteId, filterOption: subscriberType } );
-	const grandTotal = grandTotalQueryResult.data?.total || 0;
 
 	const dispatch = useDispatch();
 
@@ -80,8 +78,10 @@ export const SubscribersPageProvider = ( {
 		search: debouncedSearchTerm,
 		siteId,
 		sortTerm,
-		filterOption,
+		filterOption: subscriberType,
 	} );
+
+	const grandTotal = subscribersQueryResult.data?.total || 0;
 
 	const { pageChangeCallback } = usePagination(
 		pageNumber,
