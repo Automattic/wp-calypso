@@ -27,6 +27,9 @@
 .reader-post-actions .reader-post-actions__item {
 	height: 20px;
 	margin-right: 24px;
+	&:first-of-type {
+		margin-left: 24px;
+	}
 
 	&.reader-post-actions__visit {
 		.reader-visit-link {
@@ -69,6 +72,9 @@
 	@include breakpoint-deprecated( "<660px" ) {
 		margin-right: 18px;
 		height: auto;
+		&:first-of-type {
+			margin-left: 18px;
+		}
 
 		.reader-share__button,
 		.like-button,
