@@ -90,9 +90,7 @@ export const ManageStagingSiteCardContent = ( {
 			return (
 				<ConfirmationModalButton
 					disabled={ isButtonDisabled }
-					onConfirm={ () => {
-						onPushClick();
-					} }
+					onConfirm={ onPushClick }
 					modalTitle={ translate( 'Confirm pushing changes from your staging site' ) }
 					modalMessage={ translate(
 						'Are you sure you want to push your production changes to your staging site?'
