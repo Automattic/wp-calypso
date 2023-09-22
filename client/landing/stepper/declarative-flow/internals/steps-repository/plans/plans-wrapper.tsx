@@ -93,7 +93,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
-	const onSelectPlan = ( cartItems: MinimalRequestCartProduct[] | null ) => {
+	const onSelectPlan = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
 		const planCartItem = getPlanCartItem( cartItems );
 		if ( planCartItem ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
