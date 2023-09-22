@@ -5,13 +5,13 @@ import colorStudio from '@automattic/color-studio';
 import { Card, Gridicon } from '@automattic/components';
 import {
 	CheckoutProvider,
+	CheckoutPaymentMethods,
 	CheckoutFormSubmit,
 	checkoutTheme,
-	CheckoutStepGroup,
-	PaymentMethodStep,
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
@@ -95,8 +95,6 @@ const TOSItemWrapper = styled.div`
 	}
 `;
 
-const PaymentMethodSelectorWrapper = Card;
-
 export default function PaymentMethodSelector( {
 	purchase,
 	paymentMethods,
@@ -169,70 +167,69 @@ export default function PaymentMethodSelector( {
 	const elements = useElements();
 
 	return (
-		<PaymentMethodSelectorWrapper>
-			<CheckoutProvider
-				onPaymentComplete={ () => {
-					onPaymentSelectComplete( {
-						successCallback,
-						translate,
-						showSuccessMessage,
-						purchase,
-					} );
-				} }
-				onPaymentRedirect={ showRedirectMessage }
-				onPaymentError={ handleChangeError }
-				onPageLoadError={ logError }
-				paymentMethods={ paymentMethods }
-				paymentProcessors={ {
-					paypal: ( data: unknown ) => assignPayPalProcessor( purchase, reduxDispatch, data ),
-					'existing-card': ( data: unknown ) =>
-						assignExistingCardProcessor( purchase, reduxDispatch, data ),
-					'existing-card-ebanx': ( data: unknown ) =>
-						assignExistingCardProcessor( purchase, reduxDispatch, data ),
-					card: ( data: unknown ) =>
-						assignNewCardProcessor(
-							{
-								purchase,
-								translate,
-								stripe,
-								stripeConfiguration,
-								cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
-								reduxDispatch,
-								eventSource: eventContext,
-							},
-							data
-						),
-				} }
-				isLoading={ isStripeLoading }
-				initiallySelectedPaymentMethodId={ getInitiallySelectedPaymentMethodId(
-					currentlyAssignedPaymentMethodId,
-					paymentMethods
-				) }
-				theme={ theme }
+		<CheckoutProvider
+			onPaymentComplete={ () => {
+				onPaymentSelectComplete( {
+					successCallback,
+					translate,
+					showSuccessMessage,
+					purchase,
+				} );
+			} }
+			onPaymentRedirect={ showRedirectMessage }
+			onPaymentError={ handleChangeError }
+			onPageLoadError={ logError }
+			paymentMethods={ paymentMethods }
+			paymentProcessors={ {
+				paypal: ( data: unknown ) => assignPayPalProcessor( purchase, reduxDispatch, data ),
+				'existing-card': ( data: unknown ) =>
+					assignExistingCardProcessor( purchase, reduxDispatch, data ),
+				'existing-card-ebanx': ( data: unknown ) =>
+					assignExistingCardProcessor( purchase, reduxDispatch, data ),
+				card: ( data: unknown ) =>
+					assignNewCardProcessor(
+						{
+							purchase,
+							translate,
+							stripe,
+							stripeConfiguration,
+							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
+							reduxDispatch,
+							eventSource: eventContext,
+						},
+						data
+					),
+			} }
+			isLoading={ isStripeLoading }
+			initiallySelectedPaymentMethodId={ getInitiallySelectedPaymentMethodId(
+				currentlyAssignedPaymentMethodId,
+				paymentMethods
+			) }
+			theme={ theme }
+		>
+			<Card
+				className={ classNames( 'payment-method-selector__content', {
+					'is-jetpack-cloud': isJetpackCloud(),
+				} ) }
 			>
 				<QueryPaymentCountries />
 				{ currentPaymentMethodNotAvailable && purchase && (
 					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
 				) }
-				<CheckoutStepGroup>
-					<PaymentMethodStep
-						isCompleteCallback={ () => true }
-						activeStepFooter={
-							<TOSItemWrapper>
-								<Gridicon icon="info-outline" size={ 18 } />
-								<p>
-									<TosText
-										isAkismetPurchase={ isAkismetPurchase }
-										is100YearPlanPurchase={ is100YearPlanPurchase }
-									/>
-								</p>
-							</TOSItemWrapper>
-						}
-					/>
-					<CheckoutFormSubmit />
-				</CheckoutStepGroup>
-			</CheckoutProvider>
-		</PaymentMethodSelectorWrapper>
+				<CheckoutPaymentMethods className="payment-method-selector__list" isComplete={ false } />
+				<TOSItemWrapper>
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>
+						<TosText
+							isAkismetPurchase={ isAkismetPurchase }
+							is100YearPlanPurchase={ is100YearPlanPurchase }
+						/>
+					</p>
+				</TOSItemWrapper>
+
+				<CheckoutFormSubmit />
+			</Card>
+		</CheckoutProvider>
 	);
 }
 
