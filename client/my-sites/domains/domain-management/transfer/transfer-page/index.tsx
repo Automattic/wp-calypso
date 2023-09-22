@@ -139,7 +139,10 @@ const TransferPage = ( props: TransferPageProps ) => {
 					mainText={ mainText }
 				/>
 			);
-		} else if ( isEnabled( 'domains/transfer-to-any-user' ) ) {
+		} else if (
+			isEnabled( 'domains/transfer-to-any-user' ) &&
+			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) )
+		) {
 			options.push(
 				<ActionCard
 					key="transfer-to-any-user"
