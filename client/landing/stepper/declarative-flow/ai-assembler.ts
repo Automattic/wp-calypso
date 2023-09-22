@@ -4,7 +4,6 @@ import { useFlowProgress, AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -76,7 +75,6 @@ const withThemeAssemblerFlow: Flow = {
 			[]
 		);
 		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
-		const [ searchParams, setSearchParams ] = useSearchParams(); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
@@ -92,7 +90,7 @@ const withThemeAssemblerFlow: Flow = {
 			return navigate( 'processing' );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: any[] ) => {
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
@@ -115,15 +113,6 @@ const withThemeAssemblerFlow: Flow = {
 				}
 
 				case 'site-prompt': {
-					// This actually passes the patterns to the pattern assembler.
-					setSearchParams(
-						( currentSearchParams ) => {
-							currentSearchParams.set( 'pattern_ids', results.join( ',' ) );
-							return currentSearchParams;
-						},
-						{ replace: false }
-					);
-
 					return navigate( 'patternAssembler' );
 				}
 

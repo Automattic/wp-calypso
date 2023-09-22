@@ -4,6 +4,7 @@ import { TextareaControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { FormEvent, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import wpcomRequest from 'wpcom-proxy-request';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -11,6 +12,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+
 import './style.scss';
 
 const ActionSection = styled.div`
@@ -48,6 +50,7 @@ const AISitePrompt: Step = function ( props ) {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
 		[]
 	);
+	const [ searchParams, setSearchParams ] = useSearchParams(); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
@@ -62,8 +65,18 @@ const AISitePrompt: Step = function ( props ) {
 		} )
 			.then( ( response: any ) => {
 				console.log( 'Patterns AI response', response ); /* eslint-disable-line no-console */
+				// This actually passes the patterns to the pattern assembler.
+				setSearchParams(
+					( currentSearchParams ) => {
+						currentSearchParams.set( 'header_pattern_id', response.header_pattern );
+						currentSearchParams.set( 'footer_pattern_id', response.footer_pattern );
+						currentSearchParams.set( 'pattern_ids', response.pages[ 0 ].patterns.join( ',' ) );
+						return currentSearchParams;
+					},
+					{ replace: true }
+				);
 				setLoading( false );
-				submit?.( {}, response.pages[ 0 ].patterns );
+				submit?.();
 			} )
 			.catch( ( error ) => {
 				console.error( 'big sky error', error ); /* eslint-disable-line no-console */
