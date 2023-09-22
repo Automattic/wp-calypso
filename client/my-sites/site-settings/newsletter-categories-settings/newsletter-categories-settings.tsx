@@ -1,28 +1,29 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NewsletterCategoriesToggle from './newsletter-categories-toggle';
-import useNewsletterCategoriesSettings from './use-newsletter-categories-settings';
 import './style.scss';
 
 type NewsletterCategoriesSettingsProps = {
 	disabled?: boolean;
 	handleAutosavingToggle: ( field: string ) => ( value: boolean ) => void;
+	handleSubmitForm: () => void;
+	newsletterCategoryIds: number[];
 	toggleValue?: boolean;
+	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
 };
 
 const NewsletterCategoriesSettings = ( {
 	disabled,
 	handleAutosavingToggle,
 	toggleValue,
+	newsletterCategoryIds,
+	handleSubmitForm,
+	updateFields,
 }: NewsletterCategoriesSettingsProps ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId ) as number;
-	const { isSaving, newsletterCategoryIds, handleCategoryToggle, handleSave } =
-		useNewsletterCategoriesSettings( siteId );
 
 	return (
 		<div className="newsletter-categories-settings">
@@ -43,8 +44,21 @@ const NewsletterCategoriesSettings = ( {
 					addTerm={ true }
 					multiple={ true }
 					selected={ newsletterCategoryIds }
-					onChange={ handleCategoryToggle }
-					onAddTermSuccess={ handleCategoryToggle }
+					onChange={ (
+						category: { ID: number },
+						{ target: { checked } }: React.ChangeEvent< HTMLInputElement >
+					) => {
+						const updatedValue = checked
+							? [ ...newsletterCategoryIds, category.ID ]
+							: newsletterCategoryIds.filter( ( id ) => id !== category.ID );
+
+						updateFields( { wpcom_newsletter_categories: updatedValue } );
+					} }
+					onAddTermSuccess={ ( category: { ID: number } ) => {
+						updateFields( {
+							wpcom_newsletter_categories: [ ...newsletterCategoryIds, category.ID ],
+						} );
+					} }
 					height={ 218 }
 				/>
 				<p className="newsletter-categories-settings__description">
@@ -55,9 +69,9 @@ const NewsletterCategoriesSettings = ( {
 				<Button
 					primary
 					compact
-					disabled={ isSaving || disabled }
+					disabled={ disabled }
 					className="newsletter-categories-settings__save-button"
-					onClick={ handleSave }
+					onClick={ handleSubmitForm }
 				>
 					{ translate( 'Save settings' ) }
 				</Button>
