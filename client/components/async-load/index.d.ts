@@ -1,12 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ReactNode } from 'react';
+import { Component, ReactNode, ComponentType } from 'react';
 
 declare module 'calypso/components/async-load' {
 	interface AsyncLoadProps {
 		placeholder?: ReactNode;
-		require: any;
-		[ key: string ]: any;
+		require: string;
+		[ key: string ]: never;
 	}
 
-	export default class AsyncLoad extends Component< AsyncLoadProps, { component: any | null } > {}
+	export default class AsyncLoad extends Component<
+		AsyncLoadProps,
+		{ component: ComponentType | null }
+	> {}
 }

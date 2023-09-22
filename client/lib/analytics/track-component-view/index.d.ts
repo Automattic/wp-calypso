@@ -1,7 +1,7 @@
 import { ComponentType } from 'react';
 
 interface TrackComponentViewProps {
-	eventName?: string;
+	eventName: string;
 	eventProperties?: Record< string, unknown >;
 	statGroup?: string;
 	statName?: string;
