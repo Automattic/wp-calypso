@@ -11,6 +11,7 @@ import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -47,7 +48,6 @@ class ReaderPostCard extends Component {
 		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
 		hasOrganization: PropTypes.bool,
-		showFollowButton: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
 	};
@@ -58,7 +58,18 @@ class ReaderPostCard extends Component {
 		handleClick: noop,
 		isSelected: false,
 		showSiteName: true,
-		showFollowButton: true,
+	};
+
+	state = {
+		isSuggestedFollowsModalOpen: false,
+	};
+
+	openSuggestedFollowsModal = () => {
+		this.setState( { isSuggestedFollowsModalOpen: true } );
+	};
+
+	onCloseSuggestedFollowModal = () => {
+		this.setState( { isSuggestedFollowsModalOpen: false } );
 	};
 
 	propagateCardClick = () => {
@@ -140,7 +151,6 @@ class ReaderPostCard extends Component {
 			hasOrganization,
 			isWPForTeamsItem,
 			teams,
-			showFollowButton,
 		} = this.props;
 
 		let isSeen = false;
@@ -175,12 +185,9 @@ class ReaderPostCard extends Component {
 				post={ post }
 				site={ site }
 				visitUrl={ post.URL }
-				showFollow={ showFollowButton }
-				showVisit={ true }
 				fullPost={ false }
 				onCommentClick={ onCommentClick }
 				showEdit={ false }
-				showSuggestedFollows={ isReaderSearchPage }
 				className="ignore-click"
 				iconSize={ 20 }
 			/>
@@ -196,7 +203,8 @@ class ReaderPostCard extends Component {
 				showSiteName={ showSiteName }
 				showAvatar={ ! compact }
 				teams={ teams }
-				showFollow={ false }
+				showFollow={ true }
+				openSuggestedFollows={ this.openSuggestedFollowsModal }
 				compact={ compact }
 			/>
 		);
@@ -224,6 +232,7 @@ class ReaderPostCard extends Component {
 					postKey={ postKey }
 					postByline={ postByline }
 					onClick={ this.handleCardClick }
+					openSuggestedFollows={ this.openSuggestedFollowsModal }
 				>
 					{ readerPostActions }
 				</CompactPostCard>
@@ -266,12 +275,21 @@ class ReaderPostCard extends Component {
 			);
 		}
 
+		const showSuggestedFollows = isReaderSearchPage;
 		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
+				{ showSuggestedFollows && post.site_ID && (
+					<ReaderSuggestedFollowsDialog
+						onClose={ this.onCloseSuggestedFollowModal }
+						siteId={ +post.site_ID }
+						postId={ +post.ID }
+						isVisible={ this.state.isSuggestedFollowsModalOpen }
+					/>
+				) }
 				{ shouldShowPostCardComments && (
 					<PostCardComments
 						post={ post }

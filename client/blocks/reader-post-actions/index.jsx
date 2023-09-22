@@ -1,15 +1,12 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import CommentButton from 'calypso/blocks/comment-button';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowShare, shouldShowReblog } from 'calypso/blocks/reader-share/helper';
-import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
-import ReaderFollowButton from 'calypso/reader/follow-button';
 import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import * as stats from 'calypso/reader/stats';
@@ -20,29 +17,9 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import './style.scss';
 
 const ReaderPostActions = ( props ) => {
-	const {
-		post,
-		site,
-		onCommentClick,
-		showEdit,
-		showSuggestedFollows,
-		iconSize,
-		className,
-		fullPost,
-		showFollow,
-	} = props;
-
-	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
+	const { post, site, onCommentClick, showEdit, iconSize, className, fullPost } = props;
 
 	const hasSites = !! useSelector( getPrimarySiteId );
-
-	const openSuggestedFollowsModal = ( followClicked ) => {
-		setIsSuggestedFollowsModalOpen( followClicked );
-	};
-
-	const onCloseSuggestedFollowModal = () => {
-		setIsSuggestedFollowsModalOpen( false );
-	};
 
 	const onEditClick = () => {
 		stats.recordAction( 'edit_post' );
@@ -67,23 +44,7 @@ const ReaderPostActions = ( props ) => {
 					/>
 				</li>
 			) }
-			{ showSuggestedFollows && post.site_ID && (
-				<ReaderSuggestedFollowsDialog
-					onClose={ onCloseSuggestedFollowModal }
-					siteId={ +post.site_ID }
-					postId={ +post.ID }
-					isVisible={ isSuggestedFollowsModalOpen }
-				/>
-			) }
-			{ showFollow && shouldShowLikes( post ) && (
-				<li className="reader-post-actions__item">
-					<ReaderFollowButton
-						siteUrl={ post.feed_URL || post.site_URL }
-						iconSize={ iconSize }
-						onFollowToggle={ openSuggestedFollowsModal }
-					/>
-				</li>
-			) }
+
 			{ shouldShowShare( post ) && (
 				<li className="reader-post-actions__item">
 					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
@@ -140,7 +101,6 @@ ReaderPostActions.propTypes = {
 	onCommentClick: PropTypes.func,
 	showEdit: PropTypes.bool,
 	showFollow: PropTypes.bool,
-	showSuggestedFollows: PropTypes.bool,
 	iconSize: PropTypes.number,
 	visitUrl: PropTypes.string,
 	fullPost: PropTypes.bool,
@@ -150,7 +110,6 @@ ReaderPostActions.defaultProps = {
 	showEdit: true,
 	showFollow: true,
 	showVisit: false,
-	showSuggestedFollows: false,
 	iconSize: 20,
 };
 
