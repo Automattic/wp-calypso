@@ -15,18 +15,20 @@ export function getDisabledProductSlugs(
 	return (
 		selectedProductSlugs
 			// Get the product objects corresponding to the selected product slugs
-			.map( ( selectedProductSlug ) =>
-				allProducts?.find( ( product ) => product.slug === selectedProductSlug )
+			.map(
+				( selectedProductSlug ) =>
+					allProducts?.find( ( product ) => product.slug === selectedProductSlug )
 			)
 			// Get all the product slugs of products within the same product family as the selected product
-			.flatMap( ( selectedProduct ) =>
-				allProducts
-					?.filter(
-						( product ) =>
-							product.family_slug === selectedProduct?.family_slug &&
-							product.slug !== selectedProduct.slug
-					)
-					.map( ( product ) => product.slug )
+			.flatMap(
+				( selectedProduct ) =>
+					allProducts
+						?.filter(
+							( product ) =>
+								product.family_slug === selectedProduct?.family_slug &&
+								product.slug !== selectedProduct.slug
+						)
+						.map( ( product ) => product.slug )
 			)
 	);
 }

@@ -9,7 +9,7 @@ export type Activity = {
 			section?: string;
 			type?: string;
 			url?: string;
-		}
+		},
 	];
 	activityMedia: {
 		available: boolean;

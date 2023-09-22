@@ -45,7 +45,7 @@ export const initiateAtomicTransfer = ( siteId: number, initiateTransfer: Initia
 		type: ATOMIC_TRANSFER_INITIATE_TRANSFER,
 		siteId,
 		...initiateTransfer,
-	} as const );
+	} ) as const;
 
 /**
  * Fetch transfer.
@@ -57,7 +57,7 @@ export const requestLatestAtomicTransfer = ( siteId: number ) =>
 	( {
 		type: ATOMIC_TRANSFER_REQUEST_LATEST,
 		siteId,
-	} as const );
+	} ) as const;
 
 /**
  * Set the transfer.
@@ -71,11 +71,11 @@ export const setLatestAtomicTransfer = ( siteId: number, transfer: AtomicTransfe
 		type: ATOMIC_TRANSFER_SET_LATEST,
 		siteId,
 		transfer,
-	} as const );
+	} ) as const;
 
 export const setLatestAtomicTransferError = ( siteId: number, error: AtomicTransferError ) =>
 	( {
 		type: ATOMIC_TRANSFER_SET_LATEST,
 		siteId,
 		error,
-	} as const );
+	} ) as const;

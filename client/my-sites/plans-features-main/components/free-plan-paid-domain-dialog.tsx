@@ -111,7 +111,9 @@ export const StyledButton = styled( Button )`
 		transition: 0.7s;
 	}
 	&:focus {
-		box-shadow: 0 0 0 2px var( --studio-white ), 0 0 0 4px var( --studio-blue-50 );
+		box-shadow:
+			0 0 0 2px var( --studio-white ),
+			0 0 0 4px var( --studio-blue-50 );
 	}
 	width: 100%;
 	@media ( min-width: 780px ) {

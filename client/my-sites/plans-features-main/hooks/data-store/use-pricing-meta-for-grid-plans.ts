@@ -60,60 +60,79 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
 	const planPrices = useSelector( ( state: IAppState ) => {
-		return planSlugs.reduce( ( acc, planSlug ) => {
-			const availableForPurchase =
-				! currentSitePlanSlug ||
-				( selectedSiteId ? isPlanAvailableForPurchase( state, selectedSiteId, planSlug ) : false );
-			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-			const storageAddOnPrices = storageAddOns?.find( ( addOn ) => {
-				return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
-			} )?.prices;
-			const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
-			const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
+		return planSlugs.reduce(
+			( acc, planSlug ) => {
+				const availableForPurchase =
+					! currentSitePlanSlug ||
+					( selectedSiteId
+						? isPlanAvailableForPurchase( state, selectedSiteId, planSlug )
+						: false );
+				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
+				const storageAddOnPrices = storageAddOns?.find( ( addOn ) => {
+					return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
+				} )?.prices;
+				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
+				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
 
-			const planPricesMonthly = getPlanPrices( state, {
-				planSlug,
-				siteId: selectedSiteId || null,
-				returnMonthly: true,
-				returnSmallestUnit: true,
-			} );
-			const planPricesFull = getPlanPrices( state, {
-				planSlug,
-				siteId: selectedSiteId || null,
-				returnMonthly: false,
-				returnSmallestUnit: true,
-			} );
-			const totalPricesMonthly = getTotalPrices( planPricesMonthly, storageAddOnPriceMonthly );
-			const totalPricesFull = getTotalPrices( planPricesFull, storageAddOnPriceYearly );
-
-			// raw prices for current site's plan
-			if ( selectedSiteId && currentSitePlanSlug === planSlug ) {
-				const monthlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+				const planPricesMonthly = getPlanPrices( state, {
+					planSlug,
+					siteId: selectedSiteId || null,
 					returnMonthly: true,
 					returnSmallestUnit: true,
 				} );
-				const yearlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+				const planPricesFull = getPlanPrices( state, {
+					planSlug,
+					siteId: selectedSiteId || null,
 					returnMonthly: false,
 					returnSmallestUnit: true,
 				} );
+				const totalPricesMonthly = getTotalPrices( planPricesMonthly, storageAddOnPriceMonthly );
+				const totalPricesFull = getTotalPrices( planPricesFull, storageAddOnPriceYearly );
 
-				return {
-					...acc,
-					[ planSlug ]: {
-						originalPrice: {
-							monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
-							full: yearlyPrice ? yearlyPrice + storageAddOnPriceYearly : null,
-						},
-						discountedPrice: {
-							monthly: null,
-							full: null,
-						},
-					},
-				};
-			}
+				// raw prices for current site's plan
+				if ( selectedSiteId && currentSitePlanSlug === planSlug ) {
+					const monthlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+						returnMonthly: true,
+						returnSmallestUnit: true,
+					} );
+					const yearlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+						returnMonthly: false,
+						returnSmallestUnit: true,
+					} );
 
-			// raw prices for plan not available for purchase
-			if ( ! availableForPurchase ) {
+					return {
+						...acc,
+						[ planSlug ]: {
+							originalPrice: {
+								monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
+								full: yearlyPrice ? yearlyPrice + storageAddOnPriceYearly : null,
+							},
+							discountedPrice: {
+								monthly: null,
+								full: null,
+							},
+						},
+					};
+				}
+
+				// raw prices for plan not available for purchase
+				if ( ! availableForPurchase ) {
+					return {
+						...acc,
+						[ planSlug ]: {
+							originalPrice: {
+								monthly: totalPricesMonthly.rawPrice,
+								full: totalPricesFull.rawPrice,
+							},
+							discountedPrice: {
+								monthly: null,
+								full: null,
+							},
+						},
+					};
+				}
+
+				// raw prices with discounts for plan available for purchase
 				return {
 					...acc,
 					[ planSlug ]: {
@@ -122,32 +141,21 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 							full: totalPricesFull.rawPrice,
 						},
 						discountedPrice: {
-							monthly: null,
-							full: null,
+							monthly: withoutProRatedCredits
+								? totalPricesMonthly.discountedRawPrice
+								: totalPricesMonthly.planDiscountedRawPrice ||
+								  totalPricesMonthly.discountedRawPrice,
+							full: withoutProRatedCredits
+								? totalPricesFull.discountedRawPrice
+								: totalPricesFull.planDiscountedRawPrice || totalPricesFull.discountedRawPrice,
 						},
 					},
 				};
+			},
+			{} as {
+				[ planSlug: string ]: Pick< PricingMetaForGridPlan, 'originalPrice' | 'discountedPrice' >;
 			}
-
-			// raw prices with discounts for plan available for purchase
-			return {
-				...acc,
-				[ planSlug ]: {
-					originalPrice: {
-						monthly: totalPricesMonthly.rawPrice,
-						full: totalPricesFull.rawPrice,
-					},
-					discountedPrice: {
-						monthly: withoutProRatedCredits
-							? totalPricesMonthly.discountedRawPrice
-							: totalPricesMonthly.planDiscountedRawPrice || totalPricesMonthly.discountedRawPrice,
-						full: withoutProRatedCredits
-							? totalPricesFull.discountedRawPrice
-							: totalPricesFull.planDiscountedRawPrice || totalPricesFull.discountedRawPrice,
-					},
-				},
-			};
-		}, {} as { [ planSlug: string ]: Pick< PricingMetaForGridPlan, 'originalPrice' | 'discountedPrice' > } );
+		);
 	} );
 
 	/*
@@ -159,23 +167,26 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		return null;
 	}
 
-	return planSlugs.reduce( ( acc, planSlug ) => {
-		// pricedAPIPlans - should have a definition for all plans, being the main source of API data
-		const pricedAPIPlan = pricedAPIPlans[ planSlug ];
-		// pricedAPISitePlans - unclear if all plans are included
-		const sitePlan = sitePlans.data?.[ planSlug ];
+	return planSlugs.reduce(
+		( acc, planSlug ) => {
+			// pricedAPIPlans - should have a definition for all plans, being the main source of API data
+			const pricedAPIPlan = pricedAPIPlans[ planSlug ];
+			// pricedAPISitePlans - unclear if all plans are included
+			const sitePlan = sitePlans.data?.[ planSlug ];
 
-		return {
-			...acc,
-			[ planSlug ]: {
-				originalPrice: planPrices[ planSlug ]?.originalPrice,
-				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
-				billingPeriod: pricedAPIPlan?.bill_period,
-				currencyCode: pricedAPIPlan?.currency_code,
-				introOffer: sitePlan?.introOffer,
-			},
-		};
-	}, {} as { [ planSlug: string ]: PricingMetaForGridPlan } );
+			return {
+				...acc,
+				[ planSlug ]: {
+					originalPrice: planPrices[ planSlug ]?.originalPrice,
+					discountedPrice: planPrices[ planSlug ]?.discountedPrice,
+					billingPeriod: pricedAPIPlan?.bill_period,
+					currencyCode: pricedAPIPlan?.currency_code,
+					introOffer: sitePlan?.introOffer,
+				},
+			};
+		},
+		{} as { [ planSlug: string ]: PricingMetaForGridPlan }
+	);
 };
 
 export default usePricingMetaForGridPlans;

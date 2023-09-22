@@ -31,7 +31,7 @@ export const requestAtomicSoftwareInstall = ( siteId: number, softwareSet: strin
 		type: ATOMIC_SOFTWARE_INITIATE_INSTALL,
 		siteId,
 		softwareSet,
-	} as const );
+	} ) as const;
 
 /**
  * Fetch install status.
@@ -45,7 +45,7 @@ export const requestAtomicSoftwareStatus = ( siteId: number, softwareSet: string
 		type: ATOMIC_SOFTWARE_REQUEST_STATUS,
 		siteId,
 		softwareSet,
-	} as const );
+	} ) as const;
 
 /**
  * Set the install status.
@@ -65,7 +65,7 @@ export const setAtomicSoftwareStatus = (
 		siteId,
 		softwareSet,
 		status,
-	} as const );
+	} ) as const;
 
 /**
  * Set the install error.
@@ -85,7 +85,7 @@ export const setAtomicSoftwareError = (
 		siteId,
 		softwareSet,
 		error,
-	} as const );
+	} ) as const;
 
 /**
  * Clean the install status.
@@ -101,4 +101,4 @@ export const cleanAtomicSoftwareStatus = ( siteId: number, softwareSet: string )
 		softwareSet,
 		status: null,
 		error: null,
-	} as const );
+	} ) as const;

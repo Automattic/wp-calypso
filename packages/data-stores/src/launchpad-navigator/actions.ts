@@ -8,13 +8,13 @@ export const receiveActiveChecklistSlug = ( activeChecklistSlug: string | null )
 	( {
 		type: 'LAUNCHPAD_NAVIGATOR_RECEIVE_ACTIVE_CHECKLIST_SLUG',
 		active_checklist_slug: activeChecklistSlug,
-	} as const );
+	} ) as const;
 
 export const removeChecklistFromNavigatorList = ( checklist_slug: string ) =>
 	( {
 		type: 'LAUNCHPAD_NAVIGATOR_REMOVE_CHECKLIST',
 		checklist_slug,
-	} as const );
+	} ) as const;
 
 export function* setActiveChecklist( siteSlug: string, active_checklist_slug: string | null ) {
 	const body = {

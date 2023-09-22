@@ -20,7 +20,7 @@ export type BulkUpdateVariables = UpdateContactInfoVariables | SetAutoRenewVaria
 export function useDomainsBulkActionsMutation<
 	TData = unknown,
 	TError = unknown,
-	TContext = unknown
+	TContext = unknown,
 >( options: UseMutationOptions< TData, TError, BulkUpdateVariables, TContext > = {} ) {
 	const { mutate, ...rest } = useMutation( {
 		mutationFn: ( variables ) => {

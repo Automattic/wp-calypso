@@ -20,4 +20,4 @@ export const requestPolicies = ( siteId: number | null ) =>
 		type: REWIND_POLICIES_REQUEST,
 		siteId,
 		...trackRequests,
-	} as const );
+	} ) as const;

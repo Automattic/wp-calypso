@@ -44,9 +44,12 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const recordSignupComplete = useRecordSignupComplete( flow );
 
-	useInterval( () => {
-		setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
-	}, loadingMessages[ currentMessageIndex ]?.duration );
+	useInterval(
+		() => {
+			setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
+		},
+		loadingMessages[ currentMessageIndex ]?.duration
+	);
 
 	const action = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPendingAction(),

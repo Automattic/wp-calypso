@@ -62,7 +62,7 @@ export type ThankYouData = [
 	string,
 	string[],
 	boolean,
-	React.ReactElement | null
+	React.ReactElement | null,
 ];
 
 export type ThankYouSteps = { steps: string[]; additionalSteps: string[] };

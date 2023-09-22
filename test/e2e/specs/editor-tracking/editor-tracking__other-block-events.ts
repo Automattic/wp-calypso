@@ -65,9 +65,8 @@ describe(
 			} );
 
 			it( '"wpcom_block_moved_down" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
-					'wpcom_block_moved_down'
-				);
+				const eventDidFire =
+					await editorTracksEventManager.didEventFire( 'wpcom_block_moved_down' );
 				expect( eventDidFire ).toBe( true );
 			} );
 
