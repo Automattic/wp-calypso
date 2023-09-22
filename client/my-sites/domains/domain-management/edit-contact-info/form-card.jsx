@@ -137,7 +137,7 @@ class EditContactInfoFormCard extends Component {
 		const { firstName, lastName, organization, email } = this.getContactFormFieldValues();
 		const isWwdDomain =
 			this.props.selectedDomain.registrar === registrarNames.WWD ||
-			this.props.wwdDomains?.length > 0;
+			( this.props.bulkEdit && this.props.wwdDomains?.length > 0 );
 
 		const primaryFieldsChanged = ! (
 			firstName === newContactDetails.firstName &&
@@ -238,7 +238,7 @@ class EditContactInfoFormCard extends Component {
 				onClose={ this.handleDialogClose }
 			>
 				<h1>{ translate( 'Confirmation Needed' ) }</h1>
-				{ this.props.wwdDomains?.length > 0 && (
+				{ this.props.bulkEdit && this.props.wwdDomains?.length > 0 && (
 					<>
 						<span>{ translate( 'Confirmation is needed for the following domains:' ) }</span>
 						<ul>
