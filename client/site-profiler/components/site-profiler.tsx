@@ -22,8 +22,8 @@ export default function SiteProfiler() {
 	const { data: hostingProviderData } = useHostingProviderQuery( domain );
 	const conversionAction = useDefineConversionAction(
 		domain,
+		data?.whois,
 		data?.is_domain_available,
-		data?.whois.registrar,
 		hostingProviderData?.hosting_provider
 	);
 

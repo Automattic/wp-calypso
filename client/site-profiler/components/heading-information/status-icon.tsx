@@ -12,17 +12,19 @@ export default function StatusIcon( props: Props ) {
 
 	useEffect( () => {
 		switch ( conversionAction ) {
-			case 'register-domain':
+			case 'idle':
 				setStatusIcon( 'checkmark' );
 				setStatusColor( 'green' );
 				break;
 			case 'transfer-domain':
 			case 'transfer-hosting':
+			case 'transfer-google-domain':
+			case 'transfer-google-domain-hosting':
 			case 'transfer-domain-hosting':
 				setStatusIcon( 'cross' );
 				setStatusColor( 'red' );
 				break;
-			case 'idle':
+			case 'register-domain':
 			default:
 				setStatusIcon( 'checkmark' );
 				setStatusColor( 'blue' );
