@@ -27,7 +27,6 @@ import {
 	useAvailablePaymentMethodIds,
 	useTogglePaymentMethod,
 } from './lib/payment-methods';
-import PaymentLogo from './lib/payment-methods/payment-logo';
 import {
 	usePaymentProcessor,
 	usePaymentProcessors,
@@ -56,7 +55,6 @@ export {
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
 	LoadingContent,
-	PaymentLogo,
 	PaymentMethodStep,
 	checkoutTheme,
 	createCheckoutStepGroupStore,

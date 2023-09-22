@@ -219,15 +219,6 @@ An enum that holds the values of the [form status](#useFormStatus).
 
 A placeholder used while checkout is initially loading (when [FormStatus](#FormStatus) is `LOADING`). Can be replaced using the `loadingContent` prop of [CheckoutStepGroup](#CheckoutStepGroup).
 
-### PaymentLogo
-
-Renders a logo for a credit card.
-
-Takes two props:
-
-- `brand: string`. This is a lower-case card name, like `visa` or `mastercard`.
-- `isSummary: boolean`. If true, will display a more compact version of the logo.
-
 ### PaymentMethodStep
 
 A pre-built [CheckoutStep](#CheckoutStep) to select the payment method. It does not require any props but any of the [CheckoutStep](#CheckoutStep) props can be overridden by passing them to this component.
