@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { DEFAULT_PER_PAGE, SubscribersFilterBy, SubscribersSortBy } from '../constants';
 import { getSubscribersCacheKey } from '../helpers';
@@ -22,7 +23,13 @@ const useSubscribersQuery = ( {
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	filterOption = SubscribersFilterBy.All,
 }: SubscriberQueryParams ) => {
-	const hasManySubscribers = useManySubsSite( siteId );
+	const { hasManySubscribers, isLoading } = useManySubsSite( siteId );
+	const [ shouldFetch, setShouldFetch ] = useState( false );
+	useEffect( () => {
+		if ( ! isLoading ) {
+			setShouldFetch( true );
+		}
+	}, [ isLoading ] );
 
 	return useQuery< SubscriberEndpointResponse >( {
 		queryKey: getSubscribersCacheKey( siteId, page, perPage, search, sortTerm, filterOption ),
@@ -43,7 +50,7 @@ const useSubscribersQuery = ( {
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		enabled: !! siteId,
+		enabled: !! siteId && shouldFetch,
 		keepPreviousData: true,
 	} );
 };
