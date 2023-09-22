@@ -418,6 +418,7 @@ const sections = [
 		paths: [
 			'/read/subscriptions',
 			'/read/subscriptions/comments',
+			'/read/subscriptions/pending',
 			'^/read/subscriptions/(\\d+)(/)?$',
 		],
 		module: 'calypso/reader/site-subscriptions-manager',

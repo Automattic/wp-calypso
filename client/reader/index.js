@@ -22,6 +22,7 @@ import {
 	siteSubscriptionsManager,
 	siteSubscription,
 	commentSubscriptionsManager,
+	pendingSubscriptionsManager,
 } from './controller';
 
 import './style.scss';
@@ -138,6 +139,15 @@ export default async function () {
 		updateLastRoute,
 		sidebar,
 		commentSubscriptionsManager,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/read/subscriptions/pending',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		pendingSubscriptionsManager,
 		makeLayout,
 		clientRender
 	);
