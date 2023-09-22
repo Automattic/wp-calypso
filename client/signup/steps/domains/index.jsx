@@ -141,6 +141,12 @@ class DomainsStep extends Component {
 				}
 			);
 		}
+
+		// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
+		if ( this.props.flowName === 'onboarding ' ) {
+			loadExperimentAssignment( 'calypso_srm_test_paid_domain_click_free_plan_button_click' );
+			loadExperimentAssignment( 'calypso_srm_test_domain_page_view_free_plan_modal_view' );
+		}
 	}
 
 	getLocale() {
@@ -290,7 +296,7 @@ class DomainsStep extends Component {
 						'calypso_onboarding_plans_paid_domain_on_free_plan_confidence_check'
 					);
 
-					// the first two variations of the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
+					// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
 					loadExperimentAssignment( 'calypso_srm_test_paid_domain_click_free_plan_button_click' );
 					loadExperimentAssignment( 'calypso_srm_test_paid_domain_click_free_plan_modal_view' );
 				} else {
