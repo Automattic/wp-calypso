@@ -17,11 +17,11 @@ export default function useDefineConversionAction(
 ): CONVERSION_ACTION | undefined {
 	const isWpDomain = domain.toLowerCase().includes( 'wordpress.com' );
 	const isWpAtomicDomain = domain.toLowerCase().includes( 'wpcomstaging.com' );
-	const isA8cRegistrar = whois?.registrar.toLowerCase().includes( 'automattic' );
+	const isA8cRegistrar = whois?.registrar?.toLowerCase().includes( 'automattic' );
 	const isGoogleRegistrar =
-		whois?.registrar.toLowerCase().includes( 'google' ) ||
-		whois?.registrar_whois_server.toLowerCase().includes( 'google' ) ||
-		whois?.registrant_organization.toLowerCase().includes( 'google' );
+		whois?.registrar?.toLowerCase().includes( 'google' ) ||
+		whois?.registrar_whois_server?.toLowerCase().includes( 'google' ) ||
+		whois?.registrant_organization?.toLowerCase().includes( 'google' );
 
 	const isA8cDomain = isA8cRegistrar || isWpDomain || isWpAtomicDomain;
 	const isA8cHosting = hostingProvider?.slug === 'automattic';
