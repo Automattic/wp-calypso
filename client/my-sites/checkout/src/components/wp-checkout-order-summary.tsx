@@ -20,11 +20,7 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import {
-	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
-	FormStatus,
-	useFormStatus,
-} from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -720,7 +716,7 @@ const pulse = keyframes`
 	100% { opacity: 1; }
 `;
 
-const CheckoutSummaryCard = styled( CheckoutSummaryCardUnstyled )`
+const CheckoutSummaryCard = styled.div`
 	border-bottom: none 0;
 `;
 

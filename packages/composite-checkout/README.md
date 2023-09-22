@@ -195,16 +195,6 @@ Available props:
 - `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
 - `store?: CheckoutStepGroupStore`. A way to inject a data store for the step group created by [createCheckoutStepGroupStore](#createCheckoutStepGroupStore). If not provided, a store will be created automatically.
 
-### CheckoutSummaryArea
-
-Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutStepGroup`](#CheckoutStepGroup) wrapper (floated on desktop, collapsed on mobile). It has the following props.
-
-- `className?: string`. The className for the component.
-
-### CheckoutSummaryCard
-
-Can be used inside [CheckoutSummaryArea](#CheckoutSummaryArea) to render a bordered area.
-
 ### FormStatus
 
 An enum that holds the values of the [form status](#useFormStatus).

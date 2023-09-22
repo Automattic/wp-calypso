@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLineItems, useLineItemsOfType } from '../lib/line-items';
-import { CheckoutSummaryCard, useTotal } from '../public-api';
+import { useTotal } from '../public-api';
+import { CheckoutSummaryCard } from './checkout-steps';
 
 const ProductList = styled.ul`
 	margin: 0;

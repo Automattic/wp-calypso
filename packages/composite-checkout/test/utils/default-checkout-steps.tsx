@@ -1,3 +1,4 @@
+import { CheckoutSummaryArea, CheckoutSummaryCard } from '../../src/components/checkout-steps';
 import {
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
@@ -6,8 +7,6 @@ import {
 } from '../../src/components/default-steps';
 import {
 	CheckoutStepGroup,
-	CheckoutSummaryArea,
-	CheckoutSummaryCard,
 	CheckoutStepBody,
 	CheckoutStep,
 	CheckoutFormSubmit,
