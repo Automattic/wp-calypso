@@ -5,13 +5,14 @@ import {
 	__experimentalNavigatorToParentButton as NavigatorToParentButton,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalItemGroup as ItemGroup,
 	Card,
 	CardBody,
 	__experimentalItem as Item,
 	FlexBlock,
 } from '@wordpress/components';
 import {
+	plugins,
+	key,
 	currencyDollar,
 	store,
 	payment,
@@ -71,41 +72,57 @@ export default function DashboardSidebar( { path }: { path: string } ) {
 					<Card>
 						<CardBody>
 							<VStack spacing={ 0 } justify="flex-start">
-								<ItemGroup>
-									<NavigatorButton
-										as={ SidebarItem }
-										icon={
-											<svg
-												width="24"
-												height="24"
-												viewBox="0 0 24 24"
-												fill="none"
-												xmlns="http://www.w3.org/2000/svg"
-											>
-												<path
-													fillRule="evenodd"
-													clipRule="evenodd"
-													d="M6 5.5H9C9.27614 5.5 9.5 5.72386 9.5 6V9C9.5 9.27614 9.27614 9.5 9 9.5H6C5.72386 9.5 5.5 9.27614 5.5 9V6C5.5 5.72386 5.72386 5.5 6 5.5ZM4 6C4 4.89543 4.89543 4 6 4H9C10.1046 4 11 4.89543 11 6V9C11 10.1046 10.1046 11 9 11H6C4.89543 11 4 10.1046 4 9V6ZM15 5.5H18C18.2761 5.5 18.5 5.72386 18.5 6V9C18.5 9.27614 18.2761 9.5 18 9.5H15C14.7239 9.5 14.5 9.27614 14.5 9V6C14.5 5.72386 14.7239 5.5 15 5.5ZM13 6C13 4.89543 13.8954 4 15 4H18C19.1046 4 20 4.89543 20 6V9C20 10.1046 19.1046 11 18 11H15C13.8954 11 13 10.1046 13 9V6ZM18 14.5H15C14.7239 14.5 14.5 14.7239 14.5 15V18C14.5 18.2761 14.7239 18.5 15 18.5H18C18.2761 18.5 18.5 18.2761 18.5 18V15C18.5 14.7239 18.2761 14.5 18 14.5ZM15 13C13.8954 13 13 13.8954 13 15V18C13 19.1046 13.8954 20 15 20H18C19.1046 20 20 19.1046 20 18V15C20 13.8954 19.1046 13 18 13H15ZM6 14.5H9C9.27614 14.5 9.5 14.7239 9.5 15V18C9.5 18.2761 9.27614 18.5 9 18.5H6C5.72386 18.5 5.5 18.2761 5.5 18V15C5.5 14.7239 5.72386 14.5 6 14.5ZM4 15C4 13.8954 4.89543 13 6 13H9C10.1046 13 11 13.8954 11 15V18C11 19.1046 10.1046 20 9 20H6C4.89543 20 4 19.1046 4 18V15Z"
-												/>
-											</svg>
-										}
-										path="/"
-										link="/dashboard"
-										onClick={ () => onClickSubMenuItem( '/dashboard' ) }
-									>
-										{ translate( 'Sites Management' ) }
-									</NavigatorButton>
-									<NavigatorButton
-										as={ SidebarItem }
-										icon={ currencyDollar }
-										path="/partner-portal"
-										withChevron
-										link="/partner-portal/billing"
-										onClick={ () => onClickSubMenuItem( '/partner-portal/billing' ) }
-									>
-										{ translate( 'Purchases' ) }
-									</NavigatorButton>
-								</ItemGroup>
+								<NavigatorButton
+									as={ SidebarItem }
+									icon={
+										<svg
+											width="24"
+											height="24"
+											viewBox="0 0 24 24"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												fillRule="evenodd"
+												clipRule="evenodd"
+												d="M6 5.5H9C9.27614 5.5 9.5 5.72386 9.5 6V9C9.5 9.27614 9.27614 9.5 9 9.5H6C5.72386 9.5 5.5 9.27614 5.5 9V6C5.5 5.72386 5.72386 5.5 6 5.5ZM4 6C4 4.89543 4.89543 4 6 4H9C10.1046 4 11 4.89543 11 6V9C11 10.1046 10.1046 11 9 11H6C4.89543 11 4 10.1046 4 9V6ZM15 5.5H18C18.2761 5.5 18.5 5.72386 18.5 6V9C18.5 9.27614 18.2761 9.5 18 9.5H15C14.7239 9.5 14.5 9.27614 14.5 9V6C14.5 5.72386 14.7239 5.5 15 5.5ZM13 6C13 4.89543 13.8954 4 15 4H18C19.1046 4 20 4.89543 20 6V9C20 10.1046 19.1046 11 18 11H15C13.8954 11 13 10.1046 13 9V6ZM18 14.5H15C14.7239 14.5 14.5 14.7239 14.5 15V18C14.5 18.2761 14.7239 18.5 15 18.5H18C18.2761 18.5 18.5 18.2761 18.5 18V15C18.5 14.7239 18.2761 14.5 18 14.5ZM15 13C13.8954 13 13 13.8954 13 15V18C13 19.1046 13.8954 20 15 20H18C19.1046 20 20 19.1046 20 18V15C20 13.8954 19.1046 13 18 13H15ZM6 14.5H9C9.27614 14.5 9.5 14.7239 9.5 15V18C9.5 18.2761 9.27614 18.5 9 18.5H6C5.72386 18.5 5.5 18.2761 5.5 18V15C5.5 14.7239 5.72386 14.5 6 14.5ZM4 15C4 13.8954 4.89543 13 6 13H9C10.1046 13 11 13.8954 11 15V18C11 19.1046 10.1046 20 9 20H6C4.89543 20 4 19.1046 4 18V15Z"
+											/>
+										</svg>
+									}
+									path="/"
+									link="/dashboard"
+									onClick={ () => onClickSubMenuItem( '/dashboard' ) }
+								>
+									{ translate( 'Sites Management' ) }
+								</NavigatorButton>
+								<NavigatorButton
+									as={ SidebarItem }
+									icon={ plugins }
+									path="/"
+									link="/plugins/manage"
+									onClick={ () => onClickSubMenuItem( '/plugins/manage' ) }
+								>
+									{ translate( 'Plugin Management' ) }
+								</NavigatorButton>
+								<NavigatorButton
+									as={ SidebarItem }
+									icon={ key }
+									path="/"
+									link="/partner-portal/licenses"
+									onClick={ () => onClickSubMenuItem( '/partner-portal/licenses' ) }
+								>
+									{ translate( 'Licenses' ) }
+								</NavigatorButton>
+								<NavigatorButton
+									as={ SidebarItem }
+									icon={ currencyDollar }
+									path="/partner-portal"
+									withChevron
+									link="/partner-portal/billing"
+									onClick={ () => onClickSubMenuItem( '/partner-portal/billing' ) }
+								>
+									{ translate( 'Purchases' ) }
+								</NavigatorButton>
 							</VStack>
 						</CardBody>
 					</Card>
@@ -119,7 +136,6 @@ export default function DashboardSidebar( { path }: { path: string } ) {
 									onClick={ () => onClickSubMenuItem( '/dashboard' ) }
 									text={ translate( 'Purchases' ) }
 								/>
-
 								<div>
 									<div className="sidebar__navigation-group-description">
 										{ translate( 'Manage all your billing related settings from one place.' ) }
