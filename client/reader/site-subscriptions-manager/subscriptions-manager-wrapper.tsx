@@ -1,12 +1,17 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import {
 	__experimentalHStack as HStack,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import Nav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import {
 	SubscriptionsPortal,
 	SubscriptionManagerContextProvider,
@@ -26,6 +31,16 @@ const useMarkFollowsAsStaleOnUnmount = () => {
 	}, [] );
 };
 
+const getSelectedTab = ( pathname: string ) => {
+	if ( pathname.includes( 'comments' ) ) {
+		return 'comments';
+	}
+	if ( pathname.includes( 'pending' ) ) {
+		return 'pending';
+	}
+	return 'sites';
+};
+
 type SubscriptionsManagerWrapperProps = {
 	actionButton?: React.ReactNode;
 	children: React.ReactNode;
@@ -42,6 +57,8 @@ const SubscriptionsManagerWrapper = ( {
 	subHeaderText,
 }: SubscriptionsManagerWrapperProps ) => {
 	const translate = useTranslate();
+	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
+	const selectedTab = getSelectedTab( page.current );
 
 	// Mark follows as stale on unmount to ensure that the reader
 	// redux store is in a consistent state when the user navigates.
@@ -74,6 +91,34 @@ const SubscriptionsManagerWrapper = ( {
 						</SubscriptionsEllipsisMenu>
 					) }
 				</HStack>
+
+				<Nav className="site-subscriptions-manager__nav">
+					<NavTabs>
+						<NavItem
+							count={ counts?.blogs }
+							selected={ selectedTab === 'sites' }
+							onClick={ () => page( '/read/subscriptions' ) }
+						>
+							{ translate( 'Sites' ) }
+						</NavItem>
+						<NavItem
+							count={ counts?.comments }
+							selected={ selectedTab === 'comments' }
+							onClick={ () => page( '/read/subscriptions/comments' ) }
+						>
+							{ translate( 'Comments' ) }
+						</NavItem>
+						{ !! counts?.pending && (
+							<NavItem
+								count={ counts?.pending }
+								selected={ selectedTab === 'pending' }
+								onClick={ () => page( '/read/subscriptions/pending' ) }
+							>
+								{ translate( 'Pending' ) }
+							</NavItem>
+						) }
+					</NavTabs>
+				</Nav>
 
 				{ children }
 			</Main>
