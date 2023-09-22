@@ -1,11 +1,5 @@
-import {
-	Button,
-	FormStatus,
-	useTotal,
-	useFormStatus,
-	PaymentLogo,
-} from '@automattic/composite-checkout';
-import { styled } from '@automattic/wpcom-checkout';
+import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { styled, PaymentLogo } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
