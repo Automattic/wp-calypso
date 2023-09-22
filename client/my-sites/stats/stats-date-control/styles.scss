@@ -1,0 +1,15 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography.scss";
+
+$button-padding: 8px 32px;
+
+.stats-purchase-page {
+	--font-body: 16px;
+	--jp-black: #000;
+	--jp-white: #fff;
+}
+
+.stats-date-control {
+	display: flex;
+	flex-direction: row-reverse;
+}
