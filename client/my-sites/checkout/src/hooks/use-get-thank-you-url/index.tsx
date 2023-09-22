@@ -36,10 +36,13 @@ export default function useGetThankYouUrl( {
 	hideNudge,
 	isInModal,
 	domains,
+	connectAfterCheckout,
+	adminUrl: wpAdminUrl,
+	fromSiteSlug,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
-	const adminUrl = selectedSiteData?.options?.admin_url;
+	const adminUrl = selectedSiteData?.options?.admin_url || wpAdminUrl;
 
 	const getThankYouUrl = useCallback( () => {
 		const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
@@ -55,8 +58,9 @@ export default function useGetThankYouUrl( {
 			hideNudge,
 			isInModal,
 			domains,
+			connectAfterCheckout,
+			fromSiteSlug,
 		};
-
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 		debug( 'getThankYouUrl returned', url );
@@ -75,6 +79,8 @@ export default function useGetThankYouUrl( {
 		hideNudge,
 		sitelessCheckoutType,
 		domains,
+		connectAfterCheckout,
+		fromSiteSlug,
 	] );
 	return getThankYouUrl;
 }
@@ -91,4 +97,7 @@ export interface GetThankYouUrlProps {
 	isInModal?: boolean;
 	isJetpackNotAtomic?: boolean;
 	domains: ResponseDomain[] | undefined;
+	connectAfterCheckout?: boolean;
+	adminUrl?: string;
+	fromSiteSlug?: string;
 }

@@ -102,6 +102,9 @@ export interface CheckoutMainProps {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	connectAfterCheckout?: boolean;
+	fromSiteSlug?: string;
+	adminUrl?: string;
 }
 
 export default function CheckoutMain( {
@@ -129,6 +132,9 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	connectAfterCheckout,
+	fromSiteSlug,
+	adminUrl,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -257,6 +263,9 @@ export default function CheckoutMain( {
 		sitelessCheckoutType,
 		isInModal,
 		domains,
+		connectAfterCheckout,
+		adminUrl,
+		fromSiteSlug,
 	} );
 
 	const getThankYouUrl = useCallback( () => {
@@ -590,6 +599,9 @@ export default function CheckoutMain( {
 		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
 		checkoutFlow,
+		connectAfterCheckout,
+		adminUrl,
+		fromSiteSlug,
 	} );
 
 	const handleStepChanged = useCallback(

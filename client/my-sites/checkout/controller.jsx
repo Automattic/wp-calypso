@@ -46,7 +46,15 @@ import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './u
 const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkoutJetpackSiteless( context, next ) {
-	sitelessCheckout( context, next, { sitelessCheckoutType: 'jetpack' } );
+	const connectAfterCheckout = context.query?.connect_after_checkout === 'true';
+	const fromSiteSlug = context.query?.from_site_slug;
+	const adminUrl = context.query?.admin_url;
+	sitelessCheckout( context, next, {
+		sitelessCheckoutType: 'jetpack',
+		connectAfterCheckout,
+		...( fromSiteSlug && { fromSiteSlug } ),
+		...( adminUrl && { adminUrl } ),
+	} );
 }
 
 export function checkoutAkismetSiteless( context, next ) {
@@ -252,6 +260,8 @@ export function checkoutPending( context, next ) {
 		? Number( context.query.receiptId )
 		: undefined;
 
+	const fromSite = context.query.from_site;
+
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
@@ -260,6 +270,7 @@ export function checkoutPending( context, next ) {
 			siteSlug={ siteSlug }
 			redirectTo={ redirectTo }
 			receiptId={ receiptId }
+			fromSite={ fromSite }
 		/>
 	);
 

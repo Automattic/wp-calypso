@@ -7,6 +7,7 @@ export interface PendingPageRedirectOptions {
 	orderId?: string | number | undefined;
 	receiptId?: string | number | undefined;
 	urlType?: 'relative' | 'absolute';
+	fromSiteSlug?: string;
 }
 
 export interface RedirectInstructions {
@@ -23,6 +24,7 @@ export interface RedirectForTransactionStatusArgs {
 	redirectTo?: string;
 	siteSlug?: string;
 	saasRedirectUrl?: string;
+	fromSite?: string;
 }
 
 /**
@@ -160,7 +162,13 @@ export function addUrlToPendingPageRedirect(
 	url: string,
 	options: PendingPageRedirectOptions
 ): string {
-	const { siteSlug, orderId, urlType = 'absolute', receiptId = ':receiptId' } = options;
+	const {
+		siteSlug,
+		orderId,
+		urlType = 'absolute',
+		receiptId = ':receiptId',
+		fromSiteSlug,
+	} = options;
 
 	const { origin = 'https://wordpress.com' } = typeof window !== 'undefined' ? window.location : {};
 	const successUrlPath =
@@ -170,6 +178,7 @@ export function addUrlToPendingPageRedirect(
 	const successUrlObject = new URL( successUrlBase );
 	successUrlObject.searchParams.set( 'redirectTo', url );
 	successUrlObject.searchParams.set( 'receiptId', String( receiptId ) );
+	fromSiteSlug && successUrlObject.searchParams.set( 'from_site', fromSiteSlug );
 	if ( urlType === 'relative' ) {
 		return successUrlObject.pathname + successUrlObject.search + successUrlObject.hash;
 	}
@@ -314,6 +323,7 @@ export function getRedirectFromPendingPage( {
 	redirectTo,
 	siteSlug,
 	saasRedirectUrl,
+	fromSite,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
 	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
 	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
@@ -335,7 +345,7 @@ export function getRedirectFromPendingPage( {
 					redirectTo ?? getDefaultSuccessUrl( siteSlug, receiptId ),
 					receiptId
 				),
-				siteSlug,
+				siteSlug || fromSite,
 				getDefaultSuccessUrl( siteSlug, receiptId )
 			),
 		};
