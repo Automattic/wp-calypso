@@ -203,9 +203,11 @@ const OrderReviewTitle = () => {
 };
 
 const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
-	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
-		isJetpackPurchasableItem( product.product_slug )
-	);
+	const hasCartJetpackProductsOnly =
+		responseCart?.products?.length > 0 &&
+		responseCart?.products?.every( ( product ) =>
+			isJetpackPurchasableItem( product.product_slug )
+		);
 
 	if ( isAkismetCheckout() ) {
 		return 'akismet';
@@ -265,7 +267,7 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const reduxDispatch = useReduxDispatch();
-	usePresalesChat( getPresalesChatKey( responseCart ) );
+	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
