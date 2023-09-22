@@ -251,9 +251,7 @@ class StatsSite extends Component {
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
 						{ isDateControlEnabled ? (
-							<DateControl
-							// New DateControl component
-							/>
+							<DateControl period={ period } pathTemplate={ pathTemplate } />
 						) : (
 							<StatsPeriodHeader>
 								<StatsPeriodNavigation
