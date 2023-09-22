@@ -1,8 +1,11 @@
 import { Card } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import NewsletterCategoriesToggle from './newsletter-categories-toggle';
 import './style.scss';
@@ -27,6 +30,8 @@ const NewsletterCategoriesSection = ( {
 	isSavingSettings,
 }: NewsletterCategoriesSectionProps ) => {
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	return (
 		<>
@@ -80,11 +85,18 @@ const NewsletterCategoriesSection = ( {
 					} }
 					height={ 218 }
 				/>
-				<p className="newsletter-categories-settings__description">
-					{ translate(
-						'When adding a new newsletter category, your subscribers will be automatically subscribed to it. They won’t receive any email notification when the category is created.'
-					) }
-				</p>
+				<FormSettingExplanation className="newsletter-categories-settings__description">
+					{ isEnglishLocale ||
+					hasTranslation(
+						'When you add a new category, your existing subscribers will be automatically subscribed to it.'
+					)
+						? translate(
+								'When you add a new category, your existing subscribers will be automatically subscribed to it.'
+						  )
+						: translate(
+								'When adding a new newsletter category, your subscribers will be automatically subscribed to it. They won’t receive any email notification when the category is created.'
+						  ) }
+				</FormSettingExplanation>
 			</Card>
 		</>
 	);
