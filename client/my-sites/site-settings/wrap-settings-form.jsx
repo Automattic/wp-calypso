@@ -171,6 +171,9 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			if ( path === '/settings/reading/:site' ) {
 				trackTracksEvent( 'calypso_settings_reading_saved' );
 			}
+			if ( path === '/settings/newsletter/:site' ) {
+				trackTracksEvent( 'calypso_settings_newsletter_saved' );
+			}
 			this.submitForm();
 			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};
@@ -231,6 +234,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.trackTracksEvent( 'calypso_settings_autosaving_toggle_updated', {
 				name,
+				value: ! this.props.fields[ name ],
 				path: this.props.path,
 			} );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
