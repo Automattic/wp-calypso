@@ -11,7 +11,10 @@ import './style.scss';
 const noop = () => {};
 
 function CommentButton( props ) {
-	const { commentCount, href, onClick, tagName, target, icon } = props;
+	const { commentCount, href, onClick, tagName, target, icon, defaultLabel } = props;
+
+	const showLabel = commentCount > 0 || defaultLabel;
+	const label = commentCount || defaultLabel;
 
 	return createElement(
 		tagName,
@@ -27,13 +30,14 @@ function CommentButton( props ) {
 		),
 		icon || <Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
 		<span className="comment-button__label">
-			{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
+			{ showLabel && <span className="comment-button__label-count">{ label }</span> }
 		</span>
 	);
 }
 
 CommentButton.propTypes = {
 	commentCount: PropTypes.number,
+	defaultLabel: PropTypes.string,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
 	post: PropTypes.object,

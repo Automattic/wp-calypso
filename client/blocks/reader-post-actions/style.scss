@@ -5,7 +5,7 @@
 	font-family: $sans;
 	flex-direction: row;
 	height: auto;
-	justify-content: flex-end;
+	justify-content: space-between;
 	list-style-type: none;
 	margin: 10px 0 0;
 
@@ -68,5 +68,14 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		margin-right: 18px;
+		height: auto;
+
+		.reader-share__button,
+		.like-button,
+		.comment-button {
+			display: flex;
+			flex-direction: column;
+			height: auto;
+		}
 	}
 }
