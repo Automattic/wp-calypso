@@ -80,6 +80,20 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-sync', () => ( {
+	__esModule: true,
+	usePullFromProductionMutation: jest.fn( () => {
+		return {
+			pullFromProduction: jest.fn(),
+		};
+	} ),
+	usePushToStagingMutation: jest.fn( () => {
+		return {
+			pushToStaging: jest.fn(),
+		};
+	} ),
+} ) );
+
 jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-site', () => ( {
 	__esModule: true,
 	useStagingSite: jest.fn(),
@@ -225,6 +239,7 @@ describe( 'StagingSiteCard component', () => {
 			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: false } ],
 			isLoading: false,
 		} );
+
 		render(
 			<Provider store={ store }>
 				<StagingSiteCard { ...defaultProps } />

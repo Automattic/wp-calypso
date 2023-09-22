@@ -19,7 +19,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
 import { ConfirmationModalButton } from './confirm-modal-button';
-import { usePullFromProduction } from './use-staging-sync';
+import { usePullFromProductionMutation } from './use-staging-sync';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -50,7 +50,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 		},
 	} );
 
-	const { pullFromProduction } = usePullFromProduction( siteId, {
+	const { pullFromProduction } = usePullFromProductionMutation( siteId, {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onError: ( error: any ) => {
 			dispatch(
