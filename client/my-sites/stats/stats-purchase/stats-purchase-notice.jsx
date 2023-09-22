@@ -11,14 +11,8 @@ import {
 } from './stats-purchase-shared';
 import './styles.scss';
 
-const getStatsPurchaseURL = ( siteId, isOdysseyStats, productType = 'commercial' ) => {
-	const purchasePath = `/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
-
-	if ( ! isOdysseyStats ) {
-		return purchasePath;
-	}
-	return `https://wordpress.com${ purchasePath }`;
-};
+const getStatsPurchaseURL = ( siteId, productType = 'commercial' ) =>
+	`/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
 
 const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 	event.preventDefault();
@@ -27,7 +21,7 @@ const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked' )
 		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
 
-	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
+	setTimeout( () => page( upgradeUrl ), 250 );
 };
 
 const StatsCommercialOwned = ( { siteSlug } ) => {
@@ -86,11 +80,7 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button
 				variant="primary"
 				onClick={ ( e ) =>
-					handleUpgradeClick(
-						e,
-						getStatsPurchaseURL( siteId, isOdysseyStats, 'commercial' ),
-						isOdysseyStats
-					)
+					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'commercial' ), isOdysseyStats )
 				}
 			>
 				{ translate( 'Upgrade my Stats' ) }
@@ -128,11 +118,7 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button
 				variant="primary"
 				onClick={ ( e ) =>
-					handleUpgradeClick(
-						e,
-						getStatsPurchaseURL( siteId, isOdysseyStats, 'personal' ),
-						isOdysseyStats
-					)
+					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'personal' ), isOdysseyStats )
 				}
 			>
 				{ translate( 'Upgrade my Stats' ) }
