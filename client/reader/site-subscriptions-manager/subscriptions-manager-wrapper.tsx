@@ -92,7 +92,7 @@ const SubscriptionsManagerWrapper = ( {
 					) }
 				</HStack>
 
-				<Nav>
+				<Nav className="site-subscriptions-manager__nav">
 					<NavTabs>
 						<NavItem
 							count={ counts?.blogs }
