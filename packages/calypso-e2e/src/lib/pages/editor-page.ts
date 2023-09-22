@@ -20,6 +20,7 @@ import {
 	TemplateCategory,
 	BlockToolbarButtonIdentifier,
 	CookieBannerComponent,
+	EditorToolbarSettingsButton,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type {
@@ -483,8 +484,8 @@ export class EditorPage {
 	/**
 	 * Opens the Settings sidebar.
 	 */
-	async openSettings(): Promise< void > {
-		await this.editorToolbarComponent.openSettings();
+	async openSettings( target: EditorToolbarSettingsButton = 'Settings' ): Promise< void > {
+		await this.editorToolbarComponent.openSettings( target );
 	}
 
 	/**
@@ -497,6 +498,24 @@ export class EditorPage {
 		} else {
 			await this.editorToolbarComponent.closeSettings();
 		}
+	}
+
+	/**
+	 * General method to expand the named section in the settings sidebar.
+	 *
+	 * @param {string} name Name of the section to expand.
+	 */
+	async expandSection( name: string ): Promise< void > {
+		await this.editorSettingsSidebarComponent.expandSection( name );
+	}
+
+	/**
+	 * Clicks on a button with matching accessible name in the Editor sidebar.
+	 *
+	 * @param {string} name Accessible name of the button.
+	 */
+	async clickSidebarButton( name: string ): Promise< void > {
+		await this.editorSettingsSidebarComponent.clickButton( name );
 	}
 
 	/**
@@ -583,6 +602,20 @@ export class EditorPage {
 		] );
 		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
 		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
+	}
+
+	/**
+	 * Enters SEO details on the Editor sidebar.
+	 *
+	 * @param param0 Keyed object parameter.
+	 * @param {string} param0.title SEO title.
+	 * @param {string} param0.description SEO description.
+	 */
+	async enterSEODetails( { title, description }: { title: string; description: string } ) {
+		await this.editorSettingsSidebarComponent.enterText( title, { label: 'SEO TITLE' } );
+		await this.editorSettingsSidebarComponent.enterText( description, {
+			label: 'SEO DESCRIPTION',
+		} );
 	}
 
 	//#endregion
