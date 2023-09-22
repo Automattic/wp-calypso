@@ -289,6 +289,9 @@ class DomainsStep extends Component {
 					loadExperimentAssignment(
 						'calypso_onboarding_plans_paid_domain_on_free_plan_confidence_check'
 					);
+
+					// the A/A test for identifying SRM issue. See peP6yB-11Y-p2
+					loadExperimentAssignment( 'calypso_srm_test_paid_domain_click_free_plan_button_click' );
 				} else {
 					loadExperimentAssignment(
 						'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'
