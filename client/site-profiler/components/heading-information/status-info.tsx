@@ -8,7 +8,7 @@ export default function StatusInfo( props: Props ) {
 
 	switch ( conversionAction ) {
 		case 'register-domain':
-			return <p>Nice! This site and its domain are fully hosted on WordPress.com!</p>;
+			return <p>Nice find! This site is available and could be yours today!</p>;
 		case 'transfer-domain':
 		case 'transfer-google-domain':
 			return (
