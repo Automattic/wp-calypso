@@ -1,3 +1,4 @@
+import { Onboard } from '@automattic/data-stores';
 import { DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
 import { useFlowProgress, AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -17,9 +18,16 @@ import { ProcessingResult } from './internals/steps-repository/processing-step/c
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
+const SiteIntent = Onboard.SiteIntent;
+
 const withThemeAssemblerFlow: Flow = {
 	name: AI_ASSEMBLER_FLOW,
 	useSideEffect() {
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = DEFAULT_ASSEMBLER_DESIGN.slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
@@ -32,6 +40,19 @@ const withThemeAssemblerFlow: Flow = {
 				console.log( `The ${ selectedTheme } theme is loading...` );
 				return;
 			}
+
+			setSelectedDesign( {
+				...selectedDesign,
+				slug: theme.id,
+				title: theme.name,
+				recipe: {
+					...selectedDesign?.recipe,
+					stylesheet: theme.stylesheet,
+				},
+				design_type: 'assembler',
+			} );
+
+			setIntent( SiteIntent.WithThemeAssembler );
 		}, [ theme ] );
 	},
 
