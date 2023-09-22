@@ -539,8 +539,6 @@ export const SubmitButtonWrapper = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 24px 0px 24px 40px;
-
 		.checkout-button {
 			width: 100%;
 		}
@@ -549,8 +547,12 @@ export const SubmitButtonWrapper = styled.div`
 			position: relative;
 		}
 
-		.rtl & {
-			padding: 24px 40px 24px 0px;
+		.checkout__step-wrapper & {
+			padding: 24px 0px 24px 40px;
+
+			.rtl & {
+				padding: 24px 40px 24px 0px;
+			}
 		}
 	}
 `;
