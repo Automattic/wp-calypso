@@ -224,13 +224,7 @@ class HandleEmailedLinkForm extends Component {
 						'grav-powered-login-link--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
-					<img
-						className="grav-powered-handle-auth__logo"
-						src={ oauth2Client.icon }
-						width={ 27 }
-						height={ 27 }
-						alt={ oauth2Client.title }
-					/>
+					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 					<EmptyContent
 						action={ this.state.hasSubmitted ? <LoadingEllipsis /> : action }
 						illustration=""
