@@ -206,10 +206,6 @@ An enum that holds the values of the [form status](#useFormStatus).
 - `.VALIDATING`
 - `.COMPLETE`
 
-### LoadingContent
-
-A placeholder used while checkout is initially loading (when [FormStatus](#FormStatus) is `LOADING`). Can be replaced using the `loadingContent` prop of [CheckoutStepGroup](#CheckoutStepGroup).
-
 ### PaymentMethodStep
 
 A pre-built [CheckoutStep](#CheckoutStep) to select the payment method. It does not require any props but any of the [CheckoutStep](#CheckoutStep) props can be overridden by passing them to this component.

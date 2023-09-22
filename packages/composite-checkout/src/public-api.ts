@@ -14,7 +14,6 @@ import {
 	useSetStepComplete,
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
-import LoadingContent from './components/loading-content';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
 import { useTotal } from './lib/line-items';
@@ -50,7 +49,6 @@ export {
 	CheckoutStep,
 	CheckoutStepBody,
 	CheckoutStepGroup,
-	LoadingContent,
 	PaymentMethodStep,
 	checkoutTheme,
 	createCheckoutStepGroupStore,
