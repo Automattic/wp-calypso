@@ -4,11 +4,11 @@ import {
 	// __experimentalNavigationMenu as NavigationMenu,
 	// __experimentalNavigationItem as NavigationItem,
 	// __experimentalNavigationGroup as NavigationGroup,
+	// __experimentalNavigationGroup as NavigationGroup,
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
 	__experimentalNavigatorButton as NavigatorButton,
-	__experimentalNavigatorBackButton as NavigatorBackButton,
-	// __experimentalNavigatorToParentButton as NavigatorToParentButton,
+	__experimentalNavigatorToParentButton as NavigatorToParentButton,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalItemGroup as ItemGroup,
@@ -70,7 +70,7 @@ export default function DashboardSidebar( { path }: { path: string } ) {
 		);
 	};
 
-	const initialPath = isPartnerPortal ? '/partner-portal' : '/dashboard';
+	const initialPath = isPartnerPortal ? '/partner-portal' : '/';
 
 	return (
 		<>
@@ -81,7 +81,7 @@ export default function DashboardSidebar( { path }: { path: string } ) {
 					maxHeight: '450px',
 				} }
 			>
-				<NavigatorScreen path="/dashboard">
+				<NavigatorScreen path="/">
 					<Card>
 						<CardBody>
 							<VStack spacing={ 0 } justify="flex-start">
@@ -103,7 +103,7 @@ export default function DashboardSidebar( { path }: { path: string } ) {
 												/>
 											</svg>
 										}
-										path="/dashboard"
+										path="/"
 										link="/dashboard"
 										onClick={ () => onClickSubMenuItem( '/dashboard' ) }
 									>
@@ -128,11 +128,12 @@ export default function DashboardSidebar( { path }: { path: string } ) {
 					<Card>
 						<CardBody className="sidebar__navigation-sub-menu">
 							<VStack spacing={ 0 } justify="flex-start">
-								<NavigatorBackButton
+								<NavigatorToParentButton
 									icon={ chevronLeft }
 									onClick={ () => onClickSubMenuItem( '/dashboard' ) }
 									text={ translate( 'Purchases' ) }
 								/>
+
 								<div>
 									<div className="sidebar__navigation-group-description">
 										{ translate( 'Manage all your billing related settings from one place.' ) }
