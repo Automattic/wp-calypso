@@ -191,7 +191,8 @@ Available props:
 
 - `areStepsActive?: boolean`. A boolean you can set to explicitly disable all the steps in the group.
 - `stepAreaHeader?: ReactNode`. A slot for additional components that can be injected at the top of the step group.
-- `loadingContent: ReactNode`. A component that will be displayed while checkout is loading. The default is [LoadingContent](#LoadingContent).
+- `loadingContent?: ReactNode`. A component that will be displayed while checkout is loading. The default is [LoadingContent](#LoadingContent).
+- `loadingHeader?: ReactNode`. A component that will be displayed above the main content while checkout is loading.
 - `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
 - `store?: CheckoutStepGroupStore`. A way to inject a data store for the step group created by [createCheckoutStepGroupStore](#createCheckoutStepGroupStore). If not provided, a store will be created automatically.
 

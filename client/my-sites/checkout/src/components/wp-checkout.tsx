@@ -230,7 +230,7 @@ export default function WPCheckout( {
 	areThereErrors,
 	isInitialCartLoading,
 	customizedPreviousPath,
-	loadingContent,
+	loadingHeader,
 	onStepChanged,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
@@ -249,7 +249,7 @@ export default function WPCheckout( {
 	areThereErrors: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
-	loadingContent: ReactNode;
+	loadingHeader?: ReactNode;
 } ) {
 	const locale = useLocale();
 	const cartKey = useCartKey();
@@ -463,7 +463,7 @@ export default function WPCheckout( {
 			<WPCheckoutMainContent>
 				<CheckoutOrderBanner />
 				<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
-				<CheckoutStepGroup loadingContent={ loadingContent } onStepChanged={ onStepChanged }>
+				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
 					<CheckoutStepBody

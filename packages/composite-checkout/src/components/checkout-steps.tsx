@@ -324,11 +324,13 @@ function CheckoutStepGroupWrapper( {
 	children,
 	className,
 	loadingContent,
+	loadingHeader,
 	onStepChanged,
 	store,
 }: PropsWithChildren< {
 	className?: string;
 	loadingContent?: ReactNode;
+	loadingHeader?: ReactNode;
 	onStepChanged?: StepChangedCallback;
 	store: CheckoutStepGroupStore;
 } > ) {
@@ -382,6 +384,7 @@ function CheckoutStepGroupWrapper( {
 		return (
 			<CheckoutWrapper className={ classNames }>
 				<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
+					{ loadingHeader }
 					{ loadingContent ? loadingContent : <LoadingContent /> }
 				</MainContentWrapper>
 			</CheckoutWrapper>
@@ -1062,18 +1065,21 @@ export function CheckoutStepGroup( {
 	store,
 	onStepChanged,
 	loadingContent,
+	loadingHeader,
 }: PropsWithChildren< {
 	areStepsActive?: boolean;
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
 	onStepChanged?: StepChangedCallback;
 	loadingContent?: ReactNode;
+	loadingHeader?: ReactNode;
 } > ) {
 	const stepGroupStore = useMemo( () => store || createCheckoutStepGroupStore(), [ store ] );
 	return (
 		<CheckoutStepGroupWrapper
 			store={ stepGroupStore }
 			loadingContent={ loadingContent }
+			loadingHeader={ loadingHeader }
 			onStepChanged={ onStepChanged }
 		>
 			{ stepAreaHeader }

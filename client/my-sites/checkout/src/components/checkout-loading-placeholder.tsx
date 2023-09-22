@@ -1,4 +1,3 @@
-import { LoadingContent } from '@automattic/composite-checkout';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -25,7 +24,6 @@ export function CheckoutLoadingPlaceholder( {
 			{ shouldShowLoadingInfo && (
 				<CheckoutLoadingInfo checkoutLoadingConditions={ checkoutLoadingConditions } />
 			) }
-			<LoadingContent />
 		</>
 	);
 }
