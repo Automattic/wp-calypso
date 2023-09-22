@@ -163,10 +163,12 @@ class HandleEmailedLinkForm extends Component {
 			buttonLabel = translate( 'Confirm Login to WordPress.com' );
 		} else if ( isWooDna ) {
 			buttonLabel = translate( 'Connect' );
-		} else if ( isGravPoweredClient ) {
-			buttonLabel = translate( 'Continue' );
 		} else {
 			buttonLabel = translate( 'Continue to WordPress.com' );
+		}
+
+		if ( isGravPoweredClient ) {
+			buttonLabel = translate( 'Continue' );
 		}
 
 		const action = (
