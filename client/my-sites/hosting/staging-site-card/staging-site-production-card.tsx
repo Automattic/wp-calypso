@@ -54,7 +54,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onError: ( error: any ) => {
 			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
 					code: error.code,
 				} )
 			);
