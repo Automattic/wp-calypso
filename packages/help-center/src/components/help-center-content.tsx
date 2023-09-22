@@ -3,9 +3,8 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { CardBody } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
@@ -24,16 +23,10 @@ import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
-	const isWapuuEnabled = config.isEnabled( 'wapuu' );
 	const location = useLocation();
 	const navigate = useNavigate();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const section = useSelector( getSectionName );
-	const { setInitialRoute } = useDispatch( HELP_CENTER_STORE );
-
-	if ( isWapuuEnabled ) {
-		setInitialRoute( '/odie' );
-	}
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {

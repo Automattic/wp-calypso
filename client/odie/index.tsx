@@ -168,7 +168,11 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 					<span>{ botName }</span>
 				</div>
 			) }
-			<div className="chat-box-message-container">
+			<div
+				className={ classnames( 'chat-box-message-container', {
+					'has-top-border': ! floating,
+				} ) }
+			>
 				<div className="chatbox-messages">
 					{ chat.messages.map( ( message, index ) => (
 						<ChatMessage
