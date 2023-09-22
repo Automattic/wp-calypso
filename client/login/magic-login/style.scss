@@ -197,7 +197,6 @@
 	line-height: 1.5;
 
 	&.grav-powered-magic-login--wp-job-manager {
-
 		a,
 		.grav-powered-magic-login__content a,
 		.grav-powered-magic-login__footer button {
@@ -397,6 +396,42 @@
 		.grav-powered-magic-login__gravatar-info {
 			margin-top: 40px;
 		}
+	}
+}
+
+.grav-powered-login-link {
+	background-color: #fff;
+	max-width: 560px;
+	margin: 0 auto;
+	padding: 20px 30px;
+	border-radius: 2px;
+
+	&.grav-powered-login-link--wp-job-manager .button.is-primary {
+		background-color: #2404eb;
+	}
+
+	.grav-powered-handle-auth__logo {
+		justify-self: start;
+	}
+
+	.empty-content {
+		margin-top: 110px;
+		margin-bottom: 137px;
+		padding-top: 0;
+	}
+
+	.button.is-primary {
+		height: 42px;
+		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		background-color: #1d4fc4;
+		font-size: 16px;
+		font-weight: 600;
+		color: #fff;
+		border: none;
+	}
+
+	@include break-small {
+		padding: 40px 56px;
 	}
 }
 /* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights */
