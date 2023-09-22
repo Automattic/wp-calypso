@@ -1,4 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { translate } from 'i18n-calypso';
 import { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
 
 interface Props {
@@ -15,14 +16,16 @@ export default function HostingInformation( props: Props ) {
 			<h3>Hosting information</h3>
 			<ul className="hosting-information-details result-list">
 				<li>
-					<div className="name">Provider</div>
+					<div className="name">{ translate( 'Provider' ) }</div>
 					<div>
 						{ hostingProvider?.slug !== 'automattic' && <>{ hostingProvider?.name }</> }
 						{ hostingProvider?.slug === 'automattic' && (
 							<>
 								<a href={ localizeUrl( 'https://automattic.com' ) }>{ hostingProvider?.name }</a>
 								&nbsp;&nbsp;
-								<a href={ localizeUrl( 'https://automattic.com/login' ) }>(login)</a>
+								<a href={ localizeUrl( 'https://automattic.com/login' ) }>
+									({ translate( 'login' ) })
+								</a>
 							</>
 						) }
 					</div>
@@ -31,12 +34,19 @@ export default function HostingInformation( props: Props ) {
 					<li>
 						<div className="name">Support</div>
 						<div>
-							<a href={ localizeUrl( 'https://wordpress.com/help/contact' ) }>Contact support</a>
+							<a href={ localizeUrl( 'https://wordpress.com/help/contact' ) }>
+								{ translate( 'Contact support' ) }
+							</a>
 						</div>
 					</li>
 				) }
 				<li>
-					<div className="name">A Records</div>
+					<div className="name">
+						{
+							/* translators: "A Records" refer to the DNS records of type "A". */
+							translate( 'A Records' )
+						}
+					</div>
 					<div className="col">
 						<ul>
 							{ aRecordIps.map( ( x, i ) => (
