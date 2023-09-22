@@ -250,6 +250,13 @@ export default function getThankYouPageUrl( {
 		}
 
 		// siteless checkout
+		if ( connectAfterCheckout && adminUrl && fromSiteSlug ) {
+			debug( 'Redirecting to the site to initiate Jetpack connection' );
+			// TODO: Then after connection, transfer temporary site subscription to the target site.
+			const connectUrl = `${ adminUrl }/admin.php?page=jetpack&connect_url_redirect&from=my-jetpack&redirect_after_auth=${ adminUrl }/admin.php?page=my-jetpack#/add-license`;
+			return connectUrl;
+		}
+
 		debug( 'redirecting to siteless jetpack thank you' );
 		const thankYouUrl = `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`;
 
