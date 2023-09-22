@@ -28,6 +28,8 @@
 }
 
 .newsletter-categories-settings__description {
-	margin-top: -12px;
-	margin-bottom: 0;
+	&.form-setting-explanation {
+		margin-top: -12px;
+		margin-bottom: 0;
+	}
 }
