@@ -40,6 +40,7 @@
 		"domains/bulk-actions-contact-info-editing": true,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
+		"domains/transfer-to-any-user": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
