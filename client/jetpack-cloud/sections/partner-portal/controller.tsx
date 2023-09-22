@@ -29,6 +29,7 @@ import {
 	getCurrentPartner,
 	hasActivePartnerKey,
 	doesPartnerRequireAPaymentMethod,
+	hasJetpackPartnerAccess,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -173,16 +174,15 @@ export function wpcomAtomicHostingContext( context: PageJS.Context, next: () => 
 
 /**
  * Require the user to have a partner with at least 1 active partner key.
- *
  * @param {PageJS.Context} context PageJS context.
  * @param {() => void} next Next context callback.
  */
 export function requireAccessContext( context: PageJS.Context, next: () => void ): void {
 	const state = context.store.getState();
-	const partner = getCurrentPartner( state );
+	const hasPartnerAccess = hasJetpackPartnerAccess( state );
 	const { pathname, search } = window.location;
 
-	if ( partner ) {
+	if ( hasPartnerAccess ) {
 		next();
 		return;
 	}
@@ -199,7 +199,6 @@ export function requireAccessContext( context: PageJS.Context, next: () => void 
 
 /**
  * Require the user to have consented to the terms of service.
- *
  * @param {PageJS.Context} context PageJS context.
  * @param {() => void} next Next context callback.
  */
@@ -230,7 +229,6 @@ export function requireTermsOfServiceConsentContext(
 
 /**
  * Require the user to have selected a partner key to use.
- *
  * @param {PageJS.Context} context PageJS context.
  * @param {() => void} next Next context callback.
  */
@@ -261,7 +259,6 @@ export function requireSelectedPartnerKeyContext(
 
 /**
  * Require the user to have a valid payment method registered.
- *
  * @param {PageJS.Context} context PageJS context.
  * @param {() => void} next Next context callback.
  */
