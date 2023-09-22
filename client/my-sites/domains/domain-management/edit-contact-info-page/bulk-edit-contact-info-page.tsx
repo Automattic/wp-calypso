@@ -144,13 +144,11 @@ export default function BulkEditContactInfoPage( {
 					successNotice( noticeMessage, {
 						showDismiss: true,
 						isPersistent: true,
-						duration: 3000,
+						duration: 5000,
 					} )
 				);
 			}
-			setTimeout( () => {
-				page( domainsListPath );
-			}, 3000 );
+			page( domainsListPath );
 		},
 		mutationFn: createBulkAction,
 	} );
