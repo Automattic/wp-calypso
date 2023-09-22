@@ -9,12 +9,12 @@ export const NEWSLETTER_CATEGORIES_ENABLED_OPTION = 'wpcom_newsletter_categories
 type NewsletterCategoriesToggleProps = {
 	disabled?: boolean;
 	value?: boolean;
-	handleAutosavingToggle: ( field: string ) => ( value: boolean ) => void;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
 };
 
 const NewsletterCategoriesToggle = ( {
 	disabled,
-	handleAutosavingToggle,
+	handleToggle,
 	value = false,
 }: NewsletterCategoriesToggleProps ) => {
 	const translate = useTranslate();
@@ -25,7 +25,7 @@ const NewsletterCategoriesToggle = ( {
 		<div className="newsletter-categories-toggle">
 			<ToggleControl
 				checked={ !! value }
-				onChange={ handleAutosavingToggle( NEWSLETTER_CATEGORIES_ENABLED_OPTION ) }
+				onChange={ handleToggle( NEWSLETTER_CATEGORIES_ENABLED_OPTION ) }
 				disabled={ disabled }
 				label={ translate( 'Enable newsletter categories' ) }
 			/>
