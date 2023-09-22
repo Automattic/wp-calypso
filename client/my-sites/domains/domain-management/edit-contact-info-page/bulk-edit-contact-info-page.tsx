@@ -137,23 +137,21 @@ export default function BulkEditContactInfoPage( {
 		selectedSite?.options?.is_domain_only
 	);
 
-	const goToDomainsList = () => {
-		if ( noticeMessage ) {
-			dispatch(
-				successNotice( noticeMessage, {
-					showDismiss: true,
-					isPersistent: true,
-					duration: 3000,
-				} )
-			);
-		}
-		setTimeout( () => {
-			page( domainsListPath );
-		}, 3000 );
-	};
-
 	const { updateContactInfo } = useDomainsBulkActionsMutation( {
-		onSuccess: goToDomainsList,
+		onSuccess: () => {
+			if ( noticeMessage ) {
+				dispatch(
+					successNotice( noticeMessage, {
+						showDismiss: true,
+						isPersistent: true,
+						duration: 3000,
+					} )
+				);
+			}
+			setTimeout( () => {
+				page( domainsListPath );
+			}, 3000 );
+		},
 		mutationFn: createBulkAction,
 	} );
 
@@ -423,7 +421,7 @@ export default function BulkEditContactInfoPage( {
 				{ selectedDomains?.map( ( domain ) => (
 					<QueryWhois domain={ domain.domain } key={ domain.domain } />
 				) ) }
-				<DomainMainPlaceholder goBack={ goToDomainsList } />
+				<DomainMainPlaceholder goBack={ () => page( domainsListPath ) } />
 			</>
 		);
 	}
