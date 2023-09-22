@@ -87,7 +87,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: false,
-			message: __( "Sorry, we still don't support some higher tier premium domain transfers." ),
+			message: __( "Sorry, we don't support some higher tier premium domain transfers." ),
 		};
 	} else if ( validationResult?.auth_code_valid === false ) {
 		// the auth check API has a bug and returns error 400 for incorrect auth codes,
