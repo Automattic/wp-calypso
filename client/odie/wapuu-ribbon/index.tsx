@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import PropTypes from 'prop-types';
 import WapuuEar from 'calypso/assets/images/odie/wapuu-ear.svg';
 import Wapuu from 'calypso/assets/images/odie/wapuu-noear-notail.svg';
 import WapuuTail from 'calypso/assets/images/odie/wapuu-tail.svg';
@@ -45,10 +44,6 @@ const WapuuRibbon = ( {
 			/>
 		</>
 	);
-};
-
-WapuuRibbon.propTypes = {
-	onToggleVisibility: PropTypes.func.isRequired,
 };
 
 export default WapuuRibbon;
