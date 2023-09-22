@@ -18,14 +18,23 @@ const ReaderPostActions = ( props ) => {
 	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
 
+	const showShare = shouldShowShare( post );
+	const showReblog = shouldShowReblog( post, hasSites );
+	const showComments = shouldShowComments( post );
+	const showLikes = shouldShowLikes( post );
+	const numberOfActions = [ showShare, showReblog, showComments, showLikes ].filter(
+		( item ) => item
+	).length;
+
 	const listClassnames = classnames( className, {
 		'reader-post-actions': true,
+		'space-items-apart': numberOfActions > 2,
 	} );
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	return (
 		<ul className={ listClassnames }>
-			{ shouldShowShare( post ) && (
+			{ showShare && (
 				<li className="reader-post-actions__item">
 					<ShareButton
 						post={ post }
@@ -36,7 +45,7 @@ const ReaderPostActions = ( props ) => {
 					/>
 				</li>
 			) }
-			{ shouldShowReblog( post, hasSites ) && (
+			{ showReblog && (
 				<li className="reader-post-actions__item">
 					<ShareButton
 						post={ post }
@@ -48,7 +57,7 @@ const ReaderPostActions = ( props ) => {
 					/>
 				</li>
 			) }
-			{ shouldShowComments( post ) && (
+			{ showComments && (
 				<li className="reader-post-actions__item">
 					<CommentButton
 						key="comment-button"
@@ -61,7 +70,7 @@ const ReaderPostActions = ( props ) => {
 					/>
 				</li>
 			) }
-			{ shouldShowLikes( post ) && (
+			{ showLikes && (
 				<li className="reader-post-actions__item">
 					<LikeButton
 						key="like-button"
