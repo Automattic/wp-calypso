@@ -14,7 +14,6 @@ import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -41,7 +40,6 @@ export const HelpCenterContactPage: FC = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const isWapuuEnabled = config.isEnabled( 'wapuu' );
-	const { setIsHelpCenterVisible, setIsLoading } = useOdieAssistantContext();
 
 	const renderEmail = useShouldRenderEmailOption();
 	const {
@@ -72,9 +70,7 @@ export const HelpCenterContactPage: FC = () => {
 			chat_available: renderChat.state === 'AVAILABLE',
 			email_available: renderEmail.render,
 		} );
-
-		setIsLoading( isLoading );
-	}, [ isLoading, renderChat.state, renderEmail.render, setIsLoading ] );
+	}, [ isLoading, renderChat.state, renderEmail.render ] );
 
 	const liveChatHeaderText = useMemo( () => {
 		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Live chat (English)' ) ) {
@@ -210,7 +206,7 @@ export const HelpCenterContactPage: FC = () => {
 						</Link>
 					) }
 					{ isWapuuEnabled && (
-						<Link onClick={ () => setIsHelpCenterVisible( false ) } to="#">
+						<Link to="/odie">
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'odie' ) }
 								role="button"

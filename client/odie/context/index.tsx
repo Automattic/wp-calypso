@@ -1,9 +1,4 @@
 import config from '@automattic/calypso-config';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import {
-	useDispatch as useDataStoreDispatch,
-	useSelect as useDateStoreSelect,
-} from '@wordpress/data';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -14,7 +9,6 @@ import { getOdieInitialMessages } from './initial-messages';
 import { getOdieInitialPrompt } from './initial-prompts';
 import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
 import type { Chat, Context, Message, Nudge, OdieAllowedSectionNames } from '../types';
-import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -38,15 +32,12 @@ interface OdieAssistantContextInterface {
 	botSetting?: string;
 	chat: Chat;
 	clearChat: () => void;
-	isHelpCenterVisible: boolean;
 	isLoadingChat: boolean;
 	isLoading: boolean;
 	isNudging: boolean;
 	isVisible: boolean;
 	lastNudge: Nudge | null;
 	lastUserLocations: OdieUserTracking[];
-	onContactUs: () => void;
-	onSearchDoc: () => void;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
@@ -55,7 +46,6 @@ interface OdieAssistantContextInterface {
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
-	setIsHelpCenterVisible: ( isHelpCenterVisible: boolean ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 }
 
@@ -65,15 +55,12 @@ const defaultContextInterfaceValues = {
 	botNameSlug: 'wapuu',
 	chat: { context: { section_name: '', site_id: null }, messages: [] },
 	clearChat: noop,
-	isHelpCenterVisible: false,
 	isLoadingChat: false,
 	isLoading: false,
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
 	lastUserLocations: [],
-	onContactUs: noop,
-	onSearchDoc: noop,
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
@@ -82,7 +69,6 @@ const defaultContextInterfaceValues = {
 	setIsNudging: noop,
 	setIsVisible: noop,
 	setIsLoading: noop,
-	setIsHelpCenterVisible: noop,
 	trackEvent: noop,
 };
 
@@ -96,14 +82,12 @@ const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 
 // Create a provider component for the context
 const OdieAssistantProvider = ( {
-	helpCenter = null,
 	botName = 'Wapuu assistant',
 	botNameSlug = 'wapuu',
 	botSetting = 'wapuu',
 	sectionName,
 	children,
 }: {
-	helpCenter?: ReactNode;
 	botName?: string;
 	botNameSlug?: string;
 	botSetting?: string;
@@ -115,7 +99,6 @@ const OdieAssistantProvider = ( {
 	const lastUserLocations = useOdieUserTracking();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
@@ -167,30 +150,6 @@ const OdieAssistantProvider = ( {
 		dispatch( recordTracksEvent( event, properties ) );
 	};
 
-	const helpCenterVisible =
-		useDateStoreSelect(
-			( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-			[]
-		) ?? false;
-
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const { setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
-
-	const onSearchDoc = () => {
-		setIsHelpCenterVisible( true );
-		setShowHelpCenter( true );
-		setInitialRoute( '/' );
-	};
-
-	const onContactUs = () => {
-		setIsHelpCenterVisible( true );
-		setShowHelpCenter( true );
-		setInitialRoute( '/contact-options' );
-	};
-
-	const visibility = sectionName === 'help-center' ? helpCenterVisible : isVisible;
-	const setVisibility = sectionName === 'help-center' ? setShowHelpCenter : setIsVisible;
-
 	const addMessage = ( message: Message ) => {
 		setMessages( ( prevMessages ) => {
 			const lastMessage = prevMessages[ prevMessages.length - 1 ];
@@ -222,11 +181,9 @@ const OdieAssistantProvider = ( {
 				isLoadingChat: false,
 				isLoading: isLoading,
 				isNudging,
-				isVisible: visibility,
+				isVisible,
 				lastNudge,
 				lastUserLocations,
-				onContactUs,
-				onSearchDoc,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,
@@ -234,9 +191,7 @@ const OdieAssistantProvider = ( {
 				setContext: noop,
 				setIsLoading,
 				setIsNudging,
-				setIsVisible: setVisibility,
-				isHelpCenterVisible,
-				setIsHelpCenterVisible,
+				setIsVisible,
 				trackEvent,
 				botSetting,
 			} }
@@ -246,8 +201,9 @@ const OdieAssistantProvider = ( {
 			{ odieIsEnabled && (
 				<OdieAssistant
 					botNameSlug={ botNameSlug }
-					helpCenter={ helpCenter }
+					floating={ botSetting !== 'supportDocs' }
 					simple={ botSetting === 'supportDocs' }
+					showHeader={ botSetting !== 'supportDocs' }
 				/>
 			) }
 		</OdieAssistantContext.Provider>

@@ -65,9 +65,6 @@ $head-foot-height: 50px;
 		}
 
 		.help-center__container-content {
-			&.is-relative {
-				flex: auto;
-			}
 			overflow-y: auto;
 			padding: 16px;
 		}
@@ -94,7 +91,7 @@ $head-foot-height: 50px;
 				cursor: move;
 			}
 
-			.help-center__container-content:not(.is-relative) {
+			.help-center__container-content {
 				flex-grow: 1;
 				height: calc(80vh - #{$head-foot-height} * 2);
 			}
@@ -108,13 +105,6 @@ $head-foot-height: 50px;
 					cursor: pointer;
 				}
 			}
-		}
-
-		&.is-relative {
-			position: inherit;
-			width: 100%;
-			height: 100%;
-			max-height: 100%;
 		}
 
 		&.is-mobile {
@@ -238,10 +228,21 @@ $head-foot-height: 50px;
 		}
 	}
 
+	.help-center__container-content-odie {
+		display: flex;
+		height: 100%;
+		flex-direction: column;
+
+		.back-button {
+			padding-left: 16px;
+			padding-top: 16px;
+		}
+	}
+
 	.help-center__container-content {
 		padding: 0 !important;
 
-		> *:not(iframe) {
+		> *:not(iframe):not(.help-center__container-content-odie) {
 			padding: 16px;
 			box-sizing: border-box;
 		}

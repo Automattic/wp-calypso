@@ -6,7 +6,6 @@ export interface Container {
 	defaultFooterContent?: ReactElement;
 	isLoading?: boolean;
 	hidden?: boolean;
-	isRelative?: boolean;
 }
 
 export interface Header {

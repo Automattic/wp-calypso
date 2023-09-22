@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState } from 'react';
-import BackButton from 'calypso/components/back-button';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -17,13 +16,14 @@ export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
 
 type OdieAssistantProps = {
-	helpCenter?: React.ReactNode;
 	botNameSlug: string;
 	simple?: boolean;
+	floating?: boolean;
+	showHeader?: boolean;
 };
 
 const OdieAssistant = ( props: OdieAssistantProps ) => {
-	const { helpCenter = null, simple, botNameSlug } = props;
+	const { simple, botNameSlug, floating = true, showHeader = true } = props;
 	const {
 		addMessage,
 		botName,
@@ -37,10 +37,7 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		setIsNudging,
 		isVisible,
 		setIsVisible,
-		isHelpCenterVisible,
-		onSearchDoc: onBackButton,
 	} = useOdieAssistantContext();
-	const hasHelpCenter = helpCenter !== null;
 	const [ input, setInput ] = useState( '' );
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const { data: chatData } = useOdieGetChatPollQuery( chat.chat_id ?? null );
@@ -146,68 +143,59 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 	return (
 		<div
 			className={ classnames( 'chatbox', {
-				'chatbox-show': isVisible && ! simple,
-				'chatbox-hide': ! isVisible && ! simple,
-				'chatbox-show-vertical': isVisible && simple,
-				'chatbox-hide-vertical': ! isVisible && simple,
-				'using-environment-badge': environmentBadge,
-				'chatbox-big': botSetting === 'supportDocs',
+				'chatbox-floating': floating,
+				'chatbox-show': isVisible && ! simple && floating,
+				'chatbox-hide': ! isVisible && ! simple && floating,
+				'chatbox-show-vertical': isVisible && simple && floating,
+				'chatbox-hide-vertical': ! isVisible && simple && floating,
+				'using-environment-badge': environmentBadge && floating,
+				'chatbox-big': botSetting === 'supportDocs' && floating,
 			} ) }
 		>
 			<TrackComponentView
 				eventName="calypso_odie_chatbox_view"
 				eventProperties={ { bot_name_slug: botNameSlug } }
 			/>
-			{ ! simple && (
+			{ ! simple && showHeader && (
 				<WapuuRibbon
 					onToggleVisibility={ handleToggleVisibility }
 					isNudging={ isNudging }
 					isLoading={ isLoading }
 				/>
 			) }
-			<div
-				className={ classnames( 'chatbox-header', {
-					'chatbox-header-with-help': hasHelpCenter,
-				} ) }
-			>
-				{ ! isHelpCenterVisible && <BackButton onClick={ onBackButton } /> }
-				<span>{ botName }</span>
-			</div>
-
-			{ hasHelpCenter && isHelpCenterVisible && (
-				<div className="chatbox-help-center-container">{ helpCenter }</div>
+			{ showHeader && (
+				<div className="chatbox-header">
+					<span>{ botName }</span>
+				</div>
 			) }
-			{ ! hasHelpCenter ||
-				( hasHelpCenter && ! isHelpCenterVisible && (
-					<div className="chat-box-message-container">
-						<div className="chatbox-messages">
-							{ chat.messages.map( ( message, index ) => (
-								<ChatMessage
-									message={ message }
-									isLast={ index === chat.messages.length - 1 }
-									messageEndRef={ messagesEndRef }
-									key={ index }
-								/>
-							) ) }
-						</div>
-						<div className="chatbox-input-area">
-							<FormTextInputWithAction
-								className="reader-sidebar-tags__text-input"
-								placeholder={ translate( 'Enter message', {
-									context:
-										'Placeholder text for the input field where the user can type a message to a chat bot',
-									textOnly: true,
-								} ) }
-								action={ translate( 'Send', {
-									context: 'Button label for sending a message to a chat bot',
-								} ) }
-								onAction={ handleSendMessage }
-								onChange={ handleMessageChange }
-								clearOnSubmit
-							/>
-						</div>
-					</div>
-				) ) }
+			<div className="chat-box-message-container">
+				<div className="chatbox-messages">
+					{ chat.messages.map( ( message, index ) => (
+						<ChatMessage
+							message={ message }
+							isLast={ index === chat.messages.length - 1 }
+							messageEndRef={ messagesEndRef }
+							key={ index }
+						/>
+					) ) }
+				</div>
+				<div className="chatbox-input-area">
+					<FormTextInputWithAction
+						className="reader-sidebar-tags__text-input"
+						placeholder={ translate( 'Enter message', {
+							context:
+								'Placeholder text for the input field where the user can type a message to a chat bot',
+							textOnly: true,
+						} ) }
+						action={ translate( 'Send', {
+							context: 'Button label for sending a message to a chat bot',
+						} ) }
+						onAction={ handleSendMessage }
+						onChange={ handleMessageChange }
+						clearOnSubmit
+					/>
+				</div>
+			</div>
 		</div>
 	);
 };

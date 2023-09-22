@@ -2,7 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import type { Message } from '../types';
 
 export const getOdieInitialMessages = ( botConfig: string | undefined ): Message[] => {
-	if ( ! botConfig ) {
+	if ( ! botConfig || botConfig === 'supportDocs' ) {
 		return [];
 	}
 

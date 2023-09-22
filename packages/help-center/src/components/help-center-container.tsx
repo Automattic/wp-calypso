@@ -31,15 +31,11 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( {
-	handleClose,
-	hidden,
-	isRelative = false,
-} ) => {
+const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { show, isMinimized, initialRoute } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
-			show: isRelative || store.isHelpCenterShown(),
+			show: store.isHelpCenterShown(),
 			isMinimized: store.getIsMinimized(),
 			initialRoute: store.getInitialRoute(),
 		};
@@ -51,7 +47,6 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	const isMobile = useMobileBreakpoint();
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
-		'is-relative': isRelative,
 	} );
 
 	const onDismiss = () => {
@@ -84,21 +79,19 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		<MemoryRouter initialEntries={ initialRoute ? [ initialRoute ] : undefined }>
 			<FeatureFlagProvider>
 				<OptionalDraggable
-					draggable={ ! isMobile && ! isMinimized && ! isRelative }
+					draggable={ ! isMobile && ! isMinimized }
 					nodeRef={ nodeRef }
 					handle=".help-center__container-header"
 					bounds="body"
 				>
 					<Card className={ classNames } { ...animationProps } ref={ nodeRef }>
-						{ ! isRelative && (
-							<HelpCenterHeader
-								isMinimized={ isMinimized }
-								onMinimize={ () => setIsMinimized( true ) }
-								onMaximize={ () => setIsMinimized( false ) }
-								onDismiss={ onDismiss }
-							/>
-						) }
-						<HelpCenterContent isRelative={ isRelative } />
+						<HelpCenterHeader
+							isMinimized={ isMinimized }
+							onMinimize={ () => setIsMinimized( true ) }
+							onMaximize={ () => setIsMinimized( false ) }
+							onDismiss={ onDismiss }
+						/>
+						<HelpCenterContent />
 						{ ! isMinimized && <HelpCenterFooter /> }
 					</Card>
 				</OptionalDraggable>
