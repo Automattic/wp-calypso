@@ -71,7 +71,7 @@ const SubscriberDetails = ( {
 							dateFormat="LL"
 						/>
 					</div>
-					{ config.isEnabled( 'settings/newsletter-categories' ) && newsletterCategoriesEnabled && (
+					{ newsletterCategoriesEnabled && (
 						<div className="subscriber-details__content-column">
 							<div className="subscriber-details__content-label">
 								{ translate( 'Receives emails for' ) }

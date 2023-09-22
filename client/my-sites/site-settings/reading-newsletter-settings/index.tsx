@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -71,21 +70,20 @@ export const NewsletterSettingsSection = ( {
 
 	return (
 		<>
-			{ config.isEnabled( 'settings/newsletter-categories' ) &&
-				( isSimpleSite || hasNewsletterCategoriesBlogSticker ) && (
-					<Card className="site-settings__card">
-						<NewsletterCategoriesSettings
-							disabled={ disabled }
-							newsletterCategoryIds={
-								fields.wpcom_newsletter_categories ?? defaultNewsletterCategoryIds
-							}
-							handleAutosavingToggle={ handleAutosavingToggle }
-							handleSubmitForm={ handleSubmitForm }
-							toggleValue={ wpcom_newsletter_categories_enabled }
-							updateFields={ updateFields }
-						/>
-					</Card>
-				) }
+			{ ( isSimpleSite || hasNewsletterCategoriesBlogSticker ) && (
+				<Card className="site-settings__card">
+					<NewsletterCategoriesSettings
+						disabled={ disabled }
+						newsletterCategoryIds={
+							fields.wpcom_newsletter_categories ?? defaultNewsletterCategoryIds
+						}
+						handleAutosavingToggle={ handleAutosavingToggle }
+						handleSubmitForm={ handleSubmitForm }
+						toggleValue={ wpcom_newsletter_categories_enabled }
+						updateFields={ updateFields }
+					/>
+				</Card>
+			) }
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				id="newsletter-settings"
