@@ -46,8 +46,9 @@ class EditContactInfoFormCard extends Component {
 		whoisSaveSuccess: PropTypes.bool,
 		showContactInfoNote: PropTypes.bool,
 		backUrl: PropTypes.string.isRequired,
-		onSubmitButtonClick: PropTypes.func, // Callback can return "cancel" to cancel the default form handling
 		bulkEdit: PropTypes.bool,
+		wwdDomains: PropTypes.arrayOf( PropTypes.object ),
+		bulkUpdateContactInfo: PropTypes.func,
 		forceShowTransferLockOptOut: PropTypes.bool,
 	};
 
@@ -134,7 +135,9 @@ class EditContactInfoFormCard extends Component {
 
 	requiresConfirmation( newContactDetails ) {
 		const { firstName, lastName, organization, email } = this.getContactFormFieldValues();
-		const isWwdDomain = this.props.selectedDomain.registrar === registrarNames.WWD;
+		const isWwdDomain =
+			this.props.selectedDomain.registrar === registrarNames.WWD ||
+			( this.props.bulkEdit && this.props.wwdDomains?.length > 0 );
 
 		const primaryFieldsChanged = ! (
 			firstName === newContactDetails.firstName &&
@@ -235,6 +238,18 @@ class EditContactInfoFormCard extends Component {
 				onClose={ this.handleDialogClose }
 			>
 				<h1>{ translate( 'Confirmation Needed' ) }</h1>
+				{ this.props.bulkEdit && this.props.wwdDomains?.length > 0 && (
+					<>
+						<span>{ translate( 'Confirmation is needed for the following domains:' ) }</span>
+						<ul>
+							{ this.props.wwdDomains.map( ( domain ) => (
+								<li key={ domain }>
+									<strong>{ domain.domain }</strong>
+								</li>
+							) ) }
+						</ul>
+					</>
+				) }
 				<p>{ text }</p>
 				{ email !== wpcomEmail && this.renderBackupEmail() }
 			</Dialog>
@@ -284,6 +299,15 @@ class EditContactInfoFormCard extends Component {
 				showNonDaConfirmationDialog: false,
 			},
 			() => {
+				if ( this.props.bulkEdit ) {
+					this.updateWpcomEmail( newContactDetails, updateWpcomEmail );
+					this.props.bulkUpdateContactInfo?.(
+						newContactDetails,
+						transferLock,
+						this.getNoticeMessage()
+					);
+					return;
+				}
 				this.props.saveWhois(
 					selectedDomain.name,
 					newContactDetails,
@@ -307,14 +331,15 @@ class EditContactInfoFormCard extends Component {
 			),
 		} );
 
+		this.showNoticeAndGoBack( this.getNoticeMessage() );
+	};
+
+	getNoticeMessage = () => {
 		if ( ! this.state.requiresConfirmation ) {
-			this.showNoticeAndGoBack(
-				this.props.translate(
-					'The contact info has been updated. ' +
-						'There may be a short delay before the changes show up in the public records.'
-				)
+			return this.props.translate(
+				'The contact info has been updated. ' +
+					'There may be a short delay before the changes show up in the public records.'
 			);
-			return;
 		}
 
 		const { email } = this.getContactFormFieldValues();
@@ -342,7 +367,7 @@ class EditContactInfoFormCard extends Component {
 			);
 		}
 
-		this.showNoticeAndGoBack( message );
+		return message;
 	};
 
 	getReturnDestination = () => {
@@ -385,18 +410,6 @@ class EditContactInfoFormCard extends Component {
 	};
 
 	handleSubmitButtonClick = ( newContactDetails ) => {
-		if ( this.props.onSubmitButtonClick ) {
-			const result = this.props.onSubmitButtonClick(
-				newContactDetails,
-				this.state.transferLock,
-				this.state.updateWpcomEmail
-			);
-			this.updateWpcomEmail( newContactDetails, this.state.updateWpcomEmail );
-			if ( result === 'cancel' ) {
-				return;
-			}
-		}
-
 		this.setState(
 			{
 				requiresConfirmation: this.requiresConfirmation( newContactDetails ),
@@ -419,7 +432,7 @@ class EditContactInfoFormCard extends Component {
 	};
 
 	getIsFieldDisabled = ( name ) => {
-		if ( this.props.bulkEdit ) {
+		if ( this.props.bulkEdit && ! this.state.formSubmitting ) {
 			return false;
 		}
 		const unmodifiableFields = get(

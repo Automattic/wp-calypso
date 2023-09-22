@@ -131,7 +131,6 @@ const useModifiedActionPrimary = (
 				// Navigate to the stats purchase page, scrolled to the top.
 				const purchaseUrl = getStatsPurchaseURL(
 					siteId,
-					false,
 					addOnMeta.productSlug === PRODUCT_JETPACK_STATS_YEARLY ? 'commercial' : 'personal'
 				);
 				// TODO: Remove the feature flag once we enable Paid Stats for WPCOM sites.

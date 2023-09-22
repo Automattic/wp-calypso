@@ -197,6 +197,7 @@ function ContactInfo( {
 				isSubmitting={ false }
 				updateWpcomEmailCheckboxHidden={ true }
 				cancelHidden={ true }
+				ignoreCountryOnDisableSubmit={ true }
 			>
 				<div className="domain-contact-info-form__terms">
 					<Gridicon icon="info-outline" size={ 18 } />

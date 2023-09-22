@@ -1,10 +1,9 @@
-import React from 'react';
+import IntervalDropdown from '../stats-interval-dropdown';
 
-const DateControl = () => {
+const DateControl = ( { period, pathTemplate } ) => {
 	return (
 		<div>
-			{ /* New Component bits go here */ }
-			New DateControl Component
+			<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
 		</div>
 	);
 };

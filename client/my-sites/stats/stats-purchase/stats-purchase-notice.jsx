@@ -11,11 +11,8 @@ import {
 } from './stats-purchase-shared';
 import './styles.scss';
 
-const getStatsPurchaseURL = ( siteId, isOdysseyStats, productType = 'commercial' ) => {
-	const purchasePath = `/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
-
-	return purchasePath;
-};
+const getStatsPurchaseURL = ( siteId, productType = 'commercial' ) =>
+	`/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
 
 const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 	event.preventDefault();
@@ -83,11 +80,7 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button
 				variant="primary"
 				onClick={ ( e ) =>
-					handleUpgradeClick(
-						e,
-						getStatsPurchaseURL( siteId, isOdysseyStats, 'commercial' ),
-						isOdysseyStats
-					)
+					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'commercial' ), isOdysseyStats )
 				}
 			>
 				{ translate( 'Upgrade my Stats' ) }
@@ -125,11 +118,7 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button
 				variant="primary"
 				onClick={ ( e ) =>
-					handleUpgradeClick(
-						e,
-						getStatsPurchaseURL( siteId, isOdysseyStats, 'personal' ),
-						isOdysseyStats
-					)
+					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'personal' ), isOdysseyStats )
 				}
 			>
 				{ translate( 'Upgrade my Stats' ) }
