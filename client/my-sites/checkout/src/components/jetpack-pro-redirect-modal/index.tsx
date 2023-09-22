@@ -38,12 +38,12 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 		dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_redirect' ) );
 	};
 
-	// Features list of Agency/Pro Dashboard.
+	// Features list of Jetpack Manage.
 	const features = [
 		translate( 'Up to 60% off our products and bundles.' ),
 		translate( 'A recurring discount (not just for the first year).' ),
 		translate( 'More flexible billing (only pay per day of use, billed monthly).' ),
-		translate( 'Access to our Pro Dashboard – manage all of your sites in one place.' ),
+		translate( 'Access to Jetpack Manage – manage all of your sites in one place.' ),
 	];
 
 	const redirectURLPage = getQueryArg( redirectTo ?? '', 'page' );
