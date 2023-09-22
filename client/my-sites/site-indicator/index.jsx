@@ -136,7 +136,7 @@ export class SiteIndicator extends Component {
 			<span>
 				<WPAdminLink
 					onClick={ this.handleGenericUpdate }
-					href={ site.options.admin_url + 'update-core.php' }
+					href={ site.options?.admin_url + 'update-core.php' }
 				>
 					{ translate( 'There is an update available.', 'There are updates available.', {
 						count: siteUpdates.total,

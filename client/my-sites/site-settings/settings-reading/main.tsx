@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -159,6 +159,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						id="newsletter-settings"
 						title={ translate( 'Newsletter settings' ) }
 					/>
+					{ isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
 					<Card className="site-settings__card">
 						<em>
 							{ translate( 'Newsletter settings have moved to their {{a}}own page{{/a}}.', {
@@ -176,7 +177,6 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isAtomic={ isAtomic }
 						siteIsJetpack={ siteIsJetpack }
 					/>
-					{ config.isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
 					<RssFeedSettingsSection
 						fields={ fields }
 						onChangeField={ onChangeField }

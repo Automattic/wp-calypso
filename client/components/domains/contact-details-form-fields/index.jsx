@@ -70,6 +70,7 @@ export class ContactDetailsFormFields extends Component {
 		updateWpcomEmailCheckboxDisabled: PropTypes.bool,
 		onUpdateWpcomEmailCheckboxChange: PropTypes.func,
 		updateWpcomEmailCheckboxHidden: PropTypes.bool,
+		ignoreCountryOnDisableSubmit: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -94,6 +95,7 @@ export class ContactDetailsFormFields extends Component {
 		shouldForceRenderOnPropChange: false,
 		updateWpcomEmailCheckboxDisabled: false,
 		updateWpcomEmailCheckboxHidden: false,
+		ignoreCountryOnDisableSubmit: false,
 	};
 
 	constructor( props ) {
@@ -534,8 +536,14 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	render() {
-		const { translate, onCancel, disableSubmitButton, labelTexts, contactDetailsErrors } =
-			this.props;
+		const {
+			translate,
+			onCancel,
+			disableSubmitButton,
+			labelTexts,
+			contactDetailsErrors,
+			ignoreCountryOnDisableSubmit,
+		} = this.props;
 
 		if ( ! this.state.form ) {
 			return null;
@@ -585,7 +593,9 @@ export class ContactDetailsFormFields extends Component {
 						{ this.props.onSubmit && (
 							<FormButton
 								className="contact-details-form-fields__submit-button"
-								disabled={ ! countryCode || disableSubmitButton }
+								disabled={
+									( ! ignoreCountryOnDisableSubmit && ! countryCode ) || disableSubmitButton
+								}
 								onClick={ this.handleSubmitButtonClick }
 							>
 								{ labelTexts.submitButton || translate( 'Submit' ) }

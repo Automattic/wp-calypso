@@ -10,8 +10,7 @@ type Props = {
 const hasLinkInBioSite = ( sites: SiteExcerptData[] ) => {
 	return Boolean(
 		sites.find( ( site ) => {
-			const option = site.options || {};
-			return option.site_intent === 'link-in-bio';
+			return site.options?.site_intent === 'link-in-bio';
 		} )
 	);
 };

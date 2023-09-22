@@ -19,6 +19,7 @@ export type DomainThankYouParams = {
 	isDomainOnly: boolean;
 	siteIntent: ReturnType< typeof useSiteOption >;
 	redirectTo: 'home' | 'setup';
+	isActivityPubEnabled?: boolean;
 };
 
 export type DomainThankYouPropsGetter = ( params: DomainThankYouParams ) => DomainThankYouProps;

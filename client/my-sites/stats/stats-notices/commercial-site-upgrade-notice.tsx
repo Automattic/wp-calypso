@@ -3,6 +3,7 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
@@ -12,11 +13,7 @@ import { StatsNoticeProps } from './types';
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
 	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/type-detection,stats/paid-wpcom-stats&from=${ from }-stats-commercial-site-upgrade-notice&productType=commercial`;
-	if ( ! isOdysseyStats ) {
-		return purchasePath;
-	}
-	// We use absolute path here as it runs in Odyssey as well.
-	return `https://wordpress.com${ purchasePath }`;
+	return purchasePath;
 };
 
 const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
@@ -46,10 +43,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 			  )
 			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_support_button_clicked' );
 		// Allow some time for the event to be recorded before redirecting.
-		setTimeout(
-			() => ( window.location.href = getStatsPurchaseURL( siteId, isOdysseyStats ) ),
-			250
-		);
+		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
 	};
 
 	useEffect( () => {

@@ -2,6 +2,7 @@ import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { type as domainType } from 'calypso/lib/domains/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
@@ -12,6 +13,7 @@ import type { DisconnectDomainResult } from './types';
 import type { DomainInfoCardProps } from '../types';
 
 const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) => {
+	const disconnectableTypes = [ domainType.REGISTERED ] as const;
 	const [ isDialogVisible, setDialogVisible ] = useState( false );
 	const [ isDisconnecting, setDisconnecting ] = useState( false );
 	const translate = useTranslate();
@@ -22,7 +24,8 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 		! domain.currentUserIsOwner ||
 		domain.isMoveToNewSitePending ||
 		! selectedSite ||
-		selectedSite.options?.is_domain_only
+		selectedSite.options?.is_domain_only ||
+		! disconnectableTypes.includes( domain.type )
 	) {
 		return null;
 	}

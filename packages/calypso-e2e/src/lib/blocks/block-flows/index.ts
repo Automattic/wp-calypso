@@ -28,6 +28,8 @@ export * from './form-ai';
 export * from './image-compare';
 export * from './map';
 export * from './gif';
+export * from './markdown';
+export * from './related-posts';
 
 /* Types */
 export * from './types';
