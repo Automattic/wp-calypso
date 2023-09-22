@@ -47,7 +47,7 @@ class EditContactInfoFormCard extends Component {
 		showContactInfoNote: PropTypes.bool,
 		backUrl: PropTypes.string.isRequired,
 		bulkEdit: PropTypes.bool,
-		wwdDomains: [ PropTypes.object ],
+		wwdDomains: PropTypes.arrayOf( PropTypes.object ),
 		bulkUpdateContactInfo: PropTypes.func,
 		forceShowTransferLockOptOut: PropTypes.bool,
 	};
