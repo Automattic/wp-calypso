@@ -88,14 +88,14 @@ $domains-table-mobile-breakpoint: 480px;
 	}
 
 	.domains-table-row__status-cell {
-		white-space: nowrap;
+		white-space: pre-line;
 		display: flex;
 		align-items: center;
 		gap: 4px;
 		font-size: $font-body-small;
 
 		@media ( min-width: $domains-table-mobile-breakpoint ) {
-			width: 100px;
+			width: 150px;
 		}
 
 		svg {
@@ -120,7 +120,6 @@ $domains-table-mobile-breakpoint: 480px;
 
 	.domains-table-row__actions {
 		text-align: right;
-
 	}
 }
 
@@ -215,7 +214,7 @@ $domains-table-mobile-breakpoint: 480px;
 .domains-table-row__domain-type-text {
 	display: none;
 	font-size: $font-body-extra-small;
-	font-style: normal;
+	font-style: italic;
 	font-weight: 400;
 	line-height: 20px;
 

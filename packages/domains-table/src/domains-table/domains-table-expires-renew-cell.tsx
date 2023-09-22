@@ -7,10 +7,12 @@ import moment from 'moment';
 
 interface DomainsTableExpiresRewnewsOnCellProps {
 	domain: PartialDomainData;
+	isCompact?: boolean;
 }
 
 export const DomainsTableExpiresRewnewsOnCell = ( {
 	domain,
+	isCompact = false,
 }: DomainsTableExpiresRewnewsOnCellProps ) => {
 	const localeSlug = useLocale();
 	const isExpired = domain.expiry && moment( domain.expiry ).utc().isBefore( moment().utc() );
@@ -39,7 +41,9 @@ export const DomainsTableExpiresRewnewsOnCell = ( {
 		<div className="domains-table-row__renews-on-cell">
 			{ expiryDate ? (
 				<>
-					<Gridicon icon={ isExpired ? 'notice-outline' : 'reblog' } size={ 18 } />
+					{ ! isCompact && (
+						<Gridicon icon={ isExpired ? 'notice-outline' : 'reblog' } size={ 18 } />
+					) }
 					{ notice }
 				</>
 			) : (

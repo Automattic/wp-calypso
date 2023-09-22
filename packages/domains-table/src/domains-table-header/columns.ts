@@ -157,3 +157,8 @@ export const applyColumnSort = (
 		return result;
 	} );
 };
+
+export const removeColumns = ( columns: DomainsTableColumn[], ...names: string[] ) => {
+	const _names = names ?? [];
+	return columns.filter( ( column ) => ! _names.includes( column.name ) );
+};
