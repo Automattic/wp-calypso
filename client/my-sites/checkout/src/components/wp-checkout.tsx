@@ -7,7 +7,6 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
-	SubmitButtonWrapper,
 	Button,
 	useTransactionStatus,
 	TransactionStatus,
@@ -366,11 +365,13 @@ export default function WPCheckout( {
 					<PerformanceTrackerStop />
 					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
 					<CheckoutCompleteRedirecting />
-					<SubmitButtonWrapper>
-						<Button buttonType="primary" fullWidth isBusy disabled>
-							{ translate( 'Please wait…' ) }
-						</Button>
-					</SubmitButtonWrapper>
+					<CheckoutFormSubmit
+						submitButton={
+							<Button buttonType="primary" fullWidth isBusy disabled>
+								{ translate( 'Please wait…' ) }
+							</Button>
+						}
+					/>
 				</WPCheckoutMainContent>
 			</WPCheckoutWrapper>
 		);
@@ -393,11 +394,13 @@ export default function WPCheckout( {
 					<PerformanceTrackerStop />
 					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
 					<EmptyCart />
-					<SubmitButtonWrapper>
-						<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
-							{ translate( 'Go back' ) }
-						</Button>
-					</SubmitButtonWrapper>
+					<CheckoutFormSubmit
+						submitButton={
+							<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
+								{ translate( 'Go back' ) }
+							</Button>
+						}
+					/>
 				</WPCheckoutMainContent>
 			</WPCheckoutWrapper>
 		);
