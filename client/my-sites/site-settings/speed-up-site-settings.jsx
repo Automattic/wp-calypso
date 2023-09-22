@@ -141,7 +141,7 @@ class SpeedUpSiteSettings extends Component {
 									'Modern browsers now support lazy loading, and WordPress itself bundles lazy loading features for images and videos. This feature will consequently be removed from Jetpack in November.'
 								) }
 							>
-								<NoticeAction href={ lazyImagesSupportUrl }>
+								<NoticeAction href={ lazyImagesSupportUrl } external>
 									{ translate( 'Learn more' ) }
 								</NoticeAction>
 							</Notice>
