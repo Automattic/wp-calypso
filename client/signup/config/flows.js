@@ -32,6 +32,8 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 }
 
 function dependenciesContainCartItem( dependencies ) {
+	// @TODO: cartItem is now deprecated. Remove dependencies.cartItem and
+	// dependencies.domainItem once all steps and flows have been updated to use cartItems
 	return dependencies.cartItem || dependencies.domainItem || dependencies.cartItems;
 }
 

@@ -96,6 +96,8 @@ import './style.scss';
 const debug = debugModule( 'calypso:signup' );
 
 function dependenciesContainCartItem( dependencies ) {
+	// @TODO: cartItem is now deprecated. Remove dependencies.cartItem and
+	// dependencies.domainItem once all steps and flows have been updated to use cartItems
 	return !! (
 		dependencies &&
 		( dependencies.cartItem || dependencies.domainItem || dependencies.cartItems )
@@ -484,6 +486,8 @@ class Signup extends Component {
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
+		// @TODO: cartItem is now deprecated. Remove this once all steps and flows have been
+		// updated to use cartItems
 		const cartItem = get( dependencies, 'cartItem' );
 		const cartItems = get( dependencies, 'cartItems' );
 		const domainItem = get( dependencies, 'domainItem' );
