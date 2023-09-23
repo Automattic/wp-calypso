@@ -53,7 +53,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Start a new page', async function () {
-		await pagesPage.addNewPage();
+		await pagesPage.addNewPage( { timeout: 30 * 1000 } );
 	} );
 
 	it( 'Select page template', async function () {

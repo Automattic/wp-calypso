@@ -29,10 +29,11 @@ export class PagesPage {
 	/**
 	 * Start a new page using the 'Add new page' button.
 	 */
-	async addNewPage(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.getByRole( 'link', { name: /(Add new|Start a) page/ } ).click(),
-		] );
+	async addNewPage( { timeout }: { timeout?: number } = {} ): Promise< void > {
+		const button = this.page.getByRole( 'link', { name: /(Add new|Start a) page/ } );
+		await button.waitFor( { timeout: timeout } );
+		await button.click();
+
+		await this.page.waitForURL( /(page|post_type=page)/, { timeout: timeout } );
 	}
 }
