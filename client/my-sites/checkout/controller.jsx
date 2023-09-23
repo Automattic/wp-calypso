@@ -182,6 +182,13 @@ export function checkout( context, next ) {
 		} );
 	}
 
+	// On checkout routes, block the PWA install prompt if we can detect it
+	// beforeInstallPrompt is technically an experimental event, but if we pick it up, we can prevent the browser from showing the prompt
+	window.addEventListener( 'beforeinstallprompt', function ( e ) {
+		e.preventDefault();
+		return false;
+	} );
+
 	context.primary = (
 		<>
 			<CheckoutDocumentTitle />
