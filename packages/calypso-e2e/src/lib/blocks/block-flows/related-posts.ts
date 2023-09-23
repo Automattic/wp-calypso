@@ -33,6 +33,7 @@ export class RelatedPostsFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		await context.addedBlockLocator.waitFor();
+		await context.addedBlockLocator.scrollIntoViewIfNeeded();
 
 		if ( this.configurationData.headline ) {
 			await context.editorPage.openSettings();
