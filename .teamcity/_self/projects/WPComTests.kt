@@ -225,7 +225,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		uuid = buildUuid
 		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)"
 		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport"
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
@@ -281,13 +281,13 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
-	
+
 	return BuildType({
 		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
 		description = "Runs E2E tests validating the deployment of Jetpack on Atomic sites on $targetDevice viewport"
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
@@ -301,6 +301,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
+			param("env.AUTHENTICATE_ACCOUNTS", "jetpackAtomicDefaultUser,jetpackAtomicPhpOldUser,jetpackAtomicPhpNewUser,jetpackAtomicEcommPlanUser,jetpackAtomicPrivateUser,jetpackAtomicWpBetaUser,jetpackAtomicWpPreviousUser")
 		}
 
 		steps {

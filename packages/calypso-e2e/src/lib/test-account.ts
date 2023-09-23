@@ -79,6 +79,13 @@ export class TestAccount {
 		if ( this.credentials.smsNumber ) {
 			return await loginPage.submitVerificationCode( await this.getSMSOTP() );
 		}
+
+		// Wait for the `/home` endpoint to load.
+		// Note, even for eCommerce users (which eventually loads the wp-admin screen),
+		// the `/home` endpoint attempts to load first.
+		// When saving cookies, it is important to wait until the `/home` endpoint is
+		// first loaded, otherwise the cookie is invalid.
+		await page.waitForURL( /(home|read)/ );
 	}
 
 	/**
