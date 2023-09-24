@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 
-export default function HostingInto() {
+export default function HostingIntro() {
 	return (
 		<>
 			<h2>{ translate( 'The best WordPress Hosting on the planet' ) }</h2>
