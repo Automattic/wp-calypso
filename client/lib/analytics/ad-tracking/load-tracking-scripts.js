@@ -18,6 +18,7 @@ import {
 	OUTBRAIN_SCRIPT_URL,
 	PINTEREST_SCRIPT_URL,
 	GOOGLE_GTM_SCRIPT_URL,
+	WPCOM_CLARITY_URI,
 } from './constants';
 
 // Ensure setup has run.
@@ -102,6 +103,10 @@ function getTrackingScriptsToLoad() {
 
 	if ( mayWeInitTracker( 'googleTagManager' ) && isAkismetCheckout() ) {
 		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.akismetGoogleTagManagerId );
+	}
+
+	if ( mayWeInitTracker( 'clarity' ) ) {
+		scripts.push( WPCOM_CLARITY_URI );
 	}
 
 	return scripts;
