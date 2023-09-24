@@ -82,8 +82,9 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	return (
-		<tr key={ domain.domain } ref={ ref }>
-			<td>
+		<tr key={ domain.domain }>
+			{ /* display:contents appears to break the in-view logic so attach the in-view ref to the first cell instead */ }
+			<td ref={ ref }>
 				{ canSelectAnyDomains && canBulkUpdate( domain ) && (
 					<CheckboxControl
 						__nextHasNoMarginBottom
@@ -99,7 +100,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 			{ domainsTableColumns.map( ( column ) => {
 				if ( column.name === 'domain' ) {
 					return (
-						<td key={ column.name }>
+						<td key={ column.name } className="domains-table-row__domain">
 							{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 							{ isManageableDomain ? (
 								<a

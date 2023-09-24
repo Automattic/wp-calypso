@@ -4,7 +4,7 @@ import { CheckboxControl, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { CSSProperties, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -17,7 +17,6 @@ interface BaseDomainsTableColumn {
 		( first: DomainData, second: DomainData, sortOrder: number, sites?: SiteDetails[] ) => number
 	>;
 	headerComponent?: ReactNode;
-	width?: CSSProperties[ 'width' ];
 	className?: string;
 }
 
@@ -109,11 +108,7 @@ export const DomainsTableHeader = ( {
 						return null;
 					}
 					return (
-						<th
-							key={ column.name }
-							className={ column.className }
-							style={ { width: column.width } }
-						>
+						<th key={ column.name } className={ column.className }>
 							<Button
 								plain
 								onClick={ () => onChangeSortOrder( column ) }

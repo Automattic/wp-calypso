@@ -35,7 +35,6 @@ export const allSitesViewColumns = (
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
-		width: '25%',
 	},
 	{
 		name: 'owner',
@@ -89,7 +88,6 @@ export const siteSpecificViewColumns = (
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
-		width: '35%',
 	},
 	{
 		name: 'owner',
