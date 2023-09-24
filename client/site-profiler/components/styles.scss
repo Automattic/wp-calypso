@@ -114,4 +114,28 @@
 			background: var(--studio-red-50);
 		}
 	}
+
+	.domain-analyzer-block,
+	.domain-result-block {
+		position: relative;
+		z-index: 1;
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+			background: #e5f4ff;
+			z-index: -1;
+		}
+	}
+
+	.domain-analyzer-block::after {
+		height: 280px;
+	}
+
+	.domain-result-block::after {
+		height: 210px;
+	}
 }

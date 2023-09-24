@@ -37,7 +37,7 @@ export default function SiteProfiler() {
 	return (
 		<>
 			{ ! data && (
-				<LayoutBlock>
+				<LayoutBlock className="domain-analyzer-block">
 					<DomainAnalyzer
 						domain={ domain }
 						onFormSubmit={ updateDomainQueryParam }
@@ -47,7 +47,7 @@ export default function SiteProfiler() {
 			) }
 
 			{ data && (
-				<LayoutBlock>
+				<LayoutBlock className="domain-result-block">
 					{ data && (
 						<LayoutBlockSection>
 							<HeadingInformation
