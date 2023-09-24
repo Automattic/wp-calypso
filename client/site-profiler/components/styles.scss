@@ -10,6 +10,8 @@
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		/* stylelint-disable-next-line */
 		font-size: 4.375rem;
+		line-height: 1;
+		margin-bottom: 1rem;
 		color: var(--studio-gray-100);
 	}
 
@@ -17,12 +19,15 @@
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		/* stylelint-disable-next-line */
 		font-size: 2.5rem;
+		line-height: 1.15;
+		margin-bottom: 1rem;
 	}
 
 	h3 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		font-size: 1.75rem;
-		margin-bottom: 1.25rem;
+		line-height: 1.15;
+		margin-bottom: 1rem;
 	}
 
 	h4 {
