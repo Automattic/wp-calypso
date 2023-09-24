@@ -153,6 +153,48 @@ class Sites extends Component {
 			case 'site-monitoring':
 				path = translate( 'Site Monitoring' );
 				break;
+			case 'customize':
+				path = translate( 'Customizer' );
+				break;
+			case 'purchases':
+				path = translate( 'Purchases' );
+				break;
+			case 'marketing':
+				path = translate( 'Marketing' );
+				break;
+			case 'subscribers':
+				path = translate( 'Subscribers' );
+				break;
+			case 'email':
+				path = translate( 'Email' );
+				break;
+			case 'themes':
+				path = translate( 'Themes' );
+				break;
+			case 'earn':
+				path = translate( 'Earn' );
+				break;
+			case 'comments':
+				path = translate( 'Comments' );
+				break;
+			case 'view':
+				path = translate( 'View' );
+				break;
+			case 'import':
+				path = translate( 'Import' );
+				break;
+			case 'export':
+				path = translate( 'Export' );
+				break;
+			case 'backup':
+				path = translate( 'Backup' );
+				break;
+			case 'scan':
+				path = translate( 'Scan' );
+				break;
+			case 'store':
+				path = translate( 'Store' );
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
