@@ -40,7 +40,7 @@ export default function HostingInformation( props: Props ) {
 						</div>
 					</li>
 				) }
-				<li>
+				<li className="a-records">
 					<div className="name">
 						{
 							/* translators: "A Records" refer to the DNS records of type "A". */

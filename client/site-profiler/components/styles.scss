@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .layout__primary .main {
 	padding-bottom: 0;
 }
@@ -83,6 +85,7 @@
 			padding: 1rem 0;
 			border-top: solid 1px var(--studio-gray-5);
 			gap: 2rem;
+			overflow-x: scroll;
 
 			&:first-child {
 				border: none;
@@ -91,6 +94,31 @@
 			.name {
 				min-width: 200px;
 				text-transform: uppercase;
+			}
+
+			@media (max-width: $break-small) {
+				&.a-records {
+					flex-wrap: wrap;
+					gap: 1rem;
+
+					.name {
+						flex-basis: 100%;
+					}
+				}
+
+				&:not(.a-records) {
+					flex-direction: column;
+					gap: 0;
+
+					.name {
+						min-width: 0;
+						margin-bottom: 1rem;
+					}
+
+					.col {
+						margin-bottom: 1rem;
+					}
+				}
 			}
 		}
 
