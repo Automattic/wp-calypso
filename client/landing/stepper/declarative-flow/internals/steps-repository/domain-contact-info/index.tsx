@@ -111,7 +111,7 @@ function ContactInfo( {
 				dispatch(
 					errorNotice(
 						translate(
-							'The receiving user’s email address must match the email address of the domain receipient.'
+							'The receiving user’s email address must match the email address of the domain recipient.'
 						),
 						{
 							duration: 10000,
