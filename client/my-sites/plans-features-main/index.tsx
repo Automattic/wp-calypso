@@ -269,6 +269,7 @@ const PlansFeaturesMain = ( {
 	useEffect( () => {
 		if ( flowName === 'onboarding' ) {
 			loadExperimentAssignment( 'calypso_srm_test_plans_page_view_free_plan_modal_view' );
+			loadExperimentAssignment( 'calypso_srm_test_plans_page_view_free_plan_button_click' );
 		}
 	}, [] );
 
