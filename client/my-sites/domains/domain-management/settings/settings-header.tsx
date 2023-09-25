@@ -4,6 +4,7 @@ import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useCurrentRoute } from 'calypso/components/route';
 import { resolveDomainStatus } from 'calypso/lib/domains';
@@ -31,14 +32,22 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	const dispatch = useDispatch();
 	const { currentRoute } = useCurrentRoute();
 	const hasNoticePreferences = useSelector( hasReceivedRemotePreferences );
-	const noticeDismissPreference = `domain-status-notice-${ domain.name }`;
-	const isNoticeDismissed = useSelector( ( state ) =>
-		getPreference( state, noticeDismissPreference )
+	const noticeDismissPreferenceName = `domain-status-notice-${ domain.name }`;
+	const noticeDismissPreferences = useSelector( ( state ) =>
+		getPreference( state, noticeDismissPreferenceName )
 	);
 
-	const handleNoticeDismiss = () => {
-		dispatch( savePreference( noticeDismissPreference, 1 ) );
-	};
+	const handleNoticeDismiss = useCallback(
+		( type: string ) => {
+			dispatch(
+				savePreference( noticeDismissPreferenceName, {
+					...noticeDismissPreferences,
+					[ type ]: true,
+				} )
+			);
+		},
+		[ dispatch, noticeDismissPreferenceName, noticeDismissPreferences ]
+	);
 
 	const renderCircle = () => (
 		<SVG viewBox="0 0 24 24" height={ 8 } width={ 8 }>
@@ -133,7 +142,10 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 			}
 		);
 
-		if ( isDismissable && ( ! hasNoticePreferences || isNoticeDismissed ) ) {
+		if (
+			isDismissable &&
+			( ! hasNoticePreferences || noticeDismissPreferences?.[ statusClass ] )
+		) {
 			return null;
 		}
 
@@ -157,7 +169,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 						<button
 							className="settings-header__domain-notice-dismiss-button"
 							aria-label={ translate( 'Dismiss' ) }
-							onClick={ handleNoticeDismiss }
+							onClick={ handleNoticeDismiss.bind( null, statusClass ) }
 						>
 							<Gridicon icon="cross" width={ 18 } />
 						</button>
