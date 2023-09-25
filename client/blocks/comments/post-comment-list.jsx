@@ -235,7 +235,7 @@ class PostCommentList extends Component {
 
 		// Query selector ALL since we might be showing the readers reply as well.
 		const commentContentEles = this.listRef.current.querySelectorAll(
-			'.comments__comment-content-wrapper'
+			'.comments__comment-content'
 		);
 		let isClampedComment = false;
 
