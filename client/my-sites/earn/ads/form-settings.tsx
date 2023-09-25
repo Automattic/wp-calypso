@@ -73,25 +73,11 @@ const AdsFormSettings = () => {
 			...defaultSettings(),
 			...wordadsSettings,
 		};
-
-		const isUpdatedSettings = ! isEqual( wordadsSettings, settings );
+		const isUpdatedSettings = ! isEqual( newSettings, settings );
 		if ( isUpdatedSettings ) {
 			setSettings( newSettings );
 		}
 	}, [ wordadsSettings ] );
-
-	useEffect( () => {
-		// siteId has changed, so we reset settings
-		// This code is here to directly mimic code that
-		// was in UNSAFE_componentWillReceiveProps
-		setSettings( {
-			...defaultSettings(),
-			...wordadsSettings,
-		} );
-
-		// Only run on siteId change
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteId ] );
 
 	function handleChange( event: ChangeEvent< HTMLInputElement > ) {
 		const name = event.currentTarget.name;
