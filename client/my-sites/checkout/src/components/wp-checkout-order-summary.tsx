@@ -18,6 +18,10 @@ import {
 	isAkismetProduct,
 	planHasFeature,
 	WPCOM_FEATURES_ATOMIC,
+	isPersonal,
+	isPremium,
+	isBusiness,
+	isEcommerce,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -38,6 +42,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
+import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -53,6 +58,10 @@ import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
+function isPlanEligibleForCheckoutFeatureListExperiment( plan: ResponseCartProduct ) {
+	return isPersonal( plan ) || isPremium( plan ) || isBusiness( plan ) || isEcommerce( plan );
+}
 
 export default function WPCheckoutOrderSummary( {
 	siteId,
@@ -83,6 +92,13 @@ export default function WPCheckoutOrderSummary( {
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
+	const [ isLoadingExperimentAssignment ] = useExperiment(
+		'calypso_checkout_feature_list_copy_v2',
+		{
+			isEligible: plan && isPlanEligibleForCheckoutFeatureListExperiment( plan ),
+		}
+	);
+
 	return (
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
@@ -94,7 +110,7 @@ export default function WPCheckoutOrderSummary( {
 						? translate( 'WordPress.com Gift Subscription' )
 						: translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				{ isCartUpdating ? (
+				{ isCartUpdating || isLoadingExperimentAssignment ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
 					<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
@@ -607,12 +623,19 @@ function CheckoutSummaryPlanFeatures( props: {
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
+
+	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_feature_list_copy_v2', {
+		isEligible: planInCart && isPlanEligibleForCheckoutFeatureListExperiment( planInCart ),
+	} );
+	const showPricingGridFeatures = 'treatment' === experimentAssignment?.variationName;
+
 	const planFeatures = getPlanFeatures(
 		planInCart,
 		translate,
 		hasDomainsInCart,
 		hasRenewalInCart,
-		nextDomainIsFree
+		nextDomainIsFree,
+		showPricingGridFeatures
 	);
 
 	return (

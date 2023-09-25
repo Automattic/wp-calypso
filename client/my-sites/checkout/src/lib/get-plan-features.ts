@@ -9,9 +9,13 @@ import {
 	isWpComPremiumPlan,
 	isStarterPlan,
 	is100YearPlan,
+	FEATURE_FREE_DOMAIN,
+	Feature,
+	applyTestFiltersToPlansList,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export default function getPlanFeatures(
@@ -19,7 +23,8 @@ export default function getPlanFeatures(
 	translate: ReturnType< typeof useTranslate >,
 	hasDomainsInCart: boolean,
 	hasRenewalInCart: boolean,
-	nextDomainIsFree: boolean
+	nextDomainIsFree: boolean,
+	showPricingGridFeatures?: boolean
 ): string[] {
 	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
 	const productSlug = plan?.product_slug;
@@ -29,6 +34,27 @@ export default function getPlanFeatures(
 	}
 
 	const isMonthlyPlan = isMonthly( productSlug );
+
+	if ( showPricingGridFeatures ) {
+		const planObject = applyTestFiltersToPlansList( productSlug, undefined );
+
+		if ( ! planObject ) {
+			return [];
+		}
+
+		const featureList: Feature[] = planObject?.getCheckoutFeatures?.() || [];
+		const annualPlanOnlyFeatures = planObject?.getAnnualPlansOnlyFeatures?.() || [];
+
+		return (
+			featureList
+				// Exclude annual plan only features if the current plan is a monthly plan
+				?.filter( ( feature ) => ! isMonthlyPlan || ! annualPlanOnlyFeatures.includes( feature ) )
+				// Show the free domain feature if `showFreeDomainFeature` is true
+				?.filter( ( feature ) => feature !== FEATURE_FREE_DOMAIN || showFreeDomainFeature )
+				?.map( ( feature ) => String( FEATURES_LIST[ feature ].getTitle() ) )
+		);
+	}
+
 	const emailSupport = String( translate( 'Customer support via email' ) );
 	const liveChatSupport = String( translate( 'Live chat support' ) );
 	const freeOneYearDomain = showFreeDomainFeature
