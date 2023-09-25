@@ -79,9 +79,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 			<div className="file-browser-header__selecting">
 				<CheckboxControl
 					__nextHasNoMarginBottom
-					checked={
-						rootNode ? rootNode.checkState === 'checked' || rootNode.checkState === 'mixed' : false
-					}
+					checked={ rootNode ? rootNode.checkState === 'checked' : false }
 					indeterminate={ rootNode && rootNode.checkState === 'mixed' }
 					onChange={ onCheckboxChange }
 					className={ `${ rootNode && rootNode.checkState === 'mixed' ? 'mixed' : '' }` }
