@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
+import { isEqual } from 'lodash';
 import { Fragment, useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -69,17 +69,16 @@ const AdsFormSettings = () => {
 	const isWordAds = site?.options?.wordads;
 
 	useEffect( () => {
-		// Set default settings if settings are empty
-		const settingsAreEmptyAndWordadsSettingsExist =
-			isEmpty( settings ) && ! isEmpty( wordadsSettings );
+		const newSettings = {
+			...defaultSettings(),
+			...wordadsSettings,
+		};
 
-		if ( settingsAreEmptyAndWordadsSettingsExist ) {
-			setSettings( {
-				...defaultSettings(),
-				...wordadsSettings,
-			} );
+		const isUpdatedSettings = ! isEqual( wordadsSettings, settings );
+		if ( isUpdatedSettings ) {
+			setSettings( newSettings );
 		}
-	}, [ settings, wordadsSettings ] );
+	}, [ wordadsSettings ] );
 
 	useEffect( () => {
 		// siteId has changed, so we reset settings
