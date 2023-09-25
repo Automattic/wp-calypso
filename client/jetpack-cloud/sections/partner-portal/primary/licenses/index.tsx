@@ -1,7 +1,5 @@
 import { Button } from '@automattic/components';
-import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalLicenseCounts from 'calypso/components/data/query-jetpack-partner-portal-license-counts';
 import SiteAddLicenseNotification from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-add-license-notification';
@@ -17,7 +15,6 @@ import {
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { infoNotice } from 'calypso/state/notices/actions';
 import {
 	getLicenseCounts,
 	hasFetchedLicenseCounts,
@@ -53,20 +50,6 @@ export default function Licenses( {
 	const counts = useSelector( getLicenseCounts );
 	const hasFetched = useSelector( hasFetchedLicenseCounts );
 	const allLicensesCount = counts[ 'all' ];
-	const provisioningSite = getQueryArg( window.location.href, 'provisioning' ) as string;
-
-	useEffect( () => {
-		if ( 'true' === provisioningSite ) {
-			dispatch(
-				infoNotice(
-					translate(
-						'We are creating a WordPress.com site in the background. It will appear on your dashboard shortly.'
-					),
-					{ id: 'provisioning-site-notice' }
-				)
-			);
-		}
-	}, [ provisioningSite, translate, dispatch ] );
 
 	const context = {
 		filter,
