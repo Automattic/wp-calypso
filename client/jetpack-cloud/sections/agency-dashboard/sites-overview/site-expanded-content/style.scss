@@ -283,3 +283,9 @@ $color-yellow: var(--studio-yellow-50);
 	opacity: 0.5;
 	cursor: not-allowed;
 }
+
+.site-expanded-content__progress-icon {
+	vertical-align: middle;
+	color: var(--studio-gray-40);
+	margin-block: 6px;
+}
