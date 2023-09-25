@@ -175,7 +175,7 @@ export const useSiteLogsDownloader = ( {
 					{
 						start: startTime,
 						end: endTime,
-						page_size: 10000,
+						page_size: 500,
 						scroll_id: scrollId,
 					}
 				)
