@@ -2,8 +2,9 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { getFeedUrl } from 'calypso/reader/get-helpers';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
-import { UnsubscribeIcon } from '../icons';
+import { FeedIcon, UnsubscribeIcon } from '../icons';
 import DeliveryFrequencyInput from './delivery-frequency-input';
 import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
@@ -110,6 +111,14 @@ export const SiteSettingsPopover = ( {
 						} }
 					>
 						{ translate( 'Unsubscribe' ) }
+					</Button>
+
+					<Button
+						className="site-settings-popover__view-feed"
+						icon={ <FeedIcon className="subscriptions-ellipsis-menu__item-icon" /> }
+						href={ getFeedUrl( {} ) }
+					>
+						{ translate( 'View feed' ) }
 					</Button>
 				</>
 			) }

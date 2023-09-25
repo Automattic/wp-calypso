@@ -26,6 +26,8 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
+import { SiteSubscriptionProvider } from './site-subscription-provider';
+import { toSiteSubscription } from './utils';
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -68,21 +70,14 @@ const SelectedNewPostDeliveryMethods = ( {
 
 type SiteRowProps = Reader.SiteSubscription;
 
-const SiteRow = ( {
-	ID: subscriptionId,
-	blog_ID: blog_id,
-	feed_ID: feed_id,
-	name,
-	site_icon,
-	URL: url,
-	date_subscribed,
-	delivery_methods,
-	is_wpforteams_site,
-	is_paid_subscription,
-	isDeleted,
-}: SiteRowProps ) => {
+const SiteRow = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const context = React.useContext( SiteSubscriptionContext );
+	if ( ! context ) {
+		throw new Error( 'SiteSubscriptionRow must be wrapped in a SiteSubscriptionProvider' );
+	}
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
@@ -346,4 +341,13 @@ const SiteRow = ( {
 	) : null;
 };
 
-export default SiteRow;
+const SiteSubscriptionRowWithProvider = ( props: Reader.SiteSubscription ) => {
+	const siteSubscription = useMemo( () => toSiteSubscription( props ), [ props ] );
+	return (
+		<SiteSubscriptionProvider subscription={ siteSubscription }>
+			<SiteRow { ...props } />
+		</SiteSubscriptionProvider>
+	);
+};
+
+export default SiteSubscriptionRowWithProvider;

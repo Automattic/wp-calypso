@@ -27,7 +27,7 @@ export type EmailSettingsAPIResponse = {
 	};
 };
 
-type SiteSubscriptionMeta = {
+export type SiteSubscriptionMeta = {
 	links: {
 		site: string;
 		feed: string;

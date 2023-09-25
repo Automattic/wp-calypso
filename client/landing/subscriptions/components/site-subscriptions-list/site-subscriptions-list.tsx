@@ -2,7 +2,7 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { Spinner, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { Notice, NoticeType } from '../notice';
-import SiteRow from './site-row';
+import SiteRow from '../site-subscription-row/site-subscription-row';
 import './styles/site-subscriptions-list.scss';
 
 type SiteSubscriptionsListProps = {
