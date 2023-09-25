@@ -548,13 +548,10 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-section-login.is-grav-powered-login-link,
-.layout.is-section-login.is-grav-powered-login-page {
-	background-color: #e7e9ea;
-}
-
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
 .layout.is-section-login.is-grav-powered-login-page {
+	background-color: #e7e9ea;
+
 	&.is-wp-job-manager {
 		.login a,
 		.login__form-change-username {

@@ -89,7 +89,7 @@ class HandleEmailedLinkForm extends Component {
 		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
 			document
 				.querySelector( '.layout.is-section-login' )
-				?.classList.add( 'is-grav-powered-login-link' );
+				?.classList.add( 'is-grav-powered-login-page' );
 		}
 	}
 
@@ -220,8 +220,8 @@ class HandleEmailedLinkForm extends Component {
 		if ( isGravPoweredClient ) {
 			return (
 				<div
-					className={ classNames( 'grav-powered-login-link', {
-						'grav-powered-login-link--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
+					className={ classNames( 'grav-powered-magic-link', {
+						'grav-powered-magic-link--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />

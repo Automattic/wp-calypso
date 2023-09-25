@@ -25,8 +25,8 @@ class EmailedLoginLinkExpired extends Component {
 
 		if ( this.props.isGravPoweredClient ) {
 			document
-				.querySelector( '.is-grav-powered-login-link' )
-				?.classList.remove( 'is-grav-powered-login-link' );
+				.querySelector( '.is-grav-powered-login-page' )
+				?.classList.remove( 'is-grav-powered-login-page' );
 		}
 	}
 
