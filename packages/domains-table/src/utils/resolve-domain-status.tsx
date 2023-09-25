@@ -98,7 +98,7 @@ export function resolveDomainStatus(
 
 	const paymentSetupCallToAction = {
 		href: '/me/purchases/payment-methods',
-		label: translate( 'Go to payment methods' ),
+		label: translate( 'Fix' ),
 	};
 
 	switch ( domain.type ) {
