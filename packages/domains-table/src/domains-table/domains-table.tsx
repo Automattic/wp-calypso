@@ -236,6 +236,10 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		domainsTableColumns = removeColumns( domainsTableColumns, 'site', 'owner' );
 	}
 
+	if ( shouldHideOwnerColumn( Object.values< DomainData[] >( fetchedSiteDomains ).flat() ) ) {
+		domainsTableColumns = removeColumns( domainsTableColumns, 'owner' );
+	}
+
 	const sortedDomains = useMemo( () => {
 		if ( ! domains ) {
 			return;
@@ -358,10 +362,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 
 		page( formLink );
 	};
-
-	if ( shouldHideOwnerColumn( Object.values< DomainData[] >( fetchedSiteDomains ).flat() ) ) {
-		domainsTableColumns = removeColumns( domainsTableColumns, 'owner' );
-	}
 
 	const currentUsersOwnsAllSelectedDomains = ! Array.from( selectedDomains ).some( ( selected ) =>
 		( domains ?? [] ).find(
