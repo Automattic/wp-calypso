@@ -28,7 +28,7 @@ describe( 'useSiteColumns', () => {
 		} = renderHook( () => useDefaultSiteColumns() );
 
 		const columnTitles = columns.map( ( { title } ) => title );
-		expect( columnTitles ).toContain( 'Boost' );
+		expect( columnTitles ).toContain( 'Boost score' );
 	} );
 
 	it( 'does not include the Boost column if Boost is not enabled on the dashboard', () => {
@@ -39,6 +39,6 @@ describe( 'useSiteColumns', () => {
 		} = renderHook( () => useDefaultSiteColumns() );
 
 		const columnTitles = columns.map( ( { title } ) => title );
-		expect( columnTitles ).not.toContain( 'Boost' );
+		expect( columnTitles ).not.toContain( 'Boost score' );
 	} );
 } );
