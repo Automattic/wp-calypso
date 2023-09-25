@@ -7,6 +7,7 @@ import Tooltip from 'calypso/components/tooltip';
 import { jetpackBoostDesktopIcon, jetpackBoostMobileIcon } from '../../icons';
 import { getBoostRating, getBoostRatingClass } from '../lib/boost';
 import ExpandedCard from './expanded-card';
+import InProgressIcon from './in-progress-icon';
 import type { BoostData } from '../types';
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 	siteUrlWithScheme: string;
 	trackEvent: ( eventName: string ) => void;
 	hasError: boolean;
+	hasPendingScore: boolean;
 }
 
 export default function BoostSitePerformance( {
@@ -25,6 +27,7 @@ export default function BoostSitePerformance( {
 	siteUrlWithScheme,
 	trackEvent,
 	hasError,
+	hasPendingScore,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -80,57 +83,67 @@ export default function BoostSitePerformance( {
 			<div className="site-expanded-content__card-content-container">
 				<div className="site-expanded-content__card-content">
 					<div className="site-expanded-content__card-content-column">
-						<div
-							className={ classNames(
-								'site-expanded-content__card-content-score',
-								getBoostRatingClass( overallScore )
-							) }
-						>
-							{ getBoostRating( overallScore ) }
+						{ hasPendingScore ? (
+							<InProgressIcon />
+						) : (
+							<div
+								className={ classNames(
+									'site-expanded-content__card-content-score',
+									getBoostRatingClass( overallScore )
+								) }
+							>
+								{ getBoostRating( overallScore ) }
 
-							<span
-								ref={ helpIconRef }
-								onMouseEnter={ () => setShowTooltip( true ) }
-								onMouseLeave={ () => setShowTooltip( false ) }
-							>
-								<Icon size={ 20 } className="site-expanded-content__help-icon" icon={ help } />
-							</span>
-							<Tooltip
-								id={ `${ siteId }-boost-help-text` }
-								context={ helpIconRef.current }
-								isVisible={ showTooltip }
-								position="bottom"
-								className="site-expanded-content__tooltip"
-							>
-								{ tooltip }
-							</Tooltip>
-						</div>
+								<span
+									ref={ helpIconRef }
+									onMouseEnter={ () => setShowTooltip( true ) }
+									onMouseLeave={ () => setShowTooltip( false ) }
+								>
+									<Icon size={ 20 } className="site-expanded-content__help-icon" icon={ help } />
+								</span>
+								<Tooltip
+									id={ `${ siteId }-boost-help-text` }
+									context={ helpIconRef.current }
+									isVisible={ showTooltip }
+									position="bottom"
+									className="site-expanded-content__tooltip"
+								>
+									{ tooltip }
+								</Tooltip>
+							</div>
+						) }
 						<div className="site-expanded-content__card-content-score-title">
 							{ translate( 'Overall' ) }
 						</div>
 					</div>
 					<div className="site-expanded-content__card-content-column">
-						<div className="site-expanded-content__device-score-container">
-							<div className="site-expanded-content__card-content-column">
-								<Icon
-									size={ 24 }
-									className="site-expanded-content__device-icon"
-									icon={ jetpackBoostDesktopIcon }
-								/>
-								<span className="site-expanded-content__device-score">{ desktopScore }</span>
-							</div>
-							<div className="site-expanded-content__card-content-column site-expanded-content__card-content-column-mobile">
-								<Icon
-									className="site-expanded-content__device-icon"
-									size={ 24 }
-									icon={ jetpackBoostMobileIcon }
-								/>
-								<span className="site-expanded-content__device-score">{ mobileScore }</span>
-							</div>
-						</div>
-						<div className="site-expanded-content__card-content-score-title">
-							{ translate( 'Devices' ) }
-						</div>
+						{ hasPendingScore ? (
+							<InProgressIcon />
+						) : (
+							<>
+								<div className="site-expanded-content__device-score-container">
+									<div className="site-expanded-content__card-content-column">
+										<Icon
+											size={ 24 }
+											className="site-expanded-content__device-icon"
+											icon={ jetpackBoostDesktopIcon }
+										/>
+										<span className="site-expanded-content__device-score">{ desktopScore }</span>
+									</div>
+									<div className="site-expanded-content__card-content-column site-expanded-content__card-content-column-mobile">
+										<Icon
+											className="site-expanded-content__device-icon"
+											size={ 24 }
+											icon={ jetpackBoostMobileIcon }
+										/>
+										<span className="site-expanded-content__device-score">{ mobileScore }</span>
+									</div>
+								</div>
+								<div className="site-expanded-content__card-content-score-title">
+									{ translate( 'Devices' ) }
+								</div>
+							</>
+						) }
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">

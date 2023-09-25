@@ -35,11 +35,16 @@ const plugin: TooltipGetter = {
 	success: ( translate ) => translate( 'No plugin updates found' ),
 };
 
+const boost: TooltipGetter = {
+	progress: ( translate ) => translate( 'Fetching Scores' ),
+};
+
 const ALL_TOOLTIPS: Partial< Record< AllowedRowType, TooltipGetter > > = {
 	backup,
 	scan,
 	monitor,
 	plugin,
+	boost,
 };
 
 const useTooltip = (
