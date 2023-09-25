@@ -87,7 +87,7 @@ export const DomainsTableHeader = ( {
 	return (
 		<thead className={ listHeaderClasses }>
 			<tr>
-				<th className="domains-table__bulk-action-container">
+				<th>
 					{ canSelectAnyDomains && (
 						<CheckboxControl
 							data-testid="domains-select-all-checkbox"
