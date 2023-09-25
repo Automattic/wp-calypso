@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
+import { CheckboxControl } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FunctionComponent } from 'react';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { backupDownloadPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRequestGranularBackup } from 'calypso/state/activity-log/actions';
@@ -77,10 +77,12 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 				</div>
 			) }
 			<div className="file-browser-header__selecting">
-				<FormCheckbox
+				<CheckboxControl
+					__nextHasNoMarginBottom
 					checked={
 						rootNode ? rootNode.checkState === 'checked' || rootNode.checkState === 'mixed' : false
 					}
+					indeterminate={ rootNode && rootNode.checkState === 'mixed' }
 					onChange={ onCheckboxChange }
 					className={ `${ rootNode && rootNode.checkState === 'mixed' ? 'mixed' : '' }` }
 				/>

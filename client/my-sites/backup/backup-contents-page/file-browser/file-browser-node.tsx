@@ -1,9 +1,8 @@
-import { Button, Icon } from '@wordpress/components';
+import { Button, CheckboxControl, Icon } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { chevronDown, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { FunctionComponent } from 'react';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { useDispatch, useSelector } from 'calypso/state';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
@@ -209,20 +208,16 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			return null;
 		}
 
-		// Mixed state will show checked but with a mixed class
-		// We'll use this to show an alternate background
-		// TODO: Replace with a [-] for mixed state
 		return (
-			<FormCheckbox
+			<CheckboxControl
+				__nextHasNoMarginBottom
 				checked={
 					browserNodeItem
 						? browserNodeItem.checkState === 'checked' || browserNodeItem.checkState === 'mixed'
 						: false
 				}
+				indeterminate={ browserNodeItem && browserNodeItem.checkState === 'mixed' }
 				onChange={ onCheckboxChange }
-				className={ `${
-					browserNodeItem && browserNodeItem.checkState === 'mixed' ? 'mixed' : ''
-				}` }
 			/>
 		);
 	};
