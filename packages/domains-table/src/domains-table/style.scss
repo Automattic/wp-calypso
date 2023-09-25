@@ -40,12 +40,18 @@ $domains-table-mobile-breakpoint: 480px;
 		margin-top: 14px; /* 30px - 16px of the table heading padding */
 		border-collapse: collapse;
 
+		--row-gap: 20px;
+
 		display: grid;
 		grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
-		column-gap: 16px;
+		gap: var(--row-gap) 16px;
 
-		tr {
-			border-bottom: 1px solid #f0f0f0;
+		tr::after {
+			display: block;
+			content: "";
+			height: 1px;
+			background: #f0f0f0;
+			grid-column: 1 / -1;
 		}
 	}
 
@@ -59,7 +65,6 @@ $domains-table-mobile-breakpoint: 480px;
 	}
 
 	td {
-		padding: 20px 0;
 		min-height: 44px;
 		display: flex;
 		align-items: center;
