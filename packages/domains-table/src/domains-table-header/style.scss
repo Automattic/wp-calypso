@@ -19,7 +19,8 @@
 		padding: 16px 0;
 		margin-bottom: calc(-1 * var(--row-gap));
 		color: var(--studio-gray-60);
-		vertical-align: middle;
+		display: flex;
+		align-items: center;
 		font-size: $font-body-small;
 		font-style: normal;
 		font-weight: 500;
