@@ -12,7 +12,6 @@ const notNull = < T >( x: T ): x is Exclude< T, null > => x !== null;
 
 export const useDomainRow = ( domain: PartialDomainData ) => {
 	const {
-		hideOwnerColumn,
 		isAllSitesView,
 		fetchSiteDomains,
 		domainStatusPurchaseActions,
@@ -148,7 +147,6 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		isManageableDomain,
 		userCanAddSiteToDomain,
 		domainsRequiringAttention,
-		hideOwnerColumn,
 		placeholderWidth,
 		shouldDisplayPrimaryDomainLabel,
 		isLoadingRowDetails,

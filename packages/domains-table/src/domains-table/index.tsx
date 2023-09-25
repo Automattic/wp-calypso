@@ -1,5 +1,4 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import classname from 'classnames';
 import { ReactNode } from 'react';
 import {
 	DomainsTableProps,
@@ -27,11 +26,7 @@ export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } 
 				{ isMobile ? (
 					<DomainsTableMobileCards />
 				) : (
-					<table
-						className={ classname( {
-							'is-owner-hidden': state.hideOwnerColumn,
-						} ) }
-					>
+					<table className={ `is-${ state.domainsTableColumns.length }-column` }>
 						<DomainsTableHeader />
 						<DomainsTableBody />
 					</table>

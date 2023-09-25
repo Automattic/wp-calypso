@@ -40,7 +40,6 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		isSelected,
 		handleSelectDomain,
 		isAllSitesView,
-		hideOwnerColumn,
 		domainStatus,
 		pendingUpdates,
 	} = useDomainRow( domain );
@@ -123,11 +122,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				}
 
 				if ( column.name === 'owner' ) {
-					if ( ! hideOwnerColumn ) {
-						return <td key={ column.name }>{ renderOwnerCell() }</td>;
-					}
-
-					return null;
+					return <td key={ column.name }>{ renderOwnerCell() }</td>;
 				}
 
 				if ( column.name === 'site' ) {

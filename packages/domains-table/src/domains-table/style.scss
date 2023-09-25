@@ -45,9 +45,14 @@ $domains-table-mobile-breakpoint: 480px;
 		display: grid;
 		gap: var(--row-gap) 16px;
 
-		grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
-		&.is-owner-hidden {
+		&.is-7-column {
+			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
+		}
+		&.is-6-column {
 			grid-template-columns: 20px 1fr 1fr auto auto auto 36px;
+		}
+		&.is-5-column {
+			grid-template-columns: 20px 1fr auto auto auto 36px;
 		}
 
 		tr::after {

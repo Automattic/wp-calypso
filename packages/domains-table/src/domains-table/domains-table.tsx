@@ -96,7 +96,6 @@ type Value = {
 	deleteBulkActionStatus?: () => Promise< void >;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
-	hideOwnerColumn: boolean;
 	canSelectAnyDomains: boolean;
 	domainsRequiringAttention?: number;
 	sortKey: string;
@@ -360,9 +359,9 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		page( formLink );
 	};
 
-	const hideOwnerColumn = shouldHideOwnerColumn(
-		Object.values< DomainData[] >( fetchedSiteDomains ).flat()
-	);
+	if ( shouldHideOwnerColumn( Object.values< DomainData[] >( fetchedSiteDomains ).flat() ) ) {
+		domainsTableColumns = removeColumns( domainsTableColumns, 'owner' );
+	}
 
 	const currentUsersOwnsAllSelectedDomains = ! Array.from( selectedDomains ).some( ( selected ) =>
 		( domains ?? [] ).find(
@@ -381,7 +380,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		deleteBulkActionStatus,
 		isAllSitesView,
 		domainStatusPurchaseActions,
-		hideOwnerColumn,
 		canSelectAnyDomains,
 		domainsRequiringAttention,
 		sortKey,

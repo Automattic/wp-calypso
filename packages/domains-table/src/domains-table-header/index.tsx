@@ -45,7 +45,6 @@ type DomainsTableHeaderProps = {
 	domainCount: number;
 	selectedDomainsCount: number;
 	headerClasses?: string;
-	hideOwnerColumn?: boolean;
 	domainsRequiringAttention?: number;
 	canSelectAnyDomains?: boolean;
 };
@@ -60,7 +59,6 @@ export const DomainsTableHeader = ( {
 	domainCount,
 	selectedDomainsCount,
 	headerClasses,
-	hideOwnerColumn = false,
 	domainsRequiringAttention,
 	canSelectAnyDomains = true,
 }: DomainsTableHeaderProps ) => {
@@ -104,9 +102,6 @@ export const DomainsTableHeader = ( {
 				</th>
 
 				{ columns.map( ( column ) => {
-					if ( column.name === 'owner' && hideOwnerColumn ) {
-						return null;
-					}
 					return (
 						<th key={ column.name } className={ column.className }>
 							<Button
