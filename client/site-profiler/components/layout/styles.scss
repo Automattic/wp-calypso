@@ -10,19 +10,19 @@
 	}
 
 	&.width-small {
-		.l-block-content {
+		.l-block-wrapper {
 			max-width: 600px;
 		}
 	}
 
 	&.width-medium {
-		.l-block-content {
+		.l-block-wrapper {
 			max-width: 1015px;
 		}
 	}
 }
 
-.l-block-content {
+.l-block-wrapper {
 	max-width: 1224px;
 	margin: 0 auto;
 	padding: 0 1.5rem;
