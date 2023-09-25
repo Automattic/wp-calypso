@@ -20,7 +20,7 @@ const formatStatsData = ( site: Site ): StatsNode => ( {
 } );
 
 const formatBoostData = ( site: Site ): BoostNode => ( {
-	status: site.has_boost && site.has_pending_boost_one_time_score ? 'progress' : 'active',
+	status: site.has_pending_boost_one_time_score ? 'progress' : 'active',
 	type: 'boost',
 	value: site.jetpack_boost_scores,
 } );
