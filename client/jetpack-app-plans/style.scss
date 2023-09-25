@@ -1,0 +1,5 @@
+@import "calypso/my-sites/plan-features-2023-grid/media-queries";
+
+.jetpack-app-plans {
+	@include plan-features-layout-switcher;
+}
