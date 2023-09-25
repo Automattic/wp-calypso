@@ -311,7 +311,7 @@ function PluginDetails( props ) {
 			components: {
 				org_link: (
 					<a
-						href={ localizeUrl( 'https://wordpress.org/plugins/' + ( fullPlugin?.slug || '' ) ) }
+						href={ 'https://wordpress.org/plugins/' + ( fullPlugin?.slug || '' ) }
 						target="_blank"
 						rel="noreferrer noopener"
 					/>
