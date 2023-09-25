@@ -1,4 +1,4 @@
-import { ActionButtons, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -136,11 +136,6 @@ class StepWrapper extends Component {
 		if ( this.props.positionInFlow === 0 ) {
 			if ( this.props.headerText !== undefined ) {
 				return this.props.headerText;
-			}
-
-			const params = new URLSearchParams( window.location.search );
-			if ( params.get( 'variationName' ) === NEWSLETTER_FLOW ) {
-				return this.props.translate( 'Let’s get you signed up.' );
 			}
 
 			return this.props.translate( 'Let’s get started' );
