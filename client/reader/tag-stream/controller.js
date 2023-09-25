@@ -53,6 +53,7 @@ export const tagListing = ( context, next ) => {
 				streamKey={ streamKey }
 				encodedTagSlug={ encodedTag }
 				decodedTagSlug={ tagSlug }
+				sort={ context.query.sort }
 				trackScrollPage={ trackScrollPage.bind(
 					// eslint-disable-line
 					null,
