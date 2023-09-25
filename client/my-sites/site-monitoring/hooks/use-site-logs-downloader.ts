@@ -208,9 +208,18 @@ export const useSiteLogsDownloader = ( {
 						},
 					} );
 				} )
-				.catch( ( error: unknown ) => {
+				.catch( ( error: { message: string; status: number } ) => {
 					isError = true;
-					const message = get( error, 'message', 'Could not retrieve logs.' );
+					let message = get( error, 'message', 'Could not retrieve logs.' );
+					if ( error?.status === 500 ) {
+						message = translate(
+							'There was an error retrieving logs. Please try again in a few minutes.'
+						);
+					} else if ( error?.status === 400 ) {
+						message = translate(
+							'There was an error retrieving logs. Please try with a different time range.'
+						);
+					}
 					downloadErrorNotice( message );
 					recordDownloadError( {
 						error_message: message,
