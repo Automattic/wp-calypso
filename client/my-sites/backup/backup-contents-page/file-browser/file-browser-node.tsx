@@ -211,11 +211,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		return (
 			<CheckboxControl
 				__nextHasNoMarginBottom
-				checked={
-					browserNodeItem
-						? browserNodeItem.checkState === 'checked' || browserNodeItem.checkState === 'mixed'
-						: false
-				}
+				checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
 				indeterminate={ browserNodeItem && browserNodeItem.checkState === 'mixed' }
 				onChange={ onCheckboxChange }
 			/>
