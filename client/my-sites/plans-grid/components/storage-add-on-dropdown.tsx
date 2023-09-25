@@ -3,6 +3,7 @@ import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
+import { useIsLargeAddOnCurrency } from '../hooks/npm-ready/use-is-large-add-on-currency';
 import { getStorageStringFromFeature } from '../util';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { AddOnMeta } from '@automattic/data-stores';
@@ -16,7 +17,8 @@ type StorageAddOnDropdownProps = {
 
 type StorageAddOnOptionProps = {
 	title: string;
-	price: string | undefined;
+	price?: string;
+	isLargeCurrency?: boolean;
 };
 
 const getStorageOptionPrice = (
@@ -28,29 +30,16 @@ const getStorageOptionPrice = (
 	} )?.prices?.formattedMonthlyPrice;
 };
 
-const SelectedStorageOption = ( { title, price }: StorageAddOnOptionProps ) => {
+const StorageAddOnOption = ( {
+	title,
+	price,
+	isLargeCurrency = false,
+}: StorageAddOnOptionProps ) => {
 	const translate = useTranslate();
-	return (
-		<>
-			{ price ? (
-				<div>
-					<span className="storage-add-on-dropdown-option__title">{ title }</span>
-					<span className="storage-add-on-dropdown-option__price">
-						{ ` + ${ price }/${ translate( 'month' ) }` }
-					</span>
-				</div>
-			) : (
-				<span className="storage-add-on-dropdown-option__title">{ title }</span>
-			) }
-		</>
-	);
-};
 
-const StorageAddOnOption = ( { title, price }: StorageAddOnOptionProps ) => {
-	const translate = useTranslate();
 	return (
 		<>
-			{ price ? (
+			{ price && ! isLargeCurrency ? (
 				<div>
 					<span className="storage-add-on-dropdown-option__title">{ title }</span>
 					<div className="storage-add-on-dropdown-option__price-container">
@@ -73,48 +62,73 @@ export const StorageAddOnDropdown = ( {
 	storageOptions,
 	onStorageAddOnClick,
 }: StorageAddOnDropdownProps ) => {
+	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
-	const { storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
+	const {
+		pricing: { currencyCode },
+		storageAddOnsForPlan,
+	} = gridPlansIndex[ planSlug ];
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
+	const isLargeCurrency = useIsLargeAddOnCurrency( {
+		storageAddOns: storageAddOnsForPlan,
+		currencyCode: currencyCode || 'USD',
+	} );
 	const selectedStorageOptionForPlan = useSelect(
-		( select ) => {
-			return select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug );
-		},
+		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug ),
 		[ planSlug ]
 	);
-
-	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.map( ( storageOption ) => {
 		const title = getStorageStringFromFeature( storageOption.slug ) || '';
 		const price = getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug );
 		return {
-			key: storageOption?.slug,
+			key: storageOption.slug,
 			name: <StorageAddOnOption title={ title } price={ price } />,
 		};
 	} );
 
-	const defaultStorageOption = storageOptions.find( ( storageOption ) => ! storageOption?.isAddOn );
-	const selectedOptionKey = selectedStorageOptionForPlan || defaultStorageOption?.slug || '';
-	const selectedOptionPrice = getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey );
-	const selectedOptionTitle = getStorageStringFromFeature( selectedOptionKey ) || '';
+	const selectedOptionKey = selectedStorageOptionForPlan
+		? selectedStorageOptionForPlan
+		: storageOptions.find( ( storageOption ) => ! storageOption.isAddOn )?.slug;
+	const selectedOptionPrice = selectedOptionKey
+		? getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey )
+		: undefined;
+	const selectedOptionTitle = selectedOptionKey
+		? getStorageStringFromFeature( selectedOptionKey )
+		: undefined;
+
 	const selectedOption = {
 		key: selectedOptionKey,
-		name: <SelectedStorageOption title={ selectedOptionTitle } price={ selectedOptionPrice } />,
+		name: (
+			<StorageAddOnOption
+				title={ selectedOptionTitle }
+				price={ selectedOptionPrice }
+				isLargeCurrency={ isLargeCurrency }
+			/>
+		),
 	};
 	return (
-		<CustomSelectControl
-			label={ label }
-			options={ selectControlOptions }
-			value={ selectedOption }
-			onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) => {
-				const addOnSlug = selectedItem?.key;
+		<>
+			<CustomSelectControl
+				label={ label }
+				options={ selectControlOptions }
+				value={ selectedOption }
+				onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) => {
+					const addOnSlug = selectedItem?.key;
 
-				if ( addOnSlug ) {
-					onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
-					setSelectedStorageOptionForPlan( { addOnSlug, planSlug } );
-				}
-			} }
-		/>
+					if ( addOnSlug ) {
+						onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
+						setSelectedStorageOptionForPlan( { addOnSlug, planSlug } );
+					}
+				} }
+			/>
+			{ isLargeCurrency && selectedOptionPrice && (
+				<div className="storage-add-on-dropdown__offset-price-container">
+					<span className="storage-add-on-dropdown__offset-price">
+						{ ` + ${ selectedOptionPrice }/${ translate( 'month' ) }` }
+					</span>
+				</div>
+			) }
+		</>
 	);
 };
 

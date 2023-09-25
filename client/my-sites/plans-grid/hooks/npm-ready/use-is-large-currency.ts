@@ -1,4 +1,4 @@
-import { formatCurrency } from '@automattic/format-currency';
+import { getDisplayPrices } from '../../lib/get-display-prices';
 import type { GridPlan } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 const LARGE_CURRENCY_CHAR_THRESHOLD = 6;
@@ -16,7 +16,7 @@ interface Props {
  * 9 characters. For example, $4,000 undiscounted and $30 discounted would be 9 characters.
  * This is primarily used for lowering the font-size of "large" display prices.
  */
-export default function useIsLargeCurrency( { gridPlans, returnMonthly = true }: Props ) {
+export default function useIsLargePlanCurrency( { gridPlans, returnMonthly = true }: Props ) {
 	return gridPlans.some( ( gridPlan ) => {
 		const {
 			pricing: { originalPrice, discountedPrice, currencyCode },
@@ -33,29 +33,20 @@ export default function useIsLargeCurrency( { gridPlans, returnMonthly = true }:
 		 *
 		 * https://github.com/Automattic/wp-calypso/pull/81537#discussion_r1323182287
 		 */
-		const priceCharacterCounts = [
-			originalPrice[ returnMonthly ? 'monthly' : 'full' ],
-			discountedPrice[ returnMonthly ? 'monthly' : 'full' ],
-		].map( ( price ) => {
-			/**
-			 * Prices are represented in smallest units for a currency, and not as prices that
-			 * are actually displayed. Ex. $20 is the integer 2000, and not 20. To determine if
-			 * the display price is too long, we convert the integer to a display string.
-			 */
-			return price
-				? formatCurrency( price, currencyCode || 'USD', {
-						stripZeros: true,
-						isSmallestUnit: true,
-				  } ).length
-				: 0;
-		} );
+		const displayPrices = getDisplayPrices(
+			[
+				originalPrice[ returnMonthly ? 'monthly' : 'full' ],
+				discountedPrice[ returnMonthly ? 'monthly' : 'full' ],
+			],
+			currencyCode || 'USD'
+		);
 
-		const exceedsSingleCountThreshold = priceCharacterCounts.some(
-			( charLength ) => charLength > LARGE_CURRENCY_CHAR_THRESHOLD
+		const exceedsSingleCountThreshold = displayPrices.some(
+			( price ) => price.length > LARGE_CURRENCY_CHAR_THRESHOLD
 		);
 
 		const exceedsCombinedCountThreshold =
-			priceCharacterCounts.reduce( ( acc, price ) => acc + price, 0 ) >
+			displayPrices.reduce( ( acc, price ) => acc + price.length, 0 ) >
 			LARGE_CURRENCY_COMBINED_CHAR_THRESHOLD;
 
 		return exceedsSingleCountThreshold || exceedsCombinedCountThreshold;
