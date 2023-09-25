@@ -38,6 +38,7 @@ type ResolveDomainStatusReturn =
 			icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
 			listStatusWeight?: number;
 			noticeText?: TranslateResult | Array< TranslateResult > | null;
+			isDismissable?: boolean;
 	  }
 	| Record< string, never >;
 
@@ -538,6 +539,7 @@ export function resolveDomainStatus(
 					icon: 'info',
 					noticeText: hasTranslation ? newCopy : oldCopy,
 					listStatusWeight: 600,
+					isDismissable: true,
 				};
 			}
 
