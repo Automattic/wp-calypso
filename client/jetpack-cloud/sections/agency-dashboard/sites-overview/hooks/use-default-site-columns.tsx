@@ -26,7 +26,6 @@ const useDefaultSiteColumns = (): SiteColumns => {
 					{
 						key: 'boost',
 						title: translate( 'Boost score' ),
-						className: 'width-fit-content',
 						isExpandable: true,
 						showInfo: true,
 					},

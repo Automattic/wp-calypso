@@ -29,10 +29,7 @@ export default function SiteBoostColumn( { site }: Props ) {
 					getBoostRatingClass( overallScore )
 				) }
 			>
-				{ translate( '%(rating)s Score', {
-					args: { rating: getBoostRating( overallScore ) },
-					comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
-				} ) }
+				{ getBoostRating( overallScore ) }
 			</div>
 		);
 	}
@@ -41,7 +38,7 @@ export default function SiteBoostColumn( { site }: Props ) {
 		const { origin, pathname } = getUrlParts( adminUrl ?? '' );
 		return (
 			<a
-				className="sites-overview__column-action-button"
+				className="sites-overview__column-action-button is-link"
 				href={
 					adminUrl
 						? `${ origin }${ pathname }?page=my-jetpack#/add-boost`
@@ -58,7 +55,7 @@ export default function SiteBoostColumn( { site }: Props ) {
 	return (
 		<>
 			<button
-				className="sites-overview__column-action-button"
+				className="sites-overview__column-action-button is-link"
 				onClick={ handleGetBoostScoreAction }
 			>
 				{ translate( 'Get Score' ) }
