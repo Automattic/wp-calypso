@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .l-block {
 	padding: 5rem 0;
 
@@ -36,6 +38,16 @@
 	.l-block-col-2 .l-block-content {
 		box-sizing: border-box;
 		width: 50%;
+	}
+
+	@media (max-width: $break-medium) {
+		.l-block-col-2 {
+			flex-direction: column;
+
+			.l-block-content {
+				width: 100%;
+			}
+		}
 	}
 }
 
