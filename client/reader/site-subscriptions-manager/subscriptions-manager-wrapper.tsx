@@ -1,11 +1,12 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import {
+	Button,
 	__experimentalHStack as HStack,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -46,7 +47,7 @@ type SubscriptionsManagerWrapperProps = {
 	children: React.ReactNode;
 	ellipsisMenuItems?: React.ReactNode;
 	headerText: string;
-	subHeaderText: string;
+	subHeaderText: React.ReactNode;
 };
 
 const SubscriptionsManagerWrapper = ( {
@@ -74,7 +75,18 @@ const SubscriptionsManagerWrapper = ( {
 				<HStack className="site-subscriptions-manager__header-h-stack">
 					<FormattedHeader
 						headerText={ headerText }
-						subHeaderText={ subHeaderText }
+						subHeaderText={
+							<>
+								{ subHeaderText }{ ' ' }
+								<Button
+									className="site-subscriptions-manager__manage-notifications-button"
+									variant="link"
+									href="/me/notifications"
+								>
+									{ translate( 'Manage notification settings' ) }
+								</Button>
+							</>
+						}
 						align="left"
 						brandFont
 					/>
