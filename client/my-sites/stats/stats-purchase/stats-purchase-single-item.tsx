@@ -218,8 +218,7 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		recordTracksEvent( `calypso_stats_plan_switched_from_personal_to_commercial` );
 
-		const purchasePath = `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection`;
-		window.location.href = purchasePath;
+		page( `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection` );
 	};
 
 	return (
