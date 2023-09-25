@@ -61,6 +61,7 @@
 		font-size: 1rem;
 		font-weight: 500;
 		padding: 1.5rem;
+		text-decoration: none;
 
 		&:hover {
 			color: #fff !important;
@@ -149,6 +150,12 @@
 
 		&.red {
 			background: var(--studio-red-50);
+		}
+	}
+
+	.hosting-intro-block {
+		h2 {
+			max-width: 400px;
 		}
 	}
 

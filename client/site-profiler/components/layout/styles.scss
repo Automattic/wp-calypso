@@ -26,6 +26,17 @@
 	max-width: 1224px;
 	margin: 0 auto;
 	padding: 0 1.5rem;
+
+	.l-block-col-2 {
+		gap: 5rem;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.l-block-col-2 .l-block-content {
+		box-sizing: border-box;
+		width: 50%;
+	}
 }
 
 .l-block-section {
