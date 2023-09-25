@@ -22,7 +22,7 @@ export function LayoutBlock( props: Props ) {
 				animate: animate,
 			} ) }
 		>
-			<div className="l-block-content">{ children }</div>
+			<div className="l-block-wrapper">{ children }</div>
 		</div>
 	);
 }

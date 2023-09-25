@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .l-block {
 	padding: 5rem 0;
 
@@ -10,22 +12,43 @@
 	}
 
 	&.width-small {
-		.l-block-content {
+		.l-block-wrapper {
 			max-width: 600px;
 		}
 	}
 
 	&.width-medium {
-		.l-block-content {
+		.l-block-wrapper {
 			max-width: 1015px;
 		}
 	}
 }
 
-.l-block-content {
+.l-block-wrapper {
 	max-width: 1224px;
 	margin: 0 auto;
 	padding: 0 1.5rem;
+
+	.l-block-col-2 {
+		gap: 5rem;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.l-block-col-2 .l-block-content {
+		box-sizing: border-box;
+		width: 50%;
+	}
+
+	@media (max-width: $break-medium) {
+		.l-block-col-2 {
+			flex-direction: column;
+
+			.l-block-content {
+				width: 100%;
+			}
+		}
+	}
 }
 
 .l-block-section {
