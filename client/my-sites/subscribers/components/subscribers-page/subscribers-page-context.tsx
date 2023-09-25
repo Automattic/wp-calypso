@@ -64,7 +64,7 @@ export const SubscribersPageProvider = ( {
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
-	const hasManySubscribers = useManySubsSite( siteId );
+	const { hasManySubscribers } = useManySubsSite( siteId );
 
 	const subscriberType =
 		filterOption === SubscribersFilterBy.All && hasManySubscribers
@@ -81,7 +81,6 @@ export const SubscribersPageProvider = ( {
 		sortTerm,
 		filterOption: subscriberType,
 	} );
-
 	const grandTotal = subscribersQueryResult.data?.total || 0;
 
 	const { pageChangeCallback } = usePagination(

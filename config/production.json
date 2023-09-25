@@ -124,6 +124,8 @@
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
 		"reader": true,
+		"reader/discover-stream": false,
+		"reader/first-posts-stream": false,
 		"reader/full-errors": false,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
