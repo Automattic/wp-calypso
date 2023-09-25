@@ -161,7 +161,11 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 	};
 
 	// Account for the fact that users can purchase a bundled domain separately from a paid plan
-	if ( ! cartHasPlanBundlePolicy && cartHasDomainBundleProduct && ! cartHasHundredYearPlan ) {
+	if (
+		! cartHasPlanBundlePolicy &&
+		cartHasDomainBundleProduct &&
+		! cartHasHundredYearPlan( cart )
+	) {
 		refundPolicies.push( RefundPolicy.DomainNameRegistrationBundled );
 	}
 
