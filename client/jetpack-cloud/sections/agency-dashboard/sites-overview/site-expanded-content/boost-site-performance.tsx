@@ -2,9 +2,10 @@ import { Button } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState, useContext, useMemo } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { jetpackBoostDesktopIcon, jetpackBoostMobileIcon } from '../../icons';
+import SitesOverviewContext from '../context';
 import { getBoostRating, getBoostRatingClass } from '../lib/boost';
 import ExpandedCard from './expanded-card';
 import InProgressIcon from './in-progress-icon';
@@ -33,6 +34,7 @@ export default function BoostSitePerformance( {
 
 	const helpIconRef = useRef< HTMLElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
+	const { showLicenseInfo } = useContext( SitesOverviewContext );
 
 	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
 
@@ -63,7 +65,7 @@ export default function BoostSitePerformance( {
 	);
 
 	const handleOnClick = () => {
-		// TODO - should open a modal.
+		showLicenseInfo( 'boost' );
 	};
 
 	return (

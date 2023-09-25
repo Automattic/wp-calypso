@@ -1,8 +1,10 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
+import SitesOverviewContext from '../../context';
 import { getBoostRating, getBoostRatingClass } from '../../lib/boost';
 import { Site } from '../../types';
 
@@ -13,12 +15,14 @@ interface Props {
 export default function SiteBoostColumn( { site }: Props ) {
 	const translate = useTranslate();
 
+	const { showLicenseInfo } = useContext( SitesOverviewContext );
+
 	const overallScore = site.jetpack_boost_scores?.overall;
 	const hasBoost = site.has_boost;
 	const adminUrl = useSelector( ( state ) => getJetpackAdminUrl( state, site.blog_id ) );
 
 	const handleGetBoostScoreAction = () => {
-		// TODO - should open a modal.
+		showLicenseInfo( 'boost' );
 	};
 
 	if ( overallScore ) {
