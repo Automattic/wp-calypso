@@ -329,6 +329,13 @@ function PluginDetails( props ) {
 		}
 	);
 
+	const structuredData = JSON.stringify( {
+		'@context': 'https://schema.org',
+		'@type': 'SoftwareApplication',
+		name: fullPlugin?.name,
+		sameAs: 'https://wordpress.org/plugins/' + ( fullPlugin?.slug || '' ),
+	} );
+
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
@@ -439,6 +446,7 @@ function PluginDetails( props ) {
 								>
 									{ translate( 'Download' ) }
 								</Button>
+								<script type="application/ld+json">{ structuredData }</script>
 							</Card>
 						) }
 					</div>
