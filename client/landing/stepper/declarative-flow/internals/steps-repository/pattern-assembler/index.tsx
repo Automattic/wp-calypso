@@ -149,7 +149,7 @@ const PatternAssembler = ( {
 				font_variation_title: getVariationTitle( fontVariation ),
 				font_variation_type: getVariationType( fontVariation ),
 				assembler_source: getAssemblerSource( selectedDesign ),
-				has_premium_styles_selected: shouldUnlockGlobalStyles,
+				has_premium_styles_selected: numOfSelectedGlobalStyles > 0,
 			} ),
 		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
