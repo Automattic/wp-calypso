@@ -1,6 +1,6 @@
 @import "calypso/signup/style.scss";
 
-.business-info__instructions-container {
+.site-prompt__instructions-container {
 	width: 60%;
 	.components-base-control {
 		margin-bottom: 24px;
@@ -27,12 +27,12 @@
 		height: 15em;
 	}
 
-	.business-info__components-group .components-checkbox-control:not(:last-child) {
+	.site-prompt__components-group .components-checkbox-control:not(:last-child) {
 		margin-bottom: $grid-unit;
 	}
 }
 
-.business-info__components-group-label {
+.site-prompt__components-group-label {
 	box-sizing: border-box;
 	color: currentColor;
 	display: block;

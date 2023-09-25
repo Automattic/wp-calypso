@@ -19,7 +19,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
-const withThemeAssemblerFlow: Flow = {
+const withAIAssemblerFlow: Flow = {
 	name: AI_ASSEMBLER_FLOW,
 	useSideEffect() {
 		const selectedDesign = useSelect(
@@ -134,4 +134,4 @@ const withThemeAssemblerFlow: Flow = {
 	},
 };
 
-export default withThemeAssemblerFlow;
+export default withAIAssemblerFlow;

@@ -88,7 +88,7 @@ const AISitePrompt: Step = function ( props ) {
 	function getContent() {
 		return (
 			<>
-				<div className="business-info__instructions-container">
+				<div className="site-prompt__instructions-container">
 					<form onSubmit={ onSubmit }>
 						<TextareaControl
 							label={ __( 'Please describe your site, business and ideas in detail.' ) }
@@ -113,10 +113,10 @@ const AISitePrompt: Step = function ( props ) {
 	}
 
 	return (
-		<div className="business-info__signup is-woocommerce-install">
-			<div className="business-info__is-store-address">
+		<div className="site-prompt__signup is-woocommerce-install">
+			<div className="site-prompt__is-store-address">
 				<StepContainer
-					stepName="business-info"
+					stepName="site-prompt"
 					className={ `is-step-${ intent }` }
 					skipButtonAlign="top"
 					goBack={ goBack }
@@ -124,7 +124,7 @@ const AISitePrompt: Step = function ( props ) {
 					isHorizontalLayout={ true }
 					formattedHeader={
 						<FormattedHeader
-							id="business-info-header"
+							id="site-prompt-header"
 							headerText={ __( 'Tell us a bit about the site you want.' ) }
 							subHeaderText={ __( 'And let WordPress do Wonders.' ) }
 							align="left"
