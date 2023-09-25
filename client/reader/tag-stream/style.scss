@@ -1,10 +1,5 @@
 .tag-stream__header {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: baseline;
 	margin-bottom: 10px;
-
 	.tag-stream__header-follow .follow-button {
 		background: inherit;
 	}
@@ -12,7 +7,6 @@
 
 .reader__content .tag-stream__header {
 	margin-bottom: 0;
-	padding-bottom: 55px;
 }
 
 .reader__content .tag-stream__header.has-description {
@@ -20,9 +14,8 @@
 }
 
 .tag-stream__header-title-group {
-	display: flex;
-	flex-wrap: wrap;
-	margin-right: 6px;
+	display: block;
+	padding-bottom: 40px;
 }
 
 .tag-stream__header-title {
@@ -32,6 +25,19 @@
 	font-weight: 600;
 	line-height: 24px;
 	margin-bottom: 4px;
+}
+
+.tag-stream__header-controls {
+	display: flex;
+	justify-content: space-between;
+
+	@include breakpoint-deprecated( ">1040px" ) {
+		padding-bottom: 20px;
+	}
+}
+
+.tag-stream__header-sort-picker {
+	width: 200px;
 }
 
 .has-description .tag-stream__header-title {

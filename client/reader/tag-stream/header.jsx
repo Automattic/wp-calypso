@@ -28,24 +28,27 @@ class TagStreamHeader extends Component {
 	useRelevanceSort = () => {
 		const sort = 'relevance';
 		recordAction( 'tag_page_clicked_relevance_sort' );
-		this.props.recordReaderTracksEvent &&
+		if ( this.props.recordReaderTracksEvent ) {
 			this.props.recordReaderTracksEvent( 'calypso_reader_clicked_tag_sort', {
 				tag: this.props.encodedTagSlug,
 				sort,
 			} );
+		}
 		updateQueryArg( { sort } );
 	};
 
 	useDateSort = () => {
 		const sort = 'date';
 		recordAction( 'tag_page_clicked_date_sort' );
-		this.props.recordReaderTracksEvent &&
+		if ( this.props.recordReaderTracksEvent ) {
 			this.props.recordReaderTracksEvent( 'calypso_reader_clicked_tag_sort', {
 				tag: this.props.encodedTagSlug,
 				sort,
 			} );
+		}
 		updateQueryArg( { sort } );
 	};
+
 	render() {
 		const {
 			title,
@@ -77,33 +80,41 @@ class TagStreamHeader extends Component {
 					<h1 className="tag-stream__header-title">{ title }</h1>
 					{ description && <h2 className="tag-stream__header-description">{ description }</h2> }
 				</div>
-				<div className="tag-stream__header-sort-picker">
-					{ showSort && (
-						<SegmentedControl compact>
-							<SegmentedControl.Item
-								selected={ sortOrder !== 'date' }
-								onClick={ this.useRelevanceSort }
-							>
-								{ this.props.translate( 'Popular' ) }
-							</SegmentedControl.Item>
-							<SegmentedControl.Item selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
-								{ this.props.translate( 'Recent' ) }
-							</SegmentedControl.Item>
-						</SegmentedControl>
-					) }
-				</div>
-				<div className="tag-stream__header-follow">
-					{ showFollow && (
-						<FollowButton
-							followLabel={ translate( 'Follow tag' ) }
-							followingLabel={ translate( 'Following tag' ) }
-							following={ following }
-							onFollowToggle={ onFollowToggle }
-							followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
-						/>
-					) }
-				</div>
+				{ ( showSort || showFollow ) && (
+					<div className="tag-stream__header-controls">
+						<div className="tag-stream__header-sort-picker">
+							{ showSort && (
+								<SegmentedControl compact>
+									<SegmentedControl.Item
+										selected={ sortOrder !== 'date' }
+										onClick={ this.useRelevanceSort }
+									>
+										{ this.props.translate( 'Popular' ) }
+									</SegmentedControl.Item>
+									<SegmentedControl.Item
+										selected={ sortOrder === 'date' }
+										onClick={ this.useDateSort }
+									>
+										{ this.props.translate( 'Recent' ) }
+									</SegmentedControl.Item>
+								</SegmentedControl>
+							) }
+						</div>
+						<div className="tag-stream__header-follow">
+							{ showFollow && (
+								<FollowButton
+									followLabel={ translate( 'Follow tag' ) }
+									followingLabel={ translate( 'Following tag' ) }
+									iconSize={ 24 }
+									following={ following }
+									onFollowToggle={ onFollowToggle }
+									followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+									followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+								/>
+							) }
+						</div>
+					</div>
+				) }
 			</div>
 		);
 	}
