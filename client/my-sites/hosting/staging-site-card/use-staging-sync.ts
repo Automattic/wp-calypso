@@ -51,7 +51,7 @@ export const usePushToStagingMutation = (
 	return useMemo( () => ( { ...data, pushToStaging: data.pushTo } ), [ data ] );
 };
 
-export const usePullFromProduction = (
+export const usePullFromProductionMutation = (
 	stagingSiteId: number,
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables >
 ) => {
