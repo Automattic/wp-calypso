@@ -1,13 +1,16 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
+import SegmentedControl from 'calypso/components/segmented-control';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import HeaderBack from 'calypso/reader/header-back';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -22,10 +25,14 @@ import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
 
+const updateQueryArg = ( params ) =>
+	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
+
 class TagStream extends Component {
 	static propTypes = {
 		encodedTagSlug: PropTypes.string,
 		decodedTagSlug: PropTypes.string,
+		sort: PropTypes.string,
 	};
 
 	state = {
@@ -97,11 +104,37 @@ class TagStream extends Component {
 		);
 	};
 
+	useRelevanceSort = () => {
+		const sort = 'relevance';
+		recordAction( 'tag_page_clicked_relevance_sort' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_clicked_tag_sort', {
+			tag: this.props.encodedTagSlug,
+			sort,
+		} );
+		updateQueryArg( { sort } );
+	};
+
+	useDateSort = () => {
+		const sort = 'date';
+		recordAction( 'tag_page_clicked_date_sort' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_clicked_tag_sort', {
+			tag: this.props.encodedTagSlug,
+			sort,
+		} );
+		updateQueryArg( { sort } );
+	};
+
 	render() {
 		const emptyContent = () => <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
 		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
+		const sortOrder = this.props.sort || 'relevance';
 		const titleText = title.replace( /-/g, ' ' );
+
+		// const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
+		// const segmentedControlClass = wideDisplay
+		// 	? 'search-stream__sort-picker is-wide'
+		// 	: 'search-stream__sort-picker';
 
 		let imageSearchString = this.props.encodedTagSlug;
 
@@ -131,15 +164,29 @@ class TagStream extends Component {
 
 		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
 		const tagHeader = () => (
-			<TagStreamHeader
-				title={ titleText }
-				description={ this.props.description }
-				imageSearchString={ imageSearchString }
-				showFollow={ !! ( tag && tag.id ) }
-				following={ this.isSubscribed() }
-				onFollowToggle={ this.toggleFollowing }
-				showBack={ this.props.showBack }
-			/>
+			<>
+				<TagStreamHeader
+					title={ titleText }
+					description={ this.props.description }
+					imageSearchString={ imageSearchString }
+					showFollow={ !! ( tag && tag.id ) }
+					following={ this.isSubscribed() }
+					onFollowToggle={ this.toggleFollowing }
+					showBack={ this.props.showBack }
+				/>
+
+				<SegmentedControl compact className="tag-stream__sort-picker">
+					<SegmentedControl.Item
+						selected={ sortOrder !== 'date' }
+						onClick={ this.useRelevanceSort }
+					>
+						{ this.props.translate( 'Relevance' ) }
+					</SegmentedControl.Item>
+					<SegmentedControl.Item selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+						{ this.props.translate( 'Date' ) }
+					</SegmentedControl.Item>
+				</SegmentedControl>
+			</>
 		);
 
 		return (

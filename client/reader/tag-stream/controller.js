@@ -25,7 +25,9 @@ export const tagListing = ( context, next ) => {
 	const tagTitle = titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' );
 
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
-	const streamKey = 'tag:' + tagSlug;
+
+	const streamKey =
+		context.query.sort === 'relevance' ? 'tag_popular:' + tagSlug : 'tag:' + tagSlug;
 	const mcKey = 'topic';
 	const startDate = getStartDate( context );
 

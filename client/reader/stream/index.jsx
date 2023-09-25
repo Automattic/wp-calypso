@@ -372,6 +372,15 @@ class ReaderStream extends Component {
 		this.props.requestPage( { streamKey, isPoll: true } );
 	};
 
+	getPageHandle = ( pageHandle, startDate ) => {
+		if ( pageHandle ) {
+			return pageHandle;
+		} else if ( startDate ) {
+			return { before: startDate };
+		}
+		return null;
+	};
+
 	fetchNextPage = ( options, props = this.props ) => {
 		const { streamKey, stream, startDate } = props;
 		if ( options.triggeredByScroll ) {
@@ -380,7 +389,7 @@ class ReaderStream extends Component {
 
 			props.trackScrollPage( pageId );
 		}
-		const pageHandle = stream.pageHandle || { before: startDate };
+		const pageHandle = this.getPageHandle( stream.pageHandle, startDate );
 		props.requestPage( { streamKey, pageHandle } );
 	};
 

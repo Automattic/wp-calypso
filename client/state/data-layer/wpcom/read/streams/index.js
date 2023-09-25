@@ -298,6 +298,10 @@ const streamApis = {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
 	},
+	tag_popular: {
+		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/cards`,
+		apiNamespace: 'wpcom/v2',
+	},
 	list: {
 		path: ( { streamKey } ) => {
 			const { owner, slug } = JSON.parse( streamKeySuffix( streamKey ) );
