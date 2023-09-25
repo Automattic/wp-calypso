@@ -22,24 +22,24 @@ import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-20
 import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
 import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import { usePlansGridContext } from '../grid-context';
-import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
-import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
-import { isStorageUpgradeableForPlan } from '../lib/is-storage-upgradeable-for-plan';
-import { sortPlans } from '../lib/sort-plan-properties';
-import { plansBreakSmall } from '../media-queries';
-import { getStorageStringFromFeature, usePricingBreakpoint } from '../util';
-import PlanFeatures2023GridActions from './actions';
-import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
-import PlanFeatures2023GridHeaderPrice from './header-price';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
-import PopularBadge from './popular-badge';
-import StorageAddOnDropdown from './storage-add-on-dropdown';
+import { usePlansGridContext } from '../../grid-context';
+import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
+import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
+import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
+import { sortPlans } from '../../lib/sort-plan-properties';
+import { plansBreakSmall } from '../../media-queries';
+import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
+import PlanFeatures2023GridActions from '../actions';
+import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
+import PlanFeatures2023GridHeaderPrice from '../header-price';
+import { Plans2023Tooltip } from '../plans-2023-tooltip';
+import PopularBadge from '../popular-badge';
+import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
 	GridPlan,
 	TransformedFeatureObject,
-} from '../hooks/npm-ready/data-store/use-grid-plans';
-import type { PlanActionOverrides } from '../types';
+} from '../../hooks/npm-ready/data-store/use-grid-plans';
+import type { PlanActionOverrides } from '../../types';
 import type {
 	FeatureObject,
 	Feature,
@@ -795,7 +795,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	);
 };
 
-export const PlanComparisonGrid = ( {
+const PlanComparisonGrid = ( {
 	intervalType,
 	planTypeSelectorProps,
 	isInSignup,
@@ -1089,3 +1089,5 @@ export const PlanComparisonGrid = ( {
 		</div>
 	);
 };
+
+export default PlanComparisonGrid;

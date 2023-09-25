@@ -38,9 +38,9 @@ import ComparisonGridToggle from '../plans-features-main/components/comparison-g
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
+import PlanComparisonGrid from './components/comparison-grid';
 import PlanFeatures2023GridHeaderPrice from './components/header-price';
 import { PlanFeaturesItem } from './components/item';
-import { PlanComparisonGrid } from './components/plan-comparison-grid';
 import PlanDivOrTdContainer from './components/plan-div-td-container';
 import PlanFeaturesContainer from './components/plan-features-container';
 import PlanLogo from './components/plan-logo';
