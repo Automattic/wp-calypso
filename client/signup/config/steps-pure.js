@@ -117,7 +117,7 @@ export function generateSteps( {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				hideFreePlan: true,
@@ -135,7 +135,7 @@ export function generateSteps( {
 			stepName: 'plans-site-selected-legacy',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				hideEcommercePlan: true,
@@ -266,7 +266,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
@@ -275,7 +275,7 @@ export function generateSteps( {
 			apiRequestFunction: addWithThemePlanToCart,
 			dependencies: [ 'siteSlug', 'theme' ],
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
@@ -284,7 +284,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
 				hideFreePlan: true,
@@ -300,7 +300,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
 				showBiennialToggle: true,
@@ -315,7 +315,7 @@ export function generateSteps( {
 
 		'plans-new': {
 			stepName: 'plans',
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
@@ -324,7 +324,7 @@ export function generateSteps( {
 			stepName: 'plans-import',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
@@ -337,7 +337,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_PERSONAL,
@@ -349,7 +349,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_PREMIUM,
@@ -361,7 +361,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
@@ -373,7 +373,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
@@ -385,7 +385,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_WPCOM_PRO,
@@ -397,7 +397,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_WPCOM_STARTER,
@@ -409,7 +409,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE,
 				themeSlugWithRepo: 'pub/twentytwentytwo',
@@ -421,7 +421,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				isLaunchPage: true,
@@ -432,7 +432,7 @@ export function generateSteps( {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug', 'domainItem' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItems' ],
 		},
 
 		'mailbox-plan': {
@@ -440,7 +440,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'emailItem' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'cartItem' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'cartItems' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				useEmailOnboardingSubheader: true,
@@ -686,7 +686,7 @@ export function generateSteps( {
 				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-			dependencies: [ 'cartItem', 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
+			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
 
@@ -815,7 +815,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_PERSONAL_MONTHLY,
@@ -827,7 +827,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_PREMIUM_MONTHLY,
@@ -839,7 +839,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS_MONTHLY,
@@ -851,7 +851,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE_MONTHLY,
 				themeSlugWithRepo: 'pub/twentytwentytwo',
@@ -863,7 +863,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_PERSONAL_2_YEARS,
@@ -875,7 +875,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_PREMIUM_2_YEARS,
@@ -887,7 +887,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS_2_YEARS,
@@ -899,7 +899,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE_2_YEARS,
 				themeSlugWithRepo: 'pub/twentytwentytwo',

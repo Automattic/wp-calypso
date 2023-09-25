@@ -25,7 +25,10 @@ import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import {
+	planItem as getCartItemForPlan,
+	getPlanCartItem,
+} from 'calypso/lib/cart-values/cart-items';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
@@ -98,7 +101,7 @@ export interface PlansFeaturesMainProps {
 	basePlansPath?: string;
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
-	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
+	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -217,7 +220,7 @@ const PlansFeaturesMain = ( {
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
 	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
-	const storageAddOns = useAddOns( siteId ?? undefined ).filter(
+	const storageAddOns = useAddOns( siteId ?? undefined, isInSignup ).filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
 	);
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
@@ -284,7 +287,9 @@ const PlansFeaturesMain = ( {
 		setIsFreePlanPaidDomainDialogOpen( ! isFreePlanPaidDomainDialogOpen );
 	};
 
-	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
+	const handleUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
+		const cartItemForPlan = getPlanCartItem( cartItems );
+
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
@@ -302,7 +307,7 @@ const PlansFeaturesMain = ( {
 		}
 
 		if ( onUpgradeClick ) {
-			onUpgradeClick( cartItemForPlan );
+			onUpgradeClick( cartItems );
 			return;
 		}
 
@@ -576,7 +581,8 @@ const PlansFeaturesMain = ( {
 					} }
 					onPlanSelected={ () => {
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
+						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
+						onUpgradeClick?.( cartItems );
 					} }
 				/>
 			) }
@@ -598,7 +604,8 @@ const PlansFeaturesMain = ( {
 						}
 						invalidateDomainSuggestionCache();
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
+						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
+						onUpgradeClick?.( cartItems );
 					} }
 				/>
 			) }

@@ -35,7 +35,7 @@ import useAddOnPrices from './use-add-on-prices';
 import type { AddOnMeta } from '@automattic/data-stores';
 
 // some memoization. executes far too many times
-const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
+const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[] => {
 	const translate = useTranslate();
 
 	const addOnsActive = [
@@ -124,28 +124,28 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 	// if upgrade is bought - show as manage
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
-	const { billingTransactions, isLoading } = usePastBillingTransactions();
+	const { billingTransactions, isLoading } = usePastBillingTransactions( isInSignup );
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		// get the list of supported features
 		const siteFeatures = getFeaturesBySiteId( state, siteId );
-		const filter = getBillingTransactionFilters( state, 'past' );
-		const filteredTransactions =
-			billingTransactions && filterTransactions( billingTransactions, filter, siteId );
-
 		const spaceUpgradesPurchased: number[] = [];
 
-		if ( filteredTransactions?.length ) {
-			for ( const transaction of filteredTransactions ) {
-				transaction.items?.length &&
-					spaceUpgradesPurchased.push(
-						...transaction.items
-							.filter( ( item ) => item.wpcom_product_slug === PRODUCT_1GB_SPACE )
-							.map( ( item ) => Number( item.licensed_quantity ) )
-					);
+		if ( billingTransactions && ! isInSignup ) {
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const filteredTransactions = filterTransactions( billingTransactions, filter, siteId );
+
+			if ( filteredTransactions?.length ) {
+				for ( const transaction of filteredTransactions ) {
+					transaction.items?.length &&
+						spaceUpgradesPurchased.push(
+							...transaction.items
+								.filter( ( item ) => item.wpcom_product_slug === PRODUCT_1GB_SPACE )
+								.map( ( item ) => Number( item.licensed_quantity ) )
+						);
+				}
 			}
 		}
-
 		// Determine which Stats Add-On to show based on the site's commercial classification.
 		const isSiteMarkedCommercial = getSiteOption( state, siteId, 'is_commercial' );
 
