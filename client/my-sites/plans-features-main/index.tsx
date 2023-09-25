@@ -29,6 +29,7 @@ import {
 	planItem as getCartItemForPlan,
 	getPlanCartItem,
 } from 'calypso/lib/cart-values/cart-items';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
@@ -261,6 +262,17 @@ const PlansFeaturesMain = ( {
 		useGetFreeSubdomainSuggestion(
 			paidDomainName || siteTitle || signupFlowUserName || currentUserName
 		);
+
+	// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
+	// We can use `useExperiment()` and its `isEligible` check to avoid the condition, but it's intentional to use loadExperimentAssignment() here
+	// to be consistent with the other A/A tests.
+	useEffect( () => {
+		if ( flowName === 'onboarding' ) {
+			loadExperimentAssignment( 'calypso_srm_test_plans_page_view_free_plan_modal_view' );
+			loadExperimentAssignment( 'calypso_srm_test_plans_page_view_free_plan_button_click' );
+		}
+	}, [] );
+
 	const resolvedSubdomainName: DataResponse< string > = {
 		isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
 		result: signupFlowSubdomain
