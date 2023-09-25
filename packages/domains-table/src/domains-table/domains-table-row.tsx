@@ -82,24 +82,26 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 	return (
 		<tr key={ domain.domain }>
-			{ /* display:contents appears to break the in-view logic so attach the in-view ref to the first cell instead */ }
-			<td ref={ ref }>
-				{ canSelectAnyDomains && canBulkUpdate( domain ) && (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ isSelected }
-						onChange={ () => handleSelectDomain( domain ) }
-						/* translators: Label for a checkbox control that selects a domain name.*/
-						aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
-							domain: domain.domain,
-						} ) }
-					/>
-				) }
-			</td>
+			{ canSelectAnyDomains && (
+				<td>
+					{ canBulkUpdate( domain ) && (
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							checked={ isSelected }
+							onChange={ () => handleSelectDomain( domain ) }
+							/* translators: Label for a checkbox control that selects a domain name.*/
+							aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
+								domain: domain.domain,
+							} ) }
+						/>
+					) }
+				</td>
+			) }
 			{ domainsTableColumns.map( ( column ) => {
 				if ( column.name === 'domain' ) {
 					return (
-						<td key={ column.name } className="domains-table-row__domain">
+						// The in-view ref is attached to the domain cell because the <tr> is display:contents, which appears to break the in-view logic
+						<td key={ column.name } className="domains-table-row__domain" ref={ ref }>
 							{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 							{ isManageableDomain ? (
 								<a

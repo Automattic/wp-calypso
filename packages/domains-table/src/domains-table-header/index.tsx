@@ -85,8 +85,8 @@ export const DomainsTableHeader = ( {
 	return (
 		<thead className={ listHeaderClasses }>
 			<tr>
-				<th>
-					{ canSelectAnyDomains && (
+				{ canSelectAnyDomains && (
+					<th>
 						<CheckboxControl
 							data-testid="domains-select-all-checkbox"
 							__nextHasNoMarginBottom
@@ -98,8 +98,8 @@ export const DomainsTableHeader = ( {
 								__i18n_text_domain__
 							) }
 						/>
-					) }
-				</th>
+					</th>
+				) }
 
 				{ columns.map( ( column ) => {
 					return (
