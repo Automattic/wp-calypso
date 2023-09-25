@@ -306,10 +306,17 @@ function PluginDetails( props ) {
 	}
 
 	const downloadText = translate(
-		'This plugin is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.',
+		'This plugin is {{org_link}}available for download{{/org_link}} to be used on your {{wpcom_vs_wporg_link}}WordPress self-hosted{{/wpcom_vs_wporg_link}} installation.',
 		{
 			components: {
-				a: (
+				org_link: (
+					<a
+						href={ localizeUrl( 'https://wordpress.org/plugins/' + ( fullPlugin?.slug || '' ) ) }
+						target="_blank"
+						rel="noreferrer noopener"
+					/>
+				),
+				wpcom_vs_wporg_link: (
 					<a
 						href={ localizeUrl(
 							'https://wordpress.com/go/website-building/wordpress-com-vs-wordpress-org/'
