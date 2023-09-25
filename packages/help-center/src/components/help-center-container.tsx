@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import config from '@automattic/calypso-config';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -40,6 +41,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 			initialRoute: store.getInitialRoute(),
 		};
 	}, [] );
+	const isWapuuEnabled = config.isEnabled( 'wapuu' );
 
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
@@ -75,8 +77,10 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 		return null;
 	}
 
+	const defaultRoute = isWapuuEnabled ? [ '/odie' ] : undefined;
+
 	return (
-		<MemoryRouter initialEntries={ initialRoute ? [ initialRoute ] : undefined }>
+		<MemoryRouter initialEntries={ initialRoute ? [ initialRoute ] : defaultRoute }>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }
