@@ -1,3 +1,4 @@
+import { preventWidows } from 'calypso/lib/formatting';
 import { OdieAllowedSectionNames, OdieAllowedBots } from '../types';
 
 // This is a temporal solution, we might need to move this to the backend.
@@ -18,7 +19,7 @@ export const getOdieInitialPrompt = (
 ): string => {
 	switch ( botNameSlug ) {
 		case 'wapuu':
-			return getWapuuInitialPrompts( sectionName );
+			return preventWidows( getWapuuInitialPrompts( sectionName ) );
 		default:
 			return 'Hello, I am your personal assistant.';
 	}

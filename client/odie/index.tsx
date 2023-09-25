@@ -17,13 +17,13 @@ export const WAPUU_ERROR_MESSAGE =
 
 type OdieAssistantProps = {
 	botNameSlug: string;
-	simple?: boolean;
-	floating?: boolean;
-	showHeader?: boolean;
+	isSimpleChatbox?: boolean;
+	isFloatingChatbox?: boolean;
+	isHeaderVisible?: boolean;
 };
 
 const OdieAssistant = ( props: OdieAssistantProps ) => {
-	const { simple, botNameSlug, floating = true, showHeader = true } = props;
+	const { isSimpleChatbox, botNameSlug, isFloatingChatbox = true, isHeaderVisible = true } = props;
 	const {
 		addMessage,
 		botName,
@@ -133,7 +133,7 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 			recordTracksEvent( 'calypso_odie_chat_toggle_visibility_click', {
 				visible: newVisibility,
 				bot_name_slug: botNameSlug,
-				simple_chatbox: simple,
+				simple_chatbox: isSimpleChatbox,
 			} )
 		);
 
@@ -143,34 +143,34 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 	return (
 		<div
 			className={ classnames( 'chatbox', {
-				'chatbox-floating': floating,
-				'chatbox-show': isVisible && ! simple && floating,
-				'chatbox-hide': ! isVisible && ! simple && floating,
-				'chatbox-show-vertical': isVisible && simple && floating,
-				'chatbox-hide-vertical': ! isVisible && simple && floating,
-				'using-environment-badge': environmentBadge && floating,
-				'chatbox-big': botSetting === 'supportDocs' && floating,
+				'chatbox-floating': isFloatingChatbox,
+				'chatbox-show': isVisible && ! isSimpleChatbox && isFloatingChatbox,
+				'chatbox-hide': ! isVisible && ! isSimpleChatbox && isFloatingChatbox,
+				'chatbox-show-vertical': isVisible && isSimpleChatbox && isFloatingChatbox,
+				'chatbox-hide-vertical': ! isVisible && isSimpleChatbox && isFloatingChatbox,
+				'using-environment-badge': environmentBadge && isFloatingChatbox,
+				'chatbox-big': botSetting === 'supportDocs' && isFloatingChatbox,
 			} ) }
 		>
 			<TrackComponentView
 				eventName="calypso_odie_chatbox_view"
 				eventProperties={ { bot_name_slug: botNameSlug } }
 			/>
-			{ ! simple && showHeader && (
+			{ ! isSimpleChatbox && isHeaderVisible && (
 				<WapuuRibbon
 					onToggleVisibility={ handleToggleVisibility }
 					isNudging={ isNudging }
 					isLoading={ isLoading }
 				/>
 			) }
-			{ showHeader && (
+			{ isHeaderVisible && (
 				<div className="chatbox-header">
 					<span>{ botName }</span>
 				</div>
 			) }
 			<div
 				className={ classnames( 'chat-box-message-container', {
-					'has-top-border': ! floating,
+					'has-top-border': ! isFloatingChatbox,
 				} ) }
 			>
 				<div className="chatbox-messages">

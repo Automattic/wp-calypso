@@ -70,7 +70,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 					path="/odie"
 					element={
 						<div className="help-center__container-content-odie">
-							<BackButton className="back-button" />
+							<BackButton className="help-center__container-odie-back-button" />
 							<OdieAssistantProvider
 								sectionName="help-center"
 								botSetting="supportDocs"

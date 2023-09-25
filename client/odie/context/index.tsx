@@ -201,9 +201,9 @@ const OdieAssistantProvider = ( {
 			{ odieIsEnabled && (
 				<OdieAssistant
 					botNameSlug={ botNameSlug }
-					floating={ botSetting !== 'supportDocs' }
-					simple={ botSetting === 'supportDocs' }
-					showHeader={ botSetting !== 'supportDocs' }
+					isFloatingChatbox={ botSetting !== 'supportDocs' }
+					isSimpleChatbox={ botSetting === 'supportDocs' }
+					isHeaderVisible={ botSetting !== 'supportDocs' }
 				/>
 			) }
 		</OdieAssistantContext.Provider>
