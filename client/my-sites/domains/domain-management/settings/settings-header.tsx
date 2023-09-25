@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -9,7 +9,9 @@ import { useCurrentRoute } from 'calypso/components/route';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
-import { useDispatch } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -28,6 +30,15 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { currentRoute } = useCurrentRoute();
+	const hasNoticePreferences = useSelector( hasReceivedRemotePreferences );
+	const noticeDismissPreference = `domain-status-notice-${ domain.name }`;
+	const isNoticeDismissed = useSelector( ( state ) =>
+		getPreference( state, noticeDismissPreference )
+	);
+
+	const handleNoticeDismiss = () => {
+		dispatch( savePreference( noticeDismissPreference, 1 ) );
+	};
 
 	const renderCircle = () => (
 		<SVG viewBox="0 0 24 24" height={ 8 } width={ 8 }>
@@ -110,7 +121,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	};
 
 	const renderNotices = () => {
-		const { noticeText, statusClass } = resolveDomainStatus(
+		const { noticeText, statusClass, isDismissable } = resolveDomainStatus(
 			domain,
 			purchase,
 			translate,
@@ -121,6 +132,10 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 				currentRoute,
 			}
 		);
+
+		if ( isDismissable && ( ! hasNoticePreferences || isNoticeDismissed ) ) {
+			return null;
+		}
 
 		if ( noticeText && statusClass ) {
 			return (
@@ -138,6 +153,15 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 						viewBox="2 2 20 20"
 					/>
 					<div className="settings-header__domain-notice-message">{ noticeText }</div>
+					{ isDismissable && (
+						<button
+							className="settings-header__domain-notice-dismiss-button"
+							aria-label={ translate( 'Dismiss' ) }
+							onClick={ handleNoticeDismiss }
+						>
+							<Gridicon icon="cross" width={ 18 } />
+						</button>
+					) }
 				</div>
 			);
 		}
