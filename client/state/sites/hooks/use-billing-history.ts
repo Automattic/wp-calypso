@@ -23,7 +23,7 @@ export const usePastBillingTransactions = ( disabled: boolean ) => {
 
 	return {
 		billingTransactions: data?.billing_history || null,
-		isLoading,
+		isLoading: disabled ? false : isLoading,
 		error: error?.message || null,
 		enabled: ! disabled,
 	};
