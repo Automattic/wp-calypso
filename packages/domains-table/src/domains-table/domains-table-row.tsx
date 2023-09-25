@@ -136,24 +136,27 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 				if ( column.name === 'expire_renew' ) {
 					return (
-						<td key={ column.name }>
-							<DomainsTableExpiresRewnewsOnCell domain={ domain } isCompact={ isCompact } />
-						</td>
+						<DomainsTableExpiresRewnewsOnCell
+							key={ column.name }
+							as="td"
+							domain={ domain }
+							isCompact={ isCompact }
+						/>
 					);
 				}
 
 				if ( column.name === 'status' ) {
-					return (
+					return isLoadingRowDetails ? (
 						<td key={ column.name }>
-							{ isLoadingRowDetails ? (
-								<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
-							) : (
-								<DomainsTableStatusCell
-									domainStatus={ domainStatus }
-									pendingUpdates={ pendingUpdates }
-								/>
-							) }
+							<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 						</td>
+					) : (
+						<DomainsTableStatusCell
+							key={ column.name }
+							as="td"
+							domainStatus={ domainStatus }
+							pendingUpdates={ pendingUpdates }
+						/>
 					);
 				}
 
