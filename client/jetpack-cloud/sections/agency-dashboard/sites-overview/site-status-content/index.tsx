@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Gridicon, ShortenedNumber, WordPressLogo } from '@automattic/components';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,15 +13,14 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
 import SitesOverviewContext from '../context';
-import { getBoostRating, getBoostRatingClass } from '../lib/boost';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 import SiteBackupStaging from '../site-backup-staging';
 import SiteSelectCheckbox from '../site-select-checkbox';
 import SiteSetFavorite from '../site-set-favorite';
 import useRowMetadata from './hooks/use-row-metadata';
+import SiteBoostColumn from './site-boost-column';
 import type { AllowedTypes, SiteData } from '../types';
 
 interface Props {
@@ -110,17 +108,9 @@ export default function SiteStatusContent( {
 		return page( issueLicenseRedirectUrl );
 	};
 
-	const handleGetBoostScoreAction = () => {
-		// TODO - should open a modal.
-	};
-
 	const handleDeselectLicenseAction = () => {
 		dispatch( unselectLicense( siteId, type ) );
 	};
-
-	const hasBoost = rows.site.value.has_boost;
-
-	const adminUrl = useSelector( ( state ) => getJetpackAdminUrl( state, siteId ) );
 
 	function getTrendIcon( viewsTrend: 'up' | 'down' ) {
 		if ( viewsTrend === 'up' ) {
@@ -278,50 +268,7 @@ export default function SiteStatusContent( {
 
 		// We will show a progress icon when the site score is being fetched.
 		if ( type === 'boost' && status !== 'progress' ) {
-			const overallScore = rows.site.value.jetpack_boost_scores.overall;
-
-			if ( overallScore ) {
-				return (
-					<div
-						className={ classNames(
-							'sites-overview__boost-score',
-							getBoostRatingClass( overallScore )
-						) }
-					>
-						{ translate( '%(rating)s Score', {
-							args: { rating: getBoostRating( overallScore ) },
-							comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
-						} ) }
-					</div>
-				);
-			}
-
-			if ( hasBoost ) {
-				const { origin, pathname } = getUrlParts( adminUrl ?? '' );
-				return (
-					<a
-						className="sites-overview__column-action-button"
-						href={
-							adminUrl
-								? `${ origin }${ pathname }?page=my-jetpack#/add-boost`
-								: `https://${ siteUrl }/wp-admin/admin.php?page=jetpack`
-						}
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ translate( 'Configure Boost' ) }
-					</a>
-				);
-			}
-
-			return (
-				<button
-					className="sites-overview__column-action-button"
-					onClick={ handleGetBoostScoreAction }
-				>
-					{ translate( 'Get Score' ) }
-				</button>
-			);
+			return <SiteBoostColumn site={ rows.site.value } />;
 		}
 
 		switch ( status ) {
