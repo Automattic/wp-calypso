@@ -2,7 +2,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import HostingInto from 'calypso/site-profiler/components/hosting-into';
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainQueryParam from 'calypso/site-profiler/hooks/use-domain-query-param';
@@ -10,6 +9,7 @@ import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
 import HostingInformation from './hosting-information';
+import HostingIntro from './hosting-intro';
 import './styles.scss';
 
 export default function SiteProfiler() {
@@ -37,7 +37,7 @@ export default function SiteProfiler() {
 	return (
 		<>
 			{ ! data && (
-				<LayoutBlock>
+				<LayoutBlock className="domain-analyzer-block" width="medium">
 					<DomainAnalyzer
 						domain={ domain }
 						onFormSubmit={ updateDomainQueryParam }
@@ -47,7 +47,7 @@ export default function SiteProfiler() {
 			) }
 
 			{ data && (
-				<LayoutBlock>
+				<LayoutBlock className="domain-result-block">
 					{ data && (
 						<LayoutBlockSection>
 							<HeadingInformation
@@ -78,7 +78,7 @@ export default function SiteProfiler() {
 			) }
 
 			<LayoutBlock isMonoBg>
-				<HostingInto />
+				<HostingIntro />
 			</LayoutBlock>
 		</>
 	);

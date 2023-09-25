@@ -8,11 +8,24 @@
 	&.animate {
 		animation: l-block-fade-in 250ms ease-in;
 	}
+
+	&.width-small {
+		.l-block-content {
+			max-width: 600px;
+		}
+	}
+
+	&.width-medium {
+		.l-block-content {
+			max-width: 1015px;
+		}
+	}
 }
 
 .l-block-content {
 	max-width: 1224px;
 	margin: 0 auto;
+	padding: 0 1.5rem;
 }
 
 .l-block-section {
