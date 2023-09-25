@@ -84,7 +84,7 @@ export default function BoostSitePerformance( {
 				<div className="site-expanded-content__card-content">
 					<div className="site-expanded-content__card-content-column">
 						{ hasPendingScore ? (
-							<InProgressIcon id={ `${ siteId }-boost-fetching-score-overall` } />
+							<InProgressIcon />
 						) : (
 							<div
 								className={ classNames(
@@ -118,7 +118,7 @@ export default function BoostSitePerformance( {
 					</div>
 					<div className="site-expanded-content__card-content-column">
 						{ hasPendingScore ? (
-							<InProgressIcon id={ `${ siteId }-boost-fetching-score-overall` } />
+							<InProgressIcon />
 						) : (
 							<>
 								<div className="site-expanded-content__device-score-container">

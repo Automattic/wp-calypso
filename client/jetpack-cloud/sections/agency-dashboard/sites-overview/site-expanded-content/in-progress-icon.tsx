@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
-export default function InProgressIcon( { id }: { id: string } ) {
+export default function InProgressIcon() {
 	const translate = useTranslate();
 
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -18,7 +18,7 @@ export default function InProgressIcon( { id }: { id: string } ) {
 			>
 				<Gridicon icon="time" size={ 18 } className="site-expanded-content__progress-icon" />
 			</span>
-			<Tooltip id={ id } context={ iconRef.current } isVisible={ showTooltip } position="bottom">
+			<Tooltip context={ iconRef.current } isVisible={ showTooltip } position="bottom">
 				{ translate( 'Fetching Scores' ) }
 			</Tooltip>
 		</>
