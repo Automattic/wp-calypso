@@ -18,10 +18,10 @@ import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
-import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
-import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
+import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
+import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
@@ -310,7 +310,7 @@ const FeatureFootnote = styled.span`
 	}
 `;
 
-type PlanComparisonGridProps = {
+type ComparisonGridProps = {
 	intervalType: string;
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	isInSignup: boolean;
@@ -330,7 +330,7 @@ type PlanComparisonGridProps = {
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 };
 
-type PlanComparisonGridHeaderProps = {
+type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
 	visibleGridPlans: GridPlan[];
 	isInSignup: boolean;
@@ -348,7 +348,7 @@ type PlanComparisonGridHeaderProps = {
 	selectedPlan?: string;
 };
 
-type PlanComparisonGridHeaderCellProps = PlanComparisonGridHeaderProps & {
+type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
 	allVisible: boolean;
 	isLastInRow: boolean;
 	isLargeCurrency: boolean;
@@ -361,7 +361,7 @@ type PlanFeatureFootnotes = {
 	footnotesByFeature: Record< Feature, number >;
 };
 
-const PlanComparisonGridHeaderCell = ( {
+const ComparisonGridHeaderCell = ( {
 	planSlug,
 	allVisible,
 	isLastInRow,
@@ -381,7 +381,7 @@ const PlanComparisonGridHeaderCell = ( {
 	planActionOverrides,
 	isPlanUpgradeCreditEligible,
 	siteId,
-}: PlanComparisonGridHeaderCellProps ) => {
+}: ComparisonGridHeaderCellProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
@@ -476,7 +476,7 @@ const PlanComparisonGridHeaderCell = ( {
 	);
 };
 
-const PlanComparisonGridHeader = ( {
+const ComparisonGridHeader = ( {
 	displayedGridPlans,
 	visibleGridPlans,
 	isInSignup,
@@ -492,7 +492,7 @@ const PlanComparisonGridHeader = ( {
 	siteId,
 	planActionOverrides,
 	selectedPlan,
-}: PlanComparisonGridHeaderProps ) => {
+}: ComparisonGridHeaderProps ) => {
 	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 	const isLargeCurrency = useIsLargeCurrency( { gridPlans: displayedGridPlans } );
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
@@ -506,7 +506,7 @@ const PlanComparisonGridHeader = ( {
 				className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
 			/>
 			{ visibleGridPlans.map( ( { planSlug }, index ) => (
-				<PlanComparisonGridHeaderCell
+				<ComparisonGridHeaderCell
 					planSlug={ planSlug }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					key={ planSlug }
@@ -534,7 +534,7 @@ const PlanComparisonGridHeader = ( {
 	);
 };
 
-const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
+const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	feature?: FeatureObject;
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
@@ -692,7 +692,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	);
 };
 
-const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
+const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	feature?: FeatureObject | TransformedFeatureObject;
 	isHiddenInMobile: boolean;
 	allJetpackFeatures: Set< string >;
@@ -775,7 +775,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 				) }
 			</RowTitleCell>
 			{ visibleGridPlans.map( ( { planSlug } ) => (
-				<PlanComparisonGridFeatureGroupRowCell
+				<ComparisonGridFeatureGroupRowCell
 					key={ planSlug }
 					feature={ feature }
 					allJetpackFeatures={ allJetpackFeatures }
@@ -795,7 +795,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	);
 };
 
-const PlanComparisonGrid = ( {
+const ComparisonGrid = ( {
 	intervalType,
 	planTypeSelectorProps,
 	isInSignup,
@@ -812,7 +812,7 @@ const PlanComparisonGrid = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
-}: PlanComparisonGridProps ) => {
+}: ComparisonGridProps ) => {
 	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -984,7 +984,7 @@ const PlanComparisonGrid = ( {
 				plans={ displayedGridPlans.map( ( { planSlug } ) => planSlug ) }
 			/>
 			<Grid isInSignup={ isInSignup }>
-				<PlanComparisonGridHeader
+				<ComparisonGridHeader
 					siteId={ siteId }
 					displayedGridPlans={ displayedGridPlans }
 					visibleGridPlans={ visibleGridPlans }
@@ -1017,7 +1017,7 @@ const PlanComparisonGrid = ( {
 								</Title>
 							</TitleRow>
 							{ featureObjects.map( ( feature ) => (
-								<PlanComparisonGridFeatureGroupRow
+								<ComparisonGridFeatureGroupRow
 									key={ feature.getSlug() }
 									feature={ feature }
 									isHiddenInMobile={ isHiddenInMobile }
@@ -1036,7 +1036,7 @@ const PlanComparisonGrid = ( {
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
-								<PlanComparisonGridFeatureGroupRow
+								<ComparisonGridFeatureGroupRow
 									key="feature-storage"
 									isHiddenInMobile={ isHiddenInMobile }
 									allJetpackFeatures={ allJetpackFeatures }
@@ -1056,7 +1056,7 @@ const PlanComparisonGrid = ( {
 						</div>
 					);
 				} ) }
-				<PlanComparisonGridHeader
+				<ComparisonGridHeader
 					displayedGridPlans={ displayedGridPlans }
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
@@ -1090,4 +1090,4 @@ const PlanComparisonGrid = ( {
 	);
 };
 
-export default PlanComparisonGrid;
+export default ComparisonGrid;

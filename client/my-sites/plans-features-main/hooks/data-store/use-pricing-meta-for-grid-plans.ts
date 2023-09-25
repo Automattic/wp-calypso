@@ -15,7 +15,7 @@ import type { AddOnMeta } from '@automattic/data-stores';
 import type {
 	UsePricingMetaForGridPlans,
 	PricingMetaForGridPlan,
-} from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
+} from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import type { IAppState } from 'calypso/state/types';
 
 interface Props {
@@ -167,26 +167,23 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		return null;
 	}
 
-	return planSlugs.reduce(
-		( acc, planSlug ) => {
-			// pricedAPIPlans - should have a definition for all plans, being the main source of API data
-			const pricedAPIPlan = pricedAPIPlans[ planSlug ];
-			// pricedAPISitePlans - unclear if all plans are included
-			const sitePlan = sitePlans.data?.[ planSlug ];
+	return planSlugs.reduce( ( acc, planSlug ) => {
+		// pricedAPIPlans - should have a definition for all plans, being the main source of API data
+		const pricedAPIPlan = pricedAPIPlans[ planSlug ];
+		// pricedAPISitePlans - unclear if all plans are included
+		const sitePlan = sitePlans.data?.[ planSlug ];
 
-			return {
-				...acc,
-				[ planSlug ]: {
-					originalPrice: planPrices[ planSlug ]?.originalPrice,
-					discountedPrice: planPrices[ planSlug ]?.discountedPrice,
-					billingPeriod: pricedAPIPlan?.bill_period,
-					currencyCode: pricedAPIPlan?.currency_code,
-					introOffer: sitePlan?.introOffer,
-				},
-			};
-		},
-		{} as { [ planSlug: string ]: PricingMetaForGridPlan }
-	);
+		return {
+			...acc,
+			[ planSlug ]: {
+				originalPrice: planPrices[ planSlug ]?.originalPrice,
+				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
+				billingPeriod: pricedAPIPlan?.bill_period,
+				currencyCode: pricedAPIPlan?.currency_code,
+				introOffer: sitePlan?.introOffer,
+			},
+		};
+	}, {} as { [ planSlug: string ]: PricingMetaForGridPlan } );
 };
 
 export default usePricingMetaForGridPlans;

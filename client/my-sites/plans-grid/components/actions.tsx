@@ -18,7 +18,7 @@ import classNames from 'classnames';
 import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
+import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import { useSelector } from 'calypso/state';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import { usePlansGridContext } from '../grid-context';
