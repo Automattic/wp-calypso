@@ -276,7 +276,8 @@ export default function SiteStatusContent( {
 			);
 		}
 
-		if ( type === 'boost' ) {
+		// We will show a progress icon when the site score is being fetched.
+		if ( type === 'boost' && status !== 'progress' ) {
 			const overallScore = rows.site.value.jetpack_boost_scores.overall;
 
 			if ( overallScore ) {
