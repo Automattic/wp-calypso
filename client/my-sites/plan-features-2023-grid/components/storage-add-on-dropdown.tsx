@@ -12,7 +12,7 @@ type StorageAddOnDropdownProps = {
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
 	showPrice?: boolean;
-	onStorageAddOnClick?: () => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 };
 
 type StorageAddOnOptionProps = {
@@ -95,9 +95,12 @@ export const StorageAddOnDropdown = ( {
 			options={ selectControlOptions }
 			value={ selectedOption }
 			onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) => {
-				onStorageAddOnClick && onStorageAddOnClick();
-				selectedItem?.key &&
-					setSelectedStorageOptionForPlan( { addOnSlug: selectedItem.key, planSlug } );
+				const addOnSlug = selectedItem?.key;
+
+				if ( addOnSlug ) {
+					onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
+					setSelectedStorageOptionForPlan( { addOnSlug, planSlug } );
+				}
 			} }
 		/>
 	);

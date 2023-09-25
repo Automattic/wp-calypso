@@ -40,7 +40,13 @@ import type {
 	TransformedFeatureObject,
 } from '../hooks/npm-ready/data-store/use-grid-plans';
 import type { PlanActionOverrides } from '../types';
-import type { FeatureObject, Feature, FeatureGroup, PlanSlug } from '@automattic/calypso-products';
+import type {
+	FeatureObject,
+	Feature,
+	FeatureGroup,
+	PlanSlug,
+	WPComStorageAddOnSlug,
+} from '@automattic/calypso-products';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 
 function DropdownIcon() {
@@ -321,7 +327,7 @@ type PlanComparisonGridProps = {
 	selectedFeature?: string;
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean;
-	onStorageAddOnClick?: () => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -540,7 +546,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
-	onStorageAddOnClick?: () => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 } > = ( {
 	feature,
 	visibleGridPlans,
@@ -700,7 +706,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
-	onStorageAddOnClick?: () => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 } > = ( {
 	feature,
 	isHiddenInMobile,
