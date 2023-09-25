@@ -27,6 +27,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { validateDomainForwarding } from './utils/domain-forwarding';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+
 import './style.scss';
 
 const noticeOptions = {
@@ -64,14 +65,11 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			dispatch(
 				successNotice( translate( 'Domain forward updated and enabled.' ), noticeOptions )
 			);
+			// TODO: open the edition of the new forwarding we just created
+			setEditingId( 0 );
 		},
-		onError() {
-			dispatch(
-				errorNotice(
-					translate( 'An error occurred while updating the domain forward.' ),
-					noticeOptions
-				)
-			);
+		onError( error ) {
+			dispatch( errorNotice( error.message, noticeOptions ) );
 		},
 	} );
 
@@ -246,9 +244,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			forward_paths: forwardPaths,
 			is_permanent: isPermanent,
 		} );
-
-		// TODO: open the edition of the new forwarding we just created
-		setEditingId( 0 );
 
 		return false;
 	};
