@@ -105,7 +105,7 @@ function getTrackingScriptsToLoad() {
 		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.akismetGoogleTagManagerId );
 	}
 
-	if ( mayWeInitTracker( 'clarity' ) ) {
+	if ( mayWeTrackByTracker( 'clarity' ) ) {
 		scripts.push( WPCOM_CLARITY_URI );
 	}
 
