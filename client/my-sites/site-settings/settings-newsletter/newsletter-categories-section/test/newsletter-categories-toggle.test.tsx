@@ -19,17 +19,17 @@ describe( 'NewsletterCategoriesToggle', () => {
 	it( 'renders toggle control correctly with given value', () => {
 		const mockHandleToggle = jest.fn();
 		const { getByText } = render(
-			<NewsletterCategoriesToggle value={ true } handleAutosavingToggle={ mockHandleToggle } />
+			<NewsletterCategoriesToggle value={ true } handleToggle={ mockHandleToggle } />
 		);
 
 		expect( getByText( 'Enable newsletter categories' ) ).toBeInTheDocument();
 	} );
 
-	it( 'calls handleAutosavingToggle correctly when toggled off', () => {
+	it( 'calls handleToggle correctly when toggled off', () => {
 		const mockHandleChange = jest.fn();
 		const mockHandleToggle = jest.fn().mockImplementation( () => mockHandleChange );
 		const { getByLabelText } = render(
-			<NewsletterCategoriesToggle value={ true } handleAutosavingToggle={ mockHandleToggle } />
+			<NewsletterCategoriesToggle value={ true } handleToggle={ mockHandleToggle } />
 		);
 
 		fireEvent.click( getByLabelText( 'Enable newsletter categories' ) );
@@ -38,11 +38,11 @@ describe( 'NewsletterCategoriesToggle', () => {
 		expect( mockHandleChange ).toHaveBeenCalledWith( false );
 	} );
 
-	it( 'calls handleAutosavingToggle correctly when toggled on', () => {
+	it( 'calls handleToggle correctly when toggled on', () => {
 		const mockHandleChange = jest.fn();
 		const mockHandleToggle = jest.fn().mockImplementation( () => mockHandleChange );
 		const { getByLabelText } = render(
-			<NewsletterCategoriesToggle value={ false } handleAutosavingToggle={ mockHandleToggle } />
+			<NewsletterCategoriesToggle value={ false } handleToggle={ mockHandleToggle } />
 		);
 
 		fireEvent.click( getByLabelText( 'Enable newsletter categories' ) );
@@ -57,7 +57,7 @@ describe( 'NewsletterCategoriesToggle', () => {
 			<NewsletterCategoriesToggle
 				value={ true }
 				disabled={ true }
-				handleAutosavingToggle={ mockHandleToggle }
+				handleToggle={ mockHandleToggle }
 			/>
 		);
 

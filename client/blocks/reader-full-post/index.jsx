@@ -13,6 +13,7 @@ import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
+import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -52,6 +53,7 @@ import {
 import { showSelectedPost } from 'calypso/reader/utils';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import { userCan } from 'calypso/state/posts/utils';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderFollowForFeed,
@@ -243,6 +245,12 @@ export class FullPostView extends Component {
 			this.props.post,
 			{ context: 'full-post', event_source: 'keyboard' }
 		);
+	};
+
+	onEditClick = () => {
+		recordAction( 'edit_post' );
+		recordGaEvent( 'Clicked Edit Post', 'full_post' );
+		recordTrackForPost( 'calypso_reader_edit_post_clicked', this.props.post );
 	};
 
 	handleRelatedPostFromSameSiteClicked = () => {
@@ -528,6 +536,15 @@ export class FullPostView extends Component {
 							/>
 						) }
 						<div className="reader-full-post__sidebar-comment-like">
+							{ userCan( 'edit_post', post ) && (
+								<PostEditButton
+									post={ post }
+									site={ site }
+									iconSize={ 20 }
+									onClick={ this.onEditClick }
+								/>
+							) }
+
 							{ shouldShowComments( post ) && (
 								<CommentButton
 									key="comment-button"

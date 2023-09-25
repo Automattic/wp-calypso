@@ -44,7 +44,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		domainStatus,
 		pendingUpdates,
 	} = useDomainRow( domain );
-	const { canSelectAnyDomains, domainsTableColumns } = useDomainsTable();
+	const { canSelectAnyDomains, domainsTableColumns, isCompact } = useDomainsTable();
 
 	const renderSiteCell = () => {
 		if ( site && currentDomainData ) {
@@ -111,6 +111,9 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 							) : (
 								<span className="domains-table__domain-name">{ domain.domain }</span>
 							) }
+
+							{ isCompact && <div>{ renderSiteCell() }</div> }
+
 							{ domainTypeText && (
 								<span className="domains-table-row__domain-type-text">{ domainTypeText }</span>
 							) }
@@ -133,7 +136,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'expire_renew' ) {
 					return (
 						<td key={ column.name }>
-							<DomainsTableExpiresRewnewsOnCell domain={ domain } />
+							<DomainsTableExpiresRewnewsOnCell domain={ domain } isCompact={ isCompact } />
 						</td>
 					);
 				}

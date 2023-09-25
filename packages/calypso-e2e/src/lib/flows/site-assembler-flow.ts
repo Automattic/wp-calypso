@@ -22,7 +22,7 @@ export class SiteAssemblerFlow {
 	 * @param {string} text User-visible text on the button.
 	 */
 	async clickButton( text: string ): Promise< void > {
-		await this.page.getByRole( 'button', { name: text } ).click();
+		await this.page.getByRole( 'button', { name: new RegExp( text ) } ).click();
 	}
 
 	/**

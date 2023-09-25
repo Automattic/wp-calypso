@@ -804,7 +804,7 @@ export function shouldRenderExpiringCreditCard( purchase: Purchase ) {
 	);
 }
 
-function monthsUntilCardExpires( purchase: Purchase ) {
+export function monthsUntilCardExpires( purchase: Purchase ) {
 	const creditCard = purchase.payment.creditCard;
 	const expiry = moment( creditCard?.expiryDate, 'MM/YY' );
 	return expiry.diff( moment(), 'months' );

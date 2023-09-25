@@ -117,7 +117,6 @@ type ReadingSettingsFormProps = {
 	isAtomic: boolean | null;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
-	settings: { subscription_options?: SubscriptionOptions };
 	siteIsJetpack: boolean | null;
 	siteSlug?: string;
 	siteUrl?: string;

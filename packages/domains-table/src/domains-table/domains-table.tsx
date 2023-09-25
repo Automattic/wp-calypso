@@ -14,6 +14,7 @@ import {
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useQueries } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -32,6 +33,7 @@ import {
 	allSitesViewColumns,
 	siteSpecificViewColumns,
 	applyColumnSort,
+	removeColumns,
 } from '../domains-table-header/columns';
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
@@ -130,6 +132,7 @@ type Value = {
 	domainsTableColumns: DomainsTableColumn[];
 	currentUsersOwnsAllSelectedDomains: boolean;
 	currentUserCanBulkUpdateContactInfo: boolean;
+	isCompact: boolean;
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -163,6 +166,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		sortDirection: 'asc',
 	} );
 
+	const isCompact = useBreakpoint( '<1280px' );
 	const [ showBulkActions, setShowBulkActions ] = useState( Boolean( ! isMobile() ) );
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
 	const [ filter, setFilter ] = useState< DomainsTableFilter >( () => ( { query: '' } ) );
@@ -236,9 +240,13 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		} );
 	}, [ domains ] );
 	const translate = useTranslate();
-	const domainsTableColumns = isAllSitesView
+	let domainsTableColumns = isAllSitesView
 		? allSitesViewColumns( translate, domainStatusPurchaseActions )
 		: siteSpecificViewColumns( translate, domainStatusPurchaseActions );
+
+	if ( isCompact ) {
+		domainsTableColumns = removeColumns( domainsTableColumns, 'site', 'owner' );
+	}
 
 	const sortedDomains = useMemo( () => {
 		if ( ! domains ) {
@@ -431,6 +439,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		domainsTableColumns,
 		isFetchingDomains,
 		currentUserCanBulkUpdateContactInfo,
+		isCompact,
 	};
 
 	return (

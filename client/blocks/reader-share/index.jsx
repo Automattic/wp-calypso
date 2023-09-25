@@ -122,9 +122,14 @@ class ReaderShare extends Component {
 					title={ this.props.isReblogSelection ? translate( 'Reblog' ) : translate( 'Share' ) }
 				>
 					{ ! this.props.isReblogSelection ? (
-						ReaderShareIcon( {
-							iconSize: this.props.iconSize,
-						} )
+						<>
+							{ ReaderShareIcon( {
+								iconSize: this.props.iconSize,
+							} ) }
+							{ this.props.showLabel && (
+								<span className="reader-share__label">{ translate( 'Share' ) }</span>
+							) }
+						</>
 					) : (
 						<>
 							<Gridicon
@@ -133,8 +138,8 @@ class ReaderShare extends Component {
 								title={ reblogTitle }
 								style={ { height: this.props.iconSize, width: this.props.iconSize } }
 							/>
-							{ this.props.showReblogLabel && (
-								<span className="reader-share__reblog-label" title={ reblogTitle }>
+							{ this.props.showLabel && (
+								<span className="reader-share__label" title={ reblogTitle }>
 									{ translate( 'Reblog' ) }
 								</span>
 							) }

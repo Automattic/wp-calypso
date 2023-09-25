@@ -1,12 +1,17 @@
+import { translate } from 'i18n-calypso';
+
 export default function HostingInto() {
 	return (
 		<>
-			<h2>The best WordPress Hosting on the planet</h2>
+			<h2>{ translate( 'The best WordPress Hosting on the planet' ) }</h2>
 			<p>
-				Whatever you’re building, WordPress.com has everything you need: unmetered bandwidth,
-				unmatched speed, unstoppable security, and intuitive multi-site management.
+				{ translate(
+					'Whatever you’re building, WordPress.com has everything you need: ' +
+						'unmetered bandwidth, unmatched speed, unstoppable security, ' +
+						'and intuitive multi-site management.'
+				) }
 			</p>
-			<p>Bring your WordPress site to WordPress.com and get it all.</p>
+			<p>{ translate( 'Bring your WordPress site to WordPress.com and get it all.' ) }</p>
 		</>
 	);
 }
