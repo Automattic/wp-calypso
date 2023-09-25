@@ -43,8 +43,12 @@ $domains-table-mobile-breakpoint: 480px;
 		--row-gap: 20px;
 
 		display: grid;
-		grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
 		gap: var(--row-gap) 16px;
+
+		grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
+		&.is-owner-hidden {
+			grid-template-columns: 20px 1fr 1fr auto auto auto 36px;
+		}
 
 		tr::after {
 			display: block;

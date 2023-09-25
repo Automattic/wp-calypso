@@ -19,15 +19,7 @@ import { useQueries } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import {
-	useCallback,
-	useLayoutEffect,
-	useMemo,
-	useState,
-	createContext,
-	useContext,
-	ReactNode,
-} from 'react';
+import { useCallback, useLayoutEffect, useMemo, useState, createContext, useContext } from 'react';
 import { DomainsTableFilter } from '../domains-table-filters/index';
 import {
 	allSitesViewColumns,
@@ -76,11 +68,9 @@ interface BaseDomainsTableProps {
 	currentUserCanBulkUpdateContactInfo?: boolean;
 }
 
-export type DomainsTablePropsNoChildren =
+export type DomainsTableProps =
 	| ( BaseDomainsTableProps & { isAllSitesView: true } )
 	| ( BaseDomainsTableProps & { isAllSitesView: false; siteSlug: string | null } );
-
-export type DomainsTableProps = DomainsTablePropsNoChildren & { children: ReactNode | ReactNode[] };
 
 interface DomainsTableUpdatingDomain {
 	action: DomainAction;
@@ -135,11 +125,11 @@ type Value = {
 	isCompact: boolean;
 };
 
-const Context = createContext< Value | undefined >( undefined );
+export const DomainsTableStateContext = createContext< Value | undefined >( undefined );
 
-export const useDomainsTable = () => useContext( Context ) as Value;
+export const useDomainsTable = () => useContext( DomainsTableStateContext ) as Value;
 
-export const DomainsTable = ( props: DomainsTableProps ) => {
+export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 	const {
 		domains: allDomains,
 		fetchAllDomains,
@@ -150,7 +140,6 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		deleteBulkActionStatus,
 		isAllSitesView,
 		domainStatusPurchaseActions,
-		children,
 		onDomainAction,
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction = false,
@@ -442,9 +431,5 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		isCompact,
 	};
 
-	return (
-		<Context.Provider value={ value }>
-			<div className="domains-table">{ children }</div>
-		</Context.Provider>
-	);
+	return value;
 };
