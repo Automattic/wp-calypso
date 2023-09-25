@@ -73,8 +73,8 @@ function getLocation( path ) {
 		return 'following_manage';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		const queryArgs = new URLSearchParams( window.location.search );
-		const selectedTab = queryArgs.get( 'selectedTab' );
+		const searchParams = new URLSearchParams( window.location.search );
+		const selectedTab = searchParams.get( 'selectedTab' );
 		if ( ! selectedTab || selectedTab === 'recommended' ) {
 			return 'discover_recommended';
 		} else if ( selectedTab === 'latest' ) {
