@@ -8,6 +8,7 @@ import {
 	PlanSlug,
 	isWooExpressPlusPlan,
 	FeatureList,
+	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -77,7 +78,7 @@ export interface PlanFeatures2023GridProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
-	onStorageAddOnClick?: () => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
@@ -440,6 +441,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			product_slug: storageAddOn.productSlug,
 			quantity: storageAddOn.quantity,
 			volume: 1,
+			extra: { feature_slug: selectedStorageOption },
 		};
 
 		// TODO clk: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
