@@ -1,4 +1,5 @@
 import {
+	is100YearPlan,
 	isBiennially,
 	isBundled,
 	isDomainRegistration,
@@ -153,8 +154,14 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		( product ) => isDomainRegistration( product ) && isBundled( product )
 	);
 
+	const cartHasHundredYearPlan = ( { products = [] }: ResponseCart ) => {
+		return (
+			products.length > 0 && products.some( ( product ) => is100YearPlan( product.product_slug ) )
+		);
+	};
+
 	// Account for the fact that users can purchase a bundled domain separately from a paid plan
-	if ( ! cartHasPlanBundlePolicy && cartHasDomainBundleProduct ) {
+	if ( ! cartHasPlanBundlePolicy && cartHasDomainBundleProduct && ! cartHasHundredYearPlan ) {
 		refundPolicies.push( RefundPolicy.DomainNameRegistrationBundled );
 	}
 
