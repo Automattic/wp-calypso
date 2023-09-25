@@ -418,10 +418,10 @@ class PostCommentList extends Component {
 
 		const viewMoreText =
 			! shouldShowViewMoreToggle && this.state.showExpandWhenOnlyComments
-				? translate( 'View more' )
-				: translate( 'View more comments' );
+				? translate( 'Show more' )
+				: translate( 'Show more comments' );
 
-		let viewFewerText = translate( 'View fewer comments' );
+		let viewFewerText = translate( 'Show fewer comments' );
 		if ( this.props.isExpanded ) {
 			const { displayedCommentsCount: collapsedDisplayedCommentsCount } =
 				this.getDisplayedCollapsedInlineComments( commentsTreeToShow );
@@ -429,7 +429,7 @@ class PostCommentList extends Component {
 			// If collapsing will not reduce the number of comments shown (only line-clamp them
 			// visually), display 'View less' instead of 'View fewer comments'.
 			if ( displayedCommentsCount === collapsedDisplayedCommentsCount ) {
-				viewFewerText = translate( 'View less' );
+				viewFewerText = translate( 'Show less' );
 			}
 		}
 
