@@ -49,9 +49,9 @@ const SubscriberListContainer = ( {
 						<div className="loading-placeholder small hidden"></div>
 					</div>
 				) ) }
-			{ ! isLoading && grandTotal && (
+			{ ! isLoading && Boolean( grandTotal ) && (
 				<>
-					{ total && (
+					{ Boolean( total ) && (
 						<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
 					) }
 					{ ! total && <NoSearchResults searchTerm={ searchTerm } /> }
