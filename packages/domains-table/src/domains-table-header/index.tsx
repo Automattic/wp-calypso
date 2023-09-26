@@ -4,7 +4,7 @@ import { CheckboxControl, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { CSSProperties, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -12,12 +12,11 @@ export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'a
 
 interface BaseDomainsTableColumn {
 	name: string;
-	label: string | ( ( count: number ) => string ) | null;
+	label: string | ( ( count: number, isBulkSelection: boolean ) => string ) | null;
 	sortFunctions?: Array<
 		( first: DomainData, second: DomainData, sortOrder: number, sites?: SiteDetails[] ) => number
 	>;
 	headerComponent?: ReactNode;
-	width?: CSSProperties[ 'width' ];
 	className?: string;
 }
 
@@ -34,7 +33,7 @@ export type DomainsTableColumn = BaseDomainsTableColumn &
 				initialSortDirection?: never;
 				supportsOrderSwitching?: never;
 		  }
-	 );
+	);
 
 type DomainsTableHeaderProps = {
 	columns: DomainsTableColumn[];
@@ -44,8 +43,8 @@ type DomainsTableHeaderProps = {
 	bulkSelectionStatus: DomainsTableBulkSelectionStatus;
 	onBulkSelectionChange(): void;
 	domainCount: number;
+	selectedDomainsCount: number;
 	headerClasses?: string;
-	hideOwnerColumn?: boolean;
 	domainsRequiringAttention?: number;
 	canSelectAnyDomains?: boolean;
 };
@@ -58,8 +57,8 @@ export const DomainsTableHeader = ( {
 	onBulkSelectionChange,
 	onChangeSortOrder,
 	domainCount,
+	selectedDomainsCount,
 	headerClasses,
-	hideOwnerColumn = false,
 	domainsRequiringAttention,
 	canSelectAnyDomains = true,
 }: DomainsTableHeaderProps ) => {
@@ -81,11 +80,13 @@ export const DomainsTableHeader = ( {
 		return <Icon icon={ columnSortOrder === 'asc' ? chevronDown : chevronUp } size={ 16 } />;
 	};
 
+	const isBulkSelection = bulkSelectionStatus !== 'no-domains';
+
 	return (
 		<thead className={ listHeaderClasses }>
 			<tr>
-				<th className="domains-table__bulk-action-container">
-					{ canSelectAnyDomains && (
+				{ canSelectAnyDomains && (
+					<th>
 						<CheckboxControl
 							data-testid="domains-select-all-checkbox"
 							__nextHasNoMarginBottom
@@ -97,19 +98,12 @@ export const DomainsTableHeader = ( {
 								__i18n_text_domain__
 							) }
 						/>
-					) }
-				</th>
+					</th>
+				) }
 
 				{ columns.map( ( column ) => {
-					if ( column.name === 'owner' && hideOwnerColumn ) {
-						return null;
-					}
 					return (
-						<th
-							key={ column.name }
-							className={ column.className }
-							style={ { width: column.width } }
-						>
+						<th key={ column.name } className={ column.className }>
 							<Button
 								plain
 								onClick={ () => onChangeSortOrder( column ) }
@@ -120,7 +114,10 @@ export const DomainsTableHeader = ( {
 							>
 								{ column?.headerComponent ||
 									( typeof column?.label === 'function'
-										? column.label( domainCount )
+										? column.label(
+												isBulkSelection ? selectedDomainsCount : domainCount,
+												isBulkSelection
+										  )
 										: column?.label ) }
 								{ column?.name === 'status' && domainsRequiringAttention && (
 									<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>

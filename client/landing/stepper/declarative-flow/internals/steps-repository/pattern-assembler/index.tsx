@@ -238,7 +238,7 @@ const PatternAssembler = ( {
 				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
 				footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
 			} as DesignRecipe,
-		} as Design );
+		} ) as Design;
 
 	const updateActivePatternPosition = ( position: number ) => {
 		const patternPosition = header ? position + 1 : position;
@@ -426,11 +426,9 @@ const PatternAssembler = ( {
 			return undefined;
 		}
 
-		// Commit the following string for the translation
-		// translate( 'Back to %(pageTitle)s' );
-		return translate( 'Back to %(clientTitle)s', {
+		return translate( 'Back to %(pageTitle)s', {
 			args: {
-				clientTitle: currentScreen.previousScreen.title,
+				pageTitle: currentScreen.previousScreen.backLabel || currentScreen.previousScreen.title,
 			},
 		} );
 	};

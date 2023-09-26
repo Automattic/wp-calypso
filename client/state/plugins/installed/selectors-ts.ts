@@ -208,10 +208,13 @@ export const getFilteredAndSortedPlugins = createSelector(
 			pluginFilter && _filters[ pluginFilter ]
 				? Object.values( allPluginsForSites )
 						.filter( ( plugin ) => _filters[ pluginFilter ]( plugin ) )
-						.reduce( ( obj, plugin ) => {
-							obj[ plugin.slug ] = plugin;
-							return obj;
-						}, {} as { [ pluginSlug: string ]: Plugin } )
+						.reduce(
+							( obj, plugin ) => {
+								obj[ plugin.slug ] = plugin;
+								return obj;
+							},
+							{} as { [ pluginSlug: string ]: Plugin }
+						)
 				: allPluginsForSites;
 
 		// Sort the plugins alphabetically by slug

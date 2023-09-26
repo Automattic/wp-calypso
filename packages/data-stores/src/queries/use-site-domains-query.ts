@@ -3,6 +3,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 
 export interface DomainData {
 	primary_domain: boolean;
+	blog_name: string;
 	blog_id: number;
 	subscription_id: string;
 	can_manage_dns_records: boolean;
@@ -29,7 +30,7 @@ export interface DomainData {
 	expiry: string;
 	expiry_soon: boolean;
 	expired: boolean;
-	auto_renewing: 0;
+	auto_renewing: boolean;
 	pending_registration: boolean;
 	pending_registration_time: string;
 	has_registration: boolean;
@@ -80,7 +81,14 @@ export interface DomainData {
 	aftermarket_auction_end: string | null;
 	nominet_pending_contact_verification_request: boolean;
 	nominet_domain_suspended: boolean;
-	transfer_status: unknown;
+	transfer_status:
+		| 'pending_owner'
+		| 'pending_registry'
+		| 'cancelled'
+		| 'completed'
+		| 'pending_start'
+		| 'pending_async'
+		| null;
 	last_transfer_error: string;
 	has_private_registration: boolean;
 	is_pending_icann_verification: boolean;

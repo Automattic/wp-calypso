@@ -11,6 +11,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -38,6 +39,7 @@ class ReaderPostEllipsisMenu extends Component {
 		post: PropTypes.object,
 		feed: PropTypes.object,
 		onBlock: PropTypes.func,
+		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
 		showEditPost: PropTypes.bool,
@@ -51,6 +53,7 @@ class ReaderPostEllipsisMenu extends Component {
 
 	static defaultProps = {
 		onBlock: noop,
+		openSuggestedFollows: noop,
 		position: 'top left',
 		showFollow: true,
 		showVisitPost: true,
@@ -59,6 +62,12 @@ class ReaderPostEllipsisMenu extends Component {
 		showReportPost: true,
 		showReportSite: false,
 		posts: [],
+	};
+
+	openSuggestedFollowsModal = ( shouldOpen ) => {
+		if ( shouldOpen ) {
+			this.props.openSuggestedFollows();
+		}
 	};
 
 	blockSite = () => {
@@ -292,6 +301,18 @@ class ReaderPostEllipsisMenu extends Component {
 						followSource={ READER_POST_OPTIONS_MENU }
 						followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
 						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
+					/>
+				) }
+
+				{ this.props.showFollow && (
+					<ReaderFollowButton
+						tagName={ PopoverMenuItem }
+						siteUrl={ post.feed_URL || post.site_URL }
+						followSource={ READER_POST_OPTIONS_MENU }
+						iconSize={ 20 }
+						followLabel={ translate( 'Follow blog' ) }
+						followingLabel={ translate( 'Unfollow blog' ) }
+						onFollowToggle={ this.openSuggestedFollowsModal }
 					/>
 				) }
 

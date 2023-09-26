@@ -287,6 +287,8 @@ export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
 export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const WPCOM_FEATURES_SUBSCRIPTION_GIFTING = 'subscription-gifting';
+export const WPCOM_FEATURES_LOCKED_MODE = 'locked-mode';
+export const WPCOM_FEATURES_LEGACY_CONTACT = 'legacy-contact';
 export const WPCOM_FEATURES_UPLOAD_AUDIO_FILES = 'upload-audio-files';
 export const WPCOM_FEATURES_UPLOAD_PLUGINS = 'upload-plugins';
 export const WPCOM_FEATURES_UPLOAD_VIDEO_FILES = 'upload-video-files';
@@ -419,7 +421,7 @@ export const FEATURE_SHIPPING_INTEGRATIONS = 'shipping-integrations';
 export const FEATURE_50GB_STORAGE_ADD_ON = '50gb-storage-add-on';
 export const FEATURE_100GB_STORAGE_ADD_ON = '100gb-storage-add-on';
 
-export const WPCOM_STORAGE_ADD_ONS = <const>[
+export const WPCOM_STORAGE_ADD_ONS = < const >[
 	FEATURE_50GB_STORAGE_ADD_ON,
 	FEATURE_100GB_STORAGE_ADD_ON,
 ];

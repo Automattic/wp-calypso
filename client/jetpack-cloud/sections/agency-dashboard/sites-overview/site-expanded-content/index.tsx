@@ -53,6 +53,7 @@ export default function SiteExpandedContent( {
 					hasBoost={ site.has_boost }
 					trackEvent={ trackEvent }
 					hasError={ hasError }
+					hasPendingScore={ site.has_pending_boost_one_time_score }
 				/>
 			) }
 			{ columns.includes( 'backup' ) && stats && (

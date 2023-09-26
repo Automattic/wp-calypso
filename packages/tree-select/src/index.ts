@@ -49,7 +49,7 @@ export default function treeSelect<
 	// Same issue as https://github.com/Automattic/wp-calypso/pull/74540#issuecomment-1650834391
 	SArgs extends Args = Args,
 	Deps extends WeakMapKey[] = any[], // eslint-disable-line @typescript-eslint/no-explicit-any
-	Result = unknown
+	Result = unknown,
 >(
 	getDependents: ( state: State, ...args: Args ) => Deps,
 	selector: ( deps: Deps, ...args: SArgs ) => Result,

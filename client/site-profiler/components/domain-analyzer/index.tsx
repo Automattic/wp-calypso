@@ -4,13 +4,14 @@ import { FormEvent } from 'react';
 import './styles.scss';
 
 interface Props {
-	onFormSubmit: ( domain: string ) => void;
+	domain?: string;
 	isBusy?: boolean;
+	onFormSubmit: ( domain: string ) => void;
 }
 
 export default function DomainAnalyzer( props: Props ) {
 	const translate = useTranslate();
-	const { isBusy, onFormSubmit } = props;
+	const { domain, isBusy, onFormSubmit } = props;
 
 	const onSubmit = ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
@@ -18,7 +19,7 @@ export default function DomainAnalyzer( props: Props ) {
 		const domainEl = e.currentTarget.elements.namedItem( 'domain' ) as HTMLInputElement;
 		const domain = domainEl.value;
 
-		domain && onFormSubmit( domain );
+		onFormSubmit( domain );
 	};
 
 	return (
@@ -33,10 +34,16 @@ export default function DomainAnalyzer( props: Props ) {
 			<form className="domain-analyzer--form" onSubmit={ onSubmit }>
 				<div className="domain-analyzer--form-container">
 					<div className="col-1">
-						<input type="text" name="domain" placeholder={ translate( 'mysite.com' ) } />
+						<input
+							type="text"
+							name="domain"
+							autoComplete="off"
+							defaultValue={ domain }
+							placeholder={ translate( 'mysite.com' ) }
+						/>
 					</div>
 					<div className="col-2">
-						<Button isBusy={ isBusy } type="submit">
+						<Button isBusy={ isBusy } type="submit" className="button-action">
 							{ translate( 'Check site' ) }
 						</Button>
 					</div>

@@ -308,12 +308,10 @@ function getConfig( {
 	return importerConfig;
 }
 
-export function getImporters(
-	args: ImporterConfigArgs = { isAtomic: false, siteSlug: '', siteTitle: '' }
-) {
+export function getImporters( args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' } ) {
 	const importerConfig = getConfig( args );
 
-	if ( ! config.isEnabled( 'importers/substack' ) || args.isAtomic ) {
+	if ( ! config.isEnabled( 'importers/substack' ) ) {
 		delete importerConfig.substack;
 	}
 

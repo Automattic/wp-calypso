@@ -55,8 +55,11 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 		showConfirmDialog,
 	} = props;
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
-	const fromSiteItem = useSelector( ( state ) =>
-		getSiteBySlug( state, fromSite ? convertToFriendlyWebsiteName( fromSite ) : '' )
+	const fromSiteSlug = fromSite ? convertToFriendlyWebsiteName( fromSite ) : '';
+	// Check domain without the www first, and with www as a backup
+	const fromSiteItem = useSelector(
+		( state ) =>
+			getSiteBySlug( state, fromSiteSlug ) || getSiteBySlug( state, `www.${ fromSiteSlug }` )
 	);
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );

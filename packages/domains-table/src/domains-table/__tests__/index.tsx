@@ -1,11 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, getByText, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import moment from 'moment';
 import React from 'react';
 import { DomainsTable } from '..';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
+import { transferStatus } from '../../utils/constants';
 
 const render = ( el ) => renderWithProvider( el );
 
@@ -13,6 +15,7 @@ const getBulkCheckbox = () =>
 	screen.getByRole( 'checkbox', { name: 'Select all tick boxes for domains in table' } );
 const getDomainCheckbox = ( domain: string ) =>
 	screen.getByRole( 'checkbox', { name: `Tick box for ${ domain }` } );
+const getBulkUpdateContactDetailsButton = () => screen.getByText( 'Edit contact information' );
 
 test( 'all domain names are rendered in the table', () => {
 	const { rerender } = render(
@@ -99,6 +102,7 @@ test( 'when isAllSitesView is true, the primary domain label is displayed if a d
 			domains={ [ primaryPartial, notPrimaryPartial ] }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView={ false }
+			siteSlug="example.com"
 		/>
 	);
 
@@ -520,4 +524,236 @@ test( 'when isAllSitesView is false, hide wordpress.com domain if there is a wpc
 
 	expect( screen.queryByText( 'primary-domain.wpcomstaging.com' ) ).toBeInTheDocument();
 	expect( screen.queryByText( 'primary-domain.wordpress.com' ) ).not.toBeInTheDocument();
+} );
+
+test( 'when selecting a domain, display the selected count instead of the total count', () => {
+	const [ primaryPartial ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const [ notPrimaryPartial ] = testDomain( {
+		domain: 'not-primary-domain.blog',
+		blog_id: 124,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	render( <DomainsTable domains={ [ primaryPartial, notPrimaryPartial ] } isAllSitesView /> );
+
+	expect( screen.queryByText( '2 domains' ) ).toBeInTheDocument();
+
+	const firstDomainsCheckbox = getDomainCheckbox( 'primary-domain.blog' );
+
+	fireEvent.click( firstDomainsCheckbox );
+
+	expect( screen.queryByText( '2 domains' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( '1 domain selected' ) ).toBeInTheDocument();
+} );
+
+describe( 'column sorting', () => {
+	let dateTimeFormatSpy;
+	const OriginalTimeFormat = Intl.DateTimeFormat;
+
+	beforeAll( () => {
+		dateTimeFormatSpy = jest.spyOn( global.Intl, 'DateTimeFormat' );
+		dateTimeFormatSpy.mockImplementation(
+			( locale, options ) => new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } )
+		);
+	} );
+
+	afterAll( () => {
+		dateTimeFormatSpy.mockClear();
+	} );
+
+	test( 'sorts simple columns', async () => {
+		const blogId = 1;
+
+		const [ ownedByAPartial, ownedByAFull ] = testDomain( {
+			domain: '1.com',
+			blog_id: blogId,
+			owner: 'A Owner',
+			current_user_is_owner: false,
+		} );
+
+		const [ ownedByFPartial, ownedByFFull ] = testDomain( {
+			domain: '2.com',
+			blog_id: blogId,
+			owner: 'F Owner',
+			current_user_is_owner: false,
+		} );
+
+		const [ ownedByCPartial, ownedByCFull ] = testDomain( {
+			domain: '3.com',
+			blog_id: blogId,
+			owner: 'C Owner',
+			current_user_is_owner: false,
+		} );
+
+		const fetchSiteDomains = jest.fn().mockImplementation( () =>
+			Promise.resolve( {
+				domains: [ ownedByAFull, ownedByFFull, ownedByCFull ],
+			} )
+		);
+
+		const fetchSite = jest.fn().mockResolvedValue( { ID: blogId, name: 'The blog' } );
+
+		render(
+			<DomainsTable
+				domains={ [ ownedByAPartial, ownedByFPartial, ownedByCPartial ] }
+				isAllSitesView
+				fetchSite={ fetchSite }
+				fetchSiteDomains={ fetchSiteDomains }
+			/>
+		);
+
+		await waitFor( () => expect( fetchSiteDomains ).toHaveBeenCalled() );
+
+		fireEvent.click( screen.getByText( 'Owner' ) );
+
+		let [ , firstRow, secondRow, thirdRow ] = screen.getAllByRole( 'row' );
+
+		expect( getByText( firstRow, 'A Owner' ) ).toBeInTheDocument();
+		expect( getByText( secondRow, 'C Owner' ) ).toBeInTheDocument();
+		expect( getByText( thirdRow, 'F Owner' ) ).toBeInTheDocument();
+
+		fireEvent.click( screen.getByText( 'Owner' ) );
+
+		[ , firstRow, secondRow, thirdRow ] = screen.getAllByRole( 'row' );
+
+		expect( getByText( firstRow, 'F Owner' ) ).toBeInTheDocument();
+		expect( getByText( secondRow, 'C Owner' ) ).toBeInTheDocument();
+		expect( getByText( thirdRow, 'A Owner' ) ).toBeInTheDocument();
+	} );
+
+	test( 'sorts by status', async () => {
+		const blogId = 1;
+
+		const [ activePartial, activeFull ] = testDomain( {
+			domain: 'active.com',
+			blog_id: blogId,
+			wpcom_domain: false,
+			type: 'registered',
+			has_registration: true,
+			points_to_wpcom: true,
+			transfer_status: transferStatus.COMPLETED,
+		} );
+
+		const [ expiringPartial, expiringFull ] = testDomain( {
+			domain: 'expiring.com',
+			blog_id: blogId,
+			wpcom_domain: false,
+			type: 'mapping',
+			has_registration: true,
+			current_user_is_owner: true,
+			expired: false,
+			expiry: moment().add( 29, 'days' ).toISOString(),
+		} );
+
+		const [ errorPartial, errorFull ] = testDomain( {
+			domain: 'error.com',
+			blog_id: blogId,
+			wpcom_domain: false,
+			type: 'mapping',
+			has_registration: false,
+			expired: false,
+			registration_date: moment().subtract( 5, 'days' ).toISOString(),
+			expiry: moment().add( 60, 'days' ).toISOString(),
+			points_to_wpcom: false,
+			auto_renewing: false,
+		} );
+
+		const fetchSiteDomains = jest.fn().mockImplementation( () =>
+			Promise.resolve( {
+				domains: [ activeFull, expiringFull, errorFull ],
+			} )
+		);
+
+		const fetchSite = jest.fn().mockResolvedValue( { ID: blogId, name: 'The blog' } );
+
+		render(
+			<DomainsTable
+				domains={ [ activePartial, expiringPartial, errorPartial ] }
+				isAllSitesView
+				fetchSite={ fetchSite }
+				fetchSiteDomains={ fetchSiteDomains }
+			/>
+		);
+
+		await waitFor( () => expect( fetchSiteDomains ).toHaveBeenCalled() );
+
+		fireEvent.click( screen.getByText( 'Status' ) );
+
+		let [ , firstRow, secondRow, thirdRow ] = screen.getAllByRole( 'row' );
+
+		expect( getByText( firstRow, 'active.com' ) ).toBeInTheDocument();
+		expect( getByText( secondRow, 'expiring.com' ) ).toBeInTheDocument();
+		expect( getByText( thirdRow, 'error.com' ) ).toBeInTheDocument();
+
+		fireEvent.click( screen.getByText( 'Status' ) );
+
+		[ , firstRow, secondRow, thirdRow ] = screen.getAllByRole( 'row' );
+
+		expect( getByText( firstRow, 'error.com' ) ).toBeInTheDocument();
+		expect( getByText( secondRow, 'expiring.com' ) ).toBeInTheDocument();
+		expect( getByText( thirdRow, 'active.com' ) ).toBeInTheDocument();
+	} );
+} );
+
+test( 'when current user is the owner, they can bulk update contact info', () => {
+	render(
+		<DomainsTable
+			shouldDisplayContactInfoBulkAction
+			currentUserCanBulkUpdateContactInfo
+			domains={ [ testPartialDomain( { domain: 'example1.com', current_user_is_owner: true } ) ] }
+			isAllSitesView
+		/>
+	);
+
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+
+	fireEvent.click( firstDomainsCheckbox );
+
+	expect( getBulkUpdateContactDetailsButton() ).toBeEnabled();
+} );
+
+test( 'when current user is not the owner, they cannot bulk update contact info', () => {
+	render(
+		<DomainsTable
+			shouldDisplayContactInfoBulkAction
+			currentUserCanBulkUpdateContactInfo
+			domains={ [
+				testPartialDomain( { domain: 'example1.com', current_user_is_owner: false } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
+
+	fireEvent.click( firstDomainsCheckbox );
+	fireEvent.click( secondDomainsCheckbox );
+
+	expect( getBulkUpdateContactDetailsButton() ).toBeDisabled();
+} );
+
+test( 'when the current user is not allowed to bulk update the contact info, disable the action', () => {
+	render(
+		<DomainsTable
+			shouldDisplayContactInfoBulkAction
+			currentUserCanBulkUpdateContactInfo={ false }
+			isAllSitesView
+			domains={ [ testPartialDomain( { domain: 'example1.com' } ) ] }
+		/>
+	);
+
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+
+	fireEvent.click( firstDomainsCheckbox );
+
+	expect( getBulkUpdateContactDetailsButton() ).toBeDisabled();
 } );

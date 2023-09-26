@@ -1,23 +1,35 @@
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
+import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSiteTitle, getSiteDomain } from 'calypso/state/sites/selectors';
-import { useActivityPubStatus } from './hooks';
 
 const DomainUpsellCard = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const linkUrl = domainAddNew( domain );
+	const linkUrl = addQueryArgs( domainAddNew( domain ), {
+		domainAndPlanPackage: 'true',
+		upsell: 'activitypub',
+	} );
+	const translate = useTranslate();
+	const recordClick = () => {
+		recordTracksEvent( 'calypso_activitypub_domain_upsell_click' );
+	};
 	return (
 		<Card className="site-settings__card">
-			<code>{ '<blink>' }</code>
-			<a href={ linkUrl }>
-				Link to Domain Upsell, with tracking and return path, needs moar design.
-			</a>
-			<code>{ '</blink>' }</code>
+			<p>
+				{ translate(
+					'Unlock the full power of the fediverse with a memorable custom domain. Your domain also means that you can take your followers with you, using self-hosted WordPress with the ActivityPub plugin, or any other ActivityPub software.'
+				) }
+			</p>
+			<Button primary href={ linkUrl } onClick={ recordClick }>
+				{ translate( 'Add a custom domain' ) }
+			</Button>
 		</Card>
 	);
 };
@@ -26,10 +38,15 @@ const DomainCongratsCard = ( { user } ) => {
 	const translate = useTranslate();
 	return (
 		<Card className="site-settings__card">
-			{ translate(
-				'Your site is using a custom domain! You can now set up a custom ActivityPub alias.'
-			) }
-			<ClipboardButtonInput value={ user } />
+			<p>{ translate( 'Your site is using a custom domain! 🎉' ) }</p>
+			<p>
+				{ translate(
+					'Owning your domain unlocks account portability and a separate profile for each blog author. Here’s yours:'
+				) }
+			</p>
+			<p>
+				<ClipboardButtonInput value={ user } />
+			</p>
 		</Card>
 	);
 };
@@ -82,12 +99,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 			<Card className="site-settings__card">
 				<p>
 					{ translate(
-						'With ActivityPub your blog becomes part of a federated social network. This means you can share and talk to everyone using the ActivityPub protocol, including users of Mastodon, Friendica, and Pleroma.'
-					) }
-				</p>
-				<p>
-					{ translate(
-						'Allow people on the fediverse to follow your site, receive updates, and leave comments.'
+						'Broadcast your blog into the fediverse! Attract followers, deliver updates, and receive comments from a diverse user base of ActivityPub-compliant platforms.'
 					) }
 				</p>
 				<ToggleControl

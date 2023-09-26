@@ -16,6 +16,7 @@ import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginBrowser from './plugins-browser';
+import { RelatedPluginsPage } from './related-plugins-page';
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -95,6 +96,19 @@ export function plugins( context, next ) {
 function plugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
 	renderSinglePlugin( context, siteUrl );
+	next();
+}
+
+export function relatedPlugins( context, next ) {
+	const siteUrl = getSiteFragment( context.path );
+	const pluginSlug = decodeURIComponent( context.params.plugin );
+
+	context.primary = createElement( RelatedPluginsPage, {
+		path: context.path,
+		pluginSlug,
+		siteUrl,
+	} );
+
 	next();
 }
 

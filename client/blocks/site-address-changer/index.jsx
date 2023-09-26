@@ -36,6 +36,7 @@ export class SiteAddressChanger extends Component {
 		currentDomainSuffix: PropTypes.string.isRequired,
 		currentDomain: PropTypes.object.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		onSiteAddressChanged: PropTypes.func,
 
 		// `connect`ed
 		isSiteAddressChangeRequesting: PropTypes.bool,
@@ -58,7 +59,7 @@ export class SiteAddressChanger extends Component {
 		this.props.clearValidationError( this.props.siteId );
 	}
 
-	onConfirm = () => {
+	onConfirm = async () => {
 		const { domainFieldValue, newDomainSuffix } = this.state;
 		const { currentDomain, currentDomainSuffix, siteId } = this.props;
 		const oldDomain = get( currentDomain, 'name', null );
@@ -67,13 +68,15 @@ export class SiteAddressChanger extends Component {
 				? freeSiteAddressType.BLOG
 				: freeSiteAddressType.MANAGED;
 
-		this.props.requestSiteAddressChange(
+		await this.props.requestSiteAddressChange(
 			siteId,
 			domainFieldValue,
 			newDomainSuffix.substr( 1 ),
 			oldDomain,
 			type
 		);
+
+		this.props.onSiteAddressChanged?.();
 	};
 
 	setValidationState = () => {

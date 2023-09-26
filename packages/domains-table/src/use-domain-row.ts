@@ -8,9 +8,10 @@ import { countDomainsRequiringAttention } from './utils';
 import { createSiteDomainObject } from './utils/assembler';
 import { resolveDomainStatus } from './utils/resolve-domain-status';
 
+const notNull = < T >( x: T ): x is Exclude< T, null > => x !== null;
+
 export const useDomainRow = ( domain: PartialDomainData ) => {
 	const {
-		hideOwnerColumn,
 		isAllSitesView,
 		fetchSiteDomains,
 		domainStatusPurchaseActions,
@@ -20,6 +21,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		handleSelectDomain,
 		domainResults,
 		showBulkActions,
+		updatingDomain,
 	} = useDomainsTable();
 
 	const translate = useTranslate();
@@ -52,7 +54,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 			return domain.blog_id.toString( 10 );
 		}
 
-		if ( site.options.is_redirect && site.options.unmapped_url ) {
+		if ( site.options?.is_redirect && site.options?.unmapped_url ) {
 			return new URL( site.options.unmapped_url ).host;
 		}
 
@@ -65,8 +67,8 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		if ( ! currentDomainData || isLoadingRowDetails ) {
 			return null;
 		}
-		return countDomainsRequiringAttention(
-			allSiteDomains?.map( ( domain ) =>
+		const domains = allSiteDomains
+			?.map( ( domain ) =>
 				resolveDomainStatus( domain, {
 					siteSlug: siteSlug,
 					getMappingErrors: true,
@@ -76,7 +78,9 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 						domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
 				} )
 			)
-		);
+			.filter( notNull );
+
+		return countDomainsRequiringAttention( domains ?? [] );
 	}, [
 		allSiteDomains,
 		currentDomainData,
@@ -106,6 +110,36 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 
 	const isSelected = selectedDomains.has( getDomainId( domain ) );
 
+	const pendingUpdates = useMemo( () => {
+		const updates = domainResults.get( domain.domain ) ?? [];
+
+		if ( domain.domain === updatingDomain?.domain && updatingDomain.message ) {
+			updates.unshift( {
+				created_at: updatingDomain.created_at,
+				message: updatingDomain.message,
+				status: '',
+			} );
+		}
+
+		return updates;
+	}, [ domain.domain, domainResults, updatingDomain ] );
+
+	const domainStatus = currentDomainData
+		? resolveDomainStatus( currentDomainData, {
+				siteSlug: siteSlug,
+				translate,
+				getMappingErrors: true,
+				currentRoute: window.location.pathname,
+				isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( currentDomainData ),
+				isCreditCardExpiring:
+					domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
+				onRenewNowClick: () =>
+					domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', currentDomainData ),
+				monthsUtilCreditCardExpires:
+					domainStatusPurchaseActions?.monthsUtilCreditCardExpires?.( currentDomainData ),
+		  } )
+		: null;
+
 	return {
 		ref,
 		site,
@@ -113,7 +147,6 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		isManageableDomain,
 		userCanAddSiteToDomain,
 		domainsRequiringAttention,
-		hideOwnerColumn,
 		placeholderWidth,
 		shouldDisplayPrimaryDomainLabel,
 		isLoadingRowDetails,
@@ -122,8 +155,9 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		isSelected,
 		handleSelectDomain,
 		isAllSitesView,
+		domainStatus,
 		domainStatusPurchaseActions,
-		pendingUpdates: domainResults.get( domain.domain ) || [],
+		pendingUpdates,
 		currentDomainData,
 		showBulkActions,
 	};

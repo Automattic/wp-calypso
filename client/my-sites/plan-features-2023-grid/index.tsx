@@ -19,12 +19,13 @@ import {
 	SlackLogo,
 	TimeLogo,
 } from '@automattic/components';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, ForwardedRef, forwardRef, createRef } from 'react';
+import { Component, ForwardedRef, forwardRef } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -34,6 +35,7 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
+import ComparisonGridToggle from '../plans-features-main/components/comparison-grid-toggle';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
@@ -55,7 +57,7 @@ import type {
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { PlanActionOverrides } from './types';
-import type { DomainSuggestion } from '@automattic/data-stores';
+import type { DomainSuggestion, SelectedStorageOptionForPlans } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
@@ -74,7 +76,7 @@ export interface PlanFeatures2023GridProps {
 	siteId?: number | null;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
-	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
+	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
@@ -93,12 +95,13 @@ export interface PlanFeatures2023GridProps {
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	showOdie?: () => void;
 	// temporary
 	showPlansComparisonGrid: boolean;
 	// temporary
 	toggleShowPlansComparisonGrid: () => void;
 	planTypeSelectorProps: PlanTypeSelectorProps;
+	// temporary: callback ref to scroll Odie AI Assistant into view once "Compare plans" button is clicked
+	observableForOdieRef: ( observableElement: Element | null ) => void;
 }
 
 interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
@@ -110,33 +113,10 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 	isPlanUpgradeCreditEligible: boolean;
 	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
 	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
+	selectedStorageOptions?: SelectedStorageOptionForPlans;
 }
 
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
-	observer: IntersectionObserver | null = null;
-	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
-
-	componentDidMount() {
-		this.observer = new IntersectionObserver( ( entries ) => {
-			entries.forEach( ( entry ) => {
-				if ( entry.isIntersecting ) {
-					this.props.showOdie?.();
-					this.observer?.disconnect();
-				}
-			} );
-		} );
-
-		if ( this.buttonRef.current ) {
-			this.observer.observe( this.buttonRef.current );
-		}
-	}
-
-	componentWillUnmount() {
-		if ( this.observer ) {
-			this.observer.disconnect();
-		}
-	}
-
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
 		// Do not render the spotlight plan if it exists
@@ -440,14 +420,33 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	handleUpgradeClick = ( planSlug: PlanSlug ) => {
-		const { onUpgradeClick: ownPropsOnUpgradeClick, gridPlansForFeaturesGrid } = this.props;
-		const { cartItemForPlan } =
+		const {
+			onUpgradeClick: ownPropsOnUpgradeClick,
+			gridPlansForFeaturesGrid,
+			selectedStorageOptions,
+		} = this.props;
+		const { cartItemForPlan, storageAddOnsForPlan } =
 			gridPlansForFeaturesGrid.find( ( gridPlan ) => gridPlan.planSlug === planSlug ) ?? {};
 
-		// TODO clk: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
+		const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
+		const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
+			return selectedStorageOption && addOn
+				? addOn.featureSlugs?.includes( selectedStorageOption )
+				: false;
+		} );
 
+		const storageAddOnCartItem = storageAddOn && {
+			product_slug: storageAddOn.productSlug,
+			quantity: storageAddOn.quantity,
+			volume: 1,
+		};
+
+		// TODO clk: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
 		if ( cartItemForPlan ) {
-			ownPropsOnUpgradeClick?.( cartItemForPlan );
+			ownPropsOnUpgradeClick?.( [
+				cartItemForPlan,
+				...( storageAddOnCartItem ? [ storageAddOnCartItem ] : [] ),
+			] );
 			return;
 		}
 
@@ -659,7 +658,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				showUpgradeableStorage,
 				storageOptions,
 			} );
-
 			const storageJSX = canUpgradeStorageForPlan ? (
 				<StorageAddOnDropdown
 					label={ translate( 'Storage' ) }
@@ -720,6 +718,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			toggleShowPlansComparisonGrid,
 			showPlansComparisonGrid,
 			showUpgradeableStorage,
+			observableForOdieRef,
 		} = this.props;
 
 		return (
@@ -756,13 +755,15 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					</PlansGridContextProvider>
 				</div>
 				{ ! hidePlansFeatureComparison && (
-					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-						<Button onClick={ toggleShowPlansComparisonGrid } ref={ this.buttonRef }>
-							{ showPlansComparisonGrid
+					<ComparisonGridToggle
+						onClick={ toggleShowPlansComparisonGrid }
+						label={
+							showPlansComparisonGrid
 								? translate( 'Hide comparison' )
-								: translate( 'Compare plans' ) }
-						</Button>
-					</div>
+								: translate( 'Compare plans' )
+						}
+						ref={ observableForOdieRef }
+					/>
 				) }
 				{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (
 					<div
@@ -792,11 +793,10 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								showLegacyStorageFeature={ showLegacyStorageFeature }
 								showUpgradeableStorage={ showUpgradeableStorage }
 							/>
-							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-								<Button onClick={ toggleShowPlansComparisonGrid }>
-									{ translate( 'Hide comparison' ) }
-								</Button>
-							</div>
+							<ComparisonGridToggle
+								onClick={ toggleShowPlansComparisonGrid }
+								label={ translate( 'Hide comparison' ) }
+							/>
 						</PlansGridContextProvider>
 					</div>
 				) : null }
@@ -816,6 +816,10 @@ export default forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
 		const isLargeCurrency = useIsLargeCurrency( {
 			gridPlans: props.gridPlansForFeaturesGrid,
 		} );
+
+		const selectedStorageOptions = useSelect( ( select ) => {
+			return select( WpcomPlansUI.store ).getSelectedStorageOptions();
+		}, [] );
 
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
@@ -845,6 +849,7 @@ export default forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
 					manageHref={ manageHref }
 					selectedSiteSlug={ selectedSiteSlug }
 					translate={ translate }
+					selectedStorageOptions={ selectedStorageOptions }
 				/>
 			);
 		}

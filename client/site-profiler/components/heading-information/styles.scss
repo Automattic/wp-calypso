@@ -1,0 +1,42 @@
+.heading-information {
+	background: #fff;
+	border: 1px solid var(--studio-gray-5);
+	/* stylelint-disable-next-line */
+	border-radius: 3px;
+	box-shadow: 0 4px 10px 0 #0000000d;
+
+	p {
+		font-size: 1rem !important;
+		margin: 0;
+	}
+
+	h5 {
+		font-size: 0.875rem;
+		color: var(--studio-gray-50);
+	}
+
+	.domain {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 3rem;
+		color: var(--studio-gray-100);
+	}
+
+	summary {
+		padding: 1.5rem;
+	}
+
+	footer {
+		background: var(--studio-gray-0);
+		border-radius: 0 0 2px 2px;
+		padding: 1rem 1.5rem;
+
+		p {
+			margin-bottom: 1rem;
+		}
+	}
+
+	.cta-wrapper {
+		display: flex;
+		gap: 1rem;
+	}
+}

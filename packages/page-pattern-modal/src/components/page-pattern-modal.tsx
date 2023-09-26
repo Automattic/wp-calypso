@@ -84,19 +84,22 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	} );
 
 	filterPatternsWithMissingBlocks( patterns: Record< string, FormattedPattern > ) {
-		return Object.entries( patterns ).reduce( ( acc, [ name, pattern ] ) => {
-			// Does the pattern contain any missing blocks?
-			const patternHasMissingBlocks = containsMissingBlock( pattern.blocks );
+		return Object.entries( patterns ).reduce(
+			( acc, [ name, pattern ] ) => {
+				// Does the pattern contain any missing blocks?
+				const patternHasMissingBlocks = containsMissingBlock( pattern.blocks );
 
-			// Only retain the pattern in the collection if:
-			// 1. It does not contain any missing blocks
-			// 2. There are no blocks at all (likely the "blank" pattern placeholder)
-			if ( ! patternHasMissingBlocks || ! pattern.blocks.length ) {
-				acc[ name ] = pattern;
-			}
+				// Only retain the pattern in the collection if:
+				// 1. It does not contain any missing blocks
+				// 2. There are no blocks at all (likely the "blank" pattern placeholder)
+				if ( ! patternHasMissingBlocks || ! pattern.blocks.length ) {
+					acc[ name ] = pattern;
+				}
 
-			return acc;
-		}, {} as Record< string, FormattedPattern > );
+				return acc;
+			},
+			{} as Record< string, FormattedPattern >
+		);
 	}
 
 	getBlocksForSelection = ( selectedPattern: string ) => {

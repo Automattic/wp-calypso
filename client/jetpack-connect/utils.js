@@ -48,6 +48,11 @@ export function authQueryTransformer( queryObject ) {
 		allowSiteConnection: queryObject.skip_user || queryObject.allow_site_connection || null,
 		// Used by woo core profiler flow to determine if we need to show a success notice after installing extensions or not.
 		installedExtSuccess: queryObject.installed_ext_success || null,
+
+		// This is a temporary param used for Jetpack A.I and Jetpack Boost A/B testing in WooCommerce core
+		// Related WooCommerce PR: https://github.com/woocommerce/woocommerce/pull/39799
+		// this param will be removed after the expierment is over
+		plugin_name: queryObject.plugin_name || null,
 	};
 }
 
@@ -70,6 +75,7 @@ export const authQueryPropTypes = PropTypes.shape( {
 	state: PropTypes.string.isRequired,
 	userEmail: PropTypes.string,
 	installedExtSuccess: PropTypes.string,
+	plugin_name: PropTypes.string,
 } );
 
 export function addCalypsoEnvQueryArg( url ) {

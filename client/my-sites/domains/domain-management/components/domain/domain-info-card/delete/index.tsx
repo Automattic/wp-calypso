@@ -26,6 +26,7 @@ const DomainDeleteInfoCard = ( {
 		! purchase ||
 		! domain.currentUserIsOwner ||
 		domain.pendingRegistration ||
+		domain.isMoveToNewSitePending ||
 		domain.transferStatus === transferStatus.PENDING_ASYNC
 	) {
 		return null;

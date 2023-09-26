@@ -186,6 +186,7 @@ describe( 'parseBackupContentsData', () => {
 				hasChildren: false,
 				period: '1690411648',
 				id: 'ZjY6L2luZGV4LnBocA==',
+				totalItems: 1,
 			},
 		];
 

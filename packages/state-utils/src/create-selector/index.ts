@@ -82,7 +82,7 @@ export default function createSelector<
 	// only uses state, not props.
 	// See https://github.com/Automattic/wp-calypso/pull/74540#issuecomment-1650834391
 	TDepProps extends TProps,
-	TDerivedState
+	TDerivedState,
 >(
 	selector: ( state: TState, ...props: TProps ) => TDerivedState,
 	getDependants:

@@ -12,12 +12,14 @@ interface BulkActionsToolbarProps {
 	onAutoRenew: ( enable: boolean ) => void;
 	onUpdateContactInfo: () => void;
 	selectedDomainCount: number;
+	canUpdateContactInfo: boolean;
 }
 
 export function BulkActionsToolbar( {
 	onAutoRenew,
 	onUpdateContactInfo,
 	selectedDomainCount,
+	canUpdateContactInfo,
 }: BulkActionsToolbarProps ) {
 	const { shouldDisplayContactInfoBulkAction } = useDomainsTable();
 	const { __, _n } = useI18n();
@@ -67,7 +69,7 @@ export function BulkActionsToolbar( {
 	return (
 		<div className="domains-table-bulk-actions-toolbar">
 			{ shouldDisplayContactInfoBulkAction && (
-				<Button onClick={ onUpdateContactInfo }>
+				<Button onClick={ onUpdateContactInfo } disabled={ ! canUpdateContactInfo }>
 					<img
 						className="domains-table-bulk-actions-toolbar__icon"
 						src={ contactIcon }

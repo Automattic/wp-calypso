@@ -7,21 +7,26 @@ import moment from 'moment';
 
 interface DomainsTableExpiresRewnewsOnCellProps {
 	domain: PartialDomainData;
+	isCompact?: boolean;
+	as?: 'td' | 'div';
 }
 
 export const DomainsTableExpiresRewnewsOnCell = ( {
 	domain,
+	isCompact = false,
+	as: Element = 'div',
 }: DomainsTableExpiresRewnewsOnCellProps ) => {
 	const localeSlug = useLocale();
 	const isExpired = domain.expiry && moment( domain.expiry ).utc().isBefore( moment().utc() );
 	const { __ } = useI18n();
 
-	const expiryDate = domain.has_registration
-		? new Intl.DateTimeFormat( localeSlug, { dateStyle: 'medium' } ).format(
-				new Date( domain.expiry )
-		  )
-		: null;
-
+	const isInvalidDate = isNaN( Date.parse( domain.expiry ) );
+	const expiryDate =
+		domain.has_registration && ! isInvalidDate
+			? new Intl.DateTimeFormat( localeSlug, { dateStyle: 'medium' } ).format(
+					new Date( domain.expiry )
+			  )
+			: null;
 	const notice = isExpired
 		? sprintf(
 				/* translators: %s - The date on which the domain was expired */
@@ -35,15 +40,17 @@ export const DomainsTableExpiresRewnewsOnCell = ( {
 		  );
 
 	return (
-		<div className="domains-table-row__renews-on-cell">
+		<Element className="domains-table-row__renews-on-cell">
 			{ expiryDate ? (
 				<>
-					<Gridicon icon={ isExpired ? 'notice-outline' : 'reblog' } size={ 18 } />
+					{ ! isCompact && (
+						<Gridicon icon={ isExpired ? 'notice-outline' : 'reblog' } size={ 18 } />
+					) }
 					{ notice }
 				</>
 			) : (
 				'-'
 			) }
-		</div>
+		</Element>
 	);
 };

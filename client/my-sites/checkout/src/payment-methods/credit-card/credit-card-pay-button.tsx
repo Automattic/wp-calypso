@@ -3,11 +3,14 @@ import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composi
 import { styled } from '@automattic/wpcom-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
+import { useState, useEffect } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import { useDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
@@ -47,6 +50,15 @@ export default function CreditCardPayButton( {
 	const elements = useElements();
 	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
 
+	const [ displayFieldsError, setDisplayFieldsError ] = useState( '' );
+	const reduxDispatch = useDispatch();
+	useEffect( () => {
+		if ( displayFieldsError ) {
+			document.body.scrollTop = document.documentElement.scrollTop = 0;
+			reduxDispatch( errorNotice( displayFieldsError ) );
+			setDisplayFieldsError( '' );
+		}
+	}, [ displayFieldsError ] );
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
 	// this prop yet.
@@ -60,7 +72,7 @@ export default function CreditCardPayButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
+				if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayFieldsError ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
 						onClick( {
@@ -173,9 +185,16 @@ function ButtonContents( {
 function isCreditCardFormValid(
 	store: CardStoreType,
 	paymentPartner: string,
-	__: ( value: string ) => string
+	__: ( value: string ) => string,
+	setDisplayFieldsError: ( value: string ) => void
 ) {
 	debug( 'validating credit card fields for partner', paymentPartner );
+
+	function setFieldsError() {
+		setDisplayFieldsError(
+			__( 'Something seems to be missing — please fill out all the required fields.' )
+		);
+	}
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
@@ -185,6 +204,7 @@ function isCreditCardFormValid(
 				// Touch the field so it displays a validation error
 				store.dispatch( actions.setFieldValue( 'cardholderName', '' ) );
 				store.dispatch( actions.setFieldError( 'cardholderName', __( 'This field is required' ) ) );
+				setFieldsError();
 			}
 			const errors = selectors.getCardDataErrors( store.getState() );
 			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
@@ -195,9 +215,11 @@ function isCreditCardFormValid(
 				incompleteFieldKeys.map( ( key ) =>
 					store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
 				);
+				setFieldsError();
 			}
 			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
+
 				return false;
 			}
 			return true;

@@ -18,6 +18,7 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT,
 	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
+	DOMAIN_MARK_AS_PENDING_MOVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
@@ -78,6 +79,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
 				privateDomain: false,
 				contactInfoDisclosed: false,
+			} );
+		case DOMAIN_MARK_AS_PENDING_MOVE:
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+				isMoveToNewSitePending: true,
 			} );
 	}
 

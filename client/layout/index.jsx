@@ -201,20 +201,7 @@ class Layout extends Component {
 	}
 
 	shouldShowOdieAssistant() {
-		const eligibleSections = [
-			'plans',
-			'add-ons',
-			'domains',
-			'email',
-			'site-purchases',
-			'checkout',
-		];
-
-		if ( this.props.isOffline ) {
-			return false;
-		}
-
-		return eligibleSections.includes( this.props.sectionName );
+		return false;
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {

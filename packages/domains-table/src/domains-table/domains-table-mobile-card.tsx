@@ -6,11 +6,12 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
-import { ResponseDomain } from '../utils/types';
+import { canBulkUpdate } from '../utils/can-bulk-update';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
+import { DomainsTableStatusCTA } from './domains-table-status-cta';
 
 type Props = {
 	domain: PartialDomainData;
@@ -26,7 +27,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		currentDomainData,
 		isSelected,
 		handleSelectDomain,
-		domainStatusPurchaseActions,
+		domainStatus,
 		pendingUpdates,
 		shouldDisplayPrimaryDomainLabel,
 		showBulkActions,
@@ -38,7 +39,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		<div className="domains-table-mobile-card" ref={ ref }>
 			<div>
 				<div className="domains-table-mobile-card-header">
-					{ ! domain.wpcom_domain && showBulkActions && (
+					{ canBulkUpdate( domain ) && showBulkActions && (
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							checked={ isSelected }
@@ -66,6 +67,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 								site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false
 							}
 							isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+							isSimpleSite={ ! site?.is_wpcom_atomic }
 						/>
 					) }
 				</div>
@@ -81,7 +83,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Expires / renews on' ) } </span>
 				<span className="domains-table-mobile-card-registered-date">
-					<DomainsTableExpiresRewnewsOnCell domain={ domain } />
+					<DomainsTableExpiresRewnewsOnCell domain={ domain } as="div" />
 				</span>
 			</div>
 
@@ -90,12 +92,16 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 				{ ! currentDomainData || isLoadingSiteDomainsDetails ? (
 					<LoadingPlaceholder style={ { width: '30%' } } />
 				) : (
-					<DomainsTableStatusCell
-						siteSlug={ siteSlug }
-						currentDomainData={ currentDomainData as ResponseDomain }
-						domainStatusPurchaseActions={ domainStatusPurchaseActions }
-						pendingUpdates={ pendingUpdates }
-					/>
+					<div className="domains-table-mobile-card-status">
+						<DomainsTableStatusCell
+							domainStatus={ domainStatus }
+							pendingUpdates={ pendingUpdates }
+							as="div"
+						/>
+						{ domainStatus?.callToAction && (
+							<DomainsTableStatusCTA callToAction={ domainStatus.callToAction } />
+						) }
+					</div>
 				) }
 			</div>
 		</div>

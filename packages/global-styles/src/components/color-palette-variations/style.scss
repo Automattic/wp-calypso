@@ -4,7 +4,7 @@
 	grid-template-columns: repeat(3, 1fr);
 	min-width: 100%;
 	box-sizing: border-box;
-	margin: 14px -2px 26px;
+	margin: 14px -2px 2px;
 
 	.global-styles-variation-container__iframe {
 		max-height: 52px;
@@ -62,6 +62,7 @@
 	font-weight: 500;
 	letter-spacing: -0.15px;
 	line-height: 1.7;
+	align-items: center;
 }
 
 .global-styles-variations__group-title-actual {

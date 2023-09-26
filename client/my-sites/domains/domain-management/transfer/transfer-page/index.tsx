@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
@@ -139,7 +138,9 @@ const TransferPage = ( props: TransferPageProps ) => {
 					mainText={ mainText }
 				/>
 			);
-		} else if ( isEnabled( 'domains/transfer-to-any-user' ) ) {
+		} else if (
+			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) )
+		) {
 			options.push(
 				<ActionCard
 					key="transfer-to-any-user"

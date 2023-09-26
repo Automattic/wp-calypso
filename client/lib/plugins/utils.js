@@ -123,7 +123,8 @@ export function getAllowedPluginData( plugin ) {
 		'variations',
 		'version',
 		'wp_admin_settings_page_url',
-		'saas_landing_page'
+		'saas_landing_page',
+		'categories'
 	);
 }
 
@@ -187,6 +188,10 @@ export function normalizeCompatibilityList( compatibilityList ) {
 		}
 		return version.join( '.' );
 	} );
+}
+
+export function mapStarRatingToPercent( starRating ) {
+	return ( ( starRating ?? 0 ) / 5 ) * 100;
 }
 
 export function normalizePluginData( plugin, pluginData ) {

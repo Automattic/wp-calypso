@@ -6,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { useDomainRow } from '../use-domain-row';
+import { canBulkUpdate } from '../utils/can-bulk-update';
 import { domainInfoContext } from '../utils/constants';
 import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
@@ -15,6 +16,7 @@ import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
+import { DomainsTableStatusCTA } from './domains-table-status-cta';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
@@ -38,11 +40,10 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		isSelected,
 		handleSelectDomain,
 		isAllSitesView,
-		hideOwnerColumn,
-		domainStatusPurchaseActions,
+		domainStatus,
 		pendingUpdates,
 	} = useDomainRow( domain );
-	const { canSelectAnyDomains, domainsTableColumns } = useDomainsTable();
+	const { canSelectAnyDomains, domainsTableColumns, isCompact } = useDomainsTable();
 
 	const renderSiteCell = () => {
 		if ( site && currentDomainData ) {
@@ -80,24 +81,27 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	return (
-		<tr key={ domain.domain } ref={ ref }>
-			<td>
-				{ canSelectAnyDomains && ! domain.wpcom_domain && (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ isSelected }
-						onChange={ () => handleSelectDomain( domain ) }
-						/* translators: Label for a checkbox control that selects a domain name.*/
-						aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
-							domain: domain.domain,
-						} ) }
-					/>
-				) }
-			</td>
+		<tr key={ domain.domain }>
+			{ canSelectAnyDomains && (
+				<td>
+					{ canBulkUpdate( domain ) && (
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							checked={ isSelected }
+							onChange={ () => handleSelectDomain( domain ) }
+							/* translators: Label for a checkbox control that selects a domain name.*/
+							aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
+								domain: domain.domain,
+							} ) }
+						/>
+					) }
+				</td>
+			) }
 			{ domainsTableColumns.map( ( column ) => {
 				if ( column.name === 'domain' ) {
 					return (
-						<td key={ column.name }>
+						// The in-view ref is attached to the domain cell because the <tr> is display:contents, which appears to break the in-view logic
+						<td key={ column.name } className="domains-table-row__domain" ref={ ref }>
 							{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 							{ isManageableDomain ? (
 								<a
@@ -109,6 +113,9 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 							) : (
 								<span className="domains-table__domain-name">{ domain.domain }</span>
 							) }
+
+							{ isCompact && <div>{ renderSiteCell() }</div> }
+
 							{ domainTypeText && (
 								<span className="domains-table-row__domain-type-text">{ domainTypeText }</span>
 							) }
@@ -117,11 +124,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				}
 
 				if ( column.name === 'owner' ) {
-					if ( ! hideOwnerColumn ) {
-						return <td key={ column.name }>{ renderOwnerCell() }</td>;
-					}
-
-					return null;
+					return <td key={ column.name }>{ renderOwnerCell() }</td>;
 				}
 
 				if ( column.name === 'site' ) {
@@ -130,24 +133,35 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 				if ( column.name === 'expire_renew' ) {
 					return (
-						<td key={ column.name }>
-							<DomainsTableExpiresRewnewsOnCell domain={ domain } />
-						</td>
+						<DomainsTableExpiresRewnewsOnCell
+							key={ column.name }
+							as="td"
+							domain={ domain }
+							isCompact={ isCompact }
+						/>
 					);
 				}
 
 				if ( column.name === 'status' ) {
+					return isLoadingRowDetails ? (
+						<td key={ column.name }>
+							<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
+						</td>
+					) : (
+						<DomainsTableStatusCell
+							key={ column.name }
+							as="td"
+							domainStatus={ domainStatus }
+							pendingUpdates={ pendingUpdates }
+						/>
+					);
+				}
+
+				if ( column.name === 'status_action' ) {
 					return (
 						<td key={ column.name }>
-							{ isLoadingRowDetails ? (
-								<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
-							) : (
-								<DomainsTableStatusCell
-									siteSlug={ siteSlug }
-									currentDomainData={ currentDomainData }
-									domainStatusPurchaseActions={ domainStatusPurchaseActions }
-									pendingUpdates={ pendingUpdates }
-								/>
+							{ ! domainStatus?.callToAction || isLoadingRowDetails ? null : (
+								<DomainsTableStatusCTA callToAction={ domainStatus.callToAction } />
 							) }
 						</td>
 					);
@@ -174,6 +188,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 										false
 									}
 									isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+									isSimpleSite={ ! site?.is_wpcom_atomic }
 								/>
 							) }
 						</td>

@@ -1,16 +1,18 @@
 import config from '@automattic/calypso-config';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import OdieAssistant from '..';
+import useOdieUserTracking from '../trackLocation/useOdieUserTracking';
+import { getOdieInitialMessages } from './initial-messages';
 import { getOdieInitialPrompt } from './initial-prompts';
+import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
 import type { Chat, Context, Message, Nudge, OdieAllowedSectionNames } from '../types';
 import type { ReactNode } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
+export const noop = () => {};
 
 /*
  * This is the interface for the context. It contains all the methods and values that are
@@ -25,12 +27,17 @@ const noop = () => {};
  */
 interface OdieAssistantContextInterface {
 	addMessage: ( message: Message ) => void;
+	botName?: string;
+	botNameSlug?: string;
+	botSetting?: string;
 	chat: Chat;
+	clearChat: () => void;
 	isLoadingChat: boolean;
 	isLoading: boolean;
 	isNudging: boolean;
 	isVisible: boolean;
 	lastNudge: Nudge | null;
+	lastUserLocations: OdieUserTracking[];
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
@@ -44,12 +51,16 @@ interface OdieAssistantContextInterface {
 
 const defaultContextInterfaceValues = {
 	addMessage: noop,
+	botName: 'Wapuu',
+	botNameSlug: 'wapuu',
 	chat: { context: { section_name: '', site_id: null }, messages: [] },
+	clearChat: noop,
 	isLoadingChat: false,
 	isLoading: false,
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
+	lastUserLocations: [],
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
@@ -69,22 +80,23 @@ const OdieAssistantContext = createContext< OdieAssistantContextInterface >(
 // Custom hook to access the OdieAssistantContext
 const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 
-const allowedTreatmentSections = [ 'plans' ];
-
 // Create a provider component for the context
 const OdieAssistantProvider = ( {
+	botName = 'Wapuu assistant',
+	botNameSlug = 'wapuu',
+	botSetting = 'wapuu',
 	sectionName,
 	children,
 }: {
+	botName?: string;
+	botNameSlug?: string;
+	botSetting?: string;
 	sectionName: OdieAllowedSectionNames;
-	children: ReactNode;
+	children?: ReactNode;
 } ) => {
 	const dispatch = useDispatch();
-	const [ , experimentAssignment ] = useExperiment( 'calypso_plans_wapuu_sales_agent_v1' );
-	const odieIsEnabled =
-		config.isEnabled( 'odie' ) ||
-		( experimentAssignment?.variationName === 'treatment' &&
-			allowedTreatmentSections.includes( sectionName ) );
+	const odieIsEnabled = config.isEnabled( 'wapuu' );
+	const lastUserLocations = useOdieUserTracking();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const [ isVisible, setIsVisible ] = useState( false );
@@ -92,20 +104,47 @@ const OdieAssistantProvider = ( {
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ messages, setMessages ] = useState< Message[] >( [
-		{ content: getOdieInitialPrompt( sectionName ), role: 'bot', type: 'message' },
+		{
+			content: getOdieInitialPrompt( sectionName ),
+			role: 'bot',
+			type: botSetting === 'supportDocs' ? 'introduction' : 'message',
+		},
+		...getOdieInitialMessages( botSetting ),
 	] );
 	const [ chat, setChat ] = useState< Chat >( {
 		context: { section_name: sectionName, site_id: siteId },
 		messages,
 	} );
 
+	const clearChat = () => {
+		setChat( {
+			chat_id: null,
+			context: { section_name: sectionName, site_id: siteId },
+			messages: [
+				{
+					content: getOdieInitialPrompt( sectionName ),
+					role: 'bot',
+					type: botSetting === 'supportDocs' ? 'introduction' : 'message',
+				},
+				...getOdieInitialMessages( botSetting ),
+			],
+		} );
+	};
+
 	useEffect( () => {
 		setChat( {
 			chat_id: null,
 			context: { section_name: sectionName, site_id: siteId },
-			messages: [ { content: getOdieInitialPrompt( sectionName ), role: 'bot', type: 'message' } ],
+			messages: [
+				{
+					content: getOdieInitialPrompt( sectionName ),
+					role: 'bot',
+					type: botSetting === 'supportDocs' ? 'introduction' : 'message',
+				},
+				...getOdieInitialMessages( botSetting ),
+			],
 		} );
-	}, [ sectionName, siteId ] );
+	}, [ sectionName, siteId, botSetting ] );
 
 	const trackEvent = ( event: string, properties?: Record< string, unknown > ) => {
 		dispatch( recordTracksEvent( event, properties ) );
@@ -135,12 +174,16 @@ const OdieAssistantProvider = ( {
 		<OdieAssistantContext.Provider
 			value={ {
 				addMessage,
+				botName,
+				botNameSlug,
 				chat,
+				clearChat,
 				isLoadingChat: false,
 				isLoading: isLoading,
 				isNudging,
 				isVisible,
 				lastNudge,
+				lastUserLocations,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,
@@ -150,11 +193,19 @@ const OdieAssistantProvider = ( {
 				setIsNudging,
 				setIsVisible,
 				trackEvent,
+				botSetting,
 			} }
 		>
 			{ children }
 
-			{ odieIsEnabled && <OdieAssistant botNameSlug="wapuu" /> }
+			{ odieIsEnabled && (
+				<OdieAssistant
+					botNameSlug={ botNameSlug }
+					isFloatingChatbox={ botSetting !== 'supportDocs' }
+					isSimpleChatbox={ botSetting === 'supportDocs' }
+					isHeaderVisible={ botSetting !== 'supportDocs' }
+				/>
+			) }
 		</OdieAssistantContext.Provider>
 	);
 };

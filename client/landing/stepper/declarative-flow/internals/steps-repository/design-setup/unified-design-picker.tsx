@@ -18,9 +18,11 @@ import {
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect, useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -35,6 +37,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -61,6 +64,7 @@ import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
+import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import useRecipe from './hooks/use-recipe';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
@@ -75,7 +79,6 @@ import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
-
 const SiteIntent = Onboard.SiteIntent;
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
@@ -104,9 +107,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// But maybe we can enable the global styles since it's gated under the Premium plan.
 	const disableCheckoutImmediately = isDesignFirstFlow;
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
+	const [ showEligibility, setShowEligibility ] = useState( false );
 
 	const { goToCheckout } = useCheckout();
 
+	const isJetpack = useSelect(
+		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
+		[ site ]
+	);
 	const isAtomic = useSelect(
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
 		[ site ]
@@ -387,6 +395,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[ site ]
 	);
 
+	const eligibility = useSelector( ( state ) => site && getEligibility( state, site.ID ) );
+
+	const hasEligibilityMessages =
+		! isAtomic &&
+		! isJetpack &&
+		( eligibility?.eligibilityHolds?.length || eligibility?.eligibilityWarnings?.length );
+
 	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
 		<ThemeTypeBadge
 			canGoToCheckout={ false }
@@ -421,13 +436,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 		setShowUpgradeModal( false );
 	}
-
-	function handleCheckout() {
-		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
-			theme: selectedDesign?.slug,
-			is_externally_managed: selectedDesign?.is_externally_managed,
-		} );
-
+	function navigateToCheckout() {
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
 			( set ) => set.slug === 'woo-on-plans'
 		);
@@ -441,22 +450,40 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
 
-		if ( siteSlugOrId ) {
-			goToCheckout( {
-				flowName: flow,
-				stepName,
-				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-				// When the user is done with checkout, send them back to the current url
-				destination: window.location.href.replace( window.location.origin, '' ),
-				plan,
-				extraProducts:
-					selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
-						? [ marketplaceProductSlug ]
-						: [],
-			} );
+		// When the user is done with checkout, send them back to the current url
+		// If the theme is externally managed, send them to the marketplace thank you page
+		const destination = selectedDesign?.is_externally_managed
+			? addQueryArgs( `/marketplace/thank-you/${ siteSlug }`, {
+					themes: selectedDesign?.slug,
+			  } )
+			: window.location.href.replace( window.location.origin, '' );
 
-			setShowUpgradeModal( false );
+		goToCheckout( {
+			flowName: flow,
+			stepName,
+			siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
+			destination,
+			plan,
+			extraProducts:
+				selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
+					? [ marketplaceProductSlug ]
+					: [],
+		} );
+	}
+	function handleCheckout() {
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
+			theme: selectedDesign?.slug,
+			is_externally_managed: selectedDesign?.is_externally_managed,
+		} );
+
+		if ( siteSlugOrId ) {
+			if ( selectedDesign?.is_externally_managed && hasEligibilityMessages ) {
+				setShowEligibility( true );
+			} else {
+				navigateToCheckout();
+			}
 		}
+		setShowUpgradeModal( false );
 	}
 
 	// ********** Logic for Premium Global Styles
@@ -741,6 +768,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					marketplaceProduct={ selectedMarketplaceProduct }
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
+				/>
+				<QueryEligibility siteId={ site?.ID } />
+				<EligibilityWarningsModal
+					site={ site }
+					isMarketplace={ selectedDesign?.is_externally_managed }
+					isOpen={ showEligibility }
+					handleClose={ () => setShowEligibility( false ) }
+					handleContinue={ () => {
+						navigateToCheckout();
+						setShowEligibility( false );
+					} }
 				/>
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ handleCheckoutForPremiumGlobalStyles }

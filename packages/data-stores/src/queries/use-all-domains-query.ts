@@ -20,6 +20,7 @@ export type PartialDomainData = Pick<
 	| 'google_apps_subscription'
 	| 'titan_mail_subscription'
 	| 'email_forwards_count'
+	| 'tld_maintenance_end_time'
 >;
 
 export interface AllDomainsQueryFnData {

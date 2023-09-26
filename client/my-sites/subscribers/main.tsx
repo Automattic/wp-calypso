@@ -40,6 +40,8 @@ const SubscribersPage = ( {
 }: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
+	const siteId = selectedSite?.ID || null;
+
 	const pageArgs = {
 		currentPage: pageNumber,
 		filterOption,
@@ -83,7 +85,7 @@ const SubscribersPage = ( {
 
 	return (
 		<SubscribersPageProvider
-			siteId={ selectedSite?.ID }
+			siteId={ siteId }
 			filterOption={ filterOption }
 			pageNumber={ pageNumber }
 			searchTerm={ searchTerm }

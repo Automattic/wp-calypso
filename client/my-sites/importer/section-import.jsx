@@ -189,7 +189,7 @@ class SectionImport extends Component {
 	renderIdleImporters( importerState ) {
 		const { site, siteSlug, siteTitle } = this.props;
 		const importers = getImporters( {
-			isAtomic: site.options.is_wpcom_atomic,
+			isAtomic: site.options?.is_wpcom_atomic,
 			isJetpack: site.jetpack,
 		} );
 
@@ -212,7 +212,7 @@ class SectionImport extends Component {
 					siteSlug={ siteSlug }
 					siteTitle={ siteTitle }
 					importerStatus={ importerStatus }
-					isAtomic={ site.options.is_wpcom_atomic }
+					isAtomic={ site.options?.is_wpcom_atomic }
 					isJetpack={ site.jetpack }
 				/>
 			);
@@ -222,7 +222,7 @@ class SectionImport extends Component {
 		return (
 			<>
 				{ importerElements }
-				<CompactCard href={ site.options.admin_url + 'import.php' }>
+				<CompactCard href={ site.options?.admin_url + 'import.php' }>
 					{ this.props.translate( 'Choose from full list' ) }
 				</CompactCard>
 			</>

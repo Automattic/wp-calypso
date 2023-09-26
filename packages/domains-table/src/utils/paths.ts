@@ -160,6 +160,14 @@ export function domainManagementEdit(
 	return domainManagementEditBase( siteName, domainName, 'edit', relativeTo, expandSections );
 }
 
+export function domainManagementTransfer(
+	siteName: string,
+	domainName: string,
+	relativeTo: string | null = null
+) {
+	return domainManagementEditBase( siteName, domainName, 'transfer', relativeTo );
+}
+
 export function isUnderEmailManagementAll( path: string ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }

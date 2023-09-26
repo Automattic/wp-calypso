@@ -8,6 +8,7 @@ export type BackupBrowserItem = {
 	checkState: 'checked' | 'unchecked' | 'mixed';
 	childrenLoaded: boolean;
 	children: BackupBrowserItem[];
+	totalItems: number;
 };
 
 export type BackupBrowserCheckListInfo = {

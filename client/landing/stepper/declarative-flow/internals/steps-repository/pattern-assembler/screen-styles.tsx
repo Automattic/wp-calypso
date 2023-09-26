@@ -30,7 +30,7 @@ const ScreenStyles = ( {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
 	const { location, goTo } = useNavigator();
-	const { title } = useScreen( 'styles' );
+	const { title, description, continueLabel } = useScreen( 'styles' );
 
 	const handleNavigatorItemSelect = ( type: string, path: string ) => {
 		const nextPath = path !== location.path ? path : NAVIGATOR_PATHS.STYLES;
@@ -64,9 +64,7 @@ const ScreenStyles = ( {
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ title } /> }
-				description={ translate(
-					'Create your homepage by first adding patterns and then choosing a color palette and font style.'
-				) }
+				description={ description }
 				hideBack
 			/>
 			<div className="screen-container__body">
@@ -108,7 +106,7 @@ const ScreenStyles = ( {
 					onMouseDown={ handleMouseDown }
 					onClick={ () => handleContinueClick() }
 				>
-					{ translate( 'Save and continue' ) }
+					{ continueLabel }
 				</Button>
 			</div>
 		</>

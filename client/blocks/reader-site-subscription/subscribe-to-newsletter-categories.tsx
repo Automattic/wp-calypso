@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Spinner } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -36,10 +35,7 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 		] );
 	};
 
-	if (
-		! config.isEnabled( 'settings/newsletter-categories' ) ||
-		! subscribedNewsletterCategoriesData?.enabled
-	) {
+	if ( ! subscribedNewsletterCategoriesData?.enabled ) {
 		return null;
 	}
 

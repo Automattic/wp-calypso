@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -92,11 +93,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
-	const onSelectPlan = ( selectedPlan: any ) => {
-		if ( selectedPlan ) {
+	const onSelectPlan = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
+		const planCartItem = getPlanCartItem( cartItems );
+		if ( planCartItem ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
-				product_slug: selectedPlan?.product_slug,
-				free_trial: selectedPlan?.free_trial,
+				product_slug: planCartItem?.product_slug,
 				from_section: 'default',
 			} );
 		} else {
@@ -105,8 +106,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			} );
 		}
 
-		setPlanCartItem( selectedPlan );
-		props.onSubmit?.( selectedPlan );
+		setPlanCartItem( planCartItem );
+		props.onSubmit?.( planCartItem );
 	};
 
 	const getPaidDomainName = () => {

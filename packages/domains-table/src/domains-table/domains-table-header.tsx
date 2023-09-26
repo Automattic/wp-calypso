@@ -8,11 +8,11 @@ export const DomainsTableHeader = () => {
 		onSortChange,
 		getBulkSelectionStatus,
 		changeBulkSelection,
-		hideOwnerColumn,
 		domainsRequiringAttention,
 		canSelectAnyDomains,
 		filteredData,
 		domainsTableColumns,
+		selectedDomains,
 	} = useDomainsTable();
 
 	return (
@@ -23,10 +23,10 @@ export const DomainsTableHeader = () => {
 			bulkSelectionStatus={ getBulkSelectionStatus() }
 			onBulkSelectionChange={ changeBulkSelection }
 			onChangeSortOrder={ onSortChange }
-			hideOwnerColumn={ hideOwnerColumn }
 			domainsRequiringAttention={ domainsRequiringAttention }
 			canSelectAnyDomains={ canSelectAnyDomains }
 			domainCount={ filteredData.length }
+			selectedDomainsCount={ selectedDomains.size }
 		/>
 	);
 };

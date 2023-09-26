@@ -42,6 +42,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 			} ) }
 			ctaText={ translate( 'Add professional email' ) }
 			isPrimary={ true }
+			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
 	) : (
 		<DomainInfoCard
@@ -55,6 +56,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 			}
 			description={ emailAddresses.join( '\n' ) }
 			ctaText={ translate( 'View emails' ) }
+			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
 	);
 };

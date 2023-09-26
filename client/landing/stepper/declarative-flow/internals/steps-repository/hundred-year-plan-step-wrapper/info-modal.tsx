@@ -110,7 +110,9 @@ const RowItem = styled.div`
 
 const RowTitle = styled.div`
 	color: #7f9af3;
-	font-feature-settings: 'clig' off, 'liga' off;
+	font-feature-settings:
+		'clig' off,
+		'liga' off;
 	font-family: 'SF Pro Display', sans-serif;
 	font-size: 16px;
 	font-style: normal;
@@ -125,7 +127,9 @@ const RowTitle = styled.div`
 
 const RowContent = styled.div`
 	color: var( --studio-gray-0 );
-	font-feature-settings: 'clig' off, 'liga' off;
+	font-feature-settings:
+		'clig' off,
+		'liga' off;
 
 	/* Lg/Regular */
 	font-family: 'SF Pro Display', sans-serif;
@@ -194,7 +198,7 @@ export default function InfoModal( { onClose }: { onClose: () => void } ) {
 						</RowContent>
 					</RowItem>
 					<RowItem>
-						<RowTitle>{ translate( 'Top-Tier Managed Wordpress Hosting' ) }</RowTitle>
+						<RowTitle>{ translate( 'Top-Tier Managed WordPress Hosting' ) }</RowTitle>
 						<RowContent>
 							{ translate(
 								'The very best managed WordPress experience with unmetered bandwidth, best-in-class speed, and unstoppable security bundled in one convenient package.'

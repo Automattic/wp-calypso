@@ -197,7 +197,6 @@
 	line-height: 1.5;
 
 	&.grav-powered-magic-login--wp-job-manager {
-
 		a,
 		.grav-powered-magic-login__content a,
 		.grav-powered-magic-login__footer button {
@@ -232,6 +231,7 @@
 
 		a {
 			color: #1d4fc4;
+			text-decoration: underline;
 		}
 
 		button:disabled {
@@ -280,7 +280,7 @@
 		}
 	}
 
-	.magic-login__tos {
+	.grav-powered-magic-login__tos {
 		margin: 32px 0 20px;
 		font-size: 13px;
 		color: rgba(#00101c, 0.6);
@@ -299,6 +299,14 @@
 		background-color: #e7e9ea;
 		width: 80px;
 		margin: 32px 0 20px;
+
+		&.grav-powered-magic-login__divider--email-form {
+			margin: 20px auto;
+		}
+	}
+
+	.grav-powered-magic-login__login-page-link {
+		text-align: center;
 	}
 
 	.grav-powered-magic-login__footer {
@@ -307,10 +315,6 @@
 		gap: 16px;
 		font-size: 15px;
 		line-height: 1;
-
-		a {
-			text-decoration: underline;
-		}
 
 		button {
 			color: #1d4fc4;
@@ -377,7 +381,7 @@
 			}
 		}
 
-		.magic-login__tos {
+		.grav-powered-magic-login__tos {
 			margin-top: 44px;
 		}
 
@@ -392,6 +396,37 @@
 		.grav-powered-magic-login__gravatar-info {
 			margin-top: 40px;
 		}
+	}
+}
+
+.grav-powered-magic-link {
+	background-color: #fff;
+	max-width: 560px;
+	margin: 0 auto;
+	padding: 20px 30px;
+	border-radius: 2px;
+
+	&.grav-powered-magic-link--wp-job-manager .button.is-primary {
+		background-color: #2404eb;
+	}
+
+	.empty-content {
+		margin: 120px 0;
+		padding-top: 0;
+	}
+
+	.button.is-primary {
+		height: 42px;
+		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		background-color: #1d4fc4;
+		font-size: 16px;
+		font-weight: 600;
+		color: #fff;
+		border: none;
+	}
+
+	@include break-small {
+		padding: 40px 56px;
 	}
 }
 /* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights */

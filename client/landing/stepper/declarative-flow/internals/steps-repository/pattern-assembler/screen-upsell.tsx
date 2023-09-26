@@ -25,14 +25,14 @@ const ScreenUpsell = ( {
 	onContinue,
 }: Props ) => {
 	const translate = useTranslate();
-	const { title } = useScreen( 'upsell' );
+	const { title, description, continueLabel } = useScreen( 'upsell' );
 	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
 
 	return (
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ title } /> }
-				description={ translate( "You've chosen a custom style and action is required." ) }
+				description={ description }
 				hideBack
 			/>
 			<div className="screen-container__body">
@@ -73,7 +73,7 @@ const ScreenUpsell = ( {
 					primary
 					onClick={ ! resetCustomStyles ? onCheckout : onContinue }
 				>
-					{ ! resetCustomStyles ? translations.upgradeWithPlan : translate( 'Continue' ) }
+					{ ! resetCustomStyles ? translations.upgradeWithPlan : continueLabel }
 				</Button>
 			</div>
 		</>

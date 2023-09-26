@@ -11,7 +11,7 @@ export const TERM_NOVENNIALLY = 'TERM_NOVENNIALLY'; //9y
 export const TERM_DECENNIALLY = 'TERM_DECENNIALLY'; //10y
 export const TERM_CENTENNIALLY = 'TERM_CENTENNIALLY'; //100y
 
-export const TERMS_LIST = <const>[
+export const TERMS_LIST = < const >[
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -39,7 +39,7 @@ export const PLAN_NOVENNIAL_PERIOD = 3285;
 export const PLAN_DECENNIAL_PERIOD = 3650;
 export const PLAN_CENTENNIAL_PERIOD = 35000;
 
-export const PERIOD_LIST = <const>[
+export const PERIOD_LIST = < const >[
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,

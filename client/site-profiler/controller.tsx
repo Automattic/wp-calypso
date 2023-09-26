@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
+import { BrowserRouter } from 'react-router-dom';
 import Main from 'calypso/components/main';
 import SiteProfiler from 'calypso/site-profiler/components/site-profiler';
 
@@ -10,9 +11,11 @@ export function siteProfilerContext( context: PageJS.Context, next: () => void )
 	}
 
 	context.primary = (
-		<Main fullWidthLayout>
-			<SiteProfiler />
-		</Main>
+		<BrowserRouter>
+			<Main fullWidthLayout>
+				<SiteProfiler />
+			</Main>
+		</BrowserRouter>
 	);
 
 	next();
