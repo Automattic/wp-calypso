@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 
@@ -23,17 +24,15 @@ const JetpackAppPlans = ( { domainName, redirectTo } ) => {
 		}
 	};
 
-	const onUpgradeClick = ( partialPlan ) => {
-		if ( partialPlan ) {
-			const plan = getPlan( partialPlan.product_slug );
-			const cartItem = {
-				product_id: plan.getProductId(),
-				product_slug: partialPlan.product_slug,
-			};
-			handleRedirect( cartItem );
-		} else {
-			handleRedirect();
-		}
+	const onUpgradeClick = ( cartItems ) => {
+		const planCartItem = getPlanCartItem( cartItems );
+		const planProductSlug = planCartItem.product_slug;
+		const plan = getPlan( planProductSlug );
+		const cartItem = {
+			product_id: plan.getProductId(),
+			product_slug: plan.getStoreSlug(),
+		};
+		handleRedirect( cartItem );
 	};
 
 	const removePaidDomain = () => handleRedirect();
