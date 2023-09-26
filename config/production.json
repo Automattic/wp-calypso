@@ -166,6 +166,8 @@
 		"subscription-management-redirect-following": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/block-theme-previews": false,
+		"themes/discovery-lits": false,
+		"themes/discovery-lots": false,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
