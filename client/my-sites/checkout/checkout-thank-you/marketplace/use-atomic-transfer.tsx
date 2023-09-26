@@ -1,3 +1,4 @@
+import { usePrevious } from '@wordpress/compose';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -32,6 +33,8 @@ export function useAtomicTransfer(
 	const [ isAtomicTransferCheckComplete, setIsAtomicTransferCheckComplete ] = useState(
 		! isAtomicNeeded
 	);
+	const previousIsAtomicNeeded = usePrevious( isAtomicNeeded );
+	const isAtomicNeededTransition = ! previousIsAtomicNeeded && isAtomicNeeded;
 	const [ showProgressBar, setShowProgressBar ] = useState(
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
 	);
@@ -96,5 +99,10 @@ export function useAtomicTransfer(
 		}
 	}, [ transferStatus, showProgressBar, isJetpack ] );
 
-	return [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ];
+	return [
+		isAtomicNeededTransition ? false : isAtomicTransferCheckComplete,
+		currentStep,
+		showProgressBar,
+		setShowProgressBar,
+	];
 }
