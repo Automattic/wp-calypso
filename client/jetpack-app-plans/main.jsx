@@ -32,6 +32,7 @@ const JetpackAppPlans = ( { domainName } ) => {
 	const plans = (
 		<PlansFeaturesMain
 			paidDomainName={ domainName }
+			intent="plans-jetpack-app-site-creation"
 			isInSignup={ true }
 			intervalType="yearly"
 			onUpgradeClick={ ( cartItem ) => onUpgradeClick( cartItem ) }
