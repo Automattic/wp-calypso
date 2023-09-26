@@ -96,6 +96,10 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 		page( href );
 	};
 
+	const handleShortcutSelected = () => {
+		console.log( 'handleShortcutSelected' );
+	}
+
 	const DateControlPickerContent = () => (
 		<div>
 			<DateControlPickerDate
@@ -106,6 +110,7 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 				onApply={ handleOnApply }
 			/>
 			<DateControlPickerShortcuts shortcutList={ shortcutList } />
+			<DateControlPickerShortcuts shortcutList={ shortcutList } onClick={ handleShortcutSelected } />
 		</div>
 	);
 

@@ -12,6 +12,7 @@ interface DateControlPickerProps {
 
 interface DateControlPickerShortcutsProps {
 	shortcutList: DateControlPickerShortcut[];
+	onClick: any;
 }
 
 interface DateControlPickerShortcut {
