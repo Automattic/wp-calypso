@@ -17,15 +17,15 @@ export const PUSH_TO_STAGING = 'push-to-staging-site-mutation-key';
 
 const pushSyncMutation =
 	( sitePath: string, key: string ) =>
-	< X, Y, Z, W >( firstSiteId: number, options: UseMutationOptions< X, Y, Z, W > ) => {
+	< X, Y, Z, W >( sourceSiteId: number, options: UseMutationOptions< X, Y, Z, W > ) => {
 		const mutation = useMutation( {
-			mutationFn: async ( otherSiteId ) =>
+			mutationFn: async ( targetSiteId ) =>
 				wp.req.post( {
-					path: `/sites/${ firstSiteId }/${ sitePath }/${ otherSiteId }`,
+					path: `/sites/${ sourceSiteId }/${ sitePath }/${ targetSiteId }`,
 					apiNamespace: 'wpcom/v2',
 				} ),
 			...options,
-			mutationKey: [ key, firstSiteId ],
+			mutationKey: [ key, sourceSiteId ],
 			onSuccess: async ( ...args ) => {
 				options.onSuccess?.( ...args );
 			},
@@ -35,7 +35,7 @@ const pushSyncMutation =
 		// isMutating is returning a number. Greater than 0 means we have some pending mutations for
 		// the provided key. This is preserved across different pages, while isLoading it's not.
 		// TODO: Remove that when react-query v5 is out. They seem to have added isPending variable for this.
-		const isLoading = useIsMutating( { mutationKey: [ key, firstSiteId ] } ) > 0;
+		const isLoading = useIsMutating( { mutationKey: [ key, sourceSiteId ] } ) > 0;
 
 		const pushTo = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 

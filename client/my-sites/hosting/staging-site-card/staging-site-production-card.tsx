@@ -18,7 +18,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
-import { ConfirmationModalButton } from './confirm-modal-button';
+import { ConfirmationModal } from './confirmation-modal';
 import { usePullFromProductionMutation } from './use-staging-sync';
 
 const ActionButtons = styled.div( {
@@ -36,7 +36,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ loadingError, setLoadingError ] = useState( null );
-	const isStagingI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
+	const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
 	const { data: productionSite, isLoading } = useProductionSiteDetail( siteId, {
 		enabled: ! disabled,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -91,8 +91,8 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
-					{ isStagingI3Enabled && (
-						<ConfirmationModalButton
+					{ isStagingSitesI3Enabled && (
+						<ConfirmationModal
 							onConfirm={ () => pullFromProduction( productionSite.id ) }
 							modalTitle={ translate( 'Confirm pulling changes to your staging site.' ) }
 							modalMessage={ translate(
@@ -103,7 +103,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						>
 							<Gridicon icon="arrow-down" />
 							<span>{ translate( 'Pull from production' ) }</span>
-						</ConfirmationModalButton>
+						</ConfirmationModal>
 					) }
 				</ActionButtons>
 			</>

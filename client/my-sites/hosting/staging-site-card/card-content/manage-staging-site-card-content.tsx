@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { urlToSlug } from 'calypso/lib/url';
-import { ConfirmationModalButton } from 'calypso/my-sites/hosting/staging-site-card/confirm-modal-button';
+import { ConfirmationModal } from 'calypso/my-sites/hosting/staging-site-card/confirmation-modal';
 import { StagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 
@@ -84,14 +84,14 @@ export const ManageStagingSiteCardContent = ( {
 }: CardContentProps ) => {
 	{
 		const translate = useTranslate();
-		const isStagingI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
+		const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
 
 		const ConfirmationPushChangesButton = () => {
 			return (
-				<ConfirmationModalButton
+				<ConfirmationModal
 					disabled={ isButtonDisabled }
 					onConfirm={ onPushClick }
-					modalTitle={ translate( 'Confirm pushing changes from your staging site' ) }
+					modalTitle={ translate( 'Confirm pushing changes to your staging site' ) }
 					modalMessage={ translate(
 						'Are you sure you want to push your production changes to your staging site?'
 					) }
@@ -100,13 +100,13 @@ export const ManageStagingSiteCardContent = ( {
 				>
 					<Gridicon icon="arrow-up" />
 					<span>{ translate( 'Push to staging' ) }</span>
-				</ConfirmationModalButton>
+				</ConfirmationModal>
 			);
 		};
 
 		const ConfirmationDeleteButton = () => {
 			return (
-				<ConfirmationModalButton
+				<ConfirmationModal
 					disabled={ isButtonDisabled }
 					onConfirm={ onDeleteClick }
 					isBusy={ isBusy }
@@ -120,7 +120,7 @@ export const ManageStagingSiteCardContent = ( {
 				>
 					<Gridicon icon="trash" />
 					<span>{ translate( 'Delete staging site' ) }</span>
-				</ConfirmationModalButton>
+				</ConfirmationModal>
 			);
 		};
 
@@ -164,7 +164,7 @@ export const ManageStagingSiteCardContent = ( {
 						</StagingSiteLink>
 					</SiteInfo>
 				</SiteRow>
-				{ isStagingI3Enabled ? (
+				{ isStagingSitesI3Enabled ? (
 					<ActionButtonsJustifyBetween>
 						<LeftActionsContainer>
 							<ManageStagingSiteButton />

@@ -26,7 +26,7 @@ type ConfirmationModalButtonProps = {
 	cancelLabel: string;
 };
 
-export function ConfirmationModalButton( {
+export function ConfirmationModal( {
 	onConfirm,
 	onCancel,
 	disabled = false,
