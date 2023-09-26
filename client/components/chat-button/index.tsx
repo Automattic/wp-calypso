@@ -8,10 +8,12 @@ import type { MessagingGroup } from '@automattic/help-center/src/hooks/use-messa
 import type { FC } from 'react';
 
 type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
+export type KeyType = 'akismet' | 'jpAgency' | 'jpCheckout' | 'jpGeneral' | 'wpcom';
 
 type Props = {
 	borderless?: boolean;
 	chatIntent?: ChatIntent;
+	keyType?: KeyType;
 	className?: string;
 	initialMessage: string;
 	onClick?: () => void;
@@ -23,10 +25,23 @@ type Props = {
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-function getMessagingGroupForIntent( chatIntent: ChatIntent ): MessagingGroup {
+function getGroupName( keyType: KeyType ) {
+	switch ( keyType ) {
+		case 'akismet':
+		case 'jpAgency':
+		case 'jpCheckout':
+		case 'jpGeneral':
+			return 'jp_presales';
+		case 'wpcom':
+		default:
+			return 'wpcom_presales';
+	}
+}
+
+function getMessagingGroupForIntent( chatIntent: ChatIntent, keyType: KeyType ): MessagingGroup {
 	switch ( chatIntent ) {
 		case 'PRESALES':
-			return 'wpcom_presales';
+			return getGroupName( keyType );
 
 		case 'PRECANCELLATION':
 		case 'SUPPORT':
@@ -38,6 +53,7 @@ function getMessagingGroupForIntent( chatIntent: ChatIntent ): MessagingGroup {
 const ChatButton: FC< Props > = ( {
 	borderless = true,
 	chatIntent = 'SUPPORT',
+	keyType = 'wpcom',
 	children,
 	className = '',
 	initialMessage,
@@ -48,7 +64,8 @@ const ChatButton: FC< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const messagingGroup = getMessagingGroupForIntent( chatIntent );
+	const messagingGroup = getMessagingGroupForIntent( chatIntent, keyType );
+
 	const {
 		canConnectToZendesk,
 		hasActiveChats,
@@ -57,13 +74,13 @@ const ChatButton: FC< Props > = ( {
 		isPrecancellationChatOpen,
 		isPresalesChatOpen,
 	} = useChatStatus( messagingGroup );
+
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	function shouldShowChatButton() {
 		if ( isEligibleForChat && hasActiveChats ) {
 			return true;
 		}
-
 		switch ( chatIntent ) {
 			case 'PRESALES':
 				if ( ! isPresalesChatOpen ) {
