@@ -1756,6 +1756,33 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
+		// siteless "Connect after checkout" flow.
+		it( "redirects to the site's wp-admin cunnect_url_redirect url to initiate Jetpack connection", () => {
+			const adminUrl = 'https://my.site/wp-admin/';
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				sitelessCheckoutType: 'jetpack',
+				connectAfterCheckout: true,
+				adminUrl: adminUrl,
+				fromSiteSlug: 'my.site',
+				receiptId: 'invalid receipt ID' as any,
+			} );
+			expect( url ).toBe(
+				`${ adminUrl }admin.php?page=jetpack&connect_url_redirect&from=my-jetpack&redirect_after_auth=${ adminUrl }/admin.php?page=my-jetpack#/add-license`
+			);
+		} );
+
 		it( 'Redirects to the 100 year plan thank-you page when the 100 year plan is available', () => {
 			const cart = {
 				...getMockCart(),
