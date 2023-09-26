@@ -83,7 +83,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Expires / renews on' ) } </span>
 				<span className="domains-table-mobile-card-registered-date">
-					<DomainsTableExpiresRewnewsOnCell domain={ domain } />
+					<DomainsTableExpiresRewnewsOnCell domain={ domain } as="div" />
 				</span>
 			</div>
 
@@ -96,6 +96,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 						<DomainsTableStatusCell
 							domainStatus={ domainStatus }
 							pendingUpdates={ pendingUpdates }
+							as="div"
 						/>
 						{ domainStatus?.callToAction && (
 							<DomainsTableStatusCTA callToAction={ domainStatus.callToAction } />
