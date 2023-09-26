@@ -24,7 +24,7 @@ export default function DomainAnalyzer( props: Props ) {
 
 	return (
 		<div className="domain-analyzer">
-			<h1>{ translate( 'Who Hosts This Site?' ) }</h1>
+			<h1>{ translate( 'Site Profiler' ) }</h1>
 			<p>
 				{ translate(
 					'Access essential information about a site, such as hosting provider, domain details, and contact information.'
