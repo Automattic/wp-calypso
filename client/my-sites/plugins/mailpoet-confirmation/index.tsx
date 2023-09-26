@@ -48,6 +48,7 @@ export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 				headerText={ translate( 'MailPoet Subscription' ) }
 				subHeaderText={ translate( 'Get a Free MailPoet Subscription' ) }
 				align="left"
+				hasScreenOptions
 			/>
 			<Card>
 				<p>
