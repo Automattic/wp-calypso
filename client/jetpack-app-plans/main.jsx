@@ -36,10 +36,10 @@ const JetpackAppPlans = ( { domainName } ) => {
 			isInSignup={ true }
 			intervalType="yearly"
 			onUpgradeClick={ ( cartItem ) => onUpgradeClick( cartItem ) }
-			customerType="personal"
 			plansWithScroll={ false }
 			flowName="onboarding"
 			removePaidDomain={ () => removePaidDomain() }
+			hidePlanTypeSelector={ true }
 		/>
 	);
 
