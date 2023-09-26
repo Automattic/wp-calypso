@@ -7,66 +7,51 @@ import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps } from './types';
 
 const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
-	const redirectToQueryDate = ( daysToSubtract: number ) => {
-		const startDate = calculateQueryDate( daysToSubtract );
-		const query = qs.stringify( Object.assign( {}, queryParams, { startDate } ), {
-			addQueryPrefix: true,
-		} );
-		const period = 'day'; // TODO: adjust this as needed
-		const url = `/stats/${ period }/${ slug }`;
-		const href = `${ url }${ query }`;
-
-		page( href );
-	};
-
 	// shortcut list will come from props
 	const shortcutList = [
 		{
 			id: 'today',
 			label: 'Today',
-			onClick: () => redirectToQueryDate( 0 ),
+			offset: 0,
+			range: 0,
 		},
 		{
 			id: 'yesterday',
 			label: 'Yesterday',
-			onClick: () => redirectToQueryDate( 1 ),
+			offset: 1,
+			range: 0,
 		},
 		{
 			id: 'last-7-days',
 			label: 'Last 7 Days',
-			onClick: () => redirectToQueryDate( 7 ),
+			offset: 0,
+			range: 7,
 		},
 		{
 			id: 'last-30-days',
 			label: 'Last 30 Days',
-			onClick: () => redirectToQueryDate( 30 ),
+			offset: 0,
+			range: 30,
 		},
 		{
 			id: 'last-year',
 			label: 'Last Year',
-			onClick: () => redirectToQueryDate( 365 ),
+			offset: 0,
+			range: 365,
 		},
 		{
 			id: 'all-time',
 			label: 'All Time',
-			onClick: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-			// This is empty because I don't yet fully understand what 'all time' will show
+			offset: 0,
+			range: 400, // TODO: Don't hard code this value.
 		},
 		{
 			id: 'custom-range',
 			label: 'Custom Range',
-			onClick: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-			// Keep this empty, since the custom range is handled by the DateControlPickerDate component.
+			offset: 0,
+			range: 3, // TODO: Should nail down how this is expected to behave.
 		},
 	];
-
-	// calculate the date to query for based on the number of days to subtract
-	function calculateQueryDate( daysToSubtract: number ) {
-		const today = new Date();
-		const date = new Date( today );
-		date.setDate( date.getDate() - daysToSubtract );
-		return date.toISOString().split( 'T' )[ 0 ];
-	}
 
 	// TODO: remove placeholder values
 	const [ inputStartDate, setInputStartDate ] = useState( new Date().toISOString().slice( 0, 10 ) );
@@ -96,8 +81,17 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 		page( href );
 	};
 
-	const handleShortcutSelected = () => {
-		console.log( 'handleShortcutSelected' );
+	const handleShortcutSelected = ( shortcut: any ) => {
+		// We do our date math based on 24 hour increments.
+		const millisecondsInOneDay = 1000 * 60 * 60 * 24;
+		// Calc new start date based on offset value from shortcut.
+		let offsetInMilliseconds = new Date().getTime() - ( millisecondsInOneDay * shortcut.offset );
+		const newStartDate = new Date( offsetInMilliseconds );
+		setInputStartDate( newStartDate.toISOString().split( 'T' )[ 0 ] ); 
+		// Calc new end date based on start date plus range as specified in shortcut.
+		offsetInMilliseconds = newStartDate.getTime() - ( millisecondsInOneDay * shortcut.range );
+		const newEndDate = new Date( offsetInMilliseconds );
+		setInputEndDate( newEndDate.toISOString().split( 'T' )[ 0 ] );
 	}
 
 	const DateControlPickerContent = () => (
@@ -109,7 +103,6 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 				onEndChange={ changeEndDate }
 				onApply={ handleOnApply }
 			/>
-			<DateControlPickerShortcuts shortcutList={ shortcutList } />
 			<DateControlPickerShortcuts shortcutList={ shortcutList } onClick={ handleShortcutSelected } />
 		</div>
 	);
