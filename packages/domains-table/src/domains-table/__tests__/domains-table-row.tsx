@@ -7,20 +7,26 @@ import moment from 'moment';
 import React from 'react';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
 import { transferStatus } from '../../utils/constants';
-import { DomainsTable, DomainsTableProps } from '../domains-table';
+import {
+	DomainsTableProps,
+	DomainsTableStateContext,
+	useGenerateDomainsTableState,
+} from '../domains-table';
 import { DomainsTableRow } from '../domains-table-row';
 
 const siteSlug = 'site123.com';
 
 const render = ( el, props ) =>
 	renderWithProvider( el, {
-		wrapper: ( { children } ) => (
-			<DomainsTable { ...props }>
-				<table>
-					<tbody>{ children }</tbody>
-				</table>
-			</DomainsTable>
-		),
+		wrapper: function Wrapper( { children } ) {
+			return (
+				<DomainsTableStateContext.Provider value={ useGenerateDomainsTableState( props ) }>
+					<table>
+						<tbody>{ children }</tbody>
+					</table>
+				</DomainsTableStateContext.Provider>
+			);
+		},
 	} );
 
 test( 'domain name is rendered in the row', () => {
@@ -48,7 +54,7 @@ test( 'wpcom domains do not link to management interface', async () => {
 	expect( screen.getByText( 'example.wordpress.com' ) ).not.toHaveAttribute( 'href' );
 } );
 
-test( 'domain name links to management interface', async () => {
+test( 'domain name links to management interface (all-domains table)', async () => {
 	const partialDomain = testPartialDomain( {
 		domain: 'example.com',
 		blog_id: 123,
@@ -59,7 +65,7 @@ test( 'domain name links to management interface', async () => {
 		options: { is_redirect: false },
 	} );
 
-	const { rerender } = render( <DomainsTableRow domain={ partialDomain } />, {
+	render( <DomainsTableRow domain={ partialDomain } />, {
 		domains: [ partialDomain ],
 		isAllSitesView: true,
 		fetchSite,
@@ -81,28 +87,35 @@ test( 'domain name links to management interface', async () => {
 			'/domains/manage/all/example.com/edit/my-site.com'
 		)
 	);
+} );
 
-	// Test site-specific link
-	rerender(
-		<DomainsTable
-			siteSlug={ siteSlug }
-			domains={ [ partialDomain ] }
-			fetchSite={ fetchSite }
-			isAllSitesView={ false }
-		>
-			<tbody>
-				<DomainsTableRow domain={ partialDomain } />
-			</tbody>
-		</DomainsTable>
-	);
+test( 'domain name links to management interface (site-specific table)', async () => {
+	const partialDomain = testPartialDomain( {
+		domain: 'example.com',
+		blog_id: 123,
+	} );
 
-	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
-		'href',
-		'/domains/manage/example.com/edit/my-site.com'
+	const fetchSite = jest.fn().mockResolvedValue( {
+		URL: 'https://my-site.com',
+		options: { is_redirect: false },
+	} );
+
+	render( <DomainsTableRow domain={ partialDomain } />, {
+		siteSlug,
+		domains: [ partialDomain ],
+		fetchSite,
+		isAllSitesView: false,
+	} );
+
+	await waitFor( () =>
+		expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
+			'href',
+			'/domains/manage/example.com/edit/my-site.com'
+		)
 	);
 } );
 
-test( `redirect links use the site's unmapped URL for the site slug`, async () => {
+test( `redirect links use the site's unmapped URL for the site slug (all-domains table)`, async () => {
 	const [ partialRedirectDomain, fullRedirectDomain ] = testDomain( {
 		domain: 'redirect.blog',
 		primary_domain: true,
@@ -127,7 +140,7 @@ test( `redirect links use the site's unmapped URL for the site slug`, async () =
 		domains: [ fullRedirectDomain, fullUnmappedDomain ],
 	} );
 
-	const { rerender } = render( <DomainsTableRow domain={ partialRedirectDomain } />, {
+	render( <DomainsTableRow domain={ partialRedirectDomain } />, {
 		domains: [ partialRedirectDomain ],
 		fetchSite,
 		fetchSiteDomains,
@@ -142,28 +155,50 @@ test( `redirect links use the site's unmapped URL for the site slug`, async () =
 			'/domains/manage/all/redirect.blog/redirect/redirect-site.wordpress.com'
 		)
 	);
+} );
 
-	// Test site-specific link
-	rerender(
-		<DomainsTable
-			siteSlug={ siteSlug }
-			domains={ [ partialRedirectDomain ] }
-			fetchSiteDomains={ fetchSiteDomains }
-			isAllSitesView={ false }
-		>
-			<tbody>
-				<DomainsTableRow domain={ partialRedirectDomain } />
-			</tbody>
-		</DomainsTable>
-	);
+test( `redirect links use the site's unmapped URL for the site slug (site-specific table)`, async () => {
+	const [ partialRedirectDomain, fullRedirectDomain ] = testDomain( {
+		domain: 'redirect.blog',
+		primary_domain: true,
+		wpcom_domain: false,
+		type: 'redirect',
+		blog_id: 123,
+	} );
+	const [ , fullUnmappedDomain ] = testDomain( {
+		domain: 'redirect-site.wordpress.com',
+		primary_domain: false,
+		wpcom_domain: true,
+		type: 'wpcom',
+		blog_id: 123,
+	} );
 
-	expect( screen.getByRole( 'link', { name: 'redirect.blog' } ) ).toHaveAttribute(
-		'href',
-		'/domains/manage/redirect.blog/redirect/redirect-site.wordpress.com'
+	const fetchSite = jest.fn().mockResolvedValue( {
+		URL: 'http://redirect.blog',
+		options: { is_redirect: true, unmapped_url: 'http://redirect-site.wordpress.com' },
+	} );
+
+	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		domains: [ fullRedirectDomain, fullUnmappedDomain ],
+	} );
+
+	render( <DomainsTableRow domain={ partialRedirectDomain } />, {
+		siteSlug,
+		domains: [ partialRedirectDomain ],
+		fetchSite,
+		fetchSiteDomains,
+		isAllSitesView: false,
+	} );
+
+	await waitFor( () =>
+		expect( screen.getByRole( 'link', { name: 'redirect.blog' } ) ).toHaveAttribute(
+			'href',
+			'/domains/manage/redirect.blog/redirect/redirect-site.wordpress.com'
+		)
 	);
 } );
 
-test( 'transfer domains link to the transfer management interface', async () => {
+test( 'transfer domains link to the transfer management interface (all-domains table)', async () => {
 	const [ partialDomain, fullDomain ] = testDomain( {
 		domain: 'example.com',
 		blog_id: 123,
@@ -181,7 +216,7 @@ test( 'transfer domains link to the transfer management interface', async () => 
 		options: { is_redirect: false },
 	} );
 
-	const { rerender } = render( <DomainsTableRow domain={ partialDomain } />, {
+	render( <DomainsTableRow domain={ partialDomain } />, {
 		domains: [ partialDomain ],
 		fetchSite,
 		fetchSiteDomains,
@@ -196,24 +231,39 @@ test( 'transfer domains link to the transfer management interface', async () => 
 			'/domains/manage/all/example.com/transfer/in/example.com'
 		)
 	);
+} );
 
-	// Test site-specific link
-	rerender(
-		<DomainsTable
-			siteSlug={ siteSlug }
-			domains={ [ partialDomain ] }
-			fetchSiteDomains={ fetchSiteDomains }
-			isAllSitesView={ false }
-		>
-			<tbody>
-				<DomainsTableRow domain={ partialDomain } />
-			</tbody>
-		</DomainsTable>
-	);
+test( 'transfer domains link to the transfer management interface (site-specific table)', async () => {
+	const [ partialDomain, fullDomain ] = testDomain( {
+		domain: 'example.com',
+		blog_id: 123,
+		primary_domain: true,
+		wpcom_domain: false,
+		type: 'transfer',
+	} );
 
-	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
-		'href',
-		'/domains/manage/example.com/transfer/in/example.com'
+	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		domains: [ fullDomain ],
+	} );
+
+	const fetchSite = jest.fn().mockResolvedValue( {
+		URL: 'http://example.com',
+		options: { is_redirect: false },
+	} );
+
+	render( <DomainsTableRow domain={ partialDomain } />, {
+		siteSlug,
+		domains: [ partialDomain ],
+		fetchSite,
+		fetchSiteDomains,
+		isAllSitesView: false,
+	} );
+
+	await waitFor( () =>
+		expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
+			'href',
+			'/domains/manage/example.com/transfer/in/example.com'
+		)
 	);
 } );
 
