@@ -1666,6 +1666,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 	} );
 
+	// Siteless checkout flow
 	describe( 'Jetpack Siteless Checkout Thank You', () => {
 		it( 'redirects when jetpack checkout arg is set, but siteSlug is undefined.', () => {
 			const cart = {
@@ -1756,8 +1757,10 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
-		// siteless "Connect after checkout" flow.
-		it( "redirects to the site's wp-admin cunnect_url_redirect url to initiate Jetpack connection", () => {
+		// Jetpack siteless "Connect after checkout" flow.
+		// Triggered when `connectAfterCheckout: true`, `adminUrl` is set, `fromSiteSlug` is set,
+		// and `siteSlug` is falsy(undefined).
+		it( "redirects to the site's wp-admin `connect_url_redirect` url to initiate Jetpack connection", () => {
 			const adminUrl = 'https://my.site/wp-admin/';
 			const cart = {
 				...getMockCart(),
