@@ -13,10 +13,7 @@ import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import wp from 'calypso/lib/wp';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import TransferLockOptOutForm from 'calypso/my-sites/domains/domain-management/components/transfer-lock-opt-out-form';
-import {
-	domainManagementContactsPrivacy,
-	domainManagementEdit,
-} from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { requestWhois, saveWhois } from 'calypso/state/domains/management/actions';
 import {
@@ -373,20 +370,7 @@ class EditContactInfoFormCard extends Component {
 	getReturnDestination = () => {
 		const domainName = this.props.selectedDomain.name;
 		const siteSlug = this.props.selectedSite.slug;
-		const domainSettingsPage = domainManagementEdit(
-			siteSlug,
-			domainName,
-			this.props.currentRoute
-		);
-		const contactsPrivacyPage = domainManagementContactsPrivacy(
-			siteSlug,
-			domainName,
-			this.props.currentRoute
-		);
-
-		return this.props.previousPath?.startsWith( domainSettingsPage )
-			? domainSettingsPage
-			: contactsPrivacyPage;
+		return domainManagementEdit( siteSlug, domainName, this.props.currentRoute );
 	};
 
 	showNoticeAndGoBack = ( message ) => {
