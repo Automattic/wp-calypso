@@ -64,11 +64,12 @@ export default function DomainInformation( props: Props ) {
 							{ whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
 								<VerifiedProvider />
 							) }
-							{ ! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
-								<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
-									{ whois.registrar }
-								</a>
-							) }
+							{ whois.registrar_url &&
+								! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
+									<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
+										{ whois.registrar }
+									</a>
+								) }
 							{ ! whois.registrar_url && <span>{ whois.registrar }</span> }
 						</div>
 					</li>
