@@ -224,7 +224,7 @@ const StatsPersonalPurchase = ( {
 
 	return (
 		<>
-			<h1>{ translate( 'Jetpack Stats Personal' ) }</h1>
+			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<PersonalPurchase
 				subscriptionValue={ subscriptionValue }
