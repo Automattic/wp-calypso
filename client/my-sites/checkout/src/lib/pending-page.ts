@@ -386,7 +386,7 @@ export function getRedirectFromPendingPage( {
 						redirectTo ?? getDefaultSuccessUrl( siteSlug, transactionReceiptId ),
 						transactionReceiptId
 					),
-					siteSlug,
+					siteSlug || fromSiteSlug,
 					getDefaultSuccessUrl( siteSlug, transactionReceiptId )
 				),
 			};
