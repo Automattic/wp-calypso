@@ -4,6 +4,7 @@ import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
+import VerifiedProvider from './verified-provider';
 import type { WhoIs } from 'calypso/data/site-profiler/types';
 import './styles.scss';
 
@@ -60,7 +61,10 @@ export default function DomainInformation( props: Props ) {
 					<li>
 						<div className="name">{ translate( 'Registrar' ) }</div>
 						<div>
-							{ whois.registrar_url && (
+							{ whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
+								<VerifiedProvider />
+							) }
+							{ ! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
 								<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
 									{ whois.registrar }
 								</a>
