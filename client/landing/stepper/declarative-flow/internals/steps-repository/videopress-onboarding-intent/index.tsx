@@ -11,7 +11,7 @@ import ChannelIntentImage from 'calypso/assets/images/onboarding/videopress-onbo
 import JetpackIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-jetpack.png';
 import OtherIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-other.png';
 import PortfolioIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-portfolio.png';
-import SingleVideoIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-single-video.png';
+import SenseiIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-sensei.png';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -22,7 +22,7 @@ import VideoPressOnboardingIntentModalChannel from './videopress-onboarding-inte
 import VideoPressOnboardingIntentModalJetpack from './videopress-onboarding-intent-modal-jetpack';
 import VideoPressOnboardingIntentModalOther from './videopress-onboarding-intent-modal-other';
 import VideoPressOnboardingIntentModalPortfolio from './videopress-onboarding-intent-modal-portfolio';
-import VideoPressOnboardingIntentModalVideoUpload from './videopress-onboarding-intent-modal-video-upload';
+import VideoPressOnboardingIntentModalSensei from './videopress-onboarding-intent-modal-sensei';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 import './styles.scss';
@@ -62,9 +62,9 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 		setModal( <VideoPressOnboardingIntentModalChannel onSubmit={ handleSubmit } /> );
 	};
 
-	const onUploadVideoIntentClicked = () => {
-		sendTracksIntent( 'videoupload' );
-		setModal( <VideoPressOnboardingIntentModalVideoUpload onSubmit={ handleSubmit } /> );
+	const onSenseiIntentClicked = () => {
+		sendTracksIntent( 'sensei' );
+		setModal( <VideoPressOnboardingIntentModalSensei /> );
 	};
 
 	const onJetpackIntentClicked = () => {
@@ -104,11 +104,13 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 		/>,
 		<VideoPressOnboardingIntentItem
 			key={ 3 }
-			title={ __( 'Share a video' ) }
-			description={ __( 'Just put a video on the internet.' ) }
-			image={ SingleVideoIntentImage }
-			isComingSoon={ true }
-			onClick={ onUploadVideoIntentClicked }
+			title={ __( 'Create video courses' ) }
+			description={ __(
+				'Embed videos in your online lessons to make your courses more dynamic and engaging.'
+			) }
+			image={ SenseiIntentImage }
+			isComingSoon={ false }
+			onClick={ onSenseiIntentClicked }
 		/>,
 		'vpcom' !== fromReferrer && (
 			<VideoPressOnboardingIntentItem

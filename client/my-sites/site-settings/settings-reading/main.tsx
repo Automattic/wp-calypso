@@ -153,12 +153,12 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
 					/>
+					{ isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
 					{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 					<SettingsSectionHeader
 						id="newsletter-settings"
 						title={ translate( 'Newsletter settings' ) }
 					/>
-					{ isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
 					<Card className="site-settings__card">
 						<em>
 							{ translate( 'Newsletter settings have moved to their {{a}}own page{{/a}}.', {

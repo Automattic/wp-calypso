@@ -1,4 +1,6 @@
+import { translate } from 'i18n-calypso';
 import { useNavigate, useLocation } from 'react-router-dom';
+import DocumentHead from 'calypso/components/data/document-head';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -38,6 +40,7 @@ export default function SiteProfiler() {
 		<>
 			{ ! data && (
 				<LayoutBlock className="domain-analyzer-block" width="medium">
+					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<DomainAnalyzer
 						domain={ domain }
 						onFormSubmit={ updateDomainQueryParam }
@@ -48,6 +51,10 @@ export default function SiteProfiler() {
 
 			{ data && (
 				<LayoutBlock className="domain-result-block">
+					{
+						// Translators: %s is the domain name searched
+						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
+					}
 					{ data && (
 						<LayoutBlockSection>
 							<HeadingInformation

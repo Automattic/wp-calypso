@@ -1,9 +1,10 @@
-import { TextControl, Button } from '@wordpress/components';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState } from 'react';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FormTextInputWithAction from '../components/forms/form-text-input-with-action';
 import { useOdieAssistantContext } from './context';
 import ChatMessage from './message';
 import { useOdieGetChatPollQuery, useOdieSendMessage } from './query';
@@ -16,15 +17,19 @@ export const WAPUU_ERROR_MESSAGE =
 
 type OdieAssistantProps = {
 	botNameSlug: string;
-	simple?: boolean;
+	isSimpleChatbox?: boolean;
+	isFloatingChatbox?: boolean;
+	isHeaderVisible?: boolean;
 };
 
 const OdieAssistant = ( props: OdieAssistantProps ) => {
-	const { simple, botNameSlug } = props;
+	const { isSimpleChatbox, botNameSlug, isFloatingChatbox = true, isHeaderVisible = true } = props;
 	const {
+		addMessage,
+		botName,
+		botSetting,
 		lastNudge,
 		chat,
-		addMessage,
 		setMessages,
 		isLoading,
 		setIsLoading,
@@ -36,7 +41,7 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 	const [ input, setInput ] = useState( '' );
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const { data: chatData } = useOdieGetChatPollQuery( chat.chat_id ?? null );
-	const [ userInteracted, setUserInteracted ] = useState( false );
+	const translate = useTranslate();
 
 	const dispatch = useDispatch();
 
@@ -84,7 +89,6 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 	const handleMessageChange = ( text: string ) => {
 		setInput( text );
 	};
-
 	const handleSendMessage = async () => {
 		try {
 			setIsLoading( true );
@@ -124,78 +128,51 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 
 	const handleToggleVisibility = () => {
 		const newVisibility = ! isVisible;
-		setUserInteracted( true );
 
 		dispatch(
 			recordTracksEvent( 'calypso_odie_chat_toggle_visibility_click', {
 				visible: newVisibility,
 				bot_name_slug: botNameSlug,
-				simple_chatbox: simple,
+				simple_chatbox: isSimpleChatbox,
 			} )
 		);
 
 		setIsVisible( newVisibility );
 	};
 
-	function handleKeyDown( event: React.KeyboardEvent< HTMLInputElement > ) {
-		if ( event.key === 'Enter' || event.keyCode === 13 ) {
-			// Prevent a newline from being entered into the textbox
-			event.preventDefault();
-
-			handleSendMessage();
-		}
-	}
-
-	function handleFormSubmit( event: React.FormEvent ) {
-		event.preventDefault();
-
-		if ( isLoading ) {
-			return;
-		}
-
-		handleSendMessage();
-	}
-
 	return (
 		<div
 			className={ classnames( 'chatbox', {
-				'chatbox-show': isVisible && ! simple,
-				'chatbox-hide': ! isVisible && ! simple,
-				'chatbox-show-vertical': isVisible && simple,
-				'chatbox-hide-vertical': ! isVisible && simple,
-				'using-environment-badge': environmentBadge,
+				'chatbox-floating': isFloatingChatbox,
+				'chatbox-show': isVisible && ! isSimpleChatbox && isFloatingChatbox,
+				'chatbox-hide': ! isVisible && ! isSimpleChatbox && isFloatingChatbox,
+				'chatbox-show-vertical': isVisible && isSimpleChatbox && isFloatingChatbox,
+				'chatbox-hide-vertical': ! isVisible && isSimpleChatbox && isFloatingChatbox,
+				'using-environment-badge': environmentBadge && isFloatingChatbox,
+				'chatbox-big': botSetting === 'supportDocs' && isFloatingChatbox,
 			} ) }
 		>
 			<TrackComponentView
 				eventName="calypso_odie_chatbox_view"
 				eventProperties={ { bot_name_slug: botNameSlug } }
 			/>
-			{ ! simple && (
+			{ ! isSimpleChatbox && isHeaderVisible && (
 				<WapuuRibbon
 					onToggleVisibility={ handleToggleVisibility }
 					isNudging={ isNudging }
 					isLoading={ isLoading }
 				/>
 			) }
-			<div className="chatbox-header">
-				{ ! simple ? (
-					'Wapuu Assistant'
-				) : (
-					<>
-						<button className="chatbox-header-button" onClick={ handleToggleVisibility }>
-							<span
-								className={ classnames( {
-									'chatbox-attention': ! userInteracted || isNudging,
-								} ) }
-							>
-								Wapuu Assistant
-							</span>
-						</button>
-					</>
-				) }
-			</div>
-
-			<div className="chat-box-message-container">
+			{ isHeaderVisible && (
+				<div className="chatbox-header">
+					<span>{ botName }</span>
+				</div>
+			) }
+			<div
+				className={ classnames( 'chat-box-message-container', {
+					'has-top-border': ! isFloatingChatbox,
+				} ) }
+			>
 				<div className="chatbox-messages">
 					{ chat.messages.map( ( message, index ) => (
 						<ChatMessage
@@ -206,25 +183,22 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 						/>
 					) ) }
 				</div>
-				<form onSubmit={ handleFormSubmit }>
-					<div className="chatbox-input-area">
-						<TextControl
-							className="chatbox-input"
-							type="text"
-							value={ input }
-							onChange={ handleMessageChange }
-							onKeyDown={ handleKeyDown }
-						/>
-						<Button
-							disabled={ isLoading }
-							onClick={ handleSendMessage }
-							className="chatbox-send-btn"
-							type="button"
-						>
-							Send
-						</Button>
-					</div>
-				</form>
+				<div className="chatbox-input-area">
+					<FormTextInputWithAction
+						className="reader-sidebar-tags__text-input"
+						placeholder={ translate( 'Enter message', {
+							context:
+								'Placeholder text for the input field where the user can type a message to a chat bot',
+							textOnly: true,
+						} ) }
+						action={ translate( 'Send', {
+							context: 'Button label for sending a message to a chat bot',
+						} ) }
+						onAction={ handleSendMessage }
+						onChange={ handleMessageChange }
+						clearOnSubmit
+					/>
+				</div>
 			</div>
 		</div>
 	);

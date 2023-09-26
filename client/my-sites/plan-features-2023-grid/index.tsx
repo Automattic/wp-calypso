@@ -8,6 +8,7 @@ import {
 	PlanSlug,
 	isWooExpressPlusPlan,
 	FeatureList,
+	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -19,10 +20,8 @@ import {
 	SlackLogo,
 	TimeLogo,
 } from '@automattic/components';
-import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, ForwardedRef, forwardRef } from 'react';
@@ -49,6 +48,7 @@ import { StickyContainer } from './components/sticky-container';
 import StorageAddOnDropdown from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { type PlansIntent } from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
+import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
 import { isStorageUpgradeableForPlan } from './lib/is-storage-upgradeable-for-plan';
 import { DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
@@ -57,7 +57,7 @@ import type {
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { PlanActionOverrides } from './types';
-import type { DomainSuggestion, SelectedStorageOptionForPlans } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
@@ -77,6 +77,7 @@ export interface PlanFeatures2023GridProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
@@ -113,7 +114,7 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 	isPlanUpgradeCreditEligible: boolean;
 	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
 	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
-	selectedStorageOptions?: SelectedStorageOptionForPlans;
+	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
 }
 
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
@@ -419,43 +420,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		} );
 	}
 
-	handleUpgradeClick = ( planSlug: PlanSlug ) => {
-		const {
-			onUpgradeClick: ownPropsOnUpgradeClick,
-			gridPlansForFeaturesGrid,
-			selectedStorageOptions,
-		} = this.props;
-		const { cartItemForPlan, storageAddOnsForPlan } =
-			gridPlansForFeaturesGrid.find( ( gridPlan ) => gridPlan.planSlug === planSlug ) ?? {};
-
-		const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-		const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
-			return selectedStorageOption && addOn
-				? addOn.featureSlugs?.includes( selectedStorageOption )
-				: false;
-		} );
-
-		const storageAddOnCartItem = storageAddOn && {
-			product_slug: storageAddOn.productSlug,
-			quantity: storageAddOn.quantity,
-			volume: 1,
-		};
-
-		// TODO clk: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
-		if ( cartItemForPlan ) {
-			ownPropsOnUpgradeClick?.( [
-				cartItemForPlan,
-				...( storageAddOnCartItem ? [ storageAddOnCartItem ] : [] ),
-			] );
-			return;
-		}
-
-		if ( isFreePlan( planSlug ) ) {
-			ownPropsOnUpgradeClick?.( null );
-			return;
-		}
-	};
-
 	renderTopButtons( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const {
 			isInSignup,
@@ -469,6 +433,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			planActionOverrides,
 			siteId,
 			isLargeCurrency,
+			handleUpgradeClick,
 		} = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, availableForPurchase } ) => {
@@ -509,7 +474,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
-						onUpgradeClick={ () => this.handleUpgradeClick( planSlug ) }
+						onUpgradeClick={ () => handleUpgradeClick( planSlug ) }
 						planSlug={ planSlug }
 						flowName={ flowName }
 						currentSitePlanSlug={ currentSitePlanSlug }
@@ -636,7 +601,14 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { translate, intervalType, isInSignup, flowName, showUpgradeableStorage } = this.props;
+		const {
+			translate,
+			intervalType,
+			isInSignup,
+			flowName,
+			onStorageAddOnClick,
+			showUpgradeableStorage,
+		} = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -662,6 +634,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				<StorageAddOnDropdown
 					label={ translate( 'Storage' ) }
 					planSlug={ planSlug }
+					onStorageAddOnClick={ onStorageAddOnClick }
 					storageOptions={ storageOptions }
 					showPrice
 				/>
@@ -719,10 +692,12 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			showPlansComparisonGrid,
 			showUpgradeableStorage,
 			observableForOdieRef,
+			onStorageAddOnClick,
+			handleUpgradeClick,
 		} = this.props;
 
 		return (
-			<div className="plans-wrapper">
+			<>
 				<QueryActivePromotions />
 				<PlansGridContextProvider
 					intent={ intent }
@@ -786,12 +761,13 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								manageHref={ manageHref }
 								canUserPurchasePlan={ canUserPurchasePlan }
 								selectedSiteSlug={ selectedSiteSlug }
-								onUpgradeClick={ this.handleUpgradeClick }
+								onUpgradeClick={ handleUpgradeClick }
 								siteId={ siteId }
 								selectedPlan={ selectedPlan }
 								selectedFeature={ selectedFeature }
 								showLegacyStorageFeature={ showLegacyStorageFeature }
 								showUpgradeableStorage={ showUpgradeableStorage }
+								onStorageAddOnClick={ onStorageAddOnClick }
 							/>
 							<ComparisonGridToggle
 								onClick={ toggleShowPlansComparisonGrid }
@@ -800,7 +776,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</PlansGridContextProvider>
 					</div>
 				) : null }
-			</div>
+			</>
 		);
 	}
 }
@@ -816,10 +792,6 @@ export default forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
 		const isLargeCurrency = useIsLargeCurrency( {
 			gridPlans: props.gridPlansForFeaturesGrid,
 		} );
-
-		const selectedStorageOptions = useSelect( ( select ) => {
-			return select( WpcomPlansUI.store ).getSelectedStorageOptions();
-		}, [] );
 
 		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 		const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
@@ -838,6 +810,11 @@ export default forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
 				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 				: `/plans/my-plan/${ siteId }`;
 
+		const handleUpgradeClick = useUpgradeClickHandler( {
+			gridPlansForFeaturesGrid: props.gridPlansForFeaturesGrid,
+			onUpgradeClick: props.onUpgradeClick,
+		} );
+
 		if ( props.isInSignup ) {
 			return (
 				<PlanFeatures2023Grid
@@ -849,7 +826,7 @@ export default forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
 					manageHref={ manageHref }
 					selectedSiteSlug={ selectedSiteSlug }
 					translate={ translate }
-					selectedStorageOptions={ selectedStorageOptions }
+					handleUpgradeClick={ handleUpgradeClick }
 				/>
 			);
 		}
@@ -865,6 +842,7 @@ export default forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
 					manageHref={ manageHref }
 					selectedSiteSlug={ selectedSiteSlug }
 					translate={ translate }
+					handleUpgradeClick={ handleUpgradeClick }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

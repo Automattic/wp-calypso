@@ -29,6 +29,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 		setShowBulkActions,
 		showBulkActions,
 		domainsTableColumns,
+		canSelectAnyDomains,
 	} = useDomainsTable();
 
 	const options: ReactNode[] = [];
@@ -82,22 +83,24 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 							{ options }
 						</SelectDropdown>
 
-						<DropdownMenu icon={ <Gridicon icon="ellipsis" /> } label={ __( 'Domain actions' ) }>
-							{ () => (
-								<MenuGroup>
-									<MenuItem
-										onClick={ () => setShowBulkActions( ! showBulkActions ) }
-										className="domains-table-mobile-cards-controls-bulk-toggle"
-									>
-										<ToggleControl
-											label={ __( 'Bulk actions ' ) }
-											onChange={ () => setShowBulkActions( ! showBulkActions ) }
-											checked={ showBulkActions }
-										/>
-									</MenuItem>
-								</MenuGroup>
-							) }
-						</DropdownMenu>
+						{ canSelectAnyDomains && (
+							<DropdownMenu icon={ <Gridicon icon="ellipsis" /> } label={ __( 'Domain actions' ) }>
+								{ () => (
+									<MenuGroup>
+										<MenuItem
+											onClick={ () => setShowBulkActions( ! showBulkActions ) }
+											className="domains-table-mobile-cards-controls-bulk-toggle"
+										>
+											<ToggleControl
+												label={ __( 'Bulk actions ' ) }
+												onChange={ () => setShowBulkActions( ! showBulkActions ) }
+												checked={ showBulkActions }
+											/>
+										</MenuItem>
+									</MenuGroup>
+								) }
+							</DropdownMenu>
+						) }
 					</div>
 				</>
 			) }
