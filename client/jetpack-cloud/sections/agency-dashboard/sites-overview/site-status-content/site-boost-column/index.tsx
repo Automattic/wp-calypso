@@ -1,12 +1,12 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useContext } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
-import SitesOverviewContext from '../../context';
 import { getBoostRating, getBoostRatingClass } from '../../lib/boost';
-import { Site } from '../../types';
+import BoostLicenseInfoModal from './boost-license-info-modal';
+import type { Site } from '../../types';
 
 interface Props {
 	site: Site;
@@ -15,14 +15,14 @@ interface Props {
 export default function SiteBoostColumn( { site }: Props ) {
 	const translate = useTranslate();
 
-	const { showLicenseInfo } = useContext( SitesOverviewContext );
-
 	const overallScore = site.jetpack_boost_scores?.overall;
 	const hasBoost = site.has_boost;
 	const adminUrl = useSelector( ( state ) => getJetpackAdminUrl( state, site.blog_id ) );
 
+	const [ showBoostModal, setShowBoostModal ] = useState( false );
+
 	const handleGetBoostScoreAction = () => {
-		showLicenseInfo( 'boost' );
+		setShowBoostModal( true );
 	};
 
 	if ( overallScore ) {
@@ -64,6 +64,12 @@ export default function SiteBoostColumn( { site }: Props ) {
 			>
 				{ translate( 'Get Score' ) }
 			</button>
+			{ showBoostModal && (
+				<BoostLicenseInfoModal
+					onClose={ () => setShowBoostModal( false ) }
+					siteId={ site.blog_id }
+				/>
+			) }
 		</>
 	);
 }

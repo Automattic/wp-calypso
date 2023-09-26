@@ -2,11 +2,11 @@ import { Button } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useContext, useMemo } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { jetpackBoostDesktopIcon, jetpackBoostMobileIcon } from '../../icons';
-import SitesOverviewContext from '../context';
 import { getBoostRating, getBoostRatingClass } from '../lib/boost';
+import BoostLicenseInfoModal from '../site-status-content/site-boost-column/boost-license-info-modal';
 import ExpandedCard from './expanded-card';
 import InProgressIcon from './in-progress-icon';
 import type { BoostData } from '../types';
@@ -34,7 +34,7 @@ export default function BoostSitePerformance( {
 
 	const helpIconRef = useRef< HTMLElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
-	const { showLicenseInfo } = useContext( SitesOverviewContext );
+	const [ showBoostModal, setShowBoostModal ] = useState( false );
 
 	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
 
@@ -65,7 +65,7 @@ export default function BoostSitePerformance( {
 	);
 
 	const handleOnClick = () => {
-		showLicenseInfo( 'boost' );
+		setShowBoostModal( true );
 	};
 
 	return (
@@ -160,6 +160,9 @@ export default function BoostSitePerformance( {
 					</Button>
 				</div>
 			</div>
+			{ showBoostModal && (
+				<BoostLicenseInfoModal onClose={ () => setShowBoostModal( false ) } siteId={ siteId } />
+			) }
 		</ExpandedCard>
 	);
 }
