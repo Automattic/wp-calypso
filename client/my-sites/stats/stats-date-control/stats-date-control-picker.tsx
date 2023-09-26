@@ -82,16 +82,23 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 	};
 
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
+
+		const formattedDate = ( date: Date ) => {
+			return date.toISOString().split( 'T' )[ 0 ];
+		}
+
 		// We do our date math based on 24 hour increments.
 		const millisecondsInOneDay = 1000 * 60 * 60 * 24;
+
 		// Calc new start date based on offset value from shortcut.
 		let offsetInMilliseconds = new Date().getTime() - ( millisecondsInOneDay * shortcut.offset );
 		const newStartDate = new Date( offsetInMilliseconds );
-		setInputStartDate( newStartDate.toISOString().split( 'T' )[ 0 ] ); 
+		setInputStartDate( formattedDate( newStartDate ) ); 
+
 		// Calc new end date based on start date plus range as specified in shortcut.
 		offsetInMilliseconds = newStartDate.getTime() - ( millisecondsInOneDay * shortcut.range );
 		const newEndDate = new Date( offsetInMilliseconds );
-		setInputEndDate( newEndDate.toISOString().split( 'T' )[ 0 ] );
+		setInputEndDate( formattedDate( newEndDate ) ); 
 	}
 
 	const DateControlPickerContent = () => (
