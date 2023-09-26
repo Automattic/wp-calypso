@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import { startsWith } from 'lodash';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -46,20 +47,48 @@ export const FilePath = ( { children } ) => (
 	</div>
 );
 
-export const Post = ( { content, children } ) => {
+export const Post = ( { content, children, meta } ) => {
+	const moment = useLocalizedMoment();
+	const siteId = useSelector( getSelectedSiteId );
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+	const translate = useTranslate();
+
+	let titleContent = children;
+
 	// Don't render links to WordPress.com inside Jetpack Cloud
-	if ( isJetpackCloud() ) {
-		return content.isTrashed ? children : <em>{ children }</em>;
+	if ( ! isJetpackCloud() ) {
+		if ( content.isTrashed ) {
+			titleContent = <a href={ `/posts/${ content.siteId }/trash` }>{ children }</a>;
+		} else {
+			titleContent = (
+				<a href={ `/read/blogs/${ content.siteId }/posts/${ content.postId }` }>{ children }</a>
+			);
+		}
 	}
 
-	if ( content.isTrashed ) {
-		return <a href={ `/posts/${ content.siteId }/trash` }>{ children }</a>;
+	let publishedContent = null;
+	if ( meta.published ) {
+		const formattedPublishedDate = applySiteOffset( moment( meta.published ), {
+			timezone,
+			gmtOffset,
+		} ).format( 'MMM D, YYYY' );
+
+		publishedContent = (
+			<>
+				<br />
+				<span className="note-formatted-block__post-publish-date">
+					{ translate( 'Original publish date:' ) } { formattedPublishedDate }
+				</span>
+			</>
+		);
 	}
 
 	return (
-		<a href={ `/read/blogs/${ content.siteId }/posts/${ content.postId }` }>
-			<em>{ children }</em>
-		</a>
+		<>
+			{ titleContent }
+			{ publishedContent }
+		</>
 	);
 };
 
