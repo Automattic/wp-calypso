@@ -11,6 +11,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'earn_money',
 	'manage_subscribers',
 	'connect_social_media',
+	'drive_traffic',
 ];
 
 export const setUpActionsForTasks = ( {
