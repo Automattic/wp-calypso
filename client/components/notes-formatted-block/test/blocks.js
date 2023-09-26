@@ -6,7 +6,17 @@ import { render, screen } from '@testing-library/react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import * as Blocks from '../blocks';
 
+const EXAMPLE_SITE_ID = 123;
+
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useSelector: jest.fn( ( func ) => func() ),
+	useDispatch: () => jest.fn(),
+} ) );
+jest.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSiteId: jest.fn().mockImplementation( () => EXAMPLE_SITE_ID ),
+} ) );
 
 // NOTE: There's a repeating pattern in these tests that links to WordPress.com
 //       aren't rendered in the context of Jetpack Cloud. Best I can tell, this
@@ -144,7 +154,7 @@ describe( 'Post block', () => {
 		expect( link ).toHaveTextContent( text );
 	} );
 
-	test( 'on Jetpack Cloud, if the post is not trashed, shows emphasized text but does not link', () => {
+	test( 'on Jetpack Cloud, if the post is not trashed, shows the text but does not link', () => {
 		isJetpackCloud.mockImplementation( () => true );
 
 		const content = {
@@ -162,8 +172,28 @@ describe( 'Post block', () => {
 			<Blocks.Post content={ content } children={ text } meta={ meta } />
 		).container.firstChild;
 
-		expect( unlinkedPost.tagName ).toEqual( 'EM' );
 		expect( unlinkedPost ).toHaveTextContent( text );
+	} );
+
+	test( 'if the post has a published date, shows the published date span', () => {
+		isJetpackCloud.mockImplementation( () => true );
+
+		const content = {
+			siteId: 1,
+			postId: 10,
+			isTrashed: false,
+		};
+
+		const meta = {
+			published: 1695394395000,
+		};
+
+		const text = 'another post';
+		render( <Blocks.Post content={ content } children={ text } meta={ meta } /> );
+
+		const publishSpan = screen.getByText( /Original publish date/i );
+
+		expect( publishSpan ).toBeTruthy();
 	} );
 } );
 
