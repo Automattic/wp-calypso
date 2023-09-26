@@ -120,7 +120,7 @@ export default function TransferDomainToAnyUser( {
 		selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	}
 
-	const disableForm = ! hasSiteDomainsLoaded || isRequestingSiteDomains || transferEmail;
+	const disableForm = ! hasSiteDomainsLoaded || isRequestingSiteDomains || isLoading;
 
 	const handleEmailChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const email = event.target.value;
