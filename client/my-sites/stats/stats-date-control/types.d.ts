@@ -33,6 +33,7 @@ interface DateControlPickerDateProps {
 export {
 	StatsDateControlProps,
 	DateControlPickerProps,
+	DateControlPickerShortcut,
 	DateControlPickerShortcutsProps,
 	DateControlPickerDateProps,
 };

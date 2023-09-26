@@ -4,7 +4,7 @@ import qs from 'qs';
 import React, { useState } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
-import { DateControlPickerProps } from './types';
+import { DateControlPickerProps, DateControlPickerShortcut } from './types';
 
 const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 	// shortcut list will come from props
@@ -81,7 +81,7 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 		page( href );
 	};
 
-	const handleShortcutSelected = ( shortcut: any ) => {
+	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
 		// We do our date math based on 24 hour increments.
 		const millisecondsInOneDay = 1000 * 60 * 60 * 24;
 		// Calc new start date based on offset value from shortcut.
