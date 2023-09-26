@@ -31,7 +31,7 @@ export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 			dispatch( errorNotice( ( error as Error ).message ) );
 		} finally {
 			setIsBusy( false );
-			// Either if error or success. We will mark it as completed so user can navigate back
+			// Either error or success. We will mark it as completed so user can navigate back
 			setIsCompleted( true );
 		}
 	};
@@ -50,10 +50,9 @@ export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 				align="left"
 			/>
 			<Card>
-				{ /* <TrackComponentView eventName="calypso_profile_domain_upsell_impression" /> */ }
 				<p>
 					{ translate(
-						'The eCommerce plan subscription provides a complimentary MailPoet Business Subscription, allowing you to send visually appealing emails that consistently land in inboxes and clutivate a loyal subscriber base.'
+						'The eCommerce plan provides a complimentary MailPoet Business Subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.'
 					) }
 				</p>
 				<p>
