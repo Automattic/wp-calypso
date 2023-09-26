@@ -14,24 +14,18 @@ import {
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useQueries } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import {
-	useCallback,
-	useLayoutEffect,
-	useMemo,
-	useState,
-	createContext,
-	useContext,
-	ReactNode,
-} from 'react';
+import { useCallback, useLayoutEffect, useMemo, useState, createContext, useContext } from 'react';
 import { DomainsTableFilter } from '../domains-table-filters/index';
 import {
 	allSitesViewColumns,
 	siteSpecificViewColumns,
 	applyColumnSort,
+	removeColumns,
 } from '../domains-table-header/columns';
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
@@ -74,11 +68,9 @@ interface BaseDomainsTableProps {
 	currentUserCanBulkUpdateContactInfo?: boolean;
 }
 
-export type DomainsTablePropsNoChildren =
+export type DomainsTableProps =
 	| ( BaseDomainsTableProps & { isAllSitesView: true } )
 	| ( BaseDomainsTableProps & { isAllSitesView: false; siteSlug: string | null } );
-
-export type DomainsTableProps = DomainsTablePropsNoChildren & { children: ReactNode | ReactNode[] };
 
 interface DomainsTableUpdatingDomain {
 	action: DomainAction;
@@ -104,7 +96,6 @@ type Value = {
 	deleteBulkActionStatus?: () => Promise< void >;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
-	hideOwnerColumn: boolean;
 	canSelectAnyDomains: boolean;
 	domainsRequiringAttention?: number;
 	sortKey: string;
@@ -130,13 +121,14 @@ type Value = {
 	domainsTableColumns: DomainsTableColumn[];
 	currentUsersOwnsAllSelectedDomains: boolean;
 	currentUserCanBulkUpdateContactInfo: boolean;
+	isCompact: boolean;
 };
 
-const Context = createContext< Value | undefined >( undefined );
+export const DomainsTableStateContext = createContext< Value | undefined >( undefined );
 
-export const useDomainsTable = () => useContext( Context ) as Value;
+export const useDomainsTable = () => useContext( DomainsTableStateContext ) as Value;
 
-export const DomainsTable = ( props: DomainsTableProps ) => {
+export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 	const {
 		domains: allDomains,
 		fetchAllDomains,
@@ -147,7 +139,6 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		deleteBulkActionStatus,
 		isAllSitesView,
 		domainStatusPurchaseActions,
-		children,
 		onDomainAction,
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction = false,
@@ -163,6 +154,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		sortDirection: 'asc',
 	} );
 
+	const isCompact = useBreakpoint( '<1280px' );
 	const [ showBulkActions, setShowBulkActions ] = useState( Boolean( ! isMobile() ) );
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
 	const [ filter, setFilter ] = useState< DomainsTableFilter >( () => ( { query: '' } ) );
@@ -236,9 +228,17 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		} );
 	}, [ domains ] );
 	const translate = useTranslate();
-	const domainsTableColumns = isAllSitesView
+	let domainsTableColumns = isAllSitesView
 		? allSitesViewColumns( translate, domainStatusPurchaseActions )
 		: siteSpecificViewColumns( translate, domainStatusPurchaseActions );
+
+	if ( isCompact ) {
+		domainsTableColumns = removeColumns( domainsTableColumns, 'site', 'owner' );
+	}
+
+	if ( shouldHideOwnerColumn( Object.values< DomainData[] >( fetchedSiteDomains ).flat() ) ) {
+		domainsTableColumns = removeColumns( domainsTableColumns, 'owner' );
+	}
 
 	const sortedDomains = useMemo( () => {
 		if ( ! domains ) {
@@ -363,10 +363,6 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		page( formLink );
 	};
 
-	const hideOwnerColumn = shouldHideOwnerColumn(
-		Object.values< DomainData[] >( fetchedSiteDomains ).flat()
-	);
-
 	const currentUsersOwnsAllSelectedDomains = ! Array.from( selectedDomains ).some( ( selected ) =>
 		( domains ?? [] ).find(
 			( domain ) => getDomainId( domain ) === selected && ! domain.current_user_is_owner
@@ -384,7 +380,6 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		deleteBulkActionStatus,
 		isAllSitesView,
 		domainStatusPurchaseActions,
-		hideOwnerColumn,
 		canSelectAnyDomains,
 		domainsRequiringAttention,
 		sortKey,
@@ -431,11 +426,8 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		domainsTableColumns,
 		isFetchingDomains,
 		currentUserCanBulkUpdateContactInfo,
+		isCompact,
 	};
 
-	return (
-		<Context.Provider value={ value }>
-			<div className="domains-table">{ children }</div>
-		</Context.Provider>
-	);
+	return value;
 };

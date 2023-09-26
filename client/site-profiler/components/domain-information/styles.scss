@@ -1,5 +1,7 @@
 .domain-information-details {
 	.whois-raw-data {
+		animation: l-block-fade-in 250ms ease-in;
+
 		button {
 			margin-bottom: 0.5rem;
 		}
@@ -12,6 +14,7 @@
 		}
 
 		pre {
+			background: transparent;
 			font-size: 0.875rem;
 			/* stylelint-disable-next-line */
 			line-height: 1.25rem;

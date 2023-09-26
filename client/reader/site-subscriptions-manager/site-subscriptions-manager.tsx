@@ -7,7 +7,6 @@ import { AddSitesButton } from 'calypso/landing/subscriptions/components/add-sit
 import { downloadCloud, uploadCloud } from 'calypso/reader/icons';
 import ReaderSiteSubscriptions from './reader-site-subscriptions';
 import SubscriptionsManagerWrapper from './subscriptions-manager-wrapper';
-import './style.scss';
 
 const SiteSubscriptionsManager = () => {
 	const translate = useTranslate();

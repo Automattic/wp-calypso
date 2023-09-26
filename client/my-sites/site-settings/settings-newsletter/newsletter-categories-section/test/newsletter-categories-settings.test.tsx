@@ -5,7 +5,7 @@
 import { render, fireEvent, screen } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import { NewsletterCategoriesSettings } from '..';
+import { NewsletterCategoriesSection } from '..';
 import { NEWSLETTER_CATEGORIES_ENABLED_OPTION } from '../newsletter-categories-toggle';
 
 jest.mock( 'i18n-calypso' );
@@ -18,11 +18,12 @@ describe( 'NewsletterCategoriesSettings', () => {
 
 	it( 'renders the toggle correctly', () => {
 		render(
-			<NewsletterCategoriesSettings
+			<NewsletterCategoriesSection
 				handleSubmitForm={ jest.fn() }
 				updateFields={ jest.fn() }
 				newsletterCategoryIds={ [] }
-				handleAutosavingToggle={ jest.fn() }
+				handleToggle={ jest.fn() }
+				isSavingSettings={ false }
 			/>
 		);
 
@@ -31,12 +32,13 @@ describe( 'NewsletterCategoriesSettings', () => {
 
 	it( 'displays the term tree selector when toggleValue is true', () => {
 		render(
-			<NewsletterCategoriesSettings
-				toggleValue={ true }
+			<NewsletterCategoriesSection
+				newsletterCategoriesEnabled={ true }
 				handleSubmitForm={ jest.fn() }
 				updateFields={ jest.fn() }
 				newsletterCategoryIds={ [] }
-				handleAutosavingToggle={ jest.fn() }
+				handleToggle={ jest.fn() }
+				isSavingSettings={ false }
 			/>
 		);
 
@@ -47,12 +49,13 @@ describe( 'NewsletterCategoriesSettings', () => {
 
 	it( 'hides the term tree selector when toggleValue is false', () => {
 		render(
-			<NewsletterCategoriesSettings
-				toggleValue={ false }
-				handleAutosavingToggle={ jest.fn() }
+			<NewsletterCategoriesSection
+				newsletterCategoriesEnabled={ false }
+				handleToggle={ jest.fn() }
 				updateFields={ jest.fn() }
 				handleSubmitForm={ jest.fn() }
 				newsletterCategoryIds={ [] }
+				isSavingSettings={ false }
 			/>
 		);
 
@@ -64,12 +67,13 @@ describe( 'NewsletterCategoriesSettings', () => {
 		const mockHandleToggle = jest.fn().mockImplementation( () => mockHandleChange );
 
 		render(
-			<NewsletterCategoriesSettings
-				toggleValue={ true }
-				handleAutosavingToggle={ mockHandleToggle }
+			<NewsletterCategoriesSection
+				newsletterCategoriesEnabled={ true }
+				handleToggle={ mockHandleToggle }
 				updateFields={ jest.fn() }
 				handleSubmitForm={ jest.fn() }
 				newsletterCategoryIds={ [] }
+				isSavingSettings={ false }
 			/>
 		);
 
@@ -84,9 +88,13 @@ describe( 'NewsletterCategoriesSettings', () => {
 		const mockHandleToggle = jest.fn().mockImplementation( () => mockHandleChange );
 
 		render(
-			<NewsletterCategoriesSettings
-				toggleValue={ false }
-				handleAutosavingToggle={ mockHandleToggle }
+			<NewsletterCategoriesSection
+				newsletterCategoriesEnabled={ false }
+				handleToggle={ mockHandleToggle }
+				handleSubmitForm={ jest.fn() }
+				newsletterCategoryIds={ [] }
+				updateFields={ jest.fn() }
+				isSavingSettings={ false }
 			/>
 		);
 
@@ -100,12 +108,13 @@ describe( 'NewsletterCategoriesSettings', () => {
 		const handleSubmitForm = jest.fn();
 
 		render(
-			<NewsletterCategoriesSettings
-				toggleValue={ true }
+			<NewsletterCategoriesSection
+				newsletterCategoriesEnabled={ true }
 				newsletterCategoryIds={ [] }
 				handleSubmitForm={ handleSubmitForm }
-				handleAutosavingToggle={ jest.fn() }
+				handleToggle={ jest.fn() }
 				updateFields={ jest.fn() }
+				isSavingSettings={ false }
 			/>
 		);
 

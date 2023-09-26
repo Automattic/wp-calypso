@@ -22,7 +22,8 @@ const useSubscribersQuery = ( {
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	filterOption = SubscribersFilterBy.All,
 }: SubscriberQueryParams ) => {
-	const hasManySubscribers = useManySubsSite( siteId );
+	const { hasManySubscribers, isLoading } = useManySubsSite( siteId );
+	const shouldFetch = ! isLoading;
 
 	return useQuery< SubscriberEndpointResponse >( {
 		queryKey: getSubscribersCacheKey( siteId, page, perPage, search, sortTerm, filterOption ),
@@ -43,7 +44,7 @@ const useSubscribersQuery = ( {
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		enabled: !! siteId,
+		enabled: !! siteId && shouldFetch,
 		keepPreviousData: true,
 	} );
 };

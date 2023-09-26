@@ -1,3 +1,4 @@
+import { updateLaunchpadSettings, type UserSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -16,7 +17,6 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
 
 const linkInBio: Flow = {
 	name: LINK_IN_BIO_FLOW,
@@ -155,10 +155,13 @@ const linkInBio: Flow = {
 			return;
 		};
 
-		const goNext = () => {
+		const goNext = async () => {
 			switch ( _currentStepSlug ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteId ?? siteSlug }` );
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+					}
+					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
 
 				default:
 					return navigate( 'intro' );

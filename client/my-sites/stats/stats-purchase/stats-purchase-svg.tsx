@@ -1,3 +1,4 @@
+import configApi from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import calypsoStatsPurchaseGraphSVG from 'calypso/assets/images/stats/calypso-purchase-stats-graph.svg';
 import statsPurchaseCelebrationSVG from 'calypso/assets/images/stats/purchase-stats-celebration.svg';
@@ -20,10 +21,13 @@ const StatsPurchaseSVG = ( {
 }: StatsPurchaseSVG ) => {
 	const translate = useTranslate();
 	const message = translate( 'Thanks for being one of our biggest supporters!' );
+	const isOdyssey = configApi.isEnabled( 'is_running_in_jetpack_site' );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
-	const purchaseGraphSVG = isWPCOMSite ? calypsoStatsPurchaseGraphSVG : statsPurchaseGraphSVG;
+	// For Odyssey Stats, the SVG is loaded separately from the sprite located in `widgets.wp.com/odyssey-stats/common/` for CORS reasons.
+	let purchaseGraphSVG = isWPCOMSite ? calypsoStatsPurchaseGraphSVG : statsPurchaseGraphSVG;
+	purchaseGraphSVG = ! isOdyssey ? purchaseGraphSVG : '';
 
 	return (
 		<>

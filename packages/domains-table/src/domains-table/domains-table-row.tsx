@@ -40,11 +40,10 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		isSelected,
 		handleSelectDomain,
 		isAllSitesView,
-		hideOwnerColumn,
 		domainStatus,
 		pendingUpdates,
 	} = useDomainRow( domain );
-	const { canSelectAnyDomains, domainsTableColumns } = useDomainsTable();
+	const { canSelectAnyDomains, domainsTableColumns, isCompact } = useDomainsTable();
 
 	const renderSiteCell = () => {
 		if ( site && currentDomainData ) {
@@ -82,24 +81,27 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	return (
-		<tr key={ domain.domain } ref={ ref }>
-			<td>
-				{ canSelectAnyDomains && canBulkUpdate( domain ) && (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ isSelected }
-						onChange={ () => handleSelectDomain( domain ) }
-						/* translators: Label for a checkbox control that selects a domain name.*/
-						aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
-							domain: domain.domain,
-						} ) }
-					/>
-				) }
-			</td>
+		<tr key={ domain.domain }>
+			{ canSelectAnyDomains && (
+				<td>
+					{ canBulkUpdate( domain ) && (
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							checked={ isSelected }
+							onChange={ () => handleSelectDomain( domain ) }
+							/* translators: Label for a checkbox control that selects a domain name.*/
+							aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
+								domain: domain.domain,
+							} ) }
+						/>
+					) }
+				</td>
+			) }
 			{ domainsTableColumns.map( ( column ) => {
 				if ( column.name === 'domain' ) {
 					return (
-						<td key={ column.name }>
+						// The in-view ref is attached to the domain cell because the <tr> is display:contents, which appears to break the in-view logic
+						<td key={ column.name } className="domains-table-row__domain" ref={ ref }>
 							{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 							{ isManageableDomain ? (
 								<a
@@ -111,6 +113,9 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 							) : (
 								<span className="domains-table__domain-name">{ domain.domain }</span>
 							) }
+
+							{ isCompact && <div>{ renderSiteCell() }</div> }
+
 							{ domainTypeText && (
 								<span className="domains-table-row__domain-type-text">{ domainTypeText }</span>
 							) }
@@ -119,11 +124,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				}
 
 				if ( column.name === 'owner' ) {
-					if ( ! hideOwnerColumn ) {
-						return <td key={ column.name }>{ renderOwnerCell() }</td>;
-					}
-
-					return null;
+					return <td key={ column.name }>{ renderOwnerCell() }</td>;
 				}
 
 				if ( column.name === 'site' ) {
@@ -132,24 +133,27 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 				if ( column.name === 'expire_renew' ) {
 					return (
-						<td key={ column.name }>
-							<DomainsTableExpiresRewnewsOnCell domain={ domain } />
-						</td>
+						<DomainsTableExpiresRewnewsOnCell
+							key={ column.name }
+							as="td"
+							domain={ domain }
+							isCompact={ isCompact }
+						/>
 					);
 				}
 
 				if ( column.name === 'status' ) {
-					return (
+					return isLoadingRowDetails ? (
 						<td key={ column.name }>
-							{ isLoadingRowDetails ? (
-								<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
-							) : (
-								<DomainsTableStatusCell
-									domainStatus={ domainStatus }
-									pendingUpdates={ pendingUpdates }
-								/>
-							) }
+							<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 						</td>
+					) : (
+						<DomainsTableStatusCell
+							key={ column.name }
+							as="td"
+							domainStatus={ domainStatus }
+							pendingUpdates={ pendingUpdates }
+						/>
 					);
 				}
 

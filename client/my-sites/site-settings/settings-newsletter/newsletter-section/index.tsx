@@ -1,15 +1,9 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useNewsletterCategoriesBlogSticker } from 'calypso/data/newsletter-categories';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { useSelector } from 'calypso/state';
-import { isSimpleSite as isSimpleSiteSelector } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { NewsletterCategoriesSettings } from '../newsletter-categories-settings';
-import { SubscriptionOptions } from '../settings-reading/main';
+import { SubscriptionOptions } from '../../settings-reading/main';
 import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
@@ -17,8 +11,6 @@ import { SubscribeModalSetting } from './SubscribeModalSetting';
 
 type Fields = {
 	wpcom_featured_image_in_email?: boolean;
-	wpcom_newsletter_categories?: number[];
-	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	subscription_options?: SubscriptionOptions;
 	sm_enabled?: boolean;
@@ -26,7 +18,6 @@ type Fields = {
 
 type NewsletterSettingsSectionProps = {
 	fields: Fields;
-	handleAutosavingToggle: ( field: string ) => ( value: boolean ) => void;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	handleSubmitForm: () => void;
 	disabled?: boolean;
@@ -35,11 +26,8 @@ type NewsletterSettingsSectionProps = {
 	updateFields: ( fields: Fields ) => void;
 };
 
-const defaultNewsletterCategoryIds: number[] = [];
-
 export const NewsletterSettingsSection = ( {
 	fields,
-	handleAutosavingToggle,
 	handleToggle,
 	handleSubmitForm,
 	disabled,
@@ -50,13 +38,10 @@ export const NewsletterSettingsSection = ( {
 	const translate = useTranslate();
 	const {
 		wpcom_featured_image_in_email,
-		wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		subscription_options,
 		sm_enabled,
 	} = fields;
-	const siteId = useSelector( getSelectedSiteId );
-	const isSimpleSite = useSelector( isSimpleSiteSelector );
 
 	// Update subscription_options form fields when savedSubscriptionOptions changes.
 	// This makes sure the form fields hold the current value after saving.
@@ -67,25 +52,8 @@ export const NewsletterSettingsSection = ( {
 		scrollToAnchor( { offset: 15 } );
 	}, [ savedSubscriptionOptions, updateFields ] );
 
-	const hasNewsletterCategoriesBlogSticker = useNewsletterCategoriesBlogSticker( { siteId } );
-
 	return (
 		<>
-			{ config.isEnabled( 'settings/newsletter-categories' ) &&
-				( isSimpleSite || hasNewsletterCategoriesBlogSticker ) && (
-					<Card className="site-settings__card">
-						<NewsletterCategoriesSettings
-							disabled={ disabled }
-							newsletterCategoryIds={
-								fields.wpcom_newsletter_categories ?? defaultNewsletterCategoryIds
-							}
-							handleAutosavingToggle={ handleAutosavingToggle }
-							handleSubmitForm={ handleSubmitForm }
-							toggleValue={ wpcom_newsletter_categories_enabled }
-							updateFields={ updateFields }
-						/>
-					</Card>
-				) }
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				id="newsletter-settings"

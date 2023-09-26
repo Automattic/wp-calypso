@@ -2,11 +2,14 @@ import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-prod
 import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useCallback, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
+import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import FeatureItem from './feature-item';
 import './style.scss';
@@ -23,7 +26,15 @@ interface PlanInfo {
 	previousProductName: string;
 }
 
-export default function CardContent( { planSlug }: { planSlug: string } ) {
+export default function CardContent( {
+	planSlug,
+	isRequesting,
+	setIsRequesting,
+}: {
+	planSlug: string;
+	isRequesting: boolean;
+	setIsRequesting: any;
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
@@ -107,9 +118,22 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 
 	const plan = getPlanInfo( planSlug );
 
+	const { issueLicenses } = useIssueLicenses();
+
 	const onCTAClick = useCallback( () => {
+		const productSlug =
+			planSlug === PLAN_BUSINESS ? 'wpcom-hosting-business' : 'wpcom-hosting-ecommerce';
+
+		setIsRequesting( true );
+
+		dispatch( infoNotice( translate( 'A new WordPress.com site is on the way!' ) ) );
 		dispatch( recordTracksEvent( getCTAEventName( planSlug ) ) );
-	}, [ dispatch, planSlug ] );
+
+		issueLicenses( [ productSlug ] );
+
+		setIsRequesting( false );
+		page.redirect( `/partner-portal/licenses?provisioning=true` );
+	}, [ dispatch, planSlug, issueLicenses, translate, setIsRequesting ] );
 
 	if ( ! plan ) {
 		return null;
@@ -126,7 +150,12 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 					{ plan.interval === 'day' && translate( '/USD per license per day' ) }
 					{ plan.interval === 'month' && translate( '/USD per license per month' ) }
 				</div>
-				<Button className="wpcom-atomic-hosting__card-button" primary onClick={ onCTAClick }>
+				<Button
+					className="wpcom-atomic-hosting__card-button"
+					primary
+					onClick={ onCTAClick }
+					disabled={ isRequesting }
+				>
 					{ translate( 'Get %(title)s', {
 						args: {
 							title: plan.title,

@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
+	AI_ASSEMBLER_FLOW,
 	LINK_IN_BIO_DOMAIN_FLOW,
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
@@ -138,4 +139,13 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-export default { ...availableFlows, ...videoPressTvFlows };
+const aiAsseblerFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+	'calypso/ai-assembler'
+)
+	? {
+			[ AI_ASSEMBLER_FLOW ]: () =>
+				import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
+	  }
+	: {};
+
+export default { ...availableFlows, ...videoPressTvFlows, ...aiAsseblerFlows };

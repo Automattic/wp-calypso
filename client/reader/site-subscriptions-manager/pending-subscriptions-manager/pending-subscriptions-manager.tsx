@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { Pending } from 'calypso/landing/subscriptions/components/tab-views';
 import SubscriptionsManagerWrapper from '../subscriptions-manager-wrapper';
-import '../style.scss';
 
 const PendingSubscriptionsManager = () => {
 	const translate = useTranslate();

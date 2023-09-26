@@ -303,6 +303,11 @@ export type Plan = BillingTerm & {
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
+
+	/**
+	 * Features that are shown on the right sidebar of the checkout page.
+	 */
+	getCheckoutFeatures?: () => Feature[];
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

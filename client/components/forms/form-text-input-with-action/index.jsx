@@ -10,6 +10,7 @@ const noop = () => {};
 
 function FormTextInputWithAction( {
 	className,
+	clearOnSubmit = false,
 	action,
 	inputRef,
 	onFocus = noop,
@@ -53,8 +54,11 @@ function FormTextInputWithAction( {
 	const handleAction = useCallback(
 		( e ) => {
 			onAction( value, e );
+			if ( clearOnSubmit ) {
+				setValue( '' );
+			}
 		},
-		[ onAction, value ]
+		[ clearOnSubmit, onAction, value ]
 	);
 
 	const handleKeyDown = useCallback(
@@ -101,6 +105,7 @@ function FormTextInputWithAction( {
 
 FormTextInputWithAction.propTypes = {
 	className: PropTypes.string,
+	clearOnSubmit: PropTypes.bool,
 	action: PropTypes.node,
 	inputRef: PropTypes.func,
 	onFocus: PropTypes.func,
