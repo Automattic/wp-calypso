@@ -468,6 +468,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
 					? [ marketplaceProductSlug ]
 					: [],
+			forceRedirection: true,
 		} );
 	}
 	function handleCheckout() {
