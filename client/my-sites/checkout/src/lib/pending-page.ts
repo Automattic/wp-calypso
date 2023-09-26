@@ -24,7 +24,7 @@ export interface RedirectForTransactionStatusArgs {
 	redirectTo?: string;
 	siteSlug?: string;
 	saasRedirectUrl?: string;
-	fromSite?: string;
+	fromSiteSlug?: string;
 }
 
 /**
@@ -178,7 +178,9 @@ export function addUrlToPendingPageRedirect(
 	const successUrlObject = new URL( successUrlBase );
 	successUrlObject.searchParams.set( 'redirectTo', url );
 	successUrlObject.searchParams.set( 'receiptId', String( receiptId ) );
-	fromSiteSlug && successUrlObject.searchParams.set( 'from_site', fromSiteSlug );
+	if ( fromSiteSlug ) {
+		successUrlObject.searchParams.set( 'from_site_slug', fromSiteSlug );
+	}
 	if ( urlType === 'relative' ) {
 		return successUrlObject.pathname + successUrlObject.search + successUrlObject.hash;
 	}
@@ -323,7 +325,7 @@ export function getRedirectFromPendingPage( {
 	redirectTo,
 	siteSlug,
 	saasRedirectUrl,
-	fromSite,
+	fromSiteSlug,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
 	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
 	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
@@ -345,7 +347,7 @@ export function getRedirectFromPendingPage( {
 					redirectTo ?? getDefaultSuccessUrl( siteSlug, receiptId ),
 					receiptId
 				),
-				siteSlug || fromSite,
+				siteSlug || fromSiteSlug,
 				getDefaultSuccessUrl( siteSlug, receiptId )
 			),
 		};

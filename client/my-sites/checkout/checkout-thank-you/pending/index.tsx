@@ -37,7 +37,7 @@ interface CheckoutPendingProps {
 	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
-	fromSite?: string;
+	fromSiteSlug?: string;
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -73,7 +73,7 @@ function CheckoutPending( {
 	receiptId,
 	siteSlug,
 	redirectTo,
-	fromSite,
+	fromSiteSlug,
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 
@@ -82,7 +82,7 @@ function CheckoutPending( {
 		receiptId,
 		siteSlug,
 		redirectTo,
-		fromSite,
+		fromSiteSlug,
 	} );
 
 	return (
@@ -143,13 +143,13 @@ function useRedirectOnTransactionSuccess( {
 	receiptId,
 	siteSlug,
 	redirectTo,
-	fromSite,
+	fromSiteSlug,
 }: {
 	orderId: number | undefined;
 	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
-	fromSite?: string;
+	fromSiteSlug?: string;
 } ): void {
 	const translate = useTranslate();
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
@@ -215,7 +215,7 @@ function useRedirectOnTransactionSuccess( {
 			redirectTo,
 			siteSlug,
 			saasRedirectUrl,
-			fromSite,
+			fromSiteSlug,
 		} );
 
 		if ( ! redirectInstructions ) {
@@ -247,7 +247,7 @@ function useRedirectOnTransactionSuccess( {
 		transaction,
 		translate,
 		willAutoRenew,
-		fromSite,
+		fromSiteSlug,
 	] );
 }
 

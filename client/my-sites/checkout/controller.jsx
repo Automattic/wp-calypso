@@ -260,7 +260,7 @@ export function checkoutPending( context, next ) {
 		? Number( context.query.receiptId )
 		: undefined;
 
-	const fromSite = context.query.from_site;
+	const fromSiteSlug = context.query.from_site_slug;
 
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
@@ -270,7 +270,7 @@ export function checkoutPending( context, next ) {
 			siteSlug={ siteSlug }
 			redirectTo={ redirectTo }
 			receiptId={ receiptId }
-			fromSite={ fromSite }
+			fromSiteSlug={ fromSiteSlug }
 		/>
 	);
 
