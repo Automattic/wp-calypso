@@ -53,7 +53,7 @@ export default function SiteProfiler() {
 				<LayoutBlock className="domain-result-block">
 					{
 						// Translators: %s is the domain name searched
-						<DocumentHead title={ translate( '%s < Site Profiler', { args: [ domain ] } ) } />
+						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
 					}
 					{ data && (
 						<LayoutBlockSection>
