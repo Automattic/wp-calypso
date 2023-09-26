@@ -103,10 +103,11 @@ class Document extends Component {
 
 		const isRTL = isLocaleRtl( lang );
 
+		const redirectTo = typeof query?.redirect_to === 'string' ? query.redirect_to.split( '?' ) : [];
+
 		// Get the client ID from the redirect URL to cover the case of a login URL without the "client_id" parameter.
 		// e.g. /log-in/link/use
-		const clientId =
-			query?.redirect_to && new URL( query.redirect_to ).searchParams.get( 'client_id' );
+		const clientId = new URLSearchParams( redirectTo[ 1 ] ).get( 'client_id' );
 
 		const oauth2Client = initialClientsData[ clientId ];
 

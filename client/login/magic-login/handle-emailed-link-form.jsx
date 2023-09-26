@@ -251,8 +251,7 @@ class HandleEmailedLinkForm extends Component {
 
 const mapState = ( state ) => {
 	const redirectToOriginal = getRedirectToOriginal( state );
-	const clientId =
-		redirectToOriginal && new URL( redirectToOriginal ).searchParams.get( 'client_id' );
+	const clientId = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'client_id' );
 	const oauth2Client = state.oauth2Clients?.clients?.[ clientId ] || {};
 
 	return {
