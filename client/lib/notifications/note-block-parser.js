@@ -7,7 +7,6 @@ import { compact, find } from 'lodash';
  *   - it's a zero-length range and the other isn't
  *   - it starts before the other
  *   - it has the same start but ends before the other
- *
  * @param {Object} rangeA                  First range
  * @param {Array}  rangeA.indices          Start and end of the first range
  * @param {number} rangeA.indices.0 aStart Start index of first range
