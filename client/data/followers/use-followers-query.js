@@ -10,7 +10,6 @@ const defaults = {
 /**
  * Normalizes a follower object. Changes 'avatar' to 'avatar_URL' allowing a follower
  * object to be used with the Gravatar component.
- *
  * @param  {Object} follower A follower ojbect
  * @returns {Object}          A normalized follower object
  */

@@ -4,7 +4,6 @@ import { MediaTypes } from '../constants';
 /**
  * Given a REST API media object, attempts to infer the type and returns a
  * normalized deserialized media object.
- *
  * @param  {*}      node Media object to parse
  * @returns {Object}      Normalized object
  */

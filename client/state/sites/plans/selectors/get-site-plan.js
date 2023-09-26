@@ -3,7 +3,6 @@ import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-
 
 /**
  * Returns a site specific plan
- *
  * @param  {Object} state        global state
  * @param  {number|undefined} siteId       the site id
  * @param  {string} productSlug  the plan product slug

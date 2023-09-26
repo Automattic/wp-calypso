@@ -1,7 +1,6 @@
 /**
  * Wrapper method for the HTML canvas toBlob() function. Polyfills if the
  * function does not exist
- *
  * @param {Object} canvas the canvas element
  * @param {Function} callback function to process the blob after it is extracted
  * @param {string} type image type to be extracted

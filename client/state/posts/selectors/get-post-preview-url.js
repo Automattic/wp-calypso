@@ -7,7 +7,6 @@ import 'calypso/state/posts/init';
 /**
  * Returns the most reliable preview URL for the post by site ID, post ID pair,
  * or null if a preview URL cannot be determined.
- *
  * @param   {Object}  state     Global state tree
  * @param   {number}  siteId    Site ID
  * @param   {number}  postId    Post ID

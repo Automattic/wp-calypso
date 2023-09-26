@@ -9,12 +9,11 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
  * The query key is supplied by the action, making it opaque to the reducer.
  * Here is what the state tree may look like:
  * feedSearches: {
-		items: {
-			'wordpress tavern-X': [ feed1, feed2, ],
-			...
-		},
-	}
- *
+ * items: {
+ * 'wordpress tavern-X': [ feed1, feed2, ],
+ * ...
+ * },
+ * }
  * @param  {Array} state  Current state
  * @param  {Object} action Action payload
  * @returns {Array}        Updated state
@@ -38,14 +37,13 @@ export const items = keyedReducer( 'queryKey', ( state = null, action ) => {
  * The query key is supplied by the action, making it opaque to the reducer.
  * Here is what the state tree may look like:
  * feedSearches: {
-		total: {
-			'wordpress tavern-X': 4,
-			'thingsldkjflskjfsdf-A': 0,
-			'chickens-A': 4000,
-			...
-		},
-	}
- *
+ * total: {
+ * 'wordpress tavern-X': 4,
+ * 'thingsldkjflskjfsdf-A': 0,
+ * 'chickens-A': 4000,
+ * ...
+ * },
+ * }
  * @param  {Array}  state  Current state
  * @param  {Object} action Action payload
  * @returns {Array}         Updated state

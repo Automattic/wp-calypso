@@ -8,7 +8,6 @@ import QueryKey from './key';
 /**
  * Object key name for property used in indicating that an item is intended to
  * be removed during patched `mergeItem`.
- *
  * @type {string}
  */
 export const DELETE_PATCH_KEY = '__DELETE';
@@ -58,7 +57,6 @@ export default class QueryManager {
 
 	/**
 	 * Constructs a new instance of QueryManager
-	 *
 	 * @param {Object} data            Initial data
 	 * @param {Object} options         Manager options
 	 * @param {string} options.itemKey Field to key items by
@@ -85,7 +83,6 @@ export default class QueryManager {
 	 * item. The item can be undefined in the case that the revision is
 	 * new. Optionally patch the item to merge, not replace. Returning
 	 * undefined indicates that item should be removed from known set.
-	 *
 	 * @param  {?Object} item        Existing item, if exists
 	 * @param  {Object}  revisedItem Incoming revision of item
 	 * @param  {boolean} patch       Use patching application
@@ -105,7 +102,6 @@ export default class QueryManager {
 
 	/**
 	 * Returns true if the item matches the given query, or false otherwise.
-	 *
 	 * @param  {Object}  query Query object
 	 * @param  {Object}  item  Item to consider
 	 * @returns {boolean}       Whether item matches query
@@ -117,7 +113,6 @@ export default class QueryManager {
 	/**
 	 * A sort comparison function that defines the sort order of items under
 	 * consideration of the specified query.
-	 *
 	 * @param  {Object} query Query object
 	 * @param  {Object} itemA First item
 	 * @param  {Object} itemB Second item
@@ -137,7 +132,6 @@ export default class QueryManager {
 	 * consideration of the specified query. This mutates the keys argument and
 	 * doesn't have a return value (because that's how Array.prototype.sort works, see
 	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort ).
-	 *
 	 * @param  {Array}  keys  Keys to be sorted
 	 * @param  {Array}  items Items by which to sort
 	 * @param  {Object} query Query object
@@ -158,7 +152,6 @@ export default class QueryManager {
 
 	/**
 	 * Returns a single item by key.
-	 *
 	 * @param  {string} itemKey Item key
 	 * @returns {Object}         Item
 	 */
@@ -170,7 +163,6 @@ export default class QueryManager {
 	 * Returns items tracked by the instance. If a query is specified, returns
 	 * items specific to that query, or null if no items have been received for
 	 * the query.
-	 *
 	 * @param  {?Object}       query Optional query object
 	 * @returns {Object[] | null}       Items tracked, if known
 	 */
@@ -191,7 +183,6 @@ export default class QueryManager {
 	 * Returns the number of total known items for the specified query, as
 	 * included in the REST API posts response. Returns null if the query is
 	 * not known.
-	 *
 	 * @param  {Object}  query Query object
 	 * @returns {?number}       Found items for query
 	 */
@@ -204,7 +195,6 @@ export default class QueryManager {
 	 * Removes a single item given its item key, returning a new instance of
 	 * QueryManager if the tracked items have changed, or the current instance
 	 * otherwise.
-	 *
 	 * @param  {string}       itemKey Key of item to remove
 	 * @returns {QueryManager}         New instance if changed, or same instance
 	 *                                otherwise
@@ -217,7 +207,6 @@ export default class QueryManager {
 	 * Removes multiple items given an array of item keys, returning a new
 	 * instance of QueryManager if the tracked items have changed, or the
 	 * current instance otherwise.
-	 *
 	 * @param  {string[]}     itemKeys Keys of items to remove
 	 * @returns {QueryManager}          New instance if changed, or same
 	 *                                 instance otherwise
@@ -240,7 +229,6 @@ export default class QueryManager {
 	 * they are associated with a query. This function does not mutate the
 	 * instance state. Instead, it returns a new instance of QueryManager if
 	 * the tracked items have been modified, or the current instance otherwise.
-	 *
 	 * @param  {(Array | Object)} items              Item(s) to be received
 	 * @param  {Object}         options            Options for receive
 	 * @param  {boolean}        options.patch      Apply changes as partial

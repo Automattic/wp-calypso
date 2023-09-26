@@ -76,7 +76,6 @@ export function setLocaleMiddleware( param = 'lang' ) {
 
 /**
  * Composes multiple handlers into one.
- *
  * @param { ...( context, Function ) => void } handlers - A list of route handlers to compose
  * @returns  { ( context, Function ) => void } - A new route handler that executes the handlers in succession
  */

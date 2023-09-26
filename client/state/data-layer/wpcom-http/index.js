@@ -14,7 +14,6 @@ const debug = debugModule( 'calypso:data-layer:wpcom-http' );
  * Returns the appropriate fetcher in wpcom given the request method
  *
  * fetcherMap :: String -> (Params -> Query -> [Body] -> Promise)
- *
  * @param {string} method name of HTTP method for request
  * @param {string} fetcher Name of fetcher to use. Defaults to wpcom.
  * @returns {Function} the fetcher

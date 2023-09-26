@@ -14,7 +14,6 @@ import { collectTranslationTimings, clearTranslationTimings } from './collectors
 /**
  * This reporter is added to _all_ performance tracking metrics.
  * Be sure to add only metrics that make sense for tracked pages and are always present.
- *
  * @param state redux state
  */
 const buildDefaultCollector = ( state ) => {

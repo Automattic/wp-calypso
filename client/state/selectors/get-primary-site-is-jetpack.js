@@ -3,7 +3,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Returns whether the current user's primary site's is Jetpack or not.
- *
  * @param  {Object}  state Global state tree
  * @returns {?boolean}     The current user's primary site Jetpack status.
  */

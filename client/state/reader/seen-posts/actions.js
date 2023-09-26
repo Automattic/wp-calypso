@@ -18,7 +18,6 @@ import 'calypso/state/data-layer/wpcom/seen-posts/seen/blog/delete/index';
 
 /**
  * Request mark as seen for given seenIds
- *
  * @param {Object} payload method
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
@@ -37,7 +36,6 @@ export const requestMarkAsSeen = ( { feedId, feedUrl, feedItemIds, globalIds } )
 
 /**
  * Receive mark as seen for successful requests
- *
  * @param {Object} payload method
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
@@ -53,7 +51,6 @@ export const receiveMarkAsSeen = ( { feedId, feedUrl, globalIds } ) => ( {
 
 /**
  * Request mark as unseen for given seenIds
- *
  * @param {Object} payload method
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
@@ -72,7 +69,6 @@ export const requestMarkAsUnseen = ( { feedId, feedUrl, feedItemIds, globalIds }
 
 /**
  * Receive mark as unseen for successful requests
- *
  * @param {Object} payload method
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
@@ -88,7 +84,6 @@ export const receiveMarkAsUnseen = ( { feedId, feedUrl, globalIds } ) => ( {
 
 /**
  * Request mark all as seen
- *
  * @param {Object} payload method
  * @param payload.identifier given Reader section
  * @param payload.feedIds list of feed identifiers
@@ -115,7 +110,6 @@ export const receiveMarkAllAsSeen = ( { feedIds, feedUrls, globalIds } ) => ( {
 
 /**
  * Request mark as seen for given blog and post id
- *
  * @param {Object} payload method
  * @param payload.blogId identifier of the blog
  * @param payload.postIds list of blog post ids
@@ -136,7 +130,6 @@ export const requestMarkAsSeenBlog = ( { blogId, postIds, feedId, feedUrl, globa
 
 /**
  * Request mark as unseen for given blog and post ids
- *
  * @param {Object} payload method
  * @param payload.blogId identifier of the blog
  * @param payload.feedId identifier of the feed

@@ -12,7 +12,6 @@ export const DEFAULT_PER_PAGE = 10;
 /**
  * Normalize a WP REST API (v2) user ressource for consumption in Calypso which
  * uses legacy API (v1) names internally.
- *
  * @param {Object} user Raw user from the API
  * @returns {Object} the normalized user
  */
@@ -28,7 +27,6 @@ export const normalizeUser = ( user ) =>
 
 /**
  * Dispatches a request to fetch post revisions authors
- *
  * @param {Object} action The `POST_REVISIONS_AUTHORS_REQUEST` action used to trigger the fetch
  * @returns {Object} The low-level action used to execute the fetch
  */
@@ -51,7 +49,6 @@ export const fetchPostRevisionAuthors = ( action ) => {
 
 /**
  * Dispatches returned post revision authors
- *
  * @param {Object} action The `POST_REVISIONS_AUTHORS_REQUEST` action with response data as meta
  * @param {Array} users raw data from post revisions API
  * @returns {Object | Function} Action or action thunk that handles the response

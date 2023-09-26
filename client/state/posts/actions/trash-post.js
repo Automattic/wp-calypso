@@ -8,7 +8,6 @@ import 'calypso/state/posts/init';
 /**
  * Returns an action thunk which, when dispatched, triggers a network request
  * to trash the specified post.
- *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
  * @param  {boolean}  silent Whether to stop related notices from appearing

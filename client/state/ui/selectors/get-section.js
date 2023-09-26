@@ -2,7 +2,6 @@ import 'calypso/state/ui/init';
 
 /**
  * Returns the current section.
- *
  * @param  {Object}  state Global state tree
  * @returns {Object}        Current section
  */

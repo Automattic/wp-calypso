@@ -19,7 +19,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to fetch a specific theme from a site.
- *
  * @param  {string}   themeId Theme ID
  * @param  {number}   siteId  Site ID
  * @param  {string}   locale  Locale slug

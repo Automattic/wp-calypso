@@ -11,7 +11,6 @@ import 'calypso/state/purchases/init';
  * The backend has the final say on if this actually happens, see:
  * revert_atomic_site_on_subscription_removal() and deactivate_product().
  * This is a helper for UI elements only, it does not control actual revert decisions.
- *
  * @param   {Object} state           global state
  * @param   {number} purchaseId      the purchase id
  * @param   {Array}  linkedPurchases List of purchases that will be also deactivated because they are

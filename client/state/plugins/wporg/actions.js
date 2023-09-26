@@ -61,7 +61,6 @@ export function fetchPluginData( pluginSlug, locale = '' ) {
 /**
  * Helper thunk for receiving a specific data or retrieve error of plugins list.
  * Handles plugin list normalization internally.
- *
  * @param {string} category   Plugin category
  * @param {number} page       Page (1-based)
  * @param {string} searchTerm Search term
@@ -88,7 +87,6 @@ function receivePluginsList( category, page, searchTerm, data, error, pagination
  * WP.org plugins can be filtered either by category or search term.
  * Category can be one of "featured", "popular", "new", "beta" or "recommended".
  * Search term is an open text field.
- *
  * @param {string} category   	Plugin category
  * @param {number} page       	Page (1-based)
  * @param {string} searchTerm 	Search term
@@ -158,7 +156,6 @@ export function fetchPluginsList(
 /**
  * Retrieve the next page of plugins for the specified category.
  * Pagination is currently supported only for category queries in the API.
- *
  * @param {string} category   Plugin category
  * @returns {Function} Action thunk
  */

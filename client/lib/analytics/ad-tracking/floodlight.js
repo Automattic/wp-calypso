@@ -13,7 +13,6 @@ import './setup';
 
 /**
  * Records Floodlight events using Gtag and automatically adds `u4`, `u5`, and `allow_custom_scripts: true`.
- *
  * @param {Object} params An object of Floodlight params.
  */
 export function recordParamsInFloodlightGtag( params ) {
@@ -37,7 +36,6 @@ export function recordParamsInFloodlightGtag( params ) {
 
 /**
  * Returns an object with DCM Floodlight user params
- *
  * @returns {Object} With the WordPress.com user id and/or the logged out Tracks id
  */
 function floodlightUserParams() {
@@ -58,7 +56,6 @@ function floodlightUserParams() {
 
 /**
  * Returns the DCM Floodlight session id, generating a new one if there's not already one
- *
  * @returns {string} The session id
  */
 function floodlightSessionId() {
@@ -78,7 +75,6 @@ function floodlightSessionId() {
 
 /**
  * Track a page view in DCM Floodlight
- *
  * @param {string} urlPath - The URL path
  * @returns {void}
  */

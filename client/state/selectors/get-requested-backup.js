@@ -4,7 +4,6 @@ import 'calypso/state/activity-log/init';
 
 /**
  * Returns the requested backup Activity ID.
- *
  * @param  {Object}        state  Global state tree
  * @param  {number|string} siteId Site ID
  * @returns {?Object}              Activity log item if found, otherwise null

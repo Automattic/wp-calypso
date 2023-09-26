@@ -36,7 +36,6 @@ function applyMetadataEdits( metadata, edits ) {
  * Merges edits into a post object. Essentially performs a deep merge of two objects,
  * except that arrays are treated as atomic values and overwritten rather than merged.
  * That's important especially for term removals.
- *
  * @param  {Object} post  Destination post for merge
  * @param  {Object} edits Objects with edits
  * @returns {Object}       Merged post with applied edits

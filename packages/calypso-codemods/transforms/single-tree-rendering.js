@@ -46,7 +46,6 @@ export default function transformer( file, api ) {
 
 	/**
 	 * Is an import external
-	 *
 	 * @param  {Object}  importNode Node object
 	 * @returns {boolean}            True if import is external
 	 */
@@ -56,7 +55,6 @@ export default function transformer( file, api ) {
 	/**
 	 * Removes the extra newlines between two import statements
 	 * caused by `insertAfter()`:
-	 *
 	 * @see {@link https://github.com/benjamn/recast/issues/371}
 	 * @param  {string} str String
 	 * @returns {string}     Cleaned string
@@ -68,7 +66,6 @@ export default function transformer( file, api ) {
 	/**
 	 * Check if `parameters` has `param` either as a string or as a name of
 	 * an object, which could be e.g. an `Identifier`.
-	 *
 	 * @param  {Array}   params     Parameters to look from. Could be an array of strings or Identifier objects.
 	 * @param  {string}  paramValue Parameter value
 	 * @returns {boolean}            True if parameter is present
@@ -81,7 +78,6 @@ export default function transformer( file, api ) {
 
 	/**
 	 * Removes imports maintaining any comments above them
-	 *
 	 * @param {Object} collection Collection containing at least one node. Comments are preserved only from first node.
 	 */
 	function removeImport( collection ) {
@@ -114,7 +110,6 @@ export default function transformer( file, api ) {
 
 	/**
 	 * Catch simple redirect middlewares by looking for `page.redirect()`
-	 *
 	 * @example
 	 * // Middleware could look like this:
 	 * () => page.redirect('/foo')
@@ -152,7 +147,6 @@ export default function transformer( file, api ) {
 
 	/**
 	 * Ensure `context` is among params
-	 *
 	 * @param {Object} path Path object that wraps a single node
 	 * @returns {Object} Single node object
 	 */
@@ -169,7 +163,6 @@ export default function transformer( file, api ) {
 
 	/**
 	 * Ensure `next` is among params and `next()` is in the block's body
-	 *
 	 * @param {Object} path Path object that wraps a single node
 	 * @returns {Object} Single node object
 	 */
@@ -204,7 +197,6 @@ export default function transformer( file, api ) {
 
 	/**
 	 * Transform `renderWithReduxStore()` CallExpressions.
-	 *
 	 * @example
 	 * Input
 	 * ```
@@ -232,7 +224,6 @@ export default function transformer( file, api ) {
 
 	/**
 	 * Transform `ReactDom.render()` CallExpressions.
-	 *
 	 * @example
 	 * Input
 	 * ```
@@ -267,7 +258,6 @@ export default function transformer( file, api ) {
 	 * Transform CallExpressions.
 	 * What kind of CallExpressions this replaces depends on `expressionCallee`
 	 * parameter.
-	 *
 	 * @example
 	 * Input
 	 * ```

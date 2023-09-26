@@ -16,7 +16,6 @@ const debug = debugFactory( 'calypso:site-features:actions' );
 
 /**
  * Fetches features for the given site.
- *
  * @param {number} siteId identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
@@ -91,7 +90,6 @@ function fetchJetpackSitesFeaturesReceive( features ) {
 /**
  * Returns an action object to be used in signalling that an object containing
  * the features for a given site have been received.
- *
  * @param {number} siteId - identifier of the site
  * @param {Object} features - list of features received from the API
  * @returns {Object} the corresponding action object

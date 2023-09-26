@@ -3,7 +3,6 @@ import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 /**
  * Retrieves url for site editor.
- *
  * @param {Object} state  Global state tree
  * @param {?number} siteId Site ID
  * @param {?Object} queryArgs The query arguments append to the Url

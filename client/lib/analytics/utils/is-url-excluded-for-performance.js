@@ -5,7 +5,6 @@ const excludedRoutes = [ '/log-in' ];
 
 /**
  * Are tracking pixels forbidden from the given URL for better performance (except for Google Analytics)?
- *
  * @returns {boolean} true if the current URL is excluded.
  */
 export default function isUrlExcludedForPerformance() {
