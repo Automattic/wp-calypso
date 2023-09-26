@@ -257,6 +257,7 @@ export default function getThankYouPageUrl( {
 			return connectUrl;
 		}
 
+		// siteless checkout
 		debug( 'redirecting to siteless jetpack thank you' );
 		const thankYouUrl = `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`;
 
