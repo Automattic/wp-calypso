@@ -1,13 +1,13 @@
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import './style.scss';
 import { addMailPoetUpgrade } from 'calypso/data/marketplace/mailpoet-add-upgrade';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import './style.scss';
 
 export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
@@ -52,7 +52,7 @@ export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 			<Card>
 				<p>
 					{ translate(
-						'The eCommerce plan provides a complimentary MailPoet Business Subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.'
+						'Your eCommerce plan provides a complimentary MailPoet Business subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.'
 					) }
 				</p>
 				<p>
@@ -74,7 +74,7 @@ export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 					) : (
 						<>
 							<Button primary onClick={ getItNowClickHandler } busy={ isBusy }>
-								{ translate( 'Get it Now' ) }
+								{ translate( 'Get it now' ) }
 							</Button>
 							<Button onClick={ dismissHandler } busy={ isBusy }>
 								{ translate( 'No I´m ok' ) }
