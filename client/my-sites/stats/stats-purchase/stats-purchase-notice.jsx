@@ -41,7 +41,7 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 			<h1>{ translate( 'You have already purchased Jetpack Stats Commercial!' ) }</h1>
 			<p>
 				{ translate(
-					'It appears that you have already purchased a license or a plan that supports this product, and it has been successfully activated. You now have access to:'
+					'You have already purchased a license or a plan that supports this product, and it has been successfully activated. You now have access to:'
 				) }
 			</p>
 			<StatsBenefitsCommercial />
@@ -70,7 +70,7 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 			<h1>{ translate( 'You have already purchased Jetpack Stats Personal Plan!' ) }</h1>
 			<p>
 				{ translate(
-					'It appears that you have already purchased a license for this product, and it has been successfully activated. You now have access to:'
+					'You have already purchased a license for this product, and it has been successfully activated. You now have access to:'
 				) }
 			</p>
 			<StatsBenefitsPersonal />
