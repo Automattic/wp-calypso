@@ -91,11 +91,7 @@ const CheckoutMasterbar = ( {
 		responseCart.products.map( ( product ) => product.product_name ).join( ', ' );
 
 	const handleClick = () => {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_masterbar_support_click', {
-				cart: JSON.stringify( responseCart ),
-			} )
-		);
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_masterbar_support_click' ) );
 	};
 
 	return (
