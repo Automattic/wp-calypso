@@ -18,7 +18,7 @@ const JetpackAppPlans = ( { domainName, redirectTo } ) => {
 	const handleRedirect = ( data ) => {
 		if ( redirectTo ) {
 			window.location.href = `${ redirectTo }${
-				data ? `?cartItem=${ encodeURIComponent( JSON.stringify( data ) ) }` : ''
+				data ? `?cart_item=${ encodeURIComponent( JSON.stringify( data ) ) }` : ''
 			}`;
 		}
 	};
