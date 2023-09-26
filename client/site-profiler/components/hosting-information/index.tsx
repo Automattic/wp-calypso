@@ -44,8 +44,8 @@ export default function HostingInformation( props: Props ) {
 						<ul>
 							{ aRecordIps.map( ( x, i ) => (
 								<li key={ i }>
-									{ ! x.host && '-' }
-									{ x.host && `${ x.host }` }
+									{ ! x.ip && '-' }
+									{ x.ip && `${ x.ip }` }
 								</li>
 							) ) }
 						</ul>
@@ -54,8 +54,8 @@ export default function HostingInformation( props: Props ) {
 						<ul>
 							{ aRecordIps.map( ( x, i ) => (
 								<li key={ i }>
-									{ ! x.ip && '-' }
-									{ x.ip && `${ x.ip }` }
+									{ ! x.host && '-' }
+									{ x.host && `${ x.host }` }
 								</li>
 							) ) }
 						</ul>
