@@ -47,6 +47,15 @@ const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkoutJetpackSiteless( context, next ) {
 	const connectAfterCheckout = context.query?.connect_after_checkout === 'true';
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
+	 * site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 *
+	 * @type {string|undefined}
+	 */
 	const fromSiteSlug = context.query?.from_site_slug;
 	const adminUrl = context.query?.admin_url;
 	sitelessCheckout( context, next, {
@@ -260,7 +269,16 @@ export function checkoutPending( context, next ) {
 		? Number( context.query.receiptId )
 		: undefined;
 
-	const fromSiteSlug = context.query.from_site_slug;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
+	 * site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 *
+	 * @type {string|undefined}
+	 */
+	const fromSiteSlug = context.query?.from_site_slug;
 
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 

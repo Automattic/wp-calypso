@@ -81,6 +81,10 @@ export default function useCreatePaymentCompleteCallback( {
 	checkoutFlow?: string;
 	connectAfterCheckout?: boolean;
 	adminUrl?: string;
+	// `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	// checkout), for use cases when there is not a site in context, such as siteless checkout.
+	// As opposed to `siteSlug` which is the site slug present when the site is in context
+	// (ie- the site is available in state, such as when site is connected and user logged in).
 	fromSiteSlug?: string;
 } ): PaymentEventCallback {
 	const cartKey = useCartKey();
