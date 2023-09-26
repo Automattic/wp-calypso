@@ -34,7 +34,7 @@ const ReaderSiteSubscription = () => {
 							className="site-subscription-page__fetch-details-error"
 							type={ NoticeType.Error }
 						>
-							Subscription not found
+							{ translate( 'Subscription not found' ) }
 						</Notice>
 					) : (
 						<SiteSubscriptionDetails
