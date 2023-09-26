@@ -45,8 +45,8 @@ const EmailSignup = ( {
 				submitButtonLabel={ __( 'Continue' ) }
 				{ ...gravatarProps }
 			/>
-			<Button onClick={ handleBack } variant="link">
-				<span className="delete-label">{ __( 'Back' ) }</span>
+			<Button onClick={ handleBack } className="back-button" variant="link">
+				<span>{ __( 'Back' ) }</span>
 			</Button>
 		</div>
 	);

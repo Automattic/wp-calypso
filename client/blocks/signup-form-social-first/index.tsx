@@ -1,20 +1,18 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import SocialFirstAccessList from './social-first-access-list';
-import SocialSignupForm from '../signup-form/social';
-import GoogleIcon from 'calypso/components/social-icons/google';
-
+import { get } from 'lodash';
+import MailIcon from 'calypso/components/social-icons/mail';
+import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { useSelector } from 'calypso/state';
-import { getSectionName } from 'calypso/state/ui/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import { get } from 'lodash';
-import { useLocale, localizeUrl } from '@automattic/i18n-utils';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import EmailSignup from './email-signup';
-import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import { getSectionName } from 'calypso/state/ui/selectors';
+import SocialSignupForm from '../signup-form/social';
+import EmailSignup from './email-signup';
 import '../signup-form/style.scss';
 import './style.scss';
 
@@ -73,13 +71,13 @@ const SignupFormSocialFirst = ( {
 					isReskinned={ true }
 					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 					disableTosText={ true }
-                    compact={ true }
+					compact={ true }
 				>
 					<button
 						className="social-buttons__button button"
 						onClick={ () => setCurrentStep( 'email' ) }
 					>
-						<GoogleIcon width="20" height="20" />
+						<MailIcon width="20" height="20" />
 						<span className="social-buttons__service-name">{ __( 'Continue with Email' ) }</span>
 					</button>
 				</SocialSignupForm>
