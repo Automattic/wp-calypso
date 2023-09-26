@@ -18,7 +18,8 @@ interface DateControlPickerShortcutsProps {
 interface DateControlPickerShortcut {
 	id?: string;
 	label: string;
-	onClick: () => void;
+	offset: number;
+	range: number;
 }
 
 interface DateControlPickerDateProps {
