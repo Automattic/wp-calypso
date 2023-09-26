@@ -59,6 +59,30 @@
 			margin-left: 24px;
 		}
 	}
+
+	.transfer-domain-to-any-user__pending-transfer-card {
+		h2 {
+			font-size: $font-title-small;
+			margin-bottom: 1rem;
+			font-weight: 600;
+		}
+
+		.transfer-domain-to-any-user__pending-detail {
+			margin-bottom: 1rem;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+
+			strong {
+				color: var(--studio-gray-70);
+			}
+
+			.transfer-domain-to-any-user__pending-status {
+				color: var(--color-warning);
+			}
+		}
+	}
+
 }
 
 .transfer-domain-to-any-user__notice {
