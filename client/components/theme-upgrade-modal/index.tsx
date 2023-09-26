@@ -32,13 +32,17 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useSelector } from 'calypso/state';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
-import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import {
+	getCanonicalTheme,
+	isExternallyManagedTheme,
+	isWporgTheme,
+} from 'calypso/state/themes/selectors';
 import './style.scss';
 
 interface UpgradeModalProps {
 	/* Theme slug */
 	slug: string;
+	siteId: number;
 	isOpen: boolean;
 	isMarketplaceThemeSubscriptionNeeded?: boolean;
 	isMarketplacePlanSubscriptionNeeeded?: boolean;
@@ -56,6 +60,7 @@ interface UpgradeModalContent {
 
 export const ThemeUpgradeModal = ( {
 	slug,
+	siteId,
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
 	isMarketplacePlanSubscriptionNeeeded,
@@ -65,13 +70,14 @@ export const ThemeUpgradeModal = ( {
 }: UpgradeModalProps ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
-	const theme = useThemeDetails( slug );
+	const theme = useSelector( ( state ) => getCanonicalTheme( state, siteId, slug ) );
 	const isDesktop = useBreakpoint( '>782px' );
 
 	// Check current theme: Does it have a plugin bundled?
-	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
+	const theme_software_set = theme?.taxonomies?.theme_software_set?.length;
 	const showBundleVersion = theme_software_set;
 	const isExternallyManaged = useSelector( ( state ) => isExternallyManagedTheme( state, slug ) );
+	const isCommunityTheme = useSelector( ( state ) => isWporgTheme( state, slug ) );
 
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
@@ -83,7 +89,7 @@ export const ThemeUpgradeModal = ( {
 	);
 
 	//Wait until we have theme and product data to show content
-	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
+	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme;
 
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
 		const planPrice = premiumPlanProduct?.combined_cost_display;
@@ -244,6 +250,53 @@ export const ThemeUpgradeModal = ( {
 		};
 	};
 
+	const getCommunityPurchaseModalData = (): UpgradeModalContent => {
+		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+		return {
+			header: (
+				<h1 className="theme-upgrade-modal__heading bundle">
+					{ translate( 'Unlock this community theme' ) }
+				</h1>
+			),
+			text: (
+				<>
+					<p>
+						{ translate(
+							'This community theme can only be purchased if you have the Business plan on your site. It’s {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+							{
+								components: {
+									strong: <strong />,
+								},
+
+								args: businessPlanPrice,
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Upgrade now to activate this theme and get access to tons of other features.'
+						) }
+					</p>
+				</>
+			),
+			price: null,
+			action: (
+				<div className="theme-upgrade-modal__actions bundle">
+					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button
+						className="theme-upgrade-modal__upgrade-plan"
+						primary
+						onClick={ () => checkout() }
+					>
+						{ translate( 'Upgrade Plan' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
+
 	const getStandardPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
@@ -274,6 +327,8 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getExternallyManagedFeatureList = () => {
+		// This list also used in getCommunityFeatureList
+		// because they're the same at present
 		return getPlanFeaturesObject( [
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_STYLE_CUSTOMIZATION,
@@ -287,6 +342,10 @@ export const ThemeUpgradeModal = ( {
 			FEATURE_MULTI_SITE,
 			FEATURE_VIDEOPRESS_JP,
 		] );
+	};
+
+	const getCommunityFeatureList = () => {
+		return getExternallyManagedFeatureList();
 	};
 
 	let modalData = null;
@@ -307,6 +366,10 @@ export const ThemeUpgradeModal = ( {
 			isEnglishLocale || i18n.hasTranslation( 'Included with your Business plan' )
 				? translate( 'Included with your Business plan' )
 				: translate( 'Included with your purchase' );
+	} else if ( isCommunityTheme ) {
+		modalData = getCommunityPurchaseModalData();
+		featureList = getCommunityFeatureList();
+		featureListHeader = translate( 'Included with your Business plan' );
 	} else {
 		modalData = getStandardPurchaseModalData();
 		featureList = getStandardPurchaseFeatureList();
