@@ -1,5 +1,4 @@
 import {
-	is100YearPlan,
 	isBiennially,
 	isBundled,
 	isDomainRegistration,
@@ -13,6 +12,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
 import CheckoutTermsItem from './checkout-terms-item';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -154,18 +154,9 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		( product ) => isDomainRegistration( product ) && isBundled( product )
 	);
 
-	const cartHasHundredYearPlan = ( { products = [] }: ResponseCart ) => {
-		return (
-			products.length > 0 && products.some( ( product ) => is100YearPlan( product.product_slug ) )
-		);
-	};
-
 	// Account for the fact that users can purchase a bundled domain separately from a paid plan
-	if (
-		! cartHasPlanBundlePolicy &&
-		cartHasDomainBundleProduct &&
-		! cartHasHundredYearPlan( cart )
-	) {
+	// However, if the bundled plan is a 100 year plan, we don't need to show the domain refund policy
+	if ( ! cartHasPlanBundlePolicy && cartHasDomainBundleProduct && ! has100YearPlan( cart ) ) {
 		refundPolicies.push( RefundPolicy.DomainNameRegistrationBundled );
 	}
 
