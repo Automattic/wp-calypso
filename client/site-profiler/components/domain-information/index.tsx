@@ -248,10 +248,12 @@ export default function DomainInformation( props: Props ) {
 									) }
 								</li>
 							) }
-							{ whois.admin_email && whois.admin_email.includes( '@' ) && (
+							{ whois.admin_email?.includes( '@' ) && (
 								<a href={ `mailto:${ whois.admin_email }` }>{ translate( 'Email' ) }</a>
 							) }
-							{ urlRegex.test( whois.admin_email ) && linkifyUrlFromText( whois.admin_email ) }
+							{ whois.admin_email &&
+								urlRegex.test( whois.admin_email ) &&
+								linkifyUrlFromText( whois.admin_email ) }
 						</ul>
 					</div>
 					<div className="col">
@@ -311,10 +313,12 @@ export default function DomainInformation( props: Props ) {
 									{ translate( '{{strong}}Phone:{{/strong}} %s', contactArgs( whois.tech_phone ) ) }
 								</li>
 							) }
-							{ whois.tech_email && whois.tech_email.includes( '@' ) && (
+							{ whois.tech_email?.includes( '@' ) && (
 								<a href={ `mailto:${ whois.tech_email }` }>{ translate( 'Email' ) }</a>
 							) }
-							{ urlRegex.test( whois.tech_email ) && linkifyUrlFromText( whois.tech_email ) }
+							{ whois.tech_email &&
+								urlRegex.test( whois.tech_email ) &&
+								linkifyUrlFromText( whois.tech_email ) }
 						</ul>
 					</div>
 				</li>
