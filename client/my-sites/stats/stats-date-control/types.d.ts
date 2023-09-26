@@ -8,6 +8,7 @@ interface StatsDateControlProps {
 interface DateControlPickerProps {
 	slug: string;
 	queryParams: string;
+	shortcutList: DateControlPickerShortcut[];
 }
 
 interface DateControlPickerShortcutsProps {
