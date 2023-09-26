@@ -40,7 +40,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const layoutTitles = {
 		earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 		settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
-		payments: translate( 'Recurring Payments' ),
+		payments: translate( 'Payment Settings' ),
+		customers: translate( 'Customers', { args: { wordads: adsProgramName } } ),
+		stats: translate( 'Stats' ),
 		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
@@ -226,7 +228,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
 			/>
-			<DocumentHead title={ layoutTitles[ section as keyof typeof layoutTitles ] } />
+			<DocumentHead
+				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Earn' ) }
+			/>
 			<FormattedHeader
 				brandFont
 				className="earn__page-header"
