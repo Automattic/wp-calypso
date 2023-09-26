@@ -16,9 +16,7 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
-import { initialClientsData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
 import { chunkCssLinks } from './utils/chunk';
 
@@ -62,7 +60,6 @@ class Document extends Component {
 			target,
 			featuresHelper,
 			params,
-			query,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -103,16 +100,6 @@ class Document extends Component {
 
 		const isRTL = isLocaleRtl( lang );
 
-		// Get the client ID from the redirect URL to cover the case of a login URL without the "client_id" parameter.
-		// e.g. /log-in/link/use
-		const clientId =
-			query?.redirect_to && new URL( query.redirect_to ).searchParams.get( 'client_id' );
-
-		const oauth2Client = initialClientsData[ clientId ];
-
-		const isGravPoweredClient =
-			isGravPoweredOAuth2Client( oauth2Client ) && sectionName === 'login';
-
 		return (
 			<html
 				lang={ lang }
@@ -120,10 +107,9 @@ class Document extends Component {
 				className={ classNames( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
 			>
 				<Head
-					title={ isGravPoweredClient ? oauth2Client.title : head.title }
+					title={ head.title }
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
-					faviconUrl={ isGravPoweredClient ? oauth2Client.favicon : '' }
 				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
