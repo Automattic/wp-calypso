@@ -204,9 +204,9 @@ const streamApis = {
 			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
 				return '/read/tags/cards';
 			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
-				return '/read/tags/posts';
+				return '/read/streams/discover';
 			}
-			return `/read/tags/${ streamKeySuffix( streamKey ) }/cards`;
+			return `/read/streams/discover?tags=${ streamKeySuffix( streamKey ) }`;
 		},
 		dateProperty: 'date',
 		query: ( extras, { streamKey } ) =>
