@@ -139,15 +139,9 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 				siteSlug: site.slug,
 				getMappingErrors: true,
 				currentRoute,
+				dismissPreferences: hasNoticePreferences ? noticeDismissPreferences : null,
 			}
 		);
-
-		if (
-			isDismissable &&
-			( ! hasNoticePreferences || noticeDismissPreferences?.[ statusClass ] )
-		) {
-			return null;
-		}
 
 		if ( noticeText && statusClass ) {
 			return (
