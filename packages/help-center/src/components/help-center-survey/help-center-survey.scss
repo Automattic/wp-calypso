@@ -41,6 +41,8 @@
 		background-color: #000;
 		color: #fff;
 
+		&:active:not(:disabled),
+		&:focus:not(:disabled),
 		&:hover:not(:disabled) {
 			background-color: var(--studio-gray-90, #1d2327);
 			color: #fff;
