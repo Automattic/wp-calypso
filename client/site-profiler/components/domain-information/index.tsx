@@ -41,7 +41,7 @@ export default function DomainInformation( props: Props ) {
 		} );
 
 		return createInterpolateElement( preparedText, {
-			a: createElement( 'a', { href: url, target: '_blank' } ),
+			a: createElement( 'a', { href: url, target: '_blank', rel: 'nofollow noreferrer' } ),
 		} );
 	};
 
