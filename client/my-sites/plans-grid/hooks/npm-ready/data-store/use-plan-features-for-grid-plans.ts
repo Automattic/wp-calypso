@@ -1,5 +1,5 @@
 import { applyTestFiltersToPlansList, isMonthly } from '@automattic/calypso-products';
-import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
+import getPlanFeaturesObject from '../../../lib/get-plan-features-object';
 import useHighlightedFeatures from './use-highlighted-features';
 import type { FeatureObject, FeatureList, PlanSlug } from '@automattic/calypso-products';
 import type {
