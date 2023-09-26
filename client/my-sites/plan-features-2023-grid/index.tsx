@@ -8,6 +8,7 @@ import {
 	PlanSlug,
 	isWooExpressPlusPlan,
 	FeatureList,
+	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -77,6 +78,7 @@ export interface PlanFeatures2023GridProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
@@ -439,6 +441,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			product_slug: storageAddOn.productSlug,
 			quantity: storageAddOn.quantity,
 			volume: 1,
+			extra: { feature_slug: selectedStorageOption },
 		};
 
 		// TODO clk: Revisit. Could this suffice: `ownPropsOnUpgradeClick?.( cartItemForPlan )`
@@ -636,7 +639,14 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { translate, intervalType, isInSignup, flowName, showUpgradeableStorage } = this.props;
+		const {
+			translate,
+			intervalType,
+			isInSignup,
+			flowName,
+			onStorageAddOnClick,
+			showUpgradeableStorage,
+		} = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -662,6 +672,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				<StorageAddOnDropdown
 					label={ translate( 'Storage' ) }
 					planSlug={ planSlug }
+					onStorageAddOnClick={ onStorageAddOnClick }
 					storageOptions={ storageOptions }
 					showPrice
 				/>
@@ -719,6 +730,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			showPlansComparisonGrid,
 			showUpgradeableStorage,
 			observableForOdieRef,
+			onStorageAddOnClick,
 		} = this.props;
 
 		return (
@@ -792,6 +804,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								selectedFeature={ selectedFeature }
 								showLegacyStorageFeature={ showLegacyStorageFeature }
 								showUpgradeableStorage={ showUpgradeableStorage }
+								onStorageAddOnClick={ onStorageAddOnClick }
 							/>
 							<ComparisonGridToggle
 								onClick={ toggleShowPlansComparisonGrid }

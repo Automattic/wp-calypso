@@ -13,7 +13,7 @@ const fetchPastBillingTransactions = () =>
 		apiVersion: '1.3',
 	} );
 
-export const usePastBillingTransactions = ( isInSignup: boolean ) => {
+export const usePastBillingTransactions = ( disabled: boolean ) => {
 	const queryKey = [ billingTransactionsQueryKey ];
 
 	const { data, isLoading, error } = useQuery< BillingHistory, Error >( {
@@ -23,8 +23,8 @@ export const usePastBillingTransactions = ( isInSignup: boolean ) => {
 
 	return {
 		billingTransactions: data?.billing_history || null,
-		isLoading,
+		isLoading: disabled ? false : isLoading,
 		error: error?.message || null,
-		enabled: ! isInSignup,
+		enabled: ! disabled,
 	};
 };
