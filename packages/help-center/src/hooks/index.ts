@@ -9,3 +9,4 @@ export { default as useZendeskConfig } from './use-zendesk-config';
 export { default as useZendeskMessaging } from './use-zendesk-messaging';
 export { default as useChatStatus } from './use-chat-status';
 export { default as useChatWidget } from './use-chat-widget';
+export { useIsWapuuEnabled } from './use-is-wapuu-enabled';
