@@ -18,36 +18,32 @@ export function Survey() {
 		queryFn: () =>
 			wpcomProxyRequest< {
 				calypso_preferences: {
-					'dismissed-help-center-survey': boolean;
+					'dismissed-help-center-survey': 'dismiss' | 'remind' | undefined;
 				};
 			} >( { path: '/me/preferences', apiVersion: '1.1' } ),
-		enabled: ! skipped && canAccessWpcomApis(),
+		enabled: canAccessWpcomApis(),
 		staleTime: Infinity,
 	} );
 
 	const mutation = useMutation( {
-		mutationFn: () =>
+		mutationFn: ( { type = 'dismiss' }: { type?: 'dismiss' | 'remind' } ) =>
 			wpcomProxyRequest( {
 				path: '/me/preferences',
 				apiVersion: '1.1',
 				method: 'POST',
 				body: {
-					calypso_preferences: { 'dismissed-help-center-survey': true },
+					calypso_preferences: { 'dismissed-help-center-survey': type },
 				},
 			} ),
-		onSuccess: () => {
-			queryClient.setQueryData( [ 'me/preferences/help-center-survey' ], {
-				calypso_preferences: {
-					'dismissed-help-center-survey': true,
-				},
-			} );
+		onSuccess: ( data ) => {
+			queryClient.setQueryData( [ 'me/preferences/help-center-survey' ], data );
 		},
 	} );
 
 	const answeredBefore = data?.calypso_preferences[ 'dismissed-help-center-survey' ];
 
 	// Only show in Simple sites and Calypso.
-	if ( skipped || ! canAccessWpcomApis() || isLoading || answeredBefore ) {
+	if ( skipped || ! canAccessWpcomApis() || isLoading || answeredBefore === 'dismiss' ) {
 		return null;
 	}
 
@@ -67,7 +63,7 @@ export function Survey() {
 				<Button
 					onClick={ () => {
 						window.open( 'https://wordpressdotcom.survey.fm/help-center-revamp' );
-						mutation.mutate();
+						mutation.mutate( { type: 'dismiss' } );
 					} }
 					variant="primary"
 				>
@@ -77,10 +73,19 @@ export function Survey() {
 					onClick={ () => {
 						setSkipped( true );
 						hasSkipped = true;
+						// If they haven't answered before, then we want to remind them later.
+						// If they did, it means they clicked "I don't want to collaborate" and we want to dismiss it.
+						if ( ! answeredBefore ) {
+							mutation.mutate( { type: 'remind' } );
+						} else {
+							mutation.mutate( { type: 'dismiss' } );
+						}
 					} }
 					variant="link"
 				>
-					{ __( 'Remind me later', __i18n_text_domain__ ) }
+					{ answeredBefore === 'remind'
+						? __( "I don't want to collaborate", __i18n_text_domain__ )
+						: __( 'Remind me later', __i18n_text_domain__ ) }
 				</Button>
 			</div>
 		</div>
