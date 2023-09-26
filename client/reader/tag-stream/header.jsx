@@ -60,7 +60,7 @@ class TagStreamHeader extends Component {
 			showBack,
 			showSort,
 		} = this.props;
-		const sortOrder = this.props.sort || 'recent';
+		const sortOrder = this.props.sort || 'relevance';
 
 		// A bit of a hack: check for a prompt tag (which always have a description) from the slug before waiting for tag info to load,
 		// so we can set a smaller title size and prevent it from resizing as the page loads. Should be refactored if tag descriptions

@@ -301,6 +301,14 @@ const streamApis = {
 	tag_popular: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/cards`,
 		apiNamespace: 'wpcom/v2',
+		query: ( extras, { streamKey } ) =>
+			getQueryString( {
+				...extras,
+				tags: streamKeySuffix( streamKey ),
+				tag_recs_per_card: 5,
+				site_recs_per_card: 5,
+				after: getAfterDateForFeed(),
+			} ),
 	},
 	list: {
 		path: ( { streamKey } ) => {
