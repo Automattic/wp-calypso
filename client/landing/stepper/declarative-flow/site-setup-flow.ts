@@ -63,10 +63,6 @@ import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-sto
 
 const SiteIntent = Onboard.SiteIntent;
 
-type ExitFlowOptions = {
-	skipLaunchpad?: boolean;
-};
-
 function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
@@ -193,7 +189,7 @@ const siteSetupFlow: Flow = {
 			setStepProgress( flowProgress );
 		}
 
-		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
+		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				/**
 				 * This implementation seems very hacky.
@@ -225,12 +221,8 @@ const siteSetupFlow: Flow = {
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
-						let launchpadScreen;
-						if ( ! options.skipLaunchpad ) {
-							launchpadScreen = isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
-						} else {
-							launchpadScreen = 'skipped';
-						}
+						const launchpadScreen =
+							isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
 
 						settings.launchpad_screen = launchpadScreen;
 					}
@@ -582,7 +574,7 @@ const siteSetupFlow: Flow = {
 			}
 		};
 
-		const goNext = async () => {
+		const goNext = () => {
 			switch ( currentStep ) {
 				case 'options':
 					if ( intent === 'sell' ) {
@@ -596,9 +588,7 @@ const siteSetupFlow: Flow = {
 				case 'goals':
 					// Skip to dashboard must have been pressed
 					setIntent( SiteIntent.Build );
-					return exitFlow( `/home/${ siteId ?? siteSlug }`, {
-						skipLaunchpad: true,
-					} );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 
 				case 'import':
 					return navigate( 'importList' );
