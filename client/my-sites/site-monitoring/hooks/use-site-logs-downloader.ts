@@ -212,13 +212,9 @@ export const useSiteLogsDownloader = ( {
 					isError = true;
 					let message = get( error, 'message', 'Could not retrieve logs.' );
 					if ( error?.status === 500 ) {
-						message = translate(
-							'There was an error retrieving logs. Please try again in a few minutes.'
-						);
+						message = translate( 'Could not retrieve logs. Please try again in a few minutes.' );
 					} else if ( error?.status === 400 ) {
-						message = translate(
-							'There was an error retrieving logs. Please try with a different time range.'
-						);
+						message = translate( 'Could not retrieve. Please try with a different time range.' );
 					}
 					downloadErrorNotice( message );
 					recordDownloadError( {
