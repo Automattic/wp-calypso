@@ -38,8 +38,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 
 	const layoutTitles = {
-		earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
-		settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
+		'ads-earnings': translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
+		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
+		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
 		customers: translate( 'Customers' ),
 		stats: translate( 'Stats' ),
