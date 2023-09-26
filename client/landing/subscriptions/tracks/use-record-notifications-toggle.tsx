@@ -6,7 +6,7 @@ const useRecordNotificationsToggle = () => {
 	const recordNotificationsToggle = (
 		enabled: boolean,
 		tracksProps: {
-			blog_id: string | null;
+			blog_id: number | null;
 		}
 	) => {
 		if ( enabled ) {

@@ -2,6 +2,7 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useSiteSubscription } from 'calypso/reader/contexts/SiteSubscriptionContext';
 import { getFeedUrl } from 'calypso/reader/get-helpers';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
 import { FeedIcon, UnsubscribeIcon } from '../icons';
@@ -12,73 +13,30 @@ import NotifyMeOfNewPostsToggle from './notify-me-of-new-posts-toggle';
 import './styles.scss';
 import '../styles.scss';
 
-type SiteSettingsProps = {
-	notifyMeOfNewPosts: boolean;
-	onNotifyMeOfNewPostsChange: ( value: boolean ) => void;
-	updatingNotifyMeOfNewPosts: boolean;
-	emailMeNewPosts: boolean;
-	onEmailMeNewPostsChange: ( value: boolean ) => void;
-	updatingEmailMeNewPosts: boolean;
-	deliveryFrequency: Reader.EmailDeliveryFrequency;
-	onDeliveryFrequencyChange: ( value: Reader.EmailDeliveryFrequency ) => void;
-	updatingFrequency: boolean;
-	emailMeNewComments: boolean;
-	onEmailMeNewCommentsChange: ( value: boolean ) => void;
-	updatingEmailMeNewComments: boolean;
-	isWpComSite?: boolean;
-};
-
-const SiteSettings = ( {
-	notifyMeOfNewPosts,
-	onNotifyMeOfNewPostsChange,
-	updatingNotifyMeOfNewPosts,
-	emailMeNewPosts,
-	onEmailMeNewPostsChange,
-	updatingEmailMeNewPosts,
-	deliveryFrequency,
-	onDeliveryFrequencyChange,
-	emailMeNewComments,
-	onEmailMeNewCommentsChange,
-	updatingEmailMeNewComments,
-	updatingFrequency,
-}: SiteSettingsProps ) => {
+const SiteSettings = () => {
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
+	const { data } = useSiteSubscription();
+	if ( ! data ) {
+		throw new Error( 'SiteSettings: site subscription data is undefined' );
+	}
+
+	const emailMeNewPostsEnabled = Boolean( data.deliveryMethods.email?.sendPosts );
 
 	return (
 		<div className="settings site-settings">
 			{ isLoggedIn && (
 				<>
-					<NotifyMeOfNewPostsToggle
-						value={ notifyMeOfNewPosts }
-						onChange={ onNotifyMeOfNewPostsChange }
-						isUpdating={ updatingNotifyMeOfNewPosts }
-					/>
-					<EmailMeNewPostsToggle
-						value={ emailMeNewPosts }
-						onChange={ onEmailMeNewPostsChange }
-						isUpdating={ updatingEmailMeNewPosts }
-					/>
+					<NotifyMeOfNewPostsToggle />
+					<EmailMeNewPostsToggle />
 				</>
 			) }
-			{ emailMeNewPosts && (
-				<DeliveryFrequencyInput
-					value={ deliveryFrequency }
-					onChange={ onDeliveryFrequencyChange }
-					isUpdating={ updatingFrequency }
-				/>
-			) }
-			{ isLoggedIn && (
-				<EmailMeNewCommentsToggle
-					value={ emailMeNewComments }
-					onChange={ onEmailMeNewCommentsChange }
-					isUpdating={ updatingEmailMeNewComments }
-				/>
-			) }
+			{ emailMeNewPostsEnabled && <DeliveryFrequencyInput /> }
+			{ isLoggedIn && <EmailMeNewCommentsToggle /> }
 		</div>
 	);
 };
 
-type SiteSettingsPopoverProps = SiteSettingsProps & {
+type SiteSettingsPopoverProps = {
 	onUnsubscribe: () => void;
 	unsubscribing: boolean;
 };
@@ -86,17 +44,22 @@ type SiteSettingsPopoverProps = SiteSettingsProps & {
 export const SiteSettingsPopover = ( {
 	onUnsubscribe,
 	unsubscribing,
-	isWpComSite = true,
-	...props
 }: SiteSettingsPopoverProps ) => {
+	const { data: subscription } = useSiteSubscription();
+	if ( ! subscription ) {
+		throw new Error( 'SiteSettingsPopover: site subscription data is undefined' );
+	}
+
 	const translate = useTranslate();
+	const isWpComSite = Reader.isValidId( subscription.blogId );
+
 	return (
 		<SubscriptionsEllipsisMenu popoverClassName="site-settings-popover">
 			{ ( close: () => void ) => (
 				<>
 					{ isWpComSite && (
 						<>
-							<SiteSettings { ...props } />
+							<SiteSettings />
 							<hr className="subscriptions__separator" />
 						</>
 					) }
@@ -113,13 +76,13 @@ export const SiteSettingsPopover = ( {
 						{ translate( 'Unsubscribe' ) }
 					</Button>
 
-					<Button
+					{ /* <Button
 						className="site-settings-popover__view-feed"
 						icon={ <FeedIcon className="subscriptions-ellipsis-menu__item-icon" /> }
 						href={ getFeedUrl( {} ) }
 					>
 						{ translate( 'View feed' ) }
-					</Button>
+					</Button> */ }
 				</>
 			) }
 		</SubscriptionsEllipsisMenu>

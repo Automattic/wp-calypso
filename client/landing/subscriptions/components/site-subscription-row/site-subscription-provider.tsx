@@ -1,51 +1,25 @@
 import { Reader } from '@automattic/data-stores';
-import React from 'react';
-
-type SiteSubscriptionContextProps = {
-	subscription: SiteSubscription | null;
-	setSubscription: React.Dispatch< React.SetStateAction< SiteSubscription | null > >;
-};
-
-const SiteSubscriptionContext = React.createContext< SiteSubscriptionContextProps | undefined >(
-	undefined
-);
-
-export type SiteSubscription = {
-	id: string;
-	blogId: string;
-	feedId: string;
-	url: string;
-	dateSubscribed: Date;
-	deliveryMethods: Reader.SiteSubscriptionDeliveryMethods;
-	name: string;
-	organizationId: number;
-	unseenCount: number;
-	lastUpdated: Date;
-	siteIcon: string;
-	isOwner: boolean;
-	meta: Reader.SiteSubscriptionMeta;
-	isWpForTeamsSite: boolean;
-	isPaidSubscription: boolean;
-	isDeleted: boolean;
-};
+import React, { useMemo } from 'react';
+import { SiteSubscriptionContext } from 'calypso/reader/contexts/SiteSubscriptionContext';
+import { toSiteSubscription } from './utils';
 
 type SiteSubscriptionProviderProps = {
-	subscription: SiteSubscription;
+	value: Reader.SiteSubscription;
 	children: React.ReactNode;
 };
 
-export const SiteSubscriptionProvider: React.FC< SiteSubscriptionProviderProps > = ( {
-	subscription,
+export const SiteSubscriptionRowProvider: React.FC< SiteSubscriptionProviderProps > = ( {
+	value,
 	children,
 } ) => {
-	const [ currentSubscription, setSubscription ] = React.useState< SiteSubscription | null >(
-		subscription
-	);
-
+	const siteSubscriptionContext = useMemo( () => {
+		return {
+			data: toSiteSubscription( value ),
+			isLoading: false,
+		};
+	}, [ value ] );
 	return (
-		<SiteSubscriptionContext.Provider
-			value={ { subscription: currentSubscription, setSubscription } }
-		>
+		<SiteSubscriptionContext.Provider value={ siteSubscriptionContext }>
 			{ children }
 		</SiteSubscriptionContext.Provider>
 	);

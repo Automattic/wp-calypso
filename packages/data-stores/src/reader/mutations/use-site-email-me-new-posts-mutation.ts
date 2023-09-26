@@ -4,8 +4,8 @@ import { useIsLoggedIn } from '../hooks';
 import type { SiteSubscriptionsPages, SiteSubscriptionDetails } from '../types';
 
 type SiteSubscriptionEmailMeNewPostsParams = {
-	send_posts: boolean;
-	blog_id: number | string;
+	sendPosts: boolean;
+	blogId: number | string;
 	subscriptionId: number;
 };
 
@@ -20,17 +20,17 @@ const useSiteEmailMeNewPostsMutation = () => {
 
 	return useMutation( {
 		mutationFn: async ( params: SiteSubscriptionEmailMeNewPostsParams ) => {
-			if ( ! params.blog_id || typeof params.send_posts !== 'boolean' ) {
+			if ( ! params.blogId || typeof params.sendPosts !== 'boolean' ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
 					'Something went wrong while changing the "Email me new posts" setting.'
 				);
 			}
 
-			const action = params.send_posts ? 'new' : 'delete';
+			const action = params.sendPosts ? 'new' : 'delete';
 
 			const response = await callApi< SiteSubscriptionEmailMeNewPostsResponse >( {
-				path: `/read/site/${ params.blog_id }/post_email_subscriptions/${ action }`,
+				path: `/read/site/${ params.blogId }/post_email_subscriptions/${ action }`,
 				method: 'POST',
 				body: {},
 				isLoggedIn,
@@ -45,7 +45,7 @@ const useSiteEmailMeNewPostsMutation = () => {
 
 			return response;
 		},
-		onMutate: async ( { blog_id, send_posts, subscriptionId } ) => {
+		onMutate: async ( { blogId: blog_id, sendPosts: send_posts, subscriptionId } ) => {
 			const siteSubscriptionsQueryKey = buildQueryKey(
 				[ 'read', 'site-subscriptions' ],
 				isLoggedIn,
@@ -135,7 +135,7 @@ const useSiteEmailMeNewPostsMutation = () => {
 				previousSiteSubscriptionDetailsByBlogId,
 			};
 		},
-		onError: ( _err, { blog_id, subscriptionId }, context ) => {
+		onError: ( _err, { blogId: blog_id, subscriptionId }, context ) => {
 			if ( context?.previousSiteSubscriptions ) {
 				queryClient.setQueryData(
 					buildQueryKey( [ 'read', 'site-subscriptions' ], isLoggedIn, id ),
@@ -159,7 +159,7 @@ const useSiteEmailMeNewPostsMutation = () => {
 				);
 			}
 		},
-		onSettled: ( _data, _err, { blog_id, subscriptionId } ) => {
+		onSettled: ( _data, _err, { blogId: blog_id, subscriptionId } ) => {
 			queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
 			queryClient.invalidateQueries(
 				buildQueryKey( [ 'read', 'site-subscription-details', String( blog_id ) ], isLoggedIn, id )

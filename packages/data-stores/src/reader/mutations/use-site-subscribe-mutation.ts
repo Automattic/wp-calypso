@@ -5,8 +5,8 @@ import { SiteSubscriptionsPages } from '../types';
 import type { SiteSubscriptionDetails } from '../types';
 
 type SubscribeParams = {
-	blog_id?: number | string;
-	feed_id?: number | string;
+	blogId?: number | string;
+	feedId?: number | string;
 	url?: string;
 	doNotInvalidateSiteSubscriptions?: boolean;
 	onSuccess?: () => void;
@@ -27,11 +27,15 @@ type SubscribeResponse = {
 };
 
 const buildSubscriptionDetailsByBlogIdQueryKey = (
-	blogId: string,
+	blogId: number | string,
 	isLoggedIn: boolean,
 	userId?: number
 ) => {
-	return buildQueryKey( [ 'read', 'site-subscription-details', blogId ], isLoggedIn, userId );
+	return buildQueryKey(
+		[ 'read', 'site-subscription-details', String( blogId ) ],
+		isLoggedIn,
+		userId
+	);
 };
 
 const useSiteSubscribeMutation = () => {
@@ -53,7 +57,7 @@ const useSiteSubscribeMutation = () => {
 			const { path, apiVersion, body } = getSubscriptionMutationParams(
 				'new',
 				isLoggedIn,
-				params.blog_id,
+				params.blogId,
 				params.url
 			);
 
@@ -74,12 +78,11 @@ const useSiteSubscribeMutation = () => {
 			return response;
 		},
 		onMutate: async ( params ) => {
-			const isValidBlogId = isValidId( params.blog_id );
 			let previousSiteSubscriptionDetailsByBlogId: SiteSubscriptionDetails | undefined;
 
-			if ( isValidBlogId ) {
+			if ( isValidId( params.blogId ) ) {
 				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsByBlogIdQueryKey(
-					String( params.blog_id ),
+					params.blogId,
 					isLoggedIn,
 					userId
 				);
@@ -108,9 +111,9 @@ const useSiteSubscribeMutation = () => {
 							subscriptions: page.subscriptions.map( ( siteSubscription ) => ( {
 								...siteSubscription,
 								isDeleted:
-									siteSubscription.blog_ID === params.blog_id ? false : siteSubscription.isDeleted,
+									siteSubscription.blog_ID === params.blogId ? false : siteSubscription.isDeleted,
 								date_subscribed:
-									siteSubscription.blog_ID === params.blog_id
+									siteSubscription.blog_ID === params.blogId
 										? new Date()
 										: siteSubscription.date_subscribed,
 							} ) ),
@@ -129,9 +132,9 @@ const useSiteSubscribeMutation = () => {
 				queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
 			}
 
-			if ( isValidId( params.blog_id ) && context?.previousSiteSubscriptionDetails ) {
+			if ( isValidId( params.blogId ) && context?.previousSiteSubscriptionDetails ) {
 				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsByBlogIdQueryKey(
-					String( params.blog_id ),
+					String( params.blogId ),
 					isLoggedIn,
 					userId
 				);
@@ -148,18 +151,18 @@ const useSiteSubscribeMutation = () => {
 				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
 			}
 
-			if ( isValidId( params.blog_id ) ) {
+			if ( isValidId( params.blogId ) ) {
 				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsByBlogIdQueryKey(
-					String( params.blog_id ),
+					params.blogId,
 					isLoggedIn,
 					userId
 				);
 				queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
-				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
+				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blogId ) ] );
 			}
 
-			if ( isValidId( params.feed_id ) ) {
-				const feedCacheKey = [ 'read', 'feeds', Number( params.feed_id ) ];
+			if ( isValidId( params.feedId ) ) {
+				const feedCacheKey = [ 'read', 'feeds', Number( params.feedId ) ];
 				queryClient.invalidateQueries( feedCacheKey );
 			}
 

@@ -6,7 +6,7 @@ const useRecordCommentEmailsToggle = () => {
 	const recordCommentEmailsToggle = (
 		enabled: boolean,
 		tracksProps: {
-			blog_id: string | null;
+			blog_id: number | null;
 		}
 	) => {
 		if ( enabled ) {

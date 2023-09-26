@@ -55,7 +55,7 @@ export type PagedQueryResult< TDataType, TKey extends string > = {
 
 export type SiteSubscription = {
 	ID: string;
-	blog_ID: string;
+	blog_ID: string | false;
 	feed_ID: string;
 	URL: string;
 	date_subscribed: Date;

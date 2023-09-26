@@ -3,44 +3,16 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { useRecordPostEmailsSetFrequency } from 'calypso/landing/subscriptions/tracks';
+import { useSiteSubscription } from 'calypso/reader/contexts/SiteSubscriptionContext';
 
-type DeliveryFrequencyOptionProps = {
-	children: React.ReactNode;
-	value: Reader.EmailDeliveryFrequency;
-	selected: boolean;
-	onChange: ( value: Reader.EmailDeliveryFrequency ) => void;
-};
-
-const DeliveryFrequencyOption = ( {
-	children,
-	selected,
-	value,
-	onChange,
-}: DeliveryFrequencyOptionProps ) => (
-	<SegmentedControl.Item selected={ selected } onClick={ () => onChange( value ) }>
-		{ children }
-	</SegmentedControl.Item>
-);
-
-type DeliveryFrequencyInputProps = {
-	onChange: ( value: Reader.EmailDeliveryFrequency ) => void;
-	value: Reader.EmailDeliveryFrequency;
-	isUpdating: boolean;
-};
-
-type DeliveryFrequencyKeyLabel = {
-	key: Reader.EmailDeliveryFrequency;
-	label: string;
-};
-
-const DeliveryFrequencyInput = ( {
-	onChange,
-	value: selectedValue,
-	isUpdating,
-}: DeliveryFrequencyInputProps ) => {
-	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
+const DeliveryFrequencyInput = () => {
+	const { data: subscription } = useSiteSubscription();
 	const translate = useTranslate();
-	const availableFrequencies = useMemo< DeliveryFrequencyKeyLabel[] >(
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
+	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
+
+	const availableFrequencies = useMemo(
 		() => [
 			{
 				key: Reader.EmailDeliveryFrequency.Instantly,
@@ -58,6 +30,32 @@ const DeliveryFrequencyInput = ( {
 		[ translate ]
 	);
 
+	const deliveryFrequency =
+		subscription?.deliveryMethods.email?.postDeliverFrequency ??
+		Reader.EmailDeliveryFrequency.Instantly;
+
+	const { mutate: updateDeliveryFrequency, isLoading: isUpdating } =
+		SubscriptionManager.useSiteDeliveryFrequencyMutation();
+
+	const handleDeliveryFrequencyChange = ( newDeliveryFrequency: Reader.EmailDeliveryFrequency ) => {
+		if ( subscription === undefined || ! subscription.blogId ) {
+			return;
+		}
+
+		// Update post emails delivery frequency
+		updateDeliveryFrequency( {
+			blog_id: subscription.blogId,
+			delivery_frequency: newDeliveryFrequency,
+			subscriptionId: Number( subscription.id ),
+		} );
+
+		// Record tracks event
+		recordPostEmailsSetFrequency( {
+			blog_id: String( subscription.blogId ),
+			delivery_frequency: newDeliveryFrequency,
+		} );
+	};
+
 	return (
 		<div
 			className={ classNames( 'setting-item', 'delivery-frequency-input', {
@@ -73,14 +71,13 @@ const DeliveryFrequencyInput = ( {
 				} ) }
 			>
 				{ availableFrequencies.map( ( { key, label }, index ) => (
-					<DeliveryFrequencyOption
-						selected={ selectedValue === key }
-						value={ key }
-						onChange={ onChange }
+					<SegmentedControl.Item
 						key={ index }
+						selected={ deliveryFrequency === key }
+						onClick={ () => handleDeliveryFrequencyChange( key ) }
 					>
 						{ label }
-					</DeliveryFrequencyOption>
+					</SegmentedControl.Item>
 				) ) }
 			</SegmentedControl>
 		</div>

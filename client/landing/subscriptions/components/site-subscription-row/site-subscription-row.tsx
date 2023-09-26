@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { isValidId } from '@automattic/data-stores/src/reader';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
@@ -15,19 +14,14 @@ import {
 	useRecordSiteIconClicked,
 	useRecordSiteTitleClicked,
 	useRecordSiteUrlClicked,
-	useRecordNotificationsToggle,
-	useRecordPostEmailsToggle,
-	useRecordCommentEmailsToggle,
-	useRecordPostEmailsSetFrequency,
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
+import { useSiteSubscription } from 'calypso/reader/contexts/SiteSubscriptionContext';
 import { successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
-import { SiteSubscriptionProvider } from './site-subscription-provider';
-import { toSiteSubscription } from './utils';
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -68,39 +62,30 @@ const SelectedNewPostDeliveryMethods = ( {
 	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
-type SiteRowProps = Reader.SiteSubscription;
+const SiteSubscriptionRow = () => {
+	const { data: subscription } = useSiteSubscription();
+	if ( subscription === undefined ) {
+		throw new Error( 'SiteSubscriptionRow: site subscription data is undefined' );
+	}
 
-const SiteRow = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const context = React.useContext( SiteSubscriptionContext );
-	if ( ! context ) {
-		throw new Error( 'SiteSubscriptionRow must be wrapped in a SiteSubscriptionProvider' );
-	}
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
 
 	const hostname = useMemo( () => {
 		try {
-			return new URL( url ).hostname;
+			return new URL( subscription.url ).hostname;
 		} catch ( e ) {
 			return '';
 		}
-	}, [ url ] );
+	}, [ subscription.url ] );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel(
-		delivery_methods.email?.post_delivery_frequency
+		subscription.deliveryMethods.email?.postDeliverFrequency
 	);
-	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
-		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
-	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
-		SubscriptionManager.useSiteEmailMeNewPostsMutation();
-	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
-		SubscriptionManager.useSiteDeliveryFrequencyMutation();
-	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
-		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
+
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
 	const { mutate: resubscribe } = SubscriptionManager.useSiteSubscribeMutation();
@@ -109,18 +94,20 @@ const SiteRow = () => {
 	const recordSiteIconClicked = useRecordSiteIconClicked();
 	const recordSiteTitleClicked = useRecordSiteTitleClicked();
 	const recordSiteUrlClicked = useRecordSiteUrlClicked();
-	const recordNotificationsToggle = useRecordNotificationsToggle();
-	const recordPostEmailsToggle = useRecordPostEmailsToggle();
-	const recordCommentEmailsToggle = useRecordCommentEmailsToggle();
-	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 	const recordSiteResubscribed = useRecordSiteResubscribed();
 
 	const unsubscribeCallback = () => {
-		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+		recordSiteUnsubscribed( {
+			blog_id: String( subscription.blogId ),
+			url: subscription.url,
+			source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
+		} );
 		dispatch(
 			successNotice(
-				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
+				translate( 'You have successfully unsubscribed from %(name)s.', {
+					args: { name: subscription.name },
+				} ),
 				{
 					duration: 5000,
 					button: translate( 'Resubscribe' ),
@@ -128,10 +115,14 @@ const SiteRow = () => {
 						if ( unsubscribeInProgress.current ) {
 							resubscribePending.current = true;
 						} else {
-							resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+							resubscribe( {
+								blogId: subscription.blogId,
+								url: subscription.url,
+								doNotInvalidateSiteSubscriptions: true,
+							} );
 							recordSiteResubscribed( {
-								blog_id,
-								url,
+								blog_id: String( subscription.blogId ),
+								url: subscription.url,
 								source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 							} );
 						}
@@ -142,79 +133,57 @@ const SiteRow = () => {
 	};
 
 	const { isReaderPortal, isSubscriptionsPortal } = useSubscriptionManagerContext();
+	const emailMeNewPostsEnabled = Boolean( subscription.deliveryMethods.email?.sendPosts );
+	const notifyMeOfNewPostsEnabled = Boolean( subscription.deliveryMethods.notification?.sendPosts );
+	const notifyMeOfNewCommentsEnabled = Boolean( subscription.deliveryMethods.email?.sendComments );
 
 	const siteTitleUrl = useMemo( () => {
 		if ( isReaderPortal ) {
-			const feedUrl = `/read/feeds/${ feed_id }`;
+			const feedUrl = `/read/feeds/${ subscription.feedId }`;
 
-			if ( ! blog_id ) {
+			if ( ! subscription.blogId ) {
 				// The site subscription page does not support non-wpcom feeds yet
 				return feedUrl;
 			}
 
-			return `/read/subscriptions/${ subscriptionId }`;
+			return `/read/subscriptions/${ subscription.id }`;
 		}
 
 		if ( isSubscriptionsPortal ) {
-			if ( ! Reader.isValidId( blog_id ) ) {
+			if ( ! Reader.isValidId( subscription.blogId ) ) {
 				// If it is a non-wpcom feed item, we want to open the reader's page for that feed
-				return `/read/feeds/${ feed_id }`;
+				return `/read/feeds/${ subscription.feedId }`;
 			}
-			return `/subscriptions/site/${ blog_id }`;
+			return `/subscriptions/site/${ subscription.blogId }`;
 		}
-	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal, subscriptionId ] );
+	}, [
+		isReaderPortal,
+		isSubscriptionsPortal,
+		subscription.blogId,
+		subscription.feedId,
+		subscription.id,
+	] );
 
-	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
-		// Update post notification settings
-		updateNotifyMeOfNewPosts( { blog_id, send_posts, subscriptionId: Number( subscriptionId ) } );
+	if ( subscription.isDeleted ) {
+		return null;
+	}
 
-		// Record tracks event
-		recordNotificationsToggle( send_posts, { blog_id } );
-	};
-
-	const handleEmailMeNewPostsChange = ( send_posts: boolean ) => {
-		// Update post emails settings
-		updateEmailMeNewPosts( { blog_id, send_posts, subscriptionId: Number( subscriptionId ) } );
-
-		// Record tracks event
-		recordPostEmailsToggle( send_posts, { blog_id } );
-	};
-
-	const handleEmailMeNewCommentsChange = ( send_comments: boolean ) => {
-		// Update comment emails settings
-		updateEmailMeNewComments( {
-			blog_id,
-			send_comments,
-			subscriptionId: Number( subscriptionId ),
-		} );
-
-		// Record tracks event
-		recordCommentEmailsToggle( send_comments, { blog_id } );
-	};
-
-	const handleDeliveryFrequencyChange = ( delivery_frequency: Reader.EmailDeliveryFrequency ) => {
-		// Update post emails delivery frequency
-		updateDeliveryFrequency( {
-			blog_id,
-			delivery_frequency,
-			subscriptionId: Number( subscriptionId ),
-		} );
-
-		// Record tracks event
-		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
-	};
-
-	return ! isDeleted ? (
+	return (
 		<HStack as="li" alignment="center" className="row" role="row">
 			<span className="title-cell" role="cell">
 				<Link
 					className="title-icon"
 					href={ siteTitleUrl }
 					onClick={ () => {
-						recordSiteIconClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+						recordSiteIconClicked( {
+							blog_id: String( subscription.blogId ),
+							feed_id:
+								typeof subscription.feedId === 'number' ? String( subscription.feedId ) : undefined,
+							source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
+						} );
 					} }
 				>
-					<SiteIcon iconUrl={ site_icon } size={ 40 } alt={ name } />
+					<SiteIcon iconUrl={ subscription.siteIcon } size={ 40 } alt={ subscription.name } />
 				</Link>
 				<span className="title-column">
 					<Link
@@ -222,15 +191,18 @@ const SiteRow = () => {
 						href={ siteTitleUrl }
 						onClick={ () => {
 							recordSiteTitleClicked( {
-								blog_id,
-								feed_id,
+								blog_id: String( subscription.blogId ),
+								feed_id:
+									typeof subscription.feedId === 'number'
+										? String( subscription.feedId )
+										: undefined,
 								source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
 							} );
 						} }
 					>
-						{ name }
-						{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
-						{ !! is_paid_subscription && (
+						{ subscription.name }
+						{ !! subscription.isWpForTeamsSite && <span className="p2-label">P2</span> }
+						{ !! subscription.isPaidSubscription && (
 							<span className="paid-label">
 								{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
 							</span>
@@ -238,11 +210,18 @@ const SiteRow = () => {
 					</Link>
 					<ExternalLink
 						className="title-url"
-						{ ...( url && { href: url } ) }
+						{ ...( subscription.url && { href: subscription.url } ) }
 						rel="noreferrer noopener"
 						target="_blank"
 						onClick={ () => {
-							recordSiteUrlClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+							recordSiteUrlClicked( {
+								blog_id: String( subscription.blogId ),
+								feed_id:
+									typeof subscription.feedId === 'number'
+										? String( subscription.feedId )
+										: undefined,
+								source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
+							} );
 						} }
 					>
 						{ hostname }
@@ -252,16 +231,18 @@ const SiteRow = () => {
 			<span className="date-cell" role="cell">
 				<TimeSince
 					date={
-						( date_subscribed.valueOf() ? date_subscribed : new Date( 0 ) ).toISOString?.() ??
-						date_subscribed
+						( subscription.dateSubscribed.valueOf()
+							? subscription.dateSubscribed
+							: new Date( 0 )
+						).toISOString?.() ?? subscription.dateSubscribed
 					}
 				/>
 			</span>
 			{ isLoggedIn && (
 				<span className="new-posts-cell" role="cell">
 					<SelectedNewPostDeliveryMethods
-						isEmailMeNewPostsSelected={ !! delivery_methods.email?.send_posts }
-						isNotifyMeOfNewPostsSelected={ !! delivery_methods.notification?.send_posts }
+						isEmailMeNewPostsSelected={ emailMeNewPostsEnabled }
+						isNotifyMeOfNewPostsSelected={ notifyMeOfNewPostsEnabled }
 					/>
 				</span>
 			) }
@@ -269,12 +250,12 @@ const SiteRow = () => {
 				<span className="new-comments-cell" role="cell">
 					<InfoPopover
 						position="top"
-						icon={ ! delivery_methods.email?.send_comments ? 'cross' : 'checkmark' }
+						icon={ notifyMeOfNewCommentsEnabled ? 'checkmark' : 'cross' }
 						iconSize={ 16 }
-						className={ ! delivery_methods.email?.send_comments ? 'red' : 'green' }
+						className={ notifyMeOfNewCommentsEnabled ? 'green' : 'red' }
 						showOnHover={ true }
 					>
-						{ delivery_methods.email?.send_comments
+						{ notifyMeOfNewCommentsEnabled
 							? translate( 'You will receive email notifications for new comments on this site.' )
 							: translate(
 									"You won't receive email notifications for new comments on this site."
@@ -287,33 +268,14 @@ const SiteRow = () => {
 			</span>
 			<span className="actions-cell" role="cell">
 				<SiteSettingsPopover
-					// NotifyMeOfNewPosts
-					notifyMeOfNewPosts={ !! delivery_methods.notification?.send_posts }
-					onNotifyMeOfNewPostsChange={ handleNotifyMeOfNewPostsChange }
-					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
-					// EmailMeNewPosts
-					emailMeNewPosts={ !! delivery_methods.email?.send_posts }
-					updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
-					onEmailMeNewPostsChange={ handleEmailMeNewPostsChange }
-					// DeliveryFrequency
-					deliveryFrequency={
-						delivery_methods.email?.post_delivery_frequency ??
-						Reader.EmailDeliveryFrequency.Instantly
-					}
-					onDeliveryFrequencyChange={ handleDeliveryFrequencyChange }
-					updatingFrequency={ updatingFrequency }
-					// EmailMeNewComments
-					emailMeNewComments={ !! delivery_methods.email?.send_comments }
-					onEmailMeNewCommentsChange={ handleEmailMeNewCommentsChange }
-					updatingEmailMeNewComments={ updatingEmailMeNewComments }
 					onUnsubscribe={ () => {
 						unsubscribeInProgress.current = true;
 						unsubscribeCallback();
 						unsubscribe(
 							{
-								blog_id,
-								subscriptionId: Number( subscriptionId ),
-								url,
+								blogId: subscription.blogId,
+								subscriptionId: Number( subscription.id ),
+								url: subscription.url,
 								doNotInvalidateSiteSubscriptions: true,
 							},
 							{
@@ -322,10 +284,14 @@ const SiteRow = () => {
 
 									if ( resubscribePending.current ) {
 										resubscribePending.current = false;
-										resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+										resubscribe( {
+											blogId: subscription.blogId,
+											url: subscription.url,
+											doNotInvalidateSiteSubscriptions: true,
+										} );
 										recordSiteResubscribed( {
-											blog_id,
-											url,
+											blog_id: String( subscription.blogId ),
+											url: subscription.url,
 											source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 										} );
 									}
@@ -334,20 +300,10 @@ const SiteRow = () => {
 						);
 					} }
 					unsubscribing={ unsubscribing }
-					isWpComSite={ isValidId( blog_id ) }
 				/>
 			</span>
 		</HStack>
-	) : null;
-};
-
-const SiteSubscriptionRowWithProvider = ( props: Reader.SiteSubscription ) => {
-	const siteSubscription = useMemo( () => toSiteSubscription( props ), [ props ] );
-	return (
-		<SiteSubscriptionProvider subscription={ siteSubscription }>
-			<SiteRow { ...props } />
-		</SiteSubscriptionProvider>
 	);
 };
 
-export default SiteSubscriptionRowWithProvider;
+export default SiteSubscriptionRow;

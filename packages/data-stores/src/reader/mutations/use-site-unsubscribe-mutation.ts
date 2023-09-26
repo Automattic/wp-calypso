@@ -10,7 +10,7 @@ import {
 type UnsubscribeParams = {
 	subscriptionId: number;
 	url?: string;
-	blog_id?: number | string;
+	blogId?: number | string;
 	doNotInvalidateSiteSubscriptions?: boolean;
 	emailId?: string;
 };
@@ -52,7 +52,7 @@ const useSiteUnsubscribeMutation = () => {
 			const { path, apiVersion, body } = getSubscriptionMutationParams(
 				'delete',
 				isLoggedIn,
-				params.blog_id,
+				params.blogId,
 				params.url,
 				params.emailId
 			);
@@ -103,7 +103,7 @@ const useSiteUnsubscribeMutation = () => {
 								...siteSubscription,
 								isDeleted:
 									Number( siteSubscription.ID ) === params.subscriptionId ||
-									( isValidId( params.blog_id ) && siteSubscription.blog_ID === params.blog_id ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
+									( isValidId( params.blogId ) && siteSubscription.blog_ID === params.blogId ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
 										? true
 										: siteSubscription.isDeleted,
 							} ) ),
@@ -139,9 +139,9 @@ const useSiteUnsubscribeMutation = () => {
 			}
 
 			let previousSiteSubscriptionDetailsByBlogId: SiteSubscriptionDetails | undefined;
-			if ( isValidId( params.blog_id ) ) {
+			if ( isValidId( params.blogId ) ) {
 				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsByBlogIdQueryKey(
-					params.blog_id,
+					params.blogId,
 					isLoggedIn,
 					userId
 				);
@@ -186,9 +186,9 @@ const useSiteUnsubscribeMutation = () => {
 					}
 				);
 			}
-			if ( context?.previousSiteSubscriptionDetailsByBlogId && isValidId( params.blog_id ) ) {
+			if ( context?.previousSiteSubscriptionDetailsByBlogId && isValidId( params.blogId ) ) {
 				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsByBlogIdQueryKey(
-					params.blog_id,
+					params.blogId,
 					isLoggedIn,
 					userId
 				);
@@ -203,13 +203,13 @@ const useSiteUnsubscribeMutation = () => {
 				queryClient.invalidateQueries( siteSubscriptionsQueryKey );
 			}
 
-			if ( isValidId( params.blog_id ) ) {
+			if ( isValidId( params.blogId ) ) {
 				const siteSubscriptionDetailsByBlogIdQueryKey =
-					buildSiteSubscriptionDetailsByBlogIdQueryKey( params.blog_id, isLoggedIn, userId );
+					buildSiteSubscriptionDetailsByBlogIdQueryKey( params.blogId, isLoggedIn, userId );
 				queryClient.invalidateQueries( siteSubscriptionDetailsByBlogIdQueryKey, {
 					refetchType: 'none',
 				} );
-				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
+				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blogId ) ] );
 			}
 
 			queryClient.invalidateQueries( subscriptionsCountQueryKey );
