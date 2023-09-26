@@ -32,7 +32,7 @@ export function renderMarketplaceThankYou( context, next ) {
 		<MarketplaceThankYou
 			pluginSlugs={ pluginSlugs }
 			themeSlugs={ themeSlugs }
-			onboardingFlow={ onboarding !== undefined }
+			isOnboardingFlow={ onboarding !== undefined }
 		/>
 	);
 	next();

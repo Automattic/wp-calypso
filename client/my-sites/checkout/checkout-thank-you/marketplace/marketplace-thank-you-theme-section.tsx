@@ -107,10 +107,10 @@ const ThemeNameSectionWrapper = styled.div`
 
 export const ThankYouThemeSection = ( {
 	theme,
-	onboardingFlow,
+	isOnboardingFlow,
 }: {
 	theme: any;
-	onboardingFlow: boolean;
+	isOnboardingFlow: boolean;
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -146,7 +146,9 @@ export const ThankYouThemeSection = ( {
 			return;
 		}
 		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
-		dispatch( activate( theme.id, siteId, 'marketplace-thank-you', false, false, onboardingFlow ) );
+		dispatch(
+			activate( theme.id, siteId, 'marketplace-thank-you', false, false, isOnboardingFlow )
+		);
 	};
 
 	return (

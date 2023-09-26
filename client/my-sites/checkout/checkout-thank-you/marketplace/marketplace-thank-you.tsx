@@ -26,11 +26,11 @@ import './style.scss';
 const MarketplaceThankYou = ( {
 	pluginSlugs,
 	themeSlugs,
-	onboardingFlow,
+	isOnboardingFlow,
 }: {
 	pluginSlugs: Array< string >;
 	themeSlugs: Array< string >;
-	onboardingFlow: boolean;
+	isOnboardingFlow: boolean;
 } ) => {
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
@@ -58,7 +58,7 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 		themesProgressbarSteps,
 		isAtomicNeededForThemes,
-	] = useThemesThankYouData( themeSlugs, onboardingFlow );
+	] = useThemesThankYouData( themeSlugs, isOnboardingFlow );
 
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
