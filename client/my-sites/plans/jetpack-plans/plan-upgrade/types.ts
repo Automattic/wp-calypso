@@ -5,5 +5,5 @@ import type {
 
 export type PlanRecommendation = [
 	JetpackLegacyPlanSlug,
-	Exclude< JetpackPurchasableItemSlug, JetpackLegacyPlanSlug >[]
+	Exclude< JetpackPurchasableItemSlug, JetpackLegacyPlanSlug >[],
 ];

@@ -1,80 +1,93 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/onboarding/styles/mixins";
 
-@media ( max-width: 480px ) {
-	.is-bulk-domains-page main {
-		overflow-y: hidden;
+$domains-table-mobile-breakpoint: 480px;
+
+@media ( max-width: $domains-table-mobile-breakpoint ) {
+	.navigation-header {
+		position: sticky;
 		/*
 		 * The 47px value comes from https://github.com/Automattic/wp-calypso/blob/d7e2ada/client/my-sites/sidebar/style.scss#L751.
 		 * Using 46px, which is the masterbar height CSS variable, introduces an annoying 1px scroll.
 		 * We're using this magic number elsewhere too, so a clean up would be appreciated.
 		 */
-		height: calc(100vh - 47px);
-		padding-bottom: 0 !important;
-		display: flex;
-		flex-direction: column;
+		top: 47px;
+		z-index: 1;
+	}
 
-		.domains-table {
-			flex: 1;
-			height: 100%;
-			overflow-y: hidden;
+	.domains-table-toolbar {
+		position: sticky;
+		z-index: 1;
+	}
 
-			border-collapse: collapse;
-
-			@media ( max-width: 480px ) {
-				padding: 13px;
-			}
-		}
+	.domains-table {
+		padding: 0 16px;
 	}
 }
 
 .domains-table {
-	--domains-table-toolbar-height: 40px;
+	.domains-table-toolbar {
+		--domains-table-toolbar-height: 40px;
+		background: var(--color-surface-backdrop);
+
+		@media ( min-width: $domains-table-mobile-breakpoint ) {
+			position: relative;
+			z-index: 2; // Ensure the dropdown appears overtop of the sticky table header
+		}
+	}
 
 	table {
 		margin-top: 14px; /* 30px - 16px of the table heading padding */
 		border-collapse: collapse;
 
-		tr {
-			border-bottom: 1px solid #f0f0f0;
+		--row-gap: 20px;
+
+		display: grid;
+		gap: var(--row-gap) 16px;
+
+		// Note: The checkbox does not count for column counting purposes
+
+		&.is-7-column {
+			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
+		}
+		&.is-7-column:not(.has-checkbox) {
+			grid-template-columns: 2fr 1fr 1fr auto auto auto 36px;
+		}
+		&.is-6-column {
+			grid-template-columns: 20px 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+		&.is-6-column:not(.has-checkbox) {
+			grid-template-columns: 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+		&.is-5-column {
+			grid-template-columns: 20px 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+		&.is-5-column:not(.has-checkbox) {
+			grid-template-columns: 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+
+		tr::after {
+			display: block;
+			content: "";
+			height: 1px;
+			background: #f0f0f0;
+			grid-column: 1 / -1;
 		}
 	}
 
-	thead {
-		position: sticky;
-		top: var(--masterbar-height);
-		background: var(--color-surface-backdrop);
-		z-index: 9999;
-	}
-
-	th {
-		padding: 16px 0;
-		color: var(--studio-gray-60);
-		vertical-align: middle;
-		font-size: $font-body-small;
-		font-style: normal;
-		font-weight: 500;
-		line-height: 20px;
-	}
-
-	.domains-table__bulk-action-container {
-		width: 0;
-		min-width: fit-content;
-
-		.components-checkbox-control__input-container {
-			margin-right: 16px;
-		}
-	}
-
-	.domains-table__action-ellipsis-column-header {
-		width: 0;
-		min-width: fit-content;
+	thead,
+	tbody,
+	tr {
+		// For CSS gird to work the table cells need to be direct children of the grid parent.
+		// display: contents prevents the intermediate table elements from generating their own CSS boxes.
+		// This means we can keep the HTML semantics of a table for accessibility.
+		display: contents;
 	}
 
 	td {
-		padding: 20px 0;
-		height: 44px;
-		vertical-align: middle;
+		min-height: 44px;
+		display: flex;
+		align-items: center;
 
 		color: var(--studio-gray-50);
 		font-size: $font-body-small;
@@ -100,15 +113,11 @@
 	}
 
 	.domains-table-row__status-cell {
-		white-space: nowrap;
+		white-space: pre-line;
 		display: flex;
 		align-items: center;
 		gap: 4px;
 		font-size: $font-body-small;
-
-		@media ( min-width: 480px) {
-			width: 100px;
-		}
 
 		svg {
 			color: currentColor;
@@ -130,9 +139,14 @@
 		}
 	}
 
+	.domains-table-row__domain {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+	}
+
 	.domains-table-row__actions {
 		text-align: right;
-
 	}
 }
 
@@ -227,7 +241,7 @@
 .domains-table-row__domain-type-text {
 	display: none;
 	font-size: $font-body-extra-small;
-	font-style: normal;
+	font-style: italic;
 	font-weight: 400;
 	line-height: 20px;
 
@@ -237,10 +251,6 @@
 }
 
 .domains-table-mobile-cards {
-	height: calc(100vh - 280px);
-	overflow-y: auto;
-	padding: 3px;
-
 	.domains-table-mobile-cards-select-all {
 		display: flex;
 		align-items: center;

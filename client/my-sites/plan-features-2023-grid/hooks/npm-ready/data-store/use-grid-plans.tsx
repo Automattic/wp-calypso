@@ -71,12 +71,10 @@ export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits,
 	storageAddOns,
-	currencyCode,
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
-	currencyCode?: string | null;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 // TODO clk: move to types. will consume plan properties
@@ -203,7 +201,7 @@ const usePlanTypesWithIntent = ( {
 			];
 			break;
 		case 'plans-jetpack-app':
-			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM ];
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-paid-media':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];

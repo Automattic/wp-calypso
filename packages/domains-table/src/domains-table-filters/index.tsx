@@ -1,11 +1,10 @@
 import { Gridicon, SelectDropdown } from '@automattic/components';
 import SearchControl, { SearchIcon } from '@automattic/search';
-import { isMobile } from '@automattic/viewport';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { DropdownMenu, MenuGroup, MenuItem, ToggleControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactNode } from 'react';
 import { useDomainsTable } from '../domains-table/domains-table';
-
 import './style.scss';
 
 export interface DomainsTableFilter {
@@ -21,6 +20,8 @@ interface DomainsTableFiltersProps {
 export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersProps ) => {
 	const { __ } = useI18n();
 
+	const isMobile = useMobileBreakpoint();
+
 	const {
 		sortKey,
 		sortDirection,
@@ -28,6 +29,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 		setShowBulkActions,
 		showBulkActions,
 		domainsTableColumns,
+		canSelectAnyDomains,
 	} = useDomainsTable();
 
 	const options: ReactNode[] = [];
@@ -60,8 +62,6 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 			);
 		} );
 
-	const isMobileDevice = isMobile();
-
 	return (
 		<div className="domains-table-filter">
 			<SearchControl
@@ -73,7 +73,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 				placeholder={ __( 'Search by domain…' ) }
 				disableAutocorrect={ true }
 			/>
-			{ isMobileDevice && (
+			{ isMobile && (
 				<>
 					<div className="domains-table-mobile-cards-controls">
 						<SelectDropdown
@@ -83,22 +83,24 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 							{ options }
 						</SelectDropdown>
 
-						<DropdownMenu icon={ <Gridicon icon="ellipsis" /> } label={ __( 'Domain actions' ) }>
-							{ () => (
-								<MenuGroup>
-									<MenuItem
-										onClick={ () => setShowBulkActions( ! showBulkActions ) }
-										className="domains-table-mobile-cards-controls-bulk-toggle"
-									>
-										<ToggleControl
-											label={ __( 'Bulk actions ' ) }
-											onChange={ () => setShowBulkActions( ! showBulkActions ) }
-											checked={ showBulkActions }
-										/>
-									</MenuItem>
-								</MenuGroup>
-							) }
-						</DropdownMenu>
+						{ canSelectAnyDomains && (
+							<DropdownMenu icon={ <Gridicon icon="ellipsis" /> } label={ __( 'Domain actions' ) }>
+								{ () => (
+									<MenuGroup>
+										<MenuItem
+											onClick={ () => setShowBulkActions( ! showBulkActions ) }
+											className="domains-table-mobile-cards-controls-bulk-toggle"
+										>
+											<ToggleControl
+												label={ __( 'Bulk actions ' ) }
+												onChange={ () => setShowBulkActions( ! showBulkActions ) }
+												checked={ showBulkActions }
+											/>
+										</MenuItem>
+									</MenuGroup>
+								) }
+							</DropdownMenu>
+						) }
 					</div>
 				</>
 			) }

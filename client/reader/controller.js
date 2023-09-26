@@ -339,3 +339,17 @@ export async function siteSubscription( context, next ) {
 	);
 	return next();
 }
+
+export async function commentSubscriptionsManager( context, next ) {
+	context.primary = (
+		<AsyncLoad require="calypso/reader/site-subscriptions-manager/comment-subscriptions-manager" />
+	);
+	return next();
+}
+
+export async function pendingSubscriptionsManager( context, next ) {
+	context.primary = (
+		<AsyncLoad require="calypso/reader/site-subscriptions-manager/pending-subscriptions-manager" />
+	);
+	return next();
+}

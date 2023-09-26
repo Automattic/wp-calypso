@@ -5,17 +5,21 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import request from 'wpcom-proxy-request';
+import requestWithSubkeyFallback from 'calypso/lib/request-with-subkey-fallback/request-with-subkey-fallback';
 import useSubscribedNewsletterCategories from '../use-subscribed-newsletter-categories-query';
 
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
+jest.mock( 'calypso/lib/request-with-subkey-fallback/request-with-subkey-fallback', () =>
+	jest.fn()
+);
 
 describe( 'useSubscribedNewsletterCategories', () => {
 	let queryClient: QueryClient;
 	let wrapper: any;
 
 	beforeEach( () => {
-		( request as jest.MockedFunction< typeof request > ).mockReset();
+		(
+			requestWithSubkeyFallback as jest.MockedFunction< typeof requestWithSubkeyFallback >
+		 ).mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -35,7 +39,9 @@ describe( 'useSubscribedNewsletterCategories', () => {
 	} );
 
 	it( 'should return expected data when successful', async () => {
-		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( {
+		(
+			requestWithSubkeyFallback as jest.MockedFunction< typeof requestWithSubkeyFallback >
+		 ).mockResolvedValue( {
 			newsletter_categories: [
 				{
 					id: 1,
@@ -85,7 +91,9 @@ describe( 'useSubscribedNewsletterCategories', () => {
 	} );
 
 	it( 'should handle empty response', async () => {
-		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( {
+		(
+			requestWithSubkeyFallback as jest.MockedFunction< typeof requestWithSubkeyFallback >
+		 ).mockResolvedValue( {
 			newsletter_categories: [],
 		} );
 
@@ -99,7 +107,9 @@ describe( 'useSubscribedNewsletterCategories', () => {
 	} );
 
 	it( 'should call request with correct arguments', async () => {
-		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( {
+		(
+			requestWithSubkeyFallback as jest.MockedFunction< typeof requestWithSubkeyFallback >
+		 ).mockResolvedValue( {
 			success: true,
 		} );
 
@@ -107,12 +117,11 @@ describe( 'useSubscribedNewsletterCategories', () => {
 			wrapper,
 		} );
 
-		await waitFor( () => expect( request ).toHaveBeenCalled() );
+		await waitFor( () => expect( requestWithSubkeyFallback ).toHaveBeenCalled() );
 
-		expect( request ).toHaveBeenCalledWith( {
-			path: `/sites/123/newsletter-categories/subscriptions`,
-			apiVersion: '2',
-			apiNamespace: 'wpcom/v2',
-		} );
+		expect( requestWithSubkeyFallback ).toHaveBeenCalledWith(
+			false,
+			`/sites/123/newsletter-categories/subscriptions`
+		);
 	} );
 } );

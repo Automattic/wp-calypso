@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { type UseQueryOptions, useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
 export interface BulkDomainUpdateStatus {
@@ -47,7 +47,19 @@ export const getBulkDomainUpdateStatusQueryKey = () => {
 	return [ 'domains', 'bulk-actions' ];
 };
 
-export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
+export interface BulkDomainUpdateStatusResult {
+	domainResults: Map< string, DomainUpdateStatus[] >;
+	completedJobs: JobStatus[];
+}
+
+export function useBulkDomainUpdateStatusQuery< TError = unknown >(
+	pollingInterval: number,
+	options: UseQueryOptions<
+		BulkDomainUpdateStatusQueryFnData,
+		TError,
+		BulkDomainUpdateStatusResult
+	> = {}
+) {
 	return useQuery( {
 		queryFn: () =>
 			wpcomRequest< BulkDomainUpdateStatusQueryFnData >( {
@@ -55,7 +67,7 @@ export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 			} ),
-		select: ( data ) => {
+		select: ( data ): BulkDomainUpdateStatusResult => {
 			// get top-level info about recent jobs
 			const allJobs: JobStatus[] = Object.keys( data ).map( ( jobId ) => {
 				const job = data[ jobId ];
@@ -109,5 +121,6 @@ export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 		},
 		refetchInterval: pollingInterval,
 		queryKey: getBulkDomainUpdateStatusQueryKey(),
+		...options,
 	} );
 }

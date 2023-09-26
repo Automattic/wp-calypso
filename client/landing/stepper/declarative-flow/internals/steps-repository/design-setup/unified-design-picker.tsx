@@ -18,6 +18,7 @@ import {
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect, useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -448,12 +449,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
+
+		// When the user is done with checkout, send them back to the current url
+		// If the theme is externally managed, send them to the marketplace thank you page
+		const destination = selectedDesign?.is_externally_managed
+			? addQueryArgs( `/marketplace/thank-you/${ siteSlug }`, {
+					themes: selectedDesign?.slug,
+			  } )
+			: window.location.href.replace( window.location.origin, '' );
+
 		goToCheckout( {
 			flowName: flow,
 			stepName,
 			siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-			// When the user is done with checkout, send them back to the current url
-			destination: window.location.href.replace( window.location.origin, '' ),
+			destination,
 			plan,
 			extraProducts:
 				selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded

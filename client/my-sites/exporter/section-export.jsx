@@ -35,7 +35,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 				title={ translate( 'Want to export your site?' ) }
 				line={ translate( "Visit your site's wp-admin for all your import and export needs." ) }
 				action={ translate( 'Export %(siteTitle)s', { args: { siteTitle: site.title } } ) }
-				actionURL={ site.options.admin_url + 'export.php' }
+				actionURL={ site.options?.admin_url + 'export.php' }
 				actionTarget="_blank"
 			/>
 		);

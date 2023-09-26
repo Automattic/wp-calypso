@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useMemo, useState } from 'react';
@@ -21,9 +20,18 @@ import {
 } from 'calypso/state/domains/management/actions';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit as hasDomainCreditSelector } from 'calypso/state/sites/plans/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { domainManagementList } from '../../paths';
 import DomainHeader from '../components/domain-header';
+import {
+	createBulkAction,
+	deleteBulkActionStatus,
+	fetchAllDomains,
+	fetchBulkActionStatus,
+	fetchSite,
+	fetchSiteDomains,
+} from '../domains-table-fetch-functions';
 import EmptyDomainsListCard from './empty-domains-list-card';
 import { filterDomainsByOwner } from './helpers';
 import { ManageAllDomainsCTA } from './manage-domains-cta';
@@ -37,16 +45,18 @@ interface BulkSiteDomainsProps {
 }
 
 export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
-	const isMobile = useMobileBreakpoint();
 	const site = useSelector( getSelectedSite );
 	const userCanSetPrimaryDomains = useSelector(
 		( state ) => ! currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 	const hasDomainCredit = useSelector( ( state ) => hasDomainCreditSelector( state, site?.ID ) );
-	const { data, isLoading, refetch } = useSiteDomainsQuery( site?.ID );
+	const { data, isLoading, refetch } = useSiteDomainsQuery( site?.ID, {
+		queryFn: () => fetchSiteDomains( site?.ID ),
+	} );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
 	const dispatch = useDispatch();
+	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 
 	const hasNonWpcomDomains = useMemo( () => {
 		return (
@@ -89,13 +99,21 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					) }
 					domainStatusPurchaseActions={ purchaseActions }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
+					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
 					onDomainAction={ ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
 							return {
 								action: () => {
 									sendNudge( {
 										nudge: 'dns-settings',
-										initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
+										initialMessage: translate(
+											'I see you want to change your DNS settings for your domain %(domain)s. That’s a complex thing, but I can guide you and help you at any moment.',
+											{
+												args: {
+													domain: domain.name,
+												},
+											}
+										) as string,
 										context: { domain: domain.domain },
 									} );
 								},
@@ -104,7 +122,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 
 						if ( action === 'set-primary-address' && site ) {
 							return {
-								message: 'Set domain as the primary site address',
+								message: translate( 'Set domain as the primary site address' ),
 								action: async () => {
 									try {
 										await dispatch( setPrimaryDomain( site.ID, domain.domain ) );
@@ -122,20 +140,26 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 							setChangeSiteAddressSourceDomain( domain );
 						}
 					} }
+					footer={
+						<>
+							{ ! isLoading && (
+								<EmptyDomainsListCard
+									selectedSite={ site }
+									hasDomainCredit={ !! hasDomainCredit }
+									isCompact={ hasNonWpcomDomains }
+									hasNonWpcomDomains={ hasNonWpcomDomains }
+								/>
+							) }
+							<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
+						</>
+					}
+					fetchAllDomains={ fetchAllDomains }
+					fetchSite={ fetchSite }
+					fetchSiteDomains={ fetchSiteDomains }
+					createBulkAction={ createBulkAction }
+					fetchBulkActionStatus={ fetchBulkActionStatus }
+					deleteBulkActionStatus={ deleteBulkActionStatus }
 				/>
-				{ ! isMobile && (
-					<>
-						{ ! isLoading && (
-							<EmptyDomainsListCard
-								selectedSite={ site }
-								hasDomainCredit={ !! hasDomainCredit }
-								isCompact={ hasNonWpcomDomains }
-								hasNonWpcomDomains={ hasNonWpcomDomains }
-							/>
-						) }
-						<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
-					</>
-				) }
 				{ changeSiteAddressSourceDomain && (
 					<SiteAddressChanger
 						currentDomain={ changeSiteAddressSourceDomain }

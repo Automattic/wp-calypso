@@ -24,8 +24,20 @@
 
 			&__subtitle {
 				margin-bottom: 0;
+
+				a.site-subscriptions-manager__manage-notifications-button {
+					font-size: inherit;
+					font-family: inherit;
+					line-height: inherit;
+					text-decoration: none;
+					color: var(--color-primary);
+				}
 			}
 		}
+	}
+
+	.site-subscriptions-manager__nav {
+		margin-bottom: 32px;
 	}
 
 	hr.subscriptions__separator {

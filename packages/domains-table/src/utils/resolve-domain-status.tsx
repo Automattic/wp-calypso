@@ -45,31 +45,34 @@ export type ResolveDomainStatusReturn = {
 };
 
 export type ResolveDomainStatusOptionsBag = {
-	siteSlug?: string | null;
+	siteSlug?: string;
 	currentRoute?: string | null;
 	getMappingErrors?: boolean | null;
 	translate: I18N[ 'translate' ];
 	isPurchasedDomain?: boolean | null;
 	onRenewNowClick?(): void;
 	isCreditCardExpiring?: boolean | null;
+	monthsUtilCreditCardExpires?: number | null;
 };
 
 export type DomainStatusPurchaseActions = {
 	isCreditCardExpiring?: ( domain: ResponseDomain ) => boolean;
 	onRenewNowClick?: ( siteSlug: string, domain: ResponseDomain ) => void;
 	isPurchasedDomain?: ( domain: ResponseDomain ) => boolean;
+	monthsUtilCreditCardExpires?: ( domain: ResponseDomain ) => number | null;
 };
 
 export function resolveDomainStatus(
 	domain: ResponseDomain,
 	{
-		siteSlug = null,
+		siteSlug,
 		getMappingErrors = false,
 		currentRoute = null,
 		translate,
 		isPurchasedDomain = false,
 		onRenewNowClick,
 		isCreditCardExpiring = false,
+		monthsUtilCreditCardExpires = null,
 	}: ResolveDomainStatusOptionsBag
 ): ResolveDomainStatusReturn | null {
 	const transferOptions = {
@@ -91,6 +94,11 @@ export function resolveDomainStatus(
 	const mappingSetupCallToAction = {
 		href: domainMappingSetup( siteSlug as string, domain.domain ),
 		label: translate( 'Go to setup' ),
+	};
+
+	const paymentSetupCallToAction = {
+		href: '/me/purchases/payment-methods',
+		label: translate( 'Fix' ),
 	};
 
 	switch ( domain.type ) {
@@ -136,7 +144,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( getMappingErrors && siteSlug !== null ) {
+			if ( getMappingErrors ) {
 				const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 
 				const hasMappingError =
@@ -214,14 +222,22 @@ export function resolveDomainStatus(
 					icon: 'cached',
 				};
 			}
-
-			if ( isPurchasedDomain && isCreditCardExpiring ) {
+			if (
+				isPurchasedDomain &&
+				isCreditCardExpiring &&
+				monthsUtilCreditCardExpires &&
+				monthsUtilCreditCardExpires < 3
+			) {
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
 					status: translate( 'Action required' ),
 					icon: 'info',
+					noticeText: translate(
+						'Your credit card expires before the next renewal. Please update your payment information.'
+					),
 					listStatusWeight: 600,
+					callToAction: paymentSetupCallToAction,
 				};
 			}
 
@@ -289,7 +305,7 @@ export function resolveDomainStatus(
 				if ( domain.isRenewable ) {
 					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
 
-					if ( isPurchasedDomain && siteSlug && domain.currentUserIsOwner ) {
+					if ( isPurchasedDomain && domain.currentUserIsOwner ) {
 						noticeText.push( ' ' );
 						noticeText.push(
 							translate(
@@ -324,7 +340,7 @@ export function resolveDomainStatus(
 				} else if ( domain.isRedeemable ) {
 					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
 
-					if ( isPurchasedDomain && siteSlug && domain.currentUserIsOwner ) {
+					if ( isPurchasedDomain && domain.currentUserIsOwner ) {
 						noticeText.push( ' ' );
 						noticeText.push(
 							translate(
@@ -382,7 +398,7 @@ export function resolveDomainStatus(
 
 				let callToAction;
 
-				if ( isPurchasedDomain && siteSlug && domain.currentUserIsOwner ) {
+				if ( isPurchasedDomain && domain.currentUserIsOwner ) {
 					callToAction = {
 						onClick: onRenewNowClick,
 						label: translate( 'Renew now' ),
@@ -523,13 +539,22 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.SITE_REDIRECT:
-			if ( isPurchasedDomain && isCreditCardExpiring ) {
+			if (
+				isPurchasedDomain &&
+				isCreditCardExpiring &&
+				monthsUtilCreditCardExpires &&
+				monthsUtilCreditCardExpires < 3
+			) {
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
 					status: translate( 'Action required' ),
 					icon: 'info',
+					noticeText: translate(
+						'Your credit card expires before the next renewal. Please update your payment information.'
+					),
 					listStatusWeight: 600,
+					callToAction: paymentSetupCallToAction,
 				};
 			}
 

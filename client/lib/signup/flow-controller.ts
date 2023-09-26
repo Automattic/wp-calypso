@@ -45,6 +45,7 @@ import {
 import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getPlanCartItem } from '../cart-values/cart-items';
 import type { Flow, Dependencies } from '../../signup/types';
 
 const debug = debugModule( 'calypso:signup' );
@@ -442,7 +443,14 @@ export default class SignupFlowController {
 
 	_getNeedsToGoThroughCheckout() {
 		const progress = getSignupDependencyProgress( this._reduxStore.getState() );
-		return !! progress?.plans?.cartItem;
+
+		if ( ! progress?.plans?.cartItems ) {
+			return false;
+		}
+
+		return (
+			progress.plans.cartItems.length && Boolean( getPlanCartItem( progress.plans.cartItems ) )
+		);
 	}
 
 	_destination( dependencies: Dependencies ): string {

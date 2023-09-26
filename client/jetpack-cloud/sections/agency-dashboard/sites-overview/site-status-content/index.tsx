@@ -15,12 +15,12 @@ import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboar
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
 import SitesOverviewContext from '../context';
-import { getBoostRating, getBoostRatingClass } from '../lib/boost';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 import SiteBackupStaging from '../site-backup-staging';
 import SiteSelectCheckbox from '../site-select-checkbox';
 import SiteSetFavorite from '../site-set-favorite';
 import useRowMetadata from './hooks/use-row-metadata';
+import SiteBoostColumn from './site-boost-column';
 import type { AllowedTypes, SiteData } from '../types';
 
 interface Props {
@@ -111,8 +111,6 @@ export default function SiteStatusContent( {
 	const handleDeselectLicenseAction = () => {
 		dispatch( unselectLicense( siteId, type ) );
 	};
-
-	const hasBoost = rows.site.value.has_boost;
 
 	function getTrendIcon( viewsTrend: 'up' | 'down' ) {
 		if ( viewsTrend === 'up' ) {
@@ -268,24 +266,9 @@ export default function SiteStatusContent( {
 			);
 		}
 
-		if ( type === 'boost' ) {
-			const overallScore = rows.site.value.jetpack_boost_scores.overall;
-			if ( hasBoost ) {
-				return (
-					<div
-						className={ classNames(
-							'sites-overview__boost-score',
-							getBoostRatingClass( overallScore )
-						) }
-					>
-						{ translate( '%(rating)s Score', {
-							args: { rating: getBoostRating( overallScore ) },
-							comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
-						} ) }
-					</div>
-				);
-			}
-			return <div></div>;
+		// We will show a progress icon when the site score is being fetched.
+		if ( type === 'boost' && status !== 'progress' ) {
+			return <SiteBoostColumn site={ rows.site.value } />;
 		}
 
 		switch ( status ) {
@@ -318,18 +301,20 @@ export default function SiteStatusContent( {
 			}
 			case 'inactive': {
 				content = ! isLicenseSelected ? (
-					<button onClick={ handleSelectLicenseAction }>
-						<span className="sites-overview__status-select-license">
-							<Gridicon icon="plus-small" size={ 16 } />
-							<span>{ translate( 'Add' ) }</span>
-						</span>
+					<button
+						className="sites-overview__column-action-button"
+						onClick={ handleSelectLicenseAction }
+					>
+						<Gridicon icon="plus-small" size={ 16 } />
+						<span>{ translate( 'Add' ) }</span>
 					</button>
 				) : (
-					<button onClick={ handleDeselectLicenseAction }>
-						<span className="sites-overview__status-unselect-license">
-							<Gridicon icon="checkmark" size={ 16 } />
-							<span>{ translate( 'Selected' ) }</span>
-						</span>
+					<button
+						className="sites-overview__column-action-button is-selected"
+						onClick={ handleDeselectLicenseAction }
+					>
+						<Gridicon icon="checkmark" size={ 16 } />
+						<span>{ translate( 'Selected' ) }</span>
 					</button>
 				);
 				break;

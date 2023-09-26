@@ -70,7 +70,7 @@ class BlogSettings extends Component {
 			'draft_post_prompt',
 		];
 
-		if ( site.options.woocommerce_is_active ) {
+		if ( site.options?.woocommerce_is_active ) {
 			settingKeys.push( 'store_order' );
 		}
 

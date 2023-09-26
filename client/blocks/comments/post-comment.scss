@@ -33,7 +33,7 @@
 	}
 
 	&:not(.depth-0) .comments__comment-actions .comments__comment-actions-reply-label,
-	&:not(.depth-0) .comments__comment-actions .reader-share__reblog-label {
+	&:not(.depth-0) .comments__comment-actions .reader-share__label {
 		display: none;
 	}
 }

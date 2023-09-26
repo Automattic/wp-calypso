@@ -41,7 +41,6 @@ export const HelpCenterContactPage: FC = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const isWapuuEnabled = useIsWapuuEnabled();
-
 	const renderEmail = useShouldRenderEmailOption();
 	const {
 		hasActiveChats,

@@ -51,7 +51,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 		return generateRowKeys( logs );
 	}, [ logs ] );
 
-	const [ latestLogType, setLatestLogType ] = useState( logType );
+	const [ latestLogType, setLatestLogType ] = useState< LogType | undefined | null >( null );
 	useEffect( () => {
 		if ( ! isLoading && logType !== latestLogType ) {
 			setLatestLogType( logType );

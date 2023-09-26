@@ -175,12 +175,11 @@ import './style.scss';
 
 		if ( name === 'hidden' && value ) {
 			// Blur all focusable elements
-			this.find( '[tabindex], button, input, object, select, textarea' ).each( function (
-				_,
-				element
-			) {
-				element.blur();
-			} );
+			this.find( '[tabindex], button, input, object, select, textarea' ).each(
+				function ( _, element ) {
+					element.blur();
+				}
+			);
 		}
 	};
 	/*

@@ -32,7 +32,7 @@ const Badge = styled.div< { isForIntroOffer?: boolean } >`
 	letter-spacing: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'inherit' : '0.2px' ) };
 	font-weight: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 600 : 500 ) };
 	text-align: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'left' : 'center' ) };
-	padding: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? '0 6px' : '0 12px' ) };
+	padding: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 0 : '0 12px' ) };
 	background-color: ${ ( { isForIntroOffer } ) =>
 		isForIntroOffer ? 'inherit' : 'var( --studio-green-0 )' };
 	color: ${ ( { isForIntroOffer } ) =>

@@ -4,7 +4,7 @@ export function getSelectedDomain<
 	T extends {
 		type?: string;
 		name?: string;
-	}
+	},
 >( {
 	domains,
 	selectedDomainName,

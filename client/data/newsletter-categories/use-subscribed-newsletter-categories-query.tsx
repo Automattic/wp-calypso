@@ -1,9 +1,9 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import request from 'wpcom-proxy-request';
+import { useIsLoggedIn, requestWithSubkeyFallback } from 'calypso/lib/request-with-subkey-fallback';
 import { NewsletterCategories, NewsletterCategory } from './types';
 
 type NewsletterCategoryQueryProps = {
-	siteId?: number;
+	siteId: number;
 	subscriptionId?: number;
 };
 
@@ -28,16 +28,20 @@ const useSubscribedNewsletterCategories = ( {
 	siteId,
 	subscriptionId,
 }: NewsletterCategoryQueryProps ): UseQueryResult< NewsletterCategories > => {
+	const { isLoggedIn } = useIsLoggedIn();
+
 	return useQuery( {
 		queryKey: getSubscribedNewsletterCategoriesKey( siteId, subscriptionId ),
-		queryFn: () =>
-			request< NewsletterCategoryResponse >( {
-				path: `/sites/${ siteId }/newsletter-categories/subscriptions${
-					subscriptionId ? `/${ subscriptionId }` : ''
-				}`,
-				apiVersion: '2',
-				apiNamespace: 'wpcom/v2',
-			} ).then( convertNewsletterCategoryResponse ),
+		queryFn: () => {
+			try {
+				return requestWithSubkeyFallback< NewsletterCategoryResponse >(
+					isLoggedIn,
+					`/sites/${ siteId }/newsletter-categories/subscriptions${
+						subscriptionId ? `/${ subscriptionId }` : ''
+					}`
+				).then( convertNewsletterCategoryResponse );
+			} catch ( e ) {}
+		},
 		enabled: !! siteId,
 	} );
 };

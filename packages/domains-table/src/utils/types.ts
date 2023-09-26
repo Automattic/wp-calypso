@@ -43,7 +43,7 @@ export type TitanEmailSubscription = EmailSubscription & {
 	subscriptionId?: number | null;
 };
 
-export type TransferStatus = keyof typeof transferStatus | null;
+export type TransferStatus = ( typeof transferStatus )[ keyof typeof transferStatus ];
 
 export type ResponseDomain = {
 	adminEmail: string | null | undefined;

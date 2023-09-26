@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { PlansSelect, SiteSelect } from '@automattic/data-stores';
+import { PlansSelect, SiteSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -113,6 +113,8 @@ const videopress: Flow = {
 			setDomain( undefined );
 			setSelectedDesign( undefined );
 		};
+
+		const siteSlug = useSiteSlug();
 
 		const stepValidateUserIsLoggedIn = () => {
 			if ( ! userIsLoggedIn ) {
@@ -287,10 +289,13 @@ const videopress: Flow = {
 			return;
 		};
 
-		const goNext = () => {
+		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.replace( `/view/${ siteId ?? _siteSlug }` );
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+					}
+					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
 
 				default:
 					return navigate( 'intro' );

@@ -2,7 +2,7 @@
  * @group gutenberg
  * @group jetpack-wpcom-integration
  */
-import { BlockFlow, AIAssistantFlow } from '@automattic/calypso-e2e';
+import { BlockFlow, AIAssistantFlow, MarkdownFlow } from '@automattic/calypso-e2e';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -14,6 +14,16 @@ const blockFlows: BlockFlow[] = [
 		},
 		{ keywords: [ 'Vancouver' ] }
 	),
+	new MarkdownFlow(
+		{
+			text: '### Test',
+		},
+		{
+			expectedText: 'Test',
+			expectedRole: 'heading',
+		}
+	),
 ];
 
 createBlockTests( 'Blocks: Jetpack Writing', blockFlows );
+8;

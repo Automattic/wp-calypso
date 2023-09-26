@@ -88,7 +88,7 @@ const Task = ( {
 			actionUrl: string;
 			actionButton?: ReactNode;
 	  }
- ) &
+) &
 	(
 		| {
 				hasSecondaryAction?: false;
@@ -104,7 +104,7 @@ const Task = ( {
 				secondaryActionUrl: string;
 				secondaryActionButton?: ReactNode;
 		  }
-	 ) ) => {
+	) ) => {
 	const [ isLoading, setIsLoading ] = useState( forceIsLoading );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
 	const dispatch = useDispatch();

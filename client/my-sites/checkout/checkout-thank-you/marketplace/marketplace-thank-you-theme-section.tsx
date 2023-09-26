@@ -34,7 +34,9 @@ const ThemeSectionContainer = styled.div`
 const ThemeSectionImageContainer = styled.div`
 	padding: 8px 8px 0 8px;
 	border-radius: 16px;
-	box-shadow: 0px 15px 20px rgba( 0, 0, 0, 0.04 ), 0px 13px 10px rgba( 0, 0, 0, 0.03 ),
+	box-shadow:
+		0px 15px 20px rgba( 0, 0, 0, 0.04 ),
+		0px 13px 10px rgba( 0, 0, 0, 0.03 ),
 		0px 6px 6px rgba( 0, 0, 0, 0.02 );
 	width: 100%;
 `;

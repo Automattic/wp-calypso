@@ -1,10 +1,10 @@
-import { DomainData, SiteDetails } from '@automattic/data-stores';
+import { DomainData } from '@automattic/data-stores';
 import { I18N } from 'i18n-calypso';
 import { createSiteDomainObject } from './utils/assembler';
 import {
 	DomainStatusPurchaseActions,
-	ResolveDomainStatusReturn,
 	resolveDomainStatus,
+	ResolveDomainStatusReturn,
 } from './utils/resolve-domain-status';
 
 export const getSimpleSortFunctionBy =
@@ -33,40 +33,6 @@ export const getReverseSimpleSortFunctionBy =
 	( column: keyof DomainData ) => ( first: DomainData, second: DomainData, sortOrder: number ) =>
 		getSimpleSortFunctionBy( column )( first, second, sortOrder ) * -1;
 
-export const getSiteSortFunctions = () => {
-	return [
-		( first: DomainData, second: DomainData, sortOrder: number, sites?: SiteDetails[] ) => {
-			// sort all domain olny sites after/before the other sites
-			const firstSite = sites && sites[ first?.blog_id ];
-			const secondSite = sites && sites[ second?.blog_id ];
-
-			if ( firstSite?.options?.is_domain_only && secondSite?.options?.is_domain_only ) {
-				return 0;
-			}
-
-			if ( firstSite?.options?.is_domain_only ) {
-				return 1 * sortOrder;
-			}
-
-			if ( secondSite?.options?.is_domain_only ) {
-				return -1 * sortOrder;
-			}
-
-			return 0;
-		},
-		( first: DomainData, second: DomainData, sortOrder: number, sites?: SiteDetails[] ) => {
-			const firstSite = sites && sites[ first?.blog_id ];
-			const secondSite = sites && sites[ second?.blog_id ];
-
-			const firstTitle = firstSite?.title || firstSite?.slug;
-			const secondTitle = secondSite?.title || secondSite?.slug;
-
-			return ( firstTitle ?? '' ).localeCompare( secondTitle ?? '' ) * sortOrder;
-		},
-		getSimpleSortFunctionBy( 'domain' ),
-	];
-};
-
 export const getStatusSortFunctions = (
 	translate: I18N[ 'translate' ],
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions
@@ -92,12 +58,13 @@ export const getStatusSortFunctions = (
 		return ( firstStatusWeight - secondStatusWeight ) * sortOrder;
 	};
 
-	return [ compareStatus, getReverseSimpleSortFunctionBy( 'domain' ) ];
+	return [ compareStatus ];
 };
 
 export const shouldHideOwnerColumn = ( domains: DomainData[] ) => {
 	return ! domains.some( ( domain ) => domain.owner && ! domain.current_user_is_owner );
 };
+
 export const countDomainsRequiringAttention = (
 	domainStatutes: ResolveDomainStatusReturn[] | undefined
 ) =>

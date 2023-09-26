@@ -283,12 +283,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'inbox',
-		paths: [ '/inbox' ],
-		module: 'calypso/my-sites/email',
-		group: 'sites',
-	},
-	{
 		name: 'checkout',
 		paths: [ '/checkout' ],
 		module: 'calypso/my-sites/checkout',
@@ -421,7 +415,12 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/subscriptions', '^/read/subscriptions/(\\d+)(/)?$' ],
+		paths: [
+			'/read/subscriptions',
+			'/read/subscriptions/comments',
+			'/read/subscriptions/pending',
+			'^/read/subscriptions/(\\d+)(/)?$',
+		],
 		module: 'calypso/reader/site-subscriptions-manager',
 		group: 'reader',
 	},

@@ -1,23 +1,24 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import NoticeBanner from '@automattic/components/src/notice-banner';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
 	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/type-detection,stats/paid-wpcom-stats&from=${ from }-stats-commercial-site-upgrade-notice&productType=commercial`;
-	if ( ! isOdysseyStats ) {
-		return purchasePath;
-	}
-	// We use absolute path here as it runs in Odyssey as well.
-	return `https://wordpress.com${ purchasePath }`;
+	return purchasePath;
 };
 
 const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
@@ -42,10 +43,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 			  )
 			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_support_button_clicked' );
 		// Allow some time for the event to be recorded before redirecting.
-		setTimeout(
-			() => ( window.location.href = getStatsPurchaseURL( siteId, isOdysseyStats ) ),
-			250
-		);
+		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
 	};
 
 	useEffect( () => {
@@ -59,6 +57,10 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 	if ( noticeDismissed ) {
 		return null;
 	}
+
+	const learnMoreLink = isWPCOMSite
+		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
+		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
 	return (
 		<div
@@ -86,7 +88,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 							commercialUpgradeLink: (
 								<a
 									className="notice-banner__action-link"
-									href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+									href={ localizeUrl( learnMoreLink ) }
 									target="_blank"
 									rel="noreferrer"
 								/>

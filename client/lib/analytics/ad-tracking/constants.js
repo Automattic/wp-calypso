@@ -86,3 +86,5 @@ export const GA_PRODUCT_BRAND_AKISMET = 'Akismet';
  */
 export const WOOEXPRESS_AFFILIATE_VENDOR_ID = '67386441';
 export const WPCOM_AFFILIATE_VENDOR_ID = '67402';
+
+export const WPCOM_CLARITY_URI = 'https://www.clarity.ms/tag/j0cc1i1dba';

@@ -48,6 +48,10 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 			await editorPage.visit( 'post' );
 		} );
 
+		it( 'Enter post title', async () => {
+			await editorPage.enterTitle( `${ specName } - ${ DataHelper.getDateString( 'ISO-8601' ) }` );
+		} );
+
 		describe( 'Add and configure blocks in the editor', function () {
 			for ( const blockFlow of blockFlows ) {
 				it( `${ blockFlow.blockSidebarName }: Add the block from the sidebar`, async function () {

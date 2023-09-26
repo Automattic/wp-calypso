@@ -15,12 +15,12 @@ interface SetAutoRenewVariables {
 	autoRenew: boolean;
 }
 
-type BulkUpdateVariables = UpdateContactInfoVariables | SetAutoRenewVariables;
+export type BulkUpdateVariables = UpdateContactInfoVariables | SetAutoRenewVariables;
 
 export function useDomainsBulkActionsMutation<
 	TData = unknown,
 	TError = unknown,
-	TContext = unknown
+	TContext = unknown,
 >( options: UseMutationOptions< TData, TError, BulkUpdateVariables, TContext > = {} ) {
 	const { mutate, ...rest } = useMutation( {
 		mutationFn: ( variables ) => {

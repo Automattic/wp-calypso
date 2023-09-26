@@ -45,7 +45,10 @@ export class StartImportFlow {
 	 * @param {Page} page The underlying page.
 	 * @param framework
 	 */
-	constructor( private page: Page, private framework: 'signup' | 'stepper' ) {}
+	constructor(
+		private page: Page,
+		private framework: 'signup' | 'stepper'
+	) {}
 
 	/**
 	 * Given text, click on the button's first instance with the text.

@@ -1,4 +1,4 @@
-const SITE_FRAGMENT_REGEX = /\/(email|inbox|checkout|domains|purchases|plans|view)(\/)*/i;
+const SITE_FRAGMENT_REGEX = /\/(email|mailboxes|checkout|domains|purchases|plans|view)(\/)*/i;
 
 /**
  * Check if a path should report the current selected site's main product (`site`, `domain` or `email`)

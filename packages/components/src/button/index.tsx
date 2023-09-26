@@ -65,7 +65,7 @@ const cleanButtonProps = ( {
 	target,
 	transparent,
 	...buttonProps
-}: ButtonProps | AnchorProps ): ButtonProps => ( { ...buttonProps, type } as ButtonProps );
+}: ButtonProps | AnchorProps ): ButtonProps => ( { ...buttonProps, type } ) as ButtonProps;
 
 const Button: ForwardRefRenderFunction<
 	HTMLButtonElement | HTMLAnchorElement,

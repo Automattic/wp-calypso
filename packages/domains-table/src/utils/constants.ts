@@ -21,7 +21,7 @@ export const transferStatus = {
 	COMPLETED: 'completed',
 	PENDING_START: 'pending_start',
 	PENDING_ASYNC: 'pending_async',
-};
+} as const;
 
 export const registrar = {
 	OPENHRS: 'OpenHRS',

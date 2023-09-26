@@ -98,6 +98,7 @@ export default function CampaignItemDetails( props: Props ) {
 		target_urn,
 		delivery_percent,
 		created_at,
+		format,
 	} = campaign || {};
 
 	const {
@@ -609,7 +610,7 @@ export default function CampaignItemDetails( props: Props ) {
 									{ translate( 'Ad preview' ) }
 								</div>
 								<div className="campaign-item-details__preview-header-dimensions">
-									{ ! isLoading ? (
+									{ ! isLoading && format !== 'html5_v2' ? (
 										<>
 											<span>{ `${ width }x${ height }` }</span>
 										</>
@@ -619,9 +620,11 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 							</div>
 							{ isSmallScreen && <hr className="campaign-item-ad-header-line" /> }
-							<div className="campaign-item-details__preview-content">
-								<AdPreview isLoading={ isLoading } htmlCode={ creative_html || '' } />
-							</div>
+							<AdPreview
+								isLoading={ isLoading }
+								htmlCode={ creative_html || '' }
+								templateFormat={ format || '' }
+							/>
 							<p className="campaign-item-details__preview-disclosure">
 								{ translate(
 									'Depending on the platform, the ad may seem differently from the preview.'

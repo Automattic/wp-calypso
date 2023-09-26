@@ -15,8 +15,11 @@ export function sortGroupNames< T >(
 	const remainingGroups = groups.filter( ( x ) => ! preferredGroupOrder.includes( x ) );
 	const allGroups = orderedGroups.concat( remainingGroups.sort() );
 
-	return allGroups.reduce( ( result, groupName ) => {
-		result[ groupName ] = groupsObject[ groupName ];
-		return result;
-	}, {} as Record< string, T > );
+	return allGroups.reduce(
+		( result, groupName ) => {
+			result[ groupName ] = groupsObject[ groupName ];
+			return result;
+		},
+		{} as Record< string, T >
+	);
 }

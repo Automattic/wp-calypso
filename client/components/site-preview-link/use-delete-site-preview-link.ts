@@ -51,8 +51,9 @@ export const useDeleteSitePreviewLink = ( options: UseDeleteSitePreviewLinkOptio
 		onSettled: ( data: PreviewLink | undefined ) => {
 			if ( data?.code ) {
 				const cachedData = queryClient.getQueryData< PreviewLinksResponse >( queryKey );
-				queryClient.setQueryData( queryKey, () =>
-					cachedData?.filter( ( previewLink ) => ! previewLink.isRemoving )
+				queryClient.setQueryData(
+					queryKey,
+					() => cachedData?.filter( ( previewLink ) => ! previewLink.isRemoving )
 				);
 			}
 			queryClient.invalidateQueries( queryKey );

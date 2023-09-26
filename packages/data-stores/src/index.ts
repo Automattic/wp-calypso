@@ -2,6 +2,7 @@ import * as Analyzer from './analyzer';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
+import * as LaunchpadNavigator from './launchpad-navigator';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
@@ -22,6 +23,7 @@ export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './theme';
 export * from './user/types';
+export * from './wpcom-plans-ui/types';
 export * from './queries/use-launchpad';
 export * from './queries/use-all-domains-query';
 export * from './queries/use-site-domains-query';
@@ -36,6 +38,7 @@ export {
 	User,
 	DomainSuggestions,
 	HelpCenter,
+	LaunchpadNavigator,
 	Site,
 	Plans,
 	WpcomPlansUI,

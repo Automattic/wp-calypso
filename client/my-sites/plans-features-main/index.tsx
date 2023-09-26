@@ -25,7 +25,11 @@ import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import {
+	planItem as getCartItemForPlan,
+	getPlanCartItem,
+} from 'calypso/lib/cart-values/cart-items';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
@@ -34,7 +38,6 @@ import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-gri
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -51,6 +54,7 @@ import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
 import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
+import useObservableForOdie from './hooks/use-observable-for-odie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -68,7 +72,6 @@ import type {
 	PlanActionOverrides,
 } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
@@ -99,7 +102,7 @@ export interface PlansFeaturesMainProps {
 	basePlansPath?: string;
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
-	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
+	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -218,7 +221,7 @@ const PlansFeaturesMain = ( {
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
 	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
-	const storageAddOns = useAddOns( siteId ?? undefined ).filter(
+	const storageAddOns = useAddOns( siteId ?? undefined, isInSignup ).filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
 	);
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
@@ -244,6 +247,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+	const observableForOdieRef = useObservableForOdie();
 
 	const toggleShowPlansComparisonGrid = () => {
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
@@ -253,12 +257,22 @@ const PlansFeaturesMain = ( {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
 
-	const { isVisible, setIsVisible, trackEvent } = useOdieAssistantContext();
 	const currentUserName = useSelector( getCurrentUserName );
 	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
 		useGetFreeSubdomainSuggestion(
 			paidDomainName || siteTitle || signupFlowUserName || currentUserName
 		);
+
+	// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
+	// We can use `useExperiment()` and its `isEligible` check to avoid the condition, but it's intentional to use loadExperimentAssignment() here
+	// to be consistent with the other A/A tests.
+	useEffect( () => {
+		if ( flowName === 'onboarding' ) {
+			loadExperimentAssignment( 'calypso_srm_test_plans_page_view_free_plan_modal_view' );
+			loadExperimentAssignment( 'calypso_srm_test_plans_page_view_free_plan_button_click' );
+		}
+	}, [] );
+
 	const resolvedSubdomainName: DataResponse< string > = {
 		isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
 		result: signupFlowSubdomain
@@ -285,7 +299,12 @@ const PlansFeaturesMain = ( {
 		setIsFreePlanPaidDomainDialogOpen( ! isFreePlanPaidDomainDialogOpen );
 	};
 
-	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
+	const handleUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
+		const cartItemForPlan = getPlanCartItem( cartItems );
+		const cartItemForStorageAddOn = cartItems?.find(
+			( items ) => items.product_slug === PRODUCT_1GB_SPACE
+		);
+
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
@@ -302,8 +321,14 @@ const PlansFeaturesMain = ( {
 			}
 		}
 
+		if ( cartItemForStorageAddOn?.extra ) {
+			recordTracksEvent( 'calypso_signup_storage_add_on_upgrade_click', {
+				add_on_slug: cartItemForStorageAddOn.extra.feature_slug,
+			} );
+		}
+
 		if ( onUpgradeClick ) {
-			onUpgradeClick( cartItemForPlan );
+			onUpgradeClick( cartItems );
 			return;
 		}
 
@@ -577,7 +602,8 @@ const PlansFeaturesMain = ( {
 					} }
 					onPlanSelected={ () => {
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
+						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
+						onUpgradeClick?.( cartItems );
 					} }
 				/>
 			) }
@@ -599,7 +625,8 @@ const PlansFeaturesMain = ( {
 						}
 						invalidateDomainSuggestionCache();
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
+						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
+						onUpgradeClick?.( cartItems );
 					} }
 				/>
 			) }
@@ -687,19 +714,16 @@ const PlansFeaturesMain = ( {
 							stickyRowOffset={ masterbarHeight }
 							usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 							allFeaturesList={ FEATURES_LIST }
-							showOdie={ () => {
-								if ( ! isVisible ) {
-									trackEvent( 'calypso_odie_chat_toggle_visibility', {
-										visibility: true,
-										trigger: 'scroll',
-									} );
-									setIsVisible( true );
-								}
-							} }
 							showPlansComparisonGrid={ showPlansComparisonGrid }
 							toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
 							planTypeSelectorProps={ planTypeSelectorProps }
 							ref={ plansComparisonGridRef }
+							observableForOdieRef={ observableForOdieRef }
+							onStorageAddOnClick={ ( addOnSlug ) =>
+								recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
+									add_on_slug: addOnSlug,
+								} )
+							}
 						/>
 					</div>
 				</>

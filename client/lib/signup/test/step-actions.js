@@ -16,10 +16,13 @@ jest.mock( 'calypso/signup/config/flows-pure', () =>
 // to ensure jest waits for the test to finish.
 async function testCreateSite( cb, ...args ) {
 	return new Promise( ( resolve ) => {
-		createSiteWithCart( ( response ) => {
-			cb( response );
-			resolve();
-		}, ...args );
+		createSiteWithCart(
+			( response ) => {
+				cb( response );
+				resolve();
+			},
+			...args
+		);
 	} );
 }
 
@@ -199,7 +202,7 @@ describe( 'isPlanFulfilled()', () => {
 			submitSignupStep,
 		};
 		const defaultDependencies = { cartItem: 'testPlan' };
-		const cartItem = { product_slug: defaultDependencies.cartItem };
+		const cartItems = [ { product_slug: defaultDependencies.cartItem } ];
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
@@ -207,8 +210,8 @@ describe( 'isPlanFulfilled()', () => {
 		isPlanFulfilled( stepName, defaultDependencies, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, cartItem, wasSkipped: true },
-			{ cartItem }
+			{ stepName, cartItems, wasSkipped: true },
+			{ cartItems }
 		);
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
@@ -233,8 +236,8 @@ describe( 'isPlanFulfilled()', () => {
 		isPlanFulfilled( stepName, undefined, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, cartItem: null, wasSkipped: true },
-			{ cartItem: null }
+			{ stepName, cartItems: null, wasSkipped: true },
+			{ cartItems: null }
 		);
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
