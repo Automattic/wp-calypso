@@ -174,7 +174,9 @@ export class ImportEverything extends SectionMigrate {
 			return (
 				<NotAuthorized
 					onStartBuilding={ () => {
-						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard' );
+						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+							from: 'target-staging',
+						} );
 						stepNavigator.goToDashboardPage();
 					} }
 					onStartBuildingText={ translate( 'Skip to dashboard' ) }
@@ -192,8 +194,15 @@ export class ImportEverything extends SectionMigrate {
 					isMigrateFromWp={ isMigrateFromWp }
 					isTrial={ isMigrationTrialSite( this.props.targetSite ) }
 					onContentOnlyClick={ onContentOnlySelection }
+					sourceSite={ sourceSite }
 					onFreeTrialClick={ () => {
 						stepNavigator?.navigate( `migrationTrial${ window.location.search }` );
+					} }
+					onNotAuthorizedClick={ () => {
+						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+							from: 'pre-migration',
+						} );
+						stepNavigator?.goToDashboardPage();
 					} }
 				/>
 			);
