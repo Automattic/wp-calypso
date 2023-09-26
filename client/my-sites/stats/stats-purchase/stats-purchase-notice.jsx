@@ -104,7 +104,7 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 
 	return (
 		<StatsSingleItemPagePurchaseFrame isFree>
-			<h1>{ translate( 'You have already purchased Jetpack Stats Free Plan!' ) }</h1>
+			<h1>{ translate( 'You already have a free license for Jetpack Stats.' ) }</h1>
 			<p>
 				{ translate(
 					'You already have a free license for this product, and it has been successfully activated. Currently have access to:'
