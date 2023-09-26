@@ -9,7 +9,7 @@ export interface Activity {
 			type?: string;
 			url?: string;
 			published?: number;
-		}
+		},
 	];
 	activityIcon?: string;
 	activityId: number;
