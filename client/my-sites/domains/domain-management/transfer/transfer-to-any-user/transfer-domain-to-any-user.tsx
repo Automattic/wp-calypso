@@ -150,7 +150,7 @@ export default function TransferDomainToAnyUser( {
 				) }
 				<p>
 					{ translate(
-						'You can transfer the domain to any WordPress.com user, even if they do not have a site. If the user does not have a WordPress.com account, they will be prompted to create one.'
+						'You can transfer the domain to any WordPress.com user. If the user does not have a WordPress.com account, they will be prompted to create one.'
 					) }
 				</p>
 				<p>
