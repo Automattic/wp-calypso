@@ -142,7 +142,9 @@ describe( 'PlansFeaturesMain', () => {
 		test( 'Should render <PlanFeatures /> with WP.com data-e2e-plans when requested', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 
-			expect( screen.getByTestId( 'plan-features' ).parentElement ).toHaveAttribute(
+			// immediate parent is <div className="plans-wrapper">
+			// data-e2e-plans is set on the parent of that
+			expect( screen.getByTestId( 'plan-features' ).parentElement.parentElement ).toHaveAttribute(
 				'data-e2e-plans',
 				'wpcom'
 			);
