@@ -42,3 +42,35 @@
 		}
 	}
 }
+
+.domain-analyzer--form {
+	&.is-error {
+		.domain-analyzer--form-container {
+			border: 1px solid var(--studio-red-50);
+		}
+	}
+}
+
+.domain-analyzer--msg {
+	margin-top: 1rem;
+
+	p {
+		font-size: 1rem !important;
+		margin: 0;
+	}
+
+	.center {
+		text-align: center;
+	}
+
+	.error {
+		color: var(--studio-red-50) !important;
+
+		svg {
+			top: 4px;
+			position: relative;
+			fill: var(--studio-red-50);
+			transform: rotate(180deg);
+		}
+	}
+}
