@@ -39,7 +39,7 @@ export default function DomainAnalyzer( props: Props ) {
 							name="domain"
 							autoComplete="off"
 							defaultValue={ domain }
-							placeholder={ translate( 'mysite.com' ) }
+							placeholder={ translate( 'Enter a website URL or domain name' ) }
 						/>
 					</div>
 					<div className="col-2">
