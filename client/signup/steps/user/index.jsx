@@ -8,7 +8,8 @@ import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import SignupForm from 'calypso/blocks/signup-form';
+import SignupFormOld from 'calypso/blocks/signup-form';
+import SignupForm from 'calypso/blocks/signup-form-social-first';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
@@ -463,6 +464,10 @@ export class UserStep extends Component {
 			return this.props.translate( 'Let’s get you signed up.' );
 		}
 
+		if ( ! headerText ) {
+			return translate( 'Create your account' );
+		}
+
 		return headerText;
 	}
 
@@ -515,6 +520,38 @@ export class UserStep extends Component {
 			}
 		}
 
+		console.log("this.props?.queryObject?.variationName", this.props?.queryObject?.variationName)
+
+		if ( this.props?.queryObject?.variationName === 'newsletter' ) {
+			return (
+				<>
+					<SignupFormOld
+						{ ...omit( this.props, [ 'translate' ] ) }
+						email={ this.props.queryObject?.email_address || '' }
+						redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
+						disabled={ this.userCreationStarted() }
+						submitting={ this.userCreationStarted() }
+						save={ this.save }
+						submitForm={ this.submitForm }
+						submitButtonText={ this.submitButtonText() }
+						suggestedUsername={ this.props.suggestedUsername }
+						handleSocialResponse={ this.handleSocialResponse }
+						isPasswordless={ isPasswordless }
+						isSocialFirst={ true }
+						queryArgs={ this.props.initialContext?.query || {} }
+						isSocialSignupEnabled={ isSocialSignupEnabled }
+						socialService={ socialService }
+						socialServiceResponse={ socialServiceResponse }
+						recaptchaClientId={ this.state.recaptchaClientId }
+						horizontal={ isReskinned }
+						isReskinned={ isReskinned }
+						shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
+					/>
+					<div id="g-recaptcha"></div>
+				</>
+			);
+		}
+
 		return (
 			<>
 				<SignupForm
@@ -528,7 +565,6 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
-					isPasswordless={ isPasswordless }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
