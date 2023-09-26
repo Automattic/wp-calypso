@@ -84,8 +84,12 @@ describe( 'Post block', () => {
 			isTrashed: true,
 		};
 
+		const meta = {
+			published: null,
+		};
+
 		const text = 'this is a post';
-		render( <Blocks.Post content={ content } children={ text } /> );
+		render( <Blocks.Post content={ content } children={ text } meta={ meta } /> );
 
 		const link = screen.getByRole( 'link' );
 
@@ -101,8 +105,12 @@ describe( 'Post block', () => {
 			isTrashed: true,
 		};
 
+		const meta = {
+			published: null,
+		};
+
 		const text = 'this is a post';
-		render( <Blocks.Post content={ content } children={ text } /> );
+		render( <Blocks.Post content={ content } children={ text } meta={ meta } /> );
 
 		const unlinkedText = screen.getByText( text );
 		const link = screen.queryByRole( 'link' );
@@ -120,8 +128,12 @@ describe( 'Post block', () => {
 			isTrashed: false,
 		};
 
+		const meta = {
+			published: null,
+		};
+
 		const text = 'another post';
-		render( <Blocks.Post content={ content } children={ text } /> );
+		render( <Blocks.Post content={ content } children={ text } meta={ meta } /> );
 
 		const link = screen.getByRole( 'link' );
 
@@ -141,9 +153,14 @@ describe( 'Post block', () => {
 			isTrashed: false,
 		};
 
+		const meta = {
+			published: null,
+		};
+
 		const text = 'another post';
-		const unlinkedPost = render( <Blocks.Post content={ content } children={ text } /> ).container
-			.firstChild;
+		const unlinkedPost = render(
+			<Blocks.Post content={ content } children={ text } meta={ meta } />
+		).container.firstChild;
 
 		expect( unlinkedPost.tagName ).toEqual( 'EM' );
 		expect( unlinkedPost ).toHaveTextContent( text );
