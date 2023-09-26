@@ -107,7 +107,6 @@ const ReaderTagSidebar = ( { tag, showFollow } ) => {
 					<FollowButton
 						followLabel={ translate( 'Follow tag' ) }
 						followingLabel={ translate( 'Following tag' ) }
-						iconSize={ 24 }
 						following={ isFollowing }
 						onFollowToggle={ toggleFollowing }
 						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
