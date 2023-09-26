@@ -21,15 +21,21 @@ const SiteLogsToolbarDownloadProgress = ( {
 
 	return (
 		<span className="site-logs-toolbar__download-progress">
-			{ translate(
-				'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
-				{
-					args: {
-						logRecordsDownloaded: recordsDownloaded,
-						totalLogRecordsAvailable: totalRecordsAvailable,
-					},
-				}
-			) }
+			{ totalRecordsAvailable === 10000
+				? translate( 'Download progress: %(logRecordsDownloaded)d records', {
+						args: {
+							logRecordsDownloaded: recordsDownloaded,
+						},
+				  } )
+				: translate(
+						'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
+						{
+							args: {
+								logRecordsDownloaded: recordsDownloaded,
+								totalLogRecordsAvailable: totalRecordsAvailable,
+							},
+						}
+				  ) }
 		</span>
 	);
 };
