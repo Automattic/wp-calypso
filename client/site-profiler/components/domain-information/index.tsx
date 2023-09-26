@@ -176,7 +176,7 @@ export default function DomainInformation( props: Props ) {
 							) }
 							{ whois.registrant_email && (
 								<li>
-									{ whois.registrant_email.includes( '@' ) && (
+									{ whois.registrant_email?.includes( '@' ) && (
 										<a href={ `mailto:${ whois.registrant_email }` }>{ translate( 'Email' ) }</a>
 									) }
 									{ urlRegex.test( whois.registrant_email ) &&
