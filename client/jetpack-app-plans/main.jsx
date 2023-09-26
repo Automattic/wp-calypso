@@ -8,45 +8,56 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 
 import './style.scss';
 
-const JetpackAppPlans = ( { domainName } ) => {
+const JetpackAppPlans = ( { domainName, redirectTo } ) => {
 	const planSlug = useSelector( ( state ) =>
 		getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 )
 	);
 	const plansLoaded = Boolean( planSlug );
 
-	const loading = (
-		<div className="plans__loading">
-			<LoadingEllipsis active />
-		</div>
-	);
-
-	const onUpgradeClick = () => {
-		// TODO: Implement this
-		// console.log(cartItem);
+	// Helper function to handle redirection
+	const handleRedirect = ( data ) => {
+		if ( redirectTo ) {
+			window.location.href = `${ redirectTo }${
+				data ? `?cartItem=${ encodeURIComponent( JSON.stringify( data ) ) }` : ''
+			}`;
+		}
 	};
 
-	const removePaidDomain = () => {
-		// TODO: Continue with free plan flow
+	const onUpgradeClick = ( partialPlan ) => {
+		if ( partialPlan ) {
+			const plan = getPlan( partialPlan.product_slug );
+			const cartItem = {
+				product_id: plan.getProductId(),
+				product_slug: partialPlan.product_slug,
+			};
+			handleRedirect( cartItem );
+		} else {
+			handleRedirect();
+		}
 	};
 
-	const plans = (
-		<PlansFeaturesMain
-			paidDomainName={ domainName }
-			intent="plans-jetpack-app-site-creation"
-			isInSignup={ true }
-			intervalType="yearly"
-			onUpgradeClick={ ( cartItem ) => onUpgradeClick( cartItem ) }
-			plansWithScroll={ false }
-			flowName="onboarding"
-			removePaidDomain={ () => removePaidDomain() }
-			hidePlanTypeSelector={ true }
-		/>
-	);
+	const removePaidDomain = () => handleRedirect();
 
 	return (
 		<Main className="jetpack-app-plans">
 			<QueryPlans />
-			{ plansLoaded ? plans : loading }
+			{ plansLoaded ? (
+				<PlansFeaturesMain
+					paidDomainName={ domainName }
+					intent="plans-jetpack-app-site-creation"
+					isInSignup
+					intervalType="yearly"
+					onUpgradeClick={ onUpgradeClick }
+					plansWithScroll={ false }
+					flowName="onboarding"
+					removePaidDomain={ removePaidDomain }
+					hidePlanTypeSelector
+				/>
+			) : (
+				<div className="plans__loading">
+					<LoadingEllipsis active />
+				</div>
+			) }
 		</Main>
 	);
 };
