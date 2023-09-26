@@ -6,28 +6,38 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import './style.scss';
+import { addMailPoetUpgrade } from 'calypso/data/marketplace/mailpoet-add-upgrade';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
-type Props = {
-	siteSlug: string;
-};
-
-export const MailPoetConfirmationPage: React.FC< Props > = ( { siteSlug } ) => {
+export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ isBusy, setIsBusy ] = useState( false );
+	const [ isCompleted, setIsCompleted ] = useState( false );
 
-	const getItNowLink = 'https://wordpress.com/pricing/';
-
-	const getItNowClickHandler = () => {
+	const getItNowClickHandler = async () => {
 		setIsBusy( true );
-		// TODO: implement get it now handlergst
-		dispatch( { type: 'GET_IT_NOW', payload: siteSlug } );
-		// console.log( 'getItNowClickHandler' );
+		try {
+			await addMailPoetUpgrade( siteId );
+
+			dispatch(
+				successNotice(
+					translate(
+						'The MailPoet is added to your site. MailPoet plugin will be installed and activated shortly.'
+					)
+				)
+			);
+		} catch ( error ) {
+			dispatch( errorNotice( ( error as Error ).message ) );
+		} finally {
+			setIsBusy( false );
+			// Either if error or success. We will mark it as completed so user can navigate back
+			setIsCompleted( true );
+		}
 	};
 
 	const dismissHandler = () => {
-		// TODO: implement dismiss handler
-		// console.log( 'Dismissed' );
+		window.history.back();
 	};
 
 	return (
@@ -41,32 +51,37 @@ export const MailPoetConfirmationPage: React.FC< Props > = ( { siteSlug } ) => {
 			/>
 			<Card>
 				{ /* <TrackComponentView eventName="calypso_profile_domain_upsell_impression" /> */ }
-				<div>
-					<p>
-						{ translate(
-							'The eCommerce plan subscription provides a complimentary MailPoet Business Subscription, allowing you to send visually appealing emails that consistently land in inboxes and clutivate a loyal subscriber base.'
-						) }
-					</p>
-					<p>
-						{ translate( 'Know more about {{a/}}', {
-							components: {
-								a: (
-									<a href="https://kb.mailpoet.com/article/183-mailpoets-sending-service">
-										MailPoet Service
-									</a>
-								),
-							},
-						} ) }
-					</p>
-
-					<div className="mailpoet-confirmation-actions">
-						<Button primary href={ getItNowLink } onClick={ getItNowClickHandler }>
-							{ translate( 'Get it Now' ) }
+				<p>
+					{ translate(
+						'The eCommerce plan subscription provides a complimentary MailPoet Business Subscription, allowing you to send visually appealing emails that consistently land in inboxes and clutivate a loyal subscriber base.'
+					) }
+				</p>
+				<p>
+					{ translate( 'Know more about {{a/}}', {
+						components: {
+							a: (
+								<a href="https://kb.mailpoet.com/article/183-mailpoets-sending-service">
+									MailPoet Service
+								</a>
+							),
+						},
+					} ) }
+				</p>
+				<div className="mailpoet-confirmation-actions">
+					{ isCompleted ? (
+						<Button primary onClick={ dismissHandler } busy={ isBusy }>
+							{ translate( 'Go Back' ) }
 						</Button>
-						<Button onClick={ dismissHandler } busy={ isBusy }>
-							{ translate( 'No I´m ok' ) }
-						</Button>
-					</div>
+					) : (
+						<>
+							<Button primary onClick={ getItNowClickHandler } busy={ isBusy }>
+								{ translate( 'Get it Now' ) }
+							</Button>
+							<Button onClick={ dismissHandler } busy={ isBusy }>
+								{ translate( 'No I´m ok' ) }
+							</Button>
+						</>
+					) }
 				</div>
 			</Card>
 		</Main>

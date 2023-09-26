@@ -83,7 +83,7 @@ export function redirectMailpoetConfirmation( context, next ) {
 	const site = getSelectedSite( state );
 
 	context.primary = createElement( MailPoetConfirmationPage, {
-		siteSlug: site.slug,
+		siteId: site.ID,
 	} );
 	next();
 }
