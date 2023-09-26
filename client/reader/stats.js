@@ -100,6 +100,23 @@ function getLocation( path ) {
 }
 
 /**
+ *
+ * @param {Object} eventProperties extra event properties to add
+ * @param {*} pathnameOverride Overwrites location used for determining ui_algo. See notes in
+ * `recordTrack` function docs below for more info.
+ * @param {Object|null} post Optional post object used to build post event props.
+ * @returns new eventProperties object with default reader values added.
+ */
+export function buildReaderTracksEventProps( eventProperties, pathnameOverride, post ) {
+	const location = getLocation( pathnameOverride || window.location.pathname );
+	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
+	if ( post ) {
+		eventProperties = Object.assign( getTracksPropertiesForPost( post ), eventProperties );
+	}
+	return eventProperties;
+}
+
+/**
  * @param {*} eventName track event name
  * @param {*} eventProperties extra event props
  * @param {{pathnameOverride: string}} [pathnameOverride] Overwrites the location for ui_algo Useful for when
@@ -113,8 +130,7 @@ function getLocation( path ) {
 export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
 	debug( 'reader track', ...arguments );
 
-	const location = getLocation( pathnameOverride || window.location.pathname );
-	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
+	eventProperties = buildReaderTracksEventProps( eventProperties, pathnameOverride );
 
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if (

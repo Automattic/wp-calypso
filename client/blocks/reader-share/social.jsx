@@ -56,9 +56,13 @@ const ReaderSocialShareSelection = ( props ) => {
 			stats.recordAction( 'share_' + action );
 			stats.recordGaEvent( 'Clicked on Share to ' + action );
 			dispatch(
-				recordReaderTracksEvent( 'calypso_reader_share_action_picked', {
-					action: action,
-				} )
+				recordReaderTracksEvent(
+					'calypso_reader_share_action_picked',
+					{
+						action: action,
+					},
+					{ post: props.post }
+				)
 			);
 			actionFunc( props.post );
 		}

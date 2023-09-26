@@ -29,7 +29,11 @@ const ReaderReblogSelection = ( props ) => {
 		stats.recordAction( `share_wordpress${ props.comment ? '_comment' : '' }` );
 		stats.recordGaEvent( `Clicked on Share${ props.comment ? ' Comment' : '' } to WordPress` );
 		dispatch(
-			recordReaderTracksEvent( `calypso_reader_share${ props.comment ? '_comment' : '' }_to_site` )
+			recordReaderTracksEvent(
+				`calypso_reader_share${ props.comment ? '_comment' : '' }_to_site`,
+				{},
+				{ post: props.post }
+			)
 		);
 		window.open(
 			`/post/${ slug }?${ buildQuerystringForPost( props.post, props.comment ) }`,
