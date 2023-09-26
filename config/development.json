@@ -202,6 +202,7 @@
 		"themes/block-theme-previews": true,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
+		"themes/search-v2": true,
 		"themes/subscription-purchases": true,
 		"themes/theme-switch-persist-template": false,
 		"titan/iframe-control-panel": false,
