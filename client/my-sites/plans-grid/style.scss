@@ -576,12 +576,6 @@ $mobile-card-max-width: 440px;
 
 	.plan-features-2023-grid__table-bottom {
 		margin-top: 54px;
-
-		.components-custom-select-control {
-			// Fixes dropdown select displaying above sticky CTAs when focused
-			z-index: 0;
-		}
-
 	}
 }
 

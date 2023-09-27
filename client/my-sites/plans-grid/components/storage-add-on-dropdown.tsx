@@ -13,12 +13,14 @@ type StorageAddOnDropdownProps = {
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	priceOnSeparateLine?: boolean;
 };
 
 type StorageAddOnOptionProps = {
 	title: string;
 	price?: string;
 	isLargeCurrency?: boolean;
+	priceOnSeparateLine?: boolean;
 };
 
 const getStorageOptionPrice = (
@@ -34,12 +36,13 @@ const StorageAddOnOption = ( {
 	title,
 	price,
 	isLargeCurrency = false,
+	priceOnSeparateLine,
 }: StorageAddOnOptionProps ) => {
 	const translate = useTranslate();
 
 	return (
 		<>
-			{ price && ! isLargeCurrency ? (
+			{ price && ! isLargeCurrency && ! priceOnSeparateLine ? (
 				<div>
 					<span className="storage-add-on-dropdown-option__title">{ title }</span>
 					<div className="storage-add-on-dropdown-option__price-container">
@@ -61,6 +64,7 @@ export const StorageAddOnDropdown = ( {
 	planSlug,
 	storageOptions,
 	onStorageAddOnClick,
+	priceOnSeparateLine = false,
 }: StorageAddOnDropdownProps ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
@@ -89,12 +93,9 @@ export const StorageAddOnDropdown = ( {
 	const selectedOptionKey = selectedStorageOptionForPlan
 		? selectedStorageOptionForPlan
 		: storageOptions.find( ( storageOption ) => ! storageOption.isAddOn )?.slug;
-	const selectedOptionPrice = selectedOptionKey
-		? getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey )
-		: undefined;
-	const selectedOptionTitle = selectedOptionKey
-		? getStorageStringFromFeature( selectedOptionKey )
-		: undefined;
+	const selectedOptionPrice =
+		selectedOptionKey && getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey );
+	const selectedOptionTitle = selectedOptionKey && getStorageStringFromFeature( selectedOptionKey );
 
 	const selectedOption = {
 		key: selectedOptionKey,
@@ -103,6 +104,7 @@ export const StorageAddOnDropdown = ( {
 				title={ selectedOptionTitle }
 				price={ selectedOptionPrice }
 				isLargeCurrency={ isLargeCurrency }
+				priceOnSeparateLine={ priceOnSeparateLine }
 			/>
 		),
 	};
@@ -121,7 +123,7 @@ export const StorageAddOnDropdown = ( {
 					}
 				} }
 			/>
-			{ isLargeCurrency && selectedOptionPrice && (
+			{ selectedOptionPrice && ( isLargeCurrency || priceOnSeparateLine ) && (
 				<div className="storage-add-on-dropdown__offset-price-container">
 					<span className="storage-add-on-dropdown__offset-price">
 						{ ` + ${ selectedOptionPrice }/${ translate( 'month' ) }` }
