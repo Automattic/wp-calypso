@@ -125,7 +125,6 @@ export const analyticsEvents: EventEmitter = new EventEmitter();
 
 /**
  * Returns the anoymous id stored in the `tk_ai` cookie
- *
  * @returns The Tracks anonymous user id
  */
 export function getTracksAnonymousUserId(): string {
@@ -171,7 +170,12 @@ export function identifyUser( userData: any ): any {
 
 	// Tracks user identification.
 	debug( 'Tracks identifyUser.', currentUser );
+
+	const anonId = getTracksAnonymousUserId();
 	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
+	if ( anonId ) {
+		document.cookie = cookie.serialize( 'tk_ai', anonId, { path: '/', domain: '.wordpress.com' } );
+	}
 }
 
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {
