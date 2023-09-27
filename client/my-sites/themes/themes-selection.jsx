@@ -9,6 +9,7 @@ import { Component } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
+import ThemeCollection from 'calypso/components/theme-collection';
 import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -269,6 +270,18 @@ class ThemesSelection extends Component {
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
 				{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
+				<ThemeCollection
+					heading="Premium themes"
+					themes={ interlacedThemes }
+					collectionSlug="premium-themes"
+					onScreenshotClick={ this.onScreenshotClick }
+					onStyleVariationClick={ this.onStyleVariationClick }
+					getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
+					getScreenshotUrl={ this.props.getScreenshotUrl }
+					onMoreButtonClick={ this.recordSearchResultsClick }
+					onMoreButtonItemClick={ this.onMoreButtonItemClick }
+					siteId={ siteId }
+				/>
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					upsellBanner={ upsellBanner }
