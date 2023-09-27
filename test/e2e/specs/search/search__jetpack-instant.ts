@@ -105,11 +105,15 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 	it( 'Enter search term and launch search modal', async function () {
 		const inputLocator = page
 			.getByRole( 'search' )
-			.getByRole( 'searchbox', { name: 'Search' } )
+			// Sometimes the parent block on a homepage has a very high-up aria-hidden.
+			// TODO: figure out what is adding that, and remove the "includeHidden" here.
+			.getByRole( 'searchbox', { name: 'Search', includeHidden: true } )
 			.first();
 		const buttonLocator = page
 			.getByRole( 'search' )
-			.getByRole( 'button', { name: 'Search' } )
+			// Sometimes the parent block on a homepage has a very high-up aria-hidden.
+			// TODO: figure out what is adding that, and remove the "includeHidden" here.
+			.getByRole( 'button', { name: 'Search', includeHidden: true } )
 			.first();
 
 		// Adding a slightly longer timeout here because we can't fully wait for the "load" event above due to
