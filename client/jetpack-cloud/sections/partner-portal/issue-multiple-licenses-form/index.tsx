@@ -41,7 +41,9 @@ export default function IssueMultipleLicensesForm( {
 
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 
-	let allProducts = data;
+	// Filter out hosting products as they have their own dedicated UI.
+	let allProducts = ( data || [] ).filter( ( product ) => product.family_slug !== 'wpcom-hosting' );
+
 	const addedPlanAndProducts = useSelector( ( state ) =>
 		selectedSite ? getAssignedPlanAndProductIDsForSite( state, selectedSite.ID ) : null
 	);
