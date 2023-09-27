@@ -8,7 +8,7 @@ import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
-import { DEFAULT_TAB, LATEST_TAB } from './helper';
+import { DEFAULT_TAB, FIRST_POSTS_TAB, LATEST_TAB } from './helper';
 
 import './discover-navigation.scss';
 
@@ -113,6 +113,13 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 						onClick={ () => menuTabClick( LATEST_TAB ) }
 					>
 						{ translate( 'Latest' ) }
+					</SegmentedControl.Item>
+					<SegmentedControl.Item
+						key={ FIRST_POSTS_TAB }
+						selected={ FIRST_POSTS_TAB === selectedTab }
+						onClick={ () => menuTabClick( FIRST_POSTS_TAB ) }
+					>
+						{ translate( 'First posts' ) }
 					</SegmentedControl.Item>
 					{ recommendedTags.map( ( tag ) => {
 						return (
