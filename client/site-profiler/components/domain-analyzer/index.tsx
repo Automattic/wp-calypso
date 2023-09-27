@@ -55,9 +55,6 @@ export default function DomainAnalyzer( props: Props ) {
 					</div>
 				</div>
 				<div className="domain-analyzer--msg">
-					{ ( isDomainValid || isDomainValid === undefined ) && (
-						<p className="center">{ translate( 'Enter the URL of the site you want to check' ) }</p>
-					) }
 					{ isDomainValid === false && (
 						<p className="error">
 							<Icon icon={ info } size={ 20 } />{ ' ' }
