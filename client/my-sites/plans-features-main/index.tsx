@@ -715,11 +715,7 @@ const PlansFeaturesMain = ( {
 								stickyRowOffset={ masterbarHeight }
 								usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 								allFeaturesList={ FEATURES_LIST }
-								showPlansComparisonGrid={ showPlansComparisonGrid }
-								toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
 								planTypeSelectorProps={ planTypeSelectorProps }
-								ref={ plansComparisonGridRef }
-								observableForOdieRef={ observableForOdieRef }
 								onStorageAddOnClick={ ( addOnSlug ) =>
 									recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
 										add_on_slug: addOnSlug,
@@ -767,11 +763,7 @@ const PlansFeaturesMain = ( {
 										stickyRowOffset={ masterbarHeight }
 										usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 										allFeaturesList={ FEATURES_LIST }
-										showPlansComparisonGrid={ showPlansComparisonGrid }
-										toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
 										planTypeSelectorProps={ planTypeSelectorProps }
-										ref={ plansComparisonGridRef }
-										observableForOdieRef={ observableForOdieRef }
 										onStorageAddOnClick={ ( addOnSlug ) =>
 											recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
 												add_on_slug: addOnSlug,

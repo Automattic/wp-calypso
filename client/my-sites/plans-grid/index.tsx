@@ -26,6 +26,16 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
+/*
+ * TODO clk:
+ * These props need to be split into what's needed separately for the internal grids and what's needed for the exported wrappers.
+ * This is currently also used as the internal type for the FeaturesGrid (wrongly).
+ *   - onUpgradeClick is only needed for the wrappers exported from here. Internally the grids take a transformed
+ *     handleUpgradeClick/onUpgradeClick function (force renamed to handleUpgradeClick in FeaturesGrid).
+ *   - allFeaturesList is only relevant for the ComparisonGrid
+ *   - gridPlanForSpotlight is only relevant for the FeaturesGrid
+ *   - etc.
+ */
 export interface PlansGridProps {
 	gridPlans: GridPlan[];
 	gridPlanForSpotlight?: GridPlan;
@@ -55,13 +65,7 @@ export interface PlansGridProps {
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	// temporary
-	showPlansComparisonGrid: boolean;
-	// temporary
-	toggleShowPlansComparisonGrid: () => void;
 	planTypeSelectorProps: PlanTypeSelectorProps;
-	// temporary: callback ref to scroll Odie AI Assistant into view once "Compare plans" button is clicked
-	observableForOdieRef: ( observableElement: Element | null ) => void;
 }
 
 const WrappedComparisonGrid = ( {
