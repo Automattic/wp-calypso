@@ -105,7 +105,6 @@ export const HelpCenterSearch = () => {
 				isVisible
 				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
 			/>
-			{ /* Don't show the survey in case when Launchpad is visible */ }
 			{ ! HelpCenterLaunchpad() && <Survey /> }
 			<HelpCenterSearchResults
 				onSelect={ redirectToArticle }

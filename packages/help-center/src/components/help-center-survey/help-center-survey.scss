@@ -7,7 +7,7 @@
 	flex-direction: column;
 	gap: 24px;
 	border-radius: 2px;
-	border-left: 3px solid #000;
+	border-left: 3px solid var(--studio-black, #000);
 	padding: 25px 36px;
 	// Accounting for the 3px border-left.
 	padding-left: 33px;
@@ -41,19 +41,19 @@
 	}
 
 	button.components-button.is-primary {
-		background-color: #000;
-		color: #fff;
+		background-color: var(--studio-black, #000);
+		color: var(--studio-white, #fff);
 
 		&:active:not(:disabled),
 		&:focus:not(:disabled),
 		&:hover:not(:disabled) {
 			background-color: var(--studio-gray-90, #1d2327);
-			color: #fff;
+			color: var(--studio-white, #fff);
 		}
 	}
 
 	button.components-button.is-link {
-		--wp-components-color-accent: #000;
+		--wp-components-color-accent: var(--studio-black, #000);
 		margin-top: 8px;
 	}
 }
