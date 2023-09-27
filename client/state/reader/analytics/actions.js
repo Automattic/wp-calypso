@@ -5,12 +5,12 @@ import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 export const recordReaderTracksEvent =
 	( name, properties, { pathnameOverride, post } = {} ) =>
 	( dispatch, getState ) => {
-		properties = buildReaderTracksEventProps( properties, pathnameOverride, post );
+		const eventProps = buildReaderTracksEventProps( properties, pathnameOverride, post );
 		const followsCount = getReaderFollowsCount( getState() );
 		dispatch(
 			recordTracksEvent( name, {
 				subscription_count: followsCount,
-				...properties,
+				...eventProps,
 			} )
 		);
 	};
