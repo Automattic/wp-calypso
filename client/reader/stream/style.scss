@@ -807,6 +807,13 @@
 	display: none;
 }
 
+.tag-stream__main .stream__header .section-nav {
+	margin-top: 26px;
+	@include break-medium {
+		margin-top: 0;
+	}
+}
+
 .stream__header .section-nav {
 	background: inherit;
 	border-bottom: 1px solid var(--color-neutral-10);
