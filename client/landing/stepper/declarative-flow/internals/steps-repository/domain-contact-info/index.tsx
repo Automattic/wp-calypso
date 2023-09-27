@@ -1,9 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon, Button, ConfettiAnimation } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
@@ -16,7 +15,6 @@ import {
 } from 'calypso/data/domains/transfers/use-domain-transfer-receive';
 import { useDomainParams } from 'calypso/landing/stepper/hooks/use-domain-params';
 import wp from 'calypso/lib/wp';
-import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { StepProps, ProvidedDependencies } from '../../types';
 import './styles.scss';
@@ -24,7 +22,6 @@ import './styles.scss';
 export default function DomainContactInfo( { navigation }: StepProps ) {
 	const { submit } = navigation;
 	const translate = useTranslate();
-	const [ success, setSuccess ] = useState( false );
 
 	return (
 		<StepContainer
@@ -34,57 +31,24 @@ export default function DomainContactInfo( { navigation }: StepProps ) {
 			formattedHeader={
 				<FormattedHeader
 					className="domain-contact-info-header"
-					headerText={
-						success
-							? translate( 'Your domain transfer is underway!' )
-							: translate( 'Your contact details are needed' )
-					}
-					subHeaderText={
-						success
-							? translate(
-									'Domain transfers can take a few minutes, we’ll email you once it’s set up.'
-							  )
-							: translate(
-									'To accept a domain transfer we are required to collect your contact information.'
-							  )
-					}
+					headerText={ translate( 'Your contact details are needed' ) }
+					subHeaderText={ translate(
+						'To accept a domain transfer we are required to collect your contact information.'
+					) }
 				/>
 			}
-			stepContent={
-				<>
-					{ success && <SuccessContent /> }
-					{ ! success && <ContactInfo onSubmit={ submit } setSuccess={ setSuccess } /> }
-				</>
-			}
+			stepContent={ <ContactInfo onSubmit={ submit } /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
 }
 
-function SuccessContent() {
-	const translate = useTranslate();
-	useEffect( () => {
-		recordTracksEvent( 'calypso_domain_transfer_start_success' );
-	}, [] );
-
-	return (
-		<div className="domain-contact-info__success">
-			<ConfettiAnimation />
-			<Button className="domain-contact-info__success-cta" href={ domainManagementRoot() } primary>
-				{ translate( 'Manage domains' ) }
-			</Button>
-		</div>
-	);
-}
-
 function ContactInfo( {
 	onSubmit,
-	setSuccess,
 }: {
 	onSubmit:
 		| ( ( providedDependencies?: ProvidedDependencies | undefined, ...params: string[] ) => void )
 		| undefined;
-	setSuccess: React.Dispatch< React.SetStateAction< boolean > >;
 } ) {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
@@ -94,7 +58,7 @@ function ContactInfo( {
 	const { domainTransferReceive } = useDomainTransferReceive( domain ?? '', {
 		onSuccess( data ) {
 			if ( data.success ) {
-				setSuccess( true );
+				onSubmit?.( { domain } );
 			} else {
 				dispatch(
 					errorNotice(
@@ -168,7 +132,6 @@ function ContactInfo( {
 
 	function submitForm( contactInfo: TransferInfo ) {
 		domainTransferReceive( contactInfo );
-		onSubmit?.( contactInfo );
 	}
 
 	const renderContent = () => {
