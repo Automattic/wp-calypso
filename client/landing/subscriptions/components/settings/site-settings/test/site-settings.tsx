@@ -2,15 +2,30 @@
  * @jest-environment jsdom
  */
 import { Reader } from '@automattic/data-stores';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import {
+	SubscriptionManagerContextProvider,
+	SubscriptionsPortal,
+} from '../../../subscription-manager-context';
 import { SiteSettingsPopover } from '../site-settings';
 
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
 	useTranslate: jest.fn( () => ( text ) => text ),
 } ) );
+
+const queryClient = new QueryClient();
+
+const Wrapper = ( { children }: { children: React.ReactNode } ) => (
+	<QueryClientProvider client={ queryClient }>
+		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
+			{ children }
+		</SubscriptionManagerContextProvider>
+	</QueryClientProvider>
+);
 
 describe( 'Site Settings', () => {
 	it( 'Ensure correct href value of the View Feed button within the Site Settings popover', async () => {
@@ -30,9 +45,9 @@ describe( 'Site Settings', () => {
 				updatingEmailMeNewComments={ false }
 				onUnsubscribe={ () => undefined }
 				unsubscribing={ false }
-				isWpComSite={ false }
 				feedId={ 123456789 }
-			/>
+			/>,
+			{ wrapper: Wrapper }
 		);
 
 		act( () => {
