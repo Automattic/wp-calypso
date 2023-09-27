@@ -264,7 +264,7 @@ class PasswordlessSignupForm extends Component {
 							placeholder={ this.props.inputPlaceholder }
 						/>
 					</ValidationFieldset>
-					{ this.props.renderTerms() }
+					{ this.props.renderTerms?.() }
 					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>

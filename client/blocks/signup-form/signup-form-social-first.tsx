@@ -1,17 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale, localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { get } from 'lodash';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { login } from 'calypso/lib/paths';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import { getSectionName } from 'calypso/state/ui/selectors';
-import EmailSignup from './email-signup';
+import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import './style.scss';
 
@@ -21,6 +18,7 @@ interface SignupFormSocialFirst {
 	stepName: string;
 	flowName: string;
 	redirectToAfterLoginUrl: string;
+	logInUrl: string;
 	socialService: string;
 	socialServiceResponse: string;
 	handleSocialResponse: () => void;
@@ -34,6 +32,7 @@ const SignupFormSocialFirst = ( {
 	stepName,
 	flowName,
 	redirectToAfterLoginUrl,
+	logInUrl,
 	socialService,
 	socialServiceResponse,
 	handleSocialResponse,
@@ -42,23 +41,16 @@ const SignupFormSocialFirst = ( {
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
-	const localeSlug = useLocale();
 
-	const { sectionName, oauth2Client, from, wccomFrom, isWoo, isGravatar } = useSelector(
-		( state ) => {
-			const oauth2Client = getCurrentOAuth2Client( state );
-			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
+	const { isWoo, isGravatar } = useSelector( ( state ) => {
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 
-			return {
-				sectionName: getSectionName( state ),
-				oauth2Client: oauth2Client,
-				from: get( getCurrentQueryArguments( state ), 'from' ),
-				wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-				isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
-				isGravatar: isGravatarOAuth2Client( oauth2Client ),
-			};
-		}
-	);
+		return {
+			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
+			isGravatar: isGravatarOAuth2Client( oauth2Client ),
+		};
+	} );
 
 	const renderContent = () => {
 		if ( currentStep === 'initial' ) {
@@ -67,7 +59,7 @@ const SignupFormSocialFirst = ( {
 					handleResponse={ handleSocialResponse }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
-					isReskinned={ true }
+					isReskinned={ isReskinned }
 					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 					disableTosText={ true }
 					compact={ true }
@@ -82,28 +74,34 @@ const SignupFormSocialFirst = ( {
 				</SocialSignupForm>
 			);
 		} else if ( currentStep === 'email' ) {
-			const logInUrl = login( {
-				isJetpack: 'jetpack-connect' === sectionName,
-				from,
-				redirectTo: redirectToAfterLoginUrl,
-				locale: localeSlug,
-				oauth2ClientId: oauth2Client && oauth2Client.id,
-				wccomFrom: wccomFrom,
-				isWhiteLogin: isReskinned,
-				signupUrl: window.location.pathname + window.location.search,
-			} );
+			const gravatarProps = isGravatar
+				? {
+						inputPlaceholder: __( 'Enter your email address' ),
+						submitButtonLoadingLabel: __( 'Continue' ),
+				  }
+				: {};
 
 			return (
-				<EmailSignup
-					step={ step }
-					stepName={ stepName }
-					flowName={ flowName }
-					goToNextStep={ goToNextStep }
-					logInUrl={ logInUrl }
-					queryArgs={ queryArgs }
-					handleBack={ () => setCurrentStep( 'initial' ) }
-					isGravatarOAuth2Client={ isGravatar }
-				/>
+				<div className="signup-form-social-first-email">
+					<PasswordlessSignupForm
+						step={ step }
+						stepName={ stepName }
+						flowName={ flowName }
+						goToNextStep={ goToNextStep }
+						logInUrl={ logInUrl }
+						queryArgs={ queryArgs }
+						labelText={ __( 'Your email' ) }
+						submitButtonLabel={ __( 'Continue' ) }
+						{ ...gravatarProps }
+					/>
+					<Button
+						onClick={ () => setCurrentStep( 'initial' ) }
+						className="back-button"
+						variant="link"
+					>
+						<span>{ __( 'Back' ) }</span>
+					</Button>
+				</div>
 			);
 		}
 	};
