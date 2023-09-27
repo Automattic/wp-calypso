@@ -10,6 +10,7 @@ import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/component
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainQueryParam from 'calypso/site-profiler/hooks/use-domain-query-param';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
@@ -31,6 +32,7 @@ export default function SiteProfiler() {
 		isError: isErrorSP,
 		errorUpdateCount: errorUpdateCountSP,
 	} = useDomainAnalyzerQuery( domain, isDomainValid );
+	const isBusyForWhile = useLongFetchingDetection( domain, isFetchingSP );
 	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
 	const conversionAction = useDefineConversionAction(
 		domain,
@@ -71,6 +73,7 @@ export default function SiteProfiler() {
 						isDomainValid={ isDomainValid }
 						onFormSubmit={ updateDomainQueryParam }
 						isBusy={ isFetchingSP }
+						isBusyForWhile={ isBusyForWhile }
 					/>
 				</LayoutBlock>
 			) }
