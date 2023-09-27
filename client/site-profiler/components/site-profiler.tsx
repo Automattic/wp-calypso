@@ -20,12 +20,12 @@ export default function SiteProfiler() {
 	const queryParams = useQuery();
 	const { domain, isValid: isDomainValid } = useDomainQueryParam();
 
-	const { data, isFetching } = useDomainAnalyzerQuery( domain, isDomainValid );
+	const { data: siteProfilerData, isFetching } = useDomainAnalyzerQuery( domain, isDomainValid );
 	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
 	const conversionAction = useDefineConversionAction(
 		domain,
-		data?.whois,
-		data?.is_domain_available,
+		siteProfilerData?.whois,
+		siteProfilerData?.is_domain_available,
 		hostingProviderData?.hosting_provider
 	);
 
@@ -39,7 +39,7 @@ export default function SiteProfiler() {
 
 	return (
 		<>
-			{ ! data && (
+			{ ! siteProfilerData && (
 				<LayoutBlock className="domain-analyzer-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<DomainAnalyzer
@@ -51,13 +51,13 @@ export default function SiteProfiler() {
 				</LayoutBlock>
 			) }
 
-			{ data && (
+			{ siteProfilerData && (
 				<LayoutBlock className="domain-result-block">
 					{
 						// Translators: %s is the domain name searched
 						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
 					}
-					{ data && (
+					{ siteProfilerData && (
 						<LayoutBlockSection>
 							<HeadingInformation
 								domain={ domain }
@@ -66,19 +66,19 @@ export default function SiteProfiler() {
 							/>
 						</LayoutBlockSection>
 					) }
-					{ ! data.is_domain_available && (
+					{ ! siteProfilerData.is_domain_available && (
 						<>
-							{ data && (
+							{ siteProfilerData && (
 								<LayoutBlockSection>
 									<HostingInformation
-										dns={ data.dns }
+										dns={ siteProfilerData.dns }
 										hostingProvider={ hostingProviderData?.hosting_provider }
 									/>
 								</LayoutBlockSection>
 							) }
-							{ data?.whois && (
+							{ siteProfilerData?.whois && (
 								<LayoutBlockSection>
-									<DomainInformation domain={ domain } whois={ data.whois } />
+									<DomainInformation domain={ domain } whois={ siteProfilerData.whois } />
 								</LayoutBlockSection>
 							) }
 						</>
@@ -86,7 +86,7 @@ export default function SiteProfiler() {
 				</LayoutBlock>
 			) }
 
-			<LayoutBlock isMonoBg={ !! data }>
+			<LayoutBlock isMonoBg={ !! siteProfilerData }>
 				<HostingIntro />
 			</LayoutBlock>
 		</>
