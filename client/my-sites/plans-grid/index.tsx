@@ -22,6 +22,7 @@ import type { FeatureList, WPComStorageAddOnSlug } from '@automattic/calypso-pro
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
+import './style.scss';
 
 export interface PlansGridProps {
 	gridPlansForFeaturesGrid: GridPlan[];

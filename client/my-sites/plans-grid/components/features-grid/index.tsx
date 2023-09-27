@@ -40,7 +40,6 @@ import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type { PlansGridProps } from '../..';
 import type { GridPlan } from '../../hooks/npm-ready/data-store/use-grid-plans';
-import '../../style.scss';
 
 type PlanRowOptions = {
 	isTableCell?: boolean;
