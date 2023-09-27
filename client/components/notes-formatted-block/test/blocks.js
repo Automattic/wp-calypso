@@ -191,7 +191,7 @@ describe( 'Post block', () => {
 		const text = 'another post';
 		render( <Blocks.Post content={ content } children={ text } meta={ meta } /> );
 
-		const publishSpan = screen.getByText( /Original publish date/i );
+		const publishSpan = screen.getByText( /Published:/i );
 
 		expect( publishSpan ).toBeTruthy();
 	} );
