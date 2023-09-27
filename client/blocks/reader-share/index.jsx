@@ -72,9 +72,13 @@ class ReaderShare extends Component {
 				: 'calypso_reader_share_opened';
 			stats.recordAction( actionName );
 			stats.recordGaEvent( eventName );
-			this.props.recordReaderTracksEvent( trackName, {
-				has_sites: this.props.hasSites,
-			} );
+			this.props.recordReaderTracksEvent(
+				trackName,
+				{
+					has_sites: this.props.hasSites,
+				},
+				{ post: this.props.post }
+			);
 		}
 		this.deferMenuChange( ! this.state.showingMenu );
 	};
