@@ -18,20 +18,26 @@ const Header = ( { domainName } ) => (
 			headerText={ translate( 'Choose the perfect plan' ) }
 			align="center"
 		/>
-		<p>
-			{ translate(
-				'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
-				{
-					args: { domainName },
-					components: { strong: <strong /> },
-				}
-			) }
-		</p>
-		<p>
-			{ translate(
-				'You’ll also unlock advanced features that make it easy to build and grow your site.'
-			) }
-		</p>
+		{ domainName ? (
+			<>
+				<p>
+					{ translate(
+						'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+						{
+							args: { domainName },
+							components: { strong: <strong /> },
+						}
+					) }
+				</p>
+				<p>
+					{ translate(
+						'You’ll also unlock advanced features that make it easy to build and grow your site.'
+					) }
+				</p>
+			</>
+		) : (
+			<p>{ translate( 'See and compare the features available on each WordPress.com plan.' ) }</p>
+		) }
 	</div>
 );
 
