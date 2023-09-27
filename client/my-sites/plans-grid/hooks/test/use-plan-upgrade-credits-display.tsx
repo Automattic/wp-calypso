@@ -10,8 +10,8 @@ import {
 	PLAN_FREE,
 	PlanSlug,
 } from '@automattic/calypso-products';
-import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-calculate-max-plan-upgrade-credit';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
+import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
+import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import isAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -24,12 +24,9 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getSitePlanSlug: jest.fn(),
 } ) );
-jest.mock(
-	'calypso/my-sites/plan-features-2023-grid/hooks/use-calculate-max-plan-upgrade-credit',
-	() => ( {
-		useCalculateMaxPlanUpgradeCredit: jest.fn(),
-	} )
-);
+jest.mock( 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit', () => ( {
+	useCalculateMaxPlanUpgradeCredit: jest.fn(),
+} ) );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
 	default: jest.fn(),
