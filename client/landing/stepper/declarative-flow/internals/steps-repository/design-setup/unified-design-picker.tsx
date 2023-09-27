@@ -40,6 +40,7 @@ import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
@@ -96,6 +97,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const { site, siteSlug, siteSlugOrId } = useSiteData();
+	const wpcomSiteSlug = useSelector( ( state ) => getSiteSlug( state, site?.ID ) );
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
@@ -455,7 +457,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		// When the user is done with checkout, send them back to the current url
 		// If the theme is externally managed, send them to the marketplace thank you page
 		const destination = selectedDesign?.is_externally_managed
-			? addQueryArgs( `/marketplace/thank-you/${ siteSlug }?onboarding`, {
+			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug }?onboarding`, {
 					themes: selectedDesign?.slug,
 			  } )
 			: window.location.href.replace( window.location.origin, '' );
