@@ -82,11 +82,6 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 
 jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-sync', () => ( {
 	__esModule: true,
-	usePullFromProductionMutation: jest.fn( () => {
-		return {
-			pullFromProduction: jest.fn(),
-		};
-	} ),
 	usePushToStagingMutation: jest.fn( () => {
 		return {
 			pushToStaging: jest.fn(),

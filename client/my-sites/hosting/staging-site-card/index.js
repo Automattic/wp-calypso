@@ -206,7 +206,7 @@ export const StagingSiteCard = ( {
 		addStagingSite();
 	};
 
-	const { pushToStaging } = usePushToStagingMutation( siteId, {
+	const { pushToStaging } = usePushToStagingMutation( siteId, stagingSite?.id, {
 		onError: ( error ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
@@ -215,10 +215,6 @@ export const StagingSiteCard = ( {
 			);
 		},
 	} );
-
-	const onPushClick = useCallback( () => {
-		pushToStaging( stagingSite.id );
-	}, [ pushToStaging, stagingSite.id ] );
 
 	const getTransferringStagingSiteContent = useCallback( () => {
 		return (
@@ -274,7 +270,7 @@ export const StagingSiteCard = ( {
 			<ManageStagingSiteCardContent
 				stagingSite={ stagingSite }
 				onDeleteClick={ deleteStagingSite }
-				onPushClick={ onPushClick }
+				onPushClick={ pushToStaging }
 				isButtonDisabled={ disabled }
 				isBusy={ isReverting }
 			/>

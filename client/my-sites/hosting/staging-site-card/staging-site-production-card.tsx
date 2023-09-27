@@ -19,7 +19,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
 import { ConfirmationModal } from './confirmation-modal';
-import { usePullFromProductionMutation } from './use-staging-sync';
+import { usePushToStagingMutation } from './use-staging-sync';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -50,7 +50,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 		},
 	} );
 
-	const { pullFromProduction } = usePullFromProductionMutation( siteId, {
+	const { pushToStaging } = usePushToStagingMutation( productionSite?.id as number, siteId, {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onError: ( error: any ) => {
 			dispatch(
@@ -93,7 +93,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					</Button>
 					{ isStagingSitesI3Enabled && (
 						<ConfirmationModal
-							onConfirm={ () => pullFromProduction( productionSite.id ) }
+							onConfirm={ pushToStaging }
 							modalTitle={ translate( 'Confirm pulling changes to your staging site.' ) }
 							modalMessage={ translate(
 								'Are you sure you want to pull your production changes to your staging site?'
