@@ -22,9 +22,11 @@ const Header = ( { paidDomainName } ) => (
 			<>
 				<p>
 					{ translate(
-						'With your annual plan, you’ll get %(paidDomainName)s {{strong}}free for the first year{{/strong}}.',
+						'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
 						{
-							args: { paidDomainName },
+							args: {
+								domainName: paidDomainName,
+							},
 							components: { strong: <strong /> },
 						}
 					) }
