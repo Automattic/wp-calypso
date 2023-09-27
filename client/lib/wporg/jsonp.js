@@ -25,7 +25,6 @@ function noop() {}
 
 /**
  * JSONP handler
- *
  * @param {string} url
  * @param {Object} query params
  * @param {Function} fn optional callback

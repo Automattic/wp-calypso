@@ -18,7 +18,6 @@ import 'calypso/state/login/init';
 
 /**
  * Logs a user in.
- *
  * @param  {string}   usernameOrEmail Username or email of the user
  * @param  {string}   password        Password of the user
  * @param  {string}   redirectTo      Url to redirect the user to upon successful login

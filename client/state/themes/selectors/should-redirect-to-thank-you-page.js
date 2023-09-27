@@ -5,7 +5,6 @@ import { getTheme, isExternallyManagedTheme } from '.';
 /**
  * Returns whether it should redirect to thank you page
  * after to activate a theme.
- *
  * @param {Object} state
  * @param {string} themeId
  * @returns {boolean}

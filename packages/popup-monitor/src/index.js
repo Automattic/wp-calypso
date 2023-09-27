@@ -10,7 +10,6 @@ function Emitter( prototype ) {
 
 /**
  * PopupMonitor component
- *
  * @public
  */
 function PopupMonitor() {
@@ -33,7 +32,6 @@ Emitter( PopupMonitor.prototype );
  * Opens a new popup and starts monitoring it for changes. This should only be
  * invoked on a user action to avoid the popup being blocked. Returns the
  * current instance of PopupMonitor to enable chainability
- *
  * @param {string} url The URL to be loaded in the newly opened window
  * @param {string} name A string name for the new window
  * @param {string} specs An optional parameter listing the features of the new window as a string
@@ -53,7 +51,6 @@ PopupMonitor.prototype.open = function ( url, name, specs ) {
 /**
  * Returns a popup window specification string fragment containing properties
  * to visually center the popup on the user's current screen.
- *
  * @param  {number} width The desired width of the popup
  * @param  {number} height The desired height of the popup
  * @returns {string} Popup window specificatino string fragment
@@ -74,7 +71,6 @@ PopupMonitor.prototype.getScreenCenterSpecs = function ( width, height ) {
 /**
  * Returns true if the popup with the specified name is closed, or false
  * otherwise
- *
  * @param {string} name The name of the popup window to check
  * @public
  */
@@ -111,7 +107,6 @@ PopupMonitor.prototype.checkStatus = function () {
 /**
  * Starts monitoring a popup window instance for changes on a recurring
  * interval.
- *
  * @param {string} name The name of hte popup window to monitor
  * @param {window} windowInstance The popup window instance
  */

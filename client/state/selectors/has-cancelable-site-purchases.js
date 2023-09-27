@@ -6,7 +6,6 @@ import 'calypso/state/purchases/init';
  * Does the site have any current purchases that can be canceled (i.e. purchases other than legacy premium theme purchases)?
  *
  * Note: there is an is_cancelable flag on the purchase object, but it returns true for legacy premium theme purchases.
- *
  * @param  {Object}  state       global state
  * @param  {number}  siteId      the site ID
  * @returns {boolean} if the site currently has any purchases that can be canceled.

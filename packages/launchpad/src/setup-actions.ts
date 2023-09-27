@@ -11,6 +11,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'earn_money',
 	'manage_subscribers',
 	'connect_social_media',
+	'drive_traffic',
 ];
 
 export const setUpActionsForTasks = ( {
@@ -21,7 +22,7 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions || {};
+	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions;
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {

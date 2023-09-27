@@ -38,7 +38,6 @@ export function areFetched( state, pluginSlugs ) {
 /**
  * WP.org plugins can be filtered either by category or search term.
  * So we can either be fetching by category or by search term.
- *
  * @param {Object} state      State object
  * @param {string} category   Plugin category
  * @param {string} searchTerm Search term
@@ -56,7 +55,6 @@ export function isFetchingPluginsList( state, category, searchTerm ) {
 
 /**
  * Retrieve the next page for the particular plugins list.
- *
  * @param {Object} state    State object
  * @param {string} category Plugin category
  * @returns {?number}       Next page number, or null if there is no next page.

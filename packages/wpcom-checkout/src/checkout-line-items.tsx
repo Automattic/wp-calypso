@@ -717,10 +717,12 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	}
 
 	if ( isDomainTransfer ) {
+		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
+
 		return (
 			<>
-				<DefaultLineItemSublabel product={ product } />: { translate( 'billed annually' ) }{ ' ' }
-				{ price }
+				{ premiumLabel } <DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( 'billed annually' ) } { price }
 			</>
 		);
 	}

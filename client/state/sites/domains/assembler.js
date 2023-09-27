@@ -39,7 +39,6 @@ function assembleCurrentUserCannotAddEmailReason( reason ) {
 
 /**
  * Creates a ResponseDomain object.
- *
  * @param {Object} domain domain object
  * @returns {import('calypso/lib/domains/types').ResponseDomain} Response domain
  */

@@ -6,7 +6,6 @@ import SiteTaxonomyTerm from './site.taxonomy.term';
 class SiteTaxonomy {
 	/**
 	 * Create a SiteTaxonomy instance
-	 *
 	 * @param {string} taxonomy - taxonomy type
 	 * @param {string} siteId - site id
 	 * @param {WPCOM} wpcom - wpcom instance
@@ -34,7 +33,6 @@ class SiteTaxonomy {
 
 	/**
 	 * Get a list of Terms for the Taxonomy
-	 *
 	 * @param {Object} [query] - query object
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
@@ -46,7 +44,6 @@ class SiteTaxonomy {
 
 	/**
 	 * Return `Term` instance
-	 *
 	 * @param {string} [term] - term slug
 	 * @returns {SiteTaxonomyTerm} Term instance
 	 */

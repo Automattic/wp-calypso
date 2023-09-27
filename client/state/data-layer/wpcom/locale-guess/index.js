@@ -12,7 +12,6 @@ const noop = () => {};
 
 /**
  * Dispatches a request to /locale-guess to fetch locale suggestions
- *
  * @param {Object} action Redux action
  * @returns {Object} WordPress.com API HTTP Request action object
  */
@@ -28,7 +27,6 @@ export const fetchLocaleSuggestions = ( action ) =>
 
 /**
  * Dispatches returned locale suggestions data
- *
  * @param {Object} action Redux action
  * @param {Array} data raw data from /locale-guess
  * @returns {Object} Redux action
