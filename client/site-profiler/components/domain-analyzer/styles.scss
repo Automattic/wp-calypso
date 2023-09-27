@@ -13,6 +13,10 @@
 .domain-analyzer {
 	p + .domain-analyzer--form {
 		margin-top: 2.5rem;
+
+		@media (max-width: $break-small) {
+			margin-top: 2.25rem;
+		}
 	}
 }
 

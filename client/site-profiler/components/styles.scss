@@ -15,6 +15,10 @@
 		line-height: 1;
 		margin-bottom: 1rem;
 		color: var(--studio-gray-100);
+
+		@media (max-width: $break-small ) {
+			font-size: 3rem;
+		}
 	}
 
 	h2 {
