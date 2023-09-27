@@ -93,7 +93,7 @@ export const LogsTab = ( {
 	};
 
 	const paginationText =
-		data?.total_results && data.total_results !== 10000
+		data?.total_results && data.total_results > pageSize
 			? /* translators: Describes which log entries we're showing on the page: "start" and "end" represent the range of log entries currently displayed, "total" is the number of log entries there are overall; e.g. Showing 1–20 of 428 */
 			  sprintf( __( 'Showing %(start)d\u2013%(end)d of %(total)d' ), {
 					start: currentPageIndex * pageSize + 1,
