@@ -50,6 +50,7 @@ export default function SiteExpandedContent( {
 					boostData={ boostData }
 					siteId={ site.blog_id }
 					siteUrlWithScheme={ siteUrlWithScheme }
+					siteUrl={ site.url }
 					hasBoost={ site.has_boost }
 					trackEvent={ trackEvent }
 					hasError={ hasError }

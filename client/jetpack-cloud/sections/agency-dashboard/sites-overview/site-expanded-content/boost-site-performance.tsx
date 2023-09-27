@@ -2,10 +2,11 @@ import { Button } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { jetpackBoostDesktopIcon, jetpackBoostMobileIcon } from '../../icons';
 import { getBoostRating, getBoostRatingClass } from '../lib/boost';
+import BoostLicenseInfoModal from '../site-status-content/site-boost-column/boost-license-info-modal';
 import ExpandedCard from './expanded-card';
 import InProgressIcon from './in-progress-icon';
 import type { BoostData } from '../types';
@@ -18,6 +19,7 @@ interface Props {
 	trackEvent: ( eventName: string ) => void;
 	hasError: boolean;
 	hasPendingScore: boolean;
+	siteUrl: string;
 }
 
 export default function BoostSitePerformance( {
@@ -28,11 +30,13 @@ export default function BoostSitePerformance( {
 	trackEvent,
 	hasError,
 	hasPendingScore,
+	siteUrl,
 }: Props ) {
 	const translate = useTranslate();
 
 	const helpIconRef = useRef< HTMLElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
+	const [ showBoostModal, setShowBoostModal ] = useState( false );
 
 	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
 
@@ -44,7 +48,7 @@ export default function BoostSitePerformance( {
 		'Your Overall Score is a summary of your website performance across both mobile and desktop devices.'
 	);
 
-	const isEnabled = !! ( hasBoost || overallScore );
+	const isEnabled = !! ( hasBoost || overallScore ) || hasPendingScore;
 
 	const buttonProps = useMemo(
 		() =>
@@ -63,7 +67,7 @@ export default function BoostSitePerformance( {
 	);
 
 	const handleOnClick = () => {
-		// TODO - should open a modal.
+		setShowBoostModal( true );
 	};
 
 	return (
@@ -117,10 +121,10 @@ export default function BoostSitePerformance( {
 						</div>
 					</div>
 					<div className="site-expanded-content__card-content-column">
-						{ hasPendingScore ? (
-							<InProgressIcon />
-						) : (
-							<>
+						<>
+							{ hasPendingScore ? (
+								<InProgressIcon />
+							) : (
 								<div className="site-expanded-content__device-score-container">
 									<div className="site-expanded-content__card-content-column">
 										<Icon
@@ -139,11 +143,11 @@ export default function BoostSitePerformance( {
 										<span className="site-expanded-content__device-score">{ mobileScore }</span>
 									</div>
 								</div>
-								<div className="site-expanded-content__card-content-score-title">
-									{ translate( 'Devices' ) }
-								</div>
-							</>
-						) }
+							) }
+							<div className="site-expanded-content__card-content-score-title">
+								{ translate( 'Devices' ) }
+							</div>
+						</>
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">
@@ -158,6 +162,13 @@ export default function BoostSitePerformance( {
 					</Button>
 				</div>
 			</div>
+			{ showBoostModal && (
+				<BoostLicenseInfoModal
+					onClose={ () => setShowBoostModal( false ) }
+					siteId={ siteId }
+					siteUrl={ siteUrl }
+				/>
+			) }
 		</ExpandedCard>
 	);
 }
