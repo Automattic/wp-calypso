@@ -782,7 +782,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					site={ site }
 					isMarketplace={ selectedDesign?.is_externally_managed }
 					isOpen={ showEligibility }
-					handleClose={ () => setShowEligibility( false ) }
+					handleClose={ () => {
+						recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
+							flow: 'onboarding',
+							theme: selectedDesign?.slug,
+						} );
+						setShowEligibility( false );
+					} }
 					handleContinue={ () => {
 						navigateToCheckout();
 						setShowEligibility( false );
