@@ -1,4 +1,6 @@
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
@@ -7,6 +9,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainQueryParam from 'calypso/site-profiler/hooks/use-domain-query-param';
+import { errorNotice } from 'calypso/state/notices/actions';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
@@ -16,11 +19,18 @@ import './styles.scss';
 
 export default function SiteProfiler() {
 	const location = useLocation();
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const queryParams = useQuery();
 	const { domain, isValid: isDomainValid } = useDomainQueryParam();
 
-	const { data: siteProfilerData, isFetching } = useDomainAnalyzerQuery( domain, isDomainValid );
+	const {
+		data: siteProfilerData,
+		isFetching,
+		error: errorSP,
+		isError: isErrorSP,
+		errorUpdateCount: errorUpdateCountSP,
+	} = useDomainAnalyzerQuery( domain, isDomainValid );
 	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
 	const conversionAction = useDefineConversionAction(
 		domain,
@@ -28,6 +38,11 @@ export default function SiteProfiler() {
 		siteProfilerData?.is_domain_available,
 		hostingProviderData?.hosting_provider
 	);
+
+	// Handle errors from the domain analyzer query
+	useEffect( () => {
+		isErrorSP && errorSP instanceof Error && dispatch( errorNotice( errorSP.message ) );
+	}, [ errorUpdateCountSP ] );
 
 	const updateDomainQueryParam = ( value: string ) => {
 		// Update the domain query param;
