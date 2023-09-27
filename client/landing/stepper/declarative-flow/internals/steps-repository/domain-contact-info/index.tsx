@@ -57,9 +57,7 @@ function ContactInfo( {
 
 	const { domainTransferReceive } = useDomainTransferReceive( domain ?? '', {
 		onSuccess( data ) {
-			if ( data.success ) {
-				onSubmit?.( { domain } );
-			} else {
+			if ( ! data.success ) {
 				dispatch(
 					errorNotice(
 						translate( 'Domain transfers are currently unavailable, please try again later.' ),
@@ -132,6 +130,7 @@ function ContactInfo( {
 
 	function submitForm( contactInfo: TransferInfo ) {
 		domainTransferReceive( contactInfo );
+		onSubmit?.( { contactInfo, domain } );
 	}
 
 	const renderContent = () => {
