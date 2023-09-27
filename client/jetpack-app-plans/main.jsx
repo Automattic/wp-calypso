@@ -1,6 +1,8 @@
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -40,23 +42,40 @@ const JetpackAppPlans = ( { domainName, redirectTo } ) => {
 		}
 	};
 
-	const removePaidDomain = () => handleRedirect();
+	const headline = translate( 'Choose the perfect plan' );
 
 	return (
 		<Main className="jetpack-app-plans">
 			<QueryPlans />
 			{ plansLoaded ? (
-				<PlansFeaturesMain
-					paidDomainName={ domainName }
-					intent="plans-jetpack-app-site-creation"
-					isInSignup
-					intervalType="yearly"
-					onUpgradeClick={ onUpgradeClick }
-					plansWithScroll={ false }
-					flowName="onboarding"
-					removePaidDomain={ removePaidDomain }
-					hidePlanTypeSelector
-				/>
+				<div className="plans__header">
+					<FormattedHeader brandFont headerText={ headline } align="center" />
+					<p>
+						{ translate(
+							'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+							{
+								args: { domainName },
+								components: { strong: <strong /> },
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							'You’ll also unlock advanced features that make it easy to build and grow your site.'
+						) }
+					</p>
+					<PlansFeaturesMain
+						paidDomainName={ domainName }
+						intent="plans-jetpack-app-site-creation"
+						isInSignup
+						intervalType="yearly"
+						onUpgradeClick={ onUpgradeClick }
+						plansWithScroll={ false }
+						flowName="onboarding"
+						removePaidDomain={ handleRedirect }
+						hidePlanTypeSelector
+					/>
+				</div>
 			) : (
 				<div className="plans__loading">
 					<LoadingEllipsis active />

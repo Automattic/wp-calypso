@@ -2,6 +2,34 @@
 
 .jetpack-app-plans {
 	@include plan-features-layout-switcher;
+
+	.plans__header {
+		display: block;
+		overflow: auto;
+
+		.formatted-header__title,
+		.formatted-header__subtitle {
+			max-width: unset;
+		}
+
+		h1 {
+			font-family: $brand-serif;
+			font-size: $font-headline-small;
+			margin-bottom: 16px;
+		}
+
+		p {
+			font-size: $font-body;
+			color: var(--color-text-subtle);
+			text-align: center;
+			padding: 0 16px;
+			margin-bottom: 0;
+		}
+	}
+}
+
+.layout__content {
+	padding: 0;
 }
 
 .masterbar {
