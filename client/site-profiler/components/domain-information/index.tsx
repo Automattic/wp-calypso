@@ -64,11 +64,12 @@ export default function DomainInformation( props: Props ) {
 							{ whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
 								<VerifiedProvider />
 							) }
-							{ ! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
-								<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
-									{ whois.registrar }
-								</a>
-							) }
+							{ whois.registrar_url &&
+								! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
+									<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
+										{ whois.registrar }
+									</a>
+								) }
 							{ ! whois.registrar_url && <span>{ whois.registrar }</span> }
 						</div>
 					</li>
@@ -176,7 +177,7 @@ export default function DomainInformation( props: Props ) {
 							) }
 							{ whois.registrant_email && (
 								<li>
-									{ whois.registrant_email.includes( '@' ) && (
+									{ whois.registrant_email?.includes( '@' ) && (
 										<a href={ `mailto:${ whois.registrant_email }` }>{ translate( 'Email' ) }</a>
 									) }
 									{ urlRegex.test( whois.registrant_email ) &&
