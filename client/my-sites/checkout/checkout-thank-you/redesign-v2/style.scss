@@ -2,7 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 // Design i2 overrides, the purchase-detail component is also used by the /plans/my-plan page to render plan features.
-.is-redesign-v2.checkout-thank-you {
+.is-redesign-v2.checkout-thank-you,
+.is-redesign-v2 {
 	&.main {
 		max-width: 750px;
 		padding: 0 24px 0;
