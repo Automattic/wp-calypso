@@ -31,10 +31,11 @@ export default function ThemeCollection( {
 		<div className="theme-collection__container">
 			<h2>{ heading }</h2>
 			{ themes.map( ( theme, index ) => (
-				<div>
+				<div key={ `theme-collection-container-${ collectionSlug }-${ index }` }>
 					<ThemeBlock
 						getScreenshotUrl={ getScreenshotUrl }
-						key={ `theme-collection-${ collectionSlug }-${ index }` }
+						index={ index }
+						collectionSlug={ collectionSlug }
 						theme={ theme }
 						siteId={ siteId }
 						isActive={ isActive }
