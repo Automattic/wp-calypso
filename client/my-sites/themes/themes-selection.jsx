@@ -267,12 +267,15 @@ class ThemesSelection extends Component {
 
 		const interlacedThemes = interlaceThemes( themes, wpOrgThemes, query.search, isLastPage );
 
+		const isActiveInLits = config.isEnabled( 'themes/discovery-lits' ) && this.props.isLoggedIn;
+		const isActiveInLots = config.isEnabled( 'themes/discovery-lots' ) && ! this.props.isLoggedIn;
+
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
 				{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
 
-				{ config.isEnabled( 'themes/discovery-lots' ) && ! this.props.isLoggedIn && (
+				{ ( isActiveInLits || isActiveInLots ) && (
 					<ThemeCollection
 						heading="Premium themes"
 						themes={ interlacedThemes }
