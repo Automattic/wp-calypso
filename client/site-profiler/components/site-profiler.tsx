@@ -23,11 +23,11 @@ export default function SiteProfiler() {
 	const navigate = useNavigate();
 	const queryParams = useQuery();
 	const { domain, isValid: isDomainValid } = useDomainQueryParam();
+	const noticeOptions = { duration: 3000 };
 
 	const {
 		data: siteProfilerData,
 		isFetching,
-		error: errorSP,
 		isError: isErrorSP,
 		errorUpdateCount: errorUpdateCountSP,
 	} = useDomainAnalyzerQuery( domain, isDomainValid );
@@ -41,7 +41,13 @@ export default function SiteProfiler() {
 
 	// Handle errors from the domain analyzer query
 	useEffect( () => {
-		isErrorSP && errorSP instanceof Error && dispatch( errorNotice( errorSP.message ) );
+		isErrorSP &&
+			dispatch(
+				errorNotice(
+					translate( 'There was problem analyzing provided domain. Please try again.' ),
+					noticeOptions
+				)
+			);
 	}, [ errorUpdateCountSP ] );
 
 	const updateDomainQueryParam = ( value: string ) => {
