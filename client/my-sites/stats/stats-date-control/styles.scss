@@ -35,5 +35,9 @@ $button-padding: 8px 32px;
 		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		font-weight: 400;
 	}
+
+	&:hover {
+		background-color: var(--color-neutral-0);
+	}
 }
 
