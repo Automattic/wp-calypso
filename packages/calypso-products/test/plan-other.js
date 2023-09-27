@@ -55,7 +55,7 @@ describe( 'getBillingMonthsForTerm', () => {
 		expect( getBillingMonthsForTerm( TERM_TRIENNIALLY ) ).toBe( 36 );
 	} );
 	test( 'should throw an error for unknown term', () => {
-		expect( () => getBillingMonthsForTerm( 'fake' ) ).toThrowError();
+		expect( () => getBillingMonthsForTerm( 'fake' ) ).toThrow();
 	} );
 } );
 

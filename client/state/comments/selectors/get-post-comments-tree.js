@@ -6,7 +6,6 @@ import 'calypso/state/comments/init';
 
 /**
  * Gets comment tree for a given post
- *
  * @param {Object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification

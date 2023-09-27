@@ -156,7 +156,6 @@ export class DateRange extends Component {
 	/**
 	 * Updates state with current value of start/end
 	 * text inputs
-	 *
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
@@ -169,7 +168,6 @@ export class DateRange extends Component {
 	/**
 	 * Ensure dates are valid according to standard rules
 	 * and special configuration component config props
-	 *
 	 * @param  {moment}  date MomentJS date object
 	 * @returns {boolean}      whether date is considered valid or not
 	 */
@@ -202,7 +200,6 @@ export class DateRange extends Component {
 
 	/**
 	 * Updates the state when the date text inputs are blurred
-	 *
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
@@ -233,7 +230,6 @@ export class DateRange extends Component {
 	 * Updates the currently focused date picker month when one of the
 	 * inputs is focused.
 	 * http://react-day-picker.js.org/api/DayPicker/#month
-	 *
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
@@ -266,7 +262,6 @@ export class DateRange extends Component {
 	/**
 	 * Converts moment dates to a DateRange
 	 * as required by Day Picker DateUtils
-	 *
 	 * @param  {import('moment').Moment} startDate the start date for the range
 	 * @param  {import('moment').Moment} endDate   the end date for the range
 	 * @returns {Object}           the date range object
@@ -285,7 +280,6 @@ export class DateRange extends Component {
 	 * method is triggered which restores the previous ("stale") dates.
 	 *
 	 * Dates are only persisted via the commitDates method.
-	 *
 	 * @param  {import('moment').Moment} date the newly selected date object
 	 */
 	onSelectDate = ( date ) => {
@@ -436,7 +430,6 @@ export class DateRange extends Component {
 
 	/**
 	 * Converts a moment date to a native JS Date object
-	 *
 	 * @param  {import('moment').Moment} momentDate a momentjs date object to convert
 	 * @returns {Date}            the converted JS Date object
 	 */
@@ -446,7 +439,6 @@ export class DateRange extends Component {
 
 	/**
 	 * Converts a native JS Date object to a MomentJS Date object
-	 *
 	 * @param  {Date} nativeDate date to be converted
 	 * @returns {import('moment').Moment}            the converted Date
 	 */
@@ -457,7 +449,6 @@ export class DateRange extends Component {
 	/**
 	 * Formats a given date to the appropriate format for the
 	 * current locale
-	 *
 	 * @param  {import('moment').Moment | Date} date the date to be converted
 	 * @returns {string}      the date as a formatted locale string
 	 */
@@ -467,7 +458,6 @@ export class DateRange extends Component {
 
 	/**
 	 * 	Gets the locale appropriate date format (eg: "MM/DD/YYYY")
-	 *
 	 * @returns {string} date format as a string
 	 */
 	getLocaleDateFormat() {
@@ -477,7 +467,6 @@ export class DateRange extends Component {
 	/**
 	 * Enforces that given date is within the bounds of the
 	 * range specified
-	 *
 	 * @param  {import('moment').Moment}  date             momentJS instance
 	 * @param  {Object} options          date range
 	 * @param  {import('moment').Moment | Date}  options.dateFrom the start of the date range
@@ -501,7 +490,6 @@ export class DateRange extends Component {
 	 * Converts date-like object to a string suitable
 	 * for display in a text input. Also converts
 	 * to locale appropriate format.
-	 *
 	 * @param  {import('moment').Moment | Date} date the date for conversion
 	 * @returns {string}      the date expressed as a locale appropriate string or if null
 	 *                       then returns the locale format (eg: MM/DD/YYYY)
@@ -522,7 +510,6 @@ export class DateRange extends Component {
 	 * See:
 	 * http://react-day-picker.js.org/api/DayPicker/#disabledDays
 	 * http://react-day-picker.js.org/docs/matching-days
-	 *
 	 * @returns {Array} configuration to be passed to DatePicker as disabledDays prop
 	 */
 	getDisabledDaysConfig() {
@@ -586,7 +573,6 @@ export class DateRange extends Component {
 
 	/**
 	 * Renders the Popover component
-	 *
 	 * @returns {import('react').Element} the Popover component
 	 */
 	renderPopover() {
@@ -625,7 +611,6 @@ export class DateRange extends Component {
 
 	/**
 	 * Renders the DatePicker component
-	 *
 	 * @returns {import('react').Element} the DatePicker component
 	 */
 	renderDatePicker() {
@@ -684,7 +669,6 @@ export class DateRange extends Component {
 
 	/**
 	 * Renders the component
-	 *
 	 * @returns {import('react').Element} the DateRange component
 	 */
 	render() {

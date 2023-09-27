@@ -2,7 +2,6 @@ import 'calypso/state/media/init';
 
 /**
  * Retrieves a transient media item by ID for a given site.
- *
  * @param {Object} state The current state.
  * @param {number} siteId The site ID for which to retrieve the transient media item.
  * @param {string} transientMediaId The ID of the transient media to retrieve

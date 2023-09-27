@@ -17,7 +17,6 @@ import 'calypso/state/site-keyrings/init';
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve site keyrings
- *
  * @param  {number} siteId Site ID
  * @returns {Function}      Action thunk
  */

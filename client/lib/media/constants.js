@@ -1,6 +1,5 @@
 /**
  * An enum set of possible media validation errors.
- *
  * @type {Object}
  * @typedef MediaValidationError
  */
@@ -59,7 +58,6 @@ export const GalleryDefaultAttrs = {
  * Dictionary of common file extensions mapped to respective mime type.
  *
  * Adapted from WordPress
- *
  * @copyright 2015 by the WordPress contributors.
  * See CREDITS.md file in root directory for full license.
  * @see https://github.com/WordPress/WordPress/blob/4.2.4/wp-includes/functions.php#L2156-L2277
@@ -200,7 +198,6 @@ export const MEDIA_IMAGE_RESIZER = 'MEDIA_IMAGE_RESIZER';
 /**
  * Scale choices are 12, 8, 6, 4, and 3 items per row, with some horizontal
  * padding between items
- *
  * @type {Array}
  */
 export const SCALE_CHOICES = [ 0.077, 0.115, 0.157, 0.24, 0.323 ];

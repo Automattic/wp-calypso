@@ -11,7 +11,6 @@ import 'calypso/state/user-suggestions/init';
 /**
  * Returns an action object to be used in signalling that user suggestions for a site
  * have been received.
- *
  * @param  {number} siteId  	Site ID
  * @param  {Object} suggestions User suggestions
  * @returns {Object}         	Action object
@@ -27,7 +26,6 @@ export function receiveUserSuggestions( siteId, suggestions ) {
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve user suggestions for a site.
- *
  * @param  {number}   siteId  Site ID
  * @returns {Function}         Action thunk
  */

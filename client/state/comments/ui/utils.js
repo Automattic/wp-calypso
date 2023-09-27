@@ -1,7 +1,6 @@
 /**
  * Creates a filters key to be used in the `comments.ui.queries` state.
  * E.g. `comments.ui.queries.${ siteId }.${ postId }.${ 'approved?s=foo' }.${ page }`
- *
  * @param {Object} query Filter parameters.
  * @param {string} [query.order] Query order ('ASC' or 'DESC').
  * @param {string} [query.search] Search query.

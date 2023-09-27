@@ -7,7 +7,6 @@ const noop = () => {};
 
 /**
  * Start the Jetpack product install process.
- *
  * @param   {Object} action Action to start product install request.
  * @returns {Object}        The dispatched action.
  */

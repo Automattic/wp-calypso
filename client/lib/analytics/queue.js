@@ -58,7 +58,6 @@ function runTrigger( moduleName, trigger, ...args ) {
 
 /**
  * Add an item to the analytics queue.
- *
  * @param {string} moduleName the name of the module where the queued method exists, e.g. `signup`.
  * See the `modules` constant at the top of this file (`lib/analytics/queue.js`).
  * @param {string} trigger the exported function in the chosen module to be run, e.g. `recordSignupStart` in `signup`.

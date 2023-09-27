@@ -4,7 +4,6 @@ import apiResponseSchema from './schema';
 
 /**
  * Transforms API response into array of activities
- *
  * @param  {Object} apiResponse API response body
  * @returns {Object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */

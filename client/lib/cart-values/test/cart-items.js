@@ -846,7 +846,7 @@ describe( 'getRenewalItemFromProduct()', () => {
 					buildPurchase( { product_slug: 'new_plan_does_not_exist' } ),
 					properties
 				)
-			).toThrowError( 'This product cannot be renewed' );
+			).toThrow( 'This product cannot be renewed' );
 		} );
 	} );
 } );

@@ -19,14 +19,14 @@ describe( 'markup', () => {
 			jest.spyOn( markup.mimeTypes, 'image' );
 			markup.get( site, { mime_type: 'image/png' } );
 
-			expect( markup.mimeTypes.image ).toBeCalled();
+			expect( markup.mimeTypes.image ).toHaveBeenCalled();
 		} );
 
 		test( 'should return a link for a mime type prefix without a specific handler', () => {
 			jest.spyOn( markup, 'link' );
 			markup.get( site, { mime_type: 'application/pdf' } );
 
-			expect( markup.link ).toBeCalled();
+			expect( markup.link ).toHaveBeenCalled();
 		} );
 	} );
 

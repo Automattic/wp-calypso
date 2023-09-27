@@ -5,7 +5,6 @@ const debug = debugFactory( 'calypso:local-storage' );
 
 /**
  * Overwrite window.localStorage if necessary
- *
  * @param  {Object} root Object to instantiate `windows` object to test in node.js
  */
 export default function ( root ) {

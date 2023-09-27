@@ -37,14 +37,14 @@ describe( 'index', () => {
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).toBe( true );
-			expect( changeSpy ).not.toBeCalled();
+			expect( changeSpy ).not.toHaveBeenCalled();
 		} );
 
 		test( 'has to change state to disconnected when disconnected event sent', () => {
 			NetworkConnectionApp.emitDisconnected();
 
 			expect( NetworkConnectionApp.isConnected() ).toBe( false );
-			expect( changeSpy ).toBeCalledTimes( 1 );
+			expect( changeSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'has to change state to connected only once when connected event sent twice', () => {
@@ -52,7 +52,7 @@ describe( 'index', () => {
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).toBe( true );
-			expect( changeSpy ).toBeCalledTimes( 1 );
+			expect( changeSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'has to change state to disconnected and then back to connected when disconnected and then connected events sent', () => {
@@ -60,7 +60,7 @@ describe( 'index', () => {
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).toBe( true );
-			expect( changeSpy ).toBeCalledTimes( 2 );
+			expect( changeSpy ).toHaveBeenCalledTimes( 2 );
 		} );
 	} );
 } );

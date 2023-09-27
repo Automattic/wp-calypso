@@ -5,7 +5,6 @@ import getSitesItems from 'calypso/state/selectors/get-sites-items';
 /**
  * Returns a filtered array of WordPress.com site IDs where a Jetpack site
  * exists in the set of sites with the same URL.
- *
  * @param  {Object}   state Global state tree
  * @returns {number[]}       WordPress.com site IDs with collisions
  */

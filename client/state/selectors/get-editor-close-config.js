@@ -5,7 +5,6 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Gets the URL for the close button for the block editor, dependent previous referral state
- *
  * @param {Object} state  Global state tree
  * @param {number|string|undefined|null} siteId Site ID
  * @param {string} postType The type of the current post being edited

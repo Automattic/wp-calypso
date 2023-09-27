@@ -13,7 +13,6 @@ import 'calypso/state/themes/init';
 /**
  * Returns an array of normalized themes for the themes query, including all
  * known queried pages, or null if the themes for the query are not known.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {Object}  query  Theme query object

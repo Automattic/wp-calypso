@@ -57,10 +57,10 @@ describe( 'afterLayoutFlush', () => {
 			const callback = jest.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction();
-			expect( callback ).not.toBeCalled();
+			expect( callback ).not.toHaveBeenCalled();
 
 			runAnimationFrame();
-			expect( callback ).not.toBeCalled();
+			expect( callback ).not.toHaveBeenCalled();
 
 			jest.runAllTimers();
 			expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -75,7 +75,7 @@ describe( 'afterLayoutFlush', () => {
 			runAnimationFrame();
 			jest.runAllTimers();
 
-			expect( callback ).not.toBeCalled();
+			expect( callback ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should cancel execution if `cancel` is called before the timeout', () => {
@@ -87,7 +87,7 @@ describe( 'afterLayoutFlush', () => {
 			wrappedFunction.cancel();
 			jest.runAllTimers();
 
-			expect( callback ).not.toBeCalled();
+			expect( callback ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not throw if `cancel` is called after execution', () => {
@@ -98,7 +98,7 @@ describe( 'afterLayoutFlush', () => {
 			runAnimationFrame();
 			jest.runAllTimers();
 
-			expect( callback ).toBeCalled();
+			expect( callback ).toHaveBeenCalled();
 			expect( () => wrappedFunction.cancel() ).not.toThrow();
 		} );
 
@@ -157,7 +157,7 @@ describe( 'afterLayoutFlush', () => {
 
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction();
-			expect( callback ).not.toBeCalled();
+			expect( callback ).not.toHaveBeenCalled();
 
 			jest.runAllTimers();
 			expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -171,7 +171,7 @@ describe( 'afterLayoutFlush', () => {
 			wrappedFunction.cancel();
 			jest.runAllTimers();
 
-			expect( callback ).not.toBeCalled();
+			expect( callback ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not throw if `cancel` is called after execution', () => {
@@ -181,7 +181,7 @@ describe( 'afterLayoutFlush', () => {
 
 			jest.runAllTimers();
 
-			expect( callback ).toBeCalled();
+			expect( callback ).toHaveBeenCalled();
 			expect( () => wrappedFunction.cancel() ).not.toThrow();
 		} );
 

@@ -50,7 +50,6 @@ import 'calypso/state/reader/init';
 
 /**
  * Follow a feed URL
- *
  * @param   {string} feedUrl      			The feed URL
  * @param   {?Follow} followInfo   			A subscription, optional
  * @param   {?Object} recommendedSiteInfo   A subscription, optional
@@ -86,7 +85,6 @@ export function unfollow( feedUrl ) {
 /**
  * Returns an action object to signal that an error was encountered
  * when following a URL.
- *
  * @param  {string} feedUrl Feed URL
  * @param  {Object} error Error response (contains keys 'info' and 'subscribed')
  * @returns {Object} Action
@@ -109,7 +107,6 @@ export function receiveFollows( { follows, totalCount } ) {
 
 /**
  * Returns an action object to signal that follows have been requested.
- *
  * @returns {Object} 		Action object
  */
 export function requestFollows() {
@@ -120,7 +117,6 @@ export function requestFollows() {
 
 /**
  * Represents a completed sync.
- *
  * @param  {Array} followedUrls An array of all the feed URLS seen during the sync
  * @returns {Object}              The action
  */

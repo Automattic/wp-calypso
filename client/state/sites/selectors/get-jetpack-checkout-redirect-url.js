@@ -2,7 +2,6 @@ import getSiteOption from './get-site-option';
 
 /**
  * Returns a jetpack plugin admin page depending on which plugin is active.
- *
  * @param  {Object}  state  Global state tree
  * @param  {?number}  siteId Site ID
  * @returns {string}        Jetpack or standalone plugin checkout redirect page

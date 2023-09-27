@@ -5,7 +5,6 @@ import 'calypso/state/data-layer/wpcom/auth/send-login-email';
 
 /**
  * Sends an email with a link that allows a user to login WordPress.com or the native apps
- *
  * @param {string} email - email to send to
  * @param {Object} options object:
  * @param {string} options.redirectTo - url to redirect to after login

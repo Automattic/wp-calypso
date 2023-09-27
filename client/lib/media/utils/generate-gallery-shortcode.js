@@ -9,7 +9,6 @@ import { stringify } from 'calypso/lib/shortcode';
 /**
  * Given an array of media items, returns a gallery shortcode using an
  * optional set of parameters.
- *
  * @param  {Object} settings Gallery settings
  * @returns {string|undefined}          Gallery shortcode
  */

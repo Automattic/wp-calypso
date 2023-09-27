@@ -20,7 +20,6 @@ import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/sho
 /**
  * Triggers a network request to activate a specific theme on a given site.
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
- *
  * @param  {string}   themeId   Theme ID
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
@@ -103,7 +102,6 @@ export function activate(
 /**
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
  * Otherwise, activate the theme directly
- *
  * @param  {string}   themeId   Theme ID
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
