@@ -34,7 +34,7 @@ export function useAtomicTransfer(
 		! isAtomicNeeded
 	);
 	const previousIsAtomicNeeded = usePrevious( isAtomicNeeded );
-	const isAtomicNeededTransition = ! previousIsAtomicNeeded && isAtomicNeeded;
+	const isAtomicNeededActivated = ! previousIsAtomicNeeded && isAtomicNeeded;
 	const [ showProgressBar, setShowProgressBar ] = useState(
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
 	);
@@ -100,7 +100,7 @@ export function useAtomicTransfer(
 	}, [ transferStatus, showProgressBar, isJetpack ] );
 
 	return [
-		isAtomicNeededTransition ? false : isAtomicTransferCheckComplete,
+		isAtomicNeededActivated ? false : isAtomicTransferCheckComplete,
 		currentStep,
 		showProgressBar,
 		setShowProgressBar,
