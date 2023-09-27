@@ -1,17 +1,20 @@
 import { Button } from '@wordpress/components';
+import { Icon, info } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FormEvent } from 'react';
+import React, { FormEvent } from 'react';
 import './styles.scss';
 
 interface Props {
 	domain?: string;
 	isBusy?: boolean;
+	isDomainValid?: boolean;
 	onFormSubmit: ( domain: string ) => void;
 }
 
 export default function DomainAnalyzer( props: Props ) {
 	const translate = useTranslate();
-	const { domain, isBusy, onFormSubmit } = props;
+	const { domain, isBusy, isDomainValid, onFormSubmit } = props;
 
 	const onSubmit = ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
@@ -31,7 +34,10 @@ export default function DomainAnalyzer( props: Props ) {
 				) }
 			</p>
 
-			<form className="domain-analyzer--form" onSubmit={ onSubmit }>
+			<form
+				className={ classnames( 'domain-analyzer--form', { 'is-error': isDomainValid === false } ) }
+				onSubmit={ onSubmit }
+			>
 				<div className="domain-analyzer--form-container">
 					<div className="col-1">
 						<input
@@ -39,7 +45,7 @@ export default function DomainAnalyzer( props: Props ) {
 							name="domain"
 							autoComplete="off"
 							defaultValue={ domain }
-							placeholder={ translate( 'mysite.com' ) }
+							placeholder={ translate( 'Enter a website URL' ) }
 						/>
 					</div>
 					<div className="col-2">
@@ -47,6 +53,17 @@ export default function DomainAnalyzer( props: Props ) {
 							{ translate( 'Check site' ) }
 						</Button>
 					</div>
+				</div>
+				<div className="domain-analyzer--msg">
+					{ ( isDomainValid || isDomainValid === undefined ) && (
+						<p className="center">{ translate( 'Enter the URL of the site you want to check' ) }</p>
+					) }
+					{ isDomainValid === false && (
+						<p className="error">
+							<Icon icon={ info } size={ 20 } />{ ' ' }
+							{ translate( 'Please enter a valid website address' ) }
+						</p>
+					) }
 				</div>
 			</form>
 		</div>

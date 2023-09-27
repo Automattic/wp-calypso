@@ -7,7 +7,7 @@ export interface MigrationStatusError {
 	message: string;
 }
 
-export const useDomainAnalyzerQuery = ( domain: string ) => {
+export const useDomainAnalyzerQuery = ( domain: string, isValid?: boolean ) => {
 	return useQuery( {
 		queryKey: [ 'domain-', domain ],
 		queryFn: (): Promise< DomainAnalyzerQueryResponse > =>
@@ -18,7 +18,7 @@ export const useDomainAnalyzerQuery = ( domain: string ) => {
 		meta: {
 			persist: false,
 		},
-		enabled: !! domain,
+		enabled: !! domain && isValid,
 		retry: false,
 		refetchOnWindowFocus: false,
 	} );
