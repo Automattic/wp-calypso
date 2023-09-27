@@ -102,12 +102,23 @@ export const SiteSettingsPopover = ( {
 		>
 			{ ( close: () => void ) => (
 				<>
-					{ isWpComSite && (
-						<>
-							<SiteSettings { ...props } />
-							<hr className="subscriptions__separator" />
-						</>
-					) }
+					{ isWpComSite && <SiteSettings { ...props } /> }
+
+					<Button
+						className={ classNames( 'site-settings-popover__unsubscribe-button', {
+							'is-loading': unsubscribing,
+						} ) }
+						disabled={ unsubscribing }
+						icon={ <UnsubscribeIcon className="subscriptions-ellipsis-menu__item-icon" /> }
+						onClick={ () => {
+							onUnsubscribe();
+							close();
+						} }
+					>
+						{ translate( 'Unsubscribe' ) }
+					</Button>
+
+					<hr className="subscriptions__separator" />
 
 					<VStack spacing={ 4 }>
 						{ Boolean( feedId ) && (
@@ -125,20 +136,6 @@ export const SiteSettingsPopover = ( {
 								{ translate( 'View feed' ) }
 							</Button>
 						) }
-
-						<Button
-							className={ classNames( 'site-settings-popover__unsubscribe-button', {
-								'is-loading': unsubscribing,
-							} ) }
-							disabled={ unsubscribing }
-							icon={ <UnsubscribeIcon className="subscriptions-ellipsis-menu__item-icon" /> }
-							onClick={ () => {
-								onUnsubscribe();
-								close();
-							} }
-						>
-							{ translate( 'Unsubscribe' ) }
-						</Button>
 					</VStack>
 				</>
 			) }
