@@ -17,7 +17,6 @@ import 'calypso/state/themes/init';
  * Returns an action thunk to be used in signalling that a theme has been activated
  * on a given site. Careful, this action is different from most others here in that
  * expects a theme stylesheet string (not just a theme ID).
- *
  * @param  {string}   themeStylesheet    Theme stylesheet string (*not* just a theme ID!)
  * @param  {number}   siteId             Site ID
  * @param  {string}   source             The source that is requesting theme activation, e.g. 'showcase'

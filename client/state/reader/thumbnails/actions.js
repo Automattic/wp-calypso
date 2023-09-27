@@ -14,7 +14,6 @@ export const BAD_API_RESPONSE = 'BAD_API_RESPONSE';
 
 /**
  * Returns an action object to signal that a thumbnailUrl has been received.
- *
  * @param {string} embedUrl the url of the embed for which the thumbnail was grabbed
  * @param {string} thumbnailUrl the url at which to find the thumbnail for the embed
  * @returns {Object} Action object
@@ -31,7 +30,6 @@ export function receiveThumbnail( embedUrl, thumbnailUrl ) {
  * Handle the fetch response.
  * Throws an error if response is not OK.
  * Converts to JSON if response is OK.
- *
  * @param {Promise} response A promise that resolves to a Response object.
  * @returns {string} Reponse, converted to JSON.
  * @throws Error If the response is not OK.
@@ -46,7 +44,6 @@ function handleFetchResponse( response ) {
 /**
  * Either instantly returns an action for the thumbnail info or
  * triggers a network request to fetch a thumbnailUrl if necessary
- *
  * @param  {string} embedUrl -  the url of the embed for which to get the thumbnail
  * @returns {Function | Object} Action thunk | Action object
  */

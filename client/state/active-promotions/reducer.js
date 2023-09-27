@@ -12,7 +12,6 @@ import { itemsSchema } from './schema';
  * ActivePromotions `Reducer` function
  * root state -> state.activePromotions.items =>
  * [ '', '', '', ... '' ]
- *
  * @param {Object} state - current state
  * @param {Object} action - activePromotions action
  * @returns {Object} updated state
@@ -33,7 +32,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
 /**
  * `Reducer` function which handles request/response actions
  * to/from WP REST-API
- *
  * @param {Object} state - current state
  * @param {Object} action - activePromotions action
  * @returns {Object} updated state
@@ -53,7 +51,6 @@ export const requesting = ( state = false, action ) => {
 
 /**
  * `Reducer` function which handles ERROR REST-API response actions
- *
  * @param {Object} state - current state
  * @param {Object} action - activePromotions action
  * @returns {Object} updated state

@@ -2,7 +2,6 @@ import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 
 /**
  * Get the last full site backup.
- *
  * @param {Object} state Global state tree
  * @param {number|string} siteId the site ID
  * @returns {Array} Rewind backups list

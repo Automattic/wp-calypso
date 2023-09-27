@@ -12,7 +12,6 @@ export const ALL_SITES_ID = -1;
 /**
  * Returns an action object to be used in signalling that stats for a given type of stats and query
  * have been received.
- *
  * @param  {number} siteId   Site ID
  * @param  {string} statType Stat Key
  * @param  {Object} query    Stats query
@@ -64,7 +63,6 @@ const wpcomV2AllSitesEndpoints = {
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve site stats.
- *
  * @param  {number} siteId   Site ID
  * @param  {string} statType Type of stats
  * @param  {Object} query    Stats Query

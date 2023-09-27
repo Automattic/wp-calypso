@@ -262,7 +262,6 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 /**
  * The paths allowed for domain-only sites and DIFM in-progress sites are the same
  * with one exception - /domains/add should be allowed for DIFM in-progress sites.
- *
  * @param {string} path The path to be checked
  * @param {string} slug The site slug
  * @param {Array} domains The list of site domains
@@ -378,7 +377,6 @@ export function updateRecentSitesPreferences( context ) {
 
 /**
  * Returns the site-picker react element.
- *
  * @param {Object} context -- Middleware context
  * @returns {Object} A site-picker React element
  */
@@ -666,7 +664,6 @@ export function navigation( context, next ) {
 
 /**
  * Middleware that adds the site selector screen to the layout.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -702,7 +699,6 @@ export function redirectWithoutSite( redirectPath ) {
 
 /**
  * Use this middleware to prevent navigation to pages which are not supported by staging sites.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -725,7 +721,6 @@ export function stagingSiteNotSupportedRedirect( context, next ) {
  *
  * If you need to prevent navigation to pages for the P2 project in general,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -749,7 +744,6 @@ export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
 /**
  * For P2s, only hubs can have a plan. If we are on P2 a site that is a site under
  * a hub, we redirect the hub's plans page.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -778,7 +772,6 @@ export function p2RedirectToHubPlans( context, next ) {
  *
  * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -797,7 +790,6 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
 
 /**
  * Whether we need to redirect user to the Jetpack site for authorization.
- *
  * @param {Object} context -- The context object.
  * @param {Object} site -- The site information.
  * @returns {boolean} shouldRedirect -- Whether we need to redirect user to the Jetpack site for authorization.
@@ -808,7 +800,6 @@ export function shouldRedirectToJetpackAuthorize( context, site ) {
 
 /**
  * Get redirect URL to the Jetpack site for authorization.
- *
  * @param {Object} context -- The context object.
  * @param {Object} site -- The site information.
  * @returns {string} redirectURL -- The redirect URL.

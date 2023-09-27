@@ -12,7 +12,6 @@ import pwa from 'calypso/server/pwa';
 
 /**
  * Returns the server HTTP request handler "app".
- *
  * @returns {Object} The express app
  */
 export default function setup() {

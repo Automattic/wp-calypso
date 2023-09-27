@@ -22,7 +22,7 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions || {};
+	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions;
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {

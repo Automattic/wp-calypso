@@ -9,7 +9,6 @@ export default class MediaQueryKey extends PaginatedQueryKey {
 	/**
 	 * Default query used in determining values to be omitted from stringified
 	 * or parsed query objects
-	 *
 	 * @type {?Object}
 	 */
 	static DEFAULT_QUERY = DEFAULT_MEDIA_QUERY;
@@ -17,7 +16,6 @@ export default class MediaQueryKey extends PaginatedQueryKey {
 	/**
 	 * Controls omission to remove all null values from stringified or parsed
 	 * query objects
-	 *
 	 * @type {boolean}
 	 */
 	static OMIT_NULL_VALUES = true;

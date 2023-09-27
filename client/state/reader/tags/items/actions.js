@@ -15,7 +15,6 @@ import 'calypso/state/reader/init';
 
 /**
  * Helper function. Turns a tag name into a tag "slug" for use with the API.
- *
  * @param  {string} tag  Tag name to parse into a slug
  * @returns {string}      Tag slug
  */

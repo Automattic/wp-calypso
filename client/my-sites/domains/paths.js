@@ -344,7 +344,6 @@ export function domainMappingSetup(
 
 /**
  * Return the path to start an inbound domain transfer to WordPress.com.
- *
  * @param { string } siteName         The slug for the site.
  * @param { string } domain           The domain name.
  * @param { boolean } useStandardBack Flag to indicate whether the "Back" button in the

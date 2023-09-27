@@ -15,7 +15,6 @@ export const initialSiteState = {
 
 /**
  * Returns a new state with the given attributes updated for the specified site.
- *
  * @param {Object} state current state
  * @param {number} siteId identifier of the site
  * @param {Object} attributes list of attributes and their values

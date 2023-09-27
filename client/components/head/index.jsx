@@ -2,7 +2,13 @@ import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import Favicons from './favicons';
 
-const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonce } ) => {
+const Head = ( {
+	title = 'WordPress.com',
+	children,
+	branchName,
+	inlineScriptNonce,
+	faviconUrl,
+} ) => {
 	return (
 		<head>
 			<title>{ title }</title>
@@ -22,7 +28,7 @@ const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonc
 				href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
 			/>
 
-			<Favicons environmentFaviconURL={ config( 'favicon_url' ) } />
+			<Favicons environmentFaviconURL={ faviconUrl || config( 'favicon_url' ) } />
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
 
@@ -71,6 +77,7 @@ Head.propTypes = {
 	title: PropTypes.string,
 	children: PropTypes.node,
 	branchName: PropTypes.string,
+	faviconUrl: PropTypes.string,
 };
 
 export default Head;

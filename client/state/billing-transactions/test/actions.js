@@ -50,14 +50,14 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestBillingTransactions()( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: BILLING_TRANSACTIONS_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch receive action when request completes', () => {
 				return requestBillingTransactions()( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: BILLING_TRANSACTIONS_RECEIVE,
 						past: successResponse.billing_history,
 						upcoming: successResponse.upcoming_charges,
@@ -67,7 +67,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch request success action when request completes', () => {
 				return requestBillingTransactions()( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 					} );
 				} );
@@ -90,7 +90,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch request failure action when request fails', () => {
 				return requestBillingTransactions()( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
 						error: expect.objectContaining( {
 							message,
@@ -115,7 +115,7 @@ describe( 'actions', () => {
 			test( 'should dispatch send action when thunk triggered', () => {
 				sendBillingReceiptEmail( receiptId )( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: BILLING_RECEIPT_EMAIL_SEND,
 					receiptId,
 				} );
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch send success action when request completes', () => {
 				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 						receiptId,
 					} );
@@ -147,7 +147,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch send failure action when request fails', () => {
 				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 						receiptId,
 						error: expect.objectContaining( {

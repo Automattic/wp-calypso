@@ -5,7 +5,6 @@ import 'calypso/state/jetpack-connect/init';
 
 /**
  * Returns true if the authorization error indicates that site has been blocked.
- *
  * @param  {Object}  state Global state tree
  * @returns {boolean}       True if there's a blocked site error, false otherwise
  */

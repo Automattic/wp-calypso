@@ -31,6 +31,7 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
+import DomainTransferToAnyUser from './checkout-thank-you/domain-transfer-to-any-user';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import HundredYearPlanThankYou from './checkout-thank-you/hundred-year-plan-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
@@ -511,6 +512,14 @@ export function giftThankYou( context, next ) {
 	// background via .is-section-checkout-gift-thank-you
 	context.section.name = 'checkout-gift-thank-you';
 	context.primary = <GiftThankYou site={ context.params.site } />;
+	next( context );
+}
+
+export function transferDomainToAnyUser( context, next ) {
+	// Overriding section name here in order to apply a top level
+	// background via .is-section-checkout-thank-you
+	context.section.name = 'checkout-thank-you';
+	context.primary = <DomainTransferToAnyUser domain={ context.params.domain } />;
 	next( context );
 }
 
