@@ -1,0 +1,15 @@
+.popover.info-popover__tooltip {
+	outline: none;
+
+	.popover__inner {
+		color: var(--color-neutral-50);
+		font-size: $font-body-small;
+		max-width: 300px;
+		padding: 1rem;
+		text-align: left;
+	}
+}
+
+.hosting-provider-name {
+	padding: 0;
+}

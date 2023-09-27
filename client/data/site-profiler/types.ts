@@ -60,6 +60,7 @@ export interface HostingProvider {
 	slug: string;
 	name: string;
 	is_cdn: boolean;
+	support_url?: string;
 }
 
 export interface DomainAnalyzerQueryResponse {
