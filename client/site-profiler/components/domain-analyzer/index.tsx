@@ -55,12 +55,14 @@ export default function DomainAnalyzer( props: Props ) {
 					</div>
 				</div>
 				<div className="domain-analyzer--msg">
-					{ isDomainValid === false && (
-						<p className="error">
-							<Icon icon={ info } size={ 20 } />{ ' ' }
-							{ translate( 'Please enter a valid website address' ) }
-						</p>
-					) }
+					<p
+						className={ classnames( 'error', {
+							'vis-hidden': isDomainValid || isDomainValid === undefined,
+						} ) }
+					>
+						<Icon icon={ info } size={ 20 } />{ ' ' }
+						{ translate( 'Please enter a valid website address' ) }
+					</p>
 				</div>
 			</form>
 		</div>
