@@ -88,6 +88,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 							<Route path="/contact-form" element={ <SupportModeTitle /> } />
 							<Route path="/post" element={ <ArticleTitle /> } />
 							<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
+							<Route path="/odie" element={ __( 'Wapuu', __i18n_text_domain__ ) } />
 						</Routes>
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )

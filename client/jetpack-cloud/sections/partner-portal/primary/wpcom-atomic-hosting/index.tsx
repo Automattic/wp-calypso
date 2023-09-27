@@ -1,7 +1,7 @@
 import { PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -15,6 +15,7 @@ export default function WPCOMAtomicHosting() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const title = translate( 'Create a new WordPress.com site' );
+	const [ isRequesting, setIsRequesting ] = useState( false );
 
 	const plansToBeDisplayed = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
@@ -34,7 +35,11 @@ export default function WPCOMAtomicHosting() {
 			<div className="wpcom-atomic-hosting__card-container">
 				{ plansToBeDisplayed.map( ( plan ) => (
 					<Card key={ plan } className="wpcom-atomic-hosting__card" compact>
-						<CardContent planSlug={ plan } />
+						<CardContent
+							planSlug={ plan }
+							isRequesting={ isRequesting }
+							setIsRequesting={ setIsRequesting }
+						/>
 					</Card>
 				) ) }
 			</div>

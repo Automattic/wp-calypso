@@ -1,4 +1,4 @@
-import { PaymentLogo } from '@automattic/composite-checkout';
+import { PaymentLogo } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';

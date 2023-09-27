@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
+import VerifiedProvider from '../domain-information/verified-provider';
+import type { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
 
 interface Props {
 	dns: DNS[];
@@ -19,15 +20,7 @@ export default function HostingInformation( props: Props ) {
 					<div className="name">{ translate( 'Provider' ) }</div>
 					<div>
 						{ hostingProvider?.slug !== 'automattic' && <>{ hostingProvider?.name }</> }
-						{ hostingProvider?.slug === 'automattic' && (
-							<>
-								<a href={ localizeUrl( 'https://automattic.com' ) }>{ hostingProvider?.name }</a>
-								&nbsp;&nbsp;
-								<a href={ localizeUrl( 'https://automattic.com/login' ) }>
-									({ translate( 'login' ) })
-								</a>
-							</>
-						) }
+						{ hostingProvider?.slug === 'automattic' && <VerifiedProvider /> }
 					</div>
 				</li>
 				{ hostingProvider?.slug === 'automattic' && (

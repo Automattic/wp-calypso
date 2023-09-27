@@ -324,11 +324,13 @@ function CheckoutStepGroupWrapper( {
 	children,
 	className,
 	loadingContent,
+	loadingHeader,
 	onStepChanged,
 	store,
 }: PropsWithChildren< {
 	className?: string;
 	loadingContent?: ReactNode;
+	loadingHeader?: ReactNode;
 	onStepChanged?: StepChangedCallback;
 	store: CheckoutStepGroupStore;
 } > ) {
@@ -382,6 +384,7 @@ function CheckoutStepGroupWrapper( {
 		return (
 			<CheckoutWrapper className={ classNames }>
 				<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
+					{ loadingHeader }
 					{ loadingContent ? loadingContent : <LoadingContent /> }
 				</MainContentWrapper>
 			</CheckoutWrapper>
@@ -506,7 +509,9 @@ export const CheckoutStepAreaWrapper = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		margin-bottom: 0;
+		&.checkout__step-wrapper--last-step {
+			margin-bottom: 0;
+		}
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -537,8 +542,6 @@ export const SubmitButtonWrapper = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 24px 0px 24px 40px;
-
 		.checkout-button {
 			width: 100%;
 		}
@@ -547,8 +550,12 @@ export const SubmitButtonWrapper = styled.div`
 			position: relative;
 		}
 
-		.rtl & {
-			padding: 24px 40px 24px 0px;
+		.checkout__step-wrapper & {
+			padding: 24px 0px 24px 40px;
+
+			.rtl & {
+				padding: 24px 40px 24px 0px;
+			}
 		}
 	}
 `;
@@ -586,11 +593,13 @@ export function CheckoutFormSubmit( {
 	submitButtonHeader,
 	submitButtonFooter,
 	disableSubmitButton,
+	submitButton,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
+	submitButton?: ReactNode;
 } ) {
 	const { state } = useContext( CheckoutStepGroupContext );
 	const { activeStepNumber, totalSteps } = state;
@@ -608,11 +617,13 @@ export function CheckoutFormSubmit( {
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
-			<CheckoutSubmitButton
-				validateForm={ validateForm }
-				disabled={ isThereAnotherNumberedStep || disableSubmitButton }
-				onLoadError={ onSubmitButtonLoadError }
-			/>
+			{ submitButton || (
+				<CheckoutSubmitButton
+					validateForm={ validateForm }
+					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
+					onLoadError={ onSubmitButtonLoadError }
+				/>
+			) }
 			<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
 		</SubmitButtonWrapper>
 	);
@@ -1054,18 +1065,21 @@ export function CheckoutStepGroup( {
 	store,
 	onStepChanged,
 	loadingContent,
+	loadingHeader,
 }: PropsWithChildren< {
 	areStepsActive?: boolean;
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
 	onStepChanged?: StepChangedCallback;
 	loadingContent?: ReactNode;
+	loadingHeader?: ReactNode;
 } > ) {
 	const stepGroupStore = useMemo( () => store || createCheckoutStepGroupStore(), [ store ] );
 	return (
 		<CheckoutStepGroupWrapper
 			store={ stepGroupStore }
 			loadingContent={ loadingContent }
+			loadingHeader={ loadingHeader }
 			onStepChanged={ onStepChanged }
 		>
 			{ stepAreaHeader }

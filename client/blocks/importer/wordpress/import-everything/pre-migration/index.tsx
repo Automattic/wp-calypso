@@ -23,6 +23,7 @@ import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import NotAuthorized from '../../../components/not-authorized';
 import ConfirmModal from './confirm-modal';
 import { CredentialsHelper } from './credentials-helper';
 import { StartImportTrackingProps } from './types';
@@ -37,7 +38,9 @@ interface PreMigrationProps {
 	isMigrateFromWp: boolean;
 	isTrial?: boolean;
 	onContentOnlyClick: () => void;
+	sourceSite?: SiteDetails;
 	onFreeTrialClick: () => void;
+	onNotAuthorizedClick: () => void;
 }
 
 export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
@@ -52,6 +55,8 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isTrial,
 		onContentOnlyClick,
 		onFreeTrialClick,
+		sourceSite,
+		onNotAuthorizedClick,
 	} = props;
 
 	const translate = useTranslate();
@@ -70,7 +75,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const {
 		sourceSiteId,
-		sourceSite,
 		fetchMigrationEnabledStatus,
 		isFetchingData: isFetchingMigrationData,
 		siteCanMigrate,
@@ -170,10 +174,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		if ( showUpdatePluginInfo || ! continueImport ) {
 			return;
 		}
-		if ( sourceSite ) {
+		if ( sourceSiteId ) {
 			startImport( migrationTrackingProps );
 		}
-	}, [ continueImport, sourceSite, startImport, showUpdatePluginInfo ] );
+	}, [ continueImport, sourceSiteId, startImport, showUpdatePluginInfo ] );
 
 	function renderCredentialsFormSection() {
 		// We do not show the credentials form if we already have credentials
@@ -229,6 +233,13 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		// Show a loading state when we are trying to fetch existing credentials
 		if ( ! hasLoaded || isRequestingCredentials ) {
 			return <LoadingEllipsis />;
+		}
+
+		if ( ! sourceSite || ( sourceSite && sourceSite.ID !== sourceSiteId ) ) {
+			<NotAuthorized
+				onStartBuilding={ onNotAuthorizedClick }
+				onStartBuildingText={ translate( 'Skip to dashboard' ) }
+			/>;
 		}
 
 		return (

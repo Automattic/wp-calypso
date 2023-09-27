@@ -38,6 +38,7 @@ type ResolveDomainStatusReturn =
 			icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
 			listStatusWeight?: number;
 			noticeText?: TranslateResult | Array< TranslateResult > | null;
+			isDismissable?: boolean;
 	  }
 	| Record< string, never >;
 
@@ -48,6 +49,7 @@ export type ResolveDomainStatusOptionsBag = {
 	siteSlug?: string | null;
 	currentRoute?: string | null;
 	getMappingErrors?: boolean | null;
+	dismissPreferences?: any;
 };
 
 export function resolveDomainStatus(
@@ -62,6 +64,7 @@ export function resolveDomainStatus(
 		siteSlug = null,
 		getMappingErrors = false,
 		currentRoute = null,
+		dismissPreferences = null,
 	}: ResolveDomainStatusOptionsBag = {}
 ): ResolveDomainStatusReturn {
 	const transferOptions = {
@@ -493,7 +496,12 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( domain.transferStatus === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
+			// We use the statusClass to save which notice we dismissed. We plan to add a new option if we add the dismiss option to more notices
+			if (
+				! dismissPreferences?.[ 'status-success' ] &&
+				domain.transferStatus === transferStatus.COMPLETED &&
+				! domain.pointsToWpcom
+			) {
 				const hasTranslation =
 					englishLocales.includes( String( getLocaleSlug() ) ) ||
 					i18n.hasTranslation(
@@ -538,6 +546,7 @@ export function resolveDomainStatus(
 					icon: 'info',
 					noticeText: hasTranslation ? newCopy : oldCopy,
 					listStatusWeight: 600,
+					isDismissable: true,
 				};
 			}
 

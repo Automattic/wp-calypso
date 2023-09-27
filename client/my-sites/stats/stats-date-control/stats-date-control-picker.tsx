@@ -1,5 +1,6 @@
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import moment from 'moment';
 import page from 'page';
 import qs from 'qs';
 import React, { useState, useRef } from 'react';
@@ -25,6 +26,8 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 	const [ inputEndDate, setInputEndDate ] = useState(
 		new Date( new Date().setMonth( new Date().getMonth() - 3 ) ).toISOString().slice( 0, 10 )
 	);
+	const infoReferenceElement = useRef( null );
+	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
 	const changeStartDate = ( value: string ) => {
 		// do more here
@@ -47,9 +50,9 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 
 		page( href );
 	};
-
-	const infoReferenceElement = useRef( null );
-	const [ popoverOpened, togglePopoverOpened ] = useState( false );
+	const formatDate = ( date: string ) => {
+		return moment( date ).format( 'MMM D, YYYY' );
+	};
 
 	return (
 		<>
@@ -58,7 +61,7 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
 				ref={ infoReferenceElement }
 			>
-				{ `${ inputStartDate } - ${ inputEndDate }` }
+				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
 			</Button>
 			<Popover
 				placement="bottom end"

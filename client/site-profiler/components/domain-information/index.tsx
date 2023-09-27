@@ -1,8 +1,10 @@
 import { Button } from '@wordpress/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
+import VerifiedProvider from './verified-provider';
 import type { WhoIs } from 'calypso/data/site-profiler/types';
 import './styles.scss';
 
@@ -15,6 +17,7 @@ export default function DomainInformation( props: Props ) {
 	const { domain, whois } = props;
 	const moment = useLocalizedMoment();
 	const momentFormat = 'YYYY-MM-DD HH:mm:ss UTC';
+	const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
 	const [ fetchWhoisRawData, setFetchWhoisRawData ] = useState( false );
 
 	const {
@@ -23,12 +26,25 @@ export default function DomainInformation( props: Props ) {
 		isError: whoisRawDataFetchingError,
 	} = useDomainAnalyzerWhoisRawDataQuery( domain, fetchWhoisRawData );
 
-	function contactArgs( name: string ) {
+	const contactArgs = ( name: string ) => {
 		return {
 			args: [ name ],
 			components: { strong: <strong /> },
 		};
-	}
+	};
+
+	const linkifyUrlFromText = ( text: string ) => {
+		let url = '';
+
+		const preparedText = text.replace( urlRegex, ( _url: string ) => {
+			url = _url;
+			return '<a>link</a>';
+		} );
+
+		return createInterpolateElement( preparedText, {
+			a: createElement( 'a', { href: url, target: '_blank', rel: 'nofollow noreferrer' } ),
+		} );
+	};
 
 	return (
 		<div className="domain-information">
@@ -45,7 +61,10 @@ export default function DomainInformation( props: Props ) {
 					<li>
 						<div className="name">{ translate( 'Registrar' ) }</div>
 						<div>
-							{ whois.registrar_url && (
+							{ whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
+								<VerifiedProvider />
+							) }
+							{ ! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
 								<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
 									{ whois.registrar }
 								</a>
@@ -157,7 +176,11 @@ export default function DomainInformation( props: Props ) {
 							) }
 							{ whois.registrant_email && (
 								<li>
-									<a href={ `mailto:${ whois.registrant_email }` }>{ translate( 'Email' ) }</a>
+									{ whois.registrant_email.includes( '@' ) && (
+										<a href={ `mailto:${ whois.registrant_email }` }>{ translate( 'Email' ) }</a>
+									) }
+									{ urlRegex.test( whois.registrant_email ) &&
+										linkifyUrlFromText( whois.registrant_email ) }
 								</li>
 							) }
 						</ul>
@@ -225,11 +248,12 @@ export default function DomainInformation( props: Props ) {
 									) }
 								</li>
 							) }
-							{ whois.admin_email && (
-								<li>
-									<a href={ `mailto:${ whois.admin_email }` }>{ translate( 'Email' ) }</a>
-								</li>
+							{ whois.admin_email?.includes( '@' ) && (
+								<a href={ `mailto:${ whois.admin_email }` }>{ translate( 'Email' ) }</a>
 							) }
+							{ whois.admin_email &&
+								urlRegex.test( whois.admin_email ) &&
+								linkifyUrlFromText( whois.admin_email ) }
 						</ul>
 					</div>
 					<div className="col">
@@ -289,11 +313,12 @@ export default function DomainInformation( props: Props ) {
 									{ translate( '{{strong}}Phone:{{/strong}} %s', contactArgs( whois.tech_phone ) ) }
 								</li>
 							) }
-							{ whois.tech_email && (
-								<li>
-									<a href={ `mailto:${ whois.tech_email }` }>{ translate( 'Email' ) }</a>
-								</li>
+							{ whois.tech_email?.includes( '@' ) && (
+								<a href={ `mailto:${ whois.tech_email }` }>{ translate( 'Email' ) }</a>
 							) }
+							{ whois.tech_email &&
+								urlRegex.test( whois.tech_email ) &&
+								linkifyUrlFromText( whois.tech_email ) }
 						</ul>
 					</div>
 				</li>
