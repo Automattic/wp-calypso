@@ -27,7 +27,7 @@ export default function SiteProfiler() {
 
 	const {
 		data: siteProfilerData,
-		isFetching,
+		isFetching: isFetchingSP,
 		isError: isErrorSP,
 		errorUpdateCount: errorUpdateCountSP,
 	} = useDomainAnalyzerQuery( domain, isDomainValid );
@@ -41,13 +41,16 @@ export default function SiteProfiler() {
 
 	// Handle errors from the domain analyzer query
 	useEffect( () => {
-		isErrorSP &&
-			dispatch(
-				errorNotice(
-					translate( 'There was problem analyzing provided domain. Please try again.' ),
-					noticeOptions
-				)
-			);
+		if ( ! isErrorSP ) {
+			return;
+		}
+
+		dispatch(
+			errorNotice(
+				translate( 'There was problem analyzing provided domain. Please try again.' ),
+				noticeOptions
+			)
+		);
 	}, [ errorUpdateCountSP ] );
 
 	const updateDomainQueryParam = ( value: string ) => {
@@ -67,7 +70,7 @@ export default function SiteProfiler() {
 						domain={ domain }
 						isDomainValid={ isDomainValid }
 						onFormSubmit={ updateDomainQueryParam }
-						isBusy={ isFetching }
+						isBusy={ isFetchingSP }
 					/>
 				</LayoutBlock>
 			) }
