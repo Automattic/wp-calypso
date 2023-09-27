@@ -42,6 +42,8 @@ type SiteLogsDownloaderReducerAction =
 			payload: { recordsDownloaded: number; totalRecordsAvailable: number };
 	  };
 
+const MAX_LOGS_DOWNLOAD = 10_000;
+
 const siteLogsDownloaderReducer = (
 	state: SiteLogsDownloaderReducerState = initialState,
 	action: SiteLogsDownloaderReducerAction
@@ -199,6 +201,10 @@ export const useSiteLogsDownloader = ( {
 							return Object.values( entry ).join( ',' ) + '\n';
 						} ),
 					];
+
+					if ( logs.length > MAX_LOGS_DOWNLOAD ) {
+						scrollId = null;
+					}
 
 					dispatch( {
 						type: 'DOWNLOAD_UPDATE',
