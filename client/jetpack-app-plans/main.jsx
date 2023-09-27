@@ -11,20 +11,20 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 
 import './style.scss';
 
-const Header = ( { domainName } ) => (
+const Header = ( { paidDomainName } ) => (
 	<div className="plans__header">
 		<FormattedHeader
 			brandFont
 			headerText={ translate( 'Choose the perfect plan' ) }
 			align="center"
 		/>
-		{ domainName ? (
+		{ paidDomainName ? (
 			<>
 				<p>
 					{ translate(
-						'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+						'With your annual plan, you’ll get %(paidDomainName)s {{strong}}free for the first year{{/strong}}.',
 						{
-							args: { domainName },
+							args: { paidDomainName },
 							components: { strong: <strong /> },
 						}
 					) }
@@ -41,9 +41,9 @@ const Header = ( { domainName } ) => (
 	</div>
 );
 
-const Plans = ( { domainName, onUpgradeClick, handleRedirect } ) => (
+const Plans = ( { paidDomainName, onUpgradeClick, handleRedirect } ) => (
 	<PlansFeaturesMain
-		paidDomainName={ domainName }
+		paidDomainName={ paidDomainName }
 		intent="plans-jetpack-app-site-creation"
 		isInSignup={ true }
 		intervalType="yearly"
@@ -62,7 +62,7 @@ const Loading = () => (
 	</div>
 );
 
-const JetpackAppPlans = ( { domainName, redirectTo } ) => {
+const JetpackAppPlans = ( { paidDomainName, redirectTo } ) => {
 	const planSlug = useSelector( ( state ) =>
 		getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 )
 	);
@@ -97,9 +97,9 @@ const JetpackAppPlans = ( { domainName, redirectTo } ) => {
 			<QueryPlans />
 			{ plansLoaded ? (
 				<>
-					<Header domainName={ domainName } />
+					<Header paidDomainName={ paidDomainName } />
 					<Plans
-						domainName={ domainName }
+						paidDomainName={ paidDomainName }
 						onUpgradeClick={ onUpgradeClick }
 						handleRedirect={ handleRedirect }
 					/>
