@@ -48,6 +48,11 @@ export const setUpActionsForTasks = ( {
 				targetPath = addQueryArgs( targetPath, { tour: 'marketingConnectionsTour' } );
 			}
 
+			// Enable task in 'calypso' context
+			if ( task.id === 'setup_general' ) {
+				task.disabled = false;
+			}
+
 			action = () => {
 				if ( siteSlug && TASKS_TO_COMPLETE_ON_CLICK.includes( task.id ) ) {
 					updateLaunchpadSettings( siteSlug, {
