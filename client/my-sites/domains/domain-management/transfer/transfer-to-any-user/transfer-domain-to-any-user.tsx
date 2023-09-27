@@ -211,7 +211,7 @@ export default function TransferDomainToAnyUser( {
 								</div>
 							</div>
 							<div className="transfer-domain-to-any-user__pending-detail">
-								<strong>{ translate( 'Transfer receipient' ) }</strong>
+								<strong>{ translate( 'Transfer recipient' ) }</strong>
 								<div>
 									<span>{ transferEmail }</span>
 								</div>
