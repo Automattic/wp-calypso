@@ -1,0 +1,63 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.help-center__survey {
+	background: #f6f7f7;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	border-radius: 2px;
+	border-left: 3px solid var(--studio-black, #000);
+	padding: 25px 36px;
+	// Accounting for the 3px border-left.
+	padding-left: 33px;
+}
+
+.help-center__survey-title {
+	color: var(--studio-gray-100, #101517);
+	font-size: $font-body;
+	margin-bottom: 16px;
+}
+
+.help-center__survey-text {
+	color: var(--studio-gray-100, #101517);
+	font-size: $font-body-small;
+	margin: 0;
+}
+
+.help-center__survey-question {
+	color: var(--studio-gray-100, #101517);
+	font-size: $font-body-small;
+}
+
+.help-center__survey-buttons {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0;
+
+	button.components-button {
+		justify-content: center;
+	}
+
+	button.components-button.is-primary {
+		background-color: var(--studio-black, #000);
+		color: var(--studio-white, #fff);
+
+		&:active:not(:disabled),
+		&:focus:not(:disabled),
+		&:hover:not(:disabled) {
+			background-color: var(--studio-gray-90, #1d2327);
+			color: var(--studio-white, #fff);
+		}
+	}
+
+	button.components-button.is-link {
+		--wp-components-color-accent: var(--studio-black, #000);
+		margin-top: 8px;
+	}
+}
+
+.help-center__survey-artwork {
+	max-width: 100%;
+}
