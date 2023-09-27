@@ -264,6 +264,11 @@ export interface APIToggleFavorite {
 	[ key: string ]: any;
 }
 
+export interface ToggleFavoriteOptions {
+	siteId: number;
+	isFavorite: boolean;
+}
+
 interface MonitorURLS {
 	monitor_url: string;
 	options: Array< string >;
