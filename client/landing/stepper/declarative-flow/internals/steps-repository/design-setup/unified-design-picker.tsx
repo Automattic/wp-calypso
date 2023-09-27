@@ -121,6 +121,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 	useEffect( () => {
 		if ( isAtomic ) {
+			// TODO: move this logic from this step to the flow(s). See: https://wp.me/pdDR7T-KR
 			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -205,6 +206,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		site?.ID,
 		allDesigns,
 		pickDesign,
+		pickUnlistedDesign,
 		recordPreviewDesign,
 		recordPreviewStyleVariation
 	);
@@ -620,6 +622,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
 			);
 		}
+	}
+
+	function pickUnlistedDesign( theme: string ) {
+		// TODO: move this logic from this step to the flow(s). See: https://wp.me/pdDR7T-KR
+		exitFlow?.( `/theme/${ theme }/${ siteSlug }` );
 	}
 
 	function designYourOwn( design: Design ) {
