@@ -185,8 +185,7 @@ body.is-section-signup .layout:not(.dops) {
 			background: var(--color-surface);
 			padding-bottom: 16px;
 			margin-bottom: 24px;
-			border-radius: 6px;
-			/* stylelint-disable-line scales/radii */
+			border-radius: 4px;
 			@include elevation(3dp);
 		}
 
@@ -299,7 +298,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 		width: 100%;
 		height: 56px;
 
-		svg>g {
+		svg > g {
 			transform: translateX(50%);
 		}
 	}
@@ -495,8 +494,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 2.15rem;
-			/* stylelint-disable-line scales/font-sizes */
+			font-size: 2.25rem;
 
 			@include break-xlarge {
 				font-size: 2.75rem;
@@ -542,12 +540,17 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	}
 
 	.signup__step.is-user {
+		margin-top: 25vh;
+
+		.step-wrapper__header {
+			margin-bottom: 24px;
+		}
+
 		.formatted-header {
 			.formatted-header__title {
 				text-align: center;
-				font-size: 1.875rem;
-				/* stylelint-disable-line scales/font-sizes */
-				line-height: 2.5rem;
+				font-size: rem(30px);
+				line-height: 2.5;
 
 				@include break-small {
 					max-width: inherit;
@@ -569,8 +572,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 
 				@include break-small {
 					max-width: inherit;
-					font-size: 1.125rem;
-					/* stylelint-disable-line scales/font-sizes */
+					font-size: rem(18px);
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 1.625rem;
 					letter-spacing: 0.24px;
@@ -579,8 +581,8 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 
 		a.step-wrapper__navigation-link {
-			color: #1D2327;
-			font-family: 'SF Pro Text';
+			color: #1d2327;
+			font-family: "SF Pro Text", sans-serif;
 			font-size: 0.875rem;
 			font-style: normal;
 			font-weight: 500;
@@ -627,7 +629,8 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			align-self: stretch;
 			border-radius: 4px;
 			border: 1px solid var(--studio-gray-50, #646970) !important;
-			background: var(--black-white-white, #FFF);
+			background: var(--black-white-white, #fff);
+			margin-bottom: 0;
 
 			text-align: start;
 			padding-left: 0;
@@ -636,13 +639,12 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			background-color: transparent;
 
 			&:hover {
-				background: var(--studio-gray-0, #F6F7F7);
+				background: var(--studio-gray-0, #f6f7f7);
 			}
 
 
 			@include break-small {
 				text-align: center;
-				margin-bottom: 5px;
 			}
 
 			@include break-medium {
@@ -654,9 +656,9 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			}
 
 			span {
-				color: var(--studio-gray-80, #2C3338);
-				font-feature-settings: 'clig' off, 'liga' off;
-				font-family: SF Pro Display;
+				color: var(--studio-gray-80, #2c3338);
+				font-feature-settings: "clig" off, "liga" off;
+				font-family: "SF Pro Text", sans-serif;
 				font-size: 0.875rem;
 				font-style: normal;
 				font-weight: 500;
@@ -772,7 +774,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				text-align: start;
 			}
 
-			.signup-form__social>p {
+			.signup-form__social > p {
 				display: none;
 			}
 
