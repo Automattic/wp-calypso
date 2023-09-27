@@ -63,9 +63,10 @@ async function postMagicLoginRequest( url, bodyObj ) {
  * Logs a user in from a token included in a magic link.
  * @param  {string}   token      Security token
  * @param  {string}   redirectTo Url to redirect the user to upon successful login
- * @returns {Function}            A thunk that can be dispatched
+ * @param  {string}   flow       The client's login flow
+ * @returns {Function}           A thunk that can be dispatched
  */
-export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => ( dispatch ) => {
+export const fetchMagicLoginAuthenticate = ( token, redirectTo, flow ) => ( dispatch ) => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
 	postMagicLoginRequest( AUTHENTICATE_URL, {
@@ -73,6 +74,7 @@ export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => ( dispatch )
 		client_secret: config( 'wpcom_signup_key' ),
 		token,
 		redirect_to: redirectTo,
+		flow,
 	} )
 		.then( ( json ) => {
 			dispatch( {

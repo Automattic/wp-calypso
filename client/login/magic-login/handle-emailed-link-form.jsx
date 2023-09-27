@@ -96,7 +96,12 @@ class HandleEmailedLinkForm extends Component {
 			hasSubmitted: true,
 		} );
 
-		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal );
+		this.props.fetchMagicLoginAuthenticate(
+			this.props.token,
+			this.props.redirectToOriginal,
+			// Provide a flow to customize the login experience for Gravatar-powered clients in the backend, e.g. SMS messages
+			isGravPoweredOAuth2Client( this.props.oauth2Client ) && this.props.oauth2Client.name
+		);
 	};
 
 	// Lifted from `blocks/login`
