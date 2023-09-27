@@ -13,22 +13,17 @@
 		margin-bottom: 24px;
 	}
 
-
-	&__unsubscribe-button,
-	&__view-feed-button {
-		&:visited {
-			color: inherit;
-		}
-
-		display: flex;
-		width: 100%;
-	}
-
 	&__unsubscribe-button.components-button.has-icon,
 	&__view-feed-button.components-button.has-icon {
+		display: flex;
+		width: 100%;
 		height: auto;
 		padding: 0;
 		font-size: $font-body-small;
 		line-height: $font-title-small;
+
+		&:visited {
+			color: inherit;
+		}
 	}
 }
