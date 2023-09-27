@@ -2,6 +2,7 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getFeedUrl } from 'calypso/reader/route';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
 import { FeedIcon, UnsubscribeIcon } from '../icons';
@@ -25,7 +26,6 @@ type SiteSettingsProps = {
 	emailMeNewComments: boolean;
 	onEmailMeNewCommentsChange: ( value: boolean ) => void;
 	updatingEmailMeNewComments: boolean;
-	isWpComSite?: boolean;
 };
 
 const SiteSettings = ( {
@@ -81,17 +81,20 @@ const SiteSettings = ( {
 type SiteSettingsPopoverProps = SiteSettingsProps & {
 	onUnsubscribe: () => void;
 	unsubscribing: boolean;
+	blogId?: number;
 	feedId: number;
 };
 
 export const SiteSettingsPopover = ( {
 	onUnsubscribe,
 	unsubscribing,
-	isWpComSite = true,
+	blogId,
 	feedId,
 	...props
 }: SiteSettingsPopoverProps ) => {
 	const translate = useTranslate();
+	const recordViewFeedButtonClicked = useRecordViewFeedButtonClicked();
+	const isWpComSite = Reader.isValidId( blogId );
 	return (
 		<SubscriptionsEllipsisMenu
 			popoverClassName="site-settings-popover"
@@ -112,6 +115,12 @@ export const SiteSettingsPopover = ( {
 								className="site-settings-popover__view-feed-button"
 								icon={ <FeedIcon className="subscriptions-ellipsis-menu__item-icon" /> }
 								href={ getFeedUrl( feedId ) }
+								onClick={ () => {
+									recordViewFeedButtonClicked( {
+										blogId: blogId ? String( blogId ) : null,
+										feedId: String( feedId ),
+									} );
+								} }
 							>
 								{ translate( 'View feed' ) }
 							</Button>

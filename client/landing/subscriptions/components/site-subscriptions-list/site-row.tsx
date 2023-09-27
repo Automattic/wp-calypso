@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { isValidId } from '@automattic/data-stores/src/reader';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
@@ -98,6 +97,8 @@ const SiteRow = ( {
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel(
 		delivery_methods.email?.post_delivery_frequency
 	);
+	const sanitizedBlogId = Reader.isValidId( blog_id ) ? Number( blog_id ) : undefined;
+
 	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
 		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
 	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
@@ -339,7 +340,7 @@ const SiteRow = ( {
 						);
 					} }
 					unsubscribing={ unsubscribing }
-					isWpComSite={ isValidId( blog_id ) }
+					blogId={ sanitizedBlogId }
 					feedId={ Number( feed_id ) }
 				/>
 			</span>
