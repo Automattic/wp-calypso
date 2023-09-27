@@ -48,10 +48,6 @@ const DiscoverStream = ( props ) => {
 
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
-	// Filter followed tags out of interestTags to get recommendedTags.
-	const followedTagSlugs = followedTags ? followedTags.map( ( tag ) => tag.slug ) : [];
-	const recommendedTags = interestTags.filter( ( tag ) => ! followedTagSlugs.includes( tag.slug ) );
-
 	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
 	const recommendedStreamTags = getDiscoverStreamTags(
 		followedTags && followedTags.map( ( tag ) => tag.slug ),
@@ -106,7 +102,7 @@ const DiscoverStream = ( props ) => {
 			<DiscoverNavigation
 				width={ props.width }
 				selectedTab={ selectedTab }
-				recommendedTags={ recommendedTags }
+				recommendedTags={ interestTags }
 			/>
 			<Stream { ...streamProps } />
 		</>

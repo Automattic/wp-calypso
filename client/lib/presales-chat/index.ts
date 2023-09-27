@@ -6,6 +6,7 @@ import {
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
 
@@ -51,10 +52,12 @@ function getGroupName( keyType: KeyType ) {
 
 export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabilityCheck = false ) {
 	const isEnglishLocale = useIsEnglishLocale();
-	const { canConnectToZendesk } = useChatStatus();
-	const isEligibleForPresalesChat = enabled && isEnglishLocale && canConnectToZendesk;
-
+	const isWpMobileAppUser = isWpMobileApp();
 	const group = getGroupName( keyType );
+
+	const { canConnectToZendesk } = useChatStatus( group, enabled );
+	const isEligibleForPresalesChat =
+		enabled && isEnglishLocale && canConnectToZendesk && ! isWpMobileAppUser;
 
 	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
 		useMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );
@@ -70,6 +73,10 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 		isLoggedIn
 	);
 
+	const openChat = () => {
+		window.zE( 'messenger', 'open' );
+	};
+
 	useEffect( () => {
 		// presales chat is always shown by default
 		if ( enabled && isPresalesChatAvailable && isMessagingScriptLoaded ) {
@@ -81,5 +88,6 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 		isChatActive: isPresalesChatAvailable && isEligibleForPresalesChat,
 		isLoading: isLoadingAvailability,
 		isPresalesChatAvailable,
+		openChat,
 	};
 }

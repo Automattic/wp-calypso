@@ -208,7 +208,7 @@ class SiteOrDomain extends Component {
 		);
 		this.props.submitSignupStep(
 			{ stepName: 'plans-site-selected', wasSkipped: true },
-			{ cartItem: null }
+			{ cartItems: null }
 		);
 		goToStep( 'user' );
 	}

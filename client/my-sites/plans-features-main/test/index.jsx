@@ -14,6 +14,10 @@ jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector',
 	<div>PlanTypeSelector</div>
 ) );
 jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
+jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( {
+	wpcomFreeDomainSuggestion: { isLoading: false, result: { domain_name: 'suggestion.com' } },
+	invalidateDomainSuggestionCache: () => {},
+} ) );
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
@@ -138,7 +142,9 @@ describe( 'PlansFeaturesMain', () => {
 		test( 'Should render <PlanFeatures /> with WP.com data-e2e-plans when requested', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 
-			expect( screen.getByTestId( 'plan-features' ).parentElement ).toHaveAttribute(
+			// immediate parent is <div className="plans-wrapper">
+			// data-e2e-plans is set on the parent of that
+			expect( screen.getByTestId( 'plan-features' ).parentElement.parentElement ).toHaveAttribute(
 				'data-e2e-plans',
 				'wpcom'
 			);

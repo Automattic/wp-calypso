@@ -21,7 +21,7 @@ export const TYPE_PRO = 'TYPE_PRO';
 export const TYPE_STARTER = 'TYPE_STARTER';
 export const TYPE_GOLDEN_TOKEN = 'TYPE_GOLDEN_TOKEN';
 
-export const TYPES_LIST = <const>[
+export const TYPES_LIST = < const >[
 	TYPE_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,

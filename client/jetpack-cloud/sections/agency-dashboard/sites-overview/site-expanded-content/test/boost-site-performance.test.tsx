@@ -40,11 +40,11 @@ describe( 'BoostSitePerformance', () => {
 		expect( desktopScore ).toBeInTheDocument();
 	} );
 
-	test( 'renders the empty content when hasBoost is false', () => {
+	test( 'renders the empty content when there is no score and no boost', () => {
 		const hasBoost = false;
 		render(
 			<BoostSitePerformance
-				boostData={ boostData }
+				boostData={ { overall: 0, mobile: 0, desktop: 0 } }
 				hasBoost={ hasBoost }
 				siteId={ siteId }
 				siteUrlWithScheme={ siteUrlWithScheme }
@@ -55,13 +55,12 @@ describe( 'BoostSitePerformance', () => {
 
 		const emptyContent = screen.getByText( /see your site performance scores/i );
 		expect( emptyContent ).toBeInTheDocument();
-		const strongTag = screen.getByText( /Boost/i );
+		const strongTag = screen.getByText( /get score/i );
 		expect( strongTag ).toHaveStyle( 'font-weight: bold' );
 	} );
 
-	test( 'calls trackEvent when button is clicked and checks if the button has href', () => {
+	test( 'renders the Optimize css button when there is a score and has boost', () => {
 		const hasBoost = true;
-
 		render(
 			<BoostSitePerformance
 				boostData={ boostData }
@@ -82,5 +81,29 @@ describe( 'BoostSitePerformance', () => {
 
 		fireEvent.click( button );
 		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_optimize_css_click' );
+	} );
+
+	test( 'renders the Configure Boost button when there is a score and has no boost', () => {
+		const hasBoost = false;
+		render(
+			<BoostSitePerformance
+				boostData={ boostData }
+				hasBoost={ hasBoost }
+				siteId={ siteId }
+				siteUrlWithScheme={ siteUrlWithScheme }
+				trackEvent={ trackEventMock }
+				hasError={ false }
+			/>
+		);
+
+		const button = screen.getByRole( 'link', { name: /configure boost/i } );
+		expect( button ).toBeInTheDocument();
+		expect( button ).toHaveAttribute(
+			'href',
+			`${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`
+		);
+
+		fireEvent.click( button );
+		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_configure_boost_click' );
 	} );
 } );

@@ -80,7 +80,9 @@ const PluginButton = styled( Button )`
 
 const PluginIcon = styled.img`
 	border-radius: 10px;
-	box-shadow: 0px 15px 20px rgba( 0, 0, 0, 0.04 ), 0px 13px 10px rgba( 0, 0, 0, 0.03 ),
+	box-shadow:
+		0px 15px 20px rgba( 0, 0, 0, 0.04 ),
+		0px 13px 10px rgba( 0, 0, 0, 0.03 ),
 		0px 6px 6px rgba( 0, 0, 0, 0.02 );
 `;
 

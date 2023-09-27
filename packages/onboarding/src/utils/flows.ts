@@ -1,3 +1,4 @@
+export const AI_ASSEMBLER_FLOW = 'ai-assembler';
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting';
@@ -33,6 +34,7 @@ export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 export const DOMAIN_TRANSFER = 'domain-transfer';
 export const GOOGLE_TRANSFER = 'google-transfer';
 export const ONBOARDING_PM_FLOW = 'onboarding-media';
+export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 
 export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && flowName === ONBOARDING_PM_FLOW );
@@ -139,7 +141,7 @@ export const isDomainUpsellFlow = ( flowName: string | null ) => {
 };
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {
-	const SITE_ASSEMBLER_FLOWS = [ WITH_THEME_ASSEMBLER_FLOW ];
+	const SITE_ASSEMBLER_FLOWS = [ WITH_THEME_ASSEMBLER_FLOW, AI_ASSEMBLER_FLOW ];
 
 	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
 };

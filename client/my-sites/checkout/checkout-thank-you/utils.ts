@@ -91,5 +91,5 @@ export function getDomainManagementUrl(
 }
 
 export function isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
-	return purchases?.every( isDomainTransfer );
+	return purchases?.length > 0 && purchases?.every( isDomainTransfer );
 }

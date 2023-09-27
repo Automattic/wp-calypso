@@ -101,7 +101,7 @@ export function useWindowResizeCallback(
  */
 export function useWindowResizeRect(): [
 	React.MutableRefObject< NullableElement >,
-	NullableDOMRect
+	NullableDOMRect,
 ] {
 	const [ rect, setRect ] = useState< NullableDOMRect >( null );
 	const callbackRef = useWindowResizeCallback( setRect );

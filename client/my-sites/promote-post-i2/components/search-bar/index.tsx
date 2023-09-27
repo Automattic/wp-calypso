@@ -162,9 +162,8 @@ export default function SearchBar( props: Props ) {
 	};
 
 	const getPostTypeFilterLabel = () => {
-		const selectedOption = postTypeOptions.find(
-			( item ) => item.value === filterOption.postType
-		)?.label;
+		const selectedOption = postTypeOptions.find( ( item ) => item.value === filterOption.postType )
+			?.label;
 
 		return selectedOption
 			? // translators: filterOption is something like All, Posts and Pages

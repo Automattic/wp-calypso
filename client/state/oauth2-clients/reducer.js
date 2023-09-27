@@ -27,6 +27,14 @@ export const initialClientsData = {
 		name: 'gravatar',
 		title: 'Gravatar',
 		icon: 'https://gravatar.com/images/grav-logo-blue.svg',
+		favicon: 'https://gravatar.com/favicon.ico',
+	},
+	90057: {
+		id: 90057,
+		name: 'wpjobmanager',
+		title: 'WP Job Manager',
+		icon: 'https://wpjobmanager.com/wp-content/uploads/2023/06/JM-Letters.png',
+		favicon: 'https://wpjobmanager.com/wp-content/uploads/2023/06/cropped-JM-512x512-1.png?w=32',
 	},
 	2665: {
 		id: 2665,

@@ -36,6 +36,7 @@ import {
 	isJetpackStarterPlan,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
 	JETPACK_STARTER_UPGRADE_MAP,
+	is100Year,
 } from '@automattic/calypso-products';
 import {
 	Badge,
@@ -333,7 +334,8 @@ class ManagePurchase extends Component<
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
 			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
-			isAkismetFreeProduct( purchase )
+			isAkismetFreeProduct( purchase ) ||
+			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 		) {
 			return null;
 		}
@@ -361,6 +363,7 @@ class ManagePurchase extends Component<
 			! isEcommerce( purchase ) &&
 			! isPro( purchase ) &&
 			! isComplete( purchase ) &&
+			! is100Year( purchase ) &&
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
 			! isPlan( purchase ) &&
@@ -517,7 +520,8 @@ class ManagePurchase extends Component<
 			! isEcommerce( purchase ) &&
 			! isPro( purchase ) &&
 			! isComplete( purchase ) &&
-			! isP2Plus( purchase );
+			! isP2Plus( purchase ) &&
+			! is100Year( purchase );
 
 		const isUpgradeableBackupProduct = (
 			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
@@ -1239,6 +1243,8 @@ class ManagePurchase extends Component<
 			return this.renderPlaceholder();
 		}
 
+		const isActive100YearPurchase = is100Year( purchase ) && ! isCloseToExpiration( purchase );
+
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': purchase && isPersonal( purchase ),
@@ -1310,7 +1316,10 @@ class ManagePurchase extends Component<
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
-						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
+						{ ! preventRenewal &&
+							! renderMonthlyRenewalOption &&
+							! isActive100YearPurchase &&
+							this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
@@ -1321,10 +1330,7 @@ class ManagePurchase extends Component<
 						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
-						{ /* We don't want to show the Cancel/Remove nav item for "Jetpack" temporary sites, but we DO
-						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
-						{ /* TODO: Add ability to Cancel Akismet subscription */ }
-						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderRemovePurchaseNavItem() }
+						{ this.renderRemovePurchaseNavItem() }
 					</>
 				) }
 			</Fragment>

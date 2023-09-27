@@ -5,26 +5,19 @@ import {
 	UseQueryOptions,
 	UseQueryResult,
 } from '@tanstack/react-query';
-import { getPreinstalledPremiumPluginsVariations } from 'calypso/lib/plugins/utils';
+import { normalizePluginData, mapStarRatingToPercent } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 import { ESRelatedPluginsResult, RelatedPlugin } from './types';
 
-const mapESDataToReatedPluginData = ( results: Array< ESRelatedPluginsResult > = [] ) => {
+const mapESDataToReatedPluginData = (
+	results: Array< ESRelatedPluginsResult > = []
+): RelatedPlugin[] => {
 	return results.map( ( result ) => {
 		const esPlugin = result.fields;
 
-		const relatedPlugin: RelatedPlugin = {
-			categories: esPlugin.categories,
-			excerpt: esPlugin.excerpt,
-			icon: esPlugin.icon,
-			marketplaceSlug: esPlugin.marketplace_slug,
-			productSlug: esPlugin.product_slug,
-			slug: esPlugin.slug,
-			title: esPlugin.title,
-		};
-
-		relatedPlugin.variations = getPreinstalledPremiumPluginsVariations( esPlugin );
+		const relatedPlugin = normalizePluginData( esPlugin ) as RelatedPlugin;
+		relatedPlugin.rating = mapStarRatingToPercent( esPlugin.rating );
 
 		return relatedPlugin;
 	} );

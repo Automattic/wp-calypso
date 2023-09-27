@@ -1,6 +1,6 @@
 export interface CurrencyFormatter {
 	geolocateCurrencySymbol: () => Promise< void >;
-	setDefaultLocale: ( locale: string ) => void;
+	setDefaultLocale: ( locale: string | undefined ) => void;
 	setCurrencySymbol: ( currencyCode: string, currencySymbol: string | undefined ) => void;
 	formatCurrency: (
 		amount: number,

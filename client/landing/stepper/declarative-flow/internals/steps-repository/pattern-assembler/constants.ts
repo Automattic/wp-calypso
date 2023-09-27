@@ -18,7 +18,6 @@ export const NAVIGATOR_PATHS = {
 };
 
 export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
-export const INITIAL_CATEGORY = 'posts';
 
 export const INITIAL_SCREEN = 'main';
 
@@ -30,13 +29,14 @@ export const INITIAL_SCREEN = 'main';
  */
 export const PATTERN_CATEGORIES = [
 	//'featured', // -- Not exists
+	'intro',
 	'about',
 	//'buttons', -- Not exist
 	//'banner', -- Not exist
 	//'query', -- Not exist
 	'blog',
 	'posts', // Reused as "Blog Posts"
-	'call-to-action',
+	//'call-to-action', -- Hidden
 	//'columns', -- Not exist
 	//'coming-soon', -- Hidden
 	'contact',
@@ -47,12 +47,26 @@ export const PATTERN_CATEGORIES = [
 	//'link-in-bio', -- Hidden
 	//'media', -- Not exist
 	'newsletter',
-	// 'podcast', -- Hidden
-	// 'portfolio', -- Hidden
+	//'podcast', -- Hidden
+	//'portfolio', -- Hidden
 	'quotes',
 	'services',
 	'store',
 	//'team', -- Not exist
-	'testimonials',
-	// 'text', -- Hidden
+	//'testimonials', -- Not exist
+	//'text', -- Hidden
 ];
+
+export const ORDERED_PATTERN_CATEGORIES = [
+	'intro',
+	'about',
+	'services',
+	'store',
+	'quotes',
+	'posts',
+	'newsletter',
+	'gallery',
+	'contact',
+];
+
+export const INITIAL_CATEGORY = ORDERED_PATTERN_CATEGORIES[ 0 ];

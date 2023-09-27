@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -6,8 +7,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import UpworkBanner from 'calypso/blocks/upwork-banner';
-import { isUpworkBannerDismissed } from 'calypso/blocks/upwork-banner/selector';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -35,13 +35,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
-import {
-	addTracking,
-	appendStyleVariationToThemesPath,
-	getSubjectsFromTermTable,
-	trackClick,
-	localizeThemesPath,
-} from './helpers';
+import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
@@ -377,13 +371,8 @@ class ThemeShowcase extends Component {
 	};
 
 	renderBanner = () => {
-		const {
-			loggedOutComponent,
-			isExpertBannerDissmissed,
-			upsellBanner,
-			isUpsellCardDisplayed,
-			isSiteECommerceFreeTrial,
-		} = this.props;
+		const { loggedOutComponent, upsellBanner, isUpsellCardDisplayed, isSiteECommerceFreeTrial } =
+			this.props;
 
 		// Don't show the banner if there is already an upsell card displayed
 		if ( isUpsellCardDisplayed ) {
@@ -398,27 +387,14 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
-		const tabKey = this.getSelectedTabFilter().key;
-
-		if (
-			tabKey !== staticFilters.MYTHEMES?.key &&
-			! isExpertBannerDissmissed &&
-			! loggedOutComponent
-		) {
-			// these are from the time we rely on the redirect.
-			// See p2-pau2Xa-4nq#comment-12480
-			let location = 'theme-banner';
-			let refURLParam = 'built-by-wordpress-com-redirect';
-
-			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
-			switch ( tabKey ) {
-				case staticFilters.RECOMMENDED.key:
-				case staticFilters.ALL.key:
-					location = 'all-theme-banner';
-					refURLParam = 'themes';
-			}
-
-			return <UpworkBanner location={ location } refURLParam={ refURLParam } />;
+		if ( config.isEnabled( 'jitms' ) && ! loggedOutComponent ) {
+			return (
+				<AsyncLoad
+					require="calypso/blocks/jitm"
+					placeholder={ null }
+					messagePath="calypso:themes:showcase-website-design"
+				/>
+			);
 		}
 
 		return upsellBanner;
@@ -466,16 +442,13 @@ class ThemeShowcase extends Component {
 			secondaryOption: this.props.secondaryOption,
 			placeholderCount: this.props.placeholderCount,
 			bookmarkRef: this.bookmarkRef,
-			getScreenshotUrl: ( theme, styleVariation ) => {
+			getScreenshotUrl: ( theme, themeOptions ) => {
 				if ( ! getScreenshotOption( theme ).getUrl ) {
 					return null;
 				}
 
 				return localizeThemesPath(
-					appendStyleVariationToThemesPath(
-						getScreenshotOption( theme ).getUrl( theme ),
-						styleVariation
-					),
+					getScreenshotOption( theme ).getUrl( theme, themeOptions ),
 					locale,
 					! isLoggedIn
 				);
@@ -571,7 +544,6 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
-		isExpertBannerDissmissed: isUpworkBannerDismissed( state ),
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),

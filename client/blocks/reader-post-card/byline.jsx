@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
@@ -23,6 +22,7 @@ class PostByline extends Component {
 		teams: PropTypes.array,
 		showFollow: PropTypes.bool,
 		compact: PropTypes.bool,
+		openSuggestedFollows: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -38,7 +38,8 @@ class PostByline extends Component {
 	};
 
 	render() {
-		const { post, site, feed, showSiteName, showAvatar, teams, compact } = this.props;
+		const { post, site, feed, showSiteName, showAvatar, teams, compact, openSuggestedFollows } =
+			this.props;
 		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
 		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 		const siteId = get( site, 'ID' );
@@ -121,14 +122,14 @@ class PostByline extends Component {
 							</span>
 						) }
 					</div>
-					{ ! compact && <TagsList post={ post } /> }
 				</div>
 				{ ! compact && (
 					<ReaderPostEllipsisMenu
 						site={ site }
 						teams={ teams }
 						post={ post }
-						showFollow={ false }
+						showFollow={ true }
+						openSuggestedFollows={ openSuggestedFollows }
 					/>
 				) }
 			</div>

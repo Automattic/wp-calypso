@@ -21,7 +21,7 @@ class DnsRecordData extends Component {
 		const { dnsRecord, translate } = this.props;
 		const { type, aux, port, weight } = dnsRecord;
 		const data = this.trimDot( dnsRecord.data );
-		const target = this.trimDot( dnsRecord.target );
+		const target = dnsRecord.target !== '.' ? this.trimDot( dnsRecord.target ) : '.';
 
 		// TODO: Remove this once we stop displaying the protected records
 		if ( dnsRecord.protected_field ) {
@@ -84,12 +84,14 @@ class DnsRecordData extends Component {
 		const { name, service, protocol, type } = this.props.dnsRecord;
 		const domain = this.props.selectedDomainName;
 
-		if ( name.replace( /\.$/, '' ) === domain ) {
-			return '@';
+		if ( 'SRV' === type ) {
+			return `${ service }.${ protocol }.${
+				name.replace( /\.$/, '' ) === domain ? name : name + '.' + domain + '.'
+			}`;
 		}
 
-		if ( 'SRV' === type ) {
-			return `_${ service }._${ protocol }.${ name }`;
+		if ( name.replace( /\.$/, '' ) === domain ) {
+			return '@';
 		}
 
 		return name;

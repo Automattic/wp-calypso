@@ -158,6 +158,11 @@ const sections = [
 		name: 'settings-newsletter',
 		paths: [ '/settings/newsletter' ],
 		module: 'calypso/my-sites/site-settings/settings-newsletter',
+	},
+	{
+		name: 'settings-podcast',
+		paths: [ '/settings/podcasting' ],
+		module: 'calypso/my-sites/site-settings/settings-podcast',
 		group: 'sites',
 	},
 	{
@@ -244,6 +249,16 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
+		name: 'site-profiler',
+		paths: [ '/site-profiler' ],
+		module: 'calypso/site-profiler',
+		enableLoggedOut: true,
+		group: 'site-profiler',
+		isomorphic: true,
+		title: 'Site Profiler',
+		trackLoadPerformance: true,
+	},
+	{
 		name: 'domains',
 		paths: [ '/domains' ],
 		module: 'calypso/my-sites/domains',
@@ -262,8 +277,8 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'inbox',
-		paths: [ '/inbox' ],
+		name: 'mailboxes',
+		paths: [ '/mailboxes' ],
 		module: 'calypso/my-sites/email',
 		group: 'sites',
 	},
@@ -400,7 +415,12 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/subscriptions', '^/read/subscriptions/(\\d+)(/)?$' ],
+		paths: [
+			'/read/subscriptions',
+			'/read/subscriptions/comments',
+			'/read/subscriptions/pending',
+			'^/read/subscriptions/(\\d+)(/)?$',
+		],
 		module: 'calypso/reader/site-subscriptions-manager',
 		group: 'reader',
 	},

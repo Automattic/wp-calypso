@@ -25,6 +25,7 @@ import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import { validateDomainForwarding } from './utils/domain-forwarding';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
 
@@ -54,6 +55,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const pointsToWpcom = domain.pointsToWpcom;
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, domain.blogId ) );
+	const isPrimaryDomain = domain?.isPrimary && ! isDomainOnly;
 	const protocol = 'https';
 
 	// Display success notices when the forwarding is updated
@@ -130,7 +132,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		// By default, the interface already opens with domain forwarding addition
 		if ( data?.length === 0 ) {
 			setEditingId( -1 );
-			setSourceType( 'domain' );
+			setSourceType( isPrimaryDomain ? 'subdomain' : 'domain' );
 		}
 	}, [ isLoading, data ] );
 
@@ -142,21 +144,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		setForwardPaths( false );
 		setSubdomain( '' );
 		setSourceType( 'subdomain' );
-	};
-
-	const handleSubdomainChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		const subdomain = event.target.value;
-		setSubdomain( withoutHttp( subdomain ) );
-
-		const CAPTURE_SUBDOMAIN_RGX = /^(?!-)[a-zA-Z0-9-]{0,63}(?<!-)$/i;
-
-		if ( subdomain.length > 0 && ! CAPTURE_SUBDOMAIN_RGX.test( subdomain ) ) {
-			setIsValidUrl( false );
-			setErrorMessage( translate( 'Please enter a valid subdomain name.' ) );
-			return;
-		}
-
-		setIsValidUrl( true );
 	};
 
 	const handleForwardToChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -172,16 +159,34 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		try {
 			const url = new URL( protocol + '://' + inputUrl );
 
-			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
-			// Disallow same domain forwardings (for now, this may change in the future)
-			if ( url.hostname === domain.name || url.hostname.endsWith( `.${ domain.name }` ) ) {
-				setErrorMessage( translate( 'Forwarding to the same domain is not allowed.' ) );
+			const validateDomain = validateDomainForwarding(
+				domain.name,
+				url.hostname,
+				url.pathname + url.search + url.hash
+			);
+			if ( ! validateDomain.isValid ) {
+				setErrorMessage( validateDomain.errorMsg );
 				setIsValidUrl( false );
 				return;
 			}
 		} catch ( e ) {
 			setErrorMessage( translate( 'Please enter a valid URL.' ) );
 			setIsValidUrl( false );
+			return;
+		}
+
+		setIsValidUrl( true );
+	};
+
+	const handleSubdomainChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const subdomain = event.target.value;
+		setSubdomain( withoutHttp( subdomain ) );
+
+		const CAPTURE_SUBDOMAIN_RGX = /^(?!-)[a-zA-Z0-9-]{0,63}(?<!-)$/i;
+
+		if ( subdomain.length > 0 && ! CAPTURE_SUBDOMAIN_RGX.test( subdomain ) ) {
+			setIsValidUrl( false );
+			setErrorMessage( translate( 'Please enter a valid subdomain name.' ) );
 			return;
 		}
 
@@ -301,6 +306,23 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			return;
 		}
 
+		const newNoticeText =
+			"This domain is your site's main address. You can forward subdomains or {{a}}set a new primary site address{{/a}} to forward the root domain.";
+
+		let noticeText;
+		if ( hasTranslation( newNoticeText ) || isEnglishLocale ) {
+			noticeText = translate(
+				"This domain is your site's main address. You can forward subdomains or {{a}}set a new primary site address{{/a}} to forward the root domain.",
+				{
+					components: {
+						a: <a href={ `/domains/manage/${ domain.domain }` } />,
+					},
+				}
+			);
+		} else {
+			return;
+		}
+
 		return (
 			<div className="domain-forwarding-card-notice">
 				<Icon
@@ -309,17 +331,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					className="domain-forwarding-card-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="domain-forwarding-card-notice__message">
-					{ translate(
-						'Domains set as the {{strong}}primary site address{{/strong}} can not be forwarded. To forward this domain, please {{a}}set a new primary site address{{/a}}.',
-						{
-							components: {
-								strong: <strong />,
-								a: <a href={ `/domains/manage/${ domain.domain }` } />,
-							},
-						}
-					) }
-				</div>
+				<div className="domain-forwarding-card-notice__message">{ noticeText }</div>
 			</div>
 		);
 	};
@@ -352,10 +364,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		return false;
 	};
 
-	const isDomainForwardDisabled = ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom;
-
 	const FormViewRow = ( { child: child }: { child: DomainForwardingObject } ) => (
-		<FormFieldset disabled={ isDomainForwardDisabled } className="domain-forwarding-card__fields">
+		<FormFieldset disabled={ ! pointsToWpcom } className="domain-forwarding-card__fields">
 			<div className="domain-forwarding-card__fields-row">
 				<div className="domain-forwarding-card__fields-column">
 					<Badge type={ child.subdomain === '' ? 'warning' : 'info' }>
@@ -399,7 +409,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		<>
 			<FormFieldset
 				key={ child.domain_redirect_id }
-				disabled={ isDomainForwardDisabled }
+				disabled={ ! pointsToWpcom }
 				className="domain-forwarding-card__fields"
 			>
 				<FormLabel>{ translate( 'Source URL' ) }</FormLabel>
@@ -424,7 +434,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 									name="redirect_type"
 									value={ sourceType }
 									onChange={ handleDomainSubdomainChange }
-									disabled={ isLoading }
+									disabled={ isLoading || isPrimaryDomain }
 								>
 									<option value="domain">{ translate( 'Domain' ) }</option>
 									<option value="subdomain">{ translate( 'Subdomain' ) }</option>
@@ -446,7 +456,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						maxLength={ 1000 }
 						suffix={
 							child.target_host + child.target_path !== '' &&
-							! isDomainForwardDisabled && (
+							pointsToWpcom && (
 								<Button className="forwarding__clear" onClick={ cleanForwardingInput }>
 									<Gridicon icon="cross" />
 								</Button>
@@ -455,10 +465,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					/>
 					<Button
 						className={ classNames( 'forwarding__checkmark', {
-							visible:
-								! isDomainForwardDisabled &&
-								isValidUrl &&
-								child.target_host + child.target_path !== '',
+							visible: pointsToWpcom && isValidUrl && child.target_host + child.target_path !== '',
 						} ) }
 					>
 						<Gridicon icon="checkmark" />
@@ -556,7 +563,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 				<div>
 					<FormButton
 						disabled={
-							isDomainForwardDisabled ||
+							! pointsToWpcom ||
 							! isValidUrl ||
 							isLoading ||
 							( forwarding && ! redirectHasChanged( child ) ) ||

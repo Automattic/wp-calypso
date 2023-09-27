@@ -32,7 +32,7 @@ const Badge = styled.div< { isForIntroOffer?: boolean } >`
 	letter-spacing: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'inherit' : '0.2px' ) };
 	font-weight: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 600 : 500 ) };
 	text-align: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'left' : 'center' ) };
-	padding: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? '0 6px' : '0 12px' ) };
+	padding: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 0 : '0 12px' ) };
 	background-color: ${ ( { isForIntroOffer } ) =>
 		isForIntroOffer ? 'inherit' : 'var( --studio-green-0 )' };
 	color: ${ ( { isForIntroOffer } ) =>
@@ -156,6 +156,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 								rawPrice={ introOffer.rawPrice }
 								displayPerMonthNotation={ false }
 								isLargeCurrency={ isLargeCurrency }
+								isSmallestUnit={ false }
 								priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							/>
 						</>
@@ -173,6 +174,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 									rawPrice={ originalPrice.monthly }
 									displayPerMonthNotation={ false }
 									isLargeCurrency={ isLargeCurrency }
+									isSmallestUnit={ true }
 									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 									original
 								/>
@@ -181,6 +183,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 									rawPrice={ discountedPrice.monthly }
 									displayPerMonthNotation={ false }
 									isLargeCurrency={ isLargeCurrency }
+									isSmallestUnit={ true }
 									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 									discounted
 								/>
@@ -193,6 +196,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ originalPrice.monthly }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
+							isSmallestUnit={ true }
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 						/>
 					) }

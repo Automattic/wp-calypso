@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useState } from 'react';
 import { removeStatsPurchaseSuccessParamFromCurrentUrl } from './lib/remove-stats-purchase-success-param';
 import { StatsNoticeProps } from './types';
@@ -9,12 +10,9 @@ import { StatsNoticeProps } from './types';
 const getStatsPurchaseURL = ( siteId: number | null ) => {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-free-stats-purchase-success-notice`;
+	const purchasePath = `/stats/purchase/${ siteId }?productType=personal&from=${ from }-free-stats-purchase-success-notice`;
 
-	if ( ! isOdysseyStats ) {
-		return purchasePath;
-	}
-	return `https://wordpress.com${ purchasePath }`;
+	return purchasePath;
 };
 
 const handleUpgradeClick = (
@@ -28,7 +26,7 @@ const handleUpgradeClick = (
 		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked' )
 		: recordTracksEvent( 'calypso_stats_purchase_success_banner_upgrade_clicked' );
 
-	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
+	setTimeout( () => page( upgradeUrl ), 250 );
 };
 
 const FreePlanPurchaseSuccessJetpackStatsNotice = ( {

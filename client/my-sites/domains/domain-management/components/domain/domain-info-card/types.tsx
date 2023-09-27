@@ -7,6 +7,7 @@ import type { TranslateResult } from 'i18n-calypso';
 type ActionCardPropsBase = {
 	title: TranslateResult;
 	description: TranslateResult;
+	buttonDisabled?: boolean;
 };
 
 type ActionCardPropsInfoOnly = ActionCardPropsBase & {

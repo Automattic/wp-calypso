@@ -1,14 +1,18 @@
+import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components';
+import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import page from 'page';
+import { useCallback, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
+import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
+import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import FeatureItem from './feature-item';
-
 import './style.scss';
-
-// FIXME: These should be imported from a shared file when available
-const JETPACK_HOSTING_WPCOM_BUSINESS = 'JETPACK_HOSTING_WPCOM_BUSINESS';
-const JETPACK_HOSTING_WPCOM_ECOMMERCE = 'JETPACK_HOSTING_WPCOM_ECOMMERCE';
 
 interface PlanInfo {
 	title: string;
@@ -19,53 +23,117 @@ interface PlanInfo {
 	jetpackFeatures: Array< { text: string; tooltipText: string } >;
 	storage: string;
 	logo: JSX.Element | null;
+	previousProductName: string;
 }
 
-export default function CardContent( { planSlug }: { planSlug: string } ) {
+export default function CardContent( {
+	planSlug,
+	isRequesting,
+	setIsRequesting,
+}: {
+	planSlug: string;
+	isRequesting: boolean;
+	setIsRequesting: any;
+} ) {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
+	const { data: agencyProducts } = useProductsQuery();
 
 	const getLogo = ( planSlug: string ) => {
 		switch ( planSlug ) {
-			case JETPACK_HOSTING_WPCOM_BUSINESS:
+			case PLAN_BUSINESS:
 				return <CloudLogo />;
-			case JETPACK_HOSTING_WPCOM_ECOMMERCE:
+			case PLAN_ECOMMERCE:
 				return <WooLogo />;
 			default:
 				return null;
 		}
 	};
 
+	const getCTAEventName = ( planSlug: string ) => {
+		switch ( planSlug ) {
+			case PLAN_BUSINESS:
+				return 'calypso_jetpack_agency_dashboard_wpcom_atomic_hosting_business_cta_click';
+			case PLAN_ECOMMERCE:
+				return 'calypso_jetpack_agency_dashboard_wpcom_atomic_hosting_ecommerce_cta_click';
+			default:
+				return null;
+		}
+	};
+
+	const getPreviousProductName = ( planSlug: string ) => {
+		switch ( planSlug ) {
+			case PLAN_BUSINESS:
+				return 'Premium';
+			case PLAN_ECOMMERCE:
+				return 'Business';
+			default:
+				return '';
+		}
+	};
+
+	const getProductTagline = ( planSlug: string ) => {
+		switch ( planSlug ) {
+			case PLAN_BUSINESS:
+				return translate( 'Unlock the power of WordPress with plugins and cloud tools.' );
+			case PLAN_ECOMMERCE:
+				return translate( 'Create a powerful online store with built-in premium extensions.' );
+			default:
+				return '';
+		}
+	};
+
 	const getPlanInfo = ( planSlug: string ): PlanInfo => {
-		// FIXME: This is a placeholder until we have the real data
+		const plan = getPlan( planSlug );
+
+		const planFeatures = plan?.get2023PricingGridSignupWpcomFeatures?.() || [];
+		const planFeaturesObject = getPlanFeaturesObject( planFeatures );
+		const jetpackFeatures = plan?.get2023PricingGridSignupJetpackFeatures?.() || [];
+		const jetpackFeaturesObject = getPlanFeaturesObject( jetpackFeatures );
+
+		const agencyProduct = agencyProducts?.find(
+			( agencyProduct ) => agencyProduct.product_id === plan?.getProductId?.()
+		);
+
 		return {
-			title: 'Plan Title',
-			description: 'Plan description goes here',
-			price: '$25',
+			title: plan?.getTitle?.().toString() || '',
+			description: getProductTagline( planSlug ) || '',
+			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
 			interval: 'month',
-			wpcomFeatures: [
-				{ text: 'Feature 1', tooltipText: 'Tooltip for Feature 1' },
-				{ text: 'Feature 2', tooltipText: 'Tooltip for Feature 2' },
-				{ text: 'Feature 3', tooltipText: 'Tooltip for Feature 3' },
-				{ text: 'Feature 4', tooltipText: 'Tooltip for Feature 4' },
-				{ text: 'Feature 5', tooltipText: 'Tooltip for Feature 5' },
-			],
-			jetpackFeatures:
-				planSlug === JETPACK_HOSTING_WPCOM_BUSINESS
-					? [
-							{ text: 'Feature 1', tooltipText: 'Tooltip for Feature 1' },
-							{ text: 'Feature 2', tooltipText: 'Tooltip for Feature 2' },
-							{ text: 'Feature 3', tooltipText: 'Tooltip for Feature 3' },
-							{ text: 'Feature 4', tooltipText: 'Tooltip for Feature 4' },
-					  ]
-					: [],
+			wpcomFeatures: planFeaturesObject.map( ( feature ) => ( {
+				text: feature?.getTitle?.()?.toString() || '',
+				tooltipText: feature?.getDescription?.()?.toString() || '',
+			} ) ),
+			jetpackFeatures: jetpackFeaturesObject.map( ( feature ) => ( {
+				text: feature?.getTitle?.()?.toString() || '',
+				tooltipText: feature?.getDescription?.()?.toString() || '',
+			} ) ),
 			storage: '50GB',
 			logo: getLogo( planSlug ),
+			previousProductName: getPreviousProductName( planSlug ),
 		};
 	};
 
 	const plan = getPlanInfo( planSlug );
+
+	const { issueLicenses } = useIssueLicenses();
+
+	const onCTAClick = useCallback( () => {
+		const productSlug =
+			planSlug === PLAN_BUSINESS ? 'wpcom-hosting-business' : 'wpcom-hosting-ecommerce';
+
+		setIsRequesting( true );
+
+		dispatch( infoNotice( translate( 'A new WordPress.com site is on the way!' ) ) );
+		dispatch( recordTracksEvent( getCTAEventName( planSlug ) ) );
+
+		issueLicenses( [ productSlug ] );
+
+		setIsRequesting( false );
+		page.redirect( `/partner-portal/licenses?provisioning=true` );
+	}, [ dispatch, planSlug, issueLicenses, translate, setIsRequesting ] );
 
 	if ( ! plan ) {
 		return null;
@@ -82,7 +150,12 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 					{ plan.interval === 'day' && translate( '/USD per license per day' ) }
 					{ plan.interval === 'month' && translate( '/USD per license per month' ) }
 				</div>
-				<Button className="wpcom-atomic-hosting__card-button" primary>
+				<Button
+					className="wpcom-atomic-hosting__card-button"
+					primary
+					onClick={ onCTAClick }
+					disabled={ isRequesting }
+				>
 					{ translate( 'Get %(title)s', {
 						args: {
 							title: plan.title,
@@ -93,7 +166,7 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 				<div className="wpcom-atomic-hosting__card-features">
 					<div className="wpcom-atomic-hosting__card-features-heading">
 						{ translate( 'Everything in %(previousProductName)s, plus:', {
-							args: { previousProductName: 'Product Name' }, // FIXME: This should be the plan name
+							args: { previousProductName: plan.previousProductName },
 						} ) }
 					</div>
 					{ plan.wpcomFeatures.length > 0 &&

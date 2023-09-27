@@ -3,26 +3,18 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
-import { useFormStatusManager } from '../lib/form-status';
 import { LineItemsProvider } from '../lib/line-items';
 import defaultTheme from '../lib/theme';
-import { useTransactionStatusManager } from '../lib/transaction-status';
 import {
 	validateArg,
 	validateLineItems,
 	validatePaymentMethods,
 	validateTotal,
 } from '../lib/validation';
-import { LineItem, CheckoutProviderProps, FormStatus, TransactionStatus } from '../types';
+import { LineItem, CheckoutProviderProps } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import { FormStatusProvider } from './form-status-provider';
-import TransactionStatusHandler from './transaction-status-handler';
-import type {
-	PaymentEventCallback,
-	PaymentErrorCallback,
-	PaymentProcessorResponseData,
-	CheckoutContextInterface,
-} from '../types';
+import { FormAndTransactionProvider } from './form-and-transaction-provider';
+import type { CheckoutContextInterface } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -63,12 +55,14 @@ export function CheckoutProvider( {
 		children,
 		initiallySelectedPaymentMethodId,
 	};
-	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >( [] );
 
+	// Keep track of enabled/disabled payment methods.
+	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >( [] );
 	const availablePaymentMethodIds = paymentMethods
 		.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
 		.map( ( method ) => method.id );
 
+	// Automatically select first payment method unless explicitly set or disabled.
 	if (
 		selectFirstAvailablePaymentMethod &&
 		! initiallySelectedPaymentMethodId &&
@@ -77,31 +71,19 @@ export function CheckoutProvider( {
 		initiallySelectedPaymentMethodId = availablePaymentMethodIds[ 0 ];
 	}
 
+	// Keep track of selected payment method.
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
 	);
 
+	// Reset the selected payment method if the list of payment methods changes.
 	useResetSelectedPaymentMethodWhenListChanges(
 		availablePaymentMethodIds,
 		initiallySelectedPaymentMethodId,
 		setPaymentMethodId
 	);
 
-	const formStatusManager = useFormStatusManager( Boolean( isLoading ), Boolean( isValidating ) );
-	const transactionStatusManager = useTransactionStatusManager();
-	const { transactionLastResponse, transactionStatus, transactionError } = transactionStatusManager;
-
-	useCallEventCallbacks( {
-		onPaymentComplete,
-		onPaymentRedirect,
-		onPaymentError,
-		formStatus: formStatusManager.formStatus,
-		transactionError,
-		transactionStatus,
-		paymentMethodId,
-		transactionLastResponse,
-	} );
-
+	// Create a big blob of state to store in React Context for use by all this Provider's children.
 	const value: CheckoutContextInterface = useMemo(
 		() => ( {
 			allPaymentMethods: paymentMethods,
@@ -109,7 +91,6 @@ export function CheckoutProvider( {
 			setDisabledPaymentMethodIds,
 			paymentMethodId,
 			setPaymentMethodId,
-			transactionStatusManager,
 			paymentProcessors,
 			onPageLoadError,
 			onPaymentMethodChanged,
@@ -118,7 +99,6 @@ export function CheckoutProvider( {
 			paymentMethodId,
 			paymentMethods,
 			disabledPaymentMethodIds,
-			transactionStatusManager,
 			paymentProcessors,
 			onPageLoadError,
 			onPaymentMethodChanged,
@@ -138,18 +118,27 @@ export function CheckoutProvider( {
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<LineItemsProvider items={ items } total={ total }>
-					<FormStatusProvider formStatusManager={ formStatusManager }>
-						<CheckoutContext.Provider value={ value }>
-							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
-							{ children }
-						</CheckoutContext.Provider>
-					</FormStatusProvider>
+					<FormAndTransactionProvider
+						onPaymentComplete={ onPaymentComplete }
+						onPaymentRedirect={ onPaymentRedirect }
+						onPaymentError={ onPaymentError }
+						isLoading={ isLoading }
+						isValidating={ isValidating }
+						redirectToUrl={ redirectToUrl }
+					>
+						<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
+					</FormAndTransactionProvider>
 				</LineItemsProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
 	);
 }
 
+/**
+ * Even though CheckoutProvider is TypeScript, it's possible for consumers to
+ * misuse it in ways that are not easy to debug. This helper component throws
+ * errors if the props are not what they should be.
+ */
 function CheckoutProviderPropValidator( {
 	propsToValidate,
 }: {
@@ -170,71 +159,7 @@ function CheckoutProviderPropValidator( {
 	return null;
 }
 
-function useCallEventCallbacks( {
-	onPaymentComplete,
-	onPaymentRedirect,
-	onPaymentError,
-	formStatus,
-	transactionError,
-	transactionStatus,
-	paymentMethodId,
-	transactionLastResponse,
-}: {
-	onPaymentComplete?: PaymentEventCallback;
-	onPaymentRedirect?: PaymentEventCallback;
-	onPaymentError?: PaymentErrorCallback;
-	formStatus: FormStatus;
-	transactionError: string | null;
-	transactionStatus: TransactionStatus;
-	paymentMethodId: string | null;
-	transactionLastResponse: PaymentProcessorResponseData;
-} ): void {
-	// Store the callbacks as refs so we do not call them more than once if they
-	// are anonymous functions. This way they are only called when the
-	// transactionStatus/formStatus changes, which is what we really want.
-	const paymentCompleteRef = useRef( onPaymentComplete );
-	paymentCompleteRef.current = onPaymentComplete;
-	const paymentRedirectRef = useRef( onPaymentRedirect );
-	paymentRedirectRef.current = onPaymentRedirect;
-	const paymentErrorRef = useRef( onPaymentError );
-	paymentErrorRef.current = onPaymentError;
-
-	const prevFormStatus = useRef< FormStatus >();
-	const prevTransactionStatus = useRef< TransactionStatus >();
-
-	useEffect( () => {
-		if (
-			paymentCompleteRef.current &&
-			formStatus === FormStatus.COMPLETE &&
-			formStatus !== prevFormStatus.current
-		) {
-			debug( "form status changed to complete so I'm calling onPaymentComplete" );
-			paymentCompleteRef.current( { paymentMethodId, transactionLastResponse } );
-		}
-		prevFormStatus.current = formStatus;
-	}, [ formStatus, transactionLastResponse, paymentMethodId ] );
-
-	useEffect( () => {
-		if (
-			paymentRedirectRef.current &&
-			transactionStatus === TransactionStatus.REDIRECTING &&
-			transactionStatus !== prevTransactionStatus.current
-		) {
-			debug( "transaction status changed to redirecting so I'm calling onPaymentRedirect" );
-			paymentRedirectRef.current( { paymentMethodId, transactionLastResponse } );
-		}
-		if (
-			paymentErrorRef.current &&
-			transactionStatus === TransactionStatus.ERROR &&
-			transactionStatus !== prevTransactionStatus.current
-		) {
-			debug( "transaction status changed to error so I'm calling onPaymentError" );
-			paymentErrorRef.current( { paymentMethodId, transactionError } );
-		}
-		prevTransactionStatus.current = transactionStatus;
-	}, [ transactionStatus, paymentMethodId, transactionLastResponse, transactionError ] );
-}
-
+// Reset the selected payment method if the list of payment methods changes.
 function useResetSelectedPaymentMethodWhenListChanges(
 	availablePaymentMethodIds: string[],
 	initiallySelectedPaymentMethodId: string | null,

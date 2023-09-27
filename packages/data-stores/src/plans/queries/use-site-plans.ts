@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback } from '@wordpress/element';
 import wpcomRequest from 'wpcom-proxy-request';
+import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { PlanIntroductoryOffer, PricedAPISitePlan, SitePlan } from '../types';
 
 interface SitePlansIndex {
@@ -36,8 +37,10 @@ const unpackIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer 
  * - UI works with product/plan slugs everywhere, so returned index is transformed to be keyed by product_slug
  */
 function useSitePlans( { siteId }: Props ) {
+	const queryKeys = useQueryKeysFactory();
+
 	return useQuery< PricedAPISitePlansIndex, Error, SitePlansIndex >( {
-		queryKey: [ 'site-plans', siteId ],
+		queryKey: queryKeys.sitePlans( siteId ),
 		queryFn: async () =>
 			await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/plans`,
@@ -57,7 +60,7 @@ function useSitePlans( { siteId }: Props ) {
 			}, {} );
 		}, [] ),
 		refetchOnWindowFocus: false,
-		staleTime: 1000 * 60 * 3, // 3 minutes
+		staleTime: 1000 * 60 * 5, // 5 minutes
 		enabled: !! siteId,
 	} );
 }

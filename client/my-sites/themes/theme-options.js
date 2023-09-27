@@ -4,10 +4,7 @@ import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
-import {
-	appendStyleVariationToThemesPath,
-	localizeThemesPath,
-} from 'calypso/my-sites/themes/helpers';
+import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
@@ -40,8 +37,6 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 
-const identity = ( theme ) => theme;
-
 function getAllThemeOptions( { translate, isFSEActive } ) {
 	const purchase = {
 		label: translate( 'Purchase', {
@@ -52,11 +47,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme',
 		} ),
-		getUrl: ( state, themeId, siteId, styleVariation ) => {
+		getUrl: ( state, themeId, siteId, options ) => {
 			const slug = getSiteSlug( state, siteId );
 			const redirectTo = encodeURIComponent(
 				addQueryArgs( `/theme/${ themeId }/${ slug }`, {
-					style_variation: styleVariation?.slug,
+					style_variation: options?.styleVariationSlug,
 				} )
 			);
 
@@ -106,11 +101,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
-		getUrl: ( state, themeId, siteId, styleVariation ) =>
-			appendStyleVariationToThemesPath(
-				getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
-				styleVariation
-			),
+		getUrl: ( state, themeId, siteId, options ) =>
+			getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId, options ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! isJetpackSite( state, siteId ) ||
 			isSiteWpcomAtomic( state, siteId ) ||
@@ -133,7 +125,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
-		getUrl: ( state, themeId, siteId, styleVariation ) => {
+		getUrl: ( state, themeId, siteId, options ) => {
 			const { origin = 'https://wordpress.com' } =
 				typeof window !== 'undefined' ? window.location : {};
 			const slug = getSiteSlug( state, siteId );
@@ -142,7 +134,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				addQueryArgs( `${ origin }/setup/site-setup/designSetup`, {
 					siteSlug: slug,
 					theme: themeId,
-					style_variation: styleVariation?.slug,
+					style_variation: options?.styleVariationSlug,
 				} )
 			);
 
@@ -211,9 +203,9 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 
 	const customize = {
 		icon: 'customize',
-		getUrl: ( state, themeId, siteId, styleVariation ) =>
+		getUrl: ( state, themeId, siteId, options ) =>
 			addQueryArgs( getCustomizeUrl( state, themeId, siteId, isFSEActive ), {
-				style_variation: styleVariation?.slug,
+				style_variation: options?.styleVariationSlug,
 			} ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
@@ -290,10 +282,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	const signup = {
 		label: signupLabel,
 		extendedLabel: signupLabel,
-		getUrl: ( state, themeId, siteId, styleVariation ) =>
-			addQueryArgs( getThemeSignupUrl( state, themeId ), {
-				style_variation: styleVariation?.slug,
-			} ),
+		getUrl: ( state, themeId, siteId, options ) => getThemeSignupUrl( state, themeId, options ),
 		hideForTheme: ( state ) => isUserLoggedIn( state ),
 	};
 
@@ -306,11 +295,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for displaying the theme info sheet',
 		} ),
 		icon: 'info',
-		getUrl: ( state, themeId, siteId, styleVariation ) =>
-			appendStyleVariationToThemesPath(
-				getThemeDetailsUrl( state, themeId, siteId ),
-				styleVariation
-			),
+		getUrl: ( state, themeId, siteId, options ) =>
+			getThemeDetailsUrl( state, themeId, siteId, options ),
 	};
 
 	return {
@@ -335,19 +321,12 @@ const connectOptionsHoc = connect(
 	( state, props ) => {
 		const { siteId, origin = siteId, locale } = props;
 		const isLoggedOut = ! isUserLoggedIn( state );
-		let mapGetUrl = identity;
-		let mapHideForTheme = identity;
 
 		/* eslint-disable wpcalypso/redux-no-bound-selectors */
-		if ( siteId ) {
-			mapGetUrl = ( getUrl ) => ( t, styleVariation ) =>
-				localizeThemesPath( getUrl( state, t, siteId, styleVariation ), locale, isLoggedOut );
-			mapHideForTheme = ( hideForTheme ) => ( t ) => hideForTheme( state, t, siteId, origin );
-		} else {
-			mapGetUrl = ( getUrl ) => ( t, s, styleVariation ) =>
-				localizeThemesPath( getUrl( state, t, s, styleVariation ), locale, isLoggedOut );
-			mapHideForTheme = ( hideForTheme ) => ( t, s ) => hideForTheme( state, t, s, origin );
-		}
+		const mapGetUrl = ( getUrl ) => ( t, options ) =>
+			localizeThemesPath( getUrl( state, t, siteId, options ), locale, isLoggedOut );
+		const mapHideForTheme = ( hideForTheme ) => ( t, s ) =>
+			hideForTheme( state, t, s ?? siteId, origin );
 
 		return mapValues( getAllThemeOptions( props ), ( option, key ) =>
 			Object.assign(

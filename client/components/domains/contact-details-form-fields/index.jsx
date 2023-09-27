@@ -69,6 +69,8 @@ export class ContactDetailsFormFields extends Component {
 		shouldForceRenderOnPropChange: PropTypes.bool,
 		updateWpcomEmailCheckboxDisabled: PropTypes.bool,
 		onUpdateWpcomEmailCheckboxChange: PropTypes.func,
+		updateWpcomEmailCheckboxHidden: PropTypes.bool,
+		ignoreCountryOnDisableSubmit: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -92,6 +94,8 @@ export class ContactDetailsFormFields extends Component {
 		userCountryCode: 'US',
 		shouldForceRenderOnPropChange: false,
 		updateWpcomEmailCheckboxDisabled: false,
+		updateWpcomEmailCheckboxHidden: false,
+		ignoreCountryOnDisableSubmit: false,
 	};
 
 	constructor( props ) {
@@ -474,19 +478,23 @@ export class ContactDetailsFormFields extends Component {
 				) }
 			>
 				<Input label={ this.props.translate( 'Email' ) } { ...emailInputFieldProps } />
-				<FormLabel
-					className={ classNames( 'email-text-input-with-checkbox__checkbox-label', {
-						'is-disabled': this.props.updateWpcomEmailCheckboxDisabled,
-					} ) }
-				>
-					<FormCheckbox
-						name="update-wpcom-email"
-						disabled={ this.props.updateWpcomEmailCheckboxDisabled }
-						onChange={ this.handleUpdateWpcomEmailCheckboxChanged }
-						checked={ this.state.updateWpcomEmail && ! this.props.updateWpcomEmailCheckboxDisabled }
-					/>
-					<span>{ this.props.translate( 'Apply contact update to My Account email.' ) }</span>
-				</FormLabel>
+				{ ! this.props.updateWpcomEmailCheckboxHidden && (
+					<FormLabel
+						className={ classNames( 'email-text-input-with-checkbox__checkbox-label', {
+							'is-disabled': this.props.updateWpcomEmailCheckboxDisabled,
+						} ) }
+					>
+						<FormCheckbox
+							name="update-wpcom-email"
+							disabled={ this.props.updateWpcomEmailCheckboxDisabled }
+							onChange={ this.handleUpdateWpcomEmailCheckboxChanged }
+							checked={
+								this.state.updateWpcomEmail && ! this.props.updateWpcomEmailCheckboxDisabled
+							}
+						/>
+						<span>{ this.props.translate( 'Apply contact update to My Account email.' ) }</span>
+					</FormLabel>
+				) }
 			</div>
 		);
 	}
@@ -528,8 +536,14 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	render() {
-		const { translate, onCancel, disableSubmitButton, labelTexts, contactDetailsErrors } =
-			this.props;
+		const {
+			translate,
+			onCancel,
+			disableSubmitButton,
+			labelTexts,
+			contactDetailsErrors,
+			ignoreCountryOnDisableSubmit,
+		} = this.props;
 
 		if ( ! this.state.form ) {
 			return null;
@@ -579,7 +593,9 @@ export class ContactDetailsFormFields extends Component {
 						{ this.props.onSubmit && (
 							<FormButton
 								className="contact-details-form-fields__submit-button"
-								disabled={ ! countryCode || disableSubmitButton }
+								disabled={
+									( ! ignoreCountryOnDisableSubmit && ! countryCode ) || disableSubmitButton
+								}
 								onClick={ this.handleSubmitButtonClick }
 							>
 								{ labelTexts.submitButton || translate( 'Submit' ) }

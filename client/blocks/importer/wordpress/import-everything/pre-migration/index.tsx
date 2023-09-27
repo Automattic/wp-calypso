@@ -23,6 +23,7 @@ import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import NotAuthorized from '../../../components/not-authorized';
 import ConfirmModal from './confirm-modal';
 import { CredentialsHelper } from './credentials-helper';
 import { StartImportTrackingProps } from './types';
@@ -37,7 +38,9 @@ interface PreMigrationProps {
 	isMigrateFromWp: boolean;
 	isTrial?: boolean;
 	onContentOnlyClick: () => void;
+	sourceSite?: SiteDetails;
 	onFreeTrialClick: () => void;
+	onNotAuthorizedClick: () => void;
 }
 
 export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
@@ -52,6 +55,8 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isTrial,
 		onContentOnlyClick,
 		onFreeTrialClick,
+		sourceSite,
+		onNotAuthorizedClick,
 	} = props;
 
 	const translate = useTranslate();
@@ -63,31 +68,19 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
 	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
 	const [ hasLoaded, setHasLoaded ] = useState( false );
-	const [ showUpdatePluginInfo, setShowUpdatePluginInfo ] = useState( false );
 	const [ continueImport, setContinueImport ] = useState( false );
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) ?? '';
 	const sourceSiteUrl = formatSlugToURL( sourceSiteSlug );
 
-	const onfetchCallback = ( siteCanMigrate: boolean ) => {
-		if ( ! siteCanMigrate ) {
-			setShowUpdatePluginInfo( true );
-		} else {
-			setShowUpdatePluginInfo( false );
-		}
-	};
-
 	const {
 		sourceSiteId,
-		sourceSite,
 		fetchMigrationEnabledStatus,
 		isFetchingData: isFetchingMigrationData,
-	} = useSiteMigrateInfo(
-		targetSite.ID,
-		sourceSiteSlug,
-		isTargetSitePlanCompatible,
-		onfetchCallback
-	);
+		siteCanMigrate,
+	} = useSiteMigrateInfo( targetSite.ID, sourceSiteSlug, isTargetSitePlanCompatible );
+
+	const showUpdatePluginInfo = typeof siteCanMigrate === 'boolean' ? ! siteCanMigrate : false;
 
 	const migrationTrackingProps = {
 		source_site_id: sourceSiteId,
@@ -181,10 +174,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		if ( showUpdatePluginInfo || ! continueImport ) {
 			return;
 		}
-		if ( sourceSite ) {
+		if ( sourceSiteId ) {
 			startImport( migrationTrackingProps );
 		}
-	}, [ continueImport, sourceSite, startImport, showUpdatePluginInfo ] );
+	}, [ continueImport, sourceSiteId, startImport, showUpdatePluginInfo ] );
 
 	function renderCredentialsFormSection() {
 		// We do not show the credentials form if we already have credentials
@@ -242,13 +235,20 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			return <LoadingEllipsis />;
 		}
 
+		if ( ! sourceSite || ( sourceSite && sourceSite.ID !== sourceSiteId ) ) {
+			<NotAuthorized
+				onStartBuilding={ onNotAuthorizedClick }
+				onStartBuildingText={ translate( 'Skip to dashboard' ) }
+			/>;
+		}
+
 		return (
 			<>
 				{ showConfirmModal && (
 					<ConfirmModal
 						sourceSiteSlug={ sourceSiteSlug }
 						targetSiteSlug={ targetSite.slug }
-						onClose={ () => setShowConfirmModal( false ) }
+						onClose={ hideConfirmModal }
 						onConfirm={ () => {
 							// reset migration confirmation to initial state
 							setMigrationConfirmed( false );
@@ -272,7 +272,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 								onClick={ () => {
 									migrationConfirmed
 										? startImport( { type: 'without-credentials', ...migrationTrackingProps } )
-										: setShowConfirmModal( true );
+										: displayConfirmModal();
 								} }
 							>
 								{ translate( 'Start migration' ) }
@@ -282,6 +282,22 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				</div>
 			</>
 		);
+	}
+
+	function displayConfirmModal() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_confirm_modal_display', migrationTrackingProps )
+		);
+
+		setShowConfirmModal( true );
+	}
+
+	function hideConfirmModal() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_confirm_modal_hide', migrationTrackingProps )
+		);
+
+		setShowConfirmModal( false );
 	}
 
 	function renderUpdatePluginInfo() {

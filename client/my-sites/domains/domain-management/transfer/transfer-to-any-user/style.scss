@@ -1,0 +1,92 @@
+@import "../../../../customer-home/grid-mixins.scss";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/colors.native";
+
+.transfer-domain-to-any-user {
+	background: var(--studio-white);
+
+	&__card {
+		padding: 0;
+		box-shadow: none;
+		background: transparent;
+	}
+
+	&__container {
+		margin: 0 16px 16px 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin: 0;
+		}
+	}
+
+	.transfer-domain-to-any-user__container {
+		@include break-xlarge {
+			@include grid-row( 1, 1 );
+			@include grid-column( 1, 12 );
+			@include display-grid;
+			@include grid-template-columns( 12, 24px, 1fr );
+			grid-gap: 24px;
+			.transfer-domain-to-any-user__main {
+				@include grid-column( 1, 8 );
+				margin: 0;
+			}
+		}
+	}
+
+	.transfer-domain-to-any-user__input {
+		max-width: 300px;
+	}
+
+	.transfer-domain-to-any-user__notice {
+		color: var(--color-neutral-40);
+		margin: 16px 0;
+		padding: 0;
+		text-align: left;
+
+		.gridicon {
+			float: left;
+		}
+
+		p {
+			font-size: $font-body-small;
+			font-weight: 400;
+			margin-left: 24px;
+		}
+	}
+
+	.transfer-domain-to-any-user__pending-transfer-card {
+		h2 {
+			font-size: $font-title-small;
+			margin-bottom: 1rem;
+			font-weight: 600;
+		}
+
+		.transfer-domain-to-any-user__pending-detail {
+			margin-bottom: 1rem;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+
+			strong {
+				color: var(--studio-gray-70);
+			}
+
+			.transfer-domain-to-any-user__pending-status {
+				color: var(--color-warning);
+			}
+		}
+	}
+
+}
+
+.transfer-domain-to-any-user__notice {
+	color: var(--color-neutral-40);
+	margin: 16px 0;
+
+	.gridicon {
+		float: left;
+	}
+}

@@ -11,8 +11,10 @@ import SidebarRegion from 'calypso/layout/sidebar/region';
 import CurrentSite from 'calypso/my-sites/current-site';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import 'calypso/components/jetpack/sidebar/style.scss';
 import type { FunctionComponent } from 'react';
+
+import 'calypso/components/jetpack/sidebar/style.scss';
+import './style.scss';
 
 interface Props {
 	path: string;
@@ -33,9 +35,21 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 	const isPluginsPage = path.includes( '/plugins' );
 	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
 
+	const isAtomicSiteCreationEnabled = config.isEnabled(
+		'jetpack/pro-dashboard-wpcom-atomic-hosting'
+	);
+
 	return (
 		<div>
-			<SiteSelector showAddNewSite showAllSites allSitesPath={ path } siteBasePath="/backup" />
+			<SiteSelector
+				showAddNewSite
+				showAllSites
+				isJetpackAgencyDashboard={ isAtomicSiteCreationEnabled }
+				className="sidebar__site-selector"
+				allSitesPath={ path }
+				siteBasePath="/backup"
+				wpcomSiteBasePath={ isAtomicSiteCreationEnabled && 'https://wordpress.com/home' }
+			/>
 			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
 					<CurrentSite

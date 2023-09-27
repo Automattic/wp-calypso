@@ -39,6 +39,7 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 export const HelpCenterContactPage: FC = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
+	const isWapuuEnabled = config.isEnabled( 'wapuu' );
 
 	const renderEmail = useShouldRenderEmailOption();
 	const {
@@ -200,6 +201,23 @@ export const HelpCenterContactPage: FC = () => {
 								<div>
 									<h2>{ emailHeaderText }</h2>
 									<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
+								</div>
+							</div>
+						</Link>
+					) }
+					{ isWapuuEnabled && (
+						<Link to="/odie">
+							<div
+								className={ classnames( 'help-center-contact-page__box', 'odie' ) }
+								role="button"
+								tabIndex={ 0 }
+							>
+								<div className="help-center-contact-page__box-icon">
+									<Icon icon={ comment } />
+								</div>
+								<div>
+									<h2>{ __( 'Wapuu', __i18n_text_domain__ ) }</h2>
+									<p>{ __( 'Get an immediate reply using a trained AI', __i18n_text_domain__ ) }</p>
 								</div>
 							</div>
 						</Link>

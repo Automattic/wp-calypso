@@ -488,7 +488,11 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned, isPasswordless } = this.props;
+		const { oauth2Client, isReskinned } = this.props;
+		const isPasswordless =
+			isMobile() ||
+			this.props.isPasswordless ||
+			isNewsletterFlow( this.props?.queryObject?.variationName );
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -519,7 +523,7 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
-					isPasswordless={ isMobile() || isPasswordless }
+					isPasswordless={ isPasswordless }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }

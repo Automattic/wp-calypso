@@ -16,7 +16,10 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EmptyContent from 'calypso/components/empty-content';
-import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+import PromoSection, {
+	Props as PromoSectionProps,
+	PromoSectionCardProps,
+} from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -131,7 +134,7 @@ const Home = () => {
 	const getPremiumPlanNames = () => {
 		const nonAtomicJetpackText = eligibleForProPlan
 			? translate( 'Available only with a Pro plan.' )
-			: translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+			: translate( 'Available only with a Premium, Business, or Commerce plan.' );
 
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
@@ -139,10 +142,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Simple Payments card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
 	 */
-	const getSimplePaymentsCard = () => {
+	const getSimplePaymentsCard = (): PromoSectionCardProps => {
 		const supportLink = localizeUrl(
 			'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
 		);
@@ -192,10 +193,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Recurring Payments card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
 	 */
-	const getRecurringPaymentsCard = () => {
+	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
 		const hasConnectionCtaTitle = translate( 'Manage Payment Button' );
 		const noConnectionCtaTitle = translate( 'Enable Payment Button' );
 		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
@@ -245,10 +244,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Donations card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
 	 */
-	const getDonationsCard = () => {
+	const getDonationsCard = (): PromoSectionCardProps => {
 		const hasConnectionCtaTitle = translate( 'Manage Donations Form' );
 		const noConnectionCtaTitle = translate( 'Enable Donations Form' );
 		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
@@ -298,10 +295,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Premium Content Block card based on the current plan.
-	 *
-	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
-	const getPremiumContentCard = () => {
+	const getPremiumContentCard = (): PromoSectionCardProps | undefined => {
 		const hasConnectionCtaTitle = translate( 'Manage Premium Content' );
 		const noConnectionCtaTitle = translate( 'Enable Premium Content' );
 		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
@@ -328,7 +323,7 @@ const Home = () => {
 				'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
 			),
 			onClick: () => trackLearnLink( 'premium-content' ),
-			label: hasConnectedAccount ? translate( 'Support documentation' ) : null,
+			label: hasConnectedAccount ? translate( 'Support documentation' ) : undefined,
 		};
 
 		return {
@@ -344,10 +339,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Paid Newsletter card based on the current plan.
-	 *
-	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
-	const getPaidNewsletterCard = () => {
+	const getPaidNewsletterCard = (): PromoSectionCardProps | undefined => {
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
@@ -377,10 +370,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Peer Referrals card.
-	 *
-	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
-	const getPeerReferralsCard = () => {
+	const getPeerReferralsCard = (): PromoSectionCardProps | undefined => {
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
@@ -426,15 +417,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Ads card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
 	 */
-	/**
-	 * Return the content to display in the Ads card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
-	 */
-	const getAdsCard = () => {
+	const getAdsCard = (): PromoSectionCardProps => {
 		const cta =
 			hasWordAdsFeature || hasSetupAds
 				? {

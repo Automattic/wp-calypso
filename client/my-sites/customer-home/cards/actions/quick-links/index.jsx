@@ -85,7 +85,7 @@ export const QuickLinks = ( {
 	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
-	const hasBoost = site?.options.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
+	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 
 	const addNewDomain = () => {
 		sendNudge( {
@@ -428,7 +428,6 @@ export const trackManageAllDomainsAction = ( isStaticHomePage ) => ( dispatch ) 
 /**
  * Select a list of domains that are eligible to add email to from a larger list.
  * WPCOM-specific domains like free and staging sub-domains are filtered from this list courtesy of `canCurrentUserAddEmail`
- *
  * @param domains An array domains to filter
  */
 const getDomainsThatCanAddEmail = ( domains ) =>

@@ -11,14 +11,8 @@ import {
 } from './stats-purchase-shared';
 import './styles.scss';
 
-const getStatsPurchaseURL = ( siteId, isOdysseyStats, productType = 'commercial' ) => {
-	const purchasePath = `/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
-
-	if ( ! isOdysseyStats ) {
-		return purchasePath;
-	}
-	return `https://wordpress.com${ purchasePath }`;
-};
+const getStatsPurchaseURL = ( siteId, productType = 'commercial' ) =>
+	`/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
 
 const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 	event.preventDefault();
@@ -27,7 +21,7 @@ const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked' )
 		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
 
-	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
+	setTimeout( () => page( upgradeUrl ), 250 );
 };
 
 const StatsCommercialOwned = ( { siteSlug } ) => {
@@ -44,10 +38,10 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 
 	return (
 		<>
-			<h1>{ translate( 'You have already purchased Jetpack Stats Commercial!' ) }</h1>
+			<h1>{ translate( 'You have already purchased Jetpack Stats!' ) }</h1>
 			<p>
 				{ translate(
-					'It appears that you have already purchased a license or a plan that supports this product, and it has been successfully activated. You now have access to:'
+					'You have already purchased a commercial license or a plan that supports this product, and it has been successfully activated. You now have access to:'
 				) }
 			</p>
 			<StatsBenefitsCommercial />
@@ -73,10 +67,10 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 
 	return (
 		<StatsSingleItemPagePurchaseFrame>
-			<h1>{ translate( 'You have already purchased Jetpack Stats Personal Plan!' ) }</h1>
+			<h1>{ translate( 'You have already purchased Jetpack Stats!' ) }</h1>
 			<p>
 				{ translate(
-					'It appears that you have already purchased a license for this product, and it has been successfully activated. You now have access to:'
+					'You have already purchased a personal license for this product, and it has been successfully activated. You now have access to:'
 				) }
 			</p>
 			<StatsBenefitsPersonal />
@@ -86,11 +80,7 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button
 				variant="primary"
 				onClick={ ( e ) =>
-					handleUpgradeClick(
-						e,
-						getStatsPurchaseURL( siteId, isOdysseyStats, 'commercial' ),
-						isOdysseyStats
-					)
+					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'commercial' ), isOdysseyStats )
 				}
 			>
 				{ translate( 'Upgrade my Stats' ) }
@@ -114,10 +104,10 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 
 	return (
 		<StatsSingleItemPagePurchaseFrame isFree>
-			<h1>{ translate( 'You have already purchased Jetpack Stats Free Plan!' ) }</h1>
+			<h1>{ translate( 'You already have a free license for Jetpack Stats.' ) }</h1>
 			<p>
 				{ translate(
-					'It appears that you have already purchased a license for this product, and it has been successfully activated. You now have access to:'
+					'You already have a free license for this product, and it has been successfully activated. Currently have access to:'
 				) }
 			</p>
 			<StatsBenefitsFree />
@@ -128,11 +118,7 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button
 				variant="primary"
 				onClick={ ( e ) =>
-					handleUpgradeClick(
-						e,
-						getStatsPurchaseURL( siteId, isOdysseyStats, 'personal' ),
-						isOdysseyStats
-					)
+					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'personal' ), isOdysseyStats )
 				}
 			>
 				{ translate( 'Upgrade my Stats' ) }

@@ -140,3 +140,8 @@ declare module 'calypso/state/analytics/actions' {
 }
 
 declare module 'calypso/lib/mobile-app';
+
+declare module '*.svg' {
+	const content: string;
+	export default content;
+}

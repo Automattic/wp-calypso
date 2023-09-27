@@ -50,7 +50,7 @@ describe( 'existingCardProcessor', () => {
 			name: 'test name',
 			payment_key: 'stripe-token',
 			payment_method: 'WPCOM_Billing_MoneyPress_Stored',
-			payment_partner: 'IE',
+			payment_partner: 'stripe_ie',
 			postal_code: '10001',
 			stored_details_id: 'stored-details-id',
 			zip: '10001',
@@ -104,7 +104,7 @@ describe( 'existingCardProcessor', () => {
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
-			paymentPartnerProcessorId: 'IE',
+			paymentPartnerProcessorId: 'stripe_ie',
 		};
 		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
@@ -124,7 +124,7 @@ describe( 'existingCardProcessor', () => {
 		const submitData = {
 			storedDetailsId: 'stored-details-id',
 			paymentMethodToken: 'stripe-token',
-			paymentPartnerProcessorId: 'IE',
+			paymentPartnerProcessorId: 'stripe_ie',
 		};
 		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
@@ -157,7 +157,7 @@ describe( 'existingCardProcessor', () => {
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
-			paymentPartnerProcessorId: 'IE',
+			paymentPartnerProcessorId: 'stripe_ie',
 		};
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
@@ -177,7 +177,7 @@ describe( 'existingCardProcessor', () => {
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
-			paymentPartnerProcessorId: 'IE',
+			paymentPartnerProcessorId: 'stripe_ie',
 		};
 		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
@@ -208,7 +208,7 @@ describe( 'existingCardProcessor', () => {
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
-			paymentPartnerProcessorId: 'IE',
+			paymentPartnerProcessorId: 'stripe_ie',
 		};
 		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
@@ -250,7 +250,7 @@ describe( 'existingCardProcessor', () => {
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
-			paymentPartnerProcessorId: 'IE',
+			paymentPartnerProcessorId: 'stripe_ie',
 		};
 		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(

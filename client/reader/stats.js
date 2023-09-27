@@ -73,7 +73,16 @@ function getLocation( path ) {
 		return 'following_manage';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		return 'discover';
+		const searchParams = new URLSearchParams( window.location.search );
+		const selectedTab = searchParams.get( 'selectedTab' );
+		if ( ! selectedTab || selectedTab === 'recommended' ) {
+			return 'discover_recommended';
+		} else if ( selectedTab === 'latest' ) {
+			return 'discover_latest';
+		} else if ( selectedTab === 'firstposts' ) {
+			return 'discover_firstposts';
+		}
+		return `discover_tag:${ selectedTab }`;
 	}
 	if ( path.indexOf( '/read/recommendations/posts' ) === 0 ) {
 		return 'recommended_posts';

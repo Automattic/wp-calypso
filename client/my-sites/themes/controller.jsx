@@ -75,7 +75,10 @@ export function fetchThemeData( context, next ) {
 		return next();
 	}
 
-	context.store.dispatch( requestThemes( siteId, query, context.lang ) ).then( next ).catch( next );
+	context.store
+		.dispatch( requestThemes( siteId, query, context.lang ) )
+		.then( next )
+		.catch( next );
 }
 
 export function fetchThemeFilters( context, next ) {

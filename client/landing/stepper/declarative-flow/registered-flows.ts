@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
+	AI_ASSEMBLER_FLOW,
 	LINK_IN_BIO_DOMAIN_FLOW,
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
@@ -115,6 +116,12 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ 'plugin-bundle' ]: () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
+
+	[ 'hundred-year-plan' ]: () =>
+		import( /* webpackChunkName: "hundred-year-plan" */ './hundred-year-plan' ),
+
+	'domain-user-transfer': () =>
+		import( /* webpackChunkName: "domain-user-transfer-flow" */ './domain-user-transfer' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
@@ -132,4 +139,13 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-export default { ...availableFlows, ...videoPressTvFlows };
+const aiAsseblerFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+	'calypso/ai-assembler'
+)
+	? {
+			[ AI_ASSEMBLER_FLOW ]: () =>
+				import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
+	  }
+	: {};
+
+export default { ...availableFlows, ...videoPressTvFlows, ...aiAsseblerFlows };

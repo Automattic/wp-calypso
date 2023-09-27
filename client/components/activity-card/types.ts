@@ -8,7 +8,7 @@ export interface Activity {
 			section?: string;
 			type?: string;
 			url?: string;
-		}
+		},
 	];
 	activityIcon?: string;
 	activityId: number;

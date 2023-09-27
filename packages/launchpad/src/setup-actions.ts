@@ -11,6 +11,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'earn_money',
 	'manage_subscribers',
 	'connect_social_media',
+	'drive_traffic',
 ];
 
 export const setUpActionsForTasks = ( {
@@ -21,7 +22,7 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen, siteLaunched } = extraActions || {};
+	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions || {};
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -122,6 +123,8 @@ export const setUpActionsForTasks = ( {
 					};
 					break;
 				case 'site_launched':
+				case 'videopress_launched':
+				case 'link_in_bio_launched':
 					action = async () => {
 						await wpcomRequest( {
 							path: `/sites/${ siteSlug }/launch`,
@@ -148,6 +151,9 @@ export const setUpActionsForTasks = ( {
 
 		const actionDispatch = () => {
 			recordTaskClickTracksEvent( task );
+			if ( siteSlug && setActiveChecklist ) {
+				setActiveChecklist( siteSlug, checklistSlug );
+			}
 			action?.();
 		};
 

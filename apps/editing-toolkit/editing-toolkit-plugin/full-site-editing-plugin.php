@@ -370,8 +370,26 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  */
 function load_help_center() {
 	// disable help center in P2s.
-	if ( defined( 'IS_WPCOM' ) && IS_WPCOM && \WPForTeams\is_wpforteams_site( get_current_blog_id() ) ) {
+	if (
+		defined( 'IS_WPCOM' )
+		&& IS_WPCOM
+		&& \WPForTeams\is_wpforteams_site( get_current_blog_id() )
+	) {
 		return false;
+	}
+
+	// disable help center if Jetpack isn't active.
+	if ( ! defined( 'IS_WPCOM' ) ) {
+		// Make sure the function have been loaded.
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		// This doesn't work if Jetpack is an mu-plugin.
+		// Since this isn't running in WPCOM this shouldn't matter.
+		if ( ! is_plugin_active( 'jetpack/jetpack.php' ) ) {
+			return false;
+		}
 	}
 
 	require_once __DIR__ . '/help-center/class-help-center.php';

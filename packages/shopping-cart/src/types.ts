@@ -159,7 +159,7 @@ export type ShoppingCartState = {
 			loadingError: string;
 			loadingErrorType: ShoppingCartError;
 	  }
- );
+);
 
 export interface WithShoppingCartProps {
 	shoppingCartManager: UseShoppingCart;
@@ -614,6 +614,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	import_dns_records?: boolean;
 	signup?: boolean;
 	headstart_theme?: string;
+	feature_slug?: string;
 }
 
 export interface GSuiteProductUser {

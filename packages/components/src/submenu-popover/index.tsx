@@ -24,8 +24,10 @@ interface SubmenuPopoverProps extends ComponentProps< typeof Popover > {
 		| 'left'
 		| 'left-start'
 		| 'left-end';
-	anchorRef?: React.MutableRefObject< HTMLElement | undefined >;
-	__unstableForcePosition?: boolean;
+	anchor?: Element | undefined;
+	flip?: boolean;
+	resize?: boolean;
+	inline?: boolean;
 }
 
 /**
@@ -81,9 +83,14 @@ function useHasRightSpace( parentElement: HTMLElement | undefined, isVisible: bo
 }
 
 export function useSubmenuPopoverProps< T extends HTMLElement >(
-	options: { offset?: number } = {}
+	options: Omit< SubmenuPopoverProps, 'isVisible' | 'placement' | 'anchor' | 'children' > = {
+		offset: 0,
+		flip: true,
+		resize: true,
+		inline: false,
+	}
 ) {
-	const { offset = 0 } = options;
+	const { offset, inline, flip, resize } = options;
 	const [ isVisible, setIsVisible ] = useState( false );
 	const anchor = useRef< T >();
 	const parentElement = anchor?.current;
@@ -93,9 +100,11 @@ export function useSubmenuPopoverProps< T extends HTMLElement >(
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
 		placement: hasRightSpace ? 'right-start' : 'left-start',
-		anchorRect: anchor?.current?.getBoundingClientRect(),
+		anchor: anchor?.current,
 		offset,
-		__unstableForcePosition: true,
+		flip,
+		resize,
+		inline,
 	};
 
 	const parent = {

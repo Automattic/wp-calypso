@@ -7,7 +7,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { isGravPoweredOAuth2Client, isWPJobManagerOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -54,6 +56,7 @@ class HandleEmailedLinkForm extends Component {
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 		initialQuery: PropTypes.object,
+		oauth2Client: PropTypes.object.isRequired,
 
 		// Connected action creators
 		fetchMagicLoginAuthenticate: PropTypes.func.isRequired,
@@ -81,6 +84,12 @@ class HandleEmailedLinkForm extends Component {
 			! wooDnaConfig( this.props.initialQuery ).isWooDnaFlow()
 		) {
 			this.handleSubmit();
+		}
+
+		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
+			document
+				.querySelector( '.layout.is-section-login' )
+				?.classList.add( 'is-grav-powered-login-page' );
 		}
 	}
 
@@ -133,12 +142,20 @@ class HandleEmailedLinkForm extends Component {
 	}
 
 	render() {
-		const { currentUser, emailAddress, isExpired, isFetching, translate, initialQuery } =
-			this.props;
+		const {
+			currentUser,
+			emailAddress,
+			isExpired,
+			isFetching,
+			translate,
+			initialQuery,
+			oauth2Client,
+		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
+		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 
 		if ( isExpired ) {
-			return <EmailedLoginLinkExpired />;
+			return <EmailedLoginLinkExpired isGravPoweredClient={ isGravPoweredClient } />;
 		}
 
 		let buttonLabel;
@@ -148,6 +165,10 @@ class HandleEmailedLinkForm extends Component {
 			buttonLabel = translate( 'Connect' );
 		} else {
 			buttonLabel = translate( 'Continue to WordPress.com' );
+		}
+
+		if ( isGravPoweredClient ) {
+			buttonLabel = translate( 'Continue' );
 		}
 
 		const action = (
@@ -196,6 +217,23 @@ class HandleEmailedLinkForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
+		if ( isGravPoweredClient ) {
+			return (
+				<div
+					className={ classNames( 'grav-powered-magic-link', {
+						'grav-powered-magic-link--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
+					} ) }
+				>
+					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+					<EmptyContent
+						action={ this.state.hasSubmitted ? <LoadingEllipsis /> : action }
+						illustration=""
+						title=""
+					/>
+				</div>
+			);
+		}
+
 		return (
 			<EmptyContent
 				action={ action }
@@ -212,8 +250,14 @@ class HandleEmailedLinkForm extends Component {
 }
 
 const mapState = ( state ) => {
+	const redirectToOriginal = getRedirectToOriginal( state );
+	const redirectToOriginalParams =
+		typeof redirectToOriginal === 'string' && redirectToOriginal.split( '?' )[ 1 ];
+	const clientId = new URLSearchParams( redirectToOriginalParams ).get( 'client_id' );
+	const oauth2Client = state.oauth2Clients?.clients?.[ clientId ] || {};
+
 	return {
-		redirectToOriginal: getRedirectToOriginal( state ),
+		redirectToOriginal,
 		redirectToSanitized: getRedirectToSanitized( state ),
 		authError: getMagicLoginRequestAuthError( state ),
 		currentUser: getCurrentUser( state ),
@@ -225,6 +269,7 @@ const mapState = ( state ) => {
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		initialQuery: getInitialQueryArguments( state ),
+		oauth2Client,
 	};
 };
 

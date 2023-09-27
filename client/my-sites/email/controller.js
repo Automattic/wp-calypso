@@ -11,7 +11,7 @@ import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-provid
 import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-comparison/stacked';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import InboxManagement from 'calypso/my-sites/email/inbox';
+import MailboxesManagement from 'calypso/my-sites/email/mailboxes';
 import * as paths from 'calypso/my-sites/email/paths';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
@@ -234,11 +234,11 @@ export default {
 		next();
 	},
 
-	emailManagementInbox( pageContext, next ) {
+	emailManagementMailboxes( pageContext, next ) {
 		pageContext.primary = (
-			// Defer PageViewTracker to `InboxManagement` component, since we track different page
+			// Defer PageViewTracker to `MailboxesManagement` component, since we track different page
 			// view contexts depending on a few parameters
-			<InboxManagement
+			<MailboxesManagement
 				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 			/>
 		);

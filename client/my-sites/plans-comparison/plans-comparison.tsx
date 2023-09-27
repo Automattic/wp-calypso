@@ -433,18 +433,20 @@ interface Props {
 	selectedDomainConnection?: boolean;
 	hideFreePlan?: boolean;
 	purchaseId?: number | null;
-	onSelectPlan: ( item: Partial< CartItem > | null ) => void;
+	onSelectPlan: ( item: Partial< CartItem >[] | null ) => void;
 }
 
-function planToCartItem( plan: WPComPlan ): Partial< CartItem > | null {
+function planToCartItems( plan: WPComPlan ): Partial< CartItem >[] | null {
 	if ( plan.type === TYPE_FREE || plan.type === TYPE_FLEXIBLE ) {
 		return null;
 	}
 
-	return {
-		product_slug: plan.getStoreSlug(),
-		product_id: plan.getProductId(),
-	};
+	return [
+		{
+			product_slug: plan.getStoreSlug(),
+			product_id: plan.getProductId(),
+		},
+	];
 }
 
 export const PlansComparison: React.FunctionComponent< Props > = ( {
@@ -538,7 +540,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 										isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
 										manageHref={ manageHref }
 										disabled={ isDomainConnectionDisabled || isMonthlyPlanDisabled }
-										onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
+										onClick={ () => onSelectPlan( planToCartItems( plan ) ) }
 									/>
 								</PlansComparisonColCTA>
 							);

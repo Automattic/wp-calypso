@@ -1,6 +1,9 @@
 import config from '@automattic/calypso-config';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
+import { NewsletterCategory } from 'calypso/data/newsletter-categories/types';
 import { useSubscriptionPlans } from '../../hooks';
 import { Subscriber } from '../../types';
 import { SubscriberProfile } from '../subscriber-profile';
@@ -13,6 +16,8 @@ type SubscriberDetailsProps = {
 	siteId: number;
 	subscriptionId?: number;
 	userId?: number;
+	newsletterCategoriesEnabled?: boolean;
+	newsletterCategories?: NewsletterCategory[];
 };
 
 const SubscriberDetails = ( {
@@ -20,9 +25,18 @@ const SubscriberDetails = ( {
 	siteId,
 	subscriptionId,
 	userId,
+	newsletterCategoriesEnabled,
+	newsletterCategories,
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
+	const newsletterCategoryNames = useMemo(
+		() =>
+			newsletterCategories
+				?.filter( ( category ) => !! category.subscribed )
+				.map( ( category ) => category.name ),
+		[ newsletterCategories ]
+	);
 	const { avatar, date_subscribed, display_name, email_address, country, url } = subscriber;
 
 	const notApplicableLabel = translate( 'N/A', {
@@ -57,6 +71,18 @@ const SubscriberDetails = ( {
 							dateFormat="LL"
 						/>
 					</div>
+					{ newsletterCategoriesEnabled && (
+						<div className="subscriber-details__content-column">
+							<div className="subscriber-details__content-label">
+								{ translate( 'Receives emails for' ) }
+							</div>
+							<div className="subscriber-details__content-value">
+								{ newsletterCategoryNames && newsletterCategoryNames.length > 0
+									? newsletterCategoryNames.join( ', ' )
+									: translate( 'Not subscribed to any newsletter categories' ) }
+							</div>
+						</div>
+					) }
 					<div className="subscriber-details__content-column">
 						<div className="subscriber-details__content-label">{ translate( 'Plan' ) }</div>
 						{ subscriptionPlans &&
@@ -107,7 +133,9 @@ const SubscriberDetails = ( {
 							<div className="subscriber-details__content-label">
 								{ translate( 'Acquisition source' ) }
 							</div>
-							<div className="subscriber-details__content-value">{ url }</div>
+							<div className="subscriber-details__content-value">
+								<ExternalLink href={ url }>{ url }</ExternalLink>
+							</div>
 						</div>
 					) }
 				</div>

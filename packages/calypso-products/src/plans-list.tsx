@@ -438,6 +438,7 @@ import {
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 } from './constants';
 import type {
 	BillingTerm,
@@ -891,6 +892,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_CONTENT_JP,
 		FEATURE_PAID_SUBSCRIBERS_JP,
 	],
+	getCheckoutFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_SUPPORT_EMAIL,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_FAST_DNS,
+		FEATURE_PAID_SUBSCRIBERS_JP,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
@@ -1045,6 +1053,17 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			? FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL
 			: FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	],
+	getCheckoutFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+		FEATURE_LOYALTY_PROG,
+		FEATURE_INVENTORY,
+		FEATURE_CUSTOM_MARKETING_AUTOMATION,
+	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
 		let storageOptionSlugs = [];
@@ -1181,6 +1200,7 @@ const getWooExpressMediumPlanCompareFeatures = (): string[] => [
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_DISCOUNTED_SHIPPING,
 	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 ];
 const getWooExpressSmallPlanCompareFeatures = (): string[] => [
 	FEATURE_WOOCOMMERCE_STORE,
@@ -1214,6 +1234,7 @@ const getWooExpressSmallPlanCompareFeatures = (): string[] => [
 	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 ];
 
 const getWooExpressPlanCompareFeatures = (): string[] => [
@@ -1273,6 +1294,7 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 	],
 	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
 	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
@@ -1361,7 +1383,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
 	getNewsletterSignupFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PREMIUM_THEMES_V2,
@@ -1436,6 +1457,16 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	],
+	getCheckoutFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PREMIUM_THEMES_V2,
+		FEATURE_WORDADS,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_VIDEOPRESS_JP,
+		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_VIDEOPRESS_JP,
@@ -1620,6 +1651,19 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
 			? [ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO, FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]
 			: [ FEATURE_PAYMENT_TRANSACTION_FEES_2 ] ),
+	],
+	getCheckoutFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_BANDWIDTH,
+		FEATURE_CDN,
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_DEV_TOOLS,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_SECURITY_DDOS,
+		FEATURE_SITE_STAGING_SITES,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_REALTIME_BACKUPS_JP,
@@ -3097,7 +3141,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
 		...getPlanJetpackCompleteDetails(),
-		...getAnnualTimeframe(),
+		...getBiAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_BI_YEARLY,
 		getPathSlug: () => 'complete-bi-yearly',
 		getProductId: () => 2035,

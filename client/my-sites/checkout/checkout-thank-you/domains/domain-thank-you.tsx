@@ -13,6 +13,7 @@ import {
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { useDispatch, useSelector } from 'calypso/state';
+import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
@@ -46,6 +47,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	const launchpadScreen = useSiteOption( 'launchpad_screen' );
 	const redirectTo = isLaunchpadIntentBuildEnabled ? 'home' : 'setup';
 	const siteIntent = useSiteOption( 'site_intent' );
+	const { isEnabled: isActivityPubEnabled } = useActivityPubStatus( selectedSiteSlug );
+
 	const isDomainOnlySiteOption = useSelector(
 		( state ) =>
 			selectedSiteId !== undefined && Boolean( isDomainOnlySite( state, selectedSiteId ) )
@@ -63,6 +66,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			redirectTo,
 			isDomainOnly: isDomainOnly && isDomainOnlySiteOption,
 			selectedSiteId,
+			isActivityPubEnabled,
 		} );
 	}, [
 		type,
@@ -77,6 +81,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		isDomainOnly,
 		selectedSiteId,
 		isDomainOnlySiteOption,
+		isActivityPubEnabled,
 	] );
 	const dispatch = useDispatch();
 	const isLaunchpadEnabled = launchpadScreen === 'full';

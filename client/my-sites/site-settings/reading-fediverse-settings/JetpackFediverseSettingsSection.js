@@ -21,12 +21,7 @@ export const JetpackFediverseSettingsSection = ( { siteId } ) => {
 			<Card className="site-settings__card">
 				<p>
 					{ translate(
-						'With ActivityPub your blog becomes part of a federated social network. This means you can share and talk to everyone using the ActivityPub protocol, including users of Mastodon, Friendica, and Pleroma.'
-					) }
-				</p>
-				<p>
-					{ translate(
-						'Allow people on the fediverse to follow your site, receive updates, and leave comments.'
+						'Broadcast your blog into the fediverse! Attract followers, deliver updates, and receive comments from a diverse user base of ActivityPub-compliant platforms.'
 					) }
 				</p>
 				<p>

@@ -91,7 +91,7 @@ export default function SiteAddLicenseNotification() {
 			return licenses.length > 1
 				? translate(
 						'{{strong}}%(initialLicenseList)s%(conjunction)s%(lastLicenseItem)s{{/strong}} ' +
-							'were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. ' +
+							'were successfully assigned to {{em}}%(selectedSite)s{{/em}}. ' +
 							'Please allow a few minutes for your features to activate.',
 						{
 							args: multipleLicensesArgs,
@@ -101,7 +101,7 @@ export default function SiteAddLicenseNotification() {
 						}
 				  )
 				: translate(
-						'{{strong}}%(licenseItem)s{{/strong}} was succesfully assigned to ' +
+						'{{strong}}%(licenseItem)s{{/strong}} was successfully assigned to ' +
 							'{{em}}%(selectedSite)s{{/em}}. Please allow a few minutes ' +
 							'for your features to activate.',
 						{

@@ -10,6 +10,7 @@ import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
+import noticesReducer from 'calypso/state/notices/reducer';
 import type { PricedAPIPlan, StorePlanSlug } from '@automattic/data-stores';
 import type {
 	CartKey,
@@ -343,6 +344,48 @@ export const planLevel2Biannual: ResponseCartProduct = {
 	months_per_bill_period: 24,
 };
 
+export const jetpackMonthly: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'Jetpack Scan Monthly',
+	product_slug: 'jetpack_scan_monthly',
+	currency: 'BRL',
+	meta: '',
+	product_id: 2107,
+	volume: 1,
+	item_original_cost_integer: 1495,
+	item_subtotal_integer: 1495,
+	bill_period: '31',
+	months_per_bill_period: 1,
+};
+
+export const jetpackYearly: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'Jetpack Scan Yearly',
+	product_slug: 'jetpack_scan',
+	currency: 'BRL',
+	meta: '',
+	product_id: 2106,
+	volume: 1,
+	item_original_cost_integer: 19940,
+	item_subtotal_integer: 11940,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const jetpackBiannual: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'Jetpack Scan Bi-yearly',
+	product_slug: 'jetpack_scan_bi_yearly',
+	currency: 'BRL',
+	meta: '',
+	product_id: 2038,
+	volume: 1,
+	item_original_cost_integer: 23380,
+	item_subtotal_integer: 23380,
+	bill_period: '730',
+	months_per_bill_period: 24,
+};
+
 export const professionalEmailAnnual: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'Professional Email',
@@ -449,6 +492,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'jetpack_anti_spam_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2039,
+				product_name: 'Jetpack Akismet Anti-spam',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_backup_t1_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
@@ -512,6 +564,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'jetpack_boost_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2036,
+				product_name: 'Jetpack Boost',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_complete_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
@@ -530,6 +591,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'jetpack_complete_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2035,
+				product_name: 'Jetpack Complete',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_scan_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
@@ -543,9 +613,18 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 			return {
 				...getEmptyResponseCartProduct(),
 				product_id: 2106,
-				product_name: 'Jetpack Scan Daily',
+				product_name: 'Jetpack Scan',
 				product_slug: productSlug,
 				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_scan_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2038,
+				product_name: 'Jetpack Scan',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
 		case 'jetpack_search_monthly':
@@ -564,6 +643,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_name: 'Jetpack Search',
 				product_slug: productSlug,
 				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_search_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2131,
+				product_name: 'Jetpack Search',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
 		case 'jetpack_security_t1_monthly':
@@ -629,6 +717,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'jetpack_social_basic_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2037,
+				product_name: 'Jetpack Social Basic',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_social_advanced_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
@@ -647,6 +744,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'jetpack_social_advanced_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2604,
+				product_name: 'Jetpack Social Advanced',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_videopress_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
@@ -663,6 +769,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_name: 'Jetpack VideoPress',
 				product_slug: productSlug,
 				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_videopress_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2119,
+				product_name: 'Jetpack VideoPress',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
 		case 'ak_free_yearly':
@@ -1057,6 +1172,57 @@ function convertRequestProductToResponseProduct(
 						isAkismetSitelessCheckout: true,
 					},
 				};
+			case jetpackMonthly.product_slug:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: jetpackMonthly.product_id,
+					product_name: jetpackMonthly.product_name,
+					product_slug: jetpackMonthly.product_slug,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: jetpackMonthly.item_original_cost_integer,
+					item_subtotal_integer: jetpackMonthly.item_subtotal_integer,
+					bill_period: jetpackMonthly.bill_period,
+					months_per_bill_period: jetpackMonthly.months_per_bill_period,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case jetpackYearly.product_slug:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: jetpackYearly.product_id,
+					product_name: jetpackYearly.product_name,
+					product_slug: jetpackYearly.product_slug,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: jetpackYearly.item_original_cost_integer,
+					item_subtotal_integer: jetpackYearly.item_subtotal_integer,
+					bill_period: jetpackYearly.bill_period,
+					months_per_bill_period: jetpackYearly.months_per_bill_period,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case jetpackBiannual.product_slug:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: jetpackBiannual.product_id,
+					product_name: jetpackBiannual.product_name,
+					product_slug: jetpackBiannual.product_slug,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: jetpackBiannual.item_original_cost_integer,
+					item_subtotal_integer: jetpackBiannual.item_subtotal_integer,
+					bill_period: jetpackBiannual.bill_period,
+					months_per_bill_period: jetpackBiannual.months_per_bill_period,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
 			case planLevel2.product_slug:
 				return {
 					...getEmptyResponseCartProduct(),
@@ -1249,6 +1415,17 @@ export function getBusinessPlanForInterval( type: string ) {
 	}
 }
 
+export function getJetpackPlanForInterval( type: string ) {
+	switch ( type ) {
+		case 'monthly':
+			return addVariantsToCartItem( jetpackMonthly );
+		case 'yearly':
+			return addVariantsToCartItem( jetpackYearly );
+		case 'two-year':
+			return addVariantsToCartItem( jetpackBiannual );
+	}
+}
+
 export function getVariantItemTextForInterval( type: string ) {
 	switch ( type ) {
 		case 'monthly':
@@ -1343,6 +1520,39 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			raw_price: 499,
 			raw_price_integer: 49900,
 		},
+		{
+			product_id: jetpackMonthly.product_id,
+			product_slug: jetpackMonthly.product_slug as StorePlanSlug,
+			product_name: jetpackMonthly.product_name,
+			product_name_short: jetpackMonthly.product_name,
+			currency_code: 'USD',
+			bill_period: 31,
+			product_type: 'product',
+			raw_price: 14.95,
+			raw_price_integer: 1495,
+		},
+		{
+			product_id: jetpackYearly.product_id,
+			product_slug: jetpackYearly.product_slug as StorePlanSlug,
+			product_name: jetpackYearly.product_name,
+			product_name_short: jetpackYearly.product_name,
+			currency_code: 'USD',
+			bill_period: 365,
+			product_type: 'product',
+			raw_price: 119.4,
+			raw_price_integer: 11940,
+		},
+		{
+			product_id: jetpackBiannual.product_id,
+			product_slug: jetpackBiannual.product_slug as StorePlanSlug,
+			product_name: jetpackBiannual.product_name,
+			product_name_short: jetpackBiannual.product_name,
+			currency_code: 'USD',
+			bill_period: 730,
+			product_type: 'product',
+			raw_price: 238.8,
+			raw_price_integer: 23880,
+		},
 	];
 }
 
@@ -1350,6 +1560,7 @@ export function createTestReduxStore() {
 	const rootReducer = ( state, action ) => {
 		return {
 			...state,
+			notices: noticesReducer( state, action ),
 			plans: {
 				items: getPlansItemsState(),
 			},
@@ -1405,6 +1616,30 @@ export function createTestReduxStore() {
 						available: true,
 						is_domain_registration: false,
 						currency_code: planLevel2Biannual.currency,
+					},
+					[ jetpackMonthly.product_slug ]: {
+						product_id: jetpackMonthly.product_id,
+						product_slug: jetpackMonthly.product_slug,
+						product_type: 'product',
+						available: true,
+						is_domain_registration: false,
+						currency_code: jetpackMonthly.currency,
+					},
+					[ jetpackYearly.product_slug ]: {
+						product_id: jetpackYearly.product_id,
+						product_slug: jetpackYearly.product_slug,
+						product_type: 'product',
+						available: true,
+						is_domain_registration: false,
+						currency_code: jetpackYearly.currency,
+					},
+					[ jetpackBiannual.product_slug ]: {
+						product_id: jetpackBiannual.product_id,
+						product_slug: jetpackBiannual.product_slug,
+						product_type: 'product',
+						available: true,
+						is_domain_registration: false,
+						currency_code: jetpackBiannual.currency,
 					},
 					domain_map: {
 						product_id: 5,
@@ -1767,6 +2002,14 @@ function buildVariantsForCartItem( data: ResponseCartProduct ): ResponseCartProd
 				buildVariant( planWithoutDomain ),
 				buildVariant( planWithoutDomainBiannual ),
 			];
+		case jetpackMonthly.product_slug:
+		case jetpackYearly.product_slug:
+		case jetpackBiannual.product_slug:
+			return [
+				buildVariant( jetpackMonthly ),
+				buildVariant( jetpackYearly ),
+				buildVariant( jetpackBiannual ),
+			];
 	}
 	return [];
 }
@@ -1783,6 +2026,36 @@ function getVariantPrice( data: ResponseCartProduct ): number {
 
 function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 	switch ( data.product_slug ) {
+		case jetpackMonthly.product_slug:
+			return {
+				product_id: jetpackMonthly.product_id,
+				bill_period_in_months: jetpackMonthly.months_per_bill_period as number,
+				product_slug: data.product_slug,
+				currency: jetpackMonthly.currency,
+				price_integer: getVariantPrice( jetpackMonthly ),
+				price_before_discounts_integer: getVariantPrice( jetpackMonthly ),
+				introductory_offer_terms: {},
+			};
+		case jetpackYearly.product_slug:
+			return {
+				product_id: jetpackYearly.product_id,
+				bill_period_in_months: jetpackYearly.months_per_bill_period as number,
+				product_slug: data.product_slug,
+				currency: jetpackYearly.currency,
+				price_integer: getVariantPrice( jetpackYearly ),
+				price_before_discounts_integer: getVariantPrice( jetpackYearly ),
+				introductory_offer_terms: {},
+			};
+		case jetpackBiannual.product_slug:
+			return {
+				product_id: jetpackBiannual.product_id,
+				bill_period_in_months: jetpackBiannual.months_per_bill_period as number,
+				product_slug: data.product_slug,
+				currency: jetpackBiannual.currency,
+				price_integer: getVariantPrice( jetpackBiannual ),
+				price_before_discounts_integer: getVariantPrice( jetpackBiannual ),
+				introductory_offer_terms: {},
+			};
 		case planLevel2Monthly.product_slug:
 			return {
 				product_id: planLevel2Monthly.product_id,

@@ -14,7 +14,6 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
-import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
@@ -22,6 +21,8 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
+	isWPJobManagerOAuth2Client,
+	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -44,6 +45,8 @@ const LayoutLoggedOut = ( {
 	isJetpackWooDnaFlow,
 	isP2Login,
 	isGravatar,
+	isWPJobManager,
+	isGravPoweredClient,
 	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
@@ -82,6 +85,15 @@ const LayoutLoggedOut = ( {
 	const isReaderSearchPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
 
+	// It's used to add a class name for the login and magic login of Gravatar powered clients only (not for F2A pages)
+	const isGravPoweredLoginPage =
+		isGravPoweredClient &&
+		! currentRoute.startsWith( '/log-in/push' ) &&
+		! currentRoute.startsWith( '/log-in/authenticator' ) &&
+		! currentRoute.startsWith( '/log-in/sms' ) &&
+		! currentRoute.startsWith( '/log-in/webauthn' ) &&
+		! currentRoute.startsWith( '/log-in/backup' );
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -98,6 +110,9 @@ const LayoutLoggedOut = ( {
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
+		'is-wp-job-manager': isWPJobManager,
+		'is-grav-powered-client': isGravPoweredClient,
+		'is-grav-powered-login-page': isGravPoweredLoginPage,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 	};
 
@@ -112,15 +127,13 @@ const LayoutLoggedOut = ( {
 			);
 		} else if (
 			( isWooOAuth2Client( oauth2Client ) && wccomFrom ) ||
-			( isGravatar && sectionName === 'signup' )
+			isGravatar ||
+			isGravPoweredClient
 		) {
 			masterbar = null;
 		} else {
-			if ( ! isGravatar ) {
-				classes.dops = true;
-				// Using .is-gravatar instead of .gravatar to avoid style conflicts with the Gravatar component
-				classes[ oauth2Client.name ] = true;
-			}
+			classes.dops = true;
+			classes[ oauth2Client.name ] = true;
 
 			// Force masterbar for all Crowdsignal OAuth pages
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
@@ -132,7 +145,9 @@ const LayoutLoggedOut = ( {
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
 	} else if (
-		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName ) &&
+		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions', 'site-profiler' ].includes(
+			sectionName
+		) &&
 		! isReaderTagPage &&
 		! isReaderSearchPage &&
 		! isReaderDiscoverPage
@@ -188,7 +203,7 @@ const LayoutLoggedOut = ( {
 				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
 			) }
 
-			{ sectionName === 'plugins' && (
+			{ [ 'plugins', 'site-profiler' ].includes( sectionName ) && (
 				<>
 					<UniversalNavbarFooter
 						currentRoute={ currentRoute }
@@ -213,10 +228,6 @@ const LayoutLoggedOut = ( {
 					currentRoute={ currentRoute }
 					isLoggedIn={ isLoggedIn }
 				/>
-			) }
-
-			{ isGravatar && sectionName === 'login' && (
-				<PoweredByWPFooter clientTitle={ oauth2Client.title } />
 			) }
 		</div>
 	);
@@ -246,18 +257,20 @@ export default withCurrentRoute(
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
+		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 		const isReskinLoginRoute =
 			currentRoute.startsWith( '/log-in' ) &&
 			! isJetpackLogin &&
 			! isP2Login &&
 			Boolean( currentQuery?.client_id ) === false;
 		const isWhiteLogin =
-			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatar;
+			isReskinLoginRoute ||
+			( isPartnerSignup && ! isPartnerSignupStart ) ||
+			isGravatar ||
+			isGravPoweredClient;
 		const noMasterbarForRoute =
-			isJetpackLogin ||
-			( isWhiteLogin && ! isPartnerSignup && ! isGravatar ) ||
-			isJetpackWooDnaFlow ||
-			isP2Login;
+			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection =
 			! isWooOAuth2Client( oauth2Client ) &&
@@ -276,6 +289,8 @@ export default withCurrentRoute(
 			isJetpackWooDnaFlow,
 			isP2Login,
 			isGravatar,
+			isWPJobManager,
+			isGravPoweredClient,
 			wccomFrom,
 			masterbarIsHidden,
 			sectionGroup,

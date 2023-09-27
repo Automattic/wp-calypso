@@ -17,12 +17,7 @@ import {
 	showUnavailableForMultisites,
 } from 'calypso/my-sites/backup/controller';
 import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-backup-upsell';
-import {
-	navigation,
-	siteSelection,
-	sites,
-	stagingSiteNotSupportedRedirect,
-} from 'calypso/my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
@@ -51,7 +46,6 @@ export default function () {
 	page(
 		backupDownloadPath( ':site', ':rewindId' ),
 		siteSelection,
-		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupDownload,
 		wrapInSiteOffsetProvider,
@@ -69,7 +63,6 @@ export default function () {
 	page(
 		backupRestorePath( ':site', ':rewindId' ),
 		siteSelection,
-		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupRestore,
 		wrapInSiteOffsetProvider,
@@ -87,7 +80,6 @@ export default function () {
 	page(
 		backupClonePath( ':site' ),
 		siteSelection,
-		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupClone,
 		wrapInSiteOffsetProvider,
@@ -105,7 +97,6 @@ export default function () {
 	page(
 		backupMainPath( ':site' ),
 		siteSelection,
-		stagingSiteNotSupportedRedirect,
 		navigation,
 		backups,
 		wrapInSiteOffsetProvider,
@@ -124,7 +115,6 @@ export default function () {
 	page(
 		backupContentsPath( ':site', ':rewindId' ),
 		siteSelection,
-		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupContents,
 		wrapInSiteOffsetProvider,
@@ -142,7 +132,6 @@ export default function () {
 	page(
 		backupGranularRestorePath( ':site', ':rewindId' ),
 		siteSelection,
-		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupGranularRestore,
 		wrapInSiteOffsetProvider,

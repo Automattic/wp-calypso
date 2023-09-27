@@ -37,7 +37,7 @@ const useUnmarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 
 			queryClient.setQueryData( cacheKey, ( oldData?: NewsletterCategories ) => {
 				const updatedData = {
-					...oldData,
+					enabled: oldData?.enabled || false,
 					newsletterCategories:
 						oldData?.newsletterCategories.filter(
 							( category: NewsletterCategory ) => category?.id !== categoryId
@@ -52,8 +52,8 @@ const useUnmarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 		onError: ( error, variables, context ) => {
 			queryClient.setQueryData( cacheKey, context?.previousData );
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( cacheKey );
+		onSettled: async () => {
+			await queryClient.invalidateQueries( cacheKey );
 		},
 	} );
 };

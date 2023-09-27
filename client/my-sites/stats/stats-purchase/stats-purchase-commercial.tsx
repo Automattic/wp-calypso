@@ -1,7 +1,10 @@
+import { Button as CalypsoButton } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { StatsCommercialPriceDisplay } from './stats-purchase-shared';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
@@ -9,6 +12,7 @@ import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 interface CommercialPurchaseProps {
 	planValue: number;
 	currencyCode: string;
+	siteId: number | null;
 	siteSlug: string;
 	adminUrl: string;
 	redirectUri: string;
@@ -18,12 +22,20 @@ interface CommercialPurchaseProps {
 const CommercialPurchase = ( {
 	planValue,
 	currencyCode,
+	siteId,
 	siteSlug,
 	adminUrl,
 	redirectUri,
 	from,
 }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
+
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	// The button of @automattic/components has built-in color scheme support for Calypso.
+	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
+	const learnMoreLink = isWPCOMSite
+		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
+		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-site-types';
 
 	return (
 		<div>
@@ -38,7 +50,7 @@ const CommercialPurchase = ( {
 				) }
 				<Button
 					variant="link"
-					href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-site-types"
+					href={ localizeUrl( learnMoreLink ) }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
@@ -49,46 +61,21 @@ const CommercialPurchase = ( {
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				<p>{ translate( 'Benefits:' ) }</p>
 				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 					<li>{ translate( 'Instant access to upcoming features' ) }</li>
 					<li>{ translate( 'Priority support' ) }</li>
 				</ul>
 			</div>
 
-			<p>
-				{ translate(
-					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
-					{
-						components: {
-							a: (
-								<Button
-									variant="link"
-									target="_blank"
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-								/>
-							),
-							b: (
-								<Button
-									variant="link"
-									target="_blank"
-									rel="noopener noreferrer"
-									href={ localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' ) }
-								/>
-							),
-						},
-					}
-				) }
-			</p>
-
-			<Button
+			<ButtonComponent
 				variant="primary"
+				primary={ isWPCOMSite ? true : undefined }
 				onClick={ () =>
 					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
 				}
 			>
 				{ translate( 'Get Jetpack Stats' ) }
-			</Button>
+			</ButtonComponent>
 		</div>
 	);
 };

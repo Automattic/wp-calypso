@@ -60,8 +60,9 @@
 			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 1;
 
-			p {
+			* {
 				display: inline;
+				background: transparent;
 			}
 		}
 	}

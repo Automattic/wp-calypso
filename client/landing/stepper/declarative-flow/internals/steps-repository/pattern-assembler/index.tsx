@@ -38,7 +38,6 @@ import {
 	useInitialPath,
 	usePatternCategories,
 	usePatternsMapByCategory,
-	usePrefetchImages,
 	useRecipe,
 	useSyncNavigatorScreen,
 } from './hooks';
@@ -66,13 +65,9 @@ import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 import './style.scss';
 
-const PatternAssembler = ( {
-	navigation,
-	flow,
-	stepName,
-	noticeOperations,
-	noticeUI,
-}: StepProps & NoticesProps ) => {
+const PatternAssembler = ( props: StepProps & NoticesProps ) => {
+	const { navigation, flow, stepName, noticeOperations, noticeUI } = props;
+
 	const translate = useTranslate();
 	const navigator = useNavigator();
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
@@ -120,6 +115,7 @@ const PatternAssembler = ( {
 		setSections,
 		setColorVariation,
 		setFontVariation,
+		resetRecipe,
 	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
 	const {
@@ -164,7 +160,6 @@ const PatternAssembler = ( {
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
 	useSyncNavigatorScreen();
-	usePrefetchImages();
 
 	const siteInfo = {
 		title: site?.name,
@@ -239,7 +234,7 @@ const PatternAssembler = ( {
 				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
 				footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
 			} as DesignRecipe,
-		} as Design );
+		} ) as Design;
 
 	const updateActivePatternPosition = ( position: number ) => {
 		const patternPosition = header ? position + 1 : position;
@@ -427,11 +422,9 @@ const PatternAssembler = ( {
 			return undefined;
 		}
 
-		// Commit the following string for the translation
-		// translate( 'Back to %(pageTitle)s' );
-		return translate( 'Back to %(clientTitle)s', {
+		return translate( 'Back to %(pageTitle)s', {
 			args: {
-				clientTitle: currentScreen.previousScreen.title,
+				pageTitle: currentScreen.previousScreen.backLabel || currentScreen.previousScreen.title,
 			},
 		} );
 	};
@@ -442,6 +435,7 @@ const PatternAssembler = ( {
 			setResetCustomStyles( false );
 		}
 
+		// Go back to the previous screen
 		if ( currentScreen.previousScreen ) {
 			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
 				navigator.goTo( currentScreen.previousScreen.initialPath, { replace: true } );
@@ -456,12 +450,14 @@ const PatternAssembler = ( {
 			return;
 		}
 
+		// Go back to the previous step
 		const patterns = getPatterns();
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.BACK_CLICK, {
 			has_selected_patterns: patterns.length > 0,
 			pattern_count: patterns.length,
 		} );
 
+		resetRecipe();
 		goBack?.();
 	};
 

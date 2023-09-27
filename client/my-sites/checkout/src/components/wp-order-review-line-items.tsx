@@ -14,6 +14,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -168,6 +169,7 @@ function LineItemWrapper( {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
+	const has100YearPlanProduct = has100YearPlan( responseCart );
 
 	const signupFlowName = getSignupCompleteFlowName();
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
@@ -175,7 +177,12 @@ function LineItemWrapper( {
 	}
 
 	const shouldShowVariantSelector =
-		onChangeSelection && ! isWooMobile && ! isRenewal && ! hasPartnerCoupon;
+		onChangeSelection &&
+		! isWooMobile &&
+		! isRenewal &&
+		! hasPartnerCoupon &&
+		! has100YearPlanProduct;
+
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);

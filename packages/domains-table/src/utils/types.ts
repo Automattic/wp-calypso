@@ -5,7 +5,7 @@ export type CannotAddEmailReason = {
 	message: string;
 };
 
-export type DomainType = keyof typeof domainType;
+export type DomainType = ( typeof domainType )[ keyof typeof domainType ];
 
 interface EmailSubscription {
 	expiryDate?: string;
@@ -43,7 +43,7 @@ export type TitanEmailSubscription = EmailSubscription & {
 	subscriptionId?: number | null;
 };
 
-export type TransferStatus = keyof typeof transferStatus | null;
+export type TransferStatus = ( typeof transferStatus )[ keyof typeof transferStatus ];
 
 export type ResponseDomain = {
 	adminEmail: string | null | undefined;

@@ -1,5 +1,5 @@
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, camelCase, mapKeys, get, filter, map, concat, flatten } from 'lodash';
+import { sortBy, camelCase, get, filter, map, flatten } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
@@ -112,7 +112,7 @@ export function buildExportArray( data, parent = null ) {
 			return buildExportArray( child, label );
 		} );
 
-		exportData = concat( exportData, flatten( childData ) );
+		exportData = exportData.concat( flatten( childData ) );
 	}
 
 	return exportData;
@@ -312,7 +312,9 @@ export const normalizers = {
 			return null;
 		}
 
-		return mapKeys( data.stats, ( value, key ) => camelCase( key ) );
+		return Object.fromEntries(
+			Object.entries( data.stats ).map( ( [ key, value ] ) => [ camelCase( key ), value ] )
+		);
 	},
 
 	/**
@@ -563,7 +565,7 @@ export const normalizers = {
 		if ( ! data ) {
 			return null;
 		}
-		const adminUrl = site ? site.options.admin_url : null;
+		const adminUrl = site?.options?.admin_url ?? null;
 
 		let authors = [];
 		if ( data.authors ) {
