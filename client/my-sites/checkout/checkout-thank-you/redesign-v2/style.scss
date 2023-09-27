@@ -4,6 +4,9 @@
 // Design i2 overrides, the purchase-detail component is also used by the /plans/my-plan page to render plan features.
 .is-redesign-v2.checkout-thank-you,
 .is-redesign-v2 {
+	--color-accent: var(--studio-blue-50);
+	--color-accent-60: var(--studio-blue-60);
+
 	&.main {
 		max-width: 750px;
 		padding: 0 24px 0;
@@ -14,9 +17,9 @@
 	}
 
 	.checkout-thank-you__purchase-details-list {
+		max-width: 650px;
 		text-align: initial;
-		margin-top: 40px;
-		margin-bottom: 80px;
+		margin: 40px auto 80px;
 		display: flex;
 		justify-content: center;
 
@@ -55,7 +58,7 @@
 		}
 
 		.purchase-detail__title {
-			font-size: $font-body-small;
+			font-size: $font-body;
 			line-height: 20px;
 			font-weight: 500;
 			color: var(--studio-gray-100);
@@ -103,7 +106,8 @@
 	}
 
 	.checkout-thank-you__header-details {
-		margin: 40px 0 0;
+		max-width: 650px;
+		margin: 40px auto 0;
 		display: flex;
 		flex-direction: row;
 		box-sizing: border-box;
@@ -120,7 +124,7 @@
 
 		@media ( min-width: 480px ) {
 			padding: 20px 25px;
-			margin: 50px 0 0;
+			margin: 50px auto 0;
 		}
 	}
 
@@ -196,5 +200,10 @@
 		@include breakpoint-deprecated( ">660px" ) {
 			padding-left: 70px;
 		}
+	}
+
+	.components-button {
+		border-radius: 4px;
+		padding: 10px 24px;
 	}
 }

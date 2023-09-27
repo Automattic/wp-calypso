@@ -1,9 +1,14 @@
 import { translate } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
+import ProfessionalEmail from './ProfessionalEmail';
 
 import './style.scss';
 
-const DomainTransferToAnyUserFooter = () => {
+interface DomainTransferToAnyUserFooterProps {
+	domain: string;
+}
+
+const DomainTransferToAnyUserFooter = ( { domain }: DomainTransferToAnyUserFooterProps ) => {
 	return (
 		<div className="checkout-thank-you__purchase-details-list">
 			<div>
@@ -26,6 +31,10 @@ const DomainTransferToAnyUserFooter = () => {
 					onClick={ null }
 				/>
 			</div>
+			<ProfessionalEmail
+				domain={ domain }
+				trackEvent="calypso_domain_transfer_thank_you_professional_email_click"
+			/>
 		</div>
 	);
 };
