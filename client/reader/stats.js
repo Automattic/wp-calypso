@@ -109,11 +109,11 @@ function getLocation( path ) {
  */
 export function buildReaderTracksEventProps( eventProperties, pathnameOverride, post ) {
 	const location = getLocation( pathnameOverride || window.location.pathname );
-	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
+	let composedProperties = Object.assign( { ui_algo: location }, eventProperties );
 	if ( post ) {
-		eventProperties = Object.assign( getTracksPropertiesForPost( post ), eventProperties );
+		composedProperties = Object.assign( getTracksPropertiesForPost( post ), composedProperties );
 	}
-	return eventProperties;
+	return composedProperties;
 }
 
 /**
