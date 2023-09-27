@@ -128,7 +128,6 @@
 				display: block;
 
 				>div {
-					padding: 0 25px;
 					margin-bottom: 50px;
 					justify-content: space-between;
 					flex-wrap: nowrap;
@@ -167,10 +166,15 @@
 							display: none;
 						}
 					}
-
-					display: flex;
-					gap: 40px;
 				}
+			}
+		}
+	}
+
+	&.is-redesign-v2 {
+		div.checkout-thank-you__purchase-details-list {
+			>div {
+				padding: 0 25px;
 			}
 		}
 	}
