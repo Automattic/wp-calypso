@@ -4,6 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import { Notice } from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
@@ -34,7 +35,24 @@ const DomainUpsellCard = ( { siteId } ) => {
 	);
 };
 
-const DomainCongratsCard = ( { user } ) => {
+const DomainPendingWarning = ( { siteId } ) => {
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const translate = useTranslate();
+	return (
+		<Notice status="is-warning" translate={ translate } isCompact={ true }>
+			{ translate(
+				'Recommended: wait until your new domain activates before sharing your profile URL. {{link}}Click here{{/link}} to check the status of your domain.',
+				{
+					components: {
+						link: <a href={ `/domains/manage/${ domain }` } />,
+					},
+				}
+			) }
+		</Notice>
+	);
+};
+
+const DomainCongratsCard = ( { user, isPending, siteId } ) => {
 	const translate = useTranslate();
 	return (
 		<Card className="site-settings__card">
@@ -44,6 +62,7 @@ const DomainCongratsCard = ( { user } ) => {
 					'Owning your domain unlocks account portability and a separate profile for each blog author. Here’s yours:'
 				) }
 			</p>
+			{ isPending && <DomainPendingWarning siteId={ siteId } /> }
 			<p>
 				<ClipboardButtonInput value={ user } />
 			</p>
@@ -54,17 +73,27 @@ const DomainCongratsCard = ( { user } ) => {
 const EnabledSettingsSection = ( { data, siteId } ) => {
 	const translate = useTranslate();
 	const { blogIdentifier = '', userIdentifier } = data;
+	const hasDomain = !! userIdentifier;
+	// if the domain has been purchased, but isn't active yet because the site is still using *.wordpress.com
+	const isDomainPending = hasDomain && userIdentifier.match( /\.wordpress\.com$/ );
 
 	return (
 		<>
-			{ ! data.userIdentifier && <DomainUpsellCard siteId={ siteId } /> }
+			{ ! hasDomain && <DomainUpsellCard siteId={ siteId } /> }
 			<Card className="site-settings__card">
 				<p>{ translate( 'Anyone in the fediverse can follow your site with this alias:' ) }</p>
+				{ isDomainPending && <DomainPendingWarning siteId={ siteId } /> }
 				<p>
 					<ClipboardButtonInput value={ blogIdentifier } />
 				</p>
 			</Card>
-			{ data.userIdentifier && <DomainCongratsCard user={ userIdentifier } /> }
+			{ hasDomain && (
+				<DomainCongratsCard
+					user={ userIdentifier }
+					isPending={ isDomainPending }
+					siteId={ siteId }
+				/>
+			) }
 		</>
 	);
 };
