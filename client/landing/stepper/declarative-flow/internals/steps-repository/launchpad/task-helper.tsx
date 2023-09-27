@@ -550,9 +550,14 @@ export function getEnhancedTasks(
 								: translate( 'Upgrade plan' ),
 					};
 					break;
+				case 'verify_domain_email':
 				case 'verify_email':
 					taskData = {
 						completed: isEmailVerified,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.replace( task.calypso_path || '/me/account' );
+						},
 					};
 					break;
 				case 'set_up_payments':

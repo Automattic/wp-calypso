@@ -7,6 +7,7 @@ export interface Task {
 	badge_text?: string;
 	actionDispatch?: ( force?: boolean ) => void;
 	isLaunchTask?: boolean;
+	calypso_path?: string;
 }
 
 export type LaunchpadChecklist = Task[];
