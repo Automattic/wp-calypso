@@ -6,21 +6,9 @@ import qs from 'qs';
 import React, { useState, useRef } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
-import { DateControlPickerProps } from './types';
+import { DateControlPickerProps, DateControlPickerShortcut } from './types';
 
-const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
-	// shortcut list will come from props
-	const shortcutList = [
-		{
-			id: 'test',
-			label: 'Test shortcut',
-			onClick: () => {
-				// eslint-disable-next-line no-console
-				console.log( 'clicking' );
-			},
-		},
-	];
-
+const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
 	const [ inputStartDate, setInputStartDate ] = useState( new Date().toISOString().slice( 0, 10 ) );
 	const [ inputEndDate, setInputEndDate ] = useState(
@@ -50,6 +38,30 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 
 		page( href );
 	};
+
+	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
+		// Shared date math.
+		const calcNewDateWithOffset = ( date: Date, offset: number ): Date => {
+			// We do our date math based on 24 hour increments.
+			const millisecondsInOneDay = 1000 * 60 * 60 * 24;
+			const newDateInMilliseconds = date.getTime() - millisecondsInOneDay * offset;
+			return new Date( newDateInMilliseconds );
+		};
+
+		// Shared date formatting.
+		const formattedDate = ( date: Date ) => {
+			return date.toISOString().split( 'T' )[ 0 ];
+		};
+
+		// Calc new start date based on offset value from shortcut.
+		const newStartDate = calcNewDateWithOffset( new Date(), shortcut.offset );
+		setInputStartDate( formattedDate( newStartDate ) );
+
+		// Calc new end date based on start date plus range as specified in shortcut.
+		const newEndDate = calcNewDateWithOffset( newStartDate, shortcut.range );
+		setInputEndDate( formattedDate( newEndDate ) );
+	};
+
 	const formatDate = ( date: string ) => {
 		return moment( date ).format( 'MMM D, YYYY' );
 	};
@@ -67,6 +79,8 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 				placement="bottom end"
 				context={ infoReferenceElement?.current }
 				isVisible={ popoverOpened }
+				// TODO: Remove this inline CSS.
+				style={ { minWidth: '260px' } }
 			>
 				<DateControlPickerDate
 					startDate={ inputStartDate }
@@ -75,7 +89,10 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 					onEndChange={ changeEndDate }
 					onApply={ handleOnApply }
 				/>
-				<DateControlPickerShortcuts shortcutList={ shortcutList } />
+				<DateControlPickerShortcuts
+					shortcutList={ shortcutList }
+					onClick={ handleShortcutSelected }
+				/>
 			</Popover>
 		</>
 	);
