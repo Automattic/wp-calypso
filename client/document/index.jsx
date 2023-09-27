@@ -103,17 +103,19 @@ class Document extends Component {
 
 		const isRTL = isLocaleRtl( lang );
 
-		const redirectToParams =
-			typeof query?.redirect_to === 'string' && query.redirect_to.split( '?' )[ 1 ];
+		let headTitle = head.title;
+		let headFaviconUrl;
 
-		// Get the client ID from the redirect URL to cover the case of a login URL without the "client_id" parameter.
-		// e.g. /log-in/link/use
-		const clientId = new URLSearchParams( redirectToParams ).get( 'client_id' );
+		// To customize the page title and favicon for the Gravatar passwordless login relevant pages.
+		if ( sectionName === 'login' && typeof query?.redirect_to === 'string' ) {
+			const searchParams = new URLSearchParams( query.redirect_to.split( '?' )[ 1 ] );
+			// Get the client ID from the redirect URL to cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
+			const oauth2Client = initialClientsData[ searchParams.get( 'client_id' ) ] || {};
+			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 
-		const oauth2Client = initialClientsData[ clientId ] || {};
-
-		const isGravPoweredClient =
-			sectionName === 'login' && isGravPoweredOAuth2Client( oauth2Client );
+			headTitle = isGravPoweredClient ? oauth2Client.title : headTitle;
+			headFaviconUrl = isGravPoweredClient ? oauth2Client.favicon : headFaviconUrl;
+		}
 
 		return (
 			<html
@@ -122,10 +124,10 @@ class Document extends Component {
 				className={ classNames( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
 			>
 				<Head
-					title={ isGravPoweredClient ? oauth2Client.title : head.title }
+					title={ headTitle }
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
-					faviconUrl={ isGravPoweredClient ? oauth2Client.favicon : '' }
+					faviconUrl={ headFaviconUrl }
 				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
