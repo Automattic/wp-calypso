@@ -7,6 +7,7 @@ import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
+import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
@@ -63,70 +64,131 @@ export interface PlansGridProps {
 	observableForOdieRef: ( observableElement: Element | null ) => void;
 }
 
-export default forwardRef< HTMLDivElement, PlansGridProps >(
-	function WrappedPlansGrid( props, ref ) {
-		const { siteId } = props;
-		const translate = useTranslate();
-		const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-			props.siteId,
-			props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
-		);
-		const isLargeCurrency = useIsLargeCurrency( {
-			gridPlans: props.gridPlansForFeaturesGrid,
-		} );
+const WrappedComparisonGrid = ( props: PlansGridProps ) => {
+	const { siteId } = props;
+	const translate = useTranslate();
+	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
+		props.siteId,
+		props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+	);
+	const isLargeCurrency = useIsLargeCurrency( {
+		gridPlans: props.gridPlansForFeaturesGrid,
+	} );
 
-		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-		const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
-			siteId
-				? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-				: null
-		);
-		const purchaseId = useSelector( ( state: IAppState ) =>
-			siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
-		);
-		// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
-		const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
+	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
+		siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null
+	);
+	const purchaseId = useSelector( ( state: IAppState ) =>
+		siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
+	);
+	// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
+	const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 
-		const manageHref =
-			purchaseId && selectedSiteSlug
-				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-				: `/plans/my-plan/${ siteId }`;
+	const manageHref =
+		purchaseId && selectedSiteSlug
+			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+			: `/plans/my-plan/${ siteId }`;
 
-		const handleUpgradeClick = useUpgradeClickHandler( {
-			gridPlansForFeaturesGrid: props.gridPlansForFeaturesGrid,
-			onUpgradeClick: props.onUpgradeClick,
-		} );
+	const handleUpgradeClick = useUpgradeClickHandler( {
+		gridPlansForFeaturesGrid: props.gridPlansForFeaturesGrid,
+		onUpgradeClick: props.onUpgradeClick,
+	} );
 
-		if ( props.isInSignup ) {
-			return (
-				<FeaturesGrid
-					{ ...props }
-					plansComparisonGridRef={ ref }
-					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					manageHref={ manageHref }
-					selectedSiteSlug={ selectedSiteSlug }
-					translate={ translate }
-					handleUpgradeClick={ handleUpgradeClick }
-				/>
-			);
-		}
-
+	if ( props.isInSignup ) {
 		return (
-			<CalypsoShoppingCartProvider>
-				<FeaturesGrid
-					{ ...props }
-					plansComparisonGridRef={ ref }
-					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					manageHref={ manageHref }
-					selectedSiteSlug={ selectedSiteSlug }
-					translate={ translate }
-					handleUpgradeClick={ handleUpgradeClick }
-				/>
-			</CalypsoShoppingCartProvider>
+			<ComparisonGrid
+				{ ...props }
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				isLargeCurrency={ isLargeCurrency }
+				canUserPurchasePlan={ canUserPurchasePlan }
+				manageHref={ manageHref }
+				selectedSiteSlug={ selectedSiteSlug }
+				translate={ translate }
+				handleUpgradeClick={ handleUpgradeClick }
+			/>
 		);
 	}
-);
+
+	return (
+		<CalypsoShoppingCartProvider>
+			<ComparisonGrid
+				{ ...props }
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				isLargeCurrency={ isLargeCurrency }
+				canUserPurchasePlan={ canUserPurchasePlan }
+				manageHref={ manageHref }
+				selectedSiteSlug={ selectedSiteSlug }
+				translate={ translate }
+				handleUpgradeClick={ handleUpgradeClick }
+			/>
+		</CalypsoShoppingCartProvider>
+	);
+};
+
+const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
+	const { siteId } = props;
+	const translate = useTranslate();
+	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
+		props.siteId,
+		props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+	);
+	const isLargeCurrency = useIsLargeCurrency( {
+		gridPlans: props.gridPlansForFeaturesGrid,
+	} );
+
+	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
+	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
+		siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null
+	);
+	const purchaseId = useSelector( ( state: IAppState ) =>
+		siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
+	);
+	// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
+	const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+
+	const manageHref =
+		purchaseId && selectedSiteSlug
+			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+			: `/plans/my-plan/${ siteId }`;
+
+	const handleUpgradeClick = useUpgradeClickHandler( {
+		gridPlansForFeaturesGrid: props.gridPlansForFeaturesGrid,
+		onUpgradeClick: props.onUpgradeClick,
+	} );
+
+	if ( props.isInSignup ) {
+		return (
+			<FeaturesGrid
+				{ ...props }
+				plansComparisonGridRef={ ref }
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				isLargeCurrency={ isLargeCurrency }
+				canUserPurchasePlan={ canUserPurchasePlan }
+				manageHref={ manageHref }
+				selectedSiteSlug={ selectedSiteSlug }
+				translate={ translate }
+				handleUpgradeClick={ handleUpgradeClick }
+			/>
+		);
+	}
+
+	return (
+		<CalypsoShoppingCartProvider>
+			<FeaturesGrid
+				{ ...props }
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				isLargeCurrency={ isLargeCurrency }
+				canUserPurchasePlan={ canUserPurchasePlan }
+				manageHref={ manageHref }
+				selectedSiteSlug={ selectedSiteSlug }
+				translate={ translate }
+				handleUpgradeClick={ handleUpgradeClick }
+			/>
+		</CalypsoShoppingCartProvider>
+	);
+};
