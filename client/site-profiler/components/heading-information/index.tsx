@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { translate } from 'i18n-calypso';
 import page from 'page';
 import StatusCtaInfo from '../heading-information/status-cta-info';
 import StatusIcon from '../heading-information/status-icon';
@@ -34,7 +35,7 @@ export default function HeadingInformation( props: Props ) {
 	return (
 		<div className="heading-information">
 			<summary>
-				<h5>Who Hosts This Site?</h5>
+				<h5>{ translate( 'Site Profiler' ) }</h5>
 				<div className="domain">
 					<StatusIcon conversionAction={ conversionAction } />
 					{ domain }
@@ -46,30 +47,30 @@ export default function HeadingInformation( props: Props ) {
 				<div className="cta-wrapper">
 					{ conversionAction === 'register-domain' && (
 						<Button className="button-action" onClick={ onRegisterDomain }>
-							Register domain
+							{ translate( 'Register domain' ) }
 						</Button>
 					) }
 					{ ( conversionAction === 'transfer-domain' ||
 						conversionAction === 'transfer-domain-hosting' ) && (
 						<Button className="button-action" onClick={ onTransferDomain }>
-							Transfer domain
+							{ translate( 'Transfer domain' ) }
 						</Button>
 					) }
 					{ ( conversionAction === 'transfer-google-domain' ||
 						conversionAction === 'transfer-google-domain-hosting' ) && (
 						<Button className="button-action" onClick={ onTransferDomainFree }>
-							Transfer domain for free
+							{ translate( 'Transfer domain for free' ) }
 						</Button>
 					) }
 					{ conversionAction === 'transfer-hosting' && (
 						<Button className="button-action" onClick={ onMigrateSite }>
-							Migrate site
+							{ translate( 'Migrate site' ) }
 						</Button>
 					) }
 
 					{ onCheckAnotherSite && (
 						<Button variant="link" onClick={ onCheckAnotherSite }>
-							Check another site
+							{ translate( 'Check another site' ) }
 						</Button>
 					) }
 				</div>

@@ -1,6 +1,10 @@
 import { DomainStatusPurchaseActions, ResponseDomain } from '@automattic/domains-table';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
-import { handleRenewNowClick, shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
+import {
+	handleRenewNowClick,
+	monthsUntilCardExpires,
+	shouldRenderExpiringCreditCard,
+} from 'calypso/lib/purchases';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
@@ -25,6 +29,14 @@ export const usePurchaseActions = () => {
 		return !! purchase;
 	};
 
+	const monthsUtilCreditCardExpires = ( domain: ResponseDomain ) => {
+		const purchase = purchases?.find(
+			( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
+		);
+
+		return purchase ? monthsUntilCardExpires( purchase ) : null;
+	};
+
 	const onRenewNowClick = ( siteSlug: string, domain: ResponseDomain ) => {
 		const purchase = purchases?.find(
 			( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
@@ -37,6 +49,7 @@ export const usePurchaseActions = () => {
 	const purchaseActions: DomainStatusPurchaseActions = {
 		isCreditCardExpiring,
 		isPurchasedDomain,
+		monthsUtilCreditCardExpires,
 		onRenewNowClick,
 	};
 

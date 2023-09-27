@@ -1,4 +1,5 @@
-import { FormStatus, useFormStatus, PaymentLogo } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { PaymentLogo } from '@automattic/wpcom-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';

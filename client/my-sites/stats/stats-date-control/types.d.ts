@@ -8,16 +8,19 @@ interface StatsDateControlProps {
 interface DateControlPickerProps {
 	slug: string;
 	queryParams: string;
+	shortcutList: DateControlPickerShortcut[];
 }
 
 interface DateControlPickerShortcutsProps {
 	shortcutList: DateControlPickerShortcut[];
+	onClick: ( shortcut: DateControlPickerShortcut ) => void;
 }
 
 interface DateControlPickerShortcut {
 	id?: string;
 	label: string;
-	onClick: () => void;
+	offset: number;
+	range: number;
 }
 
 interface DateControlPickerDateProps {
@@ -31,6 +34,7 @@ interface DateControlPickerDateProps {
 export {
 	StatsDateControlProps,
 	DateControlPickerProps,
+	DateControlPickerShortcut,
 	DateControlPickerShortcutsProps,
 	DateControlPickerDateProps,
 };

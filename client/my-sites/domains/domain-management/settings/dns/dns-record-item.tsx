@@ -10,7 +10,7 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ) 
 	const handledBy = () => {
 		const { type, aux, port, weight } = dnsRecord;
 		const data = trimDot( dnsRecord.data );
-		const target = trimDot( dnsRecord.target );
+		const target = '.' !== dnsRecord.target ? trimDot( dnsRecord.target ) : '.';
 
 		// TODO: Remove this once we stop displaying the protected records
 		if ( dnsRecord.protected_field ) {

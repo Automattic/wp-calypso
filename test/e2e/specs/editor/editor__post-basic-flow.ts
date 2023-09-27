@@ -20,6 +20,8 @@ const quote =
 const title = DataHelper.getRandomPhrase();
 const category = 'Uncategorized';
 const tag = 'test-tag';
+const seoTitle = 'SEO example title';
+const seoDescription = 'SEO example description';
 
 declare const browser: Browser;
 
@@ -64,8 +66,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Categories and Tags', function () {
-		it( 'Open settings', async function () {
-			await editorPage.openSettings();
+		it( 'Open post settings', async function () {
+			await editorPage.openSettings( 'Settings' );
 		} );
 
 		it( 'Add post category', async function () {
@@ -75,15 +77,62 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Add post tag', async function () {
 			await editorPage.addTag( tag );
 		} );
+
+		afterAll( async function () {
+			// For mobile, but doesn't hurt to do this for Desktop either.
+			await editorPage.closeSettings();
+		} );
+	} );
+
+	describe( 'Jetpack features', function () {
+		it( 'Open Jetpack settings', async function () {
+			await editorPage.openSettings( 'Jetpack' );
+		} );
+
+		skipItIf( envVariables.TEST_ON_ATOMIC !== true )(
+			'Enter SEO title and preview',
+			async function () {
+				await editorPage.enterSEODetails( {
+					title: seoTitle,
+					description: seoDescription,
+				} );
+			}
+		);
+
+		it( 'Open social preview', async function () {
+			await editorPage.expandSection( 'Social Previews' );
+			await editorPage.clickSidebarButton( 'Open Social Previews' );
+		} );
+
+		it( 'Show social preview for Tumblr', async function () {
+			// Action implemented as "raw" calls for now (2023-09).
+			const editorParent = await editorPage.getEditorParent();
+			const dialog = editorParent.getByRole( 'dialog' );
+
+			await dialog.getByRole( 'tab', { name: 'Tumblr' } ).click();
+			await dialog.getByRole( 'tabpanel', { name: 'Tumblr' } ).waitFor();
+			await dialog
+				.filter( {
+					// Look for either the SEO title, or the post title,
+					// depending on whether the platform had SEO options
+					// two steps previously.
+					hasText: new RegExp( `${ seoTitle }|${ title }` ),
+				} )
+				.waitFor();
+		} );
+
+		it( 'Dismiss social preview', async function () {
+			await page.keyboard.press( 'Escape' );
+		} );
+
+		afterAll( async function () {
+			// For mobile, but doesn't hurt to do this for Desktop either.
+			await editorPage.closeSettings();
+		} );
 	} );
 
 	describe( 'Preview', function () {
 		let previewPage: Page;
-
-		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
-		it( 'Close settings sidebar', async function () {
-			await editorPage.closeSettings();
-		} );
 
 		it( 'Launch preview', async function () {
 			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {

@@ -53,12 +53,11 @@ function getGroupName( keyType: KeyType ) {
 export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabilityCheck = false ) {
 	const isEnglishLocale = useIsEnglishLocale();
 	const isWpMobileAppUser = isWpMobileApp();
+	const group = getGroupName( keyType );
 
-	const { canConnectToZendesk } = useChatStatus();
+	const { canConnectToZendesk } = useChatStatus( group, enabled );
 	const isEligibleForPresalesChat =
 		enabled && isEnglishLocale && canConnectToZendesk && ! isWpMobileAppUser;
-
-	const group = getGroupName( keyType );
 
 	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
 		useMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );

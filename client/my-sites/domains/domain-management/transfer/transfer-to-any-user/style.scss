@@ -15,7 +15,7 @@
 	}
 
 	&__container {
-		margin: 16px;
+		margin: 0 16px 16px 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
 			margin: 0;
@@ -23,9 +23,6 @@
 	}
 
 	.transfer-domain-to-any-user__container {
-		.transfer-domain-to-any-user__main {
-			margin: 16px;
-		}
 		@include break-xlarge {
 			@include grid-row( 1, 1 );
 			@include grid-column( 1, 12 );
@@ -59,6 +56,30 @@
 			margin-left: 24px;
 		}
 	}
+
+	.transfer-domain-to-any-user__pending-transfer-card {
+		h2 {
+			font-size: $font-title-small;
+			margin-bottom: 1rem;
+			font-weight: 600;
+		}
+
+		.transfer-domain-to-any-user__pending-detail {
+			margin-bottom: 1rem;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+
+			strong {
+				color: var(--studio-gray-70);
+			}
+
+			.transfer-domain-to-any-user__pending-status {
+				color: var(--color-warning);
+			}
+		}
+	}
+
 }
 
 .transfer-domain-to-any-user__notice {

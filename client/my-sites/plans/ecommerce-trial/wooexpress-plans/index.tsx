@@ -12,6 +12,7 @@ import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
@@ -96,8 +97,8 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	] );
 
 	const onUpgradeClick = useCallback(
-		( cartItem?: MinimalRequestCartProduct | null ) => {
-			const upgradePlanSlug = cartItem?.product_slug ?? PLAN_FREE;
+		( cartItems?: MinimalRequestCartProduct[] | null ) => {
+			const upgradePlanSlug = getPlanCartItem( cartItems )?.product_slug ?? PLAN_FREE;
 
 			triggerTracksEvent?.( upgradePlanSlug );
 

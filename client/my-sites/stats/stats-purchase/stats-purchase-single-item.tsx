@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -218,8 +219,7 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		recordTracksEvent( `calypso_stats_plan_switched_from_personal_to_commercial` );
 
-		const purchasePath = `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection`;
-		window.location.href = purchasePath;
+		page( `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection` );
 	};
 
 	return (

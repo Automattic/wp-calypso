@@ -162,7 +162,7 @@
 	svg {
 		margin-inline-start: -0.4em;
 	}
-	&:hover {
+	&:hover:not(.is-link) {
 		background: var(--studio-gray-80);
 		color: var(--studio-white);
 	}
@@ -175,6 +175,19 @@
 		background: var(--studio-jetpack-green-50);
 		color: var(--studio-white);
 		border: none;
+	}
+
+	&.is-link {
+		border: none;
+		background: none;
+		text-decoration: underline;
+		outline: none;
+		margin: 0;
+		padding: 0;
+
+		&:hover {
+			color: var(--studio-gray-80);
+		}
 	}
 }
 
@@ -483,19 +496,31 @@
 }
 
 .sites-overview__boost-score {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	font-weight: 500;
+	user-select: none;
+
 	&.boost-score-good {
 		@extend .sites-overview__column-content;
 		color: var(--studio-green-50);
+		background-color: var(--studio-green-0);
 	}
 
 	&.boost-score-okay {
 		@extend .sites-overview__column-content;
 		color: var(--studio-yellow-50);
+		background-color: var(--studio-yellow-0);
 	}
 
 	&.boost-score-bad {
 		@extend .sites-overview__column-content;
 		color: var(--studio-red-50);
+		background-color: var(--studio-red-0);
 	}
 }
 

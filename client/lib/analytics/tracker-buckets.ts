@@ -32,6 +32,7 @@ const allAdTrackers = [
 	'quora',
 	'adroll',
 	'parsely',
+	'clarity',
 ] as const;
 
 type AdTracker = ( typeof allAdTrackers )[ number ];
@@ -58,6 +59,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	pinterest: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
+	clarity: Bucket.ADVERTISING,
 
 	// Advertising trackers (only Jetpack Cloud or on Jetpack Checkout):
 	linkedin: isJetpackCloud() || isJetpackCheckout() ? Bucket.ADVERTISING : null,
@@ -95,6 +97,7 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,
 	parsely: () => 'PARSELY' in window,
+	clarity: () => 'clarity' in window,
 };
 
 const isTrackerIntialized = ( tracker: AdTracker ): boolean => {

@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import joinClasses from '../lib/join-classes';
-import { useLineItems } from '../public-api';
+import { useLineItems } from '../lib/line-items';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,

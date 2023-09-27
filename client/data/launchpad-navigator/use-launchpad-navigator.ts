@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
+import apiFetch, { type APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 interface AvailableChecklist {
@@ -7,16 +7,25 @@ interface AvailableChecklist {
 	title: string;
 }
 
+interface AvailableChecklists {
+	[ checklist_slug: string ]: AvailableChecklist;
+}
+
 interface LaunchpadNavigatorResponse {
-	available_checklists: AvailableChecklist[];
+	available_checklists: AvailableChecklists;
 	current_checklist: string | null;
 }
+
+const defaultResponse: LaunchpadNavigatorResponse = {
+	available_checklists: {},
+	current_checklist: null,
+};
 
 export const fetchLaunchpadNavigator = (
 	siteSlug: string | null
 ): Promise< LaunchpadNavigatorResponse > => {
 	if ( ! siteSlug ) {
-		return Promise.resolve( { available_checklists: [], current_checklist: null } );
+		return Promise.resolve( defaultResponse );
 	}
 	const slug = encodeURIComponent( siteSlug );
 
@@ -42,9 +51,6 @@ export const useLaunchpadNavigator = (
 		queryKey: key,
 		queryFn: () => fetchLaunchpadNavigator( siteSlug ),
 		retry: 3,
-		initialData: {
-			available_checklists: [],
-			current_checklist: null,
-		},
+		initialData: defaultResponse,
 	} );
 };

@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { plansLink } from '@automattic/calypso-products';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import useOneDollarOfferTrack from '../hooks/use-onedollar-offer-track';
 import TrialBanner from '../trials/trial-banner';
 import { WooExpressPlans } from './wooexpress-plans';
 import type { Site } from 'calypso/my-sites/scan/types';
@@ -23,6 +24,8 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			plan_slug: planSlug,
 		} );
 	}, [] );
+
+	useOneDollarOfferTrack( siteId, 'plans' );
 
 	return (
 		<>

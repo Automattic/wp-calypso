@@ -40,29 +40,54 @@ $domains-table-mobile-breakpoint: 480px;
 		margin-top: 14px; /* 30px - 16px of the table heading padding */
 		border-collapse: collapse;
 
-		tr {
-			border-bottom: 1px solid #f0f0f0;
+		--row-gap: 20px;
+
+		display: grid;
+		gap: var(--row-gap) 16px;
+
+		// Note: The checkbox does not count for column counting purposes
+
+		&.is-7-column {
+			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
+		}
+		&.is-7-column:not(.has-checkbox) {
+			grid-template-columns: 2fr 1fr 1fr auto auto auto 36px;
+		}
+		&.is-6-column {
+			grid-template-columns: 20px 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+		&.is-6-column:not(.has-checkbox) {
+			grid-template-columns: 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+		&.is-5-column {
+			grid-template-columns: 20px 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+		&.is-5-column:not(.has-checkbox) {
+			grid-template-columns: 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+
+		tr::after {
+			display: block;
+			content: "";
+			height: 1px;
+			background: #f0f0f0;
+			grid-column: 1 / -1;
 		}
 	}
 
-	.domains-table__bulk-action-container {
-		width: 0;
-		min-width: fit-content;
-
-		.components-checkbox-control__input-container {
-			margin-right: 16px;
-		}
-	}
-
-	.domains-table__action-ellipsis-column-header {
-		width: 0;
-		min-width: fit-content;
+	thead,
+	tbody,
+	tr {
+		// For CSS gird to work the table cells need to be direct children of the grid parent.
+		// display: contents prevents the intermediate table elements from generating their own CSS boxes.
+		// This means we can keep the HTML semantics of a table for accessibility.
+		display: contents;
 	}
 
 	td {
-		padding: 20px 0;
-		height: 44px;
-		vertical-align: middle;
+		min-height: 44px;
+		display: flex;
+		align-items: center;
 
 		color: var(--studio-gray-50);
 		font-size: $font-body-small;
@@ -88,15 +113,11 @@ $domains-table-mobile-breakpoint: 480px;
 	}
 
 	.domains-table-row__status-cell {
-		white-space: nowrap;
+		white-space: pre-line;
 		display: flex;
 		align-items: center;
 		gap: 4px;
 		font-size: $font-body-small;
-
-		@media ( min-width: $domains-table-mobile-breakpoint ) {
-			width: 100px;
-		}
 
 		svg {
 			color: currentColor;
@@ -118,9 +139,14 @@ $domains-table-mobile-breakpoint: 480px;
 		}
 	}
 
+	.domains-table-row__domain {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+	}
+
 	.domains-table-row__actions {
 		text-align: right;
-
 	}
 }
 
@@ -215,7 +241,7 @@ $domains-table-mobile-breakpoint: 480px;
 .domains-table-row__domain-type-text {
 	display: none;
 	font-size: $font-body-extra-small;
-	font-style: normal;
+	font-style: italic;
 	font-weight: 400;
 	line-height: 20px;
 

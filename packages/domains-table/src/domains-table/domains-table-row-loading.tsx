@@ -2,7 +2,7 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useDomainsTable } from './domains-table';
 
 export default function DomainsTableRowLoading() {
-	const { hideOwnerColumn } = useDomainsTable();
+	const { domainsTableColumns } = useDomainsTable();
 	return (
 		<tr className="domains-table-row-loading-placeholder">
 			<td className="domains-table-row-loading-placeholder-checkbox-column">
@@ -11,7 +11,7 @@ export default function DomainsTableRowLoading() {
 			<td className="domains-table-row-loading-placeholder-domain-column">
 				<LoadingPlaceholder delayMS={ 50 } />
 			</td>
-			{ hideOwnerColumn && (
+			{ domainsTableColumns.some( ( column ) => column.name === 'owner' ) && (
 				<td className="domains-table-row-loading-placeholder-owner-column">
 					<LoadingPlaceholder delayMS={ 50 } />
 				</td>

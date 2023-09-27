@@ -200,7 +200,7 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 							</Header>
 							<Highlight isMobile={ isMobile }>
 								{ translate(
-									'The %(planTitle)s for (%(domain)s) is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
+									'The %(planTitle)s for %(domain)s is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
 									{
 										args: {
 											domain: registeredDomain?.domain || siteSlug,

@@ -187,7 +187,6 @@ class ReaderPostCard extends Component {
 				visitUrl={ post.URL }
 				fullPost={ false }
 				onCommentClick={ onCommentClick }
-				showEdit={ false }
 				className="ignore-click"
 				iconSize={ 20 }
 			/>
