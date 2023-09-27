@@ -6,7 +6,7 @@ interface ThemeCollectionProps {
 	heading: string;
 	themes: Array< never >;
 	collectionSlug: string;
-	onScreenshotCLick: () => void;
+	onScreenshotClick: () => void;
 	onStyleVariationClick: () => void;
 	onMoreButtonClick: () => void;
 	onMoreButtonItemClick: () => void;
@@ -18,7 +18,7 @@ export default function ThemeCollection( {
 	collectionSlug,
 	heading,
 	themes,
-	onScreenshotCLick,
+	onScreenshotClick,
 	onStyleVariationClick,
 	getScreenshotUrl,
 	onMoreButtonClick,
@@ -31,7 +31,7 @@ export default function ThemeCollection( {
 			{ themes.map( ( theme, index ) => (
 				<div>
 					<Theme
-						onScreenshotCLick={ onScreenshotCLick }
+						onScreenshotCLick={ onScreenshotClick }
 						onStyleVariationClick={ onStyleVariationClick }
 						onMoreButtonClick={ onMoreButtonClick }
 						getScreenshotUrl={ getScreenshotUrl }
