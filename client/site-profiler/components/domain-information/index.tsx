@@ -4,6 +4,7 @@ import { TranslateOptions, translate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
+import { useFilteredWhoisData } from 'calypso/data/site-profiler/use-filtered-whois-data';
 import VerifiedProvider from './verified-provider';
 import type { WhoIs } from 'calypso/data/site-profiler/types';
 import './styles.scss';
@@ -19,14 +20,14 @@ export default function DomainInformation( props: Props ) {
 	const momentFormat = 'YYYY-MM-DD HH:mm:ss UTC';
 	const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
 	const [ fetchWhoisRawData, setFetchWhoisRawData ] = useState( false );
-	const redactedWhois = [ 'redactedforprivacy' ];
-	let fieldsRedacted = 0;
 
 	const {
 		data: whoisRawData,
 		isFetching: whoisRawDataFetching,
 		isError: whoisRawDataFetchingError,
 	} = useDomainAnalyzerWhoisRawDataQuery( domain, fetchWhoisRawData );
+
+	const { fieldsRedacted, filteredWhois } = useFilteredWhoisData( whois );
 
 	const contactArgs = ( args?: string | string[] ): TranslateOptions => {
 		return {
@@ -47,26 +48,6 @@ export default function DomainInformation( props: Props ) {
 			a: createElement( 'a', { href: url, target: '_blank', rel: 'nofollow noreferrer' } ),
 		} );
 	};
-
-	const filteredWhois: { [ name: string ]: boolean } = {};
-
-	// Check if there are redacted whois fields
-	for ( const key in whois ) {
-		let value = whois[ key as keyof WhoIs ] ?? '';
-
-		if ( Array.isArray( value ) ) {
-			value = value.length > 0 ? value[ 0 ] : '';
-		}
-
-		value = value?.toLowerCase().replace( /[ .]/g, '' );
-		const isRedacted = redactedWhois.includes( value );
-
-		if ( isRedacted ) {
-			++fieldsRedacted;
-		}
-
-		filteredWhois[ key ] = ! isRedacted;
-	}
 
 	return (
 		<div className="domain-information">
