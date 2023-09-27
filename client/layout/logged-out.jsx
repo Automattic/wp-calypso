@@ -263,7 +263,7 @@ export default withCurrentRoute(
 		const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'client_id' );
 		const isGravPoweredClient =
 			isGravPoweredOAuth2Client( oauth2Client ) ||
-			// To support the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
+			// To cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
 			isGravPoweredOAuth2Client( { id: Number( clientId ) } );
 		const isReskinLoginRoute =
 			currentRoute.startsWith( '/log-in' ) &&
