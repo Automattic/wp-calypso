@@ -483,7 +483,6 @@ describe( 'Site Actions', () => {
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSwitchApiRequest( {
 					theme: 'zoologist',
-					dont_change_homepage: true,
 				} )
 			);
 
@@ -516,7 +515,6 @@ describe( 'Site Actions', () => {
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSwitchApiRequest( {
 					theme: 'arbutus',
-					dont_change_homepage: true,
 				} )
 			);
 

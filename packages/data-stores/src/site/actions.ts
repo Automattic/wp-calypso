@@ -381,13 +381,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			selectedDesign.slug ||
 			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] ||
 			selectedDesign.theme;
-		const { keepHomepage = true, styleVariation, globalStyles } = options;
+		const { styleVariation, globalStyles } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine?_locale=user`,
 			apiVersion: '1.1',
 			body: {
 				theme: themeSlug,
-				dont_change_homepage: keepHomepage,
 			},
 			method: 'POST',
 		} );
