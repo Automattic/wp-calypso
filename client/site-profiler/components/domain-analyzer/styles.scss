@@ -1,3 +1,15 @@
+@import "@wordpress/base-styles/breakpoints";
+
+@mixin input-style {
+	background: #fff;
+	box-sizing: border-box;
+	box-shadow: 0 5px 10px 0 #0000000d;
+	border: 1px solid transparent;
+	/* stylelint-disable-next-line */
+	border-radius: 8px;
+	padding: 0.625rem 1.5rem;
+}
+
 .domain-analyzer {
 	p + .domain-analyzer--form {
 		margin-top: 2.5rem;
@@ -5,23 +17,32 @@
 }
 
 .domain-analyzer--form-container {
-	background: #fff;
-	box-shadow: 0 5px 10px 0 #0000000d;
-	border: 1px solid transparent;
-	/* stylelint-disable-next-line */
-	border-radius: 8px;
-	padding: 0.625rem 1.5rem;
 	display: flex;
-	gap: 1rem;
 
-	.col-1 {
-		flex: 1;
+	@media (min-width: $break-small + 1px) {
+		@include input-style;
+		gap: 1rem;
+
+		.col-1 {
+			flex: 1;
+		}
+
+		.col-2 {
+			display: flex;
+			align-items: center;
+			width: fit-content;
+		}
 	}
 
-	.col-2 {
-		display: flex;
-		align-items: center;
-		width: fit-content;
+	@media (max-width: $break-small) {
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 1.5rem;
+
+		.button-action {
+			width: 100%;
+			justify-content: center;
+		}
 	}
 
 	input {
@@ -41,13 +62,27 @@
 		&:focus {
 			outline: none;
 		}
+
+		@media (max-width: $break-small) {
+			@include input-style;
+			font-size: 1.5rem;
+			line-height: 2;
+		}
 	}
 }
 
 .domain-analyzer--form {
 	&.is-error {
-		.domain-analyzer--form-container {
-			border: 1px solid var(--studio-red-50);
+		@media (min-width: $break-small + 1px) {
+			.domain-analyzer--form-container {
+				border: 1px solid var(--studio-red-50);
+			}
+		}
+
+		@media (max-width: $break-small ) {
+			input {
+				border: 1px solid var(--studio-red-50);
+			}
 		}
 	}
 }
