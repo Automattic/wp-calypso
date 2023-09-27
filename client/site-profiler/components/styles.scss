@@ -191,14 +191,17 @@
 			left: 0;
 			background: #e5f4ff;
 			z-index: -1;
+			height: 100%;
 		}
 	}
 
-	.domain-analyzer-block::after {
-		height: 280px;
-	}
+	@media (min-width: $break-medium) {
+		.domain-analyzer-block::after {
+			height: 280px;
+		}
 
-	.domain-result-block::after {
-		height: 210px;
+		.domain-result-block::after {
+			height: 210px;
+		}
 	}
 }
