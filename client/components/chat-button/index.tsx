@@ -1,12 +1,18 @@
+import { isJetpackPurchasableItem } from '@automattic/calypso-products';
 import { Button, Gridicon, Spinner } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useChatStatus, useChatWidget } from '@automattic/help-center/src/hooks';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import { ObjectWithProducts } from 'calypso/lib/cart-values/cart-items';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { MessagingGroup } from '@automattic/help-center/src/hooks/use-messaging-availability';
 import type { FC } from 'react';
-
 type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
 export type KeyType = 'akismet' | 'jpAgency' | 'jpCheckout' | 'jpGeneral' | 'wpcom';
 
@@ -24,6 +30,23 @@ type Props = {
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
+
+// Find out what service's products are in the cart currently
+function getChatKey( responseCart: ObjectWithProducts ) {
+	const hasCartJetpackProductsOnly =
+		responseCart?.products?.length > 0 &&
+		responseCart?.products?.every( ( product ) =>
+			isJetpackPurchasableItem( product.product_slug )
+		);
+
+	if ( isAkismetCheckout() ) {
+		return 'akismet';
+	} else if ( isJetpackCheckout() || hasCartJetpackProductsOnly ) {
+		return 'jpCheckout';
+	}
+
+	return 'wpcom';
+}
 
 function getGroupName( keyType: KeyType ) {
 	switch ( keyType ) {
@@ -53,7 +76,6 @@ function getMessagingGroupForIntent( chatIntent: ChatIntent, keyType: KeyType ):
 const ChatButton: FC< Props > = ( {
 	borderless = true,
 	chatIntent = 'SUPPORT',
-	keyType = 'wpcom',
 	children,
 	className = '',
 	initialMessage,
@@ -63,8 +85,9 @@ const ChatButton: FC< Props > = ( {
 	siteUrl,
 } ) => {
 	const { __ } = useI18n();
-
-	const messagingGroup = getMessagingGroupForIntent( chatIntent, keyType );
+	const siteId = useSelector( getSelectedSiteId );
+	const { responseCart } = useShoppingCart( siteId ?? undefined );
+	const messagingGroup = getMessagingGroupForIntent( chatIntent, getChatKey( responseCart ) );
 
 	const {
 		canConnectToZendesk,
