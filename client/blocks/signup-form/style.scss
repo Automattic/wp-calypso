@@ -169,16 +169,13 @@ body.is-section-signup {
 		.signup-form-social-first-email {
 			.card {
 				box-shadow: none;
+				padding-left: 0;
+				padding-right: 0;
 
-				@media (max-width: 660px) {
-					padding-left: 0;
-					padding-right: 0;
-
-					button {
-						display: block;
-						max-width: 327px;
-						margin: 0 auto;
-					}
+				button {
+					display: block;
+					max-width: 327px;
+					margin: 0 auto;
 				}
 			}
 
