@@ -13,8 +13,23 @@
 		margin-bottom: 24px;
 	}
 
-	.unsubscribe-button {
+
+	&__unsubscribe-button,
+	&__view-feed-button {
+		&:visited {
+			color: inherit;
+		}
+
 		display: flex;
 		width: 100%;
+	}
+
+	&__unsubscribe-button.components-button.has-icon,
+	&__view-feed-button.components-button.has-icon,
+	.resubscribe-button.components-button.has-icon {
+		height: auto;
+		padding: 0;
+		font-size: $font-body-small;
+		line-height: $font-title-small;
 	}
 }

@@ -340,6 +340,7 @@ const SiteRow = ( {
 					} }
 					unsubscribing={ unsubscribing }
 					isWpComSite={ isValidId( blog_id ) }
+					feedId={ Number( feed_id ) }
 				/>
 			</span>
 		</HStack>
