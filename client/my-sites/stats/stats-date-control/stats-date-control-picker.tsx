@@ -1,7 +1,8 @@
-import { Dropdown, Button } from '@wordpress/components';
+import { Popover } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import page from 'page';
 import qs from 'qs';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps } from './types';
@@ -47,30 +48,33 @@ const DateControlPicker = ( { slug, queryParams }: DateControlPickerProps ) => {
 		page( href );
 	};
 
-	const DateControlPickerContent = () => (
-		<div>
-			<DateControlPickerDate
-				startDate={ inputStartDate }
-				endDate={ inputEndDate }
-				onStartChange={ changeStartDate }
-				onEndChange={ changeEndDate }
-				onApply={ handleOnApply }
-			/>
-			<DateControlPickerShortcuts shortcutList={ shortcutList } />
-		</div>
-	);
+	const infoReferenceElement = useRef( null );
+	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
 	return (
-		<Dropdown
-			// TODO: add CSS to increase the width
-			popoverProps={ { placement: 'bottom-end' } }
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button variant="primary" onClick={ onToggle } aria-expanded={ isOpen }>
-					{ `${ inputStartDate } - ${ inputEndDate }` }
-				</Button>
-			) }
-			renderContent={ () => <DateControlPickerContent /> }
-		/>
+		<>
+			<Button
+				variant="primary"
+				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
+				ref={ infoReferenceElement }
+			>
+				{ `${ inputStartDate } - ${ inputEndDate }` }
+			</Button>
+			<Popover
+				placement="bottom end"
+				context={ infoReferenceElement?.current }
+				isVisible={ popoverOpened }
+			>
+				<DateControlPickerDate
+					startDate={ inputStartDate }
+					endDate={ inputEndDate }
+					onStartChange={ changeStartDate }
+					onEndChange={ changeEndDate }
+					onApply={ handleOnApply }
+				/>
+				<DateControlPickerShortcuts shortcutList={ shortcutList } />
+			</Popover>
+		</>
 	);
 };
 
