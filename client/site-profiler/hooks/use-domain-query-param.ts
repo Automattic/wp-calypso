@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
+import { CAPTURE_URL_RGX_SOFT } from 'calypso/blocks/import/util';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { extractDomainFromInput, getFixedDomainSearch } from 'calypso/lib/domains';
 
@@ -11,7 +11,7 @@ export default function useDomainQueryParam( sanitize = true ) {
 	useEffect( () => {
 		const _domain = queryParams.get( 'domain' ) || '';
 
-		setIsValid( _domain ? CAPTURE_URL_RGX.test( _domain ) : undefined );
+		setIsValid( _domain ? CAPTURE_URL_RGX_SOFT.test( _domain ) : undefined );
 
 		setDomain( sanitize ? getFixedDomainSearch( extractDomainFromInput( _domain ) ) : _domain );
 	}, [ queryParams ] );
