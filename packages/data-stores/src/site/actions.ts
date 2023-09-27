@@ -418,6 +418,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			yield* setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
 		}
 
+		// Potentially runs Headstart.
+		// E.g. if the homepage has a Query Loop block, we insert placeholder posts on the new site.
 		yield* runThemeSetupOnSite( siteSlug );
 
 		return activatedTheme;
