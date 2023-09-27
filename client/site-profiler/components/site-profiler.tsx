@@ -86,7 +86,7 @@ export default function SiteProfiler() {
 				</LayoutBlock>
 			) }
 
-			<LayoutBlock isMonoBg>
+			<LayoutBlock isMonoBg={ !! data }>
 				<HostingIntro />
 			</LayoutBlock>
 		</>
