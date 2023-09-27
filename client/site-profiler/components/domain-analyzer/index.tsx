@@ -52,7 +52,7 @@ export default function DomainAnalyzer( props: Props ) {
 					<div className="col-2">
 						<Button isBusy={ isBusy } type="submit" className="button-action">
 							{
-								// translators: "Still checking" stands for "still check the domain you entered"
+								// translators: "Still checking" stands for "Still checking the domain you entered in the form"
 								isBusyForWhile && domain && isDomainValid
 									? translate( 'Still checking…' )
 									: translate( 'Check site' )
