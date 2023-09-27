@@ -52,6 +52,7 @@ const Plans = ( { domainName, onUpgradeClick, handleRedirect } ) => (
 		flowName="onboarding"
 		removePaidDomain={ handleRedirect }
 		hidePlanTypeSelector={ true }
+		hidePlansFeatureComparison={ true }
 	/>
 );
 
