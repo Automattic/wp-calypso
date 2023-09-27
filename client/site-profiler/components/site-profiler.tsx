@@ -18,10 +18,10 @@ export default function SiteProfiler() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const queryParams = useQuery();
-	const domain = useDomainQueryParam();
+	const { domain, isValid: isDomainValid } = useDomainQueryParam();
 
-	const { data, isFetching } = useDomainAnalyzerQuery( domain );
-	const { data: hostingProviderData } = useHostingProviderQuery( domain );
+	const { data, isFetching } = useDomainAnalyzerQuery( domain, isDomainValid );
+	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
 	const conversionAction = useDefineConversionAction(
 		domain,
 		data?.whois,
@@ -32,7 +32,8 @@ export default function SiteProfiler() {
 	const updateDomainQueryParam = ( value: string ) => {
 		// Update the domain query param;
 		// URL param is the source of truth
-		queryParams.set( 'domain', value );
+		value ? queryParams.set( 'domain', value ) : queryParams.delete( 'domain' );
+
 		navigate( location.pathname + '?' + queryParams.toString() );
 	};
 
@@ -43,6 +44,7 @@ export default function SiteProfiler() {
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<DomainAnalyzer
 						domain={ domain }
+						isDomainValid={ isDomainValid }
 						onFormSubmit={ updateDomainQueryParam }
 						isBusy={ isFetching }
 					/>
