@@ -19,11 +19,16 @@ export default class AppleIcon extends PureComponent {
 
 		return (
 			<svg
+				className={ classNames( 'social-icons social-icons__google', {
+					'social-icons--enabled': ! this.props.isDisabled,
+					'social-icons--disabled': !! this.props.isDisabled,
+				} ) }
 				width="18"
 				height="14"
 				viewBox="0 0 18 14"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
+				{ ...props }
 			>
 				<g>
 					<rect
