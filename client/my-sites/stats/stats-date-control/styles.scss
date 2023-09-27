@@ -15,7 +15,6 @@ $button-padding: 8px 32px;
 }
 
 .components-dropdown > .components-button {
-
 	--gray-gray-10: #c3c4c7;
 	--gutenberg-gray-900: #1e1e1e;
 
@@ -41,3 +40,42 @@ $button-padding: 8px 32px;
 	}
 }
 
+.components-popover__content {
+	width: 196px;
+	border-radius: 2px;
+	background: var(--gutenberg-white, #fff);
+	box-shadow:
+		0 2.3px 3.3px -0.5px rgba(0, 0, 0, 0.1),
+		0 1.2px 1.7px -0.2px rgba(0, 0, 0, 0.1),
+		0 0.7px 1px 0 rgba(0, 0, 0, 0.1),
+		0 0 0 1px #ccc;
+
+	.segmented-control {
+		display: block;
+		background-color: transparent;
+		padding-left: 0;
+
+		&__item {
+			flex: none;
+			cursor: default;
+
+			&:not(.is-selected) {
+				.segmented-control__link {
+					color: inherit;
+					background-color: var(--jp-white);
+					outline: none;
+				}
+			}
+		}
+
+		&__link {
+			display: block;
+			padding: 8px 12px;
+			border: none;
+			text-align: left;
+			color: inherit;
+			background-color: transparent;
+			transition: none;
+		}
+	}
+}
