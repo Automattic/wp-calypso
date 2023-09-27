@@ -1,10 +1,10 @@
 
 @import "@wordpress/base-styles/breakpoints";
 
-main.mailpoet-confirmation__main.mailpoet-confirmation__no-header {
+main.mailpoet-upgrade.mailpoet-upgrade-header {
 	padding-top: 0;
 }
-.mailpoet-confirmation-actions {
+.mailpoet-upgrade-actions {
 	display: flex;
 	flex-direction: column;
 	justify-content: left;

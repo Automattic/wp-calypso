@@ -16,7 +16,7 @@ import {
 	plugins,
 	relatedPlugins,
 	redirectTrialSites,
-	redirectMailpoetConfirmation,
+	redirectMailPoetUpgrade,
 	scrollTopIfNoHash,
 	navigationIfLoggedIn,
 	maybeRedirectLoggedOut,
@@ -154,14 +154,14 @@ export default function ( router ) {
 	);
 
 	router(
-		`/${ langParam }/plugins/mailpoet/confirmation/:site_id`,
+		`/${ langParam }/plugins/mailpoet-business/upgrade/:site_id`,
 		redirectLoggedOut,
 		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
 		redirectTrialSites,
-		redirectMailpoetConfirmation,
+		redirectMailPoetUpgrade,
 		makeLayout,
 		clientRender
 	);

@@ -9,7 +9,7 @@ import { addMailPoetUpgrade } from 'calypso/data/marketplace/mailpoet-add-upgrad
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
-export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
+export const MailPoetUpgradePage = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ isBusy, setIsBusy ] = useState( false );
@@ -23,7 +23,7 @@ export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 			dispatch(
 				successNotice(
 					translate(
-						'The MailPoet is added to your site. MailPoet plugin will be installed and activated shortly.'
+						'MailPoet Business is added to your site. MailPoet plugin will be installed and activated shortly.'
 					)
 				)
 			);
@@ -41,19 +41,19 @@ export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 	};
 
 	return (
-		<Main wideLayout className="mailpoet-confirmation__main mailpoet-confirmation__no-header">
-			<DocumentHead title={ translate( 'MailPoet Subscription' ) } />
+		<Main wideLayout className="mailpoet-upgrade mailpoet-upgrade-header">
+			<DocumentHead title={ translate( 'MailPoet Business' ) } />
 			<FormattedHeader
 				brandFont
-				headerText={ translate( 'MailPoet Subscription' ) }
-				subHeaderText={ translate( 'Get a Free MailPoet Subscription' ) }
+				headerText={ translate( 'MailPoet Business' ) }
+				subHeaderText={ translate( 'Get a complimentary MailPoet Business Subscription' ) }
 				align="left"
 				hasScreenOptions
 			/>
 			<Card>
 				<p>
 					{ translate(
-						'Your eCommerce plan provides a complimentary MailPoet Business subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.'
+						'Your Commerce plan provides a complimentary MailPoet Business subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.'
 					) }
 				</p>
 				<p>
@@ -67,7 +67,7 @@ export const MailPoetConfirmationPage = ( { siteId }: { siteId: number } ) => {
 						},
 					} ) }
 				</p>
-				<div className="mailpoet-confirmation-actions">
+				<div className="mailpoet-upgrade-actions">
 					{ isCompleted ? (
 						<Button primary onClick={ dismissHandler } busy={ isBusy }>
 							{ translate( 'Go Back' ) }
