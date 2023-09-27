@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 export default function useLongFetchingDetection(
 	domain: string,
 	isFetching: boolean,
-	limit = 1000
+	limit = 3000
 ) {
 	const [ isTimeUp, setIsTimeUp ] = useState( false );
 
