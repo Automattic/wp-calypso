@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_BUSINESS, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_PREMIUM_THEMES,
+	isDomainRegistration,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	Onboard,
@@ -39,6 +43,7 @@ import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/help
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -97,12 +102,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const { site, siteSlug, siteSlugOrId } = useSiteData();
-	const wpcomSiteSlug = useSelector( ( state ) => getSiteSlug( state, site?.ID ) );
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
+
+	const wpcomSiteSlug = useSelector( ( state ) => getSiteSlug( state, site?.ID ) );
+	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, site?.ID ) );
+	const isDomainPurchased = !! sitePurchases.find( isDomainRegistration );
 
 	// The design-first flow put the checkout at the last step, so we cannot show any upsell modal.
 	// Therefore, we need to hide any feature that needs to check out right away, e.g.: Premium theme.
@@ -482,7 +490,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 
 		if ( siteSlugOrId ) {
-			if ( selectedDesign?.is_externally_managed && hasEligibilityMessages ) {
+			// We want to display the Eligibility Modal only for externally managed themes
+			// and when no domain was purchased yet.
+			if (
+				selectedDesign?.is_externally_managed &&
+				hasEligibilityMessages &&
+				! isDomainPurchased
+			) {
 				setShowEligibility( true );
 			} else {
 				navigateToCheckout();
