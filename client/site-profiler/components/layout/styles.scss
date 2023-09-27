@@ -3,6 +3,10 @@
 .l-block {
 	padding: 5rem 0;
 
+	@media (max-width: $break-small) {
+		padding: 2.5rem 0;
+	}
+
 	&.is-mono-bg {
 		background-color: #e9eff5;
 	}
@@ -53,6 +57,10 @@
 
 .l-block-section {
 	padding: 1.5rem 0;
+
+	@media (max-width: $break-small) {
+		padding: 1rem 0;
+	}
 }
 
 @keyframes l-block-fade-in {
