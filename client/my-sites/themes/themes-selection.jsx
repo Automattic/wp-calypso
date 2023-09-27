@@ -274,12 +274,14 @@ class ThemesSelection extends Component {
 					heading="Premium themes"
 					themes={ interlacedThemes }
 					collectionSlug="premium-themes"
-					onScreenshotClick={ this.onScreenshotClick }
-					onStyleVariationClick={ this.onStyleVariationClick }
 					getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
 					getScreenshotUrl={ this.props.getScreenshotUrl }
-					onMoreButtonClick={ this.recordSearchResultsClick }
-					onMoreButtonItemClick={ this.onMoreButtonItemClick }
+					bookmarkRef={ this.props.bookmarkRef }
+					getButtonOptions={ this.getOptions }
+					getActionLabel={ this.props.getActionLabel }
+					isActive={ this.props.isThemeActive }
+					getPrice={ this.props.getPremiumThemePrice }
+					isInstalling={ this.props.isInstallingTheme }
 					siteId={ siteId }
 				/>
 				<ThemesList

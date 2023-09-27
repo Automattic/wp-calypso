@@ -198,7 +198,7 @@ ThemesList.defaultProps = {
 	isInstalling: () => false,
 };
 
-function ThemeBlock( props ) {
+export function ThemeBlock( props ) {
 	const { theme, index, tabFilter } = props;
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
 

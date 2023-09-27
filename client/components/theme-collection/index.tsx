@@ -1,44 +1,47 @@
 import { ReactElement } from 'react';
-import Theme from 'calypso/components/theme';
+import { ThemeBlock } from 'calypso/components/themes-list';
 import './style.scss';
 
 interface ThemeCollectionProps {
 	heading: string;
 	themes: Array< never >;
 	collectionSlug: string;
-	onScreenshotClick: () => void;
-	onStyleVariationClick: () => void;
-	onMoreButtonClick: () => void;
-	onMoreButtonItemClick: () => void;
 	getScreenshotUrl: ( themeId: string ) => string;
 	siteId: string;
+	getButtonOptions: () => void;
+	getActionLabel: () => string;
+	isActive: () => boolean;
+	getPrice: () => string;
+	isInstalling: () => boolean;
 }
 
 export default function ThemeCollection( {
 	collectionSlug,
 	heading,
 	themes,
-	onScreenshotClick,
-	onStyleVariationClick,
 	getScreenshotUrl,
-	onMoreButtonClick,
-	onMoreButtonItemClick,
 	siteId,
+	getButtonOptions,
+	getActionLabel,
+	isActive,
+	getPrice,
+	isInstalling,
 }: ThemeCollectionProps ): ReactElement {
 	return (
 		<div className="theme-collection__container">
 			<h2>{ heading }</h2>
 			{ themes.map( ( theme, index ) => (
 				<div>
-					<Theme
-						onScreenshotCLick={ onScreenshotClick }
-						onStyleVariationClick={ onStyleVariationClick }
-						onMoreButtonClick={ onMoreButtonClick }
+					<ThemeBlock
 						getScreenshotUrl={ getScreenshotUrl }
-						onMoreButtonItemClick={ onMoreButtonItemClick }
 						key={ `theme-collection-${ collectionSlug }-${ index }` }
 						theme={ theme }
 						siteId={ siteId }
+						isActive={ isActive }
+						getButtonOptions={ getButtonOptions }
+						getActionLabel={ getActionLabel }
+						getPrice={ getPrice }
+						isInstalling={ isInstalling }
 					/>
 				</div>
 			) ) }
