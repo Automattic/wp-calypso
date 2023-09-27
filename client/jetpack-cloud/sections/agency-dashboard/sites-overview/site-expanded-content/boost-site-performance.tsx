@@ -46,7 +46,7 @@ export default function BoostSitePerformance( {
 		'Your Overall Score is a summary of your website performance across both mobile and desktop devices.'
 	);
 
-	const isEnabled = !! ( hasBoost || overallScore );
+	const isEnabled = !! ( hasBoost || overallScore ) || hasPendingScore;
 
 	const buttonProps = useMemo(
 		() =>
@@ -119,10 +119,10 @@ export default function BoostSitePerformance( {
 						</div>
 					</div>
 					<div className="site-expanded-content__card-content-column">
-						{ hasPendingScore ? (
-							<InProgressIcon />
-						) : (
-							<>
+						<>
+							{ hasPendingScore ? (
+								<InProgressIcon />
+							) : (
 								<div className="site-expanded-content__device-score-container">
 									<div className="site-expanded-content__card-content-column">
 										<Icon
@@ -141,11 +141,11 @@ export default function BoostSitePerformance( {
 										<span className="site-expanded-content__device-score">{ mobileScore }</span>
 									</div>
 								</div>
-								<div className="site-expanded-content__card-content-score-title">
-									{ translate( 'Devices' ) }
-								</div>
-							</>
-						) }
+							) }
+							<div className="site-expanded-content__card-content-score-title">
+								{ translate( 'Devices' ) }
+							</div>
+						</>
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">

@@ -15,6 +15,8 @@ interface Props {
 	onClose?: () => void;
 	siteId?: number;
 	extraContent?: JSX.Element;
+	isDisabled?: boolean;
+	onCtaClick?: () => void;
 }
 
 export default function LicenseInfoModal( {
@@ -23,6 +25,8 @@ export default function LicenseInfoModal( {
 	onClose,
 	siteId,
 	extraContent,
+	isDisabled,
+	onCtaClick,
 }: Props ) {
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
@@ -52,7 +56,7 @@ export default function LicenseInfoModal( {
 			recordEvent( 'issue_license_info', {
 				product: currentLicenseProductSlug,
 			} );
-			// Update to handle the boost flow
+			onCtaClick?.();
 			onHideLicenseInfo();
 			page(
 				addQueryArgs(
@@ -72,6 +76,7 @@ export default function LicenseInfoModal( {
 			<LicenseLightbox
 				product={ currentLicenseProduct }
 				ctaLabel={ label ?? translate( 'Issue License' ) }
+				isDisabled={ isDisabled }
 				onActivate={ onIssueLicense }
 				onClose={ onHideLicenseInfo }
 				extraContent={ extraContent }
