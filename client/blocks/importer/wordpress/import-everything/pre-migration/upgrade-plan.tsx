@@ -42,7 +42,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		targetSite.ID
 	);
 	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
-	const [ popoverVisible, setPopoverVisible ] = useState( true );
+	const [ popoverVisible, setPopoverVisible ] = useState( false );
 	const trialBtnRef: React.RefObject< HTMLButtonElement > = useRef( null );
 
 	useEffect( () => {
