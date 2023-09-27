@@ -103,16 +103,17 @@ class Document extends Component {
 
 		const isRTL = isLocaleRtl( lang );
 
-		const redirectTo = typeof query?.redirect_to === 'string' ? query.redirect_to.split( '?' ) : [];
+		const redirectToParams =
+			typeof query?.redirect_to === 'string' && query.redirect_to.split( '?' )[ 1 ];
 
 		// Get the client ID from the redirect URL to cover the case of a login URL without the "client_id" parameter.
 		// e.g. /log-in/link/use
-		const clientId = new URLSearchParams( redirectTo[ 1 ] ).get( 'client_id' );
+		const clientId = new URLSearchParams( redirectToParams ).get( 'client_id' );
 
 		const oauth2Client = initialClientsData[ clientId ];
 
 		const isGravPoweredClient =
-			isGravPoweredOAuth2Client( oauth2Client ) && sectionName === 'login';
+			sectionName === 'login' && isGravPoweredOAuth2Client( oauth2Client );
 
 		return (
 			<html
