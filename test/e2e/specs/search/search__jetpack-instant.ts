@@ -103,16 +103,14 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 	} );
 
 	it( 'Enter search term and launch search modal', async function () {
+		// Sometimes the parent block on a homepage has a very high-up aria-hidden.
+		// TODO: figure out what is adding that, and remove the "includeHidden" here.
 		const inputLocator = page
-			.getByRole( 'search' )
-			// Sometimes the parent block on a homepage has a very high-up aria-hidden.
-			// TODO: figure out what is adding that, and remove the "includeHidden" here.
+			.getByRole( 'search', { includeHidden: true } )
 			.getByRole( 'searchbox', { name: 'Search', includeHidden: true } )
 			.first();
 		const buttonLocator = page
-			.getByRole( 'search' )
-			// Sometimes the parent block on a homepage has a very high-up aria-hidden.
-			// TODO: figure out what is adding that, and remove the "includeHidden" here.
+			.getByRole( 'search', { includeHidden: true } )
 			.getByRole( 'button', { name: 'Search', includeHidden: true } )
 			.first();
 
