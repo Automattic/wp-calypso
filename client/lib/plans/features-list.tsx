@@ -293,6 +293,7 @@ import {
 	FEATURE_STREAMLINED_CHECKOUT,
 	FEATURE_SELL_60_COUNTRIES,
 	FEATURE_SHIPPING_INTEGRATIONS,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 	isPersonalPlan,
 	isPremiumPlan,
 	isEcommercePlan,
@@ -2603,6 +2604,11 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PRINT_SHIPPING_LABELS ]: {
 		getSlug: () => FEATURE_PRINT_SHIPPING_LABELS,
 		getTitle: () => i18n.translate( 'Print shipping labels' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION ]: {
+		getSlug: () => FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
+		getTitle: () => i18n.translate( 'AI-assisted product descriptions' ),
 		getDescription: () => '',
 	},
 	/* END: Woo Express Features */

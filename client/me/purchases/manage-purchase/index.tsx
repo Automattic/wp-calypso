@@ -1330,10 +1330,7 @@ class ManagePurchase extends Component<
 						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
-						{ /* We don't want to show the Cancel/Remove nav item for "Jetpack" temporary sites, but we DO
-						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
-						{ /* TODO: Add ability to Cancel Akismet subscription */ }
-						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderRemovePurchaseNavItem() }
+						{ this.renderRemovePurchaseNavItem() }
 					</>
 				) }
 			</Fragment>

@@ -6,7 +6,7 @@ import {
 	useStripeSetupIntentId,
 } from '@automattic/calypso-stripe';
 import { Card, Button } from '@automattic/components';
-import { CheckoutProvider, CheckoutSubmitButton } from '@automattic/composite-checkout';
+import { CheckoutProvider, CheckoutFormSubmit } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
@@ -281,7 +281,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 									{ translate( 'Go back' ) }
 								</Button>
 
-								<CheckoutSubmitButton className="payment-method-add__submit-button" />
+								<CheckoutFormSubmit />
 							</div>
 						</div>
 						<div className="payment-method-add__image">

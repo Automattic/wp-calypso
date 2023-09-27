@@ -24,12 +24,7 @@ import {
 	isEcommerce,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import {
-	CheckoutCheckIcon,
-	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
-	FormStatus,
-	useFormStatus,
-} from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -52,6 +47,7 @@ import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
+import { CheckIcon } from './check-icon';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -743,7 +739,7 @@ const pulse = keyframes`
 	100% { opacity: 1; }
 `;
 
-const CheckoutSummaryCard = styled( CheckoutSummaryCardUnstyled )`
+const CheckoutSummaryCard = styled.div`
 	border-bottom: none 0;
 `;
 
@@ -786,7 +782,7 @@ const CheckoutSummaryFeaturesListWrapper = styled.ul`
 	font-size: 14px;
 `;
 
-const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
+const WPCheckoutCheckIcon = styled( CheckIcon )`
 	fill: ${ ( props ) => props.theme.colors.success };
 	margin-right: 4px;
 	position: absolute;
