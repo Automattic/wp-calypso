@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
@@ -202,11 +203,15 @@ const streamApis = {
 	discover: {
 		path: ( { streamKey } ) => {
 			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
+				if ( config.isEnabled( 'reader/discover-stream' ) ) {
+					return '/read/streams/discover';
+				}
+
 				return '/read/tags/cards';
 			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
-				return '/read/streams/discover';
+				return '/read/tags/posts';
 			}
-			return `/read/streams/discover?tags=${ streamKeySuffix( streamKey ) }`;
+			return `/read/tags/${ streamKeySuffix( streamKey ) }/cards`;
 		},
 		dateProperty: 'date',
 		query: ( extras, { streamKey } ) =>
