@@ -5,7 +5,6 @@ import 'calypso/state/themes/init';
 /**
  * Determine whether a zip of a given theme is hosted on
  * wpcom for download.
- *
  * @param {Object} state Global state tree
  * @param {string} themeId Theme ID
  * @returns {boolean} true if zip is available on wpcom

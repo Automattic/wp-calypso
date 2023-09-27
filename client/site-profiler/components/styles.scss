@@ -92,6 +92,13 @@
 				border: none;
 			}
 
+			&.redacted {
+				border-top: none;
+				padding-top: 0;
+				color: var(--studio-gray-60);
+				font-size: 0.875rem;
+			}
+
 			.name {
 				min-width: 200px;
 				text-transform: uppercase;
@@ -110,6 +117,12 @@
 				&:not(.a-records) {
 					flex-direction: column;
 					gap: 0;
+
+					&.redacted {
+						.name {
+							margin-bottom: 0;
+						}
+					}
 
 					.name {
 						min-width: 0;

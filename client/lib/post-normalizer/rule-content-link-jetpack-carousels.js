@@ -7,7 +7,6 @@ import { forEach, get } from 'lodash';
  * For example,
  * Before: https://example.com/2017/03/25/my-family/img_1/
  * After: https://example.com/2017/03/25/my-family/#jp-carousel-1234
- *
  * @param  {Object} post The post
  * @param  {Object} dom  The DOM for the post's content
  * @returns {Object}      The post, with any additions

@@ -93,7 +93,6 @@ const analyticsPageTitleByType = {
  * For now we just redirect directly to checkout since we do not have any
  * upsell logic ready and want to avoid confusion by show full price products
  * on the plan page.
- *
  * @todo Should we dynamically fetch partners and presets?
  * @todo Should we make a coupon validation request? If the coupon is invalid, we leave the user on the plans page.
  * @todo Accept partner coupon as a query parameter during the initial auth request (client/jetpack-connect/schema.js).

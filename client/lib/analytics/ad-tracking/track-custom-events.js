@@ -5,7 +5,6 @@ import './setup';
 
 /**
  * Fire custom facebook conversion tracking event.
- *
  * @param {string} name - The name of the custom event.
  * @param {Object} properties - The custom event attributes.
  * @returns {void}
@@ -16,7 +15,6 @@ export function trackCustomFacebookConversionEvent( name, properties ) {
 
 /**
  * Fire custom adwords conversation tracking event.
- *
  * @param {Object} properties - The custom event attributes.
  * @returns {void}
  */

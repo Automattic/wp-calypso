@@ -5,9 +5,6 @@
  * This nearly duplicates existing behavior in <MediaListData /> utility
  * library, but does not include the `/` suffix required for REST API
  * filtering, but not utilized in MediaLibrary mime prefix detection.
- *
- *
- *
  * @see /client/components/data/media-list-data/utils.ts
  * @param {string} filter Media filter path segment
  * @returns {string}        Media mime type prefix

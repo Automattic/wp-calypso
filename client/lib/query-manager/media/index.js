@@ -13,7 +13,6 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	/**
 	 * Returns true if the media item matches the given query, or false
 	 * otherwise.
-	 *
 	 * @param  {Object}  query Query object
 	 * @param  {Object}  media Item to consider
 	 * @returns {boolean}       Whether media item matches query
@@ -73,7 +72,6 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	/**
 	 * A sort comparison function that defines the sort order of media items
 	 * under consideration of the specified query.
-	 *
 	 * @param  {Object} query  Query object
 	 * @param  {Object} mediaA First media item
 	 * @param  {Object} mediaB Second media item

@@ -9,7 +9,6 @@ import 'calypso/state/posts/init';
 /**
  * Returns an action thunk which, when dispatched, triggers a network request
  * to save the specified post object.
- *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
  * @param  {Object}   post   Post attributes

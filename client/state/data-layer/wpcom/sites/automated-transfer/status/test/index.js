@@ -44,8 +44,8 @@ describe( 'receiveStatus', () => {
 	test( 'should dispatch set status action', () => {
 		const dispatch = jest.fn();
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
-		expect( dispatch ).toBeCalledTimes( 2 );
-		expect( dispatch ).toBeCalledWith(
+		expect( dispatch ).toHaveBeenCalledTimes( 2 );
+		expect( dispatch ).toHaveBeenCalledWith(
 			setAutomatedTransferStatus( siteId, 'complete', 'hello-dolly' )
 		);
 	} );
@@ -57,7 +57,7 @@ describe( 'receiveStatus', () => {
 			}
 		} );
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
-		expect( dispatch ).toBeCalledTimes( 3 );
+		expect( dispatch ).toHaveBeenCalledTimes( 3 );
 		expect( dispatch ).toHaveBeenLastCalledWith( { type: SITE_REQUEST, siteId } );
 	} );
 
@@ -67,7 +67,7 @@ describe( 'receiveStatus', () => {
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 		jest.runAllTimers();
 
-		expect( dispatch ).toBeCalledTimes( 2 );
-		expect( dispatch ).toBeCalledWith( fetchAutomatedTransferStatus( siteId ) );
+		expect( dispatch ).toHaveBeenCalledTimes( 2 );
+		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 } );

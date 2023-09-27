@@ -4,7 +4,6 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 
 /**
  * Update query for current page or passed in URL
- *
  * @param {Object} query query object
  * @param {string} path full or partial URL. pathname and search required
  * @returns pathname concatenated with query string

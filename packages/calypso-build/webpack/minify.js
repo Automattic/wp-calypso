@@ -46,7 +46,6 @@ function isFeatureSupported( feature, browsers ) {
  *
  * If Terser ever supports `browserslist`, this method will no longer be needed
  * and the world will be a better place.
- *
  * @param {Array<string>} browsers The list of supported browsers.
  * @returns {number} The maximum supported ECMAScript version.
  */
@@ -98,7 +97,6 @@ function chooseTerserEcmaVersion( browsers ) {
 
 /**
  * Returns an array containing a Terser plugin object to be used in Webpack minification.
- *
  * @see https://github.com/webpack-contrib/terser-webpack-plugin for complete descriptions of options.
  * @param {Object} options Options
  * @param options.terserOptions Options for Terser plugin

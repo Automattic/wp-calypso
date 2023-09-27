@@ -10,7 +10,6 @@ import 'calypso/state/stats/init';
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve views for a post or posts.
- *
  * @param  {number}   siteId   Site ID
  * @param  {string}   postIds  Comma separated list of Post IDs
  * @param  {number}   num      Number of days to include in the query
@@ -30,7 +29,6 @@ export function requestRecentPostViews( siteId, postIds, num, date ) {
 /**
  * Returns an action object to be used in signalling that a post views object has
  * been received.
- *
  * @param  {number}  siteId   Site ID
  * @returns {Object}  Action object
  */

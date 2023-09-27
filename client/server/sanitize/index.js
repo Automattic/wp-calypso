@@ -1,6 +1,5 @@
 /**
  * Encode single characters with backslashes.
- *
  * @param {string} charStr single-character string.
  * @returns {string} backslash escaped character.
  * @copyright (c) 2013, GoInstant Inc., a salesforce.com company.
@@ -40,7 +39,6 @@ function jsSlashEncoder( charStr ) {
 
 /**
  * Create JSON serialized string suitable for inclusion in HTML
- *
  * @param {any} value The variable to be serialized
  * @returns {string} JSON serialized string
  */

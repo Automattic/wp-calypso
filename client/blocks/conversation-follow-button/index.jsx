@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { getTracksPropertiesForPost } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
 import { isFollowingReaderConversation } from 'calypso/state/reader/conversations/selectors';
@@ -33,20 +32,21 @@ class ConversationFollowButtonContainer extends Component {
 		const { siteId, postId, post, followSource } = this.props;
 
 		const tracksProperties = {
-			...getTracksPropertiesForPost( post ),
 			follow_source: followSource,
 		};
 
 		if ( isRequestingFollow ) {
 			this.props.recordReaderTracksEvent(
 				'calypso_reader_conversations_post_followed',
-				tracksProperties
+				tracksProperties,
+				{ post }
 			);
 			this.props.followConversation( { siteId, postId } );
 		} else {
 			this.props.recordReaderTracksEvent(
 				'calypso_reader_conversations_post_muted',
-				tracksProperties
+				tracksProperties,
+				{ post }
 			);
 			this.props.muteConversation( { siteId, postId } );
 		}

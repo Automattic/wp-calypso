@@ -425,7 +425,6 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 
 /**
  * Return a whole state with domains data structure
- *
  * @returns {Object} an state instance
  *
  * - first site-domians is not requesting

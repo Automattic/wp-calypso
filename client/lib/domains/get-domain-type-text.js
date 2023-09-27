@@ -2,7 +2,6 @@ import { type as domainTypes, domainInfoContext } from './constants';
 
 /**
  * Translate function placeholder.
- *
  * @param   {string} string Input string
  * @returns {string}        Returns the input string
  */
@@ -12,7 +11,6 @@ function translatePlaceholder( string ) {
 
 /**
  * Get domain type text.
- *
  * @param   {Object}   domain Domain object
  * @param   {Function} __     Translate function
  * @param   {string} context  Context of the returned text (DOMAIN_ITEM: item of a domain list, PAGE_TITLE: title when managing the domain)

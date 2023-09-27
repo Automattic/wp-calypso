@@ -121,6 +121,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 	useEffect( () => {
 		if ( isAtomic ) {
+			// TODO: move this logic from this step to the flow(s). See: https://wp.me/pdDR7T-KR
 			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -205,6 +206,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		site?.ID,
 		allDesigns,
 		pickDesign,
+		pickUnlistedDesign,
 		recordPreviewDesign,
 		recordPreviewStyleVariation
 	);
@@ -453,7 +455,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		// When the user is done with checkout, send them back to the current url
 		// If the theme is externally managed, send them to the marketplace thank you page
 		const destination = selectedDesign?.is_externally_managed
-			? addQueryArgs( `/marketplace/thank-you/${ siteSlug }`, {
+			? addQueryArgs( `/marketplace/thank-you/${ siteSlug }?onboarding`, {
 					themes: selectedDesign?.slug,
 			  } )
 			: window.location.href.replace( window.location.origin, '' );
@@ -620,6 +622,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
 			);
 		}
+	}
+
+	function pickUnlistedDesign( theme: string ) {
+		// TODO: move this logic from this step to the flow(s). See: https://wp.me/pdDR7T-KR
+		exitFlow?.( `/theme/${ theme }/${ siteSlug }` );
 	}
 
 	function designYourOwn( design: Design ) {

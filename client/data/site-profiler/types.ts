@@ -23,7 +23,7 @@ export interface WhoIs {
 	admin_phone?: string;
 	admin_postal_code?: string;
 	admin_state?: string;
-	admin_street?: string;
+	admin_street?: string | string[];
 	creation_date?: string;
 	domain_name?: string;
 	name_server?: string[];
@@ -35,7 +35,7 @@ export interface WhoIs {
 	registrant_phone?: string;
 	registrant_postal_code?: string;
 	registrant_state?: string;
-	registrant_street?: string;
+	registrant_street?: string | string[];
 	registrar?: string;
 	registrar_iana_id?: string;
 	registrar_url?: string;
@@ -52,7 +52,7 @@ export interface WhoIs {
 	tech_phone?: string;
 	tech_postal_code?: string;
 	tech_state?: string;
-	tech_street?: string;
+	tech_street?: string | string[];
 	updated_date?: string;
 }
 

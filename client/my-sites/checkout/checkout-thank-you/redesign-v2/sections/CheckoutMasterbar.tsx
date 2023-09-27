@@ -5,7 +5,7 @@ import MasterbarStyled from '../masterbar-styled';
 
 type HeaderProps = {
 	siteId?: number;
-	siteSlug: string | null;
+	siteSlug?: string | null;
 };
 
 const CheckoutMasterbar = ( { siteId, siteSlug }: HeaderProps ) => {

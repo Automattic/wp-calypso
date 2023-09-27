@@ -142,7 +142,6 @@ export function recordSignupInvalidStep( flow, step ) {
 
 /**
  * Records registration event.
- *
  * @param {Object} param {}
  * @param {Object} param.userData User data
  * @param {string} param.flow Registration flow
@@ -165,7 +164,6 @@ export function recordRegistration( { userData, flow, type } ) {
 
 /**
  * Records loading of the processing screen
- *
  * @param {string} flow Signup flow name
  * @param {string} previousStep The step before the processing screen
  * @param {string} optionalProps Extra properties to record
@@ -182,7 +180,6 @@ export function recordSignupProcessingScreen( flow, previousStep, optionalProps 
 
 /**
  * Records plan change in signup flow
- *
  * @param {string} flow Signup flow name
  * @param {string} step The step when the user changes the plan
  * @param {string} previousPlanName The plan name before changing
