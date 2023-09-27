@@ -23,8 +23,11 @@ export default function getEditorCloseConfig( state, siteId, postType ) {
 	const currentSiteId = state?.ui?.selectedSiteId;
 	const currentSite = state?.sites?.items[ currentSiteId ];
 
-	// Redirect user to Launchpad screen if launchpad is enabled
-	if ( currentSite?.options?.launchpad_screen === 'full' ) {
+	// Redirect user to Launchpad screen if launchpad is enabled and site is not launched.
+	if (
+		currentSite?.options?.launchpad_screen === 'full' &&
+		! currentSite?.options?.launchpad_checklist_tasks_statuses?.site_launched
+	) {
 		const siteSlug = getSiteSlug( state, currentSiteId );
 		const flow = currentSite?.options?.site_intent;
 		return {
