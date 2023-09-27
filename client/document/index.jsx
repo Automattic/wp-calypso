@@ -110,7 +110,7 @@ class Document extends Component {
 		// e.g. /log-in/link/use
 		const clientId = new URLSearchParams( redirectToParams ).get( 'client_id' );
 
-		const oauth2Client = initialClientsData[ clientId ];
+		const oauth2Client = initialClientsData[ clientId ] || {};
 
 		const isGravPoweredClient =
 			sectionName === 'login' && isGravPoweredOAuth2Client( oauth2Client );
