@@ -91,7 +91,7 @@ describe(
 			} );
 
 			it( 'See Home', async function () {
-				await page.waitForURL( /home/, { waitUntil: 'networkidle' } );
+				await page.waitForURL( /home/ );
 			} );
 		} );
 
