@@ -52,7 +52,6 @@
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
-		"fediverse/allow-opt-in": true,
 		"cookie-banner": true,
 		"github-integration-i1": false,
 		"google-my-business": true,
