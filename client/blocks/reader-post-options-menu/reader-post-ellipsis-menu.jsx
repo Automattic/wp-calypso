@@ -166,7 +166,7 @@ class ReaderPostEllipsisMenu extends Component {
 			return;
 		}
 
-		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_seen_clicked' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_seen_clicked', {}, { post } );
 
 		const feedId = post.feed_ID;
 		let postIds = [ post.ID ];
@@ -211,7 +211,7 @@ class ReaderPostEllipsisMenu extends Component {
 			return;
 		}
 
-		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_unseen_clicked' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_unseen_clicked', {}, { post } );
 
 		const feedId = post.feed_ID;
 		let postIds = [ post.ID ];
