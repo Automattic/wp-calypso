@@ -4,7 +4,7 @@ import { TranslateOptions, translate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
-import { useFilteredWhoisData } from 'calypso/data/site-profiler/use-filtered-whois-data';
+import { useFilteredWhoisData } from 'calypso/site-profiler/hooks/use-filtered-whois-data';
 import VerifiedProvider from './verified-provider';
 import type { WhoIs } from 'calypso/data/site-profiler/types';
 import './styles.scss';
