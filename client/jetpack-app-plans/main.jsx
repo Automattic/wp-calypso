@@ -11,75 +11,94 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 
 import './style.scss';
 
+const Header = ( { domainName } ) => (
+	<div className="plans__header">
+		<FormattedHeader
+			brandFont
+			headerText={ translate( 'Choose the perfect plan' ) }
+			align="center"
+		/>
+		<p>
+			{ translate(
+				'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+				{
+					args: { domainName },
+					components: { strong: <strong /> },
+				}
+			) }
+		</p>
+		<p>
+			{ translate(
+				'You’ll also unlock advanced features that make it easy to build and grow your site.'
+			) }
+		</p>
+	</div>
+);
+
+const Plans = ( { domainName, onUpgradeClick, handleRedirect } ) => (
+	<PlansFeaturesMain
+		paidDomainName={ domainName }
+		intent="plans-jetpack-app-site-creation"
+		isInSignup={ true }
+		intervalType="yearly"
+		onUpgradeClick={ onUpgradeClick }
+		plansWithScroll={ false }
+		flowName="onboarding"
+		removePaidDomain={ handleRedirect }
+		hidePlanTypeSelector={ true }
+	/>
+);
+
+const Loading = () => (
+	<div className="plans__loading">
+		<LoadingEllipsis active />
+	</div>
+);
+
 const JetpackAppPlans = ( { domainName, redirectTo } ) => {
 	const planSlug = useSelector( ( state ) =>
 		getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 )
 	);
 	const plansLoaded = Boolean( planSlug );
 
-	// Helper function to handle redirection
 	const handleRedirect = ( data ) => {
 		if ( redirectTo ) {
-			window.location.href = `${ redirectTo }${
-				data ? `?cart_item=${ encodeURIComponent( JSON.stringify( data ) ) }` : ''
-			}`;
+			const cartItemParam = data
+				? `?cart_item=${ encodeURIComponent( JSON.stringify( data ) ) }`
+				: '';
+			window.location.href = `${ redirectTo }${ cartItemParam }`;
 		}
 	};
 
 	const onUpgradeClick = ( cartItems ) => {
-		// There're no cartItems object if the free plan is selected
-		if ( cartItems ) {
-			const planCartItem = getPlanCartItem( cartItems );
-			const planProductSlug = planCartItem.product_slug;
-			const plan = getPlan( planProductSlug );
-			const cartItem = {
-				product_id: plan.getProductId(),
-				product_slug: plan.getStoreSlug(),
-			};
-			handleRedirect( cartItem );
-		} else {
-			handleRedirect();
+		if ( ! cartItems ) {
+			return handleRedirect();
 		}
-	};
 
-	const headline = translate( 'Choose the perfect plan' );
+		const { product_slug: planProductSlug } = getPlanCartItem( cartItems );
+		const plan = getPlan( planProductSlug );
+		const cartItem = {
+			product_id: plan.getProductId(),
+			product_slug: plan.getStoreSlug(),
+		};
+
+		handleRedirect( cartItem );
+	};
 
 	return (
 		<Main className="jetpack-app-plans">
 			<QueryPlans />
 			{ plansLoaded ? (
-				<div className="plans__header">
-					<FormattedHeader brandFont headerText={ headline } align="center" />
-					<p>
-						{ translate(
-							'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
-							{
-								args: { domainName },
-								components: { strong: <strong /> },
-							}
-						) }
-					</p>
-					<p>
-						{ translate(
-							'You’ll also unlock advanced features that make it easy to build and grow your site.'
-						) }
-					</p>
-					<PlansFeaturesMain
-						paidDomainName={ domainName }
-						intent="plans-jetpack-app-site-creation"
-						isInSignup
-						intervalType="yearly"
+				<>
+					<Header domainName={ domainName } />
+					<Plans
+						domainName={ domainName }
 						onUpgradeClick={ onUpgradeClick }
-						plansWithScroll={ false }
-						flowName="onboarding"
-						removePaidDomain={ handleRedirect }
-						hidePlanTypeSelector
+						handleRedirect={ handleRedirect }
 					/>
-				</div>
+				</>
 			) : (
-				<div className="plans__loading">
-					<LoadingEllipsis active />
-				</div>
+				<Loading />
 			) }
 		</Main>
 	);
