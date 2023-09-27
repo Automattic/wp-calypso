@@ -1,6 +1,6 @@
-import { forwardRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
@@ -9,6 +9,7 @@ import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provi
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
+import PlansGridContextProvider from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
 import { useIsPlanUpgradeCreditVisible } from './hooks/use-is-plan-upgrade-credit-visible';
@@ -26,8 +27,7 @@ import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 export interface PlansGridProps {
-	gridPlansForFeaturesGrid: GridPlan[];
-	gridPlansForComparisonGrid: GridPlan[];
+	gridPlans: GridPlan[];
 	gridPlanForSpotlight?: GridPlan;
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
@@ -64,17 +64,25 @@ export interface PlansGridProps {
 	observableForOdieRef: ( observableElement: Element | null ) => void;
 }
 
-const WrappedComparisonGrid = ( props: PlansGridProps ) => {
-	const { siteId } = props;
-	const translate = useTranslate();
-	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-		props.siteId,
-		props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
-	);
-	const isLargeCurrency = useIsLargeCurrency( {
-		gridPlans: props.gridPlansForFeaturesGrid,
-	} );
-
+const WrappedComparisonGrid = ( {
+	siteId,
+	intent,
+	gridPlans,
+	usePricingMetaForGridPlans,
+	allFeaturesList,
+	onUpgradeClick,
+	planTypeSelectorProps,
+	intervalType,
+	isInSignup,
+	isLaunchPage,
+	flowName,
+	currentSitePlanSlug,
+	selectedPlan,
+	selectedFeature,
+	showLegacyStorageFeature,
+	showUpgradeableStorage,
+	onStorageAddOnClick,
+}: PlansGridProps ) => {
 	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
 		siteId
@@ -93,50 +101,83 @@ const WrappedComparisonGrid = ( props: PlansGridProps ) => {
 			: `/plans/my-plan/${ siteId }`;
 
 	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlansForFeaturesGrid: props.gridPlansForFeaturesGrid,
-		onUpgradeClick: props.onUpgradeClick,
+		gridPlans,
+		onUpgradeClick,
 	} );
 
-	if ( props.isInSignup ) {
+	if ( isInSignup ) {
 		return (
-			<ComparisonGrid
-				{ ...props }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				isLargeCurrency={ isLargeCurrency }
-				canUserPurchasePlan={ canUserPurchasePlan }
-				manageHref={ manageHref }
-				selectedSiteSlug={ selectedSiteSlug }
-				translate={ translate }
-				handleUpgradeClick={ handleUpgradeClick }
-			/>
+			<PlansGridContextProvider
+				intent={ intent }
+				gridPlans={ gridPlans }
+				usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+				allFeaturesList={ allFeaturesList }
+			>
+				<QueryActivePromotions />
+				<ComparisonGrid
+					planTypeSelectorProps={ planTypeSelectorProps }
+					intervalType={ intervalType }
+					isInSignup={ isInSignup }
+					isLaunchPage={ isLaunchPage }
+					flowName={ flowName }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					manageHref={ manageHref }
+					canUserPurchasePlan={ canUserPurchasePlan }
+					selectedSiteSlug={ selectedSiteSlug }
+					onUpgradeClick={ handleUpgradeClick }
+					siteId={ siteId }
+					selectedPlan={ selectedPlan }
+					selectedFeature={ selectedFeature }
+					showLegacyStorageFeature={ showLegacyStorageFeature }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					onStorageAddOnClick={ onStorageAddOnClick }
+				/>
+			</PlansGridContextProvider>
 		);
 	}
 
 	return (
-		<CalypsoShoppingCartProvider>
-			<ComparisonGrid
-				{ ...props }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				isLargeCurrency={ isLargeCurrency }
-				canUserPurchasePlan={ canUserPurchasePlan }
-				manageHref={ manageHref }
-				selectedSiteSlug={ selectedSiteSlug }
-				translate={ translate }
-				handleUpgradeClick={ handleUpgradeClick }
-			/>
-		</CalypsoShoppingCartProvider>
+		<PlansGridContextProvider
+			intent={ intent }
+			gridPlans={ gridPlans }
+			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+			allFeaturesList={ allFeaturesList }
+		>
+			<CalypsoShoppingCartProvider>
+				<QueryActivePromotions />
+				<ComparisonGrid
+					planTypeSelectorProps={ planTypeSelectorProps }
+					intervalType={ intervalType }
+					isInSignup={ isInSignup }
+					isLaunchPage={ isLaunchPage }
+					flowName={ flowName }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					manageHref={ manageHref }
+					canUserPurchasePlan={ canUserPurchasePlan }
+					selectedSiteSlug={ selectedSiteSlug }
+					onUpgradeClick={ handleUpgradeClick }
+					siteId={ siteId }
+					selectedPlan={ selectedPlan }
+					selectedFeature={ selectedFeature }
+					showLegacyStorageFeature={ showLegacyStorageFeature }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					onStorageAddOnClick={ onStorageAddOnClick }
+				/>
+			</CalypsoShoppingCartProvider>
+		</PlansGridContextProvider>
 	);
 };
 
 const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
-	const { siteId } = props;
+	const { siteId, intent, gridPlans, usePricingMetaForGridPlans, allFeaturesList, onUpgradeClick } =
+		props;
 	const translate = useTranslate();
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-		props.siteId,
-		props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+		siteId,
+		gridPlans.map( ( gridPlan ) => gridPlan.planSlug )
 	);
 	const isLargeCurrency = useIsLargeCurrency( {
-		gridPlans: props.gridPlansForFeaturesGrid,
+		gridPlans,
 	} );
 
 	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
@@ -157,38 +198,55 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 			: `/plans/my-plan/${ siteId }`;
 
 	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlansForFeaturesGrid: props.gridPlansForFeaturesGrid,
-		onUpgradeClick: props.onUpgradeClick,
+		gridPlans,
+		onUpgradeClick,
 	} );
 
 	if ( props.isInSignup ) {
 		return (
-			<FeaturesGrid
-				{ ...props }
-				plansComparisonGridRef={ ref }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				isLargeCurrency={ isLargeCurrency }
-				canUserPurchasePlan={ canUserPurchasePlan }
-				manageHref={ manageHref }
-				selectedSiteSlug={ selectedSiteSlug }
-				translate={ translate }
-				handleUpgradeClick={ handleUpgradeClick }
-			/>
+			<PlansGridContextProvider
+				intent={ intent }
+				gridPlans={ gridPlans }
+				usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+				allFeaturesList={ allFeaturesList }
+			>
+				<QueryActivePromotions />
+				<FeaturesGrid
+					{ ...props }
+					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+					isLargeCurrency={ isLargeCurrency }
+					canUserPurchasePlan={ canUserPurchasePlan }
+					manageHref={ manageHref }
+					selectedSiteSlug={ selectedSiteSlug }
+					translate={ translate }
+					handleUpgradeClick={ handleUpgradeClick }
+				/>
+			</PlansGridContextProvider>
 		);
 	}
 
 	return (
-		<CalypsoShoppingCartProvider>
-			<FeaturesGrid
-				{ ...props }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				isLargeCurrency={ isLargeCurrency }
-				canUserPurchasePlan={ canUserPurchasePlan }
-				manageHref={ manageHref }
-				selectedSiteSlug={ selectedSiteSlug }
-				translate={ translate }
-				handleUpgradeClick={ handleUpgradeClick }
-			/>
-		</CalypsoShoppingCartProvider>
+		<PlansGridContextProvider
+			intent={ intent }
+			gridPlans={ gridPlans }
+			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+			allFeaturesList={ allFeaturesList }
+		>
+			<CalypsoShoppingCartProvider>
+				<QueryActivePromotions />
+				<FeaturesGrid
+					{ ...props }
+					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+					isLargeCurrency={ isLargeCurrency }
+					canUserPurchasePlan={ canUserPurchasePlan }
+					manageHref={ manageHref }
+					selectedSiteSlug={ selectedSiteSlug }
+					translate={ translate }
+					handleUpgradeClick={ handleUpgradeClick }
+				/>
+			</CalypsoShoppingCartProvider>
+		</PlansGridContextProvider>
 	);
 };
+
+export { WrappedFeaturesGrid as FeaturesGrid, WrappedComparisonGrid as ComparisonGrid };

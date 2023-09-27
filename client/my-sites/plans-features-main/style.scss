@@ -37,7 +37,7 @@
 		overflow-x: visible;
 
 		@include plans-2023-break-small {
-			padding-top: 35px; // enough to cover `plan-features-2023-grid__popular-badge` repositioning (top: -35px)
+			padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
 			margin: 0;
 		}
 
