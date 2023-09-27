@@ -25,14 +25,19 @@ const JetpackAppPlans = ( { domainName, redirectTo } ) => {
 	};
 
 	const onUpgradeClick = ( cartItems ) => {
-		const planCartItem = getPlanCartItem( cartItems );
-		const planProductSlug = planCartItem.product_slug;
-		const plan = getPlan( planProductSlug );
-		const cartItem = {
-			product_id: plan.getProductId(),
-			product_slug: plan.getStoreSlug(),
-		};
-		handleRedirect( cartItem );
+		// There're no cartItems object if the free plan is selected
+		if ( cartItems ) {
+			const planCartItem = getPlanCartItem( cartItems );
+			const planProductSlug = planCartItem.product_slug;
+			const plan = getPlan( planProductSlug );
+			const cartItem = {
+				product_id: plan.getProductId(),
+				product_slug: plan.getStoreSlug(),
+			};
+			handleRedirect( cartItem );
+		} else {
+			handleRedirect();
+		}
 	};
 
 	const removePaidDomain = () => handleRedirect();
