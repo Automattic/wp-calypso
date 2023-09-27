@@ -31,22 +31,15 @@ $heading-font-family: "SF Pro Display", $sans;
 
 	.domain-contact-info-form {
 		&__terms {
-			padding-left: 24px;
-			position: relative;
 			font-size: $font-body-small;
-			margin-left: 0;
+			color: var(--color-text-subtle);
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			column-gap: 5px;
 
 			> svg {
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 16px;
-				height: 16px;
-
-				.rtl & {
-					left: auto;
-					right: 0;
-				}
+				flex-shrink: 0;
 			}
 
 			p {
