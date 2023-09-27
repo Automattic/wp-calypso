@@ -43,18 +43,21 @@
 				color: $studio-gray-100;
 			}
 
-			&__subtitle {
+			&__subtitle .site-subscription-header {
 				font-family: "SF Pro Text", $sans;
 				font-weight: 400;
 				color: $studio-gray-40;
 
+				&__view-feed-button {
+					padding: 0;
+					height: auto;
+					min-width: unset;
+				}
+
 				.external-link {
 					color: $studio-gray-40;
 					white-space: nowrap;
-
-					&:hover {
-						text-decoration: underline;
-					}
+					text-decoration: underline;
 				}
 			}
 		}

@@ -14,7 +14,7 @@ import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
@@ -69,6 +69,7 @@ const ImageSection = styled.div`
 	}
 `;
 
+// @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component
 const Header = styled( FormattedHeader )`
 	.formatted-header__title {
 		line-height: 3rem;
@@ -324,6 +325,7 @@ export default function DIFMLanding( {
 			{ ! hasPriceDataLoaded && <QueryProductsList /> }
 			<Wrapper>
 				<ContentSection>
+					{ /* @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component */ }
 					<Header align="left" headerText={ headerText } subHeaderText={ subHeaderText } />
 					<VerticalStepProgress>
 						<Step

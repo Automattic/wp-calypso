@@ -40,6 +40,7 @@ const ReaderSiteSubscription = () => {
 						<SiteSubscriptionDetails
 							subscriptionId={ data.ID }
 							blogId={ data.blog_ID }
+							feedId={ data.feed_ID }
 							name={ data.name }
 							subscriberCount={ data.subscriber_count }
 							dateSubscribed={ data.date_subscribed }
