@@ -85,12 +85,6 @@ class HandleEmailedLinkForm extends Component {
 		) {
 			this.handleSubmit();
 		}
-
-		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
-			document
-				.querySelector( '.layout.is-section-login' )
-				?.classList.add( 'is-grav-powered-login-page' );
-		}
 	}
 
 	handleSubmit = ( event ) => {
@@ -250,10 +244,8 @@ class HandleEmailedLinkForm extends Component {
 }
 
 const mapState = ( state ) => {
-	const redirectToOriginal = getRedirectToOriginal( state );
-	const redirectToOriginalParams =
-		typeof redirectToOriginal === 'string' && redirectToOriginal.split( '?' )[ 1 ];
-	const clientId = new URLSearchParams( redirectToOriginalParams ).get( 'client_id' );
+	const redirectToOriginal = getRedirectToOriginal( state ) || '';
+	const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'client_id' );
 	const oauth2Client = state.oauth2Clients?.clients?.[ clientId ] || {};
 
 	return {
