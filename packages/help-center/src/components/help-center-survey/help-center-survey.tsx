@@ -1,5 +1,6 @@
 import './help-center-survey.scss';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocale } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
@@ -52,8 +53,19 @@ export function Survey() {
 
 	const answeredBefore = data?.calypso_preferences[ 'dismissed-help-center-survey' ];
 
+	const locale = useLocale();
+
+	// The survey is only available in English.
+	const englishLocale = locale?.startsWith( 'en' );
+
 	// Only show in Simple sites and Calypso.
-	if ( skipped || ! canAccessWpcomApis() || isLoading || answeredBefore === 'dismiss' ) {
+	if (
+		! englishLocale ||
+		skipped ||
+		! canAccessWpcomApis() ||
+		isLoading ||
+		answeredBefore === 'dismiss'
+	) {
 		return null;
 	}
 
