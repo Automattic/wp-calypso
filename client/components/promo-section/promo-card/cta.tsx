@@ -25,6 +25,10 @@ export interface CtaButton {
 export interface Props {
 	cta: CtaButton;
 	learnMoreLink?: CtaAction | null;
+	/**
+	 * Displays "Included in your current plan" if true or "Not included in your current plan" if false.
+	 * Ignored if undefined or if `learnMoreLink` is set.
+	 */
 	featureIncludedInPlan?: boolean;
 	isPrimary?: boolean;
 }
@@ -85,16 +89,6 @@ const PromoCardCta: FunctionComponent< Props > = ( {
 			  };
 	}
 
-	/*
-	 * Shows a notice for whether a promoted feature is
-	 * included in the user's current plan. For layout
-	 * reasons, we show this or learn more link, but not both.
-	 *
-	 * If featureIncludedInPlan is not passed (undefined), then
-	 * nothing will show. If featureIncludedInPlan is true, we show
-	 * a green check and notice. If featureIncludedInPlan is false,
-	 * we show a red cross and notice.
-	 */
 	const getAvailabilityNotice = () => {
 		if ( featureIncludedInPlan === undefined ) {
 			return null;
