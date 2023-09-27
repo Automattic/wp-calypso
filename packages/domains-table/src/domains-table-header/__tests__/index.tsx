@@ -38,6 +38,8 @@ test( 'domain columns are rendered in the header', () => {
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
 			canSelectAnyDomains
+			domainCount={ 1 }
+			selectedDomainsCount={ 0 }
 		/>
 	);
 
@@ -64,6 +66,8 @@ test( 'renders custom header component', () => {
 			onChangeSortOrder={ jest.fn() }
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
+			domainCount={ 1 }
+			selectedDomainsCount={ 0 }
 		/>
 	);
 
@@ -80,6 +84,8 @@ test( 'renders a chevron next to sortable columns', () => {
 			onChangeSortOrder={ jest.fn() }
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
+			domainCount={ 1 }
+			selectedDomainsCount={ 0 }
 		/>
 	);
 
@@ -99,6 +105,8 @@ test( 'columns that are not sortable do not renders a chevron', () => {
 			onChangeSortOrder={ jest.fn() }
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
+			domainCount={ 1 }
+			selectedDomainsCount={ 0 }
 		/>
 	);
 
@@ -119,6 +127,8 @@ test( 'no checkbox is rendered if no domains are selectable', () => {
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
 			canSelectAnyDomains={ false }
+			domainCount={ 1 }
+			selectedDomainsCount={ 0 }
 		/>
 	);
 

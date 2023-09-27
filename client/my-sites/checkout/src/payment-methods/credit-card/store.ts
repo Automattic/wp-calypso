@@ -1,4 +1,4 @@
-import { registerStore } from '@wordpress/data';
+import { registerStore, createRegistry } from '@wordpress/data';
 import debugFactory from 'debug';
 import { maskField } from 'calypso/lib/checkout';
 import type {
@@ -66,9 +66,11 @@ export type WpcomCreditCardSelectors = SelectFromMap< typeof selectors >;
 export function createCreditCardPaymentMethodStore( {
 	initialUseForAllSubscriptions,
 	allowUseForAllSubscriptions,
+	registry,
 }: {
 	initialUseForAllSubscriptions?: boolean;
 	allowUseForAllSubscriptions?: boolean;
+	registry?: ReturnType< typeof createRegistry >;
 } ): CardStoreType {
 	debug( 'creating a new credit card payment method store' );
 
@@ -169,28 +171,32 @@ export function createCreditCardPaymentMethodStore( {
 		return false;
 	}
 
-	return registerStore( 'wpcom-credit-card', {
-		reducer(
-			state = {
-				fields: fieldReducer(),
-				cardDataErrors: cardDataErrorsReducer(),
-				cardDataComplete: cardDataCompleteReducer(),
-				brand: brandReducer(),
-				useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
+	function createStore( registerStoreFunction: typeof registerStore ) {
+		return registerStoreFunction( 'wpcom-credit-card', {
+			reducer(
+				state = {
+					fields: fieldReducer(),
+					cardDataErrors: cardDataErrorsReducer(),
+					cardDataComplete: cardDataCompleteReducer(),
+					brand: brandReducer(),
+					useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
+				},
+				action: AnyAction
+			) {
+				return {
+					fields: fieldReducer( state.fields, action ),
+					cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
+					cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
+					brand: brandReducer( state.brand, action ),
+					useForAllSubscriptions: allowUseForAllSubscriptions
+						? allSubscriptionsReducer( state.useForAllSubscriptions, action )
+						: false,
+				};
 			},
-			action: AnyAction
-		) {
-			return {
-				fields: fieldReducer( state.fields, action ),
-				cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
-				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
-				brand: brandReducer( state.brand, action ),
-				useForAllSubscriptions: allowUseForAllSubscriptions
-					? allSubscriptionsReducer( state.useForAllSubscriptions, action )
-					: false,
-			};
-		},
-		actions,
-		selectors,
-	} );
+			actions,
+			selectors,
+		} );
+	}
+
+	return createStore( registry?.registerStore ?? registerStore );
 }

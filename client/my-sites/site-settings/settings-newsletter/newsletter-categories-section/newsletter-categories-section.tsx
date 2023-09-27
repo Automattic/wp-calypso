@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -6,43 +6,62 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import NewsletterCategoriesToggle from './newsletter-categories-toggle';
 import './style.scss';
 
-type NewsletterCategoriesSettingsProps = {
+type NewsletterCategoriesSectionProps = {
 	disabled?: boolean;
-	handleAutosavingToggle: ( field: string ) => ( value: boolean ) => void;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	handleSubmitForm: () => void;
+	newsletterCategoriesEnabled?: boolean;
 	newsletterCategoryIds: number[];
-	toggleValue?: boolean;
 	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
+	isSavingSettings: boolean;
 };
 
-const NewsletterCategoriesSettings = ( {
+const NewsletterCategoriesSection = ( {
 	disabled,
-	handleAutosavingToggle,
-	toggleValue,
+	handleToggle,
+	newsletterCategoriesEnabled,
 	newsletterCategoryIds,
 	handleSubmitForm,
 	updateFields,
-}: NewsletterCategoriesSettingsProps ) => {
+	isSavingSettings,
+}: NewsletterCategoriesSectionProps ) => {
 	const translate = useTranslate();
 	const { hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
 
 	return (
-		<div className="newsletter-categories-settings">
-			<NewsletterCategoriesToggle
+		<>
+			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+			<SettingsSectionHeader
+				id="newsletter-categories-settings"
+				title={ translate( 'Newsletter categories settings' ) }
+				showButton
+				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
-				handleAutosavingToggle={ handleAutosavingToggle }
-				value={ toggleValue }
+				isSaving={ isSavingSettings }
 			/>
 
-			<div
-				aria-hidden={ ! toggleValue }
-				className={ classNames( 'newsletter-categories-settings__term-tree-selector', {
-					hidden: ! toggleValue,
-				} ) }
+			<Card className="site-settings__card">
+				<NewsletterCategoriesToggle
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ newsletterCategoriesEnabled }
+				/>
+			</Card>
+
+			<Card
+				className={ classNames(
+					'newsletter-categories-settings__term-tree-selector',
+					'site-settings__card',
+					{
+						hidden: ! newsletterCategoriesEnabled,
+					}
+				) }
+				aria-hidden={ ! newsletterCategoriesEnabled }
 			>
 				<TermTreeSelector
 					taxonomy="category"
@@ -78,18 +97,9 @@ const NewsletterCategoriesSettings = ( {
 								'When adding a new newsletter category, your subscribers will be automatically subscribed to it. They won’t receive any email notification when the category is created.'
 						  ) }
 				</FormSettingExplanation>
-				<Button
-					primary
-					compact
-					disabled={ disabled }
-					className="newsletter-categories-settings__save-button"
-					onClick={ handleSubmitForm }
-				>
-					{ translate( 'Save settings' ) }
-				</Button>
-			</div>
-		</div>
+			</Card>
+		</>
 	);
 };
 
-export default NewsletterCategoriesSettings;
+export default NewsletterCategoriesSection;

@@ -1,7 +1,7 @@
-import { Gridicon } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
+import { Icon, link } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import Tooltip from 'calypso/components/tooltip';
@@ -64,7 +64,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 							</div>
 
 							<Button onClick={ copyHandler } className="share-site-modal__modal-view-site">
-								<Gridicon icon="link" size={ 18 } />
+								<Icon icon={ link } size={ 22 } />
 								<span className="share-site-modal__modal-view-site-text">
 									{ translate( 'Copy' ) }
 								</span>

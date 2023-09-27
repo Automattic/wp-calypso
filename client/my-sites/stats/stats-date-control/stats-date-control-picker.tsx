@@ -1,4 +1,5 @@
 import { Dropdown, Button } from '@wordpress/components';
+import moment from 'moment';
 import page from 'page';
 import qs from 'qs';
 import React, { useState } from 'react';
@@ -58,6 +59,10 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 		setInputEndDate( formattedDate( newEndDate ) );
 	};
 
+	const formatDate = ( date: string ) => {
+		return moment( date ).format( 'MMM D, YYYY' );
+	};
+
 	const DateControlPickerContent = () => (
 		// TODO: Remove this inline CSS.
 		<div style={ { minWidth: '260px' } }>
@@ -81,7 +86,7 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 			popoverProps={ { placement: 'bottom-end' } }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button variant="primary" onClick={ onToggle } aria-expanded={ isOpen }>
-					{ `${ inputStartDate } - ${ inputEndDate }` }
+					{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
 				</Button>
 			) }
 			renderContent={ () => <DateControlPickerContent /> }

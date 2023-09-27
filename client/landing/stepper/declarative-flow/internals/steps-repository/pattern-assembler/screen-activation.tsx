@@ -14,7 +14,7 @@ interface Props {
 
 const ScreenActivation = ( { onActivate }: Props ) => {
 	const translate = useTranslate();
-	const { title } = useScreen( 'activation' );
+	const { title, description, continueLabel } = useScreen( 'activation' );
 	const [ isConfirmed, setIsConfirmed ] = useState( false );
 	const toggleConfirm = () => setIsConfirmed( ( value ) => ! value );
 
@@ -22,7 +22,7 @@ const ScreenActivation = ( { onActivate }: Props ) => {
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ title } /> }
-				description={ translate( 'Activating this theme will result in the following changes.' ) }
+				description={ description }
 				hideBack
 			/>
 			<div className="screen-container__body">
@@ -60,7 +60,7 @@ const ScreenActivation = ( { onActivate }: Props ) => {
 					aria-disabled={ ! isConfirmed }
 					onClick={ onActivate }
 				>
-					{ translate( 'Activate' ) }
+					{ continueLabel }
 				</Button>
 			</div>
 		</>

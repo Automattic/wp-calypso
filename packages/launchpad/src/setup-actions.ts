@@ -11,6 +11,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'earn_money',
 	'manage_subscribers',
 	'connect_social_media',
+	'drive_traffic',
 ];
 
 export const setUpActionsForTasks = ( {
@@ -123,6 +124,7 @@ export const setUpActionsForTasks = ( {
 					break;
 				case 'site_launched':
 				case 'videopress_launched':
+				case 'link_in_bio_launched':
 					action = async () => {
 						await wpcomRequest( {
 							path: `/sites/${ siteSlug }/launch`,

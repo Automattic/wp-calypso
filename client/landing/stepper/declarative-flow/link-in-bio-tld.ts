@@ -1,3 +1,4 @@
+import { updateLaunchpadSettings, type UserSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -22,7 +23,6 @@ import PlansStep from './internals/steps-repository/plans';
 import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
 
 const linkInBio: Flow = {
 	name: LINK_IN_BIO_TLD_FLOW,
@@ -135,10 +135,13 @@ const linkInBio: Flow = {
 			return;
 		};
 
-		const goNext = () => {
+		const goNext = async () => {
 			switch ( _currentStepSlug ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteId ?? siteSlug }` );
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+					}
+					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
 
 				default:
 					return navigate( 'intro' );

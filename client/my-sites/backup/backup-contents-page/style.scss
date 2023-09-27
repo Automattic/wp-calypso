@@ -1,5 +1,10 @@
 @import "@automattic/onboarding/styles/mixins";
 
+.theme-jetpack-cloud .backup-contents-page {
+	--wp-components-color-accent: var(--studio-jetpack-green-50);
+	--wp-admin-theme-color: var(--studio-jetpack-green-50);
+}
+
 .backup-contents-page {
 	.card {
 		padding: 24px 22px;
@@ -240,6 +245,32 @@
 					color: #fff;
 				}
 			}
+		}
+	}
+
+	.components-checkbox-control {
+		float: left;
+
+		.components-checkbox-control__input-container {
+			margin: 8px;
+			line-height: 0;
+			width: 16px;
+			height: 16px;
+		}
+
+		.components-checkbox-control__input {
+			height: 16px;
+			vertical-align: middle;
+			width: 16px;
+			min-width: 16px;
+		}
+
+		svg.components-checkbox-control__checked,
+		svg.components-checkbox-control__indeterminate {
+			left: -2px;
+			top: -2px;
+			height: 20px;
+			width: 20px;
 		}
 	}
 }

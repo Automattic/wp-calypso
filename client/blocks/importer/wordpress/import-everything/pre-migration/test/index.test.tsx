@@ -166,6 +166,7 @@ describe( 'PreMigration', () => {
 			isTargetSitePlanCompatible: true,
 			isMigrateFromWp: true,
 			onContentOnlyClick,
+			sourceSite: sourceSite,
 		} );
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore

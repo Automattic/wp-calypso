@@ -25,7 +25,11 @@ import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import {
+	planItem as getCartItemForPlan,
+	getPlanCartItem,
+} from 'calypso/lib/cart-values/cart-items';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
@@ -98,7 +102,7 @@ export interface PlansFeaturesMainProps {
 	basePlansPath?: string;
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
-	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
+	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -214,10 +218,8 @@ const PlansFeaturesMain = ( {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
 	const [ isFreePlanFreeDomainDialogOpen, setIsFreePlanFreeDomainDialogOpen ] = useState( false );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
-	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
-	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
-	const storageAddOns = useAddOns( siteId ?? undefined ).filter(
+	const storageAddOns = useAddOns( siteId ?? undefined, isInSignup ).filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
 	);
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
@@ -258,6 +260,17 @@ const PlansFeaturesMain = ( {
 		useGetFreeSubdomainSuggestion(
 			paidDomainName || siteTitle || signupFlowUserName || currentUserName
 		);
+
+	// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
+	// We can use `useExperiment()` and its `isEligible` check to avoid the condition, but it's intentional to use loadExperimentAssignment() here
+	// to be consistent with the other A/A tests.
+	useEffect( () => {
+		if ( flowName === 'onboarding' ) {
+			loadExperimentAssignment( 'calypso_srm_test_plans_page_view_free_plan_modal_view' );
+			loadExperimentAssignment( 'calypso_srm_test_plans_page_view_free_plan_button_click' );
+		}
+	}, [] );
+
 	const resolvedSubdomainName: DataResponse< string > = {
 		isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
 		result: signupFlowSubdomain
@@ -284,7 +297,12 @@ const PlansFeaturesMain = ( {
 		setIsFreePlanPaidDomainDialogOpen( ! isFreePlanPaidDomainDialogOpen );
 	};
 
-	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
+	const handleUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
+		const cartItemForPlan = getPlanCartItem( cartItems );
+		const cartItemForStorageAddOn = cartItems?.find(
+			( items ) => items.product_slug === PRODUCT_1GB_SPACE
+		);
+
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
@@ -301,8 +319,14 @@ const PlansFeaturesMain = ( {
 			}
 		}
 
+		if ( cartItemForStorageAddOn?.extra ) {
+			recordTracksEvent( 'calypso_signup_storage_add_on_upgrade_click', {
+				add_on_slug: cartItemForStorageAddOn.extra.feature_slug,
+			} );
+		}
+
 		if ( onUpgradeClick ) {
-			onUpgradeClick( cartItemForPlan );
+			onUpgradeClick( cartItems );
 			return;
 		}
 
@@ -488,6 +512,7 @@ const PlansFeaturesMain = ( {
 			  )
 			: undefined;
 
+	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	/**
 	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
 	 * for the sticky CTA bar.
@@ -524,6 +549,10 @@ const PlansFeaturesMain = ( {
 		};
 	}, [] );
 
+	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
+	/**
+	 * Scrolls the comparison grid smoothly into view when rendered.
+	 */
 	useLayoutEffect( () => {
 		if ( showPlansComparisonGrid ) {
 			setTimeout( () => {
@@ -576,7 +605,8 @@ const PlansFeaturesMain = ( {
 					} }
 					onPlanSelected={ () => {
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
+						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
+						onUpgradeClick?.( cartItems );
 					} }
 				/>
 			) }
@@ -598,7 +628,8 @@ const PlansFeaturesMain = ( {
 						}
 						invalidateDomainSuggestionCache();
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
+						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
+						onUpgradeClick?.( cartItems );
 					} }
 				/>
 			) }
@@ -660,38 +691,45 @@ const PlansFeaturesMain = ( {
 						) }
 						data-e2e-plans="wpcom"
 					>
-						<PlanFeatures2023Grid
-							gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
-							gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
-							gridPlanForSpotlight={ gridPlanForSpotlight }
-							paidDomainName={ paidDomainName }
-							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
-							onUpgradeClick={ handleUpgradeClick }
-							flowName={ flowName }
-							selectedFeature={ selectedFeature }
-							selectedPlan={ selectedPlan }
-							siteId={ siteId }
-							isReskinned={ isReskinned }
-							intervalType={ intervalType }
-							hidePlansFeatureComparison={ hidePlansFeatureComparison }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
-							currentSitePlanSlug={ sitePlanSlug }
-							planActionOverrides={ planActionOverrides }
-							intent={ intent }
-							showLegacyStorageFeature={ showLegacyStorageFeature }
-							showUpgradeableStorage={ showUpgradeableStorage }
-							stickyRowOffset={ masterbarHeight }
-							usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-							allFeaturesList={ FEATURES_LIST }
-							showPlansComparisonGrid={ showPlansComparisonGrid }
-							toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
-							planTypeSelectorProps={ planTypeSelectorProps }
-							ref={ plansComparisonGridRef }
-							observableForOdieRef={ observableForOdieRef }
-						/>
+						<div className="plans-wrapper">
+							<PlanFeatures2023Grid
+								gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
+								gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
+								gridPlanForSpotlight={ gridPlanForSpotlight }
+								paidDomainName={ paidDomainName }
+								wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+								isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+								isInSignup={ isInSignup }
+								isLaunchPage={ isLaunchPage }
+								onUpgradeClick={ handleUpgradeClick }
+								flowName={ flowName }
+								selectedFeature={ selectedFeature }
+								selectedPlan={ selectedPlan }
+								siteId={ siteId }
+								isReskinned={ isReskinned }
+								intervalType={ intervalType }
+								hidePlansFeatureComparison={ hidePlansFeatureComparison }
+								hideUnavailableFeatures={ hideUnavailableFeatures }
+								currentSitePlanSlug={ sitePlanSlug }
+								planActionOverrides={ planActionOverrides }
+								intent={ intent }
+								showLegacyStorageFeature={ showLegacyStorageFeature }
+								showUpgradeableStorage={ showUpgradeableStorage }
+								stickyRowOffset={ masterbarHeight }
+								usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+								allFeaturesList={ FEATURES_LIST }
+								showPlansComparisonGrid={ showPlansComparisonGrid }
+								toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
+								planTypeSelectorProps={ planTypeSelectorProps }
+								ref={ plansComparisonGridRef }
+								observableForOdieRef={ observableForOdieRef }
+								onStorageAddOnClick={ ( addOnSlug ) =>
+									recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
+										add_on_slug: addOnSlug,
+									} )
+								}
+							/>
+						</div>
 					</div>
 				</>
 			) }

@@ -9,11 +9,13 @@ import { ResolveDomainStatusReturn } from '../utils/resolve-domain-status';
 interface DomainsTableStatusCellProps {
 	domainStatus: ResolveDomainStatusReturn | null;
 	pendingUpdates: DomainUpdateStatus[];
+	as?: 'td' | 'div';
 }
 
 export const DomainsTableStatusCell = ( {
 	domainStatus,
 	pendingUpdates,
+	as: Element = 'div',
 }: DomainsTableStatusCellProps ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -40,7 +42,7 @@ export const DomainsTableStatusCell = ( {
 	};
 
 	return (
-		<div
+		<Element
 			className={ classNames( 'domains-table-row__status-cell', {
 				[ `domains-table-row__status-cell__${ domainStatus?.statusClass }` ]:
 					!! domainStatus?.statusClass,
@@ -75,6 +77,6 @@ export const DomainsTableStatusCell = ( {
 					{ domainStatus.noticeText }
 				</StatusPopover>
 			) }
-		</div>
+		</Element>
 	);
 };

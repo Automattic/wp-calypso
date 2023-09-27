@@ -31,7 +31,7 @@ const ListActionsBar = () => {
 	} = useSubscribersPage();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 	const recordSort = useRecordSort();
-	const hasManySubscribers = useManySubsSite( siteId );
+	const { hasManySubscribers } = useManySubsSite( siteId );
 	const filterOptions = useSubscribersFilterOptions( hasManySubscribers, siteId );
 	const selectedText = translate( 'Subscribers: %s', {
 		args: getOptionLabel( filterOptions, filterOption ) || '',
