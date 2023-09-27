@@ -4,9 +4,9 @@ import { compact, find } from 'lodash';
  * Comparator function for sorting formatted ranges
  *
  * A range is considered to be before another range if:
- *   - it's a zero-length range and the other isn't
- *   - it starts before the other
- *   - it has the same start but ends before the other
+ * - it's a zero-length range and the other isn't
+ * - it starts before the other
+ * - it has the same start but ends before the other
  * @param {Object} rangeA                  First range
  * @param {Array}  rangeA.indices          Start and end of the first range
  * @param {number} rangeA.indices.0 aStart Start index of first range
