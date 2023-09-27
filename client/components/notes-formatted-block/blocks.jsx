@@ -78,7 +78,7 @@ export const Post = ( { content, children, meta } ) => {
 			<>
 				<br />
 				<span className="note-formatted-block__post-publish-date">
-					{ translate( 'Original publish date:' ) } { formattedPublishedDate }
+					{ translate( 'Published:' ) } { formattedPublishedDate }
 				</span>
 			</>
 		);
