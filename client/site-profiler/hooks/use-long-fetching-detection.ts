@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 
 // Used to generate a different text for the "Check site" button
-export function useDelayedQueryTime( domain: string, isFetching: boolean, limit = 3000 ) {
+export default function useLongFetchingDetection(
+	domain: string,
+	isFetching: boolean,
+	limit = 1000
+) {
 	const [ isTimeUp, setIsTimeUp ] = useState( false );
 
 	useEffect( () => {
