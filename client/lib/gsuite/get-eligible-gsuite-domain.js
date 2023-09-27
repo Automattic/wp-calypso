@@ -4,10 +4,9 @@ import { getGSuiteSupportedDomains } from './gsuite-supported-domain';
 /**
  * Retrieves the first domain that is eligible for G Suite in this order:
  *
- *   - The domain from the site currently selected, if eligible
- *   - The primary domain of the site, if eligible
- *   - The first non-primary domain eligible found
- *
+ * - The domain from the site currently selected, if eligible
+ * - The primary domain of the site, if eligible
+ * - The first non-primary domain eligible found
  * @param {string} selectedDomainName - domain name of the site currently selected by the user
  * @param {Array} domains - list of domain objects
  * @returns {string} - the name of the first eligible domain found

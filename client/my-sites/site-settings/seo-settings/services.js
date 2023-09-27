@@ -3,7 +3,6 @@
 
 /**
  * Returns the Site Verification services.
- *
  * @param  {Function}  translate  Translate needed for the name.
  * @returns {Array}               Site Verification services data.
  */

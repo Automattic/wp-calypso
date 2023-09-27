@@ -6,7 +6,6 @@ import page from 'page';
  * Redirects the page to a target `url`.
  *
  * This is a wrapper over `page.redirect` that also pushes the URL to the history, to make the back button work properly
- *
  * @param url The URL to redirect to
  */
 export function redirectTo( url ) {
@@ -26,7 +25,6 @@ export function redirectTo( url ) {
 /**
  * Get the Import Section URL depending on if the site is Jetpack or WordPress.com Simple site.
  * If the unified importer is enabled always return the Calypso page.
- *
  * @param siteSlug The Site Slug
  * @param isJetpack If the site is a Jetpack site
  * @returns {string} The URL that points to the import section
@@ -58,7 +56,6 @@ export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
 /**
  * Returns a selector that tests if the user is newer than a given time
- *
  * @param {number} age Number of milliseconds
  * @returns {Function} Selector function
  */

@@ -24,7 +24,7 @@ describe( 'recordTrack', () => {
 
 		recordTrack( tracksSpy, noop )( 'calypso_woocommerce_tracks_utils_test', eventProps );
 
-		expect( tracksSpy.recordTracksEvent ).toBeCalledWith(
+		expect( tracksSpy.recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_woocommerce_tracks_utils_test',
 			eventProps
 		);
@@ -40,7 +40,7 @@ describe( 'recordTrack', () => {
 			eventProps
 		);
 
-		expect( debugSpy ).toBeCalledWith(
+		expect( debugSpy ).toHaveBeenCalledWith(
 			"track 'calypso_woocommerce_tracks_utils_test': ",
 			eventProps
 		);
@@ -54,8 +54,8 @@ describe( 'recordTrack', () => {
 
 		recordTrack( tracksSpy, debugSpy )( 'calypso_somethingelse_invalid_name', { a: 1 } );
 
-		expect( tracksSpy.recordTracksEvent ).not.toBeCalled();
-		expect( debugSpy ).toBeCalledWith(
+		expect( tracksSpy.recordTracksEvent ).not.toHaveBeenCalled();
+		expect( debugSpy ).toHaveBeenCalledWith(
 			"invalid store track name: 'calypso_somethingelse_invalid_name', must start with 'calypso_woocommerce_'"
 		);
 	} );

@@ -16,7 +16,6 @@ const debug = debugFactory( 'calypso:themes:actions' );
  * This action queries wpcom endpoint for active theme for site.
  * If request success information about active theme is stored in Redux themes subtree.
  * In case of error, error is stored in Redux themes subtree.
- *
  * @param  {number}   siteId Site for which to check active theme
  * @returns {Function}        Redux thunk with request action
  */

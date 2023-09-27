@@ -35,7 +35,7 @@ export default function HeadingInformation( props: Props ) {
 	return (
 		<div className="heading-information">
 			<summary>
-				<h5>{ translate( 'Who Hosts This Site?' ) }</h5>
+				<h5>{ translate( 'Site Profiler' ) }</h5>
 				<div className="domain">
 					<StatusIcon conversionAction={ conversionAction } />
 					{ domain }

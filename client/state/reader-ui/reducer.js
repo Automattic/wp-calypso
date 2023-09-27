@@ -8,7 +8,6 @@ import sidebar from './sidebar/reducer';
 /**
  * Keep the last reader stream path selected by the user, for the purpose of autoselecting it
  * when user navigates back to Reader
- *
  * @param state redux state
  * @param action redux action
  * @returns {null|string} last path selected

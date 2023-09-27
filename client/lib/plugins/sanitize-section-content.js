@@ -10,7 +10,6 @@ let parser;
  * Replace global root object with compatible one
  *
  * This is need in order to sanitize the content on the server.
- *
  * @param {Object} newRoot window-like object to use as root
  */
 export function overrideSanitizeSectionRoot( newRoot ) {
@@ -22,7 +21,6 @@ export function overrideSanitizeSectionRoot( newRoot ) {
  * Get the current root object
  *
  * This is need in order to sanitize the content on the server.
- *
  * @returns {Object} window-like object used as root
  */
 export function getSanitizeSectionRoot() {
@@ -34,7 +32,6 @@ export function getSanitizeSectionRoot() {
  *
  * This only looks at the name of the tag to
  * determine if it's white-listed.
- *
  * @param {string} tagName name of tag under inspection
  * @returns {boolean} whether the tag is allowed
  */
@@ -46,11 +43,10 @@ const isAllowedTag = ( tagName ) => {
  * Determine if a given attribute is allowed
  *
  * Note! Before adding more attributes here
- *       make sure that we don't open up an
- *       attribute which could allow for a
- *       snippet of code to execute, such
- *       as `onclick` or `onmouseover`
- *
+ * make sure that we don't open up an
+ * attribute which could allow for a
+ * snippet of code to execute, such
+ * as `onclick` or `onmouseover`
  * @param {string} tagName name of tag on which attribute is found
  * @param {string} attrName name of attribute under inspection
  * @returns {boolean} whether the attribute is allowed
@@ -92,7 +88,6 @@ const replacementFor = ( node ) => {
 
 /**
  * Sanitizes input HTML for security and styling
- *
  * @param {string} content unverified HTML
  * @returns {string} sanitized HTML
  */
@@ -110,7 +105,6 @@ export const sanitizeSectionContent = ( content ) => {
 	 * we don't want to remove nodes while walking the tree
 	 * or we'll invite data-race bugs. instead, we'll track
 	 * which ones we want to remove then drop them at the end
-	 *
 	 * @type {Array<Node>} List of nodes to remove
 	 */
 	const removeList = [];
@@ -118,7 +112,6 @@ export const sanitizeSectionContent = ( content ) => {
 	/**
 	 * track any tags we want to replace, we'll need to
 	 * transfer the children too when we do the swap
-	 *
 	 * @type {Array<Node, Node>} List of pairs of nodes and their replacements
 	 */
 	const replacements = [];

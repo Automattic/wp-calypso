@@ -5,7 +5,6 @@ import getSite from './get-site';
  * handle cases where selecting a site was achieved by calling a polymorphic
  * method on the legacy `sites-list` module. The current Redux structure
  * expects a proper numeric ID to be dispatched in `SELECTED_SITE_SET` actions.
- *
  * @example
  * const numericID = getSiteId( state, siteSlug );
  * // or

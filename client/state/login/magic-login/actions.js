@@ -61,7 +61,6 @@ async function postMagicLoginRequest( url, bodyObj ) {
 
 /**
  * Logs a user in from a token included in a magic link.
- *
  * @param  {string}   token      Security token
  * @param  {string}   redirectTo Url to redirect the user to upon successful login
  * @returns {Function}            A thunk that can be dispatched

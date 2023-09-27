@@ -31,7 +31,7 @@ describe( 'actions', () => {
 			test( 'should dispatch a connection status request action when thunk triggered', () => {
 				requestConnectionStatus( siteId )( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: SITE_CONNECTION_STATUS_REQUEST,
 					siteId,
 				} );
@@ -39,13 +39,13 @@ describe( 'actions', () => {
 
 			test( 'should dispatch connection status request success and receive actions upon success', () => {
 				return requestConnectionStatus( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: SITE_CONNECTION_STATUS_RECEIVE,
 						siteId,
 						status: true,
 					} );
 
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 						siteId,
 					} );
@@ -67,7 +67,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch connection status request failure action upon error', () => {
 				return requestConnectionStatus( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 						siteId,
 						error: expect.objectContaining( { message: errorMessage } ),

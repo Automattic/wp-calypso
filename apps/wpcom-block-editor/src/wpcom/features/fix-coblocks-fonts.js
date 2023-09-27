@@ -12,7 +12,6 @@ import { isEditorReadyWithBlocks } from '../../utils';
  * Note that this doesn't work in versions of co-blocks released from 2022
  * onwards - all of the filters across CoBlocks were reconciled into one
  * so we can't remove the filter for just the font styles.
- *
  * @see https://github.com/godaddy-wordpress/coblocks/issues/2475
  */
 async function removeCoBlocksFontStyles() {

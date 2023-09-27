@@ -205,7 +205,6 @@ export function getStatusForPlugin( state, siteId, pluginId ) {
 
 /**
  * Whether the plugin's status for one or more recent actions matches a specified status.
- *
  * @param  {Object}       state    Global state tree
  * @param  {number}       siteId   ID of the site
  * @param  {string}       pluginId ID of the plugin
@@ -225,7 +224,6 @@ export function isPluginActionStatus( state, siteId, pluginId, action, status ) 
 
 /**
  * Whether the plugin's status for one or more recent actions is in progress.
- *
  * @param  {Object}       state    Global state tree
  * @param  {number}       siteId   ID of the site
  * @param  {string}       pluginId ID of the plugin
@@ -238,7 +236,6 @@ export function isPluginActionInProgress( state, siteId, pluginId, action ) {
 
 /**
  * Retrieve all plugin statuses of a certain type.
- *
  * @param  {Object} state    Global state tree
  * @param  {string} status   Status of interest
  * @returns {Array}          Array of plugin status objects

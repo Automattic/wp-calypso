@@ -1,6 +1,5 @@
 /**
  * Given an array of media objects, returns a copy sorted by media date.
- *
  * @param  {Array} items Array of media objects
  * @returns {Array}       Sorted array of media objects
  */

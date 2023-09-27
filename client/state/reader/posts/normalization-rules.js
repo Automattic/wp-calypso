@@ -73,7 +73,6 @@ const hasShortContent = ( post ) => getCharacterCount( post ) <= PHOTO_ONLY_MAX_
 
 /**
  * Attempt to classify the post into a display type
- *
  * @param  {Object}   post     A post to classify
  * @returns {Object}            The classified post
  */

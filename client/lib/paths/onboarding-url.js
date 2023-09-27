@@ -3,7 +3,6 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 /**
  * Returns the onboarding URL.
- *
  * @returns {string}  URL of the onboarding flow for existing users.
  */
 export function onboardingUrl() {

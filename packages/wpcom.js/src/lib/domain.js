@@ -6,7 +6,6 @@ const root = '/domains/';
 class Domain {
 	/**
 	 * `Domain` constructor.
-	 *
 	 * @param {string} id - domain identifier
 	 * @param wpcom - wpcom instance
 	 * @returns {undefined} undefined
@@ -21,7 +20,6 @@ class Domain {
 
 	/**
 	 * Get the status of the domain
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -32,7 +30,6 @@ class Domain {
 
 	/**
 	 * Check if the given domain is available
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -44,7 +41,6 @@ class Domain {
 	/**
 	 * Check if the given domain name can be mapped to
 	 * a WordPress blog.
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -55,7 +51,6 @@ class Domain {
 
 	/**
 	 * Check if the given domain name can be used for site redirect.
-	 *
 	 * @param {string} siteId - site id of the site to check
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
@@ -68,7 +63,6 @@ class Domain {
 
 	/**
 	 * Get the email forwards/configuration for a domain.
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -79,7 +73,6 @@ class Domain {
 
 	/**
 	 * Get a list of the nameservers for the domain
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -90,7 +83,6 @@ class Domain {
 
 	/**
 	 * Update the nameservers for the domain
-	 *
 	 * @param {Array} nameservers - nameservers list
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
@@ -103,7 +95,6 @@ class Domain {
 
 	/**
 	 * Get a list of the DNS records for the domain
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -114,7 +105,6 @@ class Domain {
 
 	/**
 	 * Get a list of all Google Apps accounts for the domain
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -125,7 +115,6 @@ class Domain {
 
 	/**
 	 * Resend the ICANN verification email for the domain
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -136,7 +125,6 @@ class Domain {
 
 	/**
 	 * Return `DomainEmail` instance
-	 *
 	 * @param {string} [email] - email identifier
 	 * @returns {DomainEmail} DomainEmail instance
 	 */
@@ -146,7 +134,6 @@ class Domain {
 
 	/**
 	 * Return `DomainDns` instance
-	 *
 	 * @returns {DomainDns} DomainDns instance
 	 */
 	dns() {
@@ -155,7 +142,6 @@ class Domain {
 
 	/**
 	 * Gets info needed to provide mapping setup instructions for a domain.
-	 *
 	 * @param {string} siteId - site id the domain will be mapped to
 	 * @param {Object} query - query object parameter
 	 * @param {Function} fn - callback function
@@ -167,7 +153,6 @@ class Domain {
 
 	/**
 	 * Gets the mapping status for a domain.
-	 *
 	 * @param {Object} query - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -178,7 +163,6 @@ class Domain {
 
 	/**
 	 * Update the connection mode used to connect this domain and retrieve its mapping status.
-	 *
 	 * @param {string} mode - connection mode used to connect this domain (can be "suggested" or "advanced")
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
