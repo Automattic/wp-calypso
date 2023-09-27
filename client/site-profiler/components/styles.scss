@@ -180,6 +180,10 @@
 		h2 {
 			max-width: 400px;
 		}
+
+		@media (max-width: $break-medium) {
+			flex-direction: column-reverse;
+		}
 	}
 
 	.domain-analyzer-block,
