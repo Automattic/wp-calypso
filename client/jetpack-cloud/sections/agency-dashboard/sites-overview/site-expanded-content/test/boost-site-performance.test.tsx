@@ -13,6 +13,8 @@ describe( 'BoostSitePerformance', () => {
 		desktop: 85,
 	};
 	const siteId = 123;
+	const siteUrl = 'example.com';
+	const hasPendingScore = false;
 	const siteUrlWithScheme = 'https://example.com';
 	const trackEventMock = jest.fn();
 
@@ -24,9 +26,11 @@ describe( 'BoostSitePerformance', () => {
 				boostData={ boostData }
 				hasBoost={ hasBoost }
 				siteId={ siteId }
+				siteUrl={ siteUrl }
 				siteUrlWithScheme={ siteUrlWithScheme }
 				trackEvent={ trackEventMock }
 				hasError={ false }
+				hasPendingScore={ hasPendingScore }
 			/>
 		);
 
@@ -47,9 +51,11 @@ describe( 'BoostSitePerformance', () => {
 				boostData={ { overall: 0, mobile: 0, desktop: 0 } }
 				hasBoost={ hasBoost }
 				siteId={ siteId }
+				siteUrl="example.com"
 				siteUrlWithScheme={ siteUrlWithScheme }
 				trackEvent={ trackEventMock }
 				hasError={ false }
+				hasPendingScore={ hasPendingScore }
 			/>
 		);
 
@@ -66,9 +72,11 @@ describe( 'BoostSitePerformance', () => {
 				boostData={ boostData }
 				hasBoost={ hasBoost }
 				siteId={ siteId }
+				siteUrl="example.com"
 				siteUrlWithScheme={ siteUrlWithScheme }
 				trackEvent={ trackEventMock }
 				hasError={ false }
+				hasPendingScore={ hasPendingScore }
 			/>
 		);
 
@@ -90,9 +98,11 @@ describe( 'BoostSitePerformance', () => {
 				boostData={ boostData }
 				hasBoost={ hasBoost }
 				siteId={ siteId }
+				siteUrl="example.com"
 				siteUrlWithScheme={ siteUrlWithScheme }
 				trackEvent={ trackEventMock }
 				hasError={ false }
+				hasPendingScore={ hasPendingScore }
 			/>
 		);
 
