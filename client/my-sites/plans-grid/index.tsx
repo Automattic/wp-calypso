@@ -63,71 +63,70 @@ export interface PlansGridProps {
 	observableForOdieRef: ( observableElement: Element | null ) => void;
 }
 
-export default forwardRef< HTMLDivElement, PlansGridProps >( function WrappedPlansGrid(
-	props,
-	ref
-) {
-	const { siteId } = props;
-	const translate = useTranslate();
-	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-		props.siteId,
-		props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
-	);
-	const isLargeCurrency = useIsLargeCurrency( {
-		gridPlans: props.gridPlansForFeaturesGrid,
-	} );
+export default forwardRef< HTMLDivElement, PlansGridProps >(
+	function WrappedPlansGrid( props, ref ) {
+		const { siteId } = props;
+		const translate = useTranslate();
+		const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
+			props.siteId,
+			props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+		);
+		const isLargeCurrency = useIsLargeCurrency( {
+			gridPlans: props.gridPlansForFeaturesGrid,
+		} );
 
-	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
-		siteId
-			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-			: null
-	);
-	const purchaseId = useSelector( ( state: IAppState ) =>
-		siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
-	);
-	// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
-	const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
+		const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
+			siteId
+				? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+				: null
+		);
+		const purchaseId = useSelector( ( state: IAppState ) =>
+			siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
+		);
+		// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
+		const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 
-	const manageHref =
-		purchaseId && selectedSiteSlug
-			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-			: `/plans/my-plan/${ siteId }`;
+		const manageHref =
+			purchaseId && selectedSiteSlug
+				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+				: `/plans/my-plan/${ siteId }`;
 
-	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlansForFeaturesGrid: props.gridPlansForFeaturesGrid,
-		onUpgradeClick: props.onUpgradeClick,
-	} );
+		const handleUpgradeClick = useUpgradeClickHandler( {
+			gridPlansForFeaturesGrid: props.gridPlansForFeaturesGrid,
+			onUpgradeClick: props.onUpgradeClick,
+		} );
 
-	if ( props.isInSignup ) {
+		if ( props.isInSignup ) {
+			return (
+				<FeaturesGrid
+					{ ...props }
+					plansComparisonGridRef={ ref }
+					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+					isLargeCurrency={ isLargeCurrency }
+					canUserPurchasePlan={ canUserPurchasePlan }
+					manageHref={ manageHref }
+					selectedSiteSlug={ selectedSiteSlug }
+					translate={ translate }
+					handleUpgradeClick={ handleUpgradeClick }
+				/>
+			);
+		}
+
 		return (
-			<FeaturesGrid
-				{ ...props }
-				plansComparisonGridRef={ ref }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				isLargeCurrency={ isLargeCurrency }
-				canUserPurchasePlan={ canUserPurchasePlan }
-				manageHref={ manageHref }
-				selectedSiteSlug={ selectedSiteSlug }
-				translate={ translate }
-				handleUpgradeClick={ handleUpgradeClick }
-			/>
+			<CalypsoShoppingCartProvider>
+				<FeaturesGrid
+					{ ...props }
+					plansComparisonGridRef={ ref }
+					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+					isLargeCurrency={ isLargeCurrency }
+					canUserPurchasePlan={ canUserPurchasePlan }
+					manageHref={ manageHref }
+					selectedSiteSlug={ selectedSiteSlug }
+					translate={ translate }
+					handleUpgradeClick={ handleUpgradeClick }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
 	}
-
-	return (
-		<CalypsoShoppingCartProvider>
-			<FeaturesGrid
-				{ ...props }
-				plansComparisonGridRef={ ref }
-				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				isLargeCurrency={ isLargeCurrency }
-				canUserPurchasePlan={ canUserPurchasePlan }
-				manageHref={ manageHref }
-				selectedSiteSlug={ selectedSiteSlug }
-				translate={ translate }
-				handleUpgradeClick={ handleUpgradeClick }
-			/>
-		</CalypsoShoppingCartProvider>
-	);
-} );
+);

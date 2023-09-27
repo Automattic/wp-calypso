@@ -10,15 +10,18 @@ type Props = {
 };
 
 const useProductIds = ( { planSlugs }: Props ) => {
-	return planSlugs.reduce( ( acc, planSlug ) => {
-		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
-		const planProductId = planConstantObj?.getProductId?.() ?? null;
+	return planSlugs.reduce(
+		( acc, planSlug ) => {
+			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
+			const planProductId = planConstantObj?.getProductId?.() ?? null;
 
-		return {
-			...acc,
-			[ planSlug ]: planProductId,
-		};
-	}, {} as { [ planSlug: string ]: number | null } );
+			return {
+				...acc,
+				[ planSlug ]: planProductId,
+			};
+		},
+		{} as { [ planSlug: string ]: number | null }
+	);
 };
 
 /*
@@ -28,13 +31,16 @@ const usePricedAPIPlans: UsePricedAPIPlans = ( { planSlugs }: Props ) => {
 	const productIds = useProductIds( { planSlugs } );
 
 	return useSelector( ( state ) => {
-		return planSlugs.reduce( ( acc, planSlug ) => {
-			const productId = productIds[ planSlug ];
-			return {
-				...acc,
-				[ planSlug ]: null !== productId ? getPlan( state, productId ) : null,
-			};
-		}, {} as { [ planSlug: string ]: PricedAPIPlan | null | undefined } );
+		return planSlugs.reduce(
+			( acc, planSlug ) => {
+				const productId = productIds[ planSlug ];
+				return {
+					...acc,
+					[ planSlug ]: null !== productId ? getPlan( state, productId ) : null,
+				};
+			},
+			{} as { [ planSlug: string ]: PricedAPIPlan | null | undefined }
+		);
 	} );
 };
 

@@ -99,7 +99,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
 		mUseIsPlanUpgradeCreditVisible.mockImplementation( () => true );
 		mUseCalculateMaxPlanUpgradeCredit.mockImplementation( () => 100 );
-		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } as Purchase ) );
+		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } ) as Purchase );
 		mIsProPlan.mockImplementation( () => false );
 	} );
 
@@ -223,7 +223,7 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Show in app purchase <PlanNotice /> when the current site was purchased in an app', () => {
-		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: true } as Purchase ) );
+		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: true } ) as Purchase );
 		renderWithProvider(
 			<PlanNotice
 				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
