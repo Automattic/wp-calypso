@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
+import './styles.scss';
 
 const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
