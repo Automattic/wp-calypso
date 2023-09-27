@@ -19,7 +19,7 @@ export default function HomeTaskTemplate( { id, CTA, tracks, ...props } ) {
 	const tracksClickProperties = { ...jitmProps, ...tracks?.click?.props };
 
 	const illustration =
-		id === 'limited_time_offer_home_card_30' ? ThirtyPercentImageCoupon : TwentyPercentImageCoupon;
+		id === 'limited_time_30_off_home_card' ? ThirtyPercentImageCoupon : TwentyPercentImageCoupon;
 
 	const handleClick = () => {
 		if ( id ) {
