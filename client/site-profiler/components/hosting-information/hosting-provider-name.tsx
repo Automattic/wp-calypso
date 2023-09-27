@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function HostingProviderName( props: Props ) {
-	const { hostingProvider, urlData } = props;
+	const { hostingProvider } = props;
 	const isPopularCdn = !! hostingProvider?.is_cdn;
 	const [ popoverVisible, setPopoverVisible ] = useState( false );
 	const hostingProviderNameRef: React.RefObject< HTMLDivElement > = useRef( null );
