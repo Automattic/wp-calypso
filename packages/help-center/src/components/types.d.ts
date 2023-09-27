@@ -8,4 +8,4 @@ interface Window {
 		handler?: ( callback: ( data: string | number ) => void ) => void
 	) => void;
 }
-declare module '*.png';
+declare module '*.jpg';

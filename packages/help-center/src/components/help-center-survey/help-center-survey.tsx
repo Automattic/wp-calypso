@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import wpcomProxyRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import artwork from './artwork.png';
+import { Artwork } from './artwork';
 
 // keep a session long state;
 let hasSkipped = false;
@@ -49,22 +49,25 @@ export function Survey() {
 
 	return (
 		<div className="help-center__survey">
-			<img src={ artwork } alt="" className="help-center__survey-artwork" role="presentation" />
-			<h3 className="help-center__survey-title">
-				{ __( 'Help us build a better Help Center?', __i18n_text_domain__ ) }
-			</h3>
-			<p className="help-center__survey-text">
-				{ __(
-					'What would your ideal Help Center look like? Take a few minutes to share your feedback and be part of its redesign.',
-					__i18n_text_domain__
-				) }
-			</p>
+			<Artwork />
+			<div className="help-center__survey-information">
+				<h3 className="help-center__survey-title">
+					{ __( 'Help us build a better Help Center?', __i18n_text_domain__ ) }
+				</h3>
+				<p className="help-center__survey-text">
+					{ __(
+						'What would your ideal Help Center look like? Take a few minutes to share your feedback and be part of its redesign.',
+						__i18n_text_domain__
+					) }
+				</p>
+			</div>
 			<div className="help-center__survey-buttons">
 				<Button
 					onClick={ () => {
 						window.open( 'https://wordpressdotcom.survey.fm/help-center-revamp' );
 						mutation.mutate( { type: 'dismiss' } );
 					} }
+					__next40pxDefaultSize
 					variant="primary"
 				>
 					{ __( 'Take a quick survey', __i18n_text_domain__ ) }
