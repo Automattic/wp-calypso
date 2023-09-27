@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { HostingProviderQueryResponse } from 'calypso/data/site-profiler/types';
 import wp from 'calypso/lib/wp';
 
-export const useHostingProviderQuery = ( domain: string ) => {
+export const useHostingProviderQuery = ( domain: string, isValid?: boolean ) => {
 	return useQuery( {
 		queryKey: [ 'hosting-provider-', domain ],
 		queryFn: (): Promise< HostingProviderQueryResponse > =>
@@ -13,7 +13,7 @@ export const useHostingProviderQuery = ( domain: string ) => {
 		meta: {
 			persist: false,
 		},
-		enabled: !! domain,
+		enabled: !! domain && isValid,
 		retry: false,
 		refetchOnWindowFocus: false,
 	} );
