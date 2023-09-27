@@ -64,13 +64,14 @@ const SignupFormSocialFirst = ( {
 					disableTosText={ true }
 					compact={ true }
 				>
-					<button
+					<Button
 						className="social-buttons__button button"
 						onClick={ () => setCurrentStep( 'email' ) }
+						variant="link"
 					>
 						<MailIcon width="20" height="20" />
 						<span className="social-buttons__service-name">{ __( 'Continue with Email' ) }</span>
-					</button>
+					</Button>
 				</SocialSignupForm>
 			);
 		} else if ( currentStep === 'email' ) {
