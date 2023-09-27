@@ -3,3 +3,7 @@
 .jetpack-app-plans {
 	@include plan-features-layout-switcher;
 }
+
+.masterbar {
+	display: none;
+}

@@ -7,5 +7,8 @@ export function jetpackAppPlans( context, next ) {
 			redirectTo={ context.query.redirect_to }
 		/>
 	);
+
+	// Hide sidebar
+	context.secondary = null;
 	next();
 }
