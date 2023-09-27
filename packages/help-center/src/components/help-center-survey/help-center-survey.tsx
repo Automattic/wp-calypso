@@ -1,4 +1,5 @@
 import './help-center-survey.scss';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
@@ -26,15 +27,24 @@ export function Survey() {
 	} );
 
 	const mutation = useMutation( {
-		mutationFn: ( { type = 'dismiss' }: { type?: 'dismiss' | 'remind' } ) =>
-			wpcomProxyRequest( {
+		mutationFn: ( { type = 'dismiss' }: { type?: 'dismiss' | 'remind' | 'take' } ) => {
+			recordTracksEvent( 'calypso_helpcenter-survey-skipped', {
+				location: 'help-center',
+				action: type,
+			} );
+
+			// We need to record both take and dismiss as dismiss in the preferences. We only need the nuance in the analytics.
+			const action = [ 'take', 'dismiss' ].includes( type ) ? 'dismiss' : type;
+
+			return wpcomProxyRequest( {
 				path: '/me/preferences',
 				apiVersion: '1.1',
 				method: 'POST',
 				body: {
-					calypso_preferences: { 'dismissed-help-center-survey': type },
+					calypso_preferences: { 'dismissed-help-center-survey': action },
 				},
-			} ),
+			} );
+		},
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( [ 'me/preferences/help-center-survey' ], data );
 		},
@@ -65,7 +75,7 @@ export function Survey() {
 				<Button
 					onClick={ () => {
 						window.open( 'https://wordpressdotcom.survey.fm/help-center-revamp' );
-						mutation.mutate( { type: 'dismiss' } );
+						mutation.mutate( { type: 'take' } );
 					} }
 					__next40pxDefaultSize
 					variant="primary"
