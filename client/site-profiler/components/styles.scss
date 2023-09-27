@@ -199,17 +199,18 @@
 			left: 0;
 			background: #e5f4ff;
 			z-index: -1;
-			height: 100%;
 		}
 	}
 
-	@media (min-width: $break-medium) {
-		.domain-analyzer-block::after {
+	.domain-analyzer-block::after {
+		height: 100%;
+
+		@media (min-width: $break-medium) {
 			height: 280px;
 		}
-
-		.domain-result-block::after {
-			height: 210px;
-		}
 	}
+	.domain-result-block::after {
+		height: 210px;
+	}
+
 }
