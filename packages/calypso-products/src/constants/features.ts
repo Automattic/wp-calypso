@@ -452,3 +452,4 @@ export const FEATURE_CUSTOM_ORDER_EMAILS = 'custom-order-emails'; // Custom orde
 export const FEATURE_LIVE_SHIPPING_RATES = 'live-shipping-rates'; // Live shipping rates
 export const FEATURE_DISCOUNTED_SHIPPING = 'discounted-shipping'; // Discounted shipping
 export const FEATURE_PRINT_SHIPPING_LABELS = 'print-shipping-labels'; // Print shipping labels
+export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-descriptions'; // AI-assisted product descriptions
