@@ -109,7 +109,7 @@ export const getRequestNotice = ( state ) => state.login.requestNotice;
  * @returns {?string}         Url to redirect the user to upon successful login
  * @see getRedirectToSanitized for the sanitized version
  */
-export const getRedirectToOriginal = ( state ) => state.login.redirectTo.original ?? null;
+export const getRedirectToOriginal = ( state ) => state.login?.redirectTo?.original ?? null;
 
 /**
  * Retrieves the last redirect url provided in the query parameters of any login page that was sanitized by the API
