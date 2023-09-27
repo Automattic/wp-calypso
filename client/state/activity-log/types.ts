@@ -9,6 +9,7 @@ export type Activity = {
 			section?: string;
 			type?: string;
 			url?: string;
+			published?: number;
 		},
 	];
 	activityMedia: {

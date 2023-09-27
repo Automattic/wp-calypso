@@ -105,7 +105,12 @@ const commentNode = ( { id: commentId, post_id: postId, site_id: siteId } ) => (
 
 const linkNode = ( { url, intent, section } ) => ( { type: 'link', url, intent, section } );
 
-const postNode = ( { id: postId, site_id: siteId } ) => ( { type: 'post', postId, siteId } );
+const postNode = ( { id: postId, site_id: siteId, published } ) => ( {
+	type: 'post',
+	postId,
+	siteId,
+	published,
+} );
 
 const siteNode = ( { id: siteId, intent, section } ) => ( {
 	type: 'site',
