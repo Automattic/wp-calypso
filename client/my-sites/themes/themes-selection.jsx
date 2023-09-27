@@ -272,23 +272,22 @@ class ThemesSelection extends Component {
 				<QueryThemes query={ query } siteId={ source } />
 				{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
 
-				{ config.isEnabled( 'themes/discovery-lots' ) &&
-					config.isEnabled( 'themes/discovery-lits' ) && (
-						<ThemeCollection
-							heading="Premium themes"
-							themes={ interlacedThemes }
-							collectionSlug="premium-themes"
-							getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
-							getScreenshotUrl={ this.props.getScreenshotUrl }
-							bookmarkRef={ this.props.bookmarkRef }
-							getButtonOptions={ this.getOptions }
-							getActionLabel={ this.props.getActionLabel }
-							isActive={ this.props.isThemeActive }
-							getPrice={ this.props.getPremiumThemePrice }
-							isInstalling={ this.props.isInstallingTheme }
-							siteId={ siteId }
-						/>
-					) }
+				{ config.isEnabled( 'themes/discovery-lots' ) && ! this.props.isLoggedIn && (
+					<ThemeCollection
+						heading="Premium themes"
+						themes={ interlacedThemes }
+						collectionSlug="premium-themes"
+						getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
+						getScreenshotUrl={ this.props.getScreenshotUrl }
+						bookmarkRef={ this.props.bookmarkRef }
+						getButtonOptions={ this.getOptions }
+						getActionLabel={ this.props.getActionLabel }
+						isActive={ this.props.isThemeActive }
+						getPrice={ this.props.getPremiumThemePrice }
+						isInstalling={ this.props.isInstallingTheme }
+						siteId={ siteId }
+					/>
+				) }
 
 				<ThemesList
 					upsellUrl={ upsellUrl }
