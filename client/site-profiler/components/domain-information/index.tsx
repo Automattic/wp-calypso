@@ -330,7 +330,7 @@ export default function DomainInformation( props: Props ) {
 				{ fieldsRedacted > 0 && (
 					<li className="redacted">
 						<div className="name"></div>
-						<div>{ translate( 'Some fields have been redacted for privacy' ) }</div>
+						<div>{ translate( '* Some fields have been redacted for privacy' ) }</div>
 					</li>
 				) }
 				<li>
