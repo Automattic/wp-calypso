@@ -1696,34 +1696,43 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 10 },
-			} ),
-		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
-		getAlternativeTitle: () => '10%',
+			i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for payments',
+				{
+					args: { commission: 10 },
+				}
+			),
+		get getAlternativeTitle() {
+			return this.getTitle();
+		},
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 8 },
-			} ),
-		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
-		getAlternativeTitle: () => '8%',
+			i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for payments',
+				{
+					args: { commission: 8 },
+				}
+			),
+		get getAlternativeTitle() {
+			return this.getTitle();
+		},
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 4 },
-			} ),
-		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
-		getAlternativeTitle: () => '4%',
+			i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for payments',
+				{
+					args: { commission: 4 },
+				}
+			),
+		get getAlternativeTitle() {
+			return this.getTitle();
+		},
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
@@ -1732,8 +1741,6 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( '%(commission)d%% transaction fee for payments', {
 				args: { commission: 2 },
 			} ),
-		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1743,41 +1750,54 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( '%(commission)d%% transaction fee for payments', {
 				args: { commission: 0 },
 			} ),
-		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for WooCommerce payment features', {
-				args: { commission: 0 },
-			} ),
-		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+			i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for standard WooCommerce payment features',
+				{
+					args: { commission: 0 },
+				}
+			),
 		getAlternativeTitle: () => '0%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for all payment features', {
-				args: { commission: 0 },
-			} ),
-		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
-		getAlternativeTitle: () => '0%',
+			i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for all payment features',
+				{
+					args: { commission: 0 },
+				}
+			),
+		get getAlternativeTitle() {
+			return this.getTitle();
+		},
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for regular payment features', {
-				args: { commission: 2 },
-			} ),
-		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
-		getAlternativeTitle: () => '2%',
+			i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for standard payment features',
+				{
+					args: { commission: 2 },
+				}
+			),
+		get getAlternativeTitle() {
+			return i18n.translate(
+				'%(stdcommission)d%% commission fee (plus standard processing fee) for standard payment features.{{br /}} %(woocommission)d%% commission fee (plus standard processing fee) for standard WooCommerce payment features',
+				{
+					args: { stdcommission: 2, woocommission: 0 },
+					components: { br: <br /> },
+				}
+			);
+		},
+
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
