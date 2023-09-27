@@ -203,16 +203,25 @@ function ContactInfo( {
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
 						{ translate(
-							'By accepting this transfer, you agree to the {{a}}Domain Registration Agreement{{/a}} for %(domainName)s.',
+							'By accepting this transfer, you agree to the {{agreementlink}}Domain Registration Agreement{{/agreementlink}} for %(domainName)s. You authorize the respective registrar to act as your {{agentlink}}Designated Agent{{/agentlink}}.',
 							{
 								args: {
 									domainName: domain ?? '',
 								},
 								components: {
-									a: (
+									agreementlink: (
 										<a
 											href={ localizeUrl(
 												'https://wordpress.com/automattic-domain-name-registration-agreement/'
+											) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									agentlink: (
+										<a
+											href={ localizeUrl(
+												'https://wordpress.com/support/domains/update-contact-information/#designated-agent'
 											) }
 											target="_blank"
 											rel="noopener noreferrer"
