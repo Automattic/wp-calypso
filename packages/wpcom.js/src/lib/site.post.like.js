@@ -1,6 +1,5 @@
 /**
  * Like methods
- *
  * @param {string} pid - post id
  * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
@@ -26,7 +25,6 @@ export default function Like( pid, sid, wpcom ) {
 
 /**
  * Get your Like status for a Post
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  */
@@ -37,7 +35,6 @@ Like.prototype.mine = Like.prototype.state = function ( query, fn ) {
 
 /**
  * Like a post
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
@@ -49,7 +46,6 @@ Like.prototype.add = function ( query, fn ) {
 
 /**
  * Remove your Like from a Post
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  */

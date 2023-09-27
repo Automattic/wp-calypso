@@ -14,7 +14,6 @@ import 'calypso/state/login/init';
 
 /**
  * Logs a user in with a two factor verification code.
- *
  * @param  {string}   twoStepCode       Verification code received by the user
  * @param  {string}   twoFactorAuthType Two factor authentication method (sms, push ...)
  * @returns {Function}                   A thunk that can be dispatched

@@ -33,7 +33,6 @@ export function getSocialServiceFromClientId( clientId ) {
 
 /**
  * Adds/ensures a leading slash to any string intended to be used as an absolute path.
- *
  * @param path The path to encode with a leading slash.
  */
 export function pathWithLeadingSlash( path ) {

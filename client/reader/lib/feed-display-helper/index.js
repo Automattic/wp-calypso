@@ -3,7 +3,6 @@ import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'calypso/reader/ro
 const exported = {
 	/**
 	 * Remove the starting https, www. and trailing slash from a URL string
-	 *
 	 * @param {string} url URL to format
 	 * @returns {string|undefined} Formatted URL e.g. "https://www.wordpress.com/" --> "wordpress.com"
 	 */

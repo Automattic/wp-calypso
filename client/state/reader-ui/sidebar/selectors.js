@@ -2,7 +2,6 @@ import 'calypso/state/reader-ui/init';
 
 /**
  * Whether or not a specific reader organization sidebar item is open
- *
  * @param state redux state
  * @param organizationId given org id
  * @returns {boolean} whether or not the sidebar item is open
@@ -17,7 +16,6 @@ export function isOrganizationOpen( state, organizationId ) {
 
 /**
  * Whether or not following reader sidebar item is open
- *
  * @param state redux state
  * @returns {boolean} whether or not the sidebar item is open
  */
@@ -27,7 +25,6 @@ export function isFollowingOpen( state ) {
 
 /**
  * Whether or not lists reader sidebar item is open
- *
  * @param state redux state
  * @returns {boolean} whether or not the sidebar item is open
  */
@@ -37,7 +34,6 @@ export function isListsOpen( state ) {
 
 /**
  * Whether or not tags reader sidebar item is open
- *
  * @param state redux state
  * @returns {boolean} whether or not the sidebar item is open
  */

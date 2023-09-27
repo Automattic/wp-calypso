@@ -5,7 +5,6 @@ import 'calypso/state/comments/init';
 
 /**
  * Returns a comment for the specified site and comment ID.
- *
  * @param {Object} state Redux state
  * @param {number} siteId Site identifier
  * @param {number} commentId Comment identifier

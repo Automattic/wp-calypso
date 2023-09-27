@@ -6,7 +6,6 @@ import 'calypso/state/stats/init';
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve visitor counts for StatsChartTabs.
- *
  * @param  {string}  date  			   The most recent day to include in results (YYYY-MM-DD format)
  * @param  {string}  period   		 Type of duration to include in the query (such as daily)
  * @param  {number}  quantity      Number of periods to include in the query
@@ -30,7 +29,6 @@ export function requestChartCounts( { chartTab, date, period, quantity, siteId, 
 /**
  * Returns an action object to be used in signalling that a visitor count object has
  * been received.
- *
  * @param  {number}  siteId   		 Site ID
  * @param  {string}  period   		 Type of duration to include in the query (such as daily)
  * @param  {Object}  data   			 Visitor counts API response

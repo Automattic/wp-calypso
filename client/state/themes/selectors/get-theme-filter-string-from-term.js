@@ -9,7 +9,6 @@ import 'calypso/state/themes/init';
  *
  * Supplied terms that belong to more than one taxonomy must be
  * prefixed taxonomy:term
- *
  * @param {Object} state Global state tree
  * @param {string} term The term slug
  * @returns {string} Complete taxonomy:term filter, or empty string if term is not valid

@@ -6,7 +6,6 @@ const log = require( '../../lib/logger' )( 'desktop:lib:archiver' );
 module.exports = {
 	/**
 	 * Compresses `contents` to the archive at `dst`.
-	 *
 	 * @param {string[]} contents Paths to be zipped
 	 * @param {string} dst Path to destination archive
 	 * @param {function():void} onZipped Callback invoked when archive is complete

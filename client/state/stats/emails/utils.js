@@ -92,7 +92,6 @@ export function getCharts( statType ) {
 /**
  * Return data in a format used by 'components/chart` for email stats. The fields array is matched to
  * the data in a single object.
- *
  * @param {Object} payload - response
  * @param {Array} nullAttributes - properties on data objects to be initialized with
  * a null value
@@ -141,7 +140,6 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
 /**
  * Return data in a format used by 'components/stats/geochart` for email stats. The fields array is matched to
  * the data in a single object.
- *
  * @param {Array} countries - the array of countries for the given data
  * @param {Object} countriesInfo - an object containing information about the countries
  * @returns {Array} - Array of data objects
@@ -185,7 +183,6 @@ export function parseEmailCountriesData( countries, countriesInfo ) {
 /**
  * Return data in a format used by lists for email stats. The fields array is matched to
  * the data in a single object.
- *
  * @param {Array} list - the array of devices/clients for the given data
  * @returns {Array} - Array of data objects
  */
@@ -217,7 +214,6 @@ export function parseEmailListData( list ) {
 /**
  * Return link data in a format used by lists for email stats. The fields array is matched to
  * the data in a single object.
- *
  * @param {Array} internalLinks - the array of links for the given data
  * @param {Array} userContentLinks - the array of user content links for the given data
  * @returns {Array|null} - Array of data objects

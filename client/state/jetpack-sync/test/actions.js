@@ -58,7 +58,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch request action when thunk triggered', () => {
 				getSyncStatus( siteId )( spy );
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					siteId: siteId,
 					type: JETPACK_SYNC_STATUS_REQUEST,
 				} );
@@ -66,7 +66,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch success action when request completes', () => {
 				return getSyncStatus( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						siteId: siteId,
 						type: JETPACK_SYNC_STATUS_SUCCESS,
 						data: data,
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch receive action when request completes', () => {
 				return getSyncStatus( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						error: {
 							error: 'unauthorized',
 							message: 'User cannot access this restricted blog',
@@ -125,7 +125,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch request action when thunk triggered', () => {
 				scheduleJetpackFullysync( siteId )( spy );
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					siteId: siteId,
 					type: JETPACK_SYNC_START_REQUEST,
 				} );
@@ -133,7 +133,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch success action when request completes', () => {
 				return scheduleJetpackFullysync( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						siteId: siteId,
 						type: JETPACK_SYNC_START_SUCCESS,
 						data: data,
@@ -161,7 +161,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch receive action when request completes', () => {
 				return scheduleJetpackFullysync( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						error: {
 							error: 'unauthorized',
 							message: 'User cannot access this restricted blog',

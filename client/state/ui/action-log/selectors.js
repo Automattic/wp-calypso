@@ -10,7 +10,6 @@ import 'calypso/state/ui/init';
  * These actions are to be consumed by and inform Calypso's Guided Tours
  * framework, but other components interested in listening to a log of Calypso
  * actions are welcome to use and/or extend it.
- *
  * @param  {Object}   state      Global state tree
  * @returns {Array}               Array of Redux actions, each with timestamp
  */
@@ -20,7 +19,6 @@ export function getActionLog( state ) {
 
 /**
  * Returns the last item from the action log.
- *
  * @param  {Object}   state      Global state tree
  * @returns {Object}              The matching dispatched action
  */

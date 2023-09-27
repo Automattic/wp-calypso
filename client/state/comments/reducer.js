@@ -81,7 +81,6 @@ const updateComment = ( commentId, newProperties ) => ( comment ) => {
 
 /**
  * Comments items reducer, stores a comments items Immutable.List per siteId, postId
- *
  * @param {Object} state redux state
  * @param {Object} action redux action
  * @returns {Object} new redux state
@@ -186,7 +185,6 @@ export function items( state = {}, action ) {
 
 /**
  * Comments pending items reducer, stores new comments per siteId and postId
- *
  * @param {Object} state redux state
  * @param {Object} action redux action
  * @returns {Object} new redux state
@@ -298,15 +296,14 @@ export const expansions = ( state = {}, action ) => {
  * Stores whether or not there are more comments, and in which directions, for a particular post.
  * Also includes whether or not a before/after has ever been queried
  * Example state:
- *  {
- *     [ siteId-postId ]: {
- *       before: bool,
- *       after: bool,
- *       hasReceivedBefore: bool,
- *       hasReceivedAfter: bool,
- *     }
- *  }
- *
+ * {
+ * [ siteId-postId ]: {
+ * before: bool,
+ * after: bool,
+ * hasReceivedBefore: bool,
+ * hasReceivedAfter: bool,
+ * }
+ * }
  * @param {Object} state redux state
  * @param {Object} action redux action
  * @returns {Object} new redux state
@@ -342,7 +339,6 @@ export const fetchStatus = ( state = {}, action ) => {
 
 /**
  * Stores latest comments count for post we've seen from the server
- *
  * @param {Object} state redux state, prev totalCommentsCount
  * @param {Object} action redux action
  * @returns {Object} new redux state
@@ -364,7 +360,6 @@ export const totalCommentsCount = ( state = {}, action ) => {
 
 /**
  * Houses errors by `siteId-commentId`
- *
  * @param {Object} state redux state
  * @param {Object} action redux action
  * @returns {Object} new redux state
@@ -404,7 +399,6 @@ export const errors = ( state = {}, action ) => {
 
 /**
  * Stores the active reply comment for a given siteId and postId
- *
  * @param {Object} state redux state
  * @param {Object} action redux action
  * @returns {Object} new redux state

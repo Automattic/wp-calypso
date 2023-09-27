@@ -1,6 +1,5 @@
 /**
  * Retrieve the WPCOM follower role info, based on site settings
- *
  * @param  {boolean} isPrivateSite    Whether site is private or not
  * @param  {Function} translate   `translate` function derived from `i18n-calypso`
  * @returns {Object}         Follower role object

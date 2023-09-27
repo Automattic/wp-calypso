@@ -8,7 +8,6 @@ import { parseDomainAgainstTldList } from './utils';
  * if the list of explicitly allowed tlds failed. This is ultimately not comprehensive as that
  * is a poor base assumption (lots of second level tlds, etc). However,
  * for our purposes, the approach should be "good enough" for a long time.
- *
  * @param {string}     domainName     The domain name parse the tld from
  * @returns {string}                   The TLD or an empty string
  */

@@ -89,7 +89,7 @@ describe( 'actions', () => {
 
 			expect( async () => {
 				await requestThumbnail( unSuccessfulEmbedUrl )( dispatchSpy );
-			} ).not.toThrowError();
+			} ).not.toThrow();
 
 			expect( dispatchSpy ).not.toHaveBeenCalled();
 		} );
@@ -99,7 +99,7 @@ describe( 'actions', () => {
 
 			expect( async () => {
 				await requestThumbnail( failingVideopressEmbedUrl )( dispatchSpy );
-			} ).not.toThrowError();
+			} ).not.toThrow();
 
 			expect( dispatchSpy ).not.toHaveBeenCalled();
 		} );

@@ -21,7 +21,6 @@ const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
  * Note! Eventually the manual "caching" here should be
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
- *
  * @param  {Object} action Redux action
  * @returns {Object | undefined} Redux action
  */

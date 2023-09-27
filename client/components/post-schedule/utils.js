@@ -7,7 +7,6 @@ import moment from 'moment-timezone';
  * h - 12-hour format of an hour with leading zeros.
  * a - Lowercase Ante meridiem and Post meridiem.
  * A - Uppercase Ante meridiem and Post meridiem.
- *
  * @see https://wikipedia.org/wiki/12-hour_clock
  * @param  {string}  timeFormat Time format.
  * @returns {boolean}            Whether it's a 12-hour time format.
@@ -17,7 +16,6 @@ export const is12hr = ( timeFormat ) => timeFormat && /[gh]|[aA]$/.test( timeFor
 /**
  * Check whether is a valid gmtOffset value.
  * Basically it should be a number.
- *
  * @param  {*}  gmtOffset - gmt offset
  * @returns {boolean} is it a valid gtm offset?
  */
@@ -26,7 +24,6 @@ export const isValidGMTOffset = ( gmtOffset ) => 'number' === typeof gmtOffset;
 /**
  * Return localized date depending of given timezone or gmtOffset
  * parameters.
- *
  * @param {Date} date - date instance
  * @param {string} tz - timezone
  * @param {number} gmt - gmt offset in minutes
@@ -75,7 +72,6 @@ export const convertDateToGivenOffset = ( date, tz, gmt ) => {
  * Convert a number of minutes to the hh:mm format,
  * adding a `+` when the number is greater than zero,
  * not adding `:00` case (zero minutes).
- *
  * @param  {number} minutes - a number of minutes
  * @returns {string} `hh:mm` format
  */
@@ -99,7 +95,6 @@ export const convertHoursToHHMM = ( hours ) => convertMinutesToHHMM( hours * 60 
  * Check if the given value is useful to be assigned like hours or minutes.
  * This function has been thought to get the data entered
  * by the used through of an input element.
- *
  * @param {string} value - time value to check
  * @returns {number|boolean} valid number or `false`
  */
