@@ -27,14 +27,15 @@ import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 /*
- * TODO clk:
- * These props need to be split into what's needed separately for the internal grids and what's needed for the exported wrappers.
- * This is currently also used as the internal type for the FeaturesGrid (wrongly).
- *   - onUpgradeClick is only needed for the wrappers exported from here. Internally the grids take a transformed
- *     handleUpgradeClick/onUpgradeClick function (force renamed to handleUpgradeClick in FeaturesGrid)
- *   - allFeaturesList is only relevant for the ComparisonGrid
- *   - gridPlanForSpotlight is only relevant for the FeaturesGrid
- *   - etc.
+ *	TODO clk: On PlansGridProps:
+ *	1.	These props need to be split into what's needed separately for the internal grids and what's needed for the exported wrappers.
+ *		This is currently also used as the internal type for the FeaturesGrid (wrongly).
+ *			- onUpgradeClick is only needed for the wrappers exported from here. Internally the grids take a transformed
+ *			handleUpgradeClick/onUpgradeClick function (force renamed to handleUpgradeClick in FeaturesGrid)
+ *			- allFeaturesList is only relevant for the ComparisonGrid
+ *			- gridPlanForSpotlight is only relevant for the FeaturesGrid
+ *			- etc.
+ *	2.	Explicitly set optional props and default values. Only absolutely vital props should be required.
  */
 export interface PlansGridProps {
 	gridPlans: GridPlan[];
