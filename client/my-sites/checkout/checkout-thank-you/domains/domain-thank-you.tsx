@@ -14,6 +14,11 @@ import {
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
+import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
+import {
+	getCurrentUserEmail,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
@@ -41,6 +46,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	isDomainOnly,
 	selectedSiteId,
 } ) => {
+	const dispatch = useDispatch();
 	const {
 		data: { is_enabled: isLaunchpadIntentBuildEnabled },
 	} = useLaunchpad( selectedSiteSlug, 'intent-build' );
@@ -48,6 +54,21 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	const redirectTo = isLaunchpadIntentBuildEnabled ? 'home' : 'setup';
 	const siteIntent = useSiteOption( 'site_intent' );
 	const { isEnabled: isActivityPubEnabled } = useActivityPubStatus( selectedSiteSlug );
+
+	const shouldDisplayVerifyEmailStep = useSelector( ( state ) => {
+		/**
+		 * We don't want to display the verify e-mail address action
+		 * if the email passed in the domain registration step differs
+		 * from the email used in account creation.
+		 *
+		 * See https://wp.me/pet6gk-Ht#rabbit-holes-no-gos
+		 */
+		if ( getCurrentUserEmail( state ) !== email ) {
+			return false;
+		}
+
+		return ! isCurrentUserEmailVerified( state );
+	} );
 
 	const isDomainOnlySiteOption = useSelector(
 		( state ) =>
@@ -59,6 +80,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			selectedSiteSlug,
 			domain,
 			email,
+			shouldDisplayVerifyEmailStep,
+			onResendEmailVerificationClick: () => dispatch( verifyEmail( { showGlobalNotices: true } ) ),
 			hasProfessionalEmail,
 			hideProfessionalEmailStep,
 			siteIntent,
@@ -73,6 +96,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		domain,
 		selectedSiteSlug,
 		email,
+		shouldDisplayVerifyEmailStep,
+		dispatch,
 		hasProfessionalEmail,
 		hideProfessionalEmailStep,
 		siteIntent,
@@ -83,7 +108,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		isDomainOnlySiteOption,
 		isActivityPubEnabled,
 	] );
-	const dispatch = useDispatch();
+
 	const isLaunchpadEnabled = launchpadScreen === 'full';
 
 	useEffect( () => {
