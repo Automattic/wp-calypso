@@ -9,6 +9,7 @@ import { updateFilter } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import DateRangeSelector from './date-range-selector';
+import TextSearchControl from './text-search-control';
 import ActivityTypeSelector from './type-selector/activity-type-selector';
 import IssueTypeSelector from './type-selector/issue-type-selector';
 
@@ -16,7 +17,7 @@ import './style.scss';
 
 export class Filterbar extends Component {
 	static defaultProps = {
-		selectorTypes: { dateRange: true, actionType: true },
+		selectorTypes: { textSearch: true, dateRange: true, actionType: true },
 	};
 
 	state = {
@@ -146,6 +147,11 @@ export class Filterbar extends Component {
 				<div className="filterbar__wrap card">
 					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
 					<ul className="filterbar__control-list">
+						{ selectorTypes.textSearch && (
+							<li>
+								<TextSearchControl filter={ filter } siteId={ siteId } />
+							</li>
+						) }
 						{ selectorTypes.dateRange && (
 							<li>
 								<DateRangeSelector
