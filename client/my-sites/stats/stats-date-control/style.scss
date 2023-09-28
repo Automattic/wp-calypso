@@ -7,12 +7,9 @@
 }
 
 // TODO: Add final colors to shortcuts.
-// Add selection with checkmark icon.
-// Remove hover support.
 
 .date-control-picker-shortcuts {
-	background-color: var(--studio-gray-5);
-	margin-top: 10px;
+	margin: 10px 0;
 }
 
 .date-control-picker-shortcuts__list {
@@ -21,6 +18,7 @@
 }
 
 .date-control-picker-shortcuts__shortcut {
+	border-radius: 4px;
 	.gridicon {
 		display: none;
 	}
@@ -31,12 +29,11 @@
 	}
 	&.is-selected {
 		background-color: var(--color-accent-5);
-		border-radius: 4px;
 		.gridicon {
 			display: initial;
 		}
 	}
 	&:hover {
-		background-color: var(--studio-gray-10);
+		background-color: var(--color-primary-0);
 	}
 }
