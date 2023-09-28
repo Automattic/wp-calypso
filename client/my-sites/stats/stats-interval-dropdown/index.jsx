@@ -24,7 +24,7 @@ const IntervalDropdown = ( { period, pathTemplate } ) => {
 					{ getCurrentIntervalLabel( currentInterval ) }
 				</Button>
 			) }
-			renderContent={ ( { onClose } ) => (
+			renderContent={ () => (
 				<div>
 					<Intervals
 						selected={ currentInterval }
@@ -32,9 +32,6 @@ const IntervalDropdown = ( { period, pathTemplate } ) => {
 						compact={ false }
 						onChange={ setCurrentInterval }
 					/>
-					<Button variant="secondary" onClick={ onClose }>
-						Close
-					</Button>
 				</div>
 			) }
 		/>
