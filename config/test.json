@@ -100,6 +100,7 @@
 		"settings/security/monitor": true,
 		"signup/social": true,
 		"site-indicator": true,
+		"site-profiler": true,
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
