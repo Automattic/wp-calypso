@@ -39,7 +39,7 @@ export default function useInstallBoost(
 		await queryClient.cancelQueries( queryKey );
 
 		// Update to the new value
-		const updatedData = queryClient.setQueryData( queryKey, ( oldSites: any ) => {
+		queryClient.setQueryData( queryKey, ( oldSites: any ) => {
 			return {
 				...oldSites,
 				sites: oldSites?.sites.map( ( site: Site ) => {
@@ -53,7 +53,6 @@ export default function useInstallBoost(
 				} ),
 			};
 		} );
-		queryClient.setQueryData( queryKey, updatedData );
 	}, [ queryClient, queryKey, siteId ] );
 
 	useEffect( () => {

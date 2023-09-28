@@ -48,7 +48,7 @@ export default function BoostSitePerformance( {
 		'Your Overall Score is a summary of your website performance across both mobile and desktop devices.'
 	);
 
-	const isEnabled = !! ( hasBoost || overallScore ) || hasPendingScore;
+	const isEnabled = hasBoost || Boolean( overallScore ) || hasPendingScore;
 
 	const buttonProps = useMemo(
 		() =>

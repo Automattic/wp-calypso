@@ -52,23 +52,24 @@ export default function LicenseInfoModal( {
 	};
 
 	const onIssueLicense = () => {
-		if ( currentLicenseProductSlug ) {
-			recordEvent( 'issue_license_info', {
-				product: currentLicenseProductSlug,
-			} );
-			onCtaClick?.();
-			onHideLicenseInfo();
-			page(
-				addQueryArgs(
-					{
-						product_slug: currentLicenseProductSlug,
-						source: 'dashboard',
-						site_id: siteId,
-					},
-					'/partner-portal/issue-license/'
-				)
-			);
+		if ( ! currentLicenseProductSlug ) {
+			return;
 		}
+		recordEvent( 'issue_license_info', {
+			product: currentLicenseProductSlug,
+		} );
+		onCtaClick?.();
+		onHideLicenseInfo();
+		page(
+			addQueryArgs(
+				{
+					product_slug: currentLicenseProductSlug,
+					source: 'dashboard',
+					site_id: siteId,
+				},
+				'/partner-portal/issue-license/'
+			)
+		);
 	};
 
 	return (

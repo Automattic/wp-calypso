@@ -9,7 +9,7 @@ import EditButton from '../../dashboard-bulk-actions/edit-button';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import SitesOverviewContext from '../context';
 import useDefaultSiteColumns from '../hooks/use-default-site-columns';
-import SiteBoostLicenseModal from '../license-info-modal';
+import LicenseInfoModal from '../license-info-modal';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
@@ -97,7 +97,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 					pageClick={ handlePageClick }
 				/>
 			) }
-			{ currentLicenseInfo && <SiteBoostLicenseModal currentLicenseInfo={ currentLicenseInfo } /> }
+			{ currentLicenseInfo && <LicenseInfoModal currentLicenseInfo={ currentLicenseInfo } /> }
 		</>
 	);
 };
