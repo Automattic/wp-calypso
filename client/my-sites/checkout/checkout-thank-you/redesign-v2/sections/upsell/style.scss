@@ -4,6 +4,8 @@
 .checkout-thank-you__upsell {
 	display: flex;
 	width: 100%;
+	max-width: 650px;
+	margin: 0 auto;
 	padding: 24px 0 !important;
 	flex-direction: column;
 	justify-content: center;
@@ -60,7 +62,6 @@
 
 	.checkout-thank-you__upsell-content-details-image {
 		width: 73px;
-		height: 100px;
 		display: flex;
 		align-items: center;
 		@media (max-width: $break-mobile ) {
@@ -69,22 +70,10 @@
 			flex-direction: column;
 			align-items: start;
 		}
-		.checkout-thank-you__upsell-content-details-image-mask {
-			width: 50px;
-			height: 100px;
-			background-image: url(calypso/assets/images/checkout/mesh-blue-desktop.png);
-
-			@media (max-width: $break-mobile ) {
-				width: 100%;
-				height: 50px;
-				flex-shrink: 0;
-				background-image: url(calypso/assets/images/checkout/mesh-blue-mobile.png);
-			}
-		}
 		.checkout-thank-you__upsell-content-details-image-content {
-			margin: 0 0 0 -24px;
+			margin: 0 0 0 24px;
 			@media (max-width: $break-mobile ) {
-				margin: -24px 0 0 20px;
+				margin: 24px 0 0 20px;
 			}
 		}
 
@@ -98,7 +87,9 @@
 		gap: 4px;
 		flex: 1 0 0;
 		align-self: stretch;
+		padding: 16px 0;
 		@media (max-width: $break-mobile ) {
+			padding: 0;
 			margin: 0 20px;
 			gap: 12px;
 		}

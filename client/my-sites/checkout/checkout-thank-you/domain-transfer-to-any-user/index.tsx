@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import professionalEmailImage from 'calypso/assets/images/checkout/professional-email.svg';
+import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import ThankYouLayout from '../redesign-v2/ThankYouLayout';
 import DomainTransferToAnyUserFooter from '../redesign-v2/sections/footer/DomainTransferToAnyUserFooter';
@@ -32,7 +32,8 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 				description={ translate(
 					'85% of people trust an email address with a custom domain name over a generic one.'
 				) }
-				icon={ professionalEmailImage }
+				meshColor="blue"
+				icon={ emailImage }
 				href={ emailManagement( domain, domain ) }
 				buttonText={ translate( 'Add email' ) }
 				trackEvent="calypso_domain_transfer_thank_you_professional_email_click"
