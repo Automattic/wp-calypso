@@ -89,7 +89,12 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 	useEffect( () => {
 		// presales chat is always shown by default
 		if ( enabled && isPresalesChatAvailable && isMessagingScriptLoaded ) {
-			! isMobile() ? window.zE( 'messenger', 'show' ) : window.zE( 'messenger', 'hide' );
+			if ( ! isMobile() ) {
+				window.zE( 'messenger', 'show' );
+			} else {
+				window.zE( 'messenger', 'close' );
+				window.zE( 'messenger', 'hide' );
+			}
 		}
 	}, [ enabled, isMessagingScriptLoaded, isPresalesChatAvailable, renderCount ] );
 
