@@ -26,6 +26,7 @@ import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-feat
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
+import { getPlanPricingInfoFromGridPlans } from '../../lib/get-plan-pricing-info-from-grid-plans';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
@@ -495,7 +496,14 @@ const ComparisonGridHeader = ( {
 	selectedPlan,
 }: ComparisonGridHeaderProps ) => {
 	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
-	const isLargeCurrency = useIsLargeCurrency( { gridPlans: displayedGridPlans } );
+	const { prices, currencyCode } = getPlanPricingInfoFromGridPlans( {
+		gridPlans: displayedGridPlans,
+	} );
+
+	const isLargeCurrency = useIsLargeCurrency( {
+		prices,
+		currencyCode: currencyCode || 'USD',
+	} );
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
 		siteId ?? 0,
 		displayedGridPlans.map( ( { planSlug } ) => planSlug )
