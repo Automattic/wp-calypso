@@ -42,7 +42,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
-		supporters: translate( 'Customers' ),
+		supporters: translate( 'Supporters' ),
 		stats: translate( 'Stats' ),
 		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
