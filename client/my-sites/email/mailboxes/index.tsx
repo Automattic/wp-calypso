@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
+import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -56,7 +57,7 @@ const NotSupportedOnP2Card = () => {
 			<TrackPageView context="not-supported-on-p2" />
 			<EmptyContent
 				title={ translate( 'Mailboxes are not supported on P2 sites' ) }
-				illustration="/calypso/images/illustrations/illustration-nosites.svg"
+				illustration={ noSitesIllustration }
 			/>
 		</Main>
 	);
