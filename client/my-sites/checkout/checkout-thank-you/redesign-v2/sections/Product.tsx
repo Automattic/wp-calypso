@@ -13,7 +13,6 @@ const Product = ( {
 	if ( isBulkDomainTransfer( purchases ) ) {
 		return <DomainsTransferredList purchases={ purchases } currency={ currency } />;
 	}
-
 	return (
 		<ProductPlan siteSlug={ siteSlug } primaryPurchase={ primaryPurchase } siteID={ siteID } />
 	);

@@ -19,7 +19,6 @@ const chroma = require( 'chroma-js' );
 
 /**
  * Native Sort - replacement of _.sortBy Lodash function
- *
  * @returns Sorted array.
  */
 const compareByName = ( objA, objB ) => {

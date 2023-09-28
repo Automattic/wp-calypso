@@ -54,7 +54,6 @@ import {
 
 /**
  * Tracks all known post objects, indexed by post global ID.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -102,7 +101,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * Returns the updated site post requests state after an action has been
  * dispatched. The state reflects a mapping of site ID, post ID pairing to a
  * boolean reflecting whether a request for the post is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -126,7 +124,6 @@ export function siteRequests( state = {}, action ) {
  * Returns the updated post query requesting state after an action has been
  * dispatched. The state reflects a mapping of serialized query to whether a
  * network request is in-progress for that query.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -149,7 +146,6 @@ export function queryRequests( state = {}, action ) {
  * Returns the updated post query state after an action has been dispatched.
  * The state reflects a mapping by site ID of serialized query key to an array
  * of post IDs for the query, if a query response was successfully received.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -255,7 +251,6 @@ function findItemKey( state, siteId, postId ) {
  * an action has been dispatched.  The state reflects a mapping of serialized
  * query key to an array of post global IDs for the query, if a query response
  * was successfully received.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -324,7 +319,6 @@ export const allSitesQueries = withSchemaValidation(
  * Returns the updated editor posts state after an action has been dispatched.
  * The state maps site ID, post ID pairing to an object containing revisions
  * for the post.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

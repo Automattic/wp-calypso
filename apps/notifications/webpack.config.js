@@ -18,7 +18,6 @@ const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'fa
  * Arguments to this function replicate webpack's so this config can be used on the command line,
  * with individual options overridden by command line args. Note that webpack-cli seems to convert
  * kebab-case (like `--ouput-path`) to camelCase (`outputPath`)
- *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
  * @param  {Object}  env                           environment options

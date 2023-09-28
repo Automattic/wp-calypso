@@ -8,7 +8,6 @@ import { UNITS } from './constants';
 /**
  * Calculate a date as the first date in each block of periods counting back from today. The number
  * of periods in a block is determined in the UNITS constants config.
- *
  * @param {string} date - Date to calculate from
  * @param {string} unit - Unit to use in calculation
  * @returns {string} - YYYY-MM-DD format of the date to be queried
@@ -26,7 +25,6 @@ export function getStartDate( date, unit ) {
 
 /**
  * Given a startDate query parameter, determine which date to send the backend on a request for data.
- *
  * @param {Object} context - Object supplied by page function
  * @returns {string} - YYYY-MM-DD format of the date to be queried
  */
@@ -38,7 +36,6 @@ export function getQueryDate( context ) {
 /**
  * Given a full date YYYY-MM-DD and unit ('day', 'week', 'month', 'year') return a shortened
  * and contextually relevant date.
- *
  * @param {string} date - string date in YYYY-MM-DD format
  * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
  * @returns {string} - as required by the API, eg for unit 'week', '2017-W27' isoWeek returned
@@ -50,7 +47,6 @@ export function getUnitPeriod( date, unit ) {
 /**
  * Given a full date YYYY-MM-DD and unit ('day', 'week', 'month', 'year') return the last date
  * for the period formatted as YYYY-MM-DD
- *
  * @param {string} date - string date in YYYY-MM-DD format
  * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
  * @returns {string} - YYYY-MM-DD format of the date to be queried
@@ -63,7 +59,6 @@ export function getEndPeriod( date, unit ) {
 
 /**
  * Given a value and format option of 'text', 'number' and 'currency' return a formatted value.
- *
  * @param {(string|number)} value - string or number to be formatted
  * @param {string} format - string of 'text', 'number' or 'currency'
  * @param {string} [code] - optional currency code
@@ -86,7 +81,6 @@ export function formatValue( value, format, code, decimals ) {
 
 /**
  * Given a date, return the delta object for a specific stat
- *
  * @param {Array} deltas - an array of delta objects
  * @param {string} selectedDate - string of date in 'YYYY-MM-DD'
  * @param {string} stat - string of stat to be referenced
@@ -101,7 +95,6 @@ export function getDelta( deltas, selectedDate, stat ) {
  * Given a unit and basedate, generate the queries needed for QuerySiteStats and getSiteStatsNormalizedData.
  * An optional overrides object can be passed to change values. Currently accepted:
  * orderQuery, topEarnersQuery, visitorQuery.
- *
  * @param {string} unit - unit/period format for the data provided
  * @param {string} baseDate - string of date in 'YYYY-MM-DD'
  * @param {Object} overrides - Object of query overrides. Example: { orderQuery: { quantity: 1 }
@@ -146,7 +139,6 @@ export function getQueries( unit, baseDate, overrides = {} ) {
  * /store/stats/<page>/<unit>/<slug>?param1=1&param2=2
  *
  * this util is for constructing the /<unit>/<slug>?param1=1&param2=2
- *
  * @param {string} unit - day, week, month, or year
  * @param {string} slug - site slug
  * @param {Object} urlQuery - url query params represented as an object

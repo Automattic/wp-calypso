@@ -43,7 +43,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: POST_STATS_REQUEST,
 				siteId: 2916284,
 				postId: 2454,
@@ -53,13 +53,15 @@ describe( 'actions', () => {
 
 		test( 'should dispatch receive action when request completes', () => {
 			return requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( receivePostStats( 2916284, 2454, { views: 2, years: {} } ) );
+				expect( spy ).toHaveBeenCalledWith(
+					receivePostStats( 2916284, 2454, { views: 2, years: {} } )
+				);
 			} );
 		} );
 
 		test( 'should dispatch request success action when request completes', () => {
 			return requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: POST_STATS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					postId: 2454,
@@ -70,7 +72,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestPostStats( 2916285, 2455, [ 'views' ] )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: POST_STATS_REQUEST_FAILURE,
 					siteId: 2916285,
 					postId: 2455,

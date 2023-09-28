@@ -51,6 +51,32 @@ export function doesTransactionResponseRequire3DS(
 	return true;
 }
 
+/**
+ * Since the checkout submit button is disabled when pressed, it should be
+ * impossible to get an error which states that we have already begun
+ * confirming a 3DS card. However, we see a number of these happen so this
+ * function logs these instances to make them easier to track down.
+ *
+ * See https://github.com/Automattic/payments-shilling/issues/1910
+ */
+export function handle3DSInFlightError( error: Error, paymentIntentId: string | undefined ): void {
+	if (
+		error.message &&
+		typeof error.message === 'string' &&
+		error.message.includes( 'You have an in-flight confirmCardPayment' )
+	) {
+		logStashEvent(
+			'calypso_checkout_duplicate_confirm_card_payment',
+			{
+				payment_intent_id: paymentIntentId ?? '',
+				tags: [ `payment_intent_id:${ paymentIntentId }` ],
+				error: error.message,
+			},
+			'info'
+		);
+	}
+}
+
 interface TransactionResponse {
 	message?: NoActionRequiredMessage | RequiresActionMessage;
 }

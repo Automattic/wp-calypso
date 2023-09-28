@@ -9,7 +9,6 @@ import 'calypso/state/themes/init';
 /**
  * Shows dialog asking user to confirm delete of theme
  * from jetpack site. Deletes theme if user confirms.
- *
  * @param {string} themeId -- Theme to delete
  * @param {number} siteId -- Site to delete theme from
  * @returns {Function} Action thunk

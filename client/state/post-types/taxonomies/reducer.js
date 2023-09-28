@@ -12,7 +12,6 @@ import { itemsSchema } from './schema';
  * Returns the updated requests state after an action has been dispatched. The
  * state is a mapping of site ID to post type to whether a request for that
  * post type is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -35,7 +34,6 @@ export function requesting( state = {}, action ) {
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state is a mapping of site ID to post type to taxonomies.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

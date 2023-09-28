@@ -35,13 +35,13 @@ class ActivityDescription extends Component {
 		 * but the index is probably sufficient because these sub-items
 		 * shouldn't be changing. */
 		return activityDescription.map( ( part, i ) => {
-			const { intent, section } = part;
+			const { intent, section, published } = part;
 			return (
 				<FormattedBlock
 					key={ i }
 					content={ part }
 					onClick={ this.trackContentLinkClick }
-					meta={ { activity: activityName, intent, section } }
+					meta={ { activity: activityName, intent, section, published } }
 				/>
 			);
 		} );

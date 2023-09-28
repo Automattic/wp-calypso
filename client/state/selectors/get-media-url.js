@@ -3,7 +3,6 @@ import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 /**
  * Returns the URL for a media item, or null if not known
- *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {number}  mediaId Media ID

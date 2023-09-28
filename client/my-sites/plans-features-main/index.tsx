@@ -32,12 +32,12 @@ import {
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
-import useGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
-import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
-import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import PlansGrid from 'calypso/my-sites/plans-grid';
+import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
+import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -66,11 +66,8 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	GridPlan,
 	PlansIntent,
-} from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
-import type {
-	DataResponse,
-	PlanActionOverrides,
-} from 'calypso/my-sites/plan-features-2023-grid/types';
+} from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+import type { DataResponse, PlanActionOverrides } from 'calypso/my-sites/plans-grid/types';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
@@ -692,7 +689,7 @@ const PlansFeaturesMain = ( {
 						data-e2e-plans="wpcom"
 					>
 						<div className="plans-wrapper">
-							<PlanFeatures2023Grid
+							<PlansGrid
 								gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
 								gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
 								gridPlanForSpotlight={ gridPlanForSpotlight }

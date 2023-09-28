@@ -5,7 +5,6 @@ import getSiteOption from './get-site-option';
 
 /**
  * Returns true if current user can see and use WordAds option in menu
- *
  * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is previewable

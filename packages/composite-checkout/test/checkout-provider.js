@@ -164,7 +164,7 @@ describe( 'CheckoutProvider', () => {
 			const onPaymentComplete = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 			expect( getByText( 'Submit' ) ).not.toBeDisabled();
-			expect( onPaymentComplete ).not.toBeCalled();
+			expect( onPaymentComplete ).not.toHaveBeenCalled();
 		} );
 
 		it( 'calls onPaymentComplete when form status is complete', () => {
@@ -172,7 +172,7 @@ describe( 'CheckoutProvider', () => {
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
-			expect( onPaymentComplete ).toBeCalled();
+			expect( onPaymentComplete ).toHaveBeenCalled();
 		} );
 
 		it( 'does not call onPaymentComplete twice when form status is complete even if callback changes', () => {
@@ -245,7 +245,7 @@ describe( 'CheckoutProvider', () => {
 			const onPaymentComplete = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 			expect( getByText( 'Submit' ) ).not.toBeDisabled();
-			expect( onPaymentComplete ).not.toBeCalled();
+			expect( onPaymentComplete ).not.toHaveBeenCalled();
 		} );
 
 		it( 'calls onPaymentComplete when form status is complete', () => {
@@ -253,14 +253,14 @@ describe( 'CheckoutProvider', () => {
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
-			expect( onPaymentComplete ).toBeCalled();
+			expect( onPaymentComplete ).toHaveBeenCalled();
 		} );
 
 		it( 'does not call onPaymentRedirect when form loads', () => {
 			const onPaymentRedirect = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
 			expect( getByText( 'Submit' ) ).not.toBeDisabled();
-			expect( onPaymentRedirect ).not.toBeCalled();
+			expect( onPaymentRedirect ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does not call onPaymentRedirect when transaction status is complete', () => {
@@ -268,7 +268,7 @@ describe( 'CheckoutProvider', () => {
 			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
 			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
-			expect( onPaymentRedirect ).not.toBeCalled();
+			expect( onPaymentRedirect ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does not call onPaymentRedirect twice when transaction status is redirecting even if callback changes', () => {
@@ -286,14 +286,14 @@ describe( 'CheckoutProvider', () => {
 			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
 			fireEvent.click( getByText( 'Redirect' ) );
 			expect( getByText( 'Redirecting' ) ).toBeInTheDocument();
-			expect( onPaymentRedirect ).toBeCalled();
+			expect( onPaymentRedirect ).toHaveBeenCalled();
 		} );
 
 		it( 'does not call onPaymentError when form loads', () => {
 			const onPaymentError = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
 			expect( getByText( 'Submit' ) ).not.toBeDisabled();
-			expect( onPaymentError ).not.toBeCalled();
+			expect( onPaymentError ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does not call onPaymentError when transaction status is complete', () => {
@@ -301,7 +301,7 @@ describe( 'CheckoutProvider', () => {
 			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
 			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
-			expect( onPaymentError ).not.toBeCalled();
+			expect( onPaymentError ).not.toHaveBeenCalled();
 		} );
 
 		it( 'calls onPaymentError when transaction status is error', () => {
@@ -309,7 +309,7 @@ describe( 'CheckoutProvider', () => {
 			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
 			fireEvent.click( getByText( 'Cause Error' ) );
 			expect( getByText( 'Showing Error' ) ).toBeInTheDocument();
-			expect( onPaymentError ).toBeCalled();
+			expect( onPaymentError ).toHaveBeenCalled();
 		} );
 
 		it( 'does not call onPaymentError twice when transaction status is error even if callback changes', () => {

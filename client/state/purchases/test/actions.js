@@ -118,9 +118,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch/remove actions', async () => {
-			await expect(
-				removePurchase( purchaseId, userId )( dispatch, getState )
-			).rejects.toThrowError();
+			await expect( removePurchase( purchaseId, userId )( dispatch, getState ) ).rejects.toThrow();
 
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: PURCHASE_REMOVE_FAILED,

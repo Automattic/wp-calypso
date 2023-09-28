@@ -139,6 +139,7 @@ export type PendingPostSubscriptionsResult = {
 export type SiteSubscriptionDetails< DateT = Date > = {
 	ID: number;
 	blog_ID: number;
+	feed_ID: number;
 	name: string;
 	URL: string;
 	site_icon: string | null;

@@ -1,6 +1,5 @@
 /**
  * Returns whether user is using a WordPress mobile app.
- *
  * @returns {boolean} Whether the user agent matches the ones used on the WordPress mobile apps.
  */
 export function isWpMobileApp() {
@@ -12,7 +11,6 @@ export function isWpMobileApp() {
 
 /**
  * Returns whether user is using a WooCommerce mobile app.
- *
  * @returns {boolean} Whether the user agent matches the ones used on the WooCommerce mobile apps.
  */
 export function isWcMobileApp() {

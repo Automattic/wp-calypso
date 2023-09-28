@@ -1,15 +1,17 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
+import { UrlData } from 'calypso/blocks/import/types';
 import VerifiedProvider from '../domain-information/verified-provider';
 import type { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
 
 interface Props {
 	dns: DNS[];
+	urlData?: UrlData;
 	hostingProvider?: HostingProvider;
 }
 
 export default function HostingInformation( props: Props ) {
-	const { dns = [], hostingProvider } = props;
+	const { dns = [], urlData, hostingProvider } = props;
 	const aRecordIps = dns.filter( ( x ) => x.type === 'A' && x.ip );
 
 	return (
@@ -19,7 +21,23 @@ export default function HostingInformation( props: Props ) {
 				<li>
 					<div className="name">{ translate( 'Provider' ) }</div>
 					<div>
-						{ hostingProvider?.slug !== 'automattic' && <>{ hostingProvider?.name }</> }
+						{ hostingProvider?.slug !== 'automattic' && (
+							<>
+								{ hostingProvider?.name }
+								{ urlData?.platform === 'wordpress' && (
+									<>
+										&nbsp;&nbsp;
+										<a
+											href={ `${ urlData.url }wp-admin` }
+											target="_blank"
+											rel="nofollow noreferrer"
+										>
+											({ translate( 'login' ) })
+										</a>
+									</>
+								) }
+							</>
+						) }
 						{ hostingProvider?.slug === 'automattic' && <VerifiedProvider /> }
 					</div>
 				</li>

@@ -2,7 +2,6 @@ import commentLike from './site.comment.like';
 
 /**
  * Comment methods
- *
  * @param {string} [cid] comment id
  * @param {string} [pid] post id
  * @param {string} sid site id
@@ -26,7 +25,6 @@ export default function Comment( cid, pid, sid, wpcom ) {
 
 /**
  * Return a single Comment
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
@@ -38,7 +36,6 @@ Comment.prototype.get = function ( query, fn ) {
 
 /**
  * Return recent comments for a post
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
@@ -50,7 +47,6 @@ Comment.prototype.replies = function ( query, fn ) {
 
 /**
  * Create a comment on a post
- *
  * @param {Object} [query] - query object parameter
  * @param {string | Object} body - body parameter
  * @param {Function} fn - callback function
@@ -76,7 +72,6 @@ Comment.prototype.add = function ( query, body, fn ) {
 
 /**
  * Edit a comment
- *
  * @param {Object} [query] - query object parameter
  * @param {string | Object} body - body parameter
  * @param {Function} fn - callback function
@@ -97,7 +92,6 @@ Comment.prototype.update = function ( query, body, fn ) {
 
 /**
  * Create a Comment as a reply to another Comment
- *
  * @param {Object} [query] - query object parameter
  * @param {string | Object} body - body parameter
  * @param {Function} fn - callback function
@@ -118,7 +112,6 @@ Comment.prototype.reply = function ( query, body, fn ) {
 
 /**
  * Delete a comment
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
@@ -130,7 +123,6 @@ Comment.prototype.del = Comment.prototype.delete = function ( query, fn ) {
 
 /**
  * Create a `commentLike` instance
- *
  * @returns {Object} CommentLike instance
  */
 Comment.prototype.like = function () {
@@ -139,7 +131,6 @@ Comment.prototype.like = function () {
 
 /**
  * Get comment likes list
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler

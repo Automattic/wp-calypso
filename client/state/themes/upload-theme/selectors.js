@@ -4,7 +4,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Returns true if a theme upload is in progress.
- *
  * @param {Object} state -- Global state tree
  * @param {number} siteId -- Site ID
  * @returns {boolean} -- True if upload is in progress
@@ -15,7 +14,6 @@ export function isUploadInProgress( state, siteId ) {
 
 /**
  * Returns true if a theme upload has finished successfully.
- *
  * @param {Object} state -- Global state tree
  * @param {number} siteId -- Site ID
  * @returns {boolean} -- True if upload has completed
@@ -26,7 +24,6 @@ export function isUploadComplete( state, siteId ) {
 
 /**
  * Returns true if a theme upload has failed
- *
  * @param {Object} state -- Global state tree
  * @param {number} siteId -- Site ID
  * @returns {boolean} -- True if upload has failed
@@ -37,7 +34,6 @@ export function hasUploadFailed( state, siteId ) {
 
 /**
  * Returns the ID of a successfully uploaded theme.
- *
  * @param {Object} state -- Global state tree
  * @param {number} siteId -- Site ID
  * @returns {?string} -- Uploaded theme ID
@@ -55,7 +51,6 @@ export function getUploadedThemeId( state, siteId ) {
 
 /**
  * Returns the error for a failed theme upload.
- *
  * @param {Object} state -- Global state tree
  * @param {number} siteId -- Site ID
  * @returns {?Object} -- Error details
@@ -66,7 +61,6 @@ export function getUploadError( state, siteId ) {
 
 /**
  * Returns the total size of a theme to be uploaded.
- *
  * @param {Object} state -- Global state tree
  * @param {number} siteId -- Site ID
  * @returns {?number} -- Total
@@ -78,7 +72,6 @@ export function getUploadProgressTotal( state, siteId ) {
 /**
  * Returns the amount of theme currently uploaded. Compare
  * with the total.
- *
  * @param {Object} state -- Global state tree
  * @param {number} siteId -- Site ID
  * @returns {?number} -- Loaded
@@ -90,7 +83,6 @@ export function getUploadProgressLoaded( state, siteId ) {
 /**
  * Returns true if the upload of a theme has completed but the
  * theme installation on the target site has not yet finished.
- *
  * @param {Object} state -- Global state tree
  * @param {number} siteId -- Site ID
  * @returns {boolean} -- True install is in progress
@@ -101,7 +93,6 @@ export function isInstallInProgress( state, siteId ) {
 
 /**
  * Returns true if a transfer is completed.
- *
  * @param {Object} state -- Global state tree
  * @param {number} siteId -- Site ID
  * @returns {boolean} -- True if transfer is completed

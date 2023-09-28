@@ -8,7 +8,6 @@ import 'calypso/state/domains/init';
 
 /**
  * Returns cached domain contact details if we've successfully requested them.
- *
  * @param  {Object}  state       Global state tree
  * @returns {null|PossiblyCompleteDomainContactDetails}              Contact details
  */

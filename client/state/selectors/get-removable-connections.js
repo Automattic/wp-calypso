@@ -10,7 +10,6 @@ import { getRemovableConnections as getRemovablePublicizeConnections } from 'cal
  * For them to be allowed to remove a connection they need to have either the
  * `edit_others_posts` capability or it's a connection to one of
  * their accounts.
- *
  * @param   {Object} state   Global state tree
  * @param   {string} service The name of the service
  * @returns {Array}          Connections that the current user is allowed to remove

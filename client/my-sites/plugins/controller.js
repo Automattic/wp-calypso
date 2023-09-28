@@ -12,6 +12,7 @@ import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plan
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
+import { MailPoetUpgradePage } from './mailpoet-upgrade';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
@@ -73,6 +74,16 @@ export function renderPluginWarnings( context, next ) {
 	context.primary = createElement( PluginEligibility, {
 		siteSlug: site.slug,
 		pluginSlug,
+	} );
+	next();
+}
+
+export function redirectMailPoetUpgrade( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	context.primary = createElement( MailPoetUpgradePage, {
+		siteId: site.ID,
 	} );
 	next();
 }

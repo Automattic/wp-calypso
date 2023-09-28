@@ -43,7 +43,6 @@ class TagStreamHeader extends Component {
 						<FollowButton
 							followLabel={ translate( 'Follow tag' ) }
 							followingLabel={ translate( 'Following tag' ) }
-							iconSize={ 24 }
 							following={ following }
 							onFollowToggle={ onFollowToggle }
 							followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }

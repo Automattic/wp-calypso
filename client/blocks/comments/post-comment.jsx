@@ -117,12 +117,14 @@ class PostComment extends PureComponent {
 	handleAuthorClick = ( event ) => {
 		recordAction( 'comment_author_click' );
 		recordGaEvent( 'Clicked Author Name' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_comment_author_click', {
-			blog_id: this.props.post.site_ID,
-			post_id: this.props.post.ID,
-			comment_id: this.props.commentId,
-			author_url: event.target.href,
-		} );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_comment_author_click',
+			{
+				comment_id: this.props.commentId,
+				author_url: event.target.href,
+			},
+			{ post: this.props.post }
+		);
 	};
 
 	handleCommentPermalinkClick = ( event ) => {
@@ -319,11 +321,15 @@ class PostComment extends PureComponent {
 			} );
 		recordAction( 'comment_read_more_click' );
 		recordGaEvent( 'Clicked Comment Read More' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_comment_read_more_click', {
-			blog_id: this.props.post.site_ID,
-			post_id: this.props.post.ID,
-			comment_id: this.props.commentId,
-		} );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_comment_read_more_click',
+			{
+				comment_id: this.props.commentId,
+			},
+			{
+				post: this.props.post,
+			}
+		);
 	};
 
 	render() {

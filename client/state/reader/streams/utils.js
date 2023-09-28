@@ -2,7 +2,6 @@ import { sameXPost } from 'calypso/reader/stream/utils';
 
 /**
  * Add the post URL from a duplicate x-post to an existing post key
- *
  * @param {Object} postKey1 First post key
  * @param {Object} postKey2 Second (duplicate) post key
  * @returns {Object} Post key
@@ -19,7 +18,6 @@ export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
 
 /**
  * Combine adjacent x-posts that refer to the same original post
- *
  * @param {Array} postKeys Array of post key objects
  * @returns {Array} Array of post key objects
  */
