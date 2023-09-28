@@ -32,6 +32,7 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import StatsSection from './components/stats';
 
 import './style.scss';
 
@@ -492,7 +493,12 @@ const Home = () => {
 					<PromoSection promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] } />
 				</div>
 			) }
-			{ ! isLoading && <PromoSection { ...promos } /> }
+			{ ! isLoading && (
+				<>
+					<StatsSection />
+					<PromoSection { ...promos } />
+				</>
+			) }
 		</>
 	);
 };

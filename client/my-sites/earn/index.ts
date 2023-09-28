@@ -5,7 +5,6 @@ import earnController from './controller';
 
 export default function () {
 	page( '/earn', siteSelection, sites, makeLayout, clientRender );
-	page( '/earn/stats', siteSelection, sites, makeLayout, clientRender );
 	page( '/earn/supporters', siteSelection, sites, makeLayout, clientRender );
 	page( '/earn/payments', siteSelection, sites, makeLayout, clientRender );
 	// This is legacy, we are leaving it here because it may have been public

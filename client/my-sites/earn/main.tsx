@@ -21,7 +21,6 @@ import Home from './home';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
-import StatsSection from './stats';
 import { Query } from './types';
 
 type EarningsMainProps = {
@@ -43,7 +42,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
 		supporters: translate( 'Supporters' ),
-		stats: translate( 'Stats' ),
 		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
@@ -60,11 +58,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				title: translate( 'Supporters' ),
 				path: '/earn/supporters' + pathSuffix,
 				id: 'supporters',
-			},
-			{
-				title: translate( 'Stats' ),
-				path: '/earn/stats' + pathSuffix,
-				id: 'stats',
 			},
 			{
 				title: translate( 'Payment Settings' ),
@@ -145,9 +138,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				return <MembershipsSection query={ query } />;
 			case 'payments-plans':
 				return <MembershipsProductsSection />;
-
-			case 'stats':
-				return <StatsSection />;
 
 			case 'supporters':
 				return <CustomerSection />;
