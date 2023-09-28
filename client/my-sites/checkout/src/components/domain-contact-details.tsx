@@ -35,21 +35,25 @@ export default function DomainContactDetails( {
 	emailOnly?: boolean;
 } ) {
 	const translate = useTranslate();
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
-	const needsOnlyGoogleAppsDetails =
-		hasGoogleApps( responseCart ) &&
-		! hasDomainRegistration( responseCart ) &&
-		! hasTransferProduct( responseCart );
-	const getIsFieldDisabled = () => isDisabled;
-	const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
+	// const cartKey = useCartKey();
+	// const { responseCart } = useShoppingCart( cartKey );
+	// const needsOnlyGoogleAppsDetails =
+	// 	hasGoogleApps( responseCart ) &&
+	// 	! hasDomainRegistration( responseCart ) &&
+	// 	! hasTransferProduct( responseCart );
+	// const getIsFieldDisabled = () => isDisabled;
+	// const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
 	const tlds = getAllTopLevelTlds( domainNames );
+
+	tlds.push( 'fr' );
+	console.log( 'tlds: ', tlds );
+	console.log( 'contactDetails: ', contactDetails );
 
 	const isVatSupported = config.isEnabled( 'checkout/vat-form' );
 
 	return (
 		<Fragment>
-			<ManagedContactDetailsFormFields
+			{ /* <ManagedContactDetailsFormFields
 				needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
 				needsAlternateEmailForGSuite={ needsAlternateEmailForGSuite }
 				contactDetails={ contactDetails }
@@ -60,7 +64,7 @@ export default function DomainContactDetails( {
 				getIsFieldDisabled={ getIsFieldDisabled }
 				isLoggedOutCart={ isLoggedOutCart }
 				emailOnly={ emailOnly }
-			/>
+			/> */ }
 			{ tlds.includes( 'ca' ) && (
 				<RegistrantExtraInfoForm
 					contactDetails={ contactDetails }

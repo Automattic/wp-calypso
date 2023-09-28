@@ -20,6 +20,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
+import DomainContactDetails from 'calypso/my-sites/checkout/src/components/domain-contact-details';
 import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -105,6 +106,7 @@ export class ContactDetailsFormFields extends Component {
 			form: null,
 			submissionCount: 0,
 			updateWpcomEmail: false,
+			contactDetails: this.props.contactDetails || {},
 		};
 
 		this.inputRefs = {};
@@ -128,7 +130,8 @@ export class ContactDetailsFormFields extends Component {
 			nextProps.needsFax !== this.props.needsFax ||
 			nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
 			nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails ||
-			nextState.updateWpcomEmail !== this.state.updateWpcomEmail
+			nextState.updateWpcomEmail !== this.state.updateWpcomEmail ||
+			nextState.contactDetails !== this.state.contactDetails
 		);
 	}
 
@@ -535,6 +538,13 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
+	updateDomainContactFields = ( data ) => {
+		const newContactDetails = Object.assign( {}, this.state.contactDetails, data );
+		this.setState( { contactDetails: newContactDetails } );
+		// Object.keys( newContactDetails ).length > 0 &&
+		// 	this.debouncedValidateContactDetails( newContactDetails );
+	};
+
 	render() {
 		const {
 			translate,
@@ -549,6 +559,7 @@ export class ContactDetailsFormFields extends Component {
 			return null;
 		}
 
+		const tlds = [ 'fr' ];
 		const countryCode = this.getCountryCode();
 
 		const isFooterVisible = !! ( this.props.onSubmit || onCancel );
@@ -583,6 +594,38 @@ export class ContactDetailsFormFields extends Component {
 				{ this.props.needsOnlyGoogleAppsDetails
 					? this.renderGAppsFieldset()
 					: this.renderContactDetailsFields() }
+
+				<div className="contact-details-form-fields__extra-fields">
+					<DomainContactDetails
+						domainNames={ [] }
+						contactDetails={ this.state.contactDetails }
+						// contactDetailsErrors={  }
+						updateDomainContactFields={ this.updateDomainContactFields }
+						shouldShowContactDetailsValidationErrors={ false }
+						isLoggedOutCart={ false }
+						// isDisabled={ isDisabled || isSubmitting }
+						// emailOnly={ emailOnly }
+					/>
+					{
+						//'uk', 'fr', 'ca', 'de', 'jp'
+					 }
+					{ /* { tlds.includes( 'fr' ) && (
+						<RegistrantExtraInfoForm
+							contactDetails={ this.props.contactDetails }
+							ccTldDetails="organization"
+							onContactDetailsChange={ ( item ) => {
+								console.log( 'updated: ', item );
+							} }
+							// contactDetailsValidationErrors={
+							// 	shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+							// }
+							tld="fr"
+							getDomainNames={ () => [ 'something.de' ] }
+							translate={ translate }
+							isManaged={ true }
+						/>
+					) } */ }
+				</div>
 
 				{ this.props.children && (
 					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
