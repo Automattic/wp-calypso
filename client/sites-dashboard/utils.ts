@@ -38,7 +38,10 @@ export const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
 };
 
-export function isCustomDomain( siteSlug: string ): boolean {
+export function isCustomDomain( siteSlug: string | null | undefined ): boolean {
+	if ( ! siteSlug ) {
+		return false;
+	}
 	return ! siteSlug.endsWith( '.wordpress.com' ) && ! siteSlug.endsWith( '.wpcomstaging.com' );
 }
 
