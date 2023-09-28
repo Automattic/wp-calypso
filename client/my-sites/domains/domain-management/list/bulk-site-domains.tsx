@@ -90,7 +90,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				<DomainsTable
-					isFetchingDomains={ isLoading }
+					isLoadingDomains={ isLoading }
 					domains={ data?.domains }
 					isAllSitesView={ false }
 					siteSlug={ site?.slug ?? null }
