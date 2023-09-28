@@ -559,7 +559,6 @@ export class ContactDetailsFormFields extends Component {
 			return null;
 		}
 
-		const tlds = [ 'fr' ];
 		const countryCode = this.getCountryCode();
 
 		const isFooterVisible = !! ( this.props.onSubmit || onCancel );
@@ -596,6 +595,9 @@ export class ContactDetailsFormFields extends Component {
 					: this.renderContactDetailsFields() }
 
 				<div className="contact-details-form-fields__extra-fields">
+					{
+						// TODO: connect contactDetailsErrors
+					 }
 					<DomainContactDetailsTlds
 						domainNames={ [] }
 						contactDetails={ this.state.contactDetails }
@@ -603,28 +605,7 @@ export class ContactDetailsFormFields extends Component {
 						updateDomainContactFields={ this.updateDomainContactFields }
 						shouldShowContactDetailsValidationErrors={ false }
 						isLoggedOutCart={ false }
-						// isDisabled={ isDisabled || isSubmitting }
-						// emailOnly={ emailOnly }
 					/>
-					{
-						//'uk', 'fr', 'ca', 'de', 'jp'
-					 }
-					{ /* { tlds.includes( 'fr' ) && (
-						<RegistrantExtraInfoForm
-							contactDetails={ this.props.contactDetails }
-							ccTldDetails="organization"
-							onContactDetailsChange={ ( item ) => {
-								console.log( 'updated: ', item );
-							} }
-							// contactDetailsValidationErrors={
-							// 	shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-							// }
-							tld="fr"
-							getDomainNames={ () => [ 'something.de' ] }
-							translate={ translate }
-							isManaged={ true }
-						/>
-					) } */ }
 				</div>
 
 				{ this.props.children && (
