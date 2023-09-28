@@ -4,11 +4,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 import './style.scss';
 
-interface DomainTransferToAnyUserFooterProps {
-	domain: string;
-}
-
-const DomainTransferToAnyUserFooter = ( { domain }: DomainTransferToAnyUserFooterProps ) => {
+const DomainTransferToAnyUserFooter = () => {
 	return (
 		<div className="checkout-thank-you__purchase-details-list">
 			<div>
@@ -37,10 +33,6 @@ const DomainTransferToAnyUserFooter = ( { domain }: DomainTransferToAnyUserFoote
 					}
 				/>
 			</div>
-			<ProfessionalEmail
-				domain={ domain }
-				trackEvent="calypso_domain_transfer_thank_you_professional_email_click"
-			/>
 		</div>
 	);
 };

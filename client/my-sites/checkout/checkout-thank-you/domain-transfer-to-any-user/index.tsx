@@ -1,9 +1,12 @@
 import { translate } from 'i18n-calypso';
+import professionalEmailImage from 'calypso/assets/images/checkout/professional-email.svg';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import ThankYouLayout from '../redesign-v2/ThankYouLayout';
 import DomainTransferToAnyUserFooter from '../redesign-v2/sections/footer/DomainTransferToAnyUserFooter';
 import DefaultThankYouHeader from '../redesign-v2/sections/header/Default';
 import ProductDomain from '../redesign-v2/sections/product/ProductDomain';
 import DefaultSubHeader from '../redesign-v2/sections/subheader/Default';
+import DefaultUpsell from '../redesign-v2/sections/upsell/Default';
 
 interface DomainTransferToAnyUserContainerProps {
 	domain: string;
@@ -23,7 +26,17 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 				) }
 			</DefaultSubHeader>
 			<ProductDomain domain={ domain } />
-			<DomainTransferToAnyUserFooter domain={ domain } />
+			<DomainTransferToAnyUserFooter />
+			<DefaultUpsell
+				title={ translate( 'Professional email' ) }
+				description={ translate(
+					'85% of people trust an email address with a custom domain name over a generic one.'
+				) }
+				icon={ professionalEmailImage }
+				href={ emailManagement( domain, domain ) }
+				buttonText={ translate( 'Add email' ) }
+				trackEvent="calypso_domain_transfer_thank_you_professional_email_click"
+			/>
 		</ThankYouLayout>
 	);
 };
