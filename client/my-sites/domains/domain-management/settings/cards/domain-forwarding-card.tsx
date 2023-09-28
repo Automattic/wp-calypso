@@ -109,7 +109,9 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			( child.is_secure ? 'http://' : 'https://' ) + ( child.target_host ?? '_invalid_.domain' );
 		const url = new URL( child.target_path, origin );
 		if ( url.hostname !== '_invalid_.domain' ) {
-			setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
+			setTargetUrl(
+				( child.is_secure ? '' : 'http://' ) + url.hostname + url.pathname + url.search + url.hash
+			);
 			setIsPermanent( child.is_permanent );
 			setForwardPaths( child.forward_paths );
 			setSubdomain( child.subdomain );
