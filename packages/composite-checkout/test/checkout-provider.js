@@ -1,6 +1,5 @@
 import { render, fireEvent } from '@testing-library/react';
 import { useState } from 'react';
-import '@testing-library/jest-dom/extend-expect';
 import {
 	CheckoutProvider,
 	FormStatus,
