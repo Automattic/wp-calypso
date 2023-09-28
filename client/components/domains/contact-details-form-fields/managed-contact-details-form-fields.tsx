@@ -21,6 +21,10 @@ import {
 } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
+import {
+	getCurrentUserEmail,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import getCountries from 'calypso/state/selectors/get-countries';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
@@ -32,7 +36,6 @@ import { GSuiteFields } from './g-suite-fields';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors, ManagedContactDetails } from '@automattic/wpcom-checkout';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
@@ -55,6 +58,8 @@ export interface ManagedContactDetailsFormFieldsConnectedProps {
 	countryCode: string | undefined;
 	hasCountryStates: boolean;
 	countriesList: CountryListItem[] | null;
+	needsEmailVerification: boolean;
+	userEmail: string;
 }
 
 interface ManagedContactDetailsFormFieldsState {
@@ -197,15 +202,21 @@ export class ManagedContactDetailsFormFields extends Component<
 		this.handleFieldChange( name, sanitizedValue );
 	};
 
+	maybeDisplayEmailVerificationNotice = () => {
+		if (
+			this.props.contactDetails.email !== this.props.userEmail ||
+			this.props.needsEmailVerification ||
+			this.props.isLoggedOutCart
+		) {
+			return this.props.translate( 'Remember to confirm your email address' );
+		}
+	};
+
 	createEmailField() {
 		return (
 			<Input
 				label={ this.props.translate( 'Email' ) }
-				description={
-					this.props.isLoggedOutCart
-						? this.props.translate( "You'll use this email address to access your account later" )
-						: undefined
-				}
+				description={ this.maybeDisplayEmailVerificationNotice() }
 				labelClass="contact-details-form-fields__label"
 				additionalClasses="contact-details-form-fields__field"
 				disabled={ this.props.getIsFieldDisabled( 'email' ) }
@@ -462,6 +473,8 @@ export default connect( ( state: IAppState, props: ManagedContactDetailsFormFiel
 		countryCode,
 		countriesList: getCountries( state, 'domains' ),
 		hasCountryStates,
+		userEmail: getCurrentUserEmail( state ),
+		needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 	};
 } )( localize( ManagedContactDetailsFormFields ) );
 
