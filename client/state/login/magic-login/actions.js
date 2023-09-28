@@ -66,32 +66,34 @@ async function postMagicLoginRequest( url, bodyObj ) {
  * @param	{string | null}	flow	The client's login flow
  * @returns	{Function}	A thunk that can be dispatched
  */
-export const fetchMagicLoginAuthenticate = ( token, redirectTo, flow ) => ( dispatch ) => {
-	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
+export const fetchMagicLoginAuthenticate =
+	( token, redirectTo, flow = null ) =>
+	( dispatch ) => {
+		dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
-	postMagicLoginRequest( AUTHENTICATE_URL, {
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-		token,
-		redirect_to: redirectTo,
-		flow,
-	} )
-		.then( ( json ) => {
-			dispatch( {
-				type: LOGIN_REQUEST_SUCCESS,
-				data: json.data,
-			} );
-
-			dispatch( {
-				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
-			} );
+		postMagicLoginRequest( AUTHENTICATE_URL, {
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+			token,
+			redirect_to: redirectTo,
+			flow,
 		} )
-		.catch( ( error ) => {
-			const { status } = error;
+			.then( ( json ) => {
+				dispatch( {
+					type: LOGIN_REQUEST_SUCCESS,
+					data: json.data,
+				} );
 
-			dispatch( {
-				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
-				error: status,
+				dispatch( {
+					type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
+				} );
+			} )
+			.catch( ( error ) => {
+				const { status } = error;
+
+				dispatch( {
+					type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
+					error: status,
+				} );
 			} );
-		} );
-};
+	};
