@@ -58,7 +58,9 @@ export function getEnhancedTasks(
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
-	stripeConnectUrl?: string
+	stripeConnectUrl?: string,
+	setShowConfirmModal: () => void = () => {},
+	hasCustomDomain = false
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -338,8 +340,16 @@ export function getEnhancedTasks(
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
-						actionDispatch: () => {
+						isLaunchTask: true,
+						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
+								if ( ! force ) {
+									if ( ! isEmailVerified && hasCustomDomain ) {
+										setShowConfirmModal();
+										return;
+									}
+								}
+
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -362,8 +372,15 @@ export function getEnhancedTasks(
 					break;
 				case 'site_launched':
 					taskData = {
-						actionDispatch: () => {
+						isLaunchTask: true,
+						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
+								if ( ! force ) {
+									if ( ! isEmailVerified && hasCustomDomain ) {
+										setShowConfirmModal();
+										return;
+									}
+								}
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -392,6 +409,7 @@ export function getEnhancedTasks(
 					}
 
 					taskData = {
+						isLaunchTask: true,
 						title,
 						disabled:
 							( isStartWritingFlow( flow ) &&
@@ -401,8 +419,15 @@ export function getEnhancedTasks(
 									! setupBlogCompleted ) ) ||
 							( isDesignFirstFlow( flow ) &&
 								( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ) ),
-						actionDispatch: () => {
+						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
+								if ( ! force ) {
+									if ( ! isEmailVerified && hasCustomDomain ) {
+										setShowConfirmModal();
+										return;
+									}
+								}
+
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -451,8 +476,16 @@ export function getEnhancedTasks(
 					break;
 				case 'videopress_launched':
 					taskData = {
-						actionDispatch: () => {
+						isLaunchTask: true,
+						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
+								if ( ! force ) {
+									if ( ! isEmailVerified && hasCustomDomain ) {
+										setShowConfirmModal();
+										return;
+									}
+								}
+
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
