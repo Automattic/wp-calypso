@@ -216,16 +216,15 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		} );
 	};
 
-	const getDesign = () =>
-		( {
-			...selectedDesign,
-			recipe: {
-				...selectedDesign?.recipe,
-				header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
-				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
-				footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
-			} as DesignRecipe,
-		} as Design );
+	const getDesign = () => ( {
+		...selectedDesign,
+		recipe: {
+			...selectedDesign?.recipe,
+			header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
+			pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
+			footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
+		} as DesignRecipe,
+	} );
 
 	const updateActivePatternPosition = ( position: number ) => {
 		const patternPosition = header ? position + 1 : position;
@@ -336,7 +335,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	};
 
 	const onSubmit = () => {
-		const design = getDesign();
+		const design = getDesign() as Design;
 		const stylesheet = design.recipe?.stylesheet ?? '';
 		const themeId = getThemeIdFromStylesheet( stylesheet );
 		const hasBlogPatterns = !! sections.find(
