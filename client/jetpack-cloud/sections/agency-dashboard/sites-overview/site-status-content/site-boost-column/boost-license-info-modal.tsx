@@ -54,7 +54,7 @@ export default function BoostLicenseInfoModal( { onClose, siteId, siteUrl }: Pro
 			onClose={ onClose }
 			siteId={ siteId }
 			onCtaClick={ handlePurchaseBoost }
-			extraContent={
+			extraAsideContent={
 				<>
 					<Button
 						disabled={ inProgress }

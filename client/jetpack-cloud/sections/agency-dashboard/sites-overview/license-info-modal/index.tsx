@@ -14,7 +14,7 @@ interface Props {
 	currentLicenseInfo: string | null;
 	onClose?: () => void;
 	siteId?: number;
-	extraContent?: JSX.Element;
+	extraAsideContent?: JSX.Element;
 	isDisabled?: boolean;
 	onCtaClick?: () => void;
 }
@@ -24,7 +24,7 @@ export default function LicenseInfoModal( {
 	currentLicenseInfo,
 	onClose,
 	siteId,
-	extraContent,
+	extraAsideContent,
 	isDisabled,
 	onCtaClick,
 }: Props ) {
@@ -80,7 +80,7 @@ export default function LicenseInfoModal( {
 				isDisabled={ isDisabled }
 				onActivate={ onIssueLicense }
 				onClose={ onHideLicenseInfo }
-				extraContent={ extraContent }
+				extraAsideContent={ extraAsideContent }
 			/>
 		)
 	);

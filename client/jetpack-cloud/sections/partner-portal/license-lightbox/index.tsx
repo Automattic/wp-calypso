@@ -20,7 +20,7 @@ export type LicenseLightBoxProps = {
 	onActivate: ( product: APIProductFamilyProduct ) => void;
 	onClose: () => void;
 	product: APIProductFamilyProduct;
-	extraContent?: JSX.Element;
+	extraAsideContent?: JSX.Element;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -30,7 +30,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	onActivate,
 	onClose,
 	product,
-	extraContent,
+	extraAsideContent,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -66,7 +66,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 				>
 					{ ctaLabel }
 				</Button>
-				{ extraContent }
+				{ extraAsideContent }
 			</JetpackLightboxAside>
 		</JetpackLightbox>
 	);

@@ -9,34 +9,29 @@ import { getBoostRating, getBoostRatingClass } from '../lib/boost';
 import BoostLicenseInfoModal from '../site-status-content/site-boost-column/boost-license-info-modal';
 import ExpandedCard from './expanded-card';
 import InProgressIcon from './in-progress-icon';
-import type { BoostData } from '../types';
+import type { Site } from '../types';
 
 interface Props {
-	boostData: BoostData;
-	hasBoost: boolean;
-	siteId: number;
-	siteUrlWithScheme: string;
+	site: Site;
 	trackEvent: ( eventName: string ) => void;
 	hasError: boolean;
-	hasPendingScore: boolean;
-	siteUrl: string;
 }
 
-export default function BoostSitePerformance( {
-	boostData,
-	hasBoost,
-	siteId,
-	siteUrlWithScheme,
-	trackEvent,
-	hasError,
-	hasPendingScore,
-	siteUrl,
-}: Props ) {
+export default function BoostSitePerformance( { site, trackEvent, hasError }: Props ) {
 	const translate = useTranslate();
 
 	const helpIconRef = useRef< HTMLElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
 	const [ showBoostModal, setShowBoostModal ] = useState( false );
+
+	const {
+		blog_id: siteId,
+		url_with_scheme: siteUrlWithScheme,
+		url: siteUrl,
+		has_boost: hasBoost,
+		jetpack_boost_scores: boostData,
+		has_pending_boost_one_time_score: hasPendingScore,
+	} = site;
 
 	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
 
@@ -121,33 +116,31 @@ export default function BoostSitePerformance( {
 						</div>
 					</div>
 					<div className="site-expanded-content__card-content-column">
-						<>
-							{ hasPendingScore ? (
-								<InProgressIcon />
-							) : (
-								<div className="site-expanded-content__device-score-container">
-									<div className="site-expanded-content__card-content-column">
-										<Icon
-											size={ 24 }
-											className="site-expanded-content__device-icon"
-											icon={ jetpackBoostDesktopIcon }
-										/>
-										<span className="site-expanded-content__device-score">{ desktopScore }</span>
-									</div>
-									<div className="site-expanded-content__card-content-column site-expanded-content__card-content-column-mobile">
-										<Icon
-											className="site-expanded-content__device-icon"
-											size={ 24 }
-											icon={ jetpackBoostMobileIcon }
-										/>
-										<span className="site-expanded-content__device-score">{ mobileScore }</span>
-									</div>
+						{ hasPendingScore ? (
+							<InProgressIcon />
+						) : (
+							<div className="site-expanded-content__device-score-container">
+								<div className="site-expanded-content__card-content-column">
+									<Icon
+										size={ 24 }
+										className="site-expanded-content__device-icon"
+										icon={ jetpackBoostDesktopIcon }
+									/>
+									<span className="site-expanded-content__device-score">{ desktopScore }</span>
 								</div>
-							) }
-							<div className="site-expanded-content__card-content-score-title">
-								{ translate( 'Devices' ) }
+								<div className="site-expanded-content__card-content-column site-expanded-content__card-content-column-mobile">
+									<Icon
+										className="site-expanded-content__device-icon"
+										size={ 24 }
+										icon={ jetpackBoostMobileIcon }
+									/>
+									<span className="site-expanded-content__device-score">{ mobileScore }</span>
+								</div>
 							</div>
-						</>
+						) }
+						<div className="site-expanded-content__card-content-score-title">
+							{ translate( 'Devices' ) }
+						</div>
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">
