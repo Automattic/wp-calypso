@@ -86,7 +86,7 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 			// TODO: add CSS to increase the width
 			popoverProps={ { placement: 'bottom-end' } }
 			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button variant="primary" onClick={ onToggle } aria-expanded={ isOpen }>
+				<Button className="date-control-dropdown" onClick={ onToggle } aria-expanded={ isOpen }>
 					{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
 				</Button>
 			) }
