@@ -35,7 +35,10 @@ export default function ThemeCollection( {
 			{ subheading }
 			<div className="theme-collection__list-wrapper">
 				{ themes.map( ( theme, index ) => (
-					<div key={ `theme-collection-container-${ collectionSlug }-${ index }` }>
+					<div
+						key={ `theme-collection-container-${ collectionSlug }-${ index }` }
+						className="theme--collection__list-item"
+					>
 						<ThemeBlock
 							getScreenshotUrl={ getScreenshotUrl }
 							index={ index }

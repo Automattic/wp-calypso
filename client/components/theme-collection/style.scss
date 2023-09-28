@@ -1,3 +1,7 @@
 .theme-collection__list-wrapper {
 	display: flex;
 }
+.theme--collection__list-item {
+	flex-basis: 30%;
+	flex-shrink: 0;
+}
