@@ -11,6 +11,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
 import ThemeCollection from 'calypso/components/theme-collection';
+import PremiumThemesCollection from 'calypso/components/theme-collection/premium-themes-collection';
 import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -276,21 +277,32 @@ class ThemesSelection extends Component {
 				{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
 
 				{ ( isActiveInLits || isActiveInLots ) && (
-					<ThemeCollection
-						heading="Premium themes"
-						subheading={ <p>Lorem ipsum nessum dorma</p> }
-						themes={ interlacedThemes }
-						collectionSlug="premium-themes"
-						getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
-						getScreenshotUrl={ this.props.getScreenshotUrl }
-						bookmarkRef={ this.props.bookmarkRef }
-						getButtonOptions={ this.getOptions }
-						getActionLabel={ this.props.getActionLabel }
-						isActive={ this.props.isThemeActive }
-						getPrice={ this.props.getPremiumThemePrice }
-						isInstalling={ this.props.isInstallingTheme }
-						siteId={ siteId }
-					/>
+					<>
+						<ThemeCollection
+							heading="Premium themes"
+							subheading={ <p>Lorem ipsum nessum dorma</p> }
+							themes={ interlacedThemes.splice( 10 ) }
+							collectionSlug="premium-themes"
+							getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
+							getScreenshotUrl={ this.props.getScreenshotUrl }
+							bookmarkRef={ this.props.bookmarkRef }
+							getButtonOptions={ this.getOptions }
+							getActionLabel={ this.props.getActionLabel }
+							isActive={ this.props.isThemeActive }
+							getPrice={ this.props.getPremiumThemePrice }
+							isInstalling={ this.props.isInstallingTheme }
+							siteId={ siteId }
+						/>
+
+						<PremiumThemesCollection
+							getScreenshotUrl={ this.props.getScreenshotUrl }
+							getButtonOptions={ this.getOptions }
+							getActionLabel={ this.props.getActionLabel }
+							isActive={ this.props.isThemeActive }
+							getPrice={ this.props.getPremiumThemePrice }
+							isInstalling={ this.props.isInstallingTheme }
+						/>
+					</>
 				) }
 
 				<ThemesList

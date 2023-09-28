@@ -8,7 +8,7 @@ interface ThemeCollectionProps {
 	themes: Array< never >;
 	collectionSlug: string;
 	getScreenshotUrl: ( themeId: string ) => string;
-	siteId: string;
+	siteId: string | null;
 	getButtonOptions: () => void;
 	getActionLabel: () => string;
 	isActive: () => boolean;
