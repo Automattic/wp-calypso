@@ -14,6 +14,7 @@ $button-padding: 8px 32px;
 	flex-direction: row-reverse;
 }
 
+// styling for both interval dropdown and date control picker drop down buttons
 .components-dropdown > .components-button {
 	--gray-gray-10: #c3c4c7;
 	--gutenberg-gray-900: #1e1e1e;
@@ -26,59 +27,7 @@ $button-padding: 8px 32px;
 	font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	font-weight: 500;
 
-	//todo: move to period header styles once component has been moved in there
-	&.interval-dropdown {
-		border-radius: 2px;
-		color: var(--gutenberg-gray-900);
-		font-family: $font-sf-pro-text;
-		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		font-weight: 400;
-	}
-
 	&:hover {
 		background-color: var(--color-neutral-0);
 	}
 }
-
-.components-popover__content {
-	width: 196px;
-	border-radius: 2px;
-	background-color: var(--studio-white);
-	box-shadow:
-		0 2.3px 3.3px -0.5px rgba(0, 0, 0, 0.1),
-		0 1.2px 1.7px -0.2px rgba(0, 0, 0, 0.1),
-		0 0.7px 1px 0 rgba(0, 0, 0, 0.1),
-		0 0 0 1px #ccc;
-
-	.segmented-control {
-		display: block;
-		background-color: var(--studio-white);
-		padding-left: 0;
-
-		&.is-primary {
-			&__item {
-				flex: none;
-				cursor: default;
-				background-color: transparent;
-
-				&:not(.is-selected) {
-					.segmented-control__link {
-						color: inherit;
-						background-color: var(--studio-white);
-						outline: none;
-					}
-				}
-			}
-		}
-
-		&__link {
-			display: block;
-			padding: 8px 12px;
-			border: none;
-			text-align: left;
-			background-color: var(--studio-white);
-			transition: none;
-		}
-	}
-}
-
