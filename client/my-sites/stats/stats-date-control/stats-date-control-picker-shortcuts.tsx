@@ -10,7 +10,7 @@ const DateControlPickerShortcuts = ( {
 		<div className="date-control-picker-shortcuts">
 			<ul className="date-control-picker-shortcuts__list">
 				{ shortcutList.map( ( shortcut, idx ) => (
-					<li className="date-control-picker-shortcuts__shortcut">
+					<li className="date-control-picker-shortcuts__shortcut" key={ shortcut.id || idx }>
 						<Button
 							key={ shortcut.id || idx }
 							onClick={ () => {
