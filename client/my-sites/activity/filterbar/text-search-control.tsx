@@ -1,16 +1,17 @@
 import { TextControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import React, { FunctionComponent } from 'react';
+import { useDispatch } from 'react-redux';
 import { updateFilter } from 'calypso/state/activity-log/actions';
+import { CalypsoDispatch } from 'calypso/state/types';
+
 interface Props {
 	siteId: number;
 }
 
 const TextSearchControl: FunctionComponent< Props > = ( { siteId } ) => {
 	const [ text, setText ] = useState( '' );
-	const dispatch = useDispatch();
-
+	const dispatch = useDispatch() as CalypsoDispatch;
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		const { value } = event.currentTarget;
 
