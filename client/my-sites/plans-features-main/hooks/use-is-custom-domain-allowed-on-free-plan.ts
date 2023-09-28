@@ -8,18 +8,10 @@ const useIsCustomDomainAllowedOnFreePlan = (
 	const EXPERIMENT_NAME =
 		flowName === 'onboarding'
 			? 'calypso_onboarding_plans_paid_domain_on_free_plan_confidence_check'
-			: '';
+			: 'calypso_onboardingpm_plans_paid_domain_on_free_plan';
 	const [ isLoading, assignment ] = useExperiment( EXPERIMENT_NAME, {
-		isEligible: flowName === 'onboarding' && hasPaidDomainName,
+		isEligible: [ 'onboarding', 'onboarding-pm' ].includes( flowName ?? '' ) && hasPaidDomainName,
 	} );
-
-	/** Ships experiment variant to onboarding-pm flow only  */
-	if ( flowName === 'onboarding-pm' ) {
-		return {
-			isLoading: false,
-			result: true,
-		};
-	}
 
 	return {
 		isLoading,
