@@ -2,11 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { DomainAnalyzerQueryResponse } from 'calypso/data/site-profiler/types';
 import wp from 'calypso/lib/wp';
 
-export interface MigrationStatusError {
-	status: number;
-	message: string;
-}
-
 export const useDomainAnalyzerQuery = ( domain: string, isValid?: boolean ) => {
 	return useQuery( {
 		queryKey: [ 'domain-', domain ],

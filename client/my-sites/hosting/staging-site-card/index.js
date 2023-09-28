@@ -24,6 +24,7 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { useDeleteStagingSite } from './use-delete-staging-site';
+import { usePushToStagingMutation } from './use-staging-sync';
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
@@ -205,6 +206,16 @@ export const StagingSiteCard = ( {
 		addStagingSite();
 	};
 
+	const { pushToStaging } = usePushToStagingMutation( siteId, stagingSite?.id, {
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+					code: error.code,
+				} )
+			);
+		},
+	} );
+
 	const getTransferringStagingSiteContent = useCallback( () => {
 		return (
 			<>
@@ -259,6 +270,7 @@ export const StagingSiteCard = ( {
 			<ManageStagingSiteCardContent
 				stagingSite={ stagingSite }
 				onDeleteClick={ deleteStagingSite }
+				onPushClick={ pushToStaging }
 				isButtonDisabled={ disabled }
 				isBusy={ isReverting }
 			/>

@@ -333,11 +333,11 @@ class MagicLogin extends Component {
 			<div className="grav-powered-magic-login__tos">
 				{ isGravatarOAuth2Client( oauth2Client )
 					? translate(
-							`By clicking "Continue", you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
+							`By clicking “Send me login link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
 							textOptions
 					  )
 					: translate(
-							`By clicking "Continue", you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.`,
+							`By clicking “Send me login link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.`,
 							textOptions
 					  ) }
 			</div>

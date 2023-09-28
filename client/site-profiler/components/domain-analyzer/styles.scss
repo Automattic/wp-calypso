@@ -64,6 +64,10 @@
 		text-align: center;
 	}
 
+	.vis-hidden {
+		visibility: hidden;
+	}
+
 	.error {
 		color: var(--studio-red-50) !important;
 

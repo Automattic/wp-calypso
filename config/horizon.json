@@ -119,6 +119,7 @@
 		"signup/social": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
+		"site-profiler": true,
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
@@ -154,7 +155,8 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/hosting-metrics-i1": false
+		"yolo/hosting-metrics-i1": false,
+		"yolo/staging-sites-i3": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

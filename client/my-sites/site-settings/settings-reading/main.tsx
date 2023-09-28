@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -15,7 +14,6 @@ import { getSiteSlug, getSiteUrl, isJetpackSite } from 'calypso/state/sites/sele
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSettingsSection from '../reader-settings';
-import { FediverseSettingsSection } from '../reading-fediverse-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
 import wrapSettingsForm from '../wrap-settings-form';
@@ -153,7 +151,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
 					/>
-					{ isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
+
 					{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 					<SettingsSectionHeader
 						id="newsletter-settings"
