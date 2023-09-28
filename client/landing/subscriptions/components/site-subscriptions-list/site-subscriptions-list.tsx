@@ -2,7 +2,7 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { Spinner, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { Notice, NoticeType } from '../notice';
-import SiteRow from './site-row';
+import SiteSubscriptionRow from './site-subscription-row';
 import './styles/site-subscriptions-list.scss';
 
 type SiteSubscriptionsListProps = {
@@ -88,7 +88,10 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="actions-cell" role="columnheader" />
 			</HStack>
 			{ subscriptions.map( ( siteSubscription ) => (
-				<SiteRow key={ `sites.siteRow.${ siteSubscription.ID }` } { ...siteSubscription } />
+				<SiteSubscriptionRow
+					key={ `sites.siteRow.${ siteSubscription.ID }` }
+					{ ...siteSubscription }
+				/>
 			) ) }
 		</ul>
 	);
