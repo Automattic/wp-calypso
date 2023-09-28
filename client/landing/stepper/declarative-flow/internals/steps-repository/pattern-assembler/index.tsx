@@ -499,8 +499,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
 	const onShuffle = ( type: string, pattern: Pattern, position?: number ) => {
-		const [ firstCategory ] = Object.keys( pattern.categories );
-		const selectedCategory = pattern.category?.name || firstCategory;
+		const availableCategory = Object.keys( pattern.categories ).find(
+			( category ) => patternsMapByCategory[ category ]
+		);
+		const selectedCategory = pattern.category?.name || availableCategory || '';
 		const patterns = patternsMapByCategory[ selectedCategory ];
 		const shuffledPattern = getShuffledPattern( patterns, pattern );
 		injectCategoryToPattern( shuffledPattern, categories, selectedCategory );
