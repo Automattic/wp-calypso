@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import ProfessionalEmail from './ProfessionalEmail';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 import './style.scss';
 
@@ -19,7 +19,9 @@ const DomainTransferToAnyUserFooter = ( { domain }: DomainTransferToAnyUserFoote
 					) }
 					buttonText={ translate( 'Master the domain basics' ) }
 					href="/support/domains"
-					onClick={ null }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_domain_transfer_to_any_user_support_domains_click' )
+					}
 				/>
 				<PurchaseDetail
 					title={ translate( 'Your go-to domain resource' ) }
@@ -28,7 +30,11 @@ const DomainTransferToAnyUserFooter = ( { domain }: DomainTransferToAnyUserFoote
 					) }
 					buttonText="Domain support resources"
 					href="/support/category/domains-and-email"
-					onClick={ null }
+					onClick={ () =>
+						recordTracksEvent(
+							'calypso_domain_transfer_to_any_user_support_domains-and-email_click'
+						)
+					}
 				/>
 			</div>
 			<ProfessionalEmail
