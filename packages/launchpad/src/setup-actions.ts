@@ -123,6 +123,7 @@ export const setUpActionsForTasks = ( {
 					};
 					break;
 				case 'site_launched':
+				case 'blog_launched':
 				case 'videopress_launched':
 				case 'link_in_bio_launched':
 					action = async () => {
