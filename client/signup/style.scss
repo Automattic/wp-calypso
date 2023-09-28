@@ -594,7 +594,10 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			}
 
 			&:focus {
-				border: 1px dashed var(--studio-blue-50, #0675c4);
+				outline: 1px dashed var(--studio-blue-50, #0675c4);
+				outline-offset: 3px;
+				box-shadow: none;
+				border-radius: 0;
 			}
 		}
 

@@ -28,7 +28,7 @@
 	text-align: center;
 
 	a {
-		@include breakpoint-deprecated( ">480px" ) {
+		@include breakpoint-deprecated(">480px") {
 			white-space: pre;
 		}
 	}
@@ -117,7 +117,7 @@
 
 // Replace recaptcha badge with ToS text and space
 // everything out a little more.
-@media ( max-width: 660px ) {
+@media (max-width: 660px) {
 	.signup-form__recaptcha-tos {
 		display: block;
 	}
@@ -209,7 +209,10 @@ body.is-section-signup {
 				}
 
 				&:focus {
-					border: 1px dashed var(--studio-blue-50, #0675c4);
+					outline: 1px dashed var(--studio-blue-50, #0675c4);
+					outline-offset: 3px;
+					box-shadow: none;
+					border-radius: 0;
 				}
 			}
 
