@@ -73,7 +73,7 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 	} );
 
-	const isAtomicNeeded = isAtomicNeededForPlugins || isAtomicNeededForThemes;
+	const isAtomicNeeded = isAtomicNeededForPlugins || isAtomicNeededForThemes || ! allThemesFetched;
 	const [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ] =
 		useAtomicTransfer( isAtomicNeeded );
 
