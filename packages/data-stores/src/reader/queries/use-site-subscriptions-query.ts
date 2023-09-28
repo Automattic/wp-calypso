@@ -102,6 +102,8 @@ const useSiteSubscriptionsQuery = ( {
 					return item.is_paid_subscription;
 				case SiteSubscriptionsFilterBy.P2:
 					return item.is_wpforteams_site;
+				case SiteSubscriptionsFilterBy.RSS:
+					return item.is_rss;
 				case SiteSubscriptionsFilterBy.All:
 				default:
 					return true;
