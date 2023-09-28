@@ -218,8 +218,8 @@ body.is-section-signup {
 
 				&:focus {
 					box-shadow: none;
-					border: 2px solid #fff;
 					outline: 2px solid var(--studio-blue-60, #055d9c);
+					outline-offset: 1px;
 				}
 			}
 		}

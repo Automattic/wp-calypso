@@ -652,9 +652,8 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 
 			&:focus {
 				background: var(--studio-gray-0, #f6f7f7);
-				border: 2px solid #fff;
 				outline: 2px solid var(--studio-gray-90, #1d2327);
-
+				outline-offset: 1px;
 			}
 
 			@include break-small {
