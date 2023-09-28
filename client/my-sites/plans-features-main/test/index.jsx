@@ -3,13 +3,15 @@
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( 'calypso/my-sites/plans-grid', () => ( { gridPlansForFeaturesGrid } ) => (
-	<div data-testid="plan-features">
-		<div data-testid="visible-plans">
-			{ JSON.stringify( gridPlansForFeaturesGrid.map( ( { planSlug } ) => planSlug ) ) }
+jest.mock( 'calypso/my-sites/plans-grid', () => ( {
+	FeaturesGrid: ( { gridPlans } ) => (
+		<div data-testid="plan-features">
+			<div data-testid="visible-plans">
+				{ JSON.stringify( gridPlans.map( ( { planSlug } ) => planSlug ) ) }
+			</div>
 		</div>
-	</div>
-) );
+	),
+} ) );
 jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
 	<div>PlanTypeSelector</div>
 ) );
