@@ -11,29 +11,35 @@
 	background: #fff;
 
 	.earn__launchpad-header {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-
+		padding: 20px 0;
 		.earn__launchpad-progress-bar-container {
-			margin: 5px;
+			margin: 0 0 10px 6px;
 		}
-
 		.earn__launchpad-title {
-			flex: 1;
-			font-size: 1rem;
-			font-weight: 500;
-			font-family: $font-sf-pro-display;
+			font-weight: 600;
+		}
+		.earn__launchpad-description {
+			margin-bottom: 0;
+			color: var(--color-neutral-60);
+			font-size: $font-body-small;
 		}
 	}
 	.launchpad__checklist-wrapper {
 		flex: 1;
-	}
-	.checklist-item__task-content {
-		padding: 12px 0;
-		&.is-placeholder:nth-of-type(3),
-		&.is-placeholder:nth-of-type(4) {
-			display: none;
+		display: flex;
+		align-items: center;
+		.checklist__tasks {
+			flex: 1;
+			.checklist-item__task-content {
+				padding: 12px 0;
+				&.is-placeholder:nth-of-type(3),
+				&.is-placeholder:nth-of-type(4) {
+					display: none;
+				}
+				.checklist-item__text {
+					font-weight: 400;
+				}
+			}
 		}
 	}
 }
