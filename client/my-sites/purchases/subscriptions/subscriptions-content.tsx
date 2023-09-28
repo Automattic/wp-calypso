@@ -1,5 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
@@ -119,7 +120,7 @@ function NoPurchasesMessage() {
 				line={ translate( 'You have made no purchases for this site.' ) }
 				action={ translate( 'Upgrade now' ) }
 				actionURL={ selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' }
-				illustration="/calypso/images/illustrations/illustration-nosites.svg"
+				illustration={ noSitesIllustration }
 			/>
 		</CompactCard>
 	);
