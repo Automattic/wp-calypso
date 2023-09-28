@@ -8,7 +8,7 @@ import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import SignupForm from 'calypso/blocks/signup-form/signup-form-social-first';
+import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
