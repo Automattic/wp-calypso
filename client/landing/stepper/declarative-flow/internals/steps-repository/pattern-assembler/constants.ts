@@ -53,7 +53,7 @@ export const PATTERN_CATEGORIES = [
 	'services',
 	'store',
 	//'team', -- Not exist
-	//'testimonials', -- Not exist
+	'testimonials', // Reused as "Quotes"
 	//'text', -- Hidden
 ];
 
@@ -62,7 +62,7 @@ export const ORDERED_PATTERN_CATEGORIES = [
 	'about',
 	'services',
 	'store',
-	'quotes',
+	'testimonials',
 	'posts',
 	'newsletter',
 	'gallery',
