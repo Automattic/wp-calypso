@@ -78,7 +78,13 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 }: NewsletterSettingsFormProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isSimpleSite = useSelector( isSimpleSiteSelector );
-	const isAtomicSite = useSelector( isAtomicSiteSelector );
+	const isAtomicSite = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
+
+		return isAtomicSiteSelector( state, siteId );
+	} );
 	const hasNewsletterCategoriesBlogSticker = useNewsletterCategoriesBlogSticker( { siteId } );
 
 	const isSubscriptionModuleInactive = useSelector( ( state ) => {
