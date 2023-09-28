@@ -18,7 +18,7 @@ const TextSearchControl: FunctionComponent< Props > = ( { siteId, filter } ) => 
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 
-	const [ text, setText ] = useState( filter.textSearch || '' );
+	const [ searchQuery, setSearchQuery ] = useState( filter.textSearch || '' );
 	const dispatch = useDispatch() as CalypsoDispatch;
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		const { value } = event.currentTarget;
@@ -29,7 +29,7 @@ const TextSearchControl: FunctionComponent< Props > = ( { siteId, filter } ) => 
 	};
 
 	const onChange = ( value: string ) => {
-		setText( value );
+		setSearchQuery( value );
 	};
 
 	const placeholder = isMobile
@@ -43,7 +43,7 @@ const TextSearchControl: FunctionComponent< Props > = ( { siteId, filter } ) => 
 			onKeyDown={ onKeyDown }
 			placeholder={ placeholder }
 			onChange={ onChange }
-			value={ text }
+			value={ searchQuery }
 		/>
 	);
 };
