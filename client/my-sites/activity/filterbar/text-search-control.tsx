@@ -1,5 +1,7 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { TextControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateFilter } from 'calypso/state/activity-log/actions';
@@ -13,6 +15,9 @@ interface Props {
 }
 
 const TextSearchControl: FunctionComponent< Props > = ( { siteId, filter } ) => {
+	const translate = useTranslate();
+	const isMobile = useMobileBreakpoint();
+
 	const [ text, setText ] = useState( filter.textSearch || '' );
 	const dispatch = useDispatch() as CalypsoDispatch;
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
@@ -27,12 +32,16 @@ const TextSearchControl: FunctionComponent< Props > = ( { siteId, filter } ) => 
 		setText( value );
 	};
 
+	const placeholder = isMobile
+		? translate( 'Search posts' )
+		: translate( 'Search posts by ID, title or author' );
+
 	return (
 		<TextControl
 			__nextHasNoMarginBottom
 			type="search"
 			onKeyDown={ onKeyDown }
-			placeholder="Search by post ID, title or author"
+			placeholder={ placeholder }
 			onChange={ onChange }
 			value={ text }
 		/>
