@@ -3,7 +3,6 @@
  */
 import { act, render, renderHook, waitFor } from '@testing-library/react';
 import { getLocaleData, subscribe } from '@wordpress/i18n';
-import '@testing-library/jest-dom/extend-expect';
 import { LocaleProvider, useLocale, withLocale } from '../locale-context';
 
 jest.mock( '@wordpress/i18n', () => ( {
