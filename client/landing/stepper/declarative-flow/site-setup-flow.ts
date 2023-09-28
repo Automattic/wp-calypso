@@ -362,7 +362,9 @@ const siteSetupFlow: Flow = {
 							return navigate( 'courses' );
 						}
 						case 'skip-to-my-home': {
-							return exitFlow( `/home/${ siteId ?? siteSlug }` );
+							return exitFlow( `/home/${ siteId ?? siteSlug }`, {
+								skipLaunchpad: true,
+							} );
 						}
 						default: {
 							return navigate( intent );
