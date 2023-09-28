@@ -57,3 +57,8 @@ export type DndAddNewRecordButtonProps = {
 	domain: string;
 	isMobile?: boolean;
 };
+
+export type DnsImportBindFileButtonProps = {
+	domain: string;
+	isMobile?: boolean;
+};
