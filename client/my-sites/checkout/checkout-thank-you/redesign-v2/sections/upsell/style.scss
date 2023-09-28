@@ -1,11 +1,15 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.checkout-thank-you__purchase-details-list {
+	margin-bottom: 50px !important;
+}
+
 .checkout-thank-you__upsell {
 	display: flex;
 	width: 100%;
 	max-width: 650px;
-	margin: 0 auto;
+	margin: 0 auto 80px;
 	padding: 24px 0 !important;
 	flex-direction: column;
 	justify-content: center;
@@ -119,7 +123,7 @@
 	.checkout-thank-you__upsell-content-actions {
 		display: flex;
 		height: 40px;
-		padding: 10px 24px;
+		padding: 10px 24px 10px 0;
 		justify-content: center;
 		align-items: center;
 		gap: 8px;

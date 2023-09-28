@@ -183,9 +183,11 @@
 
 	.checkout-thank-you__header-text {
 		color: var(--color-text-subtle);
+		font-family: "SF Pro Text", $sans;
 		font-size: initial;
 		margin: initial;
 		text-align: left;
+		letter-spacing: -0.1px;
 
 		@include break-mobile {
 			text-align: center;
