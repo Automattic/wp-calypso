@@ -56,6 +56,7 @@ const useFetchDashboardSites = (
 			),
 		select: ( data ) => {
 			return {
+				provisioningBlogIds: data.provisioning_blog_ids,
 				sites: data.sites.map( ( site: Site ) => {
 					// Since the "sites" API includes the "is_connected" property in the cache of the query set by
 					// the "useFetchTestConnection" hook, we are setting it here again since the "sites" API gets called
