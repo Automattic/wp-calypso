@@ -1,17 +1,21 @@
+import { useExperiment } from 'calypso/lib/explat';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
-/**
- * TODO: Cleanup pending, this condition needs to be removed
- */
 const useIsPlanUpsellEnabledOnFreeDomain = (
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	flowName?: string | null,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	hasPaidDomain?: boolean
 ): DataResponse< boolean > => {
+	const ONBOARDING_EXPERIMENT = 'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3';
+	const ONBOARDING_PM_EXPERIMENT =
+		'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3';
+	const relevantExperiment =
+		flowName === 'onboarding' ? ONBOARDING_EXPERIMENT : ONBOARDING_PM_EXPERIMENT;
+	const [ isLoading, experimentAssignment ] = useExperiment( relevantExperiment, {
+		isEligible: [ 'onboarding', 'onboarding-pm' ].includes( flowName ?? '' ) && ! hasPaidDomain,
+	} );
 	return {
-		isLoading: false,
-		result: true,
+		isLoading,
+		result: experimentAssignment?.variationName === 'treatment',
 	};
 };
 
