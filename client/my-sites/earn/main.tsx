@@ -59,7 +59,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			{
 				title: translate( 'Supporters' ),
 				path: '/earn/supporters' + pathSuffix,
-				id: 'customers',
+				id: 'supporters',
 			},
 			{
 				title: translate( 'Stats' ),
