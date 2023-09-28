@@ -166,7 +166,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 						{ renderEllipsisMenu( currentProduct?.ID ?? null ) }
 					</CompactCard>
 				) ) }
-			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && connectedAccountId && (
+			{ hasLoadedFeatures && showAddEditDialog && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }
 					product={ Object.assign( product ?? {}, {
