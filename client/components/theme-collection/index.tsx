@@ -4,6 +4,7 @@ import './style.scss';
 
 interface ThemeCollectionProps {
 	heading: string;
+	subheading: ReactElement;
 	themes: Array< never >;
 	collectionSlug: string;
 	getScreenshotUrl: ( themeId: string ) => string;
@@ -18,6 +19,7 @@ interface ThemeCollectionProps {
 export default function ThemeCollection( {
 	collectionSlug,
 	heading,
+	subheading,
 	themes,
 	getScreenshotUrl,
 	siteId,
@@ -30,22 +32,25 @@ export default function ThemeCollection( {
 	return (
 		<div className="theme-collection__container">
 			<h2>{ heading }</h2>
-			{ themes.map( ( theme, index ) => (
-				<div key={ `theme-collection-container-${ collectionSlug }-${ index }` }>
-					<ThemeBlock
-						getScreenshotUrl={ getScreenshotUrl }
-						index={ index }
-						collectionSlug={ collectionSlug }
-						theme={ theme }
-						siteId={ siteId }
-						isActive={ isActive }
-						getButtonOptions={ getButtonOptions }
-						getActionLabel={ getActionLabel }
-						getPrice={ getPrice }
-						isInstalling={ isInstalling }
-					/>
-				</div>
-			) ) }
+			{ subheading }
+			<div className="theme-collection__list-wrapper">
+				{ themes.map( ( theme, index ) => (
+					<div key={ `theme-collection-container-${ collectionSlug }-${ index }` }>
+						<ThemeBlock
+							getScreenshotUrl={ getScreenshotUrl }
+							index={ index }
+							collectionSlug={ collectionSlug }
+							theme={ theme }
+							siteId={ siteId }
+							isActive={ isActive }
+							getButtonOptions={ getButtonOptions }
+							getActionLabel={ getActionLabel }
+							getPrice={ getPrice }
+							isInstalling={ isInstalling }
+						/>
+					</div>
+				) ) }
+			</div>
 		</div>
 	);
 }

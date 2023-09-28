@@ -278,6 +278,7 @@ class ThemesSelection extends Component {
 				{ ( isActiveInLits || isActiveInLots ) && (
 					<ThemeCollection
 						heading="Premium themes"
+						subheading={ <p>Lorem ipsum nessum dorma</p> }
 						themes={ interlacedThemes }
 						collectionSlug="premium-themes"
 						getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
