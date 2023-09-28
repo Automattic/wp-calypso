@@ -8,6 +8,7 @@ import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import Notice from 'calypso/components/notice';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -236,6 +237,8 @@ export default function SitesOverview() {
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 
+	const isProvisioningSite = ! isLoading && data?.provisioningBlogIds?.length > 0;
+
 	return (
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
@@ -245,6 +248,13 @@ export default function SitesOverview() {
 					<div className="sites-overview__content-wrapper">
 						<DashboardBanners />
 
+						{ isProvisioningSite && (
+							<Notice status="is-info">
+								{ translate(
+									"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
+								) }
+							</Notice>
+						) }
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
 							content={
