@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import React from 'react';
 import { DateControlPickerShortcutsProps } from './types';
 
@@ -18,6 +19,7 @@ const DateControlPickerShortcuts = ( {
 							} }
 						>
 							{ shortcut.label }
+							<Icon className="gridicon" icon={ check } />
 						</Button>
 					</li>
 				) ) }

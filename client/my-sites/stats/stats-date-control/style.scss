@@ -21,6 +21,21 @@
 }
 
 .date-control-picker-shortcuts__shortcut {
+	.gridicon {
+		display: none;
+	}
+	.components-button {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+	}
+	&.is-selected {
+		background-color: var(--color-accent-5);
+		border-radius: 4px;
+		.gridicon {
+			display: initial;
+		}
+	}
 	&:hover {
 		background-color: var(--studio-gray-10);
 	}
