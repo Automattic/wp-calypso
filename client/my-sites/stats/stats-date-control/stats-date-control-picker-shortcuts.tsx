@@ -7,17 +7,21 @@ const DateControlPickerShortcuts = ( {
 	onClick,
 }: DateControlPickerShortcutsProps ) => {
 	return (
-		<div>
-			{ shortcutList.map( ( shortcut, idx ) => (
-				<Button
-					key={ shortcut.id || idx }
-					onClick={ () => {
-						onClick( shortcut );
-					} }
-				>
-					{ shortcut.label }
-				</Button>
-			) ) }
+		<div className="date-control-picker-shortcuts">
+			<ul className="date-control-picker-shortcuts__list">
+				{ shortcutList.map( ( shortcut, idx ) => (
+					<li className="date-control-picker-shortcuts__shortcut">
+						<Button
+							key={ shortcut.id || idx }
+							onClick={ () => {
+								onClick( shortcut );
+							} }
+						>
+							{ shortcut.label }
+						</Button>
+					</li>
+				) ) }
+			</ul>
 		</div>
 	);
 };
