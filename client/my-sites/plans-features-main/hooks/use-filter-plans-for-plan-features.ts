@@ -5,7 +5,7 @@ import {
 	isPersonalPlan,
 	isPremiumPlan,
 } from '@automattic/calypso-products';
-import type { GridPlan } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
+import type { GridPlan } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 interface Props {
 	plans: Omit< GridPlan, 'features' >[];

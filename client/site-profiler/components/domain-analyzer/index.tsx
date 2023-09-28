@@ -2,19 +2,20 @@ import { Button } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { FormEvent } from 'react';
+import { FormEvent } from 'react';
 import './styles.scss';
 
 interface Props {
 	domain?: string;
 	isBusy?: boolean;
+	isBusyForWhile?: boolean;
 	isDomainValid?: boolean;
 	onFormSubmit: ( domain: string ) => void;
 }
 
 export default function DomainAnalyzer( props: Props ) {
 	const translate = useTranslate();
-	const { domain, isBusy, isDomainValid, onFormSubmit } = props;
+	const { domain, isBusy, isBusyForWhile, isDomainValid, onFormSubmit } = props;
 
 	const onSubmit = ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
@@ -50,20 +51,24 @@ export default function DomainAnalyzer( props: Props ) {
 					</div>
 					<div className="col-2">
 						<Button isBusy={ isBusy } type="submit" className="button-action">
-							{ translate( 'Check site' ) }
+							{
+								// translators: "Still checking" stands for "Still checking the domain you entered in the form"
+								isBusyForWhile && domain && isDomainValid
+									? translate( 'Still checking…' )
+									: translate( 'Check site' )
+							}
 						</Button>
 					</div>
 				</div>
 				<div className="domain-analyzer--msg">
-					{ ( isDomainValid || isDomainValid === undefined ) && (
-						<p className="center">{ translate( 'Enter the URL of the site you want to check' ) }</p>
-					) }
-					{ isDomainValid === false && (
-						<p className="error">
-							<Icon icon={ info } size={ 20 } />{ ' ' }
-							{ translate( 'Please enter a valid website address' ) }
-						</p>
-					) }
+					<p
+						className={ classnames( 'error', {
+							'vis-hidden': isDomainValid || isDomainValid === undefined,
+						} ) }
+					>
+						<Icon icon={ info } size={ 20 } />{ ' ' }
+						{ translate( 'Please enter a valid website address' ) }
+					</p>
 				</div>
 			</form>
 		</div>

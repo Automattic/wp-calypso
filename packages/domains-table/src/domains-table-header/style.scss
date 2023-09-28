@@ -80,3 +80,13 @@
 		line-height: 20px;
 	}
 }
+
+.domains-table-header-loading-placeholder {
+	th {
+		width: 77px;
+
+		&.domains-table-header-loading-placeholder-checkbox-column {
+			width: 20px;
+		}
+	}
+}

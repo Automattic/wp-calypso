@@ -12,7 +12,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import usePlanPrices from '../../plans/hooks/use-plan-prices';
 import { LoadingPlaceHolder } from './loading-placeholder';
 import type { DomainSuggestion } from '@automattic/data-stores';
-import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
+import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
 export const DialogContainer = styled.div`
 	padding: 24px;

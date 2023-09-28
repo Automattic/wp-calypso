@@ -81,6 +81,7 @@ class EmptyContent extends Component {
 	}
 
 	render() {
+		const { line } = this.props;
 		const action = this.props.action && this.primaryAction();
 		const secondaryAction = this.props.secondaryAction && this.secondaryAction();
 		const title =
@@ -105,8 +106,16 @@ class EmptyContent extends Component {
 				} ) }
 			>
 				{ illustration }
-				{ title ? <h2 className="empty-content__title">{ title }</h2> : null }
-				{ this.props.line ? <h3 className="empty-content__line">{ this.props.line }</h3> : null }
+				{ typeof title === 'string' ? (
+					<h2 className="empty-content__title">{ title }</h2>
+				) : (
+					title ?? null
+				) }
+				{ typeof line === 'string' ? (
+					<h3 className="empty-content__line">{ this.props.line }</h3>
+				) : (
+					line ?? null
+				) }
 				{ action }
 				{ secondaryAction }
 				{ this.props.children }

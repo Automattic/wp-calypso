@@ -213,6 +213,7 @@ class MasterbarLoggedIn extends Component {
 	renderMySites() {
 		const {
 			domainOnlySite,
+			hasNoSites,
 			hasMoreThanOneSite,
 			siteSlug,
 			translate,
@@ -223,7 +224,10 @@ class MasterbarLoggedIn extends Component {
 		} = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
-		const homeUrl = isCustomerHomeEnabled
+		// eslint-disable-next-line no-nested-ternary
+		const homeUrl = hasNoSites
+			? '/sites'
+			: isCustomerHomeEnabled
 			? `/home/${ siteSlug }`
 			: getStatsPathForTab( 'day', siteSlug );
 
@@ -253,7 +257,7 @@ class MasterbarLoggedIn extends Component {
 				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 			>
-				{ hasMoreThanOneSite
+				{ hasNoSites || hasMoreThanOneSite
 					? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 					: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 			</Item>
@@ -588,6 +592,8 @@ export default connect(
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
 
+		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
+
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
@@ -595,7 +601,8 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
-			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
+			hasNoSites: siteCount === 0,
+			hasMoreThanOneSite: siteCount > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
 			isInEditor: getSectionName( state ) === 'gutenberg-editor',

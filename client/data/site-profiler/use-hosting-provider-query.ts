@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { HostingProviderQueryResponse } from 'calypso/data/site-profiler/types';
 import wp from 'calypso/lib/wp';
+import type { HostingProviderQueryResponse } from 'calypso/data/site-profiler/types';
 
 export const useHostingProviderQuery = ( domain: string, isValid?: boolean ) => {
 	return useQuery( {

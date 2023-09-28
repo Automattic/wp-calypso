@@ -88,7 +88,7 @@ const domainRegistrationThankYouProps = ( {
 		),
 		stepCta: (
 			<FullWidthButton
-				href={ `/settings/reading/${ selectedSiteSlug }` }
+				href={ `/settings/discussion/${ selectedSiteSlug }` }
 				busy={ false }
 				disabled={ false }
 			>

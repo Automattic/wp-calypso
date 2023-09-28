@@ -81,7 +81,7 @@ const SubscriptionsManagerWrapper = ( {
 								<Button
 									className="site-subscriptions-manager__manage-notifications-button"
 									variant="link"
-									href="/me/notifications"
+									href="/me/notifications?referrer=management"
 								>
 									{ translate( 'Manage notification settings' ) }
 								</Button>

@@ -1,10 +1,9 @@
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { useTranslate, numberFormat } from 'i18n-calypso';
-import { useEffect, useState, useMemo } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
@@ -18,6 +17,7 @@ import {
 	getPaymentInterval,
 } from './helpers';
 import SiteSubscriptionSettings from './settings';
+import SiteSubscriptionSubheader from './site-subscription-subheader';
 import SubscribeToNewsletterCategories from './subscribe-to-newsletter-categories';
 import './styles.scss';
 
@@ -28,6 +28,7 @@ const SiteSubscriptionDetails = ( {
 	siteIcon,
 	name,
 	blogId,
+	feedId,
 	deliveryMethods,
 	url,
 	paymentDetails,
@@ -84,7 +85,7 @@ const SiteSubscriptionDetails = ( {
 
 			setPaymentPlans( newPaymentPlans );
 		}
-	}, [ paymentDetails ] );
+	}, [ localeSlug, paymentDetails ] );
 
 	const onClickCancelSubscriptionButton = () => {
 		if ( paymentPlans && !! paymentPlans.length ) {
@@ -99,38 +100,6 @@ const SiteSubscriptionDetails = ( {
 		window.open( '/me/purchases', '_blank' );
 		setShowUnsubscribeModal( false );
 	};
-
-	const subscriberCountText = subscriberCount
-		? translate( '%s subscriber', '%s subscribers', {
-				count: subscriberCount,
-				args: [ numberFormat( subscriberCount, 0 ) ],
-				comment: '%s is the number of subscribers. For example: "12,000,000"',
-		  } )
-		: '';
-
-	const hostname = useMemo( () => {
-		try {
-			return new URL( url ).hostname;
-		} catch ( e ) {
-			return '';
-		}
-	}, [ url ] );
-
-	const urlLink = hostname ? (
-		<ExternalLink href={ url } rel="noreferrer noopener" target="_blank">
-			{ hostname }
-		</ExternalLink>
-	) : (
-		''
-	);
-
-	const subHeaderText = (
-		<>
-			{ subscriberCountText }
-			{ hostname ? ' · ' : '' }
-			{ urlLink }
-		</>
-	);
 
 	useEffect( () => {
 		// todo: style the button (underline, color?, etc.)
@@ -196,7 +165,18 @@ const SiteSubscriptionDetails = ( {
 		<>
 			<header className="site-subscription-page__header site-subscription-page__centered-content">
 				<SiteIcon iconUrl={ siteIcon } size={ 116 } alt={ name } />
-				<FormattedHeader brandFont headerText={ name } subHeaderText={ subHeaderText } />
+				<FormattedHeader
+					brandFont
+					headerText={ name }
+					subHeaderAs="div"
+					subHeaderText={
+						<SiteSubscriptionSubheader
+							feedId={ feedId }
+							subscriberCount={ subscriberCount }
+							url={ url }
+						/>
+					}
+				/>
 			</header>
 
 			<Notice
