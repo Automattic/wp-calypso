@@ -17,7 +17,7 @@ type StorageAddOnDropdownProps = {
 };
 
 type StorageAddOnOptionProps = {
-	title: string;
+	title?: string;
 	price?: string;
 	isLargeCurrency?: boolean;
 	priceOnSeparateLine?: boolean;
@@ -39,6 +39,10 @@ const StorageAddOnOption = ( {
 	priceOnSeparateLine,
 }: StorageAddOnOptionProps ) => {
 	const translate = useTranslate();
+
+	if ( ! title ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -99,7 +103,8 @@ export const StorageAddOnDropdown = ( {
 		: storageOptions.find( ( storageOption ) => ! storageOption.isAddOn )?.slug;
 	const selectedOptionPrice =
 		selectedOptionKey && getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey );
-	const selectedOptionTitle = selectedOptionKey && getStorageStringFromFeature( selectedOptionKey );
+	const selectedOptionTitle =
+		( selectedOptionKey && getStorageStringFromFeature( selectedOptionKey ) ) || '';
 
 	const selectedOption = {
 		key: selectedOptionKey,
