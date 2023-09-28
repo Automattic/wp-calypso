@@ -4,7 +4,7 @@
 		opacity: 0;
 		align-items: center;
 		position: absolute;
-		height: 27px;
+		height: 40px;
 		right: 0;
 
 		.pattern-action-bar__block {
@@ -16,8 +16,8 @@
 
 		.pattern-action-bar__action {
 			&.has-icon {
-				min-width: 30px;
-				max-width: 30px;
+				min-width: 40px;
+				max-width: 40px;
 				padding: 0;
 			}
 

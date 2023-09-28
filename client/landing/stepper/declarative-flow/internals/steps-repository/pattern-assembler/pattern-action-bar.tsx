@@ -16,7 +16,6 @@ type PatternActionBarProps = {
 	disableMoveDown?: boolean;
 	patternType: string;
 	category?: Category;
-	isRemoveButtonTextOnly?: boolean;
 	source: 'list' | 'large_preview';
 };
 
@@ -30,7 +29,6 @@ const PatternActionBar = ( {
 	disableMoveDown,
 	patternType,
 	category,
-	isRemoveButtonTextOnly,
 	source,
 }: PatternActionBarProps ) => {
 	const translate = useTranslate();
@@ -106,11 +104,9 @@ const PatternActionBar = ( {
 					recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_DELETE_CLICK, eventProps );
 					onDelete();
 				} }
-				icon={ ! isRemoveButtonTextOnly ? close : null }
+				icon={ close }
 				iconSize={ 23 }
-			>
-				{ isRemoveButtonTextOnly ? translate( 'Remove' ) : null }
-			</Button>
+			/>
 		</div>
 	);
 };
