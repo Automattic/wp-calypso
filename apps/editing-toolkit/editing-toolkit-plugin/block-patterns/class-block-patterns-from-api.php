@@ -118,6 +118,11 @@ class Block_Patterns_From_API {
 						'Blog Posts',
 						'full-site-editing'
 					);
+				} elseif ( 'testimonials' === $slug ) {
+					$category_properties['label'] = __(
+						'Quotes',
+						'full-site-editing'
+					);
 				}
 				register_block_pattern_category( $slug, $category_properties );
 			}
