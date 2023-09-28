@@ -2,6 +2,7 @@ import React from 'react';
 import IntervalDropdown from '../stats-interval-dropdown';
 import DateControlPicker from './stats-date-control-picker';
 import { StatsDateControlProps } from './types';
+import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
