@@ -17,6 +17,7 @@ class StepWrapper extends Component {
 		hideBack: PropTypes.bool,
 		hideSkip: PropTypes.bool,
 		hideNext: PropTypes.bool,
+		isSticky: PropTypes.bool,
 		// Allows to force a back button in the first step for example.
 		// You should only force this when you're passing a backUrl.
 		allowBackFirstStep: PropTypes.bool,
@@ -179,6 +180,7 @@ class StepWrapper extends Component {
 			isHorizontalLayout,
 			customizedActionButtons,
 			isExtraWideLayout,
+			isSticky,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -197,13 +199,17 @@ class StepWrapper extends Component {
 			'has-navigation': hasNavigation,
 		} );
 
+		let sticky = false;
+		if ( isSticky !== undefined ) {
+			sticky = isSticky;
+		} else {
+			sticky = isReskinnedFlow( flowName ) ? true : false;
+		}
+
 		return (
 			<>
 				<div className={ classes }>
-					<ActionButtons
-						className="step-wrapper__navigation"
-						sticky={ isReskinnedFlow( flowName ) ? null : false }
-					>
+					<ActionButtons className="step-wrapper__navigation" sticky={ sticky }>
 						{ backButton }
 						{ skipButton }
 						{ nextButton }

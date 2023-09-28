@@ -623,6 +623,7 @@ export class UserStep extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
+				isSticky={ false }
 				customizedActionButtons={
 					<Button
 						className="step-wrapper__navigation-link forward"
