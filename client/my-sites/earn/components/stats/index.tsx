@@ -7,7 +7,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { useSelector } from 'calypso/state';
 import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import CommissionFees from '../components/commission-fees';
+import CommissionFees from '../commission-fees';
 
 function StatsSection() {
 	const translate = useTranslate();
