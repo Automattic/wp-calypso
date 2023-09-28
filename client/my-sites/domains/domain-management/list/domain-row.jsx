@@ -149,6 +149,7 @@ class DomainRow extends PureComponent {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
 			currentRoute,
+			isVipSite: site?.is_vip,
 		} );
 
 		const domainStatusClass = classnames( 'domain-row__status-cell', {
@@ -488,6 +489,7 @@ class DomainRow extends PureComponent {
 				siteSlug: site?.slug,
 				getMappingErrors: true,
 				currentRoute,
+				isVipSite: site?.is_vip,
 			}
 		);
 
