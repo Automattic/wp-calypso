@@ -7,7 +7,6 @@ import 'calypso/state/themes/init';
  * Triggers a network request to install and activate a specific theme on a given
  * Jetpack site. If the themeId parameter is suffixed with '-wpcom', install the
  * theme from WordPress.com. Otherwise, install from WordPress.org.
- *
  * @param {string} themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
  * @param {number} siteId    Site ID
  * @param {string} source    The source that is requesting theme activation, e.g. 'showcase'

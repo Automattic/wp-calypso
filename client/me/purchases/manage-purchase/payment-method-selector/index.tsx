@@ -6,9 +6,10 @@ import { Card, Gridicon } from '@automattic/components';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
-	CheckoutSubmitButton,
+	CheckoutFormSubmit,
 	checkoutTheme,
 } from '@automattic/composite-checkout';
+import styled from '@emotion/styled';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -68,6 +69,31 @@ function useLogError( message: string ): CheckoutPageErrorCallback {
 		[ message ]
 	);
 }
+
+const TOSItemWrapper = styled.div`
+	padding-left: 24px;
+	position: relative;
+	font-size: 12px;
+
+	> svg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 16px;
+		height: 16px;
+
+		.rtl & {
+			left: auto;
+			right: 0;
+		}
+	}
+
+	p {
+		font-size: 12px;
+		margin: 0;
+		word-break: break-word;
+	}
+`;
 
 export default function PaymentMethodSelector( {
 	purchase,
@@ -191,7 +217,7 @@ export default function PaymentMethodSelector( {
 					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
 				) }
 				<CheckoutPaymentMethods className="payment-method-selector__list" isComplete={ false } />
-				<div className="payment-method-selector__terms">
+				<TOSItemWrapper>
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
 						<TosText
@@ -199,9 +225,9 @@ export default function PaymentMethodSelector( {
 							is100YearPlanPurchase={ is100YearPlanPurchase }
 						/>
 					</p>
-				</div>
+				</TOSItemWrapper>
 
-				<CheckoutSubmitButton />
+				<CheckoutFormSubmit />
 			</Card>
 		</CheckoutProvider>
 	);

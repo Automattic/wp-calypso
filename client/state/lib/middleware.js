@@ -17,7 +17,6 @@ import { successNotice } from 'calypso/state/notices/actions';
 /**
  * Notifies user about the fact that they were automatically logged in
  * via an immediate link.
- *
  * @param {Function} dispatch - redux dispatch function
  * @param {Object}   action   - the dispatched action
  * @param {Function} getState - redux getState function

@@ -10,7 +10,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordTransactionBeginAnalytics, logStashEvent } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
-import { doesTransactionResponseRequire3DS, handle3DSChallenge } from './stripe-3ds';
+import {
+	doesTransactionResponseRequire3DS,
+	handle3DSChallenge,
+	handle3DSInFlightError,
+} from './stripe-3ds';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
@@ -123,7 +127,7 @@ export default async function existingCardProcessor(
 			debug( 'transaction was successful' );
 			return makeSuccessResponse( stripeResponse );
 		} )
-		.catch( ( error ) => {
+		.catch( ( error: Error ) => {
 			debug( 'transaction failed' );
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_existing_card_transaction_failed', {
@@ -140,6 +144,8 @@ export default async function existingCardProcessor(
 				},
 				'info'
 			);
+
+			handle3DSInFlightError( error, paymentIntentId );
 
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.

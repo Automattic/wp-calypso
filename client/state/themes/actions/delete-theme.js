@@ -11,7 +11,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Deletes a theme from the given Jetpack site.
- *
  * @param {string} themeId -- Theme to delete
  * @param {number} siteId -- Site to delete theme from
  * @returns {Function} Action thunk

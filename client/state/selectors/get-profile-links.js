@@ -2,7 +2,6 @@ import 'calypso/state/profile-links/init';
 
 /**
  * Returns all profile links of the current user.
- *
  * @param {Object}  state  Global state tree
  * @returns {?Array}        Profile links
  */

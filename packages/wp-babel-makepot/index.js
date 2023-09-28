@@ -3,7 +3,6 @@ const presets = require( './presets' );
 
 /**
  * Merge options object with existing babel-i18n plugin options.
- *
  * @param   {Object} preset  Config object from extendBaseOptions.
  * @param   {Object} options Additional options object.
  * @returns {Object} Config object with merged options.

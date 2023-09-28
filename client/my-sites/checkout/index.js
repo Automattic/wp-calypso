@@ -26,6 +26,7 @@ import {
 	upsellRedirect,
 	akismetCheckoutThankYou,
 	hundredYearCheckoutThankYou,
+	transferDomainToAnyUser,
 } from './controller';
 
 export default function () {
@@ -140,6 +141,14 @@ export default function () {
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
 	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );
+
+	page(
+		'/checkout/domain-transfer-to-any-user/thank-you/:domain',
+		redirectLoggedOut,
+		transferDomainToAnyUser,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',

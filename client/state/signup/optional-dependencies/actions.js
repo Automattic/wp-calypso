@@ -16,7 +16,6 @@ export const setUsernameSuggestion = ( data ) => ( {
  *
  * If the API returns a suggestion, then the username is already taken.
  * If there is no error from the API, then the username is free.
- *
  * @param {string} username The username to get suggestions for.
  * @returns {Function} Redux action thunk
  */

@@ -21,7 +21,6 @@ import { domainWhoisSchema } from './schema';
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state maps domain to whether a request is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -53,7 +52,6 @@ export const isRequestingWhois = keyedReducer( 'domain', ( state = false, action
 /**
  * Returns the save request status after an action has been dispatched. The
  * state maps domain to the request status
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -111,7 +109,6 @@ function mergeDomainRegistrantContactDetails( domainState, registrantContactDeta
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps domain to the domain's whoisData object.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -172,11 +169,10 @@ export default combineReducers( {
  *
  * In case you're curios, Here's the weirdness:
  *
- *   weird = Object.assign( [1,2,3], { foo:'bar' } )
- *   // [1, 2, 3, foo: "bar"] (wat?)
- *   weird.map( v => v );
- *   // [1, 2, 3] (no foo for you!)
- *
+ * weird = Object.assign( [1,2,3], { foo:'bar' } )
+ * // [1, 2, 3, foo: "bar"] (wat?)
+ * weird.map( v => v );
+ * // [1, 2, 3] (no foo for you!)
  * @param  {Object} data   Potential contact details
  * @returns {Object}        Sanitized contact details
  */

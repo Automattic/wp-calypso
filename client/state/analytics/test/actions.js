@@ -27,7 +27,7 @@ describe( 'middleware', () => {
 			const statBump = bumpStat( 'splines', 'reticulated_count' );
 
 			withAnalytics( statBump, testAction )( dispatch );
-			expect( dispatch ).toBeCalledTimes( 2 );
+			expect( dispatch ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		test( 'should compose multiple analytics calls', () => {

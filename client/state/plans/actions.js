@@ -11,7 +11,6 @@ import 'calypso/state/plans/init';
 
 /**
  * Action creator function: RECEIVE
- *
  * @param {Array} plans - WordPress.com plans list
  * @returns {Object} action object
  */
@@ -24,7 +23,6 @@ export const plansReceiveAction = ( plans ) => {
 
 /**
  * Action creator function: REQUEST_SUCCESS
- *
  * @returns {Object} action object
  */
 export const plansRequestSuccessAction = () => {
@@ -33,7 +31,6 @@ export const plansRequestSuccessAction = () => {
 
 /**
  * Action creator function: REQUEST_FAILURE
- *
  * @param {string} error - error message
  * @returns {Object} action object
  */
@@ -46,7 +43,6 @@ export const plansRequestFailureAction = ( error ) => {
 
 /**
  * Action creator to request WordPress.com plans: REQUEST
- *
  * @returns {Object} action object
  */
 export const requestPlans = () => ( {

@@ -12,7 +12,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * `domain` - domain only, without email subscription
  * `email` - domain only with email subscription
  * `site` - regular site
- *
  * @param {Object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
  * @returns {import('redux').AnyAction} the new Redux action

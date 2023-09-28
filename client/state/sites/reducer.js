@@ -35,7 +35,6 @@ import { sitesSchema, hasAllSitesListSchema } from './schema';
 
 /**
  * Tracks all known site objects, indexed by site ID.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -324,7 +323,6 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for all
  * sites.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state
@@ -345,7 +343,6 @@ export const requestingAll = ( state = false, action ) => {
 /**
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for a site.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state
@@ -371,7 +368,6 @@ export const requesting = ( state = {}, action ) => {
 
 /**
  * Tracks whether all sites have been fetched.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state
@@ -391,7 +387,6 @@ export const hasAllSitesList = withSchemaValidation(
 /**
  * Returns the updated disconnected state after an action has been dispatched.
  * Tracks whether a network request is completed or not.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state

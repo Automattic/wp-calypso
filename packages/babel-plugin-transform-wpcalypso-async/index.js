@@ -4,7 +4,6 @@ module.exports = ( { types: t } ) => {
 	/**
 	 * Nested visitor for `require` function expression hoisting. This is
 	 * assigned here as a shared reference for optimized path traversal.
-	 *
 	 * @see https://github.com/thejameskyle/babel-handbook/blob/HEAD/translations/en/plugin-handbook.md#optimizing-nested-visitors
 	 * @type {Object}
 	 */

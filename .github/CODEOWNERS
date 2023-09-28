@@ -133,7 +133,7 @@
 /packages/wpcom.js/src/lib/domains.js @Automattic/nomado
 
 # Plans
-/client/my-sites/plan-features-2023-grid @Automattic/martech-decepticons
+/client/my-sites/plans-grid @Automattic/martech-decepticons
 
 # Importing
 /client/my-sites/importer @Automattic/caribou

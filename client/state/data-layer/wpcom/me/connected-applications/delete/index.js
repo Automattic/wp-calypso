@@ -8,7 +8,6 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Dispatches a request to delete a connected application for the current user
- *
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
@@ -24,7 +23,6 @@ export const removeConnectedApplication = ( action ) =>
 
 /**
  * Dispatches a user connected application removal success action and notice when the request succeeded.
- *
  * @param   {Object} action Redux action
  * @param   {string} action.appId
  * @returns {Object} Dispatched user connected applications add action
@@ -42,7 +40,6 @@ export const handleRemoveSuccess = ( { appId } ) => [
 
 /**
  * Dispatches an error notice when the request failed.
- *
  * @returns {Object} Dispatched error notice action
  */
 export const handleRemoveError = () =>

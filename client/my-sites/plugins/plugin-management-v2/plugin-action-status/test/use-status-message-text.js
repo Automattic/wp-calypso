@@ -89,6 +89,6 @@ describe( 'useStatusMessageText', () => {
 		expect( message ).toBe( 'Message' );
 		expect(
 			AllMessagesByAction[ INSTALL_PLUGIN ][ PLUGIN_INSTALLATION_IN_PROGRESS ]
-		).toBeCalledWith( { hasSelectedSite: true, siteCount: 2 } );
+		).toHaveBeenCalledWith( { hasSelectedSite: true, siteCount: 2 } );
 	} );
 } );

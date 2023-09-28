@@ -453,7 +453,6 @@ function setUpLoggedInRoute( req, res, next ) {
 
 /**
  * Sets up a Content Security Policy header
- *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
  * @param {Object} req Express request object
  * @param {Object} res Express response object
@@ -625,7 +624,6 @@ const renderServerError =
 
 /**
  * Checks if the passed URL has the same origin as the request
- *
  * @param {express.Request} req Request
  * @param {string} url URL
  * @returns {boolean} True if origins are the same
@@ -646,7 +644,6 @@ function validateRedirect( req, url ) {
 
 /**
  * Defines wordpress.com (Calypso blue) routes only
- *
  * @param {express.Application} app Express application
  */
 function wpcomPages( app ) {

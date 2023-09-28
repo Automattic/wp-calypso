@@ -10,7 +10,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from '../context';
-import type { APIError, Site } from '../types';
+import type { APIError, Site, APIToggleFavorite, ToggleFavoriteOptions } from '../types';
 
 import './style.scss';
 
@@ -41,7 +41,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		page.redirect( '/dashboard/favorites?highlight=favorite-tab' );
 	};
 
-	const handleOnChangeFavoriteSuccess = () => {
+	const handleOnChangeFavoriteSuccess = ( isFavorite: boolean ) => {
 		const text = (
 			<span>
 				{ ! isFavorite
@@ -114,8 +114,8 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 				// Store previous settings in case of failure
 				return { previousSites };
 			},
-			onSuccess: () => {
-				handleOnChangeFavoriteSuccess();
+			onSuccess: ( _data: APIToggleFavorite, options: ToggleFavoriteOptions ) => {
+				handleOnChangeFavoriteSuccess( options.isFavorite );
 			},
 			onError: ( error: APIError, options: any, context: any ) => {
 				queryClient.setQueryData( queryKey, context?.previousSites );

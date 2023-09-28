@@ -13,7 +13,6 @@ import { siteKeyrings as siteKeyringsSchema } from './schema';
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID to whether a request is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -40,7 +39,6 @@ export const requesting = ( state = {}, action ) => {
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID to the site keyrings object.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

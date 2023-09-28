@@ -8,7 +8,6 @@ import 'calypso/state/jetpack-connection-health/init';
 
 /**
  * Sets the Jetpack connection status to maybe unhealthy
- *
  * @param {number} siteId The site id to which the status belongs
  * @returns {Object} An action object
  */
@@ -19,7 +18,6 @@ export const setJetpackConnectionMaybeUnhealthy = ( siteId ) => ( {
 
 /**
  * Sets the Jetpack connection status to healthy
- *
  * @param {number} siteId The site id to which the status belongs
  * @returns {Object} An action object
  */
@@ -30,7 +28,6 @@ export const setJetpackConnectionHealthy = ( siteId ) => ( {
 
 /**
  * Sets the Jetpack connection status to unhealthy along with error code.
- *
  * @param {number} siteId The site id to which the status belongs
  * @param {string} errorCode The error code
  * @returns {Object} An action object

@@ -7,7 +7,6 @@ const DEFAULT_QUERY = Object.freeze( { number: 20 } );
 
 /**
  * Returns a new query object to use to fetch the next page of media for a site
- *
  * @param {Object} state The state object
  * @param {number} siteId The site ID
  */

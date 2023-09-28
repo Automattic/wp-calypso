@@ -128,3 +128,7 @@ export type RelatedPlugin = {
 		yearly: { product_slug?: string; product_id?: number };
 	};
 };
+
+export type AddPluginUpgrade = {
+	success: true;
+};

@@ -10,7 +10,6 @@ import { getSiteOptions } from 'calypso/state/sites/selectors';
  * we try to transfer the site (automatically on the backend) so it can become a Store/Woo site.
  * However, the transfer process might not start immediately because of the transfer eligibility
  * reasons. That's where this selector comes handy.
- *
  * @param   {Object}  state  App state.
  * @param   {number}  siteId Site of interest.
  * @returns {boolean}        Whether there might be a transfer process happening on the backend.

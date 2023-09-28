@@ -12,7 +12,6 @@ const Markup = {
 	/**
 	 * Given a media object and a site, returns a markup string representing that object
 	 * as HTML.
-	 *
 	 * @param  {Object} site    A site object
 	 * @param  {Object} media   A media object
 	 * @param  {Object} options Appearance options
@@ -37,7 +36,6 @@ const Markup = {
 	/**
 	 * Given a media object, returns a link markup string representing that
 	 * object.
-	 *
 	 * @param  {Object} media A media object
 	 * @returns {string}       A link markup string
 	 */
@@ -58,7 +56,6 @@ const Markup = {
 	 * Given a media object or markup string and a site, returns a caption React element.
 	 *
 	 * Adapted from WordPress.
-	 *
 	 * @copyright 2015 by the WordPress contributors.
 	 * @license LGPL-2.1
 	 * @see https://github.com/WordPress/WordPress/blob/4.3/wp-includes/js/tinymce/plugins/wpeditimage/plugin.js#L97-L157
@@ -113,7 +110,6 @@ const Markup = {
 		/**
 		 * Given an image media object and a site, returns a markup string representing that
 		 * image object as HTML.
-		 *
 		 * @param  {Object} site    A site object
 		 * @param  {Object} media   An image media object
 		 * @param  {Object} options Appearance options
@@ -183,7 +179,6 @@ const Markup = {
 		/**
 		 * Given an audio media object, returns a markup string representing that
 		 * audio object as HTML.
-		 *
 		 * @param  {Object} site  A site object
 		 * @param  {Object} media An audio media object
 		 * @returns {string}       An audio markup string
@@ -200,7 +195,6 @@ const Markup = {
 		/**
 		 * Given a video media object, returns a markup string representing that
 		 * video object as HTML.
-		 *
 		 * @param  {Object} site  A site object
 		 * @param  {string} media A video media object
 		 * @returns {string}       A video markup string

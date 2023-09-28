@@ -4,7 +4,6 @@ import 'calypso/state/comments/init';
 
 /**
  * Returns the parent comment of a given comment
- *
  * @param {Object} state Redux state
  * @param {number} siteId Site identifier
  * @param {number} postId Post identifier

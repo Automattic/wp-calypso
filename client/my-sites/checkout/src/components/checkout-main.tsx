@@ -732,7 +732,7 @@ export default function CheckoutMain( {
 				selectFirstAvailablePaymentMethod
 			>
 				<WPCheckout
-					loadingContent={
+					loadingHeader={
 						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
 					}
 					onStepChanged={ handleStepChanged }

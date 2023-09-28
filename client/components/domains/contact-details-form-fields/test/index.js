@@ -208,7 +208,7 @@ describe( 'ContactDetailsFormFields', () => {
 				/>
 			);
 
-			expect( onContactDetailsChange ).toBeCalledWith(
+			expect( onContactDetailsChange ).toHaveBeenCalledWith(
 				expect.objectContaining( { state: defaultProps.contactDetails.state } )
 			);
 		} );
@@ -231,7 +231,7 @@ describe( 'ContactDetailsFormFields', () => {
 				/>
 			);
 
-			expect( onContactDetailsChange ).toBeCalledWith(
+			expect( onContactDetailsChange ).toHaveBeenCalledWith(
 				expect.objectContaining( { state: defaultProps.contactDetails.state } )
 			);
 		} );

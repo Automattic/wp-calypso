@@ -4,7 +4,6 @@ import 'calypso/state/reader-ui/init';
 
 /**
  * Dispatched when viewing a stream.
- *
  * @param {string} streamKey - stream being viewed
  * @param {string} path  - current window location path
  * @returns {Object} action object for dispatch

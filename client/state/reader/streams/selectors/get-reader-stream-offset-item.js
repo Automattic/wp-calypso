@@ -7,7 +7,6 @@ import 'calypso/state/reader/init';
  * Given state, an item, and an offset: return the item that is offset away from the currentItem in the list.
  *
  * For example: in order to get the next item directly after the current one you can do: getOffsetItem( state, currentItem, 1 ).
- *
  * @param {Object} state Redux state
  * @param {Object} currentItem Current stream item
  * @param {number} offset Offset from current stream item (e.g. -1 for previous item)

@@ -2,7 +2,6 @@ import sendRequest from './send-request';
 
 /**
  * Expose `Request` module
- *
  * @param {WPCOM} wpcom - wpcom instance
  */
 export default function Req( wpcom ) {
@@ -11,7 +10,6 @@ export default function Req( wpcom ) {
 
 /**
  * Request methods
- *
  * @param {Object | string} params - params object
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
@@ -29,7 +27,6 @@ Req.prototype.get = function ( params, query, fn ) {
 
 /**
  * Make `update` request
- *
  * @param {Object | string} params
  * @param {Object} [query] - query object parameter
  * @param {Object} body - body object parameter
@@ -58,7 +55,6 @@ Req.prototype.post = Req.prototype.put = function ( params, query, body, fn ) {
 
 /**
  * Make a `delete` request
- *
  * @param {Object | string} params - params object
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function

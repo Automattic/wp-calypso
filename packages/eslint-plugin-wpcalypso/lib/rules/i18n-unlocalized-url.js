@@ -43,7 +43,6 @@ const getCallee = require( '../util/get-callee' );
 
 /**
  * A helper funciton that would return the parent node which is relevant to the specific rule checks.
- *
  * @param   {Object} node
  * @returns {Object}
  */
@@ -66,7 +65,6 @@ const rule = ( module.exports = function ( context ) {
 
 	/**
 	 * Check whether the node is an unlocalized URL.
-	 *
 	 * @param   {Object} node
 	 * @param   {string} nodeValueString
 	 * @returns {void}

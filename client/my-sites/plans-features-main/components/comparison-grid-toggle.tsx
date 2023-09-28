@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type TranslateResult } from 'i18n-calypso';
 import { forwardRef } from 'react';
-import { plansBreakSmall } from 'calypso/my-sites/plan-features-2023-grid/media-queries';
+import { plansBreakSmall } from 'calypso/my-sites/plans-grid/media-queries';
 import '../style.scss';
 
 const ComparisonGridToggle = forwardRef<

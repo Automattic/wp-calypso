@@ -4,7 +4,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Returns a theme object by site ID, theme ID pair.
- *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {string}  themeId Theme ID
