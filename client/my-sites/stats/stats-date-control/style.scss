@@ -5,3 +5,23 @@
 	display: flex;
 	flex-direction: row-reverse;
 }
+
+// TODO: Add final colors to shortcuts.
+// Add selection with checkmark icon.
+// Remove hover support.
+
+.date-control-picker-shortcuts {
+	background-color: var(--studio-gray-5);
+	margin-top: 10px;
+}
+
+.date-control-picker-shortcuts__list {
+	list-style: none;
+	margin: 0 12px;
+}
+
+.date-control-picker-shortcuts__shortcut {
+	&:hover {
+		background-color: var(--studio-gray-10);
+	}
+}
