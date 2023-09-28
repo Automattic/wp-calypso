@@ -151,7 +151,7 @@ const PatternAssembler = ( {
 				assembler_source: getAssemblerSource( selectedDesign ),
 				has_global_styles_selected: numOfSelectedGlobalStyles > 0,
 			} ),
-		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
+		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation, numOfSelectedGlobalStyles ]
 	);
 
 	const selectedVariations = useMemo(
