@@ -145,13 +145,13 @@ export class Filterbar extends Component {
 		return (
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">
+					{ selectorTypes.textSearch && (
+						<div className="filterbar__text-control">
+							<TextSearchControl filter={ filter } siteId={ siteId } />
+						</div>
+					) }
 					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
 					<ul className="filterbar__control-list">
-						{ selectorTypes.textSearch && (
-							<li>
-								<TextSearchControl filter={ filter } siteId={ siteId } />
-							</li>
-						) }
 						{ selectorTypes.dateRange && (
 							<li>
 								<DateRangeSelector
