@@ -1,5 +1,6 @@
 import { domainProductSlugs, getPlan, PlanSlug } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon } from '@automattic/components';
+import { DomainSuggestions } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -12,8 +13,9 @@ import { DataResponse } from 'calypso/my-sites/plans-grid/types';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { DialogContainer, MODAL_VIEW_EVENT_NAME } from './free-plan-paid-domain-dialog';
-import { LoadingPlaceHolder } from './loading-placeholder';
+import { LoadingPlaceHolder } from '../loading-placeholder';
+import { DialogContainer } from './components';
+import { MODAL_VIEW_EVENT_NAME } from '.';
 import type { TranslateResult } from 'i18n-calypso';
 
 export const Heading = styled.div`
@@ -137,7 +139,7 @@ export function FreePlanFreeDomainDialog( {
 	onClose,
 	suggestedPlanSlug,
 }: {
-	freeSubdomain: DataResponse< string >;
+	freeSubdomain: DataResponse< DomainSuggestions.DomainSuggestion >;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
@@ -176,6 +178,8 @@ export function FreePlanFreeDomainDialog( {
 			isVisible={ true }
 			onClose={ onClose }
 			showCloseIcon={ true }
+			labelledby="free-plan-modal-title"
+			describedby="free-plan-modal-description"
 		>
 			<Global
 				styles={ css`
@@ -190,8 +194,8 @@ export function FreePlanFreeDomainDialog( {
 			/>
 			<DialogContainer>
 				<QueryProductsList />
-				<Heading>{ translate( "Don't miss out" ) }</Heading>
-				<TextBox>
+				<Heading id="free-plan-modal-title">{ translate( "Don't miss out" ) }</Heading>
+				<TextBox id="free-plan-modal-description">
 					{ translate( "With a Free plan, you'll miss out on a lot of great features:" ) }
 				</TextBox>
 				<List>
@@ -207,7 +211,7 @@ export function FreePlanFreeDomainDialog( {
 										strong: <strong></strong>,
 										subdomain: (
 											<LazyDisplayText
-												displayText={ freeSubdomain?.result }
+												displayText={ freeSubdomain?.result?.domain_name }
 												isLoading={ freeSubdomain?.isLoading }
 											/>
 										),
