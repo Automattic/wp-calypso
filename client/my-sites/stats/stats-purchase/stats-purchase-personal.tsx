@@ -214,7 +214,7 @@ const PersonalPurchase = ( {
 						} )
 					}
 				>
-					{ isStandalone ? translate( 'Get Stats Personal' ) : translate( 'Get Jetpack Stats' ) }
+					{ isStandalone ? translate( 'Get Stats' ) : translate( 'Get Jetpack Stats' ) }
 				</ButtonComponent>
 			) }
 		</div>
