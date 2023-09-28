@@ -42,7 +42,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
-		customers: translate( 'Customers' ),
+		supporters: translate( 'Customers' ),
 		stats: translate( 'Stats' ),
 		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
@@ -52,13 +52,13 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		const pathSuffix = site?.slug ? '/' + site?.slug : '';
 		return [
 			{
-				title: translate( 'Tools' ),
+				title: translate( 'Monetization Options' ),
 				path: '/earn' + pathSuffix,
 				id: 'earn',
 			},
 			{
-				title: translate( 'Customers' ),
-				path: '/earn/customers' + pathSuffix,
+				title: translate( 'Supporters' ),
+				path: '/earn/supporters' + pathSuffix,
 				id: 'customers',
 			},
 			{
@@ -67,7 +67,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				id: 'stats',
 			},
 			{
-				title: translate( 'Settings' ),
+				title: translate( 'Payment Settings' ),
 				path: '/earn/payments' + pathSuffix,
 				id: 'payments',
 			},
@@ -149,7 +149,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			case 'stats':
 				return <StatsSection />;
 
-			case 'customers':
+			case 'supporters':
 				return <CustomerSection />;
 
 			case 'refer-a-friend':
