@@ -148,7 +148,7 @@ function DnsMenuOptionsButton( {
 	);
 
 	const restoreDefaultARecords = useCallback( async () => {
-		dispatchUpdateDns( domainName, [], getARecordsToRemove() )
+		dispatchUpdateDns( domainName, [], getARecordsToRemove(), true )
 			.then( () => dispatchSuccessNotice( __( 'Default A records restored' ) ) )
 			.catch( () => dispatchErrorNotice( __( 'Failed to restore the default A records' ) ) );
 	}, [
