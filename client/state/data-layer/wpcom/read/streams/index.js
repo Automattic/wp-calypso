@@ -222,6 +222,7 @@ const streamApis = {
 				tags: getTagsFromStreamKey( streamKey ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
+				recency_bias: 0.5,
 			} ),
 		apiNamespace: 'wpcom/v2',
 	},
@@ -306,6 +307,7 @@ const streamApis = {
 				tags: streamKeySuffix( streamKey ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
+				recency_bias: 0.5,
 			} ),
 	},
 	list: {
