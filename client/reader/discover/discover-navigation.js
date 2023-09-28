@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -107,19 +108,21 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 					>
 						{ translate( 'Recommended' ) }
 					</SegmentedControl.Item>
+					{ config.isEnabled( 'reader/first-posts-stream' ) && (
+						<SegmentedControl.Item
+							key={ FIRST_POSTS_TAB }
+							selected={ FIRST_POSTS_TAB === selectedTab }
+							onClick={ () => menuTabClick( FIRST_POSTS_TAB ) }
+						>
+							{ translate( 'First posts' ) }
+						</SegmentedControl.Item>
+					) }
 					<SegmentedControl.Item
 						key={ LATEST_TAB }
 						selected={ LATEST_TAB === selectedTab }
 						onClick={ () => menuTabClick( LATEST_TAB ) }
 					>
 						{ translate( 'Latest' ) }
-					</SegmentedControl.Item>
-					<SegmentedControl.Item
-						key={ FIRST_POSTS_TAB }
-						selected={ FIRST_POSTS_TAB === selectedTab }
-						onClick={ () => menuTabClick( FIRST_POSTS_TAB ) }
-					>
-						{ translate( 'First posts' ) }
 					</SegmentedControl.Item>
 					{ recommendedTags.map( ( tag ) => {
 						return (
