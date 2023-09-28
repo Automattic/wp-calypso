@@ -1,5 +1,6 @@
 import configApi from '@automattic/calypso-config';
 import { DomainSuggestions } from '@automattic/data-stores';
+import { useMemo } from '@wordpress/element';
 import { logToLogstash } from 'calypso/lib/logstash';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
@@ -27,13 +28,16 @@ export function useGetFreeSubdomainSuggestion( query: string ): {
 		} );
 	}
 
-	return {
-		wpcomFreeDomainSuggestion: {
-			isLoading,
-			result,
-		},
-		invalidateDomainSuggestionCache,
-	};
+	return useMemo(
+		() => ( {
+			wpcomFreeDomainSuggestion: {
+				isLoading,
+				result,
+			},
+			invalidateDomainSuggestionCache,
+		} ),
+		[ isLoading, result, invalidateDomainSuggestionCache ]
+	);
 }
 
 export default useGetFreeSubdomainSuggestion;
