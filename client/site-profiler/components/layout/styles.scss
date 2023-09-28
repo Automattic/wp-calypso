@@ -37,6 +37,10 @@
 		gap: 5rem;
 		display: flex;
 		justify-content: space-between;
+
+		@media (max-width: $break-small) {
+			gap: 2.5rem;
+		}
 	}
 
 	.l-block-col-2 .l-block-content {
