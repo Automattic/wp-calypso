@@ -7,6 +7,7 @@ import Main from 'calypso/components/main';
 import { useNewsletterCategoriesBlogSticker } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	isJetpackSite as isJetpackSiteSelector,
 	isSimpleSite as isSimpleSiteSelector,
@@ -77,6 +78,13 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 }: NewsletterSettingsFormProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isSimpleSite = useSelector( isSimpleSiteSelector );
+	const isAtomicSite = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
+
+		return isAtomicSiteSelector( state, siteId );
+	} );
 	const hasNewsletterCategoriesBlogSticker = useNewsletterCategoriesBlogSticker( { siteId } );
 
 	const isSubscriptionModuleInactive = useSelector( ( state ) => {
@@ -99,7 +107,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	return (
 		<>
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			{ ( isSimpleSite || hasNewsletterCategoriesBlogSticker ) && (
+			{ ( isSimpleSite || isAtomicSite || hasNewsletterCategoriesBlogSticker ) && (
 				<form onSubmit={ handleSubmitForm }>
 					<NewsletterCategoriesSection
 						disabled={ disabled }
