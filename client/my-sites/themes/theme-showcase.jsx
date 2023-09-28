@@ -12,7 +12,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import SearchThemes from 'calypso/components/search-themes';
+import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -472,6 +472,10 @@ class ThemeShowcase extends Component {
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
 
+		const isSearchV2 = isLoggedIn
+			? config.isEnabled( 'themes/search-v2-lits' )
+			: config.isEnabled( 'themes/search-v2-lots' );
+
 		return (
 			<div className="theme-showcase">
 				<PageViewTracker
@@ -493,11 +497,15 @@ class ThemeShowcase extends Component {
 					<div className="themes__controls">
 						<div className="theme__search">
 							<div className="theme__search-input">
-								<SearchThemes
-									query={ filterString + search }
-									onSearch={ this.doSearch }
-									recordTracksEvent={ this.recordSearchThemesTracksEvent }
-								/>
+								{ isSearchV2 ? (
+									<SearchThemesV2 query={ filterString + search } onSearch={ this.doSearch } />
+								) : (
+									<SearchThemes
+										query={ filterString + search }
+										onSearch={ this.doSearch }
+										recordTracksEvent={ this.recordSearchThemesTracksEvent }
+									/>
+								) }
 							</div>
 							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
 								<SelectDropdown

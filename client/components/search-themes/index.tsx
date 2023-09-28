@@ -183,4 +183,25 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	);
 };
 
-export default SearchThemes;
+interface SearchThemesV2Props {
+	query: string;
+	onSearch: ( query: string ) => void;
+}
+
+const SearchThemesV2: React.FC< SearchThemesV2Props > = ( { query, onSearch } ) => {
+	const translate = useTranslate();
+
+	return (
+		<div className="search-themes-card" role="presentation" data-tip-target="search-themes-card">
+			<Search
+				initialValue={ query }
+				placeholder={ translate( 'Search themes…' ) }
+				analyticsGroup="Themes"
+				searchMode={ SEARCH_MODE_ON_ENTER }
+				onSearch={ onSearch }
+			/>
+		</div>
+	);
+};
+
+export { SearchThemes, SearchThemesV2 };
