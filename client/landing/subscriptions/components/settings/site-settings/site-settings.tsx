@@ -1,5 +1,6 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { Icon, settings } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
@@ -83,6 +84,7 @@ type SiteSettingsPopoverProps = SiteSettingsProps & {
 	unsubscribing: boolean;
 	blogId?: number;
 	feedId: number;
+	subscriptionId: number;
 };
 
 export const SiteSettingsPopover = ( {
@@ -90,6 +92,7 @@ export const SiteSettingsPopover = ( {
 	unsubscribing,
 	blogId,
 	feedId,
+	subscriptionId,
 	...props
 }: SiteSettingsPopoverProps ) => {
 	const translate = useTranslate();
@@ -102,7 +105,29 @@ export const SiteSettingsPopover = ( {
 		>
 			{ ( close: () => void ) => (
 				<>
-					{ isWpComSite && <SiteSettings { ...props } /> }
+					{ isWpComSite && (
+						<>
+							<SiteSettings { ...props } />
+
+							<Button
+								className="site-settings-popover__manage-subscription-button"
+								icon={
+									<Icon
+										className="subscriptions-ellipsis-menu__item-icon"
+										size={ 20 }
+										icon={ settings }
+									/>
+								}
+								href={ `/read/subscriptions/${ subscriptionId }` }
+								onClick={ () => {
+									onUnsubscribe();
+									close();
+								} }
+							>
+								{ translate( 'Manage subscription' ) }
+							</Button>
+						</>
+					) }
 
 					<Button
 						className={ classNames( 'site-settings-popover__unsubscribe-button', {
