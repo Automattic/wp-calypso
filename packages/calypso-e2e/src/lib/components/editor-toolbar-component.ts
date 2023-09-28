@@ -446,7 +446,7 @@ export class EditorToolbarComponent {
 
 		// To support i18n tests.
 		const translatedTargetName = await this.translateFromPage( 'Options' );
-		// Narrowing down to the "Editor top bar" is needed becausei it might conflict with
+		// Narrowing down to the "Editor top bar" is needed because it might conflict with
 		// the options button for the block toolbar, causing a strict-mode violation error
 		// due to duplicate elements on the page.
 		const button = editorParent.getByLabel( 'Editor top bar' ).getByRole( 'button', {
