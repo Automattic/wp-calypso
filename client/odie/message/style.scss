@@ -4,7 +4,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: self-start;
-	margin-bottom: 8px;
+	margin-top: 8px;
 	max-width: 70%;
 	word-wrap: break-word;
 	padding: 12px;
@@ -19,6 +19,10 @@
 		margin: 0 0 1.5em 1.5em;
 		width: calc(100% - 1.5em);
 	}
+}
+
+.odie-simulate-typing {
+	min-width: 70%;
 }
 
 .odie-introduction-message {

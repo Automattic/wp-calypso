@@ -113,6 +113,7 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 			addMessage( {
 				content: response.messages[ 0 ].content,
 				role: 'bot',
+				simulateTyping: response.messages[ 0 ].simulateTyping,
 				type: 'message',
 			} );
 		} catch ( e ) {

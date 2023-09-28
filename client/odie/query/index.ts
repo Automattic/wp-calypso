@@ -8,16 +8,16 @@ function odieSendMessage( messages: Message[], context: Context, chat_id?: strin
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { messages, context, chat_id: chat_id },
+		body: { messages, context, chat_id },
 	} );
 }
 
-function odieSendCustomMessage( messages: Message[], context: Context, chat_id?: string | null ) {
-	const path = `/odie/send_custom_message`;
+function odieSendSupportMessage( message: Message, context: Context, chat_id?: string | null ) {
+	const path = `/odie/support/chat/respond`;
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { messages, context, chat_id: chat_id },
+		body: { question: message.content, context: context ?? [], chat_id },
 	} );
 }
 
@@ -37,7 +37,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 			const fetchFunction =
 				botSetting === 'wapuu'
 					? () => odieSendMessage( messagesToSend, chat.context, chat.chat_id )
-					: () => odieSendCustomMessage( messagesToSend, chat.context, chat.chat_id );
+					: () => odieSendSupportMessage( message, chat.context, chat.chat_id );
 
 			return fetchFunction();
 		},
