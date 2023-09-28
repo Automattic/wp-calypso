@@ -16,10 +16,10 @@ const TextSearchControl: FunctionComponent< Props > = ( { siteId } ) => {
 		const { value } = event.currentTarget;
 
 		if ( event.key === 'Enter' ) {
-			dispatch( updateFilter( siteId, { text_search: value } ) );
+			dispatch( updateFilter( siteId, { textSearch: value } ) );
 
 			// eslint-disable-next-line no-console
-			console.log( 'Filtering text_search by ' + value );
+			console.log( 'Filtering textSearch by ' + value );
 		}
 	};
 
