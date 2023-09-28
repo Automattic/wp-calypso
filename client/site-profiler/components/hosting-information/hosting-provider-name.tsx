@@ -38,7 +38,7 @@ export default function HostingProviderName( props: Props ) {
 					</>
 				) }
 				{ isPopularCdn && (
-					<InfoPopover className="hosting-provider-name__tooltip">
+					<InfoPopover className="hosting-provider-name__tooltip" position="top">
 						<HostingPopupContent hostingProvider={ hostingProvider } />
 					</InfoPopover>
 				) }
