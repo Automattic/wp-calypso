@@ -11,7 +11,7 @@ export const DomainsTableMobileCards = () => {
 		canSelectAnyDomains,
 		changeBulkSelection,
 		getBulkSelectionStatus,
-		isFetchingDomains,
+		isLoadingDomains,
 	} = useDomainsTable();
 
 	const bulkSelectionStatus = getBulkSelectionStatus();
@@ -48,7 +48,7 @@ export const DomainsTableMobileCards = () => {
 					</div>
 				) }
 			</div>
-			{ isFetchingDomains && (
+			{ isLoadingDomains && (
 				<>
 					<DomainsTableMobileCardLoading />
 					<DomainsTableMobileCardLoading />

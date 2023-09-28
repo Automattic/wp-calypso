@@ -151,26 +151,23 @@ $domains-table-mobile-breakpoint: 480px;
 }
 
 .domains-table-row-loading-placeholder {
-	td {
-		padding-right: 16px;
-	}
 	&-checkbox-column {
-		width: 5%;
+		width: 20px;
 	}
 	&-domain-column {
-		width: 25%;
+		width: 170px;
 	}
 	&-owner-column {
-		width: 15%;
+		width: 107px;
 	}
 	&-site-column {
-		width: 25%;
+		width: 70px;
 	}
 	&-expires-column {
-		width: 25%;
+		width: 107px;
 	}
 	&-status-column {
-		width: 15%;
+		width: 107px;
 	}
 }
 

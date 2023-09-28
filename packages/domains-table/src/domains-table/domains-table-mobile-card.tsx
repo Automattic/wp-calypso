@@ -1,5 +1,4 @@
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
-import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -9,6 +8,7 @@ import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
+import { DomainsTablePlaceholder } from './domains-table-placeholder';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
 import { DomainsTableStatusCTA } from './domains-table-status-cta';
@@ -90,7 +90,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Status' ) } </span>
 				{ ! currentDomainData || isLoadingSiteDomainsDetails ? (
-					<LoadingPlaceholder style={ { width: '30%' } } />
+					<DomainsTablePlaceholder style={ { width: '30%' } } />
 				) : (
 					<div className="domains-table-mobile-card-status">
 						<DomainsTableStatusCell
