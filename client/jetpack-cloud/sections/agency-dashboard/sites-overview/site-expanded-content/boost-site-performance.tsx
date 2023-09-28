@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -45,25 +45,49 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 
 	const isEnabled = hasBoost || Boolean( overallScore ) || hasPendingScore;
 
-	const buttonProps = useMemo(
-		() =>
-			hasBoost && overallScore
-				? {
-						label: translate( 'Optimize CSS' ),
-						href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
-						onClick: () => trackEvent( 'expandable_block_optimize_css_click' ),
-				  }
-				: {
-						label: translate( 'Configure Boost' ),
-						href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`,
-						onClick: () => trackEvent( 'expandable_block_configure_boost_click' ),
-				  },
-		[ hasBoost, siteUrlWithScheme, trackEvent, translate, overallScore ]
-	);
+	const hasPaidLicense = false;
 
 	const handleOnClick = () => {
 		setShowBoostModal( true );
 	};
+
+	const ScoreRating = getBoostRating( overallScore );
+
+	const ctaButtons = useMemo( () => {
+		if ( ! hasPaidLicense ) {
+			return [
+				{
+					label: translate( 'Auto-optimize' ),
+					onClick: handleOnClick,
+					primary: true,
+				},
+				{
+					label: translate( 'Settings' ),
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php`,
+					onClick: () => trackEvent( 'expandable_block_settings_click' ),
+				},
+			];
+		}
+
+		if ( ScoreRating === 'A' ) {
+			return [
+				{
+					label: translate( 'Boost Settings' ),
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php`,
+					onClick: () => trackEvent( 'expandable_block_settings_click' ),
+				},
+			];
+		}
+
+		return [
+			{
+				label: translate( 'Optimize performance' ),
+				href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
+				onClick: () => trackEvent( 'expandable_block_optimize_performance_click' ),
+				primary: true,
+			},
+		];
+	}, [ hasPaidLicense, ScoreRating, translate, siteUrlWithScheme, trackEvent ] );
 
 	return (
 		<ExpandedCard
@@ -91,7 +115,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 									getBoostRatingClass( overallScore )
 								) }
 							>
-								{ getBoostRating( overallScore ) }
+								{ ScoreRating }
 
 								<span
 									ref={ helpIconRef }
@@ -144,15 +168,19 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">
-					<Button
-						href={ buttonProps.href }
-						target="_blank"
-						onClick={ buttonProps.onClick }
-						className="site-expanded-content__card-button"
-						compact
-					>
-						{ buttonProps.label }
-					</Button>
+					{ ctaButtons.map( ( ctaButton ) => (
+						<Button
+							key={ ctaButton.label }
+							href={ ctaButton.href }
+							target="_blank"
+							onClick={ ctaButton.onClick }
+							className="site-expanded-content__card-button"
+							primary={ ctaButton.primary }
+							compact
+						>
+							{ ctaButton.label } { !! ctaButton.href && <Gridicon icon="external" /> }
+						</Button>
+					) ) }
 				</div>
 			</div>
 			{ showBoostModal && (
