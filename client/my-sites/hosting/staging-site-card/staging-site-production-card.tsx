@@ -19,7 +19,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
 import { ConfirmationModal } from './confirmation-modal';
-import { usePushToStagingMutation } from './use-staging-sync';
+import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -51,6 +51,18 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	} );
 
 	const { pushToStaging } = usePushToStagingMutation( productionSite?.id as number, siteId, {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		onError: ( error: any ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+					code: error.code,
+				} )
+			);
+			setLoadingError( error );
+		},
+	} );
+
+	const { pullFromStaging } = usePullFromStagingMutation( productionSite?.id as number, siteId, {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onError: ( error: any ) => {
 			dispatch(
@@ -92,18 +104,32 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
 					{ isStagingSitesI3Enabled && (
-						<ConfirmationModal
-							onConfirm={ pushToStaging }
-							modalTitle={ translate( 'Confirm pulling changes to your staging site.' ) }
-							modalMessage={ translate(
-								'Are you sure you want to pull your production changes to your staging site?'
-							) }
-							confirmLabel={ translate( 'Pull from production' ) }
-							cancelLabel={ translate( 'Cancel' ) }
-						>
-							<Gridicon icon="arrow-down" />
-							<span>{ translate( 'Pull from production' ) }</span>
-						</ConfirmationModal>
+						<>
+							<ConfirmationModal
+								onConfirm={ pushToStaging }
+								modalTitle={ translate( 'Confirm pulling changes to your staging site.' ) }
+								modalMessage={ translate(
+									'Are you sure you want to pull your production changes to your staging site?'
+								) }
+								confirmLabel={ translate( 'Pull from production' ) }
+								cancelLabel={ translate( 'Cancel' ) }
+							>
+								<Gridicon icon="arrow-down" />
+								<span>{ translate( 'Pull from production' ) }</span>
+							</ConfirmationModal>
+							<ConfirmationModal
+								onConfirm={ pullFromStaging }
+								modalTitle={ translate( 'Confirm pushing changes to your production site.' ) }
+								modalMessage={ translate(
+									'Are you sure you want to push your staging changes to your production site?'
+								) }
+								confirmLabel={ translate( 'Push to production' ) }
+								cancelLabel={ translate( 'Cancel' ) }
+							>
+								<Gridicon icon="arrow-up" />
+								<span>{ translate( 'Push to production' ) }</span>
+							</ConfirmationModal>
+						</>
 					) }
 				</ActionButtons>
 			</>

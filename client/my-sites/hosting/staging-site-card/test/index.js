@@ -87,6 +87,11 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-sync', () => 
 			pushToStaging: jest.fn(),
 		};
 	} ),
+	usePullFromStagingMutation: jest.fn( () => {
+		return {
+			pullFromStaging: jest.fn(),
+		};
+	} ),
 } ) );
 
 jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-site', () => ( {

@@ -71,6 +71,7 @@ type CardContentProps = {
 	stagingSite: StagingSite;
 	onDeleteClick: () => void;
 	onPushClick: () => void;
+	onPullClick: () => void;
 	isButtonDisabled: boolean;
 	isBusy: boolean;
 };
@@ -79,6 +80,7 @@ export const ManageStagingSiteCardContent = ( {
 	stagingSite,
 	onDeleteClick,
 	onPushClick,
+	onPullClick,
 	isButtonDisabled,
 	isBusy,
 }: CardContentProps ) => {
@@ -100,6 +102,24 @@ export const ManageStagingSiteCardContent = ( {
 				>
 					<Gridicon icon="arrow-up" />
 					<span>{ translate( 'Push to staging' ) }</span>
+				</ConfirmationModal>
+			);
+		};
+
+		const ConfirmationPullChangesButton = () => {
+			return (
+				<ConfirmationModal
+					disabled={ isButtonDisabled }
+					onConfirm={ onPullClick }
+					modalTitle={ translate( 'Confirm pull your changes to your production site' ) }
+					modalMessage={ translate(
+						'Are you sure you want to pull your staging changes to your production site?'
+					) }
+					confirmLabel={ translate( 'Pull from staging' ) }
+					cancelLabel={ translate( 'Cancel' ) }
+				>
+					<Gridicon icon="arrow-down" />
+					<span>{ translate( 'Pull from staging' ) }</span>
 				</ConfirmationModal>
 			);
 		};
@@ -169,6 +189,7 @@ export const ManageStagingSiteCardContent = ( {
 						<LeftActionsContainer>
 							<ManageStagingSiteButton />
 							<ConfirmationPushChangesButton />
+							<ConfirmationPullChangesButton />
 						</LeftActionsContainer>
 						<ConfirmationDeleteButton />
 					</ActionButtonsJustifyBetween>
