@@ -1,9 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	PLAN_BUSINESS,
-	WPCOM_FEATURES_PREMIUM_THEMES,
-	isDomainRegistration,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	Onboard,
@@ -43,7 +39,7 @@ import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/help
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -109,8 +105,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
 
 	const wpcomSiteSlug = useSelector( ( state ) => getSiteSlug( state, site?.ID ) );
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, site?.ID ) );
-	const isDomainPurchased = !! sitePurchases.find( isDomainRegistration );
+	const didPurchaseDomain = useSelector(
+		( state ) => site?.ID && hasPurchasedDomain( state, site.ID )
+	);
 
 	// The design-first flow put the checkout at the last step, so we cannot show any upsell modal.
 	// Therefore, we need to hide any feature that needs to check out right away, e.g.: Premium theme.
@@ -495,7 +492,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			if (
 				selectedDesign?.is_externally_managed &&
 				hasEligibilityMessages &&
-				! isDomainPurchased
+				! didPurchaseDomain
 			) {
 				setShowEligibility( true );
 			} else {
