@@ -570,6 +570,13 @@ const PlansFeaturesMain = ( {
 
 	const isLoadingGridPlans = Boolean( intentFromSiteMeta.processing || ! gridPlans );
 
+	const comparisonGridContainerClasses = classNames(
+		'plans-features-main__comparison-grid-container',
+		{
+			isHidden: ! showPlansComparisonGrid,
+		}
+	);
+
 	return (
 		<div
 			className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }
@@ -719,58 +726,55 @@ const PlansFeaturesMain = ( {
 								}
 							/>
 							{ ! hidePlansFeatureComparison && (
-								<ComparisonGridToggle
-									onClick={ toggleShowPlansComparisonGrid }
-									label={
-										showPlansComparisonGrid
-											? translate( 'Hide comparison' )
-											: translate( 'Compare plans' )
-									}
-									ref={ observableForOdieRef }
-								/>
-							) }
-							{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (
-								<div
-									ref={ plansComparisonGridRef }
-									className="plans-features-main__comparison-grid-container"
-								>
-									<ComparisonGrid
-										gridPlans={ gridPlansForComparisonGrid }
-										gridPlanForSpotlight={ gridPlanForSpotlight }
-										paidDomainName={ paidDomainName }
-										wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-										isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-										isInSignup={ isInSignup }
-										isLaunchPage={ isLaunchPage }
-										onUpgradeClick={ handleUpgradeClick }
-										flowName={ flowName }
-										selectedFeature={ selectedFeature }
-										selectedPlan={ selectedPlan }
-										siteId={ siteId }
-										isReskinned={ isReskinned }
-										intervalType={ intervalType }
-										hideUnavailableFeatures={ hideUnavailableFeatures }
-										currentSitePlanSlug={ sitePlanSlug }
-										planActionOverrides={ planActionOverrides }
-										intent={ intent }
-										showLegacyStorageFeature={ showLegacyStorageFeature }
-										showUpgradeableStorage={ showUpgradeableStorage }
-										stickyRowOffset={ masterbarHeight }
-										usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-										allFeaturesList={ FEATURES_LIST }
-										planTypeSelectorProps={ planTypeSelectorProps }
-										onStorageAddOnClick={ ( addOnSlug ) =>
-											recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
-												add_on_slug: addOnSlug,
-											} )
-										}
-									/>
+								<>
 									<ComparisonGridToggle
 										onClick={ toggleShowPlansComparisonGrid }
-										label={ translate( 'Hide comparison' ) }
+										label={
+											showPlansComparisonGrid
+												? translate( 'Hide comparison' )
+												: translate( 'Compare plans' )
+										}
+										ref={ observableForOdieRef }
 									/>
-								</div>
-							) : null }
+									<div ref={ plansComparisonGridRef } className={ comparisonGridContainerClasses }>
+										<ComparisonGrid
+											gridPlans={ gridPlansForComparisonGrid }
+											gridPlanForSpotlight={ gridPlanForSpotlight }
+											paidDomainName={ paidDomainName }
+											wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+											isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+											isInSignup={ isInSignup }
+											isLaunchPage={ isLaunchPage }
+											onUpgradeClick={ handleUpgradeClick }
+											flowName={ flowName }
+											selectedFeature={ selectedFeature }
+											selectedPlan={ selectedPlan }
+											siteId={ siteId }
+											isReskinned={ isReskinned }
+											intervalType={ intervalType }
+											hideUnavailableFeatures={ hideUnavailableFeatures }
+											currentSitePlanSlug={ sitePlanSlug }
+											planActionOverrides={ planActionOverrides }
+											intent={ intent }
+											showLegacyStorageFeature={ showLegacyStorageFeature }
+											showUpgradeableStorage={ showUpgradeableStorage }
+											stickyRowOffset={ masterbarHeight }
+											usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+											allFeaturesList={ FEATURES_LIST }
+											planTypeSelectorProps={ planTypeSelectorProps }
+											onStorageAddOnClick={ ( addOnSlug ) =>
+												recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
+													add_on_slug: addOnSlug,
+												} )
+											}
+										/>
+										<ComparisonGridToggle
+											onClick={ toggleShowPlansComparisonGrid }
+											label={ translate( 'Hide comparison' ) }
+										/>
+									</div>
+								</>
+							) }
 						</div>
 					</div>
 				</>
