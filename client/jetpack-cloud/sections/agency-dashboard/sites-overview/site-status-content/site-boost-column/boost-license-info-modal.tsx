@@ -23,17 +23,18 @@ export default function BoostLicenseInfoModal( { onClose, siteId, siteUrl }: Pro
 		() => [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ],
 		[ filter, search, currentPage, sort ]
 	);
-	const { installBoost, requestBoostScore, status } = useInstallBoost( siteId, siteUrl, queryKey );
+	const { installBoost, status } = useInstallBoost( siteId, siteUrl, queryKey );
 
 	const handleInstallBoost = () => {
 		installBoost();
+		// TODO: Track events here
 	};
 
 	const handlePurchaseBoost = () => {
-		requestBoostScore();
+		// TODO: Track events here
 	};
 
-	const inProgress = status === 'progress';
+	const inProgress = status === 'loading';
 
 	useEffect( () => {
 		if ( status === 'success' ) {

@@ -1,9 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import useInstallPluginMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-install-plugin-mutation';
-import useRequestBoostScoreMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-request-boost-score-mutation';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import type { Site } from '../types';
 
@@ -14,25 +13,10 @@ export default function useInstallBoost(
 ): {
 	installBoost: () => void;
 	status: string;
-	requestBoostScore: () => void;
 } {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-
-	const [ status, setStatus ] = useState( 'idle' );
-
-	const { mutate: requestBoostScore, status: requestBoostStatus } = useRequestBoostScoreMutation( {
-		retry: false,
-	} );
-
-	const errorMessage = translate(
-		'Something went wrong while installing Boost. Please try again.'
-	);
-
-	const handleRequestBoostScore = useCallback( () => {
-		requestBoostScore( { site_ids: [ siteId ] } );
-	}, [ requestBoostScore, siteId ] );
 
 	const handleUpdateSites = useCallback( async () => {
 		// Cancel any current refetches, so they don't overwrite our update
@@ -55,8 +39,19 @@ export default function useInstallBoost(
 		} );
 	}, [ queryClient, queryKey, siteId ] );
 
+	const { mutate: installPlugin, status } = useInstallPluginMutation( {
+		retry: false,
+	} );
+
+	const installBoost = () => {
+		installPlugin( {
+			site_id: siteId,
+			plugin_slug: 'jetpack_boost',
+		} );
+	};
+
 	useEffect( () => {
-		if ( requestBoostStatus === 'success' ) {
+		if ( status === 'success' ) {
 			dispatch(
 				successNotice(
 					translate(
@@ -71,40 +66,17 @@ export default function useInstallBoost(
 					)
 				)
 			);
-			setStatus( 'success' );
 			handleUpdateSites();
 		}
-		if ( requestBoostStatus === 'error' ) {
-			dispatch( errorNotice( errorMessage ) );
+		if ( status === 'error' ) {
+			dispatch(
+				errorNotice( translate( 'Something went wrong while installing Boost. Please try again.' ) )
+			);
 		}
-	}, [ dispatch, errorMessage, handleUpdateSites, requestBoostStatus, siteUrl, translate ] );
-
-	const { mutate: installPlugin, status: installPluginStatus } = useInstallPluginMutation( {
-		retry: false,
-	} );
-
-	const installBoost = () => {
-		installPlugin( {
-			site_id: siteId,
-			plugin_slug: 'jetpack_boost',
-		} );
-	};
-
-	useEffect( () => {
-		if ( installPluginStatus === 'loading' ) {
-			setStatus( 'progress' );
-		}
-		if ( installPluginStatus === 'success' ) {
-			handleRequestBoostScore();
-		}
-		if ( installPluginStatus === 'error' ) {
-			dispatch( errorNotice( errorMessage ) );
-		}
-	}, [ dispatch, errorMessage, handleRequestBoostScore, installPluginStatus ] );
+	}, [ dispatch, handleUpdateSites, status, siteUrl, translate ] );
 
 	return {
 		installBoost,
 		status,
-		requestBoostScore: handleRequestBoostScore,
 	};
 }
