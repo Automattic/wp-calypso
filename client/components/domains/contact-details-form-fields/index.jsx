@@ -20,7 +20,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
-import DomainContactDetails from 'calypso/my-sites/checkout/src/components/domain-contact-details';
+import DomainContactDetailsTlds from 'calypso/my-sites/checkout/src/components/domain-contact-details-tlds';
 import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -596,7 +596,7 @@ export class ContactDetailsFormFields extends Component {
 					: this.renderContactDetailsFields() }
 
 				<div className="contact-details-form-fields__extra-fields">
-					<DomainContactDetails
+					<DomainContactDetailsTlds
 						domainNames={ [] }
 						contactDetails={ this.state.contactDetails }
 						// contactDetailsErrors={  }
