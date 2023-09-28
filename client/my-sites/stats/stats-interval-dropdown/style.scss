@@ -12,6 +12,17 @@
 }
 
 .components-popover__content {
+
+	div.components-popover__content .segmented-control li.segmented-control__item.is-selected a.segmented-control__link:hover {
+		background-color: red;
+	}
+
+	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link {
+		// CSS to display arrow icon will go here
+		background-color: var(--studio-white);
+		color: var(--gutenberg-gray-900);
+	}
+
 	width: 196px;
 	border-radius: 2px;
 	background-color: var(--studio-white);
@@ -26,19 +37,21 @@
 		background-color: var(--studio-white);
 		padding-left: 0;
 
-		&.is-primary {
-			&__item {
-				flex: none;
-				cursor: default;
-				background-color: transparent;
+		&__item {
+			flex: none;
+			cursor: default;
+			background-color: var(--studio-white);
 
-				&:not(.is-selected) {
-					.segmented-control__link {
-						color: inherit;
-						background-color: var(--studio-white);
-						outline: none;
-					}
-				}
+			&:not(.is-selected) .segmented-control__link {
+				color: inherit;
+				background-color: var(--studio-white);
+				outline: none;
+			}
+
+			&:last-of-type .segmented-control__link {
+				border-right: none;
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
 			}
 		}
 
