@@ -49,7 +49,7 @@ export const PATTERN_CATEGORIES = [
 	'newsletter',
 	//'podcast', -- Hidden
 	//'portfolio', -- Hidden
-	'quotes',
+	//'quotes', -- Not exist
 	'services',
 	'store',
 	//'team', -- Not exist
