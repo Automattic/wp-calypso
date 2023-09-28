@@ -6,13 +6,13 @@ import {
 	type FeatureList,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
-import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
+import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
+import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
 import type {
 	TransformedFeatureObject,
 	PlanFeaturesForGridPlan,
 	PlansIntent,
-} from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
+} from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	planSlugs,

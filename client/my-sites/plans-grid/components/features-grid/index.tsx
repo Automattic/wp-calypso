@@ -7,8 +7,6 @@ import {
 	isWooExpressSmallPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
-	FeatureList,
-	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -21,91 +19,34 @@ import {
 	TimeLogo,
 } from '@automattic/components';
 import { isAnyHostingFlow } from '@automattic/onboarding';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import classNames from 'classnames';
-import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, ForwardedRef, forwardRef } from 'react';
-import { useSelector } from 'react-redux';
+import { LocalizeProps } from 'i18n-calypso';
+import { Component, ForwardedRef } from 'react';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
-import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
-import ComparisonGridToggle from '../plans-features-main/components/comparison-grid-toggle';
-import { getManagePurchaseUrlFor } from '../purchases/paths';
-import PlanFeatures2023GridActions from './components/actions';
-import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
-import PlanFeatures2023GridHeaderPrice from './components/header-price';
-import { PlanFeaturesItem } from './components/item';
-import { PlanComparisonGrid } from './components/plan-comparison-grid';
-import PlanDivOrTdContainer from './components/plan-div-td-container';
-import PlanFeaturesContainer from './components/plan-features-container';
-import PlanLogo from './components/plan-logo';
-import { StickyContainer } from './components/sticky-container';
-import StorageAddOnDropdown from './components/storage-add-on-dropdown';
-import PlansGridContextProvider, { type PlansIntent } from './grid-context';
-import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
-import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
-import { isStorageUpgradeableForPlan } from './lib/is-storage-upgradeable-for-plan';
-import { DataResponse } from './types';
-import { getStorageStringFromFeature } from './util';
-import type {
-	GridPlan,
-	UsePricingMetaForGridPlans,
-} from './hooks/npm-ready/data-store/use-grid-plans';
-import type { PlanActionOverrides } from './types';
-import type { DomainSuggestion } from '@automattic/data-stores';
-import type { IAppState } from 'calypso/state/types';
-import './style.scss';
+import ComparisonGridToggle from '../../../plans-features-main/components/comparison-grid-toggle';
+import PlansGridContextProvider from '../../grid-context';
+import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
+import { getStorageStringFromFeature } from '../../util';
+import PlanFeatures2023GridActions from '../actions';
+import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
+import PlanComparisonGrid from '../comparison-grid';
+import PlanFeatures2023GridHeaderPrice from '../header-price';
+import { PlanFeaturesItem } from '../item';
+import PlanDivOrTdContainer from '../plan-div-td-container';
+import PlanFeaturesContainer from '../plan-features-container';
+import PlanLogo from '../plan-logo';
+import { StickyContainer } from '../sticky-container';
+import StorageAddOnDropdown from '../storage-add-on-dropdown';
+import type { PlansGridProps } from '../..';
+import type { GridPlan } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 type PlanRowOptions = {
 	isTableCell?: boolean;
 	isStuck?: boolean;
 };
 
-export interface PlanFeatures2023GridProps {
-	gridPlansForFeaturesGrid: GridPlan[];
-	gridPlansForComparisonGrid: GridPlan[];
-	gridPlanForSpotlight?: GridPlan;
-	// allFeaturesList temporary until feature definitions are ported to calypso-products package
-	allFeaturesList: FeatureList;
-	isInSignup: boolean;
-	siteId?: number | null;
-	isLaunchPage?: boolean | null;
-	isReskinned?: boolean;
-	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	flowName?: string | null;
-	paidDomainName?: string;
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
-	intervalType: string;
-	currentSitePlanSlug?: string | null;
-	hidePlansFeatureComparison?: boolean;
-	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
-	planActionOverrides?: PlanActionOverrides;
-	// Value of the `?plan=` query param, so we can highlight a given plan.
-	selectedPlan?: string;
-	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
-	selectedFeature?: string;
-	intent?: PlansIntent;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
-	showLegacyStorageFeature?: boolean;
-	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
-	stickyRowOffset: number;
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	// temporary
-	showPlansComparisonGrid: boolean;
-	// temporary
-	toggleShowPlansComparisonGrid: () => void;
-	planTypeSelectorProps: PlanTypeSelectorProps;
-	// temporary: callback ref to scroll Odie AI Assistant into view once "Compare plans" button is clicked
-	observableForOdieRef: ( observableElement: Element | null ) => void;
-}
-
-interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
+interface FeaturesGridType extends PlansGridProps {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
 	canUserPurchasePlan: boolean | null;
@@ -117,7 +58,7 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
 }
 
-export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
+class FeaturesGrid extends Component< FeaturesGridType > {
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
 		// Do not render the spotlight plan if it exists
@@ -781,70 +722,4 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 }
 
-export default forwardRef< HTMLDivElement, PlanFeatures2023GridProps >(
-	function WrappedPlanFeatures2023Grid( props, ref ) {
-		const { siteId } = props;
-		const translate = useTranslate();
-		const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-			props.siteId,
-			props.gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
-		);
-		const isLargeCurrency = useIsLargeCurrency( {
-			gridPlans: props.gridPlansForFeaturesGrid,
-		} );
-
-		// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-		const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
-			siteId
-				? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-				: null
-		);
-		const purchaseId = useSelector( ( state: IAppState ) =>
-			siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
-		);
-		// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
-		const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
-
-		const manageHref =
-			purchaseId && selectedSiteSlug
-				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-				: `/plans/my-plan/${ siteId }`;
-
-		const handleUpgradeClick = useUpgradeClickHandler( {
-			gridPlansForFeaturesGrid: props.gridPlansForFeaturesGrid,
-			onUpgradeClick: props.onUpgradeClick,
-		} );
-
-		if ( props.isInSignup ) {
-			return (
-				<PlanFeatures2023Grid
-					{ ...props }
-					plansComparisonGridRef={ ref }
-					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					manageHref={ manageHref }
-					selectedSiteSlug={ selectedSiteSlug }
-					translate={ translate }
-					handleUpgradeClick={ handleUpgradeClick }
-				/>
-			);
-		}
-
-		return (
-			<CalypsoShoppingCartProvider>
-				<PlanFeatures2023Grid
-					{ ...props }
-					plansComparisonGridRef={ ref }
-					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					manageHref={ manageHref }
-					selectedSiteSlug={ selectedSiteSlug }
-					translate={ translate }
-					handleUpgradeClick={ handleUpgradeClick }
-				/>
-			</CalypsoShoppingCartProvider>
-		);
-	}
-);
+export default FeaturesGrid;

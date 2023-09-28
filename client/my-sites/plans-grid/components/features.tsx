@@ -8,7 +8,7 @@ import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
 import type { DomainSuggestion } from '@automattic/data-stores';
-import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
+import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {

@@ -1,6 +1,6 @@
 import { JetpackLogo } from '@automattic/components';
 import { LocalizeProps } from 'i18n-calypso';
-import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
+import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import { DataResponse } from '../types';
 import PlanFeatures2023GridFeatures from './features';
 import PlanDivOrTdContainer from './plan-div-td-container';
