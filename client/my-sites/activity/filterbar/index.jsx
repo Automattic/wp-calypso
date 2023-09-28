@@ -17,7 +17,8 @@ import './style.scss';
 
 export class Filterbar extends Component {
 	static defaultProps = {
-		selectorTypes: { textSearch: true, dateRange: true, actionType: true },
+		selectorTypes: { dateRange: true, actionType: true },
+		showTextSearch: false,
 	};
 
 	state = {
@@ -122,7 +123,8 @@ export class Filterbar extends Component {
 	};
 
 	render() {
-		const { translate, siteId, filter, isLoading, isVisible, selectorTypes } = this.props;
+		const { translate, siteId, filter, isLoading, isVisible, selectorTypes, showTextSearch } =
+			this.props;
 
 		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
 			return <div className="filterbar is-loading" />;
@@ -145,7 +147,7 @@ export class Filterbar extends Component {
 		return (
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">
-					{ selectorTypes.textSearch && (
+					{ showTextSearch && (
 						<div className="filterbar__text-control">
 							<TextSearchControl filter={ filter } siteId={ siteId } />
 						</div>
