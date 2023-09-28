@@ -7,10 +7,13 @@ import { CalypsoDispatch } from 'calypso/state/types';
 
 interface Props {
 	siteId: number;
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	filter: any;
 }
 
-const TextSearchControl: FunctionComponent< Props > = ( { siteId } ) => {
-	const [ text, setText ] = useState( '' );
+const TextSearchControl: FunctionComponent< Props > = ( { siteId, filter } ) => {
+	const [ text, setText ] = useState( filter.textSearch || '' );
 	const dispatch = useDispatch() as CalypsoDispatch;
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		const { value } = event.currentTarget;
