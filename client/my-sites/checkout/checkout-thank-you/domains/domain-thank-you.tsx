@@ -2,10 +2,11 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
-import { useMemo, useEffect } from 'react';
 import * as React from 'react';
+import { useEffect, useMemo } from 'react';
 import { ThankYou } from 'calypso/components/thank-you';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-email-verfication';
 import domainThankYouContent from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content';
 import {
 	DomainThankYouProps,
@@ -41,6 +42,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	isDomainOnly,
 	selectedSiteId,
 } ) => {
+	const dispatch = useDispatch();
 	const {
 		data: { is_enabled: isLaunchpadIntentBuildEnabled },
 	} = useLaunchpad( selectedSiteSlug, 'intent-build' );
@@ -48,6 +50,12 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	const redirectTo = isLaunchpadIntentBuildEnabled ? 'home' : 'setup';
 	const siteIntent = useSiteOption( 'site_intent' );
 	const { isEnabled: isActivityPubEnabled } = useActivityPubStatus( selectedSiteSlug );
+
+	const { isEmailUnverified, onResendVerificationEmail } = useDomainEmailVerification(
+		selectedSiteId,
+		selectedSiteSlug,
+		domain
+	);
 
 	const isDomainOnlySiteOption = useSelector(
 		( state ) =>
@@ -59,6 +67,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			selectedSiteSlug,
 			domain,
 			email,
+			shouldDisplayVerifyEmailStep: isEmailUnverified,
+			onResendEmailVerificationClick: onResendVerificationEmail,
 			hasProfessionalEmail,
 			hideProfessionalEmailStep,
 			siteIntent,
@@ -73,6 +83,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		domain,
 		selectedSiteSlug,
 		email,
+		isEmailUnverified,
+		onResendVerificationEmail,
 		hasProfessionalEmail,
 		hideProfessionalEmailStep,
 		siteIntent,
@@ -83,7 +95,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		isDomainOnlySiteOption,
 		isActivityPubEnabled,
 	] );
-	const dispatch = useDispatch();
+
 	const isLaunchpadEnabled = launchpadScreen === 'full';
 
 	useEffect( () => {

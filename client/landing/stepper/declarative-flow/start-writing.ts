@@ -19,6 +19,7 @@ import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
@@ -64,6 +65,7 @@ const startWriting: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
+		const siteId = useSiteIdParam();
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const state = useSelect(
@@ -182,7 +184,18 @@ const startWriting: Flow = {
 					return window.location.assign( providedDependencies.destinationUrl as string );
 			}
 		}
-		return { submit };
+
+		const goNext = async () => {
+			switch ( currentStep ) {
+				case 'launchpad':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+					}
+					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+			}
+		};
+
+		return { goNext, submit };
 	},
 
 	useAssertConditions(): AssertConditionResult {

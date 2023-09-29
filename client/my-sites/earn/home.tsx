@@ -1,7 +1,6 @@
 import {
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_WORDADS_INSTANT,
-	PLAN_100_YEARS,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
@@ -11,7 +10,6 @@ import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
 import { useState, useEffect } from 'react';
-import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -25,7 +23,6 @@ import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -35,8 +32,7 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import CommissionFees from './components/commission-fees';
-import type { Image } from 'calypso/components/promo-section/promo-card/index';
+import StatsSection from './components/stats';
 
 import './style.scss';
 
@@ -45,9 +41,6 @@ const Home = () => {
 	const dispatch = useDispatch();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const { commission } = useSelector( ( state ) =>
-		getEarningsWithDefaultsForSiteId( state, site?.ID )
-	);
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, site?.ID ?? 0 ) );
 	const hasWordAdsFeature = useSelector( ( state ) => siteHasWordAds( state, site?.ID ?? null ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
@@ -65,8 +58,6 @@ const Home = () => {
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
-
-	const isPlan100YearPlan = sitePlanSlug === PLAN_100_YEARS;
 
 	const hasConnectedAccount = Boolean( connectedAccountId );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
@@ -468,49 +459,11 @@ const Home = () => {
 		};
 	};
 
-	const getHeaderCard = () => ( {
-		title: translate( 'Start earning money now' ),
-		image: {
-			path: earnSectionImage,
-			align: 'right' as Image[ 'align' ],
-		},
-		body: (
-			<>
-				{ translate(
-					'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/'
-									) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-				) }
-				<br />
-				<br />
-				<CommissionFees
-					className="earn__notes"
-					commission={ commission }
-					iconSize={ 14 }
-					siteSlug={ site?.slug }
-					isPlan100YearPlan={ isPlan100YearPlan }
-				/>
-			</>
-		),
-	} );
-
 	const getPlaceholderPromoCard = () => {
 		return { title: '', body: '', image: <div /> };
 	};
 
 	const promos: PromoSectionProps = {
-		header: getHeaderCard(),
 		promos: compact( [
 			getRecurringPaymentsCard(),
 			getDonationsCard(),
@@ -537,13 +490,15 @@ const Home = () => {
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
-					<PromoSection
-						header={ getHeaderCard() }
-						promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] }
-					/>
+					<PromoSection promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] } />
 				</div>
 			) }
-			{ ! isLoading && <PromoSection { ...promos } /> }
+			{ ! isLoading && (
+				<>
+					<StatsSection />
+					<PromoSection { ...promos } />
+				</>
+			) }
 		</>
 	);
 };
