@@ -63,7 +63,7 @@ describe( 'BoostSitePerformance', () => {
 		expect( settingsButton ).toBeInTheDocument();
 		expect( settingsButton ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack#:~:text=Inactive-,Boost,-The%20easiest%20speed`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack`
 		);
 
 		fireEvent.click( settingsButton );
@@ -86,7 +86,7 @@ describe( 'BoostSitePerformance', () => {
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack#:~:text=Inactive-,Boost,-The%20easiest%20speed`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack`
 		);
 
 		fireEvent.click( button );
@@ -109,7 +109,7 @@ describe( 'BoostSitePerformance', () => {
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack#:~:text=Inactive-,Boost,-The%20easiest%20speed`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack`
 		);
 
 		fireEvent.click( button );

@@ -67,7 +67,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				},
 				{
 					label: translate( 'Settings' ),
-					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#:~:text=Inactive-,Boost,-The%20easiest%20speed`,
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack`,
 					onClick: () => trackEvent( 'expandable_block_settings_click' ),
 				},
 			];
@@ -77,7 +77,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 			return [
 				{
 					label: translate( 'Boost Settings' ),
-					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#:~:text=Inactive-,Boost,-The%20easiest%20speed`,
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack`,
 					onClick: () => trackEvent( 'expandable_block_settings_click' ),
 				},
 			];
@@ -86,7 +86,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		return [
 			{
 				label: translate( 'Optimize performance' ),
-				href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#:~:text=Inactive-,Boost,-The%20easiest%20speed`,
+				href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack`,
 				onClick: () => trackEvent( 'expandable_block_optimize_performance_click' ),
 				primary: true,
 			},
