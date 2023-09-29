@@ -29,6 +29,7 @@ import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
+import useQueryProvisioningBlogIds from './hooks/use-query-provisioning-blog-ids';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
@@ -237,7 +238,10 @@ export default function SitesOverview() {
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 
-	const isProvisioningSite = ! isLoading && data?.provisioningBlogIds?.length > 0;
+	const { data: provisioningBlogIds, isLoading: isLoadingProvisioningBlogIds } =
+		useQueryProvisioningBlogIds();
+	const isProvisioningSite =
+		! isLoadingProvisioningBlogIds && Number( provisioningBlogIds?.length ) > 0;
 
 	return (
 		<div className="sites-overview">
