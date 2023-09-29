@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE } from '../../../../../stores';
+import { PATTERN_CATEGORIES } from '../constants';
 import { decodePatternId } from '../utils';
 import type { Pattern, Category } from '../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -40,22 +41,26 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 	   we first initialize the sections from the search params.
 	*/
 	const initialSections = useMemo(
-		() =>
-			section_pattern_ids
+		() => {
+			const categoriesSet = new Set( PATTERN_CATEGORIES );
+			return section_pattern_ids
 				.map( ( patternId ) => patternsById[ decodePatternId( patternId ) ] )
 				.filter( Boolean )
 				.map( ( pattern: Pattern ) => {
-					const [ firstCategory ] = Object.keys( pattern.categories );
-					const category = categoriesByName[ firstCategory ];
+					const availableCategory = Object.keys( pattern.categories ).find( ( category ) =>
+						categoriesSet.has( category )
+					);
+					const category = availableCategory ? categoriesByName[ availableCategory ] : undefined;
 					return {
 						...pattern,
 						category,
 					};
-				} ),
+				} );
+		},
 		/* We are ignoring the changes from the search params (section_pattern_ids),
 	       since after this point, the changes will be handled by setSections().
 	    */
-		[ patternsById, categoriesByName ] // eslint-disable-line react-hooks/exhaustive-deps
+		[ patternsById, categoriesByName, PATTERN_CATEGORIES ] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	const uniqueSectionPatternKeyRef = useRef( 0 );
