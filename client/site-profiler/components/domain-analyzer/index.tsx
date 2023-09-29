@@ -31,7 +31,7 @@ export default function DomainAnalyzer( props: Props ) {
 			<h1>{ translate( 'Site Profiler' ) }</h1>
 			<p>
 				{ translate(
-					'Access essential information about a site, such as hosting provider, domain details, and contact information.'
+					'Access the essential information about any site, including hosting provider, domain details, and contact information.'
 				) }
 			</p>
 
@@ -46,7 +46,7 @@ export default function DomainAnalyzer( props: Props ) {
 							name="domain"
 							autoComplete="off"
 							defaultValue={ domain }
-							placeholder={ translate( 'Enter a website URL' ) }
+							placeholder={ translate( 'Enter a site URL' ) }
 						/>
 					</div>
 					<div className="col-2">
