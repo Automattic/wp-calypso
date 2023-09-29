@@ -40,6 +40,7 @@ export default function SiteProfiler() {
 		domain,
 		siteProfilerData?.whois,
 		siteProfilerData?.is_domain_available,
+		siteProfilerData?.eligible_google_transfer,
 		hostingProviderData?.hosting_provider
 	);
 
