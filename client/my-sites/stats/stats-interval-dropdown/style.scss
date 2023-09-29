@@ -17,13 +17,10 @@
 		background-color: var(--color-neutral-0);
 	}
 
-
-	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link {
+	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link,
+	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link:focus {
 		background-color: var(--studio-white);
 		color: var(--gutenberg-gray-900);
-		&:focus{
-			background-color: var(--studio-white);
-		}
 	}
 
 	width: 196px;
