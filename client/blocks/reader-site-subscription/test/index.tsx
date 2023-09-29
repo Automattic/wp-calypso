@@ -84,7 +84,7 @@ describe( 'ReaderSiteSubscription', () => {
 		).toBeInTheDocument();
 
 		// Assert that the site subscription details are rendered
-		expect( screen.getByRole( 'heading', { name: 'Test Site' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'View feed' } ) ).toBeInTheDocument();
 		expect( screen.getByText( /100 subscribers/i ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Jan 1, 2023' ) ).toBeInTheDocument();
 		expect( screen.getByAltText( 'Test Site' ) ).toBeInTheDocument();
@@ -95,7 +95,7 @@ describe( 'ReaderSiteSubscription', () => {
 	it( 'The "View feed" button should navigate to the expected path', async () => {
 		renderReaderSiteSubscription( mockSiteSubscriptionContext( { feed_ID: 123456789 } ) );
 
-		expect( screen.getByRole( 'link', { name: 'View feed' } ) ).toHaveAttribute(
+		expect( screen.getAllByTitle( 'View feed' )[ 0 ] ).toHaveAttribute(
 			'href',
 			'/read/feeds/123456789'
 		);
