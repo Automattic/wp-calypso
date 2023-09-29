@@ -556,7 +556,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 				) }
 				<div>
 					<FormButton
-						onClick={ () => handleSubmit }
 						disabled={
 							! pointsToWpcom ||
 							! isValidUrl ||
@@ -587,12 +586,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		<>
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
-			<form
-				onSubmit={ ( e ) => {
-					e.preventDefault();
-					return false;
-				} }
-			>
+			<form onSubmit={ handleSubmit }>
 				{ data?.map( ( item ) =>
 					shouldEdit( item ) ? FormRowEdditable( { child: item } ) : FormViewRow( { child: item } )
 				) }
