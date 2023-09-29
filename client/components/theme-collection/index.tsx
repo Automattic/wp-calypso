@@ -2,13 +2,8 @@ import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { ReactElement, useEffect, useRef } from 'react';
 import './style.scss';
-import Swiper from 'swiper';
-import { Navigation, Keyboard, Mousewheel } from 'swiper/modules';
+import { Swiper as SwiperType } from 'swiper/types';
 import { ThemeBlock } from 'calypso/components/themes-list';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/keyboard';
-import 'swiper/css/mousewheel';
 
 interface ThemeCollectionProps {
 	heading: string;
@@ -37,28 +32,47 @@ export default function ThemeCollection( {
 	getPrice,
 	isInstalling,
 }: ThemeCollectionProps ): ReactElement {
-	const swiperInstance = useRef< Swiper | null >( null );
-
+	const swiperInstance = useRef< SwiperType | null >( null );
 	useEffect( () => {
 		if ( themes !== null && themes.length > 0 ) {
 			const el = document.querySelector( '.swiper-container' ) as HTMLElement;
 			if ( el ) {
-				swiperInstance.current = new Swiper( el, {
-					cssMode: true,
-					mousewheel: true,
-					keyboard: {
-						enabled: true,
-						onlyInViewport: false,
-					},
-					navigation: {
-						nextEl: '.theme-collection__carousel-nav-button--next',
-						prevEl: '.theme-collection__carousel-nav-button--previous',
-					},
-					threshold: 5,
-					slideToClickedSlide: true,
-					slidesPerView: 'auto',
-					spaceBetween: 20,
-					modules: [ Navigation, Keyboard, Mousewheel ],
+				Promise.all( [
+					import( 'swiper' ),
+					import( 'swiper/modules' ),
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					import( 'swiper/css' ),
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					import( 'swiper/css/navigation' ),
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					import( 'swiper/css/keyboard' ),
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					import( 'swiper/css/mousewheel' ),
+				] ).then( ( values ) => {
+					const Swiper = values[ 0 ].default;
+					const { Navigation, Keyboard, Mousewheel } = values[ 1 ];
+
+					swiperInstance.current = new Swiper( el, {
+						cssMode: true,
+						mousewheel: true,
+						keyboard: {
+							enabled: true,
+							onlyInViewport: false,
+						},
+						navigation: {
+							nextEl: '.theme-collection__carousel-nav-button--next',
+							prevEl: '.theme-collection__carousel-nav-button--previous',
+						},
+						threshold: 5,
+						slideToClickedSlide: true,
+						slidesPerView: 'auto',
+						spaceBetween: 20,
+						modules: [ Navigation, Keyboard, Mousewheel ],
+					} );
 				} );
 			}
 		}

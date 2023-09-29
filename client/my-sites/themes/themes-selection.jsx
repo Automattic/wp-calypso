@@ -11,7 +11,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
 import ThemeCollection from 'calypso/components/theme-collection';
-import PremiumThemesCollection from 'calypso/components/theme-collection/premium-themes-collection';
+import PartnerThemesCollection from 'calypso/components/theme-collection/collection-types/partner-themes-collection';
+import PremiumThemesCollection from 'calypso/components/theme-collection/collection-types/premium-themes-collection';
 import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -295,6 +296,14 @@ class ThemesSelection extends Component {
 						/>
 
 						<PremiumThemesCollection
+							getScreenshotUrl={ this.props.getScreenshotUrl }
+							getButtonOptions={ this.getOptions }
+							getActionLabel={ this.props.getActionLabel }
+							isActive={ this.props.isThemeActive }
+							getPrice={ this.props.getPremiumThemePrice }
+							isInstalling={ this.props.isInstallingTheme }
+						/>
+						<PartnerThemesCollection
 							getScreenshotUrl={ this.props.getScreenshotUrl }
 							getButtonOptions={ this.getOptions }
 							getActionLabel={ this.props.getActionLabel }
