@@ -113,7 +113,7 @@ export const ManageStagingSiteCardContent = ( {
 					onConfirm={ onPullClick }
 					modalTitle={ translate( 'Confirm pull your changes from your staging site' ) }
 					modalMessage={ translate(
-						'Are you sure you want to pull your staging changes to your production site?'
+						'Are you sure you want to pull your changes from your staging site?'
 					) }
 					confirmLabel={ translate( 'Pull from staging' ) }
 					cancelLabel={ translate( 'Cancel' ) }
