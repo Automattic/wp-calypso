@@ -209,6 +209,8 @@ const streamApis = {
 				return '/read/tags/cards';
 			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
 				return '/read/tags/posts';
+			} else if ( streamKeySuffix( streamKey ).includes( 'firstposts' ) ) {
+				return '/read/streams/first-posts';
 			}
 			return `/read/tags/${ streamKeySuffix( streamKey ) }/cards`;
 		},
