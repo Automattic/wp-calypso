@@ -58,7 +58,9 @@ export function getEnhancedTasks(
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
-	stripeConnectUrl?: string
+	stripeConnectUrl?: string,
+	setShowConfirmModal: () => void = () => {},
+	isDomainEmailUnverified = false
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -291,8 +293,15 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published_newsletter':
 					taskData = {
+						isLaunchTask: true,
 						disabled: mustVerifyEmailBeforePosting || false,
-						actionDispatch: () => {
+						actionDispatch: ( force = false ) => {
+							if ( ! force ) {
+								if ( isDomainEmailUnverified ) {
+									setShowConfirmModal();
+									return;
+								}
+							}
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
 						},
@@ -338,8 +347,16 @@ export function getEnhancedTasks(
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
-						actionDispatch: () => {
+						isLaunchTask: true,
+						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
+								if ( ! force ) {
+									if ( isDomainEmailUnverified ) {
+										setShowConfirmModal();
+										return;
+									}
+								}
+
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -362,8 +379,15 @@ export function getEnhancedTasks(
 					break;
 				case 'site_launched':
 					taskData = {
-						actionDispatch: () => {
+						isLaunchTask: true,
+						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
+								if ( ! force ) {
+									if ( isDomainEmailUnverified ) {
+										setShowConfirmModal();
+										return;
+									}
+								}
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -392,6 +416,7 @@ export function getEnhancedTasks(
 					}
 
 					taskData = {
+						isLaunchTask: true,
 						title,
 						disabled:
 							( isStartWritingFlow( flow ) &&
@@ -401,8 +426,15 @@ export function getEnhancedTasks(
 									! setupBlogCompleted ) ) ||
 							( isDesignFirstFlow( flow ) &&
 								( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ) ),
-						actionDispatch: () => {
+						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
+								if ( ! force ) {
+									if ( isDomainEmailUnverified ) {
+										setShowConfirmModal();
+										return;
+									}
+								}
+
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -451,8 +483,16 @@ export function getEnhancedTasks(
 					break;
 				case 'videopress_launched':
 					taskData = {
-						actionDispatch: () => {
+						isLaunchTask: true,
+						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
+								if ( ! force ) {
+									if ( isDomainEmailUnverified ) {
+										setShowConfirmModal();
+										return;
+									}
+								}
+
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;

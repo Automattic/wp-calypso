@@ -2,6 +2,7 @@ import React from 'react';
 import IntervalDropdown from '../stats-interval-dropdown';
 import DateControlPicker from './stats-date-control-picker';
 import { StatsDateControlProps } from './types';
+import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
@@ -43,13 +44,8 @@ const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDat
 			offset: 0,
 			range: 400, // TODO: Don't hard code this value.
 		},
-		{
-			id: 'custom-range',
-			label: 'Custom Range',
-			offset: 0,
-			range: 3, // TODO: Should nail down how this is expected to behave.
-		},
 	];
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />

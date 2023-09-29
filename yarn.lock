@@ -30,10 +30,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/css-tools@npm:^4.0.1":
-  version: 4.2.0
-  resolution: "@adobe/css-tools@npm:4.2.0"
-  checksum: b8dbfd9c54df73a398e9b20c922abe26c67732e16afc50668402af0e3d101409e0c944baf69bf814343eb8639014637b96f209426088b06943cea288c1ef1486
+"@adobe/css-tools@npm:^4.3.0":
+  version: 4.3.1
+  resolution: "@adobe/css-tools@npm:4.3.1"
+  checksum: 05672719b544cc0c21ae3ed0eb6349bf458e9d09457578eeeb07cf0f696469ac6417e9c9be1b129e5d6a18098a061c1db55b2275591760ef30a79822436fcbfa
   languageName: node
   linkType: hard
 
@@ -536,7 +536,7 @@ __metadata:
     "@storybook/addon-actions": ^7.0.18
     "@storybook/react": ^7.0.18
     "@testing-library/dom": ^9.3.1
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
     "@types/canvas-confetti": ^1.6.0
@@ -579,7 +579,7 @@ __metadata:
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
     "@testing-library/dom": ^9.3.1
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
     "@wordpress/i18n": ^4.41.0
@@ -689,7 +689,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@tanstack/react-query": ^4.29.1
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@wordpress/components": ^25.7.0
     "@wordpress/react-i18n": ^3.39.0
@@ -726,7 +726,7 @@ __metadata:
     "@automattic/global-styles": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@wordpress/components": ^25.7.0
     "@wordpress/html-entities": ^3.41.0
@@ -759,7 +759,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@wordpress/base-styles": ^4.32.0
     "@wordpress/components": ^25.7.0
@@ -796,7 +796,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@tanstack/react-query": ^4.29.1
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@wordpress/components": ^25.7.0
     "@wordpress/react-i18n": ^3.39.0
@@ -968,7 +968,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/languages": "workspace:^"
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@types/react": ^18.2.6
     "@wordpress/compose": ^6.18.0
@@ -1156,7 +1156,7 @@ __metadata:
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
     "@emotion/styled": ^11.11.0
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@wordpress/i18n": ^4.41.0
     "@wordpress/react-i18n": ^3.39.0
@@ -1417,7 +1417,7 @@ __metadata:
     "@storybook/addon-actions": ^7.0.18
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@types/classnames": ^2.3.1
     classnames: ^2.3.1
@@ -1467,7 +1467,7 @@ __metadata:
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
     "@testing-library/dom": ^9.3.1
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
     "@wordpress/base-styles": ^4.32.0
@@ -1497,7 +1497,7 @@ __metadata:
   resolution: "@automattic/shopping-cart@workspace:packages/shopping-cart"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     debug: ^4.3.3
     typescript: ^5.1.6
@@ -1513,7 +1513,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/tour-kit": "workspace:^"
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@wordpress/dom": ^3.41.0
     "@wordpress/i18n": ^4.41.0
@@ -1533,7 +1533,7 @@ __metadata:
   resolution: "@automattic/sites@workspace:packages/sites"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     typescript: ^5.1.6
   peerDependencies:
@@ -1551,7 +1551,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@emotion/react": ^11.11.1
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@wordpress/components": ^25.7.0
     "@wordpress/element": ^5.18.0
@@ -1852,7 +1852,7 @@ __metadata:
     "@automattic/shopping-cart": "workspace:^"
     "@emotion/styled": ^11.11.0
     "@stripe/stripe-js": ^1.53.0
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@wordpress/data": ^9.11.0
     "@wordpress/i18n": ^4.41.0
@@ -1899,7 +1899,7 @@ __metadata:
     "@sentry/browser": ^7.54.0
     "@tanstack/eslint-plugin-query": ^4.29.8
     "@tanstack/react-query": ^4.29.1
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@types/node": ^18.17.3
     "@wordpress/a11y": ^3.41.0
@@ -4317,12 +4317,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/expect-utils@npm:^29.6.4":
-  version: 29.6.4
-  resolution: "@jest/expect-utils@npm:29.6.4"
+"@jest/expect-utils@npm:^29.6.4, @jest/expect-utils@npm:^29.7.0":
+  version: 29.7.0
+  resolution: "@jest/expect-utils@npm:29.7.0"
   dependencies:
     jest-get-type: ^29.6.3
-  checksum: 17d87d551090f6b460fa45605c614b2ad28e257360a5b8152216fe983370f4cfb8482d2d017552c2be43be1caa0ff5594f1381be17798dcad3899e05b297fe83
+  checksum: 60b79d23a5358dc50d9510d726443316253ecda3a7fb8072e1526b3e0d3b14f066ee112db95699b7a43ad3f0b61b750c72e28a5a1cac361d7a2bb34747fa938a
   languageName: node
   linkType: hard
 
@@ -6600,20 +6600,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^5.17.0":
-  version: 5.17.0
-  resolution: "@testing-library/jest-dom@npm:5.17.0"
+"@testing-library/jest-dom@npm:^6.1.3":
+  version: 6.1.3
+  resolution: "@testing-library/jest-dom@npm:6.1.3"
   dependencies:
-    "@adobe/css-tools": ^4.0.1
+    "@adobe/css-tools": ^4.3.0
     "@babel/runtime": ^7.9.2
-    "@types/testing-library__jest-dom": ^5.9.1
     aria-query: ^5.0.0
     chalk: ^3.0.0
     css.escape: ^1.5.1
     dom-accessibility-api: ^0.5.6
     lodash: ^4.17.15
     redent: ^3.0.0
-  checksum: 24e09c5779ea44644945ec26f2e4e5f48aecfe57d469decf2317a3253a5db28d865c55ad0ea4818d8d1df7572a6486c45daa06fa09644a833a7dd84563881939
+  peerDependencies:
+    "@jest/globals": ">= 28"
+    "@types/jest": ">= 28"
+    jest: ">= 28"
+    vitest: ">= 0.32"
+  peerDependenciesMeta:
+    "@jest/globals":
+      optional: true
+    "@types/jest":
+      optional: true
+    jest:
+      optional: true
+    vitest:
+      optional: true
+  checksum: 544e01939d3c14a3d44ae2e2bb9fe2a0cb5a9e4992ca2728f41188fb9fb2d56e25f1a2e1c12000be2a94d8da36cb220b24020e1b5c5c4c4bede9058a0d80583d
   languageName: node
   linkType: hard
 
@@ -7093,13 +7106,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*":
-  version: 29.5.2
-  resolution: "@types/jest@npm:29.5.2"
+"@types/jest@npm:^29.5.5":
+  version: 29.5.5
+  resolution: "@types/jest@npm:29.5.5"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: e85525fe83a0792632a31ca32968b33a0014d617442e9a515357d2aa8890052ef622b1f6fd25d48f4f1a3ab806bed94e6d9b056dea23a897464e0e35957ff654
+  checksum: 0a3481f119099e6a0a381fec0d410cd33241267a0981576a7a832687fc3f888f79285289dc7c054c3589fd443f7ed1598d25fa7bc9708491b58da17e423b4aff
   languageName: node
   linkType: hard
 
@@ -7518,15 +7531,6 @@ __metadata:
     "@types/cookiejar": "*"
     "@types/node": "*"
   checksum: 73d624d82c2d8e094706af6b9b23b8d938d4013270e0276cc372c730a4d7495fedc62e0dbc1d0e35d3c224e73c71ca312339c8b09ad44825c71037e5c9d72843
-  languageName: node
-  linkType: hard
-
-"@types/testing-library__jest-dom@npm:^5.9.1":
-  version: 5.9.5
-  resolution: "@types/testing-library__jest-dom@npm:5.9.5"
-  dependencies:
-    "@types/jest": "*"
-  checksum: 702d818a46e59288c5545aa9e6beb91a4df165d61b70fa0a501eed9ddca3ce37f526101b1e45a83db6ef7e210890922a68f9e56eb12e83fa3e9a1be4c98b2385
   languageName: node
   linkType: hard
 
@@ -11419,7 +11423,7 @@ __metadata:
     "@tanstack/react-query-devtools": ^4.29.1
     "@tanstack/react-query-persist-client": ^4.29.1
     "@testing-library/dom": ^9.3.1
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
     "@types/react": ^18.2.14
@@ -15944,15 +15948,15 @@ __metadata:
   linkType: hard
 
 "expect@npm:^29.0.0, expect@npm:^29.6.4":
-  version: 29.6.4
-  resolution: "expect@npm:29.6.4"
+  version: 29.7.0
+  resolution: "expect@npm:29.7.0"
   dependencies:
-    "@jest/expect-utils": ^29.6.4
+    "@jest/expect-utils": ^29.7.0
     jest-get-type: ^29.6.3
-    jest-matcher-utils: ^29.6.4
-    jest-message-util: ^29.6.3
-    jest-util: ^29.6.3
-  checksum: d3f4ed2fcc33f743b1dd9cf25a07c2f56c9ddd7e1b327d3e74b5febfc90880a9e2ab10c56b3bf31e14d5ead69dc4cb68f718b7fbc3fae8571f8e18675ffe8080
+    jest-matcher-utils: ^29.7.0
+    jest-message-util: ^29.7.0
+    jest-util: ^29.7.0
+  checksum: 2eddeace66e68b8d8ee5f7be57f3014b19770caaf6815c7a08d131821da527fb8c8cb7b3dcd7c883d2d3d8d184206a4268984618032d1e4b16dc8d6596475d41
   languageName: node
   linkType: hard
 
@@ -19750,15 +19754,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:^29.6.4":
-  version: 29.6.4
-  resolution: "jest-diff@npm:29.6.4"
+"jest-diff@npm:^29.6.4, jest-diff@npm:^29.7.0":
+  version: 29.7.0
+  resolution: "jest-diff@npm:29.7.0"
   dependencies:
     chalk: ^4.0.0
     diff-sequences: ^29.6.3
     jest-get-type: ^29.6.3
-    pretty-format: ^29.6.3
-  checksum: 5f96be0f15ba8e70acfa5512ca49ba67363678e7ce222889612385a8d9dd042822fdd22a514394fe726b1f462e605bc5d7fc130bd81fa2247e7d40413975d576
+    pretty-format: ^29.7.0
+  checksum: 89a4a7f182590f56f526443dde69acefb1f2f0c9e59253c61d319569856c4931eae66b8a3790c443f529267a0ddba5ba80431c585deed81827032b2b2a1fc999
   languageName: node
   linkType: hard
 
@@ -19869,21 +19873,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-matcher-utils@npm:^29.6.4":
-  version: 29.6.4
-  resolution: "jest-matcher-utils@npm:29.6.4"
+"jest-matcher-utils@npm:^29.6.4, jest-matcher-utils@npm:^29.7.0":
+  version: 29.7.0
+  resolution: "jest-matcher-utils@npm:29.7.0"
   dependencies:
     chalk: ^4.0.0
-    jest-diff: ^29.6.4
+    jest-diff: ^29.7.0
     jest-get-type: ^29.6.3
-    pretty-format: ^29.6.3
-  checksum: aa54f7075438160bd29e8c0a02d6b7e6ed1f18bab5670d161d1555e5cfa9b61e86306a260ca0304680fb1b357a944fd1d007b6519f91fc6f67d72997b1a7fdb8
+    pretty-format: ^29.7.0
+  checksum: 0d0e70b28fa5c7d4dce701dc1f46ae0922102aadc24ed45d594dd9b7ae0a8a6ef8b216718d1ab79e451291217e05d4d49a82666e1a3cc2b428b75cd9c933244e
   languageName: node
   linkType: hard
 
-"jest-message-util@npm:^29.6.3":
-  version: 29.6.3
-  resolution: "jest-message-util@npm:29.6.3"
+"jest-message-util@npm:^29.6.3, jest-message-util@npm:^29.7.0":
+  version: 29.7.0
+  resolution: "jest-message-util@npm:29.7.0"
   dependencies:
     "@babel/code-frame": ^7.12.13
     "@jest/types": ^29.6.3
@@ -19891,10 +19895,10 @@ __metadata:
     chalk: ^4.0.0
     graceful-fs: ^4.2.9
     micromatch: ^4.0.4
-    pretty-format: ^29.6.3
+    pretty-format: ^29.7.0
     slash: ^3.0.0
     stack-utils: ^2.0.3
-  checksum: 5ae17c0aa8076bd0d4c68a036865cf156084cf7b4f69b4ffee0f49da61f7fe9eb38c6405c1f6967df031ffe14f8a31830baa1f04f1dbea52f239689cd4e5b326
+  checksum: 850ae35477f59f3e6f27efac5215f706296e2104af39232bb14e5403e067992afb5c015e87a9243ec4d9df38525ef1ca663af9f2f4766aa116f127247008bd22
   languageName: node
   linkType: hard
 
@@ -20068,9 +20072,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-util@npm:^29.6.3":
-  version: 29.6.3
-  resolution: "jest-util@npm:29.6.3"
+"jest-util@npm:^29.6.3, jest-util@npm:^29.7.0":
+  version: 29.7.0
+  resolution: "jest-util@npm:29.7.0"
   dependencies:
     "@jest/types": ^29.6.3
     "@types/node": "*"
@@ -20078,7 +20082,7 @@ __metadata:
     ci-info: ^3.2.0
     graceful-fs: ^4.2.9
     picomatch: ^2.2.3
-  checksum: 9428c07696f27aa8f230a13a35546559f9a087f3e3744f53f69a620598234c03004b808b1b4a12120cc5771a88403bf0a1e3f95a7ccd610acf03d90c36135e88
+  checksum: bc55a8f49fdbb8f51baf31d2a4f312fb66c9db1483b82f602c9c990e659cdd7ec529c8e916d5a89452ecbcfae4949b21b40a7a59d4ffc0cd813a973ab08c8150
   languageName: node
   linkType: hard
 
@@ -24791,14 +24795,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^29.0.0, pretty-format@npm:^29.6.3":
-  version: 29.6.3
-  resolution: "pretty-format@npm:29.6.3"
+"pretty-format@npm:^29.0.0, pretty-format@npm:^29.6.3, pretty-format@npm:^29.7.0":
+  version: 29.7.0
+  resolution: "pretty-format@npm:29.7.0"
   dependencies:
     "@jest/schemas": ^29.6.3
     ansi-styles: ^5.0.0
     react-is: ^18.0.0
-  checksum: 73c6a46acdad4cb9337add02c850769fb831d7154cdb50b1152f3970a8fbf8292188dcccd1ba597f3e34c360af71fc0b63f1db4cf155a0098ffe2812eb7a6b22
+  checksum: edc5ff89f51916f036c62ed433506b55446ff739358de77207e63e88a28ca2894caac6e73dcb68166a606e51c8087d32d400473e6a9fdd2dbe743f46c9c0276f
   languageName: node
   linkType: hard
 
@@ -31654,13 +31658,14 @@ __metadata:
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
     "@tanstack/eslint-plugin-query": ^4.29.8
-    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/jest-dom": ^6.1.3
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/gradient-parser": ^0.1.2
     "@types/gtag.js": ^0.0.10
     "@types/highlight-words-core": ^1.2.1
+    "@types/jest": ^29.5.5
     "@types/lodash": ^4.14.179
     "@types/node": ^18.17.3
     "@types/page": ^1.11.5

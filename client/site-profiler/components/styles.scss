@@ -15,6 +15,10 @@
 		line-height: 1;
 		margin-bottom: 1rem;
 		color: var(--studio-gray-100);
+
+		@media (max-width: $break-small ) {
+			font-size: 3rem;
+		}
 	}
 
 	h2 {
@@ -176,6 +180,10 @@
 		h2 {
 			max-width: 400px;
 		}
+
+		@media (max-width: $break-medium) {
+			flex-direction: column-reverse;
+		}
 	}
 
 	.domain-analyzer-block,
@@ -195,10 +203,14 @@
 	}
 
 	.domain-analyzer-block::after {
-		height: 280px;
-	}
+		height: 100%;
 
+		@media (min-width: $break-medium) {
+			height: 280px;
+		}
+	}
 	.domain-result-block::after {
 		height: 210px;
 	}
+
 }

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -17,10 +18,16 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
+import { ConfirmationModal } from './confirmation-modal';
+import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
+} );
+
+const SyncActionsContainer = styled( ActionButtons )( {
+	marginTop: 12,
 } );
 
 type CardProps = {
@@ -33,12 +40,37 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ loadingError, setLoadingError ] = useState( null );
+	const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
 	const { data: productionSite, isLoading } = useProductionSiteDetail( siteId, {
 		enabled: ! disabled,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onError: ( error: any ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_load_failure', {
+					code: error.code,
+				} )
+			);
+			setLoadingError( error );
+		},
+	} );
+
+	const { pushToStaging } = usePushToStagingMutation( productionSite?.id as number, siteId, {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		onError: ( error: any ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+					code: error.code,
+				} )
+			);
+			setLoadingError( error );
+		},
+	} );
+
+	const { pullFromStaging } = usePullFromStagingMutation( productionSite?.id as number, siteId, {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		onError: ( error: any ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
 					code: error.code,
 				} )
 			);
@@ -76,6 +108,34 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
 				</ActionButtons>
+				{ isStagingSitesI3Enabled && (
+					<SyncActionsContainer>
+						<ConfirmationModal
+							onConfirm={ pushToStaging }
+							modalTitle={ translate( 'Confirm pulling changes from your production site.' ) }
+							modalMessage={ translate(
+								'Are you sure you want to pull your changes from your production site?'
+							) }
+							confirmLabel={ translate( 'Pull from production' ) }
+							cancelLabel={ translate( 'Cancel' ) }
+						>
+							<Gridicon icon="arrow-down" />
+							<span>{ translate( 'Pull from production' ) }</span>
+						</ConfirmationModal>
+						<ConfirmationModal
+							onConfirm={ pullFromStaging }
+							modalTitle={ translate( 'Confirm pushing changes to your production site.' ) }
+							modalMessage={ translate(
+								'Are you sure you want to push your changes to your production site?'
+							) }
+							confirmLabel={ translate( 'Push to production' ) }
+							cancelLabel={ translate( 'Cancel' ) }
+						>
+							<Gridicon icon="arrow-up" />
+							<span>{ translate( 'Push to production' ) }</span>
+						</ConfirmationModal>
+					</SyncActionsContainer>
+				) }
 			</>
 		);
 	};

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -10,6 +11,7 @@ import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/component
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainQueryParam from 'calypso/site-profiler/hooks/use-domain-query-param';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
@@ -31,7 +33,9 @@ export default function SiteProfiler() {
 		isError: isErrorSP,
 		errorUpdateCount: errorUpdateCountSP,
 	} = useDomainAnalyzerQuery( domain, isDomainValid );
+	const { data: urlData } = useAnalyzeUrlQuery( domain, isDomainValid );
 	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
+	const isBusyForWhile = useLongFetchingDetection( domain, isFetchingSP );
 	const conversionAction = useDefineConversionAction(
 		domain,
 		siteProfilerData?.whois,
@@ -71,6 +75,7 @@ export default function SiteProfiler() {
 						isDomainValid={ isDomainValid }
 						onFormSubmit={ updateDomainQueryParam }
 						isBusy={ isFetchingSP }
+						isBusyForWhile={ isBusyForWhile }
 					/>
 				</LayoutBlock>
 			) }
@@ -96,6 +101,7 @@ export default function SiteProfiler() {
 								<LayoutBlockSection>
 									<HostingInformation
 										dns={ siteProfilerData.dns }
+										urlData={ urlData }
 										hostingProvider={ hostingProviderData?.hosting_provider }
 									/>
 								</LayoutBlockSection>

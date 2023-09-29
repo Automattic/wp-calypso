@@ -455,7 +455,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		// When the user is done with checkout, send them back to the current url
 		// If the theme is externally managed, send them to the marketplace thank you page
 		const destination = selectedDesign?.is_externally_managed
-			? addQueryArgs( `/marketplace/thank-you/${ siteSlug }`, {
+			? addQueryArgs( `/marketplace/thank-you/${ siteSlug }?onboarding`, {
 					themes: selectedDesign?.slug,
 			  } )
 			: window.location.href.replace( window.location.origin, '' );
@@ -782,7 +782,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					site={ site }
 					isMarketplace={ selectedDesign?.is_externally_managed }
 					isOpen={ showEligibility }
-					handleClose={ () => setShowEligibility( false ) }
+					handleClose={ () => {
+						recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
+							flow: 'onboarding',
+							theme: selectedDesign?.slug,
+						} );
+						setShowEligibility( false );
+					} }
 					handleContinue={ () => {
 						navigateToCheckout();
 						setShowEligibility( false );

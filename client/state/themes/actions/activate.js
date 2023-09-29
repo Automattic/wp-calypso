@@ -25,6 +25,7 @@ import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/sho
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
  * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
+ * @param  {boolean}  skipActivationModal Skip the Activation Modal to be shown even if needed on flows that don't require it
  * @returns {Function}          Action thunk
  */
 export function activate(
@@ -32,7 +33,8 @@ export function activate(
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	keepCurrentHomepage = false
+	keepCurrentHomepage = false,
+	skipActivationModal = false
 ) {
 	return ( dispatch, getState ) => {
 		if ( ! isEnabled( 'themes/atomic-homepage-replace' ) ) {
@@ -54,9 +56,9 @@ export function activate(
 		}
 
 		/**
-		 * Check whether the user has confirmed the activation.
+		 * Check whether the user has confirmed the activation or is in a flow that doesn't require acceptance.
 		 */
-		if ( ! hasActivationModalAccepted( getState(), themeId ) ) {
+		if ( ! hasActivationModalAccepted( getState(), themeId ) && ! skipActivationModal ) {
 			return dispatch( showActivationModal( themeId ) );
 		}
 

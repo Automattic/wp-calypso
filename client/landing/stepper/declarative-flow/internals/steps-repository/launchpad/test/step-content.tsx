@@ -12,7 +12,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import StepContent from '../step-content';
-import { defaultSiteDetails, buildDomainResponse } from './lib/fixtures';
+import { buildDomainResponse, defaultSiteDetails } from './lib/fixtures';
 
 const mockSite = {
 	...defaultSiteDetails,
@@ -46,6 +46,10 @@ const completionStatuses = {
 
 jest.mock( '@automattic/data-stores/src/plugins', () => ( {
 	registerPlugins: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-site-domains', () => ( {
+	useSiteDomainsForSlug: jest.fn(),
 } ) );
 
 jest.mock( '@wordpress/data', () => {
@@ -213,6 +217,7 @@ function renderStepContent( emailVerified = false, flow: string ) {
 		},
 		initialReducer
 	);
+
 	setStore( reduxStore, getStateFromCache( user.ID ) );
 	const queryClient = new QueryClient();
 

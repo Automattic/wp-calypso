@@ -153,7 +153,9 @@ class TagStream extends Component {
 				streamHeader={ tagHeader }
 				showSiteNameOnCards={ false }
 				useCompactCards={ true }
-				streamSidebar={ () => <ReaderTagSidebar tag={ this.props.decodedTagSlug } /> }
+				streamSidebar={ () => (
+					<ReaderTagSidebar tag={ this.props.decodedTagSlug } showFollow={ false } />
+				) }
 				sidebarTabTitle={ this.props.translate( 'Related' ) }
 			>
 				<QueryReaderFollowedTags />

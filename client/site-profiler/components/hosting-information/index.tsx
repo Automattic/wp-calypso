@@ -1,27 +1,27 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import VerifiedProvider from '../domain-information/verified-provider';
+import { UrlData } from 'calypso/blocks/import/types';
+import HostingProviderName from './hosting-provider-name';
 import type { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
+import './style.scss';
 
 interface Props {
 	dns: DNS[];
+	urlData?: UrlData;
 	hostingProvider?: HostingProvider;
 }
 
 export default function HostingInformation( props: Props ) {
-	const { dns = [], hostingProvider } = props;
+	const { dns = [], urlData, hostingProvider } = props;
 	const aRecordIps = dns.filter( ( x ) => x.type === 'A' && x.ip );
 
 	return (
 		<div className="hosting-information">
-			<h3>Hosting information</h3>
+			<h3>{ translate( 'Hosting information' ) }</h3>
 			<ul className="hosting-information-details result-list">
 				<li>
 					<div className="name">{ translate( 'Provider' ) }</div>
-					<div>
-						{ hostingProvider?.slug !== 'automattic' && <>{ hostingProvider?.name }</> }
-						{ hostingProvider?.slug === 'automattic' && <VerifiedProvider /> }
-					</div>
+					<HostingProviderName hostingProvider={ hostingProvider } urlData={ urlData } />
 				</li>
 				{ hostingProvider?.slug === 'automattic' && (
 					<li>
