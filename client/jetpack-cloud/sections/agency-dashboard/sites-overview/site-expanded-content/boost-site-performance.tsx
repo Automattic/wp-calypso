@@ -188,6 +188,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 					onClose={ () => setShowBoostModal( false ) }
 					siteId={ siteId }
 					siteUrl={ siteUrl }
+					upgradeOnly
 				/>
 			) }
 		</ExpandedCard>
