@@ -70,7 +70,7 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 	return (
 		<>
 			<Button
-				variant="primary"
+				className="stats-date-control-picker__button"
 				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
 				ref={ infoReferenceElement }
 			>
