@@ -13,14 +13,17 @@
 
 .components-popover__content {
 
-	div.components-popover__content .segmented-control li.segmented-control__item.is-selected a.segmented-control__link:hover {
-		background-color: var(--studio-white);
+	.segmented-control.is-primary.stats-navigation__intervals .segmented-control__item.is-selected .segmented-control__link:hover {
+		background-color: var(--color-neutral-0);
 	}
 
+
 	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link {
-		// CSS to display arrow icon will go here
 		background-color: var(--studio-white);
 		color: var(--gutenberg-gray-900);
+		&:focus{
+			background-color: var(--studio-white);
+		}
 	}
 
 	width: 196px;
