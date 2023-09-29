@@ -230,7 +230,7 @@ class ThemeShowcase extends Component {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
 		const { filterToTermTable, subjectStringFilter } = this.props;
 
-		const filters = ( searchBoxContent + ` ${ subjectStringFilter }` ).match( filterRegex ) || [];
+		const filters = `${ searchBoxContent } ${ subjectStringFilter }`.match( filterRegex ) || [];
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
 

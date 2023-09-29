@@ -18,8 +18,8 @@ import 'calypso/state/themes/init';
 export function getThemeFilterStringFromTerm(
 	state,
 	term,
-	excludeTaxonomies = Array(),
-	includedTaxonomies = Array()
+	excludeTaxonomies = [],
+	includedTaxonomies = []
 ) {
 	const terms = getThemeFilterTermsTable( state );
 	const taxonomy = terms[ term ];

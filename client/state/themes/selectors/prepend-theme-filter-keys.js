@@ -15,8 +15,8 @@ import 'calypso/state/themes/init';
 export function prependThemeFilterKeys(
 	state,
 	terms = '',
-	excludeTaxonomies = Array(),
-	includedTaxonomies = Array()
+	excludeTaxonomies = [],
+	includedTaxonomies = []
 ) {
 	const result = terms
 		.split( /[+\s]/ )
