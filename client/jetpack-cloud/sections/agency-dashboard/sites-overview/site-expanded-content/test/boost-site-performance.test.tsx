@@ -63,7 +63,7 @@ describe( 'BoostSitePerformance', () => {
 		expect( settingsButton ).toBeInTheDocument();
 		expect( settingsButton ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack#:~:text=Inactive-,Boost,-The%20easiest%20speed`
 		);
 
 		fireEvent.click( settingsButton );
@@ -84,7 +84,10 @@ describe( 'BoostSitePerformance', () => {
 
 		const button = screen.getByRole( 'link', { name: /boost settings/i } );
 		expect( button ).toBeInTheDocument();
-		expect( button ).toHaveAttribute( 'href', `${ site.url_with_scheme }/wp-admin/admin.php` );
+		expect( button ).toHaveAttribute(
+			'href',
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack#:~:text=Inactive-,Boost,-The%20easiest%20speed`
+		);
 
 		fireEvent.click( button );
 		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_settings_click' );
@@ -106,7 +109,7 @@ describe( 'BoostSitePerformance', () => {
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php?page=jetpack-boost`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack#:~:text=Inactive-,Boost,-The%20easiest%20speed`
 		);
 
 		fireEvent.click( button );
