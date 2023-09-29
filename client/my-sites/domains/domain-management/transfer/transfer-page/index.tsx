@@ -356,7 +356,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 
 		return (
 			<Card className="transfer-page__advanced-transfer-options">
-				<CardHeading size={ 16 }>{ __( 'Advanced Options' ) }</CardHeading>
+				<CardHeading size={ 16 }>{ __( 'Transfer to another registrar' ) }</CardHeading>
 				{ topLevelOfTld !== 'uk' ? renderCommonTldTransferOptions() : renderUkTransferOptions() }
 			</Card>
 		);
