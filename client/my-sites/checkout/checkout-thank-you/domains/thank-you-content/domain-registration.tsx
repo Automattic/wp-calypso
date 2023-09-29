@@ -52,7 +52,7 @@ const domainRegistrationThankYouProps = ( {
 		stepKey: 'domain_registration_whats_next_confirm-email',
 		stepTitle: translate( 'Confirm email address' ),
 		stepDescription: translate(
-			'You must confirm your email address before your domain can be used.'
+			'You must confirm your email address to avoid your domain getting suspended.'
 		),
 		stepCta: (
 			<FullWidthButton onClick={ onResendEmailVerificationClick } busy={ false } disabled={ false }>
