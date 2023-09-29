@@ -281,7 +281,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 						label: translate( 'Continue anyway' ),
 						isPrimary: true,
 						onClick: () => {
-							enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch( true );
+							enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch?.( true );
 							setShowConfirmModal( false );
 						},
 					},
