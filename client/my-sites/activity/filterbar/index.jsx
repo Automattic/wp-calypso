@@ -9,7 +9,7 @@ import { updateFilter } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import DateRangeSelector from './date-range-selector';
-import TextSearchControl from './text-search-control';
+import TextSelector from './text-selector';
 import ActivityTypeSelector from './type-selector/activity-type-selector';
 import IssueTypeSelector from './type-selector/issue-type-selector';
 
@@ -17,8 +17,7 @@ import './style.scss';
 
 export class Filterbar extends Component {
 	static defaultProps = {
-		selectorTypes: { dateRange: true, actionType: true },
-		showTextSearch: false,
+		selectorTypes: { dateRange: true, actionType: true, text: true },
 	};
 
 	state = {
@@ -123,8 +122,7 @@ export class Filterbar extends Component {
 	};
 
 	render() {
-		const { translate, siteId, filter, isLoading, isVisible, selectorTypes, showTextSearch } =
-			this.props;
+		const { translate, siteId, filter, isLoading, isVisible, selectorTypes } = this.props;
 
 		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
 			return <div className="filterbar is-loading" />;
@@ -147,9 +145,9 @@ export class Filterbar extends Component {
 		return (
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">
-					{ showTextSearch && (
+					{ selectorTypes.text && (
 						<div className="filterbar__text-control">
-							<TextSearchControl filter={ filter } siteId={ siteId } />
+							<TextSelector filter={ filter } siteId={ siteId } />
 						</div>
 					) }
 					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>

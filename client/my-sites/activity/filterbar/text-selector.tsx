@@ -14,7 +14,7 @@ interface Props {
 	filter: any;
 }
 
-const TextSearchControl: FunctionComponent< Props > = ( { siteId, filter } ) => {
+const TextSelector: FunctionComponent< Props > = ( { siteId, filter } ) => {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 
@@ -48,4 +48,4 @@ const TextSearchControl: FunctionComponent< Props > = ( { siteId, filter } ) => 
 	);
 };
 
-export default TextSearchControl;
+export default TextSelector;
