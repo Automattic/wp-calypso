@@ -1,12 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import config from '@automattic/calypso-config';
-import { Site } from '@automattic/data-stores';
 import { DESIGN_FIRST_FLOW, NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -14,9 +11,8 @@ import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library/index';
 import StepContent from '../step-content';
-import { defaultSiteDetails, buildDomainResponse } from './lib/fixtures';
+import { buildDomainResponse, defaultSiteDetails } from './lib/fixtures';
 
 const mockSite = {
 	...defaultSiteDetails,
@@ -50,6 +46,10 @@ const completionStatuses = {
 
 jest.mock( '@automattic/data-stores/src/plugins', () => ( {
 	registerPlugins: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-site-domains', () => ( {
+	useSiteDomainsForSlug: jest.fn(),
 } ) );
 
 jest.mock( '@wordpress/data', () => {
@@ -204,43 +204,30 @@ const user = {
 };
 
 function renderStepContent( emailVerified = false, flow: string ) {
-	function TestStepContent() {
-		const initialState = getInitialState( initialReducer, user.ID );
-		const reduxStore = createReduxStore(
-			{
-				...initialState,
-				currentUser: {
-					user: {
-						...user,
-						email_verified: emailVerified,
-					},
+	const initialState = getInitialState( initialReducer, user.ID );
+	const reduxStore = createReduxStore(
+		{
+			...initialState,
+			currentUser: {
+				user: {
+					...user,
+					email_verified: emailVerified,
 				},
 			},
-			initialReducer
-		);
+		},
+		initialReducer
+	);
 
-		const SITE_STORE = Site.register( {
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_id' ),
-		} );
+	setStore( reduxStore, getStateFromCache( user.ID ) );
+	const queryClient = new QueryClient();
 
-		const { receiveSite } = useDispatch( SITE_STORE );
-
-		receiveSite( defaultSiteDetails.ID, defaultSiteDetails );
-
-		setStore( reduxStore, getStateFromCache( user.ID ) );
-		const queryClient = new QueryClient();
-
-		render(
-			<Provider store={ reduxStore }>
-				<QueryClientProvider client={ queryClient }>
-					<StepContent { ...stepContentProps } flow={ flow } />
-				</QueryClientProvider>
-			</Provider>
-		);
-	}
-
-	renderWithProvider( <TestStepContent /> );
+	render(
+		<Provider store={ reduxStore }>
+			<QueryClientProvider client={ queryClient }>
+				<StepContent { ...stepContentProps } flow={ flow } />
+			</QueryClientProvider>
+		</Provider>
+	);
 }
 
 describe( 'StepContent', () => {
