@@ -235,10 +235,7 @@ const PlansFeaturesMain = ( {
 		flowName,
 		!! paidDomainName
 	);
-	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
-		flowName,
-		!! paidDomainName
-	);
+	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain( flowName );
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
