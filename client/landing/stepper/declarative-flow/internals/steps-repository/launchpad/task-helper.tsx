@@ -60,7 +60,7 @@ export function getEnhancedTasks(
 	domainCartItem?: MinimalRequestCartProduct | null,
 	stripeConnectUrl?: string,
 	setShowConfirmModal: () => void = () => {},
-	hasCustomDomain = false
+	isDomainEmailUnverified = false
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -293,8 +293,15 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published_newsletter':
 					taskData = {
+						isLaunchTask: true,
 						disabled: mustVerifyEmailBeforePosting || false,
-						actionDispatch: () => {
+						actionDispatch: ( force = false ) => {
+							if ( ! force ) {
+								if ( isDomainEmailUnverified ) {
+									setShowConfirmModal();
+									return;
+								}
+							}
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
 						},
@@ -344,7 +351,7 @@ export function getEnhancedTasks(
 						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
 								if ( ! force ) {
-									if ( ! isEmailVerified && hasCustomDomain ) {
+									if ( isDomainEmailUnverified ) {
 										setShowConfirmModal();
 										return;
 									}
@@ -376,7 +383,7 @@ export function getEnhancedTasks(
 						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
 								if ( ! force ) {
-									if ( ! isEmailVerified && hasCustomDomain ) {
+									if ( isDomainEmailUnverified ) {
 										setShowConfirmModal();
 										return;
 									}
@@ -422,7 +429,7 @@ export function getEnhancedTasks(
 						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
 								if ( ! force ) {
-									if ( ! isEmailVerified && hasCustomDomain ) {
+									if ( isDomainEmailUnverified ) {
 										setShowConfirmModal();
 										return;
 									}
@@ -480,7 +487,7 @@ export function getEnhancedTasks(
 						actionDispatch: ( force = false ) => {
 							if ( site?.ID ) {
 								if ( ! force ) {
-									if ( ! isEmailVerified && hasCustomDomain ) {
+									if ( isDomainEmailUnverified ) {
 										setShowConfirmModal();
 										return;
 									}

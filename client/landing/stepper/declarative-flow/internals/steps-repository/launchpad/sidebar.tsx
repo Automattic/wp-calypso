@@ -10,6 +10,7 @@ import { copy, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
+import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-email-verfication';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -85,6 +86,12 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 		! isBlogOnboardingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
+	const { isEmailUnverified: isDomainEmailUnverified } = useDomainEmailVerification(
+		site?.ID,
+		siteSlug ?? '',
+		selectedDomain?.domain_name ?? sidebarDomain?.domain
+	);
+
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
@@ -116,7 +123,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			getDomainCartItem(),
 			stripeConnectUrl,
 			() => setShowConfirmModal( true ),
-			Boolean( showDomain )
+			isDomainEmailUnverified
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
@@ -271,7 +278,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 					},
 					{
 						action: 'launch',
-						label: translate( 'Launch anyway' ),
+						label: translate( 'Continue anyway' ),
 						isPrimary: true,
 						onClick: () => {
 							enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch( true );
@@ -283,12 +290,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			>
 				<p>
 					{ translate(
-						'Your email address is still unverified. This will cause {{strong}}%(domain)s{{/strong}} to be suspended in future.',
+						'Your domain email address is still unverified. This will cause {{strong}}%(domain)s{{/strong}} to be suspended in future.{{break/}}{{break/}}Please check your inbox for the ICANN verification email.',
 						{
 							components: {
+								p: <p />,
+								break: <br />,
 								strong: <strong />,
 							},
-							args: { domain: selectedDomain?.domain_name ?? `${ siteName }${ topLevelDomain }` },
+							args: { domain: sidebarDomain?.domain },
 						}
 					) }
 				</p>
