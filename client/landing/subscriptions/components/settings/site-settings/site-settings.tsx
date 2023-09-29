@@ -119,10 +119,6 @@ export const SiteSettingsPopover = ( {
 									/>
 								}
 								href={ `/read/subscriptions/${ subscriptionId }` }
-								onClick={ () => {
-									onUnsubscribe();
-									close();
-								} }
 							>
 								{ translate( 'Manage subscription' ) }
 							</Button>
