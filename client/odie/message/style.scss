@@ -143,3 +143,46 @@
 	height: auto;
 	margin: 8px -16px 8px 8px;
 }
+
+.message-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: 8px;
+	width: 100%;
+}
+
+.message-header-name {
+	flex: 1;
+	text-align: left;
+}
+
+.message-header-buttons {
+	flex: 1;
+	text-align: end;
+}
+
+.odie-fullscreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.1);
+	z-index: 9999;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	.odie-chatbox-message {
+		border: 1px solid var(--color-neutral-10);
+		box-shadow: 0 2px 3px 0 var(--color-neutral-10);
+		max-width: 800px;
+		max-height: 800px;
+		width: auto;
+		height: auto;
+		margin: auto;
+		overflow-y: auto;
+		font-size: $font-body;
+	}
+}

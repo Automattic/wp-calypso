@@ -1,13 +1,18 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import { Button, Gridicon } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { Icon, page as pageIcon } from '@wordpress/icons';
 import classnames from 'classnames';
-import { useState, useEffect, RefObject, useRef } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import WapuuAvatar from 'calypso/assets/images/odie/wapuu-avatar.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
 import { LikeDislikeButtons } from './like-dislike-buttons';
 import { uriTransformer } from './uri-transformer';
+import { useSimulateTyping } from './useSimulateTyping';
 import type { Message } from '../types';
 
 import './style.scss';
@@ -20,12 +25,26 @@ type ChatMessageProps = {
 
 const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => {
 	const isUser = message.role === 'user';
-	const { addMessage: sendOdieMessage } = useOdieAssistantContext();
+	const { addMessage: sendOdieMessage, botName } = useOdieAssistantContext();
+	const [ isFullscreen, setIsFullscreen ] = useState( false );
+
+	const backdropRef: RefObject< HTMLDivElement > = useRef( null );
+
+	const handleBackdropClick = ( e ) => {
+		if ( e.target === backdropRef.current ) {
+			setIsFullscreen( false );
+		}
+	};
+
+	const handleContentClick = ( e ) => {
+		e.stopPropagation();
+	};
+
 	const messageClasses = classnames(
 		'odie-chatbox-message',
 		isUser ? 'odie-chatbox-message-user' : 'odie-chatbox-message-wapuu',
 		{
-			'odie-full-width-message': message.type === 'help-link',
+			'odie-full-width-message': message.type === 'help-link' || message.type === 'placeholder',
 			'odie-introduction-message': message.type === 'introduction',
 			'odie-simulate-typing': message.simulateTyping,
 		}
@@ -39,40 +58,24 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		} );
 	};
 
-	const [ realTimeMessage, setRealTimeMessage ] = useState( '' );
-	const currentIndex = useRef( 0 );
+	const realTimeMessage = useSimulateTyping( message );
 
-	useEffect( () => {
-		if ( message.type === 'message' && ! isUser && message.simulateTyping ) {
-			const words = message.content.split( ' ' );
+	const handleFullscreenToggle = () => {
+		setIsFullscreen( ! isFullscreen );
+	};
 
-			const typeWord = () => {
-				if ( currentIndex.current < words.length ) {
-					// Append a space and the current word from the array
-					setRealTimeMessage(
-						( prevMessage ) => prevMessage + ' ' + words[ currentIndex.current ]
-					);
-
-					currentIndex.current++; // Update the index
-
-					const delay = Math.random() * ( 66 - 33 ) + 33; // Randomize delay between 330ms and 660ms
-					setTimeout( typeWord, delay );
-				}
-			};
-
-			// Initialize with the first word and reset index to start from the second word
-			setRealTimeMessage( words[ 0 ] );
-			currentIndex.current = 1; // Start from the second word
-
-			const initialDelay = Math.random() * ( 66 - 33 ) + 33; // Randomize initial delay
-			setTimeout( typeWord, initialDelay ); // Initiate the typing simulation
-		} else if ( message.type === 'message' && ! isUser && ! message.simulateTyping ) {
-			setRealTimeMessage( message.content ); // If not simulating typing but it's a message from not the user, show the full message
-		}
-	}, [ message, isUser ] );
-
-	return (
+	const messageContent = (
 		<div ref={ isLast ? messageEndRef : null } className={ messageClasses }>
+			{ message.type !== 'introduction' && ! isUser && (
+				<div className="message-header">
+					<strong className="message-header-name">{ botName }</strong>
+					<div className="message-header-buttons">
+						<Button compact borderless onClick={ handleFullscreenToggle }>
+							<Gridicon icon={ isFullscreen ? 'fullscreen-exit' : 'fullscreen' } size={ 18 } />
+						</Button>
+					</div>
+				</div>
+			) }
 			{ message.type === 'placeholder' && <Spinner /> }
 			{ message.type === 'message' && (
 				<>
@@ -109,6 +112,23 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 			) }
 		</div>
 	);
+
+	useEffect( () => {
+		if ( isFullscreen ) {
+			backdropRef.current?.addEventListener( 'click', handleBackdropClick );
+		}
+		return () => {
+			backdropRef.current?.removeEventListener( 'click', handleBackdropClick );
+		};
+	}, [ isFullscreen ] );
+
+	const fullscreenContent = (
+		<div className="odie-fullscreen" ref={ backdropRef } onClick={ handleBackdropClick }>
+			<div onClick={ handleContentClick }>{ messageContent }</div>
+		</div>
+	);
+
+	return isFullscreen ? ReactDOM.createPortal( fullscreenContent, document.body ) : messageContent;
 };
 
 export default ChatMessage;
