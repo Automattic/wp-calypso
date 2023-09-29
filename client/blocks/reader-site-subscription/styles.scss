@@ -38,7 +38,7 @@
 		align-items: center;
 
 		.formatted-header {
-			&__title {
+			&__title a {
 				font-weight: 600;
 				color: $studio-gray-100;
 			}

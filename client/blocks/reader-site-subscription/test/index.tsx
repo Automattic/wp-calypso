@@ -7,6 +7,10 @@ import { act, render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import {
+	SubscriptionManagerContextProvider,
+	SubscriptionsPortal,
+} from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import ReaderSiteSubscription, {
 	SiteSubscriptionContext,
 	SiteSubscriptionContextProps,
@@ -55,9 +59,11 @@ const renderReaderSiteSubscription = (
 				return (
 					<Provider store={ store }>
 						<QueryClientProvider client={ queryClient }>
-							<SiteSubscriptionContext.Provider value={ siteSubscriptionContextValue }>
-								{ props.children }
-							</SiteSubscriptionContext.Provider>
+							<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
+								<SiteSubscriptionContext.Provider value={ siteSubscriptionContextValue }>
+									{ props.children }
+								</SiteSubscriptionContext.Provider>
+							</SubscriptionManagerContextProvider>
 						</QueryClientProvider>
 					</Provider>
 				);
@@ -78,7 +84,7 @@ describe( 'ReaderSiteSubscription', () => {
 		).toBeInTheDocument();
 
 		// Assert that the site subscription details are rendered
-		expect( screen.getByRole( 'heading', { name: 'Test Site' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'View feed' } ) ).toBeInTheDocument();
 		expect( screen.getByText( /100 subscribers/i ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Jan 1, 2023' ) ).toBeInTheDocument();
 		expect( screen.getByAltText( 'Test Site' ) ).toBeInTheDocument();
@@ -89,7 +95,7 @@ describe( 'ReaderSiteSubscription', () => {
 	it( 'The "View feed" button should navigate to the expected path', async () => {
 		renderReaderSiteSubscription( mockSiteSubscriptionContext( { feed_ID: 123456789 } ) );
 
-		expect( screen.getByRole( 'link', { name: 'View feed' } ) ).toHaveAttribute(
+		expect( screen.getAllByTitle( 'View feed' )[ 0 ] ).toHaveAttribute(
 			'href',
 			'/read/feeds/123456789'
 		);

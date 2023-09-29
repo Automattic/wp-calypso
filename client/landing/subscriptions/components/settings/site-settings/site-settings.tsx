@@ -155,6 +155,7 @@ export const SiteSettingsPopover = ( {
 									recordViewFeedButtonClicked( {
 										blogId: blogId ? String( blogId ) : null,
 										feedId: String( feedId ),
+										source: 'subscription-settings-dropdown',
 									} );
 								} }
 							>
