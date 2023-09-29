@@ -7,6 +7,10 @@ import { act, render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import {
+	SubscriptionManagerContextProvider,
+	SubscriptionsPortal,
+} from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import ReaderSiteSubscription, {
 	SiteSubscriptionContext,
 	SiteSubscriptionContextProps,
@@ -55,9 +59,11 @@ const renderReaderSiteSubscription = (
 				return (
 					<Provider store={ store }>
 						<QueryClientProvider client={ queryClient }>
-							<SiteSubscriptionContext.Provider value={ siteSubscriptionContextValue }>
-								{ props.children }
-							</SiteSubscriptionContext.Provider>
+							<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
+								<SiteSubscriptionContext.Provider value={ siteSubscriptionContextValue }>
+									{ props.children }
+								</SiteSubscriptionContext.Provider>
+							</SubscriptionManagerContextProvider>
 						</QueryClientProvider>
 					</Provider>
 				);
