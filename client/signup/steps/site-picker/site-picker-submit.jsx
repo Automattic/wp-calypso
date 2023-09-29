@@ -27,7 +27,7 @@ export class SitePickerSubmit extends Component {
 		if ( hasPaidPlan ) {
 			this.props.submitSignupStep(
 				{ stepName: 'plans-site-selected', wasSkipped: true },
-				{ cartItem: null, themeSlugWithRepo: 'pub/twentysixteen' }
+				{ cartItems: null, themeSlugWithRepo: 'pub/twentysixteen' }
 			);
 
 			goToStep( 'user' );
