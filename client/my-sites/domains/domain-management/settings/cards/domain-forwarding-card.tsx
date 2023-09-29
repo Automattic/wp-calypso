@@ -359,7 +359,11 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	};
 
 	const FormViewRow = ( { child: child }: { child: DomainForwardingObject } ) => (
-		<FormFieldset disabled={ ! pointsToWpcom } className="domain-forwarding-card__fields">
+		<FormFieldset
+			disabled={ ! pointsToWpcom }
+			className="domain-forwarding-card__fields"
+			key={ `view-${ child.domain_redirect_id }` }
+		>
 			<div className="domain-forwarding-card__fields-row">
 				<div className="domain-forwarding-card__fields-column">
 					<Badge type={ child.subdomain === '' ? 'warning' : 'info' }>
@@ -402,9 +406,9 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const FormRowEdditable = ( { child }: { child: DomainForwardingObject } ) => (
 		<>
 			<FormFieldset
-				key={ child.domain_redirect_id }
 				disabled={ ! pointsToWpcom }
 				className="domain-forwarding-card__fields"
+				key={ `edit-${ child.domain_redirect_id }` }
 			>
 				<FormLabel>{ translate( 'Source URL' ) }</FormLabel>
 				<div
