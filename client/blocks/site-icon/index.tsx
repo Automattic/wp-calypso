@@ -1,6 +1,7 @@
 import { Gridicon, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { get } from 'lodash';
+import React from 'react';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
 import Image from 'calypso/components/image';
@@ -29,6 +30,9 @@ type SiteIconProps = {
 	isTransientIcon?: boolean;
 	defaultIcon?: JSX.Element | null;
 	alt?: string;
+	href?: string;
+	title?: string;
+	onClick?: () => void;
 };
 
 export function SiteIcon( {
@@ -40,6 +44,9 @@ export function SiteIcon( {
 	isTransientIcon,
 	defaultIcon = null,
 	alt = '',
+	href = '',
+	title = '',
+	onClick = () => {},
 }: SiteIconProps ) {
 	const iconSrc = resizeImageUrl( iconUrl, imgSize, null );
 
@@ -57,8 +64,8 @@ export function SiteIcon( {
 
 	const icon = defaultIcon || <Gridicon icon="globe" size={ Math.round( size / 1.8 ) } />;
 
-	return (
-		<div className={ classes } style={ style }>
+	const children = (
+		<>
 			{ ! site && typeof siteId === 'number' && siteId > 0 && <QuerySites siteId={ siteId } /> }
 			{ iconSrc ? (
 				<MediaImage component={ Image } className="site-icon__img" src={ iconSrc } alt={ alt } />
@@ -66,6 +73,18 @@ export function SiteIcon( {
 				icon
 			) }
 			{ isTransientIcon && <Spinner /> }
+		</>
+	);
+
+	return (
+		<div className={ classes } style={ style }>
+			{ href ? (
+				<a href={ href } title={ title } onClick={ onClick }>
+					{ children }
+				</a>
+			) : (
+				children
+			) }
 		</div>
 	);
 }
