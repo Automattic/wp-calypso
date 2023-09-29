@@ -244,7 +244,8 @@ export default function SitesOverview() {
 	const [ hasDismissedProvisioningNotice, setHasDismissedProvisioningNotice ] =
 		useState< boolean >( false );
 	const isProvisioningSite =
-		! isLoadingProvisioningBlogIds && Number( provisioningBlogIds?.length ) > 0;
+		'true' === getQueryArg( window.location.href, 'provisioning' ) ||
+		( ! isLoadingProvisioningBlogIds && Number( provisioningBlogIds?.length ) > 0 );
 
 	return (
 		<div className="sites-overview">

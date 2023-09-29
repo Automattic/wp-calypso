@@ -132,7 +132,7 @@ export default function CardContent( {
 		issueLicenses( [ productSlug ] );
 
 		setIsRequesting( false );
-		page.redirect( `/partner-portal/licenses?provisioning=true` );
+		page.redirect( `/dashboard?provisioning=true` );
 	}, [ dispatch, planSlug, issueLicenses, translate, setIsRequesting ] );
 
 	if ( ! plan ) {
