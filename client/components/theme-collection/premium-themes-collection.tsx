@@ -29,31 +29,15 @@ interface PremiumThemesCollectionProps {
 	translate: ReturnType< typeof useTranslate >;
 }
 
-function PremiumThemesCollection( {
-	getScreenshotUrl,
-	siteId,
-	getButtonOptions,
-	isInstalling,
-	isActive,
-	getPrice,
-	themes,
-	getActionLabel,
-}: PremiumThemesCollectionProps ): ReactElement {
+function PremiumThemesCollection( props: PremiumThemesCollectionProps ): ReactElement {
 	return (
 		<>
 			<QueryThemes query={ query } siteId="wpcom" />
 			<ThemeCollection
+				{ ...props }
 				heading={ translate( 'Premium Themes' ) }
 				subheading={ <p>Lorem ipsum mockup subheading</p> }
-				themes={ themes }
 				collectionSlug="premium-themes"
-				getScreenshotUrl={ getScreenshotUrl }
-				siteId={ siteId }
-				getButtonOptions={ getButtonOptions }
-				getActionLabel={ getActionLabel }
-				isActive={ isActive }
-				getPrice={ getPrice }
-				isInstalling={ isInstalling }
 			/>
 		</>
 	);
