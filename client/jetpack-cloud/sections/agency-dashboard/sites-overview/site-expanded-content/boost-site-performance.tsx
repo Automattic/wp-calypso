@@ -22,7 +22,10 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 
 	const helpIconRef = useRef< HTMLElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
-	const [ showBoostModal, setShowBoostModal ] = useState( false );
+	const [ boostModalState, setBoostModalState ] = useState< {
+		show: boolean;
+		upgradeOnly?: boolean;
+	} >( { show: false } );
 
 	const {
 		blog_id: siteId,
@@ -31,6 +34,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		has_boost: hasBoost,
 		jetpack_boost_scores: boostData,
 		has_pending_boost_one_time_score: hasPendingScore,
+		has_paid_boost: hasPaidLicense,
 	} = site;
 
 	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
@@ -43,12 +47,8 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		'Your Overall Score is a summary of your website performance across both mobile and desktop devices.'
 	);
 
-	const isEnabled = hasBoost || Boolean( overallScore ) || hasPendingScore;
-
-	const hasPaidLicense = false;
-
-	const handleOnClick = () => {
-		setShowBoostModal( true );
+	const showBoostModal = ( upgradeOnly: boolean ) => {
+		setBoostModalState( { show: true, upgradeOnly } );
 	};
 
 	const ScoreRating = getBoostRating( overallScore );
@@ -58,7 +58,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 			return [
 				{
 					label: translate( 'Auto-optimize' ),
-					onClick: handleOnClick,
+					onClick: () => showBoostModal( true ),
 					primary: true,
 				},
 				{
@@ -90,107 +90,114 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 	}, [ hasPaidLicense, ScoreRating, translate, siteUrlWithScheme, trackEvent ] );
 
 	return (
-		<ExpandedCard
-			header={ translate( 'Boost site performance' ) }
-			isEnabled={ isEnabled }
-			emptyContent={ translate(
-				'{{strong}}Get Score{{/strong}} to see your site performance scores',
-				{
-					components,
-				}
-			) }
-			hasError={ hasError }
-			// Allow to click on the card only if Boost is not active
-			onClick={ ! isEnabled ? handleOnClick : undefined }
-		>
-			<div className="site-expanded-content__card-content-container">
-				<div className="site-expanded-content__card-content">
-					<div className="site-expanded-content__card-content-column">
-						{ hasPendingScore ? (
-							<InProgressIcon />
-						) : (
-							<div
-								className={ classNames(
-									'site-expanded-content__card-content-score',
-									getBoostRatingClass( overallScore )
-								) }
-							>
-								{ ScoreRating }
+		<>
+			<ExpandedCard
+				header={ translate( 'Boost site performance' ) }
+				isEnabled={ hasBoost }
+				emptyContent={ translate(
+					'{{strong}}Get Score{{/strong}} to see your site performance scores',
+					{
+						components,
+					}
+				) }
+				hasError={ hasError }
+				// Allow to click on the card only if Boost is not active
+				onClick={ () => {
+					if ( ! hasBoost ) {
+						showBoostModal( false );
+					}
+				} }
+			>
+				<div className="site-expanded-content__card-content-container">
+					<div className="site-expanded-content__card-content">
+						<div className="site-expanded-content__card-content-column">
+							{ hasPendingScore ? (
+								<InProgressIcon />
+							) : (
+								<div
+									className={ classNames(
+										'site-expanded-content__card-content-score',
+										getBoostRatingClass( overallScore )
+									) }
+								>
+									{ ScoreRating }
 
-								<span
-									ref={ helpIconRef }
-									onMouseEnter={ () => setShowTooltip( true ) }
-									onMouseLeave={ () => setShowTooltip( false ) }
-								>
-									<Icon size={ 20 } className="site-expanded-content__help-icon" icon={ help } />
-								</span>
-								<Tooltip
-									id={ `${ siteId }-boost-help-text` }
-									context={ helpIconRef.current }
-									isVisible={ showTooltip }
-									position="bottom"
-									className="site-expanded-content__tooltip"
-								>
-									{ tooltip }
-								</Tooltip>
+									<span
+										ref={ helpIconRef }
+										onMouseEnter={ () => setShowTooltip( true ) }
+										onMouseLeave={ () => setShowTooltip( false ) }
+									>
+										<Icon size={ 20 } className="site-expanded-content__help-icon" icon={ help } />
+									</span>
+									<Tooltip
+										id={ `${ siteId }-boost-help-text` }
+										context={ helpIconRef.current }
+										isVisible={ showTooltip }
+										position="bottom"
+										className="site-expanded-content__tooltip"
+									>
+										{ tooltip }
+									</Tooltip>
+								</div>
+							) }
+							<div className="site-expanded-content__card-content-score-title">
+								{ translate( 'Overall' ) }
 							</div>
-						) }
-						<div className="site-expanded-content__card-content-score-title">
-							{ translate( 'Overall' ) }
+						</div>
+						<div className="site-expanded-content__card-content-column">
+							{ hasPendingScore ? (
+								<InProgressIcon />
+							) : (
+								<div className="site-expanded-content__device-score-container">
+									<div className="site-expanded-content__card-content-column">
+										<Icon
+											size={ 24 }
+											className="site-expanded-content__device-icon"
+											icon={ jetpackBoostDesktopIcon }
+										/>
+										<span className="site-expanded-content__device-score">{ desktopScore }</span>
+									</div>
+									<div className="site-expanded-content__card-content-column site-expanded-content__card-content-column-mobile">
+										<Icon
+											className="site-expanded-content__device-icon"
+											size={ 24 }
+											icon={ jetpackBoostMobileIcon }
+										/>
+										<span className="site-expanded-content__device-score">{ mobileScore }</span>
+									</div>
+								</div>
+							) }
+							<div className="site-expanded-content__card-content-score-title">
+								{ translate( 'Devices' ) }
+							</div>
 						</div>
 					</div>
-					<div className="site-expanded-content__card-content-column">
-						{ hasPendingScore ? (
-							<InProgressIcon />
-						) : (
-							<div className="site-expanded-content__device-score-container">
-								<div className="site-expanded-content__card-content-column">
-									<Icon
-										size={ 24 }
-										className="site-expanded-content__device-icon"
-										icon={ jetpackBoostDesktopIcon }
-									/>
-									<span className="site-expanded-content__device-score">{ desktopScore }</span>
-								</div>
-								<div className="site-expanded-content__card-content-column site-expanded-content__card-content-column-mobile">
-									<Icon
-										className="site-expanded-content__device-icon"
-										size={ 24 }
-										icon={ jetpackBoostMobileIcon }
-									/>
-									<span className="site-expanded-content__device-score">{ mobileScore }</span>
-								</div>
-							</div>
-						) }
-						<div className="site-expanded-content__card-content-score-title">
-							{ translate( 'Devices' ) }
-						</div>
+					<div className="site-expanded-content__card-footer">
+						{ ctaButtons.map( ( ctaButton ) => (
+							<Button
+								key={ ctaButton.label }
+								href={ ctaButton.href }
+								target="_blank"
+								onClick={ ctaButton.onClick }
+								className="site-expanded-content__card-button"
+								primary={ ctaButton.primary }
+								compact
+							>
+								{ ctaButton.label } { !! ctaButton.href && <Gridicon icon="external" /> }
+							</Button>
+						) ) }
 					</div>
 				</div>
-				<div className="site-expanded-content__card-footer">
-					{ ctaButtons.map( ( ctaButton ) => (
-						<Button
-							key={ ctaButton.label }
-							href={ ctaButton.href }
-							target="_blank"
-							onClick={ ctaButton.onClick }
-							className="site-expanded-content__card-button"
-							primary={ ctaButton.primary }
-							compact
-						>
-							{ ctaButton.label } { !! ctaButton.href && <Gridicon icon="external" /> }
-						</Button>
-					) ) }
-				</div>
-			</div>
-			{ showBoostModal && (
+			</ExpandedCard>
+
+			{ boostModalState.show && (
 				<BoostLicenseInfoModal
-					onClose={ () => setShowBoostModal( false ) }
+					onClose={ () => setBoostModalState( { show: false } ) }
 					siteId={ siteId }
 					siteUrl={ siteUrl }
-					upgradeOnly
+					upgradeOnly={ boostModalState.upgradeOnly }
 				/>
 			) }
-		</ExpandedCard>
+		</>
 	);
 }
