@@ -107,7 +107,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						<>
 							<ConfirmationModal
 								onConfirm={ pushToStaging }
-								modalTitle={ translate( 'Confirm pulling changes to your staging site.' ) }
+								modalTitle={ translate( 'Confirm pulling changes from your production site.' ) }
 								modalMessage={ translate(
 									'Are you sure you want to pull your changes from your production site?'
 								) }
