@@ -40,7 +40,7 @@ export default function ThemeCollection( {
 	const swiperInstance = useRef< Swiper | null >( null );
 
 	useEffect( () => {
-		if ( themes.length > 0 ) {
+		if ( themes !== null && themes.length > 0 ) {
 			const el = document.querySelector( '.swiper-container' ) as HTMLElement;
 			if ( el ) {
 				swiperInstance.current = new Swiper( el, {
@@ -67,6 +67,10 @@ export default function ThemeCollection( {
 			swiperInstance.current?.destroy();
 		};
 	}, [ themes ] );
+
+	if ( themes === null ) {
+		return <></>; // @todo Add LoadingPlaceholders instead.
+	}
 
 	return (
 		<div className="theme-collection__container ">
