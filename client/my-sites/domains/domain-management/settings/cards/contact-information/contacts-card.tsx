@@ -191,6 +191,13 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 							</Button>
 						) }
 					</div>
+					{ disableEdit && (
+						<p className="contact-information__transfer-warn">
+							{ translate(
+								'Contact modifications are disabled while domain transfers are pending.'
+							) }
+						</p>
+					) }
 				</div>
 				<div className="contact-information__toggle-container">
 					{ getPrivacyProtection() }
