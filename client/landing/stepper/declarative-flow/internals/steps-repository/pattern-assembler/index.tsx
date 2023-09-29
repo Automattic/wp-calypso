@@ -145,8 +145,9 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				font_variation_title: getVariationTitle( fontVariation ),
 				font_variation_type: getVariationType( fontVariation ),
 				assembler_source: getAssemblerSource( selectedDesign ),
+				has_global_styles_selected: numOfSelectedGlobalStyles > 0,
 			} ),
-		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
+		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation, numOfSelectedGlobalStyles ]
 	);
 
 	const selectedVariations = useMemo(
