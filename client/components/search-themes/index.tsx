@@ -14,6 +14,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 		<div className="search-themes-card" role="presentation" data-tip-target="search-themes-card">
 			<Search
 				initialValue={ query }
+				value={ query }
 				placeholder={ translate( 'Search themes…' ) }
 				analyticsGroup="Themes"
 				searchMode={ SEARCH_MODE_ON_ENTER }
