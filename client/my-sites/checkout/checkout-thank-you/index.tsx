@@ -664,7 +664,6 @@ export class CheckoutThankYou extends Component<
 					isDomainOnly={ this.props.domainOnlySiteFlow }
 					selectedSiteId={ this.props.domainOnlySiteFlow ? domainPurchase?.blogId : undefined }
 					type={ purchaseType as DomainThankYouType }
-					isUserEmailVerified={ this.props.isEmailVerified }
 				/>
 			);
 		} else if ( wasTitanEmailOnlyProduct ) {

@@ -3,8 +3,9 @@ import { SITE_STORE } from '../stores';
 import { useQuery } from './use-query';
 import type { SiteSelect } from '@automattic/data-stores';
 
-export function useSiteDomains() {
-	const siteSlug = useQuery().get( 'siteSlug' );
+export function useSiteDomains( selectedSiteSlug = null ) {
+	const querySlug = useQuery().get( 'siteSlug' );
+	const siteSlug = selectedSiteSlug ?? querySlug;
 	const siteId = useSelect(
 		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
 		[ siteSlug ]
