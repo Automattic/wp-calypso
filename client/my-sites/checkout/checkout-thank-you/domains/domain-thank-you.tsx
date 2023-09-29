@@ -2,7 +2,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import * as React from 'react';
 import { ThankYou } from 'calypso/components/thank-you';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -15,13 +15,12 @@ import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
-import {
-	getCurrentUserEmail,
-	isCurrentUserEmailVerified,
-} from 'calypso/state/current-user/selectors';
+import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
+import QuerySiteDomains from '../../../../components/data/query-site-domains';
 
 import './style.scss';
 
@@ -34,6 +33,7 @@ interface DomainThankYouContainerProps {
 	type: DomainThankYouType;
 	isDomainOnly: boolean;
 	selectedSiteId?: number;
+	isUserEmailVerified: boolean;
 }
 
 const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
@@ -45,6 +45,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	type,
 	isDomainOnly,
 	selectedSiteId,
+	isUserEmailVerified,
 } ) => {
 	const dispatch = useDispatch();
 	const {
@@ -55,20 +56,24 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	const siteIntent = useSiteOption( 'site_intent' );
 	const { isEnabled: isActivityPubEnabled } = useActivityPubStatus( selectedSiteSlug );
 
-	const shouldDisplayVerifyEmailStep = useSelector( ( state ) => {
-		/**
-		 * We don't want to display the verify e-mail address action
-		 * if the email passed in the domain registration step differs
-		 * from the email used in account creation.
-		 *
-		 * See https://wp.me/pet6gk-Ht#rabbit-holes-no-gos
-		 */
-		if ( getCurrentUserEmail( state ) !== email ) {
-			return false;
-		}
+	const siteDomain = useSelector(
+		( state ) =>
+			getDomainsBySiteId( state, selectedSiteId )?.find(
+				( siteDomain ) => siteDomain.domain === domain
+			)
+	);
 
-		return ! isCurrentUserEmailVerified( state );
-	} );
+	const isPendingIcannVerification = siteDomain?.isPendingIcannVerification;
+
+	const shouldDisplayVerifyEmailStep = ! isUserEmailVerified || isPendingIcannVerification;
+
+	const onResendEmailVerificationClick = useCallback( () => {
+		if ( isPendingIcannVerification ) {
+			dispatch( verifyIcannEmail( domain ) );
+		} else {
+			dispatch( verifyEmail( { showGlobalNotices: true } ) );
+		}
+	}, [ dispatch, domain, isPendingIcannVerification ] );
 
 	const isDomainOnlySiteOption = useSelector(
 		( state ) =>
@@ -81,7 +86,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			domain,
 			email,
 			shouldDisplayVerifyEmailStep,
-			onResendEmailVerificationClick: () => dispatch( verifyEmail( { showGlobalNotices: true } ) ),
+			onResendEmailVerificationClick,
 			hasProfessionalEmail,
 			hideProfessionalEmailStep,
 			siteIntent,
@@ -97,7 +102,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		selectedSiteSlug,
 		email,
 		shouldDisplayVerifyEmailStep,
-		dispatch,
+		onResendEmailVerificationClick,
 		hasProfessionalEmail,
 		hideProfessionalEmailStep,
 		siteIntent,
@@ -160,6 +165,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 				thankYouSubtitle={ thankYouProps.thankYouSubtitle }
 				thankYouNotice={ thankYouProps.thankYouNotice }
 			/>
+			<QuerySiteDomains siteId={ selectedSiteId as number } />
 		</>
 	);
 };

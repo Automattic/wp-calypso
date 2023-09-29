@@ -1,5 +1,6 @@
 import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
+import { resendIcannVerification } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -220,5 +221,24 @@ export const showUpdatePrimaryDomainErrorNotice = ( errorMessage: string ) => {
 				{ duration: 10000, isPersistent: true }
 			)
 		);
+	};
+};
+
+export const verifyIcannEmail = ( domain: string ) => {
+	return ( dispatch: CalypsoDispatch ) => {
+		resendIcannVerification( domain )
+			.then( () => {
+				dispatch(
+					successNotice(
+						translate(
+							'We sent the ICANN verification email to your ' +
+								'email address. Please check your inbox and click the link in the email.'
+						)
+					)
+				);
+			} )
+			.catch( ( error: Error ) => {
+				dispatch( errorNotice( error.message ) );
+			} );
 	};
 };
