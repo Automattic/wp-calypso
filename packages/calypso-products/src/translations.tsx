@@ -1075,7 +1075,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Quick and accurate spelling correction' ),
 	];
 	const boostIncludesInfo = [
-		translate( '{{strong}}Automated critical CSS{{/strong}}', {
+		translate( '{{strong}}Automated critical CSS (Premium){{/strong}}', {
 			components: {
 				strong: <strong />,
 			},
