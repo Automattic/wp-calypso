@@ -1,5 +1,5 @@
 import { useExperiment } from 'calypso/lib/explat';
-import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
+import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
 const useIsCustomDomainAllowedOnFreePlan = (
 	flowName?: string | null,

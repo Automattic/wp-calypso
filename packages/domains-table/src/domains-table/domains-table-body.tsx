@@ -6,9 +6,9 @@ import DomainsTableRowLoading from './domains-table-row-loading';
 import './style.scss';
 
 export function DomainsTableBody() {
-	const { filteredData, isFetchingDomains } = useDomainsTable();
+	const { filteredData, isLoadingDomains } = useDomainsTable();
 
-	if ( isFetchingDomains ) {
+	if ( isLoadingDomains ) {
 		return (
 			<tbody>
 				<DomainsTableRowLoading />

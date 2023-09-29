@@ -1,3 +1,4 @@
+import { fetchLaunchpad } from '@automattic/data-stores';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, isEqual, keys, omit, pick } from 'lodash';
@@ -38,10 +39,20 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 	class WrappedSettingsForm extends Component {
 		state = {
 			uniqueEvents: {},
+			isSiteTitleTaskCompleted: false,
+			blogNameChanged: false,
 		};
 
 		componentDidMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
+
+			// Check if site_title task is completed
+			fetchLaunchpad( this.props.siteSlug, 'intent-build' ).then( ( { checklist_statuses } ) => {
+				this.setState( {
+					...this.state,
+					isSiteTitleTaskCompleted: !! checklist_statuses?.site_title,
+				} );
+			} );
 		}
 
 		componentDidUpdate( prevProps ) {
@@ -65,6 +76,13 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					this.props.isSaveRequestSuccessful &&
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.siteIsJetpack )
 				) {
+					if ( ! this.state.isSiteTitleTaskCompleted && this.state.blogNameChanged ) {
+						noticeSettings.button = 'Next steps';
+						noticeSettings.onClick = () => {
+							window.location.assign( `/home/${ this.props.siteSlug }` );
+						};
+					}
+
 					this.props.successNotice(
 						this.props.translate( 'Settings saved successfully!' ),
 						noticeSettings
@@ -203,6 +221,13 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			const modifiedFields = pick( siteFields, dirtyFields );
 
 			this.props.saveSiteSettings( siteId, modifiedFields );
+
+			if ( 'blogname' in modifiedFields ) {
+				this.setState( {
+					...this.state,
+					blogNameChanged: true,
+				} );
+			}
 		};
 
 		handleRadio = ( event ) => {

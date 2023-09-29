@@ -4,7 +4,8 @@ import { CheckboxControl, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { ReactNode } from 'react';
+import DomainsTableHeaderLoading from './header-loading';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -47,6 +48,7 @@ type DomainsTableHeaderProps = {
 	headerClasses?: string;
 	domainsRequiringAttention?: number;
 	canSelectAnyDomains?: boolean;
+	isLoadingDomains?: boolean;
 };
 
 export const DomainsTableHeader = ( {
@@ -61,6 +63,7 @@ export const DomainsTableHeader = ( {
 	headerClasses,
 	domainsRequiringAttention,
 	canSelectAnyDomains = true,
+	isLoadingDomains,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
 	const listHeaderClasses = classNames( 'domains-table-header', headerClasses || '' );
@@ -81,6 +84,14 @@ export const DomainsTableHeader = ( {
 	};
 
 	const isBulkSelection = bulkSelectionStatus !== 'no-domains';
+
+	if ( isLoadingDomains ) {
+		return (
+			<thead className={ listHeaderClasses }>
+				<DomainsTableHeaderLoading />
+			</thead>
+		);
+	}
 
 	return (
 		<thead className={ listHeaderClasses }>

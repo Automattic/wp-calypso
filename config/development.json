@@ -205,6 +205,7 @@
 		"themes/discovery-lots": true,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
+		"themes/search-v2": true,
 		"themes/subscription-purchases": true,
 		"themes/theme-switch-persist-template": false,
 		"titan/iframe-control-panel": false,
@@ -219,6 +220,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/hosting-metrics-i1": true
+		"yolo/hosting-metrics-i1": true,
+		"yolo/staging-sites-i3": true
 	}
 }

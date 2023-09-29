@@ -84,7 +84,7 @@ const DiscoverStream = ( props ) => {
 				</>
 			);
 		} else if ( ! ( isDefaultTab || selectedTab === 'latest' ) ) {
-			return <ReaderTagSidebar tag={ selectedTab } />;
+			return <ReaderTagSidebar tag={ selectedTab } showFollow={ true } />;
 		}
 	};
 

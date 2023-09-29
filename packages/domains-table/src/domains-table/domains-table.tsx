@@ -53,7 +53,7 @@ interface BaseDomainsTableProps {
 	onDomainAction?: OnDomainAction;
 	userCanSetPrimaryDomains?: boolean;
 	shouldDisplayContactInfoBulkAction?: boolean;
-	isFetchingDomains?: boolean;
+	isLoadingDomains?: boolean;
 
 	// These props allow table users to provide their own fetching functions. This is used for
 	// testing and for Calypso to provide functions that handle authentication in a special way.
@@ -80,7 +80,7 @@ interface DomainsTableUpdatingDomain {
 }
 
 type Value = {
-	isFetchingDomains?: boolean;
+	isLoadingDomains?: boolean;
 	filter: DomainsTableFilter;
 	setFilter: (
 		value: ( ( prevState: DomainsTableFilter ) => DomainsTableFilter ) | DomainsTableFilter
@@ -142,7 +142,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		onDomainAction,
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction = false,
-		isFetchingDomains,
+		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo = false,
 	} = props;
 
@@ -424,7 +424,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction,
 		domainsTableColumns,
-		isFetchingDomains,
+		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo,
 		isCompact,
 	};

@@ -1,7 +1,7 @@
 import configApi from '@automattic/calypso-config';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { logToLogstash } from 'calypso/lib/logstash';
-import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
+import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
 export function useGetFreeSubdomainSuggestion( query: string ): {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestions.DomainSuggestion >;

@@ -170,6 +170,7 @@
 		"themes/discovery-lots": false,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
+		"themes/search-v2": false,
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
 		"unified-pages/virtual-home-page": true,
@@ -184,7 +185,8 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/hosting-metrics-i1": true
+		"yolo/hosting-metrics-i1": true,
+		"yolo/staging-sites-i3": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

@@ -1,8 +1,9 @@
-import { Dropdown, Button } from '@wordpress/components';
+import { Popover } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import moment from 'moment';
 import page from 'page';
 import qs from 'qs';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
@@ -14,6 +15,8 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 	const [ inputEndDate, setInputEndDate ] = useState(
 		new Date( new Date().setMonth( new Date().getMonth() - 3 ) ).toISOString().slice( 0, 10 )
 	);
+	const infoReferenceElement = useRef( null );
+	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
 	const changeStartDate = ( value: string ) => {
 		// do more here
@@ -64,34 +67,35 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 		return moment( date ).format( 'MMM D, YYYY' );
 	};
 
-	const DateControlPickerContent = () => (
-		// TODO: Remove this inline CSS.
-		<div style={ { minWidth: '260px' } }>
-			<DateControlPickerDate
-				startDate={ inputStartDate }
-				endDate={ inputEndDate }
-				onStartChange={ changeStartDate }
-				onEndChange={ changeEndDate }
-				onApply={ handleOnApply }
-			/>
-			<DateControlPickerShortcuts
-				shortcutList={ shortcutList }
-				onClick={ handleShortcutSelected }
-			/>
-		</div>
-	);
-
 	return (
-		<Dropdown
-			// TODO: add CSS to increase the width
-			popoverProps={ { placement: 'bottom-end' } }
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button className="date-control-dropdown" onClick={ onToggle } aria-expanded={ isOpen }>
-					{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
-				</Button>
-			) }
-			renderContent={ () => <DateControlPickerContent /> }
-		/>
+		<>
+			<Button
+				variant="primary"
+				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
+				ref={ infoReferenceElement }
+			>
+				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
+			</Button>
+			<Popover
+				placement="bottom end"
+				context={ infoReferenceElement?.current }
+				isVisible={ popoverOpened }
+				// TODO: Remove this inline CSS.
+				style={ { minWidth: '260px' } }
+			>
+				<DateControlPickerDate
+					startDate={ inputStartDate }
+					endDate={ inputEndDate }
+					onStartChange={ changeStartDate }
+					onEndChange={ changeEndDate }
+					onApply={ handleOnApply }
+				/>
+				<DateControlPickerShortcuts
+					shortcutList={ shortcutList }
+					onClick={ handleShortcutSelected }
+				/>
+			</Popover>
+		</>
 	);
 };
 
