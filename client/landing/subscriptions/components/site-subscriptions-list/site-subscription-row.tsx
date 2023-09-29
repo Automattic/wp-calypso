@@ -346,6 +346,7 @@ const SiteSubscriptionRow = ( {
 					unsubscribing={ unsubscribing }
 					blogId={ sanitizedBlogId }
 					feedId={ Number( feed_id ) }
+					subscriptionId={ Number( subscriptionId ) }
 				/>
 			</span>
 		</HStack>
