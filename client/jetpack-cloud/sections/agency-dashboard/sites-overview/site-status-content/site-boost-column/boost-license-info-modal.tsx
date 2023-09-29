@@ -12,9 +12,10 @@ interface Props {
 	onClose: () => void;
 	siteId: number;
 	siteUrl: string;
+	upgradeOnly?: boolean;
 }
 
-export default function BoostLicenseInfoModal( { onClose, siteId, siteUrl }: Props ) {
+export default function BoostLicenseInfoModal( { onClose, siteId, siteUrl, upgradeOnly }: Props ) {
 	const translate = useTranslate();
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
@@ -50,36 +51,45 @@ export default function BoostLicenseInfoModal( { onClose, siteId, siteUrl }: Pro
 	return (
 		<LicenseInfoModal
 			currentLicenseInfo="boost"
-			label={ translate( 'Purchase Boost License' ) }
+			label={
+				upgradeOnly
+					? translate( 'Upgrade to Auto-optimize' )
+					: translate( 'Purchase Boost License' )
+			}
 			onClose={ onClose }
 			siteId={ siteId }
 			onCtaClick={ handlePurchaseBoost }
 			extraAsideContent={
 				<>
-					<Button
-						disabled={ inProgress }
-						className="site-boost-column__extra-button"
-						onClick={ handleInstallBoost }
-					>
-						{ translate( 'Start Free' ) }
-					</Button>
-					<div className="site-boost-column__notice">
-						{ translate( 'Proceeding installs {{jetpackBoostLink/}} on your website.', {
-							args: { siteUrl },
-							comment: '%(siteUrl)s is the site url. Eg: example.com',
-							components: {
-								jetpackBoostLink: (
-									<ExternalLink
-										href="https://wordpress.org/plugins/jetpack-boost/"
-										onClick={ onJetpackBoostClick }
-										icon={ true }
-									>
-										{ translate( 'Jetpack Boost' ) }
-									</ExternalLink>
-								),
-							},
-						} ) }
-					</div>
+					{ ! upgradeOnly && (
+						<Button
+							disabled={ inProgress }
+							className="site-boost-column__extra-button"
+							onClick={ handleInstallBoost }
+						>
+							{ translate( 'Start Free' ) }
+						</Button>
+					) }
+
+					{ ! upgradeOnly && (
+						<div className="site-boost-column__notice">
+							{ translate( 'Proceeding installs {{jetpackBoostLink/}} on your website.', {
+								args: { siteUrl },
+								comment: '%(siteUrl)s is the site url. Eg: example.com',
+								components: {
+									jetpackBoostLink: (
+										<ExternalLink
+											href="https://wordpress.org/plugins/jetpack-boost/"
+											onClick={ onJetpackBoostClick }
+											icon={ true }
+										>
+											{ translate( 'Jetpack Boost' ) }
+										</ExternalLink>
+									),
+								},
+							} ) }
+						</div>
+					) }
 				</>
 			}
 			isDisabled={ inProgress }
