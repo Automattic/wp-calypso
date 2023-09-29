@@ -583,7 +583,6 @@ class ActivityLog extends Component {
 					filter={ filter }
 					isLoading={ ! displayRulesLoaded || ! logsLoaded }
 					isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
-					showTextSearch={ true }
 				/>
 			</div>
 		);

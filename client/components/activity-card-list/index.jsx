@@ -234,7 +234,6 @@ class ActivityCardList extends Component {
 								filter,
 								isLoading: false,
 								isVisible: true,
-								showTextSearch: true,
 							} }
 						/>
 					</div>
