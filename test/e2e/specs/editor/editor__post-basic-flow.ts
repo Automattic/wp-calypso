@@ -89,7 +89,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			await editorPage.openEditorOptionsMenu();
 			const page = await editorPage.getEditorParent();
 
-			const button = await page.locator( 'button:has(span:has-text("Jetpack"))' );
+			const button = await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } );
 			await button.click();
 		} );
 
