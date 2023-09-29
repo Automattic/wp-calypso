@@ -16,7 +16,8 @@ const SiteRow = styled.div( {
 	'.site-icon': { flexShrink: 0 },
 } );
 
-const LeftActionsContainer = styled.div( {
+const SyncActionsContainer = styled.div( {
+	marginTop: 12,
 	gap: '1em',
 	display: 'flex',
 	flexDirection: 'row',
@@ -61,10 +62,6 @@ const ActionButtons = styled.div( {
 		flexDirection: 'column',
 		'.button': { flexGrow: 1 },
 	},
-} );
-
-const ActionButtonsJustifyBetween = styled( ActionButtons )( {
-	justifyContent: 'space-between',
 } );
 
 type CardContentProps = {
@@ -185,14 +182,16 @@ export const ManageStagingSiteCardContent = ( {
 					</SiteInfo>
 				</SiteRow>
 				{ isStagingSitesI3Enabled ? (
-					<ActionButtonsJustifyBetween>
-						<LeftActionsContainer>
+					<>
+						<ActionButtons>
 							<ManageStagingSiteButton />
+							<ConfirmationDeleteButton />
+						</ActionButtons>
+						<SyncActionsContainer>
 							<ConfirmationPushChangesButton />
 							<ConfirmationPullChangesButton />
-						</LeftActionsContainer>
-						<ConfirmationDeleteButton />
-					</ActionButtonsJustifyBetween>
+						</SyncActionsContainer>
+					</>
 				) : (
 					<ActionButtons>
 						<ManageStagingSiteButton />
