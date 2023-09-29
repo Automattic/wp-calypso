@@ -81,7 +81,7 @@ class ARecord extends Component {
 					/>
 					{ ! isTTLValid && (
 						<FormInputValidation
-							text={ translate( 'Invalid TTL value - Use a value between 3600 and 86400' ) }
+							text={ translate( 'Invalid TTL value - Use a value between 300 and 86400' ) }
 							isError
 						/>
 					) }
