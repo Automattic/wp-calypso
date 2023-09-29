@@ -240,6 +240,9 @@ export default function SitesOverview() {
 
 	const { data: provisioningBlogIds, isLoading: isLoadingProvisioningBlogIds } =
 		useQueryProvisioningBlogIds();
+
+	const [ hasDismissedProvisioningNotice, setHasDismissedProvisioningNotice ] =
+		useState< boolean >( false );
 	const isProvisioningSite =
 		! isLoadingProvisioningBlogIds && Number( provisioningBlogIds?.length ) > 0;
 
@@ -252,8 +255,11 @@ export default function SitesOverview() {
 					<div className="sites-overview__content-wrapper">
 						<DashboardBanners />
 
-						{ isProvisioningSite && (
-							<Notice status="is-info">
+						{ isProvisioningSite && ! hasDismissedProvisioningNotice && (
+							<Notice
+								status="is-info"
+								onDismissClick={ () => setHasDismissedProvisioningNotice( true ) }
+							>
 								{ translate(
 									"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
 								) }
