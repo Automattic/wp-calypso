@@ -3,9 +3,7 @@ import { SITE_STORE } from '../stores';
 import { useQuery } from './use-query';
 import type { SiteSelect } from '@automattic/data-stores';
 
-export function useSiteDomains( selectedSiteSlug = null ) {
-	const querySlug = useQuery().get( 'siteSlug' );
-	const siteSlug = selectedSiteSlug ?? querySlug;
+export function useSiteDomainsForSlug( siteSlug: string | null = null ) {
 	const siteId = useSelect(
 		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
 		[ siteSlug ]
@@ -20,4 +18,9 @@ export function useSiteDomains( selectedSiteSlug = null ) {
 	}
 
 	return null;
+}
+
+export function useSiteDomains() {
+	const querySlug = useQuery().get( 'siteSlug' );
+	return useSiteDomainsForSlug( querySlug );
 }

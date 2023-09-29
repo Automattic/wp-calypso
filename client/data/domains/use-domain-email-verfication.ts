@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useSiteDomains } from 'calypso/landing/stepper/hooks/use-site-domains';
+import { useSiteDomainsForSlug } from 'calypso/landing/stepper/hooks/use-site-domains';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { useDispatch } from 'calypso/state/index';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
@@ -22,7 +22,7 @@ export const useDomainEmailVerification = (
 		dispatch( request( siteId ) );
 	}, [ dispatch, siteId ] );
 
-	const siteDomains = useSiteDomains( selectedSiteSlug ) ?? [];
+	const siteDomains = useSiteDomainsForSlug( selectedSiteSlug ) ?? [];
 	const siteDomain = siteDomains.find( ( siteDomain ) => siteDomain.domain === domain );
 
 	const isEmailUnverified = siteDomain?.is_pending_icann_verification;
