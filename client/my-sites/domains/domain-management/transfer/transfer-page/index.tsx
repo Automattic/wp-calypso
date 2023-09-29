@@ -1,5 +1,5 @@
 import { Button, Card, Spinner } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -80,7 +80,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const [ isRequestingTransferCode, setIsRequestingTransferCode ] = useState( false );
 	const [ isLockingOrUnlockingDomain, setIsLockingOrUnlockingDomain ] = useState( false );
 	const domain = getSelectedDomain( props );
-
+	const hasEnTranslation = useHasEnTranslation();
 	const renderHeader = () => {
 		const items = [
 			{
@@ -356,7 +356,11 @@ const TransferPage = ( props: TransferPageProps ) => {
 
 		return (
 			<Card className="transfer-page__advanced-transfer-options">
-				<CardHeading size={ 16 }>{ __( 'Transfer to another registrar' ) }</CardHeading>
+				<CardHeading size={ 16 }>
+					{ hasEnTranslation( 'Transfer to another registrar' )
+						? __( 'Transfer to another registrar' )
+						: __( 'Advanced Options' ) }
+				</CardHeading>
 				{ topLevelOfTld !== 'uk' ? renderCommonTldTransferOptions() : renderUkTransferOptions() }
 			</Card>
 		);
