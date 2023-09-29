@@ -59,6 +59,10 @@
 			.paid-label {
 				@extend %paid-label;
 			}
+
+			.rss-label {
+				@extend %rss-label;
+			}
 		}
 
 		.title-url {

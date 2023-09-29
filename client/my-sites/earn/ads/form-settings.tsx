@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
+import { isEqual } from 'lodash';
 import { Fragment, useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -69,30 +69,15 @@ const AdsFormSettings = () => {
 	const isWordAds = site?.options?.wordads;
 
 	useEffect( () => {
-		// Set default settings if settings are empty
-		const settingsAreEmptyAndWordadsSettingsExist =
-			isEmpty( settings ) && ! isEmpty( wordadsSettings );
-
-		if ( settingsAreEmptyAndWordadsSettingsExist ) {
-			setSettings( {
-				...defaultSettings(),
-				...wordadsSettings,
-			} );
-		}
-	}, [ settings, wordadsSettings ] );
-
-	useEffect( () => {
-		// siteId has changed, so we reset settings
-		// This code is here to directly mimic code that
-		// was in UNSAFE_componentWillReceiveProps
-		setSettings( {
+		const newSettings = {
 			...defaultSettings(),
 			...wordadsSettings,
-		} );
-
-		// Only run on siteId change
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteId ] );
+		};
+		const isUpdatedSettings = ! isEqual( newSettings, settings );
+		if ( isUpdatedSettings ) {
+			setSettings( newSettings );
+		}
+	}, [ wordadsSettings ] );
 
 	function handleChange( event: ChangeEvent< HTMLInputElement > ) {
 		const name = event.currentTarget.name;

@@ -3,5 +3,4 @@ module.exports = {
 	testMatch: [ '<rootDir>/tests/**/*.test.{ts,tsx}' ],
 	testEnvironment: 'jsdom',
 	globals: { window: { navigator: { userAgent: 'jest' } } },
-	setupFilesAfterEnv: [ '@testing-library/jest-dom/extend-expect' ],
 };

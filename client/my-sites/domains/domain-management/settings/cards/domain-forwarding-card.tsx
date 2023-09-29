@@ -53,10 +53,10 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const [ forwardPaths, setForwardPaths ] = useState( false );
 	const [ isPermanent, setIsPermanent ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const [ protocol, setProtocol ] = useState( 'https' );
 	const pointsToWpcom = domain.pointsToWpcom;
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, domain.blogId ) );
 	const isPrimaryDomain = domain?.isPrimary && ! isDomainOnly;
-	const protocol = 'https';
 
 	// Display success notices when the forwarding is updated
 	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
@@ -109,7 +109,9 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			( child.is_secure ? 'http://' : 'https://' ) + ( child.target_host ?? '_invalid_.domain' );
 		const url = new URL( child.target_path, origin );
 		if ( url.hostname !== '_invalid_.domain' ) {
-			setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
+			setTargetUrl(
+				( child.is_secure ? '' : 'http://' ) + url.hostname + url.pathname + url.search + url.hash
+			);
 			setIsPermanent( child.is_permanent );
 			setForwardPaths( child.forward_paths );
 			setSubdomain( child.subdomain );
@@ -145,9 +147,20 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 
 	const handleForwardToChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const inputUrl = event.target.value;
-		setTargetUrl( withoutHttp( inputUrl ) );
+		const hasProtocol = inputUrl.startsWith( 'http://' ) || inputUrl.startsWith( 'https://' );
+		setProtocol( hasProtocol ? inputUrl.split( '://' )[ 0 ] : 'https' );
+		setTargetUrl( inputUrl );
+	};
 
-		if ( inputUrl.length > 0 && ! CAPTURE_URL_RGX_SOFT.test( protocol + '://' + inputUrl ) ) {
+	const forwardValidation = () => {
+		let inputUrl = targetUrl;
+
+		const hasProtocol = inputUrl.startsWith( 'http://' ) || inputUrl.startsWith( 'https://' );
+		if ( ! hasProtocol ) {
+			inputUrl = protocol + '://' + inputUrl;
+		}
+
+		if ( inputUrl.length > 0 && ! CAPTURE_URL_RGX_SOFT.test( inputUrl ) ) {
 			setIsValidUrl( false );
 			setErrorMessage( translate( 'Please enter a valid URL.' ) );
 			return;
@@ -221,9 +234,15 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			return false;
 		}
 
+		let target = targetUrl;
+		const hasProtocol = target.startsWith( 'http://' ) || target.startsWith( 'https://' );
+		if ( ! hasProtocol ) {
+			target = protocol + '://' + targetUrl;
+		}
+
 		// Validate we have a valid url from the user
 		try {
-			const url = new URL( protocol + '://' + targetUrl, 'https://_domain_.invalid' );
+			const url = new URL( target, 'https://_domain_.invalid' );
 			if ( url.origin !== 'https://_domain_.invalid' ) {
 				targetHost = url.hostname;
 				targetPath = url.pathname + url.search + url.hash;
@@ -393,7 +412,9 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					{ translate( 'Destination URL' ) }:
 				</div>
 				<div className="domain-forwarding-card__fields-column destination">
-					<strong>{ child.target_host + child.target_path }</strong>
+					<strong>
+						{ ( child.is_secure ? 'https://' : 'http://' ) + child.target_host + child.target_path }
+					</strong>
 				</div>
 			</div>
 		</FormFieldset>
@@ -445,6 +466,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						name="destination"
 						noWrap
 						onChange={ handleForwardToChange }
+						onBlur={ forwardValidation }
 						value={ targetUrl }
 						className={ classNames( { 'is-error': ! isValidUrl } ) }
 						maxLength={ 1000 }
@@ -556,6 +578,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 				) }
 				<div>
 					<FormButton
+						onClick={ handleSubmit }
 						disabled={
 							! pointsToWpcom ||
 							! isValidUrl ||
@@ -586,7 +609,12 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		<>
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
-			<form onSubmit={ handleSubmit }>
+			<form
+				onSubmit={ ( e ) => {
+					e.preventDefault();
+					return false;
+				} }
+			>
 				{ data?.map( ( item ) =>
 					shouldEdit( item ) ? FormRowEdditable( { child: item } ) : FormViewRow( { child: item } )
 				) }
