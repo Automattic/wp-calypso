@@ -30,14 +30,14 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 
 	const backdropRef: RefObject< HTMLDivElement > = useRef( null );
 
-	const handleBackdropClick = ( e ) => {
-		if ( e.target === backdropRef.current ) {
+	const handleBackdropClick = ( event: MouseEvent | React.MouseEvent< HTMLDivElement > ) => {
+		if ( event.target === backdropRef.current ) {
 			setIsFullscreen( false );
 		}
 	};
 
-	const handleContentClick = ( e ) => {
-		e.stopPropagation();
+	const handleContentClick = ( event: MouseEvent | React.MouseEvent< HTMLDivElement > ) => {
+		event.stopPropagation();
 	};
 
 	const messageClasses = classnames(
