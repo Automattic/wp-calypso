@@ -45,7 +45,7 @@ export class SignupPickPlanPage {
 			url = new RegExp( '.*setup/site-setup.*' );
 		}
 
-		if ( name !== 'Free' ) {
+		if ( name === 'Free' ) {
 			if ( this.selectedDomain?.includes( 'wordpress.com' ) ) {
 				/** Shows a modal */
 				await this.plansPage.selectPlan( name );

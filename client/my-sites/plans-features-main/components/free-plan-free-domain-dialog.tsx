@@ -292,7 +292,7 @@ export function FreePlanFreeDomainDialog( {
 
 				<ButtonRow>
 					<StyledButton
-						className="free-plan-free-domain-dialog__plan-button is-upsell-modal-free-plan"
+						className="free-plan-free-domain-dialog__plan-button is-upsell-modal-personal-plan"
 						disabled={ freeSubdomain.isLoading || ! freeSubdomain.result }
 						primary
 						onClick={ () => {
@@ -308,7 +308,7 @@ export function FreePlanFreeDomainDialog( {
 					</StyledButton>
 
 					<StyledButton
-						className="free-plan-free-domain-dialog__plan-button is-upsell-modal-personal-plan"
+						className="free-plan-free-domain-dialog__plan-button is-upsell-modal-free-plan"
 						disabled={ freeSubdomain.isLoading || ! freeSubdomain.result }
 						onClick={ () => {
 							onFreePlanSelected();
