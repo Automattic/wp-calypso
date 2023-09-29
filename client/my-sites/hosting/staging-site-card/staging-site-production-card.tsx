@@ -18,6 +18,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
+import StagingSiteSyncCard from './card-content/staging-sync-card';
 import { ConfirmationModal } from './confirmation-modal';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 
@@ -132,6 +133,13 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						</>
 					) }
 				</ActionButtons>
+				<div style={ { marginTop: '12px' } }>
+					<StagingSiteSyncCard
+						onSyncronize={ () => {
+							return null;
+						} }
+					/>
+				</div>
 			</>
 		);
 	};
