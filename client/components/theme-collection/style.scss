@@ -1,7 +1,42 @@
-.theme-collection__list-wrapper {
-	display: flex;
+.theme--collection__list-item.swiper-slide {
+	/* TODO: Needs a better solution. Testing on more screen widths etc */
+	width: 32%;
 }
-.theme--collection__list-item {
-	flex-basis: 30%;
-	flex-shrink: 0;
+
+.theme-collection__list-wrapper {
+	margin-top: 1em;
+}
+
+/* TODO: Don't display on mobile? */
+.theme-collection__carousel-controls {
+	display: flex;
+	justify-content: flex-end;
+	/*!rtl:ignore*/
+	direction: ltr;
+
+	button {
+		width: 40px;
+		height: 40px;
+		background: #eee;
+		border-radius: 50%;
+		align-items: center;
+		display: flex;
+		justify-content: center;
+		transition: opacity 0.3s ease-in-out;
+		pointer-events: all;
+		z-index: 2;
+
+		cursor: pointer;
+
+		&:hover {
+			opacity: 1;
+			fill: var(--studio-blue-50);
+		}
+
+		&.swiper-button-disabled {
+			visibility: hidden;
+			pointer-events: none;
+		}
+
+	}
 }
