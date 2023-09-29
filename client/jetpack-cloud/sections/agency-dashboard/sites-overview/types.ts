@@ -83,7 +83,6 @@ export interface Site {
 	has_scan: boolean;
 	has_backup: boolean;
 	has_boost: boolean;
-	has_paid_boost?: boolean;
 	latest_scan_threats_found: Array< string >;
 	latest_backup_status: string;
 	is_connection_healthy: boolean;

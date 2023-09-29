@@ -34,7 +34,6 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		has_boost: hasBoost,
 		jetpack_boost_scores: boostData,
 		has_pending_boost_one_time_score: hasPendingScore,
-		has_paid_boost: hasPaidLicense,
 	} = site;
 
 	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
@@ -47,6 +46,8 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		'Your Overall Score is a summary of your website performance across both mobile and desktop devices.'
 	);
 
+	const isEnabled = hasBoost || Boolean( overallScore ) || hasPendingScore;
+
 	const showBoostModal = ( upgradeOnly: boolean ) => {
 		setBoostModalState( { show: true, upgradeOnly } );
 	};
@@ -54,11 +55,14 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 	const ScoreRating = getBoostRating( overallScore );
 
 	const ctaButtons = useMemo( () => {
-		if ( ! hasPaidLicense ) {
+		if ( ! hasBoost ) {
 			return [
 				{
 					label: translate( 'Auto-optimize' ),
-					onClick: () => showBoostModal( true ),
+					onClick: () => {
+						trackEvent( 'expandable_block_auto_optimize_click' );
+						showBoostModal( true );
+					},
 					primary: true,
 				},
 				{
@@ -87,13 +91,13 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				primary: true,
 			},
 		];
-	}, [ hasPaidLicense, ScoreRating, translate, siteUrlWithScheme, trackEvent ] );
+	}, [ hasBoost, ScoreRating, translate, siteUrlWithScheme, trackEvent ] );
 
 	return (
 		<>
 			<ExpandedCard
 				header={ translate( 'Boost site performance' ) }
-				isEnabled={ hasBoost }
+				isEnabled={ isEnabled }
 				emptyContent={ translate(
 					'{{strong}}Get Score{{/strong}} to see your site performance scores',
 					{
@@ -103,7 +107,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				hasError={ hasError }
 				// Allow to click on the card only if Boost is not active
 				onClick={ () => {
-					if ( ! hasBoost ) {
+					if ( ! isEnabled ) {
 						showBoostModal( false );
 					}
 				} }
