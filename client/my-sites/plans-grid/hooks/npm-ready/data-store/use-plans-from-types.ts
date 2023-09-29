@@ -8,6 +8,7 @@ import {
 	TYPE_P2_PLUS,
 	GROUP_P2,
 } from '@automattic/calypso-products';
+import { useMemo } from '@wordpress/element';
 import warn from '@wordpress/warning';
 import type { PlansIntent } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
@@ -18,34 +19,36 @@ interface Props {
 }
 
 const usePlansFromTypes = ( { planTypes, term, intent }: Props ): PlanSlug[] => {
-	const plans = planTypes.reduce( ( accum: PlanSlug[], type ) => {
-		// These plans don't have a term.
-		// We may consider to move this logic into the underlying `planMatches` function, but that would have wider implication so it's TBD
-		const planQuery: { type: string; term?: string; group?: string } = [
-			TYPE_FREE,
-			TYPE_ENTERPRISE_GRID_WPCOM,
-			TYPE_WOO_EXPRESS_PLUS,
-			TYPE_P2_PLUS,
-		].includes( type )
-			? { type }
-			: { type, term };
+	return useMemo(
+		() =>
+			planTypes.reduce( ( accum: PlanSlug[], type ) => {
+				// These plans don't have a term.
+				// We may consider to move this logic into the underlying `planMatches` function, but that would have wider implication so it's TBD
+				const planQuery: { type: string; term?: string; group?: string } = [
+					TYPE_FREE,
+					TYPE_ENTERPRISE_GRID_WPCOM,
+					TYPE_WOO_EXPRESS_PLUS,
+					TYPE_P2_PLUS,
+				].includes( type )
+					? { type }
+					: { type, term };
 
-		if ( intent === 'plans-p2' ) {
-			planQuery[ 'group' ] = GROUP_P2;
-		}
+				if ( intent === 'plans-p2' ) {
+					planQuery[ 'group' ] = GROUP_P2;
+				}
 
-		const plan = findPlansKeys( planQuery )[ 0 ];
+				const plan = findPlansKeys( planQuery )[ 0 ];
 
-		if ( ! plan ) {
-			warn(
-				`Invalid plan type, \`${ type }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
-			);
-		}
+				if ( ! plan ) {
+					warn(
+						`Invalid plan type, \`${ type }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
+					);
+				}
 
-		return plan ? [ ...accum, plan as PlanSlug ] : accum;
-	}, [] );
-
-	return plans;
+				return plan ? [ ...accum, plan as PlanSlug ] : accum;
+			}, [] ),
+		[ intent, planTypes, term ]
+	);
 };
 
 export default usePlansFromTypes;

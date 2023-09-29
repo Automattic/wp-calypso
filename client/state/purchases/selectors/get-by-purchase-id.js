@@ -1,3 +1,4 @@
+import { createSelector } from '@automattic/state-utils';
 import { getPurchases } from './get-purchases';
 
 import 'calypso/state/purchases/init';
@@ -8,5 +9,7 @@ import 'calypso/state/purchases/init';
  * @param   {number} purchaseId  the purchase id
  * @returns {import('calypso/lib/purchases/types').Purchase|undefined} the matching purchase if there is one
  */
-export const getByPurchaseId = ( state, purchaseId ) =>
-	getPurchases( state ).find( ( purchase ) => purchase.id === purchaseId );
+export const getByPurchaseId = createSelector(
+	( state, purchaseId ) => getPurchases( state ).find( ( purchase ) => purchase.id === purchaseId ),
+	[ getPurchases ]
+);

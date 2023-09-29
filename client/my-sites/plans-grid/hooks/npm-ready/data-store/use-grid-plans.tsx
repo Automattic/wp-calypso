@@ -25,6 +25,7 @@ import {
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
+import { useMemo } from '@wordpress/element';
 import { isSamePlan } from '../../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
@@ -173,95 +174,96 @@ const usePlanTypesWithIntent = ( {
 	Props,
 	'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' | 'isSubdomainNotGenerated'
 > ): string[] => {
-	const isEnterpriseAvailable = ! hideEnterprisePlan;
-	const isBloggerAvailable =
-		( selectedPlan && isBloggerPlan( selectedPlan ) ) ||
-		( sitePlanSlug && isBloggerPlan( sitePlanSlug ) );
+	return useMemo( () => {
+		const isEnterpriseAvailable = ! hideEnterprisePlan;
+		const isBloggerAvailable =
+			( selectedPlan && isBloggerPlan( selectedPlan ) ) ||
+			( sitePlanSlug && isBloggerPlan( sitePlanSlug ) );
 
-	let currentSitePlanType = null;
-	if ( sitePlanSlug ) {
-		currentSitePlanType = getPlan( sitePlanSlug )?.type;
-	}
+		let currentSitePlanType = null;
+		if ( sitePlanSlug ) {
+			currentSitePlanType = getPlan( sitePlanSlug )?.type;
+		}
 
-	const availablePlanTypes = [
-		TYPE_FREE,
-		...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
-		TYPE_PERSONAL,
-		TYPE_PREMIUM,
-		TYPE_BUSINESS,
-		TYPE_ECOMMERCE,
-		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
-		TYPE_WOOEXPRESS_SMALL,
-		TYPE_WOOEXPRESS_MEDIUM,
-		TYPE_P2_PLUS,
-	];
+		const availablePlanTypes = [
+			TYPE_FREE,
+			...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
+			TYPE_PERSONAL,
+			TYPE_PREMIUM,
+			TYPE_BUSINESS,
+			TYPE_ECOMMERCE,
+			...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
+			TYPE_WOOEXPRESS_SMALL,
+			TYPE_WOOEXPRESS_MEDIUM,
+		];
 
-	let planTypes;
-	switch ( intent ) {
-		case 'plans-woocommerce':
-			planTypes = [ TYPE_WOOEXPRESS_SMALL, TYPE_WOOEXPRESS_MEDIUM ];
-			break;
-		case 'plans-blog-onboarding':
-			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
-			break;
-		case 'plans-newsletter':
-		case 'plans-link-in-bio':
-			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
-			break;
-		case 'plans-new-hosted-site':
-			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
-			break;
-		case 'plans-import':
-			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
-			break;
-		case 'plans-plugins':
-			planTypes = [
-				...( currentSitePlanType ? [ currentSitePlanType ] : [] ),
-				TYPE_BUSINESS,
-				TYPE_ECOMMERCE,
-			];
-			break;
-		case 'plans-jetpack-app':
-			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
-			break;
-		case 'plans-jetpack-app-site-creation':
-			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
-			break;
-		case 'plans-paid-media':
-			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
-			break;
-		case 'plans-p2':
-			planTypes = [ TYPE_FREE, TYPE_P2_PLUS ];
-			break;
-		case 'plans-default-wpcom':
-			planTypes = [
-				TYPE_FREE,
-				...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
-				TYPE_PERSONAL,
-				TYPE_PREMIUM,
-				TYPE_BUSINESS,
-				TYPE_ECOMMERCE,
-				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
-			];
-			break;
-		case 'plans-business-trial':
-			planTypes = [
-				TYPE_BUSINESS,
-				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
-			];
-			break;
-		default:
-			planTypes = availablePlanTypes;
-	}
+		let planTypes;
+		switch ( intent ) {
+			case 'plans-woocommerce':
+				planTypes = [ TYPE_WOOEXPRESS_SMALL, TYPE_WOOEXPRESS_MEDIUM ];
+				break;
+			case 'plans-blog-onboarding':
+				planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+				break;
+			case 'plans-newsletter':
+			case 'plans-link-in-bio':
+				planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+				break;
+			case 'plans-new-hosted-site':
+				planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+				break;
+			case 'plans-import':
+				planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+				break;
+			case 'plans-plugins':
+				planTypes = [
+					...( currentSitePlanType ? [ currentSitePlanType ] : [] ),
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+				];
+				break;
+			case 'plans-jetpack-app':
+				planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+				break;
+			case 'plans-jetpack-app-site-creation':
+				planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+				break;
+			case 'plans-paid-media':
+				planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+				break;
+			case 'plans-p2':
+				planTypes = [ TYPE_FREE, TYPE_P2_PLUS ];
+				break;
+			case 'plans-default-wpcom':
+				planTypes = [
+					TYPE_FREE,
+					...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+					...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
+				];
+				break;
+			case 'plans-business-trial':
+				planTypes = [
+					TYPE_BUSINESS,
+					...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
+				];
+				break;
+			default:
+				planTypes = availablePlanTypes;
+		}
 
-	// Filters out the free plan  isSubdomainNotGenerated
-	// This is because, on a free plan,  a custom domain can only redirect to the hosted site.
-	// To effectively communicate this, a valid subdomain is necessary.
-	if ( isSubdomainNotGenerated ) {
-		planTypes = planTypes.filter( ( planType ) => planType !== TYPE_FREE );
-	}
+		// Filters out the free plan  isSubdomainNotGenerated
+		// This is because, on a free plan,  a custom domain can only redirect to the hosted site.
+		// To effectively communicate this, a valid subdomain is necessary.
+		if ( isSubdomainNotGenerated ) {
+			planTypes = planTypes.filter( ( planType ) => planType !== TYPE_FREE );
+		}
 
-	return planTypes;
+		return planTypes;
+	}, [ hideEnterprisePlan, selectedPlan, sitePlanSlug, intent, isSubdomainNotGenerated ] );
 };
 
 // TODO clk: move to plans data store
@@ -324,62 +326,76 @@ const useGridPlans = ( {
 		storageAddOns,
 	} );
 
-	// Null return would indicate that we are still loading the data. No grid without grid plans.
-	if ( ! pricingMeta || ! pricedAPIPlans ) {
-		return null;
-	}
-
-	return availablePlanSlugs.map( ( planSlug ) => {
-		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
-		const planObject = pricedAPIPlans[ planSlug ];
-		const isMonthlyPlan = isMonthly( planSlug );
-		const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
-		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
-
-		let tagline: TranslateResult = '';
-		if ( 'plans-newsletter' === intent ) {
-			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
-		} else if ( 'plans-link-in-bio' === intent ) {
-			tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
-		} else if ( 'plans-blog-onboarding' === intent ) {
-			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
-		} else {
-			tagline = planConstantObj.getPlanTagline?.() ?? '';
+	return useMemo( () => {
+		// Null return would indicate that we are still loading the data. No grid without grid plans.
+		if ( ! pricingMeta || ! pricedAPIPlans ) {
+			return null;
 		}
 
-		const productNameShort =
-			isWpcomEnterpriseGridPlan( planSlug ) && planConstantObj.getPathSlug
-				? planConstantObj.getPathSlug()
-				: planObject?.product_name_short ?? null;
+		return availablePlanSlugs.map( ( planSlug ) => {
+			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
+			const planObject = pricedAPIPlans[ planSlug ];
+			const isMonthlyPlan = isMonthly( planSlug );
+			const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
+			const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
-		// cartItemForPlan done in line here as it's a small piece of logic to pass another selector for
-		const cartItemForPlan =
-			isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug )
-				? null
-				: {
-						product_slug: planSlug,
-				  };
+			let tagline: TranslateResult = '';
+			if ( 'plans-newsletter' === intent ) {
+				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
+			} else if ( 'plans-link-in-bio' === intent ) {
+				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
+			} else if ( 'plans-blog-onboarding' === intent ) {
+				tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
+			} else {
+				tagline = planConstantObj.getPlanTagline?.() ?? '';
+			}
 
-		const storageAddOnsForPlan =
-			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
+			const productNameShort =
+				isWpcomEnterpriseGridPlan( planSlug ) && planConstantObj.getPathSlug
+					? planConstantObj.getPathSlug()
+					: planObject?.product_name_short ?? null;
 
-		return {
-			planSlug,
-			freeTrialPlanSlug: freeTrialPlanSlugs?.[ planConstantObj.type ],
-			isVisible: planSlugsForIntent.includes( planSlug ),
-			tagline,
-			availableForPurchase,
-			productNameShort,
-			planTitle: planConstantObj.getTitle?.() ?? '',
-			billingTimeframe: planConstantObj.getBillingTimeFrame?.(),
-			current: isCurrentPlan,
-			isMonthlyPlan,
-			cartItemForPlan,
-			highlightLabel: highlightLabels[ planSlug ],
-			pricing: pricingMeta[ planSlug ],
-			storageAddOnsForPlan,
-		};
-	} );
+			// cartItemForPlan done in line here as it's a small piece of logic to pass another selector for
+			const cartItemForPlan =
+				isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug )
+					? null
+					: {
+							product_slug: planSlug,
+					  };
+
+			const storageAddOnsForPlan =
+				isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
+
+			return {
+				planSlug,
+				freeTrialPlanSlug: freeTrialPlanSlugs?.[ planConstantObj.type ],
+				isVisible: planSlugsForIntent.includes( planSlug ),
+				tagline,
+				availableForPurchase,
+				productNameShort,
+				planTitle: planConstantObj.getTitle?.() ?? '',
+				billingTimeframe: planConstantObj.getBillingTimeFrame?.(),
+				current: isCurrentPlan,
+				isMonthlyPlan,
+				cartItemForPlan,
+				highlightLabel: highlightLabels[ planSlug ],
+				pricing: pricingMeta[ planSlug ],
+				storageAddOnsForPlan,
+			};
+		} );
+	}, [
+		pricingMeta,
+		pricedAPIPlans,
+		availablePlanSlugs,
+		isInSignup,
+		planUpgradeability,
+		sitePlanSlug,
+		intent,
+		storageAddOns,
+		freeTrialPlanSlugs,
+		planSlugsForIntent,
+		highlightLabels,
+	] );
 };
 
 export default useGridPlans;

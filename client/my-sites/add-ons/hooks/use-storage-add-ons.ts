@@ -6,7 +6,6 @@ interface Props {
 	siteId?: number | null;
 	isInSignup?: boolean;
 }
-
 const useStorageAddOns = ( { siteId, isInSignup }: Props ) => {
 	const addOns = useAddOns( siteId ?? undefined, isInSignup );
 
