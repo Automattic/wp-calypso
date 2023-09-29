@@ -197,7 +197,7 @@
 		"react-modal": "^3.16.1",
 		"redux": "^4.2.1",
 		"request": "^2.88.2",
-		"swiper": "^10.3.1",
+		"swiper": "^10.1.0",
 		"wpcom": "workspace:^"
 	},
 	"optionalDependencies": {
