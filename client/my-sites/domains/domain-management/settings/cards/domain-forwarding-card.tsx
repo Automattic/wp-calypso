@@ -55,11 +55,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const [ forwardPaths, setForwardPaths ] = useState( false );
 	const [ isPermanent, setIsPermanent ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
-<<<<<<< HEAD
 	const [ protocol, setProtocol ] = useState( 'https' );
-=======
 	const [ forceReloadDns, setForceReloadDns ] = useState( false );
->>>>>>> 1cce51f1a1 (Rebase)
 	const pointsToWpcom = domain.pointsToWpcom;
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, domain.blogId ) );
 
