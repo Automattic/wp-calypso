@@ -1,7 +1,6 @@
 import { Gridicon, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
 import Image from 'calypso/components/image';
