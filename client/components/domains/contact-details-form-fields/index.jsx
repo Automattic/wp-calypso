@@ -5,6 +5,7 @@ import {
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
+import merge from 'lodash/merge';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import { connect } from 'react-redux';
@@ -539,10 +540,17 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	updateDomainContactFields = ( data ) => {
-		const newContactDetails = Object.assign( {}, this.state.contactDetails, data );
+		if ( data.vatId ) {
+			data = {
+				extra: {
+					fr: {
+						registrantVatId: data.vatId,
+					},
+				},
+			};
+		}
+		const newContactDetails = merge( {}, this.state.contactDetails, data );
 		this.setState( { contactDetails: newContactDetails } );
-		// Object.keys( newContactDetails ).length > 0 &&
-		// 	this.debouncedValidateContactDetails( newContactDetails );
 	};
 
 	render() {
@@ -564,36 +572,43 @@ export class ContactDetailsFormFields extends Component {
 		const isFooterVisible = !! ( this.props.onSubmit || onCancel );
 
 		return (
-			<FormFieldset className="contact-details-form-fields">
-				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'first-name',
-						Input,
-						{
-							label: translate( 'First name' ),
-						},
-						{
-							customErrorMessage: contactDetailsErrors?.firstName,
-						}
+			<>
+				<FormFieldset className="contact-details-form-fields">
+					<div className="contact-details-form-fields__row">
+						{ this.createField(
+							'first-name',
+							Input,
+							{
+								label: translate( 'First name' ),
+							},
+							{
+								customErrorMessage: contactDetailsErrors?.firstName,
+							}
+						) }
+
+						{ this.createField(
+							'last-name',
+							Input,
+							{
+								label: translate( 'Last name' ),
+							},
+							{
+								customErrorMessage: contactDetailsErrors?.lastName,
+							}
+						) }
+					</div>
+					{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
+
+					{ this.props.needsOnlyGoogleAppsDetails
+						? this.renderGAppsFieldset()
+						: this.renderContactDetailsFields() }
+
+					{ this.props.children && (
+						<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 					) }
 
-					{ this.createField(
-						'last-name',
-						Input,
-						{
-							label: translate( 'Last name' ),
-						},
-						{
-							customErrorMessage: contactDetailsErrors?.lastName,
-						}
-					) }
-				</div>
-				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
-
-				{ this.props.needsOnlyGoogleAppsDetails
-					? this.renderGAppsFieldset()
-					: this.renderContactDetailsFields() }
-
+					<QueryDomainCountries />
+				</FormFieldset>
 				<div className="contact-details-form-fields__extra-fields">
 					{
 						// TODO: connect contactDetailsErrors
@@ -607,11 +622,6 @@ export class ContactDetailsFormFields extends Component {
 						isLoggedOutCart={ false }
 					/>
 				</div>
-
-				{ this.props.children && (
-					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
-				) }
-
 				{ isFooterVisible && (
 					<div>
 						{ this.props.onSubmit && (
@@ -637,8 +647,7 @@ export class ContactDetailsFormFields extends Component {
 						) }
 					</div>
 				) }
-				<QueryDomainCountries />
-			</FormFieldset>
+			</>
 		);
 	}
 }
