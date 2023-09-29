@@ -1,15 +1,19 @@
 import { useCallback, useEffect } from 'react';
+import { ThunkDispatch } from 'redux-thunk';
 import { useSiteDomainsForSlug } from 'calypso/landing/stepper/hooks/use-site-domains';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { useDispatch } from 'calypso/state/index';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { IAppState } from 'calypso/state/types';
 
-const request = ( siteId ) => ( dispatch, getState ) => {
-	if ( siteId && ! isRequestingSiteDomains( getState(), siteId ) ) {
-		dispatch( fetchSiteDomains( siteId ) );
-	}
-};
+const request =
+	( siteId: number | undefined ) =>
+	( dispatch: ThunkDispatch< IAppState, unknown, any >, getState: () => IAppState ) => {
+		if ( siteId && ! isRequestingSiteDomains( getState(), siteId ) ) {
+			dispatch( fetchSiteDomains( siteId ) );
+		}
+	};
 
 export const useDomainEmailVerification = (
 	siteId: number | undefined,
