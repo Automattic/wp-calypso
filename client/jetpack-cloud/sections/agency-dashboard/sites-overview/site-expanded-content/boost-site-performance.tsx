@@ -67,7 +67,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				},
 				{
 					label: translate( 'Settings' ),
-					href: `${ siteUrlWithScheme }/wp-admin/admin.php`,
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
 					onClick: () => trackEvent( 'expandable_block_settings_click' ),
 				},
 			];
@@ -77,7 +77,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 			return [
 				{
 					label: translate( 'Boost Settings' ),
-					href: `${ siteUrlWithScheme }/wp-admin/admin.php`,
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
 					onClick: () => trackEvent( 'expandable_block_settings_click' ),
 				},
 			];
