@@ -92,7 +92,7 @@ export const ManageStagingSiteCardContent = ( {
 					onConfirm={ onPushClick }
 					modalTitle={ translate( 'Confirm pushing changes to your staging site' ) }
 					modalMessage={ translate(
-						'Are you sure you want to push your production changes to your staging site?'
+						'Are you sure you want to push your changes to your staging site?'
 					) }
 					confirmLabel={ translate( 'Push to staging' ) }
 					cancelLabel={ translate( 'Cancel' ) }
