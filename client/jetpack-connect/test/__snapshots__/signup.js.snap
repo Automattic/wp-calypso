@@ -125,7 +125,7 @@ exports[`JetpackSignup should render 1`] = `
             GoogleSocialButton
             AppleLoginButton
             <button
-              class="components-button social-buttons__button button is-link"
+              class="components-button social-buttons__button button"
               type="button"
             >
               <svg
@@ -317,7 +317,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
             GoogleSocialButton
             AppleLoginButton
             <button
-              class="components-button social-buttons__button button is-link"
+              class="components-button social-buttons__button button"
               type="button"
             >
               <svg
