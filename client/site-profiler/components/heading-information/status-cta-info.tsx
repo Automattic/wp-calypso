@@ -13,7 +13,7 @@ export default function StatusCtaInfo( props: Props ) {
 				<p>
 					{ translate(
 						'Register your domain with {{strong}}WordPress.com{{/strong}} ' +
-							'and benefit from one of the best hosting platforms in the world.',
+							'and benefit from one of the best platforms in the world.',
 						{
 							components: { strong: <strong /> },
 						}
@@ -24,8 +24,8 @@ export default function StatusCtaInfo( props: Props ) {
 			return (
 				<p>
 					{ translate(
-						'If you own this domain, transfer it to {{strong}}WordPress.com{{/strong}} ' +
-							'and benefit from the best-performing, most reliable registrar in the business.',
+						'If you own this domain, consider transferring it to {{strong}}WordPress.com{{/strong}} ' +
+							'and benefiting from the best-performing, most reliable registrar in business.',
 						{
 							components: { strong: <strong /> },
 						}
@@ -37,10 +37,9 @@ export default function StatusCtaInfo( props: Props ) {
 			return (
 				<p>
 					{ translate(
-						'If you own this domain, transfer it to {{strong}}WordPress.com{{/strong}} ' +
-							'and benefit from the best-performing, most reliable registrar in the business.' +
-							'{{br/}}And because it’s registered with Google Domains ' +
-							'{{strong}}we’ll pay for an extra year of registration{{/strong}} when you transfer it.',
+						'If you own this domain, consider transferring it to {{strong}}WordPress.com{{/strong}} ' +
+							'to benefit from the best-performing, most reliable registrar in the business. ' +
+							'And—because it’s registered with Google Domains—{{strong}}you’ll get an extra year of registration on us!{{/strong}}',
 						{
 							components: { br: <br />, strong: <strong /> },
 						}
@@ -51,8 +50,8 @@ export default function StatusCtaInfo( props: Props ) {
 			return (
 				<p>
 					{ translate(
-						'If you own this site, host it with {{strong}}WordPress.com{{/strong}} and ' +
-							'benefit from one of the best hosting platforms in the world.',
+						'If you own this site, consider hosting it with {{strong}}WordPress.com{{/strong}} and ' +
+							'benefiting from one of the best platforms in the world.',
 						{
 							components: { strong: <strong /> },
 						}
