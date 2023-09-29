@@ -232,9 +232,9 @@ export function parseEmailLinksData( internalLinks = [], userContentLinks = [] )
 	// filter out links that are not in the stringMap
 	const filteredInternalLinks = validatedInternalLinks.filter( ( link ) => stringMap[ link[ 0 ] ] );
 
-	// Get count of all links where the first element is not a key of stringMap
+	// Get count of all links where the first element is not a key of stringMap and link_desc is not user_link
 	const otherInternalLinksCount = validatedInternalLinks.reduce( ( count, link ) => {
-		if ( ! stringMap[ link[ 0 ] ] ) {
+		if ( ! stringMap[ link[ 0 ] ] && link[ 0 ] !== 'user_link' ) {
 			count += parseInt( link[ 1 ], 10 );
 		}
 		return count;
