@@ -157,6 +157,11 @@ class DnsAddNew extends React.Component {
 			return '';
 		}
 
+		// SRV records can have a target of '.', which means that service is unavailable
+		if ( 'SRV' === recordToEdit.type && 'target' === field && '.' === recordToEdit[ field ] ) {
+			return '.';
+		}
+
 		if ( [ 'data', 'target' ].includes( field ) && 'TXT' !== recordToEdit.type ) {
 			return recordToEdit[ field ].replace( /\.$/, '' );
 		}

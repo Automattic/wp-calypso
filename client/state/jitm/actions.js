@@ -12,7 +12,6 @@ import 'calypso/state/jitm/init';
 
 /**
  * Dismisses a jitm
- *
  * @param {number} siteId The site id to dismiss the jitm for
  * @param {string} id The id of the jitm to dismiss
  * @param {string} featureClass The feature class of the jitm to dismiss
@@ -27,7 +26,6 @@ export const dismissJITM = ( siteId, id, featureClass ) => ( {
 
 /**
  * Inserts a jitm into the store for display
- *
  * @param {number} siteId The site identifier
  * @param {string} messagePath The path of the jitm (ex: "calypso:comments:admin_notices")
  * @param {Object} jitms The objects to display
@@ -41,7 +39,6 @@ export const insertJITM = ( siteId, messagePath, jitms ) => ( {
 
 /**
  * Removes all jitms for a given message path
- *
  * @param {number} siteId The site identifier
  * @param {string} messagePath The path of the jitm (ex: "calypso:comments:admin_notices")
  * @returns {Object} The action to clear out all the jitms
@@ -54,7 +51,6 @@ export const clearJITM = ( siteId, messagePath ) => ( {
 
 /**
  * Setup JITM devtools
- *
  * @param {number} siteId The site identifier
  * @param {Function} dispatch dispather function
  */
@@ -72,7 +68,6 @@ export const setupDevTool = ( siteId, dispatch ) => {
 
 /**
  * Fetch the list of JITMs
- *
  * @param {number} siteId The site id
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @param {?string} searchQuery Optional search term, added to the request as the `s` query parameter
@@ -90,7 +85,6 @@ export const fetchJITM = ( siteId, messagePath, searchQuery, locale ) => ( {
 
 /**
  * Returns an action thunk that opens the help center from a JITM CTA
- *
  * @param {Object} payload The payload coming from the JITM CTA
  * @param {Location[]} payload.route The route to open the help center to
  * @returns {Function} The action thunk

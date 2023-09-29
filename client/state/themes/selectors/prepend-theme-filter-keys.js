@@ -6,7 +6,6 @@ import 'calypso/state/themes/init';
  * For a string of terms, recreate full search string in
  * "taxonomy:term taxonomy:term " search-box format, with
  * a trailing space.
- *
  * @param {Object} state Global state tree
  * @param {string} terms Space or + separated list of filter terms
  * @returns {string} Complete taxonomy:term filter string, or empty string if term is not valid

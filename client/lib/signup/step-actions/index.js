@@ -550,7 +550,6 @@ const setIsLoadingCart = ( isLoading ) => ( dispatch ) => {
  * Based on client/state/themes/actions/add-external-managed-theme-to-cart.tsx.
  *
  * Decided to duplicate the code in order to reduce scope.
- *
  * @param state
  * @param dispatch
  * @param themeId

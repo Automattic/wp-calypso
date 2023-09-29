@@ -11,6 +11,7 @@ const KNOWN_FILTER_OPTIONS = [
 	'number',
 	'on',
 	'sortOrder',
+	'textSearch',
 ];
 
 export function getFilterKey( filter ) {

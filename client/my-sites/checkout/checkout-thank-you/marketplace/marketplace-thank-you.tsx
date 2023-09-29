@@ -26,9 +26,11 @@ import './style.scss';
 const MarketplaceThankYou = ( {
 	pluginSlugs,
 	themeSlugs,
+	isOnboardingFlow,
 }: {
 	pluginSlugs: Array< string >;
 	themeSlugs: Array< string >;
+	isOnboardingFlow: boolean;
 } ) => {
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
@@ -56,7 +58,7 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 		themesProgressbarSteps,
 		isAtomicNeededForThemes,
-	] = useThemesThankYouData( themeSlugs );
+	] = useThemesThankYouData( themeSlugs, isOnboardingFlow );
 
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
@@ -71,7 +73,7 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 	} );
 
-	const isAtomicNeeded = isAtomicNeededForPlugins || isAtomicNeededForThemes;
+	const isAtomicNeeded = isAtomicNeededForPlugins || isAtomicNeededForThemes || ! allThemesFetched;
 	const [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ] =
 		useAtomicTransfer( isAtomicNeeded );
 

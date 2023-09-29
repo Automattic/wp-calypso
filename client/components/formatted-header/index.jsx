@@ -17,6 +17,7 @@ function FormattedHeader( {
 	subHeaderAlign,
 	isSecondary,
 	hasScreenOptions,
+	subHeaderAs: SubHeaderAs = 'p',
 	children,
 } ) {
 	const classes = classNames( 'formatted-header', className, {
@@ -51,7 +52,9 @@ function FormattedHeader( {
 					</h2>
 				) }
 				{ subHeaderText && (
-					<p className={ subtitleClasses }>{ preventWidows( subHeaderText, 2 ) }</p>
+					<SubHeaderAs className={ subtitleClasses }>
+						{ preventWidows( subHeaderText, 2 ) }
+					</SubHeaderAs>
 				) }
 			</div>
 			{ children }
@@ -64,6 +67,7 @@ FormattedHeader.propTypes = {
 	className: PropTypes.string,
 	brandFont: PropTypes.bool,
 	headerText: PropTypes.node,
+	subHeaderAs: PropTypes.elementType,
 	subHeaderText: PropTypes.node,
 	tooltipText: PropTypes.node,
 	compactOnMobile: PropTypes.bool,

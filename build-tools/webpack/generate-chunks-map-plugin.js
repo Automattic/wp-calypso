@@ -3,7 +3,6 @@ const path = require( 'path' );
 
 /**
  * Plugin name.
- *
  * @type {string}
  */
 const PLUGIN_NAME = 'GenerateChunksMap';

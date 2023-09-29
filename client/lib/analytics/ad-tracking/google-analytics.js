@@ -13,7 +13,6 @@ export function setupGoogleAnalyticsGtag( params ) {
 
 /**
  * Returns the default configuration for Google Analytics
- *
  * @returns {Object} GA's default config
  */
 export function getGoogleAnalyticsDefaultConfig() {
@@ -33,7 +32,6 @@ export function getGoogleAnalyticsDefaultConfig() {
 
 /**
  * Fires Google Analytics page view event
- *
  * @param {string} urlPath The path of the current page
  * @param {string} pageTitle The title of the current page
  * @param {boolean} useJetpackGoogleAnalytics send the page view to Jetpack Google Analytics
@@ -73,7 +71,6 @@ export function fireGoogleAnalyticsPageView(
 
 /**
  * Fires a generic Google Analytics event
- *
  * @param {string} category Is the string that will appear as the event category.
  * @param {string} action Is the string that will appear as the event action in Google Analytics Event reports.
  * @param {string} label Is the string that will appear as the event label.

@@ -7,7 +7,6 @@ import 'calypso/state/billing-transactions/init';
 
 /**
  * Based on the transactions list, returns metadata for rendering the date filters with counts
- *
  * @param   {Object}  state           Global state tree
  * @param   {string}  transactionType Transaction type
  * @param   {string}  [siteId]        Optional site id

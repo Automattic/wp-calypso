@@ -3,7 +3,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Processes a redux ROUTE_SET action and returns a URL that contains no parameters that
  * are related to immediate login.
- *
  * @param {string} path  - path
  * @param {Object} query - query parameters
  * @returns {string}      - the URL without related params
@@ -24,7 +23,6 @@ export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
 
 /**
  * Creates a human-understandable message that communicates that current user was logged in
- *
  * @param {string}  loginReason  - Reason why user were logged in, the message may vary depending on it.
  * @param {string}  email        - Email of currently logged in user
  * @returns {string}              - Message to show to user

@@ -1,0 +1,39 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography.scss";
+
+.stats-date-control {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+// TODO: Add final colors to shortcuts.
+
+.date-control-picker-shortcuts {
+	margin: 10px 0;
+}
+
+.date-control-picker-shortcuts__list {
+	list-style: none;
+	margin: 0 12px;
+}
+
+.date-control-picker-shortcuts__shortcut {
+	border-radius: 4px;
+	.gridicon {
+		display: none;
+	}
+	.components-button {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+	}
+	&.is-selected {
+		background-color: var(--color-accent-5);
+		.gridicon {
+			display: initial;
+		}
+	}
+	&:hover {
+		background-color: var(--color-primary-0);
+	}
+}

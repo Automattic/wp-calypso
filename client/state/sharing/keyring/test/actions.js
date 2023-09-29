@@ -34,14 +34,14 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringConnections()( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: KEYRING_CONNECTIONS_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch keyring connections receive action when request completes', () => {
 				return requestKeyringConnections()( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: KEYRING_CONNECTIONS_RECEIVE,
 						connections: [ { ID: 4306907 }, { ID: 7589550 } ],
 					} );
@@ -50,7 +50,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch keyring connections request success action when request completes', () => {
 				return requestKeyringConnections()( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 					} );
 				} );
@@ -71,14 +71,14 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringConnections()( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: KEYRING_CONNECTIONS_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch keyring connections request fail action when request fails', () => {
 				return requestKeyringConnections()( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: KEYRING_CONNECTIONS_REQUEST_FAILURE,
 						error: expect.objectContaining( { message: 'A server error occurred' } ),
 					} );
@@ -117,7 +117,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch delete action when request completes', () => {
 			return deleteStoredKeyringConnection( { ID: 2 } )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: KEYRING_CONNECTION_DELETE,
 					connection: {
 						ID: 2,
@@ -128,7 +128,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return deleteStoredKeyringConnection( { ID: 34 } )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: KEYRING_CONNECTION_DELETE_FAILURE,
 					error: expect.objectContaining( {
 						message: 'You do not have permission to access this Keyring connection.',

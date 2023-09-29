@@ -15,7 +15,6 @@ import { combineReducers } from 'calypso/state/utils';
  * Returns the updated request state after an action has been dispatched. The
  * state maps site ID keys to a boolean value. Each site is true if
  * a site-rename request is currently taking place, and false otherwise.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated rename request state

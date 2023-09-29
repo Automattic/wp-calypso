@@ -4,7 +4,6 @@ import 'calypso/state/sharing/init';
 
 /**
  * Triggers a network request for a user's connected services.
- *
  * @param {string} serviceName name of the service to expand.
  * @returns {Function} Action thunk
  */

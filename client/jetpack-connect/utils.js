@@ -88,7 +88,6 @@ export function addCalypsoEnvQueryArg( url ) {
 
 /**
  * Sanitize a user-supplied URL so we can use it for network requests.
- *
  * @param {string} inputUrl User-supplied URL
  * @returns {string} Sanitized URL
  */
@@ -106,7 +105,6 @@ export function cleanUrl( inputUrl ) {
  *
  * Auth queries include a scope like `role:hash`. This function will attempt to extract the role
  * when provided with a scope.
- *
  * @param  {string}  scope From authorization query
  * @returns {?string}       Role parsed from scope if found
  */
@@ -123,7 +121,6 @@ export function getRoleFromScope( scope ) {
 
 /**
  * Parse an authorization query
- *
  * @property {Function} parser Lazy-instatiated parser
  * @param  {Object}     query  Authorization query
  * @returns {?Object}           Query after transformation. Null if invalid or errored during transform.
@@ -145,7 +142,6 @@ export function parseAuthorizationQuery( query ) {
 
 /**
  * Manage Jetpack Connect redirect after various site states
- *
  * @param  {string}     type Redirect type
  * @param  {string}     url Site url
  * @param  {?string}    product Product slug

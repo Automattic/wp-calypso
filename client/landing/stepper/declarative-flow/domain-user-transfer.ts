@@ -25,7 +25,12 @@ const domainUserTransfer: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-
+			switch ( currentStep ) {
+				case 'domain-contact-info':
+					return window.location.assign(
+						`/checkout/domain-transfer-to-any-user/thank-you/${ providedDependencies.domain }`
+					);
+			}
 			return providedDependencies;
 		}
 
@@ -34,10 +39,7 @@ const domainUserTransfer: Flow = {
 		};
 
 		const goNext = () => {
-			switch ( currentStep ) {
-				case 'contact-info':
-					return navigate( '/manage/domains' );
-			}
+			return;
 		};
 
 		const goToStep = ( step: string ) => {

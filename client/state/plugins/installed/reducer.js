@@ -28,7 +28,6 @@ import status from './status/reducer';
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for all
  * plugins on all sites.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state
@@ -49,7 +48,6 @@ export function isRequestingAll( state = false, action ) {
  * Returns the updated requesting error state after an action has been dispatched.
  * requestingError state tracks whether a network request is failed for all
  * plugins on all sites.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state
@@ -96,7 +94,6 @@ const updatePlugin = function ( state, action ) {
 
 /**
  * Helper function that iterates over the allSites object to update the name of the plugins
- *
  * @param {Object} allSites Object containing all the sites and their respective plugins
  * @returns {Object} Object containing all the sites and their respective plugins with decoded names
  */
@@ -110,7 +107,6 @@ function decodeAllSitePluginsName( allSites ) {
 
 /**
  * Helper function that iterates over a list of plugins to update its name if required
- *
  * @param {Array} pluginData List of plugin objects
  * @returns {Array} List of plugin objects with decoded names
  */

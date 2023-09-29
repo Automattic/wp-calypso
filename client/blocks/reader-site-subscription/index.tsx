@@ -2,9 +2,9 @@ import { Gridicon } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
-import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import { Path, useSiteSubscription } from './context';
 import SiteSubscriptionDetails from './details';
 import './styles.scss';
@@ -34,12 +34,13 @@ const ReaderSiteSubscription = () => {
 							className="site-subscription-page__fetch-details-error"
 							type={ NoticeType.Error }
 						>
-							Subscription not found
+							{ translate( 'Subscription not found' ) }
 						</Notice>
 					) : (
 						<SiteSubscriptionDetails
 							subscriptionId={ data.ID }
 							blogId={ data.blog_ID }
+							feedId={ data.feed_ID }
 							name={ data.name }
 							subscriberCount={ data.subscriber_count }
 							dateSubscribed={ data.date_subscribed }
@@ -52,7 +53,7 @@ const ReaderSiteSubscription = () => {
 				</div>
 			</div>
 
-			<PoweredByWPFooter />
+			<JetpackColophon />
 		</div>
 	);
 };

@@ -145,8 +145,9 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				font_variation_title: getVariationTitle( fontVariation ),
 				font_variation_type: getVariationType( fontVariation ),
 				assembler_source: getAssemblerSource( selectedDesign ),
+				has_global_styles_selected: numOfSelectedGlobalStyles > 0,
 			} ),
-		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
+		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation, numOfSelectedGlobalStyles ]
 	);
 
 	const selectedVariations = useMemo(
@@ -499,8 +500,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
 	const onShuffle = ( type: string, pattern: Pattern, position?: number ) => {
-		const [ firstCategory ] = Object.keys( pattern.categories );
-		const selectedCategory = pattern.category?.name || firstCategory;
+		const availableCategory = Object.keys( pattern.categories ).find(
+			( category ) => patternsMapByCategory[ category ]
+		);
+		const selectedCategory = pattern.category?.name || availableCategory || '';
 		const patterns = patternsMapByCategory[ selectedCategory ];
 		const shuffledPattern = getShuffledPattern( patterns, pattern );
 		injectCategoryToPattern( shuffledPattern, categories, selectedCategory );

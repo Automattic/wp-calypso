@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
@@ -29,7 +30,6 @@ const noop = () => {};
  * `following`
  * `site:1234`
  * `search:a:value` ( prefix is `search`, suffix is `a:value` )
- *
  * @param  {string} streamKey The stream ID to break apart
  * @returns {string}          The stream ID suffix
  */
@@ -202,6 +202,10 @@ const streamApis = {
 	discover: {
 		path: ( { streamKey } ) => {
 			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
+				if ( config.isEnabled( 'reader/discover-stream' ) ) {
+					return '/read/streams/discover';
+				}
+
 				return '/read/tags/cards';
 			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
 				return '/read/tags/posts';
@@ -303,7 +307,6 @@ const streamApis = {
 
 /**
  * Request a page for the given stream
- *
  * @param  {Object}   action   Action being handled
  * @returns {Object | undefined} http action for data-layer to dispatch
  */

@@ -28,6 +28,7 @@ import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DnsAddNewRecordButton from './dns-add-new-record-button';
 import DnsDetails from './dns-details';
+import DnsImportBindFileButton from './dns-import-bind-file-button';
 import DnsMenuOptionsButton from './dns-menu-options-button';
 import './style.scss';
 
@@ -97,12 +98,23 @@ class DnsRecords extends Component {
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 			/>,
+			<DnsImportBindFileButton
+				key="import-bind-file-button"
+				site={ selectedSite?.slug }
+				domain={ selectedDomainName }
+			/>,
 			optionsButton,
 		];
 
 		const mobileButtons = [
 			<DnsAddNewRecordButton
 				key="mobile-add-new-record-button"
+				site={ selectedSite?.slug }
+				domain={ selectedDomainName }
+				isMobile={ true }
+			/>,
+			<DnsImportBindFileButton
+				key="import-bind-file-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 				isMobile={ true }

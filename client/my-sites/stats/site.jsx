@@ -252,12 +252,6 @@ class StatsSite extends Component {
 					<>
 						{ isDateControlEnabled ? (
 							<>
-								<StatsDateControl
-									slug={ slug }
-									queryParams={ context.query }
-									period={ period }
-									pathTemplate={ pathTemplate }
-								/>
 								<StatsPeriodHeader>
 									<StatsPeriodNavigation
 										date={ date }
@@ -275,7 +269,12 @@ class StatsSite extends Component {
 											isShort
 										/>
 									</StatsPeriodNavigation>
-									<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+									<StatsDateControl
+										slug={ slug }
+										queryParams={ context.query }
+										period={ period }
+										pathTemplate={ pathTemplate }
+									/>
 								</StatsPeriodHeader>
 							</>
 						) : (

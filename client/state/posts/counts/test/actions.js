@@ -52,7 +52,7 @@ describe( 'actions', () => {
 		test( 'should dispatch request action when thunk triggered', () => {
 			requestPostCounts( 2916284, 'post' )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: POST_COUNTS_REQUEST,
 				siteId: 2916284,
 				postType: 'post',
@@ -64,7 +64,7 @@ describe( 'actions', () => {
 				2916284,
 				'post'
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: POST_COUNTS_RECEIVE,
 					siteId: 2916284,
 					postType: 'post',
@@ -81,7 +81,7 @@ describe( 'actions', () => {
 				2916284,
 				'post'
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: POST_COUNTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					postType: 'post',
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 				2916284,
 				'foo'
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: POST_COUNTS_REQUEST_FAILURE,
 					siteId: 2916284,
 					postType: 'foo',

@@ -104,7 +104,6 @@ export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction(
  *
  * This method will display debug output if Google Analytics is suppresed, otherwise it will
  * initialize and call the Google Analytics function it is passed.
- *
  * @see mayWeTrackByTracker
  * @param  {Function} func Google Analytics tracking function
  * @returns {Function} Wrapped function

@@ -45,7 +45,6 @@ function simpleArguments( args ) {
 
 /**
  * Coerce the possible arguments and normalize to a single object.
- *
  * @param   {any} args - arguments passed in from `translate()`
  * @returns {Object}         - a single object describing translation needs
  */
@@ -102,7 +101,6 @@ function normalizeTranslateArguments( args ) {
 
 /**
  * Takes translate options object and coerces to a Tannin request to retrieve translation.
- *
  * @param   {Object} tannin  - tannin data object
  * @param   {Object} options - object describing translation
  * @returns {string}         - the returned translation from Tannin
@@ -174,7 +172,6 @@ I18N.prototype.emit = function ( ...args ) {
 
 /**
  * Formats numbers using locale settings and/or passed options.
- *
  * @param   {string|number}  number to format (required)
  * @param   {number | Object}  options  Number of decimal places or options object (optional)
  * @returns {string}         Formatted number as string
@@ -303,7 +300,6 @@ I18N.prototype.getLocale = function () {
 
 /**
  * Get the current locale slug.
- *
  * @returns {string} The string representing the currently loaded locale
  */
 I18N.prototype.getLocaleSlug = function () {
@@ -313,7 +309,6 @@ I18N.prototype.getLocaleSlug = function () {
 /**
  * Get the current locale variant. That's set for some special locales that don't have a
  * standard ISO code, like `de_formal` or `sr_latin`.
- *
  * @returns {string|undefined} The string representing the currently loaded locale's variant
  */
 I18N.prototype.getLocaleVariant = function () {
@@ -322,7 +317,6 @@ I18N.prototype.getLocaleVariant = function () {
 
 /**
  * Get the current text direction, left-to-right (LTR) or right-to-left (RTL).
- *
  * @returns {boolean} `true` in case the current locale has RTL text direction
  */
 I18N.prototype.isRtl = function () {
@@ -331,7 +325,6 @@ I18N.prototype.isRtl = function () {
 
 /**
  * Adds new translations to the locale data, overwriting any existing translations with a matching key.
- *
  * @param {Object} localeData Locale data
  */
 I18N.prototype.addTranslations = function ( localeData ) {
@@ -346,7 +339,6 @@ I18N.prototype.addTranslations = function ( localeData ) {
 
 /**
  * Checks whether the given original has a translation.
- *
  * @returns {boolean} whether a translation exists
  */
 I18N.prototype.hasTranslation = function () {
@@ -356,7 +348,6 @@ I18N.prototype.hasTranslation = function () {
 /**
  * Exposes single translation method.
  * See sibling README
- *
  * @returns {string | Object | undefined} translated text or an object containing React children that can be inserted into a parent component
  */
 I18N.prototype.translate = function () {

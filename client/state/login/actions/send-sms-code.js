@@ -17,7 +17,6 @@ import 'calypso/state/login/init';
 
 /**
  * Sends a two factor authentication recovery code to a user.
- *
  * @returns {Function} A thunk that can be dispatched
  */
 export const sendSmsCode = () => ( dispatch, getState ) => {

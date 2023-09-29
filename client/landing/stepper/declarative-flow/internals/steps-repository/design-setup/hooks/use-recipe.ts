@@ -16,6 +16,7 @@ const useRecipe = (
 	siteId = 0,
 	allDesigns: StarterDesigns | undefined,
 	pickDesign: ( design?: Design, options?: { shouldGoToAssembler: boolean } ) => void,
+	pickUnlistedDesign: ( theme: string ) => void,
 	recordPreviewDesign: ( design: Design, styleVariation?: StyleVariation ) => void,
 	recordPreviewStyleVariation: ( design: Design, styleVariation?: StyleVariation ) => void
 ) => {
@@ -187,6 +188,7 @@ const useRecipe = (
 				: design.slug === preselectedTheme
 		);
 		if ( ! requestedDesign ) {
+			pickUnlistedDesign( preselectedTheme );
 			return;
 		}
 
@@ -204,6 +206,7 @@ const useRecipe = (
 		preselectedTheme,
 		preselectedStyle,
 		allDesigns,
+		pickUnlistedDesign,
 		setSelectedDesign,
 		setSelectedStyleVariation,
 	] );

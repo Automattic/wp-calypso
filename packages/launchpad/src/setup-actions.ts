@@ -11,6 +11,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'earn_money',
 	'manage_subscribers',
 	'connect_social_media',
+	'drive_traffic',
 ];
 
 export const setUpActionsForTasks = ( {
@@ -21,7 +22,7 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions || {};
+	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions;
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -45,6 +46,11 @@ export const setUpActionsForTasks = ( {
 
 			if ( task.id === 'drive_traffic' && ! isMobile() ) {
 				targetPath = addQueryArgs( targetPath, { tour: 'marketingConnectionsTour' } );
+			}
+
+			// Enable task in 'calypso' context
+			if ( task.id === 'setup_general' ) {
+				task.disabled = false;
 			}
 
 			action = () => {
@@ -122,6 +128,7 @@ export const setUpActionsForTasks = ( {
 					};
 					break;
 				case 'site_launched':
+				case 'blog_launched':
 				case 'videopress_launched':
 				case 'link_in_bio_launched':
 					action = async () => {

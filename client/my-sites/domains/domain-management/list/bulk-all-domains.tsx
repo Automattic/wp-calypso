@@ -65,7 +65,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				<DomainsTable
-					isFetchingDomains={ isLoading }
+					isLoadingDomains={ isLoading }
 					domains={ domains }
 					isAllSitesView
 					shouldDisplayContactInfoBulkAction={ isEnabled(

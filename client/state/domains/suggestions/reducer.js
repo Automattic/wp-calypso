@@ -12,7 +12,6 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
 
 /**
  * Tracks domains suggestions, indexed by a serialized query.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -33,7 +32,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 
 /**
  * Tracks domains suggestions request state, indexed by a serialized query.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -56,7 +54,6 @@ export function requesting( state = {}, action ) {
 
 /**
  * Tracks domains suggestions error state, indexed by a serialized query.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

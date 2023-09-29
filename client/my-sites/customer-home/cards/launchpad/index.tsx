@@ -21,7 +21,7 @@ import './style.scss';
 
 interface CustomerHomeLaunchpadProps {
 	checklistSlug: string;
-	extraActions?: PermittedActions;
+	extraActions?: Omit< PermittedActions, 'setActiveChecklist' >;
 }
 
 const CustomerHomeLaunchpad = ( {

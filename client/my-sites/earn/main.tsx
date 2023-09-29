@@ -21,7 +21,6 @@ import Home from './home';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
-import StatsSection from './stats';
 import { Query } from './types';
 
 type EarningsMainProps = {
@@ -38,9 +37,11 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 
 	const layoutTitles = {
-		earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
-		settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
-		payments: translate( 'Recurring Payments' ),
+		'ads-earnings': translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
+		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
+		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
+		payments: translate( 'Payment Settings' ),
+		supporters: translate( 'Supporters' ),
 		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
@@ -49,22 +50,17 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		const pathSuffix = site?.slug ? '/' + site?.slug : '';
 		return [
 			{
-				title: translate( 'Tools' ),
+				title: translate( 'Monetization Options' ),
 				path: '/earn' + pathSuffix,
 				id: 'earn',
 			},
 			{
-				title: translate( 'Customers' ),
-				path: '/earn/customers' + pathSuffix,
-				id: 'customers',
+				title: translate( 'Supporters' ),
+				path: '/earn/supporters' + pathSuffix,
+				id: 'supporters',
 			},
 			{
-				title: translate( 'Stats' ),
-				path: '/earn/stats' + pathSuffix,
-				id: 'stats',
-			},
-			{
-				title: translate( 'Settings' ),
+				title: translate( 'Payment Settings' ),
 				path: '/earn/payments' + pathSuffix,
 				id: 'payments',
 			},
@@ -143,10 +139,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			case 'payments-plans':
 				return <MembershipsProductsSection />;
 
-			case 'stats':
-				return <StatsSection />;
-
-			case 'customers':
+			case 'supporters':
 				return <CustomerSection />;
 
 			case 'refer-a-friend':
@@ -226,7 +219,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
 			/>
-			<DocumentHead title={ layoutTitles[ section as keyof typeof layoutTitles ] } />
+			<DocumentHead
+				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Earn' ) }
+			/>
 			<FormattedHeader
 				brandFont
 				className="earn__page-header"

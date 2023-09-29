@@ -1,6 +1,5 @@
 /**
  * Is there a pending request for applying a cancellation offer?
- *
  * @param state
  * @param purchaseId
  * @returns null | boolean
