@@ -1,5 +1,7 @@
 @import "@automattic/typography/styles/variables";
 
+$custom-border-corner-size: 20px;
+
 .odie-chatbox-message {
 	display: flex;
 	justify-content: space-between;
@@ -8,7 +10,7 @@
 	max-width: 70%;
 	word-wrap: break-word;
 	padding: 12px;
-	border-radius: 4px;
+	border-radius: $custom-border-corner-size;
 	font-size: $font-body-small;
 	line-height: 1.4;
 	color: #000;
@@ -185,4 +187,16 @@
 		overflow-y: auto;
 		font-size: $font-body;
 	}
+}
+
+.odie-chatbox-message-wapuu-tail {
+	position: relative;
+	top: -17px;
+	left: -8px;
+}
+
+.odie-chatbox-message-customer-tail {
+	position: relative;
+	left: 357px;
+	top: -17px;
 }

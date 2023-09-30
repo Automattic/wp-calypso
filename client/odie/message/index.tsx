@@ -6,7 +6,9 @@ import { Icon, page as pageIcon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import CustomerChatTail from 'calypso/assets/images/odie/customer-chatbubble-tail.svg';
 import WapuuAvatar from 'calypso/assets/images/odie/wapuu-avatar.svg';
+import WapuuChatTail from 'calypso/assets/images/odie/wapuu-chatbubble-tail.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
@@ -114,11 +116,12 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 	);
 
 	useEffect( () => {
+		const backdropCopy = backdropRef.current;
 		if ( isFullscreen ) {
 			backdropRef.current?.addEventListener( 'click', handleBackdropClick );
 		}
 		return () => {
-			backdropRef.current?.removeEventListener( 'click', handleBackdropClick );
+			backdropCopy?.removeEventListener( 'click', handleBackdropClick );
 		};
 	}, [ isFullscreen ] );
 
@@ -128,7 +131,33 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		</div>
 	);
 
-	return isFullscreen ? ReactDOM.createPortal( fullscreenContent, document.body ) : messageContent;
+	const isBubbleType = [ 'message', 'introduction', 'placeholder', 'help-link' ].includes(
+		message.type
+	);
+
+	const messageContentWithTail = (
+		<>
+			{ messageContent }
+			{ isBubbleType && ! isUser && (
+				<img
+					src={ WapuuChatTail }
+					className="odie-chatbox-message-wapuu-tail"
+					alt="Customer chat tail"
+				/>
+			) }
+			{ isBubbleType && isUser && (
+				<img
+					src={ CustomerChatTail }
+					className="odie-chatbox-message-customer-tail"
+					alt="Wapuu chat tail"
+				/>
+			) }
+		</>
+	);
+
+	return isFullscreen
+		? ReactDOM.createPortal( fullscreenContent, document.body )
+		: messageContentWithTail;
 };
 
 export default ChatMessage;
