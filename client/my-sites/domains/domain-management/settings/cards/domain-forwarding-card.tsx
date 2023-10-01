@@ -192,7 +192,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		const subdomain = event.target.value;
 		setSubdomain( withoutHttp( subdomain ) );
 
-		const CAPTURE_SUBDOMAIN_RGX = /^(?!-)[a-zA-Z0-9-]{0,63}(?<!-)$/i;
+		const CAPTURE_SUBDOMAIN_RGX = /^(?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]$|^[a-zA-Z0-9]$/i;
 
 		if ( subdomain.length > 0 && ! CAPTURE_SUBDOMAIN_RGX.test( subdomain ) ) {
 			setIsValidUrl( false );
