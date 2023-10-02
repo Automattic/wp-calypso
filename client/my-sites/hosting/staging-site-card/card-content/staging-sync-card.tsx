@@ -58,6 +58,10 @@ const ConfirmationModalContainer = styled.div( {
 	display: 'flex',
 	flexDirection: 'row',
 	marginTop: '12px',
+	'@media screen and (max-width: 768px)': {
+		flexDirection: 'column',
+		'.button': { flexGrow: 1 },
+	},
 } );
 
 const StagingSyncCardFooter = styled.p( {
@@ -89,6 +93,16 @@ const SyncContainerContent = styled.p( {
 const FormSelectContainer = styled.div( {
 	marginBottom: '16px',
 	marginTop: '8px',
+	'@media screen and (max-width: 768px)': {
+		display: 'flex',
+		flexDirection: 'column',
+	},
+} );
+
+const CheckboxTreeTitle = styled.p( {
+	fontWeight: 500,
+	marginTop: '0px',
+	marginBottom: '16px',
 } );
 
 interface StagingCardProps {
@@ -138,6 +152,7 @@ const ProductionSiteSync = ( {
 			</FormSelectContainer>
 			{ selectedOption === 'push' && (
 				<>
+					<CheckboxTreeTitle>{ translate( 'Synchronize the following:' ) }</CheckboxTreeTitle>
 					<CheckboxTree
 						disabled={ disabled }
 						treeItems={ synchronizationOptions }
@@ -216,6 +231,7 @@ const StagingSiteSync = ( {
 			</FormSelectContainer>
 			{ selectedOption === 'pull' && (
 				<>
+					<CheckboxTreeTitle>{ translate( 'Synchronize the following:' ) }</CheckboxTreeTitle>
 					<CheckboxTree
 						disabled={ disabled }
 						treeItems={ synchronizationOptions }

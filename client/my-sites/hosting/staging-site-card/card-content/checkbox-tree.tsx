@@ -3,13 +3,17 @@ import { ToggleControl } from '@wordpress/components';
 import { useEffect, useState } from 'react';
 
 const TreeItemContainer = styled.div( {
-	marginLeft: '1em',
+	marginLeft: '2.7em',
 } );
 
 const ToggleControlWithHelpMargin = styled( ToggleControl )( {
 	'.components-base-control__help': {
 		marginLeft: '4em',
 		marginTop: 0,
+	},
+	marginBottom: '8px !important',
+	'.components-flex': {
+		gap: '8px',
 	},
 } );
 
@@ -104,7 +108,7 @@ function CheckboxTreeItem( {
 	};
 
 	return (
-		<TreeItemContainer className={ className }>
+		<>
 			<ToggleControlWithHelpMargin
 				disabled={ parent?.checked === false || disabled }
 				help={ item.subTitle }
@@ -113,16 +117,18 @@ function CheckboxTreeItem( {
 				onChange={ handleCheckChange }
 			/>
 			{ childIds.map( ( childId ) => (
-				<CheckboxTreeItem
-					disabled={ disabled }
-					className={ className }
-					key={ childId }
-					id={ childId }
-					items={ items }
-					onCheckChange={ onCheckChange }
-				/>
+				<TreeItemContainer className={ className }>
+					<CheckboxTreeItem
+						disabled={ disabled }
+						className={ className }
+						key={ childId }
+						id={ childId }
+						items={ items }
+						onCheckChange={ onCheckChange }
+					/>
+				</TreeItemContainer>
 			) ) }
-		</TreeItemContainer>
+		</>
 	);
 }
 
