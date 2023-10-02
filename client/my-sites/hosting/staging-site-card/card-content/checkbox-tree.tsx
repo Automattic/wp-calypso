@@ -117,11 +117,10 @@ function CheckboxTreeItem( {
 				onChange={ handleCheckChange }
 			/>
 			{ childIds.map( ( childId ) => (
-				<TreeItemContainer className={ className }>
+				<TreeItemContainer className={ className } key={ childId }>
 					<CheckboxTreeItem
 						disabled={ disabled }
 						className={ className }
-						key={ childId }
 						id={ childId }
 						items={ items }
 						onCheckChange={ onCheckChange }
