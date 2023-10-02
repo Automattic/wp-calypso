@@ -100,7 +100,7 @@ export default function ThemeCollection( {
 			{ subheading }
 			<div className="swiper-container">
 				<div className="theme-collection__carousel-controls">
-					<a href={ showMoreLink }>{ translate( 'Show more' ) }</a>
+					<a href={ showMoreLink }>{ translate( 'See all' ) }</a>
 					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous">
 						<Icon icon={ chevronLeft } />
 					</Button>
