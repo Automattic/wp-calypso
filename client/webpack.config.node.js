@@ -38,7 +38,6 @@ const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMI
 /**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
- *
  * @returns {Array} list of externals
  */
 

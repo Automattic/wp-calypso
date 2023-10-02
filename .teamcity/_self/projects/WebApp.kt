@@ -239,20 +239,25 @@ object BuildDockerImage : BuildType({
 			"""
 		}
 
+		// TODO: Cache rebuilding is currently disabled. It takes a long time and
+		// causes timeouts on trunk. It needs to run more quickly to be worth it.
+		// For now, the cache will be rebuilt a couple times a day by the dedicated
+		// cache build.
+
 		// Conditions don't seem to support and/or, so we do this in a separate step.
 		// Essentially, UPDATE_BASE_IMAGE_CACHE will remain false by default, but
 		// if we're on trunk and get WEBPACK_CACHE_INVALIDATED set by the docker build,
 		// then we can flip it to true to trigger the cache rebuild.
-		script {
-			name = "Set cache update"
-			conditions {
-				equals("env.WEBPACK_CACHE_INVALIDATED", "true")
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				echo "##teamcity[setParameter name='UPDATE_BASE_IMAGE_CACHE' value='true']"
-			"""
-		}
+		// script {
+		// 	name = "Set cache update"
+		// 	conditions {
+		// 		equals("env.WEBPACK_CACHE_INVALIDATED", "true")
+		// 		equals("teamcity.build.branch.is_default", "true")
+		// 	}
+		// 	scriptContent = """
+		// 		echo "##teamcity[setParameter name='UPDATE_BASE_IMAGE_CACHE' value='true']"
+		// 	"""
+		// }
 
 		// This updates the base docker image when the webpack cache invalidates.
 		// It does so by re-using the layers already generated above, and simply

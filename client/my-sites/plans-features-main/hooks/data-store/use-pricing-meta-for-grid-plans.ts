@@ -15,7 +15,7 @@ import type { AddOnMeta } from '@automattic/data-stores';
 import type {
 	UsePricingMetaForGridPlans,
 	PricingMetaForGridPlan,
-} from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
+} from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import type { IAppState } from 'calypso/state/types';
 
 interface Props {

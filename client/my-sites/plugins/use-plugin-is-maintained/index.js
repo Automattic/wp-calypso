@@ -6,7 +6,6 @@ const WP_VERSIONS_TO_CHECK = 3;
 /**
  * Checks if a plugin is tested at least WP_VERSIONS_TO_CHECK versions below current WordPress version.
  * If the plugin was tested in an older than WP_VERSIONS_TO_CHECK versions, it is considered not maintained.
- *
  * @param {string} testedVersion - The version of the plugin to check.
  * @returns {boolean} True if the plugin was tested less than WP_VERSIONS_TO_CHECK WordPress versions ago,
  *                    false otherwise.

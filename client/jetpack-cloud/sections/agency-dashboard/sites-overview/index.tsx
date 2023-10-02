@@ -8,6 +8,7 @@ import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import Notice from 'calypso/components/notice';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -28,6 +29,7 @@ import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
+import useQueryProvisioningBlogIds from './hooks/use-query-provisioning-blog-ids';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
@@ -236,6 +238,15 @@ export default function SitesOverview() {
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 
+	const { data: provisioningBlogIds, isLoading: isLoadingProvisioningBlogIds } =
+		useQueryProvisioningBlogIds();
+
+	const [ hasDismissedProvisioningNotice, setHasDismissedProvisioningNotice ] =
+		useState< boolean >( false );
+	const isProvisioningSite =
+		'true' === getQueryArg( window.location.href, 'provisioning' ) ||
+		( ! isLoadingProvisioningBlogIds && Number( provisioningBlogIds?.length ) > 0 );
+
 	return (
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
@@ -245,6 +256,16 @@ export default function SitesOverview() {
 					<div className="sites-overview__content-wrapper">
 						<DashboardBanners />
 
+						{ isProvisioningSite && ! hasDismissedProvisioningNotice && (
+							<Notice
+								status="is-info"
+								onDismissClick={ () => setHasDismissedProvisioningNotice( true ) }
+							>
+								{ translate(
+									"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
+								) }
+							</Notice>
+						) }
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
 							content={

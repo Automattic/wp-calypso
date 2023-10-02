@@ -2,7 +2,6 @@ import 'calypso/state/post-types/init';
 
 /**
  * Returns the known post types for a site.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {?Object}        Site post types
@@ -13,7 +12,6 @@ export function getPostTypes( state, siteId ) {
 
 /**
  * Returns the known post type for a site, given the type slug.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {string}  slug   Post type slug
@@ -30,7 +28,6 @@ export function getPostType( state, siteId, slug ) {
 
 /**
  * Returns the label for the post type.
- *
  * @param  {Object}   state   Global state tree
  * @param  {number}   siteId  Site ID
  * @param  {string}   slug    Post type slug
@@ -61,7 +58,6 @@ export function getPostTypeLabel( state, siteId, slug, label, localeSlug ) {
  * Returns true if the post type supports the specified feature, false if the
  * post type does not support the specified feature, or null if post type
  * support cannot be determined.
- *
  * @param  {Object}   state   Global state tree
  * @param  {number}   siteId  Site ID
  * @param  {string}   slug    Post type slug
@@ -102,7 +98,6 @@ export function postTypeSupports( state, siteId, slug, feature ) {
  * Returns true if the site supported the post type, false if the site does not
  * support the post type, or if support cannot be determined (if site is
  * not currently known).
- *
  * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @param  {string}   slug   Post type slug

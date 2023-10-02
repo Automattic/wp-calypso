@@ -98,13 +98,13 @@ describe( 'index', () => {
 				response.emit( 'close' );
 				response2.emit( 'close' );
 
-				expect( statsdUtils.logServerEvent ).toBeCalledTimes( 1 );
+				expect( statsdUtils.logServerEvent ).toHaveBeenCalledTimes( 1 );
 
 				jest.advanceTimersByTime( TWO_SECONDS );
 				response.emit( 'close' );
 				response2.emit( 'close' );
 
-				expect( statsdUtils.logServerEvent ).toBeCalledTimes( 2 );
+				expect( statsdUtils.logServerEvent ).toHaveBeenCalledTimes( 2 );
 				analyticsMock.mockRestore();
 			} );
 		} );
@@ -124,7 +124,7 @@ describe( 'index', () => {
 				// Mock the "finish" event
 				response.emit( 'finish' );
 
-				expect( statsdUtils.logServerEvent ).not.toBeCalled();
+				expect( statsdUtils.logServerEvent ).not.toHaveBeenCalled();
 			} );
 		} );
 	} );

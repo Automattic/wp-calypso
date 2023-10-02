@@ -225,18 +225,21 @@ body.dns__body-white {
 	}
 }
 
-a.dns__breadcrumb-button {
+a.dns__breadcrumb-button,
+button.dns__breadcrumb-button {
 	display: flex;
 	align-items: center;
 
-	&.add-record {
+	&.add-record,
+	&.import-bind-file {
 		@include break-mobile {
 			svg {
 				margin-right: 8px;
 			}
 		}
 	}
-	&.add-record.is-icon-button {
+	&.add-record.is-icon-button,
+	&.import-bind-file.is-icon-button {
 		width: 40px;
 		display: flex;
 		justify-content: center;

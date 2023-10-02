@@ -119,7 +119,7 @@ Thanks\n\n`;
 
 	return (
 		<>
-			<h1>{ translate( 'Jetpack Stats Commercial' ) }</h1>
+			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
@@ -130,7 +130,7 @@ Thanks\n\n`;
 					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
 				}
 			>
-				{ translate( 'Get Stats Commercial' ) }
+				{ translate( 'Get Stats' ) }
 			</ButtonComponent>
 
 			{ showClassificationDispute && (
@@ -224,7 +224,7 @@ const StatsPersonalPurchase = ( {
 
 	return (
 		<>
-			<h1>{ translate( 'Jetpack Stats Personal' ) }</h1>
+			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<PersonalPurchase
 				subscriptionValue={ subscriptionValue }

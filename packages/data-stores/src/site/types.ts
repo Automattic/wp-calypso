@@ -336,6 +336,7 @@ export interface Domain {
 	bundled_plan_subscription_id?: any;
 	product_slug?: any;
 	owner: string;
+	is_pending_icann_verification?: boolean;
 }
 
 export interface SiteSettings {

@@ -301,8 +301,18 @@ function wpcom_global_styles_in_use_by_wp_global_styles_post( array $wp_global_s
 		return false;
 	}
 
-	$global_style_keys    = array_keys( json_decode( $wp_global_styles_post['post_content'], true ) ?? array() );
-	$global_styles_in_use = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+	$global_styles_content = json_decode( $wp_global_styles_post['post_content'], true ) ?? array();
+
+	// Some keys are ignored because they are not relevant to a custom style
+	// behaviours are not relevant if blank - as they where when included during GB16.4 and later removed.
+	$ignored_keys = array( 'version', 'isGlobalStylesUserThemeJSON' );
+	if ( isset( $global_styles_content['behaviors'] ) && empty( $global_styles_content['behaviors'] ) ) {
+		$ignored_keys[] = 'behaviors';
+	}
+
+	$global_style_keys    = array_keys( $global_styles_content );
+	$global_styles_in_use = count( array_diff( $global_style_keys, $ignored_keys ) ) > 0;
+
 	return $global_styles_in_use;
 }
 

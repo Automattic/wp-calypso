@@ -53,7 +53,7 @@ export type PagedQueryResult< TDataType, TKey extends string > = {
 	pageParams: number;
 };
 
-export type SiteSubscription = {
+export type SiteSubscriptionsResponseItem = {
 	ID: string;
 	blog_ID: string;
 	feed_ID: string;
@@ -70,10 +70,11 @@ export type SiteSubscription = {
 	is_wpforteams_site: boolean;
 	is_paid_subscription: boolean;
 	isDeleted: boolean;
+	is_rss: boolean;
 };
 
 export type SiteSubscriptionPage = {
-	subscriptions: SiteSubscription[];
+	subscriptions: SiteSubscriptionsResponseItem[];
 	total_subscriptions: number;
 };
 
@@ -139,6 +140,7 @@ export type PendingPostSubscriptionsResult = {
 export type SiteSubscriptionDetails< DateT = Date > = {
 	ID: number;
 	blog_ID: number;
+	feed_ID: number;
 	name: string;
 	URL: string;
 	site_icon: string | null;

@@ -438,6 +438,7 @@ import {
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 } from './constants';
 import type {
 	BillingTerm,
@@ -1199,6 +1200,7 @@ const getWooExpressMediumPlanCompareFeatures = (): string[] => [
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_DISCOUNTED_SHIPPING,
 	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 ];
 const getWooExpressSmallPlanCompareFeatures = (): string[] => [
 	FEATURE_WOOCOMMERCE_STORE,
@@ -1232,6 +1234,7 @@ const getWooExpressSmallPlanCompareFeatures = (): string[] => [
 	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 ];
 
 const getWooExpressPlanCompareFeatures = (): string[] => [
@@ -1291,6 +1294,7 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 	],
 	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
 	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),

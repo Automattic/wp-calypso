@@ -5,7 +5,6 @@ import 'calypso/state/themes/init';
 /**
  * Returns true if currently the themes query was already fullfiled, or false
  * otherwise.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {Object}  query  Theme query object

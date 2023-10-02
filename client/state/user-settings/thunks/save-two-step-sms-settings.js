@@ -14,7 +14,6 @@ import 'calypso/state/user-settings/init';
  *
  * Note: We purposely re-throw the error because we only catch it to handle the
  * `fetching` state with `saveUserSettingsFailure`.
- *
  * @param {string} countryCode Holds a country code
  * @param {string} phoneNumber Holds a phone number
  */

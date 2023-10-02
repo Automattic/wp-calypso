@@ -1,5 +1,4 @@
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
-import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -13,6 +12,7 @@ import { domainManagementLink } from '../utils/paths';
 import { useDomainsTable } from './domains-table';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
+import { DomainsTablePlaceholder } from './domains-table-placeholder';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
@@ -57,7 +57,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		}
 
 		if ( isLoadingRowDetails ) {
-			return <LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />;
+			return <DomainsTablePlaceholder style={ { width: `${ placeholderWidth }%` } } />;
 		}
 
 		return null;
@@ -68,7 +68,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 	const renderOwnerCell = () => {
 		if ( isLoadingSiteDetails || isLoadingSiteDomainsDetails ) {
-			return <LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />;
+			return <DomainsTablePlaceholder style={ { width: `${ placeholderWidth }%` } } />;
 		}
 
 		if ( ! currentDomainData?.owner ) {
@@ -145,7 +145,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'status' ) {
 					return isLoadingRowDetails ? (
 						<td key={ column.name }>
-							<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
+							<DomainsTablePlaceholder style={ { width: `${ placeholderWidth }%` } } />
 						</td>
 					) : (
 						<DomainsTableStatusCell

@@ -11,12 +11,12 @@
 		max-height: 235px;
 		cursor: pointer;
 		transition: all 200ms ease-in-out;
-		border: 1px solid var(--color-border-subtle);
-		border-radius: 4px;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 3px; /* stylelint-disable-line scales/radii */
 
 		&:hover,
 		&:focus {
-			box-shadow: rgba(0, 0, 0, 0.2) 0 7px 30px -10px;
+			box-shadow: 0 0 0 1px var(--color-border-subtle), rgba(0, 0, 0, 0.2) 0 7px 30px -10px;
 			.home-site-preview__thumbnail {
 				opacity: 0.8;
 			}
@@ -35,11 +35,12 @@
 				// The idea is to zoom-out the iframe to get most of the content
 				// into the thumbnail and then we scale it down so it remains the
 				// size of the parent component (357% * 0.28 ~= 100%)
-				height: 357%;
+				min-height: 375%;
 				width: 357%;
 				max-width: 357%;
 				transform: scale(0.28);
 				transform-origin: top left;
+				translate: 0 -10px;
 			}
 		}
 

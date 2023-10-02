@@ -11,13 +11,13 @@ const ActivityDescription: FunctionComponent< Props > = ( {
 } ) => (
 	<>
 		{ activityDescription.map( ( description, index ) => {
-			const { intent, section } = description;
+			const { intent, section, published } = description;
 
 			return (
 				<FormattedBlock
 					content={ description }
 					key={ index }
-					meta={ { activity: activityName, intent, section } }
+					meta={ { activity: activityName, intent, section, published } }
 				/>
 			);
 		} ) }

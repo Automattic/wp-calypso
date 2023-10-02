@@ -174,7 +174,6 @@ export class JetpackSignup extends Component {
 
 	/**
 	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
-	 *
 	 * @see client/signup/steps/user/index.jsx
 	 * @param {string} service      The name of the social service
 	 * @param {string} access_token An OAuth2 acccess token
@@ -192,7 +191,6 @@ export class JetpackSignup extends Component {
 
 	/**
 	 * Handle user creation result
-	 *
 	 * @param {Object} _             …
 	 * @param {string} _.username    Username
 	 * @param {string} _.bearerToken Bearer token
@@ -210,7 +208,6 @@ export class JetpackSignup extends Component {
 
 	/**
 	 * Handle error on user creation
-	 *
 	 * @param {?Object} error Error result
 	 */
 	handleUserCreationError = ( error ) => {

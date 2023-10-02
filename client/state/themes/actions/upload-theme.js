@@ -28,7 +28,6 @@ const performThemeUpload = ( siteId, file, onProgress ) =>
 
 /**
  * Triggers a theme upload to the given site.
- *
  * @param {number} siteId -- Site to upload to
  * @param {window.File} file -- the theme zip to upload
  * @returns {Function} the action function

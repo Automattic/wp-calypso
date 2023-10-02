@@ -214,7 +214,7 @@ export class EditGravatar extends Component {
 	render() {
 		const { isGravatarProfileHidden, isUploading, translate, user, additionalUploadHtml } =
 			this.props;
-		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
+		const gravatarLink = `https://gravatar.com/profile`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;

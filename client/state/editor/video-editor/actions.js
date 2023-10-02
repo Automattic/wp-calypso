@@ -10,7 +10,6 @@ import 'calypso/state/editor/init';
 
 /**
  * Returns an action object to indicate that a request has been made to update the video poster.
- *
  * @param {string} videoId  ID of the video
  * @param {Object} params  Poster data
  * @param {number} [params.atTime]  Number of seconds into the video at which to get the poster
@@ -28,7 +27,6 @@ export const updatePoster = ( videoId, params, meta ) => ( {
 
 /**
  * Returns an action object to indicate that the poster for the video has been updated successfully.
- *
  * @param  {string} posterUrl Poster URL
  * @returns {Object} Action object
  */
@@ -36,14 +34,12 @@ export const setPosterUrl = ( posterUrl ) => ( { type: VIDEO_EDITOR_SET_POSTER_U
 
 /**
  * Returns an action object to indicate that the poster for the video failed to update.
- *
  * @returns {Object} Action object
  */
 export const showError = () => ( { type: VIDEO_EDITOR_SHOW_ERROR } );
 
 /**
  * Returns an action object to indicate the poster upload progress.
- *
  * @param  {string} percentage  Upload progress percentage
  * @returns {Object} Action object
  */

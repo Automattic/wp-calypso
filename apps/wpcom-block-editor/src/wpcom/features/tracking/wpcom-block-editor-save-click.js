@@ -5,7 +5,6 @@ import tracksRecordEvent from './track-record-event';
 
 /**
  * Return the event definition object to track `wpcom_block_editor_save_click`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export const wpcomBlockEditorSaveClick = () => ( {

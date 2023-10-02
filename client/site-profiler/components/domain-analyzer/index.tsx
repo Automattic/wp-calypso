@@ -1,4 +1,6 @@
 import { Button } from '@wordpress/components';
+import { Icon, info } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FormEvent } from 'react';
 import './styles.scss';
@@ -6,12 +8,14 @@ import './styles.scss';
 interface Props {
 	domain?: string;
 	isBusy?: boolean;
+	isBusyForWhile?: boolean;
+	isDomainValid?: boolean;
 	onFormSubmit: ( domain: string ) => void;
 }
 
 export default function DomainAnalyzer( props: Props ) {
 	const translate = useTranslate();
-	const { domain, isBusy, onFormSubmit } = props;
+	const { domain, isBusy, isBusyForWhile, isDomainValid, onFormSubmit } = props;
 
 	const onSubmit = ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
@@ -24,14 +28,17 @@ export default function DomainAnalyzer( props: Props ) {
 
 	return (
 		<div className="domain-analyzer">
-			<h1>{ translate( 'Who Hosts This Site?' ) }</h1>
+			<h1>{ translate( 'Site Profiler' ) }</h1>
 			<p>
 				{ translate(
-					'Access essential information about a site, such as hosting provider, domain details, and contact information.'
+					'Access the essential information about any site, including hosting provider, domain details, and contact information.'
 				) }
 			</p>
 
-			<form className="domain-analyzer--form" onSubmit={ onSubmit }>
+			<form
+				className={ classnames( 'domain-analyzer--form', { 'is-error': isDomainValid === false } ) }
+				onSubmit={ onSubmit }
+			>
 				<div className="domain-analyzer--form-container">
 					<div className="col-1">
 						<input
@@ -39,14 +46,29 @@ export default function DomainAnalyzer( props: Props ) {
 							name="domain"
 							autoComplete="off"
 							defaultValue={ domain }
-							placeholder={ translate( 'mysite.com' ) }
+							placeholder={ translate( 'Enter a site URL' ) }
 						/>
 					</div>
 					<div className="col-2">
 						<Button isBusy={ isBusy } type="submit" className="button-action">
-							{ translate( 'Check site' ) }
+							{
+								// translators: "Still checking" stands for "Still checking the domain you entered in the form"
+								isBusyForWhile && domain && isDomainValid
+									? translate( 'Still checking…' )
+									: translate( 'Check site' )
+							}
 						</Button>
 					</div>
+				</div>
+				<div className="domain-analyzer--msg">
+					<p
+						className={ classnames( 'error', {
+							'vis-hidden': isDomainValid || isDomainValid === undefined,
+						} ) }
+					>
+						<Icon icon={ info } size={ 20 } />{ ' ' }
+						{ translate( 'Please enter a valid website address' ) }
+					</p>
 				</div>
 			</form>
 		</div>

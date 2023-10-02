@@ -10,10 +10,9 @@ import { getSite } from 'calypso/state/reader/sites/selectors';
  * A HoC function that will take in reader identifiers siteId or feedId and
  * pass down all of the fetched data objects they represent
  *
- *  It supports two
- *  1. feedId --> feedId, siteId, feed, site
- *  2. blogId --> feedId, siteId, feed, site
- *
+ * It supports two
+ * 1. feedId --> feedId, siteId, feed, site
+ * 2. blogId --> feedId, siteId, feed, site
  * @param {Object} Component the component to wrap
  * @returns {Object} wrapped component that hands down feed/site to its child
  */

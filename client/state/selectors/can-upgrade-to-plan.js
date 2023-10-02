@@ -15,7 +15,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * Whether a given site can be upgraded to a specific plan.
- *
  * @param  {Object}   state      Global state tree
  * @param  {number}   siteId     The site we're interested in upgrading
  * @param  {string}   planKey    The plan we want to upgrade to

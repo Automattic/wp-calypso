@@ -9,7 +9,6 @@ export const SESSION_STORAGE_SOURCE = 'jetpack_connect_source';
  * Utilities for storing jetpack connect state that needs to persist across
  * logins and redirects. Session Storage work well for this, since redux
  * state is not guaranteed to be persisted in these scenarios.
- *
  * @param planSlug A plan/product unique identifier
  */
 export const storePlan = ( planSlug ) => {

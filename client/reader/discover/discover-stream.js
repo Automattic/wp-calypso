@@ -19,6 +19,7 @@ import {
 	DEFAULT_TAB,
 	getSelectedTabTitle,
 	buildDiscoverStreamKey,
+	FIRST_POSTS_TAB,
 } from './helper';
 
 const DiscoverStream = ( props ) => {
@@ -73,6 +74,10 @@ const DiscoverStream = ( props ) => {
 	);
 
 	const streamSidebar = () => {
+		if ( selectedTab === FIRST_POSTS_TAB ) {
+			return <></>;
+		}
+
 		if ( ( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ) {
 			return (
 				<>
@@ -84,7 +89,7 @@ const DiscoverStream = ( props ) => {
 				</>
 			);
 		} else if ( ! ( isDefaultTab || selectedTab === 'latest' ) ) {
-			return <ReaderTagSidebar tag={ selectedTab } />;
+			return <ReaderTagSidebar tag={ selectedTab } showFollow={ true } />;
 		}
 	};
 
@@ -94,6 +99,7 @@ const DiscoverStream = ( props ) => {
 		useCompactCards: true,
 		streamSidebar,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
+		selectedStreamName: selectedTab,
 	};
 
 	return (

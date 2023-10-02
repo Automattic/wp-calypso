@@ -73,7 +73,16 @@ function getLocation( path ) {
 		return 'following_manage';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		return 'discover';
+		const searchParams = new URLSearchParams( window.location.search );
+		const selectedTab = searchParams.get( 'selectedTab' );
+		if ( ! selectedTab || selectedTab === 'recommended' ) {
+			return 'discover_recommended';
+		} else if ( selectedTab === 'latest' ) {
+			return 'discover_latest';
+		} else if ( selectedTab === 'firstposts' ) {
+			return 'discover_firstposts';
+		}
+		return `discover_tag:${ selectedTab }`;
 	}
 	if ( path.indexOf( '/read/recommendations/posts' ) === 0 ) {
 		return 'recommended_posts';
@@ -91,6 +100,23 @@ function getLocation( path ) {
 }
 
 /**
+ *
+ * @param {Object} eventProperties extra event properties to add
+ * @param {*} pathnameOverride Overwrites location used for determining ui_algo. See notes in
+ * `recordTrack` function docs below for more info.
+ * @param {Object|null} post Optional post object used to build post event props.
+ * @returns new eventProperties object with default reader values added.
+ */
+export function buildReaderTracksEventProps( eventProperties, pathnameOverride, post ) {
+	const location = getLocation( pathnameOverride || window.location.pathname );
+	let composedProperties = Object.assign( { ui_algo: location }, eventProperties );
+	if ( post ) {
+		composedProperties = Object.assign( getTracksPropertiesForPost( post ), composedProperties );
+	}
+	return composedProperties;
+}
+
+/**
  * @param {*} eventName track event name
  * @param {*} eventProperties extra event props
  * @param {{pathnameOverride: string}} [pathnameOverride] Overwrites the location for ui_algo Useful for when
@@ -104,8 +130,7 @@ function getLocation( path ) {
 export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
 	debug( 'reader track', ...arguments );
 
-	const location = getLocation( pathnameOverride || window.location.pathname );
-	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
+	eventProperties = buildReaderTracksEventProps( eventProperties, pathnameOverride );
 
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if (

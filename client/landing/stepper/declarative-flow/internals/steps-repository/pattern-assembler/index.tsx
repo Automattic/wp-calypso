@@ -65,13 +65,9 @@ import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 import './style.scss';
 
-const PatternAssembler = ( {
-	navigation,
-	flow,
-	stepName,
-	noticeOperations,
-	noticeUI,
-}: StepProps & NoticesProps ) => {
+const PatternAssembler = ( props: StepProps & NoticesProps ) => {
+	const { navigation, flow, stepName, noticeOperations, noticeUI } = props;
+
 	const translate = useTranslate();
 	const navigator = useNavigator();
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
@@ -122,12 +118,7 @@ const PatternAssembler = ( {
 		resetRecipe,
 	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
-	const {
-		shouldUnlockGlobalStyles,
-		numOfSelectedGlobalStyles,
-		resetCustomStyles,
-		setResetCustomStyles,
-	} = useCustomStyles( {
+	const { shouldUnlockGlobalStyles, numOfSelectedGlobalStyles } = useCustomStyles( {
 		siteID: site?.ID,
 		hasColor: !! colorVariation,
 		hasFont: !! fontVariation,
@@ -149,16 +140,14 @@ const PatternAssembler = ( {
 				font_variation_title: getVariationTitle( fontVariation ),
 				font_variation_type: getVariationType( fontVariation ),
 				assembler_source: getAssemblerSource( selectedDesign ),
+				has_global_styles_selected: numOfSelectedGlobalStyles > 0,
 			} ),
-		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
+		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation, numOfSelectedGlobalStyles ]
 	);
 
 	const selectedVariations = useMemo(
-		() =>
-			! resetCustomStyles
-				? ( [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[] )
-				: [],
-		[ colorVariation, fontVariation, resetCustomStyles ]
+		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
+		[ colorVariation, fontVariation ]
 	);
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
@@ -218,7 +207,6 @@ const PatternAssembler = ( {
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
-			reset_custom_styles: resetCustomStyles,
 		} );
 		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
@@ -229,16 +217,15 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const getDesign = () =>
-		( {
-			...selectedDesign,
-			recipe: {
-				...selectedDesign?.recipe,
-				header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
-				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
-				footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
-			} as DesignRecipe,
-		} ) as Design;
+	const getDesign = () => ( {
+		...selectedDesign,
+		recipe: {
+			...selectedDesign?.recipe,
+			header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
+			pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
+			footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
+		} as DesignRecipe,
+	} );
 
 	const updateActivePatternPosition = ( position: number ) => {
 		const patternPosition = header ? position + 1 : position;
@@ -349,7 +336,7 @@ const PatternAssembler = ( {
 	};
 
 	const onSubmit = () => {
-		const design = getDesign();
+		const design = getDesign() as Design;
 		const stylesheet = design.recipe?.stylesheet ?? '';
 		const themeId = getThemeIdFromStylesheet( stylesheet );
 		const hasBlogPatterns = !! sections.find(
@@ -378,7 +365,7 @@ const PatternAssembler = ( {
 						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 						headerHtml: header?.html,
 						footerHtml: footer?.html,
-						globalStyles: ! resetCustomStyles ? syncedGlobalStylesUserConfig : undefined,
+						globalStyles: syncedGlobalStylesUserConfig,
 						// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
 						// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
 						shouldResetContent: isNewSite && hasBlogPatterns,
@@ -417,7 +404,6 @@ const PatternAssembler = ( {
 		stepName,
 		nextScreenName: isNewSite ? 'confirmation' : 'activation',
 		onUpgradeLater: onContinue,
-		onContinue,
 		recordTracksEvent,
 	} );
 
@@ -434,11 +420,6 @@ const PatternAssembler = ( {
 	};
 
 	const onBack = () => {
-		// Turn off the resetting custom styles when going back from the upsell screen
-		if ( currentScreen.name === 'upsell' && resetCustomStyles ) {
-			setResetCustomStyles( false );
-		}
-
 		// Go back to the previous screen
 		if ( currentScreen.previousScreen ) {
 			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
@@ -503,8 +484,10 @@ const PatternAssembler = ( {
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
 	const onShuffle = ( type: string, pattern: Pattern, position?: number ) => {
-		const [ firstCategory ] = Object.keys( pattern.categories );
-		const selectedCategory = pattern.category?.name || firstCategory;
+		const availableCategory = Object.keys( pattern.categories ).find(
+			( category ) => patternsMapByCategory[ category ]
+		);
+		const selectedCategory = pattern.category?.name || availableCategory || '';
 		const patterns = patternsMapByCategory[ selectedCategory ];
 		const shuffledPattern = getShuffledPattern( patterns, pattern );
 		injectCategoryToPattern( shuffledPattern, categories, selectedCategory );
@@ -585,8 +568,6 @@ const PatternAssembler = ( {
 					<ScreenUpsell
 						{ ...globalStylesUpgradeProps }
 						numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
-						resetCustomStyles={ resetCustomStyles }
-						setResetCustomStyles={ setResetCustomStyles }
 					/>
 				</NavigatorScreen>
 			</div>

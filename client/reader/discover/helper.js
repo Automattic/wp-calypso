@@ -3,13 +3,13 @@ import moment from 'moment';
 const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 export const DEFAULT_TAB = 'recommended';
 export const LATEST_TAB = 'latest';
+export const FIRST_POSTS_TAB = 'firstposts';
 
 /**
  * Filters tags data and returns the tags intended to be loaded by the discover pages recommended
  * section. If tags is null, we return an empty array as we have yet to recieve the users followed
  * tags list. If the users followed tags list is empty, we return a default array of tags used to
  * load the feed. Otherwise, load the feed based on the users follwed tags.
- *
  * @param {Array | null} tags Array of tag slugs to evaluate
  * @returns {Array} Array of tag slugs that will be used for the discover stream.
  */
@@ -31,12 +31,14 @@ export function getSelectedTabTitle( selectedTab ) {
 	if ( selectedTab === LATEST_TAB ) {
 		return 'new';
 	}
+	if ( selectedTab === FIRST_POSTS_TAB ) {
+		return 'firstposts';
+	}
 	return selectedTab;
 }
 
 /**
  * Builds a stream key for the discover feed based on the selectedTab and tags for recommended feed.
- *
  * @param {string} selectedTab The discover feed tab that is selected
  * @param {Array} tags The list of tags to use for the recommended feed.
  * @returns {string} The stream key
@@ -57,7 +59,6 @@ export function buildDiscoverStreamKey( selectedTab, tags ) {
 
 /**
  * Retrieves an array of tags from the discover stream key.
- *
  * @param {string} streamKey The streamKey denoting the tags for the feed.
  * @returns {Array} An array of tag slugs.
  */
@@ -76,7 +77,6 @@ export function getTagsFromStreamKey( streamKey = '' ) {
 /**
  * Returns the current dateTime subtracting the number of days in the input, formatted for a
  * request.
- *
  * @param {number|null} daysToInclude Number of days to subtract from current datetime.
  * @returns Formatted date to add to the query.
  */

@@ -58,7 +58,6 @@ function triggerOverrideHandler( e ) {
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function transmitDraftId( calypsoPort ) {
@@ -83,7 +82,6 @@ function transmitDraftId( calypsoPort ) {
 
 /**
  * Sends a message to the parent frame when the "Move to trash" button is clicked.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostTrash( calypsoPort ) {
@@ -142,7 +140,6 @@ function overrideRevisions( calypsoPort ) {
  * Listens for post lock status changing to locked, and overrides the modal dialog
  * actions, addind an event handler for the All Posts button, and changing the
  * Take Over Url to work inside the iframe.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostLocked( calypsoPort ) {
@@ -189,7 +186,6 @@ function handlePostLocked( calypsoPort ) {
 /**
  * Listens for post lock status changing to locked, and for the post to have been taken over
  * by another user, adding an event handler for the All Posts button.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostLockTakeover( calypsoPort ) {
@@ -257,7 +253,6 @@ function handlePostStatusChange( calypsoPort ) {
 /**
  * Listens for image changes or removals happening in the Media Modal,
  * and updates accordingly all blocks containing them.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleUpdateImageBlocks( calypsoPort ) {
@@ -276,7 +271,6 @@ function handleUpdateImageBlocks( calypsoPort ) {
 
 	/**
 	 * Updates all the blocks containing a given edited image.
-	 *
 	 * @param {Array} blocks Array of block objects for the current post.
 	 * @param {Object} image The edited image.
 	 * @param {number} image.id The image ID.
@@ -396,7 +390,6 @@ function handleUpdateImageBlocks( calypsoPort ) {
 /**
  * Listens for insert media events happening in a Media Modal opened in a Classic Block,
  * and inserts the media into the appropriate block.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleInsertClassicBlockMedia( calypsoPort ) {
@@ -417,7 +410,6 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
 /**
  * Prevents the default closing flow and sends a message to the parent frame to
  * perform the navigation on the client side.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleCloseEditor( calypsoPort ) {
@@ -522,7 +514,6 @@ function isNavSidebarPresent() {
 
 /**
  * Modify links in order to open them in parent window and not in a child iframe.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 async function openLinksInParentFrame( calypsoPort ) {
@@ -720,7 +711,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 
 /**
  * Ensures the Calypso Customizer is opened when clicking on the FSE blocks' edit buttons.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openCustomizer( calypsoPort ) {
@@ -739,7 +729,6 @@ function openCustomizer( calypsoPort ) {
 /**
  * Sends a message to Calypso when clicking the "Edit Header" or "Edit Footer"
  * buttons in order to perform the navigation in Calypso instead of in the iFrame.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openTemplatePartLinks( calypsoPort ) {
@@ -768,7 +757,6 @@ function openTemplatePartLinks( calypsoPort ) {
  * Ensures the calypsoifyGutenberg close URL matches the one on the client.
  * This is important because we modify the close URL client side in the
  * context of template part blocks in FSE.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getCloseButtonUrl( calypsoPort ) {
@@ -805,7 +793,6 @@ function getCloseButtonUrl( calypsoPort ) {
  * Ensures gutenboarding status and corresponding data is placed on the calypsoifyGutenberg object.
  * This is imporant because it allows us to adapt small changes to the editor when
  * used in the context of Gutenboarding.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getGutenboardingStatus( calypsoPort ) {
@@ -828,7 +815,6 @@ function getGutenboardingStatus( calypsoPort ) {
 
 /**
  * Hooks the nav sidebar to change some of its button labels and behaviour.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getNavSidebarLabels( calypsoPort ) {
@@ -864,7 +850,6 @@ function getNavSidebarLabels( calypsoPort ) {
 /**
  * Retrieves info to allow the bridge to build calypso urls. Hook parts of
  * the editor that use this info.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getCalypsoUrlInfo( calypsoPort ) {
@@ -1004,7 +989,6 @@ function handleCheckoutModal( calypsoPort ) {
 
 /**
  * Handles the back to Dashboard link after the removal of the previously-used Portal in Gutenberg 14.5
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleSiteEditorBackButton( calypsoPort ) {
@@ -1040,7 +1024,6 @@ function handleSiteEditorBackButton( calypsoPort ) {
  * If WelcomeTour is set to show, check if the App Banner is visible.
  * If App Banner is visible, we set the Welcome Tour to not show.
  * When the App Banner gets dismissed, we set the Welcome Tour to show.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleAppBannerShowing( calypsoPort ) {
