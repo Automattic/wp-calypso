@@ -1,3 +1,4 @@
+import usePatternInlineCss from '../hooks/use-pattern-inline-css';
 import usePatternMinHeightVh from '../hooks/use-pattern-min-height-vh';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
@@ -20,6 +21,7 @@ const PatternRenderer = ( {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 	const patternHtml = usePatternMinHeightVh( pattern?.html, viewportHeight );
+	const inlineCss = usePatternInlineCss( patternId );
 
 	return (
 		<BlockRendererContainer
@@ -28,6 +30,7 @@ const PatternRenderer = ( {
 			viewportWidth={ viewportWidth }
 			maxHeight={ maxHeight }
 			minHeight={ minHeight }
+			inlineCss={ inlineCss }
 		>
 			<div
 				// eslint-disable-next-line react/no-danger
