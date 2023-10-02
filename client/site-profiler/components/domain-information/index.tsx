@@ -111,7 +111,7 @@ export default function DomainInformation( props: Props ) {
 				<li>
 					<div className="name">{ translate( 'Contact' ) }</div>
 
-					{ ! whoisDataAvailability && <div>{ translate( 'No available' ) }</div> }
+					{ ! whoisDataAvailability && <div>{ translate( 'Not available' ) }</div> }
 
 					{ whoisDataAvailability && (
 						<>
@@ -364,7 +364,7 @@ export default function DomainInformation( props: Props ) {
 				) }
 				<li>
 					<div className="name">WhoIs</div>
-					{ ! whoisDataAvailability && <div>{ translate( 'No available' ) }</div> }
+					{ ! whoisDataAvailability && <div>{ translate( 'Not available' ) }</div> }
 
 					{ whoisDataAvailability && (
 						<div className="whois-raw-data">
