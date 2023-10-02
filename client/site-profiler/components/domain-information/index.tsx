@@ -50,6 +50,16 @@ export default function DomainInformation( props: Props ) {
 		} );
 	};
 
+	const formatDateTime = ( date?: string | string[] ) => {
+		if ( Array.isArray( date ) && date.length > 0 ) {
+			date = date[ 0 ];
+		}
+
+		const res = moment.utc( date );
+
+		return res.isValid() ? res.format( momentFormat ) : '';
+	};
+
 	return (
 		<div className="domain-information">
 			<h3>{ translate( 'Domain information' ) }</h3>
@@ -81,19 +91,19 @@ export default function DomainInformation( props: Props ) {
 				{ filteredWhois.creation_date && (
 					<li>
 						<div className="name">{ translate( 'Registered on' ) }</div>
-						<div>{ moment.utc( whois.creation_date ).format( momentFormat ) }</div>
+						<div>{ formatDateTime( whois.creation_date ) }</div>
 					</li>
 				) }
 				{ filteredWhois.registry_expiry_date && (
 					<li>
 						<div className="name">{ translate( 'Expires on' ) }</div>
-						<div>{ moment.utc( whois.registry_expiry_date ).format( momentFormat ) }</div>
+						<div>{ formatDateTime( whois.registry_expiry_date ) }</div>
 					</li>
 				) }
 				{ filteredWhois.updated_date && (
 					<li>
 						<div className="name">{ translate( 'Updated on' ) }</div>
-						<div>{ moment.utc( whois.updated_date ).format( momentFormat ) }</div>
+						<div>{ formatDateTime( whois.updated_date ) }</div>
 					</li>
 				) }
 				{ filteredWhois.name_server && whois.name_server && (
