@@ -283,7 +283,7 @@ class ThemesSelection extends Component {
 							heading="Premium themes"
 							subheading={ <p>Lorem ipsum nessum dorma</p> }
 							themes={ interlacedThemes.splice( 10 ) }
-							collectionSlug="premium-themes"
+							collectionSlug="some-themes"
 							getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
 							getScreenshotUrl={ this.props.getScreenshotUrl }
 							bookmarkRef={ this.props.bookmarkRef }
