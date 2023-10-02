@@ -14,6 +14,10 @@ interface Props {
 export default function HostingInformation( props: Props ) {
 	const { dns = [], urlData, hostingProvider } = props;
 	const aRecordIps = dns.filter( ( x ) => x.type === 'A' && x.ip );
+	const supportUrl =
+		hostingProvider?.slug === 'automattic'
+			? localizeUrl( 'https://wordpress.com/help/contact' )
+			: hostingProvider?.support_url;
 
 	return (
 		<div className="hosting-information">
@@ -23,13 +27,11 @@ export default function HostingInformation( props: Props ) {
 					<div className="name">{ translate( 'Provider' ) }</div>
 					<HostingProviderName hostingProvider={ hostingProvider } urlData={ urlData } />
 				</li>
-				{ hostingProvider?.slug === 'automattic' && (
+				{ supportUrl && ! hostingProvider?.is_cdn && (
 					<li>
-						<div className="name">Support</div>
+						<div className="name">{ translate( 'Support' ) }</div>
 						<div>
-							<a href={ localizeUrl( 'https://wordpress.com/help/contact' ) }>
-								{ translate( 'Contact support' ) }
-							</a>
+							<a href={ supportUrl }>{ translate( 'Contact support' ) }</a>
 						</div>
 					</li>
 				) }
