@@ -39,11 +39,7 @@ describe( 'Start Writing Tailored Onboarding', () => {
 		it( 'Enter account details', async function () {
 			await page.waitForURL( /.*start-writing.*/ );
 			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signup(
-				testUser.email,
-				testUser.username,
-				testUser.password
-			);
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 		} );
 
 		it( "Start user's first post", async function () {
