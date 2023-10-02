@@ -96,10 +96,7 @@ function CheckboxTreeItem( {
 	disabled?: boolean;
 } ) {
 	const item = items[ id ];
-	if ( ! item.parent ) {
-		return null;
-	}
-	const parent = items[ item.parent ];
+	const parent = items[ item.parent as string ];
 	const childIds = Object.keys( items ).filter( ( childId ) => items[ childId ].parent === id );
 
 	const handleCheckChange = () => {
@@ -109,7 +106,7 @@ function CheckboxTreeItem( {
 	return (
 		<TreeItemContainer className={ className }>
 			<ToggleControlWithHelpMargin
-				disabled={ parent.checked === false || disabled }
+				disabled={ parent?.checked === false || disabled }
 				help={ item.subTitle }
 				label={ item.label }
 				checked={ item.checked }
