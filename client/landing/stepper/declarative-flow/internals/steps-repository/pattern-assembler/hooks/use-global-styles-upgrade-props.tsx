@@ -10,7 +10,6 @@ interface Props {
 	stepName: string;
 	nextScreenName: ScreenName;
 	onUpgradeLater?: () => void;
-	onContinue?: () => void;
 	recordTracksEvent: ( eventName: string, eventProps?: { [ key: string ]: unknown } ) => void;
 }
 
@@ -19,7 +18,6 @@ const useGlobalStylesUpgradeProps = ( {
 	stepName,
 	nextScreenName,
 	onUpgradeLater,
-	onContinue,
 	recordTracksEvent,
 }: Props ) => {
 	const site = useSite();
@@ -49,15 +47,9 @@ const useGlobalStylesUpgradeProps = ( {
 		onUpgradeLater?.();
 	};
 
-	const handleContinue = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_UPSELL_EDIT_YOUR_CONTENT_BUTTON_CLICK );
-		onContinue?.();
-	};
-
 	return {
 		onCheckout: handleCheckout,
 		onTryStyle: handleTryStyle,
-		onContinue: handleContinue,
 	};
 };
 
