@@ -7,15 +7,15 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { getRegisteredDomains } from 'calypso/lib/domains';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSiteId, getSiteOptions } from 'calypso/state/sites/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
-import './styles.scss';
 
 const HOUR_IN_MS = 1000 * 60;
 const VideoContainer = styled.div< { isMobile: boolean } >`
@@ -129,15 +129,6 @@ function isSiteCreatedWithinLastHour( createdTime: string ): boolean {
 	return Date.now() - new Date( createdTime ).getTime() < HOUR_IN_MS;
 }
 
-function PageLoadingView() {
-	const translate = useTranslate();
-	return (
-		<div className="hundred-year-plan-flow-processing-screen__container">
-			<h1 className="wp-brand-font">{ translate( 'Finalizing Purchase…' ) }</h1>
-		</div>
-	);
-}
-
 export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -187,7 +178,12 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 				` }
 			/>
 
-			{ isPageLoading && <PageLoadingView /> }
+			{ isPageLoading && (
+				<HundredYearLoaderView
+					isMobile={ isMobile }
+					loadingText={ translate( 'Finalizing purchase…' ) }
+				/>
+			) }
 			{ ! isPageLoading && (
 				<>
 					<MasterBar>
