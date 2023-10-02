@@ -470,6 +470,11 @@ class RegisterDomainStep extends Component {
 						onClick={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
 					/>
 				) }
+
+				<div className="your-domains-summary">
+					<h2>Your Domains</h2>
+					{ this.renderDomainSummary() }
+				</div>
 			</>
 		);
 	}
@@ -688,6 +693,10 @@ class RegisterDomainStep extends Component {
 				/>
 			</>
 		);
+	}
+
+	renderDomainSummary() {
+		return this.props.cart?.products.map( ( product ) => <li>{ product.meta }</li> );
 	}
 
 	renderDomainExplanationImage() {
@@ -1348,6 +1357,8 @@ class RegisterDomainStep extends Component {
 
 		globalThis?.sessionStorage.setItem( SESSION_STORAGE_QUERY_KEY, this.state.lastQuery || '' );
 
+		console.log( 'add to cart: ', suggestion, position );
+
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			this.setState( { pendingCheckSuggestion: suggestion } );
@@ -1419,6 +1430,8 @@ class RegisterDomainStep extends Component {
 		const isFreeDomainExplainerVisible =
 			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
 			this.props.isPlanSelectionAvailableInFlow;
+
+		console.log( 'this.props.cart: ', this.props.cart );
 
 		return (
 			<DomainSearchResults
