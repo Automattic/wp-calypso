@@ -202,15 +202,8 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 	const setNewDomainFromQueryArg = () => {
 		let duplicateDomain = false;
 		const newDomainsState = { ...domainsState };
-
-		// Check if the domain already exists in the state
-		Object.keys( newDomainsState ).forEach( ( domainData ) => {
-			if ( newDomainsState[ domainData ].domain === newDomainTransferQueryArg ) {
-				duplicateDomain = true;
-			}
-		} );
-
-		newDomainsState[ uuid() ] = {
+		const domainKeys = Object.keys( newDomainsState );
+		const domainTransferObj = {
 			domain: String( newDomainTransferQueryArg ),
 			auth: '',
 			valid: false,
@@ -218,6 +211,19 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 			saleCost: undefined,
 			currencyCode: undefined,
 		};
+
+		if ( domainKeys.length === 1 && newDomainsState[ domainKeys[ 0 ] ].domain === '' ) {
+			newDomainsState[ domainKeys[ 0 ] ] = { ...domainTransferObj };
+		} else {
+			// Check if the domain already exists in the state
+			Object.keys( newDomainsState ).forEach( ( domainData ) => {
+				if ( newDomainsState[ domainData ].domain === newDomainTransferQueryArg ) {
+					duplicateDomain = true;
+				}
+			} );
+
+			newDomainsState[ uuid() ] = { ...domainTransferObj };
+		}
 
 		if ( ! duplicateDomain ) {
 			setDomainsTransferData( newDomainsState );
