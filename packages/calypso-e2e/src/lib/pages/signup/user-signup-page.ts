@@ -81,6 +81,35 @@ export class UserSignupPage {
 	}
 
 	/**
+	 * Choose Email sign-up method, then fill out required information and then submit the form to complete the signup.
+	 *
+	 * @param {string} email Email address of the new user.
+	 * @returns Response from the REST API.
+	 */
+	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
+		await this.page.click( 'button.components-button' );
+
+		await this.page.fill( selectors.emailInput, email );
+
+		// Use CSS selector instead of text.
+		// Text displayed on button changes depending on the link directing
+		// user to this page.
+		const [ , response ] = await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.waitForResponse( /.*new\?.*/ ),
+			this.page.click( selectors.submitButton ),
+		] );
+
+		if ( ! response ) {
+			throw new Error( 'Failed to create new user at signup.' );
+		}
+
+		const responseBody: NewUserResponse = await response.json();
+
+		return responseBody;
+	}
+
+	/**
 	 * Signup form that is used by WordPress.com Connect (WPCC) endpoint.
 	 *
 	 * WPCC is a single sign-on service. For more information, please see
