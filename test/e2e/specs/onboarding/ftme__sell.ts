@@ -57,7 +57,11 @@ describe( 'FTME: Sell', function () {
 
 		it( 'Sign up as new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+			newUserDetails = await userSignupPage.signup(
+				testUser.email,
+				testUser.username,
+				testUser.password
+			);
 		} );
 
 		it( 'Skip domain selection', async function () {
