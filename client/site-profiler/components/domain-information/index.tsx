@@ -27,6 +27,7 @@ export default function DomainInformation( props: Props ) {
 		isError: whoisRawDataFetchingError,
 	} = useDomainAnalyzerWhoisRawDataQuery( domain, fetchWhoisRawData );
 
+	const whoisDataAvailability = whois && Object.keys( whois ).length > 0;
 	const { fieldsRedacted, filteredWhois } = useFilteredWhoisData( whois );
 
 	const contactArgs = ( args?: string | string[] ): TranslateOptions => {
@@ -67,11 +68,12 @@ export default function DomainInformation( props: Props ) {
 							{ whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
 								<VerifiedProvider />
 							) }
-							{ ! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
-								<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
-									{ whois.registrar }
-								</a>
-							) }
+							{ whois.registrar_url &&
+								! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
+									<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
+										{ whois.registrar }
+									</a>
+								) }
 							{ ! whois.registrar_url && <span>{ whois.registrar }</span> }
 						</div>
 					</li>
@@ -107,227 +109,254 @@ export default function DomainInformation( props: Props ) {
 					</li>
 				) }
 				<li>
-					<div className="name">Contact</div>
-					<div className="col">
-						<h4>
-							<strong>{ translate( 'Registrant contact' ) }</strong>
-						</h4>
-						<ul>
-							{ filteredWhois.registrant_name && (
-								<li>
-									{ translate(
-										'{{strong}}Name:{{/strong}} %s',
-										contactArgs( whois.registrant_name )
+					<div className="name">{ translate( 'Contact' ) }</div>
+
+					{ ! whoisDataAvailability && <div>{ translate( 'Not available' ) }</div> }
+
+					{ whoisDataAvailability && (
+						<>
+							<div className="col">
+								<h4>
+									<strong>{ translate( 'Registrant contact' ) }</strong>
+								</h4>
+								<ul>
+									{ filteredWhois.registrant_name && (
+										<li>
+											{ translate(
+												'{{strong}}Name:{{/strong}} %s',
+												contactArgs( whois.registrant_name )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.registrant_organization && (
-								<li>
-									{ translate(
-										'{{strong}}Organization:{{/strong}} %s',
-										contactArgs( whois.registrant_organization )
+									{ filteredWhois.registrant_organization && (
+										<li>
+											{ translate(
+												'{{strong}}Organization:{{/strong}} %s',
+												contactArgs( whois.registrant_organization )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.registrant_street && (
-								<li>
-									{ translate(
-										'{{strong}}Street:{{/strong}} %s',
-										contactArgs( whois.registrant_street )
+									{ filteredWhois.registrant_street && (
+										<li>
+											{ translate(
+												'{{strong}}Street:{{/strong}} %s',
+												contactArgs( whois.registrant_street )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.registrant_city && (
-								<li>
-									{ translate(
-										'{{strong}}City:{{/strong}} %s',
-										contactArgs( whois.registrant_city )
+									{ filteredWhois.registrant_city && (
+										<li>
+											{ translate(
+												'{{strong}}City:{{/strong}} %s',
+												contactArgs( whois.registrant_city )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.registrant_state && (
-								<li>
-									{ translate(
-										'{{strong}}State:{{/strong}} %s',
-										contactArgs( whois.registrant_state )
+									{ filteredWhois.registrant_state && (
+										<li>
+											{ translate(
+												'{{strong}}State:{{/strong}} %s',
+												contactArgs( whois.registrant_state )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.registrant_postal_code && (
-								<li>
-									{ translate(
-										'{{strong}}Postal Code:{{/strong}} %s',
-										contactArgs( whois.registrant_postal_code )
+									{ filteredWhois.registrant_postal_code && (
+										<li>
+											{ translate(
+												'{{strong}}Postal Code:{{/strong}} %s',
+												contactArgs( whois.registrant_postal_code )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.registrant_country && (
-								<li>
-									{ translate(
-										'{{strong}}Country:{{/strong}} %s',
-										contactArgs( whois.registrant_country )
+									{ filteredWhois.registrant_country && (
+										<li>
+											{ translate(
+												'{{strong}}Country:{{/strong}} %s',
+												contactArgs( whois.registrant_country )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.registrant_phone && (
-								<li>
-									{ translate(
-										'{{strong}}Phone:{{/strong}} %s',
-										contactArgs( whois.registrant_phone )
+									{ filteredWhois.registrant_phone && (
+										<li>
+											{ translate(
+												'{{strong}}Phone:{{/strong}} %s',
+												contactArgs( whois.registrant_phone )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.registrant_email && whois.registrant_email && (
-								<li>
-									{ whois.registrant_email.includes( '@' ) && (
-										<a href={ `mailto:${ whois.registrant_email }` }>{ translate( 'Email' ) }</a>
+									{ filteredWhois.registrant_email && whois.registrant_email && (
+										<li>
+											{ whois.registrant_email.includes( '@' ) && (
+												<a href={ `mailto:${ whois.registrant_email }` }>
+													{ translate( 'Email' ) }
+												</a>
+											) }
+											{ urlRegex.test( whois.registrant_email ) &&
+												linkifyUrlFromText( whois.registrant_email ) }
+										</li>
 									) }
-									{ urlRegex.test( whois.registrant_email ) &&
-										linkifyUrlFromText( whois.registrant_email ) }
-								</li>
-							) }
-						</ul>
-					</div>
-					<div className="col">
-						<h4>
-							<strong>{ translate( 'Administrative contact' ) }</strong>
-						</h4>
-						<ul>
-							{ filteredWhois.admin_name && (
-								<li>
-									{ translate( '{{strong}}Name:{{/strong}} %s', contactArgs( whois.admin_name ) ) }
-								</li>
-							) }
-							{ filteredWhois.admin_organization && (
-								<li>
-									{ translate(
-										'{{strong}}Organization:{{/strong}} %s',
-										contactArgs( whois.admin_organization )
+								</ul>
+							</div>
+							<div className="col">
+								<h4>
+									<strong>{ translate( 'Administrative contact' ) }</strong>
+								</h4>
+								<ul>
+									{ filteredWhois.admin_name && (
+										<li>
+											{ translate(
+												'{{strong}}Name:{{/strong}} %s',
+												contactArgs( whois.admin_name )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.admin_street && (
-								<li>
-									{ translate(
-										'{{strong}}Street:{{/strong}} %s',
-										contactArgs( whois.admin_street )
+									{ filteredWhois.admin_organization && (
+										<li>
+											{ translate(
+												'{{strong}}Organization:{{/strong}} %s',
+												contactArgs( whois.admin_organization )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.admin_city && (
-								<li>
-									{ translate( '{{strong}}City:{{/strong}} %s', contactArgs( whois.admin_city ) ) }
-								</li>
-							) }
-							{ filteredWhois.admin_state && (
-								<li>
-									{ translate(
-										'{{strong}}State:{{/strong}} %s',
-										contactArgs( whois.admin_state )
+									{ filteredWhois.admin_street && (
+										<li>
+											{ translate(
+												'{{strong}}Street:{{/strong}} %s',
+												contactArgs( whois.admin_street )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.admin_postal_code && (
-								<li>
-									{ translate(
-										'{{strong}}Postal Code:{{/strong}} %s',
-										contactArgs( whois.admin_postal_code )
+									{ filteredWhois.admin_city && (
+										<li>
+											{ translate(
+												'{{strong}}City:{{/strong}} %s',
+												contactArgs( whois.admin_city )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.admin_country && (
-								<li>
-									{ translate(
-										'{{strong}}Country:{{/strong}} %s',
-										contactArgs( whois.admin_country )
+									{ filteredWhois.admin_state && (
+										<li>
+											{ translate(
+												'{{strong}}State:{{/strong}} %s',
+												contactArgs( whois.admin_state )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.admin_phone && (
-								<li>
-									{ translate(
-										'{{strong}}Phone:{{/strong}} %s',
-										contactArgs( whois.admin_phone )
+									{ filteredWhois.admin_postal_code && (
+										<li>
+											{ translate(
+												'{{strong}}Postal Code:{{/strong}} %s',
+												contactArgs( whois.admin_postal_code )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.admin_email && whois.admin_email?.includes( '@' ) && (
-								<a href={ `mailto:${ whois.admin_email }` }>{ translate( 'Email' ) }</a>
-							) }
-							{ filteredWhois.admin_email &&
-								whois.admin_email &&
-								urlRegex.test( whois.admin_email ) &&
-								linkifyUrlFromText( whois.admin_email ) }
-						</ul>
-					</div>
-					<div className="col">
-						<h4>
-							<strong>{ translate( 'Technical contact' ) }</strong>
-						</h4>
-						<ul>
-							{ filteredWhois.tech_name && (
-								<li>
-									{ translate( '{{strong}}Name:{{/strong}} %s', contactArgs( whois.tech_name ) ) }
-								</li>
-							) }
-							{ filteredWhois.tech_organization && (
-								<li>
-									{ translate(
-										'{{strong}}Organization:{{/strong}} %s',
-										contactArgs( whois.tech_organization )
+									{ filteredWhois.admin_country && (
+										<li>
+											{ translate(
+												'{{strong}}Country:{{/strong}} %s',
+												contactArgs( whois.admin_country )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.tech_street && (
-								<li>
-									{ translate(
-										'{{strong}}Street:{{/strong}} %s',
-										contactArgs( whois.tech_street )
+									{ filteredWhois.admin_phone && (
+										<li>
+											{ translate(
+												'{{strong}}Phone:{{/strong}} %s',
+												contactArgs( whois.admin_phone )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.tech_city && (
-								<li>
-									{ translate( '{{strong}}City:{{/strong}} %s', contactArgs( whois.tech_city ) ) }
-								</li>
-							) }
-							{ filteredWhois.tech_state && (
-								<li>
-									{ translate( '{{strong}}State:{{/strong}} %s', contactArgs( whois.tech_state ) ) }
-								</li>
-							) }
-							{ filteredWhois.tech_postal_code && (
-								<li>
-									{ translate(
-										'{{strong}}Postal Code:{{/strong}} %s',
-										contactArgs( whois.tech_postal_code )
+									{ filteredWhois.admin_email && whois.admin_email?.includes( '@' ) && (
+										<a href={ `mailto:${ whois.admin_email }` }>{ translate( 'Email' ) }</a>
 									) }
-								</li>
-							) }
-							{ filteredWhois.tech_country && (
-								<li>
-									{ translate(
-										'{{strong}}Country:{{/strong}} %s',
-										contactArgs( whois.tech_country )
+									{ filteredWhois.admin_email &&
+										whois.admin_email &&
+										urlRegex.test( whois.admin_email ) &&
+										linkifyUrlFromText( whois.admin_email ) }
+								</ul>
+							</div>
+							<div className="col">
+								<h4>
+									<strong>{ translate( 'Technical contact' ) }</strong>
+								</h4>
+								<ul>
+									{ filteredWhois.tech_name && (
+										<li>
+											{ translate(
+												'{{strong}}Name:{{/strong}} %s',
+												contactArgs( whois.tech_name )
+											) }
+										</li>
 									) }
-								</li>
-							) }
-							{ filteredWhois.tech_phone && (
-								<li>
-									{ translate( '{{strong}}Phone:{{/strong}} %s', contactArgs( whois.tech_phone ) ) }
-								</li>
-							) }
-							{ filteredWhois.tech_email && whois.tech_email?.includes( '@' ) && (
-								<a href={ `mailto:${ whois.tech_email }` }>{ translate( 'Email' ) }</a>
-							) }
-							{ filteredWhois.tech_email &&
-								whois.tech_email &&
-								urlRegex.test( whois.tech_email ) &&
-								linkifyUrlFromText( whois.tech_email ) }
-						</ul>
-					</div>
+									{ filteredWhois.tech_organization && (
+										<li>
+											{ translate(
+												'{{strong}}Organization:{{/strong}} %s',
+												contactArgs( whois.tech_organization )
+											) }
+										</li>
+									) }
+									{ filteredWhois.tech_street && (
+										<li>
+											{ translate(
+												'{{strong}}Street:{{/strong}} %s',
+												contactArgs( whois.tech_street )
+											) }
+										</li>
+									) }
+									{ filteredWhois.tech_city && (
+										<li>
+											{ translate(
+												'{{strong}}City:{{/strong}} %s',
+												contactArgs( whois.tech_city )
+											) }
+										</li>
+									) }
+									{ filteredWhois.tech_state && (
+										<li>
+											{ translate(
+												'{{strong}}State:{{/strong}} %s',
+												contactArgs( whois.tech_state )
+											) }
+										</li>
+									) }
+									{ filteredWhois.tech_postal_code && (
+										<li>
+											{ translate(
+												'{{strong}}Postal Code:{{/strong}} %s',
+												contactArgs( whois.tech_postal_code )
+											) }
+										</li>
+									) }
+									{ filteredWhois.tech_country && (
+										<li>
+											{ translate(
+												'{{strong}}Country:{{/strong}} %s',
+												contactArgs( whois.tech_country )
+											) }
+										</li>
+									) }
+									{ filteredWhois.tech_phone && (
+										<li>
+											{ translate(
+												'{{strong}}Phone:{{/strong}} %s',
+												contactArgs( whois.tech_phone )
+											) }
+										</li>
+									) }
+									{ filteredWhois.tech_email && whois.tech_email?.includes( '@' ) && (
+										<a href={ `mailto:${ whois.tech_email }` }>{ translate( 'Email' ) }</a>
+									) }
+									{ filteredWhois.tech_email &&
+										whois.tech_email &&
+										urlRegex.test( whois.tech_email ) &&
+										linkifyUrlFromText( whois.tech_email ) }
+								</ul>
+							</div>
+						</>
+					) }
 				</li>
-				{ fieldsRedacted > 0 && (
+				{ whoisDataAvailability && fieldsRedacted > 0 && (
 					<li className="redacted">
 						<div className="name"></div>
 						<div>{ translate( '* Some fields have been redacted for privacy' ) }</div>
@@ -335,38 +364,42 @@ export default function DomainInformation( props: Props ) {
 				) }
 				<li>
 					<div className="name">WhoIs</div>
-					<div className="whois-raw-data">
-						{ ! whoisRawData && (
-							<Button
-								isBusy={ whoisRawDataFetching }
-								onClick={ () => setFetchWhoisRawData( true ) }
-								variant="link"
-							>
-								{ translate( 'Display raw WHOIS output' ) }
-							</Button>
-						) }
+					{ ! whoisDataAvailability && <div>{ translate( 'Not available' ) }</div> }
 
-						{ whoisRawDataFetchingError && (
-							<p>{ translate( 'Error fetching WHOIS data; please try again later.' ) }</p>
-						) }
+					{ whoisDataAvailability && (
+						<div className="whois-raw-data">
+							{ ! whoisRawData && (
+								<Button
+									isBusy={ whoisRawDataFetching }
+									onClick={ () => setFetchWhoisRawData( true ) }
+									variant="link"
+								>
+									{ translate( 'Display raw WHOIS output' ) }
+								</Button>
+							) }
 
-						{ whoisRawData && (
-							<div className="whois-raw-data">
-								<p>
-									{ translate(
-										'This WHOIS data is provided for information purposes ' +
-											'for domains registered through WordPress.com. We ' +
-											'do not guarantee its accuracy. This information ' +
-											'is shown for the sole purpose of assisting you in ' +
-											'obtaining information about domain name registration ' +
-											'records; any use of this data for any other purpose ' +
-											'is expressly forbidden.'
-									) }
-								</p>
-								<pre>{ whoisRawData.whois.join( '\n' ) }</pre>
-							</div>
-						) }
-					</div>
+							{ whoisRawDataFetchingError && (
+								<p>{ translate( 'Error fetching WHOIS data; please try again later.' ) }</p>
+							) }
+
+							{ whoisRawData && (
+								<div className="whois-raw-data">
+									<p>
+										{ translate(
+											'This WHOIS data is provided for information purposes ' +
+												'for domains registered through WordPress.com. We ' +
+												'do not guarantee its accuracy. This information ' +
+												'is shown for the sole purpose of assisting you in ' +
+												'obtaining information about domain name registration ' +
+												'records; any use of this data for any other purpose ' +
+												'is expressly forbidden.'
+										) }
+									</p>
+									<pre>{ whoisRawData.whois.join( '\n' ) }</pre>
+								</div>
+							) }
+						</div>
+					) }
 				</li>
 			</ul>
 		</div>
