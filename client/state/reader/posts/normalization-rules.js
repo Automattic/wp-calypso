@@ -32,6 +32,7 @@ import {
 	PHOTO_ONLY_MIN_WIDTH,
 	PHOTO_ONLY_MAX_CHARACTER_COUNT,
 	GALLERY_MIN_IMAGES,
+	GALLERY_MAX_IMAGES,
 	GALLERY_MIN_IMAGE_WIDTH,
 	MIN_IMAGE_WIDTH,
 	MIN_IMAGE_HEIGHT,
@@ -78,7 +79,7 @@ const hasShortContent = ( post ) => getCharacterCount( post ) <= PHOTO_ONLY_MAX_
  * @returns {Object}            The classified post
  */
 export function classifyPost( post ) {
-	const imagesForGallery = getImagesFromPostToDisplay( post, GALLERY_MIN_IMAGES + 1 );
+	const imagesForGallery = getImagesFromPostToDisplay( post, GALLERY_MAX_IMAGES );
 	let displayType = DISPLAY_TYPES.UNCLASSIFIED;
 
 	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
