@@ -16,7 +16,7 @@ const ToggleControlWithHelpMargin = styled( ToggleControl )( {
 export interface CheckboxTreeItem {
 	label: string;
 	checked?: boolean;
-	children?: CheckboxTreeItem[];
+	children: CheckboxTreeItem[];
 	subTitle?: string;
 	name?: string;
 }
@@ -65,19 +65,13 @@ function toInternal( nestedItems: CheckboxTreeItem[], parent: string | null = nu
 	let flatItems = {} as InternalItemMap;
 
 	nestedItems.forEach( ( item, index ) => {
-		// Create a unique ID based on the prefix (or parent ID) and current index.
 		const id = `${ prefix }${ index + 1 }`;
 
 		// Add the current item to the flat structure.
-		flatItems[ id ] = {
-			label: item.label,
-			checked: item.checked || false,
-			parent: parent,
-			subTitle: item.subTitle,
-		} as CheckboxInternalItem;
+		flatItems[ id ] = { ...item, parent, checked: item.checked || false } as CheckboxInternalItem;
 
 		// If there are sub-items, recursively convert them and merge into the current structure.
-		if ( item.children && item.children.length > 0 ) {
+		if ( item.children.length > 0 ) {
 			flatItems = {
 				...flatItems,
 				...toInternal( item?.children || ( [] as CheckboxInternalItem[] ), id, `${ id }-` ),
@@ -102,6 +96,9 @@ function CheckboxTreeItem( {
 	disabled?: boolean;
 } ) {
 	const item = items[ id ];
+	if ( ! item.parent ) {
+		return null;
+	}
 	const parent = items[ item.parent ];
 	const childIds = Object.keys( items ).filter( ( childId ) => items[ childId ].parent === id );
 
@@ -112,7 +109,7 @@ function CheckboxTreeItem( {
 	return (
 		<TreeItemContainer className={ className }>
 			<ToggleControlWithHelpMargin
-				disabled={ parent?.checked === false || disabled }
+				disabled={ parent.checked === false || disabled }
 				help={ item.subTitle }
 				label={ item.label }
 				checked={ item.checked }
@@ -138,34 +135,21 @@ export default function CheckboxTree( {
 	onChange,
 }: {
 	treeItems: CheckboxTreeItem[];
-	onChange: ( items: CheckboxTreeItem[] ) => void;
+	onChange?: ( items: CheckboxTreeItem[] ) => void;
 	disabled?: boolean;
 } ) {
 	const [ items, setItems ] = useState< InternalItemMap >( toInternal( treeItems, null, '' ) );
 
 	const handleCheckChange = ( id: string, isChecked: boolean ) => {
 		const newItems = { ...items } as InternalItemMap;
-
-		// const updateChildCheckedState = ( currentId, isChecked ) => {
-		// 	const children = Object.keys( newItems ).filter(
-		// 		( childId ) => newItems[ childId ].parent === currentId
-		// 	);
-		// 	children.forEach( ( child ) => {
-		// 		newItems[ child ].checked = isChecked;
-		// 		updateChildCheckedState( child, isChecked ); // Recurse into further child levels
-		// 	} );
-		// };
-
 		newItems[ id ].checked = isChecked;
-		//
-		// if ( isChecked === false ) {
-		// 	updateChildCheckedState( id, false );
-		// }
-
 		setItems( newItems );
 	};
 
 	useEffect( () => {
+		if ( ! onChange ) {
+			return;
+		}
 		const selectedItems = [] as CheckboxTreeItem[];
 
 		const newData = fromInternal( items );

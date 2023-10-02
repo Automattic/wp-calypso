@@ -111,8 +111,8 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				{ isStagingSitesI3Enabled && (
 					<SyncActionsContainer>
 						<ProductionSiteSyncCard
-							onPush={ pushToStaging }
-							onPull={ pullFromStaging }
+							onPush={ pullFromStaging }
+							onPull={ pushToStaging }
 							disabled={ disabled }
 						/>
 					</SyncActionsContainer>

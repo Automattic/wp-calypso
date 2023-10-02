@@ -11,6 +11,7 @@ const synchronizationOptions: CheckboxTreeItem[] = [
 	{
 		name: 'sqls',
 		label: 'Database',
+		children: [],
 	},
 	{
 		label: 'Files',
@@ -18,24 +19,29 @@ const synchronizationOptions: CheckboxTreeItem[] = [
 			{
 				name: 'themes',
 				label: translate( 'Themes' ),
+				children: [],
 			},
 			{
 				name: 'plugins',
 				label: translate( 'Plugins' ),
+				children: [],
 			},
 			{
 				name: 'uploads',
 				label: translate( 'Media Uploads' ),
+				children: [],
 			},
 			{
 				name: 'contents',
 				label: translate( 'wp-content directory' ),
 				subTitle: translate( 'excluding themes, plugins, and uploads' ),
+				children: [],
 			},
 			{
 				name: 'roots',
 				label: translate( 'WordPress roots' ),
 				subTitle: translate( 'includes wp-config php and any non WordPress files' ),
+				children: [],
 			},
 		],
 	},
@@ -85,9 +91,15 @@ const FormSelectContainer = styled.div( {
 	marginTop: '8px',
 } );
 
-interface CardProps {
+interface StagingCardProps {
 	onPush: ( items?: string[] ) => void;
 	onPull: ( items?: string[] ) => void;
+	disabled: boolean;
+}
+
+interface ProductionCardProps {
+	onPush: ( items?: string[] ) => void;
+	onPull: () => void;
 	disabled: boolean;
 }
 
@@ -95,9 +107,18 @@ const ProductionSiteSync = ( {
 	onPush,
 	onPull,
 	disabled,
+	isButtonDisabled,
 	onSelectItems,
 	selectedOption,
 	onOptionChange,
+}: {
+	onPush: ( items?: string[] ) => void;
+	onPull: () => void;
+	disabled: boolean;
+	isButtonDisabled: boolean;
+	onSelectItems: ( items: CheckboxTreeItem[] ) => void;
+	selectedOption: string;
+	onOptionChange: ( option: string ) => void;
 } ) => {
 	const translate = useTranslate();
 	return (
@@ -124,6 +145,7 @@ const ProductionSiteSync = ( {
 					></CheckboxTree>
 					<ConfirmationModalContainer>
 						<ConfirmationModal
+							disabled={ disabled || isButtonDisabled }
 							isPrimary={ true }
 							onConfirm={ onPush }
 							modalTitle={ translate( 'Confirm pushing changes to your production site.' ) }
@@ -141,6 +163,7 @@ const ProductionSiteSync = ( {
 			{ selectedOption === 'pull' && (
 				<ConfirmationModalContainer>
 					<ConfirmationModal
+						disabled={ disabled || isButtonDisabled }
 						isPrimary={ true }
 						onConfirm={ onPull }
 						modalTitle={ translate( 'Confirm pulling changes from your production site.' ) }
@@ -162,9 +185,18 @@ const StagingSiteSync = ( {
 	onPush,
 	onPull,
 	disabled,
+	isButtonDisabled,
 	onSelectItems,
 	selectedOption,
 	onOptionChange,
+}: {
+	onPush: () => void;
+	onPull: ( items?: string[] ) => void;
+	disabled: boolean;
+	isButtonDisabled: boolean;
+	onSelectItems: ( items: CheckboxTreeItem[] ) => void;
+	selectedOption: string;
+	onOptionChange: ( option: string ) => void;
 } ) => {
 	const translate = useTranslate();
 	return (
@@ -191,6 +223,8 @@ const StagingSiteSync = ( {
 					></CheckboxTree>
 					<ConfirmationModalContainer>
 						<ConfirmationModal
+							disabled={ disabled || isButtonDisabled }
+							isPrimary={ true }
 							onConfirm={ onPull }
 							modalTitle={ translate( 'Confirm pull your changes from your staging site' ) }
 							modalMessage={ translate(
@@ -207,6 +241,8 @@ const StagingSiteSync = ( {
 			{ selectedOption === 'push' && (
 				<ConfirmationModalContainer>
 					<ConfirmationModal
+						disabled={ disabled || isButtonDisabled }
+						isPrimary={ true }
 						onConfirm={ onPush }
 						modalTitle={ translate( 'Confirm pushing changes to your staging site' ) }
 						modalMessage={ translate(
@@ -256,26 +292,35 @@ const SyncCardContainer = ( { children } ) => {
 	);
 };
 
-export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: CardProps ) => {
-	const [ selectedItems, setSelectedItems ] = useState( [] as CheckboxTreeItem[] );
+export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: ProductionCardProps ) => {
+	const [ selectedItems, setSelectedItems ] = useState( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState( 'push' );
-	const onPushInternal = useCallback( () => {
-		const items =
-			selectedItems.flatMap( ( item ) => {
-				if ( item?.children?.length || 0 > 0 ) {
-					return item?.children?.map( ( child ) => child.name || '' ) || [];
+
+	const onSelectItems = useCallback( ( items: CheckboxTreeItem[] ) => {
+		const filteredItems =
+			items.flatMap( ( item ) => {
+				if ( item.children.length > 0 ) {
+					return (
+						item.children.filter( ( child ) => child.name ).map( ( child ) => child.name ) || []
+					);
 				}
-				if ( item?.name ) {
-					return item.name || '';
+				if ( item.name ) {
+					return item.name;
 				}
 				return [];
-			} ) || [];
-		onPush?.( items );
+			} ) || ( [] as string[] );
+
+		setSelectedItems( filteredItems as string[] );
+	}, [] );
+
+	const onPushInternal = useCallback( () => {
+		onPush?.( selectedItems );
 	}, [ onPush, selectedItems ] );
 
 	const onPullInternal = useCallback( () => {
 		onPull?.();
 	}, [ onPull ] );
+	const isDisabled = disabled || ( selectedItems.length === 0 && selectedOption === 'push' );
 	return (
 		<SyncCardContainer>
 			<ProductionSiteSync
@@ -284,31 +329,41 @@ export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: CardProps 
 				onPush={ onPushInternal }
 				onPull={ onPullInternal }
 				disabled={ disabled }
-				onSelectItems={ setSelectedItems }
+				isButtonDisabled={ isDisabled }
+				onSelectItems={ onSelectItems }
 			/>
 		</SyncCardContainer>
 	);
 };
 
-export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: CardProps ) => {
-	const [ selectedItems, setSelectedItems ] = useState( [] as CheckboxTreeItem[] );
+export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: StagingCardProps ) => {
+	const [ selectedItems, setSelectedItems ] = useState< string[] >( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState( 'pull' );
 	const onPushInternal = useCallback( () => {
 		onPush?.();
 	}, [ onPush ] );
-	const onPullInternal = useCallback( () => {
-		const items =
-			selectedItems.flatMap( ( item ) => {
-				if ( item?.children?.length || 0 > 0 ) {
-					return item?.children?.map( ( child ) => child.name || '' ) || [];
+	const onSelectItems = useCallback( ( items: CheckboxTreeItem[] ) => {
+		const filteredItems =
+			items.flatMap( ( item ) => {
+				if ( item.children.length > 0 ) {
+					return (
+						item.children.filter( ( child ) => child.name ).map( ( child ) => child.name ) || []
+					);
 				}
-				if ( item?.name ) {
-					return item.name || '';
+				if ( item.name ) {
+					return item.name;
 				}
 				return [];
-			} ) || [];
-		onPull?.( items );
+			} ) || ( [] as string[] );
+
+		setSelectedItems( filteredItems as string[] );
+	}, [] );
+
+	const onPullInternal = useCallback( () => {
+		onPull?.( selectedItems );
 	}, [ onPull, selectedItems ] );
+
+	const isButtonDisabled = disabled || ( selectedItems.length === 0 && selectedOption === 'pull' );
 	return (
 		<SyncCardContainer>
 			<StagingSiteSync
@@ -317,7 +372,8 @@ export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: CardProps ) =
 				onPush={ onPushInternal }
 				onPull={ onPullInternal }
 				disabled={ disabled }
-				onSelectItems={ setSelectedItems }
+				isButtonDisabled={ isButtonDisabled }
+				onSelectItems={ onSelectItems }
 			/>
 		</SyncCardContainer>
 	);
