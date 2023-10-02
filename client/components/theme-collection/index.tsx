@@ -8,7 +8,7 @@ import { ThemeBlock } from 'calypso/components/themes-list';
 interface ThemeCollectionProps {
 	heading: string;
 	subheading: ReactElement;
-	themes: Array< never >;
+	themes: Array< { id: string } >;
 	collectionSlug: string;
 	getScreenshotUrl: ( themeId: string ) => string;
 	siteId: string | null;
@@ -107,7 +107,7 @@ export default function ThemeCollection( {
 				<div className="theme-collection__list-wrapper swiper-wrapper">
 					{ themes.map( ( theme, index ) => (
 						<div
-							key={ `theme-collection-container-${ collectionSlug }-${ index }` }
+							key={ `theme-collection-container-${ collectionSlug }-${ theme.id }` }
 							className="theme--collection__list-item swiper-slide"
 						>
 							<ThemeBlock
