@@ -146,10 +146,10 @@ describe( 'Analytics', () => {
 			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', 8, 'eight' ] );
 		} );
 
-		test( 'should call recordAliasInFloodlight when anonymousUserId exists', () => {
+		test( 'should not call recordAliasInFloodlight when anonymousUserId does not exist', () => {
 			cookie.parse.mockImplementationOnce( () => ( {} ) );
 			identifyUser( { ID: 8, username: 'eight', email: 'eight@example.com' } );
-			expect( recordAliasInFloodlight ).toHaveBeenCalled();
+			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', 8, 'eight' ] );
 		} );
 	} );
