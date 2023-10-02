@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
 import { ReactElement, useEffect, useRef } from 'react';
 import './style.scss';
 import { Swiper as SwiperType } from 'swiper/types';
@@ -17,6 +18,7 @@ interface ThemeCollectionProps {
 	isActive: () => boolean;
 	getPrice: () => string;
 	isInstalling: () => boolean;
+	showMoreLink: string;
 }
 
 export default function ThemeCollection( {
@@ -31,6 +33,7 @@ export default function ThemeCollection( {
 	isActive,
 	getPrice,
 	isInstalling,
+	showMoreLink,
 }: ThemeCollectionProps ): ReactElement {
 	const swiperInstance = useRef< SwiperType | null >( null );
 	useEffect( () => {
@@ -97,6 +100,7 @@ export default function ThemeCollection( {
 			{ subheading }
 			<div className="swiper-container">
 				<div className="theme-collection__carousel-controls">
+					<a href={ showMoreLink }>{ translate( 'Show more' ) }</a>
 					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous">
 						<Icon icon={ chevronLeft } />
 					</Button>

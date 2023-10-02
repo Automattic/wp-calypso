@@ -22,6 +22,7 @@ function PremiumThemesCollection( props: ThemesCollectionProps ): ReactElement {
 			<QueryThemes query={ query } siteId="wpcom" />
 			<ThemeCollection
 				{ ...props }
+				showMoreLink={ `/themes/premium/${ props.siteId ?? '' }` }
 				heading={ translate( 'Premium Themes' ) }
 				subheading={ <p>Lorem ipsum mockup subheading</p> }
 				collectionSlug="premium-themes"

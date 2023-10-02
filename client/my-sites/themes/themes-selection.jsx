@@ -281,6 +281,7 @@ class ThemesSelection extends Component {
 					<>
 						<ThemeCollection
 							heading="Premium themes"
+							showMoreLink="/themes"
 							subheading={ <p>Lorem ipsum nessum dorma</p> }
 							themes={ interlacedThemes.splice( 10 ) }
 							collectionSlug="premium-themes"

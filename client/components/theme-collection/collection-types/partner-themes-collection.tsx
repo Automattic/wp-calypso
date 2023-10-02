@@ -22,6 +22,7 @@ function PartnerThemesCollection( props: ThemesCollectionProps ): ReactElement {
 			<QueryThemes query={ query } siteId="wpcom" />
 			<ThemeCollection
 				{ ...props }
+				showMoreLink={ `/themes/marketplace/${ props.siteId ?? '' }` }
 				heading={ translate( 'Partner Themes' ) }
 				subheading={ <p>Lorem ipsum mockup subheading</p> }
 				collectionSlug="partner-themes"
