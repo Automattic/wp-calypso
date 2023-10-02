@@ -147,7 +147,7 @@ describe( 'Analytics', () => {
 		} );
 
 		test( 'should not call recordAliasInFloodlight when anonymousUserId does not exist', () => {
-			cookie.parse.mockImplementationOnce( () => ( {} ) );
+			cookie.parse.mockImplementation( () => ( {} ) );
 			identifyUser( { ID: 8, username: 'eight', email: 'eight@example.com' } );
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', 8, 'eight' ] );
