@@ -555,7 +555,7 @@ export function getEnhancedTasks(
 						completed: ! isDomainEmailUnverified,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.replace( task.calypso_path || '/me/account' );
+							window.location.replace( task.calypso_path || `/domains/manage/${ siteSlug }` );
 						},
 					};
 					break;
