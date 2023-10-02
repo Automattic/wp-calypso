@@ -27,7 +27,7 @@ export default function HostingInformation( props: Props ) {
 					<div className="name">{ translate( 'Provider' ) }</div>
 					<HostingProviderName hostingProvider={ hostingProvider } urlData={ urlData } />
 				</li>
-				{ supportUrl && (
+				{ supportUrl && ! hostingProvider?.is_cdn && (
 					<li>
 						<div className="name">{ translate( 'Support' ) }</div>
 						<div>
