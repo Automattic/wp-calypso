@@ -33,9 +33,11 @@ export default function ThemeCollection( {
 	isInstalling,
 }: ThemeCollectionProps ): ReactElement {
 	const swiperInstance = useRef< SwiperType | null >( null );
+	const swiperContainerId = `swiper-container-${ collectionSlug }`;
+
 	useEffect( () => {
 		if ( themes !== null && themes.length > 0 ) {
-			const el = document.querySelector( '.swiper-container' ) as HTMLElement;
+			const el = document.querySelector( `#${ swiperContainerId }` ) as HTMLElement;
 			if ( el ) {
 				/**
 				 * We have to import the swiper package dynamically because it doesn't offer a CommonJS version. Because of this, the SSR build will fail.
@@ -95,7 +97,7 @@ export default function ThemeCollection( {
 		<div className="theme-collection__container ">
 			<h2>{ heading }</h2>
 			{ subheading }
-			<div className="swiper-container">
+			<div className="swiper-container" id={ swiperContainerId }>
 				<div className="theme-collection__carousel-controls">
 					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous">
 						<Icon icon={ chevronLeft } />
