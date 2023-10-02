@@ -12,11 +12,12 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
@@ -730,6 +731,12 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
+	const isEnglishLocale = useIsEnglishLocale();
+	const shouldShowNewJPTooltipCopy =
+		isEnglishLocale ||
+		i18n.hasTranslation(
+			'Security, performance and growth tools made by the WordPress experts. Powered by Jetpack.'
+		);
 
 	return (
 		<Row
@@ -766,7 +773,20 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 								</Plans2023Tooltip>
 								{ allJetpackFeatures.has( feature.getSlug() ) ? (
 									<JetpackIconContainer>
-										<JetpackLogo size={ 16 } />
+										<Plans2023Tooltip
+											text={
+												shouldShowNewJPTooltipCopy
+													? translate(
+															'Security, performance and growth tools made by the WordPress experts. Powered by Jetpack. '
+													  )
+													: ''
+											}
+											setActiveTooltipId={ setActiveTooltipId }
+											activeTooltipId={ activeTooltipId }
+											id={ `jp-${ tooltipId }` }
+										>
+											<JetpackLogo size={ 16 } />
+										</Plans2023Tooltip>
 									</JetpackIconContainer>
 								) : null }
 							</>
