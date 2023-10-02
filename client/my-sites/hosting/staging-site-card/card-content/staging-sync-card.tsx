@@ -1,179 +1,324 @@
-import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { ToggleControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useEffect } from 'react';
+import { translate, useTranslate } from 'i18n-calypso';
+import { useCallback, useState } from 'react';
+import FormSelect from 'calypso/components/forms/form-select';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { ConfirmationModal } from '../confirmation-modal';
+import CheckboxTree, { CheckboxTreeItem } from './checkbox-tree';
 
-const StagingSyncCardContainer = styled.div( {
+const synchronizationOptions: CheckboxTreeItem[] = [
+	{
+		name: 'sqls',
+		label: 'Database',
+	},
+	{
+		label: 'Files',
+		children: [
+			{
+				name: 'themes',
+				label: translate( 'Themes' ),
+			},
+			{
+				name: 'plugins',
+				label: translate( 'Plugins' ),
+			},
+			{
+				name: 'uploads',
+				label: translate( 'Media Uploads' ),
+			},
+			{
+				name: 'contents',
+				label: translate( 'wp-content directory' ),
+				subTitle: translate( 'excluding themes, plugins, and uploads' ),
+			},
+			{
+				name: 'roots',
+				label: translate( 'WordPress roots' ),
+				subTitle: translate( 'includes wp-config php and any non WordPress files' ),
+			},
+		],
+	},
+];
+
+const StagingSyncCardBody = styled.div( {
 	display: 'flex',
 	'&&&': {
 		flexDirection: 'column',
 	},
 } );
 
-const Bold = styled.p( {
-	fontWeight: 700,
+const ConfirmationModalContainer = styled.div( {
+	display: 'flex',
+	flexDirection: 'row',
+	marginTop: '12px',
 } );
 
-const synchromizeItems = [
-	{
-		label: 'Database',
-		checked: false,
-		subItems: [
-			{ label: 'Posts', checked: true, subItems: [], subTitle: 'Posts and pages content' },
-			{ label: 'Pages', checked: true, subItems: [] },
-		],
+const StagingSyncCardFooter = styled.p( {
+	fontSize: '14px',
+	fontStyle: 'italic',
+	color: '#646970',
+	marginTop: '16px',
+	lineHeight: '21px',
+	marginBottom: '0px',
+	'& a': {
+		color: '#646970',
+		textDecoration: 'underline',
 	},
-	{
-		label: 'Files',
-		checked: false,
-		subItems: [],
-		subTitle: 'Media, themes, and plugins',
-	},
-	{
-		label: 'Media',
-		checked: true,
-		subItems: [],
-		subTitle: 'Media, themes, and plugins',
-	},
-];
+} );
 
-function convertToFlatStructure( nestedItems, parent = null, prefix = '' ) {
-	let flatItems = {};
+const SyncContainerTitle = styled.p( {
+	fontWeight: 500,
+	marginTop: '0px',
+	marginBottom: '0px',
+} );
 
-	nestedItems.forEach( ( item, index ) => {
-		// Create a unique ID based on the prefix (or parent ID) and current index.
-		const id = `${ prefix }${ index + 1 }`;
+const SyncContainerContent = styled.p( {
+	fontWeight: 400,
+	lineHeight: '24px',
+	marginTop: '16px',
+	marginBottom: '16px',
+} );
 
-		// Add the current item to the flat structure.
-		flatItems[ id ] = {
-			label: item.label,
-			checked: item.checked,
-			parent: parent,
-		};
+const FormSelectContainer = styled.div( {
+	marginBottom: '16px',
+	marginTop: '8px',
+} );
 
-		// If there are sub-items, recursively convert them and merge into the current structure.
-		if ( item.subItems && item.subItems.length > 0 ) {
-			flatItems = {
-				...flatItems,
-				...convertToFlatStructure( item.subItems, id, `${ id }-` ),
-			};
-		}
-	} );
-
-	return flatItems;
+interface CardProps {
+	onPush: ( items?: string[] ) => void;
+	onPull: ( items?: string[] ) => void;
+	disabled: boolean;
 }
 
-function TreeItem( { id, items, onCheckChange } ) {
-	const item = items[ id ];
-	const parent = items[ item.parent ];
-	const childIds = Object.keys( items ).filter( ( childId ) => items[ childId ].parent === id );
-
-	const handleCheckChange = () => {
-		onCheckChange( id, ! item.checked );
-	};
-
-	return (
-		<div style={ { marginLeft: '1em' } }>
-			<ToggleControl
-				disabled={ parent?.checked === false }
-				help={ item.subtitle }
-				label={ item.label }
-				checked={ item.checked }
-				onChange={ handleCheckChange }
-			/>
-			{ childIds.map( ( childId ) => (
-				<TreeItem key={ childId } id={ childId } items={ items } onCheckChange={ onCheckChange } />
-			) ) }
-		</div>
-	);
-}
-
-const CheckboxTree = ( { treeItems, onUpdateSelectedItems } ) => {
-	const [ items, setItems ] = useState( convertToFlatStructure( treeItems ) );
-
-	const handleCheckChange = ( id, isChecked ) => {
-		const newItems = { ...items };
-
-		// const updateChildCheckedState = ( currentId, isChecked ) => {
-		// 	const children = Object.keys( newItems ).filter(
-		// 		( childId ) => newItems[ childId ].parent === currentId
-		// 	);
-		// 	children.forEach( ( child ) => {
-		// 		newItems[ child ].checked = isChecked;
-		// 		updateChildCheckedState( child, isChecked ); // Recurse into further child levels
-		// 	} );
-		// };
-
-		newItems[ id ].checked = isChecked;
-		//
-		// if ( isChecked === false ) {
-		// 	updateChildCheckedState( id, false );
-		// }
-
-		setItems( newItems );
-	};
-
-	useEffect( () => {
-		const selectedItems = [];
-
-		Object.values( items ).forEach( ( item ) => {
-			if ( ! item.checked ) {
-				return;
-			}
-			if ( item.parent ) {
-				const parent = items[ item.parent ];
-				if ( ! parent.checked ) {
-					return;
-				}
-			}
-			selectedItems.push( item );
-		} );
-		onUpdateSelectedItems( selectedItems );
-	}, [ items, onUpdateSelectedItems ] );
-
-	// Get the root nodes to begin rendering from the top level
-	const rootIds = Object.keys( items ).filter( ( id ) => ! items[ id ].parent );
-
+const ProductionSiteSync = ( {
+	onPush,
+	onPull,
+	disabled,
+	onSelectItems,
+	selectedOption,
+	onOptionChange,
+} ) => {
+	const translate = useTranslate();
 	return (
 		<>
-			{ rootIds?.map( ( rootId ) => (
-				<TreeItem
-					key={ rootId }
-					id={ rootId }
-					items={ items }
-					onCheckChange={ handleCheckChange }
-				/>
-			) ) }
+			<FormSelectContainer>
+				<FormSelect
+					value={ selectedOption }
+					onChange={ ( { currentTarget } ) => onOptionChange( currentTarget.value ) }
+				>
+					<option key={ 0 } value="push">
+						{ translate( 'Push staging changes to production' ) }
+					</option>
+					<option key={ 1 } value="pull">
+						{ translate( 'Pull production changes to staging' ) }
+					</option>
+				</FormSelect>
+			</FormSelectContainer>
+			{ selectedOption === 'push' && (
+				<>
+					<CheckboxTree
+						disabled={ disabled }
+						treeItems={ synchronizationOptions }
+						onChange={ onSelectItems }
+					></CheckboxTree>
+					<ConfirmationModalContainer>
+						<ConfirmationModal
+							isPrimary={ true }
+							onConfirm={ onPush }
+							modalTitle={ translate( 'Confirm pushing changes to your production site.' ) }
+							modalMessage={ translate(
+								'Are you sure you want to push your changes to your production site?'
+							) }
+							confirmLabel={ translate( 'Push to production' ) }
+							cancelLabel={ translate( 'Cancel' ) }
+						>
+							<span>{ translate( 'Synchronize' ) }</span>
+						</ConfirmationModal>
+					</ConfirmationModalContainer>
+				</>
+			) }
+			{ selectedOption === 'pull' && (
+				<ConfirmationModalContainer>
+					<ConfirmationModal
+						isPrimary={ true }
+						onConfirm={ onPull }
+						modalTitle={ translate( 'Confirm pulling changes from your production site.' ) }
+						modalMessage={ translate(
+							'Are you sure you want to pull your changes from your production site?'
+						) }
+						confirmLabel={ translate( 'Pull from production' ) }
+						cancelLabel={ translate( 'Cancel' ) }
+					>
+						<span>{ translate( 'Synchronize' ) }</span>
+					</ConfirmationModal>
+				</ConfirmationModalContainer>
+			) }
 		</>
 	);
 };
 
-export default function StagingSiteSyncCard( {
-	onSyncronize = () => {
-		return null;
-	},
+const StagingSiteSync = ( {
+	onPush,
+	onPull,
 	disabled,
-} ) {
+	onSelectItems,
+	selectedOption,
+	onOptionChange,
+} ) => {
 	const translate = useTranslate();
-	const [ selectedItems, setSelectedItems ] = useState( [] );
-	const onSyncronizeInternal = useCallback( () => {
-		onSyncronize( selectedItems );
-	}, [ onSyncronize, selectedItems ] );
-
 	return (
-		<StagingSyncCardContainer>
-			<Bold>{ translate( 'Data and File synchronization' ) }</Bold>
-			<p>
+		<>
+			<FormSelectContainer>
+				<FormSelect
+					value={ selectedOption }
+					onChange={ ( { currentTarget } ) => onOptionChange( currentTarget.value ) }
+				>
+					<option key={ 0 } value="pull">
+						{ translate( 'Pull staging changes to production' ) }
+					</option>
+					<option key={ 1 } value="push">
+						{ translate( 'Push production changes to staging' ) }
+					</option>
+				</FormSelect>
+			</FormSelectContainer>
+			{ selectedOption === 'pull' && (
+				<>
+					<CheckboxTree
+						disabled={ disabled }
+						treeItems={ synchronizationOptions }
+						onChange={ onSelectItems }
+					></CheckboxTree>
+					<ConfirmationModalContainer>
+						<ConfirmationModal
+							onConfirm={ onPull }
+							modalTitle={ translate( 'Confirm pull your changes from your staging site' ) }
+							modalMessage={ translate(
+								'Are you sure you want to pull your changes from your staging site?'
+							) }
+							confirmLabel={ translate( 'Pull from staging' ) }
+							cancelLabel={ translate( 'Cancel' ) }
+						>
+							<span>{ translate( 'Synchronize' ) }</span>
+						</ConfirmationModal>
+					</ConfirmationModalContainer>
+				</>
+			) }
+			{ selectedOption === 'push' && (
+				<ConfirmationModalContainer>
+					<ConfirmationModal
+						onConfirm={ onPush }
+						modalTitle={ translate( 'Confirm pushing changes to your staging site' ) }
+						modalMessage={ translate(
+							'Are you sure you want to push your changes to your staging site?'
+						) }
+						confirmLabel={ translate( 'Push to staging' ) }
+						cancelLabel={ translate( 'Cancel' ) }
+					>
+						<span>{ translate( 'Synchronize' ) }</span>
+					</ConfirmationModal>
+				</ConfirmationModalContainer>
+			) }
+		</>
+	);
+};
+
+const SyncCardContainer = ( { children } ) => {
+	const translate = useTranslate();
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	return (
+		<StagingSyncCardBody>
+			<SyncContainerTitle>{ translate( 'Data and File synchronization' ) }</SyncContainerTitle>
+			<SyncContainerContent>
 				{ translate(
 					'Keep your database and files synchronized between the production and staging environments.'
 				) }
-			</p>
-			<Bold>{ translate( 'Choose synchronization direction' ) }</Bold>
-			<CheckboxTree treeItems={ synchromizeItems } onUpdateSelectedItems={ setSelectedItems } />
-			<Button primary onClick={ onSyncronizeInternal } disabled={ disabled }>
-				<span>{ translate( 'Synchronize' ) }</span>
-			</Button>
-		</StagingSyncCardContainer>
+			</SyncContainerContent>
+			<SyncContainerTitle>{ translate( 'Choose synchronization direction' ) }</SyncContainerTitle>
+			{ children }
+			<StagingSyncCardFooter>
+				{ translate(
+					"We'll automatically back up your site before synchronization starts. Need to restore a backup? Head to the {{link}}Activity Log.{{/link}}",
+					{
+						components: {
+							link: (
+								<a
+									href={ `/activity-log/${ siteSlug }` }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</StagingSyncCardFooter>
+		</StagingSyncCardBody>
 	);
-}
+};
+
+export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: CardProps ) => {
+	const [ selectedItems, setSelectedItems ] = useState( [] as CheckboxTreeItem[] );
+	const [ selectedOption, setSelectedOption ] = useState( 'push' );
+	const onPushInternal = useCallback( () => {
+		const items =
+			selectedItems.flatMap( ( item ) => {
+				if ( item?.children?.length || 0 > 0 ) {
+					return item?.children?.map( ( child ) => child.name || '' ) || [];
+				}
+				if ( item?.name ) {
+					return item.name || '';
+				}
+				return [];
+			} ) || [];
+		onPush?.( items );
+	}, [ onPush, selectedItems ] );
+
+	const onPullInternal = useCallback( () => {
+		onPull?.();
+	}, [ onPull ] );
+	return (
+		<SyncCardContainer>
+			<ProductionSiteSync
+				selectedOption={ selectedOption }
+				onOptionChange={ setSelectedOption }
+				onPush={ onPushInternal }
+				onPull={ onPullInternal }
+				disabled={ disabled }
+				onSelectItems={ setSelectedItems }
+			/>
+		</SyncCardContainer>
+	);
+};
+
+export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: CardProps ) => {
+	const [ selectedItems, setSelectedItems ] = useState( [] as CheckboxTreeItem[] );
+	const [ selectedOption, setSelectedOption ] = useState( 'pull' );
+	const onPushInternal = useCallback( () => {
+		onPush?.();
+	}, [ onPush ] );
+	const onPullInternal = useCallback( () => {
+		const items =
+			selectedItems.flatMap( ( item ) => {
+				if ( item?.children?.length || 0 > 0 ) {
+					return item?.children?.map( ( child ) => child.name || '' ) || [];
+				}
+				if ( item?.name ) {
+					return item.name || '';
+				}
+				return [];
+			} ) || [];
+		onPull?.( items );
+	}, [ onPull, selectedItems ] );
+	return (
+		<SyncCardContainer>
+			<StagingSiteSync
+				selectedOption={ selectedOption }
+				onOptionChange={ setSelectedOption }
+				onPush={ onPushInternal }
+				onPull={ onPullInternal }
+				disabled={ disabled }
+				onSelectItems={ setSelectedItems }
+			/>
+		</SyncCardContainer>
+	);
+};

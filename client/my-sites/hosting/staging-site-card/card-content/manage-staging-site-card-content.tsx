@@ -8,6 +8,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { ConfirmationModal } from 'calypso/my-sites/hosting/staging-site-card/confirmation-modal';
 import { StagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
+import { StagingSiteSyncCard } from './staging-sync-card';
 
 const SiteRow = styled.div( {
 	display: 'flex',
@@ -17,7 +18,7 @@ const SiteRow = styled.div( {
 } );
 
 const SyncActionsContainer = styled.div( {
-	marginTop: 12,
+	marginTop: 24,
 	gap: '1em',
 	display: 'flex',
 	flexDirection: 'row',
@@ -84,42 +85,6 @@ export const ManageStagingSiteCardContent = ( {
 	{
 		const translate = useTranslate();
 		const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
-
-		const ConfirmationPushChangesButton = () => {
-			return (
-				<ConfirmationModal
-					disabled={ isButtonDisabled }
-					onConfirm={ onPushClick }
-					modalTitle={ translate( 'Confirm pushing changes to your staging site' ) }
-					modalMessage={ translate(
-						'Are you sure you want to push your changes to your staging site?'
-					) }
-					confirmLabel={ translate( 'Push to staging' ) }
-					cancelLabel={ translate( 'Cancel' ) }
-				>
-					<Gridicon icon="arrow-up" />
-					<span>{ translate( 'Push to staging' ) }</span>
-				</ConfirmationModal>
-			);
-		};
-
-		const ConfirmationPullChangesButton = () => {
-			return (
-				<ConfirmationModal
-					disabled={ isButtonDisabled }
-					onConfirm={ onPullClick }
-					modalTitle={ translate( 'Confirm pull your changes from your staging site' ) }
-					modalMessage={ translate(
-						'Are you sure you want to pull your changes from your staging site?'
-					) }
-					confirmLabel={ translate( 'Pull from staging' ) }
-					cancelLabel={ translate( 'Cancel' ) }
-				>
-					<Gridicon icon="arrow-down" />
-					<span>{ translate( 'Pull from staging' ) }</span>
-				</ConfirmationModal>
-			);
-		};
 
 		const ConfirmationDeleteButton = () => {
 			return (
@@ -188,8 +153,11 @@ export const ManageStagingSiteCardContent = ( {
 							<ConfirmationDeleteButton />
 						</ActionButtons>
 						<SyncActionsContainer>
-							<ConfirmationPushChangesButton />
-							<ConfirmationPullChangesButton />
+							<StagingSiteSyncCard
+								onPush={ onPushClick }
+								onPull={ onPullClick }
+								disabled={ isButtonDisabled }
+							/>
 						</SyncActionsContainer>
 					</>
 				) : (
