@@ -1,14 +1,11 @@
 import { WPCOM_FEATURES_INSTALL_PLUGINS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -30,18 +27,6 @@ class AmpWpcom extends Component {
 		isSavingSettings: false,
 		isRequestingSettings: true,
 		fields: {},
-	};
-
-	handleToggle = () => {
-		const { fields, submitForm, trackEvent, updateFields } = this.props;
-		const ampEnabled = ! fields.amp_is_enabled;
-		this.props.recordTracksEvent( 'calypso_seo_settings_amp_updated', {
-			amp_is_enabled: ampEnabled,
-		} );
-		updateFields( { amp_is_enabled: ampEnabled }, () => {
-			submitForm();
-			trackEvent( 'Toggled AMP Toggle' );
-		} );
 	};
 
 	handleCustomize = () => {
@@ -80,11 +65,7 @@ class AmpWpcom extends Component {
 
 	render() {
 		const {
-			fields: {
-				amp_is_supported: ampIsSupported,
-				amp_is_deprecated: ampIsDeprecated,
-				amp_is_enabled: ampIsEnabled,
-			},
+			fields: { amp_is_supported: ampIsSupported, amp_is_enabled: ampIsEnabled },
 			isRequestingSettings,
 			isSavingSettings,
 			siteSlug,
@@ -98,48 +79,12 @@ class AmpWpcom extends Component {
 			return null;
 		}
 
-		if ( ampIsDeprecated ) {
-			return (
-				<div className="amp__main site-settings__traffic-settings">
-					<SettingsSectionHeader title={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
-					{ this.renderUpgradeNotice() }
-				</div>
-			);
-		}
-
 		return (
 			<div className="amp__main site-settings__traffic-settings">
 				<SettingsSectionHeader title={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
+				{ this.renderUpgradeNotice() }
 
-				<CompactCard className="amp__explanation site-settings__amp-explanation">
-					<ToggleControl
-						checked={ !! ampIsEnabled }
-						disabled={ isDisabled }
-						onChange={ this.handleToggle }
-						label={ translate( 'Improve the loading speed of your site on phones and tablets' ) }
-					/>
-					<FormSettingExplanation isIndented>
-						{ translate(
-							'Your WordPress.com site supports the use of {{a}}Accelerated Mobile Pages{{/a}}, ' +
-								'a Google-led initiative that dramatically speeds up loading times on mobile devices.',
-							{
-								components: {
-									a: (
-										<a
-											href={ localizeUrl(
-												'https://wordpress.com/support/google-amp-accelerated-mobile-pages/'
-											) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
-					</FormSettingExplanation>
-				</CompactCard>
-
-				{ isCustomizeEnabled && (
+				{ ! isCustomizeEnabled && (
 					<CompactCard href={ '/customize/amp/' + siteSlug }>
 						{ translate( 'Edit the design of your Accelerated Mobile Pages' ) }
 					</CompactCard>
