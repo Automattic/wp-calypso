@@ -11,20 +11,20 @@ import 'calypso/state/themes/init';
  * prefixed taxonomy:term
  * @param {Object} state Global state tree
  * @param {string} term The term slug
- * @param {Array[string]} excludeTaxonomies List of taxonomies to exclude
+ * @param {Array[string]} excludedTaxonomies List of taxonomies to exclude
  * @param {Array[string]} includedTaxonomies List of taxonomies to include
  * @returns {string} Complete taxonomy:term filter, or empty string if term is not valid
  */
 export function getThemeFilterStringFromTerm(
 	state,
 	term,
-	excludeTaxonomies = [],
+	excludedTaxonomies = [],
 	includedTaxonomies = []
 ) {
 	const terms = getThemeFilterTermsTable( state );
 	const taxonomy = terms[ term ];
 
-	if ( excludeTaxonomies.includes( taxonomy ) ) {
+	if ( excludedTaxonomies.includes( taxonomy ) ) {
 		return '';
 	}
 
