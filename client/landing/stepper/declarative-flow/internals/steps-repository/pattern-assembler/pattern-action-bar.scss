@@ -23,16 +23,14 @@
 
 			svg {
 				fill: var(--studio-gray-80);
-
-				&:hover {
-					transform: scale(1.05);
-					transition: transform 0.1s ease-in;
-					transform-origin: center;
-				}
 			}
 
-			&:not(:disabled):hover svg {
-				fill: var(--studio-blue-50);
+			&:not(:disabled):hover {
+				color: var(--studio-blue-50);
+
+				svg {
+					fill: var(--studio-blue-50);
+				}
 			}
 
 			&--move-up,
@@ -40,6 +38,16 @@
 				height: 13px;
 				display: flex;
 				align-items: center;
+			}
+
+			&--shuffle {
+				&.has-icon {
+					flex-direction: row;
+					gap: 4px;
+					line-height: 40px;
+					max-width: none;
+					padding: 0 12px;
+				}
 			}
 		}
 	}

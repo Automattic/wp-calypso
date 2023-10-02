@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { chevronUp, chevronDown, close, edit, shuffle } from '@wordpress/icons';
+import { chevronUp, chevronDown, edit, shuffle, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
@@ -73,7 +73,7 @@ const PatternActionBar = ( {
 				</div>
 			) }
 			<Button
-				className="pattern-action-bar__block pattern-action-bar__action"
+				className="pattern-action-bar__block pattern-action-bar__action pattern-action-bar__action--shuffle"
 				role="menuitem"
 				label={ translate( 'Shuffle' ) }
 				onClick={ () => {
@@ -82,6 +82,7 @@ const PatternActionBar = ( {
 				} }
 				icon={ shuffle }
 				iconSize={ 23 }
+				text={ translate( 'Shuffle' ) }
 			/>
 			{ onReplace && (
 				<Button
@@ -104,7 +105,7 @@ const PatternActionBar = ( {
 					recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_DELETE_CLICK, eventProps );
 					onDelete();
 				} }
-				icon={ close }
+				icon={ trash }
 				iconSize={ 23 }
 			/>
 		</div>
