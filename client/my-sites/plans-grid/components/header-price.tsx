@@ -133,6 +133,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
+		current,
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer },
 	} = gridPlansIndex[ planSlug ];
 	const shouldShowDiscountedPrice = Boolean( discountedPrice.monthly );
@@ -148,9 +149,11 @@ const PlanFeatures2023GridHeaderPrice = ( {
 				<HeaderPriceContainer>
 					{ introOffer && (
 						<>
-							<Badge className="plan-features-2023-grid__badge" isForIntroOffer={ true }>
-								{ translate( 'Limited Time Offer' ) }
-							</Badge>
+							{ ! current && (
+								<Badge className="plan-features-2023-grid__badge" isForIntroOffer={ true }>
+									{ translate( 'Limited Time Offer' ) }
+								</Badge>
+							) }
 							<PlanPrice
 								currencyCode={ currencyCode }
 								rawPrice={ introOffer.rawPrice }
