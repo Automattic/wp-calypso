@@ -56,15 +56,19 @@ const DiscoverStream = ( props ) => {
 	);
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 	const tabTitle = getSelectedTabTitle( selectedTab );
+	let subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
+		args: [ tabTitle ],
+		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+	} );
+	if ( selectedTab === FIRST_POSTS_TAB ) {
+		subHeaderText = translate( 'Explore first posts, the starting points of new journeys.' );
+	}
 
 	const DiscoverHeader = () => (
 		<FormattedHeader
 			brandFont
 			headerText={ translate( 'Discover' ) }
-			subHeaderText={ translate( 'Explore %s blogs that inspire, educate, and entertain.', {
-				args: [ tabTitle ],
-				comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-			} ) }
+			subHeaderText={ subHeaderText }
 			align="left"
 			hasScreenOptions
 			className={ classNames( 'discover-stream-header', {
