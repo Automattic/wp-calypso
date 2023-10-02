@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_CUSTOM_DOMAIN_DEFERRED,
 	getPlan,
 	getPlanClass,
 	getPlanPath,
@@ -37,7 +36,6 @@ import {
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
@@ -183,7 +181,7 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 	);
 };
 
-const mapPlanFeaturesForWooExpressIntroductoryOffers = (
+const buildPlanFeaturesForWooExpressIntroductoryOffers = (
 	gridPlans: Omit< GridPlan, 'features' >[],
 	planSlug: string,
 	planFeatures: PlanFeaturesForGridPlan
@@ -198,23 +196,13 @@ const mapPlanFeaturesForWooExpressIntroductoryOffers = (
 		return planFeatures;
 	}
 
-	planFeatures.wpcomFeatures = planFeatures.wpcomFeatures.map( ( feature ) => {
-		if ( FEATURE_CUSTOM_DOMAIN !== feature.getSlug() ) {
-			return feature;
+	planFeatures.wpcomFeatures = planFeatures.wpcomFeatures.filter( ( feature ) => {
+		// Remove the custom domain feature for Woo Express plans with an introductory offer.
+		if ( FEATURE_CUSTOM_DOMAIN === feature.getSlug() ) {
+			return false;
 		}
 
-		const planFeature = getPlanFeaturesObject( [
-			FEATURE_CUSTOM_DOMAIN_DEFERRED,
-		] ).pop();
-		if ( ! planFeature ) {
-			return feature;
-		}
-
-		return {
-			...planFeature,
-			availableForCurrentPlan: feature.availableForCurrentPlan,
-			availableOnlyForAnnualPlans: feature.availableOnlyForAnnualPlans,
-		};
+		return true;
 	} );
 
 	return planFeatures;
@@ -232,7 +220,7 @@ const transformGridPlanFeaturesForWooExpressIntroductoryOffers = (
 	return Object.fromEntries(
 		Object.entries( gridFeatures ).map( ( [ planSlug, planFeatures ] ) => [
 			planSlug,
-			mapPlanFeaturesForWooExpressIntroductoryOffers( gridPlans, planSlug, planFeatures ),
+			buildPlanFeaturesForWooExpressIntroductoryOffers( gridPlans, planSlug, planFeatures ),
 		] )
 	) as { [ planSlug: string ]: PlanFeaturesForGridPlan };
 };

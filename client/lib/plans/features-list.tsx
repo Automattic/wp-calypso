@@ -44,7 +44,6 @@ import {
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_V2,
 	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_CUSTOM_DOMAIN_DEFERRED,
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
@@ -649,26 +648,6 @@ export const FEATURES_LIST: FeatureList = {
 
 			return i18n.translate(
 				'Get a custom domain – like {{i}}yourgroovydomain.com{{/i}} – free for the first year.',
-				{
-					components: {
-						i: <i />,
-					},
-				}
-			);
-		},
-	},
-
-	[ FEATURE_CUSTOM_DOMAIN_DEFERRED ]: {
-		getSlug: () => FEATURE_CUSTOM_DOMAIN_DEFERRED,
-		getTitle: () => {
-			return i18n.translate( 'Free domain for one year after first full-price renewal', {
-				context: 'title',
-			} );
-		},
-		getAlternativeTitle: () => i18n.translate( 'Free custom domain after full-price renewal' ),
-		getDescription: () => {
-			return i18n.translate(
-				'Get a custom domain – like {{i}}yourgroovydomain.com{{/i}} – free for the first year after your first full-price renewal.',
 				{
 					components: {
 						i: <i />,
