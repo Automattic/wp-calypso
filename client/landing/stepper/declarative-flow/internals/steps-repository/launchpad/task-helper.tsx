@@ -551,6 +551,14 @@ export function getEnhancedTasks(
 					};
 					break;
 				case 'verify_domain_email':
+					taskData = {
+						completed: ! isDomainEmailUnverified,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.replace( task.calypso_path || '/me/account' );
+						},
+					};
+					break;
 				case 'verify_email':
 					taskData = {
 						completed: isEmailVerified,
