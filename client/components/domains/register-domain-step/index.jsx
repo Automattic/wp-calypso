@@ -428,53 +428,55 @@ class RegisterDomainStep extends Component {
 
 		return (
 			<>
-				<div className={ containerDivClassName }>
-					<div className={ searchBoxClassName }>
-						<CompactCard className="register-domain-step__search-card">
-							{ this.renderSearchBar() }
-						</CompactCard>
-					</div>
-					{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
+				<div className="register-domain-and-show-summary">
+					<div className={ containerDivClassName }>
+						<div className={ searchBoxClassName }>
+							<CompactCard className="register-domain-step__search-card">
+								{ this.renderSearchBar() }
+							</CompactCard>
+						</div>
+						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
 
-					{ ! isSignupStep && isQueryInvalid && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ `Please search for domains with more than ${ MIN_QUERY_LENGTH } characters length.` }
-							status="is-info"
-							showDismiss={ false }
-						/>
-					) }
-					{ availabilityMessage && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ availabilityMessage }
-							status={ `is-${ availabilitySeverity }` }
-							showDismiss={ false }
-						/>
-					) }
-					{ suggestionMessage && availabilityError !== suggestionError && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ suggestionMessage }
-							status={ `is-${ suggestionSeverity }` }
-							showDismiss={ false }
-						/>
-					) }
-					{ this.renderFilterContent() }
-					{ this.renderDomainExplanationImage() }
-					{ this.renderSideContent() }
-					<QueryContactDetailsCache />
+						{ ! isSignupStep && isQueryInvalid && (
+							<Notice
+								className="register-domain-step__notice"
+								text={ `Please search for domains with more than ${ MIN_QUERY_LENGTH } characters length.` }
+								status="is-info"
+								showDismiss={ false }
+							/>
+						) }
+						{ availabilityMessage && (
+							<Notice
+								className="register-domain-step__notice"
+								text={ availabilityMessage }
+								status={ `is-${ availabilitySeverity }` }
+								showDismiss={ false }
+							/>
+						) }
+						{ suggestionMessage && availabilityError !== suggestionError && (
+							<Notice
+								className="register-domain-step__notice"
+								text={ suggestionMessage }
+								status={ `is-${ suggestionSeverity }` }
+								showDismiss={ false }
+							/>
+						) }
+						{ this.renderFilterContent() }
+						{ this.renderDomainExplanationImage() }
+						{ this.renderSideContent() }
+						<QueryContactDetailsCache />
+					</div>
+
+					<div className="your-domains-summary">
+						<h2>Your Domains</h2>
+						{ this.renderDomainSummary() }
+					</div>
 				</div>
 				{ showAlreadyOwnADomain && (
 					<AlreadyOwnADomain
 						onClick={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
 					/>
 				) }
-
-				<div className="your-domains-summary">
-					<h2>Your Domains</h2>
-					{ this.renderDomainSummary() }
-				</div>
 			</>
 		);
 	}
