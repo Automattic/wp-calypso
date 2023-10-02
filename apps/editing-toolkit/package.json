@@ -64,7 +64,7 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/whats-new": "workspace:^",
-		"@babel/core": "^7.17.5",
+		"@babel/core": "^7.22.20",
 		"@popperjs/core": "^2.11.8",
 		"@sentry/browser": "^7.54.0",
 		"@tanstack/react-query": "^4.29.1",
