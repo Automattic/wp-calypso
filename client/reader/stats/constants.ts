@@ -1,0 +1,13 @@
+export const ALLOWED_TRACKS_RAILCAR_EVENT_NAMES = new Set< string >()
+	.add( 'calypso_reader_related_post_from_same_site_clicked' )
+	.add( 'calypso_reader_related_post_from_other_site_clicked' )
+	.add( 'calypso_reader_related_post_site_clicked' )
+	.add( 'calypso_reader_article_liked' )
+	.add( 'calypso_reader_article_commented_on' )
+	.add( 'calypso_reader_article_opened' )
+	.add( 'calypso_reader_searchcard_clicked' )
+	.add( 'calypso_reader_author_link_clicked' )
+	.add( 'calypso_reader_permalink_click' )
+	.add( 'calypso_reader_recommended_post_clicked' )
+	.add( 'calypso_reader_recommended_site_clicked' )
+	.add( 'calypso_reader_recommended_post_dismissed' );
