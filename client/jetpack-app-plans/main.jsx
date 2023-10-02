@@ -70,11 +70,9 @@ const JetpackAppPlans = ( { paidDomainName, redirectTo } ) => {
 	);
 	const plansLoaded = Boolean( planSlug );
 
-	const handleRedirect = ( data ) => {
+	const handleRedirect = ( planId ) => {
 		if ( redirectTo ) {
-			const cartItemParam = data
-				? `?cart_item=${ encodeURIComponent( JSON.stringify( data ) ) }`
-				: '';
+			const cartItemParam = planId ? `?plan_id=${ planId }` : '';
 			window.location.href = `${ redirectTo }${ cartItemParam }`;
 		}
 	};
@@ -86,12 +84,8 @@ const JetpackAppPlans = ( { paidDomainName, redirectTo } ) => {
 
 		const { product_slug: planProductSlug } = getPlanCartItem( cartItems );
 		const plan = getPlan( planProductSlug );
-		const cartItem = {
-			product_id: plan.getProductId(),
-			product_slug: plan.getStoreSlug(),
-		};
 
-		handleRedirect( cartItem );
+		handleRedirect( plan.getProductId() );
 	};
 
 	return (
