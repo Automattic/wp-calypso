@@ -61,7 +61,9 @@ const DiscoverStream = ( props ) => {
 		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
 	} );
 	if ( selectedTab === FIRST_POSTS_TAB ) {
-		subHeaderText = translate( 'Explore first posts, the starting points of new journeys.' );
+		subHeaderText = translate(
+			'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
+		);
 	}
 
 	const DiscoverHeader = () => (
