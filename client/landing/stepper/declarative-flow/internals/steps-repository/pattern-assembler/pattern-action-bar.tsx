@@ -100,7 +100,7 @@ const PatternActionBar = ( {
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				label={ translate( 'Remove' ) }
+				label={ translate( 'Delete' ) }
 				onClick={ () => {
 					recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_DELETE_CLICK, eventProps );
 					onDelete();
