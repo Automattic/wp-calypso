@@ -32,11 +32,10 @@ export class PaidContentBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		const block = editorCanvas.getByRole( 'document', { name: 'Block: Paid Content' } );
-
 		// The Guest View will load by default. Wait for this view to fully render.
-		await block.getByRole( 'document', { name: 'Block: Guest View' } ).waitFor();
+		await context.addedBlockLocator
+			.getByRole( 'document', { name: 'Block: Guest View' } )
+			.waitFor();
 
 		// Using the Block Toolbar, change to the Subscriber view.
 		// The exact steps differ between the viewports.
@@ -50,13 +49,15 @@ export class PaidContentBlockFlow implements BlockFlow {
 		}
 
 		// Verify the Subscriber version of the block is now loaded.
-		await block.getByRole( 'document', { name: 'Block: Subscriber View' } ).waitFor();
+		await context.addedBlockLocator
+			.getByRole( 'document', { name: 'Block: Subscriber View' } )
+			.waitFor();
 
 		// Fill the title and text for Subscriber view.
-		await block
+		await context.addedBlockLocator
 			.getByRole( 'document', { name: 'Block: Heading' } )
 			.fill( this.configurationData.subscriberTitle );
-		await block
+		await context.addedBlockLocator
 			.getByRole( 'document', { name: /Paragraph/ } )
 			.fill( this.configurationData.subscriberText );
 	}
