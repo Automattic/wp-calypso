@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -42,9 +43,9 @@ class AmpWpcom extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, siteIsUnlaunched, siteIsPrivate } = this.props;
 
-		if ( isUnlaunchedSite ) {
+		if ( siteIsUnlaunched || siteIsPrivate ) {
 			return null;
 		}
 
@@ -61,10 +62,14 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const canInstallPlugins = siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS );
+		const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
+		const siteIsPrivate = isPrivateSite( state, siteId );
 
 		return {
 			siteSlug: getSelectedSiteSlug( state ),
 			canInstallPlugins,
+			siteIsUnlaunched,
+			siteIsPrivate,
 		};
 	},
 	{ recordTracksEvent }
