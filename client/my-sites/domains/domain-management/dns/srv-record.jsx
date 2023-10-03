@@ -128,7 +128,7 @@ class SrvRecord extends Component {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>TTL</FormLabel>
+					<FormLabel>TTL (time to live)</FormLabel>
 					<FormTextInput
 						name="ttl"
 						isError={ ! isTTLValid }
