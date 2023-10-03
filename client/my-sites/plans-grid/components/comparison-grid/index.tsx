@@ -734,9 +734,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const isEnglishLocale = useIsEnglishLocale();
 	const shouldShowNewJPTooltipCopy =
 		isEnglishLocale ||
-		i18n.hasTranslation(
-			'Security, performance and growth tools made by the WordPress experts. Powered by Jetpack.'
-		);
+		i18n.hasTranslation( 'Security, performance, and growth tools—powered by Jetpack.' );
 
 	return (
 		<Row
@@ -777,7 +775,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 											text={
 												shouldShowNewJPTooltipCopy
 													? translate(
-															'Security, performance and growth tools made by the WordPress experts. Powered by Jetpack. '
+															'Security, performance, and growth tools—powered by Jetpack.'
 													  )
 													: ''
 											}
