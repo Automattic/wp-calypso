@@ -21,13 +21,18 @@ const IntervalDropdown = ( { period, pathTemplate } ) => {
 		<Dropdown
 			className="stats-interval-dropdown"
 			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button onClick={ onToggle } aria-expanded={ isOpen }>
+				<Button
+					className="stats-interval-dropdown__button"
+					onClick={ onToggle }
+					aria-expanded={ isOpen }
+				>
 					{ getCurrentIntervalLabel( currentInterval ) }
 				</Button>
 			) }
 			renderContent={ () => (
 				<div>
 					<Intervals
+						className="stats-interval-dropdown__controls"
 						selected={ currentInterval }
 						pathTemplate={ pathTemplate }
 						compact={ false }
