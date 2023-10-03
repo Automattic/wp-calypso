@@ -1,6 +1,8 @@
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import page from 'page';
+import { UrlData } from 'calypso/blocks/import/types';
+import { HostingProvider } from 'calypso/data/site-profiler/types';
 import StatusCtaInfo from '../heading-information/status-cta-info';
 import StatusInfo from '../heading-information/status-info';
 import type { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
@@ -9,11 +11,13 @@ import './styles.scss';
 interface Props {
 	domain: string;
 	conversionAction?: CONVERSION_ACTION;
+	hostingProvider?: HostingProvider;
+	urlData?: UrlData;
 	onCheckAnotherSite?: () => void;
 }
 
 export default function HeadingInformation( props: Props ) {
-	const { domain, conversionAction, onCheckAnotherSite } = props;
+	const { domain, conversionAction, hostingProvider, urlData, onCheckAnotherSite } = props;
 
 	const onRegisterDomain = () => {
 		page( `/start/domain/domain-only?new=${ domain }&search=yes` );
@@ -36,7 +40,11 @@ export default function HeadingInformation( props: Props ) {
 			<summary>
 				<h5>{ translate( 'Site Profiler' ) }</h5>
 				<div className="domain">{ domain }</div>
-				<StatusInfo conversionAction={ conversionAction } />
+				<StatusInfo
+					conversionAction={ conversionAction }
+					hostingProvider={ hostingProvider }
+					urlData={ urlData }
+				/>
 			</summary>
 			<footer>
 				<StatusCtaInfo conversionAction={ conversionAction } />
