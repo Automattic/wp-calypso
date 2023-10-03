@@ -24,7 +24,7 @@ import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-tr
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { IAppState } from 'calypso/state/types';
+import { AppState } from 'calypso/types';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
@@ -206,7 +206,7 @@ const useActiveAddOnsDefs = () => {
 
 const getAddOnsTransformed = createSelector(
 	(
-		state: IAppState,
+		state: AppState,
 		activeAddOns,
 		spaceUpgradesPurchased,
 		siteId,
@@ -340,7 +340,9 @@ const getAddOnsTransformed = createSelector(
 		isLoadingBillingTransactions,
 		mediaStorage
 	) => [
-		state,
+		getFeaturesBySiteId( state, siteId ),
+		getSiteOption( state, siteId, 'is_commercial' ),
+		state.productsList,
 		activeAddOns,
 		spaceUpgradesPurchased,
 		siteId,
