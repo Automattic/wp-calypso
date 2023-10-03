@@ -382,7 +382,11 @@ export class RenderDomainsStep extends Component {
 		const { step } = this.props;
 		const { suggestion } = step;
 
-		if ( suggestion && isEnabled( 'domains/add-multiple-domains-to-cart' ) ) {
+		if (
+			suggestion &&
+			! suggestion.is_free &&
+			isEnabled( 'domains/add-multiple-domains-to-cart' )
+		) {
 			return this.handleDomainToDomainCart( {
 				googleAppsCartItem,
 				shouldHideFreePlan,
