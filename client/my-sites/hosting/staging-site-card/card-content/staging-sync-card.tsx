@@ -184,11 +184,11 @@ const ProductionSiteSync = ( {
 						disabled={ disabled || isButtonDisabled }
 						isPrimary={ true }
 						onConfirm={ onPull }
-						modalTitle={ translate( 'Confirm pulling changes from your production site.' ) }
+						modalTitle={ translate( 'You are about to update your staging site' ) }
 						modalMessage={ translate(
-							'Are you sure you want to pull your changes from your production site?'
+							'Synchronizing your staging site will replace the contents of the staging site with those of your production site.'
 						) }
-						confirmLabel={ translate( 'Pull from production' ) }
+						confirmLabel={ translate( 'Synchronize' ) }
 						cancelLabel={ translate( 'Cancel' ) }
 					>
 						<span>{ translate( 'Synchronize' ) }</span>
@@ -263,11 +263,11 @@ const StagingSiteSync = ( {
 						disabled={ disabled || isButtonDisabled }
 						isPrimary={ true }
 						onConfirm={ onPush }
-						modalTitle={ translate( 'Confirm pushing changes to your staging site' ) }
+						modalTitle={ translate( 'You are about to update your staging site' ) }
 						modalMessage={ translate(
-							'Are you sure you want to push your changes to your staging site?'
+							'Synchronizing your staging site will replace the contents of the staging site with those of your production site.'
 						) }
-						confirmLabel={ translate( 'Push to staging' ) }
+						confirmLabel={ translate( 'Synchronize' ) }
 						cancelLabel={ translate( 'Cancel' ) }
 					>
 						<span>{ translate( 'Synchronize' ) }</span>

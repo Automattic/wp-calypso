@@ -6,6 +6,7 @@ import { useState } from 'react';
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
+	justifyContent: 'flex-end',
 } );
 
 type ConfirmationModalButtonProps = {
@@ -67,6 +68,14 @@ export function ConfirmationModal( {
 					<p>{ modalMessage }</p>
 					<ActionButtons>
 						<Button
+							onClick={ () => {
+								onCancel?.();
+								closeModal();
+							} }
+						>
+							{ cancelLabel }
+						</Button>
+						<Button
 							primary
 							onClick={ () => {
 								onConfirm?.();
@@ -75,14 +84,6 @@ export function ConfirmationModal( {
 							busy={ isBusy }
 						>
 							{ confirmLabel }
-						</Button>
-						<Button
-							onClick={ () => {
-								onCancel?.();
-								closeModal();
-							} }
-						>
-							{ cancelLabel }
 						</Button>
 					</ActionButtons>
 				</Modal>
