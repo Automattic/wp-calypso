@@ -107,14 +107,13 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 
 		.campaign-item-details__wrapper {
+
 			.campaign-item-details__label,
 			.campaign-item-details__text {
 				color: var(--studio-gray-100);
-			}
-			.campaign-item-details__text
-			.campaign-item-details__text {
 				line-height: 1.25;
 			}
+
 		}
 	}
 
@@ -158,7 +157,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			margin-bottom: 24px;
 
 			@media (max-width: 660px) {
-				border: 0;
 				border: 1px solid #ddd;
 				border-radius: 0;
 				margin-bottom: 0;
@@ -180,7 +178,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				&:last-child {
 					.horizontal-bar-list-item-bar {
 						&::before {
-							background-color: #f6f7f7;
+							background-color: $studio-gray-0;
 						}
 					}
 				}
@@ -239,11 +237,35 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			}
 		}
 
-		.campaign-item-details__preview-header-dimensions {
-			align-items: center;
+		.campaign-item-details__preview-header-label {
+			align-items: end;
 			display: flex;
+			min-width: 60px;
 		}
 
+		.campaign-item-details__preview-header-dimensions {
+			min-width: 60px;
+		}
+
+		.campaign-item-details__preview-header-preview-button {
+			min-width: 76px;
+
+			svg {
+				margin-right: 6px;
+
+				path {
+					fill: var(--color-link);
+				}
+			}
+
+			> button {
+				align-items: center;
+				display: flex;
+				text-decoration: none;
+				cursor: pointer;
+				color: var(--color-link);
+			}
+		}
 
 		.campaign-item-details__secondary-stats-row,
 		.campaign-item-details__secondary-payment-row {
@@ -325,7 +347,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 
 		.campaign-item-details__ad-destination-url-container a {
-			background-color: #f6f7f7;
+			background-color: $studio-gray-0;
 			border: none;
 		}
 
@@ -397,8 +419,8 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__preview-container {
-		border-radius: 2px;
-		background-color: #f6f7f7;
+		background-color: $studio-gray-0;
+		border-radius: 4px;
 		margin-bottom: 24px;
 		padding: 24px;
 
@@ -410,10 +432,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 	.campaign-item-details__preview-header {
 		display: flex;
-		justify-content: space-between;
-		margin-bottom: 24px;
 		font-size: 0.875rem;
 		font-weight: 400;
+		justify-content: space-between;
+		margin-bottom: 24px;
 	}
 
 	.campaign-item-details__preview-content {
@@ -438,8 +460,9 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__preview-disclosure {
-		margin: 12px auto 0 auto;
+		margin: 20px auto 0 auto;
 		max-width: 300px;
+		text-align: center;
 	}
 
 	.campaign-item-details__preview-header-title {
