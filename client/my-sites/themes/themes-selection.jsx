@@ -265,50 +265,52 @@ class ThemesSelection extends Component {
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
+			isLoggedIn,
 		} = this.props;
 
 		const interlacedThemes = interlaceThemes( themes, wpOrgThemes, query.search, isLastPage );
 
-		const isActiveInLits = config.isEnabled( 'themes/discovery-lits' ) && this.props.isLoggedIn;
-		const isActiveInLots = config.isEnabled( 'themes/discovery-lots' ) && ! this.props.isLoggedIn;
+		const isDiscoveryEnabled =
+			( config.isEnabled( 'themes/discovery-lits' ) && isLoggedIn ) ||
+			( config.isEnabled( 'themes/discovery-lots' ) && ! isLoggedIn );
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
 				{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
 
-				{ ( isActiveInLits || isActiveInLots ) && (
+				{ isDiscoveryEnabled && (
 					<>
 						<ThemeCollection
-							heading="Premium themes"
-							subheading={ <p>Lorem ipsum nessum dorma</p> }
-							themes={ interlacedThemes.splice( 10 ) }
-							collectionSlug="some-themes"
-							getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
-							getScreenshotUrl={ this.props.getScreenshotUrl }
 							bookmarkRef={ this.props.bookmarkRef }
-							getButtonOptions={ this.getOptions }
+							collectionSlug="some-themes"
 							getActionLabel={ this.props.getActionLabel }
-							isActive={ this.props.isThemeActive }
+							getButtonOptions={ this.getOptions }
 							getPrice={ this.props.getPremiumThemePrice }
+							getScreenshotUrl={ this.props.getScreenshotUrl }
+							getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
+							heading="Premium themes"
+							isActive={ this.props.isThemeActive }
 							isInstalling={ this.props.isInstallingTheme }
 							siteId={ siteId }
+							subheading={ <p>Lorem ipsum nessum dorma</p> }
+							themes={ interlacedThemes.splice( 10 ) }
 						/>
 
 						<PremiumThemesCollection
-							getScreenshotUrl={ this.props.getScreenshotUrl }
-							getButtonOptions={ this.getOptions }
 							getActionLabel={ this.props.getActionLabel }
-							isActive={ this.props.isThemeActive }
+							getButtonOptions={ this.getOptions }
 							getPrice={ this.props.getPremiumThemePrice }
+							getScreenshotUrl={ this.props.getScreenshotUrl }
+							isActive={ this.props.isThemeActive }
 							isInstalling={ this.props.isInstallingTheme }
 						/>
 						<PartnerThemesCollection
-							getScreenshotUrl={ this.props.getScreenshotUrl }
-							getButtonOptions={ this.getOptions }
 							getActionLabel={ this.props.getActionLabel }
-							isActive={ this.props.isThemeActive }
+							getButtonOptions={ this.getOptions }
 							getPrice={ this.props.getPremiumThemePrice }
+							getScreenshotUrl={ this.props.getScreenshotUrl }
+							isActive={ this.props.isThemeActive }
 							isInstalling={ this.props.isInstallingTheme }
 						/>
 					</>

@@ -1,36 +1,34 @@
-import { localize, translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import * as React from 'react';
-import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
 import ThemeCollection from 'calypso/components/theme-collection';
-import { createWpcomThemeCollectionMapStateToProps } from 'calypso/components/theme-collection/create-map-state-to-props';
 import { ThemesCollectionProps } from 'calypso/components/theme-collection/themes-collection-props';
+import { useThemeCollection } from 'calypso/components/theme-collection/use-theme-collection';
 
 const query = {
-	page: 1,
-	number: 10,
-	tier: 'marketplace',
-	filter: '',
-	search: '',
 	collection: 'recommended',
+	filter: '',
+	number: 10,
+	page: 1,
+	search: '',
+	tier: 'marketplace',
 };
 
-function PartnerThemesCollection( props: ThemesCollectionProps ): ReactElement {
+export default function PartnerThemesCollection( props: ThemesCollectionProps ): ReactElement {
+	const translate = useTranslate();
+	const { siteId, themes } = useThemeCollection( query );
 	return (
 		<>
 			<QueryThemes query={ query } siteId="wpcom" />
 			<ThemeCollection
-				{ ...props }
-				heading={ translate( 'Partner Themes' ) }
-				subheading={ <p>Lorem ipsum mockup subheading</p> }
 				collectionSlug="partner-themes"
+				heading={ translate( 'Partner Themes' ) }
+				siteId={ siteId }
+				subheading={ <p>Lorem ipsum mockup subheading</p> }
+				themes={ themes }
+				{ ...props }
 			/>
 		</>
 	);
 }
-
-export default connect(
-	createWpcomThemeCollectionMapStateToProps( query ),
-	null
-)( localize( PartnerThemesCollection ) );

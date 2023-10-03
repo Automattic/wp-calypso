@@ -6,31 +6,31 @@ import { Swiper as SwiperType } from 'swiper/types';
 import { ThemeBlock } from 'calypso/components/themes-list';
 
 interface ThemeCollectionProps {
+	collectionSlug: string;
+	getActionLabel: () => string;
+	getButtonOptions: () => void;
+	getPrice: () => string;
+	getScreenshotUrl: ( themeId: string ) => string;
 	heading: string;
+	isActive: () => boolean;
+	isInstalling: () => boolean;
+	siteId: string | null;
 	subheading: ReactElement;
 	themes: Array< { id: string } >;
-	collectionSlug: string;
-	getScreenshotUrl: ( themeId: string ) => string;
-	siteId: string | null;
-	getButtonOptions: () => void;
-	getActionLabel: () => string;
-	isActive: () => boolean;
-	getPrice: () => string;
-	isInstalling: () => boolean;
 }
 
 export default function ThemeCollection( {
 	collectionSlug,
+	getActionLabel,
+	getButtonOptions,
+	getPrice,
+	getScreenshotUrl,
 	heading,
+	isActive,
+	isInstalling,
+	siteId,
 	subheading,
 	themes,
-	getScreenshotUrl,
-	siteId,
-	getButtonOptions,
-	getActionLabel,
-	isActive,
-	getPrice,
-	isInstalling,
 }: ThemeCollectionProps ): ReactElement {
 	const swiperInstance = useRef< SwiperType | null >( null );
 	const swiperContainerId = `swiper-container-${ collectionSlug }`;
@@ -113,16 +113,16 @@ export default function ThemeCollection( {
 							className="theme--collection__list-item swiper-slide"
 						>
 							<ThemeBlock
+								collectionSlug={ collectionSlug }
+								getActionLabel={ getActionLabel }
+								getButtonOptions={ getButtonOptions }
+								getPrice={ getPrice }
 								getScreenshotUrl={ getScreenshotUrl }
 								index={ index }
-								collectionSlug={ collectionSlug }
-								theme={ theme }
-								siteId={ siteId }
 								isActive={ isActive }
-								getButtonOptions={ getButtonOptions }
-								getActionLabel={ getActionLabel }
-								getPrice={ getPrice }
 								isInstalling={ isInstalling }
+								siteId={ siteId }
+								theme={ theme }
 							/>
 						</div>
 					) ) }

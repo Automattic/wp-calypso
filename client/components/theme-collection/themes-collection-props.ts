@@ -1,13 +1,8 @@
-import { useTranslate } from 'i18n-calypso';
-
 export interface ThemesCollectionProps {
-	getScreenshotUrl: ( themeId: string ) => string;
-	siteId: string | null;
-	getButtonOptions: () => void;
 	getActionLabel: () => string;
-	isActive: () => boolean;
+	getButtonOptions: () => void;
 	getPrice: () => string;
+	getScreenshotUrl: ( themeId: string ) => string;
+	isActive: () => boolean;
 	isInstalling: () => boolean;
-	themes: never[];
-	translate: ReturnType< typeof useTranslate >;
 }
