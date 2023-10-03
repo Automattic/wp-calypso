@@ -56,9 +56,9 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 	const ScoreRating = getBoostRating( overallScore );
 
 	const ctaButtons = useMemo( () => {
-		const jetpackDashboardPage = isAtomicSite ? 'jetpack' : 'my-jetpack';
-
 		if ( ! hasBoost ) {
+			const jetpackDashboardPage = isAtomicSite ? 'jetpack' : 'my-jetpack';
+
 			return [
 				{
 					label: translate( 'Auto-optimize' ),
@@ -80,7 +80,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 			return [
 				{
 					label: translate( 'Boost Settings' ),
-					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=${ jetpackDashboardPage }`,
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
 					onClick: () => trackEvent( 'expandable_block_settings_click' ),
 				},
 			];
@@ -89,7 +89,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		return [
 			{
 				label: translate( 'Optimize performance' ),
-				href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=${ jetpackDashboardPage }`,
+				href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
 				onClick: () => trackEvent( 'expandable_block_optimize_performance_click' ),
 				primary: true,
 			},
