@@ -96,7 +96,7 @@ const useScreens = ( {
 						path: '/color-palettes',
 						title: translate( 'Colors' ),
 						description: translate(
-							'Discover your ideal color blend, from free to custom styles.'
+							'Discover your ideal color blend, from free to premium styles.'
 						),
 						content: (
 							<div className="design-preview__sidebar-variations">
