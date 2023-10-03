@@ -681,7 +681,7 @@ export class RenderDomainsStep extends Component {
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
 		if ( cartIsLoading || this.shouldHideUseYourDomain() ) {
-			return null;
+			return <div className="domains__domain-side-content-container"></div>;
 		}
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div className="domains__domain-side-content">
