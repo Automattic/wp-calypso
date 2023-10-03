@@ -22,12 +22,11 @@ export const usePushToStagingMutation = (
 	options: UseMutationOptions< PushStagingMutationResponse, PushStagingMutationError >
 ) => {
 	const mutation = useMutation( {
-		mutationFn: async () => {
-			return wp.req.post( {
+		mutationFn: async () =>
+			wp.req.post( {
 				path: `/sites/${ productionSiteId }/staging-site/push-to-staging/${ stagingSiteId }`,
 				apiNamespace: 'wpcom/v2',
-			} );
-		},
+			} ),
 		...options,
 		mutationKey: [ PUSH_TO_STAGING, stagingSiteId ],
 		onSuccess: async ( ...args ) => {
@@ -54,15 +53,14 @@ export const usePullFromStagingMutation = (
 	>
 ) => {
 	const mutation = useMutation( {
-		mutationFn: async ( options ) => {
-			return wp.req.post(
+		mutationFn: async ( options ) =>
+			wp.req.post(
 				{
 					path: `/sites/${ productionSiteId }/staging-site/pull-from-staging/${ stagingSiteId }`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{ sync_options: options }
-			);
-		},
+			),
 		...options,
 		mutationKey: [ PULL_FROM_STAGING, stagingSiteId ],
 		onSuccess: async ( ...args ) => {
