@@ -6,7 +6,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -43,9 +43,9 @@ class AmpWpcom extends Component {
 	}
 
 	render() {
-		const { translate, siteIsUnlaunched, siteIsPrivate } = this.props;
+		const { translate, siteIsPrivate, siteIsComingSoon } = this.props;
 
-		if ( siteIsUnlaunched || siteIsPrivate ) {
+		if ( siteIsPrivate || siteIsComingSoon ) {
 			return null;
 		}
 
@@ -62,14 +62,14 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const canInstallPlugins = siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS );
-		const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
 		const siteIsPrivate = isPrivateSite( state, siteId );
+		const siteIsComingSoon = isSiteComingSoon( state, siteId );
 
 		return {
 			siteSlug: getSelectedSiteSlug( state ),
 			canInstallPlugins,
-			siteIsUnlaunched,
 			siteIsPrivate,
+			siteIsComingSoon,
 		};
 	},
 	{ recordTracksEvent }
