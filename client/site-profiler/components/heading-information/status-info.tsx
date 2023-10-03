@@ -37,6 +37,7 @@ export default function StatusInfo( props: Props ) {
 					) }
 				</p>
 			);
+
 		case 'transfer-domain-hosting':
 		case 'transfer-google-domain-hosting':
 			return (
@@ -47,6 +48,14 @@ export default function StatusInfo( props: Props ) {
 							components: { strong: <strong /> },
 						}
 					) }
+				</p>
+			);
+		case 'transfer-hosting-wp':
+		case 'transfer-domain-hosting-wp':
+		case 'transfer-google-domain-hosting-wp':
+			return (
+				<p>
+					{ translate( 'The owner of this site has great taste—this site runs on WordPress!' ) }
 				</p>
 			);
 		case 'idle':

@@ -58,7 +58,10 @@ export default function HeadingInformation( props: Props ) {
 							{ translate( 'Transfer domain for free' ) }
 						</Button>
 					) }
-					{ conversionAction === 'transfer-hosting' && (
+					{ ( conversionAction === 'transfer-hosting' ||
+						conversionAction === 'transfer-hosting-wp' ||
+						conversionAction === 'transfer-domain-hosting-wp' ||
+						conversionAction === 'transfer-google-domain-hosting-wp' ) && (
 						<Button className="button-action" onClick={ onMigrateSite }>
 							{ translate( 'Migrate site' ) }
 						</Button>
