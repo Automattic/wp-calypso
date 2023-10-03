@@ -45,7 +45,7 @@ export default function SiteBoostColumn( { site }: Props ) {
 				className="sites-overview__column-action-button is-link"
 				href={
 					adminUrl
-						? `${ origin }${ pathname }?page=my-jetpack#/add-boost`
+						? `${ origin }${ pathname }?page=jetpack-boost`
 						: `https://${ site.url }/wp-admin/admin.php?page=jetpack`
 				}
 				target="_blank"
