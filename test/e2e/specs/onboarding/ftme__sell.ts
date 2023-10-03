@@ -164,7 +164,7 @@ describe( 'FTME: Sell', function () {
 		it( 'Land in Home dashboard', async function () {
 			await page.waitForURL(
 				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.blogid }` ),
-				{ timeout: 20 * 1000 }
+				{ timeout: 30 * 1000 }
 			);
 		} );
 
@@ -209,10 +209,13 @@ describe( 'FTME: Sell', function () {
 			return;
 		}
 
-		const restAPIClient = new RestAPIClient( {
-			username: testUser.username,
-			password: testUser.password,
-		} );
+		const restAPIClient = new RestAPIClient(
+			{
+				username: testUser.username,
+				password: testUser.password,
+			},
+			newUserDetails.body.bearer_token
+		);
 
 		await apiCloseAccount( restAPIClient, {
 			userID: newUserDetails.body.user_id,

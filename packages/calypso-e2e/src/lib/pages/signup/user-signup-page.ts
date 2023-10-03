@@ -81,13 +81,16 @@ export class UserSignupPage {
 	}
 
 	/**
-	 * Choose Email sign-up method, then fill out required information and then submit the form to complete the signup.
+	 * Using the Social First signup, selects the Email option, then fill out required information
+	 * and then submit the form to complete the signup.
+	 *
+	 * @see https://github.com/Automattic/wp-calypso/pull/82481
 	 *
 	 * @param {string} email Email address of the new user.
 	 * @returns Response from the REST API.
 	 */
 	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
-		await this.page.click( 'button.components-button' );
+		await this.page.getByRole( 'button', { name: 'Continue with Email' } ).click();
 
 		await this.page.fill( selectors.emailInput, email );
 
