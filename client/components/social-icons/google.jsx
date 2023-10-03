@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -19,19 +18,17 @@ export default class GoogleIcon extends PureComponent {
 	};
 
 	render() {
-		const props = omit( this.props, [ 'isDisabled' ] );
+		const { isDisabled, ...rest } = this.props;
 
 		return (
 			<svg
 				className={ classNames( 'social-icons social-icons__google', {
-					'social-icons--enabled': ! this.props.isDisabled,
-					'social-icons--disabled': !! this.props.isDisabled,
+					'social-icons--enabled': ! isDisabled,
+					'social-icons--disabled': !! isDisabled,
 				} ) }
-				width={ this.props.width }
-				height={ this.props.height }
 				viewBox="0 0 20 20"
 				xmlns="http://www.w3.org/2000/svg"
-				{ ...props }
+				{ ...rest }
 			>
 				<g fill="none" fillRule="evenodd">
 					<path
