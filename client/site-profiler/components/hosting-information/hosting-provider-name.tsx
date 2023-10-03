@@ -12,15 +12,18 @@ interface Props {
 
 export default function HostingProviderName( props: Props ) {
 	const { hostingProvider, urlData } = props;
-	const isPopularCdn = !! hostingProvider?.is_cdn;
+	const isPopularCdn = ! urlData?.platform_data?.name && !! hostingProvider?.is_cdn;
+	const hostingProviderName = urlData?.platform_data?.name ?? hostingProvider?.name;
+	const hostingProviderHomepage =
+		urlData?.platform_data?.homepage_url ?? hostingProvider?.homepage_url;
 
 	const NonA8cHostingName = () => {
 		const nameComponent = hostingProvider?.homepage_url ? (
-			<a href={ hostingProvider.homepage_url } target="_blank" rel="nofollow noreferrer">
-				{ hostingProvider.name }
+			<a href={ hostingProviderHomepage } target="_blank" rel="nofollow noreferrer">
+				{ hostingProviderName }
 			</a>
 		) : (
-			hostingProvider?.name
+			hostingProviderName
 		);
 
 		return (

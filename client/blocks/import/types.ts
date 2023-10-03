@@ -6,6 +6,11 @@ export type UrlData = {
 	platform: ImporterPlatform;
 	platform_data?: {
 		is_wpcom: boolean;
+		is_wpengine: boolean;
+		slug?: string;
+		name?: string;
+		support_url?: string;
+		homepage_url?: string;
 	};
 	meta: {
 		favicon: string | null;

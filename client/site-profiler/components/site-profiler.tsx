@@ -88,11 +88,9 @@ export default function SiteProfiler() {
 									/>
 								</LayoutBlockSection>
 							) }
-							{ siteProfilerData?.whois && (
-								<LayoutBlockSection>
-									<DomainInformation domain={ domain } whois={ siteProfilerData.whois } />
-								</LayoutBlockSection>
-							) }
+							<LayoutBlockSection>
+								<DomainInformation domain={ domain } whois={ siteProfilerData.whois } />
+							</LayoutBlockSection>
 						</>
 					) }
 				</LayoutBlock>
