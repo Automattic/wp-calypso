@@ -26,10 +26,12 @@ const DiscoverStream = ( props ) => {
 	const locale = useLocale();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const recommendedSites = useSelector(
-		( state ) => getReaderRecommendedSites( state, 'discover-recommendations' ) || []
-	);
 	const selectedTab = props.selectedTab;
+	const recommendedSitesSeed =
+		selectedTab === FIRST_POSTS_TAB ? 'discover-new-sites' : 'discover-recommendations';
+	const recommendedSites = useSelector(
+		( state ) => getReaderRecommendedSites( state, recommendedSitesSeed ) || []
+	);
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
@@ -80,8 +82,16 @@ const DiscoverStream = ( props ) => {
 	);
 
 	const streamSidebar = () => {
-		if ( selectedTab === FIRST_POSTS_TAB ) {
-			return <></>;
+		if ( selectedTab === FIRST_POSTS_TAB && recommendedSites?.length ) {
+			return (
+				<>
+					<h2>{ translate( 'New Sites' ) }</h2>
+					<ReaderPopularSitesSidebar
+						items={ recommendedSites }
+						followSource={ READER_DISCOVER_POPULAR_SITES }
+					/>
+				</>
+			);
 		}
 
 		if ( ( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ) {
