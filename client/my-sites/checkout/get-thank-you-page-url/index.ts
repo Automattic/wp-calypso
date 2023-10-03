@@ -253,7 +253,9 @@ export default function getThankYouPageUrl( {
 		if ( connectAfterCheckout && adminUrl && fromSiteSlug ) {
 			debug( 'Redirecting to the site to initiate Jetpack connection' );
 			// TODO: Then after connection, transfer temporary site subscription to the target site.
-			const connectUrl = `${ adminUrl }admin.php?page=jetpack&connect_url_redirect&from=my-jetpack&redirect_after_auth=${ adminUrl }/admin.php?page=my-jetpack#/add-license`;
+			// TODO: Possibly change the final post-checkout/connect url (`redirect_after_auth` query arg).
+			// Note: Don't use Url hashes, they are stripped when passing to the payment processor.
+			const connectUrl = `${ adminUrl }admin.php?page=jetpack&connect_url_redirect&from=my-jetpack&redirect_after_auth=${ adminUrl }/admin.php?page=my-jetpack`;
 			return connectUrl;
 		}
 
