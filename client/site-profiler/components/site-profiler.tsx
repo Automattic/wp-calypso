@@ -91,7 +91,12 @@ export default function SiteProfiler() {
 								</LayoutBlockSection>
 							) }
 							<LayoutBlockSection>
-								<DomainInformation domain={ domain } whois={ siteProfilerData.whois } />
+								<DomainInformation
+									domain={ domain }
+									whois={ siteProfilerData.whois }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									urlData={ urlData }
+								/>
 							</LayoutBlockSection>
 						</>
 					) }
