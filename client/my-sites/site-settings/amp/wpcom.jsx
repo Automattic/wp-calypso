@@ -13,8 +13,9 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import './wpcom.scss';
 
 class AmpWpcom extends Component {
-	renderUpgradeNotice() {
-		const { canInstallPlugins, siteSlug, translate } = this.props;
+	render() {
+		const { canInstallPlugins, siteSlug, translate, siteIsComingSoon, siteIsPrivate } = this.props;
+
 		let tracksProps;
 
 		if ( ! canInstallPlugins ) {
@@ -25,34 +26,26 @@ class AmpWpcom extends Component {
 			};
 		}
 
-		return (
-			<UpsellNudge
-				title={ translate( 'Install the AMP plugin' ) }
-				description={ translate(
-					'AMP enables the creation of websites and ads that load near instantly, ' +
-						'giving site visitors a smooth, more engaging experience on mobile and desktop.'
-				) }
-				plan={ PLAN_WPCOM_PRO }
-				href={ `/plugins/amp/${ siteSlug }` }
-				forceHref={ true }
-				showIcon={ true }
-				forceDisplay
-				{ ...tracksProps }
-			/>
-		);
-	}
-
-	render() {
-		const { translate, siteIsPrivate, siteIsComingSoon } = this.props;
-
-		if ( siteIsPrivate || siteIsComingSoon ) {
+		if ( siteIsComingSoon || siteIsPrivate ) {
 			return null;
 		}
 
 		return (
 			<div className="amp__main site-settings__traffic-settings">
 				<SettingsSectionHeader title={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
-				{ this.renderUpgradeNotice() }
+				<UpsellNudge
+					title={ translate( 'Install the AMP plugin' ) }
+					description={ translate(
+						'AMP enables the creation of websites and ads that load near instantly, ' +
+							'giving site visitors a smooth, more engaging experience on mobile and desktop.'
+					) }
+					plan={ PLAN_WPCOM_PRO }
+					href={ `/plugins/amp/${ siteSlug }` }
+					forceHref={ true }
+					showIcon={ true }
+					forceDisplay
+					{ ...tracksProps }
+				/>
 			</div>
 		);
 	}
@@ -62,14 +55,14 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const canInstallPlugins = siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS );
-		const siteIsPrivate = isPrivateSite( state, siteId );
 		const siteIsComingSoon = isSiteComingSoon( state, siteId );
+		const siteIsPrivate = isPrivateSite( state, siteId );
 
 		return {
 			siteSlug: getSelectedSiteSlug( state ),
 			canInstallPlugins,
-			siteIsPrivate,
 			siteIsComingSoon,
+			siteIsPrivate,
 		};
 	},
 	{ recordTracksEvent }
