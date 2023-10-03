@@ -1,0 +1,35 @@
+.reader-join-conversation-dialog {
+	border-radius: 6px; /* stylelint-disable scales/radii */
+
+	.dialog__action-buttons-close {
+		padding: 28px 28px 5px 5px;
+	}
+	.dialog__content {
+		padding: 24px 32px 8px;
+	}
+}
+
+.reader-join-conversation-dialog__content {
+	width: 534px;
+
+	.reader-join-conversation-dialog__header {
+		margin-bottom: 30px;
+
+		h2 {
+			color: var(--color-neutral-70);
+			font-size: $font-title-large;
+			font-weight: 600;
+			margin-bottom: 9px;
+		}
+	}
+}
+@media only screen and (max-width: 600px) {
+	.reader-join-conversation-dialog__content {
+		width: 100%;
+	}
+}
+
+.dialog__backdrop,
+.dialog__backdrop.card {
+	background-color: rgba(var(--color-neutral-70-rgb), 0.8) !important;
+}
