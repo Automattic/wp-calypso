@@ -243,18 +243,17 @@ class PasswordlessSignupForm extends Component {
 		);
 	}
 
-	getLabelText() {
-		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
-	}
-
 	render() {
+		const { inputPlaceholder, translate } = this.props;
 		const { errorMessages, isSubmitting } = this.state;
 
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="signup-email">{ this.getLabelText() }</FormLabel>
+						<FormLabel htmlFor="signup-email">
+							{ translate( 'Enter your email address' ) }
+						</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							autoCorrect="off"
@@ -265,7 +264,7 @@ class PasswordlessSignupForm extends Component {
 							value={ this.state.email }
 							onChange={ this.onInputChange }
 							disabled={ isSubmitting || !! this.props.disabled }
-							placeholder={ this.props.inputPlaceholder }
+							placeholder={ inputPlaceholder }
 						/>
 					</ValidationFieldset>
 					{ this.props.renderTerms?.() }
