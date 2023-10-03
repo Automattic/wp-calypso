@@ -3631,5 +3631,8 @@ if ( isEnabled( 'plans/hosting-trial' ) ) {
 		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 		getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
 		getTitle: () => i18n.translate( 'Hosting Trial' ),
+		getDescription: () => i18n.translate( 'Hosting free trial' ),
+		getTagline: () =>
+			i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
 	};
 }
