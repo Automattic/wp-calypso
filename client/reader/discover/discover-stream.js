@@ -85,7 +85,7 @@ const DiscoverStream = ( props ) => {
 		if ( selectedTab === FIRST_POSTS_TAB && recommendedSites?.length ) {
 			return (
 				<>
-					<h2>{ translate( 'New Sites' ) }</h2>
+					<h2>{ translate( 'New sites' ) }</h2>
 					<ReaderPopularSitesSidebar
 						items={ recommendedSites }
 						followSource={ READER_DISCOVER_POPULAR_SITES }
@@ -97,7 +97,7 @@ const DiscoverStream = ( props ) => {
 		if ( ( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ) {
 			return (
 				<>
-					<h2>{ translate( 'Popular Sites' ) }</h2>
+					<h2>{ translate( 'Popular sites' ) }</h2>
 					<ReaderPopularSitesSidebar
 						items={ recommendedSites }
 						followSource={ READER_DISCOVER_POPULAR_SITES }
