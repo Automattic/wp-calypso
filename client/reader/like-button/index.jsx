@@ -2,6 +2,7 @@ import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
+import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -14,6 +15,7 @@ import './style.scss';
 class ReaderLikeButton extends Component {
 	state = {
 		showLikesPopover: false,
+		showJoinConversationModal: false,
 	};
 
 	hidePopoverTimeout = null;
@@ -38,6 +40,10 @@ class ReaderLikeButton extends Component {
 		}
 	};
 
+	showJoinConversationModal = () => {
+		this.setState( { showJoinConversationModal: true } );
+	};
+
 	showLikesPopover = () => {
 		clearTimeout( this.hidePopoverTimeout );
 		this.setState( { showLikesPopover: true } );
@@ -51,7 +57,7 @@ class ReaderLikeButton extends Component {
 
 	render() {
 		const { siteId, postId, likeCount, iLike, iconSize } = this.props;
-		const { showLikesPopover } = this.state;
+		const { showLikesPopover, showJoinConversationModal } = this.state;
 		const hasEnoughLikes = ( likeCount > 0 && ! iLike ) || ( likeCount > 1 && iLike );
 
 		const likeIcon = ReaderLikeIcon( {
@@ -70,6 +76,7 @@ class ReaderLikeButton extends Component {
 					onLikeToggle={ this.recordLikeToggle }
 					likeSource="reader"
 					icon={ likeIcon }
+					onLoggedOut={ this.showJoinConversationModal }
 				/>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover
@@ -80,6 +87,12 @@ class ReaderLikeButton extends Component {
 						postId={ postId }
 						showDisplayNames={ true }
 						context={ this.likeButtonRef.current }
+					/>
+				) }
+				{ showJoinConversationModal && (
+					<ReaderJoinConversationDialog
+						onClose={ () => this.setState( { showJoinConversationModal: false } ) }
+						isVisible={ this.state.showJoinConversationModal }
 					/>
 				) }
 			</Fragment>

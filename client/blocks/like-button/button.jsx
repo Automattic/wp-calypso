@@ -27,6 +27,7 @@ class LikeButton extends PureComponent {
 		slug: PropTypes.string,
 		icon: PropTypes.object,
 		defaultLabel: PropTypes.string,
+		onLoggedOut: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -50,6 +51,9 @@ class LikeButton extends PureComponent {
 
 	toggleLiked( event ) {
 		if ( ! this.props.isLoggedIn ) {
+			if ( this.props.onLoggedOut ) {
+				return this.props.onLoggedOut();
+			}
 			const { pathname } = getUrlParts( window.location.href );
 			if ( isReaderTagEmbedPage( window.location ) ) {
 				return window.open(

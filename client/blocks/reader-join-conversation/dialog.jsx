@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import useLoginWindow from 'calypso/data/reader/use-login-window';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+
 import './style.scss';
 
 const ReaderJoinConversationDialog = ( { onClose, isVisible, onLoginSuccess } ) => {
