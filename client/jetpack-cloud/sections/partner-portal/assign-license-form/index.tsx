@@ -149,7 +149,7 @@ export default function AssignLicenseForm( {
 		return page.redirect( partnerPortalBasePath( '/licenses' ) );
 	}, [ assignLicensesToSite, dispatch, licenseKeysArray, selectedSite?.ID ] );
 
-	if ( ! results.length ) {
+	if ( ! results.length && search === '' ) {
 		return (
 			<div className="assign-license-form__empty-state">
 				<p>
