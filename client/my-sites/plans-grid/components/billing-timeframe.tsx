@@ -93,9 +93,9 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( isMonthlyPlan ) {
 				if ( 'month' === introOffer.intervalUnit ) {
 					return translate(
-						'per month for your first %(introOfferIntervalCount)s month,{{br/}}' +
+						'for your first %(introOfferIntervalCount)s month,{{br/}}' +
 							'then %(rawPrice)s for the first month, excl. taxes',
-						'per month for your first %(introOfferIntervalCount)s months,{{br/}}' +
+						'for your first %(introOfferIntervalCount)s months,{{br/}}' +
 							'then %(rawPrice)s for the first month, excl. taxes',
 						{
 							count: introOffer.intervalCount,
@@ -113,9 +113,9 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 				if ( 'month' === introOffer.intervalUnit ) {
 					return translate(
-						'per month for your first %(introOfferIntervalCount)s month,{{br/}}' +
+						'for your first %(introOfferIntervalCount)s month,{{br/}}' +
 							'then %(rawPrice)s for the first year, excl. taxes',
-						'per month for your first %(introOfferIntervalCount)s months,{{br/}}' +
+						'for your first %(introOfferIntervalCount)s months,{{br/}}' +
 							'then %(rawPrice)s for the first year, excl. taxes',
 						{
 							count: introOffer.intervalCount,
@@ -133,9 +133,9 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( isMonthlyPlan ) {
 				if ( 'month' === introOffer.intervalUnit ) {
 					return translate(
-						'per month for your first %(introOfferIntervalCount)s month,{{br/}}' +
+						'for your first %(introOfferIntervalCount)s month,{{br/}}' +
 							'then %(rawPrice)s billed monthly, excl. taxes',
-						'per month for your first %(introOfferIntervalCount)s months,{{br/}}' +
+						'for your first %(introOfferIntervalCount)s months,{{br/}}' +
 							'then %(rawPrice)s billed monthly, excl. taxes',
 						{
 							count: introOffer.intervalCount,
@@ -153,9 +153,9 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 				if ( 'month' === introOffer.intervalUnit ) {
 					return translate(
-						'per month for your first %(introOfferIntervalCount)s month,{{br/}}' +
+						'for your first %(introOfferIntervalCount)s month,{{br/}}' +
 							'then %(rawPrice)s billed annually, excl. taxes',
-						'per month for your first %(introOfferIntervalCount)s months,{{br/}}' +
+						'for your first %(introOfferIntervalCount)s months,{{br/}}' +
 							'then %(rawPrice)s billed annually, excl. taxes',
 						{
 							count: introOffer.intervalCount,
