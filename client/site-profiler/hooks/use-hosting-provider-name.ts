@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { HostingProvider } from 'calypso/data/site-profiler/types';
@@ -6,9 +7,12 @@ export default function useHostingProviderName(
 	hostingProvider?: HostingProvider,
 	urlData?: UrlData
 ): string | undefined {
+	const translate = useTranslate();
+
 	return useMemo( (): string | undefined => {
-		const ret = urlData?.platform_data?.name ?? hostingProvider?.name ?? '';
+		// Translators: "Unknown" stands for "Unknown hosting provider"
+		const ret = urlData?.platform_data?.name ?? hostingProvider?.name ?? translate( 'Unknown' );
 
 		return ret === 'Automattic' ? 'WordPress.com' : ret;
-	}, [ hostingProvider, urlData ] );
+	}, [ translate, hostingProvider, urlData ] );
 }
