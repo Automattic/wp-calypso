@@ -87,7 +87,7 @@ export async function loadDSPWidgetJS(): Promise< void > {
 
 	let src = `${ getWidgetDSPJSURL() }?ver=${ Math.round( Date.now() / ( 1000 * 60 * 60 ) ) }`;
 
-	if ( shouldUseTestWidgetURL() ) {
+	if ( shouldUseTestWidgetURL() || getWidgetDSPJSURL().startsWith( 'https://dsp.wp.com' ) ) {
 		src = `${ getWidgetDSPJSURL() }`;
 	}
 
