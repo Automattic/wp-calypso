@@ -87,7 +87,7 @@ export default function ThemeCollection( {
 		return () => {
 			swiperInstance.current?.destroy();
 		};
-	}, [ themes ] );
+	}, [ swiperContainerId, themes ] );
 
 	if ( themes === null ) {
 		return <></>; // @todo Add LoadingPlaceholders instead.
