@@ -56,6 +56,7 @@ export interface PlanIntroductoryOffer {
 	rawPrice: number;
 	intervalUnit: string;
 	intervalCount: number;
+	isOfferComplete: boolean;
 }
 
 export interface SitePlan {
@@ -69,6 +70,7 @@ export interface PricedAPIPlanIntroductoryOffer {
 	introductory_offer_raw_price?: number;
 	introductory_offer_interval_unit?: string;
 	introductory_offer_interval_count?: number;
+	introductory_offer_end_date?: string;
 }
 
 /**
@@ -119,6 +121,8 @@ export interface PricedAPIPlan {
  */
 export interface PricedAPISitePlan extends PricedAPIPlanIntroductoryOffer {
 	/* product_id: number; // not included in the plan's payload */
+	current_plan?: boolean;
+	expiry?: string;
 	product_slug: StorePlanSlug;
 }
 
