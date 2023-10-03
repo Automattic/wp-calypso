@@ -4,46 +4,50 @@ import { useCallback, useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import CheckboxTree, { CheckboxTreeItem } from '../checkbox-tree';
 import { ConfirmationModal } from '../confirmation-modal';
+import SyncOptionsPanel, { CheckboxOptionItem } from '../sync-options-panel';
 
-const synchronizationOptions: CheckboxTreeItem[] = [
+const synchronizationOptions: CheckboxOptionItem[] = [
 	{
 		name: 'sqls',
-		label: 'Database',
-		children: [],
+		label: 'Site Database (SQL)',
+		subTitle: translate(
+			'Overwrite the database, posts, pages, products, and orders with staging data.'
+		),
+		checked: false,
+		isDangerous: true,
 	},
 	{
-		label: 'Files',
-		children: [
-			{
-				name: 'themes',
-				label: translate( 'Themes' ),
-				children: [],
-			},
-			{
-				name: 'plugins',
-				label: translate( 'Plugins' ),
-				children: [],
-			},
-			{
-				name: 'uploads',
-				label: translate( 'Media Uploads' ),
-				children: [],
-			},
-			{
-				name: 'contents',
-				label: translate( 'wp-content directory' ),
-				subTitle: translate( 'excluding themes, plugins, and uploads' ),
-				children: [],
-			},
-			{
-				name: 'roots',
-				label: translate( 'WordPress roots' ),
-				subTitle: translate( 'includes wp-config php and any non WordPress files' ),
-				children: [],
-			},
-		],
+		name: 'themes',
+		label: translate( 'Themes' ),
+		checked: false,
+		isDangerous: false,
+	},
+	{
+		name: 'plugins',
+		label: translate( 'Plugins' ),
+		checked: false,
+		isDangerous: false,
+	},
+	{
+		name: 'uploads',
+		label: translate( 'Media Uploads' ),
+		checked: false,
+		isDangerous: false,
+	},
+	{
+		name: 'contents',
+		label: translate( 'wp-content directory' ),
+		subTitle: translate( 'excluding themes, plugins, and uploads' ),
+		checked: false,
+		isDangerous: false,
+	},
+	{
+		name: 'roots',
+		label: translate( 'WordPress roots' ),
+		subTitle: translate( 'includes wp-config php and any non WordPress files' ),
+		checked: false,
+		isDangerous: false,
 	},
 ];
 
@@ -57,7 +61,6 @@ const StagingSyncCardBody = styled.div( {
 const ConfirmationModalContainer = styled.div( {
 	display: 'flex',
 	flexDirection: 'row',
-	marginTop: '12px',
 	'@media screen and (max-width: 768px)': {
 		flexDirection: 'column',
 		'.button': { flexGrow: 1 },
@@ -99,7 +102,7 @@ const FormSelectContainer = styled.div( {
 	},
 } );
 
-const CheckboxTreeTitle = styled.p( {
+const OptionsTreeTitle = styled.p( {
 	fontWeight: 500,
 	marginTop: '0px',
 	marginBottom: '16px',
@@ -130,7 +133,7 @@ const ProductionSiteSync = ( {
 	onPull: () => void;
 	disabled: boolean;
 	isButtonDisabled: boolean;
-	onSelectItems: ( items: CheckboxTreeItem[] ) => void;
+	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
 	selectedOption: string;
 	onOptionChange: ( option: string ) => void;
 } ) => {
@@ -152,12 +155,12 @@ const ProductionSiteSync = ( {
 			</FormSelectContainer>
 			{ selectedOption === 'push' && (
 				<>
-					<CheckboxTreeTitle>{ translate( 'Synchronize the following:' ) }</CheckboxTreeTitle>
-					<CheckboxTree
+					<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
+					<SyncOptionsPanel
+						items={ synchronizationOptions }
 						disabled={ disabled }
-						treeItems={ synchronizationOptions }
 						onChange={ onSelectItems }
-					></CheckboxTree>
+					></SyncOptionsPanel>
 					<ConfirmationModalContainer>
 						<ConfirmationModal
 							disabled={ disabled || isButtonDisabled }
@@ -209,7 +212,7 @@ const StagingSiteSync = ( {
 	onPull: ( items?: string[] ) => void;
 	disabled: boolean;
 	isButtonDisabled: boolean;
-	onSelectItems: ( items: CheckboxTreeItem[] ) => void;
+	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
 	selectedOption: string;
 	onOptionChange: ( option: string ) => void;
 } ) => {
@@ -231,12 +234,12 @@ const StagingSiteSync = ( {
 			</FormSelectContainer>
 			{ selectedOption === 'pull' && (
 				<>
-					<CheckboxTreeTitle>{ translate( 'Synchronize the following:' ) }</CheckboxTreeTitle>
-					<CheckboxTree
+					<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
+					<SyncOptionsPanel
+						items={ synchronizationOptions }
 						disabled={ disabled }
-						treeItems={ synchronizationOptions }
 						onChange={ onSelectItems }
-					></CheckboxTree>
+					></SyncOptionsPanel>
 					<ConfirmationModalContainer>
 						<ConfirmationModal
 							disabled={ disabled || isButtonDisabled }
@@ -312,21 +315,13 @@ export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: Production
 	const [ selectedItems, setSelectedItems ] = useState( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState( 'push' );
 
-	const onSelectItems = useCallback( ( items: CheckboxTreeItem[] ) => {
-		const filteredItems =
-			items.flatMap( ( item ) => {
-				if ( item.children.length > 0 ) {
-					return (
-						item.children.filter( ( child ) => child.name ).map( ( child ) => child.name ) || []
-					);
-				}
-				if ( item.name ) {
-					return item.name;
-				}
-				return [];
+	const onSelectItems = useCallback( ( items: CheckboxOptionItem[] ) => {
+		const itemNames =
+			items.map( ( item ) => {
+				return item.name;
 			} ) || ( [] as string[] );
 
-		setSelectedItems( filteredItems as string[] );
+		setSelectedItems( itemNames );
 	}, [] );
 
 	const onPushInternal = useCallback( () => {
@@ -358,21 +353,13 @@ export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: StagingCardPr
 	const onPushInternal = useCallback( () => {
 		onPush?.();
 	}, [ onPush ] );
-	const onSelectItems = useCallback( ( items: CheckboxTreeItem[] ) => {
-		const filteredItems =
-			items.flatMap( ( item ) => {
-				if ( item.children.length > 0 ) {
-					return (
-						item.children.filter( ( child ) => child.name ).map( ( child ) => child.name ) || []
-					);
-				}
-				if ( item.name ) {
-					return item.name;
-				}
-				return [];
+	const onSelectItems = useCallback( ( items: CheckboxOptionItem[] ) => {
+		const itemNames =
+			items.map( ( item ) => {
+				return item.name;
 			} ) || ( [] as string[] );
 
-		setSelectedItems( filteredItems as string[] );
+		setSelectedItems( itemNames );
 	}, [] );
 
 	const onPullInternal = useCallback( () => {
