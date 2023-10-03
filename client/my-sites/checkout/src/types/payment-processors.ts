@@ -18,7 +18,6 @@ export interface PaymentProcessorOptions {
 	siteId: number | undefined;
 	contactDetails: ManagedContactDetails | undefined;
 	recaptchaClientId?: number;
-<<<<<<< HEAD
 	/**
 	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
 	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
@@ -26,7 +25,5 @@ export interface PaymentProcessorOptions {
 	 * the site slug present when the site is in context (ie- when site is connected and user is
 	 * logged in).
 	 */
-=======
->>>>>>> 5aa0c519064 (Update logic to work for PayPal and generic payment processors.)
 	fromSiteSlug?: string;
 }
