@@ -1,3 +1,5 @@
+import { Locator } from 'playwright';
+import { envVariables } from '../../..';
 import { makeSelectorFromBlockName, validatePublishedFormFields } from './shared';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
@@ -35,14 +37,23 @@ export class FormAiFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const aiInputReadyLocator = context.addedBlockLocator.getByRole( 'textbox', {
+		let aiInputParentLocator: Locator;
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// On mobile, it's attached to the editor block toolbar, which is apart from the block DOM.
+			aiInputParentLocator = await context.editorPage.getEditorCanvas();
+		} else {
+			// On desktop, it's within the block DOM node.
+			aiInputParentLocator = context.addedBlockLocator;
+		}
+
+		const aiInputReadyLocator = aiInputParentLocator.getByRole( 'textbox', {
 			name: 'Ask Jetpack AI to create your form',
 		} );
-		const aiInputBusyLocator = context.addedBlockLocator.getByRole( 'textbox', {
+		const aiInputBusyLocator = aiInputParentLocator.getByRole( 'textbox', {
 			name: 'Creating your form. Please wait a few moments.',
 			disabled: true,
 		} );
-		const sendButtonLocator = context.addedBlockLocator.getByRole( 'button', {
+		const sendButtonLocator = aiInputParentLocator.getByRole( 'button', {
 			name: 'Send request',
 		} );
 
