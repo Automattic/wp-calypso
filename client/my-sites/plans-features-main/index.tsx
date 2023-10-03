@@ -181,6 +181,10 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 	);
 };
 
+/**
+ * Helper function to correctly process the plan features for Woo Express plans
+ * with an introductory offer, where we may need to remove some features.
+ */
 const buildPlanFeaturesForWooExpressIntroductoryOffers = (
 	gridPlans: Omit< GridPlan, 'features' >[],
 	planSlug: string,
@@ -208,6 +212,10 @@ const buildPlanFeaturesForWooExpressIntroductoryOffers = (
 	return planFeatures;
 };
 
+/**
+ * Helper function to transform the plan features for Woo Express plans,
+ * as we need some post-processing to apply for introductory offers.
+ */
 const transformGridPlanFeaturesForWooExpressIntroductoryOffers = (
 	intent: PlansIntent | null | undefined,
 	gridPlans: Omit< GridPlan, 'features' >[] | null,
