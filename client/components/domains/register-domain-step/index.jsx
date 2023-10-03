@@ -1423,6 +1423,7 @@ class RegisterDomainStep extends Component {
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
+				domainCart={ this.props.domainCart }
 				availableDomain={ availableDomain }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				isDomainOnly={ this.props.isDomainOnly }

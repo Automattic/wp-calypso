@@ -445,6 +445,7 @@ export function generateSteps( {
 				'siteUrl',
 				'lastDomainSearched',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',

@@ -37,6 +37,7 @@ export class FeaturedDomainSuggestions extends Component {
 			'pendingCheckSuggestion',
 			'unavailableDomains',
 			'domainAndPlanUpsellFlow',
+			'domainCart',
 		];
 		return pick( this.props, childKeys );
 	}

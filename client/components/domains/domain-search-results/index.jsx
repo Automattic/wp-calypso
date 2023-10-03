@@ -269,6 +269,7 @@ class DomainSearchResults extends Component {
 			featuredSuggestionElement = (
 				<FeaturedDomainSuggestions
 					cart={ this.props.cart }
+					domainCart={ this.props.domainCart }
 					isCartPendingUpdate={ this.props.isCartPendingUpdate }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					isDomainOnly={ isDomainOnly }
@@ -302,6 +303,7 @@ class DomainSearchResults extends Component {
 						isDomainOnly={ isDomainOnly }
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
+						domainCart={ this.props.domainCart }
 						cart={ this.props.cart }
 						isSignupStep={ this.props.isSignupStep }
 						showStrikedOutPrice={ this.props.showStrikedOutPrice }

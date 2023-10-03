@@ -239,12 +239,15 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		themeStyleVariation,
 		themeItem,
 		siteAccentColor,
+		domainCart,
 	} = stepData;
 
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
-	const newCartItems = [ domainItem, googleAppsCartItem, themeItem ].filter( ( item ) => item );
+	const newCartItems = [ ...Object.values( domainCart ), googleAppsCartItem, themeItem ].filter(
+		( item ) => item
+	);
 
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 	const state = reduxStore.getState();
@@ -308,6 +311,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				domainItem,
 				themeItem,
 			};
+			// TODO: need to change here to support multiple domains
 
 			processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 				isFreeThemePreselected,
