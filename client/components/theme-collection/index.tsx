@@ -42,7 +42,7 @@ export default function ThemeCollection( {
 				/**
 				 * We have to import the swiper package dynamically because it doesn't offer a CommonJS version. Because of this, the SSR build will fail.
 				 *
-				 * From a performance standpoint, I don't think it will cause any issues; we are already loading the ThemeCards dynamically anyway.
+				 * From a performance standpoint, it should not cause any issues; we are already loading the ThemeCards dynamically anyway.
 				 */
 				Promise.all( [
 					import( 'swiper' ),
