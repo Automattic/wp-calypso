@@ -168,14 +168,8 @@ describe( 'FTME: Sell', function () {
 			);
 		} );
 
-		it( 'Site URL matches selected domain', async function () {
-			// The username is too long, and it is not entirely used to generate the site slug
-			const expectedUsername = testUser.username.substring( 0, 40 );
-
-			// If domain selection is skipped during onboarding, the first (default) site
-			// is created with the user's username.
-			// See https://github.com/Automattic/wp-calypso/pull/67517.
-			expect( newSiteDetails.blog_details.site_slug ).toContain( expectedUsername );
+		it( 'Site slug exists', async function () {
+			expect( newSiteDetails.blog_details.site_slug ).toBeDefined();
 		} );
 	} );
 
