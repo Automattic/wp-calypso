@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page, Response } from 'playwright';
 import { PlansPage, Plans } from '../plans-page';
 import type { SiteDetails, NewSiteResponse } from '../../../types/rest-api-client.types';
 
@@ -23,6 +23,20 @@ export class SignupPickPlanPage {
 		this.plansPage = new PlansPage( page );
 		this.selectedDomain = selectedDomain;
 	}
+	/**
+	 * Selects the plan on the modal upsell.
+	 *
+	 * @param {Plans} plan Plan to select.
+	 */
+	async selectModalUpsellPlan( plan: Plans ): Promise< void > {
+		if ( plan !== 'Free' && plan !== 'Personal' ) {
+			throw Error( `Unsupported plan to be selected in modal upsell: ${ plan }` );
+		}
+		if ( plan === 'Free' ) {
+			await this.page.getByRole( 'button', { name: 'Continue with Free' } );
+		}
+		await this.page.getByRole( 'button', { name: 'Get the Personal plan' } );
+	}
 
 	/**
 	 * Selects a WordPress.com plan matching the name, triggering site creation.
@@ -37,7 +51,7 @@ export class SignupPickPlanPage {
 		] );
 
 		let url: RegExp;
-		let actions: Array< Promise< any > > = [];
+
 		if ( name !== 'Free' ) {
 			// Non-free plans should redirect to the Checkout cart.
 			url = new RegExp( '.*checkout.*' );
@@ -45,17 +59,18 @@ export class SignupPickPlanPage {
 			url = new RegExp( '.*setup/site-setup.*' );
 		}
 
-		if ( name === 'Free' ) {
-			if ( this.selectedDomain?.includes( 'wordpress.com' ) ) {
-				/** Shows a modal */
-				await this.plansPage.selectPlan( name );
-				actions = [
-					this.page.waitForResponse( /.*sites\/new\?.*/ ),
-					this.page.waitForURL( url, { timeout: 30 * 1000 } ),
-					this.plansPage.selectModalUpsellPlan( name ),
-				];
-			}
-		} else if ( actions.length === 0 ) {
+		let actions: Array< Promise< Response | void > > = [];
+		/**  */
+		if ( name === 'Free' && this.selectedDomain?.includes( 'wordpress.com' ) ) {
+			/** Shows a modal */
+			await this.plansPage.selectPlan( name );
+			actions = [
+				this.page.waitForResponse( /.*sites\/new\?.*/ ),
+				this.page.waitForURL( url, { timeout: 30 * 1000 } ),
+				/** Select the free plan on the modal */
+				this.selectModalUpsellPlan( 'Free' ),
+			];
+		} else {
 			actions = [
 				this.page.waitForResponse( /.*sites\/new\?.*/ ),
 				this.page.waitForURL( url, { timeout: 30 * 1000 } ),
