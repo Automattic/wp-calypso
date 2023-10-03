@@ -735,7 +735,7 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			return ! stepSectionName && translate( 'Choose a domain' );
+			return ! stepSectionName && translate( 'Choose your domains' );
 		}
 
 		return getSitePropertyDefaults( 'signUpFlowDomainsStepHeader' );
