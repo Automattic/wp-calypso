@@ -121,6 +121,103 @@ interface ProductionCardProps {
 	disabled: boolean;
 }
 
+const StagingToProductionSync = ( {
+	disabled,
+	onSelectItems,
+	selectedItems,
+	isButtonDisabled,
+	onConfirm,
+}: {
+	disabled: boolean;
+	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
+	selectedItems: string[];
+	isButtonDisabled: boolean;
+	onConfirm: () => void;
+} ) => {
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const [ typedSiteName, setTypedSiteName ] = useState( '' );
+	const translate = useTranslate();
+	return (
+		<>
+			<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
+			<SyncOptionsPanel
+				items={ synchronizationOptions }
+				disabled={ disabled }
+				onChange={ onSelectItems }
+			></SyncOptionsPanel>
+			<ConfirmationModalContainer>
+				<ConfirmationModal
+					disabled={ disabled || isButtonDisabled }
+					isConfirmationDisabled={ typedSiteName !== siteSlug }
+					isPrimary={ true }
+					onConfirm={ onConfirm }
+					modalTitle={ translate( 'You’re about to update your production site' ) }
+					extraModalContent={
+						<div>
+							<p>
+								{ translate(
+									'Synchronizing your production site will overwrite the following items with their equivalents from the staging site:'
+								) }
+							</p>
+							<ul>
+								{ selectedItems.map( ( item ) => {
+									return <li key={ item }>{ item }</li>;
+								} ) }
+							</ul>
+							<p>
+								{ translate( "Enter your site's name {{span}}%(siteSlug)s{{/span}} to confirm.", {
+									args: {
+										siteSlug: siteSlug as string,
+									},
+									components: {
+										span: <span />,
+									},
+								} ) }
+							</p>
+							<FormInput
+								value={ typedSiteName }
+								onChange={ ( event: ChangeEvent ) => setTypedSiteName( event.target.value ) }
+							/>
+						</div>
+					}
+					confirmLabel={ translate( 'Synchronize' ) }
+					cancelLabel={ translate( 'Cancel' ) }
+				>
+					<span>{ translate( 'Synchronize' ) }</span>
+				</ConfirmationModal>
+			</ConfirmationModalContainer>
+		</>
+	);
+};
+
+const ProductionToStagingSync = ( {
+	disabled,
+	isButtonDisabled,
+	onConfirm,
+}: {
+	disabled: boolean;
+	isButtonDisabled: boolean;
+	onConfirm: () => void;
+} ) => {
+	return (
+		<ConfirmationModalContainer>
+			<ConfirmationModal
+				disabled={ disabled || isButtonDisabled }
+				isPrimary={ true }
+				onConfirm={ onConfirm }
+				modalTitle={ translate( 'You are about to update your staging site' ) }
+				modalMessage={ translate(
+					'Synchronizing your staging site will replace the contents of the staging site with those of your production site.'
+				) }
+				confirmLabel={ translate( 'Synchronize' ) }
+				cancelLabel={ translate( 'Cancel' ) }
+			>
+				<span>{ translate( 'Synchronize' ) }</span>
+			</ConfirmationModal>
+		</ConfirmationModalContainer>
+	);
+};
+
 const ProductionSiteSync = ( {
 	onPush,
 	onPull,
@@ -140,8 +237,6 @@ const ProductionSiteSync = ( {
 	selectedOption: string;
 	onOptionChange: ( option: string ) => void;
 } ) => {
-	const [ typedSiteName, setTypedSiteName ] = useState( '' );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 	return (
 		<>
@@ -159,75 +254,20 @@ const ProductionSiteSync = ( {
 				</FormSelect>
 			</FormSelectContainer>
 			{ selectedOption === 'push' && (
-				<>
-					<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
-					<SyncOptionsPanel
-						items={ synchronizationOptions }
-						disabled={ disabled }
-						onChange={ onSelectItems }
-					></SyncOptionsPanel>
-					<ConfirmationModalContainer>
-						<ConfirmationModal
-							disabled={ disabled || isButtonDisabled }
-							isConfirmationDisabled={ typedSiteName !== siteSlug }
-							isPrimary={ true }
-							onConfirm={ onPush }
-							modalTitle={ translate( 'You’re about to update your production site' ) }
-							extraModalContent={
-								<div>
-									<p>
-										{ translate(
-											'Synchronizing your production site will overwrite the following items with their equivalents from the staging site:'
-										) }
-									</p>
-									<ul>
-										{ selectedItems.map( ( item ) => {
-											return <li key={ item }>{ item }</li>;
-										} ) }
-									</ul>
-									<p>
-										{ translate(
-											"Enter your site's name {{span}}%(siteSlug)s{{/span}} to confirm.",
-											{
-												args: {
-													siteSlug: siteSlug as string,
-												},
-												components: {
-													span: <span />,
-												},
-											}
-										) }
-									</p>
-									<FormInput
-										value={ typedSiteName }
-										onChange={ ( event: ChangeEvent ) => setTypedSiteName( event.target.value ) }
-									/>
-								</div>
-							}
-							confirmLabel={ translate( 'Synchronize' ) }
-							cancelLabel={ translate( 'Cancel' ) }
-						>
-							<span>{ translate( 'Synchronize' ) }</span>
-						</ConfirmationModal>
-					</ConfirmationModalContainer>
-				</>
+				<StagingToProductionSync
+					disabled={ disabled }
+					onSelectItems={ onSelectItems }
+					selectedItems={ selectedItems }
+					isButtonDisabled={ isButtonDisabled }
+					onConfirm={ onPush }
+				/>
 			) }
 			{ selectedOption === 'pull' && (
-				<ConfirmationModalContainer>
-					<ConfirmationModal
-						disabled={ disabled || isButtonDisabled }
-						isPrimary={ true }
-						onConfirm={ onPull }
-						modalTitle={ translate( 'You are about to update your staging site' ) }
-						modalMessage={ translate(
-							'Synchronizing your staging site will replace the contents of the staging site with those of your production site.'
-						) }
-						confirmLabel={ translate( 'Synchronize' ) }
-						cancelLabel={ translate( 'Cancel' ) }
-					>
-						<span>{ translate( 'Synchronize' ) }</span>
-					</ConfirmationModal>
-				</ConfirmationModalContainer>
+				<ProductionToStagingSync
+					disabled={ disabled }
+					isButtonDisabled={ isButtonDisabled }
+					onConfirm={ onPull }
+				/>
 			) }
 		</>
 	);
@@ -252,8 +292,6 @@ const StagingSiteSync = ( {
 	selectedOption: string;
 	onOptionChange: ( option: string ) => void;
 } ) => {
-	const [ typedSiteName, setTypedSiteName ] = useState( '' );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 	return (
 		<>
@@ -271,75 +309,20 @@ const StagingSiteSync = ( {
 				</FormSelect>
 			</FormSelectContainer>
 			{ selectedOption === 'pull' && (
-				<>
-					<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
-					<SyncOptionsPanel
-						items={ synchronizationOptions }
-						disabled={ disabled }
-						onChange={ onSelectItems }
-					></SyncOptionsPanel>
-					<ConfirmationModalContainer>
-						<ConfirmationModal
-							disabled={ disabled || isButtonDisabled }
-							isConfirmationDisabled={ typedSiteName !== siteSlug }
-							isPrimary={ true }
-							onConfirm={ onPull }
-							modalTitle={ translate( 'You’re about to update your production site' ) }
-							extraModalContent={
-								<div>
-									<p>
-										{ translate(
-											'Synchronizing your production site will overwrite the following items with their equivalents from the staging site:'
-										) }
-									</p>
-									<ul>
-										{ selectedItems.map( ( item ) => {
-											return <li key={ item }>{ item }</li>;
-										} ) }
-									</ul>
-									<p>
-										{ translate(
-											"Enter your site's name {{span}}%(siteSlug)s{{/span}} to confirm.",
-											{
-												args: {
-													siteSlug: siteSlug as string,
-												},
-												components: {
-													span: <span />,
-												},
-											}
-										) }
-									</p>
-									<FormInput
-										value={ typedSiteName }
-										onChange={ ( event: ChangeEvent ) => setTypedSiteName( event.target.value ) }
-									/>
-								</div>
-							}
-							confirmLabel={ translate( 'Synchronize' ) }
-							cancelLabel={ translate( 'Cancel' ) }
-						>
-							<span>{ translate( 'Synchronize' ) }</span>
-						</ConfirmationModal>
-					</ConfirmationModalContainer>
-				</>
+				<StagingToProductionSync
+					disabled={ disabled }
+					onSelectItems={ onSelectItems }
+					selectedItems={ selectedItems }
+					isButtonDisabled={ isButtonDisabled }
+					onConfirm={ onPull }
+				/>
 			) }
 			{ selectedOption === 'push' && (
-				<ConfirmationModalContainer>
-					<ConfirmationModal
-						disabled={ disabled || isButtonDisabled }
-						isPrimary={ true }
-						onConfirm={ onPush }
-						modalTitle={ translate( 'You are about to update your staging site' ) }
-						modalMessage={ translate(
-							'Synchronizing your staging site will replace the contents of the staging site with those of your production site.'
-						) }
-						confirmLabel={ translate( 'Synchronize' ) }
-						cancelLabel={ translate( 'Cancel' ) }
-					>
-						<span>{ translate( 'Synchronize' ) }</span>
-					</ConfirmationModal>
-				</ConfirmationModalContainer>
+				<ProductionToStagingSync
+					disabled={ disabled }
+					isButtonDisabled={ isButtonDisabled }
+					onConfirm={ onPush }
+				/>
 			) }
 		</>
 	);
