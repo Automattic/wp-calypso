@@ -2,7 +2,7 @@
 @import "@automattic/components/src/styles/typography.scss";
 
 .components-dropdown > .components-button {
-	&.interval-dropdown {
+	&.stats-interval-dropdown__button {
 		border-radius: 2px;
 		color: var(--gutenberg-gray-900);
 		font-family: $font-sf-pro-text;
