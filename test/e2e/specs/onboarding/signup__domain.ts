@@ -49,12 +49,12 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		} );
 
 		it( 'Select to buy just the domain', async function () {
-			await page.click( 'button:text("Just buy a domain")' );
+			await page.click( 'button:text("Get domain")' );
 		} );
 
 		it( 'Sign up for a WordPress.com account', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			await userSignupPage.signup( testUser.email, testUser.username, testUser.password );
+			await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 		} );
 
 		it( 'Land in checkout cart', async function () {
