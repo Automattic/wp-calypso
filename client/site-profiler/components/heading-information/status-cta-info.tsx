@@ -34,6 +34,7 @@ export default function StatusCtaInfo( props: Props ) {
 			);
 		case 'transfer-google-domain':
 		case 'transfer-google-domain-hosting':
+		case 'transfer-google-domain-hosting-wp':
 			return (
 				<p>
 					{ translate(
@@ -47,6 +48,7 @@ export default function StatusCtaInfo( props: Props ) {
 				</p>
 			);
 		case 'transfer-hosting':
+		case 'transfer-hosting-wp':
 			return (
 				<p>
 					{ translate(
@@ -59,6 +61,7 @@ export default function StatusCtaInfo( props: Props ) {
 				</p>
 			);
 		case 'transfer-domain-hosting':
+		case 'transfer-domain-hosting-wp':
 			return (
 				<p>
 					{ translate(
