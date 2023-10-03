@@ -2,9 +2,10 @@
 import {
 	__unstableIframe as Iframe,
 	__unstableEditorStyles as EditorStyles,
-	__unstablePresetDuotoneFilter as PresetDuotoneFilter,
+	privateApis as blockEditorPrivateApis,
 } from '@wordpress/block-editor';
 import { useResizeObserver, useRefEffect } from '@wordpress/compose';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import React, { useMemo, useState, useContext, ReactNode } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
@@ -13,6 +14,13 @@ import loadStyles from '../utils/load-styles';
 import BlockRendererContext from './block-renderer-context';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
+
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
+	'@wordpress/block-editor'
+);
+
+const { getDuotoneFilter } = unlock( blockEditorPrivateApis );
 
 interface BlockRendererContainerProps {
 	children: ReactNode;
@@ -131,9 +139,9 @@ const ScaledBlockRendererContainer = ( {
 				{ isLoaded ? contentResizeListener : null }
 				{
 					/* Filters need to be rendered before children to avoid Safari rendering issues. */
-					svgFilters.map( ( preset ) => (
-						<PresetDuotoneFilter preset={ preset } key={ preset.slug } />
-					) )
+					svgFilters.map( ( preset ) =>
+						getDuotoneFilter( `wp-duotone-${ preset.slug }`, preset.colors )
+					)
 				}
 				{ children }
 			</Iframe>
