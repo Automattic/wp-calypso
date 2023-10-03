@@ -125,13 +125,13 @@ const StagingToProductionSync = ( {
 	disabled,
 	onSelectItems,
 	selectedItems,
-	isButtonDisabled,
+	isSyncButtonDisabled,
 	onConfirm,
 }: {
 	disabled: boolean;
 	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
 	selectedItems: string[];
-	isButtonDisabled: boolean;
+	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 } ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -147,7 +147,7 @@ const StagingToProductionSync = ( {
 			></SyncOptionsPanel>
 			<ConfirmationModalContainer>
 				<ConfirmationModal
-					disabled={ disabled || isButtonDisabled }
+					disabled={ disabled || isSyncButtonDisabled }
 					isConfirmationDisabled={ typedSiteName !== siteSlug }
 					isPrimary={ true }
 					onConfirm={ onConfirm }
@@ -192,17 +192,17 @@ const StagingToProductionSync = ( {
 
 const ProductionToStagingSync = ( {
 	disabled,
-	isButtonDisabled,
+	isSyncButtonDisabled,
 	onConfirm,
 }: {
 	disabled: boolean;
-	isButtonDisabled: boolean;
+	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 } ) => {
 	return (
 		<ConfirmationModalContainer>
 			<ConfirmationModal
-				disabled={ disabled || isButtonDisabled }
+				disabled={ disabled || isSyncButtonDisabled }
 				isPrimary={ true }
 				onConfirm={ onConfirm }
 				modalTitle={ translate( 'You are about to update your staging site' ) }
@@ -215,116 +215,6 @@ const ProductionToStagingSync = ( {
 				<span>{ translate( 'Synchronize' ) }</span>
 			</ConfirmationModal>
 		</ConfirmationModalContainer>
-	);
-};
-
-const ProductionSiteSync = ( {
-	onPush,
-	onPull,
-	disabled,
-	isButtonDisabled,
-	onSelectItems,
-	selectedItems,
-	selectedOption,
-	onOptionChange,
-}: {
-	onPush: ( items?: string[] ) => void;
-	onPull: () => void;
-	disabled: boolean;
-	isButtonDisabled: boolean;
-	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
-	selectedItems: string[];
-	selectedOption: string;
-	onOptionChange: ( option: string ) => void;
-} ) => {
-	const translate = useTranslate();
-	return (
-		<>
-			<FormSelectContainer>
-				<FormSelect
-					value={ selectedOption }
-					onChange={ ( { currentTarget } ) => onOptionChange( currentTarget.value ) }
-				>
-					<option key={ 0 } value="push">
-						{ translate( 'Push staging changes to production' ) }
-					</option>
-					<option key={ 1 } value="pull">
-						{ translate( 'Pull production changes to staging' ) }
-					</option>
-				</FormSelect>
-			</FormSelectContainer>
-			{ selectedOption === 'push' && (
-				<StagingToProductionSync
-					disabled={ disabled }
-					onSelectItems={ onSelectItems }
-					selectedItems={ selectedItems }
-					isButtonDisabled={ isButtonDisabled }
-					onConfirm={ onPush }
-				/>
-			) }
-			{ selectedOption === 'pull' && (
-				<ProductionToStagingSync
-					disabled={ disabled }
-					isButtonDisabled={ isButtonDisabled }
-					onConfirm={ onPull }
-				/>
-			) }
-		</>
-	);
-};
-
-const StagingSiteSync = ( {
-	onPush,
-	onPull,
-	disabled,
-	isButtonDisabled,
-	selectedItems,
-	onSelectItems,
-	selectedOption,
-	onOptionChange,
-}: {
-	onPush: () => void;
-	onPull: ( items?: string[] ) => void;
-	disabled: boolean;
-	isButtonDisabled: boolean;
-	selectedItems: string[];
-	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
-	selectedOption: string;
-	onOptionChange: ( option: string ) => void;
-} ) => {
-	const translate = useTranslate();
-	return (
-		<>
-			<FormSelectContainer>
-				<FormSelect
-					value={ selectedOption }
-					onChange={ ( { currentTarget } ) => onOptionChange( currentTarget.value ) }
-				>
-					<option key={ 0 } value="pull">
-						{ translate( 'Pull staging changes to production' ) }
-					</option>
-					<option key={ 1 } value="push">
-						{ translate( 'Push production changes to staging' ) }
-					</option>
-				</FormSelect>
-			</FormSelectContainer>
-			{ selectedOption === 'pull' && (
-				<StagingToProductionSync
-					disabled={ disabled }
-					onSelectItems={ onSelectItems }
-					selectedItems={ selectedItems }
-					isButtonDisabled={ isButtonDisabled }
-					onConfirm={ onPull }
-				/>
-			) }
-			{ selectedOption === 'push' && (
-				<ProductionToStagingSync
-					disabled={ disabled }
-					isButtonDisabled={ isButtonDisabled }
-					onConfirm={ onPush }
-				/>
-			) }
-		</>
 	);
 };
 
@@ -381,19 +271,41 @@ export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: Production
 	const onPullInternal = useCallback( () => {
 		onPull?.();
 	}, [ onPull ] );
-	const isDisabled = disabled || ( selectedItems.length === 0 && selectedOption === 'push' );
+
+	const isSyncButtonDisabled =
+		disabled || ( selectedItems.length === 0 && selectedOption === 'push' );
+
 	return (
 		<SyncCardContainer>
-			<ProductionSiteSync
-				selectedOption={ selectedOption }
-				onOptionChange={ setSelectedOption }
-				selectedItems={ selectedItems }
-				onPush={ onPushInternal }
-				onPull={ onPullInternal }
-				disabled={ disabled }
-				isButtonDisabled={ isDisabled }
-				onSelectItems={ onSelectItems }
-			/>
+			<FormSelectContainer>
+				<FormSelect
+					value={ selectedOption }
+					onChange={ ( { currentTarget } ) => setSelectedOption( currentTarget.value ) }
+				>
+					<option key={ 0 } value="push">
+						{ translate( 'Push staging changes to production' ) }
+					</option>
+					<option key={ 1 } value="pull">
+						{ translate( 'Pull production changes to staging' ) }
+					</option>
+				</FormSelect>
+			</FormSelectContainer>
+			{ selectedOption === 'push' && (
+				<StagingToProductionSync
+					disabled={ disabled }
+					onSelectItems={ onSelectItems }
+					selectedItems={ selectedItems }
+					isSyncButtonDisabled={ isSyncButtonDisabled }
+					onConfirm={ onPushInternal }
+				/>
+			) }
+			{ selectedOption === 'pull' && (
+				<ProductionToStagingSync
+					disabled={ disabled }
+					isSyncButtonDisabled={ isSyncButtonDisabled }
+					onConfirm={ onPullInternal }
+				/>
+			) }
 		</SyncCardContainer>
 	);
 };
@@ -401,9 +313,11 @@ export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: Production
 export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: StagingCardProps ) => {
 	const [ selectedItems, setSelectedItems ] = useState< string[] >( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState( 'pull' );
+
 	const onPushInternal = useCallback( () => {
 		onPush?.();
 	}, [ onPush ] );
+
 	const onSelectItems = useCallback( ( items: CheckboxOptionItem[] ) => {
 		const itemNames =
 			items.map( ( item ) => {
@@ -417,19 +331,40 @@ export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: StagingCardPr
 		onPull?.( selectedItems );
 	}, [ onPull, selectedItems ] );
 
-	const isButtonDisabled = disabled || ( selectedItems.length === 0 && selectedOption === 'pull' );
+	const isSyncButtonDisabled =
+		disabled || ( selectedItems.length === 0 && selectedOption === 'pull' );
+
 	return (
 		<SyncCardContainer>
-			<StagingSiteSync
-				selectedOption={ selectedOption }
-				onOptionChange={ setSelectedOption }
-				onPush={ onPushInternal }
-				onPull={ onPullInternal }
-				selectedItems={ selectedItems }
-				disabled={ disabled }
-				isButtonDisabled={ isButtonDisabled }
-				onSelectItems={ onSelectItems }
-			/>
+			<FormSelectContainer>
+				<FormSelect
+					value={ selectedOption }
+					onChange={ ( { currentTarget } ) => setSelectedOption( currentTarget.value ) }
+				>
+					<option key={ 0 } value="pull">
+						{ translate( 'Pull staging changes to production' ) }
+					</option>
+					<option key={ 1 } value="push">
+						{ translate( 'Push production changes to staging' ) }
+					</option>
+				</FormSelect>
+			</FormSelectContainer>
+			{ selectedOption === 'pull' && (
+				<StagingToProductionSync
+					disabled={ disabled }
+					onSelectItems={ onSelectItems }
+					selectedItems={ selectedItems }
+					isSyncButtonDisabled={ isSyncButtonDisabled }
+					onConfirm={ onPullInternal }
+				/>
+			) }
+			{ selectedOption === 'push' && (
+				<ProductionToStagingSync
+					disabled={ disabled }
+					isSyncButtonDisabled={ isSyncButtonDisabled }
+					onConfirm={ onPushInternal }
+				/>
+			) }
 		</SyncCardContainer>
 	);
 };
