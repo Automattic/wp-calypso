@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -42,6 +43,10 @@ class AmpWpcom extends Component {
 
 	render() {
 		const { translate } = this.props;
+
+		if ( isUnlaunchedSite ) {
+			return null;
+		}
 
 		return (
 			<div className="amp__main site-settings__traffic-settings">
