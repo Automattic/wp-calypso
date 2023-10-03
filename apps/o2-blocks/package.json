@@ -24,7 +24,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@wordpress/api-fetch": "^6.39.0",
 		"@wordpress/base-styles": "^4.33.0",
-		"@wordpress/block-editor": "^12.10.0",
+		"@wordpress/block-editor": "^12.10.3",
 		"@wordpress/blocks": "^12.19.0",
 		"@wordpress/components": "^25.8.0",
 		"@wordpress/data": "^9.12.0",
