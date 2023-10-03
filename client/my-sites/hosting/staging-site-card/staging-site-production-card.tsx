@@ -18,7 +18,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
-import { ProductionSiteSyncCard } from './card-content/staging-sync-card';
+import { StagingSiteSyncCard } from './card-content/staging-sync-card';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 
 const ActionButtons = styled.div( {
@@ -110,7 +110,8 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				</ActionButtons>
 				{ isStagingSitesI3Enabled && (
 					<SyncActionsContainer>
-						<ProductionSiteSyncCard
+						<StagingSiteSyncCard
+							siteSlug={ urlToSlug( productionSite.url ) }
 							onPush={ pullFromStaging }
 							onPull={ pushToStaging }
 							disabled={ disabled }

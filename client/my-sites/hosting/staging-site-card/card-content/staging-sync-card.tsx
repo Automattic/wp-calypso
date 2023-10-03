@@ -59,6 +59,21 @@ const StagingSyncCardBody = styled.div( {
 	},
 } );
 
+const ConfirmationModalList = styled.ul( {
+	marginBottom: '16px',
+} );
+const ConfirmationModalInputTitle = styled.p( {
+	marginBottom: '8px',
+} );
+
+const ConfirmationModalInput = styled( FormInput )( {
+	marginBottom: '26px!important',
+} );
+
+const ConfirmationModalInputSiteSlug = styled.span( {
+	color: '#D63638',
+} );
+
 const ConfirmationModalContainer = styled.div( {
 	display: 'flex',
 	flexDirection: 'row',
@@ -110,31 +125,33 @@ const OptionsTreeTitle = styled.p( {
 } );
 
 interface StagingCardProps {
+	onPull: () => void;
 	onPush: ( items?: string[] ) => void;
-	onPull: ( items?: string[] ) => void;
 	disabled: boolean;
+	siteSlug: string;
 }
 
 interface ProductionCardProps {
-	onPush: ( items?: string[] ) => void;
-	onPull: () => void;
+	onPull: ( items?: string[] ) => void;
+	onPush: () => void;
 	disabled: boolean;
 }
 
 const StagingToProductionSync = ( {
 	disabled,
+	siteSlug,
 	onSelectItems,
 	selectedItems,
 	isSyncButtonDisabled,
 	onConfirm,
 }: {
 	disabled: boolean;
+	siteSlug: string;
 	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
 	selectedItems: string[];
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 } ) => {
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
 	return (
@@ -159,22 +176,22 @@ const StagingToProductionSync = ( {
 									'Synchronizing your production site will overwrite the following items with their equivalents from the staging site:'
 								) }
 							</p>
-							<ul>
+							<ConfirmationModalList>
 								{ selectedItems.map( ( item ) => {
 									return <li key={ item }>{ item }</li>;
 								} ) }
-							</ul>
-							<p>
+							</ConfirmationModalList>
+							<ConfirmationModalInputTitle>
 								{ translate( "Enter your site's name {{span}}%(siteSlug)s{{/span}} to confirm.", {
 									args: {
 										siteSlug: siteSlug as string,
 									},
 									components: {
-										span: <span />,
+										span: <ConfirmationModalInputSiteSlug />,
 									},
 								} ) }
-							</p>
-							<FormInput
+							</ConfirmationModalInputTitle>
+							<ConfirmationModalInput
 								value={ typedSiteName }
 								onChange={ ( event: ChangeEvent ) => setTypedSiteName( event.target.value ) }
 							/>
@@ -251,7 +268,7 @@ const SyncCardContainer = ( { children } ) => {
 	);
 };
 
-export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: ProductionCardProps ) => {
+export const StagingSiteSyncCard = ( { siteSlug, onPush, onPull, disabled }: StagingCardProps ) => {
 	const [ selectedItems, setSelectedItems ] = useState( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState( 'push' );
 
@@ -292,6 +309,7 @@ export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: Production
 			</FormSelectContainer>
 			{ selectedOption === 'push' && (
 				<StagingToProductionSync
+					siteSlug={ siteSlug }
 					disabled={ disabled }
 					onSelectItems={ onSelectItems }
 					selectedItems={ selectedItems }
@@ -310,9 +328,10 @@ export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: Production
 	);
 };
 
-export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: StagingCardProps ) => {
+export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: ProductionCardProps ) => {
 	const [ selectedItems, setSelectedItems ] = useState< string[] >( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState( 'pull' );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const onPushInternal = useCallback( () => {
 		onPush?.();
@@ -351,6 +370,7 @@ export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: StagingCardPr
 			</FormSelectContainer>
 			{ selectedOption === 'pull' && (
 				<StagingToProductionSync
+					siteSlug={ siteSlug || '' }
 					disabled={ disabled }
 					onSelectItems={ onSelectItems }
 					selectedItems={ selectedItems }

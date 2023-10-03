@@ -8,7 +8,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { ConfirmationModal } from 'calypso/my-sites/hosting/staging-site-card/confirmation-modal';
 import { StagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
-import { StagingSiteSyncCard } from './staging-sync-card';
+import { ProductionSiteSyncCard } from './staging-sync-card';
 
 const SiteRow = styled.div( {
 	display: 'flex',
@@ -153,7 +153,7 @@ export const ManageStagingSiteCardContent = ( {
 							<ConfirmationDeleteButton />
 						</ActionButtons>
 						<SyncActionsContainer>
-							<StagingSiteSyncCard
+							<ProductionSiteSyncCard
 								onPush={ onPushClick }
 								onPull={ onPullClick }
 								disabled={ isButtonDisabled }
