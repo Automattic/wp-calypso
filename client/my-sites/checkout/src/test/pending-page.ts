@@ -87,6 +87,21 @@ describe( 'addUrlToPendingPageRedirect', () => {
 		);
 	} );
 
+	it( 'returns a no-site URL and a site slug as `from_site_slug` if no siteSlug is provided but fromSiteSlug is provided', () => {
+		const finalUrl = '/foo/bar/baz';
+		const orderId = '12345';
+		const fromSiteSlug = 'myJetpack.site';
+		const actual = addUrlToPendingPageRedirect( finalUrl, {
+			orderId,
+			fromSiteSlug,
+		} );
+		expect( actual ).toEqual(
+			`${ currentWindowOrigin }/checkout/thank-you/no-site/pending/${ orderId }?redirectTo=${ encodeURIComponent(
+				finalUrl
+			) }&receiptId=${ encodedReceiptPlaceholder }&from_site_slug=${ fromSiteSlug }`
+		);
+	} );
+
 	it( 'returns a order ID placeholder when no order ID is provided', () => {
 		const finalUrl = '/foo/bar/baz';
 		const siteSlug = 'example2.com';

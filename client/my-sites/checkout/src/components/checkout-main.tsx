@@ -449,6 +449,7 @@ export default function CheckoutMain( {
 			stripeConfiguration,
 			stripe,
 			recaptchaClientId,
+			fromSiteSlug,
 		} ),
 		[
 			contactDetails,
@@ -463,6 +464,7 @@ export default function CheckoutMain( {
 			stripeConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
+			fromSiteSlug,
 		]
 	);
 
