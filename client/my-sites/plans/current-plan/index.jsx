@@ -16,6 +16,7 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlan,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 	JETPACK_COMPLETE_PLANS,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
@@ -220,7 +221,8 @@ class CurrentPlan extends Component {
 		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const isBusinessTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
-		const isTrial = isEcommerceTrial || isBusinessTrial;
+		const isHostingTrial = currentPlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
+		const isTrial = isEcommerceTrial || isBusinessTrial || isHostingTrial;
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
