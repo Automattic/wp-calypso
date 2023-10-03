@@ -63,6 +63,8 @@ export interface SitePlan {
 	planSlug: PlanSlugFromProducts;
 	productId: number;
 	introOffer?: PlanIntroductoryOffer | null;
+	/* This value is only returned for the current plan on the site. */
+	expiry?: string;
 }
 
 export interface PricedAPIPlanIntroductoryOffer {
