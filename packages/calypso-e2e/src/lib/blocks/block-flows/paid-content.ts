@@ -52,12 +52,12 @@ export class PaidContentBlockFlow implements BlockFlow {
 		// Verify the Subscriber version of the block is now loaded.
 		await block.getByRole( 'document', { name: 'Block: Subscriber View' } ).waitFor();
 
-		// Fill the title and text for subscribers.
+		// Fill the title and text for Subscriber view.
 		await block
 			.getByRole( 'document', { name: 'Block: Heading' } )
 			.fill( this.configurationData.subscriberTitle );
 		await block
-			.getByRole( 'document', { name: 'Block: Paragraph' } )
+			.getByRole( 'document', { name: /Paragraph/ } )
 			.fill( this.configurationData.subscriberText );
 	}
 
