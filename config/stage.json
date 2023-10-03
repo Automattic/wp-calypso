@@ -104,6 +104,7 @@
 		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
