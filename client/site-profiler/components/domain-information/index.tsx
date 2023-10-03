@@ -2,20 +2,23 @@ import { Button } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { TranslateOptions, translate } from 'i18n-calypso';
 import { useState } from 'react';
+import { UrlData } from 'calypso/blocks/import/types';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
 import { useFilteredWhoisData } from 'calypso/site-profiler/hooks/use-filtered-whois-data';
 import VerifiedProvider from './verified-provider';
-import type { WhoIs } from 'calypso/data/site-profiler/types';
+import type { HostingProvider, WhoIs } from 'calypso/data/site-profiler/types';
 import './styles.scss';
 
 interface Props {
 	domain: string;
 	whois: WhoIs;
+	hostingProvider?: HostingProvider;
+	urlData?: UrlData;
 }
 
 export default function DomainInformation( props: Props ) {
-	const { domain, whois } = props;
+	const { domain, whois, hostingProvider, urlData } = props;
 	const moment = useLocalizedMoment();
 	const momentFormat = 'YYYY-MM-DD HH:mm:ss UTC';
 	const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
@@ -76,7 +79,7 @@ export default function DomainInformation( props: Props ) {
 						<div className="name">{ translate( 'Registrar' ) }</div>
 						<div>
 							{ whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
-								<VerifiedProvider />
+								<VerifiedProvider hostingProvider={ hostingProvider } urlData={ urlData } />
 							) }
 							{ whois.registrar_url &&
 								! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
