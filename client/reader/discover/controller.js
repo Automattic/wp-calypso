@@ -10,6 +10,7 @@ import {
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
@@ -24,11 +25,14 @@ const exported = {
 		const mcKey = 'discover';
 		const state = context.store.getState();
 
+		const currentRoute = getCurrentRoute( state );
+		const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
+
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack(
 			'calypso_reader_discover_viewed',
 			{},
-			{ pathnameOverride: getCurrentRoute( state ) }
+			{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
 		);
 
 		if ( ! isUserLoggedIn( state ) ) {

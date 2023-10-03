@@ -73,8 +73,17 @@ function getLocation( path ) {
 		return 'following_manage';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		const searchParams = new URLSearchParams( window.location.search );
-		const selectedTab = searchParams.get( 'selectedTab' );
+		// Try to get search params from the path, as these could be included as part of the override.
+		// This is the case with `calypso_reader_article_opened`
+		const searchParamsMaybeInOverride = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
+		let selectedTab = searchParamsMaybeInOverride.get( 'selectedTab' );
+
+		// If selectedTab wasn't in the override, use the current location.
+		if ( ! selectedTab ) {
+			const searchParams = new URLSearchParams( window.location.search );
+			selectedTab = searchParams.get( 'selectedTab' );
+		}
+
 		if ( ! selectedTab || selectedTab === 'recommended' ) {
 			return 'discover_recommended';
 		} else if ( selectedTab === 'latest' ) {
