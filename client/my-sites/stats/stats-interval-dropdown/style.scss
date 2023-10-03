@@ -1,17 +1,16 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography.scss";
 
-.components-dropdown > .components-button {
-	&.stats-interval-dropdown__button {
+
+.stats-interval-dropdown__container {
+
+	> .components-button {
 		border-radius: 2px;
 		color: var(--gutenberg-gray-900);
 		font-family: $font-sf-pro-text;
 		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		font-weight: 400;
 	}
-}
-
-.components-popover__content {
 
 	.segmented-control.is-primary.stats-navigation__intervals .segmented-control__item.is-selected .segmented-control__link:hover {
 		background-color: var(--color-neutral-0);
@@ -23,14 +22,16 @@
 		color: var(--gutenberg-gray-900);
 	}
 
-	width: 196px;
-	border-radius: 2px;
-	background-color: var(--studio-white);
-	box-shadow:
-		0 2.3px 3.3px -0.5px rgba(0, 0, 0, 0.1),
-		0 1.2px 1.7px -0.2px rgba(0, 0, 0, 0.1),
-		0 0.7px 1px 0 rgba(0, 0, 0, 0.1),
-		0 0 0 1px #ccc;
+	.components-popover__content {
+		width: 196px;
+		border-radius: 2px;
+		background-color: var(--studio-white);
+		box-shadow:
+			0 2.3px 3.3px -0.5px rgba(0, 0, 0, 0.1),
+			0 1.2px 1.7px -0.2px rgba(0, 0, 0, 0.1),
+			0 0.7px 1px 0 rgba(0, 0, 0, 0.1),
+			0 0 0 1px #ccc;
+	}
 
 	.segmented-control {
 		display: block;
