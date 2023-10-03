@@ -34,7 +34,7 @@ export type DomainsTableColumn = BaseDomainsTableColumn &
 				initialSortDirection?: never;
 				supportsOrderSwitching?: never;
 		  }
-	 );
+	);
 
 type DomainsTableHeaderProps = {
 	columns: DomainsTableColumn[];
