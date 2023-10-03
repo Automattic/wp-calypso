@@ -138,6 +138,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	} = gridPlansIndex[ planSlug ];
 	const shouldShowDiscountedPrice = Boolean( discountedPrice.monthly );
 	const isPricedPlan = null !== originalPrice.monthly;
+	const shouldShowIntroPricing = introOffer && ! introOffer.isOfferComplete;
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
@@ -147,7 +148,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		<>
 			{ isPricedPlan ? (
 				<HeaderPriceContainer>
-					{ introOffer && (
+					{ shouldShowIntroPricing && (
 						<>
 							{ ! current && (
 								<Badge className="plan-features-2023-grid__badge" isForIntroOffer={ true }>
@@ -164,7 +165,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							/>
 						</>
 					) }
-					{ ! introOffer && shouldShowDiscountedPrice && (
+					{ ! shouldShowIntroPricing && shouldShowDiscountedPrice && (
 						<>
 							<Badge className="plan-features-2023-grid__badge">
 								{ isPlanUpgradeCreditEligible
@@ -193,7 +194,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							</PricesGroup>
 						</>
 					) }
-					{ ! introOffer && ! shouldShowDiscountedPrice && (
+					{ ! shouldShowIntroPricing && ! shouldShowDiscountedPrice && (
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ originalPrice.monthly }
