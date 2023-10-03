@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
@@ -28,6 +28,84 @@ class PostByline extends Component {
 	static defaultProps = {
 		showAvatar: true,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.secondaryBylineRef = createRef();
+		this.organizeBullets = this.organizeBullets.bind( this );
+	}
+
+	/**
+	 * Add functionality to this ref on mount and resize. Get all secondary items and bullets in
+	 * the ref element. If lastItem.offsetTop !== thisItem.offsetTop, we can remove the bullet between
+	 * them. If that bullet is on the line above (bullet.offsetTop === lastItem.offsetTop), we
+	 * need to hide it and keep its spacing. If that bullet is on the next line instead, we can
+	 * hide the bullet and its spacing (remove element entirely?).
+	 */
+	organizeBullets() {
+		// Query all items in the secondary byline, as well as the bullets between them.
+		const secondaryItems =
+			this.secondaryBylineRef.current?.querySelectorAll(
+				'.reader-post-card__byline-secondary-item'
+			) || [];
+		const bullets =
+			this.secondaryBylineRef.current?.querySelectorAll(
+				'.reader-post-card__byline-secondary-bullet'
+			) || [];
+
+		// Go through all the items to determine if the corresponding bullets should be shown.
+		let lastItem;
+		secondaryItems.forEach( ( item, index ) => {
+			// We cant compare heights unless we have a lastItem set.
+			if ( ! lastItem ) {
+				lastItem = item;
+				return;
+			}
+			// This should always exist given the elements below, but lets do a safe return if not.
+			if ( ! bullets[ index - 1 ] ) {
+				return;
+			}
+
+			// If the items arent at the same vertical position, hide the bullet.
+			if ( item.offsetTop !== lastItem.offsetTop ) {
+				// For now, hide it but keep spacing.
+				bullets[ index - 1 ].style.visibility = 'hidden';
+
+				// The below was an attempt to be more graceful than the line above. To keep the
+				// spacing when hiding the bullet, only when the bullet is on line above. And to
+				// hide it and remove its spacing when its not. This had a handful of edge case
+				// issues where it did not work as expected.
+
+				// // Check if the bullet is on the same line as above.
+				// // Testing - difference of 4 when on same line, 17 when on next line.
+				// if ( Math.abs( lastItem.offsetTop - bullets[ index - 1 ].offsetTop ) < 8 ) {
+				// 	// If the bullet is on the line above, hide it but keep spacing
+				// 	bullets[ index - 1 ].style.visibility = 'hidden';
+				// } else {
+				// 	// Otherwise, hide it completely.
+				// 	bullets[ index - 1 ].style.display = 'none';
+				// }
+			} else {
+				// If the items were on the same line, reset the style overrides.
+				bullets[ index - 1 ].removeAttribute( 'style' );
+			}
+			// Prepare for next iteration.
+			lastItem = item;
+		} );
+	}
+
+	componentDidMount() {
+		this.organizeBullets();
+		window.addEventListener( 'resize', this.organizeBullets );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.organizeBullets );
+	}
+
+	componentDidUpdate() {
+		this.organizeBullets();
+	}
 
 	recordDateClick = () => {
 		recordPermalinkClick( 'timestamp_card', this.props.post );
@@ -84,7 +162,7 @@ class PostByline extends Component {
 					) }
 					<div className="reader-post-card__author-and-timestamp">
 						{ ( shouldDisplayAuthor || ( post.date && post.URL ) ) && (
-							<span className="reader-post-card__byline-secondary">
+							<span className="reader-post-card__byline-secondary" ref={ this.secondaryBylineRef }>
 								{ shouldDisplayAuthor && (
 									<>
 										<ReaderAuthorLink
