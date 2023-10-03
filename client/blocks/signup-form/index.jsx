@@ -1177,7 +1177,7 @@ class SignupForm extends Component {
 					flowName={ this.props.flowName }
 					goToNextStep={ this.props.goToNextStep }
 					logInUrl={ logInUrl }
-					handleResponse={ this.props.handleSocialResponse }
+					handleSocialResponse={ this.props.handleSocialResponse }
 					socialService={ this.props.socialService }
 					socialServiceResponse={ this.props.socialServiceResponse }
 					isReskinned={ this.props.isReskinned }
