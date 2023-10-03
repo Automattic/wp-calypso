@@ -83,6 +83,7 @@ type SiteSettingsPopoverProps = SiteSettingsProps & {
 	unsubscribing: boolean;
 	blogId?: number;
 	feedId: number;
+	subscriptionId: number;
 };
 
 export const SiteSettingsPopover = ( {
@@ -90,6 +91,7 @@ export const SiteSettingsPopover = ( {
 	unsubscribing,
 	blogId,
 	feedId,
+	subscriptionId,
 	...props
 }: SiteSettingsPopoverProps ) => {
 	const translate = useTranslate();
@@ -130,6 +132,7 @@ export const SiteSettingsPopover = ( {
 									recordViewFeedButtonClicked( {
 										blogId: blogId ? String( blogId ) : null,
 										feedId: String( feedId ),
+										source: 'subscription-settings-dropdown',
 									} );
 								} }
 							>

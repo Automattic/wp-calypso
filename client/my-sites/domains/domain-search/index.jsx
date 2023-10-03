@@ -238,6 +238,17 @@ class DomainSearch extends Component {
 		return strippedHostname ?? selectedSite.domain.split( '.' )[ 0 ];
 	}
 
+	getBackButtonHref() {
+		const { selectedSiteSlug, currentRoute, isFromMyHome } = this.props;
+
+		// If we have the from query param, we should use that as the back button href
+		if ( isFromMyHome ) {
+			return `/home/${ selectedSiteSlug }`;
+		}
+
+		return domainManagementList( selectedSiteSlug, currentRoute );
+	}
+
 	render() {
 		const {
 			selectedSite,
@@ -248,7 +259,6 @@ class DomainSearch extends Component {
 			isDomainAndPlanPackageFlow,
 			isDomainUpsell,
 			isEcommerceSite,
-			currentRoute,
 		} = this.props;
 
 		if ( ! selectedSite ) {
@@ -309,10 +319,7 @@ class DomainSearch extends Component {
 				<span>
 					<div className="domain-search__content">
 						{ ! isDomainAndPlanPackageFlow && (
-							<BackButton
-								className="domain-search__go-back"
-								href={ domainManagementList( selectedSiteSlug, currentRoute ) }
-							>
+							<BackButton className="domain-search__go-back" href={ this.getBackButtonHref() }>
 								<Gridicon icon="arrow-left" size={ 18 } />
 								{ translate( 'Back' ) }
 							</BackButton>
@@ -430,6 +437,7 @@ export default connect(
 				isSiteOnECommerceTrial( state, siteId ) ||
 				isSiteOnWooExpress( state, siteId ) ||
 				isSiteOnEcommerce( state, siteId ),
+			isFromMyHome: getCurrentQueryArguments( state )?.from === 'my-home',
 		};
 	},
 	{

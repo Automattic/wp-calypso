@@ -57,7 +57,7 @@ export class PaidContentBlockFlow implements BlockFlow {
 			.getByRole( 'document', { name: 'Block: Heading' } )
 			.fill( this.configurationData.subscriberTitle );
 		await block
-			.getByRole( 'document', { name: 'Paragraph block' } )
+			.getByRole( 'document', { name: 'Block: Paragraph' } )
 			.fill( this.configurationData.subscriberText );
 	}
 

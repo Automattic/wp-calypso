@@ -38,14 +38,15 @@
 	position: relative;
 
 	.pattern-action-bar {
+		box-sizing: border-box;
 		position: absolute;
 		top: 16px;
 		left: 16px;
 		right: unset;
-		padding: 6px;
+		padding: 0;
 		border: 1px solid #1e1e1e;
 		border-radius: 2px;
-		gap: 6px;
+		gap: 0;
 		background-color: #fff;
 		opacity: 0;
 		z-index: 1;
@@ -55,21 +56,22 @@
 
 		> .pattern-action-bar__action {
 			position: relative;
-			min-width: 28px;
-			height: 28px;
+			min-height: 40px;
+			min-width: 40px;
 			padding: 2px;
 
-			&:last-child:not(:only-child):not(.has-icon) {
-				padding-right: 6px;
+			&:first-child::after {
+				content: none;
 			}
 
-			&::before {
+			&::after {
+				background-color: #1e1e1e;
+				bottom: 0;
 				content: "";
+				left: 0;
 				position: absolute;
-				left: -6px;
-				right: -6px;
-				top: -6px;
-				bottom: -6px;
+				top: 0;
+				width: 1px;
 			}
 		}
 	}

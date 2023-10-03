@@ -176,6 +176,12 @@
 		margin-right: 0.25rem;
 	}
 
+	.domain-analyzer-block {
+		@media (max-width: $break-small ) {
+			padding-top: 4rem;
+		}
+	}
+
 	.hosting-intro-block {
 		h2 {
 			max-width: 400px;

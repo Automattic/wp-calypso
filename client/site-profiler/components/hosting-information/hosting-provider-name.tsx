@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { UrlData } from 'calypso/blocks/import/types';
 import InfoPopover from 'calypso/components/info-popover';
@@ -13,19 +12,20 @@ interface Props {
 
 export default function HostingProviderName( props: Props ) {
 	const { hostingProvider, urlData } = props;
-	const isPopularCdn = !! hostingProvider?.is_cdn;
-	const getNonAutomatticHostingElement = () => {
-		const nameComponent = hostingProvider?.home_url ? (
-			<Button
-				borderless={ true }
-				className="action-buttons__borderless hosting-provider-name__link"
-				href={ hostingProvider?.home_url }
-			>
-				{ hostingProvider?.name }
-			</Button>
+	const isPopularCdn = ! urlData?.platform_data?.name && !! hostingProvider?.is_cdn;
+	const hostingProviderName = urlData?.platform_data?.name ?? hostingProvider?.name;
+	const hostingProviderHomepage =
+		urlData?.platform_data?.homepage_url ?? hostingProvider?.homepage_url;
+
+	const NonA8cHostingName = () => {
+		const nameComponent = hostingProvider?.homepage_url ? (
+			<a href={ hostingProviderHomepage } target="_blank" rel="nofollow noreferrer">
+				{ hostingProviderName }
+			</a>
 		) : (
-			hostingProvider?.name
+			hostingProviderName
 		);
+
 		return (
 			<>
 				{ nameComponent }
@@ -48,7 +48,7 @@ export default function HostingProviderName( props: Props ) {
 
 	return (
 		<div className="hosting-provider-name__container">
-			{ hostingProvider?.slug !== 'automattic' && getNonAutomatticHostingElement() }
+			{ hostingProvider?.slug !== 'automattic' && <NonA8cHostingName /> }
 			{ hostingProvider?.slug === 'automattic' && <VerifiedProvider /> }
 		</div>
 	);

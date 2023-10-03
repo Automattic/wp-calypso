@@ -9,6 +9,7 @@ import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/tot
 import {
 	isJetpackBundle,
 	isWooCommerceProduct,
+	isWpcomHostingProduct,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -68,7 +69,8 @@ export default function IssueMultipleLicensesForm( {
 			( { family_slug }: { family_slug: string } ) =>
 				family_slug !== 'jetpack-packs' &&
 				family_slug !== 'jetpack-backup-storage' &&
-				! isWooCommerceProduct( family_slug )
+				! isWooCommerceProduct( family_slug ) &&
+				! isWpcomHostingProduct( family_slug )
 		) || [];
 	const wooExtensions =
 		allProducts?.filter( ( { family_slug }: { family_slug: string } ) =>

@@ -118,12 +118,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		resetRecipe,
 	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
-	const {
-		shouldUnlockGlobalStyles,
-		numOfSelectedGlobalStyles,
-		resetCustomStyles,
-		setResetCustomStyles,
-	} = useCustomStyles( {
+	const { shouldUnlockGlobalStyles, numOfSelectedGlobalStyles } = useCustomStyles( {
 		siteID: site?.ID,
 		hasColor: !! colorVariation,
 		hasFont: !! fontVariation,
@@ -151,11 +146,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	);
 
 	const selectedVariations = useMemo(
-		() =>
-			! resetCustomStyles
-				? ( [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[] )
-				: [],
-		[ colorVariation, fontVariation, resetCustomStyles ]
+		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
+		[ colorVariation, fontVariation ]
 	);
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
@@ -215,7 +207,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
-			reset_custom_styles: resetCustomStyles,
 		} );
 		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
@@ -226,16 +217,15 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		} );
 	};
 
-	const getDesign = () =>
-		( {
-			...selectedDesign,
-			recipe: {
-				...selectedDesign?.recipe,
-				header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
-				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
-				footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
-			} as DesignRecipe,
-		} ) as Design;
+	const getDesign = () => ( {
+		...selectedDesign,
+		recipe: {
+			...selectedDesign?.recipe,
+			header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
+			pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
+			footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
+		} as DesignRecipe,
+	} );
 
 	const updateActivePatternPosition = ( position: number ) => {
 		const patternPosition = header ? position + 1 : position;
@@ -346,7 +336,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	};
 
 	const onSubmit = () => {
-		const design = getDesign();
+		const design = getDesign() as Design;
 		const stylesheet = design.recipe?.stylesheet ?? '';
 		const themeId = getThemeIdFromStylesheet( stylesheet );
 		const hasBlogPatterns = !! sections.find(
@@ -375,7 +365,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 						headerHtml: header?.html,
 						footerHtml: footer?.html,
-						globalStyles: ! resetCustomStyles ? syncedGlobalStylesUserConfig : undefined,
+						globalStyles: syncedGlobalStylesUserConfig,
 						// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
 						// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
 						shouldResetContent: isNewSite && hasBlogPatterns,
@@ -414,7 +404,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		stepName,
 		nextScreenName: isNewSite ? 'confirmation' : 'activation',
 		onUpgradeLater: onContinue,
-		onContinue,
 		recordTracksEvent,
 	} );
 
@@ -431,11 +420,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	};
 
 	const onBack = () => {
-		// Turn off the resetting custom styles when going back from the upsell screen
-		if ( currentScreen.name === 'upsell' && resetCustomStyles ) {
-			setResetCustomStyles( false );
-		}
-
 		// Go back to the previous screen
 		if ( currentScreen.previousScreen ) {
 			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
@@ -584,8 +568,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					<ScreenUpsell
 						{ ...globalStylesUpgradeProps }
 						numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
-						resetCustomStyles={ resetCustomStyles }
-						setResetCustomStyles={ setResetCustomStyles }
 					/>
 				</NavigatorScreen>
 			</div>
