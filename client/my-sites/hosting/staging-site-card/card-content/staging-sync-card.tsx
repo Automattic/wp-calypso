@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { translate, useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormInput from 'calypso/components/forms/form-text-input';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ConfirmationModal } from '../confirmation-modal';
@@ -126,6 +127,7 @@ const ProductionSiteSync = ( {
 	disabled,
 	isButtonDisabled,
 	onSelectItems,
+	selectedItems,
 	selectedOption,
 	onOptionChange,
 }: {
@@ -134,9 +136,12 @@ const ProductionSiteSync = ( {
 	disabled: boolean;
 	isButtonDisabled: boolean;
 	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
+	selectedItems: string[];
 	selectedOption: string;
 	onOptionChange: ( option: string ) => void;
 } ) => {
+	const [ typedSiteName, setTypedSiteName ] = useState( '' );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 	return (
 		<>
@@ -164,13 +169,42 @@ const ProductionSiteSync = ( {
 					<ConfirmationModalContainer>
 						<ConfirmationModal
 							disabled={ disabled || isButtonDisabled }
+							isConfirmationDisabled={ typedSiteName !== siteSlug }
 							isPrimary={ true }
 							onConfirm={ onPush }
-							modalTitle={ translate( 'Confirm pushing changes to your production site.' ) }
-							modalMessage={ translate(
-								'Are you sure you want to push your changes to your production site?'
-							) }
-							confirmLabel={ translate( 'Push to production' ) }
+							modalTitle={ translate( 'You’re about to update your production site' ) }
+							extraModalContent={
+								<div>
+									<p>
+										{ translate(
+											'Synchronizing your production site will overwrite the following items with their equivalents from the staging site:'
+										) }
+									</p>
+									<ul>
+										{ selectedItems.map( ( item ) => {
+											return <li key={ item }>{ item }</li>;
+										} ) }
+									</ul>
+									<p>
+										{ translate(
+											"Enter your site's name {{span}}%(siteSlug)s{{/span}} to confirm.",
+											{
+												args: {
+													siteSlug: siteSlug as string,
+												},
+												components: {
+													span: <span />,
+												},
+											}
+										) }
+									</p>
+									<FormInput
+										value={ typedSiteName }
+										onChange={ ( event: ChangeEvent ) => setTypedSiteName( event.target.value ) }
+									/>
+								</div>
+							}
+							confirmLabel={ translate( 'Synchronize' ) }
 							cancelLabel={ translate( 'Cancel' ) }
 						>
 							<span>{ translate( 'Synchronize' ) }</span>
@@ -204,6 +238,7 @@ const StagingSiteSync = ( {
 	onPull,
 	disabled,
 	isButtonDisabled,
+	selectedItems,
 	onSelectItems,
 	selectedOption,
 	onOptionChange,
@@ -212,10 +247,13 @@ const StagingSiteSync = ( {
 	onPull: ( items?: string[] ) => void;
 	disabled: boolean;
 	isButtonDisabled: boolean;
+	selectedItems: string[];
 	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
 	selectedOption: string;
 	onOptionChange: ( option: string ) => void;
 } ) => {
+	const [ typedSiteName, setTypedSiteName ] = useState( '' );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 	return (
 		<>
@@ -243,13 +281,42 @@ const StagingSiteSync = ( {
 					<ConfirmationModalContainer>
 						<ConfirmationModal
 							disabled={ disabled || isButtonDisabled }
+							isConfirmationDisabled={ typedSiteName !== siteSlug }
 							isPrimary={ true }
 							onConfirm={ onPull }
-							modalTitle={ translate( 'Confirm pull your changes from your staging site' ) }
-							modalMessage={ translate(
-								'Are you sure you want to pull your changes from your staging site?'
-							) }
-							confirmLabel={ translate( 'Pull from staging' ) }
+							modalTitle={ translate( 'You’re about to update your production site' ) }
+							extraModalContent={
+								<div>
+									<p>
+										{ translate(
+											'Synchronizing your production site will overwrite the following items with their equivalents from the staging site:'
+										) }
+									</p>
+									<ul>
+										{ selectedItems.map( ( item ) => {
+											return <li key={ item }>{ item }</li>;
+										} ) }
+									</ul>
+									<p>
+										{ translate(
+											"Enter your site's name {{span}}%(siteSlug)s{{/span}} to confirm.",
+											{
+												args: {
+													siteSlug: siteSlug as string,
+												},
+												components: {
+													span: <span />,
+												},
+											}
+										) }
+									</p>
+									<FormInput
+										value={ typedSiteName }
+										onChange={ ( event: ChangeEvent ) => setTypedSiteName( event.target.value ) }
+									/>
+								</div>
+							}
+							confirmLabel={ translate( 'Synchronize' ) }
 							cancelLabel={ translate( 'Cancel' ) }
 						>
 							<span>{ translate( 'Synchronize' ) }</span>
@@ -337,6 +404,7 @@ export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: Production
 			<ProductionSiteSync
 				selectedOption={ selectedOption }
 				onOptionChange={ setSelectedOption }
+				selectedItems={ selectedItems }
 				onPush={ onPushInternal }
 				onPull={ onPullInternal }
 				disabled={ disabled }
@@ -374,6 +442,7 @@ export const StagingSiteSyncCard = ( { onPush, onPull, disabled }: StagingCardPr
 				onOptionChange={ setSelectedOption }
 				onPush={ onPushInternal }
 				onPull={ onPullInternal }
+				selectedItems={ selectedItems }
 				disabled={ disabled }
 				isButtonDisabled={ isButtonDisabled }
 				onSelectItems={ onSelectItems }
