@@ -29,6 +29,10 @@ function validateField( { name, value, type, domainName } ) {
 			const intValue = parseInt( value, 10 );
 			return intValue >= 0 && intValue <= 65535;
 		}
+		case 'ttl': {
+			const intValue = parseInt( value, 10 );
+			return intValue >= 300 && intValue <= 86400;
+		}
 		case 'service':
 			return value.match( /^[^\s.]+$/ );
 		default:
