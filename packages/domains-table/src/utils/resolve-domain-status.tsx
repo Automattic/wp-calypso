@@ -146,11 +146,10 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( getMappingErrors ) {
+			if ( getMappingErrors && ! isVipSite ) {
 				const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 
 				const hasMappingError =
-					! isVipSite &&
 					domain.type === domainTypes.MAPPED &&
 					! domain.pointsToWpcom &&
 					moment.utc().isAfter( registrationDatePlus3Days );
