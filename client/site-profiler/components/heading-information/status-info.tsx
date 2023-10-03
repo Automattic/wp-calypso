@@ -9,7 +9,11 @@ export default function StatusInfo( props: Props ) {
 
 	switch ( conversionAction ) {
 		case 'register-domain':
-			return <p>{ translate( 'Nice find! This site is available and could be yours today!' ) }</p>;
+			return (
+				<p>
+					{ translate( 'What a great domain! This site is available and could be yours today!' ) }
+				</p>
+			);
 		case 'transfer-domain':
 		case 'transfer-google-domain':
 			return (
@@ -26,13 +30,14 @@ export default function StatusInfo( props: Props ) {
 			return (
 				<p>
 					{ translate(
-						'This site is using {{strong}}WordPress.com{{/strong}} to manage the domain, but the site is hosted elsewhere.',
+						'This site is using {{strong}}WordPress.com{{/strong}} to manage the domain, but it’s hosted elsewhere',
 						{
 							components: { strong: <strong /> },
 						}
 					) }
 				</p>
 			);
+
 		case 'transfer-domain-hosting':
 		case 'transfer-google-domain-hosting':
 			return (
@@ -45,11 +50,19 @@ export default function StatusInfo( props: Props ) {
 					) }
 				</p>
 			);
+		case 'transfer-hosting-wp':
+		case 'transfer-domain-hosting-wp':
+		case 'transfer-google-domain-hosting-wp':
+			return (
+				<p>
+					{ translate( 'The owner of this site has great taste—this site runs on WordPress!' ) }
+				</p>
+			);
 		case 'idle':
 			return (
 				<p>
 					{ translate(
-						'Nice! This site and its domain are fully hosted on {{strong}}WordPress.com{{/strong}}!',
+						'Looks like the owner of this site has great taste. The site and domain are both hosted on {{strong}}WordPress.com{{/strong}}!',
 						{
 							components: { strong: <strong /> },
 						}

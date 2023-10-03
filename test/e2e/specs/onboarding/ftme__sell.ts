@@ -57,11 +57,7 @@ describe( 'FTME: Sell', function () {
 
 		it( 'Sign up as new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signup(
-				testUser.email,
-				testUser.username,
-				testUser.password
-			);
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 		} );
 
 		it( 'Skip domain selection', async function () {
@@ -168,15 +164,12 @@ describe( 'FTME: Sell', function () {
 		it( 'Land in Home dashboard', async function () {
 			await page.waitForURL(
 				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.blogid }` ),
-				{ timeout: 20 * 1000 }
+				{ timeout: 30 * 1000 }
 			);
 		} );
 
-		it( 'Site URL matches selected domain', async function () {
-			// If domain selection is skipped during onboarding, the first (default) site
-			// is created with the user's username.
-			// See https://github.com/Automattic/wp-calypso/pull/67517.
-			expect( newSiteDetails.blog_details.site_slug ).toContain( testUser.username );
+		it( 'Site slug exists', async function () {
+			expect( newSiteDetails.blog_details.site_slug ).toBeDefined();
 		} );
 	} );
 
@@ -216,10 +209,13 @@ describe( 'FTME: Sell', function () {
 			return;
 		}
 
-		const restAPIClient = new RestAPIClient( {
-			username: testUser.username,
-			password: testUser.password,
-		} );
+		const restAPIClient = new RestAPIClient(
+			{
+				username: testUser.username,
+				password: testUser.password,
+			},
+			newUserDetails.body.bearer_token
+		);
 
 		await apiCloseAccount( restAPIClient, {
 			userID: newUserDetails.body.user_id,

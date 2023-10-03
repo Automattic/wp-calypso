@@ -19,6 +19,7 @@ import {
 	DEFAULT_TAB,
 	getSelectedTabTitle,
 	buildDiscoverStreamKey,
+	FIRST_POSTS_TAB,
 } from './helper';
 
 const DiscoverStream = ( props ) => {
@@ -55,15 +56,21 @@ const DiscoverStream = ( props ) => {
 	);
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 	const tabTitle = getSelectedTabTitle( selectedTab );
+	let subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
+		args: [ tabTitle ],
+		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+	} );
+	if ( selectedTab === FIRST_POSTS_TAB ) {
+		subHeaderText = translate(
+			'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
+		);
+	}
 
 	const DiscoverHeader = () => (
 		<FormattedHeader
 			brandFont
 			headerText={ translate( 'Discover' ) }
-			subHeaderText={ translate( 'Explore %s blogs that inspire, educate, and entertain.', {
-				args: [ tabTitle ],
-				comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-			} ) }
+			subHeaderText={ subHeaderText }
 			align="left"
 			hasScreenOptions
 			className={ classNames( 'discover-stream-header', {
@@ -73,6 +80,10 @@ const DiscoverStream = ( props ) => {
 	);
 
 	const streamSidebar = () => {
+		if ( selectedTab === FIRST_POSTS_TAB ) {
+			return <></>;
+		}
+
 		if ( ( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ) {
 			return (
 				<>
@@ -94,6 +105,7 @@ const DiscoverStream = ( props ) => {
 		useCompactCards: true,
 		streamSidebar,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
+		selectedStreamName: selectedTab,
 	};
 
 	return (

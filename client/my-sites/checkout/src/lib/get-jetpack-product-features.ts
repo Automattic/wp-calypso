@@ -59,7 +59,7 @@ function getFeatureStrings(
 			];
 		case 'boost':
 			return [
-				translate( 'Automated critical CSS' ),
+				translate( 'Automated critical CSS (Premium)' ),
 				translate( 'Site performance scores' ),
 				translate( 'One-click optimization' ),
 				translate( 'Deferred non-essential JavaScript' ),

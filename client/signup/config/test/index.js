@@ -5,6 +5,12 @@ import steps from '../steps';
 import { generateSteps } from '../steps-pure';
 
 jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
+jest.mock( 'component-file-picker', () => <div></div> );
+jest.mock( 'calypso/lib/explat', () => {
+	() => {
+		return [ false, null ];
+	};
+} );
 
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect
@@ -18,6 +24,50 @@ describe( 'index', () => {
 					'].'
 			);
 		}
+	} );
+
+	test( 'All step components should have a step definition', () => {
+		const stepModuleMap = getStepModuleMap();
+		const stepNames = new Set( Object.keys( stepModuleMap ) );
+		const allStepDefinitions = generateSteps();
+
+		stepNames.forEach( ( stepName ) => {
+			expect( allStepDefinitions ).toHaveProperty( stepName );
+		} );
+	} );
+
+	test( 'All step components should have a step implementation', async () => {
+		const stepModuleMap = getStepModuleMap();
+		const allModules = new Set( Object.values( stepModuleMap ) );
+		const nonExistentModules = [];
+		await Promise.all(
+			Array.from( allModules ).map( async ( module ) => {
+				const path = `calypso/signup/steps/${ module }`;
+				try {
+					await import( path );
+				} catch ( e ) {
+					if ( e.message.includes( 'Cannot find module' ) ) {
+						console.error( e );
+						nonExistentModules.push( path );
+					}
+				}
+			} )
+		);
+
+		expect( nonExistentModules ).toEqual( [] );
+	} );
+
+	/**
+	 * Before cleaning up a step, make sure to investigate if the step is 'phantom' submitted inside another step.
+	 * Steps can be submitted without a step component or it being included in a flow.
+	 * Eg: https://github.com/Automattic/wp-calypso/pull/81778
+	 */
+	test( 'All step definitions should have a step component mapping', () => {
+		const stepModuleMap = getStepModuleMap();
+		const allStepDefinitions = generateSteps();
+		Object.keys( allStepDefinitions ).forEach( ( stepName ) => {
+			expect( stepModuleMap ).toHaveProperty( stepName );
+		} );
 	} );
 
 	/***

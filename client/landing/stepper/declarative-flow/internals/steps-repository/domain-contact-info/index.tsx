@@ -166,7 +166,7 @@ function ContactInfo( {
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
 						{ translate(
-							'By accepting this transfer, you agree to the {{agreementlink}}Domain Registration Agreement{{/agreementlink}} for %(domainName)s. You authorize the respective registrar to act as your {{agentlink}}Designated Agent{{/agentlink}}.',
+							'By clicking "Accept domain transfer", you agree to the {{agreementlink}}Domain Registration Agreement{{/agreementlink}} for %(domainName)s. You authorize the respective registrar to act as your {{agentlink}}Designated Agent{{/agentlink}}.',
 							{
 								args: {
 									domainName: domain ?? '',

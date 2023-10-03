@@ -16,7 +16,8 @@ const SiteRow = styled.div( {
 	'.site-icon': { flexShrink: 0 },
 } );
 
-const LeftActionsContainer = styled.div( {
+const SyncActionsContainer = styled.div( {
+	marginTop: 12,
 	gap: '1em',
 	display: 'flex',
 	flexDirection: 'row',
@@ -63,14 +64,11 @@ const ActionButtons = styled.div( {
 	},
 } );
 
-const ActionButtonsJustifyBetween = styled( ActionButtons )( {
-	justifyContent: 'space-between',
-} );
-
 type CardContentProps = {
 	stagingSite: StagingSite;
 	onDeleteClick: () => void;
 	onPushClick: () => void;
+	onPullClick: () => void;
 	isButtonDisabled: boolean;
 	isBusy: boolean;
 };
@@ -79,6 +77,7 @@ export const ManageStagingSiteCardContent = ( {
 	stagingSite,
 	onDeleteClick,
 	onPushClick,
+	onPullClick,
 	isButtonDisabled,
 	isBusy,
 }: CardContentProps ) => {
@@ -93,13 +92,31 @@ export const ManageStagingSiteCardContent = ( {
 					onConfirm={ onPushClick }
 					modalTitle={ translate( 'Confirm pushing changes to your staging site' ) }
 					modalMessage={ translate(
-						'Are you sure you want to push your production changes to your staging site?'
+						'Are you sure you want to push your changes to your staging site?'
 					) }
 					confirmLabel={ translate( 'Push to staging' ) }
 					cancelLabel={ translate( 'Cancel' ) }
 				>
 					<Gridicon icon="arrow-up" />
 					<span>{ translate( 'Push to staging' ) }</span>
+				</ConfirmationModal>
+			);
+		};
+
+		const ConfirmationPullChangesButton = () => {
+			return (
+				<ConfirmationModal
+					disabled={ isButtonDisabled }
+					onConfirm={ onPullClick }
+					modalTitle={ translate( 'Confirm pull your changes from your staging site' ) }
+					modalMessage={ translate(
+						'Are you sure you want to pull your changes from your staging site?'
+					) }
+					confirmLabel={ translate( 'Pull from staging' ) }
+					cancelLabel={ translate( 'Cancel' ) }
+				>
+					<Gridicon icon="arrow-down" />
+					<span>{ translate( 'Pull from staging' ) }</span>
 				</ConfirmationModal>
 			);
 		};
@@ -165,13 +182,16 @@ export const ManageStagingSiteCardContent = ( {
 					</SiteInfo>
 				</SiteRow>
 				{ isStagingSitesI3Enabled ? (
-					<ActionButtonsJustifyBetween>
-						<LeftActionsContainer>
+					<>
+						<ActionButtons>
 							<ManageStagingSiteButton />
+							<ConfirmationDeleteButton />
+						</ActionButtons>
+						<SyncActionsContainer>
 							<ConfirmationPushChangesButton />
-						</LeftActionsContainer>
-						<ConfirmationDeleteButton />
-					</ActionButtonsJustifyBetween>
+							<ConfirmationPullChangesButton />
+						</SyncActionsContainer>
+					</>
 				) : (
 					<ActionButtons>
 						<ManageStagingSiteButton />

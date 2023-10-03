@@ -14,7 +14,8 @@
 	}
 
 	&__unsubscribe-button.components-button.has-icon,
-	&__view-feed-button.components-button.has-icon {
+	&__view-feed-button.components-button.has-icon,
+	&__manage-subscription-button.components-button.has-icon {
 		display: flex;
 		width: 100%;
 		height: auto;
@@ -28,6 +29,11 @@
 
 		&:not(:last-child) {
 			margin-bottom: 24px;
+		}
+
+		.subscriptions-ellipsis-menu__item-icon {
+			width: 20px;
+			height: 20px;
 		}
 	}
 }

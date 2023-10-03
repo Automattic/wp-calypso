@@ -124,6 +124,10 @@ export async function login( context, next ) {
 export function magicLogin( context, next ) {
 	const { path } = context;
 
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		return login( context, next );
+	}
+
 	context.primary = <MagicLogin path={ path } />;
 
 	next();

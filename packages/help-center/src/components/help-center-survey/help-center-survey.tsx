@@ -29,7 +29,7 @@ export function Survey() {
 
 	const mutation = useMutation( {
 		mutationFn: ( { type = 'dismiss' }: { type?: 'dismiss' | 'remind' | 'take' } ) => {
-			recordTracksEvent( 'calypso_helpcenter-survey-interaction', {
+			recordTracksEvent( 'calypso_helpcenter_survey_interaction', {
 				location: 'help-center',
 				action: type,
 			} );

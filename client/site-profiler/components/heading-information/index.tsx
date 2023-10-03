@@ -2,7 +2,6 @@ import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import StatusCtaInfo from '../heading-information/status-cta-info';
-import StatusIcon from '../heading-information/status-icon';
 import StatusInfo from '../heading-information/status-info';
 import type { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
 import './styles.scss';
@@ -36,10 +35,7 @@ export default function HeadingInformation( props: Props ) {
 		<div className="heading-information">
 			<summary>
 				<h5>{ translate( 'Site Profiler' ) }</h5>
-				<div className="domain">
-					<StatusIcon conversionAction={ conversionAction } />
-					{ domain }
-				</div>
+				<div className="domain">{ domain }</div>
 				<StatusInfo conversionAction={ conversionAction } />
 			</summary>
 			<footer>
@@ -62,7 +58,10 @@ export default function HeadingInformation( props: Props ) {
 							{ translate( 'Transfer domain for free' ) }
 						</Button>
 					) }
-					{ conversionAction === 'transfer-hosting' && (
+					{ ( conversionAction === 'transfer-hosting' ||
+						conversionAction === 'transfer-hosting-wp' ||
+						conversionAction === 'transfer-domain-hosting-wp' ||
+						conversionAction === 'transfer-google-domain-hosting-wp' ) && (
 						<Button className="button-action" onClick={ onMigrateSite }>
 							{ translate( 'Migrate site' ) }
 						</Button>

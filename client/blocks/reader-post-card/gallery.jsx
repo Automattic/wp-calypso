@@ -4,10 +4,10 @@ import DotPager from 'calypso/components/dot-pager';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
-import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
+import { GALLERY_MAX_IMAGES, READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
 function PostGallery( { post, children } ) {
-	const imagesToDisplay = getImagesFromPostToDisplay( post, 10 );
+	const imagesToDisplay = getImagesFromPostToDisplay( post, GALLERY_MAX_IMAGES );
 
 	function handleClick( event ) {
 		event.preventDefault();

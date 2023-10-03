@@ -3,9 +3,9 @@
 
 .is-redesign-v2 {
 	.checkout-thank-you__purchase-details-list {
+		max-width: 650px;
 		text-align: initial;
-		margin-top: 40px;
-		margin-bottom: 80px;
+		margin: 40px auto 80px;
 		display: flex;
 		justify-content: center;
 
@@ -44,7 +44,7 @@
 		}
 
 		.purchase-detail__title {
-			font-size: $font-body-small;
+			font-size: $font-body;
 			line-height: 20px;
 			font-weight: 500;
 			color: var(--studio-gray-100);
@@ -80,8 +80,6 @@
 	}
 
 	div.checkout-thank-you__purchase-details-list {
-		margin-left: 0;
-		margin-right: 0;
 		display: block;
 
 		>div {

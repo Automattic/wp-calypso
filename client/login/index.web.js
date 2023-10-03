@@ -73,7 +73,6 @@ export default ( router ) => {
 
 		router(
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],
-			redirectLoggedIn,
 			setLocaleMiddleware(),
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLogin,

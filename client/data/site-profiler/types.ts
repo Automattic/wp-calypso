@@ -61,7 +61,7 @@ export interface HostingProvider {
 	name: string;
 	is_cdn: boolean;
 	support_url?: string;
-	home_url?: string;
+	homepage_url?: string;
 }
 
 export interface DomainAnalyzerQueryResponse {
@@ -69,6 +69,7 @@ export interface DomainAnalyzerQueryResponse {
 	whois: WhoIs;
 	dns: DNS[];
 	is_domain_available: boolean;
+	eligible_google_transfer: boolean;
 }
 
 export interface DomainAnalyzerWhoisRawDataQueryResponse {

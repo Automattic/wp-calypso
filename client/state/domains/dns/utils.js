@@ -29,6 +29,10 @@ function validateField( { name, value, type, domainName } ) {
 			const intValue = parseInt( value, 10 );
 			return intValue >= 0 && intValue <= 65535;
 		}
+		case 'ttl': {
+			const intValue = parseInt( value, 10 );
+			return intValue >= 300 && intValue <= 86400;
+		}
 		case 'service':
 			return value.match( /^[^\s.]+$/ );
 		default:
@@ -61,6 +65,8 @@ function isValidName( name, type, domainName ) {
 			return /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i.test( name );
 		case 'CNAME':
 			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name ) || name === '*';
+		case 'TXT':
+			return /^(\*\.|)([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
 		default:
 			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
 	}

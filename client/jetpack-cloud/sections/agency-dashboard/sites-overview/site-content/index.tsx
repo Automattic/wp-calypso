@@ -1,24 +1,22 @@
 import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useContext, forwardRef, useMemo } from 'react';
+import { useContext, forwardRef } from 'react';
 import Pagination from 'calypso/components/pagination';
-import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { addQueryArgs } from 'calypso/lib/url';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
-import useJetpackAgencyDashboardRecordTrackEvent from '../../hooks/use-jetpack-agency-dashboard-record-track-event';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import SitesOverviewContext from '../context';
 import useDefaultSiteColumns from '../hooks/use-default-site-columns';
-import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
+import LicenseInfoModal from '../license-info-modal';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
 import { Site } from '../types';
 import useFormattedSites from './hooks/use-formatted-sites';
+
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {
@@ -39,13 +37,9 @@ interface Props {
 const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, ref: any ) => {
 	const isMobile = useMobileBreakpoint();
 
-	const translate = useTranslate();
+	const { isBulkManagementActive, currentLicenseInfo } = useContext( SitesOverviewContext );
 
-	const { isBulkManagementActive, currentLicenseInfo, hideLicenseInfo } =
-		useContext( SitesOverviewContext );
-
-	const { products, isLargeScreen } = useContext( DashboardDataContext );
-	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, ! isMobile );
+	const { isLargeScreen } = useContext( DashboardDataContext );
 
 	const sites = useFormattedSites( data?.sites ?? [] );
 
@@ -55,38 +49,6 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 
 	const siteColumns = useDefaultSiteColumns();
 	const firstColumn = siteColumns[ 0 ];
-
-	const currentLicenseProductSlug = currentLicenseInfo
-		? DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ currentLicenseInfo ]
-		: null;
-
-	const currentLicenseProduct = useMemo( () => {
-		return currentLicenseProductSlug && products
-			? products.find( ( product ) => product.slug === currentLicenseProductSlug )
-			: null;
-	}, [ currentLicenseProductSlug, products ] );
-
-	const onIssueLicense = () => {
-		if ( currentLicenseProductSlug ) {
-			recordEvent( 'issue_license_info', {
-				product: currentLicenseProductSlug,
-			} );
-			hideLicenseInfo();
-			page(
-				addQueryArgs(
-					{
-						product_slug: currentLicenseProductSlug,
-						source: 'dashboard',
-					},
-					'/partner-portal/issue-license/'
-				)
-			);
-		}
-	};
-
-	const onHideLicenseInfo = () => {
-		hideLicenseInfo();
-	};
 
 	return (
 		<>
@@ -126,7 +88,6 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 					</div>
 				</div>
 			) }
-
 			{ data && data?.total > 0 && (
 				<Pagination
 					compact={ isMobile }
@@ -136,15 +97,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 					pageClick={ handlePageClick }
 				/>
 			) }
-
-			{ currentLicenseProduct && (
-				<LicenseLightbox
-					product={ currentLicenseProduct }
-					ctaLabel={ translate( 'Issue License' ) }
-					onActivate={ onIssueLicense }
-					onClose={ onHideLicenseInfo }
-				/>
-			) }
+			{ currentLicenseInfo && <LicenseInfoModal currentLicenseInfo={ currentLicenseInfo } /> }
 		</>
 	);
 };

@@ -65,9 +65,9 @@ const SelectedNewPostDeliveryMethods = ( {
 	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
-type SiteRowProps = Reader.SiteSubscription;
+type SiteRowProps = Reader.SiteSubscriptionsResponseItem;
 
-const SiteRow = ( {
+const SiteSubscriptionRow = ( {
 	ID: subscriptionId,
 	blog_ID: blog_id,
 	feed_ID: feed_id,
@@ -79,6 +79,7 @@ const SiteRow = ( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	isDeleted,
+	is_rss,
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -236,11 +237,14 @@ const SiteRow = ( {
 					>
 						{ name }
 						{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
+
 						{ !! is_paid_subscription && (
 							<span className="paid-label">
 								{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
 							</span>
 						) }
+
+						{ !! is_rss && <span className="rss-label">RSS</span> }
 					</Link>
 					<ExternalLink
 						className="title-url"
@@ -342,10 +346,11 @@ const SiteRow = ( {
 					unsubscribing={ unsubscribing }
 					blogId={ sanitizedBlogId }
 					feedId={ Number( feed_id ) }
+					subscriptionId={ Number( subscriptionId ) }
 				/>
 			</span>
 		</HStack>
 	) : null;
 };
 
-export default SiteRow;
+export default SiteSubscriptionRow;

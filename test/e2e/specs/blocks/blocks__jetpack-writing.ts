@@ -16,10 +16,10 @@ const blockFlows: BlockFlow[] = [
 	),
 	new MarkdownFlow(
 		{
-			text: '### Test',
+			text: '### Markdown Header',
 		},
 		{
-			expectedText: 'Test',
+			expectedText: 'Markdown Header',
 			expectedRole: 'heading',
 		}
 	),
