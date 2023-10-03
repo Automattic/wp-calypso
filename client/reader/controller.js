@@ -120,7 +120,11 @@ export function following( context, next ) {
 	}
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-	recordTrack( 'calypso_reader_following_loaded', {}, getCurrentRoute( state ) );
+	recordTrack(
+		'calypso_reader_following_loaded',
+		{},
+		{ pathnameOverride: getCurrentRoute( state ) }
+	);
 
 	setPageTitle( context, i18n.translate( 'Following' ) );
 
