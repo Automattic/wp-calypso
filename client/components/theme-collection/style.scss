@@ -3,14 +3,15 @@
 	justify-content: space-between;
 }
 
+.theme-collection__headings {
+	flex-basis: 45%;
+}
+
 .theme-collection__header {
 	font-size: 1.75rem;
 	line-height: 1;
 }
 
-.theme-collection__headings {
-	flex-basis: 45%;
-}
 .theme-collection__subheading * {
 	margin-bottom: 0;
 }
