@@ -1,3 +1,22 @@
+.theme-collection__meta {
+	display: flex;
+	justify-content: space-between;
+}
+
+.theme-collection__headings {
+	flex-basis: 45%;
+}
+
+.theme-collection__title {
+	font-size: 1.75rem;
+	line-height: 1;
+}
+
+.theme-collection__description * {
+	margin-bottom: 0;
+}
+
+
 .theme-collection__list-item.swiper-slide {
 	/* TODO: Needs a better solution. Testing on more screen widths etc */
 	width: 32%;
@@ -13,28 +32,24 @@
 	justify-content: flex-end;
 	/*!rtl:ignore*/
 	direction: ltr;
+	align-self: end;
 
 	button {
 		width: 40px;
 		height: 40px;
 		background: #eee;
 		border-radius: 50%;
-		align-items: center;
 		display: flex;
 		justify-content: center;
-		transition: opacity 0.3s ease-in-out;
+		margin: 0 1em;
+		transition: opacity 0.3s linear;
 		pointer-events: all;
-		z-index: 2;
-
-		cursor: pointer;
 
 		&:hover {
-			opacity: 1;
-			fill: var(--studio-blue-50);
+			filter: brightness(0.9);
 		}
 
 		&.swiper-button-disabled {
-			visibility: hidden;
 			pointer-events: none;
 		}
 

@@ -76,10 +76,12 @@ export default function ThemeCollection( {
 	}, [ swiperContainerId, isSwiperLoaded ] );
 
 	return (
-		<div className="theme-collection__container ">
-			<h2 className="theme-collection__title">{ title }</h2>
-			<div className="theme-collection__description">{ description }</div>
-			<div className="swiper-container" id={ swiperContainerId }>
+		<div className="theme-collection__container swiper-container" id={ swiperContainerId }>
+			<div className="theme-collection__meta">
+				<div className="theme-collection__headings">
+					<h2 className="theme-collection__title">{ title }</h2>
+					<div className="theme-collection__description">{ description }</div>
+				</div>
 				<div className="theme-collection__carousel-controls">
 					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous">
 						<Icon icon={ chevronLeft } />
@@ -88,8 +90,8 @@ export default function ThemeCollection( {
 						<Icon icon={ chevronRight } />
 					</Button>
 				</div>
-				<div className="theme-collection__list-wrapper swiper-wrapper">{ children }</div>
 			</div>
+			<div className="theme-collection__list-wrapper swiper-wrapper">{ children }</div>
 		</div>
 	);
 }
