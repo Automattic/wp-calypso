@@ -25,7 +25,10 @@ export const tagListing = ( context, next ) => {
 	const tagTitle = titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' );
 
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
-	const streamKey = 'tag:' + tagSlug;
+
+	// default to popular tags unless the user explicitly selects 'date'
+	const streamKey = context.query.sort === 'date' ? 'tag:' + tagSlug : 'tag_popular:' + tagSlug;
+
 	const mcKey = 'topic';
 	const startDate = getStartDate( context );
 
@@ -51,6 +54,7 @@ export const tagListing = ( context, next ) => {
 				streamKey={ streamKey }
 				encodedTagSlug={ encodedTag }
 				decodedTagSlug={ tagSlug }
+				sort={ context.query.sort }
 				trackScrollPage={ trackScrollPage.bind(
 					// eslint-disable-line
 					null,
