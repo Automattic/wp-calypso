@@ -12,7 +12,7 @@ interface Props {
 
 export default function HostingProviderName( props: Props ) {
 	const { hostingProvider, urlData } = props;
-	const isPopularCdn = !! hostingProvider?.is_cdn;
+	const isPopularCdn = ! urlData?.platform_data?.name && !! hostingProvider?.is_cdn;
 	const hostingProviderName = urlData?.platform_data?.name ?? hostingProvider?.name;
 	const hostingProviderHomepage =
 		urlData?.platform_data?.homepage_url ?? hostingProvider?.homepage_url;
@@ -29,7 +29,7 @@ export default function HostingProviderName( props: Props ) {
 		return (
 			<>
 				{ nameComponent }
-				{ ( urlData?.platform === 'wordpress' || urlData?.platform_data?.is_wpengine ) && (
+				{ urlData?.platform === 'wordpress' && (
 					<>
 						&nbsp;&nbsp;
 						<a href={ `${ urlData.url }wp-admin` } target="_blank" rel="nofollow noreferrer">

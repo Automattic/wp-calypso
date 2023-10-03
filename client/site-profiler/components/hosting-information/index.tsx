@@ -20,7 +20,7 @@ export default function HostingInformation( props: Props ) {
 		supportUrl = localizeUrl( 'https://wordpress.com/help/contact' );
 	} else if ( urlData?.platform_data?.support_url ) {
 		supportUrl = urlData.platform_data.support_url;
-	} else if ( hostingProvider?.support_url && ! hostingProvider?.is_cdn ) {
+	} else if ( hostingProvider?.support_url ) {
 		supportUrl = hostingProvider?.support_url;
 	}
 
