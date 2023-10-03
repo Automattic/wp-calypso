@@ -10,6 +10,7 @@ import {
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
 
@@ -21,11 +22,16 @@ const exported = {
 		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Discover';
 		const streamKey = 'discover:recommended';
 		const mcKey = 'discover';
+		const state = context.store.getState();
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		recordTrack( 'calypso_reader_discover_viewed' );
+		recordTrack(
+			'calypso_reader_discover_viewed',
+			{},
+			{ pathnameOverride: getCurrentRoute( state ) }
+		);
 
-		if ( ! isUserLoggedIn( context.store.getState() ) ) {
+		if ( ! isUserLoggedIn( state ) ) {
 			context.renderHeaderSection = renderHeaderSection;
 		}
 		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
