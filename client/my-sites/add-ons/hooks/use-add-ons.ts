@@ -9,6 +9,7 @@ import {
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
+import { createSelector } from '@automattic/state-utils';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
@@ -23,6 +24,7 @@ import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-tr
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { getSiteOption } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
@@ -35,12 +37,39 @@ import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 import useAddOnPrices from './use-add-on-prices';
 import type { AddOnMeta } from '@automattic/data-stores';
 
-const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[] => {
+const useSpaceUpgradesPurchased = ( {
+	isInSignup,
+	siteId,
+}: {
+	isInSignup: boolean;
+	siteId?: number;
+} ) => {
+	const { billingTransactions } = usePastBillingTransactions( isInSignup );
+	const filter = useSelector( ( state ) => getBillingTransactionFilters( state, 'past' ) );
+
+	return useMemo( () => {
+		const spaceUpgradesPurchased: number[] = [];
+
+		if ( billingTransactions && ! isInSignup ) {
+			const filteredTransactions = filterTransactions( billingTransactions, filter, siteId );
+			if ( filteredTransactions?.length ) {
+				for ( const transaction of filteredTransactions ) {
+					transaction.items?.length &&
+						spaceUpgradesPurchased.push(
+							...transaction.items
+								.filter( ( item ) => item.wpcom_product_slug === PRODUCT_1GB_SPACE )
+								.map( ( item ) => Number( item.licensed_quantity ) )
+						);
+				}
+			}
+		}
+
+		return spaceUpgradesPurchased;
+	}, [ billingTransactions, filter, isInSignup, siteId ] );
+};
+
+const useActiveAddOnsDefs = () => {
 	const translate = useTranslate();
-	// if upgrade is bought - show as manage
-	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
-	const { data: mediaStorage } = useMediaStorageQuery( siteId );
-	const { billingTransactions, isLoading } = usePastBillingTransactions( isInSignup );
 
 	/*
 	 * TODO: `useAddOnFeatureSlugs` be refactored instead to return an index of `{ [ slug ]: featureSlug[] }`
@@ -71,7 +100,7 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	const addOnPrices1GBSpace50 = useAddOnPrices( PRODUCT_1GB_SPACE, 50 );
 	const addOnPrices1GBSpace100 = useAddOnPrices( PRODUCT_1GB_SPACE, 100 );
 
-	const addOnsActive = useMemo(
+	return useMemo(
 		() => [
 			{
 				productSlug: PRODUCT_JETPACK_AI_MONTHLY,
@@ -173,32 +202,22 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 			translate,
 		]
 	);
+};
 
-	return useSelector( ( state ): ( AddOnMeta | null )[] => {
-		// get the list of supported features
+const getAddOnsTransformed = createSelector(
+	(
+		state: IAppState,
+		activeAddOns,
+		spaceUpgradesPurchased,
+		siteId,
+		isLoadingBillingTransactions,
+		mediaStorage
+	) => {
 		const siteFeatures = getFeaturesBySiteId( state, siteId );
-		const spaceUpgradesPurchased: number[] = [];
-
-		if ( billingTransactions && ! isInSignup ) {
-			const filter = getBillingTransactionFilters( state, 'past' );
-			const filteredTransactions = filterTransactions( billingTransactions, filter, siteId );
-
-			if ( filteredTransactions?.length ) {
-				for ( const transaction of filteredTransactions ) {
-					transaction.items?.length &&
-						spaceUpgradesPurchased.push(
-							...transaction.items
-								.filter( ( item ) => item.wpcom_product_slug === PRODUCT_1GB_SPACE )
-								.map( ( item ) => Number( item.licensed_quantity ) )
-						);
-				}
-			}
-		}
-		// Determine which Stats Add-On to show based on the site's commercial classification.
 		const isSiteMarkedCommercial = getSiteOption( state, siteId, 'is_commercial' );
 
-		return addOnsActive
-			.filter( ( addOn ) => {
+		return activeAddOns
+			.filter( ( addOn: any ) => {
 				// if a user already has purchased a storage upgrade
 				// remove all upgrades smaller than the smallest purchased upgrade (we only allow purchasing upgrades in ascending order)
 				if ( spaceUpgradesPurchased.length && addOn.productSlug === PRODUCT_1GB_SPACE ) {
@@ -254,7 +273,7 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 
 				return true;
 			} )
-			.map( ( addOn ) => {
+			.map( ( addOn: any ) => {
 				const product = getProductBySlug( state, addOn.productSlug );
 				const name = addOn.name ? addOn.name : getProductName( state, addOn.productSlug );
 				const description = addOn.description ?? getProductDescription( state, addOn.productSlug );
@@ -267,19 +286,19 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 					}
 
 					// if storage add on hasn't loaded yet
-					if ( isLoading || ! product ) {
+					if ( isLoadingBillingTransactions || ! product ) {
 						return {
 							...addOn,
 							name,
 							description,
-							isLoading,
+							isLoading: isLoadingBillingTransactions,
 						};
 					}
 
 					// if storage add on is already purchased
 					if (
 						spaceUpgradesPurchased.findIndex(
-							( spaceUpgrade ) => spaceUpgrade === addOn.quantity
+							( spaceUpgrade: any ) => spaceUpgrade === addOn.quantity
 						) >= 0 &&
 						product
 					) {
@@ -312,6 +331,41 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 					description,
 				};
 			} );
+	},
+	(
+		state,
+		activeAddOns,
+		spaceUpgradesPurchased,
+		siteId,
+		isLoadingBillingTransactions,
+		mediaStorage
+	) => [
+		state,
+		activeAddOns,
+		spaceUpgradesPurchased,
+		siteId,
+		isLoadingBillingTransactions,
+		mediaStorage,
+	]
+);
+
+const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[] => {
+	// if upgrade is bought - show as manage
+	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
+	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+	const { isLoading } = usePastBillingTransactions( isInSignup );
+	const spaceUpgradesPurchased = useSpaceUpgradesPurchased( { isInSignup, siteId } );
+	const activeAddOns = useActiveAddOnsDefs();
+
+	return useSelector( ( state ): ( AddOnMeta | null )[] => {
+		return getAddOnsTransformed(
+			state,
+			activeAddOns,
+			spaceUpgradesPurchased,
+			siteId,
+			isLoading,
+			mediaStorage
+		);
 	} );
 };
 
