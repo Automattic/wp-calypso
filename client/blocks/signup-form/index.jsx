@@ -49,7 +49,7 @@ import {
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
-import { isP2Flow, isVideoPressFlow } from 'calypso/signup/utils';
+import { isP2Flow } from 'calypso/signup/utils';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -1166,10 +1166,7 @@ class SignupForm extends Component {
 
 		const logInUrl = this.getLoginLink();
 
-		if (
-			( ! isVideoPressFlow( this.props.flowName ) && 'wpcc' !== this.props.flowName ) ||
-			isGravatar
-		) {
+		if ( 'wpcc' !== this.props.flowName || isGravatar ) {
 			return (
 				<SignupFormSocialFirst
 					step={ this.props.step }

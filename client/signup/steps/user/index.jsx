@@ -33,9 +33,7 @@ import {
 	getPreviousStepName,
 	getStepUrl,
 	isP2Flow,
-	isVideoPressFlow,
 } from 'calypso/signup/utils';
-import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -243,16 +241,7 @@ export class UserStep extends Component {
 				);
 			}
 		} else if ( 'videopress-account' === flowName ) {
-			subHeaderText = translate(
-				"First, you'll need a WordPress.com account. Already have one? {{a}}Log in{{/a}}",
-				{
-					components: {
-						a: <a href={ loginUrl } />,
-					},
-					comment:
-						'Link displayed on the VideoPress signup page for users to log in with a WordPress.com account',
-				}
-			);
+			subHeaderText = '';
 		} else if ( 1 === getFlowSteps( flowName, userLoggedIn ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
@@ -361,7 +350,6 @@ export class UserStep extends Component {
 
 	/**
 	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
-	 *
 	 * @param {string} service      The name of the social service
 	 * @param {string} access_token An OAuth2 acccess token
 	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
@@ -464,10 +452,6 @@ export class UserStep extends Component {
 			return translate( 'Continue' );
 		}
 
-		if ( isVideoPressFlow( flowName ) ) {
-			return translate( 'Continue' );
-		}
-
 		if ( isWooOAuth2Client( this.props.oauth2Client ) ) {
 			return translate( 'Get started' );
 		}
@@ -529,26 +513,6 @@ export class UserStep extends Component {
 		);
 	}
 
-	renderVideoPressSignupStep() {
-		return (
-			<VideoPressStepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate( 'Let’s get you signed up' ) }
-				subHeaderText={ this.getSubHeaderText() }
-				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
-					args: {
-						currentStep: 1,
-						totalSteps: 1,
-					},
-				} ) }
-			>
-				{ this.renderSignupForm() }
-			</VideoPressStepWrapper>
-		);
-	}
-
 	renderP2SignupStep() {
 		return (
 			<P2StepWrapper
@@ -597,10 +561,6 @@ export class UserStep extends Component {
 	render() {
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
-		}
-
-		if ( isVideoPressFlow( this.props.flowName ) ) {
-			return this.renderVideoPressSignupStep();
 		}
 
 		if ( isGravatarOAuth2Client( this.props.oauth2Client ) && ! this.props.userLoggedIn ) {
