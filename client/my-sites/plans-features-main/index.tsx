@@ -436,6 +436,7 @@ const PlansFeaturesMain = ( {
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
+			isInSignup,
 		} )
 	);
 
