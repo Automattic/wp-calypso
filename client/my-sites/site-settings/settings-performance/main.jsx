@@ -137,14 +137,7 @@ class SiteSettingsPerformance extends Component {
 				{ siteIsJetpackNonAtomic || ( siteIsAtomic && hasManagePluginsFeature ) ? (
 					<AmpJetpack />
 				) : (
-					<AmpWpcom
-						submitForm={ submitForm }
-						trackEvent={ trackEvent }
-						updateFields={ updateFields }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
-					/>
+					<AmpWpcom />
 				) }
 
 				{ ( ! siteIsJetpack || siteIsAtomic ) && (
@@ -181,8 +174,6 @@ const connectComponent = connect( ( state ) => {
 
 const getFormSettings = ( settings ) =>
 	pick( settings, [
-		'amp_is_enabled',
-		'amp_is_supported',
 		'instant_search_enabled',
 		'jetpack_search_enabled',
 		'jetpack_search_supported',
