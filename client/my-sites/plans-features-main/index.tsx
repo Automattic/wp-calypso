@@ -1,17 +1,14 @@
 import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
-	FEATURE_CUSTOM_DOMAIN,
 	getPlan,
 	getPlanClass,
 	getPlanPath,
 	isFreePlan,
-	isMonthly,
 	isPersonalPlan,
 	PlanSlug,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
-	isWooExpressPlan,
 	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
@@ -40,6 +37,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { FeaturesGrid, ComparisonGrid } from 'calypso/my-sites/plans-grid';
+import useGridPlanFeaturesForWooExpressIntroductoryOffers from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plan-features-for-woo-express-introductory-offers';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
@@ -72,7 +70,6 @@ import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	GridPlan,
-	PlanFeaturesForGridPlan,
 	PlansIntent,
 } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import type { DataResponse, PlanActionOverrides } from 'calypso/my-sites/plans-grid/types';
@@ -179,58 +176,6 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 			isSecondary
 		/>
 	);
-};
-
-/**
- * Helper function to correctly process the plan features for Woo Express plans
- * with an introductory offer, where we may need to remove some features.
- */
-const buildPlanFeaturesForWooExpressIntroductoryOffers = (
-	gridPlans: Omit< GridPlan, 'features' >[],
-	planSlug: string,
-	planFeatures: PlanFeaturesForGridPlan
-): PlanFeaturesForGridPlan => {
-	if ( ! isWooExpressPlan( planSlug ) || isMonthly( planSlug ) ) {
-		return planFeatures;
-	}
-
-	const gridPlan = gridPlans.find( ( gridPlan ) => gridPlan.planSlug === planSlug );
-
-	if ( ! gridPlan || ! gridPlan.pricing.introOffer ) {
-		return planFeatures;
-	}
-
-	planFeatures.wpcomFeatures = planFeatures.wpcomFeatures.filter( ( feature ) => {
-		// Remove the custom domain feature for Woo Express plans with an introductory offer.
-		if ( FEATURE_CUSTOM_DOMAIN === feature.getSlug() ) {
-			return false;
-		}
-
-		return true;
-	} );
-
-	return planFeatures;
-};
-
-/**
- * Helper function to transform the plan features for Woo Express plans,
- * as we need some post-processing to apply for introductory offers.
- */
-const transformGridPlanFeaturesForWooExpressIntroductoryOffers = (
-	intent: PlansIntent | null | undefined,
-	gridPlans: Omit< GridPlan, 'features' >[] | null,
-	gridFeatures: { [ planSlug: string ]: PlanFeaturesForGridPlan }
-): { [ planSlug: string ]: PlanFeaturesForGridPlan } => {
-	if ( intent !== 'plans-woocommerce' || ! gridPlans ) {
-		return gridFeatures;
-	}
-
-	return Object.fromEntries(
-		Object.entries( gridFeatures ).map( ( [ planSlug, planFeatures ] ) => [
-			planSlug,
-			buildPlanFeaturesForWooExpressIntroductoryOffers( gridPlans, planSlug, planFeatures ),
-		] )
-	) as { [ planSlug: string ]: PlanFeaturesForGridPlan };
 };
 
 const PlansFeaturesMain = ( {
@@ -427,7 +372,7 @@ const PlansFeaturesMain = ( {
 		shouldDisplayFreeHostingTrial,
 	} );
 
-	const planFeaturesForFeaturesGrid = transformGridPlanFeaturesForWooExpressIntroductoryOffers(
+	const planFeaturesForFeaturesGrid = useGridPlanFeaturesForWooExpressIntroductoryOffers(
 		intent,
 		gridPlans,
 		usePlanFeaturesForGridPlans( {
@@ -440,7 +385,7 @@ const PlansFeaturesMain = ( {
 		} )
 	);
 
-	const planFeaturesForComparisonGrid = transformGridPlanFeaturesForWooExpressIntroductoryOffers(
+	const planFeaturesForComparisonGrid = useGridPlanFeaturesForWooExpressIntroductoryOffers(
 		intent,
 		gridPlans,
 		useRestructuredPlanFeaturesForComparisonGrid( {
