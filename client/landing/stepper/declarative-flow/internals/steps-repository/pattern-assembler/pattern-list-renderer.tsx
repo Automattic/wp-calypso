@@ -66,7 +66,7 @@ const PatternListItem = ( {
 	}, [ isShown, isFirst, ref ] );
 
 	return (
-		<Tooltip text={ pattern.title } inline>
+		<Tooltip text={ pattern.title }>
 			<CompositeItem
 				{ ...composite }
 				role="option"
