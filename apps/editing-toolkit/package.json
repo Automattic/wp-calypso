@@ -135,6 +135,7 @@
 		"eslint-plugin-json-es": "^1.5.7",
 		"eslint-plugin-md": "^1.0.19",
 		"eslint-plugin-you-dont-need-lodash-underscore": "^6.13.0",
+		"prettier": "npm:wp-prettier@3.0.3",
 		"wait-for-expect": "^3.0.2",
 		"webpack": "^5.68.0"
 	}
