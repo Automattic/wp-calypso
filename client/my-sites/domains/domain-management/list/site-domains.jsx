@@ -156,6 +156,7 @@ export class SiteDomains extends Component {
 						resolveDomainStatus( domain, null, translate, dispatch, {
 							getMappingErrors: true,
 							siteSlug: selectedSite.slug,
+							isVipSite: selectedSite.is_vip,
 						} )
 					)
 				),

@@ -53,6 +53,7 @@ export type ResolveDomainStatusOptionsBag = {
 	onRenewNowClick?(): void;
 	isCreditCardExpiring?: boolean | null;
 	monthsUtilCreditCardExpires?: number | null;
+	isVipSite?: boolean | null;
 };
 
 export type DomainStatusPurchaseActions = {
@@ -73,6 +74,7 @@ export function resolveDomainStatus(
 		onRenewNowClick,
 		isCreditCardExpiring = false,
 		monthsUtilCreditCardExpires = null,
+		isVipSite = false,
 	}: ResolveDomainStatusOptionsBag
 ): ResolveDomainStatusReturn | null {
 	const transferOptions = {
@@ -121,7 +123,7 @@ export function resolveDomainStatus(
 
 				let noticeText = null;
 
-				if ( ! domain.pointsToWpcom ) {
+				if ( ! isVipSite && ! domain.pointsToWpcom ) {
 					noticeText = translate( "We noticed that something wasn't updated correctly." );
 					callToAction = mappingSetupCallToAction;
 				}
@@ -144,7 +146,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( getMappingErrors ) {
+			if ( getMappingErrors && ! isVipSite ) {
 				const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 
 				const hasMappingError =

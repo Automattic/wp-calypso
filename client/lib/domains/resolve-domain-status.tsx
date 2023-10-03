@@ -50,6 +50,7 @@ export type ResolveDomainStatusOptionsBag = {
 	currentRoute?: string | null;
 	getMappingErrors?: boolean | null;
 	dismissPreferences?: any;
+	isVipSite?: boolean | null;
 };
 
 export function resolveDomainStatus(
@@ -65,6 +66,7 @@ export function resolveDomainStatus(
 		getMappingErrors = false,
 		currentRoute = null,
 		dismissPreferences = null,
+		isVipSite = false,
 	}: ResolveDomainStatusOptionsBag = {}
 ): ResolveDomainStatusReturn {
 	const transferOptions = {
@@ -107,7 +109,7 @@ export function resolveDomainStatus(
 
 				let noticeText = null;
 
-				if ( ! domain.pointsToWpcom ) {
+				if ( ! isVipSite && ! domain.pointsToWpcom ) {
 					noticeText = translate(
 						"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
 						{ components: mappingSetupComponents }
@@ -131,7 +133,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( getMappingErrors && siteSlug !== null ) {
+			if ( getMappingErrors && siteSlug !== null && ! isVipSite ) {
 				const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 
 				const hasMappingError =
@@ -154,7 +156,11 @@ export function resolveDomainStatus(
 				}
 			}
 
-			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
+			if (
+				! isVipSite &&
+				( ! isJetpackSite || isSiteAutomatedTransfer ) &&
+				! domain.pointsToWpcom
+			) {
 				return {
 					statusText: translate( 'Verifying' ),
 					statusClass: 'status-success',
