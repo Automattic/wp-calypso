@@ -4,8 +4,8 @@ import { useCallback, useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import CheckboxTree, { CheckboxTreeItem } from '../checkbox-tree';
 import { ConfirmationModal } from '../confirmation-modal';
-import CheckboxTree, { CheckboxTreeItem } from './checkbox-tree';
 
 const synchronizationOptions: CheckboxTreeItem[] = [
 	{
