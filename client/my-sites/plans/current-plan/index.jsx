@@ -220,9 +220,10 @@ class CurrentPlan extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-		const isBusinessTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
-		const isHostingTrial = currentPlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
-		const isTrial = isEcommerceTrial || isBusinessTrial || isHostingTrial;
+		const isBusinessTrial =
+			currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+			currentPlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
+		const isTrial = isEcommerceTrial || isBusinessTrial;
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
