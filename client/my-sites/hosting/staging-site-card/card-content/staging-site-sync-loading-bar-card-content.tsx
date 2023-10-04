@@ -11,9 +11,13 @@ const StyledLoadingBar = styled( LoadingBar )( {
 
 type CardContentProps = {
 	progress: number;
+	siteToSync: 'production' | 'staging';
 };
 
-export const StagingSiteSyncLoadingBarCardContent = ( { progress }: CardContentProps ) => {
+export const StagingSiteSyncLoadingBarCardContent = ( {
+	progress,
+	siteToSync,
+}: CardContentProps ) => {
 	const translate = useTranslate();
 	const siteOwnerId = useSelector( ( state ) => getSelectedSite( state )?.site_owner );
 	const currentUserId = useSelector( ( state ) => getCurrentUserId( state ) );
@@ -21,10 +25,10 @@ export const StagingSiteSyncLoadingBarCardContent = ( { progress }: CardContentP
 
 	const message = isOwner
 		? translate( 'We are updating your %s site. We’ll email you once it is ready.', {
-				args: [ 'staging' ],
+				args: [ siteToSync ],
 		  } )
 		: translate( 'We are updating the %s site. We’ll email the site owner once it is ready.', {
-				args: [ 'staging' ],
+				args: [ siteToSync ],
 		  } );
 	return (
 		<div data-testid="syncing-site-content">

@@ -251,10 +251,12 @@ const SyncCardContainer = ( {
 	children,
 	progress,
 	isSyncInProgress,
+	siteToSync,
 }: {
 	children: React.ReactNode;
 	progress: number;
 	isSyncInProgress: boolean;
+	siteToSync: 'production' | 'staging';
 } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -286,7 +288,9 @@ const SyncCardContainer = ( {
 					</StagingSyncCardFooter>
 				</>
 			) }
-			{ isSyncInProgress && <StagingSiteSyncLoadingBarCardContent progress={ progress } /> }
+			{ isSyncInProgress && (
+				<StagingSiteSyncLoadingBarCardContent siteToSync={ siteToSync } progress={ progress } />
+			) }
 		</StagingSyncCardBody>
 	);
 };
@@ -325,7 +329,11 @@ export const StagingSiteSyncCard = ( {
 		disabled || ( selectedItems.length === 0 && selectedOption === 'push' );
 
 	return (
-		<SyncCardContainer isSyncInProgress={ isSyncInProgress } progress={ progress }>
+		<SyncCardContainer
+			siteToSync={ selectedOption === 'push' ? 'production' : 'staging' }
+			isSyncInProgress={ isSyncInProgress }
+			progress={ progress }
+		>
 			<FormSelectContainer>
 				<FormSelect
 					value={ selectedOption }
@@ -394,7 +402,11 @@ export const ProductionSiteSyncCard = ( {
 		disabled || ( selectedItems.length === 0 && selectedOption === 'pull' );
 
 	return (
-		<SyncCardContainer progress={ progress } isSyncInProgress={ isSyncInProgress }>
+		<SyncCardContainer
+			siteToSync={ selectedOption === 'pull' ? 'production' : 'staging' }
+			progress={ progress }
+			isSyncInProgress={ isSyncInProgress }
+		>
 			<FormSelectContainer>
 				<FormSelect
 					value={ selectedOption }

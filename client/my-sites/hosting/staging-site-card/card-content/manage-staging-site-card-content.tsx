@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { ConfirmationModal } from 'calypso/my-sites/hosting/staging-site-card/confirmation-modal';
 import { StagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
@@ -112,7 +113,7 @@ export const ManageStagingSiteCardContent = ( {
 			return (
 				<Button
 					primary
-					onClick={ () => page.redirect( `/hosting-config/${ urlToSlug( stagingSite.url ) }` ) }
+					onClick={ () => navigate( `/hosting-config/${ urlToSlug( stagingSite.url ) }` ) }
 					disabled={ isButtonDisabled }
 				>
 					<span>{ translate( 'Manage staging site' ) }</span>
