@@ -1,6 +1,7 @@
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
@@ -77,8 +78,9 @@ export const StorageAddOnDropdown = ( {
 		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
-	const storageAddOnPrices = storageAddOnsForPlan?.map(
-		( addOn ) => addOn?.prices?.monthlyPrice ?? 0
+	const storageAddOnPrices = useMemo(
+		() => storageAddOnsForPlan?.map( ( addOn ) => addOn?.prices?.monthlyPrice ?? 0 ),
+		[ storageAddOnsForPlan ]
 	);
 	const isLargeCurrency = useIsLargeCurrency( {
 		prices: storageAddOnPrices,
