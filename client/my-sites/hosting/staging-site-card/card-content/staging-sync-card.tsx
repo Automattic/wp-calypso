@@ -13,7 +13,7 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 		name: 'sqls',
 		label: 'Site Database (SQL)',
 		subTitle: translate(
-			'Overwrite the database, posts, pages, products, and orders with staging data.'
+			'Overwrite the database, including any posts, pages, products, or orders with staging data.'
 		),
 		checked: false,
 		isDangerous: true,
@@ -38,15 +38,17 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 	},
 	{
 		name: 'contents',
-		label: translate( 'wp-content directory' ),
+		label: translate( 'wp-content Directory' ),
 		subTitle: translate( 'excluding themes, plugins, and uploads' ),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'roots',
-		label: translate( 'WordPress roots' ),
-		subTitle: translate( 'includes wp-config php and any non WordPress files' ),
+		label: translate( 'Web Root' ),
+		subTitle: translate(
+			'Everything in the wp-content directory, includes wp-config php and any non WordPress files'
+		),
 		checked: false,
 		isDangerous: false,
 	},
@@ -66,8 +68,8 @@ const ConfirmationModalInputTitle = styled.p( {
 	marginBottom: '8px',
 } );
 
-const ConfirmationModalInput = styled( FormInput )( {
-	marginBottom: '26px!important',
+const ConfirmationModalInputContainer = styled.div( {
+	marginBottom: '26px',
 } );
 
 const ConfirmationModalInputSiteSlug = styled.span( {
@@ -191,10 +193,14 @@ const StagingToProductionSync = ( {
 									},
 								} ) }
 							</ConfirmationModalInputTitle>
-							<ConfirmationModalInput
-								value={ typedSiteName }
-								onChange={ ( event: ChangeEvent ) => setTypedSiteName( event.target.value ) }
-							/>
+							<ConfirmationModalInputContainer>
+								<FormInput
+									value={ typedSiteName }
+									onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+										setTypedSiteName( event.target.value )
+									}
+								/>
+							</ConfirmationModalInputContainer>
 						</div>
 					}
 					confirmLabel={ translate( 'Synchronize' ) }
