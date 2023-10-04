@@ -56,6 +56,7 @@ import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dia
 import { LoadingPlaceHolder } from './components/loading-placeholder';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
+import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
 import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
@@ -246,6 +247,7 @@ const PlansFeaturesMain = ( {
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const observableForOdieRef = useObservableForOdie();
+	const currentPlanManageHref = useCurrentPlanManageHref();
 
 	const toggleShowPlansComparisonGrid = () => {
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
@@ -737,6 +739,7 @@ const PlansFeaturesMain = ( {
 								allFeaturesList={ FEATURES_LIST }
 								planTypeSelectorProps={ planTypeSelectorProps }
 								onStorageAddOnClick={ handleStorageAddOnClick }
+								currentPlanManageHref={ currentPlanManageHref }
 							/>
 							{ ! hidePlansFeatureComparison && (
 								<>
@@ -777,6 +780,7 @@ const PlansFeaturesMain = ( {
 											allFeaturesList={ FEATURES_LIST }
 											planTypeSelectorProps={ planTypeSelectorProps }
 											onStorageAddOnClick={ handleStorageAddOnClick }
+											currentPlanManageHref={ currentPlanManageHref }
 										/>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }

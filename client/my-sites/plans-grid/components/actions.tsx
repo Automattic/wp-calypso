@@ -32,7 +32,7 @@ type PlanFeaturesActionsButtonProps = {
 	currentSitePlanSlug?: string | null;
 	trialPlan?: boolean;
 	freePlan: boolean;
-	manageHref: string;
+	currentPlanManageHref?: string;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
@@ -194,7 +194,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
-	manageHref,
+	currentPlanManageHref,
 	canUserPurchasePlan,
 	currentSitePlanSlug,
 	buttonText,
@@ -209,7 +209,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: string;
-	manageHref?: string;
+	currentPlanManageHref?: string;
 	canUserPurchasePlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
@@ -232,7 +232,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				<Button
 					className={ classes }
 					onClick={ planActionOverrides.loggedInFreePlan.callback }
-					disabled={ ! manageHref } // not sure why this is here
+					disabled={ ! currentPlanManageHref } // not sure why this is here
 				>
 					{ planActionOverrides.loggedInFreePlan.text }
 				</Button>
@@ -248,7 +248,11 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
 		return (
-			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
+			<Button
+				className={ classes }
+				href={ currentPlanManageHref }
+				disabled={ ! currentPlanManageHref }
+			>
 				{ canUserPurchasePlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
@@ -365,7 +369,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	currentSitePlanSlug,
 	freePlan = false,
 	trialPlan = false,
-	manageHref,
+	currentPlanManageHref,
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
@@ -494,7 +498,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
-			manageHref={ manageHref }
+			currentPlanManageHref={ currentPlanManageHref }
 			canUserPurchasePlan={ canUserPurchasePlan }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
