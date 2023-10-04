@@ -51,7 +51,8 @@ export function useGetDomainSuggestions(
 
 	return {
 		...result,
-		invalidateCache: () => queryClient.invalidateQueries( queryKey ),
+		invalidateCache: () =>
+			queryClient.invalidateQueries( [ 'domain-suggestions', search, searchOptions ] ),
 	};
 }
 
