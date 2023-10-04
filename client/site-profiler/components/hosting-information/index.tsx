@@ -20,6 +20,7 @@ export default function HostingInformation( props: Props ) {
 
 	useEffect( () => {
 		hostingProvider &&
+			urlData &&
 			recordTracksEvent( 'calypso_site_profiler_hosting_information', {
 				domain_url: urlData?.url,
 				is_cdn: hostingProvider?.is_cdn,
@@ -31,7 +32,7 @@ export default function HostingInformation( props: Props ) {
 				platform_is_wpengine: urlData?.platform_data?.is_wpengine,
 				platform_is_pressable: urlData?.platform_data?.is_pressable,
 			} );
-	}, [ hostingProvider ] );
+	}, [ hostingProvider, urlData ] );
 
 	return (
 		<div className="hosting-information">

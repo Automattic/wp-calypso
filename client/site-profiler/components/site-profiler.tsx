@@ -42,7 +42,7 @@ export default function SiteProfiler() {
 		hostingProviderData?.hosting_provider,
 		isWordPressPlatForm
 	);
-	useSiteProfilerRecordAnalytics( domain, isDomainValid, conversionAction );
+	useSiteProfilerRecordAnalytics( domain, isDomainValid, conversionAction, specialDomainMapping );
 
 	const updateDomainQueryParam = ( value: string ) => {
 		// Update the domain query param;

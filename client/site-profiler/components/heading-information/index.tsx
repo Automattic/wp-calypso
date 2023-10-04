@@ -35,6 +35,7 @@ export default function HeadingInformation( props: Props ) {
 			domain,
 			cta_name: ctaName,
 			conversion_action: conversionAction,
+			special_domain_mapping: specialDomainMapping,
 		} );
 	};
 
