@@ -639,3 +639,56 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 		@include blazepress-huge;
 	}
 }
+
+.ad-preview-modal {
+	border-radius: 4px;
+	padding: 48px 48px 0 48px;
+	width: 748px;
+
+	.components-modal__content {
+		align-items: center;
+		display: flex;
+		justify-content: center;
+		margin: 0;
+		padding: 0;
+	}
+
+	.ad-preview-modal__creatives {
+		align-items: center;
+		display: flex;
+		margin-top: 10px;
+		max-width: 820px;
+		min-height: 540px;
+
+		iframe {
+			width: 100%;
+		}
+	}
+
+	.ad-preview-modal__links {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 48px;
+		padding-top: 22px;
+
+		.active {
+			background-color: $studio-gray-0;
+			color: $studio-gray-80;
+			cursor: default;
+		}
+
+		button {
+			align-items: center;
+			border-radius: 4px;
+			color: var(--color-link);
+			cursor: pointer;
+			display: inline-flex;
+			padding: 8px 12px 8px 8px;
+			text-decoration: none;
+
+			svg {
+				margin-right: 5px;
+			}
+		}
+	}
+}

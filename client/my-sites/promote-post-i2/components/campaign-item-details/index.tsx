@@ -20,6 +20,7 @@ import Notice from 'calypso/components/notice';
 import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
+import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,
@@ -161,25 +162,6 @@ export default function CampaignItemDetails( props: Props ) {
 		},
 	];
 
-	const PreviewIcon = () => {
-		return (
-			<svg
-				width="20"
-				height="20"
-				viewBox="0 0 20 20"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-				className="ad-preview-icon"
-			>
-				<path
-					fillRule="evenodd"
-					clipRule="evenodd"
-					d="M3.33301 16.666L3.33301 3.33268L4.58301 3.33268L4.58301 16.666L3.33301 16.666ZM7.91634 4.99935L7.91634 14.9993C7.91634 15.2295 8.10289 15.416 8.33301 15.416L11.6663 15.416C11.8965 15.416 12.083 15.2295 12.083 14.9993L12.083 4.99935C12.083 4.76923 11.8965 4.58268 11.6663 4.58268L8.33301 4.58268C8.10289 4.58268 7.91634 4.76923 7.91634 4.99935ZM6.66634 14.9993L6.66634 4.99935C6.66634 4.07887 7.41253 3.33268 8.33301 3.33268L11.6663 3.33268C12.5868 3.33268 13.333 4.07887 13.333 4.99935L13.333 14.9993C13.333 15.9198 12.5868 16.666 11.6663 16.666L8.33301 16.666C7.41253 16.666 6.66634 15.9198 6.66634 14.9993ZM15.4163 3.33268L15.4163 16.666L16.6663 16.666L16.6663 3.33268L15.4163 3.33268Z"
-				/>
-			</svg>
-		);
-	};
-
 	const adPreviewLabel =
 		// maybe we will need to edit this condition when we add more templates
 		format !== 'html5_v2' ? (
@@ -188,10 +170,7 @@ export default function CampaignItemDetails( props: Props ) {
 			</div>
 		) : (
 			<div className="campaign-item-details__preview-header-preview-button">
-				<button>
-					<PreviewIcon />
-					<span>{ __( 'Preview' ) }</span>
-				</button>
+				<AdPreviewModal templateFormat={ format || '' } htmlCode={ creative_html || '' } />
 			</div>
 		);
 

@@ -1,14 +1,18 @@
 import './style.scss';
 import classNames from 'classnames';
 import { useEffect } from 'react';
+import { BannerWidth } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 
 interface Props {
 	htmlCode: string;
 	templateFormat: string;
 	isLoading?: boolean;
+	width?: BannerWidth;
 }
 
-export default function AdPreview( { htmlCode, isLoading, templateFormat }: Props ) {
+export default function AdPreview( { htmlCode, isLoading, templateFormat, width }: Props ) {
+	const adWidth = width ? `${ width }px` : '300px';
+
 	useEffect( () => {
 		if ( ! isLoading && templateFormat === 'html5_v2' ) {
 			// we only need this listener to resize the iframe for html5_v2 templates
@@ -49,7 +53,7 @@ export default function AdPreview( { htmlCode, isLoading, templateFormat }: Prop
 	} );
 
 	return (
-		<div className={ classes }>
+		<div className={ classes } style={ { width: adWidth } }>
 			<iframe srcDoc={ htmlCode } title="adPreview" />
 		</div>
 	);
