@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -705,22 +706,41 @@ export class RenderDomainsStep extends Component {
 			const priceText = translate( '%(cost)s/year', {
 				args: { cost: domain.item_original_cost_display },
 			} );
-			const hasPromotion = domain.item_original_cost_display !== domain.item_subtotal_display;
+			const costDifference = domain.item_original_cost - domain.cost;
+			const hasPromotion = costDifference > 0;
 
 			return (
-				<div>
-					<div
-						className={ classNames( 'domains__domain-cart-domain', {
-							'limit-width': hasPromotion,
-						} ) }
-					>
-						<BoldTLD domain={ domain.meta } data={ domain } />
+				<>
+					<div>
+						<div
+							className={ classNames( 'domains__domain-cart-domain', {
+								'limit-width': hasPromotion,
+							} ) }
+						>
+							<BoldTLD domain={ domain.meta } data={ domain } />
+						</div>
+						<div className="domain-product-price__price">
+							{ hasPromotion && <del>{ priceText }</del> }
+							<span className="domains__price">{ domain.item_subtotal_display }</span>
+						</div>
 					</div>
-					<div className="domain-product-price__price">
-						{ hasPromotion && <del>{ priceText }</del> }
-						<span className="domains__price">{ domain.item_subtotal_display }</span>
+					<div>
+						<Button
+							borderless
+							className="domains__domain-cart-remove"
+							onClick={ this.removeDomainClickHandler( domain ) }
+						>
+							{ this.props.translate( 'Remove' ) }
+						</Button>
+						{ hasPromotion && (
+							<span className="savings-message">
+								{ translate( 'Up to %(costDifference)s off for a domain.', {
+									args: { costDifference: formatCurrency( costDifference, domain.currency ) },
+								} ) }
+							</span>
+						) }
 					</div>
-				</div>
+				</>
 			);
 		};
 
@@ -735,13 +755,6 @@ export class RenderDomainsStep extends Component {
 							{ domainsInCart.map( ( domain, i ) => (
 								<div key={ `row${ i }` } className="domains__domain-cart-row">
 									<DomainNameAndCost domain={ domain } />
-									<Button
-										borderless
-										className="domains__domain-cart-remove"
-										onClick={ this.removeDomainClickHandler( domain ) }
-									>
-										{ this.props.translate( 'Remove' ) }
-									</Button>
 								</div>
 							) ) }
 						</div>

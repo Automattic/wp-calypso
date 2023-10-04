@@ -71,9 +71,21 @@
 		}
 
 		.domains__domain-cart-rows {
+			.domains__domain-cart-row {
+				padding-bottom: 6px;
+				padding-top: 6px;
+			}
+
 			.domains__domain-cart-row > div {
 				display: flex;
 				justify-content: space-between;
+			}
+
+			.savings-message {
+				color: var(--studio-green);
+				display: flex;
+				align-items: center;
+				font-size: 0.875rem;
 			}
 
 			.domains__domain-cart-domain {
