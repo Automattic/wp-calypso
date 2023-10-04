@@ -1,4 +1,9 @@
-import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/calypso-products';
+import {
+	getPlan,
+	isFreePlanProduct,
+	getIntervalTypeForTerm,
+	domainProductSlugs,
+} from '@automattic/calypso-products';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -8,6 +13,7 @@ import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.svg';
+import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -17,6 +23,7 @@ import { TASK_DOMAIN_UPSELL } from 'calypso/my-sites/customer-home/cards/constan
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -88,6 +95,13 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
 
+	useQueryProductsList();
+
+	const domainRegistrationProduct = useSelector( ( state ) =>
+		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
+	);
+	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
+
 	const searchLink = addQueryArgs(
 		{
 			domainAndPlanPackage: true,
@@ -144,13 +158,14 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					}
 			  )
 			: translate(
-					"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
+					"{{strong}}%(domainSuggestion)s{{/strong}} is the perfect site address. It's available and easy to find and follow. And .com, .net, and .org domains start at just %(domainPrice)s—Get it now and claim a corner of the web.",
 					{
 						components: {
 							strong: <strong />,
 						},
 						args: {
 							domainSuggestion: domainSuggestionName,
+							domainPrice: domainProductCost,
 						},
 					}
 			  );
