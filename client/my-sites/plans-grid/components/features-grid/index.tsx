@@ -568,7 +568,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					planSlug={ planSlug }
 					onStorageAddOnClick={ onStorageAddOnClick }
 					storageOptions={ storageOptions }
-					showPrice
 				/>
 			) : (
 				storageOptions.map( ( storageOption ) => {

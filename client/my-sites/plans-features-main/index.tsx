@@ -9,6 +9,7 @@ import {
 	PlanSlug,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
+	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -573,6 +574,13 @@ const PlansFeaturesMain = ( {
 	}, [] );
 
 	const isLoadingGridPlans = Boolean( intentFromSiteMeta.processing || ! gridPlans );
+	const handleStorageAddOnClick = useCallback(
+		( addOnSlug: WPComStorageAddOnSlug ) =>
+			recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
+				add_on_slug: addOnSlug,
+			} ),
+		[]
+	);
 
 	const comparisonGridContainerClasses = classNames(
 		'plans-features-main__comparison-grid-container',
@@ -723,11 +731,7 @@ const PlansFeaturesMain = ( {
 								usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 								allFeaturesList={ FEATURES_LIST }
 								planTypeSelectorProps={ planTypeSelectorProps }
-								onStorageAddOnClick={ ( addOnSlug ) =>
-									recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
-										add_on_slug: addOnSlug,
-									} )
-								}
+								onStorageAddOnClick={ handleStorageAddOnClick }
 							/>
 							{ ! hidePlansFeatureComparison && (
 								<>
@@ -766,11 +770,7 @@ const PlansFeaturesMain = ( {
 											usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 											allFeaturesList={ FEATURES_LIST }
 											planTypeSelectorProps={ planTypeSelectorProps }
-											onStorageAddOnClick={ ( addOnSlug ) =>
-												recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
-													add_on_slug: addOnSlug,
-												} )
-											}
+											onStorageAddOnClick={ handleStorageAddOnClick }
 										/>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }

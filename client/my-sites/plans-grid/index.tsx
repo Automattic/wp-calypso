@@ -13,6 +13,7 @@ import PlansGridContextProvider from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
 import { useIsPlanUpgradeCreditVisible } from './hooks/use-is-plan-upgrade-credit-visible';
+import { usePlanPricingInfoFromGridPlans } from './hooks/use-plan-pricing-info-from-grid-plans';
 import type {
 	GridPlan,
 	PlansIntent,
@@ -180,8 +181,12 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 		siteId,
 		gridPlans.map( ( gridPlan ) => gridPlan.planSlug )
 	);
-	const isLargeCurrency = useIsLargeCurrency( {
+	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 		gridPlans,
+	} );
+	const isLargeCurrency = useIsLargeCurrency( {
+		prices,
+		currencyCode: currencyCode || 'USD',
 	} );
 
 	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here

@@ -26,6 +26,7 @@ import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-feat
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
+import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
@@ -495,7 +496,14 @@ const ComparisonGridHeader = ( {
 	selectedPlan,
 }: ComparisonGridHeaderProps ) => {
 	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
-	const isLargeCurrency = useIsLargeCurrency( { gridPlans: displayedGridPlans } );
+	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
+		gridPlans: displayedGridPlans,
+	} );
+
+	const isLargeCurrency = useIsLargeCurrency( {
+		prices,
+		currencyCode: currencyCode || 'USD',
+	} );
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
 		siteId ?? 0,
 		displayedGridPlans.map( ( { planSlug } ) => planSlug )
@@ -627,6 +635,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							planSlug={ planSlug }
 							storageOptions={ gridPlan.features.storageOptions }
 							onStorageAddOnClick={ onStorageAddOnClick }
+							priceOnSeparateLine
 						/>
 					) : (
 						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>

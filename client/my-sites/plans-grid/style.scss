@@ -122,6 +122,12 @@ $mobile-card-max-width: 440px;
 				color: var(--color-neutral-light);
 				box-shadow: inset 0 0 0 1px #e0e0e0;
 			}
+
+			&.is-stuck.is-large-currency {
+				height: 48px;
+				line-height: 15px;
+				padding: 9px 12px;
+			}
 		}
 	}
 }
@@ -161,6 +167,10 @@ $mobile-card-max-width: 440px;
 .plan-features-2023-grid__header-text {
 	flex: 1;
 	padding: 6px 0 0;
+}
+
+.plan-features-2023-grid__actions-signup-plan-text {
+	display: block;
 }
 
 .plan-features-2023-grid__actions-buttons {
@@ -522,11 +532,35 @@ $mobile-card-max-width: 440px;
 }
 
 .components-custom-select-control {
+	.storage-add-on-dropdown-option__price-container {
+		display: inline-block;
+	}
+
 	.storage-add-on-dropdown-option__title {
 		font-size: 0.75rem;
 	}
 
+	.storage-add-on-dropdown-option__price,
+	.storage-add-on-dropdown-option__per-month {
+		color: var(--studio-green-40);
+		display: inline-block;
+
+		// Non standard rem allows us to match font size of other storage labels
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 0.7rem;
+	}
+
 	.storage-add-on-dropdown-option__price {
+		margin-left: 4px;
+	}
+}
+
+.storage-add-on-dropdown__offset-price-container {
+	width: 100%;
+	margin-top: 8px;
+	text-align: left;
+
+	.storage-add-on-dropdown__offset-price {
 		color: var(--studio-green-40);
 
 		// Non standard rem allows us to match font size of other storage labels
@@ -1006,7 +1040,6 @@ body.is-section-signup.is-white-signup,
 			}
 		}
 	}
-
 
 	.plan-comparison-grid__title {
 		margin-top: 0;
