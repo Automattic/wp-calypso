@@ -62,7 +62,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 
 		it( 'Enter Onboarding flow for the selected domain', async function () {
 			await expect(
-				page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } ),
+				page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } )
 			).resolves.not.toThrow();
 
 			const urlRegex = `/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }`;
@@ -147,7 +147,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		}
 
 		const restAPIClient = new RestAPIClient(
-			SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser,
+			SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser
 		);
 
 		await apiDeleteSite( restAPIClient, {
