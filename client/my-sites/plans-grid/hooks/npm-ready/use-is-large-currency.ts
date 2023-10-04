@@ -32,7 +32,7 @@ function useDisplayPrices( currencyCode: string, prices?: number[] ) {
 
 function hasExceededPriceThreshold( displayPrices?: string[], isAddOn = false ) {
 	const threshold = isAddOn ? LARGE_ADD_ON_CURRENCY_CHAR_THRESHOLD : LARGE_CURRENCY_CHAR_THRESHOLD;
-	return displayPrices?.some( ( price ) => price.length > threshold );
+	return !! displayPrices?.some( ( price ) => price.length > threshold );
 }
 
 function hasExceededCombinedPriceThreshold( displayPrices?: string[] ) {
@@ -55,7 +55,7 @@ function hasExceededCombinedPriceThreshold( displayPrices?: string[] ) {
 		planPrices = [];
 	} );
 
-	return exceedsThreshold;
+	return !! exceedsThreshold;
 }
 
 /**
