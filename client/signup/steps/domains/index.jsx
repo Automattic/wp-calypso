@@ -739,7 +739,7 @@ class DomainsStep extends Component {
 			if ( isEnabled( 'domains/add-multiple-domains-to-cart' ) ) {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
-			return ! stepSectionName && translate( 'Choose your domain' );
+			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
 		return getSitePropertyDefaults( 'signUpFlowDomainsStepHeader' );
