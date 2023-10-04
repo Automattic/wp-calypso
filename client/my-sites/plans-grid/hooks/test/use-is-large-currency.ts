@@ -4,7 +4,16 @@
 
 import useIsLargeCurrency from '../npm-ready/use-is-large-currency';
 
+jest.mock( '@wordpress/element', () => ( {
+	...jest.requireActual( '@wordpress/element' ),
+	useMemo: jest.fn().mockImplementation( ( fn ) => fn() ),
+} ) );
+
 describe( 'useIsLargeCurrency', () => {
+	afterAll( () => {
+		jest.clearAllMocks();
+	} );
+
 	const smallPrices = [ 0, 0, 100, 0, 2500, 0 ];
 	const largePrices = [ 0, 0, 100000, 0, 30000000, 20 ];
 
