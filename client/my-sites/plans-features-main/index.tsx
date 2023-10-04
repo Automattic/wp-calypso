@@ -32,6 +32,7 @@ import {
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { FeaturesGrid, ComparisonGrid } from 'calypso/my-sites/plans-grid';
@@ -328,7 +329,10 @@ const PlansFeaturesMain = ( {
 		const planPath = cartItemForPlan?.product_slug
 			? getPlanPath( cartItemForPlan.product_slug )
 			: '';
-		const checkoutUrlWithArgs = `/checkout/${ siteSlug }/${ planPath }`;
+		const checkoutUrlWithArgs = addQueryArgs(
+			{ ...( withDiscount && { coupon: withDiscount } ) },
+			`/checkout/${ siteSlug }/${ planPath }`
+		);
 
 		page( checkoutUrlWithArgs );
 	};
