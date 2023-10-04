@@ -5,7 +5,7 @@ import { useTyper } from '@automattic/help-center/src/hooks';
 import { Spinner } from '@wordpress/components';
 import { Icon, page as pageIcon } from '@wordpress/icons';
 import classnames from 'classnames';
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useState } from 'react';
 import ReactDOM from 'react-dom';
 import CustomerChatTail from 'calypso/assets/images/odie/customer-chatbubble-tail.svg';
 import WapuuAvatar from 'calypso/assets/images/odie/wapuu-avatar.svg';
@@ -30,12 +30,8 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 	const { addMessage: sendOdieMessage, botName } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 
-	const backdropRef: RefObject< HTMLDivElement > = useRef( null );
-
-	const handleBackdropClick = ( event: MouseEvent | React.MouseEvent< HTMLDivElement > ) => {
-		if ( event.target === backdropRef.current ) {
-			setIsFullscreen( false );
-		}
+	const handleBackdropClick = () => {
+		setIsFullscreen( false );
 	};
 
 	const handleContentClick = ( event: MouseEvent | React.MouseEvent< HTMLDivElement > ) => {
@@ -119,18 +115,8 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		</div>
 	);
 
-	useEffect( () => {
-		const backdropCopy = backdropRef.current;
-		if ( isFullscreen ) {
-			backdropRef.current?.addEventListener( 'click', handleBackdropClick );
-		}
-		return () => {
-			backdropCopy?.removeEventListener( 'click', handleBackdropClick );
-		};
-	}, [ isFullscreen ] );
-
 	const fullscreenContent = (
-		<div className="odie-fullscreen" ref={ backdropRef } onClick={ handleBackdropClick }>
+		<div className="odie-fullscreen" onClick={ handleBackdropClick }>
 			<div onClick={ handleContentClick }>{ messageContent }</div>
 		</div>
 	);
