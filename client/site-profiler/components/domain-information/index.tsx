@@ -1,7 +1,8 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { TranslateOptions, translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
@@ -33,6 +34,11 @@ export default function DomainInformation( props: Props ) {
 
 	const whoisDataAvailability = whois && Object.keys( whois ).length > 0;
 	const { fieldsRedacted, filteredWhois } = useFilteredWhoisData( whois );
+
+	useEffect( () => {
+		fetchWhoisRawData &&
+			recordTracksEvent( 'calypso_site_profiler_domain_whois_raw_data_fetch', { domain } );
+	}, [ fetchWhoisRawData ] );
 
 	const contactArgs = ( args?: string | string[] ): TranslateOptions => {
 		return {

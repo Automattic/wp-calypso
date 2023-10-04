@@ -8,6 +8,7 @@ import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/component
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainQueryParam from 'calypso/site-profiler/hooks/use-domain-query-param';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
+import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
@@ -41,6 +42,7 @@ export default function SiteProfiler() {
 		hostingProviderData?.hosting_provider,
 		isWordPressPlatForm
 	);
+	useSiteProfilerRecordAnalytics( domain, isDomainValid, conversionAction );
 
 	const updateDomainQueryParam = ( value: string ) => {
 		// Update the domain query param;

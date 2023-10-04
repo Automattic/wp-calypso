@@ -1,4 +1,6 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import useHostingProviderURL from 'calypso/site-profiler/hooks/use-hosting-provider-url';
 import HostingProviderName from './hosting-provider-name';
@@ -15,6 +17,21 @@ export default function HostingInformation( props: Props ) {
 	const { dns = [], urlData, hostingProvider } = props;
 	const aRecordIps = dns.filter( ( x ) => x.type === 'A' && x.ip );
 	const supportUrl = useHostingProviderURL( 'support', hostingProvider, urlData );
+
+	useEffect( () => {
+		hostingProvider &&
+			recordTracksEvent( 'calypso_site_profiler_hosting_information', {
+				domain_url: urlData?.url,
+				is_cdn: hostingProvider?.is_cdn,
+				provider_slug: hostingProvider?.slug,
+				provider_name: hostingProvider?.name,
+				platform: urlData?.platform,
+				platform_slug: urlData?.platform_data?.slug,
+				platform_is_wpcom: urlData?.platform_data?.is_wpcom,
+				platform_is_wpengine: urlData?.platform_data?.is_wpengine,
+				platform_is_pressable: urlData?.platform_data?.is_pressable,
+			} );
+	}, [ hostingProvider ] );
 
 	return (
 		<div className="hosting-information">

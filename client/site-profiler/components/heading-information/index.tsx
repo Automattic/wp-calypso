@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -29,20 +30,32 @@ export default function HeadingInformation( props: Props ) {
 	} = props;
 	const finalStatus = specialDomainMapping ?? conversionAction;
 
+	const recordCtaEvent = ( ctaName: string ) => {
+		recordTracksEvent( 'calypso_site_profiler_cta', {
+			domain,
+			cta_name: ctaName,
+			conversion_action: conversionAction,
+		} );
+	};
+
 	const onRegisterDomain = () => {
+		recordCtaEvent( 'registerDomain' );
 		page( `/start/domain/domain-only?new=${ domain }&search=yes` );
 	};
 
 	const onTransferDomain = () => {
+		recordCtaEvent( 'transferDomain' );
 		page( `/setup/domain-transfer/intro?new=${ domain }&search=yes` );
 	};
 
-	const onMigrateSite = () => {
-		page( `/setup/import-hosted-site?from=${ domain }` );
+	const onTransferDomainFree = () => {
+		recordCtaEvent( 'transferDomainGoogle' );
+		page( `/setup/google-transfer/intro?new=${ domain }` );
 	};
 
-	const onTransferDomainFree = () => {
-		page( `/setup/google-transfer/intro?new=${ domain }` );
+	const onMigrateSite = () => {
+		recordCtaEvent( 'migrateSite' );
+		page( `/setup/import-hosted-site?from=${ domain }` );
 	};
 
 	const onLearnMoreHosting = () => {
