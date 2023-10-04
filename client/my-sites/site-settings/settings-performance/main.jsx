@@ -11,8 +11,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
-import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
 import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import MediaSettingsPerformance from 'calypso/my-sites/site-settings/media-settings-performance';
@@ -132,12 +130,6 @@ class SiteSettingsPerformance extends Component {
 							</>
 						) }
 					</Fragment>
-				) }
-
-				{ siteIsJetpackNonAtomic || ( siteIsAtomic && hasManagePluginsFeature ) ? (
-					<AmpJetpack />
-				) : (
-					<AmpWpcom />
 				) }
 
 				{ ( ! siteIsJetpack || siteIsAtomic ) && (
