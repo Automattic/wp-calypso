@@ -34,7 +34,7 @@ const exported = {
 		context.primary = (
 			<>
 				<DocumentHead
-					title={ translate( 'Browse %s Blogs & Read Articles ‹ Reader', {
+					title={ translate( 'Browse %s blogs & read articles ‹ Reader', {
 						args: [ tabTitle ],
 						comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
 					} ) }
