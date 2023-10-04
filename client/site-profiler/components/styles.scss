@@ -182,6 +182,7 @@
 	}
 
 	.domain-analyzer-block {
+		padding-top: 10rem;
 		@media (max-width: $break-small ) {
 			padding-top: 4rem;
 		}
@@ -248,7 +249,7 @@
 		height: 100%;
 
 		@media (min-width: $break-medium) {
-			height: 280px;
+			height: 365px;
 		}
 	}
 	.domain-result-block::after {
