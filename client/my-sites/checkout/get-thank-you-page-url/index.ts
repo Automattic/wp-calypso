@@ -29,6 +29,7 @@ import {
 } from '@automattic/calypso-url';
 import { isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
+import { REMOTE_PATH_AUTH } from 'calypso/jetpack-connect/constants';
 import {
 	getGoogleApps,
 	hasGoogleApps,
@@ -241,10 +242,10 @@ export default function getThankYouPageUrl( {
 		// siteless checkout - "Connect After Checkout" flow.
 		if ( connectAfterCheckout && adminUrl && fromSiteSlug ) {
 			debug( 'Redirecting to the site to initiate Jetpack connection' );
-			// TODO: Then after connection, transfer temporary site subscription to the target site.
-			// TODO: Possibly change the final post-checkout/connect url (`redirect_after_auth` query arg).
-			// Note: Don't use Url hashes, they are stripped when passing to the payment processor.
-			const connectUrl = `${ adminUrl }admin.php?page=jetpack&connect_url_redirect&from=my-jetpack&redirect_after_auth=${ adminUrl }/admin.php?page=my-jetpack`;
+			// Remove "/wp-admin/" from the beginning of the REMOTE_PATH_AUTH because it's already part of the `adminUrl`.
+			const jetpackSiteAuthPath = REMOTE_PATH_AUTH.replace( /^\/wp-admin\//, '' );
+			const redirectAfterAuthUrl = `${ adminUrl }admin.php?page=my-jetpack`;
+			const connectUrl = `${ adminUrl }${ jetpackSiteAuthPath }&redirect_after_auth=${ redirectAfterAuthUrl }`;
 			return connectUrl;
 		}
 

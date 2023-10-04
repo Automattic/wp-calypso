@@ -87,7 +87,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 		);
 	} );
 
-	it( 'returns a no-site URL and a site slug as `from_site_slug` if no siteSlug is provided but fromSiteSlug is provided', () => {
+	it( 'returns a no-site URL and a siteSlug as `from_site_slug` if no siteSlug is provided but fromSiteSlug is provided', () => {
 		const finalUrl = '/foo/bar/baz';
 		const orderId = '12345';
 		const fromSiteSlug = 'myJetpack.site';
@@ -201,6 +201,17 @@ describe( 'getRedirectFromPendingPage', () => {
 			siteSlug: 'example.com',
 		} );
 		expect( actual ).toEqual( { url: 'https://example.com/home' } );
+	} );
+
+	it( 'returns a simple absolute url if it matches the `fromSiteSlug` and there is no `siteSlug` and there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: 'https://example.com/wp-admin/pamin.php?page=jetpack&connect_url_redirect',
+			receiptId: 12345,
+			fromSiteSlug: 'example.com',
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://example.com/wp-admin/pamin.php?page=jetpack&connect_url_redirect',
+		} );
 	} );
 
 	it( 'returns a receipt interpolated absolute url if it is allowed and there is also a receipt', () => {

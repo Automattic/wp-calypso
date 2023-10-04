@@ -1782,7 +1782,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: 'invalid receipt ID' as any,
 			} );
 			expect( url ).toBe(
-				`${ adminUrl }admin.php?page=jetpack&connect_url_redirect&from=my-jetpack&redirect_after_auth=${ adminUrl }/admin.php?page=my-jetpack#/add-license`
+				`${ adminUrl }admin.php?page=jetpack&connect_url_redirect=true&jetpack_connect_login_redirect=true&redirect_after_auth=${ adminUrl }admin.php?page=my-jetpack`
 			);
 		} );
 
