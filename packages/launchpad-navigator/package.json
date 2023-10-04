@@ -33,6 +33,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/launchpad": "workspace:^",
+		"@automattic/calypso-analytics": "workspace:^",
 		"classnames": "^2.3.1",
 		"tslib": "^2.3.0",
 		"wpcom-proxy-request": "workspace:^"
