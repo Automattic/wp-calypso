@@ -38,15 +38,17 @@
 }
 
 // styling for both interval dropdown and date control picker drop down buttons inside the header
-.components-dropdown > .components-button {
-	--gray-gray-10: #c3c4c7;
-	--gutenberg-gray-900: #1e1e1e;
-
-	border-radius: 4px;
-	border: 1px solid var(--gray-gray-10);
-	background: #fff;
-	color: var(--studio-black);
-	font-family: $font-sf-pro-display;
-	font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-	font-weight: 500;
+.stats-date-control {
+	.components-dropdown > .components-button {
+		--gray-gray-10: #c3c4c7;
+		--gutenberg-gray-900: #1e1e1e;
+		background: #fff;
+		border-radius: 4px;
+		border: 1px solid var(--gray-gray-10);
+		color: var(--studio-black);
+		font-family: $font-sf-pro-display;
+		font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-weight: 500;
+	}
 }
+
