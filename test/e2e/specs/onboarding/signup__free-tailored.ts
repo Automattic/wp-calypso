@@ -15,7 +15,7 @@ import type { NewUserResponse } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
-describe( 'Signup: Tailored Free Signup', function () {
+describe( 'Signup: Tailored Free Flow', function () {
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'signupfree',
 	} );
