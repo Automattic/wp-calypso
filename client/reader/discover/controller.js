@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import titlecase from 'to-title-case';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
@@ -29,12 +28,12 @@ const exported = {
 			context.renderHeaderSection = renderHeaderSection;
 		}
 		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
-		const tabTitle = titlecase( getSelectedTabTitle( selectedTab ) || '' );
+		const tabTitle = getSelectedTabTitle( selectedTab ) || '';
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
 				<DocumentHead
-					title={ translate( 'Browse %s Blogs & Read Articles ‹ Reader', {
+					title={ translate( 'Browse %s blogs & read articles ‹ Reader', {
 						args: [ tabTitle ],
 						comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
 					} ) }
