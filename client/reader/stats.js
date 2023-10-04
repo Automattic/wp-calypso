@@ -242,7 +242,9 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 }
 
 export function recordFollow( url, railcar, additionalProps = {} ) {
-	const source = additionalProps.follow_source || getLocation( window.location.pathname );
+	const source =
+		additionalProps.follow_source ||
+		getLocation( window.location.pathname + window.location.search );
 	bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
@@ -257,7 +259,9 @@ export function recordFollow( url, railcar, additionalProps = {} ) {
 }
 
 export function recordUnfollow( url, railcar, additionalProps = {} ) {
-	const source = additionalProps.follow_source || getLocation( window.location.pathname );
+	const source =
+		additionalProps.follow_source ||
+		getLocation( window.location.pathname + window.location.search );
 	bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );
