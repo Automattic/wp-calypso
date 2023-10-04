@@ -73,6 +73,7 @@ import PlansFeaturesMain from '../index';
 const props = {
 	selectedPlan: PLAN_FREE,
 	translate: ( x ) => x,
+	hidePlansFeatureComparison: true,
 };
 
 const emptyPlansIndexForMockedFeatures = {
@@ -272,6 +273,7 @@ describe( 'PlansFeaturesMain', () => {
 			hideFreePlan: true,
 			withWPPlanTabs: true,
 			planTypeSelector: null,
+			hidePlansFeatureComparison: true,
 		};
 
 		beforeEach( () => {
