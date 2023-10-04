@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
@@ -42,25 +41,12 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		if ( isEnabled( 'domains/bulk-actions-table' ) ) {
-			pageContext.primary = (
-				<>
-					<DomainManagement.BulkAllDomains
-						analyticsPath={ domainManagementRoot() }
-						analyticsTitle="Domain Management > All Domains"
-					/>
-				</>
-			);
-		} else {
-			pageContext.primary = (
-				<DomainManagementData
-					analyticsPath={ domainManagementRoot() }
-					analyticsTitle="Domain Management > All Domains"
-					component={ DomainManagement.AllDomains }
-					context={ pageContext }
-				/>
-			);
-		}
+		pageContext.primary = (
+			<DomainManagement.BulkAllDomains
+				analyticsPath={ domainManagementRoot() }
+				analyticsTitle="Domain Management > All Domains"
+			/>
+		);
 		next();
 	},
 
