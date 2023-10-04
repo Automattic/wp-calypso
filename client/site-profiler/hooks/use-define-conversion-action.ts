@@ -1,3 +1,4 @@
+import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import type { HostingProvider, WhoIs } from 'calypso/data/site-profiler/types';
 
 export type CONVERSION_ACTION =
@@ -22,8 +23,9 @@ export default function useDefineConversionAction(
 ): CONVERSION_ACTION | undefined {
 	const isWpDomain = domain.toLowerCase().includes( 'wordpress.com' );
 	const isWpAtomicDomain = domain.toLowerCase().includes( 'wpcomstaging.com' );
-	const isA8cRegistrar = whois?.registrar?.toLowerCase().includes( 'automattic' );
-
+	const isA8cRegistrar = normalizeWhoisField( whois?.registrar )
+		.toLowerCase()
+		.includes( 'automattic' );
 	const isA8cDomain = isA8cRegistrar || isWpDomain || isWpAtomicDomain;
 	const isA8cHosting = hostingProvider?.slug === 'automattic';
 

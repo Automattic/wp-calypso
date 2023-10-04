@@ -6,6 +6,7 @@ import { UrlData } from 'calypso/blocks/import/types';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
 import { useFilteredWhoisData } from 'calypso/site-profiler/hooks/use-filtered-whois-data';
+import { normalizeWhoisField } from 'calypso/site-profiler/utils/normalize-whois-entry';
 import VerifiedProvider from './verified-provider';
 import type { HostingProvider, WhoIs } from 'calypso/data/site-profiler/types';
 import './styles.scss';
@@ -54,13 +55,13 @@ export default function DomainInformation( props: Props ) {
 	};
 
 	const formatDateTime = ( date?: string | string[] ) => {
-		if ( Array.isArray( date ) && date.length > 0 ) {
-			date = date[ 0 ];
-		}
-
-		const res = moment.utc( date );
+		const res = moment.utc( normalizeWhoisField( date ) );
 
 		return res.isValid() ? res.format( momentFormat ) : '';
+	};
+
+	const formatRegistrar = ( registrar?: string | string[] ) => {
+		return normalizeWhoisField( registrar );
 	};
 
 	return (
@@ -87,7 +88,7 @@ export default function DomainInformation( props: Props ) {
 										{ whois.registrar }
 									</a>
 								) }
-							{ ! whois.registrar_url && <span>{ whois.registrar }</span> }
+							{ ! whois.registrar_url && <span>{ formatRegistrar( whois.registrar ) }</span> }
 						</div>
 					</li>
 				) }
