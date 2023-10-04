@@ -309,7 +309,7 @@ export class RenderDomainsStep extends Component {
 		}
 		const { suggestion } = step;
 
-		const enabledFlows = [ 'onboarding', 'onboarding-pm' ];
+		const enabledFlows = [ 'onboarding' ];
 
 		return (
 			isEnabled( 'domains/add-multiple-domains-to-cart' ) &&
