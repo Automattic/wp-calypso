@@ -37,7 +37,7 @@
 		overflow-x: visible;
 
 		@include plans-2023-break-small {
-			padding-top: 35px; // enough to cover `plan-features-2023-grid__popular-badge` repositioning (top: -35px)
+			padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
 			margin: 0;
 		}
 
@@ -115,6 +115,27 @@
 			margin-left: -240px;
 		}
 	}
+}
+
+/**
+ * We auto-scroll to the plan comparison grid when it is shown.
+ * However, on the /plans page, due to the presence of the masterbar on top,
+ * we need to add a scroll offset.
+ */
+.is-section-plans .plans-features-main__comparison-grid-container {
+	scroll-margin-top: $plan-features-header-banner-height + 24px;
+	margin: auto;
+	@include plan-comparison-grid-breakpoints-with-sidebar;
+}
+
+.is-section-signup .plans-features-main__comparison-grid-container {
+	margin: auto;
+	@include plan-comparison-grid-breakpoints;
+}
+
+.is-section-stepper .plans-features-main__comparison-grid-container {
+	margin: auto;
+	@include plan-comparison-grid-breakpoints;
 }
 
 .is-2023-pricing-grid .plan-features-2023-grid__content {
