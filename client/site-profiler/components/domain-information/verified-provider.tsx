@@ -8,10 +8,11 @@ import useHostingProviderURL from 'calypso/site-profiler/hooks/use-hosting-provi
 interface Props {
 	hostingProvider?: HostingProvider;
 	urlData?: UrlData;
+	showHosting: boolean;
 }
 
 export default function VerifiedProvider( props: Props ) {
-	const { hostingProvider, urlData } = props;
+	const { hostingProvider, urlData, showHosting } = props;
 	const hostingProviderName = useHostingProviderName( hostingProvider, urlData );
 	const hostingProviderHomepage = useHostingProviderURL( 'homepage', hostingProvider, urlData );
 	const hostingProviderLogin = useHostingProviderURL( 'login', hostingProvider, urlData );
@@ -22,9 +23,15 @@ export default function VerifiedProvider( props: Props ) {
 				{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 				<Gridicon icon="checkmark" size={ 10 } />
 			</span>
-			<a href={ hostingProviderHomepage }>{ hostingProviderName }</a>
-			&nbsp;&nbsp;
-			<a href={ hostingProviderLogin }>({ translate( 'login' ) })</a>
+			<a href={ showHosting ? 'https://wordpress.com' : hostingProviderHomepage }>
+				{ showHosting ? translate( 'WordPress.com' ) : hostingProviderName }
+			</a>
+			{ ! showHosting && (
+				<>
+					&nbsp;&nbsp;
+					<a href={ hostingProviderLogin }>({ translate( 'login' ) })</a>
+				</>
+			) }
 		</>
 	);
 }

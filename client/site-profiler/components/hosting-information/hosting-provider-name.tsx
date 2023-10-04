@@ -52,7 +52,11 @@ export default function HostingProviderName( props: Props ) {
 		<div className="hosting-provider-name__container">
 			{ hostingProvider?.slug !== 'automattic' && <NonA8cHostingName /> }
 			{ hostingProvider?.slug === 'automattic' && (
-				<VerifiedProvider hostingProvider={ hostingProvider } urlData={ urlData } />
+				<VerifiedProvider
+					hostingProvider={ hostingProvider }
+					urlData={ urlData }
+					showHosting={ false }
+				/>
 			) }
 		</div>
 	);
