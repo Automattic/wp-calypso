@@ -4,9 +4,12 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ConfirmationModal } from '../confirmation-modal';
 import SyncOptionsPanel, { CheckboxOptionItem } from '../sync-options-panel';
+import { useCheckSyncStatus } from '../use-site-sync-status';
+import { StagingSiteSyncLoadingBarCardContent } from './staging-site-sync-loading-bar-card-content';
 
 const synchronizationOptions: CheckboxOptionItem[] = [
 	{
@@ -130,13 +133,16 @@ interface StagingCardProps {
 	onPull: () => void;
 	onPush: ( items?: string[] ) => void;
 	disabled: boolean;
-	siteSlug: string;
+	productionSiteId: number;
+	stagingSiteId?: number;
 }
 
 interface ProductionCardProps {
 	onPull: ( items?: string[] ) => void;
 	onPush: () => void;
 	disabled: boolean;
+	productionSiteId: number;
+	stagingSiteId?: number;
 }
 
 const StagingToProductionSync = ( {
@@ -241,36 +247,60 @@ const ProductionToStagingSync = ( {
 	);
 };
 
-const SyncCardContainer = ( { children } ) => {
+const SyncCardContainer = ( {
+	children,
+	progress,
+	isSyncInProgress,
+}: {
+	children: React.ReactNode;
+	progress: number;
+	isSyncInProgress: boolean;
+} ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
+
 	return (
 		<StagingSyncCardBody>
 			<SyncContainerTitle>{ translate( 'Data and File synchronization' ) }</SyncContainerTitle>
-			<SyncContainerContent>
-				{ translate(
-					'Keep your database and files synchronized between the production and staging environments.'
-				) }
-			</SyncContainerContent>
-			<SyncContainerTitle>{ translate( 'Choose synchronization direction' ) }</SyncContainerTitle>
-			{ children }
-			<StagingSyncCardFooter>
-				{ translate(
-					"We'll automatically back up your site before synchronization starts. Need to restore a backup? Head to the {{link}}Activity Log.{{/link}}",
-					{
-						components: {
-							link: <a href={ `/activity-log/${ siteSlug }` } />,
-						},
-					}
-				) }
-			</StagingSyncCardFooter>
+
+			{ ! isSyncInProgress && (
+				<>
+					<SyncContainerContent>
+						{ translate(
+							'Keep your database and files synchronized between the production and staging environments.'
+						) }
+					</SyncContainerContent>
+					<SyncContainerTitle>
+						{ translate( 'Choose synchronization direction' ) }
+					</SyncContainerTitle>
+					{ children }
+					<StagingSyncCardFooter>
+						{ translate(
+							"We'll automatically back up your site before synchronization starts. Need to restore a backup? Head to the {{link}}Activity Log.{{/link}}",
+							{
+								components: {
+									link: <a href={ `/activity-log/${ siteSlug }` } />,
+								},
+							}
+						) }
+					</StagingSyncCardFooter>
+				</>
+			) }
+			{ isSyncInProgress && <StagingSiteSyncLoadingBarCardContent progress={ progress } /> }
 		</StagingSyncCardBody>
 	);
 };
 
-export const StagingSiteSyncCard = ( { siteSlug, onPush, onPull, disabled }: StagingCardProps ) => {
+export const StagingSiteSyncCard = ( {
+	productionSiteId,
+	onPush,
+	onPull,
+	disabled,
+}: StagingCardProps ) => {
 	const [ selectedItems, setSelectedItems ] = useState( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState( 'push' );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, productionSiteId ) );
+	const { progress, resetSyncStatus, isSyncInProgress } = useCheckSyncStatus( productionSiteId );
 
 	const onSelectItems = useCallback( ( items: CheckboxOptionItem[] ) => {
 		const itemNames =
@@ -282,18 +312,20 @@ export const StagingSiteSyncCard = ( { siteSlug, onPush, onPull, disabled }: Sta
 	}, [] );
 
 	const onPushInternal = useCallback( () => {
+		resetSyncStatus();
 		onPush?.( selectedItems );
-	}, [ onPush, selectedItems ] );
+	}, [ onPush, selectedItems, resetSyncStatus ] );
 
 	const onPullInternal = useCallback( () => {
+		resetSyncStatus();
 		onPull?.();
-	}, [ onPull ] );
+	}, [ onPull, resetSyncStatus ] );
 
 	const isSyncButtonDisabled =
 		disabled || ( selectedItems.length === 0 && selectedOption === 'push' );
 
 	return (
-		<SyncCardContainer>
+		<SyncCardContainer isSyncInProgress={ isSyncInProgress } progress={ progress }>
 			<FormSelectContainer>
 				<FormSelect
 					value={ selectedOption }
@@ -309,7 +341,7 @@ export const StagingSiteSyncCard = ( { siteSlug, onPush, onPull, disabled }: Sta
 			</FormSelectContainer>
 			{ selectedOption === 'push' && (
 				<StagingToProductionSync
-					siteSlug={ siteSlug }
+					siteSlug={ siteSlug || '' }
 					disabled={ disabled }
 					onSelectItems={ onSelectItems }
 					selectedItems={ selectedItems }
@@ -328,14 +360,21 @@ export const StagingSiteSyncCard = ( { siteSlug, onPush, onPull, disabled }: Sta
 	);
 };
 
-export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: ProductionCardProps ) => {
+export const ProductionSiteSyncCard = ( {
+	onPush,
+	onPull,
+	disabled,
+	productionSiteId,
+}: ProductionCardProps ) => {
 	const [ selectedItems, setSelectedItems ] = useState< string[] >( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState( 'pull' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const { progress, resetSyncStatus, isSyncInProgress } = useCheckSyncStatus( productionSiteId );
 
 	const onPushInternal = useCallback( () => {
+		resetSyncStatus();
 		onPush?.();
-	}, [ onPush ] );
+	}, [ onPush, resetSyncStatus ] );
 
 	const onSelectItems = useCallback( ( items: CheckboxOptionItem[] ) => {
 		const itemNames =
@@ -347,14 +386,15 @@ export const ProductionSiteSyncCard = ( { onPush, onPull, disabled }: Production
 	}, [] );
 
 	const onPullInternal = useCallback( () => {
+		resetSyncStatus();
 		onPull?.( selectedItems );
-	}, [ onPull, selectedItems ] );
+	}, [ onPull, selectedItems, resetSyncStatus ] );
 
 	const isSyncButtonDisabled =
 		disabled || ( selectedItems.length === 0 && selectedOption === 'pull' );
 
 	return (
-		<SyncCardContainer>
+		<SyncCardContainer progress={ progress } isSyncInProgress={ isSyncInProgress }>
 			<FormSelectContainer>
 				<FormSelect
 					value={ selectedOption }

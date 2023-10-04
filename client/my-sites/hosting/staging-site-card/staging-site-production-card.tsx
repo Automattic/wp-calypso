@@ -14,9 +14,10 @@ import {
 	useProductionSiteDetail,
 	ProductionSite,
 } from 'calypso/my-sites/hosting/staging-site-card/use-production-site-detail';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
 import { StagingSiteSyncCard } from './card-content/staging-sync-card';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
@@ -53,6 +54,9 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 			setLoadingError( error );
 		},
 	} );
+	const isSyncInProgress = useSelector( ( state ) =>
+		getIsSyncingInProgress( state, productionSite?.id as number )
+	);
 
 	const { pushToStaging } = usePushToStagingMutation( productionSite?.id as number, siteId, {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,8 +106,10 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				<ActionButtons>
 					<Button
 						primary
-						href={ `/hosting-config/${ urlToSlug( productionSite.url ) }` }
-						disabled={ disabled }
+						onClick={ () =>
+							page.redirect( `/hosting-config/${ urlToSlug( productionSite.url ) }` )
+						}
+						disabled={ disabled || isSyncInProgress }
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
@@ -111,10 +117,11 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				{ isStagingSitesI3Enabled && (
 					<SyncActionsContainer>
 						<StagingSiteSyncCard
-							siteSlug={ urlToSlug( productionSite.url ) }
+							productionSiteId={ productionSite.id }
+							stagingSiteId={ siteId }
 							onPush={ pullFromStaging }
 							onPull={ pushToStaging }
-							disabled={ disabled }
+							disabled={ disabled || isSyncInProgress }
 						/>
 					</SyncActionsContainer>
 				) }

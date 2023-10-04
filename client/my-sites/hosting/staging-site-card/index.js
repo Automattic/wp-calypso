@@ -16,12 +16,14 @@ import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { useDeleteStagingSite } from './use-delete-staging-site';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
@@ -44,6 +46,7 @@ export const StagingSiteCard = ( {
 	const queryClient = useQueryClient();
 	const [ loadingError, setLoadingError ] = useState( false );
 	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
+	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
 	const removeAllNotices = () => {
 		dispatch( removeNotice( stagingSiteAddSuccessNoticeId ) );
@@ -279,10 +282,11 @@ export const StagingSiteCard = ( {
 		stagingSiteCardContent = (
 			<ManageStagingSiteCardContent
 				stagingSite={ stagingSite }
+				siteId={ siteId }
 				onDeleteClick={ deleteStagingSite }
 				onPushClick={ pushToStaging }
 				onPullClick={ pullFromStaging }
-				isButtonDisabled={ disabled }
+				isButtonDisabled={ disabled || isSyncInProgress }
 				isBusy={ isReverting }
 			/>
 		);
@@ -295,6 +299,7 @@ export const StagingSiteCard = ( {
 					addingStagingSite ||
 					isLoadingQuotaValidation ||
 					! hasValidQuota ||
+					isSyncInProgress ||
 					isPossibleJetpackConnectionProblem
 				}
 				showQuotaError={ ! hasValidQuota && ! isLoadingQuotaValidation }

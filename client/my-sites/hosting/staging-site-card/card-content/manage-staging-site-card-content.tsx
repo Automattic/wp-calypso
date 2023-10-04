@@ -67,6 +67,7 @@ const ActionButtons = styled.div( {
 
 type CardContentProps = {
 	stagingSite: StagingSite;
+	siteId: number;
 	onDeleteClick: () => void;
 	onPushClick: () => void;
 	onPullClick: () => void;
@@ -76,6 +77,7 @@ type CardContentProps = {
 
 export const ManageStagingSiteCardContent = ( {
 	stagingSite,
+	siteId,
 	onDeleteClick,
 	onPushClick,
 	onPullClick,
@@ -110,7 +112,7 @@ export const ManageStagingSiteCardContent = ( {
 			return (
 				<Button
 					primary
-					href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+					onClick={ () => page.redirect( `/hosting-config/${ urlToSlug( stagingSite.url ) }` ) }
 					disabled={ isButtonDisabled }
 				>
 					<span>{ translate( 'Manage staging site' ) }</span>
@@ -157,6 +159,7 @@ export const ManageStagingSiteCardContent = ( {
 								onPush={ onPushClick }
 								onPull={ onPullClick }
 								disabled={ isButtonDisabled }
+								productionSiteId={ siteId }
 							/>
 						</SyncActionsContainer>
 					</>
