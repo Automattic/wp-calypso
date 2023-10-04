@@ -15,6 +15,7 @@ interface DateControlPickerProps {
 
 interface DateControlPickerShortcutsProps {
 	shortcutList: DateControlPickerShortcut[];
+	currentShortcut: string;
 	onClick: ( shortcut: DateControlPickerShortcut ) => void;
 }
 
