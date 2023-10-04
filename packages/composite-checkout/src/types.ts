@@ -48,6 +48,11 @@ export interface PaymentMethod {
 
 export type ExternalPaymentMethod = Partial< PaymentMethod >;
 
+export interface FormAndTransactionStatus {
+	formStatus: FormStatus;
+	transactionStatus: TransactionStatusState;
+}
+
 export enum FormStatus {
 	LOADING = 'loading',
 	READY = 'ready',
@@ -60,6 +65,8 @@ export interface FormStatusState {
 	formStatus: FormStatus;
 }
 
+export type FormAndTransactionStatusAction = FormStatusAction | TransactionStatusAction;
+
 export type FormStatusAction = ReactStandardAction< 'FORM_STATUS_CHANGE', FormStatus >;
 
 export interface FormStatusController extends FormStatusState {
@@ -71,6 +78,8 @@ export interface FormStatusController extends FormStatusState {
 }
 
 export type FormStatusSetter = ( newStatus: FormStatus ) => void;
+
+export type FormAndTransactionStatusManager = FormStatusManager & TransactionStatusManager;
 
 export type FormStatusManager = {
 	formStatus: FormStatus;
@@ -236,7 +245,10 @@ export type TransactionStatusPayload =
 	| TransactionStatusPayloadRedirecting
 	| TransactionStatusPayloadError;
 
-export type TransactionStatusAction = ReactStandardAction< 'STATUS_SET', TransactionStatusPayload >;
+export type TransactionStatusAction = ReactStandardAction<
+	'TRANSACTION_STATUS_CHANGE',
+	TransactionStatusPayload
+>;
 
 export interface TransactionStatusManager extends TransactionStatusState {
 	resetTransaction: ResetTransaction;
