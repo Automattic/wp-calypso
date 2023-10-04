@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
@@ -735,6 +736,9 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
+			if ( isEnabled( 'domains/add-multiple-domains-to-cart' ) ) {
+				return ! stepSectionName && translate( 'Choose your domains' );
+			}
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
@@ -917,7 +921,7 @@ class DomainsStep extends Component {
 				backLabelText={ backLabelText }
 				hideSkip={ true }
 				goToNextStep={ this.handleSkip }
-				align={ isReskinned ? 'left' : 'center' }
+				align="center"
 				isWideLayout={ isReskinned }
 			/>
 		);

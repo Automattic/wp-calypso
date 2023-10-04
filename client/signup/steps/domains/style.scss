@@ -166,16 +166,10 @@ body.is-section-signup.is-white-signup {
 		.register-domain-step__search-card {
 			background: var(--color-surface);
 			box-shadow: none;
-			border-radius: 4px;
 			margin: 20px 0 0;
-			border: 1px solid #a7aaad;
 
 			@include break-small {
 				margin: 20px 20px 0;
-			}
-
-			.search-component.is-open {
-				border: none;
 			}
 
 			@include break-large {
@@ -242,9 +236,6 @@ body.is-section-signup.is-white-signup {
 		.button.is-primary {
 			background: $accent-blue;
 			border-color: $accent-blue;
-		}
-		.popover__arrow {
-			display: none;
 		}
 	}
 	.signup__step.is-domain-only,
