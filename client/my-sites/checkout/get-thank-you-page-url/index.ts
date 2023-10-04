@@ -250,16 +250,6 @@ export default function getThankYouPageUrl( {
 		}
 
 		// siteless checkout
-		if ( connectAfterCheckout && adminUrl && fromSiteSlug ) {
-			debug( 'Redirecting to the site to initiate Jetpack connection' );
-			// TODO: Then after connection, transfer temporary site subscription to the target site.
-			// TODO: Possibly change the final post-checkout/connect url (`redirect_after_auth` query arg).
-			// Note: Don't use Url hashes, they are stripped when passing to the payment processor.
-			const connectUrl = `${ adminUrl }admin.php?page=jetpack&connect_url_redirect&from=my-jetpack&redirect_after_auth=${ adminUrl }/admin.php?page=my-jetpack`;
-			return connectUrl;
-		}
-
-		// siteless checkout
 		debug( 'redirecting to siteless jetpack thank you' );
 		const thankYouUrl = `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`;
 
