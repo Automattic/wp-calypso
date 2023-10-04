@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	TYPE_BLOGGER,
 	TYPE_BUSINESS,
@@ -22,6 +23,7 @@ import {
 	type StorageOption,
 	isBusinessPlan,
 	isEcommercePlan,
+	TYPE_HOSTING_TRIAL,
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
@@ -168,6 +170,7 @@ const usePlanTypesWithIntent = ( {
 		...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
 		TYPE_PERSONAL,
 		TYPE_PREMIUM,
+		...( isEnabled( 'plans/hosting-trial' ) ? [ TYPE_HOSTING_TRIAL ] : [] ),
 		TYPE_BUSINESS,
 		TYPE_ECOMMERCE,
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
@@ -189,6 +192,9 @@ const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-new-hosted-site':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			if ( isEnabled( 'plans/hosting-trial' ) ) {
+				planTypes.unshift( TYPE_HOSTING_TRIAL );
+			}
 			break;
 		case 'plans-import':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
