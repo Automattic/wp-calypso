@@ -79,7 +79,6 @@ describe( 'PlanFeatures2023GridActions', () => {
 			onUpgradeClick: jest.fn(),
 			flowName: 'foo-flow',
 			isWpcomEnterpriseGridPlan: false,
-			selectedSiteSlug: 'foo.wordpress.com',
 			isStuck: false,
 			showMonthlyPrice: true,
 		};

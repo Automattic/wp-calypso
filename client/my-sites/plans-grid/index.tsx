@@ -126,7 +126,6 @@ const WrappedComparisonGrid = ( {
 					currentSitePlanSlug={ currentSitePlanSlug }
 					manageHref={ manageHref }
 					canUserPurchasePlan={ canUserPurchasePlan }
-					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ handleUpgradeClick }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -156,7 +155,6 @@ const WrappedComparisonGrid = ( {
 					currentSitePlanSlug={ currentSitePlanSlug }
 					manageHref={ manageHref }
 					canUserPurchasePlan={ canUserPurchasePlan }
-					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ handleUpgradeClick }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -222,7 +220,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 					isLargeCurrency={ isLargeCurrency }
 					canUserPurchasePlan={ canUserPurchasePlan }
 					manageHref={ manageHref }
-					selectedSiteSlug={ selectedSiteSlug }
 					translate={ translate }
 					handleUpgradeClick={ handleUpgradeClick }
 				/>
@@ -244,7 +241,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 					isLargeCurrency={ isLargeCurrency }
 					canUserPurchasePlan={ canUserPurchasePlan }
 					manageHref={ manageHref }
-					selectedSiteSlug={ selectedSiteSlug }
 					translate={ translate }
 					handleUpgradeClick={ handleUpgradeClick }
 				/>

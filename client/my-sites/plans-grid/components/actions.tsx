@@ -42,7 +42,6 @@ type PlanFeaturesActionsButtonProps = {
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
 	isWooExpressPlusPlan?: boolean;
-	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
 	siteId?: number | null;
@@ -214,7 +213,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	canUserPurchasePlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
-	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -376,7 +374,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
 	isWooExpressPlusPlan = false,
-	selectedSiteSlug,
 	planActionOverrides,
 	isStuck,
 	isLargeCurrency,
@@ -501,7 +498,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			canUserPurchasePlan={ canUserPurchasePlan }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
-			selectedSiteSlug={ selectedSiteSlug }
 			planActionOverrides={ planActionOverrides }
 			priceString={ priceString }
 			isStuck={ isStuck }
