@@ -37,7 +37,7 @@ export default function StatusCtaInfo( props: Props ) {
 			return (
 				<p>
 					{ translate(
-						'At {{strong}}Automattic{{/strong}}, we’re passionate about making the web a better place',
+						'At {{strong}}Automattic{{/strong}}, we’re passionate about making the web a better place.',
 						{
 							components: { strong: <strong /> },
 						}
@@ -109,22 +109,27 @@ export default function StatusCtaInfo( props: Props ) {
 			);
 		case 'transfer-hosting':
 		case 'transfer-hosting-wp':
+			return (
+				<p>
+					{ translate(
+						'If you own this site, consider hosting it with {{strong}}WordPress.com{{/strong}} and ' +
+							'benefiting from one of the best platforms in the world.',
+						{
+							components: { strong: <strong /> },
+						}
+					) }
+				</p>
+			);
 		case 'local-development':
 		case 'wpcom-sp':
 		case 'genaral-a8c-properties':
 			return (
 				<p>
 					{ translate(
-						'If you own %(article)s site, consider hosting it with {{strong}}WordPress.com{{/strong}} and ' +
+						'If you own a site, consider hosting it with {{strong}}WordPress.com{{/strong}} and ' +
 							'benefiting from one of the best platforms in the world.',
 						{
 							components: { strong: <strong /> },
-							args: {
-								article:
-									finalStatus === 'transfer-hosting-wp' || finalStatus === 'transfer-hosting'
-										? 'this'
-										: 'a',
-							},
 						}
 					) }
 				</p>
