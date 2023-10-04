@@ -95,7 +95,7 @@ const WrappedComparisonGrid = ( {
 	currentPlanManageHref,
 }: PlansGridProps ) => {
 	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
+	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
 		siteId
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null
@@ -123,7 +123,7 @@ const WrappedComparisonGrid = ( {
 					flowName={ flowName }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					currentPlanManageHref={ currentPlanManageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ handleUpgradeClick }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -153,7 +153,7 @@ const WrappedComparisonGrid = ( {
 					flowName={ flowName }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					currentPlanManageHref={ currentPlanManageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ handleUpgradeClick }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -191,7 +191,7 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 	} );
 
 	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
+	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
 		siteId
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null
@@ -214,7 +214,7 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					currentPlanManageHref={ currentPlanManageHref }
 					translate={ translate }
 					handleUpgradeClick={ handleUpgradeClick }
@@ -235,7 +235,7 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					currentPlanManageHref={ currentPlanManageHref }
 					translate={ translate }
 					handleUpgradeClick={ handleUpgradeClick }
