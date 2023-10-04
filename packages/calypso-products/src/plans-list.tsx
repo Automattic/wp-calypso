@@ -3620,19 +3620,16 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 	};
 }
 
-if ( isEnabled( 'plans/hosting-trial' ) ) {
-	PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
-		...getPlanBusinessDetails(),
-		type: TYPE_BUSINESS,
-		group: GROUP_WPCOM,
-		getProductId: () => 1058,
-		getPathSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
-		term: TERM_MONTHLY,
-		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
-		getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
-		getTitle: () => i18n.translate( 'Hosting Trial' ),
-		getDescription: () => i18n.translate( 'Hosting free trial' ),
-		getTagline: () =>
-			i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
-	};
-}
+PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
+	...getPlanBusinessDetails(),
+	type: TYPE_BUSINESS,
+	group: GROUP_WPCOM,
+	getProductId: () => 1058,
+	getPathSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
+	term: TERM_MONTHLY,
+	getBillingTimeFrame: () => i18n.translate( 'free trial' ),
+	getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
+	getTitle: () => i18n.translate( 'Hosting Trial' ),
+	getDescription: () => i18n.translate( 'Hosting free trial' ),
+	getTagline: () => i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
+};
