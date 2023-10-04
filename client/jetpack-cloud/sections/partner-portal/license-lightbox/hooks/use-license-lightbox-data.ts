@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import { getProductTitle } from '../../utils';
+import getProductTitle from '../../lib/get-product-title';
 
 type LicenseLightboxData = {
 	title: string;

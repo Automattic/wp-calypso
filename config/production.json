@@ -107,6 +107,7 @@
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
+		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,

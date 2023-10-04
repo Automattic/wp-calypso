@@ -1,4 +1,4 @@
-import { ActionButtons, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -17,6 +17,7 @@ class StepWrapper extends Component {
 		hideBack: PropTypes.bool,
 		hideSkip: PropTypes.bool,
 		hideNext: PropTypes.bool,
+		isSticky: PropTypes.bool,
 		// Allows to force a back button in the first step for example.
 		// You should only force this when you're passing a backUrl.
 		allowBackFirstStep: PropTypes.bool,
@@ -138,11 +139,6 @@ class StepWrapper extends Component {
 				return this.props.headerText;
 			}
 
-			const params = new URLSearchParams( window.location.search );
-			if ( params.get( 'variationName' ) === NEWSLETTER_FLOW ) {
-				return this.props.translate( 'Let’s get you signed up.' );
-			}
-
 			return this.props.translate( 'Let’s get started' );
 		}
 
@@ -184,6 +180,7 @@ class StepWrapper extends Component {
 			isHorizontalLayout,
 			customizedActionButtons,
 			isExtraWideLayout,
+			isSticky,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -202,13 +199,17 @@ class StepWrapper extends Component {
 			'has-navigation': hasNavigation,
 		} );
 
+		let sticky = false;
+		if ( isSticky !== undefined ) {
+			sticky = isSticky;
+		} else {
+			sticky = isReskinnedFlow( flowName ) ? null : false;
+		}
+
 		return (
 			<>
 				<div className={ classes }>
-					<ActionButtons
-						className="step-wrapper__navigation"
-						sticky={ isReskinnedFlow( flowName ) ? null : false }
-					>
+					<ActionButtons className="step-wrapper__navigation" sticky={ sticky }>
 						{ backButton }
 						{ skipButton }
 						{ nextButton }

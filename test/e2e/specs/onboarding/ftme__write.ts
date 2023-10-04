@@ -46,7 +46,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( `Select WordPress.com Free plan`, async function () {
-			const signupPickPlanPage = new SignupPickPlanPage( page );
+			const signupPickPlanPage = new SignupPickPlanPage( page, selectedFreeDomain );
 			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
 
 			siteCreatedFlag = true;

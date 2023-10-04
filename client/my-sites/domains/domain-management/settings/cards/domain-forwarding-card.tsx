@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CAPTURE_URL_RGX_SOFT } from 'calypso/blocks/import/util';
+import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import Accordion from 'calypso/components/domains/accordion';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -27,6 +28,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { validateDomainForwarding } from './utils/domain-forwarding';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+
 import './style.scss';
 
 const noticeOptions = {
@@ -54,8 +56,10 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const [ isPermanent, setIsPermanent ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( 'https' );
+	const [ forceReloadDns, setForceReloadDns ] = useState( false );
 	const pointsToWpcom = domain.pointsToWpcom;
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, domain.blogId ) );
+
 	const isPrimaryDomain = domain?.isPrimary && ! isDomainOnly;
 
 	// Display success notices when the forwarding is updated
@@ -66,6 +70,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			);
 			// TODO: open the edition of the new forwarding we just created
 			setEditingId( 0 );
+			setForceReloadDns( true );
 		},
 		onError( error ) {
 			dispatch( errorNotice( error.message, noticeOptions ) );
@@ -79,6 +84,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			dispatch(
 				successNotice( translate( 'Domain forward deleted successfully.' ), noticeOptions )
 			);
+			setForceReloadDns( true );
 		},
 		onError() {
 			dispatch(
@@ -128,6 +134,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			return;
 		}
 
+		setForceReloadDns( false );
 		// By default, the interface already opens with domain forwarding addition
 		if ( data?.length === 0 ) {
 			setEditingId( -1 );
@@ -613,6 +620,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		<>
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
+			{ forceReloadDns && <QueryDomainDns domain={ domain.name } forceReload={ true } /> }
 			<form
 				onSubmit={ ( e ) => {
 					e.preventDefault();
@@ -622,7 +630,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 				{ data?.map( ( item ) =>
 					shouldEdit( item ) ? FormRowEdditable( { child: item } ) : FormViewRow( { child: item } )
 				) }
-
 				{ editingId === -1 &&
 					FormRowEdditable( {
 						child: {

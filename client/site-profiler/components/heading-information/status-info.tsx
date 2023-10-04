@@ -1,11 +1,17 @@
 import { translate } from 'i18n-calypso';
+import { UrlData } from 'calypso/blocks/import/types';
+import { HostingProvider } from 'calypso/data/site-profiler/types';
+import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
 
 interface Props {
 	conversionAction?: CONVERSION_ACTION;
+	hostingProvider?: HostingProvider;
+	urlData?: UrlData;
 }
 export default function StatusInfo( props: Props ) {
-	const { conversionAction } = props;
+	const { conversionAction, hostingProvider, urlData } = props;
+	const hostingProviderName = useHostingProviderName( hostingProvider, urlData );
 
 	switch ( conversionAction ) {
 		case 'register-domain':
@@ -19,9 +25,10 @@ export default function StatusInfo( props: Props ) {
 			return (
 				<p>
 					{ translate(
-						'This site is hosted on {{strong}}WordPress.com{{/strong}} but the domain is registered elsewhere.',
+						'This site is hosted on {{strong}}%s{{/strong}} but the domain is registered elsewhere.',
 						{
 							components: { strong: <strong /> },
+							args: [ hostingProviderName ],
 						}
 					) }
 				</p>
@@ -37,6 +44,7 @@ export default function StatusInfo( props: Props ) {
 					) }
 				</p>
 			);
+
 		case 'transfer-domain-hosting':
 		case 'transfer-google-domain-hosting':
 			return (
@@ -47,6 +55,14 @@ export default function StatusInfo( props: Props ) {
 							components: { strong: <strong /> },
 						}
 					) }
+				</p>
+			);
+		case 'transfer-hosting-wp':
+		case 'transfer-domain-hosting-wp':
+		case 'transfer-google-domain-hosting-wp':
+			return (
+				<p>
+					{ translate( 'The owner of this site has great taste—this site runs on WordPress!' ) }
 				</p>
 			);
 		case 'idle':

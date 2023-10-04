@@ -21,6 +21,7 @@ class CnameRecord extends Component {
 		const classes = classnames( { 'is-hidden': ! show } );
 		const isNameValid = isValid( 'name' );
 		const isDataValid = isValid( 'data' );
+		const isTTLValid = isValid( 'ttl' );
 
 		return (
 			<div className={ classes }>
@@ -51,6 +52,24 @@ class CnameRecord extends Component {
 					/>
 					{ ! isDataValid && (
 						<FormInputValidation text={ translate( 'Invalid Target Host' ) } isError />
+					) }
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel>TTL (time to live)</FormLabel>
+					<FormTextInput
+						name="ttl"
+						isError={ ! isTTLValid }
+						onChange={ onChange }
+						value={ fieldValues.ttl }
+						defaultValue={ 3600 }
+						placeholder={ 3600 }
+					/>
+					{ ! isTTLValid && (
+						<FormInputValidation
+							text={ translate( 'Invalid TTL value - Use a value between 300 and 86400' ) }
+							isError
+						/>
 					) }
 				</FormFieldset>
 			</div>

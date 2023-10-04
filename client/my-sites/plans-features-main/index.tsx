@@ -34,7 +34,7 @@ import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-lis
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import PlansGrid from 'calypso/my-sites/plans-grid';
+import { FeaturesGrid, ComparisonGrid } from 'calypso/my-sites/plans-grid';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
@@ -46,6 +46,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import useAddOns from '../add-ons/hooks/use-add-ons';
+import ComparisonGridToggle from './components/comparison-grid-toggle';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import { LoadingPlaceHolder } from './components/loading-placeholder';
@@ -235,10 +236,7 @@ const PlansFeaturesMain = ( {
 		flowName,
 		!! paidDomainName
 	);
-	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
-		flowName,
-		!! paidDomainName
-	);
+	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain( flowName );
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
@@ -572,6 +570,13 @@ const PlansFeaturesMain = ( {
 
 	const isLoadingGridPlans = Boolean( intentFromSiteMeta.processing || ! gridPlans );
 
+	const comparisonGridContainerClasses = classNames(
+		'plans-features-main__comparison-grid-container',
+		{
+			'is-hidden': ! showPlansComparisonGrid,
+		}
+	);
+
 	return (
 		<div
 			className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }
@@ -689,9 +694,8 @@ const PlansFeaturesMain = ( {
 						data-e2e-plans="wpcom"
 					>
 						<div className="plans-wrapper">
-							<PlansGrid
-								gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
-								gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
+							<FeaturesGrid
+								gridPlans={ gridPlansForFeaturesGrid }
 								gridPlanForSpotlight={ gridPlanForSpotlight }
 								paidDomainName={ paidDomainName }
 								wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
@@ -705,7 +709,6 @@ const PlansFeaturesMain = ( {
 								siteId={ siteId }
 								isReskinned={ isReskinned }
 								intervalType={ intervalType }
-								hidePlansFeatureComparison={ hidePlansFeatureComparison }
 								hideUnavailableFeatures={ hideUnavailableFeatures }
 								currentSitePlanSlug={ sitePlanSlug }
 								planActionOverrides={ planActionOverrides }
@@ -715,17 +718,63 @@ const PlansFeaturesMain = ( {
 								stickyRowOffset={ masterbarHeight }
 								usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 								allFeaturesList={ FEATURES_LIST }
-								showPlansComparisonGrid={ showPlansComparisonGrid }
-								toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
 								planTypeSelectorProps={ planTypeSelectorProps }
-								ref={ plansComparisonGridRef }
-								observableForOdieRef={ observableForOdieRef }
 								onStorageAddOnClick={ ( addOnSlug ) =>
 									recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
 										add_on_slug: addOnSlug,
 									} )
 								}
 							/>
+							{ ! hidePlansFeatureComparison && (
+								<>
+									<ComparisonGridToggle
+										onClick={ toggleShowPlansComparisonGrid }
+										label={
+											showPlansComparisonGrid
+												? translate( 'Hide comparison' )
+												: translate( 'Compare plans' )
+										}
+										ref={ observableForOdieRef }
+									/>
+									<div ref={ plansComparisonGridRef } className={ comparisonGridContainerClasses }>
+										<ComparisonGrid
+											gridPlans={ gridPlansForComparisonGrid }
+											gridPlanForSpotlight={ gridPlanForSpotlight }
+											paidDomainName={ paidDomainName }
+											wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+											isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+											isInSignup={ isInSignup }
+											isLaunchPage={ isLaunchPage }
+											onUpgradeClick={ handleUpgradeClick }
+											flowName={ flowName }
+											selectedFeature={ selectedFeature }
+											selectedPlan={ selectedPlan }
+											siteId={ siteId }
+											isReskinned={ isReskinned }
+											intervalType={ intervalType }
+											hideUnavailableFeatures={ hideUnavailableFeatures }
+											currentSitePlanSlug={ sitePlanSlug }
+											planActionOverrides={ planActionOverrides }
+											intent={ intent }
+											showLegacyStorageFeature={ showLegacyStorageFeature }
+											showUpgradeableStorage={ showUpgradeableStorage }
+											stickyRowOffset={ masterbarHeight }
+											usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+											allFeaturesList={ FEATURES_LIST }
+											planTypeSelectorProps={ planTypeSelectorProps }
+											onStorageAddOnClick={ ( addOnSlug ) =>
+												recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
+													add_on_slug: addOnSlug,
+												} )
+											}
+										/>
+										<ComparisonGridToggle
+											onClick={ toggleShowPlansComparisonGrid }
+											label={ translate( 'Hide comparison' ) }
+										/>
+									</div>
+								</>
+							) }
 						</div>
 					</div>
 				</>

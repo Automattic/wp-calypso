@@ -3,8 +3,8 @@ import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ensurePartnerPortalReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import ensurePartnerPortalReturnUrl from '../lib/ensure-partner-portal-return-url';
 
 /**
  * Redirect to the partner portal or a present "return" GET parameter given a certain condition.

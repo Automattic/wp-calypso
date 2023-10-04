@@ -86,7 +86,7 @@ describe( 'BoostSitePerformance', () => {
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=jetpack-boost`
 		);
 
 		fireEvent.click( button );
@@ -109,7 +109,7 @@ describe( 'BoostSitePerformance', () => {
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=jetpack-boost`
 		);
 
 		fireEvent.click( button );

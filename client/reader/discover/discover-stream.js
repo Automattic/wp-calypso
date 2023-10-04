@@ -26,10 +26,12 @@ const DiscoverStream = ( props ) => {
 	const locale = useLocale();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const recommendedSites = useSelector(
-		( state ) => getReaderRecommendedSites( state, 'discover-recommendations' ) || []
-	);
 	const selectedTab = props.selectedTab;
+	const recommendedSitesSeed =
+		selectedTab === FIRST_POSTS_TAB ? 'discover-new-sites' : 'discover-recommendations';
+	const recommendedSites = useSelector(
+		( state ) => getReaderRecommendedSites( state, recommendedSitesSeed ) || []
+	);
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
@@ -56,15 +58,21 @@ const DiscoverStream = ( props ) => {
 	);
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 	const tabTitle = getSelectedTabTitle( selectedTab );
+	let subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
+		args: [ tabTitle ],
+		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+	} );
+	if ( selectedTab === FIRST_POSTS_TAB ) {
+		subHeaderText = translate(
+			'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
+		);
+	}
 
 	const DiscoverHeader = () => (
 		<FormattedHeader
 			brandFont
 			headerText={ translate( 'Discover' ) }
-			subHeaderText={ translate( 'Explore %s blogs that inspire, educate, and entertain.', {
-				args: [ tabTitle ],
-				comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-			} ) }
+			subHeaderText={ subHeaderText }
 			align="left"
 			hasScreenOptions
 			className={ classNames( 'discover-stream-header', {
@@ -74,14 +82,22 @@ const DiscoverStream = ( props ) => {
 	);
 
 	const streamSidebar = () => {
-		if ( selectedTab === FIRST_POSTS_TAB ) {
-			return <></>;
+		if ( selectedTab === FIRST_POSTS_TAB && recommendedSites?.length ) {
+			return (
+				<>
+					<h2>{ translate( 'New sites' ) }</h2>
+					<ReaderPopularSitesSidebar
+						items={ recommendedSites }
+						followSource={ READER_DISCOVER_POPULAR_SITES }
+					/>
+				</>
+			);
 		}
 
 		if ( ( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ) {
 			return (
 				<>
-					<h2>{ translate( 'Popular Sites' ) }</h2>
+					<h2>{ translate( 'Popular sites' ) }</h2>
 					<ReaderPopularSitesSidebar
 						items={ recommendedSites }
 						followSource={ READER_DISCOVER_POPULAR_SITES }
