@@ -76,7 +76,7 @@ export function generateSteps( {
 				'siteSlug',
 				'themeItem',
 				'useThemeHeadstart',
-				'domainCart',
+				...( config.isEnabled( 'domains/add-multiple-domains-to-cart' ) ? [ 'domainCart' ] : [] ),
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -492,7 +492,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'themeItem',
 				'useThemeHeadstart',
-				'domainCart',
+				...( config.isEnabled( 'domains/add-multiple-domains-to-cart' ) ? [ 'domainCart' ] : [] ),
 			], // note: siteId, siteSlug are not provided when used in domain flow
 			optionalDependencies: [
 				'signupDomainOrigin',
@@ -523,7 +523,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'signupDomainOrigin',
 				'useThemeHeadstart',
-				'domainCart',
+				...( config.isEnabled( 'domains/add-multiple-domains-to-cart' ) ? [ 'domainCart' ] : [] ),
 			],
 			optionalDependencies: [
 				'siteUrl',
@@ -554,7 +554,7 @@ export function generateSteps( {
 				'siteUrl',
 				'lastDomainSearched',
 				'isManageSiteFlow',
-				'domainCart',
+				...( config.isEnabled( 'domains/add-multiple-domains-to-cart' ) ? [ 'domainCart' ] : [] ),
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -584,7 +584,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'siteUrl',
 				'useThemeHeadstart',
-				'domainCart',
+				...( config.isEnabled( 'domains/add-multiple-domains-to-cart' ) ? [ 'domainCart' ] : [] ),
 			],
 			optionalDependencies: [
 				'signupDomainOrigin',
