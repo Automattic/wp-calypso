@@ -659,7 +659,10 @@ export class RenderDomainsStep extends Component {
 			: [];
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
-		if ( cartIsLoading || this.shouldHideUseYourDomain() ) {
+		if (
+			this.shouldHideUseYourDomain() ||
+			( this.shouldUseMultipleDomainsInCart() && cartIsLoading )
+		) {
 			return null;
 		}
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
