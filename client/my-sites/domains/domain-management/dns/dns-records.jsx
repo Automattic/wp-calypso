@@ -52,10 +52,14 @@ class DnsRecords extends Component {
 		);
 	};
 
+	hasDefaultARecords = () => {
+		const { dns } = this.props;
+		return dns?.records?.some( ( record ) => record?.type === 'A' && record?.protected_field );
+	};
+
 	renderHeader = () => {
 		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
-		const pointsToWpcom = selectedDomain?.pointsToWpcom ?? false;
 
 		const items = [
 			{
@@ -87,7 +91,7 @@ class DnsRecords extends Component {
 				key="menu-options-button"
 				domain={ selectedDomain }
 				dns={ dns }
-				pointsToWpcom={ pointsToWpcom }
+				hasDefaultARecords={ this.hasDefaultARecords() }
 				hasDefaultCnameRecord={ this.hasDefaultCnameRecord() }
 			/>
 		);
