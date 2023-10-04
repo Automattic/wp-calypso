@@ -6,6 +6,7 @@ import { HostingProvider } from 'calypso/data/site-profiler/types';
 import StatusCtaInfo from '../heading-information/status-cta-info';
 import StatusInfo from '../heading-information/status-info';
 import type { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
+import type { SPECIAL_DOMAIN_CASES } from '../../utils/get-special-domain-mapping';
 import './styles.scss';
 
 interface Props {
@@ -14,10 +15,19 @@ interface Props {
 	hostingProvider?: HostingProvider;
 	urlData?: UrlData;
 	onCheckAnotherSite?: () => void;
+	specialDomainMapping?: SPECIAL_DOMAIN_CASES;
 }
 
 export default function HeadingInformation( props: Props ) {
-	const { domain, conversionAction, hostingProvider, urlData, onCheckAnotherSite } = props;
+	const {
+		domain,
+		conversionAction,
+		hostingProvider,
+		urlData,
+		onCheckAnotherSite,
+		specialDomainMapping,
+	} = props;
+	const finalStatus = specialDomainMapping ?? conversionAction;
 
 	const onRegisterDomain = () => {
 		page( `/start/domain/domain-only?new=${ domain }&search=yes` );
@@ -35,6 +45,30 @@ export default function HeadingInformation( props: Props ) {
 		page( `/setup/google-transfer/intro?new=${ domain }` );
 	};
 
+	const onLearnMoreHosting = () => {
+		window.open( 'https://wordpress.com/hosting', '_blank' );
+	};
+
+	const onGetWordPress = () => {
+		window.open( 'https://wordpress.org/download', '_blank' );
+	};
+
+	const onLearnMoreAutomattic = () => {
+		window.open( 'https://automattic.com', '_blank' );
+	};
+
+	const onJoinTumblr = () => {
+		window.open( 'https://tumblr.com/', '_blank' );
+	};
+
+	const onLearnMoreGravatar = () => {
+		window.open( 'https://gravatar.com/', '_blank' );
+	};
+
+	const onGetAkismet = () => {
+		window.open( 'https://akismet.com/', '_blank' );
+	};
+
 	return (
 		<div className="heading-information">
 			<summary>
@@ -44,32 +78,68 @@ export default function HeadingInformation( props: Props ) {
 					conversionAction={ conversionAction }
 					hostingProvider={ hostingProvider }
 					urlData={ urlData }
+					specialDomainMapping={ specialDomainMapping }
 				/>
 			</summary>
 			<footer>
-				<StatusCtaInfo conversionAction={ conversionAction } />
+				<StatusCtaInfo
+					conversionAction={ conversionAction }
+					specialDomainMapping={ specialDomainMapping }
+				/>
 				<div className="cta-wrapper">
-					{ conversionAction === 'register-domain' && (
+					{ ( finalStatus === 'wordpress-com' ||
+						finalStatus === 'local-development' ||
+						finalStatus === 'wpcom-sp' ||
+						finalStatus === 'genaral-a8c-properties' ) && (
+						<Button className="button-action" onClick={ onLearnMoreHosting }>
+							{ translate( 'Learn more' ) }
+						</Button>
+					) }
+					{ finalStatus === 'wordpress-org' && (
+						<Button className="button-action" onClick={ onGetWordPress }>
+							{ translate( 'Get WordPress' ) }
+						</Button>
+					) }
+					{ finalStatus === 'automattic-com' && (
+						<Button className="button-action" onClick={ onLearnMoreAutomattic }>
+							{ translate( 'Learn more' ) }
+						</Button>
+					) }
+					{ finalStatus === 'tumblr-com' && (
+						<Button className="button-action" onClick={ onJoinTumblr }>
+							{ translate( 'Join Tumblr' ) }
+						</Button>
+					) }
+					{ finalStatus === 'gravatar-com' && (
+						<Button className="button-action" onClick={ onLearnMoreGravatar }>
+							{ translate( 'Learn more' ) }
+						</Button>
+					) }
+					{ finalStatus === 'akismet-com' && (
+						<Button className="button-action" onClick={ onGetAkismet }>
+							{ translate( 'Get started with Akismet' ) }
+						</Button>
+					) }
+					{ finalStatus === 'register-domain' && (
 						<Button className="button-action" onClick={ onRegisterDomain }>
 							{ translate( 'Register domain' ) }
 						</Button>
 					) }
-					{ ( conversionAction === 'transfer-domain' ||
-						conversionAction === 'transfer-domain-hosting' ) && (
+					{ ( finalStatus === 'transfer-domain' || finalStatus === 'transfer-domain-hosting' ) && (
 						<Button className="button-action" onClick={ onTransferDomain }>
 							{ translate( 'Transfer domain' ) }
 						</Button>
 					) }
-					{ ( conversionAction === 'transfer-google-domain' ||
-						conversionAction === 'transfer-google-domain-hosting' ) && (
+					{ ( finalStatus === 'transfer-google-domain' ||
+						finalStatus === 'transfer-google-domain-hosting' ) && (
 						<Button className="button-action" onClick={ onTransferDomainFree }>
 							{ translate( 'Transfer domain for free' ) }
 						</Button>
 					) }
-					{ ( conversionAction === 'transfer-hosting' ||
-						conversionAction === 'transfer-hosting-wp' ||
-						conversionAction === 'transfer-domain-hosting-wp' ||
-						conversionAction === 'transfer-google-domain-hosting-wp' ) && (
+					{ ( finalStatus === 'transfer-hosting' ||
+						finalStatus === 'transfer-hosting-wp' ||
+						finalStatus === 'transfer-domain-hosting-wp' ||
+						finalStatus === 'transfer-google-domain-hosting-wp' ) && (
 						<Button className="button-action" onClick={ onMigrateSite }>
 							{ translate( 'Migrate site' ) }
 						</Button>
