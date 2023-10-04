@@ -1,5 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 
+.is-section-site-profiler > #wpcom {
+	background: #fff;
+}
+
 .layout__primary .main {
 	padding-bottom: 0;
 }
@@ -7,7 +11,7 @@
 .is-section-site-profiler .layout__content {
 	background: #fff;
 	padding: 0;
-	min-height: 100vh;
+	min-height: calc(100vh - 3.5rem);
 
 	h1 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
@@ -195,7 +199,7 @@
 		&.globe-bg {
 			background-image: url(calypso/assets/images/illustrations/globe.svg);
 			background-repeat: no-repeat;
-			background-position: right top;
+			background-position: right top 60px;
 
 			.img-container {
 				min-height: 300px;
