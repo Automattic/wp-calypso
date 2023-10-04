@@ -73,16 +73,8 @@ function getLocation( path ) {
 		return 'following_manage';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		// Try to get search params from the path, as these could be included as part of the override.
-		// This is the case with `calypso_reader_article_opened`
 		const searchParamsMaybeInOverride = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
-		let selectedTab = searchParamsMaybeInOverride.get( 'selectedTab' );
-
-		// If selectedTab wasn't in the override, use the current location.
-		if ( ! selectedTab ) {
-			const searchParams = new URLSearchParams( window.location.search );
-			selectedTab = searchParams.get( 'selectedTab' );
-		}
+		const selectedTab = searchParamsMaybeInOverride.get( 'selectedTab' );
 
 		if ( ! selectedTab || selectedTab === 'recommended' ) {
 			return 'discover_recommended';
@@ -117,7 +109,9 @@ function getLocation( path ) {
  * @returns new eventProperties object with default reader values added.
  */
 export function buildReaderTracksEventProps( eventProperties, pathnameOverride, post ) {
-	const location = getLocation( pathnameOverride || window.location.pathname );
+	const location = getLocation(
+		pathnameOverride || window.location.pathname + window.location.search
+	);
 	let composedProperties = Object.assign( { ui_algo: location }, eventProperties );
 	if ( post ) {
 		composedProperties = Object.assign( getTracksPropertiesForPost( post ), composedProperties );
