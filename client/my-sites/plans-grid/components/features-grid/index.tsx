@@ -46,7 +46,7 @@ type PlanRowOptions = {
 interface FeaturesGridType extends PlansGridProps {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
-	canUserManageCurrentPlan: boolean | null;
+	canUserManageCurrentPlan?: boolean | null;
 	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;

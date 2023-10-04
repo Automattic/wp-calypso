@@ -47,8 +47,8 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import useAddOns from '../add-ons/hooks/use-add-ons';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
@@ -248,6 +248,11 @@ const PlansFeaturesMain = ( {
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const observableForOdieRef = useObservableForOdie();
 	const currentPlanManageHref = useCurrentPlanManageHref();
+	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
+		siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null
+	);
 
 	const toggleShowPlansComparisonGrid = () => {
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
@@ -740,6 +745,7 @@ const PlansFeaturesMain = ( {
 								planTypeSelectorProps={ planTypeSelectorProps }
 								onStorageAddOnClick={ handleStorageAddOnClick }
 								currentPlanManageHref={ currentPlanManageHref }
+								canUserManageCurrentPlan={ canUserManageCurrentPlan }
 							/>
 							{ ! hidePlansFeatureComparison && (
 								<>
@@ -781,6 +787,7 @@ const PlansFeaturesMain = ( {
 											planTypeSelectorProps={ planTypeSelectorProps }
 											onStorageAddOnClick={ handleStorageAddOnClick }
 											currentPlanManageHref={ currentPlanManageHref }
+											canUserManageCurrentPlan={ canUserManageCurrentPlan }
 										/>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }
