@@ -20,19 +20,24 @@ export default function HostingInformation( props: Props ) {
 
 	useEffect( () => {
 		hostingProvider &&
-			urlData &&
 			recordTracksEvent( 'calypso_site_profiler_hosting_information', {
-				domain_url: urlData?.url,
 				is_cdn: hostingProvider?.is_cdn,
 				provider_slug: hostingProvider?.slug,
 				provider_name: hostingProvider?.name,
+			} );
+	}, [ hostingProvider ] );
+
+	useEffect( () => {
+		urlData &&
+			recordTracksEvent( 'calypso_site_profiler_hosting_information', {
+				domain_url: urlData?.url,
 				platform: urlData?.platform,
 				platform_slug: urlData?.platform_data?.slug,
 				platform_is_wpcom: urlData?.platform_data?.is_wpcom,
 				platform_is_wpengine: urlData?.platform_data?.is_wpengine,
 				platform_is_pressable: urlData?.platform_data?.is_pressable,
 			} );
-	}, [ hostingProvider, urlData ] );
+	}, [ urlData ] );
 
 	return (
 		<div className="hosting-information">
