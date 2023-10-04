@@ -76,6 +76,8 @@ export default function SiteProfiler() {
 								domain={ domain }
 								conversionAction={ conversionAction }
 								onCheckAnotherSite={ () => updateDomainQueryParam( '' ) }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+								urlData={ urlData }
 							/>
 						</LayoutBlockSection>
 					) }
