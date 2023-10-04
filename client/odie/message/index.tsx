@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Button, Gridicon } from '@automattic/components';
+import { useTyper } from '@automattic/help-center/src/hooks';
 import { Spinner } from '@wordpress/components';
 import { Icon, page as pageIcon } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -14,7 +15,6 @@ import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
 import { LikeDislikeButtons } from './like-dislike-buttons';
 import { uriTransformer } from './uri-transformer';
-import { useSimulateTyping } from './useSimulateTyping';
 import type { Message } from '../types';
 
 import './style.scss';
@@ -60,7 +60,11 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		} );
 	};
 
-	const realTimeMessage = useSimulateTyping( message );
+	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
+		delayBetweenCharacters: 66,
+		randomDelayBetweenCharacters: true,
+		charactersPerInterval: 5,
+	} );
 
 	const handleFullscreenToggle = () => {
 		setIsFullscreen( ! isFullscreen );

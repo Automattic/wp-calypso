@@ -1,7 +1,20 @@
 import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
+import apiFetch from '@wordpress/api-fetch';
+import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { useOdieAssistantContext } from '../context';
 import type { Chat, Message, Context } from '../types';
+
+// Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
+const buildSupportChatRequest = ( message: Message, context: Context, chat_id?: string | null ) => {
+	return canAccessWpcomApis()
+		? odieSendSupportMessage( message, context, chat_id )
+		: apiFetch( {
+				path: '/help-center/odie/question',
+				method: 'POST',
+				data: { question: message, context, chat_id },
+		  } );
+};
 
 function odieSendMessage( messages: Message[], context: Context, chat_id?: string | null ) {
 	const path = `/odie/send_message`;
@@ -37,7 +50,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 			const fetchFunction =
 				botSetting === 'wapuu'
 					? () => odieSendMessage( messagesToSend, chat.context, chat.chat_id )
-					: () => odieSendSupportMessage( message, chat.context, chat.chat_id );
+					: () => buildSupportChatRequest( message, chat.context, chat.chat_id );
 
 			return fetchFunction();
 		},
