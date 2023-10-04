@@ -52,8 +52,8 @@ export default function SiteProfiler() {
 
 		navigate( location.pathname + '?' + queryParams.toString() );
 	};
-
-	const showResultScreen = siteProfilerData || ( specialDomainMapping && ! isDomainValid );
+	const noNeedToFetchApi = specialDomainMapping && isDomainSpecialInput;
+	const showResultScreen = siteProfilerData || noNeedToFetchApi;
 
 	return (
 		<>
@@ -119,7 +119,7 @@ export default function SiteProfiler() {
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
 				isMonoBg={
-					!! showResultScreen && conversionAction !== 'register-domain' && ! isDomainSpecialInput
+					!! showResultScreen && conversionAction !== 'register-domain' && ! noNeedToFetchApi
 				}
 			>
 				<HostingIntro />
