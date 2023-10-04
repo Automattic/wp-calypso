@@ -59,26 +59,32 @@ export default function HeadingInformation( props: Props ) {
 	};
 
 	const onLearnMoreHosting = () => {
+		recordCtaEvent( 'learnMoreHosting' );
 		window.open( 'https://wordpress.com/hosting', '_blank' );
 	};
 
 	const onGetWordPress = () => {
+		recordCtaEvent( 'getWordpress' );
 		window.open( 'https://wordpress.org/download', '_blank' );
 	};
 
 	const onLearnMoreAutomattic = () => {
+		recordCtaEvent( 'learnMoreAutomattic' );
 		window.open( 'https://automattic.com', '_blank' );
 	};
 
 	const onJoinTumblr = () => {
+		recordCtaEvent( 'joinTumblr' );
 		window.open( 'https://tumblr.com/', '_blank' );
 	};
 
 	const onLearnMoreGravatar = () => {
+		recordCtaEvent( 'learnMoreGravatar' );
 		window.open( 'https://gravatar.com/', '_blank' );
 	};
 
 	const onGetAkismet = () => {
+		recordCtaEvent( 'getAkismet' );
 		window.open( 'https://akismet.com/', '_blank' );
 	};
 
