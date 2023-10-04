@@ -73,7 +73,7 @@ export default function SiteProfiler() {
 			) }
 
 			{
-				// For speical vaild domain mapping, we need to wait until the result comes back
+				// For special valid domain mapping, we need to wait until the result comes back
 				showResultScreen && (
 					<LayoutBlock className="domain-result-block">
 						{
