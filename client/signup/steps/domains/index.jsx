@@ -178,7 +178,7 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
-	handleAddDomain = async ( suggestion, position ) => {
+	handleAddDomain = ( suggestion, position ) => {
 		const signupDomainOrigin = suggestion?.is_free
 			? SIGNUP_DOMAIN_ORIGIN.FREE
 			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
@@ -573,12 +573,9 @@ export class RenderDomainsStep extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		try {
-			await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
-		} catch {
-			return;
-		}
-		this.setState( { isCartPendingUpdateDomain: null } );
+		await this.props.shoppingCartManager.addProductsToCart( [ registration ] ).then( () => {
+			this.setState( { isCartPendingUpdateDomain: null } );
+		} );
 	}
 
 	removeDomainClickHandler = ( domain ) => {
