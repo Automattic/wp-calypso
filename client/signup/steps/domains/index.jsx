@@ -987,6 +987,9 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
+			if ( this.shouldUseMultipleDomainsInCart() ) {
+				return ! stepSectionName && translate( 'Choose your domains' );
+			}
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
