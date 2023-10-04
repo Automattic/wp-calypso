@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -677,7 +677,7 @@ export class RenderDomainsStep extends Component {
 	getSideContent = () => {
 		const domainsInCart = isEnabled( 'domains/add-multiple-domains-to-cart' )
 			? getDomainRegistrations( this.props.cart )
-			: {};
+			: [];
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
 		if ( cartIsLoading || this.shouldHideUseYourDomain() ) {
@@ -689,21 +689,56 @@ export class RenderDomainsStep extends Component {
 			</div>
 		) : null;
 
+		const BoldTLD = ( { domain } ) => {
+			const tld = domain.split( '.' ).pop();
+			return (
+				<>
+					{ domain.replace( `.${ tld }`, '' ) }
+					<b>.{ tld }</b>
+				</>
+			);
+		};
+
 		return (
 			<div className="domains__domain-side-content-container">
 				{ domainsInCart.length > 0 ? (
-					<>
-						<div>Domains list</div>
-						{ domainsInCart.map( ( domain, i ) => (
-							<div key={ i }>
-								<div>{ domain.meta }</div>
-								<button onClick={ this.removeDomainClickHandler( domain ) }>
-									<Gridicon icon="cross" width={ 18 } />
-								</button>
-							</div>
-						) ) }
-						<button onClick={ this.goToNext() }>NEXT</button>
-					</>
+					<div className="domains__domain-side-content domains__domain-cart">
+						<div className="domains__domain-cart-title">
+							{ this.props.translate( 'Your domains' ) }
+						</div>
+						<div className="domains__domain-cart-rows">
+							{ domainsInCart.map( ( domain, i ) => (
+								<div key={ `row${ i }` } className="domains__domain-cart-row">
+									<div className="domains__domain-cart-domain">
+										<BoldTLD domain={ domain.meta } />
+									</div>
+									<Button
+										borderless
+										className="domains__domain-cart-remove"
+										onClick={ this.removeDomainClickHandler( domain ) }
+									>
+										{ this.props.translate( 'Remove' ) }
+									</Button>
+								</div>
+							) ) }
+						</div>
+						<div key="rowtotal" className="domains__domain-cart-total">
+							{ this.props.translate( '%d domain', '%d domains', {
+								count: domainsInCart.length,
+								args: [ domainsInCart.length ],
+							} ) }
+						</div>
+						<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+							{ this.props.translate( 'Continue' ) }
+						</Button>
+						<Button
+							borderless
+							className="domains__domain-cart-choose-later"
+							onClick={ this.handleUseYourDomainClick }
+						>
+							{ this.props.translate( 'Choose my domain later' ) }
+						</Button>
+					</div>
 				) : (
 					! this.shouldHideDomainExplainer() &&
 					this.props.isPlanSelectionAvailableLaterInFlow && (
