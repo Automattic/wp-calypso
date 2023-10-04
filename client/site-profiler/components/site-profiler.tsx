@@ -20,7 +20,12 @@ export default function SiteProfiler() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const queryParams = useQuery();
-	const { domain, isValid: isDomainValid } = useDomainQueryParam();
+	const {
+		domain,
+		isValid: isDomainValid,
+		specialDomainMapping,
+		isDomainSpecialInput,
+	} = useDomainQueryParam();
 
 	const {
 		data: siteProfilerData,
@@ -47,10 +52,12 @@ export default function SiteProfiler() {
 
 		navigate( location.pathname + '?' + queryParams.toString() );
 	};
+	const noNeedToFetchApi = specialDomainMapping && isDomainSpecialInput;
+	const showResultScreen = siteProfilerData || noNeedToFetchApi;
 
 	return (
 		<>
-			{ ! siteProfilerData && (
+			{ ! showResultScreen && (
 				<LayoutBlock className="domain-analyzer-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<DomainAnalyzer
@@ -64,26 +71,28 @@ export default function SiteProfiler() {
 				</LayoutBlock>
 			) }
 
-			{ siteProfilerData && (
-				<LayoutBlock className="domain-result-block">
-					{
-						// Translators: %s is the domain name searched
-						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
-					}
-					{ siteProfilerData && (
-						<LayoutBlockSection>
-							<HeadingInformation
-								domain={ domain }
-								conversionAction={ conversionAction }
-								onCheckAnotherSite={ () => updateDomainQueryParam( '' ) }
-								hostingProvider={ hostingProviderData?.hosting_provider }
-								urlData={ urlData }
-							/>
-						</LayoutBlockSection>
-					) }
-					{ ! siteProfilerData.is_domain_available && (
-						<>
-							{ siteProfilerData && (
+			{
+				// For speical vaild domain mapping, we need to wait until the result comes back
+				showResultScreen && (
+					<LayoutBlock className="domain-result-block">
+						{
+							// Translators: %s is the domain name searched
+							<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
+						}
+						{ ( siteProfilerData || specialDomainMapping ) && (
+							<LayoutBlockSection>
+								<HeadingInformation
+									domain={ domain }
+									conversionAction={ conversionAction }
+									onCheckAnotherSite={ () => updateDomainQueryParam( '' ) }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									urlData={ urlData }
+									specialDomainMapping={ specialDomainMapping }
+								/>
+							</LayoutBlockSection>
+						) }
+						{ siteProfilerData && ! siteProfilerData.is_domain_available && (
+							<>
 								<LayoutBlockSection>
 									<HostingInformation
 										dns={ siteProfilerData.dns }
@@ -91,23 +100,25 @@ export default function SiteProfiler() {
 										hostingProvider={ hostingProviderData?.hosting_provider }
 									/>
 								</LayoutBlockSection>
-							) }
-							<LayoutBlockSection>
-								<DomainInformation
-									domain={ domain }
-									whois={ siteProfilerData.whois }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									urlData={ urlData }
-								/>
-							</LayoutBlockSection>
-						</>
-					) }
-				</LayoutBlock>
-			) }
+								<LayoutBlockSection>
+									<DomainInformation
+										domain={ domain }
+										whois={ siteProfilerData.whois }
+										hostingProvider={ hostingProviderData?.hosting_provider }
+										urlData={ urlData }
+									/>
+								</LayoutBlockSection>
+							</>
+						) }
+					</LayoutBlock>
+				)
+			}
 
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
-				isMonoBg={ !! siteProfilerData && conversionAction !== 'register-domain' }
+				isMonoBg={
+					!! showResultScreen && conversionAction !== 'register-domain' && ! noNeedToFetchApi
+				}
 			>
 				<HostingIntro />
 			</LayoutBlock>
