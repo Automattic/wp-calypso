@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
@@ -735,7 +736,10 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			return ! stepSectionName && translate( 'Choose your domains' );
+			if ( isEnabled( 'domains/add-multiple-domains-to-cart' ) ) {
+				return ! stepSectionName && translate( 'Choose your domains' );
+			}
+			return ! stepSectionName && translate( 'Choose your domain' );
 		}
 
 		return getSitePropertyDefaults( 'signUpFlowDomainsStepHeader' );
