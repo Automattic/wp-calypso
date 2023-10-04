@@ -23,7 +23,10 @@ class StatsActionLink extends PureComponent {
 		const { href, translate } = this.props;
 		// The following fix is to address encoding issues with the URLs
 		// as returned to us from the API. If we fix that, we can remove this.
-		const finalLink = href.includes( '&#038;term' ) ? href.replace( '&#038;term', '&term' ) : href;
+		const finalLink = href?.includes( '&#038;term' )
+			? href?.replace( '&#038;term', '&term' )
+			: href;
+
 		return (
 			<li className="stats-list__item-action module-content-list-item-action">
 				<a
