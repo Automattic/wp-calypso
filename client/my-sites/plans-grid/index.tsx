@@ -13,7 +13,7 @@ import PlansGridContextProvider from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
 import { useIsPlanUpgradeCreditVisible } from './hooks/use-is-plan-upgrade-credit-visible';
-import { getPlanPricingInfoFromGridPlans } from './lib/get-plan-pricing-info-from-grid-plans';
+import { usePlanPricingInfoFromGridPlans } from './hooks/use-plan-pricing-info-from-grid-plans';
 import type {
 	GridPlan,
 	PlansIntent,
@@ -181,7 +181,7 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 		siteId,
 		gridPlans.map( ( gridPlan ) => gridPlan.planSlug )
 	);
-	const { prices, currencyCode } = getPlanPricingInfoFromGridPlans( {
+	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 		gridPlans,
 	} );
 	const isLargeCurrency = useIsLargeCurrency( {
