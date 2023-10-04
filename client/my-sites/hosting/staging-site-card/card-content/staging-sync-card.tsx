@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { translate, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useState } from 'react';
-import FormSelect from 'calypso/components/forms/form-select';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -335,17 +336,28 @@ export const StagingSiteSyncCard = ( {
 			progress={ progress }
 		>
 			<FormSelectContainer>
-				<FormSelect
-					value={ selectedOption }
-					onChange={ ( { currentTarget } ) => setSelectedOption( currentTarget.value ) }
-				>
-					<option key={ 0 } value="push">
-						{ translate( 'Push staging changes to production' ) }
-					</option>
-					<option key={ 1 } value="pull">
-						{ translate( 'Pull production changes to staging' ) }
-					</option>
-				</FormSelect>
+				<FormLabel>
+					<FormRadio
+						className="staging-site-sync-card__radio"
+						label={ translate( 'Push to production' ) }
+						value="push"
+						checked={ selectedOption === 'push' }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setSelectedOption( event.target.value )
+						}
+					/>
+				</FormLabel>
+				<FormLabel>
+					<FormRadio
+						className="staging-site-sync-card__radio"
+						label={ translate( 'Pull from production' ) }
+						value="pull"
+						checked={ selectedOption === 'pull' }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setSelectedOption( event.target.value )
+						}
+					/>
+				</FormLabel>
 			</FormSelectContainer>
 			{ selectedOption === 'push' && (
 				<StagingToProductionSync
@@ -408,17 +420,28 @@ export const ProductionSiteSyncCard = ( {
 			isSyncInProgress={ isSyncInProgress }
 		>
 			<FormSelectContainer>
-				<FormSelect
-					value={ selectedOption }
-					onChange={ ( { currentTarget } ) => setSelectedOption( currentTarget.value ) }
-				>
-					<option key={ 0 } value="pull">
-						{ translate( 'Pull staging changes to production' ) }
-					</option>
-					<option key={ 1 } value="push">
-						{ translate( 'Push production changes to staging' ) }
-					</option>
-				</FormSelect>
+				<FormLabel>
+					<FormRadio
+						className="staging-site-sync-card__radio"
+						label={ translate( 'Pull from staging' ) }
+						value="pull"
+						checked={ selectedOption === 'pull' }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setSelectedOption( event.target.value )
+						}
+					/>
+				</FormLabel>
+				<FormLabel>
+					<FormRadio
+						className="staging-site-sync-card__radio"
+						label={ translate( 'Push to staging' ) }
+						value="push"
+						checked={ selectedOption === 'push' }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setSelectedOption( event.target.value )
+						}
+					/>
+				</FormLabel>
 			</FormSelectContainer>
 			{ selectedOption === 'pull' && (
 				<StagingToProductionSync
