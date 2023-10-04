@@ -79,7 +79,7 @@ export default function DomainInformation( props: Props ) {
 								<VerifiedProvider
 									hostingProvider={ hostingProvider }
 									urlData={ urlData }
-									showHosting={ true }
+									showHostingProvider={ false }
 								/>
 							) }
 							{ whois.registrar_url &&
