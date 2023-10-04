@@ -259,13 +259,7 @@ const SyncCardContainer = ( { children } ) => {
 					"We'll automatically back up your site before synchronization starts. Need to restore a backup? Head to the {{link}}Activity Log.{{/link}}",
 					{
 						components: {
-							link: (
-								<a
-									href={ `/activity-log/${ siteSlug }` }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
+							link: <a href={ `/activity-log/${ siteSlug }` } />,
 						},
 					}
 				) }
