@@ -93,15 +93,13 @@ export default function SiteProfiler() {
 						) }
 						{ siteProfilerData && ! siteProfilerData.is_domain_available && (
 							<>
-								{ siteProfilerData && (
-									<LayoutBlockSection>
-										<HostingInformation
-											dns={ siteProfilerData.dns }
-											urlData={ urlData }
-											hostingProvider={ hostingProviderData?.hosting_provider }
-										/>
-									</LayoutBlockSection>
-								) }
+								<LayoutBlockSection>
+									<HostingInformation
+										dns={ siteProfilerData.dns }
+										urlData={ urlData }
+										hostingProvider={ hostingProviderData?.hosting_provider }
+									/>
+								</LayoutBlockSection>
 								<LayoutBlockSection>
 									<DomainInformation
 										domain={ domain }
