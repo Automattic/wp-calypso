@@ -869,6 +869,9 @@ class DomainsStep extends Component {
 		} else if ( ! previousStepBackUrl && 'domain-transfer' === this.props.flowName ) {
 			backUrl = null;
 			backLabelText = null;
+		} else if ( 'with-plugin' === this.props.flowName ) {
+			backUrl = '/plugins';
+			backLabelText = translate( 'Back to plugins' );
 		} else {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 
