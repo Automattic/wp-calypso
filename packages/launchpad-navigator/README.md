@@ -1,7 +1,7 @@
 # Launchpad Navigator
 
-This package provides the components for attaching the Navigator of the 
-Launchpads to the master bar.
+This package provides the components for showing and interacting with
+one or more Launchpad task lists for a given site.
 
 ## Usage
 
