@@ -6,27 +6,20 @@ import type { DomainSuggestion, DomainSuggestionSelectorOptions } from './types'
 
 const STALE_TIME = 1000 * 60 * 5; // 5 minutes
 
-function getDomainSuggestionsQueryKey(
-	search: string,
-	options: DomainSuggestionSelectorOptions = {}
-) {
-	return [ 'domain-suggestions', search, options ];
-}
-
 export function useGetDomainSuggestions(
-	search: string,
+	search?: string | null,
 	searchOptions: DomainSuggestionSelectorOptions = {},
 	queryOptions = {}
 ) {
-	const queryKey = getDomainSuggestionsQueryKey( search, searchOptions );
 	const queryClient = useQueryClient();
 	const result = useQuery( {
-		queryKey,
+		queryKey: [ 'domain-suggestions', search, searchOptions ],
 		queryFn: async () => {
-			const queryObject = normalizeDomainSuggestionQuery( search, searchOptions );
-			if ( ! queryObject.query ) {
-				throw new Error( 'Empty query' );
+			if ( ! search ) {
+				return [];
 			}
+			const queryObject = normalizeDomainSuggestionQuery( search, searchOptions );
+
 			const suggestions: DomainSuggestion[] = await wpcomProxyRequest( {
 				apiVersion: '1.1',
 				path: '/domains/suggestions',
@@ -65,7 +58,7 @@ export function useGetDomainSuggestions(
 /**
  * Returns the expected *.wordpress.com for a given domain name
  */
-export function useGetWordPressSubdomain( paidDomainName: string ) {
+export function useGetWordPressSubdomain( paidDomainName?: string | null ) {
 	return useGetDomainSuggestions( paidDomainName, {
 		quantity: 1,
 		include_wordpressdotcom: true,
@@ -78,7 +71,7 @@ export function useGetWordPressSubdomain( paidDomainName: string ) {
 /**
  * Returns a custom .com domain suggestion for a given query
  */
-export function useGetSingleCustomDotComDomainSuggestion( query: string, locale?: string ) {
+export function useGetSingleCustomDotComDomainSuggestion( query?: string | null, locale?: string ) {
 	return useGetDomainSuggestions( query, {
 		quantity: 1,
 		include_wordpressdotcom: false,
