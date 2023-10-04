@@ -40,6 +40,8 @@ import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
 import { filterOutWpcomDomains } from './utils';
 
+import './style.scss';
+
 interface BulkSiteDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;

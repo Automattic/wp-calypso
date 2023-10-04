@@ -83,25 +83,6 @@
 	}
 }
 
-.domain-management-list__items.has-no-wpcom-domain {
-	margin-top: 24px;
-}
-
-.domain-management-list__items + .empty-domains-list-card {
-	margin-top: 16px;
-	margin-bottom: 0;
-
-	@include break-small {
-		margin-top: 0;
-	}
-}
-
-.domain-management-list__items + .empty-domains-list-card.has-non-wpcom-domains {
-	margin-top: 32px;
-	margin-bottom: 32px;
-}
-
-.domain-management-list__filter,
 .all-domains__filter {
 	padding: 0 16px;
 	> .domains-table-filter-button.is-mobile-version {

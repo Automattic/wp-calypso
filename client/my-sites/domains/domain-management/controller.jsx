@@ -32,27 +32,12 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
-		if ( isEnabled( 'domains/bulk-actions-table' ) ) {
-			pageContext.primary = (
-				<DomainManagement.BulkSiteDomains
-					analyticsPath={ domainManagementRoot( ':site' ) }
-					analyticsTitle="Domain Management"
-				/>
-			);
-		} else {
-			pageContext.primary = (
-				<DomainManagementData
-					analyticsPath={ domainManagementList( ':site' ) }
-					analyticsTitle="Domain Management"
-					component={ DomainManagement.SiteDomains }
-					context={ pageContext }
-					needsContactDetails
-					needsDomains
-					needsPlans
-					needsProductsList
-				/>
-			);
-		}
+		pageContext.primary = (
+			<DomainManagement.BulkSiteDomains
+				analyticsPath={ domainManagementRoot( ':site' ) }
+				analyticsTitle="Domain Management"
+			/>
+		);
 		next();
 	},
 
