@@ -917,7 +917,7 @@ class DomainsStep extends Component {
 				backLabelText={ backLabelText }
 				hideSkip={ true }
 				goToNextStep={ this.handleSkip }
-				align={ isReskinned ? 'left' : 'center' }
+				align="center"
 				isWideLayout={ isReskinned }
 			/>
 		);
