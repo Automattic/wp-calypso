@@ -659,12 +659,6 @@ export class RenderDomainsStep extends Component {
 			: [];
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
-		if (
-			this.shouldHideUseYourDomain() ||
-			( this.shouldUseMultipleDomainsInCart() && cartIsLoading )
-		) {
-			return null;
-		}
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div className="domains__domain-side-content">
 				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
@@ -723,49 +717,52 @@ export class RenderDomainsStep extends Component {
 			);
 		};
 
+		const DomainsInCart =
+			this.shouldUseMultipleDomainsInCart() && ! cartIsLoading ? (
+				<div className="domains__domain-side-content domains__domain-cart">
+					<div className="domains__domain-cart-title">
+						{ this.props.translate( 'Your domains' ) }
+					</div>
+					<div className="domains__domain-cart-rows">
+						{ domainsInCart.map( ( domain, i ) => (
+							<div key={ `row${ i }` } className="domains__domain-cart-row">
+								<DomainNameAndCost domain={ domain } />
+							</div>
+						) ) }
+					</div>
+					<div key="rowtotal" className="domains__domain-cart-total">
+						{ this.props.translate( '%d domain', '%d domains', {
+							count: domainsInCart.length,
+							args: [ domainsInCart.length ],
+						} ) }
+					</div>
+					<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+						{ this.props.translate( 'Continue' ) }
+					</Button>
+					<Button
+						borderless
+						className="domains__domain-cart-choose-later"
+						onClick={ this.handleUseYourDomainClick }
+					>
+						{ this.props.translate( 'Choose my domain later' ) }
+					</Button>
+				</div>
+			) : null;
+
 		return (
 			<div className="domains__domain-side-content-container">
-				{ domainsInCart.length > 0 ? (
-					<div className="domains__domain-side-content domains__domain-cart">
-						<div className="domains__domain-cart-title">
-							{ this.props.translate( 'Your domains' ) }
-						</div>
-						<div className="domains__domain-cart-rows">
-							{ domainsInCart.map( ( domain, i ) => (
-								<div key={ `row${ i }` } className="domains__domain-cart-row">
-									<DomainNameAndCost domain={ domain } />
-								</div>
-							) ) }
-						</div>
-						<div key="rowtotal" className="domains__domain-cart-total">
-							{ this.props.translate( '%d domain', '%d domains', {
-								count: domainsInCart.length,
-								args: [ domainsInCart.length ],
-							} ) }
-						</div>
-						<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
-							{ this.props.translate( 'Continue' ) }
-						</Button>
-						<Button
-							borderless
-							className="domains__domain-cart-choose-later"
-							onClick={ this.handleUseYourDomainClick }
-						>
-							{ this.props.translate( 'Choose my domain later' ) }
-						</Button>
-					</div>
-				) : (
-					! this.shouldHideDomainExplainer() &&
-					this.props.isPlanSelectionAvailableLaterInFlow && (
-						<div className="domains__domain-side-content domains__free-domain">
-							<ReskinSideExplainer
-								onClick={ this.handleDomainExplainerClick }
-								type="free-domain-explainer"
-								flowName={ this.props.flowName }
-							/>
-						</div>
-					)
-				) }
+				{ domainsInCart.length > 0
+					? DomainsInCart
+					: ! this.shouldHideDomainExplainer() &&
+					  this.props.isPlanSelectionAvailableLaterInFlow && (
+							<div className="domains__domain-side-content domains__free-domain">
+								<ReskinSideExplainer
+									onClick={ this.handleDomainExplainerClick }
+									type="free-domain-explainer"
+									flowName={ this.props.flowName }
+								/>
+							</div>
+					  ) }
 				{ useYourDomain }
 				{ this.shouldDisplayDomainOnlyExplainer() && (
 					<div className="domains__domain-side-content">
