@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/format-currency';
+import { useMemo } from '@wordpress/element';
 
 const LARGE_ADD_ON_CURRENCY_CHAR_THRESHOLD = 7;
 const LARGE_CURRENCY_CHAR_THRESHOLD = 6;
@@ -10,30 +11,35 @@ interface Props {
 	currencyCode: string;
 }
 
-function getDisplayPrices( prices: number[], currencyCode: string ) {
+function useDisplayPrices( currencyCode: string, prices?: number[] ) {
 	/**
 	 * Prices are represented in smallest units for a currency, and not as prices that
 	 * are actually displayed. Ex. $20 is the integer 2000, and not 20. To determine if
 	 * the display price is too long, we convert the integer to a display string.
 	 */
-	return prices.map( ( price ) =>
-		formatCurrency( price, currencyCode, {
-			stripZeros: true,
-			isSmallestUnit: true,
-		} )
+
+	return useMemo(
+		() =>
+			prices?.map( ( price ) =>
+				formatCurrency( price, currencyCode, {
+					stripZeros: true,
+					isSmallestUnit: true,
+				} )
+			),
+		[ currencyCode, prices ]
 	);
 }
 
-function hasExceededPriceThreshold( displayPrices: string[], isAddOn = false ) {
+function hasExceededPriceThreshold( displayPrices?: string[], isAddOn = false ) {
 	const threshold = isAddOn ? LARGE_ADD_ON_CURRENCY_CHAR_THRESHOLD : LARGE_CURRENCY_CHAR_THRESHOLD;
-	return displayPrices.some( ( price ) => price.length > threshold );
+	return displayPrices?.some( ( price ) => price.length > threshold );
 }
 
-function hasExceededCombinedPriceThreshold( displayPrices: string[] ) {
+function hasExceededCombinedPriceThreshold( displayPrices?: string[] ) {
 	let planPrices: string[] = [];
 	let exceedsThreshold = false;
 
-	displayPrices.forEach( ( price ) => {
+	displayPrices?.forEach( ( price ) => {
 		const [ originalPrice, discountedPrice ] = planPrices;
 
 		// pushes until a pair of original and discounted prices can be evaluated
@@ -60,10 +66,6 @@ function hasExceededCombinedPriceThreshold( displayPrices: string[] ) {
  * This is primarily used for lowering the font-size of "large" display prices.
  */
 export default function useIsLargeCurrency( { prices, isAddOn = false, currencyCode }: Props ) {
-	if ( ! prices ) {
-		return false;
-	}
-
 	/**
 	 * Because this hook is primarily used for lowering font-sizes of "large" display prices,
 	 * this implementation is non-ideal. It assumes that each character in the display price,
@@ -75,7 +77,7 @@ export default function useIsLargeCurrency( { prices, isAddOn = false, currencyC
 	 *
 	 * https://github.com/Automattic/wp-calypso/pull/81537#discussion_r1323182287
 	 */
-	const displayPrices = getDisplayPrices( prices, currencyCode );
+	const displayPrices = useDisplayPrices( currencyCode, prices );
 	const exceedsPriceThreshold = hasExceededPriceThreshold( displayPrices, isAddOn );
 	const exceedsCombinedPriceThreshold = hasExceededCombinedPriceThreshold( displayPrices );
 
