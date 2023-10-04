@@ -1,8 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
@@ -651,9 +653,10 @@ export class RenderDomainsStep extends Component {
 	};
 
 	getSideContent = () => {
+		const { translate } = this.props;
 		const domainsInCart = this.shouldUseMultipleDomainsInCart()
 			? getDomainRegistrations( this.props.cart )
-			: {};
+			: [];
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
 		if ( cartIsLoading || this.shouldHideUseYourDomain() ) {
@@ -665,21 +668,89 @@ export class RenderDomainsStep extends Component {
 			</div>
 		) : null;
 
+		const BoldTLD = ( { domain } ) => {
+			const tld = domain.split( '.' ).pop();
+			return (
+				<>
+					<span>{ domain.replace( `.${ tld }`, '' ) }</span>
+					<b>.{ tld }</b>
+				</>
+			);
+		};
+
+		const DomainNameAndCost = ( { domain } ) => {
+			const priceText = translate( '%(cost)s/year', {
+				args: { cost: domain.item_original_cost_display },
+			} );
+			const costDifference = domain.item_original_cost - domain.cost;
+			const hasPromotion = costDifference > 0;
+
+			return (
+				<>
+					<div>
+						<div
+							className={ classNames( 'domains__domain-cart-domain', {
+								'limit-width': hasPromotion,
+							} ) }
+						>
+							<BoldTLD domain={ domain.meta } data={ domain } />
+						</div>
+						<div className="domain-product-price__price">
+							{ hasPromotion && <del>{ priceText }</del> }
+							<span className="domains__price">{ domain.item_subtotal_display }</span>
+						</div>
+					</div>
+					<div>
+						<Button
+							borderless
+							className="domains__domain-cart-remove"
+							onClick={ this.removeDomainClickHandler( domain ) }
+						>
+							{ this.props.translate( 'Remove' ) }
+						</Button>
+						{ hasPromotion && (
+							<span className="savings-message">
+								{ translate( 'Up to %(costDifference)s off for a domain.', {
+									args: { costDifference: formatCurrency( costDifference, domain.currency ) },
+								} ) }
+							</span>
+						) }
+					</div>
+				</>
+			);
+		};
+
 		return (
 			<div className="domains__domain-side-content-container">
 				{ domainsInCart.length > 0 ? (
-					<>
-						<div>Domains list</div>
-						{ domainsInCart.map( ( domain, i ) => (
-							<div key={ i }>
-								<div>{ domain.meta }</div>
-								<button onClick={ this.removeDomainClickHandler( domain ) }>
-									<Gridicon icon="cross" width={ 18 } />
-								</button>
-							</div>
-						) ) }
-						<button onClick={ this.goToNext() }>NEXT</button>
-					</>
+					<div className="domains__domain-side-content domains__domain-cart">
+						<div className="domains__domain-cart-title">
+							{ this.props.translate( 'Your domains' ) }
+						</div>
+						<div className="domains__domain-cart-rows">
+							{ domainsInCart.map( ( domain, i ) => (
+								<div key={ `row${ i }` } className="domains__domain-cart-row">
+									<DomainNameAndCost domain={ domain } />
+								</div>
+							) ) }
+						</div>
+						<div key="rowtotal" className="domains__domain-cart-total">
+							{ this.props.translate( '%d domain', '%d domains', {
+								count: domainsInCart.length,
+								args: [ domainsInCart.length ],
+							} ) }
+						</div>
+						<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+							{ this.props.translate( 'Continue' ) }
+						</Button>
+						<Button
+							borderless
+							className="domains__domain-cart-choose-later"
+							onClick={ this.handleUseYourDomainClick }
+						>
+							{ this.props.translate( 'Choose my domain later' ) }
+						</Button>
+					</div>
 				) : (
 					! this.shouldHideDomainExplainer() &&
 					this.props.isPlanSelectionAvailableLaterInFlow && (
