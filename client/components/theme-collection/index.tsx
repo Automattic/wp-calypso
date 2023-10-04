@@ -16,7 +16,7 @@ interface ThemeCollectionProps {
 	isInstalling: () => boolean;
 	siteId: string | null;
 	subheading: ReactElement;
-	themes: Array< { id: string } >;
+	themes: Array< { id: string } > | null;
 }
 
 export default function ThemeCollection( {

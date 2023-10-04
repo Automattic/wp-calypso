@@ -13,9 +13,7 @@ interface ThemesQuery {
 
 export function useThemeCollection( query: ThemesQuery ) {
 	const siteId = useSelector( getSelectedSiteId ) as unknown as string | null;
-	const themes = useSelector(
-		( state ) => getThemesForQueryIgnoringPage( state, 'wpcom', query ) ?? []
-	);
+	const themes = useSelector( ( state ) => getThemesForQueryIgnoringPage( state, 'wpcom', query ) );
 
 	return { siteId, themes };
 }
