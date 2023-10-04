@@ -3,6 +3,7 @@ import { Button } from '@automattic/components';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
@@ -675,6 +676,7 @@ export class RenderDomainsStep extends Component {
 	};
 
 	getSideContent = () => {
+		const { translate } = this.props;
 		const domainsInCart = isEnabled( 'domains/add-multiple-domains-to-cart' )
 			? getDomainRegistrations( this.props.cart )
 			: [];
@@ -693,9 +695,32 @@ export class RenderDomainsStep extends Component {
 			const tld = domain.split( '.' ).pop();
 			return (
 				<>
-					{ domain.replace( `.${ tld }`, '' ) }
+					<span>{ domain.replace( `.${ tld }`, '' ) }</span>
 					<b>.{ tld }</b>
 				</>
+			);
+		};
+
+		const DomainNameAndCost = ( { domain } ) => {
+			const priceText = translate( '%(cost)s/year', {
+				args: { cost: domain.item_original_cost_display },
+			} );
+			const hasPromotion = domain.item_original_cost_display !== domain.item_subtotal_display;
+
+			return (
+				<div>
+					<div
+						className={ classNames( 'domains__domain-cart-domain', {
+							'limit-width': hasPromotion,
+						} ) }
+					>
+						<BoldTLD domain={ domain.meta } data={ domain } />
+					</div>
+					<div className="domain-product-price__price">
+						{ hasPromotion && <del>{ priceText }</del> }
+						<span className="domains__price">{ domain.item_subtotal_display }</span>
+					</div>
+				</div>
 			);
 		};
 
@@ -709,9 +734,7 @@ export class RenderDomainsStep extends Component {
 						<div className="domains__domain-cart-rows">
 							{ domainsInCart.map( ( domain, i ) => (
 								<div key={ `row${ i }` } className="domains__domain-cart-row">
-									<div className="domains__domain-cart-domain">
-										<BoldTLD domain={ domain.meta } />
-									</div>
+									<DomainNameAndCost domain={ domain } />
 									<Button
 										borderless
 										className="domains__domain-cart-remove"
