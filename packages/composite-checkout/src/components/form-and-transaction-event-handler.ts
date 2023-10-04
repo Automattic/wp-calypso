@@ -58,7 +58,7 @@ export function useTransactionStatusHandler( {
 
 	const { __ } = useI18n();
 	const [ paymentMethodId ] = usePaymentMethodId();
-	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const { formStatus } = useFormStatus();
 	const {
 		previousTransactionStatus,
 		transactionLastResponse,
@@ -89,17 +89,11 @@ export function useTransactionStatusHandler( {
 			return;
 		}
 
-		if ( transactionStatus === TransactionStatus.PENDING ) {
-			debug( 'transaction is beginning' );
-			setFormSubmitting();
-		}
 		if ( transactionStatus === TransactionStatus.ERROR ) {
 			debug( 'an error occurred', transactionError );
+			// Reset the transaction after the error has been registered (and
+			// other listeners have had a chance to respond to it.)
 			resetTransaction();
-		}
-		if ( transactionStatus === TransactionStatus.COMPLETE ) {
-			debug( 'marking complete' );
-			setFormComplete();
 		}
 		if ( transactionStatus === TransactionStatus.REDIRECTING ) {
 			if ( ! transactionRedirectUrl ) {
@@ -109,10 +103,6 @@ export function useTransactionStatusHandler( {
 			}
 			debug( 'redirecting to', transactionRedirectUrl );
 			performRedirect( transactionRedirectUrl );
-		}
-		if ( transactionStatus === TransactionStatus.NOT_STARTED ) {
-			debug( 'transaction status has been reset; enabling form' );
-			setFormReady();
 		}
 	}, [ transactionStatus ] ); // eslint-disable-line react-hooks/exhaustive-deps
 }

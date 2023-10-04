@@ -140,17 +140,32 @@ function formAndTransactionStatusReducer(
 
 		case 'TRANSACTION_STATUS_CHANGE': {
 			const {
-				status,
+				status: newTransactionStatus,
 				response = null,
 				error = null,
 				url = null,
 			} = action.payload as TransactionStatusPayloads;
+
+			const newFormStatus = ( () => {
+				if ( newTransactionStatus === TransactionStatus.PENDING ) {
+					return FormStatus.SUBMITTING;
+				}
+				if ( newTransactionStatus === TransactionStatus.COMPLETE ) {
+					return FormStatus.COMPLETE;
+				}
+				if ( newTransactionStatus === TransactionStatus.NOT_STARTED ) {
+					return FormStatus.READY;
+				}
+				return state.formStatus;
+			} )();
+
 			return {
 				...state,
+				formStatus: newFormStatus,
 				transactionStatus: {
 					...state.transactionStatus,
 					previousTransactionStatus: state.transactionStatus.transactionStatus,
-					transactionStatus: status,
+					transactionStatus: newTransactionStatus,
 					transactionLastResponse: response,
 					transactionRedirectUrl: url,
 					transactionError: error,
