@@ -446,7 +446,7 @@ export function generateSteps( {
 				'siteUrl',
 				'lastDomainSearched',
 				'useThemeHeadstart',
-				'domainCart',
+				...( config.isEnabled( 'domains/add-multiple-domains-to-cart' ) ? [ 'domainCart' ] : [] ),
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
