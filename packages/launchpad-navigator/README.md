@@ -9,7 +9,7 @@ First you need to import the components:
 
 ```js
 import {
-    LaunchpadNavigator,
+    FloatingNavigator,
     LaunchpadNavigatorIcon,
 } from '@automattic/launchpad-navigator';
 ```
