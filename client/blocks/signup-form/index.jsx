@@ -1183,6 +1183,7 @@ class SignupForm extends Component {
 					isReskinned={ this.props.isReskinned }
 					redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 					queryArgs={ this.props.queryArgs }
+					notice={ this.getNotice() }
 				/>
 			);
 		}
