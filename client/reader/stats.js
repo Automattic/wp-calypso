@@ -73,8 +73,8 @@ function getLocation( path ) {
 		return 'following_manage';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		const searchParamsMaybeInOverride = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
-		const selectedTab = searchParamsMaybeInOverride.get( 'selectedTab' );
+		const searchParams = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
+		const selectedTab = searchParams.get( 'selectedTab' );
 
 		if ( ! selectedTab || selectedTab === 'recommended' ) {
 			return 'discover_recommended';
