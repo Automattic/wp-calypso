@@ -1,7 +1,7 @@
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
@@ -119,20 +119,26 @@ export const StorageAddOnDropdown = ( {
 			/>
 		),
 	};
+
+	const handleOnChange = useCallback(
+		( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) => {
+			const addOnSlug = selectedItem?.key;
+
+			if ( addOnSlug ) {
+				onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
+				setSelectedStorageOptionForPlan( { addOnSlug, planSlug } );
+			}
+		},
+		[ onStorageAddOnClick, planSlug, setSelectedStorageOptionForPlan ]
+	);
+
 	return (
 		<>
 			<CustomSelectControl
 				label={ label }
 				options={ selectControlOptions }
 				value={ selectedOption }
-				onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) => {
-					const addOnSlug = selectedItem?.key;
-
-					if ( addOnSlug ) {
-						onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
-						setSelectedStorageOptionForPlan( { addOnSlug, planSlug } );
-					}
-				} }
+				onChange={ handleOnChange }
 			/>
 			{ selectedOptionPrice && ( isLargeCurrency || priceOnSeparateLine ) && (
 				<div className="storage-add-on-dropdown__offset-price-container">
