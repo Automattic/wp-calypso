@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
@@ -124,6 +125,7 @@ class DomainsStep extends Component {
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
 		this.state = {
 			currentStep: null,
+			domainCart: {},
 		};
 	}
 
@@ -263,7 +265,91 @@ class DomainsStep extends Component {
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
 	};
 
+	handleDomainToDomainCart = ( {
+		googleAppsCartItem,
+		shouldHideFreePlan = false,
+		signupDomainOrigin,
+	} ) => {
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
+
+		const { step } = this.props;
+		const { lastDomainSearched } = step.domainForm ?? {};
+
+		const { suggestion } = step;
+		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
+		const siteUrl =
+			suggestion &&
+			( isPurchasingItem
+				? suggestion.domain_name
+				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
+
+		const domainItem = isPurchasingItem
+			? domainRegistration( {
+					domain: suggestion.domain_name,
+					productSlug: suggestion.product_slug,
+			  } )
+			: undefined;
+
+		// suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
+
+		// maybeExcludeEmailsStep( {
+		// 	domainItem,
+		// 	resetSignupStep: this.props.removeStep,
+		// 	siteUrl: suggestion?.domain_name,
+		// 	stepName: 'emails',
+		// 	submitSignupStep: this.props.submitSignupStep,
+		// } );
+		if ( this.state.domainCart[ suggestion.domain_name ] ) {
+			delete this.state.domainCart[ suggestion.domain_name ];
+			this.setState( { domainCart: { ...this.state.domainCart } } );
+		} else {
+			this.setState(
+				{
+					domainCart: { ...this.state.domainCart, [ suggestion.domain_name ]: domainItem },
+				},
+				() => {
+					this.props.submitSignupStep(
+						Object.assign(
+							{
+								stepName: this.props.stepName,
+								domainItem,
+								googleAppsCartItem,
+								isPurchasingItem,
+								siteUrl,
+								stepSectionName: this.props.stepSectionName,
+								domainCart: this.state.domainCart,
+							},
+							this.getThemeArgs()
+						),
+						Object.assign(
+							{ domainItem, domainCart: this.state.domainCart },
+							this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
+							useThemeHeadstartItem,
+							signupDomainOrigin ? { signupDomainOrigin } : {},
+							suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+							lastDomainSearched ? { lastDomainSearched } : {}
+						)
+					);
+				}
+			);
+			this.props.setDesignType( this.getDesignType() );
+
+			// Start the username suggestion process.
+			siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
+		}
+	};
+
 	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
+		if ( config.isEnabled( 'domains/add-multiple-domains-to-cart' ) ) {
+			return this.handleDomainToDomainCart( {
+				googleAppsCartItem,
+				shouldHideFreePlan,
+				signupDomainOrigin,
+			} );
+		}
 		const { flowName } = this.props;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
@@ -348,7 +434,7 @@ class DomainsStep extends Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
-		this.props.goToNextStep();
+		// this.props.goToNextStep();
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
@@ -560,8 +646,16 @@ class DomainsStep extends Component {
 
 		return (
 			<CalypsoShoppingCartProvider>
+				<div style={ { display: 'flex', flexDirection: 'column' } }>
+					<h1>Domain Cart</h1>
+					<p>{ JSON.stringify( this.state.domainCart ) }</p>
+					<button onClick={ () => this.props.goToNextStep() } style={ { border: '1px solid' } }>
+						Next step
+					</button>
+				</div>
 				<RegisterDomainStep
 					key="domainForm"
+					domainCart={ this.state.domainCart }
 					path={ this.props.path }
 					initialState={ initialState }
 					onAddDomain={ this.handleAddDomain }

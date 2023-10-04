@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Badge, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -43,6 +44,7 @@ class DomainRegistrationSuggestion extends Component {
 		isFeatured: PropTypes.bool,
 		buttonStyles: PropTypes.object,
 		cart: PropTypes.object,
+		domainCart: PropTypes.object,
 		suggestion: PropTypes.shape( {
 			domain_name: PropTypes.string.isRequired,
 			product_slug: PropTypes.string,
@@ -133,9 +135,15 @@ class DomainRegistrationSuggestion extends Component {
 			pendingCheckSuggestion,
 			premiumDomain,
 			isCartPendingUpdateDomain,
+			domainCart,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
-		const isAdded = hasDomainInCart( cart, domain );
+		let isAdded;
+		if ( config.isEnabled( 'domains/add-multiple-domains-to-cart' ) ) {
+			isAdded = domainCart ? domainCart[ domain ] : false;
+		} else {
+			isAdded = hasDomainInCart( cart, domain );
+		}
 
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
@@ -212,7 +220,6 @@ class DomainRegistrationSuggestion extends Component {
 	 * becomes the tld. This is not very comprehensive since there can be
 	 * subdomains which would fail this test. However, for our purpose of
 	 * highlighting the TLD in domain suggestions, this is good enough.
-	 *
 	 * @param {string} domain The domain to be parsed
 	 */
 	getDomainParts( domain ) {
