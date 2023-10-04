@@ -105,7 +105,7 @@ export default function SiteProfiler() {
 				</LayoutBlock>
 			) }
 
-			<LayoutBlock isMonoBg={ !! siteProfilerData }>
+			<LayoutBlock className="hosting-intro-block globe-bg" isMonoBg={ !! siteProfilerData }>
 				<HostingIntro />
 			</LayoutBlock>
 		</>

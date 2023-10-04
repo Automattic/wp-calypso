@@ -191,6 +191,37 @@
 		@media (max-width: $break-medium) {
 			flex-direction: column-reverse;
 		}
+
+		&.globe-bg {
+			background-image: url(calypso/assets/images/illustrations/globe.svg);
+			background-repeat: no-repeat;
+			background-position: right top;
+
+			.img-container {
+				min-height: 300px;
+			}
+
+			@media (max-width: $break-xlarge) {
+				background-size: 60%;
+			}
+
+			@media (max-width: $break-large) {
+				background-size: 50%;
+			}
+
+			@media (max-width: $break-medium) {
+				background-size: 85%;
+				background-position: right bottom -250px;
+
+				.img-container {
+					min-height: 250px;
+				}
+			}
+
+			@media (max-width: $break-small) {
+				background-position: right bottom -150px;
+			}
+		}
 	}
 
 	.domain-analyzer-block,
