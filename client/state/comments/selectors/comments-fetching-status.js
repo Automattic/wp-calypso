@@ -9,7 +9,8 @@ export const commentsFetchingStatus = createSelector(
 	( state, siteId, postId, commentTotal = 0 ) => {
 		const fetchStatus =
 			state.comments.fetchStatus[ getStateKey( siteId, postId ) ] ?? fetchStatusInitialState;
-		const hasMoreComments = commentTotal > getPostCommentItems( state, siteId, postId ).length;
+		const hasMoreComments =
+			commentTotal > ( getPostCommentItems( state, siteId, postId )?.length ?? 0 );
 
 		return {
 			haveEarlierCommentsToFetch: fetchStatus.before && hasMoreComments,
@@ -21,7 +22,8 @@ export const commentsFetchingStatus = createSelector(
 	( state, siteId, postId, commentTotal = 0 ) => {
 		const fetchStatus =
 			state.comments.fetchStatus[ getStateKey( siteId, postId ) ] ?? fetchStatusInitialState;
-		const hasMoreComments = commentTotal > getPostCommentItems( state, siteId, postId ).length;
+		const hasMoreComments =
+			commentTotal > ( getPostCommentItems( state, siteId, postId )?.length ?? 0 );
 		return [ fetchStatus, hasMoreComments ];
 	}
 );
