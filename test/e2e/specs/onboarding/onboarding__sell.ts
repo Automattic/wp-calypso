@@ -25,7 +25,7 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( 'FTME: Sell', function () {
+describe( 'Onboarding: Sell Focus', function () {
 	const planName = 'Personal';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
@@ -164,7 +164,7 @@ describe( 'FTME: Sell', function () {
 		it( 'Land in Home dashboard', async function () {
 			await page.waitForURL(
 				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.blogid }` ),
-				{ timeout: 30 * 1000 }
+				{ timeout: 30 * 1000 },
 			);
 		} );
 
@@ -214,7 +214,7 @@ describe( 'FTME: Sell', function () {
 				username: testUser.username,
 				password: testUser.password,
 			},
-			newUserDetails.body.bearer_token
+			newUserDetails.body.bearer_token,
 		);
 
 		await apiCloseAccount( restAPIClient, {

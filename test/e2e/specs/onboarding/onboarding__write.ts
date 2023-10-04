@@ -18,7 +18,7 @@ import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
+describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () {
 	const blogName = DataHelper.getBlogName();
 	const blogTagLine = `${ blogName } tagline`;
 
@@ -62,7 +62,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 
 		it( 'Enter Onboarding flow for the selected domain', async function () {
 			await expect(
-				page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } )
+				page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } ),
 			).resolves.not.toThrow();
 
 			const urlRegex = `/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }`;
@@ -147,7 +147,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		}
 
 		const restAPIClient = new RestAPIClient(
-			SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser
+			SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser,
 		);
 
 		await apiDeleteSite( restAPIClient, {

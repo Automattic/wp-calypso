@@ -15,7 +15,7 @@ import type { NewUserResponse } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
-describe( 'Signup: Create a WordPress.com Free site as a new user', function () {
+describe( 'Signup: Tailored Free Signup', function () {
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'signupfree',
 	} );

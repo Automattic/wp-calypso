@@ -18,7 +18,7 @@ import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
-describe( 'Site Assembler', () => {
+describe( 'Onboarding: Site Assembler', () => {
 	let newSiteDetails: NewSiteResponse;
 	let page: Page;
 	let selectedFreeDomain: string;
@@ -57,11 +57,11 @@ describe( 'Site Assembler', () => {
 		it( 'Enter Onboarding flow for the selected domain', async function () {
 			await page.waitForURL(
 				DataHelper.getCalypsoURL(
-					`/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
+					`/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`,
 				),
 				{
 					timeout: 30 * 1000,
-				}
+				},
 			);
 		} );
 
@@ -73,11 +73,11 @@ describe( 'Site Assembler', () => {
 			await startSiteFlow.clickButton( 'Design your own' );
 			await page.waitForURL(
 				DataHelper.getCalypsoURL(
-					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
+					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`,
 				),
 				{
 					timeout: 30 * 1000,
-				}
+				},
 			);
 		} );
 	} );
