@@ -86,11 +86,6 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
-		paths.domainManagementContactsPrivacy,
-		domainManagementController.domainManagementContactsPrivacy
-	);
-
-	registerStandardDomainManagementPages(
 		paths.domainManagementEditContactInfo,
 		domainManagementController.domainManagementEditContactInfo
 	);

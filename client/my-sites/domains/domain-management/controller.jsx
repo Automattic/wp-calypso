@@ -6,7 +6,6 @@ import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
 	domainManagementAllEditSelectedContactInfo,
 	domainManagementEditSelectedContactInfo,
-	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
 	domainManagementDnsEditRecord,
@@ -132,20 +131,6 @@ export default {
 				needsPlans
 				needsProductsList
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
-			/>
-		);
-		next();
-	},
-
-	domainManagementContactsPrivacy( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementContactsPrivacy( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts"
-				component={ DomainManagement.ContactsPrivacy }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
 		next();
