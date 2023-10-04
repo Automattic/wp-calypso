@@ -51,7 +51,6 @@ const Plans = ( { paidDomainName, onUpgradeClick, handleRedirect } ) => (
 		intervalType="yearly"
 		onUpgradeClick={ onUpgradeClick }
 		plansWithScroll={ false }
-		flowName="onboarding"
 		removePaidDomain={ handleRedirect }
 		hidePlanTypeSelector={ true }
 		hidePlansFeatureComparison={ true }
