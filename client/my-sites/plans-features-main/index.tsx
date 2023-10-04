@@ -573,7 +573,7 @@ const PlansFeaturesMain = ( {
 	const comparisonGridContainerClasses = classNames(
 		'plans-features-main__comparison-grid-container',
 		{
-			isHidden: ! showPlansComparisonGrid,
+			'is-hidden': ! showPlansComparisonGrid,
 		}
 	);
 
