@@ -60,10 +60,6 @@ export default function DomainInformation( props: Props ) {
 		return res.isValid() ? res.format( momentFormat ) : '';
 	};
 
-	const formatRegistrar = ( registrar?: string | string[] ) => {
-		return normalizeWhoisField( registrar );
-	};
-
 	return (
 		<div className="domain-information">
 			<h3>{ translate( 'Domain information' ) }</h3>
@@ -88,7 +84,7 @@ export default function DomainInformation( props: Props ) {
 										{ whois.registrar }
 									</a>
 								) }
-							{ ! whois.registrar_url && <span>{ formatRegistrar( whois.registrar ) }</span> }
+							{ ! whois.registrar_url && <span>{ normalizeWhoisField( whois.registrar ) }</span> }
 						</div>
 					</li>
 				) }
