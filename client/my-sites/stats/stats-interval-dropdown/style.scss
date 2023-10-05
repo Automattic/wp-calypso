@@ -13,6 +13,11 @@
 	font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	font-weight: 400;
 
+	>.components-button[aria-expanded="true"],
+	.components-button:hover {
+		color: var(--gutenberg-gray-900);
+	}
+
 	>.components-button {
 
 		border-radius: 2px;
