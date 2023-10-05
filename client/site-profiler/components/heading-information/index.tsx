@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { HostingProvider } from 'calypso/data/site-profiler/types';
 import StatusCtaInfo from '../heading-information/status-cta-info';
@@ -30,11 +29,6 @@ export default function HeadingInformation( props: Props ) {
 		specialDomainMapping,
 	} = props;
 	const finalStatus = specialDomainMapping ?? conversionAction;
-
-	useEffect( () => {
-		// Scroll to top when the component is mounted
-		window && window.scrollTo( 0, 0 );
-	}, [] );
 
 	const recordCtaEvent = ( ctaName: string ) => {
 		recordTracksEvent( 'calypso_site_profiler_cta', {
