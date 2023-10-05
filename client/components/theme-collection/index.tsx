@@ -6,14 +6,14 @@ import { Swiper as SwiperType } from 'swiper/types';
 
 interface ThemeCollectionProps {
 	collectionSlug: string;
-	heading: string;
-	subheading: ReactElement;
+	title: string;
+	description: ReactElement;
 }
 
 export default function ThemeCollection( {
 	collectionSlug,
-	heading,
-	subheading,
+	title,
+	description,
 	children,
 }: PropsWithChildren< ThemeCollectionProps > ): ReactElement {
 	const swiperInstance = useRef< SwiperType | null >( null );
@@ -77,8 +77,8 @@ export default function ThemeCollection( {
 
 	return (
 		<div className="theme-collection__container ">
-			<h2>{ heading }</h2>
-			{ subheading }
+			<h2>{ title }</h2>
+			{ description }
 			<div className="swiper-container" id={ swiperContainerId }>
 				<div className="theme-collection__carousel-controls">
 					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous">

@@ -35,8 +35,8 @@ function ThemeCollectionsLayout( {
 				<QueryThemes query={ query } siteId="wpcom" />
 				<ThemeCollection
 					collectionSlug={ collectionSlug }
-					heading={ title }
-					subheading={ description }
+					title={ title }
+					description={ description }
 				>
 					{ themes &&
 						themes.map( ( theme, index ) => (
