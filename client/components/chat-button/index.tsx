@@ -1,20 +1,14 @@
-import { isJetpackPurchasableItem } from '@automattic/calypso-products';
 import { Button, Gridicon, Spinner } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useChatStatus, useChatWidget } from '@automattic/help-center/src/hooks';
-import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import { ObjectWithProducts } from 'calypso/lib/cart-values/cart-items';
-import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { MessagingGroup } from '@automattic/help-center/src/hooks/use-messaging-availability';
 import type { FC } from 'react';
+
 type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
-type KeyType = 'akismet' | 'jpAgency' | 'jpCheckout' | 'jpGeneral' | 'wpcom';
+
 type Props = {
 	borderless?: boolean;
 	chatIntent?: ChatIntent;
@@ -29,40 +23,10 @@ type Props = {
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-// Find out what service's products are in the cart currently
-function getChatKey( responseCart: ObjectWithProducts ) {
-	const hasCartJetpackProductsOnly =
-		responseCart?.products?.length > 0 &&
-		responseCart?.products?.every( ( product ) =>
-			isJetpackPurchasableItem( product.product_slug )
-		);
-
-	if ( isAkismetCheckout() ) {
-		return 'akismet';
-	} else if ( isJetpackCheckout() || hasCartJetpackProductsOnly ) {
-		return 'jpCheckout';
-	}
-
-	return 'wpcom';
-}
-
-function getGroupName( keyType: KeyType ) {
-	switch ( keyType ) {
-		case 'akismet':
-		case 'jpAgency':
-		case 'jpCheckout':
-		case 'jpGeneral':
-			return 'jp_presales';
-		case 'wpcom':
-		default:
-			return 'wpcom_presales';
-	}
-}
-
-function getMessagingGroupForIntent( chatIntent: ChatIntent, keyType: KeyType ): MessagingGroup {
+function getMessagingGroupForIntent( chatIntent: ChatIntent ): MessagingGroup {
 	switch ( chatIntent ) {
 		case 'PRESALES':
-			return getGroupName( keyType );
+			return 'wpcom_presales';
 
 		case 'PRECANCELLATION':
 		case 'SUPPORT':
@@ -84,10 +48,7 @@ const ChatButton: FC< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const siteId = useSelector( getSelectedSiteId );
-	const { responseCart } = useShoppingCart( siteId ?? undefined );
-	const messagingGroup = getMessagingGroupForIntent( chatIntent, getChatKey( responseCart ) );
-
+	const messagingGroup = getMessagingGroupForIntent( chatIntent );
 	const {
 		canConnectToZendesk,
 		hasActiveChats,
@@ -122,8 +83,6 @@ const ChatButton: FC< Props > = ( {
 		if ( isEligibleForChat && isChatAvailable ) {
 			return true;
 		}
-
-		return false;
 	}
 
 	const { isOpeningChatWidget, openChatWidget } = useChatWidget();

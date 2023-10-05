@@ -2,12 +2,11 @@
 /**
  * External Dependencies
  */
-import { isMobile } from '@automattic/viewport';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
@@ -28,8 +27,6 @@ function useMessagingBindings( hasActiveChats: boolean, isMessagingScriptLoaded:
 		};
 	}, [] );
 
-	const section = useSelector( ( state ) => getSectionName( state ) );
-
 	useEffect( () => {
 		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
 			return;
@@ -40,17 +37,13 @@ function useMessagingBindings( hasActiveChats: boolean, isMessagingScriptLoaded:
 		} );
 		window.zE( 'messenger:on', 'close', function () {
 			setShowMessagingWidget( false );
-
-			if ( isMobile() && section === 'checkout' ) {
-				setShowMessagingLauncher( false );
-			}
 		} );
 		window.zE( 'messenger:on', 'unreadMessages', function ( count ) {
 			if ( Number( count ) > 0 ) {
 				setShowMessagingLauncher( true );
 			}
 		} );
-	}, [ isMessagingScriptLoaded, setShowMessagingLauncher, setShowMessagingWidget, section ] );
+	}, [ isMessagingScriptLoaded, setShowMessagingLauncher, setShowMessagingWidget ] );
 
 	useEffect( () => {
 		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
@@ -110,14 +103,10 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 
 	useStillNeedHelpURL();
 
-	const { hasActiveChats, isEligibleForChat, isPresalesChatOpen } = useChatStatus(
-		'wpcom_messaging',
-		false
-	);
-
+	const { hasActiveChats, isEligibleForChat } = useChatStatus( 'wpcom_messaging', false );
 	const { isMessagingScriptLoaded } = useZendeskMessaging(
 		'zendesk_support_chat_key',
-		( isHelpCenterShown && isEligibleForChat ) || isPresalesChatOpen || hasActiveChats,
+		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
 		isEligibleForChat && hasActiveChats
 	);
 
