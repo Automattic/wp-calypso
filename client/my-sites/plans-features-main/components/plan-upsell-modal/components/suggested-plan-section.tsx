@@ -37,7 +37,7 @@ export default function SuggestedPlanSection( {
 				<div>{ paidDomainName }</div>
 				<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
 			</DomainName>
-			<StyledButton busy={ isBusy } primary onClick={ onButtonClick }>
+			<StyledButton fitContent busy={ isBusy } primary onClick={ onButtonClick }>
 				{ currencyCode &&
 					translate( 'Get %(planTitle)s - %(planPrice)s/month', {
 						comment: 'Eg: Get Personal - $4/month',

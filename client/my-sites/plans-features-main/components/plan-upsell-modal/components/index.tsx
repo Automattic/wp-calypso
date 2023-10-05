@@ -71,7 +71,7 @@ export const DomainName = styled.div`
 	}
 `;
 
-export const StyledButton = styled( Button )`
+export const StyledButton = styled( Button )< { fitContent?: boolean } >`
 	padding: 10px 24px;
 	border-radius: 4px;
 	font-weight: 500;
@@ -96,7 +96,7 @@ export const StyledButton = styled( Button )`
 	}
 	width: 100%;
 	@media ( min-width: 780px ) {
-		max-width: fit-content;
+		max-width: ${ ( { fitContent } ) => ( fitContent ? 'fit-content' : '260px' ) };
 		width: unset;
 	}
 `;
