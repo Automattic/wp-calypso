@@ -43,6 +43,7 @@ jest.mock(
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans', () =>
 	jest.fn()
 );
+jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
 
 import {
 	PLAN_FREE,
