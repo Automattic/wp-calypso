@@ -34,7 +34,7 @@ const Intervals = ( props ) => {
 						onClick={ () => onChange && onChange( i.value ) }
 					>
 						{ i.label }
-						{ icon && <Icon className="gridicon" icon={ icon } /> }{ ' ' }
+						{ icon && <Icon className="gridicon" icon={ icon } /> }
 					</SegmentedControl.Item>
 				);
 			} ) }
