@@ -24,7 +24,7 @@ const PatternRenderer = ( {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 	const patternHtml = usePatternMinHeightVh( pattern?.html, viewportHeight );
-	const inlineCss = usePatternInlineCss( patternId, isNewSite );
+	const inlineCss = usePatternInlineCss( patternId, patternHtml, isNewSite );
 
 	return (
 		<BlockRendererContainer
