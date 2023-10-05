@@ -79,6 +79,7 @@ import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	TYPE_100_YEAR,
 	PLAN_HOSTING_TRIAL_MONTHLY,
+	TYPE_HOSTING_TRIAL,
 } from '../src/constants';
 import {
 	getPlan,
@@ -1035,11 +1036,7 @@ describe( 'findSimilarPlansKeys', () => {
 				type: TYPE_BUSINESS,
 				group: GROUP_WPCOM,
 			} )
-		).toEqual( [
-			PLAN_BUSINESS_MONTHLY,
-			PLAN_MIGRATION_TRIAL_MONTHLY,
-			PLAN_HOSTING_TRIAL_MONTHLY,
-		] );
+		).toEqual( [ PLAN_BUSINESS_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ] );
 	} );
 } );
 
@@ -1160,6 +1157,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
+		] );
+		expect( findPlansKeys( { type: TYPE_HOSTING_TRIAL } ) ).toEqual( [
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		] );
 
@@ -1253,6 +1252,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_BUSINESS_3_YEARS,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
+		] );
+		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_HOSTING_TRIAL } ) ).toEqual( [
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_BLOGGER } ) ).toEqual( [] );
