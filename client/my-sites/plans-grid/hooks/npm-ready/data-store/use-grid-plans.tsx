@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	TYPE_BLOGGER,
 	TYPE_BUSINESS,
@@ -143,6 +142,7 @@ interface Props {
 	 */
 	isSubdomainNotGenerated?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
+	shouldDisplayFreeHostingTrial?: boolean;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -151,9 +151,15 @@ const usePlanTypesWithIntent = ( {
 	sitePlanSlug,
 	hideEnterprisePlan,
 	isSubdomainNotGenerated = false,
+	shouldDisplayFreeHostingTrial,
 }: Pick<
 	Props,
-	'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' | 'isSubdomainNotGenerated'
+	| 'intent'
+	| 'selectedPlan'
+	| 'sitePlanSlug'
+	| 'hideEnterprisePlan'
+	| 'isSubdomainNotGenerated'
+	| 'shouldDisplayFreeHostingTrial'
 > ): string[] => {
 	const isEnterpriseAvailable = ! hideEnterprisePlan;
 	const isBloggerAvailable =
@@ -170,7 +176,7 @@ const usePlanTypesWithIntent = ( {
 		...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
 		TYPE_PERSONAL,
 		TYPE_PREMIUM,
-		...( isEnabled( 'plans/hosting-trial' ) ? [ TYPE_HOSTING_TRIAL ] : [] ),
+		...( shouldDisplayFreeHostingTrial ? [ TYPE_HOSTING_TRIAL ] : [] ),
 		TYPE_BUSINESS,
 		TYPE_ECOMMERCE,
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
@@ -192,7 +198,7 @@ const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-new-hosted-site':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
-			if ( isEnabled( 'plans/hosting-trial' ) ) {
+			if ( shouldDisplayFreeHostingTrial ) {
 				planTypes.unshift( TYPE_HOSTING_TRIAL );
 			}
 			break;
@@ -256,6 +262,7 @@ const useGridPlans = ( {
 	usePlanUpgradeabilityCheck,
 	isSubdomainNotGenerated,
 	storageAddOns,
+	shouldDisplayFreeHostingTrial,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -264,6 +271,7 @@ const useGridPlans = ( {
 			sitePlanSlug,
 			hideEnterprisePlan,
 			isSubdomainNotGenerated,
+			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
 	} );
@@ -274,6 +282,7 @@ const useGridPlans = ( {
 			sitePlanSlug,
 			hideEnterprisePlan,
 			isSubdomainNotGenerated,
+			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
 	} );
