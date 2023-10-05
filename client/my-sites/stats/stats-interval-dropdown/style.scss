@@ -55,4 +55,10 @@
 			transition: none;
 		}
 	}
+
+	.segmented-control__text {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
 }
