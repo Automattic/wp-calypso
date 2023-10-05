@@ -33,15 +33,13 @@ export default function SiteProfiler() {
 	const { data: urlData } = useAnalyzeUrlQuery( domain, isDomainValid );
 	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
 	const isBusyForWhile = useLongFetchingDetection( domain, isFetchingSP );
-	const isWordPressPlatForm = urlData?.platform === 'wordpress';
 	const conversionAction = useDefineConversionAction(
 		domain,
-		siteProfilerData?.whois,
-		siteProfilerData?.is_domain_available,
-		siteProfilerData?.eligible_google_transfer,
-		hostingProviderData?.hosting_provider,
-		isWordPressPlatForm
+		siteProfilerData,
+		hostingProviderData,
+		urlData
 	);
+
 	useSiteProfilerRecordAnalytics(
 		domain,
 		isDomainValid,
