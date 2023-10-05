@@ -239,7 +239,7 @@ export const StagingSiteCard = ( {
 				/>
 			</>
 		);
-	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
+	}, [ progress, siteOwnerId, currentUserId, isReverting ] );
 
 	let stagingSiteCardContent;
 

@@ -18,9 +18,9 @@ process tracking.
 
 |   status    | meaning                                                        |
 | :---------: | -------------------------------------------------------------- |
-|  `PENDING`    | A site sync job has been started and is currently in progress. |
-|  `BACKUP`     | The sync is backing up we wait for the backups to complete.    |
-| `COMPLETED`   | The sync has been completed.                                   |
-|  `RESTORE`    | The sync is restoring and we wait for the restore to complete. |
-|  `FAILED`     | The sync has failed.                                           |
-|  _falsey_     | No information about any site syncs exists in Calypso          |
+|  `PENDING`  | A site sync job has been started and is currently in progress. |
+|  `BACKUP`   | The sync is backing up we wait for the backups to complete.    |
+| `COMPLETED` | The sync has been completed.                                   |
+|  `RESTORE`  | The sync is restoring and we wait for the restore to complete. |
+|  `FAILED`   | The sync has failed.                                           |
+|  _falsey_   | No information about any site syncs exists in Calypso          |
