@@ -3,7 +3,7 @@ import { UrlData } from 'calypso/blocks/import/types';
 import InfoPopover from 'calypso/components/info-popover';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import useHostingProviderURL from 'calypso/site-profiler/hooks/use-hosting-provider-url';
-import VerifiedProvider from '../domain-information/verified-provider';
+import VerifiedProvider from '../verified-provider';
 import HostingPopupContent from './popup-inline-content';
 import type { HostingProvider } from 'calypso/data/site-profiler/types';
 
