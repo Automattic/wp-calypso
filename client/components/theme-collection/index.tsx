@@ -77,8 +77,8 @@ export default function ThemeCollection( {
 
 	return (
 		<div className="theme-collection__container ">
-			<h2>{ title }</h2>
-			{ description }
+			<h2 className="theme-collection__title">{ title }</h2>
+			<div className="theme-collection__description">{ description }</div>
 			<div className="swiper-container" id={ swiperContainerId }>
 				<div className="theme-collection__carousel-controls">
 					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous">

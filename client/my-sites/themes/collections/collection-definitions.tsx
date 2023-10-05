@@ -12,7 +12,7 @@ export const THEME_COLLECTIONS = {
 		},
 		title: translate( 'Premium Themes' ),
 		collectionSlug: 'premium-themes',
-		description: <p>{ translate( 'Lorem ipsum dolor sit amet' ) }</p>,
+		description: <p>Lorem ipsum dolor sit amet</p>,
 	},
 	partner: {
 		query: {
@@ -25,6 +25,6 @@ export const THEME_COLLECTIONS = {
 		},
 		title: translate( 'Partner Themes' ),
 		collectionSlug: 'partner-themes',
-		description: <p>{ translate( 'Lorem ipsum dolor sit amet' ) }</p>,
+		description: <p>Lorem ipsum dolor sit amet</p>,
 	},
 };
