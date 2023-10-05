@@ -1,5 +1,9 @@
 @import "calypso/my-sites/plans-grid/media-queries";
 
+body {
+	background-color: #fdfdfd;
+}
+
 .jetpack-app-plans {
 	@include plan-features-layout-switcher;
 
