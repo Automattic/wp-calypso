@@ -38,13 +38,11 @@
 		height: 40px;
 		background: #eee;
 		border-radius: 50%;
-		align-items: center;
 		display: flex;
 		justify-content: center;
 		margin: 0 1em;
 		transition: opacity 0.3s ease-in-out;
 		pointer-events: all;
-		cursor: pointer;
 
 		&:hover {
 			filter: brightness(0.9);
