@@ -27,7 +27,6 @@ import {
 	isDotGayNoticeRequired,
 } from 'calypso/lib/domains';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
-import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -134,7 +133,6 @@ class DomainRegistrationSuggestion extends Component {
 			pendingCheckSuggestion,
 			premiumDomain,
 			isCartPendingUpdateDomain,
-			flowName,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
@@ -149,15 +147,6 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 
 			buttonStyles = { ...buttonStyles, primary: false };
-
-			if ( shouldUseMultipleDomainsInCart( flowName, suggestion ) ) {
-				buttonStyles = { ...buttonStyles, borderless: true };
-
-				buttonContent = translate( '{{checkmark/}} Selected', {
-					context: 'Domain is already added to shopping cart',
-					components: { checkmark: <Gridicon icon="checkmark" /> },
-				} );
-			}
 		} else {
 			buttonContent =
 				! isSignupStep &&
