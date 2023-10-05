@@ -22,7 +22,7 @@ export default function useDefineConversionAction(
 	domain: string,
 	siteProfilerData?: DomainAnalyzerQueryResponse,
 	hostingProviderData?: HostingProviderQueryResponse,
-	urlData?: UrlData
+	urlData?: UrlData | null
 ): CONVERSION_ACTION | undefined {
 	const [ conversionAction, setConversionAction ] = useState< CONVERSION_ACTION | undefined >();
 

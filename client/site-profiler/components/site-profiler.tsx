@@ -30,14 +30,14 @@ export default function SiteProfiler() {
 		error: errorSP,
 		isFetching: isFetchingSP,
 	} = useDomainAnalyzerQuery( domain, isDomainValid );
-	const { data: urlData } = useAnalyzeUrlQuery( domain, isDomainValid );
+	const { data: urlData, isError: isErrorUrlData } = useAnalyzeUrlQuery( domain, isDomainValid );
 	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
 	const isBusyForWhile = useLongFetchingDetection( domain, isFetchingSP );
 	const conversionAction = useDefineConversionAction(
 		domain,
 		siteProfilerData,
 		hostingProviderData,
-		urlData
+		isErrorUrlData ? null : urlData
 	);
 
 	useSiteProfilerRecordAnalytics(
