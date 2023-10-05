@@ -191,6 +191,21 @@ export class Banner extends Component {
 		} );
 	}
 
+	renderDescription( description ) {
+		if ( ! description ) {
+			return null;
+		}
+		if ( typeof description === 'string' ) {
+			return (
+				<div
+					className="banner__description"
+					dangerouslySetInnerHTML={ { __html: this.sanitize( description ) } } // eslint-disable-line react/no-danger
+				></div>
+			);
+		}
+		return <div className="banner__description">{ description }</div>;
+	}
+
 	getContent() {
 		const {
 			callToAction,
@@ -213,18 +228,6 @@ export class Banner extends Component {
 
 		const prices = Array.isArray( price ) ? price : [ price ];
 
-		function renderDescription() {
-			if ( typeof description === 'string' ) {
-				return (
-					<div
-						className="banner__description"
-						dangerouslySetInnerHTML={ { __html: this.sanitize( description ) } } // eslint-disable-line react/no-danger
-					></div>
-				);
-			}
-			return <div className="banner__description">{ description }</div>;
-		}
-
 		return (
 			<div className="banner__content">
 				{ tracksImpressionName && event && (
@@ -240,7 +243,7 @@ export class Banner extends Component {
 				) }
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
-					{ renderDescription() }
+					{ this.renderDescription( description ) }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
