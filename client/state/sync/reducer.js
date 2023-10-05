@@ -23,7 +23,7 @@ export const status = withPersistence( ( state = null, action ) => {
 			return state;
 		}
 		case SET_STATUS:
-			return action.status;
+			return action.status || null;
 		case REQUEST_STATUS_FAILURE:
 			return SiteSyncStatus.FAILED;
 		default:
