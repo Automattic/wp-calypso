@@ -20,7 +20,6 @@ import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
-import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
@@ -50,7 +49,6 @@ import type {
 	PlanSlug,
 	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
-import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 
 function DropdownIcon() {
 	return (
@@ -306,7 +304,6 @@ const FeatureFootnote = styled.span`
 
 type ComparisonGridProps = {
 	intervalType: string;
-	planTypeSelectorProps: PlanTypeSelectorProps;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	flowName?: string | null;
@@ -817,7 +814,6 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 
 const ComparisonGrid = ( {
 	intervalType,
-	planTypeSelectorProps,
 	isInSignup,
 	isLaunchPage,
 	flowName,
@@ -831,7 +827,6 @@ const ComparisonGrid = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
-	isHidden,
 }: ComparisonGridProps ) => {
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -998,13 +993,6 @@ const ComparisonGrid = ( {
 
 	return (
 		<div className="plan-comparison-grid">
-			{ isHidden ? null : (
-				<PlanTypeSelector
-					{ ...planTypeSelectorProps }
-					kind="interval"
-					plans={ displayedGridPlans.map( ( { planSlug } ) => planSlug ) }
-				/>
-			) }
 			<Grid isInSignup={ isInSignup }>
 				<ComparisonGridHeader
 					siteId={ siteId }

@@ -751,7 +751,6 @@ const PlansFeaturesMain = ( {
 								stickyRowOffset={ masterbarHeight }
 								usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 								allFeaturesList={ FEATURES_LIST }
-								planTypeSelectorProps={ planTypeSelectorProps }
 								onStorageAddOnClick={ handleStorageAddOnClick }
 								currentPlanManageHref={ currentPlanManageHref }
 								canUserManageCurrentPlan={ canUserManageCurrentPlan }
@@ -771,6 +770,7 @@ const PlansFeaturesMain = ( {
 										<PlanComparisonHeader className="wp-brand-font">
 											{ translate( 'Compare our plans and find yours' ) }
 										</PlanComparisonHeader>
+										{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 										<ComparisonGrid
 											isHidden={ ! showPlansComparisonGrid }
 											gridPlans={ gridPlansForComparisonGrid }
@@ -796,7 +796,6 @@ const PlansFeaturesMain = ( {
 											stickyRowOffset={ masterbarHeight }
 											usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 											allFeaturesList={ FEATURES_LIST }
-											planTypeSelectorProps={ planTypeSelectorProps }
 											onStorageAddOnClick={ handleStorageAddOnClick }
 											currentPlanManageHref={ currentPlanManageHref }
 											canUserManageCurrentPlan={ canUserManageCurrentPlan }
