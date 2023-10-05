@@ -1,10 +1,10 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import DOMPurify from 'dompurify';
 import React from 'react';
 import TwentyPercentImageCoupon from 'calypso/assets/images/customer-home/notice-home-limited-time-coupon-20-percent.svg';
 import ThirtyPercentImageCoupon from 'calypso/assets/images/customer-home/notice-home-limited-time-coupon-30-percent.svg';
 import { NOTICE_HOME_LIMITED_TIME_OFFER_COUPON } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 // Sanitize HTML content to allow only <b> tags and escape other tags.
 const sanitizeHTMLWithBTags = ( html ) => {
