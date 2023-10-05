@@ -446,6 +446,17 @@ body.is-section-signup.is-white-signup {
 				font-size: $font-body-small;
 			}
 
+			.domain-suggestion__action.is-borderless {
+				color: var(--color-text);
+				padding: 0.57em 1.17em;
+				@include break-mobile {
+					width: auto;
+				}
+
+				.gridicons-checkmark {
+					color: var(--studio-green-60);
+				}
+			}
 			.domain-suggestion__action:not(.is-borderless) {
 				width: 100%;
 				height: auto;
