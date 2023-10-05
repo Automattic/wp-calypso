@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
@@ -118,7 +117,6 @@ const WrappedComparisonGrid = ( {
 				usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 				allFeaturesList={ allFeaturesList }
 			>
-				<QueryActivePromotions />
 				<ComparisonGrid
 					planTypeSelectorProps={ planTypeSelectorProps }
 					intervalType={ intervalType }
@@ -149,7 +147,6 @@ const WrappedComparisonGrid = ( {
 			allFeaturesList={ allFeaturesList }
 		>
 			<CalypsoShoppingCartProvider>
-				<QueryActivePromotions />
 				<ComparisonGrid
 					planTypeSelectorProps={ planTypeSelectorProps }
 					intervalType={ intervalType }
@@ -219,7 +216,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 				usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 				allFeaturesList={ allFeaturesList }
 			>
-				<QueryActivePromotions />
 				<FeaturesGrid
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
@@ -242,7 +238,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 			allFeaturesList={ allFeaturesList }
 		>
 			<CalypsoShoppingCartProvider>
-				<QueryActivePromotions />
 				<FeaturesGrid
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
