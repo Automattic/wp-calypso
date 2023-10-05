@@ -1,5 +1,5 @@
 import { Button, Dropdown } from '@wordpress/components';
-import { check } from '@wordpress/icons';
+import { check, Icon, chevronDown } from '@wordpress/icons';
 import React, { useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import './style.scss';
@@ -23,6 +23,7 @@ const IntervalDropdown = ( { period, pathTemplate } ) => {
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button onClick={ onToggle } aria-expanded={ isOpen }>
 					{ getCurrentIntervalLabel( currentInterval ) }
+					<Icon className="gridicon" icon={ chevronDown } />
 				</Button>
 			) }
 			renderContent={ () => (
