@@ -25,7 +25,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
+import NewPurchasesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/purchases';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
 	getCurrentPartner,
@@ -40,7 +40,7 @@ import type PageJS from 'page';
 
 const setSidebar = ( context: PageJS.Context ): void => {
 	if ( isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar />;
+		context.secondary = <NewPurchasesSidebar />;
 	} else {
 		context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	}
