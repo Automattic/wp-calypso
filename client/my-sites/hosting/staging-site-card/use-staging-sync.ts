@@ -59,7 +59,7 @@ export const usePullFromStagingMutation = (
 					path: `/sites/${ productionSiteId }/staging-site/pull-from-staging/${ stagingSiteId }`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ sync_options: options }
+				{ options }
 			),
 		...options,
 		mutationKey: [ PULL_FROM_STAGING, stagingSiteId ],
