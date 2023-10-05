@@ -1,4 +1,3 @@
-import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { get } from 'lodash';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
@@ -35,7 +34,6 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => ( dispatch ) => {
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 		tos: JSON.stringify( getToSAcceptancePayload() ),
-		anon_id: getTracksAnonymousUserId(),
 	} )
 		.then( ( response ) => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {

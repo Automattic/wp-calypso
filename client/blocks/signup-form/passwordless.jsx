@@ -1,4 +1,3 @@
-import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import emailValidator from 'email-validator';
@@ -91,7 +90,6 @@ class PasswordlessSignupForm extends Component {
 					oauth2_client_id,
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
-				anon_id: getTracksAnonymousUserId(),
 			} );
 			this.createAccountCallback( null, response );
 		} catch ( err ) {
