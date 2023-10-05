@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
-import { UrlData } from 'calypso/blocks/import/types';
 import useHostingProviderURL from 'calypso/site-profiler/hooks/use-hosting-provider-url';
 import HostingProviderName from './hosting-provider-name';
+import type { UrlData } from 'calypso/blocks/import/types';
 import type { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
 import './style.scss';
 

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -29,43 +30,62 @@ export default function HeadingInformation( props: Props ) {
 	} = props;
 	const finalStatus = specialDomainMapping ?? conversionAction;
 
+	const recordCtaEvent = ( ctaName: string ) => {
+		recordTracksEvent( 'calypso_site_profiler_cta', {
+			domain,
+			cta_name: ctaName,
+			conversion_action: conversionAction,
+			special_domain_mapping: specialDomainMapping,
+		} );
+	};
+
 	const onRegisterDomain = () => {
+		recordCtaEvent( 'registerDomain' );
 		page( `/start/domain/domain-only?new=${ domain }&search=yes` );
 	};
 
 	const onTransferDomain = () => {
+		recordCtaEvent( 'transferDomain' );
 		page( `/setup/domain-transfer/intro?new=${ domain }&search=yes` );
 	};
 
-	const onMigrateSite = () => {
-		page( `/setup/import-hosted-site?from=${ domain }` );
-	};
-
 	const onTransferDomainFree = () => {
+		recordCtaEvent( 'transferDomainGoogle' );
 		page( `/setup/google-transfer/intro?new=${ domain }` );
 	};
 
+	const onMigrateSite = () => {
+		recordCtaEvent( 'migrateSite' );
+		page( `/setup/import-hosted-site?from=${ domain }` );
+	};
+
 	const onLearnMoreHosting = () => {
+		recordCtaEvent( 'learnMoreHosting' );
 		window.open( 'https://wordpress.com/hosting', '_blank' );
 	};
 
 	const onGetWordPress = () => {
+		recordCtaEvent( 'getWordpress' );
 		window.open( 'https://wordpress.org/download', '_blank' );
 	};
 
 	const onLearnMoreAutomattic = () => {
+		recordCtaEvent( 'learnMoreAutomattic' );
 		window.open( 'https://automattic.com', '_blank' );
 	};
 
 	const onJoinTumblr = () => {
+		recordCtaEvent( 'joinTumblr' );
 		window.open( 'https://tumblr.com/', '_blank' );
 	};
 
 	const onLearnMoreGravatar = () => {
+		recordCtaEvent( 'learnMoreGravatar' );
 		window.open( 'https://gravatar.com/', '_blank' );
 	};
 
 	const onGetAkismet = () => {
+		recordCtaEvent( 'getAkismet' );
 		window.open( 'https://akismet.com/', '_blank' );
 	};
 
