@@ -257,8 +257,10 @@ class PasswordlessSignupForm extends Component {
 						<FormLabel htmlFor="email">{ this.getLabelText() }</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
+							autoCorrect="off"
 							className="signup-form__passwordless-email"
 							type="email"
+							id="email"
 							name="email"
 							value={ this.state.email }
 							onChange={ this.onInputChange }
