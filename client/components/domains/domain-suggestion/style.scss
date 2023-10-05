@@ -446,6 +446,17 @@ body.is-section-signup.is-white-signup {
 				font-size: $font-body-small;
 			}
 
+			.domain-suggestion__action.is-borderless {
+				color: var(--color-text);
+				padding: 0.57em 1.5em;
+				@include break-mobile {
+					width: auto;
+				}
+
+				.gridicons-checkmark {
+					color: var(--studio-green-60);
+				}
+			}
 			.domain-suggestion__action:not(.is-borderless) {
 				width: 100%;
 				height: auto;
@@ -494,6 +505,17 @@ body.is-section-signup.is-white-signup {
 					fill: $cod-grey;
 					margin-left: 0;
 				}
+			}
+		}
+
+		&.featured-domain-suggestion .domain-suggestion__action-container .domain-suggestion__action.is-borderless {
+			padding: 0.57em 1.3em !important;
+			box-shadow: none !important;
+			color: var(--color-text);
+			font-weight: normal !important;
+
+			.gridicons-checkmark {
+				color: var(--studio-green-60);
 			}
 		}
 	}
