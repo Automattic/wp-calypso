@@ -90,8 +90,8 @@ export default function ThemeCollection( {
 						<Icon icon={ chevronRight } />
 					</Button>
 				</div>
-				<div className="theme-collection__list-wrapper swiper-wrapper">{ children }</div>
 			</div>
+			<div className="theme-collection__list-wrapper swiper-wrapper">{ children }</div>
 		</div>
 	);
 }
