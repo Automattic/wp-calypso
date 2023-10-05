@@ -962,6 +962,10 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
+		if ( this.shouldUseMultipleDomainsInCart() ) {
+			return translate( 'Find and claim one or more domain names' );
+		}
+
 		if ( isReskinned ) {
 			return (
 				! stepSectionName &&
