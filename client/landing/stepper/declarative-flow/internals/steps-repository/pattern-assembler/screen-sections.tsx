@@ -1,11 +1,9 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NavigatorHeader } from '@automattic/onboarding';
 import {
 	Button,
 	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { useScreen } from './hooks';
@@ -26,11 +24,9 @@ const ScreenSections = ( {
 	onContinueClick,
 	recordTracksEvent,
 }: Props ) => {
-	const translate = useTranslate();
-	const { title } = useScreen( 'sections' );
+	const { title, description, continueLabel } = useScreen( 'sections' );
 	const { params, goTo } = useNavigator();
 	const selectedCategory = params.categorySlug as string;
-	const hasEnTranslation = useHasEnTranslation();
 
 	const onSelectSectionCategory = ( category: string ) => {
 		const nextPath =
@@ -48,17 +44,7 @@ const ScreenSections = ( {
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ title } /> }
-				description={
-					hasEnTranslation(
-						'Find the right patterns for you by exploring the list of categories below.'
-					)
-						? translate(
-								'Find the right patterns for you by exploring the list of categories below.'
-						  )
-						: translate(
-								'Find the section patterns for your homepage by exploring the categories below.'
-						  )
-				}
+				description={ description }
 				hideBack
 			/>
 			<div className="screen-container__body">
@@ -73,7 +59,7 @@ const ScreenSections = ( {
 			</div>
 			<div className="screen-container__footer">
 				<Button className="pattern-assembler__button" variant="primary" onClick={ onContinueClick }>
-					{ translate( 'Save and continue' ) }
+					{ continueLabel }
 				</Button>
 			</div>
 		</>

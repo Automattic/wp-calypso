@@ -2,7 +2,6 @@ import getRewindState from './get-rewind-state';
 
 /**
  * Returns the url of a download if it is ready, null otherwise
- *
  * @param {Object} state Global state tree
  * @param {?number|string} siteId the site ID
  * @param {string} rewindId the id of the rewind to get the status of

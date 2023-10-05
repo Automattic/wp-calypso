@@ -6,7 +6,6 @@ import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';
  * the given site. Returns null if the bytes are invalid, the max upload
  * size for the site is unknown or a video is being uploaded for a Jetpack
  * site with VideoPress enabled. Otherwise, returns true.
- *
  * @param  {Object}   item  Media object
  * @param  {Object}   site  Site object
  * @returns {?boolean}       Whether the size exceeds the site maximum

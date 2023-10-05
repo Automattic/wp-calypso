@@ -7,8 +7,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
+import { DataResponse } from 'calypso/my-sites/plans-grid/types';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -292,6 +292,7 @@ export function FreePlanFreeDomainDialog( {
 
 				<ButtonRow>
 					<StyledButton
+						className="free-plan-free-domain-dialog__plan-button is-upsell-modal-personal-plan"
 						disabled={ freeSubdomain.isLoading || ! freeSubdomain.result }
 						primary
 						onClick={ () => {
@@ -307,6 +308,7 @@ export function FreePlanFreeDomainDialog( {
 					</StyledButton>
 
 					<StyledButton
+						className="free-plan-free-domain-dialog__plan-button is-upsell-modal-free-plan"
 						disabled={ freeSubdomain.isLoading || ! freeSubdomain.result }
 						onClick={ () => {
 							onFreePlanSelected();

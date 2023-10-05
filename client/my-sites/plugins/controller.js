@@ -5,17 +5,19 @@ import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation } from 'calypso/my-sites/controller';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
+import { MailPoetUpgradePage } from './mailpoet-upgrade';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginBrowser from './plugins-browser';
+import { RelatedPluginsPage } from './related-plugins-page';
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -76,6 +78,16 @@ export function renderPluginWarnings( context, next ) {
 	next();
 }
 
+export function redirectMailPoetUpgrade( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	context.primary = createElement( MailPoetUpgradePage, {
+		siteId: site.ID,
+	} );
+	next();
+}
+
 export function renderProvisionPlugins( context, next ) {
 	context.primary = createElement( PlanSetup, {
 		forSpecificPlugin: context.query.only || false,
@@ -95,6 +107,19 @@ export function plugins( context, next ) {
 function plugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
 	renderSinglePlugin( context, siteUrl );
+	next();
+}
+
+export function relatedPlugins( context, next ) {
+	const siteUrl = getSiteFragment( context.path );
+	const pluginSlug = decodeURIComponent( context.params.plugin );
+
+	context.primary = createElement( RelatedPluginsPage, {
+		path: context.path,
+		pluginSlug,
+		siteUrl,
+	} );
+
 	next();
 }
 
@@ -192,7 +217,8 @@ export function scrollTopIfNoHash( context, next ) {
 }
 
 export function navigationIfLoggedIn( context, next ) {
-	if ( isUserLoggedIn( context.store.getState() ) ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
 		navigation( context, next );
 		return;
 	}

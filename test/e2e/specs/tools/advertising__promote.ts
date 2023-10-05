@@ -47,18 +47,28 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		beforeAll( async () => {
 			page = await browser.newPage();
 
-			const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
+			const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+				{ gutenberg: 'stable', siteType: 'simple', accountName: 'defaultUser' },
+			] );
+
 			testAccount = new TestAccount( accountName );
 
-			// Createa a new test post before starting the test, to ensure at least one
-			// available post.
 			restAPIClient = new RestAPIClient( testAccount.credentials );
-			newPostDetails = await restAPIClient.createPost(
+
+			// Createa a new test post before starting the test if site has no published post.
+			const hasPosts = await restAPIClient.siteHasPost(
 				testAccount.credentials.testSites?.primary.id as number,
-				{
-					title: pageTitle,
-				}
+				{ state: 'publish' }
 			);
+
+			if ( ! hasPosts ) {
+				newPostDetails = await restAPIClient.createPost(
+					testAccount.credentials.testSites?.primary.id as number,
+					{
+						title: pageTitle,
+					}
+				);
+			}
 
 			await testAccount.authenticate( page );
 
@@ -75,11 +85,12 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		} );
 
 		it( 'Click on Promote for the first post', async function () {
-			await advertisingPage.clickButtonByNameOnRow( 'Promote', { postTitle: pageTitle } );
+			await advertisingPage.clickButtonByNameOnRow( 'Promote', { row: 1 } );
 		} );
 
 		it( 'Land in Blaze campaign landing page', async function () {
 			await page.waitForURL( /advertising/ );
+
 			blazeCampaignPage = new BlazeCampaignPage( page );
 		} );
 
@@ -94,7 +105,7 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 
 		it( 'Enter title and snippet', async function () {
 			await blazeCampaignPage.enterText( 'Page title', pageTitle );
-			await blazeCampaignPage.enterText( 'Article Snippet', snippet );
+			await blazeCampaignPage.enterText( 'Ad text', snippet );
 		} );
 
 		it( 'Validate preview', async function () {
@@ -102,6 +113,10 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		} );
 
 		afterAll( async function () {
+			if ( ! newPostDetails ) {
+				return;
+			}
+
 			await restAPIClient.deletePost(
 				testAccount.credentials.testSites?.primary.id as number,
 				newPostDetails.ID

@@ -5,7 +5,6 @@ const debug = debugFactory( 'calypso:payment-gateway' );
 
 /**
  * PaymentGatewayLoader component
- *
  * @returns {PaymentGatewayLoader|undefined} - an instance of PaymentGatewayLoader
  */
 function PaymentGatewayLoader() {
@@ -17,7 +16,6 @@ function PaymentGatewayLoader() {
 /**
  * After the external payment gateway script has loaded, this method calls the
  * `callback` with the `gatewayNamespace` class as its first argument
- *
  * @param {string} gatewayUrl - the URL to fetch the script
  * @param {string} gatewayNamespace - the global namespace of the script
  * @returns {Promise} promise

@@ -13,7 +13,6 @@ const noop = () => {};
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
- *
  * @param {string} str The string to decode
  * @returns {string} The decoded string
  */
@@ -22,7 +21,6 @@ const unescapeDecimalEntities = ( str ) =>
 
 /**
  * Given an object from the api, prepare it to be consumed by the ui by transforming the shape of the data
- *
  * @param {Object} response The response object from the jitms endpoint
  * @param {Object} response.data The jitms to display from the api
  * @returns {Object} The transformed data to display
@@ -51,7 +49,6 @@ const transformApiRequest = ( { data: jitms } ) =>
 
 /**
  * Processes the current state and determines if it should fire a jitm request
- *
  * @param {Object} action The fetch action
  * @returns {Object} The HTTP fetch action
  */
@@ -77,7 +74,6 @@ export const doFetchJITM = ( action ) => {
 /**
  * Dismisses a jitm on the jetpack site, it returns nothing useful and will return no useful error, so we'll
  * fail and succeed silently.
- *
  * @param {Object} action The dismissal action
  * @returns {Object} The HTTP fetch action
  */
@@ -101,7 +97,6 @@ export const doDismissJITM = ( action ) =>
 
 /**
  * Called when the http layer receives a valid jitm
- *
  * @param {Object} action action object
  * @param {number} action.siteId The site id
  * @param {string} action.messagePath The jitm message path (ex: calypso:comments:admin_notices)
@@ -115,7 +110,6 @@ export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
 
 /**
  * Called when a jitm fails for any network related reason
- *
  * @param {Object} action action object
  * @param {number} action.siteId The site id
  * @param {string} action.messagePath The jitm message path (ex: calypso:comments:admin_notices)

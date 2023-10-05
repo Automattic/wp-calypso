@@ -28,9 +28,8 @@ const StatsCommercialPriceDisplay = ( {
 					</div>
 				) }
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }>
-					{ planPriceObject.hasNonZeroFraction
-						? `${ planPriceObject.integer }${ planPriceObject.fraction }`
-						: `${ planPriceObject.integer }` }
+					{ `${ planPriceObject.integer }` }
+					{ planPriceObject.hasNonZeroFraction && <sup>{ `${ planPriceObject.fraction }` }</sup> }
 				</div>
 				{ planPriceObject.symbolPosition === 'after' && (
 					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>
@@ -74,6 +73,7 @@ const StatsBenefitsPersonal = () => {
 				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
 				<li>{ translate( 'GDPR compliant' ) }</li>
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
+				{ /** TODO: check sub price for validation -  will need support added to use-stats-purchases hook */ }
 				<li>{ translate( 'Priority support' ) }</li>
 			</ul>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>

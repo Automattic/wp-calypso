@@ -19,7 +19,6 @@ import section from './section/reducer';
 
 /**
  * Tracks the currently selected site ID.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -58,7 +57,6 @@ export function isSectionLoading( state = false, action ) {
 
 /**
  * Tracks if the notifications panel is open
- *
  * @param   {Object} state       Current state
  * @param   {Object} action      Action payload
  * @param   {string} action.type The action type identifier. In this case it's looking for NOTIFICATIONS_PANEL_TOGGLE

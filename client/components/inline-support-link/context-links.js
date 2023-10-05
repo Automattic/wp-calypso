@@ -11,8 +11,8 @@ const contextLinks = {
 		post_id: 213203,
 	},
 	autorenewal: {
-		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
-		post_id: 111349,
+		link: 'https://wordpress.com/support/manage-purchases/automatic-renewal/',
+		post_id: 267092,
 	},
 	backups: {
 		link: 'https://wordpress.com/support/restore/',
@@ -31,8 +31,8 @@ const contextLinks = {
 		post_id: 240330,
 	},
 	cancel_purchase: {
-		link: 'https://wordpress.com/support/manage-purchases/#cancel-a-purchase',
-		post_id: 111349,
+		link: 'https://wordpress.com/support/manage-purchases/cancel-a-purchase/',
+		post_id: 267077,
 	},
 	categories: {
 		link: 'https://wordpress.com/support/posts/categories/',

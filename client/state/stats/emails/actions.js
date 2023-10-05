@@ -17,7 +17,6 @@ import {
 /**
  * Returns an action object to be used in signalling that email stat for a site,
  * email, period and stat have been received.
- *
  * @param  {number} siteId Site ID
  * @param  {number} postId Email Id
  * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
@@ -40,7 +39,6 @@ export function receiveEmailStats( siteId, postId, period, statType, date, stats
 
 /**
  * Transforms the received API response to Redux state
- *
  * @param {Object} stats The incoming stats
  * @param {string} period The period for the stats
  * @returns {Object}
@@ -61,7 +59,6 @@ function emailStatsForPeriodTransform( stats, period ) {
 
 /**
  * Transforms the received API response to Redux state
- *
  * @param {Object} stats The incoming stats
  * @returns {Object}
  */
@@ -71,7 +68,7 @@ function emailStatsAlltimeTransform( stats ) {
 		countries: parseEmailCountriesData( stats.countries?.data, stats[ 'countries-info' ] ),
 		devices: parseEmailListData( stats.devices?.data ),
 		clients: parseEmailListData( stats.clients?.data ),
-		links: parseEmailLinksData( stats.links?.data ),
+		links: parseEmailLinksData( stats.links?.data, stats[ 'user-content-links' ]?.data ),
 		rate: {
 			opens_rate: stats.opens_rate,
 			total_opens: stats.total_opens,
@@ -85,7 +82,6 @@ function emailStatsAlltimeTransform( stats ) {
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve email stat for a site and a post.
- *
  * @param  {number} siteId Site ID
  * @param  {number} postId Email Id
  * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
@@ -156,7 +152,6 @@ function requestEmailStats( siteId, postId, period, statType, date, quantity ) {
  * retrieve email stat for a site, post, period and date
  *
  * This is for stats that are bound to a period (chart, clients, devices, countries)
- *
  * @param  {number} siteId Site ID
  * @param  {number} postId Email Id
  * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
@@ -173,7 +168,6 @@ export function requestEmailPeriodStats( siteId, postId, period, statType, date,
  * retrieve email stat for a site and a post.
  *
  * This is for stats that are not bound to a period (open_rate)
- *
  * @param  {number} siteId Site ID
  * @param  {number} postId Email Id
  * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats

@@ -2,7 +2,6 @@ import { forEach, get, omit } from 'lodash';
 
 /**
  * Normalize settings for use in Redux.
- *
  * @param  {Object}   settings   Raw settings.
  * @returns {Object}              Normalized settings.
  */
@@ -45,7 +44,6 @@ export const normalizeSettings = ( settings ) => {
 
 /**
  * Sanitize settings for updating in the Jetpack site.
- *
  * @param  {Object}   settings   Settings.
  * @returns {Object}              Normalized settings.
  */
@@ -83,7 +81,6 @@ export const sanitizeSettings = ( settings ) => {
 
 /**
  * Filter out all settings that belong to inactive modules.
- *
  * @param  {Object}   settings   Settings.
  * @returns {Object}              Normalized settings.
  */

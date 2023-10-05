@@ -33,7 +33,7 @@ const SitePreview = ( {
 		DEVICE_TYPES.PHONE,
 	];
 
-	const previewUrl = ! isUnsupportedPlan ? `https://${ siteSlug }` : null;
+	const previewUrl = ! isUnsupportedPlan && siteSlug ? `https://${ siteSlug }` : null;
 	const loadingMessage = ! isUnsupportedPlan
 		? translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 				components: { strong: <strong /> },
@@ -58,7 +58,7 @@ const SitePreview = ( {
 			hide_banners: true,
 			// hide cookies popup
 			preview: true,
-			do_preview_no_interactions: enableInteractions,
+			do_preview_no_interactions: ! enableInteractions,
 			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
 	};

@@ -21,6 +21,9 @@ export default function useUpdateDomainForwardingMutation(
 			queryClient.invalidateQueries( domainForwardingQueryKey( domainName ) );
 			queryOptions.onSuccess?.();
 		},
+		onError( error: DomainsApiError ) {
+			queryOptions.onError?.( error );
+		},
 	} );
 
 	const { mutate } = mutation;

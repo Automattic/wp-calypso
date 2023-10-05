@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -44,9 +43,9 @@ class RequestLoginEmailForm extends Component {
 		sendEmailLogin: PropTypes.func.isRequired,
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
 
-		showTos: PropTypes.bool,
+		tosComponent: PropTypes.node,
 		headerText: PropTypes.string,
-		subHeaderText: PropTypes.string,
+		hideSubHeaderText: PropTypes.bool,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		onSendEmailLogin: PropTypes.func,
@@ -111,9 +110,9 @@ class RequestLoginEmailForm extends Component {
 			emailRequested,
 			showCheckYourEmail,
 			translate,
-			showTos,
+			tosComponent,
 			headerText,
-			subHeaderText,
+			hideSubHeaderText,
 			inputPlaceholder,
 			submitButtonLabel,
 		} = this.props;
@@ -137,32 +136,6 @@ class RequestLoginEmailForm extends Component {
 			typeof requestError === 'string' && requestError.length
 				? requestError
 				: translate( 'Unable to complete request' );
-
-		const tos = (
-			<div className="magic-login__tos">
-				{ this.props.translate(
-					'By entering your email address, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-					{
-						components: {
-							tosLink: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							privacyLink: (
-								<a
-									href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-				) }
-			</div>
-		);
 
 		return (
 			<div className="magic-login__form">
@@ -190,7 +163,7 @@ class RequestLoginEmailForm extends Component {
 				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
 					<p className="magic-login__form-sub-header">
-						{ subHeaderText ||
+						{ ! hideSubHeaderText &&
 							translate(
 								'Get a link sent to the email address associated with your account to log in instantly without your password.'
 							) }
@@ -209,7 +182,7 @@ class RequestLoginEmailForm extends Component {
 							onChange={ this.onUsernameOrEmailFieldChange }
 							placeholder={ inputPlaceholder }
 						/>
-						{ showTos && tos }
+						{ tosComponent }
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
 								{ submitButtonLabel || translate( 'Get Link' ) }

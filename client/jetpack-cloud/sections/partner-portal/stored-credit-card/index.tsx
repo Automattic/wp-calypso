@@ -1,4 +1,4 @@
-import { PaymentLogo } from '@automattic/composite-checkout';
+import { PaymentLogo } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PaymentMethodActions from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-actions';

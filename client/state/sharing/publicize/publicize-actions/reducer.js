@@ -19,7 +19,6 @@ import { publicizeActionsSchema } from './schema';
 
 /**
  * Updates deeply nested data for the siteId/postId subtree
- *
  * @param {Object} newValue - new value to assign in the subtree
  * @param {Object} state previous state
  * @param {number} siteId siteId

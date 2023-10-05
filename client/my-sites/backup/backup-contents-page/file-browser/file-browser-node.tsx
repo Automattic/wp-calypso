@@ -1,10 +1,8 @@
-import config from '@automattic/calypso-config';
-import { Button, Icon } from '@wordpress/components';
+import { Button, CheckboxControl, Icon } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { chevronDown, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { FunctionComponent } from 'react';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { useDispatch, useSelector } from 'calypso/state';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
@@ -42,7 +40,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
-	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
 
 	const {
 		isSuccess,
@@ -85,7 +82,12 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						siteId,
 						path,
 						backupFiles.filter( shouldAddChildNode ).map( ( childItem: FileBrowserItem ) => {
-							return { id: childItem.id ?? '', path: childItem.name, type: childItem.type };
+							return {
+								id: childItem.id ?? '',
+								path: childItem.name,
+								type: childItem.type,
+								totalItems: childItem.totalItems,
+							};
 						} )
 					)
 				);
@@ -201,28 +203,17 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const renderCheckbox = () => {
-		if ( ! isGranularEnabled ) {
-			return null;
-		}
 		// We don't restore WordPress and just download it individually
 		if ( item.type === 'wordpress' ) {
 			return null;
 		}
 
-		// Mixed state will show checked but with a mixed class
-		// We'll use this to show an alternate background
-		// TODO: Replace with a [-] for mixed state
 		return (
-			<FormCheckbox
-				checked={
-					browserNodeItem
-						? browserNodeItem.checkState === 'checked' || browserNodeItem.checkState === 'mixed'
-						: false
-				}
+			<CheckboxControl
+				__nextHasNoMarginBottom
+				checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
+				indeterminate={ browserNodeItem && browserNodeItem.checkState === 'mixed' }
 				onChange={ onCheckboxChange }
-				className={ `${
-					browserNodeItem && browserNodeItem.checkState === 'mixed' ? 'mixed' : ''
-				}` }
 			/>
 		);
 	};

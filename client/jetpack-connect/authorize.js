@@ -345,7 +345,6 @@ export class JetpackAuthorize extends Component {
 
 	/**
 	 * Check whether this a valid authorized SSO request
-	 *
 	 * @param  {Object}  props          Props to test
 	 * @param  {?string} props.authQuery.from     Where is the request from
 	 * @param  {?number} props.authQuery.clientId Remote site ID
@@ -358,7 +357,6 @@ export class JetpackAuthorize extends Component {
 
 	/**
 	 * Check if the user is coming from the Jetpack upgrade flow.
-	 *
 	 * @param  {Object}  props           Props to test
 	 * @param  {?string} props.authQuery.redirectAfterAuth Where were we redirected after auth.
 	 * @returns {boolean}                True if the user is coming from the Jetpack upgrade flow, false otherwise.
@@ -867,6 +865,34 @@ export class JetpackAuthorize extends Component {
 	renderContent() {
 		const { translate, user, authQuery } = this.props;
 		if ( this.isWooCoreProfiler() ) {
+			let col1Features = [];
+			let col2Features = [];
+			if ( authQuery.plugin_name === 'jetpack-boost' ) {
+				col1Features = [
+					translate( 'Speed up your store' ),
+					translate( 'Optimize CSS loading' ),
+					translate( 'Defer non-essential Javascript' ),
+				];
+				col2Features = [
+					translate( 'Lazy image loading' ),
+					translate( 'Site performance scores' ),
+					translate( 'Improve SEO' ),
+				];
+			} else {
+				col1Features = [
+					translate( 'Speed up content creation' ),
+					translate( 'Prompt based AI assistant' ),
+					translate( 'Adaptive tone adjustment' ),
+					translate( 'Generate text, tables, and lists' ),
+				];
+				col2Features = [
+					translate( 'Quota of 20 requests' ),
+					translate( 'Title and summary generation' ),
+					translate( 'Translate content to multiple languages' ),
+					translate( 'Spelling and grammar correction' ),
+				];
+			}
+
 			return (
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
@@ -888,7 +914,7 @@ export class JetpackAuthorize extends Component {
 						</Card>
 						<div className="jetpack-connect__logged-in-bottom">
 							{ this.renderStateAction() }
-							<JetpackFeatures />
+							<JetpackFeatures col1Features={ col1Features } col2Features={ col2Features } />
 							<Disclaimer siteName={ decodeEntities( authQuery.blogname ) } />
 							<div className="jetpack-connect__jetpack-logo-wrapper">
 								<JetpackLogo monochrome size={ 18 } />{ ' ' }

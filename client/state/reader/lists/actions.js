@@ -35,7 +35,6 @@ import 'calypso/state/reader/init';
 
 /**
  * Returns an action object to signal that list objects have been received.
- *
  * @param  {Array}  lists Lists received
  * @returns {Object}       Action object
  */
@@ -48,7 +47,6 @@ export function receiveLists( lists ) {
 
 /**
  * Request the current user's subscribed lists.
- *
  * @returns {Object}       Action object
  */
 export function requestSubscribedLists() {
@@ -63,7 +61,6 @@ export function createReaderList( list ) {
 
 /**
  * Request a single Reader list.
- *
  * @param  {string}  listOwner List owner
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
@@ -90,7 +87,6 @@ export function handleReaderListRequestFailure( errorInfo ) {
 
 /**
  * Follow a list.
- *
  * @param  {string}  listOwner List owner
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
@@ -105,7 +101,6 @@ export function followList( listOwner, listSlug ) {
 
 /**
  * Receive a successful list follow.
- *
  * @param  {Object} list Followed list
  * @returns {Object} Action object
  */
@@ -118,7 +113,6 @@ export function receiveFollowList( list ) {
 
 /**
  * Unfollow a list.
- *
  * @param  {string}  listOwner List owner
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
@@ -133,7 +127,6 @@ export function unfollowList( listOwner, listSlug ) {
 
 /**
  * Receive a successful list unfollow.
- *
  * @param  {Object} list Unfollowed list
  * @returns {Object}    Action object
  */
@@ -146,7 +139,6 @@ export function receiveUnfollowList( list ) {
 
 /**
  * Triggers a network request to update a list's details.
- *
  * @param   {Object} list List details to save
  * @returns {Object} Action object
  */
@@ -163,7 +155,6 @@ export function updateReaderList( list ) {
 
 /**
  * Handle updated list object from the API.
- *
  * @param   {Object} data List to save
  * @returns {Object} Action object
  */
@@ -176,7 +167,6 @@ export function receiveUpdatedListDetails( data ) {
 
 /**
  * Handle an error from the list update API.
- *
  * @param   {Error}  error Error during the list update process
  * @param   {Object} list List details to save
  * @returns {Object} Action object

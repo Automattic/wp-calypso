@@ -316,10 +316,20 @@ $design-preview-sidebar-width: 311px;
 
 	@include break-large {
 		padding: 0 12px;
-		margin: 8px -12px 0;
+		margin: 32px -12px 0;
 		animation: none;
 		overflow-x: hidden;
 		overflow-y: scroll;
+		width: auto;
+
+		&.design-preview__sidebar-variations--styles {
+			margin-left: -15px;
+			margin-right: -15px;
+		}
+
+		.components-navigator-screen & {
+			margin-top: 2px;
+		}
 
 		@supports ( scrollbar-gutter: stable ) {
 			overflow-y: auto;
@@ -347,11 +357,10 @@ $design-preview-sidebar-width: 311px;
 		.font-pairing-variations {
 			display: grid;
 			gap: 12px;
-			margin: 14px -2px 26px;
-			padding-inline-end: 6px;
+			margin: 14px -2px 2px;
 
 			.global-styles-variation__item {
-				width: 100%;
+				width: auto;
 			}
 		}
 	}

@@ -34,7 +34,9 @@ const ThemeSectionContainer = styled.div`
 const ThemeSectionImageContainer = styled.div`
 	padding: 8px 8px 0 8px;
 	border-radius: 16px;
-	box-shadow: 0px 15px 20px rgba( 0, 0, 0, 0.04 ), 0px 13px 10px rgba( 0, 0, 0, 0.03 ),
+	box-shadow:
+		0px 15px 20px rgba( 0, 0, 0, 0.04 ),
+		0px 13px 10px rgba( 0, 0, 0, 0.03 ),
 		0px 6px 6px rgba( 0, 0, 0, 0.02 );
 	width: 100%;
 `;
@@ -105,7 +107,13 @@ const ThemeNameSectionWrapper = styled.div`
 	flex-wrap: wrap;
 `;
 
-export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
+export const ThankYouThemeSection = ( {
+	theme,
+	isOnboardingFlow,
+}: {
+	theme: any;
+	isOnboardingFlow: boolean;
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -140,7 +148,9 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 			return;
 		}
 		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
-		dispatch( activate( theme.id, siteId, 'marketplace-thank-you' ) );
+		dispatch(
+			activate( theme.id, siteId, 'marketplace-thank-you', false, false, isOnboardingFlow )
+		);
 	};
 
 	return (

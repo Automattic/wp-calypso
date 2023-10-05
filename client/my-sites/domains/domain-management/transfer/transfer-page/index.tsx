@@ -1,5 +1,5 @@
 import { Button, Card, Spinner } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -29,6 +29,7 @@ import {
 	domainManagementList,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
+	domainManagementTransferToAnyUser,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
@@ -79,7 +80,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const [ isRequestingTransferCode, setIsRequestingTransferCode ] = useState( false );
 	const [ isLockingOrUnlockingDomain, setIsLockingOrUnlockingDomain ] = useState( false );
 	const domain = getSelectedDomain( props );
-
+	const hasEnTranslation = useHasEnTranslation();
 	const renderHeader = () => {
 		const items = [
 			{
@@ -135,6 +136,24 @@ const TransferPage = ( props: TransferPageProps ) => {
 					// translators: Transfer a domain to another user
 					headerText={ __( 'To another user' ) }
 					mainText={ mainText }
+				/>
+			);
+		} else if (
+			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) )
+		) {
+			options.push(
+				<ActionCard
+					key="transfer-to-any-user"
+					buttonHref={ domainManagementTransferToAnyUser(
+						selectedSite?.slug,
+						selectedDomainName,
+						currentRoute
+					) }
+					// translators: Continue is a verb
+					buttonText={ __( 'Continue' ) }
+					// translators: Transfer a domain to another user
+					headerText={ __( 'To another WordPress.com user' ) }
+					mainText={ __( 'Transfer this domain to another WordPress.com user' ) }
 				/>
 			);
 		}
@@ -337,7 +356,11 @@ const TransferPage = ( props: TransferPageProps ) => {
 
 		return (
 			<Card className="transfer-page__advanced-transfer-options">
-				<CardHeading size={ 16 }>{ __( 'Advanced Options' ) }</CardHeading>
+				<CardHeading size={ 16 }>
+					{ hasEnTranslation( 'Transfer to another registrar' )
+						? __( 'Transfer to another registrar' )
+						: __( 'Advanced Options' ) }
+				</CardHeading>
 				{ topLevelOfTld !== 'uk' ? renderCommonTldTransferOptions() : renderUkTransferOptions() }
 			</Card>
 		);

@@ -92,7 +92,6 @@ export function getCharts( statType ) {
 /**
  * Return data in a format used by 'components/chart` for email stats. The fields array is matched to
  * the data in a single object.
- *
  * @param {Object} payload - response
  * @param {Array} nullAttributes - properties on data objects to be initialized with
  * a null value
@@ -141,7 +140,6 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
 /**
  * Return data in a format used by 'components/stats/geochart` for email stats. The fields array is matched to
  * the data in a single object.
- *
  * @param {Array} countries - the array of countries for the given data
  * @param {Object} countriesInfo - an object containing information about the countries
  * @returns {Array} - Array of data objects
@@ -185,7 +183,6 @@ export function parseEmailCountriesData( countries, countriesInfo ) {
 /**
  * Return data in a format used by lists for email stats. The fields array is matched to
  * the data in a single object.
- *
  * @param {Array} list - the array of devices/clients for the given data
  * @returns {Array} - Array of data objects
  */
@@ -217,14 +214,13 @@ export function parseEmailListData( list ) {
 /**
  * Return link data in a format used by lists for email stats. The fields array is matched to
  * the data in a single object.
- *
- * @param {Array} links - the array of links for the given data
+ * @param {Array} internalLinks - the array of links for the given data
+ * @param {Array} userContentLinks - the array of user content links for the given data
  * @returns {Array|null} - Array of data objects
  */
-export function parseEmailLinksData( links ) {
-	if ( ! links ) {
-		return null;
-	}
+export function parseEmailLinksData( internalLinks = [], userContentLinks = [] ) {
+	const validatedInternalLinks = Array.isArray( internalLinks ) ? internalLinks : [];
+	const validatedUserContentLinks = Array.isArray( userContentLinks ) ? userContentLinks : [];
 
 	const stringMap = {
 		'post-url': translate( 'Post URL', { context: 'Email link type' } ),
@@ -234,30 +230,39 @@ export function parseEmailLinksData( links ) {
 	};
 
 	// filter out links that are not in the stringMap
-	const filteredLinks = links
-		.filter( ( link ) => stringMap[ link[ 0 ] ] )
-		.sort( ( a, b ) => b[ 1 ] - a[ 1 ] );
-	// Get count of all links where the first element is not a key of stringMap
-	const otherCount = links.reduce( ( count, link ) => {
-		if ( ! stringMap[ link[ 0 ] ] ) {
+	const filteredInternalLinks = validatedInternalLinks.filter( ( link ) => stringMap[ link[ 0 ] ] );
+
+	// Get count of all links where the first element is not a key of stringMap and link_desc is not user_link
+	const otherInternalLinksCount = validatedInternalLinks.reduce( ( count, link ) => {
+		if ( ! stringMap[ link[ 0 ] ] && link[ 0 ] !== 'user_link' ) {
 			count += parseInt( link[ 1 ], 10 );
 		}
 		return count;
 	}, 0 );
 
-	const mappedLinks = filteredLinks.map( ( link ) => {
+	const mappedLinks = filteredInternalLinks.map( ( link ) => {
 		return {
 			label: stringMap[ link[ 0 ] ],
 			value: parseInt( link[ 1 ], 10 ),
 		};
 	} );
 
-	if ( otherCount ) {
+	if ( otherInternalLinksCount ) {
 		mappedLinks.push( {
 			label: translate( 'Other', { context: 'Email link type' } ),
-			value: otherCount,
+			value: otherInternalLinksCount,
 		} );
 	}
 
-	return mappedLinks;
+	// add user content links
+	validatedUserContentLinks.forEach( ( link ) => {
+		mappedLinks.push( {
+			label: link[ 0 ],
+			link: link[ 0 ],
+			value: parseInt( link[ 1 ], 10 ),
+		} );
+	} );
+
+	// sort by value
+	return mappedLinks.sort( ( a, b ) => b.value - a.value );
 }

@@ -1,3 +1,4 @@
+import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import emailValidator from 'email-validator';
@@ -90,6 +91,7 @@ class PasswordlessSignupForm extends Component {
 					oauth2_client_id,
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
+				anon_id: getTracksAnonymousUserId(),
 			} );
 			this.createAccountCallback( null, response );
 		} catch ( err ) {
@@ -241,15 +243,18 @@ class PasswordlessSignupForm extends Component {
 		);
 	}
 
+	getLabelText() {
+		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
+	}
+
 	render() {
-		const { inputPlaceholder, translate } = this.props;
 		const { errorMessages, isSubmitting } = this.state;
 
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="email">{ translate( 'Enter your email address' ) }</FormLabel>
+						<FormLabel htmlFor="email">{ this.getLabelText() }</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							className="signup-form__passwordless-email"
@@ -258,10 +263,10 @@ class PasswordlessSignupForm extends Component {
 							value={ this.state.email }
 							onChange={ this.onInputChange }
 							disabled={ isSubmitting || !! this.props.disabled }
-							placeholder={ inputPlaceholder }
+							placeholder={ this.props.inputPlaceholder }
 						/>
 					</ValidationFieldset>
-					{ this.props.renderTerms() }
+					{ this.props.renderTerms?.() }
 					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>

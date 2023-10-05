@@ -721,6 +721,10 @@
 			margin-bottom: 14px;
 		}
 	}
+	.reader-tag-sidebar-related-tags__follow-button {
+		// compensate for line height so that visual margin is 36px;
+		margin-bottom: 27px;
+	}
 	.reader-tag-sidebar-tags-page {
 		display: block;
 		font-size: $font-body-small;
@@ -734,7 +738,8 @@
 		display: flex;
 		flex-direction: row;
 		gap: 20px;
-		margin-bottom: 32px;
+		// compensate for line height so that visual margin is 36px;
+		margin-bottom: 29px;
 
 		.reader-tag-sidebar-stats__item {
 			display: flex;
@@ -800,6 +805,13 @@
 .stream__header .section-nav-tabs__dropdown,
 .stream__header .section-nav__mobile-header {
 	display: none;
+}
+
+.tag-stream__main .stream__header .section-nav {
+	margin-top: 26px;
+	@include break-medium {
+		margin-top: 0;
+	}
 }
 
 .stream__header .section-nav {

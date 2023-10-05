@@ -10,7 +10,7 @@ class UpdatedGravatarString extends Component {
 				spanExtra: <span className="profile__link-destination-label-extra" />,
 				profileLink: <a href={ gravatarProfileLink } target="_blank" rel="noreferrer" />,
 				deleteLink: (
-					<a href="https://gravatar.com/account/disable/" target="_blank" rel="noreferrer" />
+					<a href="https://gravatar.com/profile/disable-account" target="_blank" rel="noreferrer" />
 				),
 			},
 		};

@@ -51,12 +51,12 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestProductsList()( spy );
 
-			expect( spy ).toBeCalledWith( { type: PRODUCTS_LIST_REQUEST } );
+			expect( spy ).toHaveBeenCalledWith( { type: PRODUCTS_LIST_REQUEST } );
 		} );
 
 		test( 'should dispatch product list receive action when request completes', () => {
 			return requestProductsList()( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: PRODUCTS_LIST_RECEIVE,
 					productsList: { businessPlan },
 					productsListType: null,
@@ -66,7 +66,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestProductsList()( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: PRODUCTS_LIST_REQUEST_FAILURE,
 					error: expect.objectContaining( { message: 'A server error occurred' } ),
 				} );

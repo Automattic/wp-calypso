@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { envVariables } from '../..';
 import { EditorComponent } from './editor-component';
 
@@ -54,14 +54,22 @@ export class EditorBlockToolbarComponent {
 	async clickPrimaryButton( identifier: BlockToolbarButtonIdentifier ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
+		let locator: Locator;
 		if ( identifier.name ) {
-			// Accessible names don't need to have the selector built.
-			await editorParent.getByRole( 'button', { name: identifier.name } ).click();
+			// Accessible names don't need to have the selector built, but needs to be narrowed
+			// to the toolbar.
+			locator = editorParent
+				.getByRole( 'toolbar', { name: 'Block tools' } )
+				.getByRole( 'button', { name: identifier.name } );
 		} else {
 			// Other identifers need to have the selector built.
-			const locator = editorParent.locator( selectors.button( identifier ) );
-			await locator.click();
+			locator = editorParent.locator( selectors.button( identifier ) );
 		}
+
+		const handle = await locator.elementHandle();
+		await handle?.waitForElementState( 'stable' );
+
+		await locator.click();
 	}
 
 	/**

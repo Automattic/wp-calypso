@@ -3,7 +3,7 @@
 
 .global-styles-variations__container {
 	display: flex;
-	gap: 12px;
+	gap: 32px;
 	flex-direction: row;
 	@include break-large {
 		flex-direction: column;
@@ -25,6 +25,7 @@
 
 	@include break-large {
 		padding-top: 12px;
+		padding-bottom: 2px;
 	}
 
 	@include breakpoint-deprecated( "<960px" ) {
@@ -42,7 +43,6 @@
 	width: 100%;
 	margin-left: 3px;
 	color: var(--studio-gray-50);
-
 
 	.global-styles-variations__free-badge {
 		display: none;

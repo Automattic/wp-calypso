@@ -44,6 +44,7 @@ import MiniCarousel from './mini-carousel';
 import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
+import StatsDateControl from './stats-date-control';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
@@ -115,6 +116,7 @@ class StatsSite extends Component {
 	state = {
 		activeTab: null,
 		activeLegend: null,
+		customChartQuantity: null,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -142,6 +144,7 @@ class StatsSite extends Component {
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
+	onChangeChartQuantity = ( customChartQuantity ) => this.setState( { customChartQuantity } );
 
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
@@ -185,6 +188,9 @@ class StatsSite extends Component {
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
+
+		// For the new date picker
+		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -246,24 +252,55 @@ class StatsSite extends Component {
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
-						<StatsPeriodHeader>
-							<StatsPeriodNavigation
-								date={ date }
-								period={ period }
-								url={ `/stats/${ period }/${ slug }` }
-								queryParams={ context.query }
-							>
-								<DatePicker
-									period={ period }
+						{ isDateControlEnabled ? (
+							<>
+								<StatsPeriodHeader>
+									<StatsPeriodNavigation
+										date={ date }
+										period={ period }
+										url={ `/stats/${ period }/${ slug }` }
+										queryParams={ context.query }
+									>
+										{ ' ' }
+										<DatePicker
+											period={ period }
+											date={ date }
+											query={ query }
+											statsType="statsTopPosts"
+											showQueryDate
+											isShort
+										/>
+									</StatsPeriodNavigation>
+									<StatsDateControl
+										slug={ slug }
+										queryParams={ context.query }
+										period={ period }
+										pathTemplate={ pathTemplate }
+										onChangeChartQuantity={ this.onChangeChartQuantity }
+									/>
+								</StatsPeriodHeader>
+							</>
+						) : (
+							<StatsPeriodHeader>
+								<StatsPeriodNavigation
 									date={ date }
-									query={ query }
-									statsType="statsTopPosts"
-									showQueryDate
-									isShort
-								/>
-							</StatsPeriodNavigation>
-							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-						</StatsPeriodHeader>
+									period={ period }
+									url={ `/stats/${ period }/${ slug }` }
+									queryParams={ context.query }
+								>
+									{ ' ' }
+									<DatePicker
+										period={ period }
+										date={ date }
+										query={ query }
+										statsType="statsTopPosts"
+										showQueryDate
+										isShort
+									/>
+								</StatsPeriodNavigation>
+								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+							</StatsPeriodHeader>
+						) }
 
 						<ChartTabs
 							activeTab={ getActiveTab( this.props.chartTab ) }
@@ -276,6 +313,7 @@ class StatsSite extends Component {
 							queryDate={ queryDate }
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
+							customQuantity={ this.state.customChartQuantity }
 						/>
 					</>
 

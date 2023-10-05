@@ -1,6 +1,5 @@
 /**
  * Return a Webpack loader configuration object containing for JavaScript transpilation.
- *
  * @param {Object} _                   Options
  * @param {number} _.workerCount       Number of workers that are being used by the thread-loader
  * @param {string} _.configFile        Babel config file

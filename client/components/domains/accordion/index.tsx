@@ -10,6 +10,7 @@ const Accordion = ( {
 	subtitle,
 	children,
 	isPlaceholder,
+	isDisabled,
 	expanded = false,
 	onClose,
 	className,
@@ -34,7 +35,7 @@ const Accordion = ( {
 				className={ className }
 				header={ renderHeader() }
 				expanded={ expanded }
-				disabled={ isPlaceholder }
+				disabled={ isPlaceholder || isDisabled }
 				actionButton={
 					<button className="foldable-card__action foldable-card__expand">
 						<span className="screen-reader-text">More</span>

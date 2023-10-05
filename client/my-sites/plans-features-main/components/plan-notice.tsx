@@ -7,8 +7,8 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { ActiveDiscount } from 'calypso/lib/discounts/active-discounts';
-import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-calculate-max-plan-upgrade-credit';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
+import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
+import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -148,7 +148,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 								a: (
 									<a
 										href={ localizeUrl(
-											'https://wordpress.com/support/manage-purchases/#upgrade-credit'
+											'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
 										) }
 										className="get-apps__desktop-link"
 									/>

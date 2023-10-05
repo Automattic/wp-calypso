@@ -29,7 +29,7 @@ import {
 	getThemeType,
 } from 'calypso/state/themes/selectors';
 import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
-import { addStyleVariation, trackClick, interlaceThemes } from './helpers';
+import { addOptionsToGetUrl, trackClick, interlaceThemes } from './helpers';
 import SearchThemesTracks from './search-themes-tracks';
 import './themes-selection.scss';
 
@@ -186,9 +186,10 @@ class ThemesSelection extends Component {
 	getOptions = ( themeId, styleVariation, context ) => {
 		let options = this.props.getOptions( themeId, styleVariation );
 
+		const { tabFilter } = this.props;
 		const wrappedActivateAction = ( action ) => {
 			return ( t ) => {
-				this.props.setThemePreviewOptions( themeId, null, null, styleVariation );
+				this.props.setThemePreviewOptions( themeId, null, null, { styleVariation, tabFilter } );
 				return action( t, context );
 			};
 		};
@@ -222,18 +223,18 @@ class ThemesSelection extends Component {
 					defaultOption = options.activate;
 				}
 
-				this.props.setThemePreviewOptions(
-					themeId,
-					defaultOption,
-					secondaryOption,
-					styleVariation
-				);
+				this.props.setThemePreviewOptions( themeId, defaultOption, secondaryOption, {
+					styleVariation,
+				} );
 				return action( t, context );
 			};
 		};
 
 		if ( options ) {
-			options = addStyleVariation( options, styleVariation, this.props.isLoggedIn );
+			options = addOptionsToGetUrl( options, {
+				tabFilter,
+				styleVariationSlug: styleVariation?.slug,
+			} );
 			if ( options.activate ) {
 				options.activate.action = wrappedActivateAction( options.activate.action );
 			}

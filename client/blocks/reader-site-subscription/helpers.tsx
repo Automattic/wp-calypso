@@ -13,6 +13,7 @@ export type SiteSubscriptionDetailsProps = {
 	siteIcon: string | null;
 	name: string;
 	blogId: number;
+	feedId: number;
 	deliveryMethods: Reader.SiteSubscriptionDeliveryMethods;
 	url: string;
 	paymentDetails: Reader.SiteSubscriptionPaymentDetails[];

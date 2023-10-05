@@ -420,6 +420,7 @@ import {
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_THE_READER,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 	FEATURE_PAYMENT_BUTTONS_JP,
 	FEATURE_PAYPAL_JP,
 	FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
@@ -438,6 +439,8 @@ import {
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
+	TYPE_HOSTING_TRIAL,
 } from './constants';
 import type {
 	BillingTerm,
@@ -891,6 +894,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_CONTENT_JP,
 		FEATURE_PAID_SUBSCRIBERS_JP,
 	],
+	getCheckoutFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_SUPPORT_EMAIL,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_FAST_DNS,
+		FEATURE_PAID_SUBSCRIBERS_JP,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
@@ -1045,6 +1055,17 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			? FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL
 			: FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	],
+	getCheckoutFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+		FEATURE_LOYALTY_PROG,
+		FEATURE_INVENTORY,
+		FEATURE_CUSTOM_MARKETING_AUTOMATION,
+	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
 		let storageOptionSlugs = [];
@@ -1181,6 +1202,7 @@ const getWooExpressMediumPlanCompareFeatures = (): string[] => [
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_DISCOUNTED_SHIPPING,
 	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 ];
 const getWooExpressSmallPlanCompareFeatures = (): string[] => [
 	FEATURE_WOOCOMMERCE_STORE,
@@ -1214,6 +1236,7 @@ const getWooExpressSmallPlanCompareFeatures = (): string[] => [
 	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 ];
 
 const getWooExpressPlanCompareFeatures = (): string[] => [
@@ -1273,6 +1296,7 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 	],
 	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
 	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
@@ -1361,7 +1385,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
 	getNewsletterSignupFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PREMIUM_THEMES_V2,
@@ -1436,6 +1459,16 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	],
+	getCheckoutFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PREMIUM_THEMES_V2,
+		FEATURE_WORDADS,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_VIDEOPRESS_JP,
+		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_VIDEOPRESS_JP,
@@ -1620,6 +1653,19 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
 			? [ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO, FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]
 			: [ FEATURE_PAYMENT_TRANSACTION_FEES_2 ] ),
+	],
+	getCheckoutFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_BANDWIDTH,
+		FEATURE_CDN,
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_DEV_TOOLS,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_SECURITY_DDOS,
+		FEATURE_SITE_STAGING_SITES,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_REALTIME_BACKUPS_JP,
@@ -2622,6 +2668,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1018,
 		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
@@ -2648,6 +2695,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_MONTHLY,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1008,
 		getStoreSlug: () => PLAN_BUSINESS,
@@ -2676,6 +2724,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_PRO_2_YEARS,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1028,
 		getStoreSlug: () => PLAN_BUSINESS_2_YEARS,
@@ -2707,6 +2756,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_PRO_2_YEARS,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1048,
 		getStoreSlug: () => PLAN_BUSINESS_3_YEARS,
@@ -2746,6 +2796,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_MONTHLY,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1061,
 		getStoreSlug: () => PLAN_100_YEARS,
@@ -2772,6 +2823,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1021,
 		getStoreSlug: () => PLAN_ECOMMERCE_MONTHLY,
@@ -2802,6 +2854,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
@@ -2834,6 +2887,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
@@ -2943,6 +2997,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE_2_YEARS,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1051,
 		getStoreSlug: () => PLAN_ECOMMERCE_3_YEARS,
@@ -3097,7 +3152,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
 		...getPlanJetpackCompleteDetails(),
-		...getAnnualTimeframe(),
+		...getBiAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_BI_YEARLY,
 		getPathSlug: () => 'complete-bi-yearly',
 		getProductId: () => 2035,
@@ -3565,3 +3620,18 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 		getTitle: () => i18n.translate( 'Business Trial' ),
 	};
 }
+
+PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
+	...getPlanBusinessDetails(),
+	getPlanTagline: () => i18n.translate( 'Try all the features of our Business plan.' ),
+	type: TYPE_HOSTING_TRIAL,
+	group: GROUP_WPCOM,
+	getProductId: () => 1058,
+	getPathSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
+	term: TERM_MONTHLY,
+	getBillingTimeFrame: () => i18n.translate( 'Try it for 3 days' ),
+	getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
+	getTitle: () => i18n.translate( 'Business trial' ),
+	getDescription: () => i18n.translate( 'Hosting free trial' ),
+	getTagline: () => i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
+};

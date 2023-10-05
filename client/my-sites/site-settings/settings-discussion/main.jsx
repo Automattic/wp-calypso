@@ -5,6 +5,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { FediverseSettingsSection } from 'calypso/my-sites/site-settings/fediverse-settings';
 import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
@@ -31,6 +32,7 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 			hasScreenOptions
 		/>
 		<SiteSettingsNavigation site={ site } section="discussion" />
+		<FediverseSettingsSection />
 		<DiscussionForm />
 	</Main>
 );

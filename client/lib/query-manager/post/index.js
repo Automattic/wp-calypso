@@ -13,7 +13,6 @@ export default class PostQueryManager extends PaginatedQueryManager {
 
 	/**
 	 * Returns true if the post matches the given query, or false otherwise.
-	 *
 	 * @param  {Object}  query Query object
 	 * @param  {Object}  post  Item to consider
 	 * @returns {boolean}       Whether post matches query
@@ -109,7 +108,6 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	/**
 	 * A sort comparison function that defines the sort order of posts under
 	 * consideration of the specified query.
-	 *
 	 * @param  {Object} query Query object
 	 * @param  {Object} postA First post
 	 * @param  {Object} postB Second post

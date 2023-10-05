@@ -13,3 +13,7 @@ export type Product = {
 	is_editable?: boolean;
 	tier?: number;
 };
+
+export type Query = {
+	[ key: string ]: string;
+};

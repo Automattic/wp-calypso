@@ -63,7 +63,6 @@ import { getSerializedThemesQuery } from './utils';
  * Returns the updated active theme state after an action has been
  * dispatched. The state reflects a mapping of site ID to theme ID where
  * theme ID represents active theme for the site.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -95,7 +94,6 @@ export const activeThemes = withSchemaValidation( activeThemesSchema, ( state = 
  * Returns the updated theme activation state after an action has been
  * dispatched. The state reflects a mapping of site ID to a boolean
  * reflecting whether a theme is being activated on that site.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -123,7 +121,6 @@ export function activationRequests( state = {}, action ) {
  * Returns the updated completed theme activation requess state after an action has been
  * dispatched. The state reflects a mapping of site ID to boolean, reflecting whether
  * activation request has finished or has been cleared.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -155,7 +152,6 @@ export const completedActivationRequests = ( state = {}, action ) => {
  * Returns the updated active theme request state after an action has been
  * dispatched. The state reflects a mapping of site ID to a boolean
  * reflecting whether a request for active theme is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -178,7 +174,6 @@ export function activeThemeRequests( state = {}, action ) {
  * Returns the updated site theme requests state after an action has been
  * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
  * boolean reflecting whether a request for the theme is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -202,7 +197,6 @@ export function themeRequests( state = {}, action ) {
  * Returns the updated Jetpack site wpcom theme install requests state after an action has been
  * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
  * boolean reflecting whether a request for the theme install is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -226,7 +220,6 @@ export function themeInstalls( state = {}, action ) {
  * Returns the updated site theme requests error state after an action has been
  * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
  * object describing request error. If there is no error null is stored.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -264,7 +257,6 @@ export const themeRequestErrors = withSchemaValidation(
  * Returns the updated theme query requesting state after an action has been
  * dispatched. The state reflects a mapping of serialized query to whether a
  * network request is in-progress for that query.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -289,7 +281,6 @@ export function queryRequests( state = {}, action ) {
  * Returns the updated query request error state after an action has been
  * dispatched. The state reflects a mapping of site ID, query ID pairing to an
  * object containing the request error. If there is no error null is stored.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -343,7 +334,6 @@ const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
  * Returns the updated theme query state after an action has been dispatched.
  * The state reflects a mapping of serialized query key to an array of theme IDs
  * for the query, if a query response was successfully received.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -414,7 +404,6 @@ export const queries = withSchemaValidation(
 /**
  * Returns the updated themes last query state.
  * The state reflects a mapping of site Id to last query that was issued on that site.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -437,7 +426,6 @@ export const lastQuery = ( state = {}, action ) => {
 /**
  * Returns the updated previewing theme state
  * The state holds information about primary and secondary theme actions usable in preview.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -445,8 +433,8 @@ export const lastQuery = ( state = {}, action ) => {
 export const themePreviewOptions = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_PREVIEW_OPTIONS: {
-			const { themeId, primary, secondary, styleVariation } = action;
-			return { themeId, primary, secondary, styleVariation };
+			const { themeId, primary, secondary, options } = action;
+			return { ...options, themeId, primary, secondary };
 		}
 	}
 
@@ -456,7 +444,6 @@ export const themePreviewOptions = ( state = {}, action ) => {
 /**
  * Returns the updated previewing theme state
  * The state reflects if Theme Preview component should be visible or not.
- *
  * @param  {boolean}   state  Current state
  * @param  {Object} action Action payload
  * @returns {boolean}          Updated state
@@ -529,7 +516,6 @@ export function themeFilterRequestError( state = null, action ) {
 /**
  * Returns updated state for recommended themes after
  * corresponding actions have been dispatched.
- *
  * @param   {Object} state  Current state
  * @param   {Object} action Action payload
  * @returns {Object}        Updated state
@@ -556,7 +542,6 @@ export function recommendedThemes( state = {}, action ) {
 /**
  * Returns updated state for trending themes after
  * corresponding actions have been dispatched.
- *
  * @param   {Object} state  Current state
  * @param   {Object} action Action payload
  * @returns {Object}        Updated state

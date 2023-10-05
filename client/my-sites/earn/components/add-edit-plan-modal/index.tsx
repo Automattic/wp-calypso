@@ -55,11 +55,6 @@ type DefaultNames = {
  * Return the minimum transaction amount for a currency.
  * If the defaultCurrency is not the same as the current currency, return the double, in order to prevent issues with Stripe minimum amounts
  * See https://wp.me/p81Rsd-1hN
- *
- * @param {StripeMinimumCurrencyAmounts} currency_min - Minimum transaction amount for each currency.
- * @param {string} currency - Currency.
- * @param {string} connectedAccountDefaultCurrency - Default currency of the current account
- * @returns {number} Minimum transaction amount for given currency.
  */
 function minimumCurrencyTransactionAmount(
 	currency_min: StripeMinimumCurrencyAmounts,

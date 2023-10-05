@@ -32,7 +32,9 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem;
+	// @TODO: cartItem is now deprecated. Remove dependencies.cartItem and
+	// dependencies.domainItem once all steps and flows have been updated to use cartItems
+	return dependencies.cartItem || dependencies.domainItem || dependencies.cartItems;
 }
 
 function getSiteDestination( dependencies ) {
@@ -297,7 +299,6 @@ const Flows = {
 	 * Get certain flow from the flows configuration.
 	 *
 	 * The returned flow is modified according to several filters.
-	 *
 	 * @typedef {import('../types').Flow} Flow
 	 * @param {string} flowName The name of the flow to return
 	 * @param {boolean} isUserLoggedIn Whether the user is logged in
@@ -349,7 +350,6 @@ const Flows = {
 	 * Make `getFlow()` call to exclude the given steps.
 	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
 	 * without explicit user inputs, e.g. query arguments.
-	 *
 	 * @param {string} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {

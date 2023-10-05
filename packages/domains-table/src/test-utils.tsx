@@ -41,6 +41,19 @@ export function testDomain(
 		expiry: '2026-03-11T00:00:00+00:00',
 		wpcom_domain: false,
 		current_user_is_owner: true,
+		current_user_can_add_email: false,
+		google_apps_subscription: {
+			status: '',
+			is_eligible_for_introductory_offer: false,
+			total_user_count: 0,
+		},
+		titan_mail_subscription: {
+			status: '',
+			is_eligible_for_introductory_offer: false,
+			maximum_mailbox_count: 0,
+		},
+		email_forwards_count: 0,
+		tld_maintenance_end_time: 0,
 	};
 
 	const partialOnlyDefaults = Object.entries( defaults ).filter( ( [ key ] ) =>
@@ -51,6 +64,7 @@ export function testDomain(
 
 	const fullDomain: DomainData = {
 		...defaultPartialDomain,
+		blog_name: 'Example',
 		primary_domain: false,
 		subscription_id: '',
 		can_manage_dns_records: false,
@@ -72,7 +86,7 @@ export function testDomain(
 		email_forwards_count: 0,
 		expiry_soon: false,
 		expired: false,
-		auto_renewing: 0,
+		auto_renewing: false,
 		pending_registration: false,
 		pending_registration_time: '',
 		has_email_forward_dns_records: null,
@@ -91,10 +105,12 @@ export function testDomain(
 		google_apps_subscription: {
 			status: '',
 			is_eligible_for_introductory_offer: false,
+			total_user_count: 0,
 		},
 		titan_mail_subscription: {
 			status: '',
 			is_eligible_for_introductory_offer: false,
+			maximum_mailbox_count: 0,
 		},
 		pending_whois_update: false,
 		tld_maintenance_end_time: 0,
@@ -145,4 +161,8 @@ export function testDomain(
 
 export function testPartialDomain( defaults: Partial< PartialDomainData > = {} ) {
 	return testDomain( defaults )[ 0 ];
+}
+
+export function testFullDomain( defaults: Partial< PartialDomainData > = {} ) {
+	return testDomain( defaults )[ 1 ];
 }

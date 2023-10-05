@@ -139,6 +139,17 @@ export function domainManagementAllEditContactInfo() {
 	return domainManagementAllRoot() + '/edit-contact-info';
 }
 
+export function domainManagementAllEditSelectedContactInfo() {
+	return domainManagementAllRoot() + '/edit-selected-contact-info';
+}
+
+/**
+ * @param {string} siteName
+ */
+export function domainManagementEditSelectedContactInfo( siteName ) {
+	return domainManagementRoot() + '/edit-selected-contact-info/' + siteName;
+}
+
 /**
  * @param {string} siteName
  * @param {string} domainName
@@ -270,6 +281,15 @@ export function domainManagementTransferToAnotherUser( siteName, domainName, rel
  * @param {string} domainName
  * @param {string?} relativeTo
  */
+export function domainManagementTransferToAnyUser( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'any-user', relativeTo );
+}
+
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferToOtherSite( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'other-site', relativeTo );
 }
@@ -324,7 +344,6 @@ export function domainMappingSetup(
 
 /**
  * Return the path to start an inbound domain transfer to WordPress.com.
- *
  * @param { string } siteName         The slug for the site.
  * @param { string } domain           The domain name.
  * @param { boolean } useStandardBack Flag to indicate whether the "Back" button in the

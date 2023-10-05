@@ -1,9 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import NoticeBanner from '@automattic/components/src/notice-banner';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = (
@@ -12,14 +16,10 @@ const getStatsPurchaseURL = (
 	hasFreeStats = false
 ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats,stats/paid-wpcom-stats&from=${ from }-stats-upgrade-notice${
+	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-wpcom-stats&from=${ from }-stats-upgrade-notice${
 		hasFreeStats ? '&productType=personal' : ''
 	}`;
-	if ( ! isOdysseyStats ) {
-		return purchasePath;
-	}
-	// We use absolute path here as it runs in Odyssey as well.
-	return `https://wordpress.com${ purchasePath }`;
+	return purchasePath;
 };
 
 const DoYouLoveJetpackStatsNotice = ( {
@@ -28,6 +28,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 	isOdysseyStats,
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
@@ -54,10 +55,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 					'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
 			  );
 		// Allow some time for the event to be recorded before redirecting.
-		setTimeout(
-			() => ( window.location.href = getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ),
-			250
-		);
+		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ), 250 );
 	};
 
 	useEffect( () => {
@@ -74,6 +72,10 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	const noPurchaseTitle = translate( 'Do you love Jetpack Stats?' );
 	const freeTitle = translate( 'Want to get the most out of Jetpack Stats?' );
+
+	const learnMoreLink = isWPCOMSite
+		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
+		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
 	return (
 		<div
@@ -101,7 +103,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 							learnMoreLink: (
 								<a
 									className="notice-banner__action-link"
-									href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+									href={ localizeUrl( learnMoreLink ) }
 									target="_blank"
 									rel="noreferrer"
 								/>

@@ -9,7 +9,6 @@ import { forwardRef, useState, useEffect } from 'react';
 
 /**
  * React hook for getting the status for a breakpoint and keeping it updated.
- *
  * @param {string} breakpoint The breakpoint to consider.
  * @returns {boolean} The current status for the breakpoint.
  */
@@ -41,7 +40,6 @@ export function useBreakpoint( breakpoint ) {
 /**
  * React hook for getting the status for the mobile breakpoint and keeping it
  * updated.
- *
  * @returns {boolean} The current status for the breakpoint.
  */
 export function useMobileBreakpoint() {
@@ -51,7 +49,6 @@ export function useMobileBreakpoint() {
 /**
  * React hook for getting the status for the desktop breakpoint and keeping it
  * updated.
- *
  * @returns {boolean} The current status for the breakpoint.
  */
 export function useDesktopBreakpoint() {
@@ -61,7 +58,6 @@ export function useDesktopBreakpoint() {
 /**
  * React higher order component for getting the status for a breakpoint and
  * keeping it updated.
- *
  * @param {string} breakpoint The breakpoint to consider.
  * @returns {Function} A function that given a component returns the
  * wrapped component.
@@ -79,7 +75,6 @@ export const withBreakpoint = ( breakpoint ) =>
 /**
  * React higher order component for getting the status for the mobile
  * breakpoint and keeping it updated.
- *
  * @param {import('react').Component|Function} Wrapped The component to wrap.
  * @returns {Function} The wrapped component.
  */
@@ -95,7 +90,6 @@ export const withMobileBreakpoint = createHigherOrderComponent(
 /**
  * React higher order component for getting the status for the desktop
  * breakpoint and keeping it updated.
- *
  * @param {import('react').Component|Function} Wrapped The component to wrap.
  * @returns {Function} The wrapped component.
  */

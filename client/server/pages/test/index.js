@@ -118,7 +118,6 @@ jest.mock( 'calypso/lib/oauth2-clients', () => ( {
  *
  * As it uses isolated registries, any mock set outside this builder won't be visible for the
  * built app. That's why we need to require mocks here and expose them via getMocks();
- *
  * @param environment the environment
  */
 const buildApp = ( environment ) => {
@@ -167,7 +166,7 @@ const buildApp = ( environment ) => {
 					i18n_default_locale_slug: 'en',
 					favicon_url: 'http://favicon.url/',
 					enable_all_sections: true,
-				}[ key ] )
+				} )[ key ]
 		);
 
 		appFactory = require( '../index' ).default;

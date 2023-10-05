@@ -56,12 +56,15 @@ export interface PlanIntroductoryOffer {
 	rawPrice: number;
 	intervalUnit: string;
 	intervalCount: number;
+	isOfferComplete: boolean;
 }
 
 export interface SitePlan {
 	planSlug: PlanSlugFromProducts;
 	productId: number;
 	introOffer?: PlanIntroductoryOffer | null;
+	/* This value is only returned for the current plan on the site. */
+	expiry?: string;
 }
 
 export interface PricedAPIPlanIntroductoryOffer {
@@ -69,6 +72,7 @@ export interface PricedAPIPlanIntroductoryOffer {
 	introductory_offer_raw_price?: number;
 	introductory_offer_interval_unit?: string;
 	introductory_offer_interval_count?: number;
+	introductory_offer_end_date?: string;
 }
 
 /**
@@ -95,6 +99,19 @@ export interface PricedAPIPlan {
 	 * @deprecated use raw_price_integer as using floats for currency is not safe.
 	 */
 	raw_price: number;
+
+	/**
+	 * The orig cost in the currency's smallest unit. Note that origCostInteger is never null. Although orig_cost
+	 * is undefined if the cost of a store product is overridden by a promotion or a coupon, orig_cost_integer
+	 * is not. origCostInteger will return a price identical to raw_price_integer instead.
+	 */
+	orig_cost_integer: number;
+
+	/**
+	 * The orig cost as a float.
+	 *
+	 * @deprecated use orig_cost_integer as using floats for currency is not safe.
+	 */
 	orig_cost?: number | null;
 	currency_code: string;
 }
@@ -105,7 +122,9 @@ export interface PricedAPIPlan {
  * Note: These, unlike the PricedAPIPlan, are returned indexed by product_id (and do not inlcude that in the plan's payload)
  */
 export interface PricedAPISitePlan extends PricedAPIPlanIntroductoryOffer {
-	/* product_id: number; not included in the plan's payload */
+	/* product_id: number; // not included in the plan's payload */
+	current_plan?: boolean;
+	expiry?: string;
 	product_slug: StorePlanSlug;
 }
 

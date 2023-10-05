@@ -1,14 +1,20 @@
+import { loadStripeLibrary } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordTransactionBeginAnalytics, logStashEvent } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
-import { doesTransactionResponseRequire3DS, handle3DSChallenge } from './stripe-3ds';
+import {
+	doesTransactionResponseRequire3DS,
+	handle3DSChallenge,
+	handle3DSInFlightError,
+} from './stripe-3ds';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
@@ -88,9 +94,20 @@ export default async function existingCardProcessor(
 			if ( doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				debug( 'transaction requires authentication' );
 				paymentIntentId = stripeResponse.message.payment_intent_id;
+
+				// Saved cards already have a payment partner ID and we must use that ID to
+				// generate the `stripe` object we use to confirm 3DS challenges. Otherwise
+				// we may contact the wrong Stripe account.
+				const cardSpecificStripe = transactionData.paymentPartnerProcessorId
+					? await loadStripeLibrary( {
+							fetchStripeConfiguration: getStripeConfiguration,
+							paymentPartner: transactionData.paymentPartnerProcessorId,
+					  } )
+					: undefined;
+
 				await handle3DSChallenge(
 					reduxDispatch,
-					stripe,
+					cardSpecificStripe ?? stripe,
 					stripeResponse.message.payment_intent_client_secret,
 					paymentIntentId
 				);
@@ -110,7 +127,7 @@ export default async function existingCardProcessor(
 			debug( 'transaction was successful' );
 			return makeSuccessResponse( stripeResponse );
 		} )
-		.catch( ( error ) => {
+		.catch( ( error: Error ) => {
 			debug( 'transaction failed' );
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_existing_card_transaction_failed', {
@@ -127,6 +144,8 @@ export default async function existingCardProcessor(
 				},
 				'info'
 			);
+
+			handle3DSInFlightError( error, paymentIntentId );
 
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.

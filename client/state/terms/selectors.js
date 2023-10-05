@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { get, range } from 'lodash';
+import { get } from 'lodash';
 import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
 
 import 'calypso/state/terms/init';
@@ -7,7 +7,6 @@ import 'calypso/state/terms/init';
 /**
  * Returns true if currently requesting terms for the taxonomies query, or false
  * otherwise.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {string}  taxonomy Taxonomy slug
@@ -22,7 +21,6 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
 /**
  * Returns true if currently requesting terms for a query, excluding all known
  * queried pages, or false otherwise.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
@@ -35,7 +33,9 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
 		return false;
 	}
 
-	return range( 1, lastPage + 1 ).some( ( page ) => {
+	const pages = Array.from( { length: lastPage }, ( _, i ) => i + 1 );
+
+	return pages.some( ( page ) => {
 		const termsQuery = { ...query, page };
 		return isRequestingTermsForQuery( state, siteId, taxonomy, termsQuery );
 	} );
@@ -44,7 +44,6 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
 /**
  * Returns an array of terms for the taxonomies query, or null if no terms have been
  * received.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
@@ -70,7 +69,6 @@ export const getTermsForQuery = createSelector(
 /**
  * Returns an array of terms for the taxonomy query, including all known
  * queried pages, or null if the number of pages is unknown.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
@@ -96,7 +94,6 @@ export const getTermsForQueryIgnoringPage = createSelector(
 /**
  * Returns the last queryable page of terms for the given query / taxonomy, or null if the
  * total number of queryable terms if unknown.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
@@ -119,7 +116,6 @@ export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
 
 /**
  * Returns terms for a site, filtered by taxonomy.
- *
  * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy slug
@@ -136,7 +132,6 @@ export function getTerms( state, siteId, taxonomy ) {
 
 /**
  * Returns a term for a site taxonomy.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
@@ -160,7 +155,6 @@ export function getTerm( state, siteId, taxonomy, termId ) {
 
 /**
  * Returns the total count of terms for a specified query
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug

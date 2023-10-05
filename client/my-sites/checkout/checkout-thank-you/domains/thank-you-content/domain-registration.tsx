@@ -17,12 +17,15 @@ const domainRegistrationThankYouProps = ( {
 	email,
 	hasProfessionalEmail,
 	hideProfessionalEmailStep,
+	shouldDisplayVerifyEmailStep,
+	onResendEmailVerificationClick,
 	selectedSiteSlug,
 	siteIntent,
 	launchpadScreen,
 	redirectTo,
 	isDomainOnly,
 	selectedSiteId,
+	isActivityPubEnabled,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
@@ -44,6 +47,19 @@ const domainRegistrationThankYouProps = ( {
 		redirectTo,
 		true
 	);
+
+	const confirmEmailStep = {
+		stepKey: 'domain_registration_whats_next_confirm-email',
+		stepTitle: translate( 'Confirm email address' ),
+		stepDescription: translate(
+			'You must confirm your email address to avoid your domain getting suspended.'
+		),
+		stepCta: (
+			<FullWidthButton onClick={ onResendEmailVerificationClick } busy={ false } disabled={ false }>
+				{ translate( 'Resend email' ) }
+			</FullWidthButton>
+		),
+	};
 
 	const createSiteStep = {
 		stepKey: 'domain_registration_whats_next_create-site',
@@ -79,6 +95,23 @@ const domainRegistrationThankYouProps = ( {
 		),
 	};
 
+	const fediverseSettingsStep = {
+		stepKey: 'domain_registration_whats_next_fediverse_settings',
+		stepTitle: translate( 'Connect to the Fediverse' ),
+		stepDescription: translate(
+			'You’ve unlocked a durable, portable social networking presence with your domain!'
+		),
+		stepCta: (
+			<FullWidthButton
+				href={ `/settings/discussion/${ selectedSiteSlug }` }
+				busy={ false }
+				disabled={ false }
+			>
+				{ translate( 'Fediverse settings' ) }
+			</FullWidthButton>
+		),
+	};
+
 	const returnProps: DomainThankYouProps = {
 		thankYouNotice: {
 			noticeTitle: translate(
@@ -93,9 +126,10 @@ const domainRegistrationThankYouProps = ( {
 				nextSteps: launchpadNextSteps
 					? [ launchpadNextSteps ]
 					: [
+							...( shouldDisplayVerifyEmailStep ? [ confirmEmailStep ] : [] ),
 							...( professionalEmail ? [ professionalEmail ] : [] ),
 							...( isDomainOnly && selectedSiteId ? [ createSiteStep ] : [] ),
-							viewDomainsStep,
+							...( isActivityPubEnabled ? [ fediverseSettingsStep ] : [ viewDomainsStep ] ),
 					  ],
 			},
 		],

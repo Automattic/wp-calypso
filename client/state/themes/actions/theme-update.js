@@ -14,7 +14,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Updates the themes to the a newer version
- *
  * @param {Array} themeSlugs    Array of themes to be updated.
  * @param {number} siteId       Site ID
  * @param {boolean} autoupdate  Whether should enable or disable the auto update.
@@ -69,7 +68,6 @@ export function updateThemes( themeSlugs, siteId, autoupdate = false ) {
 
 /**
  * Updates the state and UI after successfuly update the themes.
- *
  * @param {number} siteId
  * @param {Array} themeSlugs
  * @returns

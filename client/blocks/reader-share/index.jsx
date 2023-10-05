@@ -72,9 +72,13 @@ class ReaderShare extends Component {
 				: 'calypso_reader_share_opened';
 			stats.recordAction( actionName );
 			stats.recordGaEvent( eventName );
-			this.props.recordReaderTracksEvent( trackName, {
-				has_sites: this.props.hasSites,
-			} );
+			this.props.recordReaderTracksEvent(
+				trackName,
+				{
+					has_sites: this.props.hasSites,
+				},
+				{ post: this.props.post }
+			);
 		}
 		this.deferMenuChange( ! this.state.showingMenu );
 	};
@@ -122,9 +126,14 @@ class ReaderShare extends Component {
 					title={ this.props.isReblogSelection ? translate( 'Reblog' ) : translate( 'Share' ) }
 				>
 					{ ! this.props.isReblogSelection ? (
-						ReaderShareIcon( {
-							iconSize: this.props.iconSize,
-						} )
+						<>
+							{ ReaderShareIcon( {
+								iconSize: this.props.iconSize,
+							} ) }
+							{ this.props.showLabel && (
+								<span className="reader-share__label">{ translate( 'Share' ) }</span>
+							) }
+						</>
 					) : (
 						<>
 							<Gridicon
@@ -133,8 +142,8 @@ class ReaderShare extends Component {
 								title={ reblogTitle }
 								style={ { height: this.props.iconSize, width: this.props.iconSize } }
 							/>
-							{ this.props.showReblogLabel && (
-								<span className="reader-share__reblog-label" title={ reblogTitle }>
+							{ this.props.showLabel && (
+								<span className="reader-share__label" title={ reblogTitle }>
 									{ translate( 'Reblog' ) }
 								</span>
 							) }

@@ -1,4 +1,3 @@
-import { flowRight } from 'lodash';
 import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP } from 'calypso/state/action-types';
 import {
 	composeAnalytics,
@@ -27,7 +26,7 @@ describe( 'middleware', () => {
 			const statBump = bumpStat( 'splines', 'reticulated_count' );
 
 			withAnalytics( statBump, testAction )( dispatch );
-			expect( dispatch ).toBeCalledTimes( 2 );
+			expect( dispatch ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		test( 'should compose multiple analytics calls', () => {
@@ -64,11 +63,10 @@ describe( 'middleware', () => {
 		} );
 
 		test( 'should compose multiple analytics calls with normal actions', () => {
-			const composite = flowRight(
-				withAnalytics( bumpStat( 'spline_types', 'ocean' ) ),
-				withAnalytics( bumpStat( 'spline_types', 'river' ) ),
-				() => ( { type: 'RETICULATE_SPLINES' } )
-			)();
+			const action = { type: 'RETICULATE_SPLINES' };
+			const composite = withAnalytics( bumpStat( 'spline_types', 'ocean' ) )(
+				withAnalytics( bumpStat( 'spline_types', 'river' ) )( action )
+			);
 
 			expect( composite.meta.analytics ).toHaveLength( 2 );
 		} );

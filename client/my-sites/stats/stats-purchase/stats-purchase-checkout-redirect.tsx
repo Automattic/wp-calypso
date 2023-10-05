@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
@@ -13,7 +14,7 @@ const setUrlParam = ( url: URL, paramName: string, paramValue?: string | null ):
 	}
 };
 
-const getStatsPurchaseURL = (
+const getStatsCheckoutURL = (
 	siteSlug: string,
 	product: string,
 	redirectUrl: string,
@@ -22,14 +23,14 @@ const getStatsPurchaseURL = (
 	// Get the checkout URL for the product, or the siteless checkout URL if no siteSlug is provided
 	const checkoutProductUrl = new URL(
 		`/checkout/${ siteSlug || 'jetpack' }/${ product }`,
-		window.location.origin
+		'https://wordpress.com'
 	);
 
 	// Add redirect_to parameter
 	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
 
-	return checkoutProductUrl.pathname + checkoutProductUrl.search;
+	return checkoutProductUrl.toString();
 };
 
 const getYearlyPrice = ( monthlyPrice: number ) => {
@@ -56,9 +57,10 @@ const getCheckoutBackUrl = ( {
 	const isFromWPAdmin = from.startsWith( 'jetpack' );
 	const isFromMyJetpack = from === 'jetpack-my-jetpack';
 	const isFromPlansPage = from === 'calypso-plans';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	// Use full URL even though redirecting on Calypso.
-	if ( ! isFromWPAdmin ) {
+	if ( ! isFromWPAdmin && ! isOdysseyStats ) {
 		if ( ! siteSlug ) {
 			return 'https://cloud.jetpack.com/pricing/';
 		}
@@ -86,7 +88,8 @@ const getRedirectUrl = ( {
 	redirectUri?: string;
 	siteSlug: string;
 } ) => {
-	const isStartedFromJetpackSite = from.startsWith( 'jetpack' );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isStartedFromJetpackSite = from.startsWith( 'jetpack' ) || isOdysseyStats;
 	const statsPurchaseSuccess = type === 'free' ? 'free' : 'paid';
 
 	// If it's a siteless checkout, let it redirect to the thank you page,
@@ -150,7 +153,7 @@ const gotoCheckoutPage = ( {
 	// Allow some time for the event to be recorded before redirecting.
 	setTimeout(
 		() =>
-			( window.location.href = getStatsPurchaseURL(
+			( window.location.href = getStatsCheckoutURL(
 				siteSlug,
 				product,
 				redirectUrl,

@@ -2,10 +2,11 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
-import { useMemo, useEffect } from 'react';
 import * as React from 'react';
+import { useEffect, useMemo } from 'react';
 import { ThankYou } from 'calypso/components/thank-you';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-email-verfication';
 import domainThankYouContent from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content';
 import {
 	DomainThankYouProps,
@@ -13,6 +14,7 @@ import {
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { useDispatch, useSelector } from 'calypso/state';
+import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
@@ -40,12 +42,21 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	isDomainOnly,
 	selectedSiteId,
 } ) => {
+	const dispatch = useDispatch();
 	const {
 		data: { is_enabled: isLaunchpadIntentBuildEnabled },
 	} = useLaunchpad( selectedSiteSlug, 'intent-build' );
 	const launchpadScreen = useSiteOption( 'launchpad_screen' );
 	const redirectTo = isLaunchpadIntentBuildEnabled ? 'home' : 'setup';
 	const siteIntent = useSiteOption( 'site_intent' );
+	const { isEnabled: isActivityPubEnabled } = useActivityPubStatus( selectedSiteSlug );
+
+	const { isEmailUnverified, onResendVerificationEmail } = useDomainEmailVerification(
+		selectedSiteId,
+		selectedSiteSlug,
+		domain
+	);
+
 	const isDomainOnlySiteOption = useSelector(
 		( state ) =>
 			selectedSiteId !== undefined && Boolean( isDomainOnlySite( state, selectedSiteId ) )
@@ -56,6 +67,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			selectedSiteSlug,
 			domain,
 			email,
+			shouldDisplayVerifyEmailStep: isEmailUnverified,
+			onResendEmailVerificationClick: onResendVerificationEmail,
 			hasProfessionalEmail,
 			hideProfessionalEmailStep,
 			siteIntent,
@@ -63,12 +76,15 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			redirectTo,
 			isDomainOnly: isDomainOnly && isDomainOnlySiteOption,
 			selectedSiteId,
+			isActivityPubEnabled,
 		} );
 	}, [
 		type,
 		domain,
 		selectedSiteSlug,
 		email,
+		isEmailUnverified,
+		onResendVerificationEmail,
 		hasProfessionalEmail,
 		hideProfessionalEmailStep,
 		siteIntent,
@@ -77,8 +93,9 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		isDomainOnly,
 		selectedSiteId,
 		isDomainOnlySiteOption,
+		isActivityPubEnabled,
 	] );
-	const dispatch = useDispatch();
+
 	const isLaunchpadEnabled = launchpadScreen === 'full';
 
 	useEffect( () => {

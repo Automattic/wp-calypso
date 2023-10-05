@@ -22,6 +22,7 @@ import {
 	isJetpackSearchFree,
 	isAkismetProduct,
 	isTieredVolumeSpaceAddon,
+	is100Year,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
@@ -776,6 +777,7 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ) {
 	return (
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
+		( ! is100Year( purchase ) || isCloseToExpiration( purchase ) ) &&
 		moment( creditCard?.expiryDate, 'MM/YY' ).isBefore( purchase.expiryDate, 'months' )
 	);
 }
@@ -787,6 +789,7 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ) {
 		creditCard &&
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
+		( ! is100Year( purchase ) || isCloseToExpiration( purchase ) ) &&
 		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
 	);
 }
@@ -801,7 +804,7 @@ export function shouldRenderExpiringCreditCard( purchase: Purchase ) {
 	);
 }
 
-function monthsUntilCardExpires( purchase: Purchase ) {
+export function monthsUntilCardExpires( purchase: Purchase ) {
 	const creditCard = purchase.payment.creditCard;
 	const expiry = moment( creditCard?.expiryDate, 'MM/YY' );
 	return expiry.diff( moment(), 'months' );

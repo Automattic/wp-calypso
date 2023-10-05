@@ -6,7 +6,6 @@ const emptyList = [];
 
 /**
  * Gets the list of trending themes.
- *
  * @param {Object} state Global state tree
  * @returns {Array} the list of trending themes
  */

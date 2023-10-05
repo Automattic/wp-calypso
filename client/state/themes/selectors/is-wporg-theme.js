@@ -4,7 +4,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Whether a theme is present in the WordPress.org Theme Directory
- *
  * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @returns {boolean}         Whether theme is in WP.org theme directory

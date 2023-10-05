@@ -17,7 +17,7 @@ $studio-blue-30: #0675c4;
 	width: 1px;
 }
 
-.is-section-plugins.has-no-sidebar {
+.is-section-plugins.has-no-sidebar:not(.is-logged-in) {
 	.masterbar {
 		height: 56px;
 		position: relative;
@@ -35,7 +35,8 @@ $studio-blue-30: #0675c4;
 
 .is-section-themes,
 .is-section-theme,
-.is-section-reader {
+.is-section-reader,
+.is-section-site-profiler {
 	&.has-no-sidebar {
 		.masterbar-menu {
 			.masterbar {

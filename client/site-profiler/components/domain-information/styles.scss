@@ -1,0 +1,26 @@
+.domain-information-details {
+	.whois-raw-data {
+		animation: l-block-fade-in 250ms ease-in;
+
+		button {
+			margin-bottom: 0.5rem;
+		}
+
+		p {
+			font-size: 0.875rem !important;
+			/* stylelint-disable-next-line */
+			line-height: 1.25rem;
+			color: var(--studio-gray) !important;
+		}
+
+		pre {
+			background: transparent;
+			font-size: 0.875rem;
+			/* stylelint-disable-next-line */
+			line-height: 1.25rem;
+			padding: 0;
+			margin: 0;
+			white-space: pre-line;
+		}
+	}
+}

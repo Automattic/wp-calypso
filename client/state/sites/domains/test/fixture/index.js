@@ -68,6 +68,7 @@ export const DOMAIN_PRIMARY = {
 	isAutoRenewing: true,
 	isPendingIcannVerification: false,
 	isIcannVerificationSuspended: null,
+	isMoveToNewSitePending: false,
 	isPendingRenewal: false,
 	isPendingWhoisUpdate: false,
 	isSubdomain: false,
@@ -167,6 +168,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	isAutoRenewing: false,
 	isPendingIcannVerification: false,
 	isIcannVerificationSuspended: null,
+	isMoveToNewSitePending: false,
 	isPendingRenewal: false,
 	isPendingWhoisUpdate: false,
 	isSubdomain: true,
@@ -272,6 +274,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	manual_whois: false,
 	owner: 'John Doe',
 	partner_domain: false,
+	move_to_new_site_pending: false,
 	pending_registration: false,
 	pending_registration_time: '',
 	pending_renewal: false,
@@ -354,6 +357,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	is_wpcom_staging_domain: false,
 	manual_transfer_required: false,
 	manual_whois: false,
+	move_to_new_site_pending: false,
 	partner_domain: false,
 	pending_registration: false,
 	pending_registration_time: '',
@@ -421,7 +425,6 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 
 /**
  * Return a whole state with domains data structure
- *
  * @returns {Object} an state instance
  *
  * - first site-domians is not requesting

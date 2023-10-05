@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -118,7 +119,7 @@ class PurchasesList extends Component {
 							) }
 							action={ translate( 'Upgrade now' ) }
 							actionURL="/plans"
-							illustration="/calypso/images/illustrations/illustration-nosites.svg"
+							illustration={ noSitesIllustration }
 						/>
 					</CompactCard>
 				</>

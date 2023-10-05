@@ -14,22 +14,20 @@ export class SitePickerSubmit extends Component {
 		const hasPaidPlan = siteHasPaidPlan( selectedSite );
 		const { ID: siteId, slug: siteSlug } = selectedSite;
 
-		this.props.submitSignupStep( {
-			stepName,
-			stepSectionName,
-			siteId,
-			siteSlug,
-		} );
-
 		this.props.submitSignupStep(
-			{ stepName: 'themes', wasSkipped: true },
+			{
+				stepName,
+				stepSectionName,
+				siteId,
+				siteSlug,
+			},
 			{ themeSlugWithRepo: 'pub/twentysixteen' }
 		);
 
 		if ( hasPaidPlan ) {
 			this.props.submitSignupStep(
 				{ stepName: 'plans-site-selected', wasSkipped: true },
-				{ cartItem: null }
+				{ cartItems: null, themeSlugWithRepo: 'pub/twentysixteen' }
 			);
 
 			goToStep( 'user' );

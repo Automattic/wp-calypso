@@ -28,7 +28,7 @@ const WOOCOMMERCE_ICON = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3
 
 export default function buildFallbackResponse( {
 	siteDomain = '',
-	shouldShowInbox = false,
+	shouldShowMailboxes = false,
 	shouldShowLinks = false,
 	shouldShowTestimonials = false,
 	shouldShowPortfolio = false,
@@ -37,19 +37,18 @@ export default function buildFallbackResponse( {
 	shouldShowApperanceHeader = false,
 	shouldShowApperanceBackground = false,
 	shouldShowAdControl = false,
-	shouldShowAMP = false,
 	shouldShowAddOns = false,
 	showSiteMonitoring = false,
 } = {} ) {
-	let inbox = [];
-	if ( shouldShowInbox ) {
-		inbox = [
+	let mailboxes = [];
+	if ( shouldShowMailboxes ) {
+		mailboxes = [
 			{
 				icon: 'dashicons-email',
-				slug: 'Inbox',
-				title: translate( 'Inbox' ),
+				slug: 'mailboxes',
+				title: translate( 'My Mailboxes' ),
 				type: 'menu-item',
-				url: `/inbox/${ siteDomain }`,
+				url: `/mailboxes/${ siteDomain }`,
 			},
 		];
 	}
@@ -117,7 +116,7 @@ export default function buildFallbackResponse( {
 				},
 			],
 		},
-		...inbox,
+		...mailboxes,
 		{
 			icon: 'dashicons-admin-post',
 			slug: 'edit-php',
@@ -625,16 +624,6 @@ export default function buildFallbackResponse( {
 					: [] ),
 			],
 		},
-		...( shouldShowAMP
-			? [
-					{
-						slug: 'amp',
-						title: translate( 'AMP' ),
-						type: 'menu-item',
-						url: `https://${ siteDomain }/wp-admin/admin.php?page=amp-options`,
-					},
-			  ]
-			: [] ),
 	];
 
 	return fallbackResponse;

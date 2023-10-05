@@ -4,15 +4,15 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
-import React from 'react';
+import React, { FC, ReactNode } from 'react';
 import request from 'wpcom-proxy-request';
-import useNewsletterCategoriesFeatureEnabled from '../use-newsletter-categories-feature-enabled';
+import useNewsletterCategoriesBlogSticker from '../use-newsletter-categories-blog-sticker';
 
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
-describe( 'useNewsletterCategoriesFeatureEnabled', () => {
+describe( 'useNewsletterCategoriesBlogSticker', () => {
 	let queryClient: QueryClient;
-	let wrapper: any;
+	let wrapper: FC< { children: ReactNode } >;
 
 	beforeEach( () => {
 		( request as jest.MockedFunction< typeof request > ).mockReset();
@@ -40,7 +40,7 @@ describe( 'useNewsletterCategoriesFeatureEnabled', () => {
 			'some-other-category',
 		] );
 
-		const { result } = renderHook( () => useNewsletterCategoriesFeatureEnabled( { siteId: 123 } ), {
+		const { result } = renderHook( () => useNewsletterCategoriesBlogSticker( { siteId: 123 } ), {
 			wrapper,
 		} );
 
@@ -54,7 +54,7 @@ describe( 'useNewsletterCategoriesFeatureEnabled', () => {
 			'some-other-category',
 		] );
 
-		const { result } = renderHook( () => useNewsletterCategoriesFeatureEnabled( { siteId: 123 } ), {
+		const { result } = renderHook( () => useNewsletterCategoriesBlogSticker( { siteId: 123 } ), {
 			wrapper,
 		} );
 

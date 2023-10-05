@@ -56,6 +56,7 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'personal',

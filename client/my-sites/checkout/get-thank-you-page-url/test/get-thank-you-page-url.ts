@@ -1,6 +1,5 @@
 /**
  * This is required to prevent "ReferenceError: window is not defined"
- *
  * @jest-environment jsdom
  */
 
@@ -15,6 +14,7 @@ import {
 	redirectCheckoutToWpAdmin,
 	TITAN_MAIL_MONTHLY_SLUG,
 	WPCOM_DIFM_LITE,
+	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
 import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import {
@@ -1754,6 +1754,25 @@ describe( 'getThankYouPageUrl', () => {
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily'
 			);
+		} );
+
+		it( 'Redirects to the 100 year plan thank-you page when the 100 year plan is available', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: PLAN_100_YEARS,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'yourgroovydomain.com',
+				receiptId: 999999,
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/100-year/thank-you/yourgroovydomain.com/999999' );
 		} );
 
 		it( 'redirects with jetpackTemporarySiteId query param when available', () => {

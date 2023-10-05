@@ -1,6 +1,5 @@
 /**
  * This function checks if a given ID is valid.
- *
  * @param {number | string | undefined} id - The ID to be validated. It can be of type number, string, or undefined.
  * @returns {boolean} The function returns true if the ID is valid, false otherwise.
  *
@@ -10,7 +9,7 @@
  *
  * If the ID is undefined or does not meet the above criteria, the function returns false.
  */
-export const isValidId = ( id?: number | string ): id is number | string => {
+export const isValidId = ( id?: unknown ): id is number | string => {
 	if ( id === undefined ) {
 		return false;
 	}

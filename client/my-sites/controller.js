@@ -39,7 +39,7 @@ import {
 	emailManagementAddEmailForwards,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
-	emailManagementInbox,
+	emailManagementMailboxes,
 	emailManagementInDepthComparison,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
@@ -193,7 +193,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementAddEmailForwards,
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
-		emailManagementInbox,
+		emailManagementMailboxes,
 		emailManagementInDepthComparison,
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
@@ -262,7 +262,6 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 /**
  * The paths allowed for domain-only sites and DIFM in-progress sites are the same
  * with one exception - /domains/add should be allowed for DIFM in-progress sites.
- *
  * @param {string} path The path to be checked
  * @param {string} slug The site slug
  * @param {Array} domains The list of site domains
@@ -378,7 +377,6 @@ export function updateRecentSitesPreferences( context ) {
 
 /**
  * Returns the site-picker react element.
- *
  * @param {Object} context -- Middleware context
  * @returns {Object} A site-picker React element
  */
@@ -496,15 +494,17 @@ export function siteSelection( context, next ) {
 	const isUnlinkedCheckout =
 		'1' === context.query?.unlinked && context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i );
 
+	const shouldRenderNoSites = ! context.section.enableNoSites && ! isUnlinkedCheckout;
+
 	// The user doesn't have any sites: render `NoSitesMessage`
-	if ( currentUser && currentUser.site_count === 0 && ! isUnlinkedCheckout ) {
+	if ( currentUser && currentUser.site_count === 0 && shouldRenderNoSites ) {
 		renderEmptySites( context );
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}
 
 	// The user has all sites set as hidden: render help message with how to make them visible
-	if ( currentUser && currentUser.visible_site_count === 0 && ! isUnlinkedCheckout ) {
+	if ( currentUser && currentUser.visible_site_count === 0 && shouldRenderNoSites ) {
 		renderNoVisibleSites( context );
 		recordNoVisibleSitesPageView( context, siteFragment );
 		return;
@@ -666,7 +666,6 @@ export function navigation( context, next ) {
 
 /**
  * Middleware that adds the site selector screen to the layout.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -702,7 +701,6 @@ export function redirectWithoutSite( redirectPath ) {
 
 /**
  * Use this middleware to prevent navigation to pages which are not supported by staging sites.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -725,7 +723,6 @@ export function stagingSiteNotSupportedRedirect( context, next ) {
  *
  * If you need to prevent navigation to pages for the P2 project in general,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -749,7 +746,6 @@ export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
 /**
  * For P2s, only hubs can have a plan. If we are on P2 a site that is a site under
  * a hub, we redirect the hub's plans page.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -778,7 +774,6 @@ export function p2RedirectToHubPlans( context, next ) {
  *
  * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -797,7 +792,6 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
 
 /**
  * Whether we need to redirect user to the Jetpack site for authorization.
- *
  * @param {Object} context -- The context object.
  * @param {Object} site -- The site information.
  * @returns {boolean} shouldRedirect -- Whether we need to redirect user to the Jetpack site for authorization.
@@ -808,7 +802,6 @@ export function shouldRedirectToJetpackAuthorize( context, site ) {
 
 /**
  * Get redirect URL to the Jetpack site for authorization.
- *
  * @param {Object} context -- The context object.
  * @param {Object} site -- The site information.
  * @returns {string} redirectURL -- The redirect URL.

@@ -3,7 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useSelector } from 'react-redux';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -20,6 +20,7 @@ import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
@@ -65,6 +66,7 @@ const designFirst: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
+		const siteId = useSiteIdParam();
 
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
@@ -105,6 +107,8 @@ const designFirst: Flow = {
 							addQueryArgs( `/setup/update-design/designSetup`, {
 								siteSlug: siteSlug,
 								flowToReturnTo: flowName,
+								theme: getQueryArg( window.location.href, 'theme' ),
+								style_variation: getQueryArg( window.location.href, 'style_variation' ),
 							} )
 						);
 					}
@@ -191,7 +195,18 @@ const designFirst: Flow = {
 					return window.location.assign( providedDependencies.destinationUrl as string );
 			}
 		}
-		return { submit };
+
+		const goNext = async () => {
+			switch ( currentStep ) {
+				case 'launchpad':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+					}
+					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+			}
+		};
+
+		return { goNext, submit };
 	},
 
 	useAssertConditions(): AssertConditionResult {
@@ -205,6 +220,10 @@ const designFirst: Flow = {
 			currentPath.includes( 'setup/design-first/site-creation-step' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
+		// Allow to create a new site if people are from the Theme Showcase or they don't have a site
+		const shouldCreateNewSite =
+			getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' || ! userAlreadyHasSites;
+
 		// There is a race condition where useLocale is reporting english,
 		// despite there being a locale in the URL so we need to look it up manually.
 		// We also need to support both query param and path suffix localized urls
@@ -214,11 +233,16 @@ const designFirst: Flow = {
 		const queryLocaleSlug = getLocaleFromQueryParam();
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+		const logInParams = new URLSearchParams( {
+			variationName: flowName,
+			pageTitle: 'Pick a design',
+			redirect_to: window.location.href.replace( window.location.origin, '' ),
+		} ).toString();
 
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Pick%20a%20design&redirect_to=/setup/${ flowName }`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Pick%20a%20design&redirect_to=/setup/${ flowName }`;
+				? `/start/account/user/${ locale }?${ logInParams }`
+				: `/start/account/user?${ logInParams }`;
 
 		// Despite sending a CHECKING state, this function gets called again with the
 		// /setup/design-first/site-creation-step route which has no locale in the path so we need to
@@ -228,7 +252,7 @@ const designFirst: Flow = {
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
 				redirect( logInUrl );
-			} else if ( userAlreadyHasSites && isSiteCreationStep ) {
+			} else if ( isSiteCreationStep && ! shouldCreateNewSite ) {
 				// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
 				// This prevents a bunch of sites being created accidentally.
 				redirect( `/themes` );
@@ -242,7 +266,7 @@ const designFirst: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( userAlreadyHasSites && isSiteCreationStep ) {
+		} else if ( isSiteCreationStep && ! shouldCreateNewSite ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires no preexisting sites`,

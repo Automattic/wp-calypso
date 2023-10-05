@@ -3,7 +3,6 @@ import { EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS } from './email-provider-constan
 /**
  * Indicates whether the supplied email account has an unverified email forward warning
  * for any of its mailboxes.
- *
  * @param {Object} emailAccount - Email account object returned from the server.
  * @returns {boolean} - Returns whether an email for the email account has an unverified email warning.
  */

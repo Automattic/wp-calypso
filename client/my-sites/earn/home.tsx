@@ -1,7 +1,6 @@
 import {
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_WORDADS_INSTANT,
-	PLAN_100_YEARS,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
@@ -11,18 +10,19 @@ import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
 import { useState, useEffect } from 'react';
-import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EmptyContent from 'calypso/components/empty-content';
-import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+import PromoSection, {
+	Props as PromoSectionProps,
+	PromoSectionCardProps,
+} from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -32,8 +32,7 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import CommissionFees from './components/commission-fees';
-import type { Image } from 'calypso/components/promo-section/promo-card/index';
+import StatsSection from './components/stats';
 
 import './style.scss';
 
@@ -42,9 +41,6 @@ const Home = () => {
 	const dispatch = useDispatch();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const { commission } = useSelector( ( state ) =>
-		getEarningsWithDefaultsForSiteId( state, site?.ID )
-	);
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, site?.ID ?? 0 ) );
 	const hasWordAdsFeature = useSelector( ( state ) => siteHasWordAds( state, site?.ID ?? null ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
@@ -62,8 +58,6 @@ const Home = () => {
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
-
-	const isPlan100YearPlan = sitePlanSlug === PLAN_100_YEARS;
 
 	const hasConnectedAccount = Boolean( connectedAccountId );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
@@ -131,7 +125,7 @@ const Home = () => {
 	const getPremiumPlanNames = () => {
 		const nonAtomicJetpackText = eligibleForProPlan
 			? translate( 'Available only with a Pro plan.' )
-			: translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+			: translate( 'Available only with a Premium, Business, or Commerce plan.' );
 
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
@@ -139,10 +133,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Simple Payments card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
 	 */
-	const getSimplePaymentsCard = () => {
+	const getSimplePaymentsCard = (): PromoSectionCardProps => {
 		const supportLink = localizeUrl(
 			'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
 		);
@@ -192,10 +184,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Recurring Payments card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
 	 */
-	const getRecurringPaymentsCard = () => {
+	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
 		const hasConnectionCtaTitle = translate( 'Manage Payment Button' );
 		const noConnectionCtaTitle = translate( 'Enable Payment Button' );
 		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
@@ -245,10 +235,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Donations card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
 	 */
-	const getDonationsCard = () => {
+	const getDonationsCard = (): PromoSectionCardProps => {
 		const hasConnectionCtaTitle = translate( 'Manage Donations Form' );
 		const noConnectionCtaTitle = translate( 'Enable Donations Form' );
 		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
@@ -298,10 +286,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Premium Content Block card based on the current plan.
-	 *
-	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
-	const getPremiumContentCard = () => {
+	const getPremiumContentCard = (): PromoSectionCardProps | undefined => {
 		const hasConnectionCtaTitle = translate( 'Manage Premium Content' );
 		const noConnectionCtaTitle = translate( 'Enable Premium Content' );
 		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
@@ -328,7 +314,7 @@ const Home = () => {
 				'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
 			),
 			onClick: () => trackLearnLink( 'premium-content' ),
-			label: hasConnectedAccount ? translate( 'Support documentation' ) : null,
+			label: hasConnectedAccount ? translate( 'Support documentation' ) : undefined,
 		};
 
 		return {
@@ -344,15 +330,13 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Paid Newsletter card based on the current plan.
-	 *
-	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
-	const getPaidNewsletterCard = () => {
+	const getPaidNewsletterCard = (): PromoSectionCardProps | undefined => {
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
 		const cta = {
-			text: translate( 'Learn how to get started' ),
+			text: translate( 'Learn more' ),
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {
@@ -371,16 +355,15 @@ const Home = () => {
 			icon: 'mail',
 			actions: {
 				cta,
+				featureIncludedInPlan: true,
 			},
 		};
 	};
 
 	/**
 	 * Return the content to display in the Peer Referrals card.
-	 *
-	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
-	const getPeerReferralsCard = () => {
+	const getPeerReferralsCard = (): PromoSectionCardProps | undefined => {
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
@@ -426,15 +409,8 @@ const Home = () => {
 
 	/**
 	 * Return the content to display in the Ads card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
 	 */
-	/**
-	 * Return the content to display in the Ads card based on the current plan.
-	 *
-	 * @returns {Object} Object with props to render a PromoCard.
-	 */
-	const getAdsCard = () => {
+	const getAdsCard = (): PromoSectionCardProps => {
 		const cta =
 			hasWordAdsFeature || hasSetupAds
 				? {
@@ -483,49 +459,11 @@ const Home = () => {
 		};
 	};
 
-	const getHeaderCard = () => ( {
-		title: translate( 'Start earning money now' ),
-		image: {
-			path: earnSectionImage,
-			align: 'right' as Image[ 'align' ],
-		},
-		body: (
-			<>
-				{ translate(
-					'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/'
-									) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-				) }
-				<br />
-				<br />
-				<CommissionFees
-					className="earn__notes"
-					commission={ commission }
-					iconSize={ 14 }
-					siteSlug={ site?.slug }
-					isPlan100YearPlan={ isPlan100YearPlan }
-				/>
-			</>
-		),
-	} );
-
 	const getPlaceholderPromoCard = () => {
 		return { title: '', body: '', image: <div /> };
 	};
 
 	const promos: PromoSectionProps = {
-		header: getHeaderCard(),
 		promos: compact( [
 			getRecurringPaymentsCard(),
 			getDonationsCard(),
@@ -552,13 +490,15 @@ const Home = () => {
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
-					<PromoSection
-						header={ getHeaderCard() }
-						promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] }
-					/>
+					<PromoSection promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] } />
 				</div>
 			) }
-			{ ! isLoading && <PromoSection { ...promos } /> }
+			{ ! isLoading && (
+				<>
+					<StatsSection />
+					<PromoSection { ...promos } />
+				</>
+			) }
 		</>
 	);
 };

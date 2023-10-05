@@ -64,7 +64,9 @@ const PatternListPanel = ( {
 				<div className="pattern-list-panel__show-more">
 					<Button
 						onClick={ () => {
-							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SHOW_MORE_CLICK );
+							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SHOW_MORE_CLICK, {
+								category: selectedCategory,
+							} );
 							setIsShowMorePatterns( true );
 						} }
 						icon={ chevronDown }

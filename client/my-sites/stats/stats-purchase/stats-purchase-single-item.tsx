@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -94,6 +95,12 @@ const StatsCommercialPurchase = ( {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const handleClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
+		event.preventDefault();
+
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
+
+		const mailTo = isOdysseyStats ? 'support@jetpack.com' : 'help@wordpress.com';
 		const emailSubject = translate( 'Jetpack Stats Commercial Classification Dispute' );
 		const emailBody = `Hi Jetpack Team,\n
 I'm writing to dispute the classification of my site '${ siteSlug }' as commercial.\n
@@ -103,22 +110,16 @@ I can confirm that,
 - I don't promote a business on my site.\n
 Could you please take a look at my site and update the classification if necessary?\n
 Thanks\n\n`;
-		const emailHref = `mailto:support@jetpack.com?subject=${ encodeURIComponent(
+		const emailHref = `mailto:${ mailTo }?subject=${ encodeURIComponent(
 			emailSubject
 		) }&body=${ encodeURIComponent( emailBody ) }`;
-
-		event.preventDefault();
-
-		const type = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-
-		recordTracksEvent( `${ type }_stats_purchase_commercial_update_classification_clicked` );
 
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
 	return (
 		<>
-			<h1>{ translate( 'Jetpack Stats Commercial' ) }</h1>
+			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
@@ -129,7 +130,7 @@ Thanks\n\n`;
 					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
 				}
 			>
-				{ translate( 'Get Stats Commercial' ) }
+				{ translate( 'Get Stats' ) }
 			</ButtonComponent>
 
 			{ showClassificationDispute && (
@@ -208,7 +209,7 @@ const StatsPersonalPurchase = ( {
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
 	// We need the exact position, otherwise the caculated pricing would not be the same as the one in the slider.
 	const defaultStartingValue = Math.floor( steps * DEFAULT_STARTING_FRACTION );
-	const uiEmojiHeartTier = steps * UI_EMOJI_HEART_TIER_THRESHOLD;
+	const uiEmojiHeartTier = Math.floor( steps * UI_EMOJI_HEART_TIER_THRESHOLD );
 	const uiImageCelebrationTier = steps * UI_IMAGE_CELEBRATION_TIER_THRESHOLD;
 
 	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingValue );
@@ -218,13 +219,12 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		recordTracksEvent( `calypso_stats_plan_switched_from_personal_to_commercial` );
 
-		const purchasePath = `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection`;
-		window.location.href = purchasePath;
+		page( `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection` );
 	};
 
 	return (
 		<>
-			<h1>{ translate( 'Jetpack Stats Personal' ) }</h1>
+			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<PersonalPurchase
 				subscriptionValue={ subscriptionValue }
@@ -244,6 +244,7 @@ const StatsPersonalPurchase = ( {
 				adminUrl={ adminUrl }
 				redirectUri={ redirectUri }
 				from={ from }
+				isStandalone={ true }
 			/>
 		</>
 	);

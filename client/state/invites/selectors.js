@@ -6,7 +6,6 @@ import 'calypso/state/invites/init';
 /**
  * Returns true if currently requesting invites for the given site, or false
  * otherwise.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether invites are being requested
@@ -18,7 +17,6 @@ export function isRequestingInvitesForSite( state, siteId ) {
 /**
  * Returns an array of all pending invite objects known for the given site, or
  * `null` if there is no data for that site.
- *
  * @param  {Object} state  Global state tree
  * @param  {number} siteId Site ID
  * @returns {?Array}        The list of pending invites for the given site
@@ -34,7 +32,6 @@ export function getPendingInvitesForSite( state, siteId ) {
 /**
  * Returns an array of all accepted invite objects known for the given site, or
  * `null` if there is no data for that site.
- *
  * @param  {Object} state  Global state tree
  * @param  {number} siteId Site ID
  * @returns {?Array}        The list of accepted invites for the given site
@@ -50,7 +47,6 @@ export function getAcceptedInvitesForSite( state, siteId ) {
 /**
  * Returns an array of all invite links for the given site, or
  * `null` if there are none.
- *
  * @param  {Object} state  Global state tree
  * @param  {number} siteId Site ID
  * @returns {?Array}       The list of invite links for the given site
@@ -65,7 +61,6 @@ export function getInviteLinksForSite( state, siteId ) {
 
 /**
  * Returns the total number of invites found for the given site, or `null`.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {?number}        The number of invites found for the given site
@@ -77,7 +72,6 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
 /**
  * Returns an invite object for the given site and invite ID, or `null` if no
  * invite with the given ID exists for the site.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
@@ -100,7 +94,6 @@ export const getInviteForSite = treeSelect(
 /**
  * Returns true if currently requesting an invite resend for the given site and
  * invite ID, or false otherwise.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
@@ -113,7 +106,6 @@ export function isRequestingInviteResend( state, siteId, inviteId ) {
 /**
  * Returns true if request to resend invite for the given site and
  * invite ID was successful, or false otherwise.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
@@ -126,7 +118,6 @@ export function didInviteResendSucceed( state, siteId, inviteId ) {
 /**
  * Returns true if currently deleting an invite for the given site and
  * invite ID, or false otherwise.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
@@ -139,7 +130,6 @@ export function isDeletingInvite( state, siteId, inviteId ) {
 /**
  * Returns true if the invite for the given site and invite ID was successfully
  * deleted, or false otherwise.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  inviteId Invite ID
@@ -152,7 +142,6 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
 /**
  * Returns true if currently deleting any invite for the given site,
  * or false otherwise.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @returns {boolean}          Whether an invite is being deleted
@@ -166,7 +155,6 @@ export function isDeletingAnyInvite( state, siteId ) {
 
 /**
  * Returns token validation object
- *
  * @param {Object} 	state	Global state tree
  */
 export function getTokenValidation( state ) {
@@ -175,7 +163,6 @@ export function getTokenValidation( state ) {
 
 /**
  * Returns send invite state object
- *
  * @param {Object} 	state	Global state tree
  */
 export function getSendInviteState( state ) {

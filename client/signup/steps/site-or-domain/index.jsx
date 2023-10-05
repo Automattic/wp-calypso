@@ -201,14 +201,13 @@ class SiteOrDomain extends Component {
 
 		// we can skip the next two steps in the `domain-first` flow if the
 		// user is only purchasing a domain
-		this.props.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
 		this.props.submitSignupStep(
-			{ stepName: 'themes', wasSkipped: true },
+			{ stepName: 'site-picker', wasSkipped: true },
 			{ themeSlugWithRepo: 'pub/twentysixteen' }
 		);
 		this.props.submitSignupStep(
 			{ stepName: 'plans-site-selected', wasSkipped: true },
-			{ cartItem: null }
+			{ cartItems: null }
 		);
 		goToStep( 'user' );
 	}
@@ -223,9 +222,8 @@ class SiteOrDomain extends Component {
 		} else if ( designType === 'existing-site' ) {
 			goToNextStep();
 		} else {
-			this.props.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
 			this.props.submitSignupStep(
-				{ stepName: 'themes', wasSkipped: true },
+				{ stepName: 'site-picker', wasSkipped: true },
 				{ themeSlugWithRepo: 'pub/twentysixteen' }
 			);
 			goToStep( 'plans-site-selected' );

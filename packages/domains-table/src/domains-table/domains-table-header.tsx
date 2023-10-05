@@ -1,39 +1,34 @@
-import { domainsTableColumns as defaultDomainsTableColumns } from '../domains-table-header/columns';
-import {
-	DomainsTableColumn,
-	DomainsTableHeader as InternalDomainsTableHeader,
-} from '../domains-table-header/index';
+import { DomainsTableHeader as InternalDomainsTableHeader } from '../domains-table-header/index';
 import { useDomainsTable } from './domains-table';
 
-type Props = {
-	domainsTableColumns?: DomainsTableColumn[];
-};
-
-export const DomainsTableHeader = ( {
-	domainsTableColumns = defaultDomainsTableColumns,
-}: Props ) => {
+export const DomainsTableHeader = () => {
 	const {
 		sortKey,
 		sortDirection,
 		onSortChange,
 		getBulkSelectionStatus,
 		changeBulkSelection,
-		hideOwnerColumn,
 		domainsRequiringAttention,
 		canSelectAnyDomains,
+		filteredData,
+		domainsTableColumns,
+		selectedDomains,
+		isLoadingDomains,
 	} = useDomainsTable();
 
 	return (
 		<InternalDomainsTableHeader
-			columns={ domainsTableColumns || [] }
+			columns={ domainsTableColumns }
 			activeSortKey={ sortKey }
 			activeSortDirection={ sortDirection }
 			bulkSelectionStatus={ getBulkSelectionStatus() }
 			onBulkSelectionChange={ changeBulkSelection }
 			onChangeSortOrder={ onSortChange }
-			hideOwnerColumn={ hideOwnerColumn }
 			domainsRequiringAttention={ domainsRequiringAttention }
 			canSelectAnyDomains={ canSelectAnyDomains }
+			domainCount={ filteredData.length }
+			selectedDomainsCount={ selectedDomains.size }
+			isLoadingDomains={ isLoadingDomains }
 		/>
 	);
 };

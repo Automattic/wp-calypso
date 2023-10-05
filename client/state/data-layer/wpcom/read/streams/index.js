@@ -1,7 +1,8 @@
+import config from '@automattic/calypso-config';
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
-import { getTagsFromStreamKey, getAfterDateForFeed } from 'calypso/reader/discover/helper';
+import { getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -103,15 +104,20 @@ function createStreamDataFromCards( cards, dateProperty ) {
 	// TODO: We may want to extract the related tags and update related tags stream too
 	const cardPosts = [];
 	let cardRecommendedSites = [];
+	let newSites = [];
 	cards.forEach( ( card ) => {
 		if ( card.type === 'post' ) {
 			cardPosts.push( card.data );
 		} else if ( card.type === 'recommended_blogs' ) {
 			cardRecommendedSites = card.data;
+		} else if ( card.type === 'new_sites' ) {
+			newSites = card.data;
 		}
 	} );
+
 	const streamSites = createStreamSitesFromRecommendedSites( cardRecommendedSites );
-	return { ...createStreamDataFromPosts( cardPosts, dateProperty ), streamSites };
+	const streamNewSites = createStreamSitesFromRecommendedSites( newSites );
+	return { ...createStreamDataFromPosts( cardPosts, dateProperty ), streamSites, streamNewSites };
 }
 
 function createStreamDataFromSites( sites, dateProperty ) {
@@ -202,9 +208,15 @@ const streamApis = {
 	discover: {
 		path: ( { streamKey } ) => {
 			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
+				if ( config.isEnabled( 'reader/discover-stream' ) ) {
+					return '/read/streams/discover';
+				}
+
 				return '/read/tags/cards';
 			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
 				return '/read/tags/posts';
+			} else if ( streamKeySuffix( streamKey ).includes( 'firstposts' ) ) {
+				return '/read/streams/first-posts';
 			}
 			return `/read/tags/${ streamKeySuffix( streamKey ) }/cards`;
 		},
@@ -216,7 +228,7 @@ const streamApis = {
 				tags: getTagsFromStreamKey( streamKey ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
-				after: getAfterDateForFeed(),
+				age_based_decay: 0.5,
 			} ),
 		apiNamespace: 'wpcom/v2',
 	},
@@ -291,6 +303,17 @@ const streamApis = {
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
+	},
+	tag_popular: {
+		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/cards`,
+		apiNamespace: 'wpcom/v2',
+		query: ( extras, { streamKey } ) =>
+			getQueryString( {
+				...extras,
+				tags: streamKeySuffix( streamKey ),
+				tag_recs_per_card: 5,
+				site_recs_per_card: 5,
+			} ),
 	},
 	list: {
 		path: ( { streamKey } ) => {
@@ -377,6 +400,7 @@ export function handlePage( action, data ) {
 	let streamItems = [];
 	let streamPosts = [];
 	let streamSites = [];
+	let streamNewSites = [];
 
 	// If the payload has posts, then this stream is intended to be a post stream
 	// If the payload has sites, then we need to extract the posts from the sites and update the post stream
@@ -396,6 +420,7 @@ export function handlePage( action, data ) {
 		streamItems = streamData.streamItems;
 		streamPosts = streamData.streamPosts;
 		streamSites = streamData.streamSites;
+		streamNewSites = streamData.streamNewSites;
 	}
 
 	const actions = analyticsForStream( {
@@ -413,6 +438,11 @@ export function handlePage( action, data ) {
 		if ( streamSites.length > 0 ) {
 			actions.push(
 				receiveRecommendedSites( { seed: 'discover-recommendations', sites: streamSites } )
+			);
+		}
+		if ( streamNewSites.length > 0 ) {
+			actions.push(
+				receiveRecommendedSites( { seed: 'discover-new-sites', sites: streamNewSites } )
 			);
 		}
 		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );

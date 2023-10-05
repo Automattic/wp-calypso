@@ -1,6 +1,5 @@
 /**
  * Get the error status of applying a cancellation offer
- *
  * @param state
  * @param purchaseId
  * @returns null | { code : string }

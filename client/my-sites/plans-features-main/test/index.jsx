@@ -3,17 +3,23 @@
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( 'calypso/my-sites/plan-features-2023-grid', () => ( { gridPlansForFeaturesGrid } ) => (
-	<div data-testid="plan-features">
-		<div data-testid="visible-plans">
-			{ JSON.stringify( gridPlansForFeaturesGrid.map( ( { planSlug } ) => planSlug ) ) }
+jest.mock( 'calypso/my-sites/plans-grid', () => ( {
+	FeaturesGrid: ( { gridPlans } ) => (
+		<div data-testid="plan-features">
+			<div data-testid="visible-plans">
+				{ JSON.stringify( gridPlans.map( ( { planSlug } ) => planSlug ) ) }
+			</div>
 		</div>
-	</div>
-) );
+	),
+} ) );
 jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
 	<div>PlanTypeSelector</div>
 ) );
 jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
+jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( {
+	wpcomFreeDomainSuggestion: { isLoading: false, result: { domain_name: 'suggestion.com' } },
+	invalidateDomainSuggestionCache: () => {},
+} ) );
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
@@ -23,11 +29,11 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn(),
 } ) );
 jest.mock(
-	'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans',
+	'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans',
 	() => jest.fn()
 );
 jest.mock(
-	'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid',
+	'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid',
 	() => jest.fn()
 );
 jest.mock(
@@ -37,6 +43,7 @@ jest.mock(
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans', () =>
 	jest.fn()
 );
+jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
 
 import {
 	PLAN_FREE,
@@ -55,10 +62,10 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
-import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
-import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
+import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
+import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';
@@ -67,6 +74,7 @@ import PlansFeaturesMain from '../index';
 const props = {
 	selectedPlan: PLAN_FREE,
 	translate: ( x ) => x,
+	hidePlansFeatureComparison: true,
 };
 
 const emptyPlansIndexForMockedFeatures = {
@@ -138,7 +146,9 @@ describe( 'PlansFeaturesMain', () => {
 		test( 'Should render <PlanFeatures /> with WP.com data-e2e-plans when requested', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 
-			expect( screen.getByTestId( 'plan-features' ).parentElement ).toHaveAttribute(
+			// immediate parent is <div className="plans-wrapper">
+			// data-e2e-plans is set on the parent of that
+			expect( screen.getByTestId( 'plan-features' ).parentElement.parentElement ).toHaveAttribute(
 				'data-e2e-plans',
 				'wpcom'
 			);
@@ -264,6 +274,7 @@ describe( 'PlansFeaturesMain', () => {
 			hideFreePlan: true,
 			withWPPlanTabs: true,
 			planTypeSelector: null,
+			hidePlansFeatureComparison: true,
 		};
 
 		beforeEach( () => {

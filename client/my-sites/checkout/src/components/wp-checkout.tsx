@@ -7,14 +7,12 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
-	SubmitButtonWrapper,
 	Button,
 	useTransactionStatus,
 	TransactionStatus,
 	CheckoutStep,
 	CheckoutStepGroup,
 	CheckoutStepBody,
-	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -26,21 +24,24 @@ import {
 } from '@automattic/composite-checkout';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled } from '@automattic/wpcom-checkout';
+import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasDIFMProduct,
 	has100YearPlan as cartHas100YearPlan,
+	ObjectWithProducts,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
@@ -51,6 +52,7 @@ import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-val
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
@@ -87,7 +89,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-import type { ReactNode } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -199,6 +201,22 @@ const OrderReviewTitle = () => {
 	return <>{ String( translate( 'Your order' ) ) }</>;
 };
 
+const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
+	const hasCartJetpackProductsOnly =
+		responseCart?.products?.length > 0 &&
+		responseCart?.products?.every( ( product ) =>
+			isJetpackPurchasableItem( product.product_slug )
+		);
+
+	if ( isAkismetCheckout() ) {
+		return 'akismet';
+	} else if ( isJetpackCheckout() || hasCartJetpackProductsOnly ) {
+		return 'jpCheckout';
+	}
+
+	return 'wpcom';
+};
+
 export default function WPCheckout( {
 	addItemToCart,
 	changeSelection,
@@ -215,7 +233,7 @@ export default function WPCheckout( {
 	areThereErrors,
 	isInitialCartLoading,
 	customizedPreviousPath,
-	loadingContent,
+	loadingHeader,
 	onStepChanged,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
@@ -234,7 +252,7 @@ export default function WPCheckout( {
 	areThereErrors: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
-	loadingContent: ReactNode;
+	loadingHeader?: ReactNode;
 } ) {
 	const locale = useLocale();
 	const cartKey = useCartKey();
@@ -248,7 +266,7 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const reduxDispatch = useReduxDispatch();
-	usePresalesChat( 'wpcom' );
+	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
@@ -328,6 +346,8 @@ export default function WPCheckout( {
 		return true;
 	};
 
+	useOneDollarOfferTrack( siteId, 'checkout' );
+
 	if ( ! checkoutActions ) {
 		return null;
 	}
@@ -349,11 +369,13 @@ export default function WPCheckout( {
 					<PerformanceTrackerStop />
 					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
 					<CheckoutCompleteRedirecting />
-					<SubmitButtonWrapper>
-						<Button buttonType="primary" fullWidth isBusy disabled>
-							{ translate( 'Please wait…' ) }
-						</Button>
-					</SubmitButtonWrapper>
+					<CheckoutFormSubmit
+						submitButton={
+							<Button buttonType="primary" fullWidth isBusy disabled>
+								{ translate( 'Please wait…' ) }
+							</Button>
+						}
+					/>
 				</WPCheckoutMainContent>
 			</WPCheckoutWrapper>
 		);
@@ -376,11 +398,13 @@ export default function WPCheckout( {
 					<PerformanceTrackerStop />
 					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
 					<EmptyCart />
-					<SubmitButtonWrapper>
-						<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
-							{ translate( 'Go back' ) }
-						</Button>
-					</SubmitButtonWrapper>
+					<CheckoutFormSubmit
+						submitButton={
+							<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
+								{ translate( 'Go back' ) }
+							</Button>
+						}
+					/>
 				</WPCheckoutMainContent>
 			</WPCheckoutWrapper>
 		);
@@ -444,7 +468,7 @@ export default function WPCheckout( {
 			<WPCheckoutMainContent>
 				<CheckoutOrderBanner />
 				<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
-				<CheckoutStepGroup loadingContent={ loadingContent } onStepChanged={ onStepChanged }>
+				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
 					<CheckoutStepBody
@@ -613,6 +637,32 @@ export default function WPCheckout( {
 		</WPCheckoutWrapper>
 	);
 }
+
+const CheckoutSummary = styled.div`
+	box-sizing: border-box;
+	margin: 0 auto;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+`;
+
+export const CheckoutSummaryAreaUnstyled = ( {
+	children,
+	className,
+}: PropsWithChildren< {
+	className?: string;
+} > ) => {
+	return (
+		<CheckoutSummary className={ joinClasses( [ className, 'checkout__summary-area' ] ) }>
+			{ children }
+		</CheckoutSummary>
+	);
+};
 
 const CheckoutSummaryArea = styled( CheckoutSummaryAreaUnstyled )`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {

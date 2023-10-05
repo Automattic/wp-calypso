@@ -122,6 +122,7 @@ class TagStream extends Component {
 						title={ title }
 						imageSearchString={ imageSearchString }
 						showFollow={ false }
+						showSort={ false }
 						showBack={ this.props.showBack }
 					/>
 					{ emptyContent() }
@@ -131,15 +132,20 @@ class TagStream extends Component {
 
 		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
 		const tagHeader = () => (
-			<TagStreamHeader
-				title={ titleText }
-				description={ this.props.description }
-				imageSearchString={ imageSearchString }
-				showFollow={ !! ( tag && tag.id ) }
-				following={ this.isSubscribed() }
-				onFollowToggle={ this.toggleFollowing }
-				showBack={ this.props.showBack }
-			/>
+			<>
+				<TagStreamHeader
+					title={ titleText }
+					description={ this.props.description }
+					imageSearchString={ imageSearchString }
+					showFollow={ !! ( tag && tag.id ) }
+					following={ this.isSubscribed() }
+					onFollowToggle={ this.toggleFollowing }
+					showBack={ this.props.showBack }
+					showSort={ true }
+					sort={ this.props.sort }
+					recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
+				/>
+			</>
 		);
 
 		return (
@@ -153,7 +159,9 @@ class TagStream extends Component {
 				streamHeader={ tagHeader }
 				showSiteNameOnCards={ false }
 				useCompactCards={ true }
-				streamSidebar={ () => <ReaderTagSidebar tag={ this.props.decodedTagSlug } /> }
+				streamSidebar={ () => (
+					<ReaderTagSidebar tag={ this.props.decodedTagSlug } showFollow={ false } />
+				) }
 				sidebarTabTitle={ this.props.translate( 'Related' ) }
 			>
 				<QueryReaderFollowedTags />
@@ -165,13 +173,14 @@ class TagStream extends Component {
 }
 
 export default connect(
-	( state, { decodedTagSlug } ) => {
+	( state, { decodedTagSlug, sort } ) => {
 		const tag = getReaderTagBySlug( state, decodedTagSlug );
 		return {
 			description: tag?.description,
 			followedTags: getReaderFollowedTags( state ),
 			tags: getReaderTags( state ),
 			isLoggedIn: isUserLoggedIn( state ),
+			sort,
 		};
 	},
 	{

@@ -4,7 +4,6 @@ import 'calypso/state/stats/init';
 
 /**
  * Returns the number of views for a given post, or `null`.
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {number}  postId   Post ID

@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { CheckoutCheckIcon } from '@automattic/composite-checkout';
 import { Modal } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -13,6 +12,7 @@ import {
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setPreference } from 'calypso/state/preferences/actions';
+import { CheckIcon } from '../check-icon';
 
 import './style.scss';
 
@@ -38,12 +38,12 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 		dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_redirect' ) );
 	};
 
-	// Features list of Agency/Pro Dashboard.
+	// Features list of Jetpack Manage.
 	const features = [
 		translate( 'Up to 60% off our products and bundles.' ),
 		translate( 'A recurring discount (not just for the first year).' ),
 		translate( 'More flexible billing (only pay per day of use, billed monthly).' ),
-		translate( 'Access to our Pro Dashboard – manage all of your sites in one place.' ),
+		translate( 'Access to Jetpack Manage – manage all of your sites in one place.' ),
 	];
 
 	const redirectURLPage = getQueryArg( redirectTo ?? '', 'page' );
@@ -92,7 +92,7 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 							const id = feature.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
 							return (
 								<li key={ id }>
-									<CheckoutCheckIcon id={ id } />
+									<CheckIcon id={ id } />
 									{ feature }
 								</li>
 							);

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -15,8 +14,6 @@ import { getSiteSlug, getSiteUrl, isJetpackSite } from 'calypso/state/sites/sele
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSettingsSection from '../reader-settings';
-import { FediverseSettingsSection } from '../reading-fediverse-settings';
-import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
 import wrapSettingsForm from '../wrap-settings-form';
@@ -118,7 +115,6 @@ type ReadingSettingsFormProps = {
 	isAtomic: boolean | null;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
-	settings: { subscription_options?: SubscriptionOptions };
 	siteIsJetpack: boolean | null;
 	siteSlug?: string;
 	siteUrl?: string;
@@ -136,7 +132,6 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
-			settings,
 			siteIsJetpack,
 			siteSlug,
 			siteUrl,
@@ -144,7 +139,6 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 		}: ReadingSettingsFormProps ) => {
 			const translate = useTranslate();
 			const disabled = isRequestingSettings || isSavingSettings;
-			const savedSubscriptionOptions = settings?.subscription_options;
 			return (
 				<form onSubmit={ handleSubmitForm }>
 					<SiteSettingsSection
@@ -157,35 +151,21 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
 					/>
-					{ config.isEnabled( 'settings/newsletter-settings-page' ) ? (
-						<>
-							{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
-							<SettingsSectionHeader
-								id="newsletter-settings"
-								title={ translate( 'Newsletter settings' ) }
-							/>
-							<Card className="site-settings__card">
-								<em>
-									{ translate( 'Newsletter settings have moved to their {{a}}own page{{/a}}.', {
-										components: {
-											a: <a href={ `/settings/newsletter/${ siteSlug }` } />,
-										},
-									} ) }
-								</em>
-							</Card>
-						</>
-					) : (
-						<NewsletterSettingsSection
-							fields={ fields }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							handleToggle={ handleToggle }
-							handleSubmitForm={ handleSubmitForm }
-							disabled={ disabled }
-							isSavingSettings={ isSavingSettings }
-							savedSubscriptionOptions={ savedSubscriptionOptions }
-							updateFields={ updateFields }
-						/>
-					) }
+
+					{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+					<SettingsSectionHeader
+						id="newsletter-settings"
+						title={ translate( 'Newsletter settings' ) }
+					/>
+					<Card className="site-settings__card">
+						<em>
+							{ translate( 'Newsletter settings have moved to their {{a}}own page{{/a}}.', {
+								components: {
+									a: <a href={ `/settings/newsletter/${ siteSlug }` } />,
+								},
+							} ) }
+						</em>
+					</Card>
 					<ReaderSettingsSection
 						fields={ fields }
 						handleAutosavingToggle={ handleAutosavingToggle }
@@ -194,7 +174,6 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isAtomic={ isAtomic }
 						siteIsJetpack={ siteIsJetpack }
 					/>
-					{ config.isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
 					<RssFeedSettingsSection
 						fields={ fields }
 						onChangeField={ onChangeField }

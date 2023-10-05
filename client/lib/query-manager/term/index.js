@@ -11,7 +11,6 @@ export default class TermQueryManager extends PaginatedQueryManager {
 
 	/**
 	 * Returns true if the term matches the given query, or false otherwise.
-	 *
 	 * @param  {Object}  query Query object
 	 * @param  {Object}  term  Item to consider
 	 * @returns {boolean}       Whether term matches query
@@ -31,7 +30,6 @@ export default class TermQueryManager extends PaginatedQueryManager {
 	/**
 	 * A sort comparison function that defines the sort order of terms under
 	 * consideration of the specified query.
-	 *
 	 * @param  {Object} query Query object
 	 * @param  {Object} termA First term
 	 * @param  {Object} termB Second term

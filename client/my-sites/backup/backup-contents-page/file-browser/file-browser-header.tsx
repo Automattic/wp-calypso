@@ -1,10 +1,13 @@
 import { Button } from '@automattic/components';
+import { CheckboxControl } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FunctionComponent } from 'react';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { backupDownloadPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
+import { rewindRequestGranularBackup } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
@@ -28,11 +31,15 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
 	const onDownloadClick = () => {
-		// eslint-disable-next-line no-console
-		console.log( browserCheckList );
+		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
+
+		dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_download_multiple_files' ) );
+		page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
 	};
 	const onRestoreClick = () => {
-		// TODO: Add tracking
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_files' ) );
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	};
 	// When the checkbox is clicked, we'll update the check state in the state
@@ -70,10 +77,10 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 				</div>
 			) }
 			<div className="file-browser-header__selecting">
-				<FormCheckbox
-					checked={
-						rootNode ? rootNode.checkState === 'checked' || rootNode.checkState === 'mixed' : false
-					}
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					checked={ rootNode ? rootNode.checkState === 'checked' : false }
+					indeterminate={ rootNode && rootNode.checkState === 'mixed' }
 					onChange={ onCheckboxChange }
 					className={ `${ rootNode && rootNode.checkState === 'mixed' ? 'mixed' : '' }` }
 				/>

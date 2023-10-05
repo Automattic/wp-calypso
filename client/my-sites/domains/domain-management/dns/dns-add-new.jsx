@@ -49,6 +49,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 				},
 			},
@@ -60,6 +61,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 				},
 			},
@@ -71,6 +73,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 					aux: 10,
 				},
@@ -83,6 +86,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 				},
 			},
@@ -94,6 +98,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					service: '',
 					aux: 10,
 					weight: 10,
@@ -155,6 +160,11 @@ class DnsAddNew extends React.Component {
 		const isRootDomainRecord = recordToEdit.name === `${ recordToEdit.domain }.`;
 		if ( isRootDomainRecord && 'name' === field ) {
 			return '';
+		}
+
+		// SRV records can have a target of '.', which means that service is unavailable
+		if ( 'SRV' === recordToEdit.type && 'target' === field && '.' === recordToEdit[ field ] ) {
+			return '.';
 		}
 
 		if ( [ 'data', 'target' ].includes( field ) && 'TXT' !== recordToEdit.type ) {

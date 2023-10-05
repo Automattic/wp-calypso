@@ -11,7 +11,6 @@ const nbsp = String.fromCharCode( 160 );
  * non-breaking spaces so that tags like 'a   b' will display correctly (not
  * using '&nbsp;' for this because again, React will escape whatever we pass
  * in).
- *
  * @param	{string} str String to unescape in preparation for React rendering
  * @returns	{string} Transformed string
  */

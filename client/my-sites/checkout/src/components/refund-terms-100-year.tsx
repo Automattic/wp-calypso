@@ -20,9 +20,7 @@ export function RefundTerms100Year( { cart }: { cart: ResponseCart } ) {
 					components: {
 						supportLink: (
 							<a
-								href={ localizeUrl(
-									'https://wordpress.com/support/manage-purchases/#refund-policy'
-								) }
+								href={ localizeUrl( 'https://wordpress.com/support/refunds/#refund-periods' ) }
 								target="_blank"
 								rel="noopener noreferrer"
 							/>

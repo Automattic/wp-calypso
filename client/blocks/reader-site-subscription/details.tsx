@@ -1,14 +1,15 @@
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { useTranslate, numberFormat } from 'i18n-calypso';
-import { useEffect, useState, useMemo } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
+import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { getFeedUrl } from 'calypso/reader/route';
 import CancelPaidSubscriptionModal from './cancel-paid-subscription-modal';
 import {
 	PaymentPlan,
@@ -18,6 +19,8 @@ import {
 	getPaymentInterval,
 } from './helpers';
 import SiteSubscriptionSettings from './settings';
+import SiteSubscriptionSubheader from './site-subscription-subheader';
+import SubscribeToNewsletterCategories from './subscribe-to-newsletter-categories';
 import './styles.scss';
 
 const SiteSubscriptionDetails = ( {
@@ -27,6 +30,7 @@ const SiteSubscriptionDetails = ( {
 	siteIcon,
 	name,
 	blogId,
+	feedId,
 	deliveryMethods,
 	url,
 	paymentDetails,
@@ -83,7 +87,7 @@ const SiteSubscriptionDetails = ( {
 
 			setPaymentPlans( newPaymentPlans );
 		}
-	}, [ paymentDetails ] );
+	}, [ localeSlug, paymentDetails ] );
 
 	const onClickCancelSubscriptionButton = () => {
 		if ( paymentPlans && !! paymentPlans.length ) {
@@ -98,38 +102,6 @@ const SiteSubscriptionDetails = ( {
 		window.open( '/me/purchases', '_blank' );
 		setShowUnsubscribeModal( false );
 	};
-
-	const subscriberCountText = subscriberCount
-		? translate( '%s subscriber', '%s subscribers', {
-				count: subscriberCount,
-				args: [ numberFormat( subscriberCount, 0 ) ],
-				comment: '%s is the number of subscribers. For example: "12,000,000"',
-		  } )
-		: '';
-
-	const hostname = useMemo( () => {
-		try {
-			return new URL( url ).hostname;
-		} catch ( e ) {
-			return '';
-		}
-	}, [ url ] );
-
-	const urlLink = hostname ? (
-		<ExternalLink href={ url } rel="noreferrer noopener" target="_blank">
-			{ hostname }
-		</ExternalLink>
-	) : (
-		''
-	);
-
-	const subHeaderText = (
-		<>
-			{ subscriberCountText }
-			{ hostname ? ' · ' : '' }
-			{ urlLink }
-		</>
-	);
 
 	useEffect( () => {
 		// todo: style the button (underline, color?, etc.)
@@ -191,11 +163,56 @@ const SiteSubscriptionDetails = ( {
 		name,
 	] );
 
+	const feedUrl = getFeedUrl( feedId );
+
+	const recordViewFeedButtonClicked = useRecordViewFeedButtonClicked();
+
+	const handleViewFeedButtonClicked = ( source: string ) => {
+		recordViewFeedButtonClicked( {
+			blogId: blogId ? String( blogId ) : null,
+			feedId: String( feedId ),
+			source,
+		} );
+	};
+
+	const siteTitle = (
+		<a
+			href={ feedUrl }
+			title={ translate( 'View feed' ) }
+			onClick={ () => {
+				handleViewFeedButtonClicked( 'subscription-site-title' );
+			} }
+		>
+			{ name }
+		</a>
+	);
+
 	return (
 		<>
 			<header className="site-subscription-page__header site-subscription-page__centered-content">
-				<SiteIcon iconUrl={ siteIcon } size={ 116 } alt={ name } />
-				<FormattedHeader brandFont headerText={ name } subHeaderText={ subHeaderText } />
+				<SiteIcon
+					iconUrl={ siteIcon }
+					size={ 116 }
+					alt={ name }
+					href={ feedUrl }
+					title={ translate( 'View feed' ) }
+					onClick={ () => {
+						handleViewFeedButtonClicked( 'subscription-site-icon' );
+					} }
+				/>
+				<FormattedHeader
+					brandFont
+					headerText={ siteTitle }
+					subHeaderAs="div"
+					subHeaderText={
+						<SiteSubscriptionSubheader
+							blogId={ blogId }
+							feedId={ feedId }
+							subscriberCount={ subscriberCount }
+							url={ url }
+						/>
+					}
+				/>
 			</header>
 
 			<Notice
@@ -221,11 +238,17 @@ const SiteSubscriptionDetails = ( {
 						emailMeNewComments={ !! deliveryMethods.email?.send_comments }
 					/>
 
+					{ !! deliveryMethods.email?.send_posts && (
+						<SubscribeToNewsletterCategories siteId={ blogId } />
+					) }
+
 					<hr className="subscriptions__separator" />
 
 					{ /* TODO: Move to SiteSubscriptionInfo component when payment details are in. */ }
 					<div className="site-subscription-info">
-						<h2 className="site-subscription-info__heading">{ translate( 'Subscription' ) }</h2>
+						<h2 className="site-subscription-info__heading">
+							{ translate( 'Subscription details' ) }
+						</h2>
 						<dl className="site-subscription-info__list">
 							<dt>{ translate( 'Date' ) }</dt>
 							<dd>

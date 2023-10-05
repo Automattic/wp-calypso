@@ -49,6 +49,12 @@ jest.mock( 'calypso/state/themes/theme-utils', () => ( {
 	},
 } ) );
 
+jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
+	getEligibility: () => {
+		return;
+	},
+} ) );
+
 jest.mock( 'calypso/my-sites/themes/helpers', () => ( {
 	marketplaceThemeBillingProductSlug: () => {
 		return;
@@ -106,6 +112,7 @@ const renderComponent = ( component, initialState = {} ) => {
 	const queryClient = new QueryClient();
 	const store = mockStore( {
 		purchases: {},
+		sites: {},
 		...initialState,
 	} );
 

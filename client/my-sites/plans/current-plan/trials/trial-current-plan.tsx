@@ -13,6 +13,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import useOneDollarOfferTrack from '../../hooks/use-onedollar-offer-track';
 import TrialBanner from '../../trials/trial-banner';
 import BusinessTrialIncluded from './business-trial-included';
 import EcommerceTrialIncluded from './ecommerce-trial-included';
@@ -44,6 +45,8 @@ const TrialCurrentPlan = () => {
 	const trackEvent = isEcommerceTrial
 		? 'calypso_wooexpress_my_plan_cta'
 		: 'calypso_migration_my_plan_cta';
+
+	useOneDollarOfferTrack( selectedSite?.ID, 'plans' );
 
 	/**
 	 * Redirects to the checkout page with Plan on cart.
@@ -86,7 +89,7 @@ const TrialCurrentPlan = () => {
 			<BodySectionCssClass bodyClass={ bodyClass } />
 
 			<div className="trial-current-plan__banner-wrapper">
-				<TrialBanner callToAction={ bannerCallToAction } />
+				<TrialBanner callToAction={ bannerCallToAction } isEcommerceTrial={ isEcommerceTrial } />
 			</div>
 
 			<h2 className="trial-current-plan__section-title">

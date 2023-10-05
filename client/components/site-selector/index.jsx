@@ -26,6 +26,7 @@ import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { withSitesSortingPreference } from 'calypso/state/sites/hooks/with-sites-sorting';
 import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import JetpackAgencyAddSite from '../jetpack/add-new-site-button';
 import SiteSelectorAddSite from './add-site';
 import SitesList from './sites-list';
 import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from './utils';
@@ -39,6 +40,7 @@ const debug = debugFactory( 'calypso:site-selector' );
 export class SiteSelector extends Component {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
+		isJetpackAgencyDashboard: PropTypes.bool,
 		sites: PropTypes.array,
 		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		wpcomSiteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
@@ -480,7 +482,28 @@ export class SiteSelector extends Component {
 								{ this.props.translate( 'Manage sites' ) }
 							</Button>
 						) }
-						{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
+						{ this.props.showAddNewSite &&
+							( this.props.isJetpackAgencyDashboard ? (
+								<JetpackAgencyAddSite
+									onClickAddNewSite={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_add_new_site_click'
+										)
+									}
+									onClickWpcomMenuItem={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_create_wpcom_site_click'
+										)
+									}
+									onClickJetpackMenuItem={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_connect_jetpack_site_click'
+										)
+									}
+								/>
+							) : (
+								<SiteSelectorAddSite />
+							) ) }
 					</div>
 				) }
 			</div>

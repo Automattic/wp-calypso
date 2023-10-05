@@ -22,7 +22,11 @@ import StagingSiteNotice from 'calypso/my-sites/plugins/plugin-details-CTA/stagi
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
-import { isUserLoggedIn, getCurrentUserId } from 'calypso/state/current-user/selectors';
+import {
+	isUserLoggedIn,
+	getCurrentUserId,
+	getCurrentUserSiteCount,
+} from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -56,6 +60,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	const currentUserId = useSelector( getCurrentUserId );
 
+	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
+
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
@@ -64,8 +70,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const currentPurchase = getPluginPurchased( plugin, purchases );
 
 	// Site type
-	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
-	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
@@ -81,7 +87,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, softwareSlug )
 	);
-	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
 
 	const shouldUpgrade =
 		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
@@ -99,8 +104,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		getSiteObjectsWithPlugin( state, siteIds, softwareSlug )
 	);
 	const installedOnSitesQuantity = sitesWithPlugin.length;
-
-	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
 
 	// Eligibilities for Simple Sites.
 	// eslint-disable-next-line prefer-const
@@ -141,10 +144,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		! isAtomic && ! isJetpack && ( eligibilityHolds?.length || eligibilityWarnings?.length );
 
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
-
-	const toggleDisplayManageSitePluginsModal = useCallback( () => {
-		setDisplayManageSitePluginsModal( ! displayManageSitePluginsModal );
-	}, [ displayManageSitePluginsModal ] );
 
 	const onIntervalSwitcherChange = useCallback(
 		( interval ) => {
@@ -201,7 +200,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						{ translate( 'Upgrade my plan' ) }
 					</Button>
 				) }
-				{ ! selectedSite && ! isLoggedIn && (
+				{ ( ! isLoggedIn || ! currentUserSiteCount ) && (
 					<GetStartedButton
 						plugin={ plugin }
 						isMarketplaceProduct={ isMarketplaceProduct }
@@ -282,37 +281,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		);
 	}
 
-	if ( ! selectedSite && isLoggedIn ) {
-		// Check if there is no site selected
-		return (
-			<div className="plugin-details-cta__container">
-				<ManageSitePluginsDialog
-					plugin={ plugin }
-					isVisible={ displayManageSitePluginsModal }
-					onClose={ () => setDisplayManageSitePluginsModal( false ) }
-				/>
-				<div className="plugin-details-cta__installed-text">
-					{ !! installedOnSitesQuantity &&
-						translate(
-							'Installed on {{span}}%d site{{/span}}',
-							'Installed on {{span}}%d sites{{/span}}',
-							{
-								args: [ installedOnSitesQuantity ],
-								installedOnSitesQuantity,
-								components: {
-									span: <span className="plugin-details-cta__installed-text-quantity"></span>,
-								},
-								count: installedOnSitesQuantity,
-							}
-						) }
-				</div>
-				<Button onClick={ toggleDisplayManageSitePluginsModal }>
-					{ translate( 'Manage sites' ) }
-				</Button>
-			</div>
-		);
-	}
-
 	return (
 		<Fragment>
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
@@ -336,7 +304,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 												<span className="plugin-details-cta__period">{ period }</span>
 											</>
 										) : (
-											<FreePrice />
+											<FreePrice shouldUpgrade={ shouldUpgrade } />
 										) }
 									</>
 								)
@@ -354,6 +322,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 				<div className="plugin-details-cta__install">
 					<PrimaryButton
 						isLoggedIn={ isLoggedIn }
+						selectedSite={ selectedSite }
+						currentUserSiteCount={ currentUserSiteCount }
 						shouldUpgrade={ shouldUpgrade }
 						hasEligibilityMessages={ hasEligibilityMessages }
 						incompatiblePlugin={ incompatiblePlugin }
@@ -362,6 +332,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						plugin={ plugin }
 						saasRedirectHRef={ saasRedirectHRef }
 						isWpcomStaging={ isWpcomStaging }
+						sitesWithPlugins={ sitesWithPlugins }
+						installedOnSitesQuantity={ installedOnSitesQuantity }
 					/>
 				</div>
 				{ isDisabledForWpcomStaging && <StagingSiteNotice plugin={ plugin } /> }
@@ -390,10 +362,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						) }
 					</div>
 				) }
-				{ ! plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
+				{ ! plugin.isSaasProduct && shouldUpgrade && isLoggedIn && selectedSite && (
 					<UpgradeRequiredContent translate={ translate } />
 				) }
-				{ plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
+				{ plugin.isSaasProduct && shouldUpgrade && isLoggedIn && selectedSite && (
 					<div className="plugin-details-cta__upgrade-required-card">
 						<UpgradeRequiredContent translate={ translate } />
 						<Button
@@ -413,6 +385,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 function PrimaryButton( {
 	isLoggedIn,
+	selectedSite,
+	currentUserSiteCount,
 	shouldUpgrade,
 	hasEligibilityMessages,
 	incompatiblePlugin,
@@ -421,6 +395,8 @@ function PrimaryButton( {
 	plugin,
 	saasRedirectHRef,
 	isWpcomStaging,
+	sitesWithPlugins,
+	installedOnSitesQuantity,
 } ) {
 	const dispatch = useDispatch();
 
@@ -439,7 +415,13 @@ function PrimaryButton( {
 		);
 	}, [ dispatch, plugin, isLoggedIn ] );
 
-	if ( ! isLoggedIn ) {
+	if ( isLoggedIn && currentUserSiteCount > 0 && sitesWithPlugins.length > 0 && ! selectedSite ) {
+		return (
+			<ManageSitesButton plugin={ plugin } installedOnSitesQuantity={ installedOnSitesQuantity } />
+		);
+	}
+
+	if ( ! isLoggedIn || ! selectedSite ) {
 		return (
 			<GetStartedButton
 				onClick={ onClick }
@@ -497,20 +479,59 @@ function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
 	);
 }
 
-function FreePrice() {
+function ManageSitesButton( { plugin, installedOnSitesQuantity } ) {
+	const translate = useTranslate();
+	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
+	const toggleDisplayManageSitePluginsModal = useCallback( () => {
+		setDisplayManageSitePluginsModal( ( value ) => ! value );
+	}, [] );
+
+	return (
+		<>
+			<ManageSitePluginsDialog
+				plugin={ plugin }
+				isVisible={ displayManageSitePluginsModal }
+				onClose={ () => setDisplayManageSitePluginsModal( false ) }
+			/>
+			{ !! installedOnSitesQuantity && (
+				<div className="plugin-details-cta__installed-text">
+					{ translate(
+						'Installed on {{span}}%d site{{/span}}',
+						'Installed on {{span}}%d sites{{/span}}',
+						{
+							args: [ installedOnSitesQuantity ],
+							installedOnSitesQuantity,
+							components: {
+								span: <span className="plugin-details-cta__installed-text-quantity"></span>,
+							},
+							count: installedOnSitesQuantity,
+						}
+					) }
+				</div>
+			) }
+			<Button
+				className="plugin-details-cta__manage-button"
+				onClick={ toggleDisplayManageSitePluginsModal }
+			>
+				{ translate( 'Manage sites' ) }
+			</Button>
+		</>
+	);
+}
+
+function FreePrice( { shouldUpgrade } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const selectedSite = useSelector( getSelectedSite );
 
-	if ( ! isLoggedIn ) {
-		return (
-			<>
-				{ translate( 'Free' ) }
+	return (
+		<>
+			{ translate( 'Free' ) }
+			{ ( ! isLoggedIn || ! selectedSite || shouldUpgrade ) && (
 				<span className="plugin-details-cta__notice">{ translate( 'on Business plan' ) }</span>
-			</>
-		);
-	}
-
-	return translate( 'Free' );
+			) }
+		</>
+	);
 }
 
 function UpgradeRequiredContent( { translate } ) {

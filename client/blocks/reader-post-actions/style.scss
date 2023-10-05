@@ -9,6 +9,10 @@
 	list-style-type: none;
 	margin: 10px 0 0;
 
+	&.space-items-apart {
+		justify-content: space-between;
+	}
+
 	@include breakpoint-deprecated( "<660px" ) {
 		justify-content: space-evenly;
 	}
@@ -43,10 +47,6 @@
 		}
 	}
 
-	&:last-child {
-		margin-right: 0;
-	}
-
 	& > button {
 		margin: 0;
 		padding: 0;
@@ -68,5 +68,17 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		margin-right: 18px;
+		height: auto;
+		&:first-of-type {
+			margin-left: 18px;
+		}
+
+		.reader-share__button,
+		.like-button,
+		.comment-button {
+			display: flex;
+			flex-direction: column;
+			height: auto;
+		}
 	}
 }

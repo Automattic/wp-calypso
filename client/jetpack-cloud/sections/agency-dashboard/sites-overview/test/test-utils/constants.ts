@@ -46,13 +46,14 @@ const site: Site = {
 		},
 	},
 	jetpack_boost_scores: {
-		overall: 10,
-		mobile: 10,
-		desktop: 10,
+		overall: 80,
+		mobile: 75,
+		desktop: 85,
 	},
 	php_version_num: 7.4,
 	is_connected: true,
 	has_paid_agency_monitor: true,
+	has_pending_boost_one_time_score: false,
 };
 
 export { site };

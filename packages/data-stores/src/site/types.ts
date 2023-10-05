@@ -121,7 +121,7 @@ export interface SiteDetails {
 	locale: string;
 	logo: { id: string; sizes: string[]; url: string };
 	name: string | undefined;
-	options: SiteDetailsOptions;
+	options?: SiteDetailsOptions;
 	p2_thumbnail_elements?: P2ThumbnailElements | null;
 	plan?: SiteDetailsPlan;
 	products?: SiteDetailsPlan[];
@@ -244,9 +244,10 @@ export interface SiteDetailsOptions {
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
+	is_commercial?: boolean | null;
 }
 
-export type SiteOption = keyof SiteDetails[ 'options' ];
+export type SiteOption = keyof NonNullable< SiteDetails[ 'options' ] >;
 
 export interface SiteError {
 	error: string;
@@ -335,6 +336,7 @@ export interface Domain {
 	bundled_plan_subscription_id?: any;
 	product_slug?: any;
 	owner: string;
+	is_pending_icann_verification?: boolean;
 }
 
 export interface SiteSettings {

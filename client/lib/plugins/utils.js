@@ -59,7 +59,6 @@ export function isSamePluginIdSlug( idOrSlug, slugOrId ) {
 
 /**
  * Filter function that return notices that fit a certain criteria.
- *
  * @param  {number} siteId   Site Object
  * @param  {string} pluginId Plugin Id
  * @param  {Object} log      Notice log Object
@@ -123,7 +122,8 @@ export function getAllowedPluginData( plugin ) {
 		'variations',
 		'version',
 		'wp_admin_settings_page_url',
-		'saas_landing_page'
+		'saas_landing_page',
+		'categories'
 	);
 }
 
@@ -187,6 +187,10 @@ export function normalizeCompatibilityList( compatibilityList ) {
 		}
 		return version.join( '.' );
 	} );
+}
+
+export function mapStarRatingToPercent( starRating ) {
+	return ( ( starRating ?? 0 ) / 5 ) * 100;
 }
 
 export function normalizePluginData( plugin, pluginData ) {
@@ -271,7 +275,6 @@ export function normalizePluginsList( pluginsList ) {
 
 /**
  * Return logs that match a certain critia.
- *
  * @param  {Array} logs      List of all notices
  * @param  {number} siteId   Site Object
  * @param  {string} pluginId Plugin ID
@@ -288,7 +291,6 @@ export const DEVELOPER_PATTERN = /developer:(?:\s)*"(.*)"/;
 
 /**
  * Extract author and search params from the plugin search query
- *
  * @param {string} searchTerm The full plugin search query
  * @returns {Array<string | undefined>} The first item will be the search and the second will be the author if exists
  */
@@ -306,7 +308,6 @@ export function extractSearchInformation( searchTerm = '' ) {
  * - Try to extract the author keyword from author_profile
  * - Try to get the author_name
  * - Send an empty string if none of the previous actions works
- *
  * @param plugin
  * @returns {string} the author keyword or an empty string
  */
@@ -334,7 +335,6 @@ export const WPORG_PROFILE_URL = 'https://profiles.wordpress.org/';
 
 /**
  * Get the author keyword from author_profile property
- *
  * @param plugin
  * @returns {string|null} the author keyword
  */
@@ -376,7 +376,6 @@ export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
 
 /**
  * Determines the URL to use for managing a connection.
- *
  * @param {string} siteSlug The site slug to use in the URL.
  * @returns The URL to use for managing a connection.
  */
@@ -389,7 +388,6 @@ export const getManageConnectionHref = ( siteSlug ) => {
 /**
  * Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
  * but require a paid upgrade to function.
- *
  * @typedef {Object} PluginVariations
  * @property {Object} monthly The plugin's monthly variation
  * @property {string} monthly.product_slug The plugin's monthly variation's product slug
@@ -411,7 +409,6 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
 
 /**
  * Returns the product slug of periodVariation passed filtering the productsList passed only if required
- *
  * @param {string} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
  * @param {Record<string, Object>} productsList The list of products
  * @returns The product slug if it exists in the periodVariation, if it does not exist in periodVariation
@@ -467,7 +464,6 @@ export const getPluginPurchased = ( plugin, purchases ) => {
 
 /**
  * Gets the SaaS redirect URL of a plugin if it exits and is valid
- *
  * @param {plugin} plugin The plugin object  to read the SaaS redirect url from
  * @param {number} userId The user id
  * @param {number} siteId The site id

@@ -28,6 +28,7 @@ import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DnsAddNewRecordButton from './dns-add-new-record-button';
 import DnsDetails from './dns-details';
+import DnsImportBindFileButton from './dns-import-bind-file-button';
 import DnsMenuOptionsButton from './dns-menu-options-button';
 import './style.scss';
 
@@ -51,10 +52,14 @@ class DnsRecords extends Component {
 		);
 	};
 
+	hasDefaultARecords = () => {
+		const { dns } = this.props;
+		return dns?.records?.some( ( record ) => record?.type === 'A' && record?.protected_field );
+	};
+
 	renderHeader = () => {
 		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
-		const pointsToWpcom = selectedDomain?.pointsToWpcom ?? false;
 
 		const items = [
 			{
@@ -86,7 +91,7 @@ class DnsRecords extends Component {
 				key="menu-options-button"
 				domain={ selectedDomain }
 				dns={ dns }
-				pointsToWpcom={ pointsToWpcom }
+				hasDefaultARecords={ this.hasDefaultARecords() }
 				hasDefaultCnameRecord={ this.hasDefaultCnameRecord() }
 			/>
 		);
@@ -97,12 +102,23 @@ class DnsRecords extends Component {
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 			/>,
+			<DnsImportBindFileButton
+				key="import-bind-file-button"
+				site={ selectedSite?.slug }
+				domain={ selectedDomainName }
+			/>,
 			optionsButton,
 		];
 
 		const mobileButtons = [
 			<DnsAddNewRecordButton
 				key="mobile-add-new-record-button"
+				site={ selectedSite?.slug }
+				domain={ selectedDomainName }
+				isMobile={ true }
+			/>,
+			<DnsImportBindFileButton
+				key="import-bind-file-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 				isMobile={ true }

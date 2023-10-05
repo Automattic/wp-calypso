@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import moment from 'moment';
 import {
@@ -12,6 +11,7 @@ import { isRecentlyRegistered } from './is-recently-registered';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
+	domainManagementTransfer,
 	domainMappingSetup,
 	domainUseMyDomain,
 } from './paths';
@@ -24,51 +24,59 @@ import {
 } from './url-support';
 import type { I18N, TranslateResult } from 'i18n-calypso';
 
-export type ResolveDomainStatusReturn =
-	| {
-			statusText: TranslateResult | TranslateResult[];
-			statusClass:
-				| 'status-error'
-				| 'status-warning'
-				| 'status-alert'
-				| 'status-success'
-				| 'status-neutral'
-				| 'status-premium';
-			status: TranslateResult;
-			icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
-			listStatusWeight?: number;
-			noticeText?: TranslateResult | Array< TranslateResult > | null;
-	  }
-	| Record< string, never >;
+export type ResolveDomainStatusReturn = {
+	statusText: TranslateResult | TranslateResult[];
+	statusClass:
+		| 'status-error'
+		| 'status-warning'
+		| 'status-alert'
+		| 'status-success'
+		| 'status-neutral'
+		| 'status-premium';
+	status: TranslateResult;
+	icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
+	listStatusWeight?: number;
+	noticeText?: TranslateResult | Array< TranslateResult > | null;
+	callToAction?: {
+		href?: string;
+		onClick?(): void;
+		label: string;
+	};
+};
 
 export type ResolveDomainStatusOptionsBag = {
-	siteSlug?: string | null;
+	siteSlug?: string;
 	currentRoute?: string | null;
 	getMappingErrors?: boolean | null;
 	translate: I18N[ 'translate' ];
 	isPurchasedDomain?: boolean | null;
-	onRenewNowClick?: any;
+	onRenewNowClick?(): void;
 	isCreditCardExpiring?: boolean | null;
+	monthsUtilCreditCardExpires?: number | null;
+	isVipSite?: boolean | null;
 };
 
 export type DomainStatusPurchaseActions = {
-	isCreditCardExpiring: ( domain: ResponseDomain ) => boolean;
+	isCreditCardExpiring?: ( domain: ResponseDomain ) => boolean;
 	onRenewNowClick?: ( siteSlug: string, domain: ResponseDomain ) => void;
 	isPurchasedDomain?: ( domain: ResponseDomain ) => boolean;
+	monthsUtilCreditCardExpires?: ( domain: ResponseDomain ) => number | null;
 };
 
 export function resolveDomainStatus(
 	domain: ResponseDomain,
 	{
-		siteSlug = null,
+		siteSlug,
 		getMappingErrors = false,
 		currentRoute = null,
 		translate,
 		isPurchasedDomain = false,
-		onRenewNowClick = null,
+		onRenewNowClick,
 		isCreditCardExpiring = false,
+		monthsUtilCreditCardExpires = null,
+		isVipSite = false,
 	}: ResolveDomainStatusOptionsBag
-): ResolveDomainStatusReturn {
+): ResolveDomainStatusReturn | null {
 	const transferOptions = {
 		components: {
 			strong: <strong />,
@@ -85,14 +93,20 @@ export function resolveDomainStatus(
 		},
 	};
 
-	const mappingSetupComponents = {
-		strong: <strong />,
-		a: <a href={ domainMappingSetup( siteSlug as string, domain.domain ) } />,
+	const mappingSetupCallToAction = {
+		href: domainMappingSetup( siteSlug as string, domain.domain ),
+		label: translate( 'Go to setup' ),
+	};
+
+	const paymentSetupCallToAction = {
+		href: '/me/purchases/payment-methods',
+		label: translate( 'Fix' ),
 	};
 
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
 			if ( isExpiringSoon( domain, 30 ) ) {
+				let callToAction;
 				const expiresMessage =
 					null !== domain.bundledPlanSubscriptionId
 						? translate(
@@ -109,11 +123,9 @@ export function resolveDomainStatus(
 
 				let noticeText = null;
 
-				if ( ! domain.pointsToWpcom ) {
-					noticeText = translate(
-						"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
-						{ components: mappingSetupComponents }
-					);
+				if ( ! isVipSite && ! domain.pointsToWpcom ) {
+					noticeText = translate( "We noticed that something wasn't updated correctly." );
+					callToAction = mappingSetupCallToAction;
 				}
 
 				let status = translate( 'Active' );
@@ -130,10 +142,11 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusWeight: isExpiringSoon( domain, 7 ) ? 1000 : 800,
 					noticeText,
+					callToAction,
 				};
 			}
 
-			if ( getMappingErrors && siteSlug !== null ) {
+			if ( getMappingErrors && ! isVipSite ) {
 				const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 
 				const hasMappingError =
@@ -147,10 +160,8 @@ export function resolveDomainStatus(
 						statusClass: 'status-alert',
 						status: translate( 'Error' ),
 						icon: 'info',
-						noticeText: translate(
-							"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
-							{ components: mappingSetupComponents }
-						),
+						noticeText: translate( "We noticed that something wasn't updated correctly." ),
+						callToAction: mappingSetupCallToAction,
 						listStatusWeight: 1000,
 					};
 				}
@@ -213,14 +224,22 @@ export function resolveDomainStatus(
 					icon: 'cached',
 				};
 			}
-
-			if ( isPurchasedDomain && isCreditCardExpiring ) {
+			if (
+				isPurchasedDomain &&
+				isCreditCardExpiring &&
+				monthsUtilCreditCardExpires &&
+				monthsUtilCreditCardExpires < 3
+			) {
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
 					status: translate( 'Action required' ),
 					icon: 'info',
+					noticeText: translate(
+						'Your credit card expires before the next renewal. Please update your payment information.'
+					),
 					listStatusWeight: 600,
+					callToAction: paymentSetupCallToAction,
 				};
 			}
 
@@ -237,19 +256,8 @@ export function resolveDomainStatus(
 			if ( domain.isPendingIcannVerification ) {
 				const noticeText = domain.currentUserIsOwner
 					? translate(
-							'We sent you an email to verify your contact information. Please complete the verification or your domain will stop working. You can also {{a}}change your email address{{/a}} if you like.',
+							'We sent you an email to verify your contact information. Please complete the verification or your domain will stop working.',
 							{
-								components: {
-									a: (
-										<a
-											href={ domainManagementEditContactInfo(
-												siteSlug as string,
-												domain.name,
-												currentRoute
-											) }
-										></a>
-									),
-								},
 								args: {
 									domainName: domain.name,
 								},
@@ -264,6 +272,16 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Verify email' ),
 					noticeText,
+					callToAction: domain.currentUserIsOwner
+						? {
+								label: translate( 'Change address' ),
+								href: domainManagementEditContactInfo(
+									siteSlug as string,
+									domain.name,
+									currentRoute
+								),
+						  }
+						: undefined,
 					icon: 'info',
 					listStatusWeight: 600,
 				};
@@ -272,58 +290,8 @@ export function resolveDomainStatus(
 			if ( domain.expired ) {
 				let renewCta;
 
-				if ( domain.isRenewable ) {
-					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
-
-					renewCta =
-						isPurchasedDomain && siteSlug && domain.currentUserIsOwner
-							? translate(
-									'You can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Renew now{{/a}}',
-									{
-										components: {
-											strong: <strong />,
-											a: <Button plain onClick={ () => onRenewNowClick?.() } />,
-										},
-										args: { renewableUntil },
-									}
-							  )
-							: translate(
-									'The domain owner can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
-									{
-										components: {
-											strong: <strong />,
-										},
-										args: { renewableUntil },
-									}
-							  );
-				} else if ( domain.isRedeemable ) {
-					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
-
-					renewCta =
-						isPurchasedDomain && siteSlug && domain.currentUserIsOwner
-							? translate(
-									'You can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee. {{a}}Renew now{{/a}}',
-									{
-										components: {
-											strong: <strong />,
-											a: <Button plain onClick={ () => onRenewNowClick?.() } />,
-										},
-										args: { redeemableUntil },
-									}
-							  )
-							: translate(
-									'The domain owner can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
-									{
-										components: {
-											strong: <strong />,
-										},
-										args: { redeemableUntil },
-									}
-							  );
-				}
-
 				const domainExpirationMessage = translate(
-					'This domain expired on {{strong}}%(expiryDate)s{{/strong}}. ',
+					'This domain expired on {{strong}}%(expiryDate)s{{/strong}}.',
 					{
 						components: {
 							strong: <strong />,
@@ -335,8 +303,77 @@ export function resolveDomainStatus(
 				);
 
 				const noticeText = [ domainExpirationMessage ];
-				if ( renewCta ) {
-					noticeText.push( renewCta );
+
+				if ( domain.isRenewable ) {
+					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
+
+					if ( isPurchasedDomain && domain.currentUserIsOwner ) {
+						noticeText.push( ' ' );
+						noticeText.push(
+							translate(
+								'You can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { renewableUntil },
+								}
+							)
+						);
+
+						renewCta = {
+							onClick: onRenewNowClick,
+							label: translate( 'Renew now' ),
+						};
+					} else {
+						noticeText.push( ' ' );
+						noticeText.push(
+							translate(
+								'The domain owner can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { renewableUntil },
+								}
+							)
+						);
+					}
+				} else if ( domain.isRedeemable ) {
+					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
+
+					if ( isPurchasedDomain && domain.currentUserIsOwner ) {
+						noticeText.push( ' ' );
+						noticeText.push(
+							translate(
+								'You can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { redeemableUntil },
+								}
+							)
+						);
+
+						renewCta = {
+							onClick: onRenewNowClick,
+							label: translate( 'Renew now' ),
+						};
+					} else {
+						noticeText.push( ' ' );
+						noticeText.push(
+							translate(
+								'The domain owner can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { redeemableUntil },
+								}
+							)
+						);
+					}
 				}
 
 				return {
@@ -345,22 +382,14 @@ export function resolveDomainStatus(
 					status: translate( 'Expired', { context: 'domain status' } ),
 					icon: 'info',
 					noticeText,
+					callToAction: renewCta,
 					listStatusWeight: 1000,
 				};
 			}
 
 			if ( isExpiringSoon( domain, 30 ) ) {
-				const renewCta =
-					isPurchasedDomain && siteSlug && domain.currentUserIsOwner
-						? translate( '{{a}}Renew now{{/a}}', {
-								components: {
-									a: <Button plain onClick={ () => onRenewNowClick?.() } />,
-								},
-						  } )
-						: translate( 'It can be renewed by the owner.' );
-
 				const domainExpirationMessage = translate(
-					'This domain will expire on {{strong}}%(expiryDate)s{{/strong}}. ',
+					'This domain will expire on {{strong}}%(expiryDate)s{{/strong}}.',
 					{
 						args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
 						components: { strong: <strong /> },
@@ -368,8 +397,17 @@ export function resolveDomainStatus(
 				);
 
 				const expiresMessage = [ domainExpirationMessage ];
-				if ( renewCta ) {
-					expiresMessage.push( renewCta );
+
+				let callToAction;
+
+				if ( isPurchasedDomain && domain.currentUserIsOwner ) {
+					callToAction = {
+						onClick: onRenewNowClick,
+						label: translate( 'Renew now' ),
+					};
+				} else {
+					expiresMessage.push( ' ' );
+					expiresMessage.push( translate( 'It can be renewed by the owner.' ) );
 				}
 
 				if ( isExpiringSoon( domain, 5 ) ) {
@@ -379,6 +417,7 @@ export function resolveDomainStatus(
 						status: translate( 'Expiring soon' ),
 						icon: 'info',
 						noticeText: expiresMessage,
+						callToAction,
 						listStatusWeight: 1000,
 					};
 				}
@@ -389,6 +428,7 @@ export function resolveDomainStatus(
 					status: translate( 'Expiring soon' ),
 					icon: 'info',
 					noticeText: expiresMessage,
+					callToAction,
 					listStatusWeight: 800,
 				};
 			}
@@ -443,6 +483,10 @@ export function resolveDomainStatus(
 			}
 
 			if ( domain.transferStatus === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
+				const ctaLink = domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
+					nameservers: true,
+				} );
+
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-success',
@@ -453,16 +497,14 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								a: (
-									<a
-										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
-											nameservers: true,
-										} ) }
-									/>
-								),
+								a: <a href={ ctaLink } />,
 							},
 						}
 					),
+					callToAction: {
+						href: ctaLink,
+						label: translate( 'Point to WordPress.com' ),
+					},
 					listStatusWeight: 600,
 				};
 			}
@@ -499,13 +541,22 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.SITE_REDIRECT:
-			if ( isPurchasedDomain && isCreditCardExpiring ) {
+			if (
+				isPurchasedDomain &&
+				isCreditCardExpiring &&
+				monthsUtilCreditCardExpires &&
+				monthsUtilCreditCardExpires < 3
+			) {
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
 					status: translate( 'Action required' ),
 					icon: 'info',
+					noticeText: translate(
+						'Your credit card expires before the next renewal. Please update your payment information.'
+					),
 					listStatusWeight: 600,
+					callToAction: paymentSetupCallToAction,
 				};
 			}
 
@@ -526,6 +577,8 @@ export function resolveDomainStatus(
 
 		case domainTypes.TRANSFER:
 			if ( domain.lastTransferError ) {
+				const ctaLink = domainManagementTransfer( siteSlug as string, domain.domain, currentRoute );
+
 				return {
 					statusText: translate( 'Complete setup' ),
 					statusClass: 'status-warning',
@@ -535,14 +588,14 @@ export function resolveDomainStatus(
 						'There was an error when initiating your domain transfer. Please {{a}}see the details or retry{{/a}}.',
 						{
 							components: {
-								a: (
-									<a
-										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
-									/>
-								),
+								a: <a href={ ctaLink } />,
 							},
 						}
 					),
+					callToAction: {
+						label: translate( 'Retry transfer' ),
+						href: ctaLink,
+					},
 					listStatusWeight: 600,
 				};
 			}
@@ -553,22 +606,15 @@ export function resolveDomainStatus(
 					statusClass: 'status-warning',
 					status: translate( 'Complete setup' ),
 					icon: 'info',
-					noticeText: translate(
-						'You need to {{a}}start the domain transfer{{/a}} for your domain.',
-						{
-							components: {
-								a: (
-									<a
-										href={ domainUseMyDomain(
-											siteSlug as string,
-											domain.name,
-											useMyDomainInputMode.startPendingTransfer
-										) }
-									/>
-								),
-							},
-						}
-					),
+					noticeText: translate( 'You need to start the domain transfer for your domain.' ),
+					callToAction: {
+						label: translate( 'Start transfer' ),
+						href: domainUseMyDomain(
+							siteSlug as string,
+							domain.name,
+							useMyDomainInputMode.startPendingTransfer
+						),
+					},
 					listStatusWeight: 600,
 				};
 			} else if ( domain.transferStatus === transferStatus.CANCELLED ) {
@@ -625,6 +671,6 @@ export function resolveDomainStatus(
 			};
 
 		default:
-			return {};
+			return null;
 	}
 }

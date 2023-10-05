@@ -1075,7 +1075,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Quick and accurate spelling correction' ),
 	];
 	const boostIncludesInfo = [
-		translate( '{{strong}}Automated critical CSS{{/strong}}', {
+		translate( '{{strong}}Automated critical CSS (Premium){{/strong}}', {
 			components: {
 				strong: <strong />,
 			},
@@ -1733,7 +1733,7 @@ export const useJetpackStorageAmountTextByProductSlug = (): ( (
 				[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: ONE_TERABYTE,
 				[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: ONE_TERABYTE,
-			}[ productSlug ] ),
+			} )[ productSlug ],
 		[ ONE_GIGABYTE, TEN_GIGABYTES, HUNDRED_GIGABYTES, ONE_TERABYTE, THREE_TERABYTE, FIVE_TERABYTE ]
 	);
 };

@@ -16,9 +16,6 @@
 
 	.search-filters__dropdown-filters {
 		height: 50px;
-		@include break-mobile {
-			min-width: 120px;
-		}
 	}
 
 	.button.domain-suggestion__action {

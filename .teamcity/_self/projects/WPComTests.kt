@@ -139,7 +139,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				name = "Post Failure Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @kitkat-team @calypso-platform-team! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @kit-squad @calypso-platform-team! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 		},
 		buildFeatures = {
@@ -322,21 +322,6 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		features {
 			perfmon {}
-
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#jetpack-alerts"
-					messageFormat = verboseMessageFormat {
-						addStatusText = true
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailedToStart = true
-				buildFailed = true
-				buildFinishedSuccessfully = false
-				buildProbablyHanging = true
-			}
 		}
 
 		failureConditions {
