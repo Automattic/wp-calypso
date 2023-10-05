@@ -324,7 +324,7 @@ export class RenderDomainsStep extends Component {
 		const { step } = this.props;
 		const { suggestion } = step;
 
-		if ( this.shouldUseMultipleDomainsInCart() ) {
+		if ( this.shouldUseMultipleDomainsInCart() && suggestion ) {
 			return this.handleDomainToDomainCart( {
 				googleAppsCartItem,
 				shouldHideFreePlan,
@@ -746,7 +746,7 @@ export class RenderDomainsStep extends Component {
 					<Button
 						borderless
 						className="domains__domain-cart-choose-later"
-						onClick={ this.handleUseYourDomainClick }
+						onClick={ () => this.handleSkip( undefined, false ) }
 					>
 						{ this.props.translate( 'Choose my domain later' ) }
 					</Button>
