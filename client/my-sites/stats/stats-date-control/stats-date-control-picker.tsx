@@ -76,12 +76,8 @@ const DateControlPicker = ( {
 	};
 
 	return (
-		<>
-			<Button
-				className="stats-date-control-picker__button"
-				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
-				ref={ infoReferenceElement }
-			>
+		<div className="stats-date-control-picker">
+			<Button onClick={ () => togglePopoverOpened( ! popoverOpened ) } ref={ infoReferenceElement }>
 				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
 			</Button>
 			<Popover
@@ -103,7 +99,7 @@ const DateControlPicker = ( {
 					onClick={ handleShortcutSelected }
 				/>
 			</Popover>
-		</>
+		</div>
 	);
 };
 
