@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_THEMES,
 	WPCOM_FEATURES_PREMIUM_THEMES,
@@ -10,8 +9,6 @@ import { Component } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
-import PartnerThemesCollection from 'calypso/components/theme-collection/collection-types/partner-themes-collection';
-import PremiumThemesCollection from 'calypso/components/theme-collection/collection-types/premium-themes-collection';
 import ThemesList, { ThemeBlock } from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -301,26 +298,14 @@ class ThemesSelection extends Component {
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
-			isLoggedIn,
 		} = this.props;
 
 		const interlacedThemes = interlaceThemes( themes, wpOrgThemes, query.search, isLastPage );
-
-		const isDiscoveryEnabled =
-			( config.isEnabled( 'themes/discovery-lits' ) && isLoggedIn ) ||
-			( config.isEnabled( 'themes/discovery-lots' ) && ! isLoggedIn );
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
 				{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
-
-				{ isDiscoveryEnabled && (
-					<>
-						<PremiumThemesCollection>{ this.getCarouselBlock }</PremiumThemesCollection>
-						<PartnerThemesCollection>{ this.getCarouselBlock }</PartnerThemesCollection>
-					</>
-				) }
 
 				<ThemesList
 					upsellUrl={ upsellUrl }

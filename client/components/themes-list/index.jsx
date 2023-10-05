@@ -199,7 +199,7 @@ ThemesList.defaultProps = {
 };
 
 export function ThemeBlock( props ) {
-	const { theme, index, tabFilter, collectionSlug = null } = props;
+	const { theme, index, tabFilter } = props;
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
 
 	if ( isEmpty( theme ) ) {
@@ -210,11 +210,9 @@ export function ThemeBlock( props ) {
 	const { themesBookmark, siteId } = props;
 	const bookmarkRef = themesBookmark === theme.id ? props.bookmarkRef : null;
 
-	const key = collectionSlug ? `theme-${ collectionSlug }-${ theme.id }` : `theme-${ theme.id }`;
-
 	return (
 		<Theme
-			key={ key }
+			key={ `theme-${ theme.id }` }
 			buttonContents={ props.getButtonOptions( theme.id, selectedStyleVariation ) }
 			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, {
 				tabFilter,
