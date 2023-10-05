@@ -37,6 +37,7 @@ describe( 'state', () => {
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'progress' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'fetchingStatus' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'isSyncingInProgress' );
+				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'error' );
 
 				const deserialized = deserialize( persistentReducer, AT_STATE );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'status' );
@@ -44,6 +45,7 @@ describe( 'state', () => {
 				// The non-persisted property has default value, persisted value is ignored
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'isSyncingInProgress', false );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'fetchingStatus', false );
+				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'error', null );
 			} );
 
 			test( 'should reset progress and status state if sync in progress become false', () => {
@@ -53,6 +55,7 @@ describe( 'state', () => {
 					progress: 1,
 					isSyncingInProgress: true,
 					fetchingStatus: false,
+					error: null,
 				};
 				const newState = reducer( AT_STATE, setSyncInProgress( SITE_ID, false ) );
 				expect( newState ).toHaveProperty( 'isSyncingInProgress', false );
@@ -66,6 +69,7 @@ describe( 'state', () => {
 					progress: 1,
 					isSyncingInProgress: true,
 					fetchingStatus: false,
+					error: null,
 				};
 				reducer( AT_STATE, {} );
 				const newState = reducer(

@@ -4,6 +4,8 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -139,6 +141,7 @@ interface StagingCardProps {
 	disabled: boolean;
 	productionSiteId: number;
 	stagingSiteId?: number;
+	error?: string | null;
 }
 
 interface ProductionCardProps {
@@ -147,6 +150,7 @@ interface ProductionCardProps {
 	disabled: boolean;
 	productionSiteId: number;
 	stagingSiteId?: number;
+	error?: string | null;
 }
 
 const StagingToProductionSync = ( {
@@ -256,11 +260,15 @@ const SyncCardContainer = ( {
 	progress,
 	isSyncInProgress,
 	siteToSync,
+	onRetry,
+	error,
 }: {
 	children: React.ReactNode;
 	progress: number;
 	isSyncInProgress: boolean;
 	siteToSync: 'production' | 'staging';
+	error?: string | null;
+	onRetry?: () => void;
 } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -273,23 +281,42 @@ const SyncCardContainer = ( {
 				<>
 					<SyncContainerContent>
 						{ translate(
-							'Keep your database and files synchronized between the production and staging environments.'
+							'Sync your database and files between your staging and production environments—in either direction.'
 						) }
 					</SyncContainerContent>
-					<SyncContainerTitle>
-						{ translate( 'Choose synchronization direction' ) }
-					</SyncContainerTitle>
-					{ children }
-					<StagingSyncCardFooter>
-						{ translate(
-							"We'll automatically back up your site before synchronization starts. Need to restore a backup? Head to the {{link}}Activity Log.{{/link}}",
-							{
-								components: {
-									link: <a href={ `/activity-log/${ siteSlug }` } />,
-								},
-							}
-						) }
-					</StagingSyncCardFooter>
+					{ error && <p>{ JSON.stringify( error ) }</p> }
+					{ error && (
+						<Notice
+							status="is-error"
+							icon="mention"
+							showDismiss={ false }
+							text={ translate( 'We couldn’t synchronize the %s environment.', {
+								args: [ siteToSync ],
+							} ) }
+						>
+							<NoticeAction onClick={ () => onRetry?.() }>
+								{ translate( 'Try Again' ) }
+							</NoticeAction>
+						</Notice>
+					) }
+					{ ! error && (
+						<>
+							<SyncContainerTitle>
+								{ translate( 'Choose synchronization direction' ) }
+							</SyncContainerTitle>
+							{ children }
+							<StagingSyncCardFooter>
+								{ translate(
+									"We'll automatically back up your site before synchronization starts. Need to restore a backup? Head to the {{link}}Activity Log.{{/link}}",
+									{
+										components: {
+											link: <a href={ `/activity-log/${ siteSlug }` } />,
+										},
+									}
+								) }
+							</StagingSyncCardFooter>
+						</>
+					) }
 				</>
 			) }
 			{ isSyncInProgress && (
@@ -304,11 +331,17 @@ export const StagingSiteSyncCard = ( {
 	onPush,
 	onPull,
 	disabled,
+	error,
 }: StagingCardProps ) => {
 	const [ selectedItems, setSelectedItems ] = useState( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, productionSiteId ) );
-	const { progress, resetSyncStatus, isSyncInProgress } = useCheckSyncStatus( productionSiteId );
+	const {
+		progress,
+		resetSyncStatus,
+		isSyncInProgress,
+		error: checkStatusError,
+	} = useCheckSyncStatus( productionSiteId );
 
 	const onSelectItems = useCallback( ( items: CheckboxOptionItem[] ) => {
 		const itemNames =
@@ -331,12 +364,22 @@ export const StagingSiteSyncCard = ( {
 
 	const isSyncButtonDisabled =
 		disabled || ( selectedItems.length === 0 && selectedOption === 'push' );
+	const syncError = error || checkStatusError;
 
 	return (
 		<SyncCardContainer
 			siteToSync={ selectedOption === 'push' ? 'production' : 'staging' }
 			isSyncInProgress={ isSyncInProgress }
 			progress={ progress }
+			error={ syncError }
+			onRetry={ () => {
+				if ( selectedOption === 'push' ) {
+					onPushInternal();
+				}
+				if ( selectedOption === 'pull' ) {
+					onPullInternal();
+				}
+			} }
 		>
 			<FormRadioContainer>
 				<FormLabel>
@@ -388,16 +431,23 @@ export const ProductionSiteSyncCard = ( {
 	onPull,
 	disabled,
 	productionSiteId,
+	error,
 }: ProductionCardProps ) => {
 	const [ selectedItems, setSelectedItems ] = useState< string[] >( [] as string[] );
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const { progress, resetSyncStatus, isSyncInProgress } = useCheckSyncStatus( productionSiteId );
+	const {
+		progress,
+		resetSyncStatus,
+		isSyncInProgress,
+		error: checkStatusError,
+	} = useCheckSyncStatus( productionSiteId );
 
 	const onPushInternal = useCallback( () => {
 		resetSyncStatus();
 		onPush?.();
 	}, [ onPush, resetSyncStatus ] );
+	const syncError = error || checkStatusError;
 
 	const onSelectItems = useCallback( ( items: CheckboxOptionItem[] ) => {
 		const itemNames =
@@ -421,6 +471,15 @@ export const ProductionSiteSyncCard = ( {
 			siteToSync={ selectedOption === 'pull' ? 'production' : 'staging' }
 			progress={ progress }
 			isSyncInProgress={ isSyncInProgress }
+			error={ syncError }
+			onRetry={ () => {
+				if ( selectedOption === 'push' ) {
+					onPushInternal();
+				}
+				if ( selectedOption === 'pull' ) {
+					onPullInternal();
+				}
+			} }
 		>
 			<FormRadioContainer>
 				<FormLabel>

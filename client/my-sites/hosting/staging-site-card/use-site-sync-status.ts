@@ -4,6 +4,7 @@ import { fetchSyncStatus, setSyncInProgress } from 'calypso/state/sync/actions';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
 import { getSyncStatus, getSyncProgress } from 'calypso/state/sync/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
+import { getSyncStatusError } from 'calypso/state/sync/selectors/get-sync-status-error';
 
 export const useCheckSyncStatus = ( siteId: number ) => {
 	const dispatch = useDispatch();
@@ -12,6 +13,7 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 	const syncStatus = useSelector( ( state ) => getSyncStatus( state, siteId ) );
 	const syncProgress = useSelector( ( state ) => getSyncProgress( state, siteId ) );
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
+	const syncStatusError = useSelector( ( state ) => getSyncStatusError( state, siteId ) );
 
 	const clearIntervalId = useCallback( () => {
 		if ( intervalIdRef.current ) {
@@ -51,7 +53,13 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 	}, [ dispatch, siteId ] );
 
 	return useMemo(
-		() => ( { status: syncStatus, progress: syncProgress, resetSyncStatus, isSyncInProgress } ),
-		[ syncStatus, syncProgress, resetSyncStatus, isSyncInProgress ]
+		() => ( {
+			status: syncStatus,
+			progress: syncProgress,
+			resetSyncStatus,
+			isSyncInProgress,
+			error: syncStatusError,
+		} ),
+		[ syncStatus, syncProgress, resetSyncStatus, isSyncInProgress, syncStatusError ]
 	);
 };

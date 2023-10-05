@@ -45,6 +45,7 @@ export const StagingSiteCard = ( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ loadingError, setLoadingError ] = useState( false );
+	const [ syncError, setSyncError ] = useState( null );
 	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
@@ -210,16 +211,23 @@ export const StagingSiteCard = ( {
 	};
 
 	const { pushToStaging } = usePushToStagingMutation( siteId, stagingSite?.id, {
+		onSuccess: () => {
+			setSyncError( null );
+		},
 		onError: ( error ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
 					code: error.code,
 				} )
 			);
+			setSyncError( error.message );
 		},
 	} );
 
 	const { pullFromStaging } = usePullFromStagingMutation( siteId, stagingSite?.id, {
+		onSuccess: () => {
+			setSyncError( null );
+		},
 		onError: ( error ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
@@ -288,6 +296,7 @@ export const StagingSiteCard = ( {
 				onPullClick={ pullFromStaging }
 				isButtonDisabled={ disabled || isSyncInProgress }
 				isBusy={ isReverting }
+				error={ syncError }
 			/>
 		);
 	} else if ( showAddStagingSite && ! addingStagingSite ) {

@@ -31,6 +31,17 @@ export const status = withPersistence( ( state = null, action ) => {
 	}
 } );
 
+export const error = ( state = null, action ) => {
+	switch ( action.type ) {
+		case REQUEST_STATUS_FAILURE:
+			return action.error;
+		case SET_STATUS:
+			return null;
+		default:
+			return state;
+	}
+};
+
 export const fetchingStatus = ( state = false, action ) => {
 	switch ( action.type ) {
 		case REQUEST_STATUS:
@@ -102,6 +113,7 @@ export const siteReducer = combineReducers( {
 	fetchingStatus,
 	progress,
 	isSyncingInProgress,
+	error,
 } );
 
 // state is a map of transfer sub-states

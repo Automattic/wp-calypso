@@ -14,6 +14,10 @@ export const isSyncingInProgress = {
 	type: 'boolean',
 };
 
+export const error = {
+	type: [ 'string', 'null' ],
+};
+
 export const siteSyncSite = {
 	type: 'object',
 	properties: {
@@ -21,6 +25,7 @@ export const siteSyncSite = {
 		fetchingStatus,
 		progress,
 		isSyncingInProgress,
+		error,
 	},
 };
 

@@ -42,6 +42,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ loadingError, setLoadingError ] = useState( null );
+	const [ syncError, setSyncError ] = useState( null );
 	const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
 	const { data: productionSite, isLoading } = useProductionSiteDetail( siteId, {
 		enabled: ! disabled,
@@ -60,6 +61,9 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	);
 
 	const { pushToStaging } = usePushToStagingMutation( productionSite?.id as number, siteId, {
+		onSuccess: () => {
+			setSyncError( null );
+		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onError: ( error: any ) => {
 			dispatch(
@@ -67,11 +71,14 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setLoadingError( error );
+			setSyncError( error.message );
 		},
 	} );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSite?.id as number, siteId, {
+		onSuccess: () => {
+			setSyncError( null );
+		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onError: ( error: any ) => {
 			dispatch(
@@ -79,7 +86,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setLoadingError( error );
+			setSyncError( error.message );
 		},
 	} );
 
@@ -120,6 +127,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 							stagingSiteId={ siteId }
 							onPush={ pullFromStaging }
 							onPull={ pushToStaging }
+							error={ syncError }
 							disabled={ disabled || isSyncInProgress }
 						/>
 					</SyncActionsContainer>

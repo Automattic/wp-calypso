@@ -69,6 +69,7 @@ const ActionButtons = styled.div( {
 type CardContentProps = {
 	stagingSite: StagingSite;
 	siteId: number;
+	error?: string | null;
 	onDeleteClick: () => void;
 	onPushClick: () => void;
 	onPullClick: () => void;
@@ -82,6 +83,7 @@ export const ManageStagingSiteCardContent = ( {
 	onDeleteClick,
 	onPushClick,
 	onPullClick,
+	error,
 	isButtonDisabled,
 	isBusy,
 }: CardContentProps ) => {
@@ -161,6 +163,7 @@ export const ManageStagingSiteCardContent = ( {
 								onPull={ onPullClick }
 								disabled={ isButtonDisabled }
 								productionSiteId={ siteId }
+								error={ error }
 							/>
 						</SyncActionsContainer>
 					</>
