@@ -71,6 +71,10 @@ export default function ThemeCollection( {
 							'1080': {
 								slidesPerView: 3,
 							},
+							// break-huge in wordpress breakpoints
+							'1440': {
+								slidesPerView: 4,
+							},
 						},
 						modules: [ Navigation, Keyboard, Mousewheel ],
 					} );
