@@ -1,10 +1,19 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .theme-collection__meta {
 	display: flex;
 	justify-content: space-between;
 }
 
 .theme-collection__headings {
-	flex-basis: 45%;
+	flex-basis: 100%;
+	@include break-medium {
+		flex-basis: 65%;
+	}
+	@include break-wide {
+		flex-basis: 45%;
+	}
 }
 
 .theme-collection__title {
@@ -16,23 +25,28 @@
 	margin-bottom: 0;
 }
 
-
 .theme-collection__list-item.swiper-slide {
-	/* TODO: Needs a better solution. Testing on more screen widths etc */
-	width: 32%;
+	.card.theme-card {
+		/* The horizontal space between themes is configured in JS by swiper `spaceBetween` */
+		margin-left: 0;
+		margin-right: 0;
+	}
 }
 
 .theme-collection__list-wrapper {
 	margin-top: 1em;
 }
 
-/* TODO: Don't display on mobile? */
 .theme-collection__carousel-controls {
-	display: flex;
-	justify-content: flex-end;
 	/*!rtl:ignore*/
 	direction: ltr;
-	align-self: end;
+	display: none;
+
+	@include break-medium {
+		display: flex;
+		justify-content: flex-end;
+		align-self: end;
+	}
 
 	button {
 		width: 40px;

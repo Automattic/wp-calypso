@@ -60,9 +60,18 @@ export default function ThemeCollection( {
 							prevEl: '.theme-collection__carousel-nav-button--previous',
 						},
 						threshold: 5,
-						slideToClickedSlide: true,
-						slidesPerView: 'auto',
-						spaceBetween: 20,
+						spaceBetween: 40,
+						slidesPerView: 1.2,
+						breakpoints: {
+							// break-medium in wordpress breakpoints
+							'782': {
+								slidesPerView: 2,
+							},
+							// break-xlarge in wordpress breakpoints
+							'1080': {
+								slidesPerView: 3,
+							},
+						},
 						modules: [ Navigation, Keyboard, Mousewheel ],
 					} );
 					setSwiperLoaded( true );
