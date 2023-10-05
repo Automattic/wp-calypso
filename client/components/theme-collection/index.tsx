@@ -1,42 +1,27 @@
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
-import { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement, useEffect, useRef, PropsWithChildren, useState } from 'react';
 import './style.scss';
 import { Swiper as SwiperType } from 'swiper/types';
-import { ThemeBlock } from 'calypso/components/themes-list';
 
 interface ThemeCollectionProps {
 	collectionSlug: string;
-	getActionLabel: () => string;
-	getButtonOptions: () => void;
-	getPrice: () => string;
-	getScreenshotUrl: ( themeId: string ) => string;
 	heading: string;
-	isActive: () => boolean;
-	isInstalling: () => boolean;
-	siteId: string | null;
 	subheading: ReactElement;
-	themes: Array< { id: string } > | null;
 }
 
 export default function ThemeCollection( {
 	collectionSlug,
-	getActionLabel,
-	getButtonOptions,
-	getPrice,
-	getScreenshotUrl,
 	heading,
-	isActive,
-	isInstalling,
-	siteId,
 	subheading,
-	themes,
-}: ThemeCollectionProps ): ReactElement {
+	children,
+}: PropsWithChildren< ThemeCollectionProps > ): ReactElement {
 	const swiperInstance = useRef< SwiperType | null >( null );
 	const swiperContainerId = `swiper-container-${ collectionSlug }`;
 
+	const [ isSwiperLoaded, setSwiperLoaded ] = useState( false );
 	useEffect( () => {
-		if ( themes !== null && themes.length > 0 ) {
+		if ( ! isSwiperLoaded ) {
 			const el = document.querySelector( `#${ swiperContainerId }` ) as HTMLElement;
 			if ( el ) {
 				/**
@@ -80,6 +65,7 @@ export default function ThemeCollection( {
 						spaceBetween: 20,
 						modules: [ Navigation, Keyboard, Mousewheel ],
 					} );
+					setSwiperLoaded( true );
 				} );
 			}
 		}
@@ -87,11 +73,7 @@ export default function ThemeCollection( {
 		return () => {
 			swiperInstance.current?.destroy();
 		};
-	}, [ swiperContainerId, themes ] );
-
-	if ( themes === null ) {
-		return <></>; // @todo Add LoadingPlaceholders instead.
-	}
+	}, [ swiperContainerId, isSwiperLoaded ] );
 
 	return (
 		<div className="theme-collection__container ">
@@ -106,28 +88,23 @@ export default function ThemeCollection( {
 						<Icon icon={ chevronRight } />
 					</Button>
 				</div>
-				<div className="theme-collection__list-wrapper swiper-wrapper">
-					{ themes.map( ( theme, index ) => (
-						<div
-							key={ `theme-collection-container-${ collectionSlug }-${ theme.id }` }
-							className="theme--collection__list-item swiper-slide"
-						>
-							<ThemeBlock
-								collectionSlug={ collectionSlug }
-								getActionLabel={ getActionLabel }
-								getButtonOptions={ getButtonOptions }
-								getPrice={ getPrice }
-								getScreenshotUrl={ getScreenshotUrl }
-								index={ index }
-								isActive={ isActive }
-								isInstalling={ isInstalling }
-								siteId={ siteId }
-								theme={ theme }
-							/>
-						</div>
-					) ) }
-				</div>
+				<div className="theme-collection__list-wrapper swiper-wrapper">{ children }</div>
 			</div>
+		</div>
+	);
+}
+
+export function CollectionListItem( {
+	collectionSlug,
+	themeId,
+	children,
+}: PropsWithChildren< { collectionSlug: string; themeId: string } > ) {
+	return (
+		<div
+			key={ `theme-collection-container-${ collectionSlug }-${ themeId }` }
+			className="theme--collection__list-item swiper-slide"
+		>
+			{ children }
 		</div>
 	);
 }

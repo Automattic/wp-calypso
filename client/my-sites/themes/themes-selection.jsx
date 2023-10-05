@@ -10,10 +10,9 @@ import { Component } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
-import ThemeCollection from 'calypso/components/theme-collection';
 import PartnerThemesCollection from 'calypso/components/theme-collection/collection-types/partner-themes-collection';
 import PremiumThemesCollection from 'calypso/components/theme-collection/collection-types/premium-themes-collection';
-import ThemesList from 'calypso/components/themes-list';
+import ThemesList, { ThemeBlock } from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -251,6 +250,43 @@ class ThemesSelection extends Component {
 		return options;
 	};
 
+	getActionLabel = ( theme ) => {
+		return this.props.getActionLabel( theme );
+	};
+
+	getPremiumThemePrice = ( theme ) => {
+		return this.props.getPremiumThemePrice( theme );
+	};
+
+	getScreenshotUrl = ( theme, themeOptions ) => {
+		return this.props.getScreenshotUrl( theme, themeOptions );
+	};
+
+	isThemeActive = ( theme ) => {
+		return this.props.isThemeActive( theme );
+	};
+
+	isInstallingTheme = ( theme ) => {
+		return this.props.isInstallingTheme( theme );
+	};
+
+	getCarouselBlock = ( collectionSlug, theme, index ) => {
+		return (
+			<ThemeBlock
+				collectionSlug={ collectionSlug }
+				getActionLabel={ this.getActionLabel }
+				getButtonOptions={ this.getOptions }
+				getPrice={ this.getPremiumThemePrice }
+				getScreenshotUrl={ this.getScreenshotUrl }
+				index={ index }
+				isActive={ this.isThemeActive }
+				isInstalling={ this.isInstallingTheme }
+				siteId={ this.props.siteId }
+				theme={ theme }
+			/>
+		);
+	};
+
 	render() {
 		const {
 			themes,
@@ -281,38 +317,8 @@ class ThemesSelection extends Component {
 
 				{ isDiscoveryEnabled && (
 					<>
-						<ThemeCollection
-							bookmarkRef={ this.props.bookmarkRef }
-							collectionSlug="some-themes"
-							getActionLabel={ this.props.getActionLabel }
-							getButtonOptions={ this.getOptions }
-							getPrice={ this.props.getPremiumThemePrice }
-							getScreenshotUrl={ this.props.getScreenshotUrl }
-							getThemeDetailsUrl={ this.props.getThemeDetailsUrl }
-							heading="Premium themes"
-							isActive={ this.props.isThemeActive }
-							isInstalling={ this.props.isInstallingTheme }
-							siteId={ siteId }
-							subheading={ <p>Lorem ipsum nessum dorma</p> }
-							themes={ interlacedThemes.splice( 10 ) }
-						/>
-
-						<PremiumThemesCollection
-							getActionLabel={ this.props.getActionLabel }
-							getButtonOptions={ this.getOptions }
-							getPrice={ this.props.getPremiumThemePrice }
-							getScreenshotUrl={ this.props.getScreenshotUrl }
-							isActive={ this.props.isThemeActive }
-							isInstalling={ this.props.isInstallingTheme }
-						/>
-						<PartnerThemesCollection
-							getActionLabel={ this.props.getActionLabel }
-							getButtonOptions={ this.getOptions }
-							getPrice={ this.props.getPremiumThemePrice }
-							getScreenshotUrl={ this.props.getScreenshotUrl }
-							isActive={ this.props.isThemeActive }
-							isInstalling={ this.props.isInstallingTheme }
-						/>
+						<PremiumThemesCollection>{ this.getCarouselBlock }</PremiumThemesCollection>
+						<PartnerThemesCollection>{ this.getCarouselBlock }</PartnerThemesCollection>
 					</>
 				) }
 

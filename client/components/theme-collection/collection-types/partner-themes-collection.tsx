@@ -1,9 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import { memo, ReactElement } from 'react';
 import * as React from 'react';
 import QueryThemes from 'calypso/components/data/query-themes';
-import ThemeCollection from 'calypso/components/theme-collection';
-import { ThemesCollectionProps } from 'calypso/components/theme-collection/themes-collection-props';
+import ThemeCollection, { CollectionListItem } from 'calypso/components/theme-collection';
 import { useThemeCollection } from 'calypso/components/theme-collection/use-theme-collection';
 
 const query = {
@@ -15,20 +14,36 @@ const query = {
 	tier: 'marketplace',
 };
 
-export default function PartnerThemesCollection( props: ThemesCollectionProps ): ReactElement {
+function PartnerThemesCollection( {
+	children,
+}: {
+	children: ( collectionSlug: string, themeId: string, index: number ) => ReactElement;
+} ): ReactElement {
 	const translate = useTranslate();
-	const { siteId, themes } = useThemeCollection( query );
+	const { themes } = useThemeCollection( query );
+
+	const collectionSlug = 'partner-themes';
 	return (
 		<>
 			<QueryThemes query={ query } siteId="wpcom" />
 			<ThemeCollection
-				collectionSlug="partner-themes"
+				collectionSlug={ collectionSlug }
 				heading={ translate( 'Partner Themes' ) }
-				siteId={ siteId }
 				subheading={ <p>Lorem ipsum mockup subheading</p> }
-				themes={ themes }
-				{ ...props }
-			/>
+			>
+				{ themes &&
+					themes.map( ( theme, index ) => (
+						<CollectionListItem
+							key={ theme.id }
+							collectionSlug={ collectionSlug }
+							themeId={ theme.id }
+						>
+							{ children( collectionSlug, theme, index ) }
+						</CollectionListItem>
+					) ) }
+			</ThemeCollection>
 		</>
 	);
 }
+
+export default memo( PartnerThemesCollection );
