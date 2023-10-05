@@ -269,7 +269,6 @@ class ThemesSelection extends Component {
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
 				{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
-
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					upsellBanner={ upsellBanner }
