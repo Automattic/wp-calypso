@@ -158,14 +158,11 @@ class InviteAcceptLoggedOut extends Component {
 
 	renderFormTitle = () => {
 		return (
-			<>
-				{ this.renderPageLogin() }
-				<div className="invite-logged-out-title">
-					<h1 className="formatted-header__title">
-						{ this.props.translate( 'Create your account' ) }
-					</h1>
-				</div>
-			</>
+			<div className="invite-logged-out-title">
+				<h1 className="formatted-header__title">
+					{ this.props.translate( 'Create your account' ) }
+				</h1>
+			</div>
 		);
 	};
 
@@ -200,6 +197,7 @@ class InviteAcceptLoggedOut extends Component {
 
 		return (
 			<div>
+				{ this.renderPageLogin() }
 				{ this.renderFormTitle() }
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
