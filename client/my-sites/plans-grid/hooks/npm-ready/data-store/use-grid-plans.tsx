@@ -22,6 +22,7 @@ import {
 	type StorageOption,
 	isBusinessPlan,
 	isEcommercePlan,
+	TYPE_HOSTING_TRIAL,
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
@@ -61,6 +62,8 @@ export interface PricingMetaForGridPlan {
 	// intro offers override billing and pricing shown in the UI
 	// they are currently defined off the site plans (so not defined when siteId is not available)
 	introOffer?: PlanIntroductoryOffer | null;
+	// Expiry date is only available from site plans and is the expiry date of an existing plan.
+	expiry?: string | null;
 }
 
 export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
@@ -142,6 +145,7 @@ interface Props {
 	 */
 	isSubdomainNotGenerated?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
+	shouldDisplayFreeHostingTrial?: boolean;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -150,9 +154,15 @@ const usePlanTypesWithIntent = ( {
 	sitePlanSlug,
 	hideEnterprisePlan,
 	isSubdomainNotGenerated = false,
+	shouldDisplayFreeHostingTrial,
 }: Pick<
 	Props,
-	'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' | 'isSubdomainNotGenerated'
+	| 'intent'
+	| 'selectedPlan'
+	| 'sitePlanSlug'
+	| 'hideEnterprisePlan'
+	| 'isSubdomainNotGenerated'
+	| 'shouldDisplayFreeHostingTrial'
 > ): string[] => {
 	const isEnterpriseAvailable = ! hideEnterprisePlan;
 	const isBloggerAvailable =
@@ -169,6 +179,7 @@ const usePlanTypesWithIntent = ( {
 		...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
 		TYPE_PERSONAL,
 		TYPE_PREMIUM,
+		...( shouldDisplayFreeHostingTrial ? [ TYPE_HOSTING_TRIAL ] : [] ),
 		TYPE_BUSINESS,
 		TYPE_ECOMMERCE,
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
@@ -190,6 +201,9 @@ const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-new-hosted-site':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			if ( shouldDisplayFreeHostingTrial ) {
+				planTypes.unshift( TYPE_HOSTING_TRIAL );
+			}
 			break;
 		case 'plans-import':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
@@ -254,6 +268,7 @@ const useGridPlans = ( {
 	usePlanUpgradeabilityCheck,
 	isSubdomainNotGenerated,
 	storageAddOns,
+	shouldDisplayFreeHostingTrial,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -262,6 +277,7 @@ const useGridPlans = ( {
 			sitePlanSlug,
 			hideEnterprisePlan,
 			isSubdomainNotGenerated,
+			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
 	} );
@@ -272,6 +288,7 @@ const useGridPlans = ( {
 			sitePlanSlug,
 			hideEnterprisePlan,
 			isSubdomainNotGenerated,
+			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
 	} );

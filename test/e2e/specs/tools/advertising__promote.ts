@@ -105,7 +105,7 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 
 		it( 'Enter title and snippet', async function () {
 			await blazeCampaignPage.enterText( 'Page title', pageTitle );
-			await blazeCampaignPage.enterText( 'Article Snippet', snippet );
+			await blazeCampaignPage.enterText( 'Ad text', snippet );
 		} );
 
 		it( 'Validate preview', async function () {

@@ -81,6 +81,10 @@ export const ThemeUpgradeModal = ( {
 		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle' ),
 		[]
 	);
+	const monthlyBusinessPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-monthly' ),
+		[]
+	);
 
 	//Wait until we have theme and product data to show content
 	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
@@ -172,11 +176,11 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getExternallyManagedPurchaseModalData = (): UpgradeModalContent => {
-		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+		const businessPlanPrice = monthlyBusinessPlanProduct?.combined_cost_display;
 		const productPrice = marketplaceProduct?.cost_display;
 
 		const businessPlanPriceText =
-			businessPlanProduct?.product_term === 'year'
+			monthlyBusinessPlanProduct?.product_term === 'year'
 				? translate( '%(cost)s per year', { args: { cost: businessPlanPrice || '' } } )
 				: translate( '%(cost)s per month', { args: { cost: businessPlanPrice || '' } } );
 

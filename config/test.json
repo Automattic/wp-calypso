@@ -38,7 +38,6 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
-		"domains/bulk-actions-table": true,
 		"domains/bulk-actions-contact-info-editing": true,
 		"domains/transfer-to-any-user": true,
 		"cookie-banner": false,
@@ -74,6 +73,7 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
+		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
@@ -100,6 +100,7 @@
 		"settings/security/monitor": true,
 		"signup/social": true,
 		"site-indicator": true,
+		"site-profiler": true,
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
@@ -115,6 +116,7 @@
 		"videopress-onboarding-user-intent": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/hosting-metrics-i1": true
+		"yolo/hosting-metrics-i1": true,
+		"yolo/staging-sites-i3": true
 	}
 }

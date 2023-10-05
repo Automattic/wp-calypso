@@ -101,7 +101,7 @@ export class FormPatternsFlow implements BlockFlow {
 			.locator( `[aria-label="${ this.configurationData.patternName }"]` )
 			.getByRole( 'option' )
 			// These patterns can load in quite slowly, messing with animation wait checks, so let's give extra time.
-			.click( { timeout: 20 * 1000 } );
+			.click( { timeout: 30 * 1000 } );
 	}
 
 	/**

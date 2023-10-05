@@ -245,7 +245,7 @@ class ThanksModal extends Component {
 		const { isLivePreviewStarted } = this.props;
 
 		if ( isLivePreviewStarted ) {
-			return this.props.translate( 'Preparing the live preview…' );
+			return this.props.translate( 'Preparing the Preview & Customize…' );
 		}
 
 		return this.props.translate( 'Activating theme…' );

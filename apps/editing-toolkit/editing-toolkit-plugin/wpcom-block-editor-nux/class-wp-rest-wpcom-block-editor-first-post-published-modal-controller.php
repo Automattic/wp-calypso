@@ -32,7 +32,7 @@ class WP_REST_WPCOM_Block_Editor_First_Post_Published_Modal_Controller extends \
 		);
 
 		wp_add_inline_script(
-			'jetpack-blocks-editor',
+			'wpcom-block-editor-nux-script',
 			'var launchpadOptions = ' . wp_json_encode( $launchpad_options, JSON_HEX_TAG | JSON_HEX_AMP ) . ';',
 			'before'
 		);

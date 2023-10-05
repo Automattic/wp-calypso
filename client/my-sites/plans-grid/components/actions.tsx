@@ -30,6 +30,7 @@ type PlanFeaturesActionsButtonProps = {
 	canUserPurchasePlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
+	trialPlan?: boolean;
 	freePlan: boolean;
 	manageHref: string;
 	isPopular?: boolean;
@@ -62,6 +63,7 @@ const DummyDisabledButton = styled.div`
 `;
 
 const SignupFlowPlanFeatureActionButton = ( {
+	trialPlan,
 	freePlan,
 	planTitle,
 	classes,
@@ -71,6 +73,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	handleUpgradeButtonClick,
 	busy,
 }: {
+	trialPlan: boolean;
 	freePlan: boolean;
 	planTitle: TranslateResult;
 	classes: string;
@@ -83,7 +86,9 @@ const SignupFlowPlanFeatureActionButton = ( {
 	const translate = useTranslate();
 	let btnText;
 
-	if ( freePlan ) {
+	if ( trialPlan ) {
+		btnText = translate( 'Start trial' );
+	} else if ( freePlan ) {
 		btnText = translate( 'Start with Free' );
 	} else if ( isStuck && ! isLargeCurrency ) {
 		btnText = translate( 'Get %(plan)s – %(priceString)s', {
@@ -93,6 +98,18 @@ const SignupFlowPlanFeatureActionButton = ( {
 			},
 			comment:
 				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+		} );
+	} else if ( isStuck && isLargeCurrency ) {
+		btnText = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
+			args: {
+				plan: planTitle,
+				priceString: priceString ?? '',
+			},
+			comment:
+				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+			components: {
+				span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
+			},
 		} );
 	} else {
 		btnText = translate( 'Get %(plan)s', {
@@ -349,6 +366,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	className,
 	currentSitePlanSlug,
 	freePlan = false,
+	trialPlan = false,
 	manageHref,
 	isInSignup,
 	isLaunchPage,
@@ -374,6 +392,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
 		'is-current-plan': current,
+		'is-stuck': isStuck,
+		'is-large-currency': isLargeCurrency,
 	} );
 
 	const handleUpgradeButtonClick = () => {
@@ -458,6 +478,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<SignupFlowPlanFeatureActionButton
 				freePlan={ freePlan }
+				trialPlan={ trialPlan }
 				planTitle={ planTitle }
 				classes={ classes }
 				priceString={ priceString }

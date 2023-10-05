@@ -37,7 +37,6 @@ export default function buildFallbackResponse( {
 	shouldShowApperanceHeader = false,
 	shouldShowApperanceBackground = false,
 	shouldShowAdControl = false,
-	shouldShowAMP = false,
 	shouldShowAddOns = false,
 	showSiteMonitoring = false,
 } = {} ) {
@@ -625,16 +624,6 @@ export default function buildFallbackResponse( {
 					: [] ),
 			],
 		},
-		...( shouldShowAMP
-			? [
-					{
-						slug: 'amp',
-						title: translate( 'AMP' ),
-						type: 'menu-item',
-						url: `https://${ siteDomain }/wp-admin/admin.php?page=amp-options`,
-					},
-			  ]
-			: [] ),
 	];
 
 	return fallbackResponse;

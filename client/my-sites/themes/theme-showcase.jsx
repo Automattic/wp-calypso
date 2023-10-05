@@ -228,9 +228,9 @@ class ThemeShowcase extends Component {
 
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
-		const { filterToTermTable, search: prevSearch } = this.props;
+		const { filterToTermTable, subjectStringFilter } = this.props;
 
-		const filters = searchBoxContent.match( filterRegex ) || [];
+		const filters = `${ searchBoxContent } ${ subjectStringFilter }`.match( filterRegex ) || [];
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
 
@@ -240,12 +240,9 @@ class ThemeShowcase extends Component {
 			filter: filterString,
 			// Strip filters and excess whitespace
 			search,
-			// Activate the "All" tab when searching on "Recommended", since the
-			// search might include some results that are not in the recommended
-			// themes (e.g. WP.org themes).
+			// If a category isn't selected we search in the all category.
 			...( search &&
-				prevSearch !== search &&
-				this.getSelectedTabFilter().key === staticFilters.RECOMMENDED.key && {
+				! subjectStringFilter && {
 					category: staticFilters.ALL.key,
 				} ),
 		} );
@@ -419,7 +416,7 @@ class ThemeShowcase extends Component {
 			filter,
 			isLoggedIn,
 			pathName,
-			filterString,
+			featureStringFilter,
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
@@ -493,11 +490,7 @@ class ThemeShowcase extends Component {
 					<div className="themes__controls">
 						<div className="theme__search">
 							<div className="theme__search-input">
-								<SearchThemes
-									query={ filterString + search }
-									onSearch={ this.doSearch }
-									recordTracksEvent={ this.recordSearchThemesTracksEvent }
-								/>
+								<SearchThemes query={ featureStringFilter + search } onSearch={ this.doSearch } />
 							</div>
 							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
 								<SelectDropdown
@@ -549,7 +542,8 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
-		filterString: prependThemeFilterKeys( state, filter ),
+		featureStringFilter: prependThemeFilterKeys( state, filter, [ 'subject' ] ),
+		subjectStringFilter: prependThemeFilterKeys( state, filter, [], [ 'subject' ] ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
 		isUpsellCardDisplayed: isUpsellCardDisplayedSelector( state ),

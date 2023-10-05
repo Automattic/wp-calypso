@@ -76,6 +76,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 					isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( currentDomainData ),
 					isCreditCardExpiring:
 						domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
+					isVipSite: site?.is_vip,
 				} )
 			)
 			.filter( notNull );
@@ -137,6 +138,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 					domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', currentDomainData ),
 				monthsUtilCreditCardExpires:
 					domainStatusPurchaseActions?.monthsUtilCreditCardExpires?.( currentDomainData ),
+				isVipSite: site?.is_vip,
 		  } )
 		: null;
 

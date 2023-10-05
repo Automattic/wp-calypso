@@ -43,8 +43,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 		'calypso_signup_pattern_assembler_screen_upsell_checkout_button_click',
 	SCREEN_UPSELL_UPGRADE_LATER_BUTTON_CLICK:
 		'calypso_signup_pattern_assembler_screen_upsell_upgrade_later_button_click',
-	SCREEN_UPSELL_EDIT_YOUR_CONTENT_BUTTON_CLICK:
-		'calypso_signup_pattern_assembler_screen_upsell_edit_your_content_button_click',
 
 	/**
 	 * Pattern Panels

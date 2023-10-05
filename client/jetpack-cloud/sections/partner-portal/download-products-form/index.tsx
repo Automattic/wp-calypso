@@ -5,9 +5,9 @@ import page from 'page';
 import { useCallback, useEffect } from 'react';
 import WooProductDownload from 'calypso/jetpack-cloud/sections/partner-portal/download-products-form/woo-product-download';
 import {
-	getProductSlugFromKey,
+	getProductSlugFromLicenseKey,
 	isWooCommerceProduct,
-} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+} from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { useSelector } from 'calypso/state';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
@@ -35,7 +35,7 @@ export default function DownloadProductsForm() {
 	const jetpackProducts =
 		jetpackKeys &&
 		jetpackKeys.map( ( licenseKey: string ) => {
-			const productSlug = getProductSlugFromKey( licenseKey );
+			const productSlug = getProductSlugFromLicenseKey( licenseKey );
 			const product =
 				allProducts && allProducts.find( ( product ) => product.slug === productSlug );
 
@@ -70,7 +70,7 @@ export default function DownloadProductsForm() {
 		}
 
 		const invalidKeys = licenseKeys.split( ',' ).filter( ( key ) => {
-			const productSlug = getProductSlugFromKey( key );
+			const productSlug = getProductSlugFromLicenseKey( key );
 			return ! allProducts.find( ( product ) => product.slug === productSlug );
 		} );
 

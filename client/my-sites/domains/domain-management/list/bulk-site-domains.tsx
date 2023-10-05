@@ -33,11 +33,13 @@ import {
 	fetchSiteDomains,
 } from '../domains-table-fetch-functions';
 import EmptyDomainsListCard from './empty-domains-list-card';
-import { filterDomainsByOwner } from './helpers';
+import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import { ManageAllDomainsCTA } from './manage-domains-cta';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
 import { filterOutWpcomDomains } from './utils';
+
+import './style.scss';
 
 interface BulkSiteDomainsProps {
 	analyticsPath: string;
@@ -59,9 +61,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 
 	const hasNonWpcomDomains = useMemo( () => {
-		return (
-			filterDomainsByOwner( filterOutWpcomDomains( data?.domains ?? [] ), undefined ).length > 0
-		);
+		return filterOutWpcomDomains( data?.domains ?? [] ).length > 0;
 	}, [ data ] );
 
 	const item = {
@@ -89,8 +89,9 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 			<Main>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
+				{ ! isLoading && <GoogleDomainOwnerBanner /> }
 				<DomainsTable
-					isFetchingDomains={ isLoading }
+					isLoadingDomains={ isLoading }
 					domains={ data?.domains }
 					isAllSitesView={ false }
 					siteSlug={ site?.slug ?? null }

@@ -4,7 +4,7 @@
 		opacity: 0;
 		align-items: center;
 		position: absolute;
-		height: 27px;
+		height: 40px;
 		right: 0;
 
 		.pattern-action-bar__block {
@@ -16,23 +16,21 @@
 
 		.pattern-action-bar__action {
 			&.has-icon {
-				min-width: 30px;
-				max-width: 30px;
+				min-width: 40px;
+				max-width: 40px;
 				padding: 0;
 			}
 
 			svg {
 				fill: var(--studio-gray-80);
-
-				&:hover {
-					transform: scale(1.05);
-					transition: transform 0.1s ease-in;
-					transform-origin: center;
-				}
 			}
 
-			&:not(:disabled):hover svg {
-				fill: var(--studio-blue-50);
+			&:not(:disabled):hover {
+				color: var(--studio-blue-50);
+
+				svg {
+					fill: var(--studio-blue-50);
+				}
 			}
 
 			&--move-up,
@@ -40,6 +38,16 @@
 				height: 13px;
 				display: flex;
 				align-items: center;
+			}
+
+			&--shuffle {
+				&.has-icon {
+					flex-direction: row;
+					gap: 4px;
+					line-height: 40px;
+					max-width: none;
+					padding: 0 12px;
+				}
 			}
 		}
 	}

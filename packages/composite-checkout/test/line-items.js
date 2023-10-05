@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
 import { LineItemsProvider, useLineItems } from '../src/lib/line-items';
 
 // React writes to console.error when a component throws before re-throwing

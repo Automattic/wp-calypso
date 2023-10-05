@@ -1,10 +1,12 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getBoostRating, getBoostRatingClass } from '../../lib/boost';
-import { Site } from '../../types';
+import BoostLicenseInfoModal from './boost-license-info-modal';
+import type { Site } from '../../types';
 
 interface Props {
 	site: Site;
@@ -17,8 +19,10 @@ export default function SiteBoostColumn( { site }: Props ) {
 	const hasBoost = site.has_boost;
 	const adminUrl = useSelector( ( state ) => getJetpackAdminUrl( state, site.blog_id ) );
 
+	const [ showBoostModal, setShowBoostModal ] = useState( false );
+
 	const handleGetBoostScoreAction = () => {
-		// TODO - should open a modal.
+		setShowBoostModal( true );
 	};
 
 	if ( overallScore ) {
@@ -41,7 +45,7 @@ export default function SiteBoostColumn( { site }: Props ) {
 				className="sites-overview__column-action-button is-link"
 				href={
 					adminUrl
-						? `${ origin }${ pathname }?page=my-jetpack#/add-boost`
+						? `${ origin }${ pathname }?page=jetpack-boost`
 						: `https://${ site.url }/wp-admin/admin.php?page=jetpack`
 				}
 				target="_blank"
@@ -60,6 +64,13 @@ export default function SiteBoostColumn( { site }: Props ) {
 			>
 				{ translate( 'Get Score' ) }
 			</button>
+			{ showBoostModal && (
+				<BoostLicenseInfoModal
+					onClose={ () => setShowBoostModal( false ) }
+					siteId={ site.blog_id }
+					siteUrl={ site.url }
+				/>
+			) }
 		</>
 	);
 }

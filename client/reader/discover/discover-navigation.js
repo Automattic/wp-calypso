@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -8,7 +9,7 @@ import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
-import { DEFAULT_TAB, LATEST_TAB } from './helper';
+import { DEFAULT_TAB, FIRST_POSTS_TAB, LATEST_TAB } from './helper';
 
 import './discover-navigation.scss';
 
@@ -107,6 +108,15 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 					>
 						{ translate( 'Recommended' ) }
 					</SegmentedControl.Item>
+					{ config.isEnabled( 'reader/first-posts-stream' ) && (
+						<SegmentedControl.Item
+							key={ FIRST_POSTS_TAB }
+							selected={ FIRST_POSTS_TAB === selectedTab }
+							onClick={ () => menuTabClick( FIRST_POSTS_TAB ) }
+						>
+							{ translate( 'First posts' ) }
+						</SegmentedControl.Item>
+					) }
 					<SegmentedControl.Item
 						key={ LATEST_TAB }
 						selected={ LATEST_TAB === selectedTab }
