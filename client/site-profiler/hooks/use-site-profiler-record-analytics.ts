@@ -23,13 +23,14 @@ export default function useSiteProfilerRecordAnalytics(
 
 	useEffect( () => {
 		domain &&
+			conversionAction &&
 			recordTracksEvent( 'calypso_site_profiler_domain_analyze', {
 				domain,
 				is_domain_valid: isDomainValid,
 				conversion_action: conversionAction,
 				special_domain_mapping: specialDomainMapping,
 			} );
-	}, [ domain, isDomainValid ] );
+	}, [ domain, isDomainValid, conversionAction ] );
 
 	useEffect( () => {
 		hostingProvider &&
