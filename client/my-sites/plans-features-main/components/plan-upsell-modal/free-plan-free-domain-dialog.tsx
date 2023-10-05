@@ -1,5 +1,5 @@
 import { domainProductSlugs, getPlan, PlanSlug } from '@automattic/calypso-products';
-import { Button, Dialog, Gridicon } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import { DomainSuggestions } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { css, Global } from '@emotion/react';
@@ -14,7 +14,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { LoadingPlaceHolder } from '../loading-placeholder';
-import { DialogContainer } from './components';
+import { DialogContainer, StyledButton } from './components';
 import { MODAL_VIEW_EVENT_NAME } from '.';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -61,49 +61,6 @@ const TextBox = styled.div< { fontSize?: number; bold?: boolean; color?: 'gray' 
 		}
 		return 'var(--color-text)';
 	} };
-`;
-
-export const StyledButton = styled( Button )`
-	padding: 10px 24px;
-	border-radius: 4px;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 20px;
-	flex: 1;
-	&.is-borderless {
-		text-decoration: underline;
-		border: none;
-		font-weight: 600;
-		padding: 0;
-		color: ${ ( { color } ) => {
-			if ( color === 'gray' ) {
-				return 'var(--studio-gray-50)';
-			}
-			return 'var(--color-text)';
-		} };
-	}
-
-	&.is-primary,
-	&.is-primary.is-busy,
-	&.is-primary:hover,
-	&.is-primary:focus {
-		background-color: var( --studio-blue-50 );
-		border: unset;
-	}
-
-	&:hover {
-		opacity: 0.85;
-		transition: 0.7s;
-	}
-
-	width: 100%;
-	@media ( min-width: 780px ) {
-		max-width: 260px;
-		width: unset;
-		&:last-child {
-			max-width: 190px;
-		}
-	}
 `;
 
 const CrossIcon = styled( Gridicon )`
