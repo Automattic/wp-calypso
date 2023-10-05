@@ -42,7 +42,6 @@ function ThemeCollectionsLayout( {
 						themes.map( ( theme, index ) => (
 							<ThemeCollectionItem key={ theme.id }>
 								<ThemeBlock
-									collectionSlug={ collectionSlug }
 									getActionLabel={ getActionLabel }
 									getButtonOptions={ getOptions }
 									getPrice={ getPrice }
