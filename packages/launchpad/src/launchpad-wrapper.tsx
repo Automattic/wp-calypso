@@ -6,17 +6,17 @@ import Launchpad from './launchpad';
 import { setUpActionsForTasks } from './setup-actions';
 import type { Task } from './types';
 
-type LaunchpadWrapperProps = {
+type DefaultWiredLaunchpadProps = {
 	siteSlug: string | null;
 	checklistSlug: string;
 	launchpadContext: string;
 };
 
-const LaunchpadWrapper = ( {
+const DefaultWiredLaunchpad = ( {
 	siteSlug,
 	checklistSlug,
 	launchpadContext,
-}: LaunchpadWrapperProps ) => {
+}: DefaultWiredLaunchpadProps ) => {
 	const {
 		data: { checklist },
 	} = useLaunchpad( siteSlug, checklistSlug );
@@ -76,4 +76,4 @@ const LaunchpadWrapper = ( {
 	);
 };
 
-export default LaunchpadWrapper;
+export default DefaultWiredLaunchpad;
