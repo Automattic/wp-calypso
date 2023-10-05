@@ -1,4 +1,4 @@
-import { chunk, times } from 'lodash';
+import { chunk } from 'lodash';
 import { POST_REVISION_AUTHORS_RECEIVE } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
@@ -11,6 +11,8 @@ import {
 	normalizeUser,
 	receivePostRevisionAuthorsSuccess,
 } from '../';
+
+const times = ( n, cb ) => [ ...new Array( n ).keys() ].map( ( k ) => cb?.( k ) ?? k );
 
 describe( '#normalizeRevision', () => {
 	test( 'should rename `id`, `name` and `slug`', () => {

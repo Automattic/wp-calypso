@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { last, times } from 'lodash';
+import { last } from 'lodash';
 import moment from 'moment';
 import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
 
@@ -20,7 +20,7 @@ export default createSelector(
 			return [];
 		}
 
-		const result = times( 6, ( n ) => {
+		const result = [ 0, 1, 2, 3, 4, 5 ].map( ( n ) => {
 			const month = moment().subtract( n, 'months' );
 			return {
 				dateString: moment( month ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
