@@ -74,6 +74,11 @@ export default function ThemeCollection( {
 							// break-huge in wordpress breakpoints
 							'1440': {
 								slidesPerView: 4,
+								spaceBetween: 60,
+							},
+							// break-xhuge in wordpress breakpoints
+							'1920': {
+								spaceBetween: 100,
 							},
 						},
 						modules: [ Navigation, Keyboard, Mousewheel ],
