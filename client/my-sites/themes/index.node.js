@@ -26,6 +26,7 @@ export default function ( router ) {
 		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/filter/:filter`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter`,
+		`/${ langParam }/themes/s/:slide`,
 	];
 	router(
 		showcaseRoutes,

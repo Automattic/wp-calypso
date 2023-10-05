@@ -46,7 +46,7 @@ export default function ThemeCollection( {
 					import( 'swiper/css/mousewheel' ),
 				] ).then( ( values ) => {
 					const Swiper = values[ 0 ].default;
-					const { Navigation, Keyboard, Mousewheel } = values[ 1 ];
+					const { Navigation, Keyboard, Mousewheel, History } = values[ 1 ];
 
 					swiperInstance.current = new Swiper( el, {
 						cssMode: true,
@@ -59,11 +59,17 @@ export default function ThemeCollection( {
 							nextEl: '.theme-collection__carousel-nav-button--next',
 							prevEl: '.theme-collection__carousel-nav-button--previous',
 						},
+						history: {
+							keepQuery: true,
+							key: 's',
+							root: '/themes/',
+							replaceState: true,
+						},
 						threshold: 5,
 						slideToClickedSlide: true,
 						slidesPerView: 'auto',
 						spaceBetween: 20,
-						modules: [ Navigation, Keyboard, Mousewheel ],
+						modules: [ Navigation, Keyboard, Mousewheel, History ],
 					} );
 					setSwiperLoaded( true );
 				} );
@@ -73,7 +79,7 @@ export default function ThemeCollection( {
 		return () => {
 			swiperInstance.current?.destroy();
 		};
-	}, [ swiperContainerId, isSwiperLoaded ] );
+	}, [ swiperContainerId, isSwiperLoaded, collectionSlug ] );
 
 	return (
 		<div className="theme-collection__container swiper-container" id={ swiperContainerId }>

@@ -30,6 +30,7 @@ export default function ( router ) {
 		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter`,
+		`/${ langParam }/themes/s/:slide`,
 	];
 	const routesWithSites = [
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,

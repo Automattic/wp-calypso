@@ -34,7 +34,11 @@ function PartnerThemesCollection( {
 			>
 				{ themes &&
 					themes.map( ( theme, index ) => (
-						<ThemeCollectionItem key={ theme.id }>
+						<ThemeCollectionItem
+							key={ theme.id }
+							slug={ theme.id }
+							collectionSlug={ collectionSlug }
+						>
 							{ children( collectionSlug, theme, index ) }
 						</ThemeCollectionItem>
 					) ) }

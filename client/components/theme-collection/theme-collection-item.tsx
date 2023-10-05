@@ -1,5 +1,21 @@
 import { PropsWithChildren } from 'react';
 
-export default function ThemeCollectionItem( { children }: PropsWithChildren ) {
-	return <div className="theme-collection__list-item swiper-slide">{ children }</div>;
+type ThemeCollectionProps = {
+	slug: string;
+	collectionSlug: string;
+};
+
+export default function ThemeCollectionItem( {
+	slug,
+	collectionSlug,
+	children,
+}: PropsWithChildren< ThemeCollectionProps > ) {
+	return (
+		<div
+			data-history={ `${ collectionSlug }-${ slug }` }
+			className="theme-collection__list-item swiper-slide"
+		>
+			{ children }
+		</div>
+	);
 }

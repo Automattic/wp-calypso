@@ -33,7 +33,7 @@ function PremiumThemesCollection( {
 			>
 				{ themes &&
 					themes.map( ( theme, index ) => (
-						<ThemeCollectionItem key={ theme.id }>
+						<ThemeCollectionItem key={ theme.id } slug={ theme.id } collectionSlug="premium-themes">
 							{ children( 'premium-themes', theme, index ) }
 						</ThemeCollectionItem>
 					) ) }
