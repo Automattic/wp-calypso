@@ -26,6 +26,10 @@ const hosting: Flow = {
 			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
+				slug: 'verifyEmail',
+				asyncComponent: () => import( './internals/steps-repository/hosting-verify-email' ),
+			},
+			{
 				slug: 'siteCreationStep',
 				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
 			},
@@ -62,6 +66,9 @@ const hosting: Flow = {
 			if ( _currentStepSlug === 'plans' ) {
 				navigate( 'options' );
 			}
+			if ( _currentStepSlug === 'verifyEmail' ) {
+				navigate( 'plans' );
+			}
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
@@ -89,6 +96,14 @@ const hosting: Flow = {
 						extra: { geo_affinity: siteGeoAffinity },
 					} );
 
+					if ( productSlug === 'wp_bundle_hosting_trial_monthly' ) {
+						return navigate( 'verifyEmail' );
+					}
+
+					return navigate( 'siteCreationStep' );
+				}
+
+				case 'verifyEmail': {
 					return navigate( 'siteCreationStep' );
 				}
 
