@@ -9,7 +9,7 @@ import { Component } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
-import ThemesList, { ThemeBlock } from 'calypso/components/themes-list';
+import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -245,43 +245,6 @@ class ThemesSelection extends Component {
 		}
 
 		return options;
-	};
-
-	getActionLabel = ( theme ) => {
-		return this.props.getActionLabel( theme );
-	};
-
-	getPremiumThemePrice = ( theme ) => {
-		return this.props.getPremiumThemePrice( theme );
-	};
-
-	getScreenshotUrl = ( theme, themeOptions ) => {
-		return this.props.getScreenshotUrl( theme, themeOptions );
-	};
-
-	isThemeActive = ( theme ) => {
-		return this.props.isThemeActive( theme );
-	};
-
-	isInstallingTheme = ( theme ) => {
-		return this.props.isInstallingTheme( theme );
-	};
-
-	getCarouselBlock = ( collectionSlug, theme, index ) => {
-		return (
-			<ThemeBlock
-				collectionSlug={ collectionSlug }
-				getActionLabel={ this.getActionLabel }
-				getButtonOptions={ this.getOptions }
-				getPrice={ this.getPremiumThemePrice }
-				getScreenshotUrl={ this.getScreenshotUrl }
-				index={ index }
-				isActive={ this.isThemeActive }
-				isInstalling={ this.isInstallingTheme }
-				siteId={ this.props.siteId }
-				theme={ theme }
-			/>
-		);
 	};
 
 	render() {
