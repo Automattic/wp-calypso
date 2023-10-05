@@ -10,7 +10,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 const ThreeColumnContainer = styled.div`
@@ -87,7 +87,7 @@ const CardText = styled.span< { color: string } >`
 export const MarketplaceFooter = () => {
 	const { __ } = useI18n();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-
+	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 	const sectionName = useSelector( getSectionName );
 
 	const startUrl = addQueryArgs(
@@ -103,7 +103,7 @@ export const MarketplaceFooter = () => {
 				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
 			>
 				<>
-					{ ! isLoggedIn && (
+					{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
 						<Button className="is-primary marketplace-cta" href={ startUrl }>
 							{ __( 'Get Started' ) }
 						</Button>
