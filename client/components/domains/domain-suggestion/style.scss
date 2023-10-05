@@ -511,6 +511,12 @@ body.is-section-signup.is-white-signup {
 		&.featured-domain-suggestion .domain-suggestion__action-container .domain-suggestion__action.is-borderless {
 			padding: 0.57em 1.3em !important;
 			box-shadow: none !important;
+			color: var(--color-text);
+			font-weight: normal !important;
+
+			.gridicons-checkmark {
+				color: var(--studio-green-60);
+			}
 		}
 	}
 }
