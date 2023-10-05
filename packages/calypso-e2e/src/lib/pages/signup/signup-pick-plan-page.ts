@@ -16,12 +16,10 @@ export class SignupPickPlanPage {
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {string} selectedDomain The selected domain in the previous step.
 	 */
-	constructor( page: Page, selectedDomain?: string ) {
+	constructor( page: Page ) {
 		this.page = page;
 		this.plansPage = new PlansPage( page );
-		this.selectedDomain = selectedDomain;
 	}
 
 	/**
@@ -36,34 +34,31 @@ export class SignupPickPlanPage {
 			this.page.waitForLoadState(),
 		] );
 
-		let url: RegExp;
-		let actions: Array< Promise< any > > = [];
-		if ( name !== 'Free' ) {
-			// Non-free plans should redirect to the Checkout cart.
-			url = new RegExp( '.*checkout.*' );
-		} else {
-			url = new RegExp( '.*setup/site-setup.*' );
+		// Free plan with free domain would redirect immediately to the site setup process.
+		// Free plan with custom domain that accepted upsell, or paid plans would
+		// go to the checkout.
+
+		// Select the plan.
+		await this.plansPage.selectPlan( name );
+
+		// Handle the situation where if a custom domain is selected, but the user attempts to
+		// select the Free plan, we show an upsell modal.
+		const planUpsellAcceptButton = this.page
+			.getByRole( 'dialog' )
+			.getByRole( 'button', { name: name } );
+		if ( await planUpsellAcceptButton.count() ) {
+			await this.page
+				.getByRole( 'dialog' )
+				.getByRole( 'button', { name: `Continue with ${ name }` } )
+				.click();
 		}
 
-		if ( name === 'Free' ) {
-			if ( this.selectedDomain?.includes( 'wordpress.com' ) ) {
-				/** Shows a modal */
-				await this.plansPage.selectPlan( name );
-				actions = [
-					this.page.waitForResponse( /.*sites\/new\?.*/ ),
-					this.page.waitForURL( url, { timeout: 30 * 1000 } ),
-					this.plansPage.selectModalUpsellPlan( name ),
-				];
-			}
-		} else if ( actions.length === 0 ) {
-			actions = [
-				this.page.waitForResponse( /.*sites\/new\?.*/ ),
-				this.page.waitForURL( url, { timeout: 30 * 1000 } ),
-				this.plansPage.selectPlan( name ),
-			];
-		}
-
-		const [ response ] = await Promise.all( actions );
+		// Resolve the promises that check for transition onto the next step of the stepper,
+		// and whether the site creation request has been kicked off.
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( /sites\/new/, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( /(setup\/site-setup|checkout)/, { timeout: 30 * 1000 } ),
+		] );
 
 		if ( ! response ) {
 			throw new Error( 'Failed to intercept response for new site creation.' );
