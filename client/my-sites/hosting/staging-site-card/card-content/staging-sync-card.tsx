@@ -43,7 +43,9 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 	{
 		name: 'contents',
 		label: translate( 'wp-content Directory' ),
-		subTitle: translate( 'excluding themes, plugins, and uploads' ),
+		subTitle: translate(
+			'Everything in the wp-content directory, excluding themes, plugins, and uploads'
+		),
 		checked: false,
 		isDangerous: false,
 	},
