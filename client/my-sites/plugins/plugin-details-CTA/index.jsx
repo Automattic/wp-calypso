@@ -70,8 +70,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const currentPurchase = getPluginPurchased( plugin, purchases );
 
 	// Site type
-	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
-	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
@@ -87,7 +87,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, softwareSlug )
 	);
-	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
 
 	const shouldUpgrade =
 		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
@@ -333,6 +332,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						plugin={ plugin }
 						saasRedirectHRef={ saasRedirectHRef }
 						isWpcomStaging={ isWpcomStaging }
+						sitesWithPlugins={ sitesWithPlugins }
 						installedOnSitesQuantity={ installedOnSitesQuantity }
 					/>
 				</div>
@@ -395,6 +395,7 @@ function PrimaryButton( {
 	plugin,
 	saasRedirectHRef,
 	isWpcomStaging,
+	sitesWithPlugins,
 	installedOnSitesQuantity,
 } ) {
 	const dispatch = useDispatch();
@@ -414,7 +415,7 @@ function PrimaryButton( {
 		);
 	}, [ dispatch, plugin, isLoggedIn ] );
 
-	if ( isLoggedIn && currentUserSiteCount > 0 && ! selectedSite ) {
+	if ( isLoggedIn && currentUserSiteCount > 0 && sitesWithPlugins.length > 0 && ! selectedSite ) {
 		return (
 			<ManageSitesButton plugin={ plugin } installedOnSitesQuantity={ installedOnSitesQuantity } />
 		);
