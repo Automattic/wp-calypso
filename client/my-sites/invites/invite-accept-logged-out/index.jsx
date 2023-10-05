@@ -156,6 +156,31 @@ class InviteAcceptLoggedOut extends Component {
 		);
 	};
 
+	renderFormTitle = () => {
+		return (
+			<>
+				{ this.renderPageLogin() }
+				<div className="invite-logged-out-title">
+					<h1 className="formatted-header__title">
+						{ this.props.translate( 'Create your account' ) }
+					</h1>
+				</div>
+			</>
+		);
+	};
+
+	renderPageLogin = () => {
+		return (
+			<div className="invite-logged-out-header">
+				<WordPressLogo size={ 24 } />
+
+				<Button href={ '/log-in?redirect_to=' + window.location.href } variant="link">
+					<span>{ this.props.translate( 'Log in' ) }</span>
+				</Button>
+			</div>
+		);
+	};
+
 	render() {
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
 			return this.renderSignInLinkOnly();
@@ -175,18 +200,7 @@ class InviteAcceptLoggedOut extends Component {
 
 		return (
 			<div>
-				<div className="invite-logged-out-header">
-					<WordPressLogo size={ 24 } />
-
-					<Button href="" variant="link">
-						<span>{ this.props.translate( 'Log in' ) }</span>
-					</Button>
-				</div>
-				<div className="invite-logged-out-title">
-					<h1 className="formatted-header__title">
-						{ this.props.translate( 'Create your account' ) }
-					</h1>
-				</div>
+				{ this.renderFormTitle() }
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.state.submitting }
