@@ -21,7 +21,7 @@ export default function ThemeCollection( {
 
 	const [ isSwiperLoaded, setSwiperLoaded ] = useState( false );
 	useEffect( () => {
-		if ( ! isSwiperLoaded ) {
+		if ( ! isSwiperLoaded || ! swiperInstance?.current || swiperInstance.current?.destroyed ) {
 			const el = document.querySelector( `#${ swiperContainerId }` ) as HTMLElement;
 			if ( el ) {
 				/**
