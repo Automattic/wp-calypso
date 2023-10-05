@@ -70,6 +70,27 @@
 		}
 	}
 
+	// General notice, but without background
+	&.is-transparent-info {
+		background: unset;
+		color: var(--studio-gray-80, #2c3338);
+		.notice__icon-wrapper {
+			background: transparent;
+		}
+		.notice__icon-wrapper-drop {
+			background: var(--color-error);
+			border-radius: 50%;
+			width: 24px;
+			height: 24px;
+			top: unset;
+			left: unset;
+		}
+
+		.notice__text a {
+			color: var(--studio-gray-80, #2c3338);
+		}
+	}
+
 	&.is-loading {
 		.notice__icon-wrapper {
 			animation: notice-loading-pulse 0.8s ease-in-out infinite;
