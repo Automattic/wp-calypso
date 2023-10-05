@@ -141,12 +141,12 @@ class DomainRegistrationSuggestion extends Component {
 		let buttonStyles = this.props.buttonStyles;
 
 		if ( isAdded ) {
-			buttonContent = translate( '{{checkmark/}} In Cart', {
+			buttonContent = translate( '{{checkmark/}} Selected', {
 				context: 'Domain is already added to shopping cart',
 				components: { checkmark: <Gridicon icon="checkmark" /> },
 			} );
 
-			buttonStyles = { ...buttonStyles, primary: false };
+			buttonStyles = { ...buttonStyles, primary: false, borderless: true };
 		} else {
 			buttonContent =
 				! isSignupStep &&
