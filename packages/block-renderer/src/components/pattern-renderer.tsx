@@ -2,6 +2,7 @@ import usePatternInlineCss from '../hooks/use-pattern-inline-css';
 import usePatternMinHeightVh from '../hooks/use-pattern-min-height-vh';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
+
 interface Props {
 	patternId: string;
 	viewportWidth?: number;
@@ -9,6 +10,7 @@ interface Props {
 	minHeight?: number;
 	maxHeight?: 'none' | number;
 	placeholder?: JSX.Element;
+	isNewSite: boolean;
 }
 
 const PatternRenderer = ( {
@@ -17,11 +19,12 @@ const PatternRenderer = ( {
 	viewportHeight,
 	minHeight,
 	maxHeight,
+	isNewSite,
 }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 	const patternHtml = usePatternMinHeightVh( pattern?.html, viewportHeight );
-	const inlineCss = usePatternInlineCss( patternId );
+	const inlineCss = usePatternInlineCss( patternId, isNewSite );
 
 	return (
 		<BlockRendererContainer

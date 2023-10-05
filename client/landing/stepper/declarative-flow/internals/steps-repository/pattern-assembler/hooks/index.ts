@@ -9,3 +9,4 @@ export { default as usePatternsMapByCategory } from './use-patterns-map-by-categ
 export { default as useRecipe } from './use-recipe';
 export { default as useScreen } from './use-screen';
 export { default as useSyncNavigatorScreen } from './use-sync-navigator-screen';
+export { default as useIsNewSite } from './use-is-new-site';
