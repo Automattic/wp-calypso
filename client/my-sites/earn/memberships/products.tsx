@@ -153,7 +153,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 			{ hasLoadedFeatures &&
 				products
 					.filter( ( currentProduct ) => ! currentProduct.tier ) // We remove the "tiers" (the annual products with "tier" type)
-					.map( ( currentProduct ) => {
+					.map( function ( currentProduct ) {
 						const currentAnnualProduct = products.find(
 							( _prod ) => _prod.tier === currentProduct.ID
 						);
