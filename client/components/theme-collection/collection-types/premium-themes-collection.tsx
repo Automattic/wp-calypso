@@ -2,7 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import { memo, ReactElement } from 'react';
 import * as React from 'react';
 import QueryThemes from 'calypso/components/data/query-themes';
-import ThemeCollection, { CollectionListItem } from 'calypso/components/theme-collection';
+import ThemeCollection from 'calypso/components/theme-collection';
+import ThemeCollectionItem from 'calypso/components/theme-collection/theme-collection-item';
 import { useThemeCollection } from 'calypso/components/theme-collection/use-theme-collection';
 
 const query = {
@@ -32,13 +33,13 @@ function PremiumThemesCollection( {
 			>
 				{ themes &&
 					themes.map( ( theme, index ) => (
-						<CollectionListItem
+						<ThemeCollectionItem
 							key={ theme.id }
 							collectionSlug="premium-themes"
 							themeId={ theme.id }
 						>
 							{ children( 'premium-themes', theme, index ) }
-						</CollectionListItem>
+						</ThemeCollectionItem>
 					) ) }
 			</ThemeCollection>
 		</>

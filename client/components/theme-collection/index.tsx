@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
-import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
-import { ReactElement, useEffect, useRef, PropsWithChildren, useState } from 'react';
+import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
+import { PropsWithChildren, ReactElement, useEffect, useRef, useState } from 'react';
 import './style.scss';
 import { Swiper as SwiperType } from 'swiper/types';
 
@@ -90,21 +90,6 @@ export default function ThemeCollection( {
 				</div>
 				<div className="theme-collection__list-wrapper swiper-wrapper">{ children }</div>
 			</div>
-		</div>
-	);
-}
-
-export function CollectionListItem( {
-	collectionSlug,
-	themeId,
-	children,
-}: PropsWithChildren< { collectionSlug: string; themeId: string } > ) {
-	return (
-		<div
-			key={ `theme-collection-container-${ collectionSlug }-${ themeId }` }
-			className="theme-collection__list-item swiper-slide"
-		>
-			{ children }
 		</div>
 	);
 }
