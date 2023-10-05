@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useLocation } from 'react-router-dom';
 import { extractDomainFromInput, getFixedDomainSearch } from 'calypso/lib/domains';
 import {
 	isSpecialInput,
@@ -11,8 +11,8 @@ export default function useDomainQueryParam( sanitize = true ) {
 	const [ domain, setDomain ] = useState( '' );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
 	const [ specialDomainMapping, setSpecialDomainMapping ] = useState< SPECIAL_DOMAIN_CASES >();
-	const queryParams = useQuery();
-	const _domain = ( queryParams.get( 'domain' ) || '' ).trim();
+	const location = useLocation();
+	const _domain = location.pathname.split( '/site-profiler/' )[ 1 ]?.trim() || '';
 	const isDomainSpecialInput = isSpecialInput( _domain );
 
 	const getFinalizedDomain = useCallback(

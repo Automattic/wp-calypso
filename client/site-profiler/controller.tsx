@@ -4,9 +4,16 @@ import { BrowserRouter } from 'react-router-dom';
 import Main from 'calypso/components/main';
 import SiteProfiler from 'calypso/site-profiler/components/site-profiler';
 
-export function redirectSiteProfilerRoot( domain?: string ) {
-	const queryParam = domain ? `?domain=${ domain }` : '';
-	page.redirect( `/site-profiler${ queryParam }` );
+export function redirectSiteProfilerResult( context: PageJS.Context, next: () => void ) {
+	const { querystring } = context;
+	const queryParams = new URLSearchParams( querystring );
+	const domainQueryParam = queryParams.get( 'domain' ) || '';
+
+	if ( ! domainQueryParam ) {
+		next();
+	} else {
+		page.redirect( `/site-profiler/${ domainQueryParam }` );
+	}
 }
 
 export function siteProfilerContext( context: PageJS.Context, next: () => void ): void {
