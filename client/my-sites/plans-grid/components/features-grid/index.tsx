@@ -7,6 +7,7 @@ import {
 	isWooExpressSmallPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	isFreeHostingTrial,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -401,6 +402,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						canUserPurchasePlan={ canUserPurchasePlan }
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planSlug ) }
+						trialPlan={ isFreeHostingTrial( planSlug ) }
 						freePlan={ isFreePlan( planSlug ) }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
