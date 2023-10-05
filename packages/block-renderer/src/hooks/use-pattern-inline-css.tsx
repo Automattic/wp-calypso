@@ -1,29 +1,53 @@
 import { shuffle } from '@automattic/js-utils';
 import { useMemo } from 'react';
-import { MAX_BLOG_POSTS } from '../constants';
 
-// Memoize the order per pattern to show the same order in previews
-const memoPatternOrder: { [ key: string ]: string } = {};
+// Shuffle order of blog posts to avoid repetition in previews
+const shufflePostOrder = ( blogPostCount: number ) =>
+	shuffle( [ ...Array( blogPostCount ).keys() ] );
 
-const usePatternInlineCss = ( patternId: string, isNewSite: boolean ) => {
+// Memoize order per pattern to show same order in previews
+const inlineCssByPatternId: { [ key: string ]: string } = {};
+
+// Memoize last order
+let lastPostOrder: number[] = [];
+
+const usePatternInlineCss = ( patternId: string, patternHtml: string, isNewSite: boolean ) => {
 	return useMemo( () => {
-		let inlineCss = memoPatternOrder[ patternId ] || '';
+		const hasGrid = patternHtml?.includes( 'is-layout-grid' );
+		const blogPostCount = patternHtml?.match( /wp-block-post /g )?.length ?? 0;
 
-		// Only newly created sites use this css
-		if ( ! isNewSite || inlineCss ) {
+		// Only for patterns with a grid of posts in newly created sites
+		if ( ! isNewSite || ! hasGrid ) {
+			return undefined;
+		}
+
+		// Return memoized order
+		let inlineCss = inlineCssByPatternId[ patternId ] || '';
+		if ( inlineCss ) {
 			return inlineCss;
 		}
 
-		shuffle( [ ...Array( MAX_BLOG_POSTS ).keys() ] ).forEach( ( order, index ) => {
+		// Shuffle post order
+		let postOrder = shufflePostOrder( blogPostCount );
+
+		// Avoid repeating the last order
+		while ( lastPostOrder.toString() === postOrder.toString() ) {
+			postOrder = shufflePostOrder( blogPostCount );
+		}
+
+		// Create CSS rules
+		postOrder.forEach( ( order, index ) => {
 			const childIndex = index + 1;
 			const shuffledOrder = order + 1;
-			inlineCss += `.is-layout-grid .wp-block-post:nth-child(${ childIndex }) { order: ${ shuffledOrder }; }`;
+			inlineCss += `.is-layout-grid > .wp-block-post:nth-child(${ childIndex }) { order: ${ shuffledOrder }; }`;
 		} );
 
-		memoPatternOrder[ patternId ] = inlineCss;
+		// Memoize
+		inlineCssByPatternId[ patternId ] = inlineCss;
+		lastPostOrder = postOrder;
 
 		return inlineCss;
-	}, [ patternId ] );
+	}, [ patternId, patternHtml ] );
 };
 
 export default usePatternInlineCss;
