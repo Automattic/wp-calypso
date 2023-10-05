@@ -3,6 +3,8 @@ import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { isMobile } from '@automattic/viewport';
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -17,6 +19,7 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
@@ -757,10 +760,61 @@ export class RenderDomainsStep extends Component {
 				</div>
 			) : null;
 
+		const DomainsInCartMobileHeader = (
+			<div class="domains__domain-cart-title">
+				<div key="rowtotal" className="domains__domain-cart-total">
+					{ this.props.translate( '%d domain', '%d domains', {
+						count: domainsInCart.length,
+						args: [ domainsInCart.length ],
+					} ) }
+				</div>
+				<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+					{ this.props.translate( 'Continue' ) }
+				</Button>
+			</div>
+		);
+
+		const DomainsInCartMobile =
+			this.shouldUseMultipleDomainsInCart() && ! cartIsLoading ? (
+				<FoldableCard
+					clickableHeader
+					className="domains__domain-side-content domains__domain-cart-foldable-card"
+					header={ DomainsInCartMobileHeader }
+					expanded={ false }
+					actionButton={
+						<button className="foldable-card__action foldable-card__expand">
+							<span className="screen-reader-text">More</span>
+							<Icon icon={ chevronDown } viewBox="6 4 12 14" size={ 16 } />
+						</button>
+					}
+					actionButtonExpanded={
+						<button className="foldable-card__action foldable-card__expand">
+							<span className="screen-reader-text">More</span>
+							<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
+						</button>
+					}
+				>
+					<div className="domains__domain-side-content domains__domain-cart">
+						<div className="domains__domain-cart-title">
+							{ this.props.translate( 'Your domains' ) }
+						</div>
+						<div className="domains__domain-cart-rows">
+							{ domainsInCart.map( ( domain, i ) => (
+								<div key={ `row${ i }` } className="domains__domain-cart-row">
+									<DomainNameAndCost domain={ domain } />
+								</div>
+							) ) }
+						</div>
+					</div>
+				</FoldableCard>
+			) : null;
+
+		const showDomainsInCart = isMobile() ? DomainsInCartMobile : DomainsInCart;
+
 		return (
 			<div className="domains__domain-side-content-container">
 				{ domainsInCart.length > 0
-					? DomainsInCart
+					? showDomainsInCart
 					: ! this.shouldHideDomainExplainer() &&
 					  this.props.isPlanSelectionAvailableLaterInFlow && (
 							<div className="domains__domain-side-content domains__free-domain">

@@ -63,6 +63,21 @@
 	}
 
 
+	.domains__domain-cart-foldable-card {
+		position: fixed;
+		width: 100%;
+		bottom: 0;
+		left: 0;
+		z-index: 99;
+
+		.foldable-card__main {
+			max-width: 100%;
+			display: block;
+			width: 100%;
+			margin: 0;
+		}
+	}
+
 	.domains__domain-cart {
 		border-bottom: 0 !important;
 
