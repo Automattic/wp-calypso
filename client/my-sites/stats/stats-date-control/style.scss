@@ -55,5 +55,10 @@
 		font-weight: 500;
 		line-height: 20px;
 		letter-spacing: 0.32px;
+		display: flex;
+		padding: var(--grid-unit-15, 12px) var(--grid-unit-20, 16px);
+		justify-content: flex-end;
+		align-items: center;
+		gap: 8px;
 	}
 }
