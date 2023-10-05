@@ -21,8 +21,15 @@ class StatsActionLink extends PureComponent {
 
 	render() {
 		const { href, translate } = this.props;
+
+		// Don't draw the link UI if the href value is empty.
+		if ( href === null ) {
+			return '';
+		}
+
 		// The following fix is to address encoding issues with the URLs
 		// as returned to us from the API. If we fix that, we can remove this.
+		// https://github.com/Automattic/wp-calypso/issues/82510
 		const finalLink = href?.includes( '&#038;term' )
 			? href?.replace( '&#038;term', '&term' )
 			: href;
