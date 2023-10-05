@@ -4,8 +4,7 @@ import {
 	useZendeskMessaging,
 } from '@automattic/help-center/src/hooks';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { isMobile, subscribeIsMobile } from '@automattic/viewport';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -78,25 +77,12 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 		window.zE( 'messenger', 'open' );
 	};
 
-	/* When we subscribe to subscribeIsMobile, we need to force a re-render of the component each time the viewport width updates
-	 * to ensure that the correct value is used for isMobile.
-	 */
-	const [ renderCount, setRenderCount ] = useState( 0 );
-	useEffect( () => {
-		return subscribeIsMobile( () => setRenderCount( ( count ) => count + 1 ) );
-	}, [] );
-
 	useEffect( () => {
 		// presales chat is always shown by default
 		if ( enabled && isPresalesChatAvailable && isMessagingScriptLoaded ) {
-			if ( ! isMobile() ) {
-				window.zE( 'messenger', 'show' );
-			} else {
-				window.zE( 'messenger', 'close' );
-				window.zE( 'messenger', 'hide' );
-			}
+			window.zE( 'messenger', 'show' );
 		}
-	}, [ enabled, isMessagingScriptLoaded, isPresalesChatAvailable, renderCount ] );
+	}, [ enabled, isMessagingScriptLoaded, isPresalesChatAvailable ] );
 
 	return {
 		isChatActive: isPresalesChatAvailable && isEligibleForPresalesChat,
