@@ -115,12 +115,15 @@ const SyncContainerContent = styled.p( {
 	marginBottom: '16px',
 } );
 
-const FormSelectContainer = styled.div( {
-	marginBottom: '16px',
+const FormRadioContainer = styled.div( {
+	marginBottom: '8px',
 	marginTop: '8px',
 	'@media screen and (max-width: 768px)': {
 		display: 'flex',
 		flexDirection: 'column',
+	},
+	'& .form-label': {
+		marginBottom: '8px',
 	},
 } );
 
@@ -335,7 +338,7 @@ export const StagingSiteSyncCard = ( {
 			isSyncInProgress={ isSyncInProgress }
 			progress={ progress }
 		>
-			<FormSelectContainer>
+			<FormRadioContainer>
 				<FormLabel>
 					<FormRadio
 						className="staging-site-sync-card__radio"
@@ -358,7 +361,7 @@ export const StagingSiteSyncCard = ( {
 						}
 					/>
 				</FormLabel>
-			</FormSelectContainer>
+			</FormRadioContainer>
 			{ selectedOption === 'push' && (
 				<StagingToProductionSync
 					siteSlug={ siteSlug || '' }
@@ -419,7 +422,7 @@ export const ProductionSiteSyncCard = ( {
 			progress={ progress }
 			isSyncInProgress={ isSyncInProgress }
 		>
-			<FormSelectContainer>
+			<FormRadioContainer>
 				<FormLabel>
 					<FormRadio
 						className="staging-site-sync-card__radio"
@@ -442,7 +445,7 @@ export const ProductionSiteSyncCard = ( {
 						}
 					/>
 				</FormLabel>
-			</FormSelectContainer>
+			</FormRadioContainer>
 			{ selectedOption === 'pull' && (
 				<StagingToProductionSync
 					siteSlug={ siteSlug || '' }
