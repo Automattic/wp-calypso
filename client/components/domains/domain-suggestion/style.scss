@@ -448,7 +448,7 @@ body.is-section-signup.is-white-signup {
 
 			.domain-suggestion__action.is-borderless {
 				color: var(--color-text);
-				padding: 0.57em 1.17em;
+				padding: 0.57em 1.5em;
 				@include break-mobile {
 					width: auto;
 				}
@@ -506,6 +506,11 @@ body.is-section-signup.is-white-signup {
 					margin-left: 0;
 				}
 			}
+		}
+
+		&.featured-domain-suggestion .domain-suggestion__action-container .domain-suggestion__action.is-borderless {
+			padding: 0.57em 1.3em !important;
+			box-shadow: none !important;
 		}
 	}
 }
