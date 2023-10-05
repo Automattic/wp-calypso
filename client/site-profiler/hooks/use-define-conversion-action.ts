@@ -45,9 +45,9 @@ export default function useDefineConversionAction(
 
 	useEffect( () => {
 		if (
-			siteProfilerData !== undefined ||
-			hostingProviderData !== undefined ||
-			urlData !== undefined
+			siteProfilerData === undefined ||
+			hostingProviderData === undefined ||
+			urlData === undefined
 		) {
 			return;
 		}
