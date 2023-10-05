@@ -1,8 +1,10 @@
+import { isMobile } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
 import { UrlData } from 'calypso/blocks/import/types';
 import { HostingProvider } from 'calypso/data/site-profiler/types';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
+import { Skeleton } from '../skeleton-screen';
 import type { SPECIAL_DOMAIN_CASES } from '../../utils/get-special-domain-mapping';
 
 interface Props {
@@ -114,6 +116,6 @@ export default function StatusInfo( props: Props ) {
 				</p>
 			);
 		default:
-			return null;
+			return <Skeleton width={ isMobile() ? '100%' : '50%' } height={ 24 } />;
 	}
 }
