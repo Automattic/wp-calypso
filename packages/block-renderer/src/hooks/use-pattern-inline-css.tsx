@@ -2,15 +2,15 @@ import { shuffle } from '@automattic/js-utils';
 import { useMemo } from 'react';
 import { MAX_BLOG_POSTS } from '../constants';
 
-// Using this object to memoize the pattern as a workaround
+// Memoize the order per pattern to show the same order in previews
 const memoPatternOrder: { [ key: string ]: string } = {};
 
-const usePatternInlineCss = ( patternId: string ) => {
-	// FIXME: Why this useMemo is not working?
+const usePatternInlineCss = ( patternId: string, isNewSite: boolean ) => {
 	return useMemo( () => {
 		let inlineCss = memoPatternOrder[ patternId ] || '';
 
-		if ( inlineCss ) {
+		// Only newly created sites use this css
+		if ( ! isNewSite || inlineCss ) {
 			return inlineCss;
 		}
 
