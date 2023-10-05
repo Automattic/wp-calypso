@@ -12,6 +12,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLastPath } from 'calypso/state/reader-ui/selectors';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSection } from 'calypso/state/ui/selectors';
 import {
@@ -119,7 +120,11 @@ export function following( context, next ) {
 	}
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-	recordTrack( 'calypso_reader_following_loaded' );
+	recordTrack(
+		'calypso_reader_following_loaded',
+		{},
+		{ pathnameOverride: getCurrentRoute( state ) }
+	);
 
 	setPageTitle( context, i18n.translate( 'Following' ) );
 

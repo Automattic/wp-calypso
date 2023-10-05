@@ -112,6 +112,7 @@ const renderComponent = ( component, initialState = {} ) => {
 	const queryClient = new QueryClient();
 	const store = mockStore( {
 		purchases: {},
+		sites: {},
 		...initialState,
 	} );
 

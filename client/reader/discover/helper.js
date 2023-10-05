@@ -1,8 +1,7 @@
-import moment from 'moment';
-
 const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 export const DEFAULT_TAB = 'recommended';
 export const LATEST_TAB = 'latest';
+export const FIRST_POSTS_TAB = 'firstposts';
 
 /**
  * Filters tags data and returns the tags intended to be loaded by the discover pages recommended
@@ -29,6 +28,9 @@ export function getSelectedTabTitle( selectedTab ) {
 	}
 	if ( selectedTab === LATEST_TAB ) {
 		return 'new';
+	}
+	if ( selectedTab === FIRST_POSTS_TAB ) {
+		return 'fresh';
 	}
 	return selectedTab;
 }
@@ -68,14 +70,4 @@ export function getTagsFromStreamKey( streamKey = '' ) {
 		return tags;
 	}
 	return [];
-}
-
-/**
- * Returns the current dateTime subtracting the number of days in the input, formatted for a
- * request.
- * @param {number|null} daysToInclude Number of days to subtract from current datetime.
- * @returns Formatted date to add to the query.
- */
-export function getAfterDateForFeed( daysToInclude = 1 ) {
-	return moment().subtract( daysToInclude, 'days' ).format( 'YYYY-MM-DDTHH:mm:ssZ' );
 }

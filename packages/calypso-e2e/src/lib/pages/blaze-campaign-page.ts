@@ -56,7 +56,7 @@ export class BlazeCampaignPage {
 	 * @param {string} param0.snippet Expected snippet.
 	 */
 	async validatePreview( { title, snippet }: { title: string; snippet: string } ) {
-		await this.page.locator( '.grid-widget-summary' ).getByText( title ).waitFor();
-		await this.page.locator( '.grid-widget-summary' ).getByText( snippet ).waitFor();
+		await this.page.locator( '.ad-preview-section' ).getByText( title ).waitFor();
+		await this.page.locator( '.ad-preview-section' ).getByText( snippet ).waitFor();
 	}
 }

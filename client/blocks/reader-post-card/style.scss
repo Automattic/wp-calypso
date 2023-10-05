@@ -347,8 +347,7 @@
 }
 
 // Need .reader__content to override .reader__content a
-.reader__content .reader-post-card__timestamp-link,
-.reader__content .reader-post-card__timestamp-slug,
+.reader__content .reader-post-card__byline-secondary-item,
 .reader__content .reader-post-card__tag-link {
 	color: var(--color-neutral-40);
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -371,7 +370,7 @@
 	outline: dotted 1px;
 }
 
-.reader-post-card__timestamp-bullet {
+.reader-post-card__byline-secondary-bullet {
 	color: var(--color-text-subtle);
 	display: inline-block;
 	margin: 0 4px;
@@ -390,7 +389,7 @@
 	flex: inherit;
 }
 
-.reader-post-card__byline-author-site {
+.reader-post-card__byline-site {
 	font-family: $sans;
 	font-weight: 600;
 	margin-bottom: 2px;
@@ -404,7 +403,7 @@
 	}
 }
 
-.reader-post-card__timestamp-and-tag {
+.reader-post-card__author-and-timestamp {
 	align-items: flex-start;
 	display: flex;
 	flex-direction: row;
@@ -412,7 +411,7 @@
 	margin-top: -2px;
 }
 
-.reader-post-card__timestamp {
+.reader-post-card__byline-secondary {
 	display: inline-table;
 }
 

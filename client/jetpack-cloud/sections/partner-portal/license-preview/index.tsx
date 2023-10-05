@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
+import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import {
@@ -14,7 +15,6 @@ import {
 	LicenseFilter,
 	LicenseType,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

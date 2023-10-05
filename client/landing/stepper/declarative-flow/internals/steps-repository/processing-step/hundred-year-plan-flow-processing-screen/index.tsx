@@ -1,12 +1,15 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-
-import './style.scss';
+import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
 
 export default function HundredYearPlanFlowProcessingScreen() {
 	const translate = useTranslate();
+	const isMobile = useMobileBreakpoint();
+
 	return (
-		<div className="hundred-year-plan-flow-processing-screen__container">
-			<h1 className="wp-brand-font">{ translate( 'Setting up your legacy…' ) }</h1>
-		</div>
+		<HundredYearLoaderView
+			isMobile={ isMobile }
+			loadingText={ translate( 'Setting up your legacy…' ) }
+		/>
 	);
 }

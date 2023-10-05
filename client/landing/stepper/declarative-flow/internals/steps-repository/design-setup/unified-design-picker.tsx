@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_BUSINESS, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { PLAN_BUSINESS_MONTHLY, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	Onboard,
@@ -39,7 +39,9 @@ import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/help
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
+import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
@@ -101,6 +103,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
+
+	const wpcomSiteSlug = useSelector( ( state ) => getSiteSlug( state, site?.ID ) );
+	const didPurchaseDomain = useSelector(
+		( state ) => site?.ID && hasPurchasedDomain( state, site.ID )
+	);
 
 	// The design-first flow put the checkout at the last step, so we cannot show any upsell modal.
 	// Therefore, we need to hide any feature that needs to check out right away, e.g.: Premium theme.
@@ -354,7 +361,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		) || [];
 	const marketplaceProductSlug =
 		marketplaceThemeProducts.length !== 0
-			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts, PLAN_BUSINESS )
+			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts )
 			: null;
 
 	const selectedMarketplaceProduct =
@@ -447,7 +454,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		if ( themeHasWooCommerce ) {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
-			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS : '';
+			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
@@ -455,7 +462,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		// When the user is done with checkout, send them back to the current url
 		// If the theme is externally managed, send them to the marketplace thank you page
 		const destination = selectedDesign?.is_externally_managed
-			? addQueryArgs( `/marketplace/thank-you/${ siteSlug }?onboarding`, {
+			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug }?onboarding`, {
 					themes: selectedDesign?.slug,
 			  } )
 			: window.location.href.replace( window.location.origin, '' );
@@ -480,7 +487,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 
 		if ( siteSlugOrId ) {
-			if ( selectedDesign?.is_externally_managed && hasEligibilityMessages ) {
+			// We want to display the Eligibility Modal only for externally managed themes
+			// and when no domain was purchased yet.
+			if (
+				selectedDesign?.is_externally_managed &&
+				hasEligibilityMessages &&
+				! didPurchaseDomain
+			) {
 				setShowEligibility( true );
 			} else {
 				navigateToCheckout();
@@ -782,7 +795,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					site={ site }
 					isMarketplace={ selectedDesign?.is_externally_managed }
 					isOpen={ showEligibility }
-					handleClose={ () => setShowEligibility( false ) }
+					handleClose={ () => {
+						recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
+							flow: 'onboarding',
+							theme: selectedDesign?.slug,
+						} );
+						setShowEligibility( false );
+					} }
 					handleContinue={ () => {
 						navigateToCheckout();
 						setShowEligibility( false );

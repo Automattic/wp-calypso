@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { WhoIs } from 'calypso/data/site-profiler/types';
+import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 
 interface FilteredWhois {
 	[ name: string ]: boolean;
@@ -18,11 +19,7 @@ export const useFilteredWhoisData = ( whois: WhoIs ): FilteredWhoisData => {
 
 		// Check if there are redacted whois fields
 		for ( const key in whois ) {
-			let value = whois[ key as keyof WhoIs ] ?? '';
-
-			if ( Array.isArray( value ) ) {
-				value = value.length > 0 ? value[ 0 ] : '';
-			}
+			let value = normalizeWhoisField( whois[ key as keyof WhoIs ] );
 
 			value = value?.toLowerCase().replace( /[ .]/g, '' );
 			const isRedacted = redactedFields.includes( value );

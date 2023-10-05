@@ -494,15 +494,17 @@ export function siteSelection( context, next ) {
 	const isUnlinkedCheckout =
 		'1' === context.query?.unlinked && context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i );
 
+	const shouldRenderNoSites = ! context.section.enableNoSites && ! isUnlinkedCheckout;
+
 	// The user doesn't have any sites: render `NoSitesMessage`
-	if ( currentUser && currentUser.site_count === 0 && ! isUnlinkedCheckout ) {
+	if ( currentUser && currentUser.site_count === 0 && shouldRenderNoSites ) {
 		renderEmptySites( context );
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}
 
 	// The user has all sites set as hidden: render help message with how to make them visible
-	if ( currentUser && currentUser.visible_site_count === 0 && ! isUnlinkedCheckout ) {
+	if ( currentUser && currentUser.visible_site_count === 0 && shouldRenderNoSites ) {
 		renderNoVisibleSites( context );
 		recordNoVisibleSitesPageView( context, siteFragment );
 		return;

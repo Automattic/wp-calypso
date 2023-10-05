@@ -36,7 +36,7 @@ export class Banner extends Component {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
-		description: PropTypes.node,
+		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.symbol ] ),
 		forceHref: PropTypes.bool,
 		disableCircle: PropTypes.bool,
 		disableHref: PropTypes.bool,
@@ -191,6 +191,21 @@ export class Banner extends Component {
 		} );
 	}
 
+	renderDescription( description ) {
+		if ( ! description ) {
+			return null;
+		}
+		if ( typeof description === 'string' ) {
+			return (
+				<div
+					className="banner__description"
+					dangerouslySetInnerHTML={ { __html: this.sanitize( description ) } } // eslint-disable-line react/no-danger
+				></div>
+			);
+		}
+		return <div className="banner__description">{ description }</div>;
+	}
+
 	getContent() {
 		const {
 			callToAction,
@@ -228,12 +243,7 @@ export class Banner extends Component {
 				) }
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
-					{ description && (
-						<div
-							className="banner__description"
-							dangerouslySetInnerHTML={ { __html: this.sanitize( description ) } } // eslint-disable-line react/no-danger
-						></div>
-					) }
+					{ this.renderDescription( description ) }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (

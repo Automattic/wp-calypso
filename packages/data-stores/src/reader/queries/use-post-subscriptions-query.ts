@@ -5,6 +5,8 @@ import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PostSubscription } from '../types';
 
+export const postSubscriptionsQueryKeyPrefix = [ 'read', 'post-subscriptions' ];
+
 type SubscriptionManagerPostSubscriptions = {
 	comment_subscriptions: PostSubscription[];
 	total_comment_subscriptions_count: number;
@@ -41,7 +43,7 @@ const usePostSubscriptionsQuery = ( {
 }: PostSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
-	const cacheKey = useCacheKey( [ 'read', 'post-subscriptions' ] );
+	const cacheKey = useCacheKey( postSubscriptionsQueryKeyPrefix );
 
 	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, ...rest } =
 		useInfiniteQuery< SubscriptionManagerPostSubscriptions >(

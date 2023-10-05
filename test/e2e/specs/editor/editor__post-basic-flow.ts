@@ -86,7 +86,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	describe( 'Jetpack features', function () {
 		it( 'Open Jetpack settings', async function () {
-			await editorPage.openSettings( 'Jetpack' );
+			await editorPage.openEditorOptionsMenu();
+			const page = await editorPage.getEditorParent();
+
+			const button = await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } );
+			await button.click();
 		} );
 
 		skipItIf( envVariables.TEST_ON_ATOMIC !== true )(

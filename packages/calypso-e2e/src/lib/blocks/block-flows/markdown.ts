@@ -55,6 +55,7 @@ export class MarkdownFlow implements BlockFlow {
 		await context.page
 			.getByRole( this.validationData.expectedRole, {
 				name: this.validationData.expectedText,
+				exact: true,
 			} )
 			.waitFor();
 	}

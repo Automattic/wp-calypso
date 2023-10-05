@@ -48,6 +48,11 @@ export const setUpActionsForTasks = ( {
 				targetPath = addQueryArgs( targetPath, { tour: 'marketingConnectionsTour' } );
 			}
 
+			// Enable task in 'calypso' context
+			if ( task.id === 'setup_general' ) {
+				task.disabled = false;
+			}
+
 			action = () => {
 				if ( siteSlug && TASKS_TO_COMPLETE_ON_CLICK.includes( task.id ) ) {
 					updateLaunchpadSettings( siteSlug, {
@@ -123,6 +128,7 @@ export const setUpActionsForTasks = ( {
 					};
 					break;
 				case 'site_launched':
+				case 'blog_launched':
 				case 'videopress_launched':
 				case 'link_in_bio_launched':
 					action = async () => {
