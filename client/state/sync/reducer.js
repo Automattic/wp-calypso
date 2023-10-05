@@ -31,7 +31,7 @@ export const status = withPersistence( ( state = null, action ) => {
 	}
 } );
 
-export const fetchingStatus = withPersistence( ( state = false, action ) => {
+export const fetchingStatus = ( state = false, action ) => {
 	switch ( action.type ) {
 		case REQUEST_STATUS:
 			return true;
@@ -42,9 +42,9 @@ export const fetchingStatus = withPersistence( ( state = false, action ) => {
 		default:
 			return state;
 	}
-} );
+};
 
-export const isSyncingInProgress = withPersistence( ( state = false, action ) => {
+export const isSyncingInProgress = ( state = false, action ) => {
 	switch ( action.type ) {
 		case IS_SYNCING_IN_PROGRESS:
 			return action.isSyncingInProgress;
@@ -55,7 +55,7 @@ export const isSyncingInProgress = withPersistence( ( state = false, action ) =>
 		default:
 			return state;
 	}
-} );
+};
 
 export const progress = withPersistence( ( state = 0, action ) => {
 	switch ( action.type ) {

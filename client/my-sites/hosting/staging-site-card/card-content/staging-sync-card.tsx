@@ -17,7 +17,7 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 		name: 'sqls',
 		label: 'Site Database (SQL)',
 		subTitle: translate(
-			'Overwrite the database, including any posts, pages, products, or orders with staging data.'
+			'Overwrite the database, including any posts, pages, products, or orders.'
 		),
 		checked: false,
 		isDangerous: true,
@@ -50,9 +50,7 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 	{
 		name: 'roots',
 		label: translate( 'Web Root' ),
-		subTitle: translate(
-			'Everything in the wp-content directory, includes wp-config php and any non WordPress files'
-		),
+		subTitle: translate( 'Everything in the WordPress root, including any non WordPress files' ),
 		checked: false,
 		isDangerous: false,
 	},

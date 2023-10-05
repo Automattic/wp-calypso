@@ -31,7 +31,7 @@ const ToggleControlWithHelpMargin = styled( ToggleControl )( {
 export interface CheckboxOptionItem {
 	label: string;
 	checked: boolean;
-	subTitle?: string;
+	subTitle?: React.ReactNode;
 	isDangerous: boolean;
 	name: string;
 }
