@@ -304,7 +304,7 @@ export const StagingSiteSyncCard = ( {
 	disabled,
 }: StagingCardProps ) => {
 	const [ selectedItems, setSelectedItems ] = useState( [] as string[] );
-	const [ selectedOption, setSelectedOption ] = useState( 'push' );
+	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, productionSiteId ) );
 	const { progress, resetSyncStatus, isSyncInProgress } = useCheckSyncStatus( productionSiteId );
 
@@ -388,7 +388,7 @@ export const ProductionSiteSyncCard = ( {
 	productionSiteId,
 }: ProductionCardProps ) => {
 	const [ selectedItems, setSelectedItems ] = useState< string[] >( [] as string[] );
-	const [ selectedOption, setSelectedOption ] = useState( 'pull' );
+	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { progress, resetSyncStatus, isSyncInProgress } = useCheckSyncStatus( productionSiteId );
 
