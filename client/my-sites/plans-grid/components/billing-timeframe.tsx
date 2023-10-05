@@ -8,6 +8,7 @@ import {
 	getPlanSlugForTermVariant,
 	TERM_ANNUALLY,
 	isWooExpressPlan,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import styled from '@emotion/styled';
@@ -23,7 +24,11 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 
-	if ( isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
+	if (
+		isWpComFreePlan( planSlug ) ||
+		isWpcomEnterpriseGridPlan( planSlug ) ||
+		planSlug === PLAN_HOSTING_TRIAL_MONTHLY
+	) {
 		return null;
 	}
 

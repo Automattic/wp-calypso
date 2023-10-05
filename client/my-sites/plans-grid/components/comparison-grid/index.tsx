@@ -10,6 +10,7 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
@@ -885,7 +886,11 @@ const ComparisonGrid = ( {
 	] );
 
 	const displayedGridPlans = useMemo( () => {
-		const hiddenPlans = [ PLAN_WOOEXPRESS_PLUS, PLAN_ENTERPRISE_GRID_WPCOM ];
+		const hiddenPlans = [
+			PLAN_HOSTING_TRIAL_MONTHLY,
+			PLAN_WOOEXPRESS_PLUS,
+			PLAN_ENTERPRISE_GRID_WPCOM,
+		];
 		const filteredPlans = gridPlans.filter(
 			( { planSlug, isVisible } ) => isVisible && ! hiddenPlans.includes( planSlug )
 		);

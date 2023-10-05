@@ -7,6 +7,7 @@ import {
 	isWooExpressSmallPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	isFreeHostingTrial,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -401,6 +402,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						canUserPurchasePlan={ canUserPurchasePlan }
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planSlug ) }
+						trialPlan={ isFreeHostingTrial( planSlug ) }
 						freePlan={ isFreePlan( planSlug ) }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
@@ -436,7 +438,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 				className="plan-features-2023-grid__table-item"
 				isTableCell={ options?.isTableCell }
 			>
-				{ ! isFreePlan( planSlug ) && (
+				{ ! isFreePlan( planSlug ) && ! isFreeHostingTrial( planSlug ) && (
 					<div className={ `plan-features-2023-grid__refund-notice ${ getPlanClass( planSlug ) }` }>
 						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
 							args: {
