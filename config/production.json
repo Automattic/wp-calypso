@@ -146,6 +146,7 @@
 		"signup/social": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
+		"site-profiler": true,
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
