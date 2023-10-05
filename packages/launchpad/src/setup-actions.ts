@@ -40,12 +40,12 @@ export const setUpActionsForTasks = ( {
 	return tasks.map( ( task: Task ) => {
 		let action: () => void;
 		let logMissingCalypsoPath = false;
+		let useCalypsoPath = true;
+		const hasCalypsoPath = task.calypso_path !== undefined;
 
-		if ( uiContext === 'calypso' && task.calypso_path !== undefined ) {
-			let targetPath = task.calypso_path;
-
-			if ( task.id === 'drive_traffic' && ! isMobile() ) {
-				targetPath = addQueryArgs( targetPath, { tour: 'marketingConnectionsTour' } );
+		if ( uiContext === 'calypso' && hasCalypsoPath ) {
+			if ( task.id === 'drive_traffic' && ! isMobile() && hasCalypsoPath ) {
+				task.calypso_path = addQueryArgs( task.calypso_path, { tour: 'marketingConnectionsTour' } );
 			}
 
 			// Enable task in 'calypso' context
@@ -59,7 +59,6 @@ export const setUpActionsForTasks = ( {
 						checklist_statuses: { [ task.id ]: true },
 					} );
 				}
-				window.location.assign( targetPath );
 			};
 		} else {
 			switch ( task.id ) {
@@ -67,66 +66,55 @@ export const setUpActionsForTasks = ( {
 					action = () => {
 						setShareSiteModalIsOpen?.( true );
 					};
+					useCalypsoPath = false;
 					break;
 
 				case 'site_title':
 					logMissingCalypsoPath = true;
-					action = () => {
-						window.location.assign( `/settings/general/${ siteSlug }` );
-					};
+					task.calypso_path = `/settings/general/${ siteSlug }`;
 					break;
 
 				case 'domain_claim':
 				case 'domain_upsell':
 				case 'domain_customize':
 					logMissingCalypsoPath = true;
-					action = () => {
-						window.location.assign( `/domains/add/${ siteSlug }` );
-					};
+					task.calypso_path = `/domains/add/${ siteSlug }`;
 					break;
+
 				case 'drive_traffic':
 					logMissingCalypsoPath = true;
-					action = () => {
-						const url = isMobile()
-							? `/marketing/connections/${ siteSlug }`
-							: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
-						window.location.assign( url );
-					};
+					task.calypso_path = isMobile()
+						? `/marketing/connections/${ siteSlug }`
+						: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
 					break;
+
 				case 'add_new_page':
 					logMissingCalypsoPath = true;
-					action = () => {
-						window.location.assign( `/page/${ siteSlug }` );
-					};
+					task.calypso_path = `/page/${ siteSlug }`;
 					break;
+
 				case 'edit_page':
 					logMissingCalypsoPath = true;
-					action = () => {
-						window.location.assign( `/pages/${ siteSlug }` );
-					};
+					task.calypso_path = `/pages/${ siteSlug }`;
 					break;
+
 				case 'update_about_page':
 					logMissingCalypsoPath = true;
-					action = () => {
-						window.location.assign( `/page/${ siteSlug }/${ task?.extra_data?.about_page_id }` );
-					};
+					task.calypso_path = `/page/${ siteSlug }/${ task?.extra_data?.about_page_id }`;
 					break;
+
 				case 'customize_welcome_message':
 					logMissingCalypsoPath = true;
-					action = () => {
-						if ( config.isEnabled( 'settings/newsletter-settings-page' ) ) {
-							window.location.assign( `/settings/newsletter/${ siteSlug }` );
-						} else {
-							window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
-						}
-					};
+					task.calypso_path = config.isEnabled( 'settings/newsletter-settings-page' )
+						? `/settings/newsletter/${ siteSlug }`
+						: `/settings/reading/${ siteSlug }#newsletter-settings`;
 					break;
+
 				case 'manage_subscribers':
 					logMissingCalypsoPath = true;
-					action = () => {
-						window.location.assign( `/subscribers/${ siteSlug }` );
-					};
+					task.calypso_path = `/subscribers/${ siteSlug }`;
 					break;
+
 				case 'site_launched':
 				case 'blog_launched':
 				case 'videopress_launched':
@@ -139,9 +127,12 @@ export const setUpActionsForTasks = ( {
 						} );
 						siteLaunched?.();
 					};
+					useCalypsoPath = false;
 					break;
+
 				default:
 					logMissingCalypsoPath = true;
+					useCalypsoPath = false;
 					break;
 			}
 		}
@@ -162,6 +153,10 @@ export const setUpActionsForTasks = ( {
 			}
 			action?.();
 		};
+
+		// Note that we double-check for both the flag and a valid calypso_path as a safety check.
+		// We intentionally avoid `hasCalypsoPath`, as it may be out of date.
+		task.useCalypsoPath = useCalypsoPath && task.calypso_path !== undefined;
 
 		return { ...task, actionDispatch };
 	} );
