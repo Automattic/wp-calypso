@@ -228,9 +228,11 @@ class ThemeShowcase extends Component {
 
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
-		const { filterToTermTable, subjectStringFilter } = this.props;
+		const { filterToTermTable, subjectStringFilter, isSearchV2 } = this.props;
 
-		const filters = `${ searchBoxContent } ${ subjectStringFilter }`.match( filterRegex ) || [];
+		const filters =
+			`${ searchBoxContent } ${ isSearchV2 ? subjectStringFilter : '' }`.match( filterRegex ) || [];
+
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
 
@@ -415,6 +417,7 @@ class ThemeShowcase extends Component {
 			search,
 			filter,
 			isLoggedIn,
+			isSearchV2,
 			pathName,
 			featureStringFilter,
 			filterString,
@@ -469,7 +472,6 @@ class ThemeShowcase extends Component {
 
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
-		const isSearchV2 = ! isLoggedIn && config.isEnabled( 'themes/text-search-lots' );
 
 		return (
 			<div className="theme-showcase">
@@ -565,6 +567,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
 	};
 };
 
