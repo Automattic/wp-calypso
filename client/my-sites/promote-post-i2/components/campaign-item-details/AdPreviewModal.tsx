@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 
 type Device = 'mobile' | 'tablet' | 'desktop';
-export type BannerWidth = 300 | 500 | 650;
+export type BannerWidth = '300px' | '500px' | '650px' | '100%';
 
 type Props = {
 	templateFormat?: string | undefined;
@@ -97,11 +97,11 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 	function getPreviewWidth( device: Device ): BannerWidth {
 		switch ( device ) {
 			case 'mobile':
-				return 300;
+				return '300px';
 			case 'tablet':
-				return 500;
+				return '500px';
 			case 'desktop':
-				return 650;
+				return '650px';
 		}
 	}
 

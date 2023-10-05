@@ -631,6 +631,7 @@ export default function CampaignItemDetails( props: Props ) {
 								isLoading={ isLoading }
 								htmlCode={ creative_html || '' }
 								templateFormat={ format || '' }
+								width={ format === 'html5_v2' ? '100%' : '300px' }
 							/>
 							<p className="campaign-item-details__preview-disclosure">
 								{ translate(

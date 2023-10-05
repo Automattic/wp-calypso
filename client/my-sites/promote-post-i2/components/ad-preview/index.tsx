@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function AdPreview( { htmlCode, isLoading, templateFormat, width }: Props ) {
-	const adWidth = width ? `${ width }px` : '300px';
+	const adWidth = width ? `${ width }` : '300px';
 
 	useEffect( () => {
 		if ( ! isLoading && templateFormat === 'html5_v2' ) {
