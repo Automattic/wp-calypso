@@ -12,7 +12,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import SearchThemes from 'calypso/components/search-themes';
+import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -417,6 +417,7 @@ class ThemeShowcase extends Component {
 			isLoggedIn,
 			pathName,
 			featureStringFilter,
+			filterString,
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
@@ -468,6 +469,7 @@ class ThemeShowcase extends Component {
 
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
+		const isSearchV2 = ! isLoggedIn && config.isEnabled( 'themes/text-search-lots' );
 
 		return (
 			<div className="theme-showcase">
@@ -490,7 +492,18 @@ class ThemeShowcase extends Component {
 					<div className="themes__controls">
 						<div className="theme__search">
 							<div className="theme__search-input">
-								<SearchThemes query={ featureStringFilter + search } onSearch={ this.doSearch } />
+								{ isSearchV2 ? (
+									<SearchThemesV2
+										query={ featureStringFilter + search }
+										onSearch={ this.doSearch }
+									/>
+								) : (
+									<SearchThemes
+										query={ filterString + search }
+										onSearch={ this.doSearch }
+										recordTracksEvent={ this.recordSearchThemesTracksEvent }
+									/>
+								) }
 							</div>
 							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
 								<SelectDropdown
@@ -542,6 +555,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
+		filterString: prependThemeFilterKeys( state, filter ),
 		featureStringFilter: prependThemeFilterKeys( state, filter, [ 'subject' ] ),
 		subjectStringFilter: prependThemeFilterKeys( state, filter, [], [ 'subject' ] ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
