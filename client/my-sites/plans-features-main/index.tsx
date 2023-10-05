@@ -96,6 +96,15 @@ const FreePlanSubHeader = styled.p`
 	}
 `;
 
+const PlanComparisonHeader = styled.h1`
+	.plans .step-container .step-container__content &&,
+	&& {
+		font-size: 2rem;
+		text-align: center;
+		margin: 48px 0;
+	}
+`;
+
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
@@ -759,6 +768,9 @@ const PlansFeaturesMain = ( {
 										ref={ observableForOdieRef }
 									/>
 									<div ref={ plansComparisonGridRef } className={ comparisonGridContainerClasses }>
+										<PlanComparisonHeader className="wp-brand-font">
+											{ translate( 'Compare our plans and find yours' ) }
+										</PlanComparisonHeader>
 										<ComparisonGrid
 											isHidden={ ! showPlansComparisonGrid }
 											gridPlans={ gridPlansForComparisonGrid }
