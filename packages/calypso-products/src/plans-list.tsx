@@ -3627,7 +3627,7 @@ PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	group: GROUP_WPCOM,
 	getProductId: () => 1058,
 	getPathSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
-	term: TERM_ANNUALLY,
+	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 	getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
 	getTitle: () => i18n.translate( 'Hosting Trial' ),
