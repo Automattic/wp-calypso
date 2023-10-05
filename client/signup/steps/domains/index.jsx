@@ -660,7 +660,11 @@ export class RenderDomainsStep extends Component {
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
-			<div className="domains__domain-side-content">
+			<div
+				className={ classNames( 'domains__domain-side-content', {
+					'fade-out': this.shouldUseMultipleDomainsInCart() && domainsInCart.length > 0,
+				} ) }
+			>
 				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		) : null;
