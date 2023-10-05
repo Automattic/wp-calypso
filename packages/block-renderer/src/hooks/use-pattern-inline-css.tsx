@@ -17,7 +17,7 @@ const usePatternInlineCss = ( patternId: string, patternHtml: string, isNewSite:
 		const blogPostCount = patternHtml?.match( /wp-block-post /g )?.length ?? 0;
 
 		// Only for patterns with a grid of posts in newly created sites
-		if ( ! isNewSite || ! hasGrid ) {
+		if ( ! isNewSite || ! hasGrid || blogPostCount === 1 ) {
 			return undefined;
 		}
 
@@ -30,8 +30,8 @@ const usePatternInlineCss = ( patternId: string, patternHtml: string, isNewSite:
 		// Shuffle post order
 		let postOrder = shufflePostOrder( blogPostCount );
 
-		// Avoid repeating the last order
-		while ( lastPostOrder.toString() === postOrder.toString() ) {
+		// Prevent repeating the last order shuffling once more
+		if ( lastPostOrder.toString() === postOrder.toString() ) {
 			postOrder = shufflePostOrder( blogPostCount );
 		}
 
