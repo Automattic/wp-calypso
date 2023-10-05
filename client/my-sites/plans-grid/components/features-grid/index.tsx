@@ -438,7 +438,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 				className="plan-features-2023-grid__table-item"
 				isTableCell={ options?.isTableCell }
 			>
-				{ ! isFreePlan( planSlug ) && (
+				{ ! isFreePlan( planSlug ) && ! isFreeHostingTrial( planSlug ) && (
 					<div className={ `plan-features-2023-grid__refund-notice ${ getPlanClass( planSlug ) }` }>
 						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
 							args: {
