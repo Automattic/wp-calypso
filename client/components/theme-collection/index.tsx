@@ -102,7 +102,7 @@ export function CollectionListItem( {
 	return (
 		<div
 			key={ `theme-collection-container-${ collectionSlug }-${ themeId }` }
-			className="theme--collection__list-item swiper-slide"
+			className="theme-collection__list-item swiper-slide"
 		>
 			{ children }
 		</div>
