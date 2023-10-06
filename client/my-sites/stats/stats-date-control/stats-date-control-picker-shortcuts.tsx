@@ -31,7 +31,7 @@ const DateControlPickerShortcuts = ( {
 							} }
 						>
 							{ shortcut.label }
-							{ isSelectedShortcut( shortcut ) && <Icon className="gridicon" icon={ check } /> }
+							{ isSelectedShortcut( shortcut ) && <Icon icon={ check } /> }
 						</Button>
 					</li>
 				) ) }
