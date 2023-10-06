@@ -50,7 +50,6 @@ interface FeaturesGridType extends PlansGridProps {
 	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
-	getFreeTrialSlugForPlan?( planSlug: PlanSlug ): PlanSlug | undefined;
 }
 
 class FeaturesGrid extends Component< FeaturesGridType > {

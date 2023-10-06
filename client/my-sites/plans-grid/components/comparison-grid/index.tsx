@@ -22,7 +22,6 @@ import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-feat
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
-import { useGetFreeTrialSlugForPlan } from '../../hooks/use-get-free-trial-slug-for-plan';
 import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
@@ -34,6 +33,7 @@ import PlanFeatures2023GridHeaderPrice from '../header-price';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
+import type { PlansGridProps } from '../..';
 import type {
 	GridPlan,
 	TransformedFeatureObject,
@@ -318,7 +318,7 @@ type ComparisonGridProps = {
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-};
+} & Pick< PlansGridProps, 'getFreeTrialSlugForPlan' >;
 
 type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
@@ -335,7 +335,7 @@ type ComparisonGridHeaderProps = {
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
-};
+} & Pick< PlansGridProps, 'getFreeTrialSlugForPlan' >;
 
 type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
 	allVisible: boolean;
@@ -343,6 +343,7 @@ type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
 	isLargeCurrency: boolean;
 	isPlanUpgradeCreditEligible: boolean;
 	planSlug: PlanSlug;
+	freeTrialPlanSlug?: PlanSlug;
 };
 
 type PlanFeatureFootnotes = {
@@ -352,6 +353,7 @@ type PlanFeatureFootnotes = {
 
 const ComparisonGridHeaderCell = ( {
 	planSlug,
+	freeTrialPlanSlug,
 	allVisible,
 	isLastInRow,
 	isFooter,
@@ -375,7 +377,6 @@ const ComparisonGridHeaderCell = ( {
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedGridPlans: visibleGridPlans,
 	} );
-	const getFreeTrialSlugForPlan = useGetFreeTrialSlugForPlan( { flowName: flowName ?? null } );
 
 	if ( ! gridPlan ) {
 		return null;
@@ -455,7 +456,7 @@ const ComparisonGridHeaderCell = ( {
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
 				flowName={ flowName }
-				freeTrialPlanSlug={ getFreeTrialSlugForPlan?.( planSlug ) }
+				freeTrialPlanSlug={ freeTrialPlanSlug }
 				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
@@ -480,6 +481,7 @@ const ComparisonGridHeader = ( {
 	siteId,
 	planActionOverrides,
 	selectedPlan,
+	getFreeTrialSlugForPlan,
 }: ComparisonGridHeaderProps ) => {
 	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
@@ -503,6 +505,7 @@ const ComparisonGridHeader = ( {
 			{ visibleGridPlans.map( ( { planSlug }, index ) => (
 				<ComparisonGridHeaderCell
 					planSlug={ planSlug }
+					freeTrialPlanSlug={ getFreeTrialSlugForPlan?.( planSlug ) }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					key={ planSlug }
 					isLastInRow={ index === visibleGridPlans.length - 1 }
@@ -954,6 +957,7 @@ const ComparisonGrid = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
+	getFreeTrialSlugForPlan,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1091,6 +1095,7 @@ const ComparisonGrid = ( {
 					onUpgradeClick={ onUpgradeClick }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
+					getFreeTrialSlugForPlan={ getFreeTrialSlugForPlan }
 				/>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
 					<FeatureGroup
@@ -1124,6 +1129,7 @@ const ComparisonGrid = ( {
 					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
+					getFreeTrialSlugForPlan={ getFreeTrialSlugForPlan }
 				/>
 			</Grid>
 
