@@ -12,7 +12,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import SearchThemes from 'calypso/components/search-themes';
+import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -228,9 +228,11 @@ class ThemeShowcase extends Component {
 
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
-		const { filterToTermTable, subjectStringFilter } = this.props;
+		const { filterToTermTable, subjectStringFilter, isSearchV2 } = this.props;
 
-		const filters = `${ searchBoxContent } ${ subjectStringFilter }`.match( filterRegex ) || [];
+		const filters =
+			`${ searchBoxContent } ${ isSearchV2 ? subjectStringFilter : '' }`.match( filterRegex ) || [];
+
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
 
@@ -415,8 +417,10 @@ class ThemeShowcase extends Component {
 			search,
 			filter,
 			isLoggedIn,
+			isSearchV2,
 			pathName,
 			featureStringFilter,
+			filterString,
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
@@ -490,7 +494,18 @@ class ThemeShowcase extends Component {
 					<div className="themes__controls">
 						<div className="theme__search">
 							<div className="theme__search-input">
-								<SearchThemes query={ featureStringFilter + search } onSearch={ this.doSearch } />
+								{ isSearchV2 ? (
+									<SearchThemesV2
+										query={ featureStringFilter + search }
+										onSearch={ this.doSearch }
+									/>
+								) : (
+									<SearchThemes
+										query={ filterString + search }
+										onSearch={ this.doSearch }
+										recordTracksEvent={ this.recordSearchThemesTracksEvent }
+									/>
+								) }
 							</div>
 							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
 								<SelectDropdown
@@ -542,6 +557,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
+		filterString: prependThemeFilterKeys( state, filter ),
 		featureStringFilter: prependThemeFilterKeys( state, filter, [ 'subject' ] ),
 		subjectStringFilter: prependThemeFilterKeys( state, filter, [], [ 'subject' ] ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
@@ -551,6 +567,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
 	};
 };
 
