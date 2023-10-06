@@ -137,10 +137,13 @@ class RegisterDomainStep extends Component {
 		 */
 		otherManagedSubdomainsCountOverride: PropTypes.number,
 		handleClickUseYourDomain: PropTypes.func,
+
+		saveSearchForLater: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		analyticsSection: 'domains',
+		saveSearchForLater: false,
 		deemphasiseTlds: [],
 		includeDotBlogSubdomain: false,
 		includeWordPressDotCom: false,
@@ -261,6 +264,11 @@ class RegisterDomainStep extends Component {
 		) {
 			this.setState( this.getState( nextProps ) );
 			nextProps.suggestion && this.onSearch( nextProps.suggestion );
+		}
+
+		// Run the blocked search if it's unblocked
+		if ( ! nextProps.blockSearch && this.props.blockSearch ) {
+			this.doSavedSearch();
 		}
 	}
 
@@ -1230,25 +1238,12 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	onSearch = async ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
-		debug( 'onSearch handler was triggered with query', searchQuery );
-
-		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
-
-		this.setState(
-			{
-				lastQuery: domain,
-				lastFilters: this.state.filters,
-				hideInitialQuery: false,
-			},
-			this.save
-		);
-
-		if ( domain === '' ) {
-			this.setState( { isQueryInvalid: searchQuery !== domain } );
-			debug( 'onSearch handler was terminated by an empty domain input' );
-			return;
-		}
+	doSavedSearch = async () => {
+		const {
+			lastQuery: domain,
+			savedQuery: searchQuery,
+			savedArgs: { shouldQuerySubdomains },
+		} = this.state;
 
 		enqueueSearchStatReport(
 			{ query: searchQuery, section: this.props.analyticsSection, vendor: this.props.vendor },
@@ -1280,6 +1275,35 @@ class RegisterDomainStep extends Component {
 				}
 			}
 		);
+	};
+
+	onSearch = async ( searchQuery, searchArgs = {} ) => {
+		debug( 'onSearch handler was triggered with query', searchQuery );
+
+		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
+
+		if ( domain === '' ) {
+			this.setState( { isQueryInvalid: searchQuery !== domain } );
+			debug( 'onSearch handler was terminated by an empty domain input' );
+			return;
+		}
+
+		this.setState(
+			{
+				lastQuery: domain,
+				savedQuery: searchQuery,
+				savedArgs: searchArgs,
+				lastFilters: this.state.filters,
+				hideInitialQuery: false,
+			},
+			this.save
+		);
+
+		if ( this.props.blockSearch ) {
+			return;
+		}
+
+		this.doSavedSearch();
 	};
 
 	showNextPage = () => {
