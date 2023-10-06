@@ -191,6 +191,11 @@ class DomainRegistrationSuggestion extends Component {
 		) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
+
+		if ( shouldUseMultipleDomainsInCart( flowName, suggestion ) ) {
+			buttonStyles = { ...buttonStyles, primary: false };
+		}
+
 		return {
 			buttonContent,
 			buttonStyles,
