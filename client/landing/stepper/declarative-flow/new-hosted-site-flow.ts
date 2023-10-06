@@ -1,4 +1,4 @@
-import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { PLAN_HOSTING_TRIAL_MONTHLY, isFreeHostingTrial } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -96,7 +96,7 @@ const hosting: Flow = {
 						extra: { geo_affinity: siteGeoAffinity },
 					} );
 
-					if ( productSlug === 'wp_bundle_hosting_trial_monthly' ) {
+					if ( isFreeHostingTrial( productSlug ) ) {
 						return navigate( 'verifyEmail' );
 					}
 
