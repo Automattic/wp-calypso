@@ -54,7 +54,7 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 				/>
 				<FormSettingExplanation>
 					{ translate(
-						"The ability to customize the confirmation email message is now disabled for enhanced security. We're keeping the field visible for a short time, so you can copy your custom message if needed."
+						'The ability to customize the confirmation email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
 					) }
 				</FormSettingExplanation>
 				<FormLabel htmlFor="comment_follow_email_message">
