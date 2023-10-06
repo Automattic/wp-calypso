@@ -14,6 +14,7 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
+	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -57,6 +58,7 @@ import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import useStorageAddOns from '../add-ons/hooks/use-storage-add-ons';
@@ -373,6 +375,8 @@ const PlansFeaturesMain = ( {
 		? 'plans-default-wpcom'
 		: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom';
 
+	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
+
 	const gridPlans = useGridPlans( {
 		allFeaturesList: FEATURES_LIST,
 		usePricedAPIPlans,
@@ -387,6 +391,13 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
+		freeTrialPlanSlugs: eligibleForFreeHostingTrial
+			? {
+					'plans-new-hosted-site': {
+						[ TYPE_BUSINESS ]: PLAN_HOSTING_TRIAL_MONTHLY,
+					},
+			  }
+			: undefined,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {

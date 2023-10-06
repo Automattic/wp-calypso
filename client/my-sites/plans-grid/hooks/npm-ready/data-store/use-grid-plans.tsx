@@ -18,6 +18,7 @@ import {
 	isWpComFreePlan,
 	type FeatureList,
 	type PlanSlug,
+	type PlanType,
 	type FeatureObject,
 	type StorageOption,
 	isBusinessPlan,
@@ -84,6 +85,7 @@ export type UsePricingMetaForGridPlans = ( {
 // TODO clk: move to types. will consume plan properties
 export type GridPlan = {
 	planSlug: PlanSlug;
+	freeTrialPlanSlug?: PlanSlug;
 	isVisible: boolean;
 	features: {
 		wpcomFeatures: TransformedFeatureObject[];
@@ -147,6 +149,11 @@ interface Props {
 	 */
 	isSubdomainNotGenerated?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
+	freeTrialPlanSlugs?: {
+		[ Intent in PlansIntent ]?: {
+			[ Type in PlanType ]?: PlanSlug;
+		};
+	};
 }
 
 const usePlanTypesWithIntent = ( {
@@ -256,6 +263,7 @@ const useGridPlans = ( {
 	usePricingMetaForGridPlans,
 	term = TERM_MONTHLY,
 	intent,
+	freeTrialPlanSlugs,
 	selectedPlan,
 	sitePlanSlug,
 	hideEnterprisePlan,
@@ -345,6 +353,7 @@ const useGridPlans = ( {
 
 		return {
 			planSlug,
+			freeTrialPlanSlug: freeTrialPlanSlugs?.[ intent ?? 'default' ]?.[ planConstantObj.type ],
 			isVisible: planSlugsForIntent.includes( planSlug ),
 			tagline,
 			availableForPurchase,

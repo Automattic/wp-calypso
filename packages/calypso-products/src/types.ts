@@ -27,6 +27,7 @@ import type {
 	FEATURE_GROUP_MARKETING_EMAIL,
 	FEATURE_GROUP_SHIPPING,
 	WOOCOMMERCE_PRODUCTS,
+	TYPES_LIST,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement, MemoExoticComponent } from 'react';
@@ -159,6 +160,7 @@ export type JetpackProductCategory = ( typeof JETPACK_PRODUCT_CATEGORIES )[ numb
 // All
 export type ProductSlug = WPComProductSlug | JetpackProductSlug | WooCommerceProductSlug;
 export type PlanSlug = WPComPlanSlug | JetpackPlanSlug;
+export type PlanType = ( typeof TYPES_LIST )[ number ];
 export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableItemSlug;
 
 export interface Product {
@@ -225,7 +227,7 @@ export type StorageOption = {
 
 export type Plan = BillingTerm & {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2;
-	type: string;
+	type: PlanType;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
 

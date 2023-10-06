@@ -33,7 +33,6 @@ import PlanFeatures2023GridHeaderPrice from '../header-price';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
-import type { PlansGridProps } from '../..';
 import type {
 	GridPlan,
 	TransformedFeatureObject,
@@ -318,7 +317,7 @@ type ComparisonGridProps = {
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-} & Pick< PlansGridProps, 'getFreeTrialSlugForPlan' >;
+};
 
 type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
@@ -335,7 +334,7 @@ type ComparisonGridHeaderProps = {
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
-} & Pick< PlansGridProps, 'getFreeTrialSlugForPlan' >;
+};
 
 type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
 	allVisible: boolean;
@@ -481,7 +480,6 @@ const ComparisonGridHeader = ( {
 	siteId,
 	planActionOverrides,
 	selectedPlan,
-	getFreeTrialSlugForPlan,
 }: ComparisonGridHeaderProps ) => {
 	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
@@ -502,10 +500,10 @@ const ComparisonGridHeader = ( {
 				key="feature-name"
 				className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
 			/>
-			{ visibleGridPlans.map( ( { planSlug }, index ) => (
+			{ visibleGridPlans.map( ( { planSlug, freeTrialPlanSlug }, index ) => (
 				<ComparisonGridHeaderCell
 					planSlug={ planSlug }
-					freeTrialPlanSlug={ getFreeTrialSlugForPlan?.( planSlug ) }
+					freeTrialPlanSlug={ freeTrialPlanSlug }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					key={ planSlug }
 					isLastInRow={ index === visibleGridPlans.length - 1 }
@@ -957,7 +955,6 @@ const ComparisonGrid = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
-	getFreeTrialSlugForPlan,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1095,7 +1092,6 @@ const ComparisonGrid = ( {
 					onUpgradeClick={ onUpgradeClick }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
-					getFreeTrialSlugForPlan={ getFreeTrialSlugForPlan }
 				/>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
 					<FeatureGroup
@@ -1129,7 +1125,6 @@ const ComparisonGrid = ( {
 					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
-					getFreeTrialSlugForPlan={ getFreeTrialSlugForPlan }
 				/>
 			</Grid>
 
