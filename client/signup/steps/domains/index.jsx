@@ -191,7 +191,10 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleAddDomain = ( suggestion, position ) => {
-		if ( this.shouldUseMultipleDomainsInCart() && suggestion?.isSubDomainSuggestion ) {
+		if (
+			shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) &&
+			suggestion?.isSubDomainSuggestion
+		) {
 			this.handleIsSubDomainSuggestion();
 			return;
 		}
@@ -738,7 +741,8 @@ export class RenderDomainsStep extends Component {
 		};
 
 		const DomainsInCart =
-			( shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) && ! cartIsLoading ) ||
+			( shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) &&
+				! cartIsLoading ) ||
 			this.state.showFreeSubdomain ? (
 				<div className="domains__domain-side-content domains__domain-cart">
 					<div className="domains__domain-cart-title">
