@@ -447,7 +447,7 @@ export class UserStep extends Component {
 
 		const params = new URLSearchParams( window.location.search );
 		if ( isNewsletterFlow( params.get( 'variationName' ) ) ) {
-			return this.props.translate( 'Let’s get you signed up.' );
+			return translate( 'Let’s get you signed up.' );
 		}
 
 		if ( ! headerText ) {

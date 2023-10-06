@@ -1,4 +1,3 @@
-import { flowRight as compose } from 'lodash';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors/get-automated-transfer-status';
 
@@ -18,6 +17,7 @@ export const isFailed = ( status ) =>
  * @param {number} siteId site of interest
  * @returns {?boolean} whether or not transfer is failed, or null if not known
  */
-export const isAutomatedTransferFailed = compose( isFailed, getAutomatedTransferStatus );
+export const isAutomatedTransferFailed = ( state, siteId ) =>
+	isFailed( getAutomatedTransferStatus( state, siteId ) );
 
 export default isAutomatedTransferFailed;

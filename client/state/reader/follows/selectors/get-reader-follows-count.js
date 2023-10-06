@@ -1,4 +1,4 @@
-import { size, filter } from 'lodash';
+import { filter } from 'lodash';
 
 import 'calypso/state/reader/init';
 
@@ -11,7 +11,7 @@ import 'calypso/state/reader/init';
 const getReaderFollowsCount = ( state ) =>
 	Math.max(
 		state.reader.follows.itemsCount,
-		size( filter( state.reader.follows.items, { is_following: true } ) )
+		Object.keys( filter( state.reader.follows.items, { is_following: true } ) ).length
 	);
 
 export default getReaderFollowsCount;

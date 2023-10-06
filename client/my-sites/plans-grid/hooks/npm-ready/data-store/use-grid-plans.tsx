@@ -62,6 +62,8 @@ export interface PricingMetaForGridPlan {
 	// intro offers override billing and pricing shown in the UI
 	// they are currently defined off the site plans (so not defined when siteId is not available)
 	introOffer?: PlanIntroductoryOffer | null;
+	// Expiry date is only available from site plans and is the expiry date of an existing plan.
+	expiry?: string | null;
 }
 
 export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {

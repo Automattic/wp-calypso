@@ -20,6 +20,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
+import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -599,6 +600,7 @@ const PlansFeaturesMain = ( {
 			<QueryPlans />
 			<QuerySites siteId={ siteId } />
 			<QuerySitePlans siteId={ siteId } />
+			<QueryActivePromotions />
 			{ paidDomainName && isFreePlanPaidDomainDialogOpen && (
 				<FreePlanPaidDomainDialog
 					paidDomainName={ paidDomainName }
@@ -749,6 +751,7 @@ const PlansFeaturesMain = ( {
 									/>
 									<div ref={ plansComparisonGridRef } className={ comparisonGridContainerClasses }>
 										<ComparisonGrid
+											isHidden={ ! showPlansComparisonGrid }
 											gridPlans={ gridPlansForComparisonGrid }
 											gridPlanForSpotlight={ gridPlanForSpotlight }
 											paidDomainName={ paidDomainName }

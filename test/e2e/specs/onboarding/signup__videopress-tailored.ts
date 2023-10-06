@@ -17,7 +17,7 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () => {
+describe( DataHelper.createSuiteTitle( 'Signup: Tailored VideoPress' ), () => {
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'videoprss_onboarding', // removed the `e` from `press` because `videopress` is a blocked term for domains.
 	} );

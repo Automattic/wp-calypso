@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
@@ -67,6 +66,13 @@ export interface PlansGridProps {
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	planTypeSelectorProps: PlanTypeSelectorProps;
+	/**
+	 * Due to the render heavy burden of the plans comparison grid the client consumer of this component, might chose to
+	 * hide the comparison grid with css but leave the render tree intact, mounted.
+	 * An isHidden prop is passed down the tree so that any elements that are not part of the
+	 * Normal react tree (like Popovers, Modals, etc) can also be forcibly hidden based on a tangible parameter
+	 */
+	isHidden?: boolean;
 }
 
 const WrappedComparisonGrid = ( {
@@ -87,6 +93,7 @@ const WrappedComparisonGrid = ( {
 	showLegacyStorageFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
+	isHidden,
 }: PlansGridProps ) => {
 	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
@@ -118,8 +125,8 @@ const WrappedComparisonGrid = ( {
 				usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 				allFeaturesList={ allFeaturesList }
 			>
-				<QueryActivePromotions />
 				<ComparisonGrid
+					isHidden={ isHidden }
 					planTypeSelectorProps={ planTypeSelectorProps }
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
@@ -149,8 +156,8 @@ const WrappedComparisonGrid = ( {
 			allFeaturesList={ allFeaturesList }
 		>
 			<CalypsoShoppingCartProvider>
-				<QueryActivePromotions />
 				<ComparisonGrid
+					isHidden={ isHidden }
 					planTypeSelectorProps={ planTypeSelectorProps }
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
@@ -219,7 +226,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 				usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 				allFeaturesList={ allFeaturesList }
 			>
-				<QueryActivePromotions />
 				<FeaturesGrid
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
@@ -242,7 +248,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 			allFeaturesList={ allFeaturesList }
 		>
 			<CalypsoShoppingCartProvider>
-				<QueryActivePromotions />
 				<FeaturesGrid
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }

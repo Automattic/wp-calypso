@@ -8,6 +8,7 @@ import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/component
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainQueryParam from 'calypso/site-profiler/hooks/use-domain-query-param';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
+import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
@@ -29,17 +30,23 @@ export default function SiteProfiler() {
 		error: errorSP,
 		isFetching: isFetchingSP,
 	} = useDomainAnalyzerQuery( domain, isDomainValid );
-	const { data: urlData } = useAnalyzeUrlQuery( domain, isDomainValid );
+	const { data: urlData, isError: isErrorUrlData } = useAnalyzeUrlQuery( domain, isDomainValid );
 	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
 	const isBusyForWhile = useLongFetchingDetection( domain, isFetchingSP );
-	const isWordPressPlatForm = urlData?.platform === 'wordpress';
 	const conversionAction = useDefineConversionAction(
 		domain,
-		siteProfilerData?.whois,
-		siteProfilerData?.is_domain_available,
-		siteProfilerData?.eligible_google_transfer,
+		siteProfilerData,
+		hostingProviderData,
+		isErrorUrlData ? null : urlData
+	);
+
+	useSiteProfilerRecordAnalytics(
+		domain,
+		isDomainValid,
+		conversionAction,
+		specialDomainMapping,
 		hostingProviderData?.hosting_provider,
-		isWordPressPlatForm
+		urlData
 	);
 
 	const updateDomainQueryParam = ( value: string ) => {
@@ -71,7 +78,7 @@ export default function SiteProfiler() {
 			) }
 
 			{
-				// For speical vaild domain mapping, we need to wait until the result comes back
+				// For special valid domain mapping, we need to wait until the result comes back
 				showResultScreen && (
 					<LayoutBlock className="domain-result-block">
 						{

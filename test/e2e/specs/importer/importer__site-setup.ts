@@ -7,7 +7,7 @@ import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
+describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 	const credentials = SecretsManager.secrets.testAccounts.defaultUser;
 
 	let page: Page;

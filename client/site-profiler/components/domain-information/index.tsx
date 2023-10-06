@@ -1,12 +1,14 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { TranslateOptions, translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
 import { useFilteredWhoisData } from 'calypso/site-profiler/hooks/use-filtered-whois-data';
 import { normalizeWhoisField } from 'calypso/site-profiler/utils/normalize-whois-entry';
+import { normalizeWhoisURL } from 'calypso/site-profiler/utils/normalize-whois-url';
 import VerifiedProvider from '../verified-provider';
 import type { HostingProvider, WhoIs } from 'calypso/data/site-profiler/types';
 import './styles.scss';
@@ -33,6 +35,11 @@ export default function DomainInformation( props: Props ) {
 
 	const whoisDataAvailability = whois && Object.keys( whois ).length > 0;
 	const { fieldsRedacted, filteredWhois } = useFilteredWhoisData( whois );
+
+	useEffect( () => {
+		fetchWhoisRawData &&
+			recordTracksEvent( 'calypso_site_profiler_domain_whois_raw_data_fetch', { domain } );
+	}, [ fetchWhoisRawData ] );
 
 	const contactArgs = ( args?: string | string[] ): TranslateOptions => {
 		return {
@@ -84,7 +91,11 @@ export default function DomainInformation( props: Props ) {
 							) }
 							{ whois.registrar_url &&
 								! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
-									<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
+									<a
+										href={ normalizeWhoisURL( whois.registrar_url ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
 										{ whois.registrar }
 									</a>
 								) }

@@ -1,3 +1,4 @@
+import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -15,6 +16,7 @@ const Intervals = ( props ) => {
 		compact = true,
 		intervalValues = intervals,
 		onChange,
+		icon,
 	} = props;
 	const classes = classnames( 'stats-navigation__intervals', className, {
 		'is-standalone': standalone,
@@ -32,6 +34,7 @@ const Intervals = ( props ) => {
 						onClick={ () => onChange && onChange( i.value ) }
 					>
 						{ i.label }
+						{ icon && i.value === selected && <Icon className="gridicon" icon={ icon } /> }
 					</SegmentedControl.Item>
 				);
 			} ) }
@@ -46,6 +49,7 @@ Intervals.propTypes = {
 	standalone: PropTypes.bool,
 	intervalValues: PropTypes.array,
 	onChange: PropTypes.func,
+	icon: PropTypes.object,
 };
 
 Intervals.defaultProps = {

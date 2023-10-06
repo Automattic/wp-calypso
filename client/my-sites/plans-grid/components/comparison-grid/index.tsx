@@ -331,6 +331,13 @@ type ComparisonGridProps = {
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	/**
+	 * Due to the render heavy burden of the plans comparison grid the client consumer of this component, might chose to
+	 * hide the comparison grid with css but leave the render tree intact, mounted.
+	 * An isHidden prop is passed down the tree so that any elements that are not part of the
+	 * Normal react tree (like Popovers, Modals, etc) can also be forcibly hidden based on a tangible parameter
+	 */
+	isHidden?: boolean;
 };
 
 type ComparisonGridHeaderProps = {
@@ -840,6 +847,7 @@ const ComparisonGrid = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
+	isHidden,
 }: ComparisonGridProps ) => {
 	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
@@ -1010,11 +1018,13 @@ const ComparisonGrid = ( {
 			<PlanComparisonHeader className="wp-brand-font">
 				{ translate( 'Compare our plans and find yours' ) }
 			</PlanComparisonHeader>
-			<PlanTypeSelector
-				{ ...planTypeSelectorProps }
-				kind="interval"
-				plans={ displayedGridPlans.map( ( { planSlug } ) => planSlug ) }
-			/>
+			{ isHidden ? null : (
+				<PlanTypeSelector
+					{ ...planTypeSelectorProps }
+					kind="interval"
+					plans={ displayedGridPlans.map( ( { planSlug } ) => planSlug ) }
+				/>
+			) }
 			<Grid isInSignup={ isInSignup }>
 				<ComparisonGridHeader
 					siteId={ siteId }
