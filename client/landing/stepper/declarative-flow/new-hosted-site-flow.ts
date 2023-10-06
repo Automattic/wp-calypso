@@ -26,8 +26,8 @@ const hosting: Flow = {
 			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
-				slug: 'verifyEmail',
-				asyncComponent: () => import( './internals/steps-repository/hosting-verify-email' ),
+				slug: 'trialAcknowledge',
+				asyncComponent: () => import( './internals/steps-repository/trial-acknowledge' ),
 			},
 			{
 				slug: 'siteCreationStep',
@@ -66,7 +66,7 @@ const hosting: Flow = {
 			if ( _currentStepSlug === 'plans' ) {
 				navigate( 'options' );
 			}
-			if ( _currentStepSlug === 'verifyEmail' ) {
+			if ( _currentStepSlug === 'trialAcknowledge' ) {
 				navigate( 'plans' );
 			}
 		};
@@ -97,13 +97,13 @@ const hosting: Flow = {
 					} );
 
 					if ( isFreeHostingTrial( productSlug ) ) {
-						return navigate( 'verifyEmail' );
+						return navigate( 'trialAcknowledge' );
 					}
 
 					return navigate( 'siteCreationStep' );
 				}
 
-				case 'verifyEmail': {
+				case 'trialAcknowledge': {
 					return navigate( 'siteCreationStep' );
 				}
 
