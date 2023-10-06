@@ -7,14 +7,14 @@ import {
 import {
 	siteProfilerContext,
 	featureFlagFirewall,
-	redirectSiteProfilerResult,
-	redirectSiteProfilerLanguage,
+	handleDomainQueryParam,
+	redirectToBaseSiteProfilerRoute,
 } from 'calypso/site-profiler/controller';
 
 export default function ( router: typeof clientRouter ) {
 	const siteProfilerMiddleware = [
 		featureFlagFirewall,
-		redirectSiteProfilerResult,
+		handleDomainQueryParam,
 		siteProfilerContext,
 		makeLayout,
 		clientRender,
@@ -24,7 +24,7 @@ export default function ( router: typeof clientRouter ) {
 		'/:lang/site-profiler/:domain?',
 		featureFlagFirewall,
 		setLocaleMiddleware(),
-		redirectSiteProfilerLanguage
+		redirectToBaseSiteProfilerRoute
 	);
 
 	router( '/site-profiler', ...siteProfilerMiddleware );

@@ -14,7 +14,7 @@ export function featureFlagFirewall( context: PageJS.Context, next: () => void )
 	}
 }
 
-export function redirectSiteProfilerResult( context: PageJS.Context, next: () => void ) {
+export function handleDomainQueryParam( context: PageJS.Context, next: () => void ) {
 	const { querystring } = context;
 	const queryParams = new URLSearchParams( querystring );
 	const domainQueryParam = queryParams.get( 'domain' ) || '';
@@ -26,7 +26,7 @@ export function redirectSiteProfilerResult( context: PageJS.Context, next: () =>
 	}
 }
 
-export function redirectSiteProfilerLanguage( context: PageJS.Context ) {
+export function redirectToBaseSiteProfilerRoute( context: PageJS.Context ) {
 	const { params, querystring } = context;
 
 	if ( params?.domain ) {
