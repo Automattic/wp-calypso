@@ -69,7 +69,6 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck,
 	isLargeCurrency,
 	hasFreeTrialPlan,
-	handleFreeTrialButtonClick,
 	handleUpgradeButtonClick,
 	busy,
 }: {
@@ -80,8 +79,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
-	handleFreeTrialButtonClick?(): void;
-	handleUpgradeButtonClick: () => void;
+	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void;
 	busy?: boolean;
 } ) => {
 	const translate = useTranslate();
@@ -120,12 +118,16 @@ const SignupFlowPlanFeatureActionButton = ( {
 
 	return (
 		<div className="plan-features-2023-grid__actions-button-container">
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } busy={ busy }>
+			<Button
+				className={ classes }
+				onClick={ () => handleUpgradeButtonClick( false ) }
+				busy={ busy }
+			>
 				{ btnText }
 			</Button>
 			{ hasFreeTrialPlan && (
 				<Button
-					onClick={ handleFreeTrialButtonClick }
+					onClick={ () => handleUpgradeButtonClick( true ) }
 					className="plan-features-2023-grid__actions-trial-button"
 				>
 					{ translate( 'Try for free' ) }
@@ -406,25 +408,21 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		'is-large-currency': isLargeCurrency,
 	} );
 
-	const handleUpgradeButtonClick = useCallback( () => {
-		if ( ! freePlan ) {
-			recordTracksEvent( 'calypso_plan_features_upgrade_click', {
-				current_plan: currentSitePlanSlug,
-				upgrading_to: planSlug,
-			} );
-		}
+	const handleUpgradeButtonClick = useCallback(
+		( isFreeTrialPlan?: boolean ) => {
+			const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
 
-		onUpgradeClick?.();
-	}, [ currentSitePlanSlug, freePlan, onUpgradeClick, planSlug ] );
+			if ( ! freePlan ) {
+				recordTracksEvent( 'calypso_plan_features_upgrade_click', {
+					current_plan: currentSitePlanSlug,
+					upgrading_to: upgradePlan,
+				} );
+			}
 
-	const handleFreeTrialButtonClick = useCallback( () => {
-		recordTracksEvent( 'calypso_plan_features_upgrade_click', {
-			current_plan: currentSitePlanSlug,
-			upgrading_to: freeTrialPlanSlug,
-		} );
-
-		onUpgradeClick?.( freeTrialPlanSlug );
-	}, [ currentSitePlanSlug, freeTrialPlanSlug, onUpgradeClick ] );
+			onUpgradeClick?.( upgradePlan );
+		},
+		[ currentSitePlanSlug, freePlan, freeTrialPlanSlug, onUpgradeClick, planSlug ]
+	);
 
 	if ( isWpcomEnterpriseGridPlan ) {
 		const vipLandingPageUrlWithoutUtmCampaign =
@@ -488,7 +486,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
 				hasFreeTrialPlan={ !! freeTrialPlanSlug }
-				handleFreeTrialButtonClick={ handleFreeTrialButtonClick }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 				busy={ freePlan && planActionOverrides?.loggedInFreePlan?.status === 'blocked' }
 			/>
