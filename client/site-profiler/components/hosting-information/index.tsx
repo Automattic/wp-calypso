@@ -28,7 +28,9 @@ export default function HostingInformation( props: Props ) {
 					<li>
 						<div className="name">{ translate( 'Support' ) }</div>
 						<div>
-							<a href={ supportUrl }>{ translate( 'Contact support' ) }</a>
+							<a href={ supportUrl } target="_blank" rel="nofollow noreferrer">
+								{ translate( 'Contact support' ) }
+							</a>
 						</div>
 					</li>
 				) }
