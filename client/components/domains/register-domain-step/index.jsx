@@ -139,6 +139,8 @@ class RegisterDomainStep extends Component {
 		handleClickUseYourDomain: PropTypes.func,
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 
+		// when it's on, the user can still interact with the searchbar, but the actual search won't fire.
+		// once it is off, the saved search will then be resumed.
 		pauseAndSaveSearch: PropTypes.bool,
 	};
 
@@ -267,7 +269,7 @@ class RegisterDomainStep extends Component {
 			nextProps.suggestion && this.onSearch( nextProps.suggestion );
 		}
 
-		// Run the blocked search if it's unblocked
+		// Run the paused search when the flag is turned off
 		if ( ! nextProps.pauseAndSaveSearch && this.props.pauseAndSaveSearch ) {
 			this.doSavedSearch();
 		}
