@@ -365,7 +365,7 @@ export const StagingSiteSyncCard = ( {
 		disabled || ( selectedItems.length === 0 && selectedOption === 'push' );
 	const syncError = error || checkStatusError;
 
-	let siteToSync = '';
+	let siteToSync: 'production' | 'staging' | null = null;
 	if ( siteType ) {
 		siteToSync = siteType;
 	} else {
@@ -474,7 +474,7 @@ export const ProductionSiteSyncCard = ( {
 	const isSyncButtonDisabled =
 		disabled || ( selectedItems.length === 0 && selectedOption === 'pull' );
 
-	let siteToSync = '';
+	let siteToSync: 'production' | 'staging' | null = null;
 	if ( siteType ) {
 		siteToSync = siteType;
 	} else {
