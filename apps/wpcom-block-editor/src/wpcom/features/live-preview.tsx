@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
 /**
  * Return true if the user is currently previewing a theme.
- * FIXME: This is copied from Gutenberg, and that should be accessed from the `core/edit-site` store.
+ * FIXME: This is copied from Gutenberg; we should be creating a selector for the `core/edit-site` store.
  * @see https://github.com/WordPress/gutenberg/blob/053c8f733c85d80c891fa308b071b9a18e5194e9/packages/edit-site/src/utils/is-previewing-theme.js#L6
  * @returns {boolean} isPreviewingTheme
  */
@@ -18,7 +18,7 @@ function isPreviewingTheme() {
 
 /**
  * Return the theme slug if the user is currently previewing a theme.
- * FIXME: This is copied from Gutenberg, and that should be accessed from the `core/edit-site` store.
+ * FIXME: This is copied from Gutenberg; we should be creating a selector for the `core/edit-site` store.
  * @see https://github.com/WordPress/gutenberg/blob/053c8f733c85d80c891fa308b071b9a18e5194e9/packages/edit-site/src/utils/is-previewing-theme.js#L6
  * @returns {string|null} currentlyPreviewingTheme
  */
@@ -55,10 +55,11 @@ const LivePreviewNotice = () => {
 	const { createWarningNotice } = useDispatch( 'core/notices' );
 	const { dashboardLink, previewingTheme } = useSelect( ( select ) => {
 		const { getSettings } = unlock( select( 'core/edit-site' ) );
+		const themeSlug = currentlyPreviewingTheme();
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const theme = ( select( 'core' ) as any ).getTheme( currentlyPreviewingTheme() );
+		const theme = ( select( 'core' ) as any ).getTheme( themeSlug );
 		return {
-			previewingTheme: theme?.name?.rendered || 'new',
+			previewingTheme: theme?.name?.rendered || themeSlug,
 			dashboardLink: getSettings().__experimentalDashboardLink,
 		};
 	}, [] );
@@ -69,7 +70,10 @@ const LivePreviewNotice = () => {
 		createWarningNotice(
 			sprintf(
 				// translators: %s: theme name
-				__( 'You are currently live-previewing the %s theme.', 'wpcom-live-preview' ),
+				__(
+					'You are previewing the %s theme. You can try out your own style customizations, which will only be saved if you activate this theme.',
+					'wpcom-live-preview'
+				),
 				previewingTheme
 			),
 			{
@@ -77,7 +81,7 @@ const LivePreviewNotice = () => {
 				isDismissible: false,
 				actions: [
 					{
-						label: __( 'Back to Themes', 'wpcom-live-preview' ),
+						label: __( 'Back to themes', 'wpcom-live-preview' ),
 						url: dashboardLink,
 						variant: 'primary',
 					},
@@ -90,11 +94,7 @@ const LivePreviewNotice = () => {
 
 const registerLivePreviewPlugin = () => {
 	registerPlugin( 'wpcom-live-preview', {
-		render: () => (
-			<>
-				<LivePreviewNotice />
-			</>
-		),
+		render: () => <LivePreviewNotice />,
 	} );
 };
 
