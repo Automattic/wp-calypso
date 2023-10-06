@@ -13,7 +13,7 @@ const Header = styled.header`
 	border-bottom: 1px solid var( --studio-gray-5 );
 	background-color: var( --studio-white );
 
-	.layout__secondary ~ .layout__primary & {
+	.layout__secondary:not( :empty ) ~ .layout__primary & {
 		left: calc( var( --sidebar-width-max ) + 1px ); // 1px is the sidebar border.
 		width: calc( 100% - var( --sidebar-width-max ) - 1px ); // 1px is the sidebar border.
 

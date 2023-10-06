@@ -1,7 +1,7 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { UrlData } from 'calypso/blocks/import/types';
+import useHostingProviderURL from 'calypso/site-profiler/hooks/use-hosting-provider-url';
 import HostingProviderName from './hosting-provider-name';
+import type { UrlData } from 'calypso/blocks/import/types';
 import type { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
 import './style.scss';
 
@@ -14,10 +14,7 @@ interface Props {
 export default function HostingInformation( props: Props ) {
 	const { dns = [], urlData, hostingProvider } = props;
 	const aRecordIps = dns.filter( ( x ) => x.type === 'A' && x.ip );
-	const supportUrl =
-		hostingProvider?.slug === 'automattic'
-			? localizeUrl( 'https://wordpress.com/help/contact' )
-			: hostingProvider?.support_url;
+	const supportUrl = useHostingProviderURL( 'support', hostingProvider, urlData );
 
 	return (
 		<div className="hosting-information">
@@ -27,11 +24,13 @@ export default function HostingInformation( props: Props ) {
 					<div className="name">{ translate( 'Provider' ) }</div>
 					<HostingProviderName hostingProvider={ hostingProvider } urlData={ urlData } />
 				</li>
-				{ supportUrl && ! hostingProvider?.is_cdn && (
+				{ supportUrl && (
 					<li>
 						<div className="name">{ translate( 'Support' ) }</div>
 						<div>
-							<a href={ supportUrl }>{ translate( 'Contact support' ) }</a>
+							<a href={ supportUrl } target="_blank" rel="nofollow noreferrer">
+								{ translate( 'Contact support' ) }
+							</a>
 						</div>
 					</li>
 				) }

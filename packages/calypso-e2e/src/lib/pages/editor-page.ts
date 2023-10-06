@@ -123,7 +123,7 @@ export class EditorPage {
 		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
 		// it is a fairly good stand-in.
 		await Promise.all( [
-			this.page.waitForURL( /(post|page|post-new.php)/ ),
+			this.page.waitForURL( /(post|page|post-new.php)/, { timeout: 60 * 1000 } ),
 			this.page.waitForResponse( /.*posts.*/, { timeout: 60 * 1000 } ),
 		] );
 
@@ -280,8 +280,9 @@ export class EditorPage {
 			noSearch: noSearch,
 		} );
 
-		const blockHandle =
-			await this.editorGutenbergComponent.getSelectedBlockElementHandle( blockEditorSelector );
+		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
+			blockEditorSelector
+		);
 
 		// Dismiss the block inserter if viewport is larger than mobile to
 		// ensure no interference from the block inserter in subsequent actions on the editor.
@@ -330,8 +331,9 @@ export class EditorPage {
 		await openInlineInserter( await this.editor.canvas() );
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 
-		const blockHandle =
-			await this.editorGutenbergComponent.getSelectedBlockElementHandle( blockEditorSelector );
+		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
+			blockEditorSelector
+		);
 		// Return an ElementHandle pointing to the block for compatibility
 		// with existing specs.
 		return blockHandle;

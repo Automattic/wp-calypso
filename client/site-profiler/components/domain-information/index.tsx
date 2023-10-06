@@ -1,21 +1,27 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { TranslateOptions, translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { UrlData } from 'calypso/blocks/import/types';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
 import { useFilteredWhoisData } from 'calypso/site-profiler/hooks/use-filtered-whois-data';
-import VerifiedProvider from './verified-provider';
-import type { WhoIs } from 'calypso/data/site-profiler/types';
+import { normalizeWhoisField } from 'calypso/site-profiler/utils/normalize-whois-entry';
+import { normalizeWhoisURL } from 'calypso/site-profiler/utils/normalize-whois-url';
+import VerifiedProvider from '../verified-provider';
+import type { HostingProvider, WhoIs } from 'calypso/data/site-profiler/types';
 import './styles.scss';
 
 interface Props {
 	domain: string;
 	whois: WhoIs;
+	hostingProvider?: HostingProvider;
+	urlData?: UrlData;
 }
 
 export default function DomainInformation( props: Props ) {
-	const { domain, whois } = props;
+	const { domain, whois, hostingProvider, urlData } = props;
 	const moment = useLocalizedMoment();
 	const momentFormat = 'YYYY-MM-DD HH:mm:ss UTC';
 	const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
@@ -29,6 +35,11 @@ export default function DomainInformation( props: Props ) {
 
 	const whoisDataAvailability = whois && Object.keys( whois ).length > 0;
 	const { fieldsRedacted, filteredWhois } = useFilteredWhoisData( whois );
+
+	useEffect( () => {
+		fetchWhoisRawData &&
+			recordTracksEvent( 'calypso_site_profiler_domain_whois_raw_data_fetch', { domain } );
+	}, [ fetchWhoisRawData ] );
 
 	const contactArgs = ( args?: string | string[] ): TranslateOptions => {
 		return {
@@ -50,6 +61,12 @@ export default function DomainInformation( props: Props ) {
 		} );
 	};
 
+	const formatDateTime = ( date?: string | string[] ) => {
+		const res = moment.utc( normalizeWhoisField( date ) );
+
+		return res.isValid() ? res.format( momentFormat ) : '';
+	};
+
 	return (
 		<div className="domain-information">
 			<h3>{ translate( 'Domain information' ) }</h3>
@@ -66,34 +83,42 @@ export default function DomainInformation( props: Props ) {
 						<div className="name">{ translate( 'Registrar' ) }</div>
 						<div>
 							{ whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
-								<VerifiedProvider />
+								<VerifiedProvider
+									hostingProvider={ hostingProvider }
+									urlData={ urlData }
+									showHostingProvider={ false }
+								/>
 							) }
 							{ whois.registrar_url &&
 								! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
-									<a href={ whois.registrar_url } target="_blank" rel="noopener noreferrer">
+									<a
+										href={ normalizeWhoisURL( whois.registrar_url ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
 										{ whois.registrar }
 									</a>
 								) }
-							{ ! whois.registrar_url && <span>{ whois.registrar }</span> }
+							{ ! whois.registrar_url && <span>{ normalizeWhoisField( whois.registrar ) }</span> }
 						</div>
 					</li>
 				) }
 				{ filteredWhois.creation_date && (
 					<li>
 						<div className="name">{ translate( 'Registered on' ) }</div>
-						<div>{ moment.utc( whois.creation_date ).format( momentFormat ) }</div>
+						<div>{ formatDateTime( whois.creation_date ) }</div>
 					</li>
 				) }
 				{ filteredWhois.registry_expiry_date && (
 					<li>
 						<div className="name">{ translate( 'Expires on' ) }</div>
-						<div>{ moment.utc( whois.registry_expiry_date ).format( momentFormat ) }</div>
+						<div>{ formatDateTime( whois.registry_expiry_date ) }</div>
 					</li>
 				) }
 				{ filteredWhois.updated_date && (
 					<li>
 						<div className="name">{ translate( 'Updated on' ) }</div>
-						<div>{ moment.utc( whois.updated_date ).format( momentFormat ) }</div>
+						<div>{ formatDateTime( whois.updated_date ) }</div>
 					</li>
 				) }
 				{ filteredWhois.name_server && whois.name_server && (

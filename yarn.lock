@@ -32570,6 +32570,7 @@ __metadata:
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
     stylelint: ^14.16.1
+    swiper: ^10.1.0
     tslib: ^2.3.0
     typescript: ^5.1.6
     v8-profiler-next: ^1.9.0

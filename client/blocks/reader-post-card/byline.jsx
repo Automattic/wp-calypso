@@ -116,6 +116,10 @@ class PostByline extends Component {
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 
+		// Use the siteName if not showing it elsewhere, otherwise use the slug.
+		const bylineSiteName = ! showSiteName ? siteName : siteSlug;
+		const showDate = post.date && post.URL;
+
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="reader-post-card__byline ignore-click">
@@ -143,12 +147,11 @@ class PostByline extends Component {
 						</div>
 					) }
 					<div className="reader-post-card__author-and-timestamp">
-						{ ( shouldDisplayAuthor || ( post.date && post.URL ) ) && (
+						{ ( shouldDisplayAuthor || bylineSiteName || showDate ) && (
 							<span className="reader-post-card__byline-secondary" ref={ this.secondaryBylineRef }>
 								{ shouldDisplayAuthor && (
 									<>
 										<ReaderAuthorLink
-											// className="reader-post-card__link"
 											className="reader-post-card__byline-secondary-item"
 											author={ post.author }
 											siteUrl={ streamUrl }
@@ -156,14 +159,14 @@ class PostByline extends Component {
 										>
 											{ post.author.name }
 										</ReaderAuthorLink>
-										{ post.date && post.URL && (
+										{ ( bylineSiteName || showDate ) && (
 											<span className="reader-post-card__byline-secondary-bullet-wrapper">
 												<span className="reader-post-card__byline-secondary-bullet">·</span>
 											</span>
 										) }
 									</>
 								) }
-								{ post.date && post.URL && (
+								{ bylineSiteName && (
 									<>
 										<a
 											className="reader-post-card__byline-secondary-item"
@@ -172,22 +175,25 @@ class PostByline extends Component {
 											target="_blank"
 											rel="noopener noreferrer"
 										>
-											{ /* Use the siteName if not showing it above, otherwise use the slug */ }
-											{ ! showSiteName ? siteName : siteSlug }
+											{ bylineSiteName }
 										</a>
-										<span className="reader-post-card__byline-secondary-bullet-wrapper">
-											<span className="reader-post-card__byline-secondary-bullet">·</span>
-										</span>
-										<a
-											className="reader-post-card__byline-secondary-item"
-											onClick={ this.recordDateClick }
-											href={ post.URL }
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											<TimeSince date={ post.date } />
-										</a>
+										{ showDate && (
+											<span className="reader-post-card__byline-secondary-bullet-wrapper">
+												<span className="reader-post-card__byline-secondary-bullet">·</span>
+											</span>
+										) }
 									</>
+								) }
+								{ showDate && (
+									<a
+										className="reader-post-card__byline-secondary-item"
+										onClick={ this.recordDateClick }
+										href={ post.URL }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<TimeSince date={ post.date } />
+									</a>
 								) }
 							</span>
 						) }

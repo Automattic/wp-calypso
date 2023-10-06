@@ -24,11 +24,18 @@ const unpackIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer 
 		return null;
 	}
 
+	const isOfferComplete = Boolean(
+		sitePlan.expiry &&
+			sitePlan.introductory_offer_end_date &&
+			new Date( sitePlan.expiry ) > new Date( sitePlan.introductory_offer_end_date )
+	);
+
 	return {
 		formattedPrice: sitePlan.introductory_offer_formatted_price as string,
 		rawPrice: sitePlan.introductory_offer_raw_price as number,
 		intervalUnit: sitePlan.introductory_offer_interval_unit as string,
 		intervalCount: sitePlan.introductory_offer_interval_count as number,
+		isOfferComplete,
 	};
 };
 
@@ -55,6 +62,7 @@ function useSitePlans( { siteId }: Props ) {
 						planSlug: plan.product_slug,
 						productId: Number( productId ),
 						introOffer: unpackIntroOffer( plan ),
+						expiry: plan.expiry,
 					},
 				};
 			}, {} );

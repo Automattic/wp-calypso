@@ -240,7 +240,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	};
 
 	const livePreview = {
-		label: translate( 'Live preview', {
+		label: translate( 'Preview & Customize', {
 			comment: 'label for previewing a block theme',
 		} ),
 		action: ( themeId, siteId ) => {

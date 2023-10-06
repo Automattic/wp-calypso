@@ -7,13 +7,20 @@ import React, { useState, useRef } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
+import './style.scss';
 
-const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPickerProps ) => {
+const DateControlPicker = ( {
+	slug,
+	queryParams,
+	shortcutList,
+	handleApply,
+}: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
 	const [ inputStartDate, setInputStartDate ] = useState( new Date().toISOString().slice( 0, 10 ) );
 	const [ inputEndDate, setInputEndDate ] = useState(
 		new Date( new Date().setMonth( new Date().getMonth() - 3 ) ).toISOString().slice( 0, 10 )
 	);
+	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
@@ -35,6 +42,9 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 		const period = 'day'; // TODO: make this dynamic
 		const url = `/stats/${ period }/${ slug }`;
 		const href = `${ url }${ nextDayQuery }`;
+
+		// expose the values externally
+		handleApply( inputStartDate, inputEndDate );
 
 		page( href );
 	};
@@ -60,6 +70,8 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 		// Calc new end date based on start date plus range as specified in shortcut.
 		const newEndDate = calcNewDateWithOffset( newStartDate, shortcut.range );
 		setInputEndDate( formattedDate( newEndDate ) );
+
+		setCurrentShortcut( shortcut.id || '' );
 	};
 
 	const formatDate = ( date: string ) => {
@@ -69,14 +81,14 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 	return (
 		<>
 			<Button
-				variant="primary"
+				className="stats-date-control-picker__button"
 				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
 				ref={ infoReferenceElement }
 			>
 				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
 			</Button>
 			<Popover
-				placement="bottom end"
+				position="bottom"
 				context={ infoReferenceElement?.current }
 				isVisible={ popoverOpened }
 				// TODO: Remove this inline CSS.
@@ -91,6 +103,7 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 				/>
 				<DateControlPickerShortcuts
 					shortcutList={ shortcutList }
+					currentShortcut={ currentShortcut }
 					onClick={ handleShortcutSelected }
 				/>
 			</Popover>

@@ -5,16 +5,17 @@
 	display: none;
 
 	.device-switcher__toolbar-devices {
+		align-items: center;
 		display: flex;
 		height: 58px;
+		gap: 18px;
 		margin-bottom: 13px;
 		justify-content: center;
 
 		> button {
 			border-radius: 2px;
 			color: var(--studio-gray-10);
-			height: auto;
-			margin: 0 9px;
+			height: 28px;
 			padding: 0;
 			transition: color 0.1s ease-in-out;
 

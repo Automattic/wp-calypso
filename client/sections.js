@@ -109,6 +109,7 @@ const sections = [
 		module: 'calypso/my-sites/plugins',
 		group: 'sites',
 		enableLoggedOut: true,
+		enableNoSites: true,
 		isomorphic: true,
 		title: 'Plugins',
 	},

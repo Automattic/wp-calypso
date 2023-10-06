@@ -38,10 +38,10 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 
 	return (
 		<>
-			<h1>{ translate( 'You have already purchased Jetpack Stats!' ) }</h1>
+			<h1>{ translate( 'You already have a commercial license for Jetpack Stats.' ) }</h1>
 			<p>
 				{ translate(
-					'You have already purchased a commercial license or a plan that supports this product, and it has been successfully activated. You now have access to:'
+					'You already have a license for this product and it has been successfully activated. You currently have access to:'
 				) }
 			</p>
 			<StatsBenefitsCommercial />
@@ -67,10 +67,10 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 
 	return (
 		<StatsSingleItemPagePurchaseFrame>
-			<h1>{ translate( 'You have already purchased Jetpack Stats!' ) }</h1>
+			<h1>{ translate( 'You already have a license for Jetpack Stats.' ) }</h1>
 			<p>
 				{ translate(
-					'You have already purchased a personal license for this product, and it has been successfully activated. You now have access to:'
+					'You already have a license for this product and it has been successfully activated. You currently have access to:'
 				) }
 			</p>
 			<StatsBenefitsPersonal />
@@ -107,7 +107,7 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 			<h1>{ translate( 'You already have a free license for Jetpack Stats.' ) }</h1>
 			<p>
 				{ translate(
-					'You already have a free license for this product, and it has been successfully activated. Currently have access to:'
+					'You already have a license for this product and it has been successfully activated. You currently have access to:'
 				) }
 			</p>
 			<StatsBenefitsFree />

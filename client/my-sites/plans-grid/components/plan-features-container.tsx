@@ -32,9 +32,7 @@ const PlanFeaturesContainer: React.FC< {
 	const isEnglishLocale = useIsEnglishLocale();
 	const shouldShowNewJPTooltipCopy =
 		isEnglishLocale ||
-		i18n.hasTranslation(
-			'Security, performance and growth tools made by the WordPress experts. Powered by Jetpack.'
-		);
+		i18n.hasTranslation( 'Security, performance, and growth tools—powered by Jetpack.' );
 
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
@@ -60,9 +58,7 @@ const PlanFeaturesContainer: React.FC< {
 							<Plans2023Tooltip
 								text={
 									shouldShowNewJPTooltipCopy
-										? translate(
-												'Security, performance and growth tools made by the WordPress experts. Powered by Jetpack.'
-										  )
+										? translate( 'Security, performance, and growth tools—powered by Jetpack.' )
 										: translate(
 												'Security, performance and growth tools made by the WordPress experts.'
 										  )

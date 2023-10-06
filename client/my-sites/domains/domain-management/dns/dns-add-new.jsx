@@ -49,6 +49,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 				},
 			},
@@ -60,6 +61,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 				},
 			},
@@ -71,6 +73,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 					aux: 10,
 				},
@@ -83,6 +86,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 				},
 			},
@@ -94,6 +98,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					service: '',
 					aux: 10,
 					weight: 10,

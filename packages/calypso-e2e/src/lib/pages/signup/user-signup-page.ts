@@ -81,6 +81,32 @@ export class UserSignupPage {
 	}
 
 	/**
+	 * Using the Social First signup, selects the Email option, then fill out required information
+	 * and then submit the form to complete the signup.
+	 *
+	 * @see https://github.com/Automattic/wp-calypso/pull/82481
+	 *
+	 * @param {string} email Email address of the new user.
+	 * @returns {NewUserResponse} Response from the REST API.
+	 */
+	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
+		await this.page.getByRole( 'button', { name: 'Continue with Email' } ).click();
+
+		await this.page.fill( selectors.emailInput, email );
+
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( /.*new\?.*/ ),
+			this.page.getByRole( 'button', { name: 'Continue' } ).click(),
+		] );
+
+		if ( ! response ) {
+			throw new Error( `Failed to sign up as new user: no or unexpected API response.` );
+		}
+
+		return await response.json();
+	}
+
+	/**
 	 * Signup form that is used by WordPress.com Connect (WPCC) endpoint.
 	 *
 	 * WPCC is a single sign-on service. For more information, please see

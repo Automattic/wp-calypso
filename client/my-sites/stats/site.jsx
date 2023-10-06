@@ -116,6 +116,7 @@ class StatsSite extends Component {
 	state = {
 		activeTab: null,
 		activeLegend: null,
+		customChartQuantity: null,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -143,6 +144,7 @@ class StatsSite extends Component {
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
+	onChangeChartQuantity = ( customChartQuantity ) => this.setState( { customChartQuantity } );
 
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
@@ -274,6 +276,7 @@ class StatsSite extends Component {
 										queryParams={ context.query }
 										period={ period }
 										pathTemplate={ pathTemplate }
+										onChangeChartQuantity={ this.onChangeChartQuantity }
 									/>
 								</StatsPeriodHeader>
 							</>
@@ -310,6 +313,7 @@ class StatsSite extends Component {
 							queryDate={ queryDate }
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
+							customQuantity={ this.state.customChartQuantity }
 						/>
 					</>
 

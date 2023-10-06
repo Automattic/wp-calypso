@@ -5,7 +5,7 @@ import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation } from 'calypso/my-sites/controller';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -217,7 +217,8 @@ export function scrollTopIfNoHash( context, next ) {
 }
 
 export function navigationIfLoggedIn( context, next ) {
-	if ( isUserLoggedIn( context.store.getState() ) ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
 		navigation( context, next );
 		return;
 	}
