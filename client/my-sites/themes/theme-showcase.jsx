@@ -420,7 +420,6 @@ class ThemeShowcase extends Component {
 						/>
 					);
 				}
-				return <ThemesSelection { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
 		}
