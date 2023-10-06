@@ -245,6 +245,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 						</div>
 					) }
 					<Launchpad
+						context="onboarding"
 						siteSlug={ siteSlug }
 						taskFilter={ () => enhancedTasks || [] }
 						makeLastTaskPrimaryAction={ true }

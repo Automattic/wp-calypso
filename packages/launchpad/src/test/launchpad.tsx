@@ -25,7 +25,7 @@ jest.mock( '@automattic/data-stores', () => {
 describe( 'Launchpad', () => {
 	describe( 'when no taskFilter is provided', () => {
 		it( 'then all tasks from useLaunchpad are rendered', () => {
-			render( <Launchpad siteSlug="any site" /> );
+			render( <Launchpad context="launchpad" siteSlug="any site" /> );
 			const checklistItems = screen.queryAllByRole( 'listitem' );
 			expect( checklistItems.length ).toBe( 3 );
 		} );
@@ -38,7 +38,7 @@ describe( 'Launchpad', () => {
 				return [ tasks[ 0 ] ];
 			};
 
-			render( <Launchpad siteSlug="any site" taskFilter={ filter } /> );
+			render( <Launchpad context="launchpad" siteSlug="any site" taskFilter={ filter } /> );
 			const checklistItems = screen.queryAllByRole( 'listitem' );
 			expect( checklistItems.length ).toBe( 1 );
 

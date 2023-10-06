@@ -10,6 +10,7 @@ export interface LaunchpadProps {
 	makeLastTaskPrimaryAction?: boolean;
 	taskFilter?: ( tasks: Task[] ) => Task[];
 	useLaunchpadOptions?: UseLaunchpadOptions;
+	context: string;
 }
 
 const Launchpad = ( {
@@ -18,6 +19,7 @@ const Launchpad = ( {
 	taskFilter,
 	makeLastTaskPrimaryAction,
 	useLaunchpadOptions = {},
+	context,
 }: LaunchpadProps ) => {
 	const launchpadData = useLaunchpad( siteSlug || '', checklistSlug, useLaunchpadOptions );
 	const { isFetchedAfterMount, data } = launchpadData;
@@ -32,6 +34,7 @@ const Launchpad = ( {
 		<div className="launchpad__checklist-wrapper">
 			{ isFetchedAfterMount ? (
 				<Checklist
+					context={ context }
 					tasks={ tasks.current }
 					makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction }
 				/>

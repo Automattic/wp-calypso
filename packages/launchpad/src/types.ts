@@ -31,6 +31,7 @@ export interface Task {
 	order?: number;
 	useCalypsoPath?: boolean;
 	body?: TaskBody[];
+	body_context?: Array< string >;
 }
 
 export type LaunchpadChecklist = Task[];

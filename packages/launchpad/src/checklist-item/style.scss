@@ -104,7 +104,7 @@
 	color: var(--color-neutral-100);
 }
 
-.checklist-item__task:not(:nth-last-child(2)) {
+.checklist-item__task:not(:nth-last-child(1)) {
 	border-bottom: 1px solid var(--studio-gray-5);
 }
 

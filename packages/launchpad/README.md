@@ -13,11 +13,12 @@ import { Launchpad } from '@automattic/launchpad'
 Then, use it in your code:
 
 ```js
-function App( { siteSlug, checklistSlug } ) {
+function App( { siteSlug, checklistSlug, context } ) {
     return (
         <Launchpad
             siteSlug={ siteSlug }
-            checklistSlug={ checklistSlug } />
+            checklistSlug={ checklistSlug }
+            context={ context } />
     );
 }
 ```

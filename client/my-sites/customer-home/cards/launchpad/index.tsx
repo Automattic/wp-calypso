@@ -162,6 +162,7 @@ const CustomerHomeLaunchpad = ( {
 				checklistSlug={ checklistSlug }
 				taskFilter={ taskFilter }
 				useLaunchpadOptions={ useLaunchpadOptions }
+				context={ launchpadContext }
 			/>
 		</div>
 	);

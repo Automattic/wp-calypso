@@ -6,7 +6,15 @@ import { Body } from './body';
 
 import './style.scss';
 
-const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
+const ChecklistItem = ( {
+	task,
+	isPrimaryAction,
+	context,
+}: {
+	task: Task;
+	isPrimaryAction?: boolean;
+	context: string;
+} ) => {
 	const isRtl = useRtl();
 	const { id, completed, disabled, title, subtitle, actionDispatch } = task;
 
@@ -28,6 +36,11 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	// This allows the UI routing code to hook into the URL changes and should reduce full-page (re)loads
 	// when clicking on the task list items.
 	const buttonHref = task.useCalypsoPath && task.calypso_path ? task.calypso_path : undefined;
+
+	const showBody =
+		task.body_context?.find( ( bodyContext ) => bodyContext === context ) &&
+		task.body &&
+		task.body.length;
 
 	return (
 		<li
@@ -85,7 +98,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 					{ subtitle && <p className="checklist-item__subtext">{ subtitle }</p> }
 				</Button>
 			) }
-			{ task.body && task.body.length && <Body body={ task.body } /> }
+			{ showBody && <Body body={ task.body || [] } /> }
 		</li>
 	);
 };

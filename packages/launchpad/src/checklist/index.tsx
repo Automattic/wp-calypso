@@ -7,9 +7,10 @@ import './style.scss';
 interface ChecklistProps {
 	tasks: Task[] | null;
 	makeLastTaskPrimaryAction?: boolean;
+	context: string;
 }
 
-const Checklist = ( { tasks, makeLastTaskPrimaryAction }: ChecklistProps ) => {
+const Checklist = ( { tasks, makeLastTaskPrimaryAction, context }: ChecklistProps ) => {
 	return (
 		<ul
 			className={ classNames( 'checklist__tasks', {
@@ -22,6 +23,7 @@ const Checklist = ( { tasks, makeLastTaskPrimaryAction }: ChecklistProps ) => {
 					<ChecklistItem
 						key={ task.id }
 						task={ task }
+						context={ context }
 						isPrimaryAction={ makeLastTaskPrimaryAction && index === tasks.length - 1 }
 					/>
 				) ) }
