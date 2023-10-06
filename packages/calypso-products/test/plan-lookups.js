@@ -1036,7 +1036,11 @@ describe( 'findSimilarPlansKeys', () => {
 				type: TYPE_BUSINESS,
 				group: GROUP_WPCOM,
 			} )
-		).toEqual( [ PLAN_BUSINESS_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ] );
+		).toEqual( [
+			PLAN_BUSINESS_MONTHLY,
+			PLAN_MIGRATION_TRIAL_MONTHLY,
+			PLAN_HOSTING_TRIAL_MONTHLY,
+		] );
 	} );
 } );
 
