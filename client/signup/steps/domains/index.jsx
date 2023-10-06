@@ -138,6 +138,7 @@ export class RenderDomainsStep extends Component {
 
 			props.goToNextStep();
 		}
+		this.shouldUseMultipleDomainsInCart = this.shouldUseMultipleDomainsInCart.bind( this );
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
 		this.state = {
 			currentStep: null,
