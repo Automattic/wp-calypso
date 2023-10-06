@@ -94,7 +94,8 @@ export default function LivePreviewModal() {
 			</p>
 			<p>
 				{ translate(
-					'To exit the Editor preview and get back to the theme showcase, click the small arrow next to “Previewing”.'
+					'To exit the Editor preview and get back to the theme showcase, click the small arrow next to {{strong}}Previewing{{/strong}}.',
+					{ components: { strong: <strong /> } }
 				) }
 			</p>
 			<CheckboxControl
