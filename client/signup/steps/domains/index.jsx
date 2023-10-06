@@ -143,6 +143,7 @@ export class RenderDomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
+			showFreeSubdomain: JSON.parse( localStorage.getItem( 'showFreeSubdomain' ) || 'false' ),
 		};
 	}
 
@@ -181,7 +182,22 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
+	state = { showFreeSubdomain: false };
+
+	handleIsSubDomainSuggestion = () => {
+		// Toggle the value based on the current state
+		const newShowFreeSubdomainValue = ! this.state.showFreeSubdomain;
+
+		this.setState( { showFreeSubdomain: newShowFreeSubdomainValue } );
+		localStorage.setItem( 'showFreeSubdomain', String( newShowFreeSubdomainValue ) );
+	};
+
 	handleAddDomain = ( suggestion, position ) => {
+		if ( this.shouldUseMultipleDomainsInCart() && suggestion?.isSubDomainSuggestion ) {
+			this.handleIsSubDomainSuggestion();
+			return;
+		}
+
 		const signupDomainOrigin = suggestion?.is_free
 			? SIGNUP_DOMAIN_ORIGIN.FREE
 			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
@@ -310,15 +326,10 @@ export class RenderDomainsStep extends Component {
 		if ( ! step ) {
 			return;
 		}
-		const { suggestion } = step;
 
 		const enabledFlows = [ 'onboarding' ];
 
-		return (
-			isEnabled( 'domains/add-multiple-domains-to-cart' ) &&
-			enabledFlows.includes( flowName ) &&
-			( ! suggestion || ( suggestion && ! suggestion.is_free ) )
-		);
+		return isEnabled( 'domains/add-multiple-domains-to-cart' ) && enabledFlows.includes( flowName );
 	};
 
 	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
@@ -739,12 +750,38 @@ export class RenderDomainsStep extends Component {
 		};
 
 		const DomainsInCart =
-			this.shouldUseMultipleDomainsInCart() && ! cartIsLoading ? (
+			( this.shouldUseMultipleDomainsInCart() && ! cartIsLoading ) ||
+			this.state.showFreeSubdomain ? (
 				<div className="domains__domain-side-content domains__domain-cart">
 					<div className="domains__domain-cart-title">
 						{ this.props.translate( 'Your domains' ) }
 					</div>
 					<div className="domains__domain-cart-rows">
+						{ this.state.showFreeSubdomain && (
+							<div className="domains__domain-cart-row free-subdomain">
+								<div>
+									<div className="domains__domain-cart-domain">
+										<span>test</span>
+										<b>.wordpress.com</b>
+									</div>
+									<div className="domain-product-price__price">
+										<span className="domains__price">Free</span>
+									</div>
+								</div>
+								<div>
+									<button
+										type="button"
+										className="button domains__domain-cart-remove is-borderless"
+										onClick={ () => {
+											localStorage.setItem( 'showFreeSubdomain', 'false' );
+											this.setState( { showFreeSubdomain: false } );
+										} }
+									>
+										Remove
+									</button>
+								</div>
+							</div>
+						) }
 						{ domainsInCart.map( ( domain, i ) => (
 							<div key={ `row${ i }` } className="domains__domain-cart-row">
 								<DomainNameAndCost domain={ domain } />
@@ -775,7 +812,7 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<div className="domains__domain-side-content-container">
-				{ domainsInCart.length > 0
+				{ domainsInCart.length > 0 || this.state.showFreeSubdomain
 					? DomainsInCart
 					: ! this.shouldHideDomainExplainer() &&
 					  this.props.isPlanSelectionAvailableLaterInFlow && (
