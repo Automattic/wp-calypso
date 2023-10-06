@@ -15,6 +15,7 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
@@ -405,7 +406,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		'is-large-currency': isLargeCurrency,
 	} );
 
-	const handleUpgradeButtonClick = () => {
+	const handleUpgradeButtonClick = useCallback( () => {
 		if ( ! freePlan ) {
 			recordTracksEvent( 'calypso_plan_features_upgrade_click', {
 				current_plan: currentSitePlanSlug,
@@ -414,16 +415,16 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		}
 
 		onUpgradeClick?.();
-	};
+	}, [ currentSitePlanSlug, freePlan, onUpgradeClick, planSlug ] );
 
-	const handleFreeTrialButtonClick = () => {
+	const handleFreeTrialButtonClick = useCallback( () => {
 		recordTracksEvent( 'calypso_plan_features_upgrade_click', {
 			current_plan: currentSitePlanSlug,
 			upgrading_to: freeTrialPlanSlug,
 		} );
 
 		onUpgradeClick?.( freeTrialPlanSlug );
-	};
+	}, [ currentSitePlanSlug, freeTrialPlanSlug, onUpgradeClick ] );
 
 	if ( isWpcomEnterpriseGridPlan ) {
 		const vipLandingPageUrlWithoutUtmCampaign =
