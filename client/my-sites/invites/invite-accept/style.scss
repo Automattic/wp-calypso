@@ -46,6 +46,17 @@ body {
 		}
 
 	}
+	.logged-out-form__footer {
+		button.is-primary {
+			background-color: #117ac9;
+			border-color: transparent !important;
+			&:hover,
+			&:focus {
+				background-color: var(--studio-blue-60);
+			}
+		}
+	}
+
 }
 .invite-accept .locale-suggestions {
 	margin-top: 0;
