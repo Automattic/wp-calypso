@@ -36,11 +36,8 @@ class PostByline extends Component {
 	}
 
 	/**
-	 * Add functionality to this ref on mount and resize. Get all secondary items and bullets in
-	 * the ref element. If lastItem.offsetTop !== thisItem.offsetTop, we can remove the bullet between
-	 * them. If that bullet is on the line above (bullet.offsetTop === lastItem.offsetTop), we
-	 * need to hide it and keep its spacing. If that bullet is on the next line instead, we can
-	 * hide the bullet and its spacing (remove element entirely?).
+	 * Goes through items in the secondary byline ref and compares their height to determine whether
+	 * or not to hide the bullet separator.
 	 */
 	organizeBullets() {
 		// Query all items in the secondary byline, as well as the bullets between them.
@@ -70,21 +67,6 @@ class PostByline extends Component {
 			if ( item.offsetTop !== lastItem.offsetTop ) {
 				// For now, hide it but keep spacing.
 				bullets[ index - 1 ].style.visibility = 'hidden';
-
-				// The below was an attempt to be more graceful than the line above. To keep the
-				// spacing when hiding the bullet, only when the bullet is on line above. And to
-				// hide it and remove its spacing when its not. This had a handful of edge case
-				// issues where it did not work as expected.
-
-				// // Check if the bullet is on the same line as above.
-				// // Testing - difference of 4 when on same line, 17 when on next line.
-				// if ( Math.abs( lastItem.offsetTop - bullets[ index - 1 ].offsetTop ) < 8 ) {
-				// 	// If the bullet is on the line above, hide it but keep spacing
-				// 	bullets[ index - 1 ].style.visibility = 'hidden';
-				// } else {
-				// 	// Otherwise, hide it completely.
-				// 	bullets[ index - 1 ].style.display = 'none';
-				// }
 			} else {
 				// If the items were on the same line, reset the style overrides.
 				bullets[ index - 1 ].removeAttribute( 'style' );
@@ -175,7 +157,9 @@ class PostByline extends Component {
 											{ post.author.name }
 										</ReaderAuthorLink>
 										{ post.date && post.URL && (
-											<span className="reader-post-card__byline-secondary-bullet">·</span>
+											<span className="reader-post-card__byline-secondary-bullet-wrapper">
+												<span className="reader-post-card__byline-secondary-bullet">·</span>
+											</span>
 										) }
 									</>
 								) }
@@ -191,7 +175,9 @@ class PostByline extends Component {
 											{ /* Use the siteName if not showing it above, otherwise use the slug */ }
 											{ ! showSiteName ? siteName : siteSlug }
 										</a>
-										<span className="reader-post-card__byline-secondary-bullet">·</span>
+										<span className="reader-post-card__byline-secondary-bullet-wrapper">
+											<span className="reader-post-card__byline-secondary-bullet">·</span>
+										</span>
 										<a
 											className="reader-post-card__byline-secondary-item"
 											onClick={ this.recordDateClick }

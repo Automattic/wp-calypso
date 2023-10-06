@@ -370,10 +370,22 @@
 	outline: dotted 1px;
 }
 
-.reader-post-card__byline-secondary-bullet {
-	color: var(--color-text-subtle);
-	display: inline-block;
-	margin: 0 4px;
+.reader-post-card__byline-secondary-item {
+	margin-right: 12px;
+	&:last-of-type {
+		margin-right: 0;
+	}
+}
+
+.reader-post-card__byline-secondary-bullet-wrapper {
+	position: relative;
+	.reader-post-card__byline-secondary-bullet {
+		color: var(--color-text-subtle);
+		// display: inline-block;
+		// margin: 0 4px;
+		position: absolute;
+		left: -8px;
+	}
 }
 
 .reader-post-card__byline-details {
