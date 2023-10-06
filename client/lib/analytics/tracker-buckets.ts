@@ -59,7 +59,6 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	pinterest: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
-	clarity: Bucket.ADVERTISING,
 
 	// Advertising trackers (only Jetpack Cloud or on Jetpack Checkout):
 	linkedin: isJetpackCloud() || isJetpackCheckout() ? Bucket.ADVERTISING : null,
@@ -73,6 +72,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	pandora: null,
 	quora: null,
 	adroll: null,
+	clarity: null,
 };
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
