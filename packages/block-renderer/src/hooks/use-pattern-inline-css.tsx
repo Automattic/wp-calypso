@@ -17,7 +17,7 @@ const usePatternInlineCss = ( patternId: string, patternHtml: string, isNewSite:
 		const blogPostCount = patternHtml?.match( /wp-block-post /g )?.length ?? 0;
 
 		// Only for patterns with a grid of posts in newly created sites
-		if ( ! isNewSite || ! hasGrid || blogPostCount === 1 ) {
+		if ( ! isNewSite || ! hasGrid || blogPostCount <= 1 ) {
 			return undefined;
 		}
 
