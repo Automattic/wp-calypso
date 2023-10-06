@@ -284,7 +284,6 @@ const SyncCardContainer = ( {
 							'Sync your database and files between your staging and production environments—in either direction.'
 						) }
 					</SyncContainerContent>
-					{ error && <p>{ JSON.stringify( error ) }</p> }
 					{ error && (
 						<Notice
 							status="is-error"
