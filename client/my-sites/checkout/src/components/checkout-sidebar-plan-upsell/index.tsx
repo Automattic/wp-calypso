@@ -101,6 +101,7 @@ export function CheckoutSidebarPlanUpsell() {
 			// This will already be displayed to the user
 			// eslint-disable-next-line no-console
 			console.error( error );
+			setIsClicked( false );
 		}
 	};
 
