@@ -83,7 +83,7 @@ const LivePreviewNotice = () => {
 					{
 						label: __( 'Back to themes', 'wpcom-live-preview' ),
 						url: dashboardLink,
-						variant: 'primary',
+						variant: 'secondary',
 					},
 				],
 			}
