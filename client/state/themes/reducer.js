@@ -653,17 +653,19 @@ export function startActivationSync( state = {}, { type, siteId, themeId } ) {
 	return state;
 }
 
-export function livePreview( state = {}, { type } ) {
-	switch ( type ) {
+export function livePreview( state = {}, action ) {
+	switch ( action.type ) {
 		case LIVE_PREVIEW_START:
 			return {
 				...state,
 				started: true,
+				themeId: action.themeId,
 			};
 		case LIVE_PREVIEW_END:
 			return {
 				...state,
 				started: false,
+				themeId: undefined,
 			};
 	}
 
