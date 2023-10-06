@@ -324,7 +324,7 @@ export class RenderDomainsStep extends Component {
 		const { step } = this.props;
 		const { suggestion } = step;
 
-		if ( this.shouldUseMultipleDomainsInCart() ) {
+		if ( this.shouldUseMultipleDomainsInCart() && suggestion ) {
 			return this.handleDomainToDomainCart( {
 				googleAppsCartItem,
 				shouldHideFreePlan,
@@ -603,6 +603,22 @@ export class RenderDomainsStep extends Component {
 		}
 	}
 
+	removeAllDomains() {
+		const cartProducts = this.props.cart.products;
+		const domainsToRemove = cartProducts.filter( ( product ) =>
+			product.product_slug.includes( 'domain' )
+		);
+
+		if ( domainsToRemove.length ) {
+			domainsToRemove.forEach( ( domain ) => {
+				this.removeDomain( {
+					domain_name: domain.meta,
+					product_slug: domain.product_slug,
+				} );
+			} );
+		}
+	}
+
 	goToNext = () => {
 		return () => {
 			const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -746,7 +762,10 @@ export class RenderDomainsStep extends Component {
 					<Button
 						borderless
 						className="domains__domain-cart-choose-later"
-						onClick={ this.handleUseYourDomainClick }
+						onClick={ () => {
+							this.removeAllDomains();
+							this.handleSkip( undefined, false );
+						} }
 					>
 						{ this.props.translate( 'Choose my domain later' ) }
 					</Button>
@@ -960,6 +979,10 @@ export class RenderDomainsStep extends Component {
 				'Find the perfect domain for your exciting new project or {{span}}decide later{{/span}}.',
 				{ components }
 			);
+		}
+
+		if ( this.shouldUseMultipleDomainsInCart() ) {
+			return translate( 'Find and claim one or more domain names' );
 		}
 
 		if ( isReskinned ) {
