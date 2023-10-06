@@ -7,10 +7,16 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
+import {
+	showDSP,
+	usePromoteWidget,
+	PromoteWidgetStatus,
+	getRecordDSPEventHandler,
+} from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
@@ -35,6 +41,8 @@ export function goToOriginalEndpoint() {
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	const dispatch = useDispatch();
+
 	const { isVisible = false, keyValue, siteId } = props;
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
@@ -97,7 +105,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					handleShowCancel,
 					handleShowTopBar,
 					localeSlug,
-					config.isEnabled( 'promote-post/widget-i2' )
+					config.isEnabled( 'promote-post/widget-i2' ),
+					getRecordDSPEventHandler( dispatch )
 				);
 				setIsLoading( false );
 			} )();

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso/types';
+import { Dispatch } from 'redux';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { getMobileDeviceInfo, isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import versionCompare from 'calypso/lib/version-compare';
@@ -59,6 +60,7 @@ declare global {
 				};
 				isV2?: boolean;
 				hotjarSiteSettings?: object;
+				recordDSPEvent?: ( name: string, props?: any ) => void;
 				options?: object;
 			} ) => void;
 			strings: any;
@@ -122,7 +124,8 @@ export async function showDSP(
 	setShowCancelButton?: ( show: boolean ) => void,
 	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string,
-	isV2?: boolean
+	isV2?: boolean,
+	recordDSPEvent?: ( name: string, props: any ) => void
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
@@ -160,6 +163,7 @@ export async function showDSP(
 					: undefined,
 				isV2,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
+				recordDSPEvent,
 				options: getWidgetOptions(),
 			} );
 		} else {
@@ -195,6 +199,21 @@ export function recordDSPEntryPoint( entryPoint: string ) {
 		recordTracksEvent( 'calypso_dsp_widget_start', eventProps ),
 		bumpStat( 'calypso_dsp_widget_start', entryPoint )
 	);
+}
+
+/**
+ * Gets the recordTrack function to be used in the DSP widget
+ *
+ * @param {Dispatch} dispatch - Redux disptach function
+ */
+export function getRecordDSPEventHandler( dispatch: Dispatch ) {
+	return ( eventName: string, props?: any ) => {
+		const eventProps = {
+			origin: getDSPOrigin(),
+			...props,
+		};
+		dispatch( recordTracksEvent( eventName, eventProps ) );
+	};
 }
 
 export const requestDSP = async < T >(
