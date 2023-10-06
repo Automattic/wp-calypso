@@ -7,6 +7,14 @@
 	width: 100%;
 }
 
+.signup__step.is-domains {
+	.action-buttons.step-wrapper__navigation {
+		@media ( max-width: $break-mobile ) {
+			display: none;
+		}
+	}
+}
+
 .is-section-signup .domains__step-content {
 	margin-bottom: 50px;
 
