@@ -23,6 +23,11 @@
 	}
 }
 
+// New navigation will not include a masterbar
+.theme-jetpack-cloud .is-jetpack-new-navigation {
+	--masterbar-height: 0;
+}
+
 .button {
 	color: var(--color-accent);
 	background: var(--studio-white);
