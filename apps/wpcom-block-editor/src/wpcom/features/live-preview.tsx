@@ -53,17 +53,32 @@ const NOTICE_ID = 'wpcom-live-preview/notice';
  */
 const LivePreviewNotice = () => {
 	const { createWarningNotice } = useDispatch( 'core/notices' );
-	const { dashboardLink, previewingTheme } = useSelect( ( select ) => {
-		const { getSettings } = unlock( select( 'core/edit-site' ) );
-		const themeSlug = currentlyPreviewingTheme();
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const theme = ( select( 'core' ) as any ).getTheme( themeSlug );
-		return {
-			previewingTheme: theme?.name?.rendered || themeSlug,
-			dashboardLink: getSettings().__experimentalDashboardLink,
-		};
-	}, [] );
+	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
+	const { dashboardLink, previewingTheme } = useSelect(
+		( select ) => {
+			if ( ! siteEditorStore ) {
+				return {
+					previewingTheme: undefined,
+					dashboardLink: undefined,
+				};
+			}
+
+			const { getSettings } = unlock( siteEditorStore );
+			const themeSlug = currentlyPreviewingTheme();
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const theme = ( select( 'core' ) as any ).getTheme( themeSlug );
+			return {
+				previewingTheme: theme?.name?.rendered || themeSlug,
+				dashboardLink: getSettings().__experimentalDashboardLink,
+			};
+		},
+		[ siteEditorStore ]
+	);
 	useEffect( () => {
+		// Do nothing in the Post Editor context.
+		if ( ! siteEditorStore ) {
+			return;
+		}
 		if ( ! isPreviewingTheme() ) {
 			return;
 		}
@@ -88,7 +103,7 @@ const LivePreviewNotice = () => {
 				],
 			}
 		);
-	}, [ dashboardLink, createWarningNotice, previewingTheme ] );
+	}, [ siteEditorStore, dashboardLink, createWarningNotice, previewingTheme ] );
 	return null;
 };
 
