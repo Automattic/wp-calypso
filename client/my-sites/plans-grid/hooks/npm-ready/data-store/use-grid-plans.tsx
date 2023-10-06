@@ -266,17 +266,6 @@ const useGridPlans = ( {
 	storageAddOns,
 	shouldDisplayFreeHostingTrial,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
-	const availablePlanSlugs = usePlansFromTypes( {
-		planTypes: usePlanTypesWithIntent( {
-			intent: 'default',
-			selectedPlan,
-			sitePlanSlug,
-			hideEnterprisePlan,
-			isSubdomainNotGenerated,
-			shouldDisplayFreeHostingTrial,
-		} ),
-		term,
-	} );
 	const planSlugsForIntent = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
 			intent,
@@ -288,7 +277,7 @@ const useGridPlans = ( {
 		} ),
 		term,
 	} );
-	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs: availablePlanSlugs } );
+	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs: planSlugsForIntent } );
 
 	// only fetch highlights for the plans that are available for the intent
 	const highlightLabels = useHighlightLabels( {
@@ -300,9 +289,9 @@ const useGridPlans = ( {
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
-	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
+	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugsForIntent } );
 	const pricingMeta = usePricingMetaForGridPlans( {
-		planSlugs: availablePlanSlugs,
+		planSlugs: planSlugsForIntent,
 		storageAddOns,
 	} );
 
@@ -311,7 +300,7 @@ const useGridPlans = ( {
 		return null;
 	}
 
-	return availablePlanSlugs.map( ( planSlug ) => {
+	return planSlugsForIntent.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const planObject = pricedAPIPlans[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
@@ -346,7 +335,7 @@ const useGridPlans = ( {
 
 		return {
 			planSlug,
-			isVisible: planSlugsForIntent.includes( planSlug ),
+			isVisible: true,
 			tagline,
 			availableForPurchase,
 			productNameShort,
