@@ -56,19 +56,13 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 					id="confirmation_email_message"
 					value={ value?.invitation }
 					onChange={ updateSubscriptionOptions( 'invitation' ) }
-					disabled={ disabled }
 					autoCapitalize="none"
+					disabled
 				/>
 				<FormSettingExplanation>
-					{ hasTranslation(
-						'The confirmation message sent out to new readers when they subscribe to your blog.'
-					) || locale.startsWith( 'en' )
-						? translate(
-								'The confirmation message sent out to new readers when they subscribe to your blog.'
-						  )
-						: translate(
-								'The welcome message sent out to new readers when they subscribe to your blog.'
-						  ) }
+					{ translate(
+						"The ability to customize the confirmation email message is now disabled for enhanced security. We're keeping the field visible for a short time, so you can copy your custom message if needed. Thank you for understanding as we prioritize safety."
+					) }
 				</FormSettingExplanation>
 				<FormLabel htmlFor="comment_follow_email_message">
 					{ hasTranslation( 'Comment follow email message' ) || locale.startsWith( 'en' )
