@@ -74,7 +74,6 @@ describe( 'PlanFeatures2023GridActions', () => {
 			className: '',
 			current: false,
 			freePlan: false,
-			manageHref: '',
 			isInSignup: false,
 			onUpgradeClick: jest.fn(),
 			flowName: 'foo-flow',

@@ -47,7 +47,7 @@ interface FeaturesGridType extends PlansGridProps {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
 	canUserPurchasePlan: boolean | null;
-	manageHref: string;
+	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
 }
@@ -358,7 +358,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			isLaunchPage,
 			flowName,
 			canUserPurchasePlan,
-			manageHref,
+			currentPlanManageHref,
 			currentSitePlanSlug,
 			translate,
 			planActionOverrides,
@@ -396,7 +396,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					isTableCell={ options?.isTableCell }
 				>
 					<PlanFeatures2023GridActions
-						manageHref={ manageHref }
+						currentPlanManageHref={ currentPlanManageHref }
 						canUserPurchasePlan={ canUserPurchasePlan }
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planSlug ) }
