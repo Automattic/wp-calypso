@@ -1,5 +1,8 @@
 import { useMutation, UseMutationOptions, useIsMutating } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
+
+type MutationVariables = string[] | undefined;
 
 interface PushStagingMutationResponse {
 	message: string;
@@ -43,14 +46,21 @@ export const usePushToStagingMutation = (
 export const usePullFromStagingMutation = (
 	productionSiteId: number,
 	stagingSiteId: number,
-	options: UseMutationOptions< PushStagingMutationResponse, PushStagingMutationError >
+	options: UseMutationOptions<
+		PushStagingMutationResponse,
+		PushStagingMutationError,
+		MutationVariables
+	>
 ) => {
 	const mutation = useMutation( {
-		mutationFn: async () =>
-			wp.req.post( {
-				path: `/sites/${ productionSiteId }/staging-site/pull-from-staging/${ stagingSiteId }`,
-				apiNamespace: 'wpcom/v2',
-			} ),
+		mutationFn: async ( options ) =>
+			wp.req.post(
+				{
+					path: `/sites/${ productionSiteId }/staging-site/pull-from-staging/${ stagingSiteId }`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{ options }
+			),
 		...options,
 		mutationKey: [ PULL_FROM_STAGING, stagingSiteId ],
 		onSuccess: async ( ...args ) => {
@@ -63,6 +73,7 @@ export const usePullFromStagingMutation = (
 	// the provided key. This is preserved across different pages, while isLoading it's not.
 	// TODO: Remove that when react-query v5 is out. They seem to have added isPending variable for this.
 	const isLoading = useIsMutating( { mutationKey: [ PULL_FROM_STAGING, stagingSiteId ] } ) > 0;
+	const pullFromStaging = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return { pullFromStaging: mutate, isLoading };
+	return { pullFromStaging, isLoading };
 };
