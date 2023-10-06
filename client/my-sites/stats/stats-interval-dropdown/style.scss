@@ -1,0 +1,58 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography.scss";
+
+.stats-interval-dropdown__container {
+
+	width: 196px;
+
+	> .components-button {
+		border-radius: 2px;
+		color: var(--gutenberg-gray-900);
+		font-family: $font-sf-pro-text;
+		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-weight: 400;
+	}
+
+	.segmented-control.is-primary.stats-navigation__intervals .segmented-control__item.is-selected .segmented-control__link:hover {
+		background-color: var(--color-neutral-0);
+	}
+
+	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link,
+	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link:focus {
+		background-color: var(--studio-white);
+		color: var(--gutenberg-gray-900);
+	}
+
+	.segmented-control {
+		display: block;
+		background-color: var(--studio-white);
+		padding-left: 0;
+
+		&__item {
+			flex: none;
+			cursor: default;
+			background-color: var(--studio-white);
+
+			&:not(.is-selected) .segmented-control__link {
+				color: inherit;
+				background-color: var(--studio-white);
+				outline: none;
+			}
+
+			&:last-of-type .segmented-control__link {
+				border-right: none;
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+		}
+
+		&__link {
+			display: block;
+			padding: 8px 12px;
+			border: none;
+			text-align: left;
+			background-color: var(--studio-white);
+			transition: none;
+		}
+	}
+}

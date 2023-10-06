@@ -1,19 +1,42 @@
-import { useEffect, useState } from 'react';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useEffect, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { extractDomainFromInput, getFixedDomainSearch } from 'calypso/lib/domains';
+import {
+	isSpecialInput,
+	SPECIAL_DOMAIN_CASES,
+	getSpecialDomainMapping,
+} from 'calypso/site-profiler/utils/get-special-domain-mapping';
 
 export default function useDomainQueryParam( sanitize = true ) {
 	const [ domain, setDomain ] = useState( '' );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
-	const queryParams = useQuery();
+	const [ specialDomainMapping, setSpecialDomainMapping ] = useState< SPECIAL_DOMAIN_CASES >();
+	const location = useLocation();
+	const _domain = location.pathname.split( '/site-profiler/' )[ 1 ]?.trim() || '';
+	const isDomainSpecialInput = isSpecialInput( _domain );
+
+	const getFinalizedDomain = useCallback(
+		( _domain: string ) => {
+			const domain_lc = _domain.toLowerCase();
+			if ( isDomainSpecialInput ) {
+				if ( domain_lc.includes( 'wordpress.com/site-profiler' ) ) {
+					return 'wordpress.com/site-profiler';
+				} else if ( domain_lc.includes( 'localhost' ) ) {
+					return 'localhost';
+				} else if ( domain_lc.includes( '127.0.0.1' ) ) {
+					return '127.0.0.1';
+				}
+			}
+			return sanitize ? getFixedDomainSearch( extractDomainFromInput( domain_lc ) ) : domain_lc;
+		},
+		[ isDomainSpecialInput, sanitize ]
+	);
 
 	useEffect( () => {
-		const _domain = ( queryParams.get( 'domain' ) || '' ).trim();
-
 		try {
 			if ( _domain ) {
 				// Only allow domains with a dot in them (not localhost, for example).
-				if ( ! _domain.includes( '.' ) ) {
+				if ( ! _domain.includes( '.' ) || isDomainSpecialInput ) {
 					throw new Error( 'Invalid domain' );
 				}
 
@@ -35,9 +58,11 @@ export default function useDomainQueryParam( sanitize = true ) {
 		} catch ( e ) {
 			setIsValid( false );
 		}
+		const finalizedDomain = getFinalizedDomain( _domain );
+		const specialDomains = getSpecialDomainMapping( finalizedDomain );
+		setSpecialDomainMapping( specialDomains );
+		setDomain( finalizedDomain );
+	}, [ _domain, getFinalizedDomain, isDomainSpecialInput ] );
 
-		setDomain( sanitize ? getFixedDomainSearch( extractDomainFromInput( _domain ) ) : _domain );
-	}, [ queryParams ] );
-
-	return { domain, isValid };
+	return { domain, isValid, specialDomainMapping, isDomainSpecialInput };
 }

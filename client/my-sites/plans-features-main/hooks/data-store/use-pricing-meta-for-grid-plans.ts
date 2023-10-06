@@ -182,6 +182,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					billingPeriod: pricedAPIPlan?.bill_period,
 					currencyCode: pricedAPIPlan?.currency_code,
 					introOffer: sitePlan?.introOffer,
+					expiry: sitePlan?.expiry,
 				},
 			};
 		},

@@ -2,13 +2,13 @@ import {
 	FormStatus,
 	TransactionStatus,
 	useTransactionStatus,
-	useLineItems,
 	useFormStatus,
 	Button,
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
+import { useLineItems } from '../src/lib/line-items';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const ButtonPayPalIcon = styled( PaypalLogo )`

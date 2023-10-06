@@ -50,12 +50,15 @@ class PostByline extends Component {
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor =
-			! compact &&
 			hasAuthorName &&
 			! isAuthorNameBlocked( post.author.name ) &&
 			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
+
+		// Use the siteName if not showing it elsewhere, otherwise use the slug.
+		const bylineSiteName = ! showSiteName ? siteName : siteSlug;
+		const showDate = post.date && post.URL;
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
@@ -71,54 +74,64 @@ class PostByline extends Component {
 					/>
 				) }
 				<div className="reader-post-card__byline-details">
-					{ ( shouldDisplayAuthor || showSiteName ) && ! compact && (
-						<div className="reader-post-card__byline-author-site">
-							{ shouldDisplayAuthor && (
-								<ReaderAuthorLink
-									className="reader-post-card__link"
-									author={ post.author }
-									siteUrl={ streamUrl }
-									post={ post }
-								>
-									{ post.author.name }
-								</ReaderAuthorLink>
-							) }
-							{ shouldDisplayAuthor && showSiteName ? ', ' : '' }
-							{ showSiteName && (
-								<ReaderSiteStreamLink
-									className="reader-post-card__site reader-post-card__link"
-									feedId={ feedId }
-									siteId={ siteId }
-									post={ post }
-								>
-									{ siteName }
-								</ReaderSiteStreamLink>
-							) }
+					{ showSiteName && ! compact && (
+						<div className="reader-post-card__byline-site">
+							<ReaderSiteStreamLink
+								className="reader-post-card__site reader-post-card__link"
+								feedId={ feedId }
+								siteId={ siteId }
+								post={ post }
+							>
+								{ siteName }
+							</ReaderSiteStreamLink>
 						</div>
 					) }
-					<div className="reader-post-card__timestamp-and-tag">
-						{ post.date && post.URL && (
-							<span className="reader-post-card__timestamp">
-								<a
-									className="reader-post-card__timestamp-slug"
-									onClick={ this.recordStubClick }
-									href={ siteUrl }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{ /* Use the siteName if not showing it above, otherwise use the slug */ }
-									{ ! showSiteName ? siteName : siteSlug }
-								</a>
-								<span className="reader-post-card__timestamp-bullet">·</span>
-								<a
-									className="reader-post-card__timestamp-link"
-									onClick={ this.recordDateClick }
-									href={ post.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<TimeSince date={ post.date } />
-								</a>
+					<div className="reader-post-card__author-and-timestamp">
+						{ ( shouldDisplayAuthor || bylineSiteName || showDate ) && (
+							<span className="reader-post-card__byline-secondary">
+								{ shouldDisplayAuthor && (
+									<>
+										<ReaderAuthorLink
+											// className="reader-post-card__link"
+											className="reader-post-card__byline-secondary-item"
+											author={ post.author }
+											siteUrl={ streamUrl }
+											post={ post }
+										>
+											{ post.author.name }
+										</ReaderAuthorLink>
+										{ ( bylineSiteName || showDate ) && (
+											<span className="reader-post-card__byline-secondary-bullet">·</span>
+										) }
+									</>
+								) }
+								{ bylineSiteName && (
+									<>
+										<a
+											className="reader-post-card__byline-secondary-item"
+											onClick={ this.recordStubClick }
+											href={ siteUrl }
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{ bylineSiteName }
+										</a>
+										{ showDate && (
+											<span className="reader-post-card__byline-secondary-bullet">·</span>
+										) }
+									</>
+								) }
+								{ showDate && (
+									<a
+										className="reader-post-card__byline-secondary-item"
+										onClick={ this.recordDateClick }
+										href={ post.URL }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<TimeSince date={ post.date } />
+									</a>
+								) }
 							</span>
 						) }
 					</div>

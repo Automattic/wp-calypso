@@ -30,7 +30,7 @@ type UnpackPromisedValue< T > = T extends ( ...args: unknown[] ) => infer R
 
 export type DnsMenuOptionsButtonProps = {
 	domain: ResponseDomain | undefined;
-	pointsToWpcom: boolean;
+	hasDefaultARecords: boolean;
 	hasDefaultCnameRecord: boolean;
 	dns: Dns;
 	dispatchApplyDnsTemplate: UnpackPromisedValue< typeof applyDnsTemplate >;

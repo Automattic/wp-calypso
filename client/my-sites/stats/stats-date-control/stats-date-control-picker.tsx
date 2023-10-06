@@ -7,6 +7,7 @@ import React, { useState, useRef } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
+import './style.scss';
 
 const DateControlPicker = ( {
 	slug,
@@ -19,6 +20,7 @@ const DateControlPicker = ( {
 	const [ inputEndDate, setInputEndDate ] = useState(
 		new Date( new Date().setMonth( new Date().getMonth() - 3 ) ).toISOString().slice( 0, 10 )
 	);
+	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
@@ -68,6 +70,8 @@ const DateControlPicker = ( {
 		// Calc new end date based on start date plus range as specified in shortcut.
 		const newEndDate = calcNewDateWithOffset( newStartDate, shortcut.range );
 		setInputEndDate( formattedDate( newEndDate ) );
+
+		setCurrentShortcut( shortcut.id || '' );
 	};
 
 	const formatDate = ( date: string ) => {
@@ -77,7 +81,7 @@ const DateControlPicker = ( {
 	return (
 		<>
 			<Button
-				variant="primary"
+				className="stats-date-control-picker__button"
 				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
 				ref={ infoReferenceElement }
 			>
@@ -99,6 +103,7 @@ const DateControlPicker = ( {
 				/>
 				<DateControlPickerShortcuts
 					shortcutList={ shortcutList }
+					currentShortcut={ currentShortcut }
 					onClick={ handleShortcutSelected }
 				/>
 			</Popover>

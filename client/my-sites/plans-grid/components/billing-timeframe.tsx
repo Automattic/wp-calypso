@@ -8,6 +8,7 @@ import {
 	getPlanSlugForTermVariant,
 	TERM_ANNUALLY,
 	isWooExpressPlan,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import styled from '@emotion/styled';
@@ -23,7 +24,11 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 
-	if ( isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
+	if (
+		isWpComFreePlan( planSlug ) ||
+		isWpcomEnterpriseGridPlan( planSlug ) ||
+		planSlug === PLAN_HOSTING_TRIAL_MONTHLY
+	) {
 		return null;
 	}
 
@@ -38,7 +43,12 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 		storageAddOns: storageAddOnsForPlan,
 	} )?.[ yearlyVariantPlanSlug ];
 
-	if ( isMonthlyPlan && originalPrice?.monthly && yearlyVariantPricing && ! introOffer ) {
+	if (
+		isMonthlyPlan &&
+		originalPrice?.monthly &&
+		yearlyVariantPricing &&
+		( ! introOffer || introOffer.isOfferComplete )
+	) {
 		const yearlyVariantMaybeDiscountedPrice =
 			yearlyVariantPricing.discountedPrice?.monthly || yearlyVariantPricing.originalPrice?.monthly;
 
@@ -78,7 +88,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	 * The introOffer billing should fall below into the next block once experiment with Woo plans is finalized.
 	 * We only expose introOffers to monthly & yearly plans for now (so no need to introduce more translations just yet).
 	 */
-	if ( introOffer?.intervalCount && introOffer.intervalUnit ) {
+	if ( introOffer?.intervalCount && introOffer.intervalUnit && ! introOffer.isOfferComplete ) {
 		if ( discountedPriceFullTermText ) {
 			if ( isMonthlyPlan ) {
 				return translate(
@@ -243,7 +253,11 @@ const PlanFeatures2023GridBillingTimeframe = ( { planSlug }: Props ) => {
 	const perMonthDescription = usePerMonthDescription( { planSlug } );
 	const description = perMonthDescription || billingTimeframe;
 
-	if ( isWooExpressPlan( planSlug ) && isMonthlyPlan && ! introOffer ) {
+	if (
+		isWooExpressPlan( planSlug ) &&
+		isMonthlyPlan &&
+		( ! introOffer || introOffer.isOfferComplete )
+	) {
 		return (
 			<div>
 				<div>{ billingTimeframe }</div>
