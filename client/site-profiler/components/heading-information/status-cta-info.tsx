@@ -8,7 +8,7 @@ interface Props {
 }
 export default function StatusCtaInfo( props: Props ) {
 	const { conversionAction, specialDomainMapping } = props;
-	// if there's a speical domain mapping, use that instead of the conversion action
+	// if there's a special domain mapping, use that instead of the conversion action
 	const finalStatus = specialDomainMapping ?? conversionAction;
 
 	switch ( finalStatus ) {

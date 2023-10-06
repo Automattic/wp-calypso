@@ -15,7 +15,7 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( 'Start Writing Tailored Onboarding', () => {
+describe( 'Signup: Tailored Start Writing Flow', () => {
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'start_writing',
 	} );

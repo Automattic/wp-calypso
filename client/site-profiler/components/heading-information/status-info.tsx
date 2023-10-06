@@ -1,9 +1,11 @@
+import { isMobile } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-import { UrlData } from 'calypso/blocks/import/types';
-import { HostingProvider } from 'calypso/data/site-profiler/types';
-import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
+import useHostingProviderName from '../../hooks/use-hosting-provider-name';
+import { Skeleton } from '../skeleton-screen';
 import type { SPECIAL_DOMAIN_CASES } from '../../utils/get-special-domain-mapping';
+import type { UrlData } from 'calypso/blocks/import/types';
+import type { HostingProvider } from 'calypso/data/site-profiler/types';
 
 interface Props {
 	conversionAction?: CONVERSION_ACTION;
@@ -14,7 +16,7 @@ interface Props {
 export default function StatusInfo( props: Props ) {
 	const { conversionAction, hostingProvider, urlData, specialDomainMapping } = props;
 	const hostingProviderName = useHostingProviderName( hostingProvider, urlData );
-	// if there's a speical domain mapping, use that instead of the conversion action
+	// if there's a special domain mapping, use that instead of the conversion action
 	const finalStatus = specialDomainMapping ?? conversionAction;
 	switch ( finalStatus ) {
 		case 'wordpress-com':
@@ -114,6 +116,6 @@ export default function StatusInfo( props: Props ) {
 				</p>
 			);
 		default:
-			return null;
+			return <Skeleton width={ isMobile() ? '100%' : '50%' } height={ 24 } />;
 	}
 }

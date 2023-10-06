@@ -751,6 +751,7 @@ const PlansFeaturesMain = ( {
 									/>
 									<div ref={ plansComparisonGridRef } className={ comparisonGridContainerClasses }>
 										<ComparisonGrid
+											isHidden={ ! showPlansComparisonGrid }
 											gridPlans={ gridPlansForComparisonGrid }
 											gridPlanForSpotlight={ gridPlanForSpotlight }
 											paidDomainName={ paidDomainName }

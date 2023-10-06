@@ -1,8 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography.scss";
 
-
 .stats-interval-dropdown__container {
+
+	width: 196px;
 
 	> .components-button {
 		border-radius: 2px;
@@ -20,17 +21,6 @@
 	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link:focus {
 		background-color: var(--studio-white);
 		color: var(--gutenberg-gray-900);
-	}
-
-	.components-popover__content {
-		width: 196px;
-		border-radius: 2px;
-		background-color: var(--studio-white);
-		box-shadow:
-			0 2.3px 3.3px -0.5px rgba(0, 0, 0, 0.1),
-			0 1.2px 1.7px -0.2px rgba(0, 0, 0, 0.1),
-			0 0.7px 1px 0 rgba(0, 0, 0, 0.1),
-			0 0 0 1px #ccc;
 	}
 
 	.segmented-control {
