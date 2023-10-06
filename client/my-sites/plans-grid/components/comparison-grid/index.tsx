@@ -22,6 +22,7 @@ import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-feat
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
+import { useGetFreeTrialSlugForPlan } from '../../hooks/use-get-free-trial-slug-for-plan';
 import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
@@ -374,6 +375,7 @@ const ComparisonGridHeaderCell = ( {
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedGridPlans: visibleGridPlans,
 	} );
+	const getFreeTrialSlugForPlan = useGetFreeTrialSlugForPlan( { flowName: flowName ?? null } );
 
 	if ( ! gridPlan ) {
 		return null;
@@ -453,7 +455,8 @@ const ComparisonGridHeaderCell = ( {
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
 				flowName={ flowName }
-				onUpgradeClick={ () => onUpgradeClick( planSlug ) }
+				freeTrialPlanSlug={ getFreeTrialSlugForPlan?.( planSlug ) }
+				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
 				isStuck={ false }
