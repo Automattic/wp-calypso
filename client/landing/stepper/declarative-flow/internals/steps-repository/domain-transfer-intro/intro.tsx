@@ -63,13 +63,13 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 							<p>
 								{ isEnglishLocale ||
 								hasTranslation(
-									"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."
+									"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration if your domain is registered before 1 July 2023."
 								)
 									? __(
-											"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."
+											"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration if your domain is registered before 1 July 2023."
 									  )
 									: __(
-											'Review your payment and contact details. Google Domains transfers and the first year are free.'
+											"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."
 									  ) }
 							</p>
 						),
