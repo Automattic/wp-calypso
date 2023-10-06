@@ -22,7 +22,6 @@ import {
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
 	TYPE_100_YEAR,
-	TYPE_HOSTING_TRIAL,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -375,7 +374,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_WOOEXPRESS_MEDIUM ]: () => this.getEcommerceFeatures(),
 				[ TYPE_WOOEXPRESS_SMALL ]: () => this.getEcommerceFeatures(),
 				[ TYPE_BUSINESS ]: () => this.getBusinessFeatures(),
-				[ TYPE_HOSTING_TRIAL ]: () => this.getBusinessFeatures(),
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),

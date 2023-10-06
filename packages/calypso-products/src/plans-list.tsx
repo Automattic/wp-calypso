@@ -441,7 +441,6 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
-	TYPE_HOSTING_TRIAL,
 	GROUP_P2,
 	FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
 	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
@@ -3674,7 +3673,7 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	...getPlanBusinessDetails(),
 	getPlanTagline: () => i18n.translate( 'Try all the features of our Business plan.' ),
-	type: TYPE_HOSTING_TRIAL,
+	type: TYPE_BUSINESS,
 	group: GROUP_WPCOM,
 	getProductId: () => 1058,
 	getPathSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,

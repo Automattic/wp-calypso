@@ -400,7 +400,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						canUserManageCurrentPlan={ canUserManageCurrentPlan }
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planSlug ) }
-						trialPlan={ isFreeHostingTrial( planSlug ) }
 						freePlan={ isFreePlan( planSlug ) }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
