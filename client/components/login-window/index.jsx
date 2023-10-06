@@ -56,7 +56,7 @@ const setUserInfoCookie = ( userData ) => {
 export default function useLoginWindow() {
 	const [ userInfo, setUserInfo ] = useState();
 	const [ loginWindowRef, setLoginWindowRef ] = useState();
-	const WordPress = () => {
+	const WordPressIcon = () => {
 		return (
 			<svg
 				width="20"
@@ -80,7 +80,7 @@ export default function useLoginWindow() {
 			cookieName: 'wpc_wpc',
 			name: 'WordPress.com',
 			popup: ',height=980,width=500',
-			icon: WordPress,
+			icon: WordPressIcon,
 			class: 'wordpress-login',
 		},
 	};
