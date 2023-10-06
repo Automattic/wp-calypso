@@ -139,12 +139,12 @@ class RegisterDomainStep extends Component {
 		handleClickUseYourDomain: PropTypes.func,
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 
-		saveSearchForLater: PropTypes.bool,
+		pauseAndSaveSearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		analyticsSection: 'domains',
-		saveSearchForLater: false,
+		pauseAndSaveSearch: false,
 		deemphasiseTlds: [],
 		includeDotBlogSubdomain: false,
 		includeWordPressDotCom: false,
@@ -268,7 +268,7 @@ class RegisterDomainStep extends Component {
 		}
 
 		// Run the blocked search if it's unblocked
-		if ( ! nextProps.blockSearch && this.props.blockSearch ) {
+		if ( ! nextProps.pauseAndSaveSearch && this.props.pauseAndSaveSearch ) {
 			this.doSavedSearch();
 		}
 	}
@@ -1300,7 +1300,7 @@ class RegisterDomainStep extends Component {
 			this.save
 		);
 
-		if ( this.props.blockSearch ) {
+		if ( this.props.pauseAndSaveSearch ) {
 			return;
 		}
 
