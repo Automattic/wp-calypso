@@ -427,7 +427,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 									onChange={ handlePriceChange( true ) }
 									currencySymbolPrefix={ currentCurrency }
 									onCurrencyChange={ handleCurrencyChange }
-									currencyList={ currencyList }
+									currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 									placeholder="0.00"
 									noWrap
 									className={ null }
