@@ -260,6 +260,14 @@ export class UserStep extends Component {
 
 		if ( isReskinned && 0 === positionInFlow ) {
 			subHeaderText = '';
+			if ( 'onboarding-pm' === flowName ) {
+				subHeaderText = translate(
+					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+					{
+						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+					}
+				);
+			}
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -520,7 +528,7 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					horizontal={ false }
+					horizontal={ true }
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
 				/>

@@ -1166,8 +1166,11 @@ class SignupForm extends Component {
 
 		const logInUrl = this.getLoginLink();
 
+		const excludedFlows = [ 'wpcc', 'onboarding-pm' ];
+
 		if (
-			( ! isVideoPressFlow( this.props.flowName ) && 'wpcc' !== this.props.flowName ) ||
+			( ! isVideoPressFlow( this.props.flowName ) &&
+				! excludedFlows.includes( this.props.flowName ) ) ||
 			isGravatar
 		) {
 			return (
