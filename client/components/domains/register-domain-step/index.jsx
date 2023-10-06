@@ -1243,7 +1243,7 @@ class RegisterDomainStep extends Component {
 		const {
 			lastQuery: domain,
 			savedQuery: searchQuery,
-			savedArgs: { shouldQuerySubdomains },
+			savedArgs: { shouldQuerySubdomains = true },
 		} = this.state;
 
 		enqueueSearchStatReport(
