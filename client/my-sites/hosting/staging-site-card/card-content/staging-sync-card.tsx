@@ -164,7 +164,7 @@ const StagingToProductionSync = ( {
 	disabled: boolean;
 	siteSlug: string;
 	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
-	selectedItems: string[];
+	selectedItems: CheckboxOptionItem[];
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 } ) => {
@@ -194,7 +194,7 @@ const StagingToProductionSync = ( {
 							</p>
 							<ConfirmationModalList>
 								{ selectedItems.map( ( item ) => {
-									return <li key={ item }>{ item }</li>;
+									return <li key={ item.name }>{ item.label }</li>;
 								} ) }
 							</ConfirmationModalList>
 							<ConfirmationModalInputTitle>
@@ -332,7 +332,7 @@ export const StagingSiteSyncCard = ( {
 	disabled,
 	error,
 }: StagingCardProps ) => {
-	const [ selectedItems, setSelectedItems ] = useState( [] as string[] );
+	const [ selectedItems, setSelectedItems ] = useState( [] as CheckboxOptionItem[] );
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, productionSiteId ) );
 	const {
@@ -342,19 +342,18 @@ export const StagingSiteSyncCard = ( {
 		error: checkStatusError,
 	} = useCheckSyncStatus( productionSiteId );
 
-	const onSelectItems = useCallback( ( items: CheckboxOptionItem[] ) => {
-		const itemNames =
+	const transformSelectedItems = useCallback( ( items: CheckboxOptionItem[] ) => {
+		return (
 			items.map( ( item ) => {
 				return item.name;
-			} ) || ( [] as string[] );
-
-		setSelectedItems( itemNames );
+			} ) || ( [] as string[] )
+		);
 	}, [] );
 
 	const onPushInternal = useCallback( () => {
 		resetSyncStatus();
-		onPush?.( selectedItems );
-	}, [ onPush, selectedItems, resetSyncStatus ] );
+		onPush?.( transformSelectedItems( selectedItems ) );
+	}, [ onPush, selectedItems, resetSyncStatus, transformSelectedItems ] );
 
 	const onPullInternal = useCallback( () => {
 		resetSyncStatus();
@@ -408,7 +407,7 @@ export const StagingSiteSyncCard = ( {
 				<StagingToProductionSync
 					siteSlug={ siteSlug || '' }
 					disabled={ disabled }
-					onSelectItems={ onSelectItems }
+					onSelectItems={ setSelectedItems }
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ onPushInternal }
@@ -432,7 +431,9 @@ export const ProductionSiteSyncCard = ( {
 	productionSiteId,
 	error,
 }: ProductionCardProps ) => {
-	const [ selectedItems, setSelectedItems ] = useState< string[] >( [] as string[] );
+	const [ selectedItems, setSelectedItems ] = useState< CheckboxOptionItem[] >(
+		[] as CheckboxOptionItem[]
+	);
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const {
@@ -448,19 +449,18 @@ export const ProductionSiteSyncCard = ( {
 	}, [ onPush, resetSyncStatus ] );
 	const syncError = error || checkStatusError;
 
-	const onSelectItems = useCallback( ( items: CheckboxOptionItem[] ) => {
-		const itemNames =
+	const transformSelectedItems = useCallback( ( items: CheckboxOptionItem[] ) => {
+		return (
 			items.map( ( item ) => {
 				return item.name;
-			} ) || ( [] as string[] );
-
-		setSelectedItems( itemNames );
+			} ) || ( [] as CheckboxOptionItem[] )
+		);
 	}, [] );
 
 	const onPullInternal = useCallback( () => {
 		resetSyncStatus();
-		onPull?.( selectedItems );
-	}, [ onPull, selectedItems, resetSyncStatus ] );
+		onPull?.( transformSelectedItems( selectedItems ) );
+	}, [ onPull, selectedItems, resetSyncStatus, transformSelectedItems ] );
 
 	const isSyncButtonDisabled =
 		disabled || ( selectedItems.length === 0 && selectedOption === 'pull' );
@@ -508,7 +508,7 @@ export const ProductionSiteSyncCard = ( {
 				<StagingToProductionSync
 					siteSlug={ siteSlug || '' }
 					disabled={ disabled }
-					onSelectItems={ onSelectItems }
+					onSelectItems={ setSelectedItems }
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ onPullInternal }

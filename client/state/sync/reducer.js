@@ -58,9 +58,9 @@ export const fetchingStatus = ( state = false, action ) => {
 export const isSyncingInProgress = ( state = false, action ) => {
 	switch ( action.type ) {
 		case IS_SYNCING_IN_PROGRESS:
-			return action.isSyncingInProgress;
+			return action.isSyncingInProgress || false;
 		case SET_STATUS:
-			return action.status && action.status !== SiteSyncStatus.COMPLETED;
+			return ( action.status && action.status !== SiteSyncStatus.COMPLETED ) || false;
 		case REQUEST_STATUS_FAILURE:
 			return false;
 		default:
