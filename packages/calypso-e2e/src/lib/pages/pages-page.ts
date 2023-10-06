@@ -1,8 +1,8 @@
-import { Page, Response } from 'playwright';
+import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 /**
- * Represents the Pages page
+ * Represents the Pages page.
  */
 export class PagesPage {
 	private page: Page;
@@ -19,20 +19,27 @@ export class PagesPage {
 	/**
 	 * Opens the Pages page.
 	 *
+	 * @param param0 Keyed object parameter.
+	 * @param {string} param0.siteSlug Site slug.
+	 * @param {number} param0.timeout Custom timeout.
+	 *
 	 * Example {@link https://wordpress.com/pages}
+	 * Example {@link https://wordpress.com/pages/usersiteslug.wordpress.com}
 	 */
-	async visit(): Promise< Response | null > {
-		const response = await this.page.goto( getCalypsoURL( 'pages' ) );
-		return response;
+	async visit( { siteSlug, timeout }: { siteSlug?: string; timeout?: number } = {} ) {
+		const url = `pages/${ siteSlug }`;
+		await this.page.goto( getCalypsoURL( url ), { timeout: timeout } );
+
+		// Wait for page entries (if any) to load. This also waits for the page to settle.
+		await this.page
+			.locator( 'card.is-placeholder' )
+			.waitFor( { state: 'detached', timeout: timeout } );
 	}
 
 	/**
 	 * Start a new page using the 'Add new page' button.
 	 */
-	async addNewPage(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.getByRole( 'link', { name: /(Add new|Start a) page/ } ).click(),
-		] );
+	async addNewPage() {
+		await this.page.getByRole( 'link', { name: /(Add new|Start a) page/ } ).click();
 	}
 }

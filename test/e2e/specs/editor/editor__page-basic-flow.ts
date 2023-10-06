@@ -35,6 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
 	);
 
+	let testAccount: TestAccount;
 	let page: Page;
 	let editorPage: EditorPage;
 	let pagesPage: PagesPage;
@@ -43,13 +44,13 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Visit Pages page', async function () {
 		pagesPage = new PagesPage( page );
-		await pagesPage.visit();
+		await pagesPage.visit( { siteSlug: testAccount.credentials.testSites?.primary.url } );
 	} );
 
 	it( 'Start a new page', async function () {
