@@ -8,6 +8,7 @@
 	padding: 48px 48px 28px;
 	max-width: 720px;
 	box-sizing: border-box;
+	text-wrap: pretty;
 
 	h1 {
 		@extend .wp-brand-font;
