@@ -67,10 +67,10 @@ export interface PlansGridProps {
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	/**
-	 * Due to the render heavy burden of the plans comparison grid the paren might chose to
-	 * hide the comparison grid with css but leave the render tree intact, unmounted.
+	 * Due to the render heavy burden of the plans comparison grid the client consumer of this component, might chose to
+	 * hide the comparison grid with css but leave the render tree intact, mounted.
 	 * An isHidden prop is passed down the tree so that any elements that are not part of the
-	 *  orthodox react tree like (Popovers, Modals, etc) can also be forcibly hidden
+	 * Normal react tree (like Popovers, Modals, etc) can also be forcibly hidden based on a tangible parameter
 	 */
 	isHidden?: boolean;
 }
