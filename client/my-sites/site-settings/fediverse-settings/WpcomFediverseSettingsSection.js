@@ -52,24 +52,6 @@ const DomainPendingWarning = ( { siteId } ) => {
 	);
 };
 
-const DomainCongratsCard = ( { user, isPending, siteId } ) => {
-	const translate = useTranslate();
-	return (
-		<Card className="site-settings__card">
-			<p>{ translate( 'Your site is using a custom domain! 🎉' ) }</p>
-			<p>
-				{ translate(
-					'Owning your domain unlocks account portability and a separate profile for each blog author. Here’s yours:'
-				) }
-			</p>
-			{ isPending && <DomainPendingWarning siteId={ siteId } /> }
-			<p>
-				<ClipboardButtonInput value={ user } />
-			</p>
-		</Card>
-	);
-};
-
 const EnabledSettingsSection = ( { data, siteId } ) => {
 	const translate = useTranslate();
 	const { blogIdentifier = '', userIdentifier } = data;
@@ -87,13 +69,6 @@ const EnabledSettingsSection = ( { data, siteId } ) => {
 					<ClipboardButtonInput value={ blogIdentifier } />
 				</p>
 			</Card>
-			{ hasDomain && (
-				<DomainCongratsCard
-					user={ userIdentifier }
-					isPending={ isDomainPending }
-					siteId={ siteId }
-				/>
-			) }
 		</>
 	);
 };
