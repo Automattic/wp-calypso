@@ -6,6 +6,14 @@ import Main from 'calypso/components/main';
 import SiteProfiler from 'calypso/site-profiler/components/site-profiler';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
+export function redirectToRoot( context: PageJS.Context, next: () => void ) {
+	if ( config.isEnabled( 'site-profiler' ) ) {
+		next();
+	} else {
+		page.redirect( '/' );
+	}
+}
+
 export function redirectSiteProfilerResult( context: PageJS.Context, next: () => void ) {
 	const { querystring } = context;
 	const queryParams = new URLSearchParams( querystring );
@@ -32,11 +40,6 @@ export function redirectSiteProfilerLanguage( context: PageJS.Context ) {
 
 export function siteProfilerContext( context: PageJS.Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-
-	if ( ! config.isEnabled( 'site-profiler' ) ) {
-		page.redirect( '/' );
-		return;
-	}
 
 	context.primary = (
 		<BrowserRouter>
