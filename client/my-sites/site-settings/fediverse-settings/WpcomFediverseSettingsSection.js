@@ -1,3 +1,4 @@
+import { FEATURE_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -9,6 +10,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { successNotice } from 'calypso/state/notices/actions';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteTitle, getSiteDomain, getSite } from 'calypso/state/sites/selectors';
 
 const DomainUpsellCard = ( { siteId } ) => {
@@ -54,10 +56,12 @@ const DomainPendingWarning = ( { siteId } ) => {
 
 const EnabledSettingsSection = ( { data, siteId } ) => {
 	const translate = useTranslate();
-	const { blogIdentifier = '', userIdentifier } = data;
-	const hasDomain = !! userIdentifier;
+	const { blogIdentifier = '' } = data;
+	const hasDomain = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_CUSTOM_DOMAIN )
+	);
 	// if the domain has been purchased, but isn't active yet because the site is still using *.wordpress.com
-	const isDomainPending = hasDomain && userIdentifier.match( /\.wordpress\.com$/ );
+	const isDomainPending = hasDomain && blogIdentifier.match( /\.wordpress\.com$/ );
 
 	return (
 		<>
