@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
@@ -33,6 +33,7 @@ class PostByline extends Component {
 		super( props );
 		this.secondaryBylineRef = createRef();
 		this.organizeBullets = this.organizeBullets.bind( this );
+		this.debouncedOrganizeBullets = debounce( this.organizeBullets, 100 );
 	}
 
 	/**
@@ -77,11 +78,11 @@ class PostByline extends Component {
 
 	componentDidMount() {
 		this.organizeBullets();
-		window.addEventListener( 'resize', this.organizeBullets );
+		window.addEventListener( 'resize', this.debouncedOrganizeBullets );
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.organizeBullets );
+		window.removeEventListener( 'resize', this.debouncedOrganizeBullets );
 	}
 
 	componentDidUpdate() {
