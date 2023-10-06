@@ -1,32 +1,33 @@
-import page from 'page';
 import {
+	clientRouter,
 	makeLayout,
 	render as clientRender,
 	setLocaleMiddleware,
 } from 'calypso/controller/index.web';
 import {
 	siteProfilerContext,
-	redirectToRoot,
+	featureFlagFirewall,
 	redirectSiteProfilerResult,
 	redirectSiteProfilerLanguage,
 } from 'calypso/site-profiler/controller';
 
-export default function () {
-	page(
+export default function ( router: typeof clientRouter ) {
+	const siteProfilerMiddleware = [
+		featureFlagFirewall,
+		redirectSiteProfilerResult,
+		siteProfilerContext,
+		makeLayout,
+		clientRender,
+	];
+
+	router(
 		'/:lang/site-profiler/:domain?',
-		redirectToRoot,
+		featureFlagFirewall,
 		setLocaleMiddleware(),
 		redirectSiteProfilerLanguage
 	);
 
-	page(
-		'/site-profiler',
-		redirectToRoot,
-		redirectSiteProfilerResult,
-		siteProfilerContext,
-		makeLayout,
-		clientRender
-	);
-	page( '/site-profiler/:domain', redirectToRoot, siteProfilerContext, makeLayout, clientRender );
-	page( '/site-profiler/:domain/*', redirectToRoot, siteProfilerContext, makeLayout, clientRender );
+	router( '/site-profiler', ...siteProfilerMiddleware );
+	router( '/site-profiler/:domain', ...siteProfilerMiddleware );
+	router( '/site-profiler/:domain/*', ...siteProfilerMiddleware );
 }

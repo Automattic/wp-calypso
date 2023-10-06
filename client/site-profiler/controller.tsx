@@ -6,7 +6,7 @@ import Main from 'calypso/components/main';
 import SiteProfiler from 'calypso/site-profiler/components/site-profiler';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
-export function redirectToRoot( context: PageJS.Context, next: () => void ) {
+export function featureFlagFirewall( context: PageJS.Context, next: () => void ) {
 	if ( config.isEnabled( 'site-profiler' ) ) {
 		next();
 	} else {
