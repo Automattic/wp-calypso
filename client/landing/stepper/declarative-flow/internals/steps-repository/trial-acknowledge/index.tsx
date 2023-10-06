@@ -1,23 +1,24 @@
-import { StepContainer } from '@automattic/onboarding';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { StepContainer, isAnyMigrationFlow } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import TrialPlan from './trial-plan';
+import { HostingTrialAcknowledge } from './hosting-trial-acknowledge';
+import { MigrationTrialAcknowledge } from './migration-trial-acknowledge';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import type { UserData } from 'calypso/lib/user/user';
 import './style.scss';
 
 const TrialAcknowledge: Step = function TrialAcknowledge( { navigation, flow, stepName } ) {
-	const site = useSite();
-	const siteSlug = useSiteSlug();
-	const user = useSelector( getCurrentUser ) as UserData;
-	const { goBack, submit } = navigation;
+	const { goBack } = navigation;
 
-	if ( ! site || ! siteSlug ) {
-		return null;
-	}
+	const getStepContent = () => {
+		if ( isAnyMigrationFlow( flow ) ) {
+			return (
+				<MigrationTrialAcknowledge flow={ flow } stepName={ stepName } navigation={ navigation } />
+			);
+		}
+
+		return (
+			<HostingTrialAcknowledge flow={ flow } navigation={ navigation } stepName={ stepName } />
+		);
+	};
 
 	return (
 		<StepContainer
@@ -28,16 +29,7 @@ const TrialAcknowledge: Step = function TrialAcknowledge( { navigation, flow, st
 			hideFormattedHeader={ true }
 			goBack={ goBack }
 			isWideLayout={ false }
-			stepContent={
-				<TrialPlan
-					user={ user }
-					site={ site }
-					siteSlug={ siteSlug }
-					flowName={ flow }
-					stepName={ stepName }
-					submit={ submit }
-				/>
-			}
+			stepContent={ getStepContent() }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
