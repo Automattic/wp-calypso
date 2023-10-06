@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
@@ -68,7 +67,7 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getExternalBackUrl } from './utils';
+import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 
 import './style.scss';
 
@@ -116,7 +115,7 @@ export class RenderDomainsStep extends Component {
 			this.skipRender = true;
 			const productSlug = getDomainProductSlug( domain );
 			const domainItem = domainRegistration( { productSlug, domain } );
-			const domainCart = this.shouldUseMultipleDomainsInCart()
+			const domainCart = shouldUseMultipleDomainsInCart( props.flowName, props.step?.suggestion )
 				? getDomainRegistrations( this.props.cart )
 				: {};
 
@@ -138,7 +137,6 @@ export class RenderDomainsStep extends Component {
 
 			props.goToNextStep();
 		}
-		this.shouldUseMultipleDomainsInCart = this.shouldUseMultipleDomainsInCart.bind( this );
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
 		this.state = {
 			currentStep: null,
@@ -321,29 +319,17 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
-	shouldUseMultipleDomainsInCart = () => {
-		const { step, flowName } = this.props;
-		if ( ! step ) {
-			return;
-		}
-
-		const enabledFlows = [ 'onboarding' ];
-
-		return isEnabled( 'domains/add-multiple-domains-to-cart' ) && enabledFlows.includes( flowName );
-	};
-
 	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
-		const { step } = this.props;
+		const { step, flowName } = this.props;
 		const { suggestion } = step;
 
-		if ( this.shouldUseMultipleDomainsInCart() && suggestion ) {
+		if ( shouldUseMultipleDomainsInCart( flowName, suggestion ) && suggestion ) {
 			return this.handleDomainToDomainCart( {
 				googleAppsCartItem,
 				shouldHideFreePlan,
 				signupDomainOrigin,
 			} );
 		}
-		const { flowName } = this.props;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -681,8 +667,8 @@ export class RenderDomainsStep extends Component {
 	};
 
 	getSideContent = () => {
-		const { translate } = this.props;
-		const domainsInCart = this.shouldUseMultipleDomainsInCart()
+		const { translate, flowName, step } = this.props;
+		const domainsInCart = shouldUseMultipleDomainsInCart( flowName, step?.suggestion )
 			? getDomainRegistrations( this.props.cart )
 			: [];
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
@@ -690,7 +676,9 @@ export class RenderDomainsStep extends Component {
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div
 				className={ classNames( 'domains__domain-side-content', {
-					'fade-out': this.shouldUseMultipleDomainsInCart() && domainsInCart.length > 0,
+					'fade-out':
+						shouldUseMultipleDomainsInCart( flowName, step?.suggestion ) &&
+						domainsInCart.length > 0,
 				} ) }
 			>
 				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
@@ -750,7 +738,7 @@ export class RenderDomainsStep extends Component {
 		};
 
 		const DomainsInCart =
-			( this.shouldUseMultipleDomainsInCart() && ! cartIsLoading ) ||
+			( shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) && ! cartIsLoading ) ||
 			this.state.showFreeSubdomain ? (
 				<div className="domains__domain-side-content domains__domain-cart">
 					<div className="domains__domain-cart-title">
@@ -978,7 +966,7 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
+		const { flowName, isAllDomains, stepSectionName, isReskinned, translate, step } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1019,14 +1007,14 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		if ( this.shouldUseMultipleDomainsInCart() ) {
+		if ( shouldUseMultipleDomainsInCart( flowName, step?.suggestion ) ) {
 			return translate( 'Find and claim one or more domain names' );
 		}
 
 		if ( isReskinned ) {
 			return (
 				! stepSectionName &&
-				'domain-transfer' !== this.props.flowName &&
+				'domain-transfer' !== flowName &&
 				translate( 'Enter some descriptive keywords to get started' )
 			);
 		}
@@ -1037,9 +1025,10 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, isReskinned, stepSectionName, translate } = this.props;
+		const { headerText, isAllDomains, isReskinned, stepSectionName, translate, flowName, step } =
+			this.props;
 
-		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === this.props.flowName ) {
+		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
 			return '';
 		}
 
@@ -1052,7 +1041,7 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			if ( this.shouldUseMultipleDomainsInCart() ) {
+			if ( shouldUseMultipleDomainsInCart( flowName, step?.suggestion ) ) {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
 			return ! stepSectionName && translate( 'Choose a domain' );
