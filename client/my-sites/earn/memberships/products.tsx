@@ -26,7 +26,7 @@ import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal
 import { Product, Query } from '../types';
 import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
-import MembershipsSection from './';
+import MembershipsSection from './section';
 import './style.scss';
 
 type MembersProductsSectionProps = {
@@ -90,8 +90,8 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 
 	function openAddEditDialog( productId?: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod ) => prod.ID === productId );
-			const currentAnnualProduct = products.find( ( prod ) => prod.tier === productId );
+			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
+			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
 			setShowAddEditDialog( true );
 			setProduct( currentProduct ?? null );
 			setAnnualProduct( currentAnnualProduct ?? null );
@@ -104,8 +104,8 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 
 	function openDeleteDialog( productId: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod ) => prod.ID === productId );
-			const currentAnnualProduct = products.find( ( prod ) => prod.tier === productId );
+			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
+			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
 			setShowDeleteDialog( true );
 			setProduct( currentProduct ?? null );
 			setAnnualProduct( currentAnnualProduct ?? null );
@@ -152,10 +152,10 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 			) }
 			{ hasLoadedFeatures &&
 				products
-					.filter( ( currentProduct ) => ! currentProduct.tier ) // We remove the "tiers" (the annual products with "tier" type)
-					.map( function ( currentProduct ) {
+					.filter( ( currentProduct: Product ) => ! currentProduct.tier ) // We remove the "tiers" (the annual products with "tier" type)
+					.map( function ( currentProduct: Product ) {
 						const currentAnnualProduct = products.find(
-							( _prod ) => _prod.tier === currentProduct.ID
+							( _prod: Product ) => _prod.tier === currentProduct.ID
 						);
 						const price = formatCurrency(
 							currentProduct?.price || 0,

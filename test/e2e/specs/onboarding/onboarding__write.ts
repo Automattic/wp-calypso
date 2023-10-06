@@ -6,37 +6,50 @@ import {
 	DataHelper,
 	StartSiteFlow,
 	RestAPIClient,
-	SecretsManager,
 	DomainSearchComponent,
 	SignupPickPlanPage,
 	NewSiteResponse,
-	TestAccount,
+	NewUserResponse,
+	LoginPage,
+	UserSignupPage,
 	EditorPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiDeleteSite } from '../shared';
+import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
+describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () {
 	const blogName = DataHelper.getBlogName();
 	const blogTagLine = `${ blogName } tagline`;
+	const testUser = DataHelper.getNewTestUser( {
+		usernamePrefix: 'signupfree',
+	} );
 
-	let siteCreatedFlag: boolean;
+	let newUserDetails: NewUserResponse;
 	let newSiteDetails: NewSiteResponse;
 	let page: Page;
 	let selectedFreeDomain: string;
 
 	beforeAll( async function () {
 		page = await browser.newPage();
-
-		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
-		await testAccount.authenticate( page );
 	} );
 
-	describe( 'Create site', function () {
-		it( 'Navigate to /new', async function () {
-			await page.goto( DataHelper.getCalypsoURL( 'start' ) );
+	describe( 'Register as new user', function () {
+		let loginPage: LoginPage;
+
+		it( 'Navigate to the Login page', async function () {
+			loginPage = new LoginPage( page );
+			await loginPage.visit();
+		} );
+
+		it( 'Click on button to create a new account', async function () {
+			await loginPage.clickCreateNewAccount();
+		} );
+
+		it( 'Sign up as a new user', async function () {
+			const userSignupPage = new UserSignupPage( page );
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 		} );
 
 		it( 'Select a .wordpress.com domain name', async function () {
@@ -48,8 +61,6 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		it( `Select WordPress.com Free plan`, async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page, selectedFreeDomain );
 			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
-
-			siteCreatedFlag = true;
 		} );
 	} );
 
@@ -95,18 +106,14 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( 'Write first post', async function () {
-			await Promise.all( [
-				page.waitForNavigation(),
-				startSiteFlow.clickButton( 'Start writing' ),
-			] );
+			await startSiteFlow.clickWriteAction( 'Start writing' );
 		} );
 
 		it( 'Editor loads', async function () {
 			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
 
-			const urlRegex = `/post/${ newSiteDetails.blog_details.site_slug }`;
-			expect( page.url() ).toMatch( urlRegex );
+			await page.waitForURL( new RegExp( newSiteDetails.blog_details.site_slug ) );
 		} );
 
 		it( 'Enter blog title', async function () {
@@ -119,41 +126,54 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 
 		it( 'First post congratulatory message is shown', async function () {
 			const editorParent = await editorPage.getEditorParent();
-
-			await editorParent.locator( ':text("Your first post is published!")' ).waitFor();
-			await page.keyboard.press( 'Escape' );
+			await editorParent
+				.getByRole( 'heading', { name: 'Your first post is published!' } )
+				.waitFor();
 		} );
 
-		it( 'Dismiss Launchpad modal if shown', async function () {
+		it( 'View Next Steps', async function () {
 			const editorParent = await editorPage.getEditorParent();
+			await editorParent.getByRole( 'button', { name: 'Next steps' } ).click();
+		} );
+	} );
 
-			const selector = '.launchpad__save-modal-buttons button';
-			const locator = editorParent.locator( selector );
-			try {
-				await locator.click( { timeout: 2000 } );
-			} catch {
-				// 	// noop;
-			}
+	describe( 'Launchpad', function () {
+		it( 'Launchpad is shown', async function () {
+			await page.waitForURL( /launchpad/ );
 		} );
 
-		it( 'Exit editor', async function () {
-			await editorPage.exitEditor();
+		it( 'Launch site', async function () {
+			await page.getByRole( 'button', { name: 'Launch your site' } ).click();
+
+			await page.waitForURL( /setup\/write\/processing/ );
+		} );
+
+		it( 'Post-launch congratulatory message is shown', async function () {
+			// User is redirected to the Home dashboard.
+			await page.waitForURL( /home/ );
+
+			await page.getByRole( 'dialog' ).getByRole( 'heading', { name: 'Congrats' } ).waitFor();
+		} );
+
+		it( 'Close congratulatory message', async function () {
+			await page.getByRole( 'dialog' ).getByRole( 'button', { name: 'Close' } ).click();
 		} );
 	} );
 
 	afterAll( async function () {
-		if ( ! siteCreatedFlag ) {
+		if ( ! newUserDetails ) {
 			return;
 		}
 
 		const restAPIClient = new RestAPIClient(
-			SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser
+			{ username: testUser.username, password: testUser.password },
+			newUserDetails.body.bearer_token
 		);
 
-		await apiDeleteSite( restAPIClient, {
-			url: newSiteDetails.blog_details.url,
-			id: newSiteDetails.blog_details.blogid,
-			name: newSiteDetails.blog_details.blogname,
+		await apiCloseAccount( restAPIClient, {
+			userID: newUserDetails.body.user_id,
+			username: newUserDetails.body.username,
+			email: testUser.email,
 		} );
 	} );
 } );

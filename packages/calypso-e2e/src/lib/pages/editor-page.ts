@@ -123,7 +123,7 @@ export class EditorPage {
 		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
 		// it is a fairly good stand-in.
 		await Promise.all( [
-			this.page.waitForURL( /(post|page|post-new.php)/ ),
+			this.page.waitForURL( /(post|page|post-new.php)/, { timeout: 60 * 1000 } ),
 			this.page.waitForResponse( /.*posts.*/, { timeout: 60 * 1000 } ),
 		] );
 

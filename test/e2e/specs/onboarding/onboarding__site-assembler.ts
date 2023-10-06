@@ -18,7 +18,7 @@ import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
-describe( 'Site Assembler', () => {
+describe( 'Onboarding: Site Assembler', () => {
 	let newSiteDetails: NewSiteResponse;
 	let page: Page;
 	let selectedFreeDomain: string;

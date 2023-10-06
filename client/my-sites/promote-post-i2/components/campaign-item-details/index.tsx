@@ -20,6 +20,7 @@ import Notice from 'calypso/components/notice';
 import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
+import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,
@@ -160,6 +161,18 @@ export default function CampaignItemDetails( props: Props ) {
 			href: getAdvertisingDashboardPath( `/campaigns/${ campaignId }/${ selectedSiteSlug }` ),
 		},
 	];
+
+	const adPreviewLabel =
+		// maybe we will need to edit this condition when we add more templates
+		format !== 'html5_v2' ? (
+			<div className="campaign-item-details__preview-header-dimensions">
+				<span>{ `${ width }x${ height }` }</span>
+			</div>
+		) : (
+			<div className="campaign-item-details__preview-header-preview-button">
+				<AdPreviewModal templateFormat={ format || '' } htmlCode={ creative_html || '' } />
+			</div>
+		);
 
 	const icon = (
 		<span className="campaign-item-details__support-buttons-icon">
@@ -609,14 +622,8 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__preview-header-title">
 									{ translate( 'Ad preview' ) }
 								</div>
-								<div className="campaign-item-details__preview-header-dimensions">
-									{ ! isLoading && format !== 'html5_v2' ? (
-										<>
-											<span>{ `${ width }x${ height }` }</span>
-										</>
-									) : (
-										<FlexibleSkeleton />
-									) }
+								<div className="campaign-item-details__preview-header-label">
+									{ ! isLoading ? <>{ adPreviewLabel }</> : <FlexibleSkeleton /> }
 								</div>
 							</div>
 							{ isSmallScreen && <hr className="campaign-item-ad-header-line" /> }
@@ -624,6 +631,7 @@ export default function CampaignItemDetails( props: Props ) {
 								isLoading={ isLoading }
 								htmlCode={ creative_html || '' }
 								templateFormat={ format || '' }
+								width={ format === 'html5_v2' ? '100%' : '300px' }
 							/>
 							<p className="campaign-item-details__preview-disclosure">
 								{ translate(

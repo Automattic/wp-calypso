@@ -213,7 +213,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
 			return;
 		}
-		const name = editedPostPaidNewsletter ? defaultNameTier : defaultNames[ `${ editedSchedule }` ];
+		const name = editedPostPaidNewsletter
+			? defaultNameTier
+			: defaultNames[ `${ editedSchedule }` ] ?? '';
+
 		setEditedProductName( name );
 	}, [ editedSchedule, editedPostPaidNewsletter ] );
 
@@ -361,6 +364,40 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						showDismiss={ false }
 					/>
 				) }
+				{ ! isFormValid( 'price' ) && (
+					<FormInputValidation
+						isError
+						text={ translate( 'Please enter a price higher than %s', {
+							args: [
+								formatCurrency(
+									minimumCurrencyTransactionAmount(
+										connectedAccountMinimumCurrency,
+										currentCurrency,
+										connectedAccountDefaultCurrency
+									),
+									currentCurrency
+								),
+							],
+						} ) }
+					/>
+				) }
+				{ editedPostPaidNewsletter && ! isFormValid( 'prices' ) && (
+					<FormInputValidation
+						isError
+						text={ translate( 'Please enter a annual price higher than the monthly price', {
+							args: [
+								formatCurrency(
+									minimumCurrencyTransactionAmount(
+										connectedAccountMinimumCurrency,
+										currentCurrency,
+										connectedAccountDefaultCurrency
+									),
+									currentCurrency
+								),
+							],
+						} ) }
+					/>
+				) }
 				{ /* Price settings for a tier plan */ }
 				{ editedPostPaidNewsletter && (
 					<>
@@ -374,7 +411,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 									onChange={ handlePriceChange( false ) }
 									currencySymbolPrefix={ currentCurrency }
 									onCurrencyChange={ handleCurrencyChange }
-									currencyList={ currencyList }
+									currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 									placeholder="0.00"
 									noWrap
 									className={ null }
@@ -425,7 +462,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 								onChange={ handlePriceChange( false ) }
 								currencySymbolPrefix={ currentCurrency }
 								onCurrencyChange={ handleCurrencyChange }
-								currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
+								currencyList={ currencyList }
 								placeholder="0.00"
 								noWrap
 								className={ null }

@@ -1,4 +1,5 @@
 import { Button, Dropdown } from '@wordpress/components';
+import { check } from '@wordpress/icons';
 import React, { useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import './style.scss';
@@ -31,6 +32,7 @@ const IntervalDropdown = ( { period, pathTemplate } ) => {
 						pathTemplate={ pathTemplate }
 						compact={ false }
 						onChange={ setCurrentInterval }
+						icon={ check }
 					/>
 				</div>
 			) }
