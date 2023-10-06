@@ -1,6 +1,20 @@
 export interface TaskExtraData {
 	about_page_id?: number;
 }
+
+export type TaskBody =
+	| {
+			type: 'text';
+			content: string;
+	  }
+	| {
+			type: 'link';
+			content: string;
+			options: {
+				href: string;
+			};
+	  };
+
 export interface Task {
 	id: string;
 	completed: boolean;
@@ -16,6 +30,7 @@ export interface Task {
 	repetition_count?: number;
 	order?: number;
 	useCalypsoPath?: boolean;
+	body?: TaskBody[];
 }
 
 export type LaunchpadChecklist = Task[];

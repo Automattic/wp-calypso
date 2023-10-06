@@ -5,10 +5,7 @@
 .checklist-item__task-content {
 	align-items: flex-start;
 	background-color: transparent;
-	border-bottom: 1px solid var(--studio-gray-5);
-	border-left: none;
-	border-right: none;
-	border-top: none;
+	border: none;
 	display: flex;
 	flex-wrap: wrap;
 	padding: 16px 0;
@@ -42,7 +39,7 @@
 .button.checklist-item__task-content:focus:not([disabled]) {
 	fill: var(--studio-blue-50);
 	color: var(--studio-blue-50);
-	border-bottom: 1px solid var(--studio-gray-5);
+	// border-bottom: 1px solid var(--studio-gray-5);
 }
 
 .checklist-item__task-content .badge {
@@ -107,21 +104,14 @@
 	color: var(--color-neutral-100);
 }
 
-.checklist__has-primary-action .checklist-item__task:nth-last-child(2) {
-
-	// remove bottom border for last checklist item before the primary button
-	.checklist-item__task-content,
-	.checklist-item__task-content:hover,
-	.checklist-item__task-content:focus {
-		border-bottom: none;
-	}
+.checklist-item__task:not(:nth-last-child(2)) {
+	border-bottom: 1px solid var(--studio-gray-5);
 }
 
-.checklist-item__task:last-child {
-	.checklist-item__task-content,
-	.checklist-item__task-content:hover,
-	.checklist-item__task-content:focus {
-		border-bottom: none;
+.checklist-item__body-row {
+	padding-bottom: 16px;
+	.components-button:not(:last-child) {
+		margin-right: 0.5em;
 	}
 }
 

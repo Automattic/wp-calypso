@@ -2,6 +2,7 @@ import { Badge, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
 import { Task } from '../types';
+import { Body } from './body';
 
 import './style.scss';
 
@@ -84,6 +85,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 					{ subtitle && <p className="checklist-item__subtext">{ subtitle }</p> }
 				</Button>
 			) }
+			{ task.body && task.body.length && <Body body={ task.body } /> }
 		</li>
 	);
 };
