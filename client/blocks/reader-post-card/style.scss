@@ -370,10 +370,22 @@
 	outline: dotted 1px;
 }
 
-.reader-post-card__byline-secondary-bullet {
-	color: var(--color-text-subtle);
-	display: inline-block;
-	margin: 0 4px;
+.reader-post-card__byline-secondary-item {
+	// Add extra margin to give space for the bullet that may exist between items.
+	margin-right: 12px;
+	&:last-of-type {
+		margin-right: 0;
+	}
+}
+
+.reader-post-card__byline-secondary-bullet-wrapper {
+	position: relative;
+	// Set bullet as relative absoulte position so it doesnt affect the layout when hiding it.
+	.reader-post-card__byline-secondary-bullet {
+		color: var(--color-text-subtle);
+		position: absolute;
+		left: -8px;
+	}
 }
 
 .reader-post-card__byline-details {
