@@ -37,7 +37,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { FeaturesGrid, ComparisonGrid } from 'calypso/my-sites/plans-grid';
-import useGridPlanFeaturesForWooExpressIntroductoryOffers from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plan-features-for-woo-express-introductory-offers';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
@@ -372,30 +371,22 @@ const PlansFeaturesMain = ( {
 		shouldDisplayFreeHostingTrial,
 	} );
 
-	const planFeaturesForFeaturesGrid = useGridPlanFeaturesForWooExpressIntroductoryOffers(
+	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
+		gridPlans: gridPlans || [],
+		allFeaturesList: FEATURES_LIST,
 		intent,
-		gridPlans,
-		usePlanFeaturesForGridPlans( {
-			planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
-			allFeaturesList: FEATURES_LIST,
-			intent,
-			selectedFeature,
-			showLegacyStorageFeature,
-			isInSignup,
-		} )
-	);
+		selectedFeature,
+		showLegacyStorageFeature,
+		isInSignup,
+	} );
 
-	const planFeaturesForComparisonGrid = useGridPlanFeaturesForWooExpressIntroductoryOffers(
+	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
+		gridPlans: gridPlans || [],
+		allFeaturesList: FEATURES_LIST,
 		intent,
-		gridPlans,
-		useRestructuredPlanFeaturesForComparisonGrid( {
-			planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
-			allFeaturesList: FEATURES_LIST,
-			intent,
-			selectedFeature,
-			showLegacyStorageFeature,
-		} )
-	);
+		selectedFeature,
+		showLegacyStorageFeature,
+	} );
 
 	// TODO: `useFilterPlansForPlanFeatures` should gradually deprecate and whatever remains to fall into the `useGridPlans` hook
 	const filteredPlansForPlanFeatures = useFilterPlansForPlanFeatures( {

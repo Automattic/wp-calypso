@@ -2,8 +2,8 @@ import {
 	applyTestFiltersToPlansList,
 	isMonthly,
 	isWooExpressPlan,
-	type PlanSlug,
 	type FeatureList,
+	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
@@ -12,16 +12,17 @@ import type {
 	TransformedFeatureObject,
 	PlanFeaturesForGridPlan,
 	PlansIntent,
+	GridPlan,
 } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
-	planSlugs,
+	gridPlans,
 	allFeaturesList,
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
 }: {
-	planSlugs: PlanSlug[];
+	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
@@ -29,21 +30,9 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
-	( {
-		planSlugs,
-		allFeaturesList,
-		intent,
-		selectedFeature,
-		showLegacyStorageFeature,
-	}: {
-		planSlugs: PlanSlug[];
-		allFeaturesList: FeatureList;
-		intent?: PlansIntent;
-		selectedFeature?: string | null;
-		showLegacyStorageFeature?: boolean;
-	} ) => {
+	( { gridPlans, allFeaturesList, intent, selectedFeature, showLegacyStorageFeature } ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
-			planSlugs,
+			gridPlans,
 			allFeaturesList,
 			intent,
 			selectedFeature,
@@ -54,7 +43,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			let previousPlan = null;
 			const planFeatureMap: Record< string, PlanFeaturesForGridPlan > = {};
 
-			for ( const planSlug of planSlugs ) {
+			for ( const gridPlan of gridPlans ) {
+				const planSlug = gridPlan.planSlug;
 				const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.();
 				const isMonthlyPlan = isMonthly( planSlug );
@@ -129,7 +119,17 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 					wpcomFeatures: [
 						...featuresAvailable.wpcomFeatures,
 						...previousPlanFeatures.wpcomFeatures,
-					],
+					].filter( ( feature ) => {
+						// Remove the custom domain feature for Woo Express plans with an introductory offer.
+						if (
+							'plans-woocommerce' === intent &&
+							gridPlan.pricing.introOffer &&
+							FEATURE_CUSTOM_DOMAIN === feature.getSlug()
+						) {
+							return false;
+						}
+						return true;
+					} ),
 					jetpackFeatures: [
 						...featuresAvailable.jetpackFeatures,
 						...previousPlanFeatures.jetpackFeatures,
@@ -143,8 +143,9 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				previousPlan = planSlug;
 			}
+
 			return planFeatureMap;
-		}, [ allFeaturesList, planFeaturesForGridPlans, planSlugs ] );
+		}, [ gridPlans, allFeaturesList, intent, planFeaturesForGridPlans ] );
 
 		return restructuredFeatures;
 	};
