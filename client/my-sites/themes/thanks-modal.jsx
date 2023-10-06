@@ -17,7 +17,6 @@ import {
 	doesThemeBundleUsableSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
-	getLivePreviewingTheme,
 	getIsLivePreviewStarted,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
@@ -243,14 +242,10 @@ class ThanksModal extends Component {
 	};
 
 	getLoadingLabel = () => {
-		const { isLivePreviewStarted, livePreviewingThemeName } = this.props;
+		const { isLivePreviewStarted } = this.props;
 
 		if ( isLivePreviewStarted ) {
-			return this.props.translate( 'Preparing the %(themeName) preview', {
-				args: {
-					themeName: livePreviewingThemeName,
-				},
-			} );
+			return this.props.translate( 'Preparing the Preview & Customize…' );
 		}
 
 		return this.props.translate( 'Activating theme…' );
@@ -383,14 +378,9 @@ const ConnectedThanksModal = connect(
 
 		const activatingThemeId = state.themes.activationRequests?.themeId;
 
-		const livePreviewingThemeId = getLivePreviewingTheme( state );
-		const livePreviewingThemeName = livePreviewingThemeId
-			? getCanonicalTheme( state, siteId, livePreviewingThemeId )?.name || livePreviewingThemeId
-			: null;
 		const isLivePreviewStarted = getIsLivePreviewStarted( state );
 
 		return {
-			livePreviewingThemeName,
 			siteId,
 			siteUrl,
 			siteSlug: getSiteSlug( state, siteId ),
