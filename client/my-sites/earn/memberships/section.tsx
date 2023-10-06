@@ -14,6 +14,7 @@ import { userCan } from 'calypso/lib/site/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
 	getConnectedAccountIdForSiteId,
@@ -23,10 +24,7 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
 import { Query } from '../types';
-import {
-	ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
-	LAUNCHPAD_HASH,
-} from './constants';
+import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH, LAUNCHPAD_HASH } from './constants';
 import './style.scss';
 
 type MembershipsSectionProps = {
@@ -180,7 +178,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		if ( stripe_connect_success === 'earn' ) {
 			const siteHasPlans = products.length !== 0;
 
-			let congratsText = '';
+			let congratsText;
 			if ( ! siteHasPlans ) {
 				congratsText = translate(
 					'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
@@ -190,13 +188,13 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			}
 
 			return (
-				<Notice status="is-success" showDismiss={ false } text={ congratsText }>
-					{ ! siteHasPlans && (
+				! siteHasPlans && (
+					<Notice status="is-success" showDismiss={ false } text={ congratsText }>
 						<NoticeAction href={ `/earn/payments-plans/${ site?.slug }` } icon="create">
 							{ translate( 'Add a payment plan' ) }
 						</NoticeAction>
-					) }
-				</Notice>
+					</Notice>
+				)
 			);
 		}
 

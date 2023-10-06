@@ -26,7 +26,7 @@ import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal
 import { Product, Query } from '../types';
 import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
-import MembershipsSection from './';
+import MembershipsSection from './section';
 import './style.scss';
 
 type MembersProductsSectionProps = {
