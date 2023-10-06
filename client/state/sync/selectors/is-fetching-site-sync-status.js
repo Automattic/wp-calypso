@@ -4,10 +4,10 @@ import { getSiteSync } from 'calypso/state/sync/selectors/get-site-sync';
 import 'calypso/state/automated-transfer/init';
 
 /**
- * Returns whether we are already fetching the sync status for given siteId.
- * @param {Object} state global app state
+ * Returns whether we are fetching sync status for given siteId
+ * @param {Object} state global state
  * @param {?number} siteId requested site for sync status info
- * @returns {?boolean} whether we are fetching sync status for given siteId
+ * @returns {?boolean} Whether we are fetching sync status for given siteId
  */
 export default ( state, siteId ) => {
 	if ( ! siteId ) {

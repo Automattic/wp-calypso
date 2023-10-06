@@ -29,12 +29,14 @@ describe( 'state', () => {
 						status: 'completed',
 						progress: 1,
 						isSyncingInProgress: true,
+						syncingSiteType: 'production',
 						fetchingStatus: true,
 					},
 				};
 				const serialized = serialize( persistentReducer, AT_STATE ).root();
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'status' );
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'progress' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingSiteType' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'fetchingStatus' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'isSyncingInProgress' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'error' );
@@ -42,6 +44,7 @@ describe( 'state', () => {
 				const deserialized = deserialize( persistentReducer, AT_STATE );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'status' );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'progress' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingSiteType' );
 				// The non-persisted property has default value, persisted value is ignored
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'isSyncingInProgress', false );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'fetchingStatus', false );
@@ -54,6 +57,7 @@ describe( 'state', () => {
 					status: SiteSyncStatus.COMPLETED,
 					progress: 1,
 					isSyncingInProgress: true,
+					syncingSiteType: 'production',
 					fetchingStatus: false,
 					error: null,
 				};
@@ -68,6 +72,7 @@ describe( 'state', () => {
 					status: SiteSyncStatus.PENDING,
 					progress: 1,
 					isSyncingInProgress: true,
+					syncingSiteType: 'production',
 					fetchingStatus: false,
 					error: null,
 				};

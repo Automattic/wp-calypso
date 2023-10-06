@@ -266,7 +266,7 @@ const SyncCardContainer = ( {
 	children: React.ReactNode;
 	progress: number;
 	isSyncInProgress: boolean;
-	siteToSync: 'production' | 'staging';
+	siteToSync: 'production' | 'staging' | null;
 	error?: string | null;
 	onRetry?: () => void;
 } ) => {
@@ -290,7 +290,7 @@ const SyncCardContainer = ( {
 							icon="mention"
 							showDismiss={ false }
 							text={ translate( 'We couldn’t synchronize the %s environment.', {
-								args: [ siteToSync ],
+								args: [ siteToSync ?? '' ],
 							} ) }
 						>
 							<NoticeAction onClick={ () => onRetry?.() }>
@@ -340,6 +340,7 @@ export const StagingSiteSyncCard = ( {
 		resetSyncStatus,
 		isSyncInProgress,
 		error: checkStatusError,
+		siteType,
 	} = useCheckSyncStatus( productionSiteId );
 
 	const transformSelectedItems = useCallback( ( items: CheckboxOptionItem[] ) => {
@@ -364,9 +365,16 @@ export const StagingSiteSyncCard = ( {
 		disabled || ( selectedItems.length === 0 && selectedOption === 'push' );
 	const syncError = error || checkStatusError;
 
+	let siteToSync = '';
+	if ( siteType ) {
+		siteToSync = siteType;
+	} else {
+		siteToSync = selectedOption === 'push' ? 'production' : 'staging';
+	}
+
 	return (
 		<SyncCardContainer
-			siteToSync={ selectedOption === 'push' ? 'production' : 'staging' }
+			siteToSync={ siteToSync }
 			isSyncInProgress={ isSyncInProgress }
 			progress={ progress }
 			error={ syncError }
@@ -441,6 +449,7 @@ export const ProductionSiteSyncCard = ( {
 		resetSyncStatus,
 		isSyncInProgress,
 		error: checkStatusError,
+		siteType,
 	} = useCheckSyncStatus( productionSiteId );
 
 	const onPushInternal = useCallback( () => {
@@ -465,9 +474,15 @@ export const ProductionSiteSyncCard = ( {
 	const isSyncButtonDisabled =
 		disabled || ( selectedItems.length === 0 && selectedOption === 'pull' );
 
+	let siteToSync = '';
+	if ( siteType ) {
+		siteToSync = siteType;
+	} else {
+		siteToSync = selectedOption === 'pull' ? 'production' : 'staging';
+	}
 	return (
 		<SyncCardContainer
-			siteToSync={ selectedOption === 'pull' ? 'production' : 'staging' }
+			siteToSync={ siteToSync }
 			progress={ progress }
 			isSyncInProgress={ isSyncInProgress }
 			error={ syncError }

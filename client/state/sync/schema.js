@@ -14,6 +14,10 @@ export const isSyncingInProgress = {
 	type: 'boolean',
 };
 
+export const syncingSiteType = {
+	type: [ 'string', 'null' ],
+};
+
 export const error = {
 	type: [ 'string', 'null' ],
 };
@@ -25,6 +29,7 @@ export const siteSyncSite = {
 		fetchingStatus,
 		progress,
 		isSyncingInProgress,
+		syncingSiteType,
 		error,
 	},
 };

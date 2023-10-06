@@ -6,7 +6,7 @@ import 'calypso/state/sync/init';
 
 /**
  * Helper to get status state from local sync state sub-tree
- * @param {Object} state automated transfer state sub-tree for a site
+ * @param {Object} state sync status state sub-tree for a site
  * @returns {string} status of transfer
  */
 export const getStatusData = ( state: AppState ): string | null => get( state, 'status', null );

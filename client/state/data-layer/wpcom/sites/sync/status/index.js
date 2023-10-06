@@ -3,7 +3,11 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { requestSite } from 'calypso/state/sites/actions';
-import { setSiteSyncStatus, siteSyncStatusFetchingFailure } from 'calypso/state/sync/actions';
+import {
+	setSiteSyncStatus,
+	siteSyncStatusFetchingFailure,
+	setSyncingSiteType,
+} from 'calypso/state/sync/actions';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
 
 export const requestStatus = ( action ) => {
@@ -20,9 +24,15 @@ export const requestStatus = ( action ) => {
 	);
 };
 export const receiveStatus =
-	( { siteId }, { status } ) =>
+	( { siteId }, { status, direction } ) =>
 	( dispatch ) => {
 		dispatch( setSiteSyncStatus( siteId, status ) );
+		if ( direction === 'pull' ) {
+			dispatch( setSyncingSiteType( siteId, 'production' ) );
+		}
+		if ( direction === 'push' ) {
+			dispatch( setSyncingSiteType( siteId, 'staging' ) );
+		}
 		if ( status === SiteSyncStatus.COMPLETED ) {
 			// Update the site object to reflect the new status
 			dispatch( requestSite( siteId ) );

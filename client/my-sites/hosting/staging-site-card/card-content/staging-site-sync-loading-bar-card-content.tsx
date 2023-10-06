@@ -11,7 +11,7 @@ const StyledLoadingBar = styled( LoadingBar )( {
 
 type CardContentProps = {
 	progress: number;
-	siteToSync: 'production' | 'staging';
+	siteToSync: 'production' | 'staging' | null;
 };
 
 export const StagingSiteSyncLoadingBarCardContent = ( {
@@ -25,10 +25,10 @@ export const StagingSiteSyncLoadingBarCardContent = ( {
 
 	const message = isOwner
 		? translate( 'We are updating your %s site. We’ll email you once it is ready.', {
-				args: [ siteToSync ],
+				args: [ siteToSync ?? '' ],
 		  } )
 		: translate( 'We are updating the %s site. We’ll email the site owner once it is ready.', {
-				args: [ siteToSync ],
+				args: [ siteToSync ?? '' ],
 		  } );
 	return (
 		<div data-testid="syncing-site-content">

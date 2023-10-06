@@ -5,15 +5,15 @@ import type { AppState } from 'calypso/types';
 import 'calypso/state/sync/init';
 
 /**
- * Helper to get status state from local sync state sub-tree
- * @param {Object} state automated transfer state sub-tree for a site
- * @returns {boolean} status of transfer
+ * Helper to get sync progress state from local sync state sub-tree
+ * @param {Object} state sync status state sub-tree for a site
+ * @returns {boolean} if syncing is in progress or not
  */
 export const getIsSyncingInProgressData = ( state: AppState ): boolean =>
 	get( state, 'isSyncingInProgress', false );
 
 /**
- * Returns status info for sync state
+ * Returns if syncing is in progress or not
  * @param {Object} state global app state
  * @param {number} siteId requested site for site sync info
  * @returns {boolean} if syncing is in progress or not

@@ -6,7 +6,7 @@ import 'calypso/state/sync/init';
 
 /**
  * Helper to get progress state from local sync state sub-tree
- * @param {Object} state automated transfer state sub-tree for a site
+ * @param {Object} state sync status state sub-tree for a site
  * @returns {number} progress of transfer
  */
 export const getProgressData = ( state: AppState ): number => get( state, 'progress', 0 );
@@ -15,6 +15,6 @@ export const getProgressData = ( state: AppState ): number => get( state, 'progr
  * Returns status info for sync progress
  * @param {Object} state global app state
  * @param {number} siteId requested site for site sync info
- * @returns {number} status if available else `null`
+ * @returns {number} progress of transfer
  */
 export const getSyncProgress = compose( getProgressData, getSiteSync );
