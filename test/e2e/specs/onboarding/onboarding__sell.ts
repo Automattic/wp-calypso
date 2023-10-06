@@ -25,7 +25,7 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( 'FTME: Sell', function () {
+describe( 'Onboarding: Sell Focus', function () {
 	const planName = 'Personal';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',

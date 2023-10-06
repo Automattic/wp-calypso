@@ -18,7 +18,7 @@ import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
+describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () {
 	const blogName = DataHelper.getBlogName();
 	const blogTagLine = `${ blogName } tagline`;
 
