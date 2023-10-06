@@ -65,10 +65,9 @@ class PostByline extends Component {
 
 			// If the items arent at the same vertical position, hide the bullet.
 			if ( item.offsetTop !== lastItem.offsetTop ) {
-				// For now, hide it but keep spacing.
 				bullets[ index - 1 ].style.visibility = 'hidden';
 			} else {
-				// If the items were on the same line, reset the style overrides.
+				// Otherwise, reset the inline style.
 				bullets[ index - 1 ].removeAttribute( 'style' );
 			}
 			// Prepare for next iteration.

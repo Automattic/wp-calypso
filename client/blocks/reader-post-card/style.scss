@@ -380,11 +380,13 @@
 
 .reader-post-card__byline-secondary-bullet-wrapper {
 	position: relative;
+	display: inline-block;
 	// Set bullet as relative absoulte position so it doesnt affect the layout when hiding it.
 	.reader-post-card__byline-secondary-bullet {
 		color: var(--color-text-subtle);
 		position: absolute;
 		left: -8px;
+		bottom: -5px;
 	}
 }
 
