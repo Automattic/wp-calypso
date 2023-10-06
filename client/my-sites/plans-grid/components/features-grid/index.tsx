@@ -50,6 +50,7 @@ interface FeaturesGridType extends PlansGridProps {
 	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
+	getFreeTrialPlanSlug?( planSlug: PlanSlug ): PlanSlug | undefined;
 }
 
 class FeaturesGrid extends Component< FeaturesGridType > {
@@ -365,6 +366,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			siteId,
 			isLargeCurrency,
 			handleUpgradeClick,
+			getFreeTrialPlanSlug,
 		} = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, availableForPurchase } ) => {
@@ -401,11 +403,14 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planSlug ) }
 						freePlan={ isFreePlan( planSlug ) }
+						freeTrialPlanSlug={ getFreeTrialPlanSlug?.( planSlug ) }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
-						onUpgradeClick={ () => handleUpgradeClick( planSlug ) }
+						onUpgradeClick={ ( overridePlanSlug ) =>
+							handleUpgradeClick( overridePlanSlug ?? planSlug )
+						}
 						planSlug={ planSlug }
 						flowName={ flowName }
 						currentSitePlanSlug={ currentSitePlanSlug }

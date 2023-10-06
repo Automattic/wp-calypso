@@ -11,7 +11,8 @@ $mobile-card-max-width: 440px;
 .plan-features-2023-grid__table-item.is-top-buttons,
 .plan-comparison-grid {
 	.plan-features-2023-gridrison__actions-buttons {
-		.plan-features-2023-grid__actions-button {
+		.plan-features-2023-grid__actions-button,
+		.plan-features-2023-grid__actions-trial-button {
 			font-weight: 500;
 			line-height: 20px;
 			border-radius: 4px;
@@ -56,6 +57,15 @@ $mobile-card-max-width: 440px;
 
 				&:focus {
 					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+				}
+
+				+ .plan-features-2023-grid__actions-trial-button {
+					border: 1px solid #7f54b3;
+					color: #7f54b3;
+
+					&:focus {
+						box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+					}
 				}
 			}
 
@@ -490,7 +500,13 @@ $mobile-card-max-width: 440px;
 	}
 }
 
+.plan-features-2023-grid__actions-button-container {
+	display: flex;
+	gap: 8px;
+}
+
 .plan-features-2023-grid__actions-button {
+	flex: 1;
 	width: 100%;
 
 	&.disabled,

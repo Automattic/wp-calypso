@@ -1,4 +1,8 @@
+import { isBusinessPlan, PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { isNewHostedSiteCreationFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
@@ -171,6 +175,8 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 		onUpgradeClick,
 	} );
 
+	const shouldDisplayFreeHostingTrialCTA = useSelector( isUserEligibleForFreeHostingTrial );
+
 	if ( props.isInSignup ) {
 		return (
 			<PlansGridContextProvider
@@ -187,6 +193,13 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 					currentPlanManageHref={ currentPlanManageHref }
 					translate={ translate }
 					handleUpgradeClick={ handleUpgradeClick }
+					getFreeTrialPlanSlug={ ( planSlug ) => {
+						return shouldDisplayFreeHostingTrialCTA &&
+							isNewHostedSiteCreationFlow( props.flowName ?? null ) &&
+							isBusinessPlan( planSlug )
+							? PLAN_HOSTING_TRIAL_MONTHLY
+							: undefined;
+					} }
 				/>
 			</PlansGridContextProvider>
 		);

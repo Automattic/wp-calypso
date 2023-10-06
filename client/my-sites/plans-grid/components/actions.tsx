@@ -34,8 +34,9 @@ type PlanFeaturesActionsButtonProps = {
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
-	onUpgradeClick: () => void;
+	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
 	planSlug: PlanSlug;
+	freeTrialPlanSlug?: PlanSlug;
 	flowName?: string | null;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
@@ -66,6 +67,8 @@ const SignupFlowPlanFeatureActionButton = ( {
 	priceString,
 	isStuck,
 	isLargeCurrency,
+	hasFreeTrialPlan,
+	handleFreeTrialButtonClick,
 	handleUpgradeButtonClick,
 	busy,
 }: {
@@ -75,6 +78,8 @@ const SignupFlowPlanFeatureActionButton = ( {
 	priceString: string | null;
 	isStuck: boolean;
 	isLargeCurrency: boolean;
+	hasFreeTrialPlan: boolean;
+	handleFreeTrialButtonClick?(): void;
 	handleUpgradeButtonClick: () => void;
 	busy?: boolean;
 } ) => {
@@ -113,9 +118,19 @@ const SignupFlowPlanFeatureActionButton = ( {
 	}
 
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick } busy={ busy }>
-			{ btnText }
-		</Button>
+		<div className="plan-features-2023-grid__actions-button-container">
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } busy={ busy }>
+				{ btnText }
+			</Button>
+			{ hasFreeTrialPlan && (
+				<Button
+					onClick={ handleFreeTrialButtonClick }
+					className="plan-features-2023-grid__actions-trial-button"
+				>
+					{ translate( 'Try for free' ) }
+				</Button>
+			) }
+		</div>
 	);
 };
 
@@ -367,6 +382,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isLaunchPage,
 	onUpgradeClick,
 	planSlug,
+	freeTrialPlanSlug,
 	flowName,
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
@@ -397,7 +413,16 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			} );
 		}
 
-		onUpgradeClick && onUpgradeClick();
+		onUpgradeClick?.();
+	};
+
+	const handleFreeTrialButtonClick = () => {
+		recordTracksEvent( 'calypso_plan_features_upgrade_click', {
+			current_plan: currentSitePlanSlug,
+			upgrading_to: freeTrialPlanSlug,
+		} );
+
+		onUpgradeClick?.( freeTrialPlanSlug );
 	};
 
 	if ( isWpcomEnterpriseGridPlan ) {
@@ -461,6 +486,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				priceString={ priceString }
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
+				hasFreeTrialPlan={ !! freeTrialPlanSlug }
+				handleFreeTrialButtonClick={ handleFreeTrialButtonClick }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 				busy={ freePlan && planActionOverrides?.loggedInFreePlan?.status === 'blocked' }
 			/>
