@@ -168,7 +168,6 @@ const AdsFormSettings = () => {
 
 		return (
 			<FormFieldset>
-				{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
 				<FormLabel>
 					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
@@ -215,7 +214,6 @@ const AdsFormSettings = () => {
 		return (
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
-					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
 					<ToggleControl
 						checked={ !! settings.display_options?.display_front_page }
@@ -243,7 +241,6 @@ const AdsFormSettings = () => {
 					/>
 				</FormFieldset>
 				<FormFieldset className="ads__settings-display-toggles">
-					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
 					<ToggleControl
 						checked={ !! settings.display_options?.enable_header_ad }
