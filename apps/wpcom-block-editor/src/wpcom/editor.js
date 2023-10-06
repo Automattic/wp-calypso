@@ -1,5 +1,4 @@
 import { registerPlugin } from '@wordpress/plugins';
-import './features/live-preview';
 import './features/deprecate-coblocks-buttons';
 import './features/fix-block-invalidation-errors';
 import './features/fix-coblocks-fonts';
