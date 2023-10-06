@@ -66,6 +66,13 @@ export interface PlansGridProps {
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	planTypeSelectorProps: PlanTypeSelectorProps;
+	/**
+	 * Due to the render heavy burden of the plans comparison grid the paren might chose to
+	 * hide the comparison grid with css but leave the render tree intact, unmounted.
+	 * An isHidden prop is passed down the tree so that any elements that are not part of the
+	 *  orthodox react tree like (Popovers, Modals, etc) can also be forcibly hidden
+	 */
+	isHidden?: boolean;
 }
 
 const WrappedComparisonGrid = ( {
@@ -86,6 +93,7 @@ const WrappedComparisonGrid = ( {
 	showLegacyStorageFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
+	isHidden,
 }: PlansGridProps ) => {
 	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
 	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
@@ -118,6 +126,7 @@ const WrappedComparisonGrid = ( {
 				allFeaturesList={ allFeaturesList }
 			>
 				<ComparisonGrid
+					isHidden={ isHidden }
 					planTypeSelectorProps={ planTypeSelectorProps }
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
@@ -148,6 +157,7 @@ const WrappedComparisonGrid = ( {
 		>
 			<CalypsoShoppingCartProvider>
 				<ComparisonGrid
+					isHidden={ isHidden }
 					planTypeSelectorProps={ planTypeSelectorProps }
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
