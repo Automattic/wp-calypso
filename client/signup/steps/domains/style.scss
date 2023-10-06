@@ -74,7 +74,6 @@
 	.domains__domain-cart-foldable-card {
 		position: fixed;
 		width: 100%;
-		max-height: 75%;
 		bottom: 0;
 		left: 0;
 		z-index: 99;
@@ -123,9 +122,10 @@
 			}
 		}
 		.foldable-card__content {
+			max-height: 70vh;
 			border-top: 0;
 			padding: 0 16px;
-			overflow-y: auto;
+			overflow-x: auto;
 			.domains__domain-cart {
 				border-top: 1px solid var(--color-neutral-5);
 			}
