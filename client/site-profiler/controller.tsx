@@ -18,6 +18,18 @@ export function redirectSiteProfilerResult( context: PageJS.Context, next: () =>
 	}
 }
 
+export function redirectSiteProfilerLanguage( context: PageJS.Context ) {
+	const { params, querystring } = context;
+
+	if ( params?.domain ) {
+		page.redirect( `/site-profiler/${ params.domain }` );
+	} else if ( querystring ) {
+		page.redirect( `/site-profiler?${ querystring }` );
+	} else {
+		page.redirect( '/site-profiler' );
+	}
+}
+
 export function siteProfilerContext( context: PageJS.Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 
