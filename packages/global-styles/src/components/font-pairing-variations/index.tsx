@@ -117,13 +117,13 @@ const FontPairingVariations = ( {
 					<span className="global-styles-variations__group-title-actual">
 						{ translate( 'Custom fonts' ) }
 					</span>
-					{ limitGlobalStyles && (
-						<PremiumBadge
-							shouldHideTooltip
-							shouldCompactWithAnimation
-							labelText={ translate( 'Upgrade' ) }
-						/>
-					) }
+					<PremiumBadge
+						shouldHideTooltip
+						shouldCompactWithAnimation
+						labelText={
+							limitGlobalStyles ? translate( 'Upgrade' ) : translate( 'Included in your plan' )
+						}
+					/>
 				</h3>
 				<div className="font-pairing-variations">
 					{ fontPairingVariations.map( ( fontPairingVariation, index ) => (

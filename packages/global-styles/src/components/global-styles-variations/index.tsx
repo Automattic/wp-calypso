@@ -1,3 +1,4 @@
+import { PremiumBadge } from '@automattic/components';
 import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
@@ -19,7 +20,6 @@ interface GlobalStylesVariationProps {
 	isActive: boolean;
 	showOnlyHoverView?: boolean;
 	onSelect: () => void;
-	showFreeBadge: boolean;
 }
 
 interface GlobalStylesVariationsProps {
@@ -28,7 +28,6 @@ interface GlobalStylesVariationsProps {
 	description?: TranslateResult;
 	showOnlyHoverViewDefaultVariation?: boolean;
 	splitDefaultVariation?: boolean;
-	displayFreeLabel?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
 
@@ -39,7 +38,6 @@ const GlobalStylesVariation = ( {
 	globalStylesVariation,
 	isActive,
 	showOnlyHoverView,
-	showFreeBadge,
 	onSelect,
 }: GlobalStylesVariationProps ) => {
 	const [ isFocused, setIsFocused ] = useState( false );
@@ -79,11 +77,6 @@ const GlobalStylesVariation = ( {
 				} ) as string
 			}
 		>
-			{ showFreeBadge && (
-				<div className="global-styles-variations__free-badge">
-					<span>{ translate( 'Free' ) }</span>
-				</div>
-			) }
 			<div className="global-styles-variation__item-preview">
 				<GlobalStylesContext.Provider value={ context }>
 					<GlobalStylesVariationPreview
@@ -105,7 +98,6 @@ const GlobalStylesVariations = ( {
 	showOnlyHoverViewDefaultVariation,
 	onSelect,
 	splitDefaultVariation = true,
-	displayFreeLabel = true,
 }: GlobalStylesVariationsProps ) => {
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
 	const premiumStylesDescription = translate(
@@ -132,7 +124,6 @@ const GlobalStylesVariations = ( {
 		( globalStylesVariation, index ) => (
 			<GlobalStylesVariation
 				key={ index }
-				showFreeBadge={ false }
 				globalStylesVariation={ globalStylesVariation }
 				isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
 				onSelect={ () => onSelect( globalStylesVariation ) }
@@ -155,14 +146,7 @@ const GlobalStylesVariations = ( {
 					} ) }
 				>
 					<div className="global-styles-variations__header">
-						<h2>
-							{ headerText }
-							{ displayFreeLabel && (
-								<div className="global-styles-variations__free-badge">
-									<span>{ translate( 'Free' ) }</span>
-								</div>
-							) }
-						</h2>
+						<h2>{ headerText }</h2>
 						{ ! splitDefaultVariation && (
 							<div>
 								<p>{ translate( 'You can change your style at any time.' ) }</p>
@@ -172,7 +156,6 @@ const GlobalStylesVariations = ( {
 					<div className="global-styles-variations">
 						<GlobalStylesVariation
 							key="base"
-							showFreeBadge={ displayFreeLabel }
 							globalStylesVariation={ baseGlobalStyles }
 							isActive={
 								! selectedGlobalStylesVariation ||
@@ -188,9 +171,16 @@ const GlobalStylesVariations = ( {
 					<div className="global-styles-variations__type">
 						<div className="global-styles-variations__header">
 							<h2>
-								{ translate( 'Custom Style', 'Custom Styles', {
-									count: nonDefaultStyles.length,
-								} ) }
+								<span>
+									{ translate( 'Custom Style', 'Custom Styles', {
+										count: nonDefaultStyles.length,
+									} ) }
+								</span>
+								<PremiumBadge
+									shouldHideTooltip
+									shouldCompactWithAnimation
+									labelText={ translate( 'Upgrade' ) }
+								/>
 							</h2>
 							<p>{ nonDefaultStylesDescription }</p>
 						</div>
