@@ -724,9 +724,73 @@ export class RenderDomainsStep extends Component {
 			);
 		};
 
+<<<<<<< HEAD
 		const DomainsInCart =
 			shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) &&
 			! cartIsLoading ? (
+=======
+		const DomainsInCart = () => {
+			if ( ! this.shouldUseMultipleDomainsInCart() || cartIsLoading ) {
+				return null;
+			}
+
+			if ( isMobile() ) {
+				const MobileHeader = (
+					<div className="domains__domain-cart-title">
+						<div className="domains__domain-cart-total">
+							<div key="rowtotal" className="domains__domain-cart-total-items">
+								{ this.props.translate( '%d domain', '%d domains', {
+									count: domainsInCart.length,
+									args: [ domainsInCart.length ],
+								} ) }
+							</div>
+							<div key="rowtotalprice" className="domains__domain-cart-total-price">
+								{ formatCurrency(
+									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
+									domainsInCart ? domainsInCart[ 0 ].currency : 'USD'
+								) }
+							</div>
+						</div>
+						<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+							{ this.props.translate( 'Continue' ) }
+						</Button>
+					</div>
+				);
+
+				return (
+					<FoldableCard
+						clickableHeader
+						className="domains__domain-side-content domains__domain-cart-foldable-card"
+						header={ MobileHeader }
+						expanded={ false }
+						actionButton={
+							<button className="foldable-card__action foldable-card__expand">
+								<span className="screen-reader-text">More</span>
+								<Icon icon={ chevronDown } viewBox="6 4 12 14" size={ 16 } />
+							</button>
+						}
+						actionButtonExpanded={
+							<button className="foldable-card__action foldable-card__expand">
+								<span className="screen-reader-text">More</span>
+								<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
+							</button>
+						}
+					>
+						<div className="domains__domain-side-content domains__domain-cart">
+							<div className="domains__domain-cart-rows">
+								{ domainsInCart.map( ( domain, i ) => (
+									<div key={ `row${ i }` } className="domains__domain-cart-row">
+										<DomainNameAndCost domain={ domain } />
+									</div>
+								) ) }
+							</div>
+						</div>
+					</FoldableCard>
+				);
+			}
+
+			return (
+>>>>>>> 4baf41cf88 (Update CSS)
 				<div className="domains__domain-side-content domains__domain-cart">
 					<div className="domains__domain-cart-title">
 						{ this.props.translate( 'Your domains' ) }
@@ -758,63 +822,13 @@ export class RenderDomainsStep extends Component {
 						{ this.props.translate( 'Choose my domain later' ) }
 					</Button>
 				</div>
-			) : null;
-
-		const DomainsInCartMobileHeader = (
-			<div class="domains__domain-cart-title">
-				<div key="rowtotal" className="domains__domain-cart-total">
-					{ this.props.translate( '%d domain', '%d domains', {
-						count: domainsInCart.length,
-						args: [ domainsInCart.length ],
-					} ) }
-				</div>
-				<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
-					{ this.props.translate( 'Continue' ) }
-				</Button>
-			</div>
-		);
-
-		const DomainsInCartMobile =
-			this.shouldUseMultipleDomainsInCart() && ! cartIsLoading ? (
-				<FoldableCard
-					clickableHeader
-					className="domains__domain-side-content domains__domain-cart-foldable-card"
-					header={ DomainsInCartMobileHeader }
-					expanded={ false }
-					actionButton={
-						<button className="foldable-card__action foldable-card__expand">
-							<span className="screen-reader-text">More</span>
-							<Icon icon={ chevronDown } viewBox="6 4 12 14" size={ 16 } />
-						</button>
-					}
-					actionButtonExpanded={
-						<button className="foldable-card__action foldable-card__expand">
-							<span className="screen-reader-text">More</span>
-							<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
-						</button>
-					}
-				>
-					<div className="domains__domain-side-content domains__domain-cart">
-						<div className="domains__domain-cart-title">
-							{ this.props.translate( 'Your domains' ) }
-						</div>
-						<div className="domains__domain-cart-rows">
-							{ domainsInCart.map( ( domain, i ) => (
-								<div key={ `row${ i }` } className="domains__domain-cart-row">
-									<DomainNameAndCost domain={ domain } />
-								</div>
-							) ) }
-						</div>
-					</div>
-				</FoldableCard>
-			) : null;
-
-		const showDomainsInCart = isMobile() ? DomainsInCartMobile : DomainsInCart;
+			);
+		};
 
 		return (
 			<div className="domains__domain-side-content-container">
 				{ domainsInCart.length > 0
-					? showDomainsInCart
+					? DomainsInCart()
 					: ! this.shouldHideDomainExplainer() &&
 					  this.props.isPlanSelectionAvailableLaterInFlow && (
 							<div className="domains__domain-side-content domains__free-domain">

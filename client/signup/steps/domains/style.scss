@@ -66,15 +66,64 @@
 	.domains__domain-cart-foldable-card {
 		position: fixed;
 		width: 100%;
+		max-height: 75%;
 		bottom: 0;
 		left: 0;
 		z-index: 99;
+		padding-bottom: 6px !important;
+		box-shadow: 0 -3px 10px 0 rgba(0, 0, 0, 0.12);
 
 		.foldable-card__main {
 			max-width: 100%;
 			display: block;
 			width: 100%;
 			margin: 0;
+
+			.foldable-card__action {
+				right: auto;
+				left: 0;
+			}
+			.domains__domain-cart-title {
+				margin-left: 24px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+
+			.domains__domain-cart-total {
+				display: flex;
+				gap: 8px;
+				align-items: center;
+
+				.domains__domain-cart-total-items {
+					font-family: "SF Pro Display", $sans;
+					font-size: $font-body-extra-small;
+					font-weight: 400;
+					line-height: 20px;
+					letter-spacing: 0;
+					text-align: left;
+				}
+				.domains__domain-cart-total-price {
+					font-family: "SF Pro Display", $sans;
+					font-size: $font-body;
+					font-weight: 500;
+					line-height: 24px;
+					letter-spacing: -0.32px;
+					text-align: left;
+
+				}
+			}
+		}
+		.foldable-card__content {
+			border-top: 0;
+			padding: 0 16px;
+			overflow-y: auto;
+			.domains__domain-cart {
+				border-top: 1px solid var(--color-neutral-5);
+			}
+			.domains__domain-cart-rows {
+				padding-top: 6px;
+			}
 		}
 	}
 
