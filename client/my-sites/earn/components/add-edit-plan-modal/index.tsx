@@ -403,10 +403,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					<>
 						<FormFieldset className="memberships__dialog-sections-price">
 							<div className="memberships__dialog-sections-price-field-container">
-								<FormLabel htmlFor="currency">{ translate( 'Monthly Price' ) }</FormLabel>
+								<FormLabel htmlFor="currency_monthly">{ translate( 'Monthly Price' ) }</FormLabel>
 								<FormCurrencyInput
-									name="currency"
-									id="currency"
+									name="currency_monthly"
+									id="currency_monthly"
 									value={ currentPrice }
 									onChange={ handlePriceChange( false ) }
 									currencySymbolPrefix={ currentCurrency }
@@ -419,10 +419,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 								/>
 							</div>
 							<div className="memberships__dialog-sections-price-field-container">
-								<FormLabel htmlFor="currency">{ translate( 'Annual Price' ) }</FormLabel>
+								<FormLabel htmlFor="currency_annual">{ translate( 'Annual Price' ) }</FormLabel>
 								<FormCurrencyInput
-									name="currency"
-									id="currency"
+									name="currency_annual"
+									id="currency_annual"
 									value={ currentAnnualPrice }
 									onChange={ handlePriceChange( true ) }
 									currencySymbolPrefix={ currentCurrency }
