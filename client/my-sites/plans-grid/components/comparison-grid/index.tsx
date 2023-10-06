@@ -10,13 +10,15 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
@@ -25,6 +27,7 @@ import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-feat
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
+import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
@@ -328,6 +331,13 @@ type ComparisonGridProps = {
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	/**
+	 * Due to the render heavy burden of the plans comparison grid the client consumer of this component, might chose to
+	 * hide the comparison grid with css but leave the render tree intact, mounted.
+	 * An isHidden prop is passed down the tree so that any elements that are not part of the
+	 * Normal react tree (like Popovers, Modals, etc) can also be forcibly hidden based on a tangible parameter
+	 */
+	isHidden?: boolean;
 };
 
 type ComparisonGridHeaderProps = {
@@ -494,7 +504,14 @@ const ComparisonGridHeader = ( {
 	selectedPlan,
 }: ComparisonGridHeaderProps ) => {
 	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
-	const isLargeCurrency = useIsLargeCurrency( { gridPlans: displayedGridPlans } );
+	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
+		gridPlans: displayedGridPlans,
+	} );
+
+	const isLargeCurrency = useIsLargeCurrency( {
+		prices,
+		currencyCode: currencyCode || 'USD',
+	} );
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
 		siteId ?? 0,
 		displayedGridPlans.map( ( { planSlug } ) => planSlug )
@@ -626,6 +643,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							planSlug={ planSlug }
 							storageOptions={ gridPlan.features.storageOptions }
 							onStorageAddOnClick={ onStorageAddOnClick }
+							priceOnSeparateLine
 						/>
 					) : (
 						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
@@ -730,6 +748,10 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
+	const isEnglishLocale = useIsEnglishLocale();
+	const shouldShowNewJPTooltipCopy =
+		isEnglishLocale ||
+		i18n.hasTranslation( 'Security, performance, and growth tools—powered by Jetpack.' );
 
 	return (
 		<Row
@@ -766,7 +788,20 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 								</Plans2023Tooltip>
 								{ allJetpackFeatures.has( feature.getSlug() ) ? (
 									<JetpackIconContainer>
-										<JetpackLogo size={ 16 } />
+										<Plans2023Tooltip
+											text={
+												shouldShowNewJPTooltipCopy
+													? translate(
+															'Security, performance, and growth tools—powered by Jetpack.'
+													  )
+													: ''
+											}
+											setActiveTooltipId={ setActiveTooltipId }
+											activeTooltipId={ activeTooltipId }
+											id={ `jp-${ tooltipId }` }
+										>
+											<JetpackLogo size={ 16 } />
+										</Plans2023Tooltip>
 									</JetpackIconContainer>
 								) : null }
 							</>
@@ -812,6 +847,7 @@ const ComparisonGrid = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
+	isHidden,
 }: ComparisonGridProps ) => {
 	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
@@ -858,7 +894,11 @@ const ComparisonGrid = ( {
 	] );
 
 	const displayedGridPlans = useMemo( () => {
-		const hiddenPlans = [ PLAN_WOOEXPRESS_PLUS, PLAN_ENTERPRISE_GRID_WPCOM ];
+		const hiddenPlans = [
+			PLAN_HOSTING_TRIAL_MONTHLY,
+			PLAN_WOOEXPRESS_PLUS,
+			PLAN_ENTERPRISE_GRID_WPCOM,
+		];
 		const filteredPlans = gridPlans.filter(
 			( { planSlug, isVisible } ) => isVisible && ! hiddenPlans.includes( planSlug )
 		);
@@ -978,11 +1018,13 @@ const ComparisonGrid = ( {
 			<PlanComparisonHeader className="wp-brand-font">
 				{ translate( 'Compare our plans and find yours' ) }
 			</PlanComparisonHeader>
-			<PlanTypeSelector
-				{ ...planTypeSelectorProps }
-				kind="interval"
-				plans={ displayedGridPlans.map( ( { planSlug } ) => planSlug ) }
-			/>
+			{ isHidden ? null : (
+				<PlanTypeSelector
+					{ ...planTypeSelectorProps }
+					kind="interval"
+					plans={ displayedGridPlans.map( ( { planSlug } ) => planSlug ) }
+				/>
+			) }
 			<Grid isInSignup={ isInSignup }>
 				<ComparisonGridHeader
 					siteId={ siteId }

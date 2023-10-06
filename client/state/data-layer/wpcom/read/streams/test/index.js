@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import deepfreeze from 'deep-freeze';
-import { getAfterDateForFeed } from 'calypso/reader/discover/helper';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	requestPage as requestPageAction,
@@ -86,7 +85,7 @@ describe( 'streams', () => {
 							tag_recs_per_card: 5,
 							site_recs_per_card: 5,
 							tags: [],
-							after: getAfterDateForFeed(),
+							age_based_decay: 0.5,
 						},
 					},
 				},
@@ -101,7 +100,7 @@ describe( 'streams', () => {
 							tag_recs_per_card: 5,
 							site_recs_per_card: 5,
 							tags: [],
-							after: getAfterDateForFeed(),
+							age_based_decay: 0.5,
 						},
 					},
 				},

@@ -7,7 +7,6 @@ import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import Main from 'calypso/components/main';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
-import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -18,6 +17,7 @@ import {
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
+import formatApiPartner from '../../lib/format-api-partner';
 import './style.scss';
 
 export default function TermsOfServiceConsent() {

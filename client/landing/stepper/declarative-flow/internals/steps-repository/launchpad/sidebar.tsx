@@ -290,7 +290,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			>
 				<p>
 					{ translate(
-						'Your domain email address is still unverified. This will cause {{strong}}%(domain)s{{/strong}} to be suspended in future.{{break/}}{{break/}}Please check your inbox for the ICANN verification email.',
+						'Your domain email address is still unverified. This will cause {{strong}}%(domain)s{{/strong}} to be suspended in the future.{{break/}}{{break/}}Please check your inbox for the ICANN verification email.',
 						{
 							components: {
 								p: <p />,

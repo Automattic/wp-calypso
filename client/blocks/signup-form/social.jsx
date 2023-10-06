@@ -154,6 +154,7 @@ class SocialSignupForm extends Component {
 								isWpccFlow( this.props.flowName ) ? window.location.search.slice( 1 ) : null
 							}
 						/>
+						{ this.props.children }
 						{ ! this.props.isWoo && ! this.props.disableTosText && <SocialSignupToS /> }
 					</div>
 					{ this.props.isWoo && ! this.props.disableTosText && <SocialSignupToS /> }

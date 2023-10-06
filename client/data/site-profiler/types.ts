@@ -36,7 +36,7 @@ export interface WhoIs {
 	registrant_postal_code?: string;
 	registrant_state?: string;
 	registrant_street?: string | string[];
-	registrar?: string;
+	registrar?: string | string[];
 	registrar_iana_id?: string;
 	registrar_url?: string;
 	registrar_whois_server?: string;
@@ -61,7 +61,7 @@ export interface HostingProvider {
 	name: string;
 	is_cdn: boolean;
 	support_url?: string;
-	home_url?: string;
+	homepage_url?: string;
 }
 
 export interface DomainAnalyzerQueryResponse {

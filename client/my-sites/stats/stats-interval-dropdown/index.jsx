@@ -1,6 +1,8 @@
 import { Button, Dropdown } from '@wordpress/components';
+import { check } from '@wordpress/icons';
 import React, { useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import './style.scss';
 
 const IntervalDropdown = ( { period, pathTemplate } ) => {
 	const [ currentInterval, setCurrentInterval ] = useState( period );
@@ -23,17 +25,15 @@ const IntervalDropdown = ( { period, pathTemplate } ) => {
 					{ getCurrentIntervalLabel( currentInterval ) }
 				</Button>
 			) }
-			renderContent={ ( { onClose } ) => (
-				<div>
+			renderContent={ () => (
+				<div className="stats-interval-dropdown__container">
 					<Intervals
 						selected={ currentInterval }
 						pathTemplate={ pathTemplate }
 						compact={ false }
 						onChange={ setCurrentInterval }
+						icon={ check }
 					/>
-					<Button variant="secondary" onClick={ onClose }>
-						Close
-					</Button>
 				</div>
 			) }
 		/>

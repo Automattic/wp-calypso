@@ -8,7 +8,7 @@ import {
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getLicenseState } from '../utils';
+import getLicenseState from '../lib/get-license-state';
 
 export default function useLicenseActions(
 	siteUrl: string | null,

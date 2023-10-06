@@ -37,6 +37,15 @@ body .customer-home__layout .domain-upsell__card {
 
 	}
 
+	.domain-upsell-subtitle {
+		margin-bottom: 12px;
+	}
+
+	.domain-upsell-description {
+		font-size: rem(14px);
+		font-style: italic;
+	}
+
 	.domain-upsell-actions {
 		display: flex;
 		flex-direction: column;

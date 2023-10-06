@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -33,7 +32,7 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 			hasScreenOptions
 		/>
 		<SiteSettingsNavigation site={ site } section="discussion" />
-		{ isEnabled( 'fediverse/allow-opt-in' ) && <FediverseSettingsSection /> }
+		<FediverseSettingsSection />
 		<DiscussionForm />
 	</Main>
 );

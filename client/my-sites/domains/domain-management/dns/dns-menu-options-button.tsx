@@ -62,7 +62,7 @@ const emailProviderKeys: EmailProviderKey[] = [ EmailProvider.TITAN, EmailProvid
 
 function DnsMenuOptionsButton( {
 	domain,
-	pointsToWpcom,
+	hasDefaultARecords,
 	hasDefaultCnameRecord,
 	dns,
 	dispatchApplyDnsTemplate,
@@ -148,7 +148,7 @@ function DnsMenuOptionsButton( {
 	);
 
 	const restoreDefaultARecords = useCallback( async () => {
-		dispatchUpdateDns( domainName, [], getARecordsToRemove() )
+		dispatchUpdateDns( domainName, [], getARecordsToRemove(), true )
 			.then( () => dispatchSuccessNotice( __( 'Default A records restored' ) ) )
 			.catch( () => dispatchErrorNotice( __( 'Failed to restore the default A records' ) ) );
 	}, [
@@ -291,7 +291,7 @@ function DnsMenuOptionsButton( {
 			>
 				<PopoverMenuItem
 					onClick={ showRestoreARecordsDialog }
-					disabled={ pointsToWpcom || ! domain }
+					disabled={ hasDefaultARecords || ! domain }
 				>
 					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
 					{ __( 'Restore default A records' ) }

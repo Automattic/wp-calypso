@@ -2,7 +2,6 @@ import { safeImageUrl } from '@automattic/calypso-url';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import classNames from 'classnames';
 import InfoPopover from 'calypso/components/info-popover';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
@@ -10,7 +9,7 @@ import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
 import { formatNumber, getPostType } from '../../utils';
 import RelativeTime from '../relative-time';
 
-export default function PostItem( { post, className }: { post: BlazablePost; className: string } ) {
+export default function PostItem( { post }: { post: BlazablePost } ) {
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: 'post-' + post.ID,
 		entrypoint: 'promoted_posts-post_item',
@@ -34,7 +33,7 @@ export default function PostItem( { post, className }: { post: BlazablePost; cla
 	const titleShortened = titleIsLong ? post?.title.slice( 0, 55 ) + '...' : post?.title;
 
 	return (
-		<tr className={ classNames( 'post-item__row', className ) }>
+		<tr className="post-item__row">
 			<td className="post-item__post-data">
 				<div className="post-item__post-data-row">
 					{ featuredImage && (
@@ -85,12 +84,7 @@ export default function PostItem( { post, className }: { post: BlazablePost; cla
 						</div>
 					</div>
 				</div>
-				<div
-					className={ classNames(
-						'post-item__post-data-row post-item__post-data-row-mobile',
-						className
-					) }
-				>
+				<div className="post-item__post-data-row post-item__post-data-row-mobile">
 					<div className="post-item__stats-mobile">
 						{ sprintf(
 							// translators: %s is number of post's views

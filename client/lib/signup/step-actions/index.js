@@ -1,3 +1,4 @@
+import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	WPCOM_DIFM_LITE,
@@ -239,12 +240,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		themeStyleVariation,
 		themeItem,
 		siteAccentColor,
+		domainCart,
 	} = stepData;
 
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
-	const newCartItems = [ domainItem, googleAppsCartItem, themeItem ].filter( ( item ) => item );
+	const newCartItems =
+		domainCart && domainCart.length > 0
+			? [ ...Object.values( domainCart ), googleAppsCartItem, themeItem ].filter( ( item ) => item )
+			: [ domainItem, googleAppsCartItem, themeItem ].filter( ( item ) => item );
 
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 	const state = reduxStore.getState();
@@ -894,6 +899,7 @@ export function createAccount(
 				client_secret: config( 'wpcom_signup_key' ),
 				...userData,
 				tos: getToSAcceptancePayload(),
+				anon_id: getTracksAnonymousUserId(),
 			},
 			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);
@@ -912,6 +918,7 @@ export function createAccount(
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
 					tos: getToSAcceptancePayload(),
+					anon_id: getTracksAnonymousUserId(),
 				},
 				oauth2Signup
 					? {

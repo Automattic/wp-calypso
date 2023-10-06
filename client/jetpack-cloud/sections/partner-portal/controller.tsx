@@ -1,4 +1,10 @@
 import page from 'page';
+import {
+	publicToInternalLicenseFilter,
+	publicToInternalLicenseSortField,
+	valueToEnum,
+	ensurePartnerPortalReturnUrl,
+} from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import LicenseSelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/license-select-partner-key';
 import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
@@ -18,12 +24,6 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import {
-	publicToInternalLicenseFilter,
-	publicToInternalLicenseSortField,
-	valueToEnum,
-	ensurePartnerPortalReturnUrl,
-} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
 	getCurrentPartner,

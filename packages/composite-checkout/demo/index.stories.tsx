@@ -6,7 +6,6 @@ import {
 	CheckoutStepGroup,
 	FormStatus,
 	PaymentMethodStep,
-	getDefaultOrderReviewStep,
 	makeSuccessResponse,
 	useFormStatus,
 	useIsStepActive,
@@ -14,6 +13,7 @@ import {
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { getDefaultOrderReviewStep } from '../src/components/default-steps';
 import { createPayPalMethod } from './pay-pal';
 
 const initialItems = [

@@ -101,6 +101,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	const renderStatusBadge = ( domain: ResponseDomain ) => {
 		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch, {
 			currentRoute,
+			isVipSite: site.is_vip,
 		} );
 
 		if ( status ) {
@@ -140,6 +141,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 				getMappingErrors: true,
 				currentRoute,
 				dismissPreferences: hasNoticePreferences ? noticeDismissPreferences : null,
+				isVipSite: site.is_vip,
 			}
 		);
 

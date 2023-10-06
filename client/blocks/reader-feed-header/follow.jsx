@@ -24,8 +24,8 @@ export default function ReaderFeedHeaderFollow( props ) {
 	const siteId = site?.ID;
 	const siteUrl = getSiteUrl( { feed, site } );
 
-	const { following, hasOrganization, isEmailBlocked, isWPForTeamsItem } = useSelector(
-		( state ) => {
+	const { following, hasOrganization, isEmailBlocked, isWPForTeamsItem, subscriptionId } =
+		useSelector( ( state ) => {
 			let _siteId = siteId;
 			let _feedId = feed?.feed_ID;
 			let _feed = _feedId ? getFeed( state, _feedId ) : undefined;
@@ -46,9 +46,9 @@ export default function ReaderFeedHeaderFollow( props ) {
 				hasOrganization: hasReaderFollowOrganization( state, _feedId, _siteId ),
 				isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 				isWPForTeamsItem: isSiteWPForTeams( state, _siteId ) || isFeedWPForTeams( state, _feedId ),
+				subscriptionId: _feed?.subscription_id,
 			};
-		}
-	);
+		} );
 
 	const openSuggestedFollowsModal = ( followClicked ) => {
 		setIsSuggestedFollowsModalOpen( followClicked );
@@ -86,7 +86,12 @@ export default function ReaderFeedHeaderFollow( props ) {
 
 				{ site && following && ! isEmailBlocked && (
 					<div className="reader-feed-header__email-settings">
-						<ReaderSiteNotificationSettings iconSize={ 24 } showLabel={ false } siteId={ siteId } />
+						<ReaderSiteNotificationSettings
+							iconSize={ 24 }
+							showLabel={ false }
+							siteId={ siteId }
+							subscriptionId={ subscriptionId }
+						/>
 					</div>
 				) }
 			</div>
