@@ -458,7 +458,7 @@ export class UserStep extends Component {
 			return translate( 'Let’s get you signed up.' );
 		}
 
-		if ( ! headerText ) {
+		if ( ! headerText && 'onboarding-pm' !== flowName ) {
 			return translate( 'Create your account' );
 		}
 
