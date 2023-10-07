@@ -364,40 +364,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						showDismiss={ false }
 					/>
 				) }
-				{ ! isFormValid( 'price' ) && (
-					<FormInputValidation
-						isError
-						text={ translate( 'Please enter a price higher than %s', {
-							args: [
-								formatCurrency(
-									minimumCurrencyTransactionAmount(
-										connectedAccountMinimumCurrency,
-										currentCurrency,
-										connectedAccountDefaultCurrency
-									),
-									currentCurrency
-								),
-							],
-						} ) }
-					/>
-				) }
-				{ editedPostPaidNewsletter && ! isFormValid( 'prices' ) && (
-					<FormInputValidation
-						isError
-						text={ translate( 'Please enter a annual price higher than the monthly price', {
-							args: [
-								formatCurrency(
-									minimumCurrencyTransactionAmount(
-										connectedAccountMinimumCurrency,
-										currentCurrency,
-										connectedAccountDefaultCurrency
-									),
-									currentCurrency
-								),
-							],
-						} ) }
-					/>
-				) }
 				{ /* Price settings for a tier plan */ }
 				{ editedPostPaidNewsletter && (
 					<>
