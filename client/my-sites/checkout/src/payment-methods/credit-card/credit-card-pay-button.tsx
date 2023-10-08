@@ -1,5 +1,7 @@
 import { useStripe } from '@automattic/calypso-stripe';
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/format-currency';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
@@ -10,11 +12,12 @@ import debugFactory from 'debug';
 import { useDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
-import type { ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:credit-card' );
@@ -32,8 +35,9 @@ export default function CreditCardPayButton( {
 	shouldUseEbanx?: boolean;
 	activeButtonText?: ReactNode;
 } ) {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const { __ } = useI18n();
-	const total = useTotal();
 	const { stripeConfiguration, stripe } = useStripe();
 	const fields: CardFieldState = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
@@ -58,7 +62,7 @@ export default function CreditCardPayButton( {
 			reduxDispatch( errorNotice( displayFieldsError ) );
 			setDisplayFieldsError( '' );
 		}
-	}, [ displayFieldsError ] );
+	}, [ displayFieldsError, reduxDispatch ] );
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
 	// this prop yet.
@@ -122,7 +126,11 @@ export default function CreditCardPayButton( {
 		>
 			<ButtonContents
 				formStatus={ formStatus }
-				total={ total }
+				total={ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+				isPurchaseFree={ responseCart.total_cost_integer === 0 }
 				activeButtonText={ activeButtonText }
 			/>
 		</Button>
@@ -147,14 +155,15 @@ const StyledMaterialIcon = styled( MaterialIcon )`
 function ButtonContents( {
 	formStatus,
 	total,
+	isPurchaseFree,
 	activeButtonText,
 }: {
 	formStatus: FormStatus;
-	total: LineItem;
+	total: string;
+	isPurchaseFree: boolean;
 	activeButtonText?: ReactNode;
 } ) {
 	const { __ } = useI18n();
-	const isPurchaseFree = total.amount.value === 0;
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <>{ __( 'Processing…' ) }</>;
 	}
@@ -172,7 +181,7 @@ function ButtonContents( {
 				{ sprintf(
 					/* translators: %s is the total to be paid in localized currency */
 					__( 'Pay %s now' ),
-					total.amount.displayValue
+					total
 				) }
 			</CreditCardPayButtonWrapper>
 		);
