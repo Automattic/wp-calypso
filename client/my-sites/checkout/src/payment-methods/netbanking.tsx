@@ -1,5 +1,7 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/format-currency';
 import { snakeToCamelCase } from '@automattic/js-utils';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, register, registerStore } from '@wordpress/data';
@@ -17,8 +19,9 @@ import {
 import useCountryList from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useCartKey from '../../use-cart-key';
 import { CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type {
 	StoreSelectors,
 	StoreSelectorsWithState,
@@ -241,8 +244,9 @@ function NetBankingPayButton( {
 	onClick?: ProcessPayment;
 	store: NetBankingStore;
 } ) {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const { __ } = useI18n();
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect(
 		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getCustomerName(),
@@ -288,19 +292,25 @@ function NetBankingPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+			/>
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
+function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: string } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
+		return <>{ sprintf( __( 'Pay %s' ), total ) }</>;
 	}
 	return <>{ __( 'Please wait…' ) }</>;
 }
