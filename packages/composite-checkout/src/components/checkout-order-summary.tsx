@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useLineItems, useLineItemsOfType } from '../lib/line-items';
-import { useTotal } from '../public-api';
+import { useLineItems, useLineItemsOfType, useTotal } from '../lib/line-items';
 import { CheckoutSummaryCard } from './checkout-steps';
 
 const ProductList = styled.ul`

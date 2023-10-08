@@ -302,10 +302,6 @@ A React Hook that will return the `onClick` function passed to each [payment met
 
 A React Hook that will return a function to set a step to "complete". Only works within a step but it does not have to be the targeted step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Continue" button on the specified step; it will call the `isCompleteCallback` prop of the step and only succeed if the callback succeeds. In addition, all previous incomplete steps will be marked as complete in the same way, and the process will fail and stop at the first step whose `isCompleteCallback` fails. The resolved Promise will return true if all the requested steps were completed and false if any of them failed.
 
-### useTotal
-
-A React Hook that returns the `total` property provided to the [CheckoutProvider](#checkoutprovider). This is the same as the second return value of [useLineItems](#useLineItems) but may be more semantic in some cases. Only works within `CheckoutProvider`.
-
 ### useTogglePaymentMethod
 
 A React Hook that returns a function which can be called to enable or disable a payment method from the list of payment methods provided to [CheckoutProvider](#CheckoutProvider). Only works within `CheckoutProvider`.
