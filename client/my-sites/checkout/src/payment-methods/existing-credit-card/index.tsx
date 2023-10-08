@@ -1,4 +1,6 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/format-currency';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, PaymentLogo } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -15,9 +17,10 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/src/components/summary-details';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'calypso:existing-card-payment-method' );
 
@@ -183,7 +186,9 @@ function ExistingCardPayButton( {
 	activeButtonText?: string;
 	isTaxInfoRequired?: boolean;
 } ) {
-	const total = useTotal();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
@@ -227,7 +232,11 @@ function ExistingCardPayButton( {
 		>
 			<ButtonContents
 				formStatus={ formStatus }
-				total={ total }
+				total={ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+				isPurchaseFree={ responseCart.total_cost_integer === 0 }
 				activeButtonText={ activeButtonText }
 			/>
 		</Button>
@@ -252,14 +261,15 @@ const StyledMaterialIcon = styled( MaterialIcon )`
 function ButtonContents( {
 	formStatus,
 	total,
+	isPurchaseFree,
 	activeButtonText,
 }: {
 	formStatus: string;
-	total: LineItem;
+	total: string;
+	isPurchaseFree: boolean;
 	activeButtonText?: string;
 } ) {
 	const { __ } = useI18n();
-	const isPurchaseFree = total.amount.value === 0;
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <>{ __( 'Processing…' ) }</>;
 	}
@@ -277,7 +287,7 @@ function ButtonContents( {
 				{ sprintf(
 					/* translators: %s is the total to be paid in localized currency */
 					__( 'Pay %s now' ),
-					total.amount.displayValue
+					total
 				) }
 			</CreditCardPayButtonWrapper>
 		);
