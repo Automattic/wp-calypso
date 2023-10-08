@@ -1,22 +1,21 @@
 import { useI18n } from '@wordpress/react-i18n';
-import joinClasses from '../lib/join-classes';
-import { useLineItems } from '../lib/line-items';
+import { LineItem } from './helpers';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
 	OrderReviewSection,
 } from './order-review-line-items';
 
-export default function CheckoutReviewOrder( { className }: { className?: string } ) {
-	const [ items, total ] = useLineItems();
+export default function CheckoutReviewOrder( { items }: { items: LineItem[] } ) {
+	const total = items.reduce( ( sum, item ) => sum + item.amount, 0 );
 
 	return (
-		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
+		<div className="checkout-review-order">
 			<OrderReviewSection>
 				<OrderReviewLineItems items={ items } />
 			</OrderReviewSection>
 			<OrderReviewSection>
-				<OrderReviewTotal total={ total } />
+				<OrderReviewTotal total={ { id: 'total', type: 'total', label: 'Total', amount: total } } />
 			</OrderReviewSection>
 		</div>
 	);

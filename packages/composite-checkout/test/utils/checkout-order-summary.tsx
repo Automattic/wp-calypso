@@ -1,7 +1,14 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useLineItems, useLineItemsOfType, useTotal } from '../lib/line-items';
-import { CheckoutSummaryCard } from './checkout-steps';
+
+export interface LineItem {
+	type: string;
+	id: string;
+	label: string;
+	amount: number;
+}
+
+export const CheckoutSummaryCard = styled.div``;
 
 const ProductList = styled.ul`
 	margin: 0;
@@ -14,9 +21,7 @@ const ProductListItem = styled.li`
 	list-style-type: none;
 `;
 
-export default function CheckoutOrderSummaryStep() {
-	const [ items ] = useLineItems();
-
+export default function CheckoutOrderSummaryStep( { items }: { items: LineItem[] } ) {
 	return (
 		<ProductList>
 			{ items.map( ( product ) => {
@@ -35,13 +40,12 @@ const CheckoutSummaryStepTotal = styled.span`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
-export function CheckoutOrderSummaryStepTitle() {
+export function CheckoutOrderSummaryStepTitle( { total }: { total: string } ) {
 	const { __ } = useI18n();
-	const total = useTotal();
 	return (
 		<CheckoutSummaryStepTitle>
 			<span>{ __( 'You are all set to check out' ) }</span>
-			<CheckoutSummaryStepTotal>{ total.amount.displayValue }</CheckoutSummaryStepTotal>
+			<CheckoutSummaryStepTotal>{ total }</CheckoutSummaryStepTotal>
 		</CheckoutSummaryStepTitle>
 	);
 }
@@ -66,10 +70,10 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
-export function CheckoutOrderSummary() {
+export function CheckoutOrderSummary( { items }: { items: LineItem[] } ) {
+	const taxes = items.filter( ( item ) => item.type === 'tax' );
+	const total = items.reduce( ( sum, item ) => sum + item.amount, 0 );
 	const { __ } = useI18n();
-	const taxes = useLineItemsOfType( 'tax' );
-	const total = useTotal();
 
 	return (
 		<CheckoutSummaryCard>
@@ -78,12 +82,12 @@ export function CheckoutOrderSummary() {
 				{ taxes.map( ( tax ) => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
 						<span>{ tax.label }</span>
-						<span>{ tax.amount.displayValue }</span>
+						<span>{ tax.amount }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
 				<CheckoutSummaryTotal>
 					<span>{ __( 'Total' ) }</span>
-					<span>{ total.amount.displayValue }</span>
+					<span>{ total }</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
 		</CheckoutSummaryCard>
