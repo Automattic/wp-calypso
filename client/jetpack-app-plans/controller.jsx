@@ -8,7 +8,5 @@ export function jetpackAppPlans( context, next ) {
 		/>
 	);
 
-	// Hide sidebar
-	context.secondary = null;
 	next();
 }
