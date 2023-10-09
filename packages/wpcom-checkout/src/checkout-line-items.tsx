@@ -24,7 +24,6 @@ import {
 	useFormStatus,
 	Button,
 	Theme,
-	LineItem as LineItemType,
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
@@ -36,6 +35,7 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
+import type { LineItemType } from './types';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -226,7 +226,7 @@ function WPNonProductLineItem( {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const label = lineItem.label;
-	const actualAmountDisplay = lineItem.amount.displayValue;
+	const actualAmountDisplay = lineItem.formattedAmount;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
