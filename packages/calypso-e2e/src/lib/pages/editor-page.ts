@@ -1,4 +1,4 @@
-import { Page, ElementHandle, Response, Locator } from 'playwright';
+import { Page, ElementHandle, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
@@ -103,16 +103,20 @@ export class EditorPage {
 	 * Example "new post": {@link https://wordpress.com/post}
 	 * Example "new page": {@link https://wordpress.com/page}
 	 */
-	async visit(
-		type: 'post' | 'page' = 'post',
-		{ siteSlug = '' }: { siteSlug?: string } = {}
-	): Promise< Response | null > {
-		const request = await this.page.goto( getCalypsoURL( `${ type }/${ siteSlug }` ), {
-			timeout: 30 * 1000,
-		} );
+	async visit( type: 'post' | 'page' = 'post', { siteSlug = '' }: { siteSlug?: string } = {} ) {
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			// Load wp-admin editor on AT.
+			const isPage = type === 'page' ? '?post_type=page' : '';
+			await this.page.goto( `https://${ siteSlug }/wp-admin/post-new.php${ isPage }`, {
+				timeout: 30 * 1000,
+			} );
+		} else {
+			// Load Calypsofied editor on Simple.
+			await this.page.goto( getCalypsoURL( `${ type }/${ siteSlug }` ), {
+				timeout: 30 * 1000,
+			} );
+		}
 		await this.waitUntilLoaded();
-
-		return request;
 	}
 
 	/**
@@ -124,8 +128,10 @@ export class EditorPage {
 		// it is a fairly good stand-in.
 		await Promise.all( [
 			this.page.waitForURL( /(post|page|post-new.php)/, { timeout: 60 * 1000 } ),
-			this.page.waitForResponse( /.*posts.*/, { timeout: 60 * 1000 } ),
 		] );
+
+		const editorParent = await this.getEditorParent();
+		editorParent.waitFor( { timeout: 60 * 1000 } );
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();

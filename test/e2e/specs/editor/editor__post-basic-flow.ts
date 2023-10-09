@@ -32,6 +32,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	] );
 
 	let page: Page;
+	let testAccount: TestAccount;
 	let editorPage: EditorPage;
 	let publishedPostPage: PublishedPostPage;
 
@@ -39,12 +40,12 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		page = await browser.newPage();
 		editorPage = new EditorPage( page );
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		await editorPage.visit( 'post' );
+		await editorPage.visit( 'post', { siteSlug: testAccount.getSiteURL( { protocol: false } ) } );
 	} );
 
 	describe( 'Blocks', function () {
