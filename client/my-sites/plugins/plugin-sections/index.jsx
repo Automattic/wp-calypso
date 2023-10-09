@@ -163,7 +163,7 @@ class PluginSections extends Component {
 		const sections = this.props.plugin.sections;
 		return find( this.getFilteredSections(), function ( section ) {
 			return sections[ section.key ];
-		} ).key;
+		} )?.key;
 	};
 
 	getAvailableSections = () => {
@@ -194,6 +194,10 @@ class PluginSections extends Component {
 		const contentClasses = classNames( 'plugin-sections__content' );
 		const banner = this.props.plugin?.banners?.high || this.props.plugin?.banners?.low;
 		const videoUrl = this.props.plugin?.banner_video_src;
+
+		if ( ! this.getSelected() ) {
+			return null;
+		}
 
 		/*eslint-disable react/no-danger*/
 		if (
@@ -267,7 +271,7 @@ class PluginSections extends Component {
 
 		return (
 			<div className="plugin-sections">
-				{ ! hasOnlyDescriptionSection && (
+				{ this.getSelected() && ! hasOnlyDescriptionSection && (
 					<div className="plugin-sections__header">
 						<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
 							<NavTabs>
