@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { PureUniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import page from 'page';
 import { ChangeEvent } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import Main from 'calypso/components/main';
 import SiteProfiler from 'calypso/site-profiler/components/site-profiler';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -49,12 +48,12 @@ export function siteProfilerContext( context: PageJS.Context, next: () => void )
 	};
 
 	context.primary = (
-		<BrowserRouter>
+		<>
 			<Main fullWidthLayout>
-				<SiteProfiler />
+				<SiteProfiler domain={ context.params?.domain } />
 			</Main>
 			<PureUniversalNavbarFooter isLoggedIn={ isLoggedIn } onLanguageChange={ onLanguageChange } />
-		</BrowserRouter>
+		</>
 	);
 
 	next();

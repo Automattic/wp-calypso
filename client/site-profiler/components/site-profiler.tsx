@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { useNavigate } from 'react-router-dom';
+import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
@@ -17,14 +17,18 @@ import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
 import './styles.scss';
 
-export default function SiteProfiler() {
-	const navigate = useNavigate();
+interface Props {
+	domain?: string;
+}
+
+export default function SiteProfiler( props: Props ) {
+	const { domain: domainFromUrl } = props;
 	const {
 		domain,
 		isValid: isDomainValid,
 		specialDomainMapping,
 		isDomainSpecialInput,
-	} = useDomainParam();
+	} = useDomainParam( domainFromUrl );
 
 	const {
 		data: siteProfilerData,
@@ -51,14 +55,10 @@ export default function SiteProfiler() {
 		urlData
 	);
 
-	const updateDomainQueryParam = ( value: string ) => {
-		// Update the domain query param;
+	const updateDomainRouteParam = ( value: string ) => {
+		// Update the domain param;
 		// URL param is the source of truth
-		if ( ! value ) {
-			navigate( '/site-profiler' );
-			return;
-		}
-		navigate( '/site-profiler/' + value );
+		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 	const noNeedToFetchApi = specialDomainMapping && isDomainSpecialInput;
 	const showResultScreen = siteProfilerData || noNeedToFetchApi;
@@ -74,7 +74,7 @@ export default function SiteProfiler() {
 						isBusy={ isFetchingSP }
 						isBusyForWhile={ isBusyForWhile }
 						domainFetchingError={ errorSP instanceof Error ? errorSP : undefined }
-						onFormSubmit={ updateDomainQueryParam }
+						onFormSubmit={ updateDomainRouteParam }
 					/>
 				</LayoutBlock>
 			) }
@@ -92,7 +92,7 @@ export default function SiteProfiler() {
 								<HeadingInformation
 									domain={ domain }
 									conversionAction={ conversionAction }
-									onCheckAnotherSite={ () => updateDomainQueryParam( '' ) }
+									onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
 									hostingProvider={ hostingProviderData?.hosting_provider }
 									urlData={ urlData }
 									specialDomainMapping={ specialDomainMapping }
