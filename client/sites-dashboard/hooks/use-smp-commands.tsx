@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import {
 	plus as addNewSiteIcon,
 	code as sshIcon,
@@ -16,6 +17,13 @@ import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
+const SiteImage = styled.img( {
+	height: 24,
+	width: 24,
+	minWidth: 24,
+	objectFit: 'cover',
+} );
+
 type CloseFunction = () => void;
 type OnClickSiteFunction = ( {
 	close,
@@ -32,7 +40,6 @@ interface Command {
 	name: string;
 	label: string;
 	searchLabel: string;
-	context: string;
 	callback: ( {
 		close,
 		setSearch,
@@ -40,24 +47,35 @@ interface Command {
 		close: CloseFunction;
 		setSearch: ( search: string ) => void;
 	} ) => void;
+	context?: string;
+	icon?: JSX.Element;
+	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
-	icon: JSX.Element;
+	separator?: boolean;
 }
 interface UseSMPCommands {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 }
 
-const siteToAction = ( onClickSite: OnClickSiteFunction ) => ( site: SiteExcerptData ) => {
-	return {
-		name: site.ID,
-		label: `${ site.name }: ${ site.URL }`,
-		searchLabel: `${ site.ID } ${ site.name } ${ site.URL }`,
-		callback: ( { close }: { close: CloseFunction } ) => {
-			onClickSite( { site, close } );
-		},
+const siteToAction =
+	( onClickSite: OnClickSiteFunction ) =>
+	( site: SiteExcerptData ): Command => {
+		return {
+			name: `${ site.ID }`,
+			label: `${ site.name }: ${ site.URL }`,
+			searchLabel: `${ site.ID } ${ site.name } ${ site.URL }`,
+			callback: ( { close }: { close: CloseFunction } ) => {
+				onClickSite( { site, close } );
+			},
+			image: (
+				<SiteImage
+					src={ site.icon?.img ?? '/calypso/images/favicons/favicon-development.ico' }
+					alt={ site.name }
+				/>
+			),
+		};
 	};
-};
 export const useSMPCommands = ( {
 	selectedCommandName,
 	setSelectedCommandName,
@@ -79,17 +97,6 @@ export const useSMPCommands = ( {
 				setSelectedCommandName( actionName );
 			};
 		return [
-			{
-				name: 'addNewSite',
-				label: __( 'Add New Site' ),
-				searchLabel: __( 'new site' ),
-				context: 'Adding a new website',
-				callback: ( { close } ) => {
-					close();
-					navigate( createSiteUrl );
-				},
-				icon: addNewSiteIcon,
-			},
 			{
 				name: 'ssh',
 				label: __( 'SSH' ),
@@ -192,11 +199,23 @@ export const useSMPCommands = ( {
 				},
 				icon: viewSitehIcon,
 			},
+			{
+				name: 'addNewSite',
+				label: __( 'Add New Site' ),
+				searchLabel: __( 'new site' ),
+				context: 'Adding a new website',
+				callback: ( { close } ) => {
+					close();
+					navigate( createSiteUrl );
+				},
+				icon: addNewSiteIcon,
+				separator: true,
+			},
 		];
 	}, [ __, createSiteUrl, setSelectedCommandName ] );
 
 	const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
-	let sitesToPick = null;
+	let sitesToPick: Command[] | null = null;
 	if ( selectedCommand?.siteFunctions ) {
 		const { onClick, filter } = selectedCommand.siteFunctions;
 		const filteredSites = filter ? allSites.filter( filter ) : allSites;
