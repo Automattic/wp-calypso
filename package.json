@@ -158,7 +158,7 @@
 		"@types/debug": "^4.1.7",
 		"@types/fast-json-stable-stringify": "^2.0.0",
 		"@types/jest": "^29.5.5",
-		"@types/lodash": "^4.14.179",
+		"@types/lodash": "^4.14.199",
 		"@types/node": "^18.17.3",
 		"@types/page": "^1.11.5",
 		"@types/qs": "^6.9.7",
