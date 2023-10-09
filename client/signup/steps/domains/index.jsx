@@ -734,11 +734,7 @@ export class RenderDomainsStep extends Component {
 		};
 
 		const DomainsInCart = () => {
-			if (
-				! shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) ||
-				cartIsLoading ||
-				this.state.wpcomSubdomainSelected
-			) {
+			if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) || cartIsLoading ) {
 				return null;
 			}
 
