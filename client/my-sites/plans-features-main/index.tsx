@@ -389,7 +389,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
+		gridPlans: gridPlans || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
 		selectedFeature,
@@ -398,7 +398,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
-		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
+		gridPlans: gridPlans || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
 		selectedFeature,
