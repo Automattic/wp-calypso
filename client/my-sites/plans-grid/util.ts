@@ -1,5 +1,6 @@
 import {
 	FEATURE_1GB_STORAGE,
+	FEATURE_3GB_STORAGE,
 	FEATURE_6GB_STORAGE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_50GB_STORAGE,
@@ -16,6 +17,8 @@ export const getStorageStringFromFeature = ( storageFeature: string ) => {
 			return translate( '1 GB' );
 		case FEATURE_6GB_STORAGE:
 			return translate( '6 GB' );
+		case FEATURE_3GB_STORAGE:
+			return translate( '3 GB' );
 		case FEATURE_13GB_STORAGE:
 			return translate( '13 GB' );
 		case FEATURE_50GB_STORAGE:

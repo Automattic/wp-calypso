@@ -3634,4 +3634,23 @@ PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	getTitle: () => i18n.translate( 'Business trial' ),
 	getDescription: () => i18n.translate( 'Hosting free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
+	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature ) => {
+		let storageOptionSlugs = [];
+		const storageAddOns = [ FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ];
+
+		if ( showLegacyStorageFeature ) {
+			storageOptionSlugs = [ FEATURE_200GB_STORAGE ];
+		} else {
+			storageOptionSlugs = isEnabled( 'plans/updated-storage-labels' )
+				? [ FEATURE_3GB_STORAGE, ...storageAddOns ]
+				: [ FEATURE_200GB_STORAGE ];
+		}
+
+		return storageOptionSlugs.map( ( slug ) => {
+			return {
+				slug: slug,
+				isAddOn: storageAddOns.includes( slug ),
+			};
+		} );
+	},
 };
