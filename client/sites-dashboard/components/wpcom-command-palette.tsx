@@ -202,7 +202,7 @@ function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
 	);
 }
 
-export const CommandPalette = () => {
+export const WpcomCommandPalette = () => {
 	// const { registerShortcut } = useDispatch( keyboardShortcutsStore );
 	const [ search, setSearch ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false ); // useSelect( ( select ) => select( commandsStore ).isOpen(), [] );
