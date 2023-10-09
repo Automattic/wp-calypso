@@ -9142,6 +9142,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/commands@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "@wordpress/commands@npm:0.14.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    "@wordpress/components": ^25.9.0
+    "@wordpress/data": ^9.13.0
+    "@wordpress/element": ^5.20.0
+    "@wordpress/i18n": ^4.43.0
+    "@wordpress/icons": ^9.34.0
+    "@wordpress/keyboard-shortcuts": ^4.20.0
+    "@wordpress/private-apis": ^0.25.0
+    classnames: ^2.3.1
+    cmdk: ^0.2.0
+    rememo: ^4.0.2
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 0315fef70215163c35c935ac741eaa5d47014fa04a66d82aa7eb4b9107b1af25f7a598be19d3b970b9c45a14c256e049702dd778d608feedaa014ebad4bff6dd
+  languageName: node
+  linkType: hard
+
 "@wordpress/components@npm:^25.7.0":
   version: 25.7.0
   resolution: "@wordpress/components@npm:25.7.0"
@@ -32426,6 +32448,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"workspace@npm:^0.0.1-preview.1":
+  version: 0.0.1-preview.1
+  resolution: "workspace@npm:0.0.1-preview.1"
+  checksum: 8c2a2d67ff7d02edbbdde587ca010e9e1fbd57e96faf8ce91092ad4ca94ff61f26342de113152e8e890e24a808376aef4453a9f99c5d96710e0fad26e39f21bf
+  languageName: node
+  linkType: hard
+
 "wp-calypso@workspace:.":
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
@@ -32487,6 +32516,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^6.7.2
     "@typescript-eslint/parser": ^6.7.2
     "@wordpress/base-styles": ^4.32.0
+    "@wordpress/commands": ^0.14.0
     "@wordpress/components": ^25.7.0
     "@wordpress/data": ^9.11.0
     "@wordpress/element": ^5.18.0
@@ -32505,6 +32535,7 @@ __metadata:
     chalk: ^4.1.2
     check-node-version: ^4.0.2
     chroma-js: ^2.1.2
+    cmdk: ^0.2.0
     config: ^3.3.6
     css-loader: ^6.5.1
     debug: ^4.3.3
@@ -32579,6 +32610,7 @@ __metadata:
     webpack-cli: ^4.9.2
     webpack-dev-middleware: ^5.3.1
     whybundled: ^2.0.0
+    workspace: ^0.0.1-preview.1
     wpcom: "workspace:^"
     yargs: ^17.0.1
   dependenciesMeta:
