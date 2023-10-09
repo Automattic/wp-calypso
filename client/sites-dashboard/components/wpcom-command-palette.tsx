@@ -3,119 +3,16 @@ import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
-import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useSMPCommands } from '../hooks/use-smp-commands';
 
 import '@wordpress/commands/build-style/style.css';
 
 // Files ported and adpted from https://github.com/WordPress/gutenberg/blob/f92f9e28ba4fb2e435cb89d5b327b707cb805ba7/packages/commands/src/components/command-menu.js
 
-const loaders = Object.values( {
-	[ 'sshLoader' ]: {
-		name: 'loader ssh name',
-		context: 'loader ssh name',
-		hook: () => {
-			return { commands: [], isLoading: false };
-		},
-	},
-} );
-
-interface CommandMenuLoaderProps {
-	name?: string;
-	search: string;
-	hook: any;
-	setLoader: ( loaders: any, isLoading?: boolean ) => void;
-	close: () => void;
-	setSearch: ( search: string ) => void;
-}
-function CommandMenuLoader( {
-	name,
-	search,
-	hook,
-	setLoader,
-	close,
-	setSearch,
-}: CommandMenuLoaderProps ) {
-	const { isLoading, commands = [] } = hook( { search } ) ?? {};
-	useEffect( () => {
-		setLoader( name, isLoading );
-	}, [ setLoader, name, isLoading ] );
-
-	if ( ! commands.length ) {
-		return null;
-	}
-
-	return (
-		<>
-			<Command.List>
-				{ commands.map( ( command: any ) => (
-					<Command.Item
-						key={ command.name }
-						value={ command.searchLabel ?? command.label }
-						onSelect={ () => {
-							command.callback( { close, setSearch } );
-						} }
-						id={ command.name }
-					>
-						<HStack
-							alignment="left"
-							className={ classnames( 'commands-command-menu__item', {
-								'has-icon': command.icon,
-							} ) }
-						>
-							{ command.icon && <Icon icon={ command.icon } /> }
-							<span>
-								<TextHighlight text={ command.label } highlight={ search } />
-							</span>
-						</HStack>
-					</Command.Item>
-				) ) }
-			</Command.List>
-		</>
-	);
-}
-
-interface CommandMenuLoaderWrapperProps {
-	hook: any;
-	search: string;
-	setLoader: ( loaders: any ) => void;
-	close: () => void;
-}
-export function CommandMenuLoaderWrapper( {
-	hook,
-	search,
-	setLoader,
-	close,
-}: CommandMenuLoaderWrapperProps ) {
-	// The "hook" prop is actually a custom React hook
-	// so to avoid breaking the rules of hooks
-	// the CommandMenuLoaderWrapper component need to be
-	// remounted on each hook prop change
-	// We use the key state to make sure we do that properly.
-	const currentLoader = useRef( hook );
-	const [ key, setKey ] = useState( 0 );
-	useEffect( () => {
-		if ( currentLoader.current !== hook ) {
-			currentLoader.current = hook;
-			setKey( ( prevKey ) => prevKey + 1 );
-		}
-	}, [ hook ] );
-
-	return (
-		<CommandMenuLoader
-			key={ key }
-			hook={ currentLoader.current }
-			search={ search }
-			setLoader={ setLoader }
-			close={ close }
-		/>
-	);
-}
-
 interface CommandMenuGroupProps {
 	isContextual?: boolean;
 	search: string;
-	setLoader: ( loaders: any ) => void;
 	close: () => void;
 	setSearch: ( search: string ) => void;
 }
@@ -123,7 +20,6 @@ interface CommandMenuGroupProps {
 export function CommandMenuGroup( {
 	isContextual,
 	search,
-	setLoader,
 	close,
 	setSearch,
 }: CommandMenuGroupProps ) {
@@ -133,18 +29,7 @@ export function CommandMenuGroup( {
 		setSelectedCommandName,
 	} );
 	const commands = isContextual ? smpDefaultCommands : [];
-	// const { commands, loaders } = useSelect(
-	// 	( select ) => {
-	// 		const { getCommands, getCommandLoaders } = select( commandsStore );
-	// 		return {
-	// 			commands: getCommands( isContextual ),
-	// 			loaders: getCommandLoaders( isContextual ),
-	// 		};
-	// 	},
-	// 	[ isContextual ]
-	// );
-
-	if ( ! commands.length && ! loaders.length ) {
+	if ( ! commands.length ) {
 		return null;
 	}
 
@@ -169,15 +54,6 @@ export function CommandMenuGroup( {
 						</span>
 					</HStack>
 				</Command.Item>
-			) ) }
-			{ loaders.map( ( loader ) => (
-				<CommandMenuLoaderWrapper
-					key={ loader.name }
-					hook={ loader.hook }
-					search={ search }
-					setLoader={ setLoader }
-					close={ close }
-				/>
 			) ) }
 		</Command.Group>
 	);
@@ -222,8 +98,6 @@ export const WpcomCommandPalette = () => {
 		close: () => setIsOpen( false ),
 		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
 	};
-	// useDispatch( commandsStore );
-	const [ loaders, setLoaders ] = useState( {} );
 
 	// Cmd+K shortcut
 	useEffect( () => {
@@ -238,14 +112,6 @@ export const WpcomCommandPalette = () => {
 		return () => document.removeEventListener( 'keydown', down );
 	}, [] );
 
-	const setLoader = useCallback(
-		( name: string, value: any ) =>
-			setLoaders( ( current ) => ( {
-				...current,
-				[ name ]: value,
-			} ) ),
-		[]
-	);
 	const closeAndReset = () => {
 		setSearch( '' );
 		close();
@@ -268,7 +134,7 @@ export const WpcomCommandPalette = () => {
 		}
 	};
 
-	const isLoading = Object.values( loaders ).some( Boolean );
+	const isLoading = false;
 
 	return (
 		<Modal
@@ -289,18 +155,12 @@ export const WpcomCommandPalette = () => {
 						) }
 						<CommandMenuGroup
 							search={ search }
-							setLoader={ setLoader }
 							close={ closeAndReset }
 							isContextual
 							setSearch={ setSearch }
 						/>
 						{ search && (
-							<CommandMenuGroup
-								search={ search }
-								setLoader={ setLoader }
-								close={ closeAndReset }
-								setSearch={ setSearch }
-							/>
+							<CommandMenuGroup search={ search } close={ closeAndReset } setSearch={ setSearch } />
 						) }
 					</Command.List>
 				</Command>
