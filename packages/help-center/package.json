@@ -54,7 +54,7 @@
 		"@storybook/addon-backgrounds": "^7.4.5",
 		"@storybook/cli": "^7.4.5",
 		"@storybook/react": "^7.4.5",
-		"typescript": "^5.1.6"
+		"typescript": "^5.2.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.11.0",
