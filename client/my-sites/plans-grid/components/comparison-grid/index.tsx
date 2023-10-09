@@ -72,15 +72,6 @@ const JetpackIconContainer = styled.div`
 	line-height: 1;
 `;
 
-const PlanComparisonHeader = styled.h1`
-	.plans .step-container .step-container__content &&,
-	&& {
-		font-size: 2rem;
-		text-align: center;
-		margin: 48px 0;
-	}
-`;
-
 const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	font-weight: 500;
 	font-size: 20px;
@@ -321,7 +312,7 @@ type ComparisonGridProps = {
 	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
 	currentPlanManageHref?: string;
-	canUserPurchasePlan?: boolean | null;
+	canUserManageCurrentPlan?: boolean | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
@@ -349,7 +340,7 @@ type ComparisonGridHeaderProps = {
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
 	currentPlanManageHref?: string;
-	canUserPurchasePlan?: boolean | null;
+	canUserManageCurrentPlan?: boolean | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
@@ -380,7 +371,7 @@ const ComparisonGridHeaderCell = ( {
 	displayedGridPlans,
 	currentSitePlanSlug,
 	currentPlanManageHref,
-	canUserPurchasePlan,
+	canUserManageCurrentPlan,
 	isLaunchPage,
 	flowName,
 	isLargeCurrency,
@@ -464,7 +455,7 @@ const ComparisonGridHeaderCell = ( {
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }
 				currentPlanManageHref={ currentPlanManageHref }
-				canUserPurchasePlan={ canUserPurchasePlan }
+				canUserManageCurrentPlan={ canUserManageCurrentPlan }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				className={ getPlanClass( planSlug ) }
 				freePlan={ isFreePlan( planSlug ) }
@@ -492,7 +483,7 @@ const ComparisonGridHeader = ( {
 	onPlanChange,
 	currentSitePlanSlug,
 	currentPlanManageHref,
-	canUserPurchasePlan,
+	canUserManageCurrentPlan,
 	onUpgradeClick,
 	siteId,
 	planActionOverrides,
@@ -531,7 +522,7 @@ const ComparisonGridHeader = ( {
 					displayedGridPlans={ displayedGridPlans }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					currentPlanManageHref={ currentPlanManageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					flowName={ flowName }
 					onUpgradeClick={ onUpgradeClick }
 					isLaunchPage={ isLaunchPage }
@@ -832,7 +823,7 @@ const ComparisonGrid = ( {
 	flowName,
 	currentSitePlanSlug,
 	currentPlanManageHref,
-	canUserPurchasePlan,
+	canUserManageCurrentPlan,
 	onUpgradeClick,
 	siteId,
 	planActionOverrides,
@@ -842,7 +833,6 @@ const ComparisonGrid = ( {
 	onStorageAddOnClick,
 	isHidden,
 }: ComparisonGridProps ) => {
-	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
@@ -1008,9 +998,6 @@ const ComparisonGrid = ( {
 
 	return (
 		<div className="plan-comparison-grid">
-			<PlanComparisonHeader className="wp-brand-font">
-				{ translate( 'Compare our plans and find yours' ) }
-			</PlanComparisonHeader>
 			{ isHidden ? null : (
 				<PlanTypeSelector
 					{ ...planTypeSelectorProps }
@@ -1029,7 +1016,7 @@ const ComparisonGrid = ( {
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					currentPlanManageHref={ currentPlanManageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ onUpgradeClick }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
@@ -1100,7 +1087,7 @@ const ComparisonGrid = ( {
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					currentPlanManageHref={ currentPlanManageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ onUpgradeClick }
 					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }
