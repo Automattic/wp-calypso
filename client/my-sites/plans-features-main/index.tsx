@@ -486,38 +486,22 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
-	const planTypeSelectorProps = useMemo( () => {
-		return {
-			basePlansPath,
-			isStepperUpgradeFlow,
-			isInSignup,
-			eligibleForWpcomMonthlyPlans,
-			isPlansInsideStepper,
-			intervalType,
-			customerType: _customerType,
-			siteSlug,
-			selectedPlan,
-			selectedFeature,
-			showBiennialToggle,
-			kind: planTypeSelector,
-			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
-		};
-	}, [
+	// These never reach the grid-components. Little/no need to memoize.
+	const planTypeSelectorProps = {
 		basePlansPath,
 		isStepperUpgradeFlow,
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
 		isPlansInsideStepper,
 		intervalType,
-		_customerType,
+		customerType: _customerType,
 		siteSlug,
 		selectedPlan,
 		selectedFeature,
 		showBiennialToggle,
-		planTypeSelector,
-		gridPlansForFeaturesGrid,
-	] );
-
+		kind: planTypeSelector,
+		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+	};
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
 	 */
