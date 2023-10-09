@@ -7,7 +7,7 @@ import './style.scss';
 const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 	const translate = useTranslate();
 
-	const { login } = useLoginWindow( {
+	const { login, createAccount } = useLoginWindow( {
 		onLoginSuccess: () => window.location.reload(),
 		domain: 'wpcalypso.wordpress.com', //Need to use this while testing locally (also needs to be sandboxed)
 	} );
@@ -27,11 +27,12 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 				<p>{ translate( 'Sign in to like, comment, reblog, and follow your favorite blogs.' ) }</p>
 				<Button
 					isPrimary
-					onClick={ login }
+					onClick={ createAccount }
 					className="reader-join-conversation-dialog__create-account-button"
 				>
 					{ translate( 'Create a new account' ) }
 				</Button>
+				<br />
 				<Button isLink onClick={ login } className="reader-join-conversation-dialog__login">
 					{ translate( 'Log in' ) }
 				</Button>
