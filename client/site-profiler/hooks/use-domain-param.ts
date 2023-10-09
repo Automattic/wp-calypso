@@ -1,19 +1,17 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
 import { extractDomainFromInput, getFixedDomainSearch } from 'calypso/lib/domains';
 import {
 	isSpecialInput,
 	SPECIAL_DOMAIN_CASES,
 	getSpecialDomainMapping,
 } from 'calypso/site-profiler/utils/get-special-domain-mapping';
+import validateDomain from 'calypso/site-profiler/utils/validate-domain';
 
-export default function useDomainParam( sanitize = true ) {
-	const [ domain, setDomain ] = useState( '' );
+export default function useDomainParam( value?: string, sanitize = true ) {
+	const [ domain, setDomain ] = useState( value || '' );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
 	const [ specialDomainMapping, setSpecialDomainMapping ] = useState< SPECIAL_DOMAIN_CASES >();
-	const location = useLocation();
-	const _domain = location.pathname.split( '/site-profiler/' )[ 1 ]?.trim() || '';
-	const isDomainSpecialInput = isSpecialInput( _domain );
+	const isDomainSpecialInput = isSpecialInput( domain );
 
 	const getFinalizedDomain = useCallback(
 		( _domain: string ) => {
@@ -33,36 +31,12 @@ export default function useDomainParam( sanitize = true ) {
 	);
 
 	useEffect( () => {
-		try {
-			if ( _domain ) {
-				// Only allow domains with a dot in them (not localhost, for example).
-				if ( ! _domain.includes( '.' ) || isDomainSpecialInput ) {
-					throw new Error( 'Invalid domain' );
-				}
-
-				let normalised = _domain;
-
-				// If the domain doesn't start with http:// or https://, add https://
-				if ( ! normalised.startsWith( 'http://' ) && ! normalised.startsWith( 'https://' ) ) {
-					normalised = 'https://' + normalised;
-				}
-
-				// Test if we can parse the URL. If we can't, it's invalid.
-				const url = new URL( normalised );
-
-				// Check if the protocol is 'http' or 'https'.
-				setIsValid( url.protocol === 'http:' || url.protocol === 'https:' );
-			} else {
-				setIsValid( undefined );
-			}
-		} catch ( e ) {
-			setIsValid( false );
-		}
-		const finalizedDomain = getFinalizedDomain( _domain );
+		setIsValid( validateDomain( value || '' ) );
+		const finalizedDomain = getFinalizedDomain( value || '' );
 		const specialDomains = getSpecialDomainMapping( finalizedDomain );
 		setSpecialDomainMapping( specialDomains );
 		setDomain( finalizedDomain );
-	}, [ _domain, getFinalizedDomain, isDomainSpecialInput ] );
+	}, [ value, getFinalizedDomain, isDomainSpecialInput ] );
 
 	return { domain, isValid, specialDomainMapping, isDomainSpecialInput };
 }

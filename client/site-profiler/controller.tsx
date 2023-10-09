@@ -50,7 +50,7 @@ export function siteProfilerContext( context: PageJS.Context, next: () => void )
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
-				<SiteProfiler domain={ context.params?.domain } />
+				<SiteProfiler routerDomain={ context.params?.domain } />
 			</Main>
 			<PureUniversalNavbarFooter isLoggedIn={ isLoggedIn } onLanguageChange={ onLanguageChange } />
 		</>

@@ -18,17 +18,17 @@ import HostingIntro from './hosting-intro';
 import './styles.scss';
 
 interface Props {
-	domain?: string;
+	routerDomain?: string;
 }
 
 export default function SiteProfiler( props: Props ) {
-	const { domain: domainFromUrl } = props;
+	const { routerDomain } = props;
 	const {
 		domain,
 		isValid: isDomainValid,
 		specialDomainMapping,
 		isDomainSpecialInput,
-	} = useDomainParam( domainFromUrl );
+	} = useDomainParam( routerDomain );
 
 	const {
 		data: siteProfilerData,
