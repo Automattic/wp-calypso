@@ -27,11 +27,7 @@ export const MastodonPreviews: React.FC< MastodonPreviewsProps > = ( {
 					<p className="social-preview__section-desc">
 						{ __( 'This is what your social post will look like on Mastodon:', 'social-previews' ) }
 					</p>
-					{ props.isSocialPost ? (
-						<MastodonPostPreview { ...props } />
-					) : (
-						<MastodonLinkPreview { ...props } />
-					) }
+					<MastodonPostPreview { ...props } />
 				</section>
 			) }
 			{ ! hideLinkPreview && (
