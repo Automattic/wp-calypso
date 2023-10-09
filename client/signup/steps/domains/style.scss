@@ -38,6 +38,15 @@
 
 	&.domains__step-content-domain-step {
 		margin-bottom: 20px;
+		&.domains__step-has-domains-in-cart {
+			.featured-domain-suggestion .domain-suggestion__action.is-primary:not(.is-busy) {
+				background: transparent;
+				border-style: solid;
+				border-width: 1px;
+				border-color: var(--color-neutral-10);
+				color: var(--color-neutral-70);
+			}
+		}
 	}
 
 	.search-component .search-component__icon-navigation {

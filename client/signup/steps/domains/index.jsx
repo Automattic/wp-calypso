@@ -1121,7 +1121,11 @@ export class RenderDomainsStep extends Component {
 		return (
 			<div
 				key={ this.props.step + this.props.stepSectionName }
-				className="domains__step-content domains__step-content-domain-step"
+				className={ classNames( 'domains__step-content', 'domains__step-content-domain-step', {
+					'domains__step-has-domains-in-cart':
+						shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) &&
+						getDomainRegistrations( this.props.cart ).length > 0,
+				} ) }
 			>
 				{ content }
 				{ sideContent }
