@@ -27,7 +27,7 @@ export default function SiteProfiler( props: Props ) {
 		domain,
 		isValid: isDomainValid,
 		specialDomainMapping,
-		isDomainSpecialInput,
+		isSpecial,
 	} = useDomainParam( routerDomain );
 
 	const {
@@ -60,7 +60,7 @@ export default function SiteProfiler( props: Props ) {
 		// URL param is the source of truth
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
-	const noNeedToFetchApi = specialDomainMapping && isDomainSpecialInput;
+	const noNeedToFetchApi = specialDomainMapping && isSpecial;
 	const showResultScreen = siteProfilerData || noNeedToFetchApi;
 
 	return (
