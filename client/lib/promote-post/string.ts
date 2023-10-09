@@ -128,6 +128,7 @@ const BlazePressStrings = () => {
 	translate( 'Everywhere' );
 	translate( 'Summary' );
 	translate( 'Ad Preview' );
+	translate( 'Preview' );
 	translate( 'Depending on the platform, the ad may look different from the preview.' );
 	translate( 'Estimated Impressions' );
 	translate( 'Max Budget' );
