@@ -27,7 +27,7 @@ export default function SiteProfiler( props: Props ) {
 		domain,
 		category: domainCategory,
 		isValid: isDomainValid,
-		isSpecial,
+		isSpecial: isDomainSpecial,
 	} = useDomainParam( routerDomain );
 
 	const {
@@ -60,7 +60,7 @@ export default function SiteProfiler( props: Props ) {
 		// URL param is the source of truth
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
-	const noNeedToFetchApi = domainCategory && isSpecial;
+	const noNeedToFetchApi = domainCategory && isDomainSpecial;
 	const showResultScreen = siteProfilerData || noNeedToFetchApi;
 
 	return (
@@ -80,14 +80,14 @@ export default function SiteProfiler( props: Props ) {
 			) }
 
 			{
-				// For special valid domain mapping, we need to wait until the result comes back
+				// For special valid domain category, we need to wait until the result comes back
 				showResultScreen && (
 					<LayoutBlock className="domain-result-block">
 						{
 							// Translators: %s is the domain name searched
 							<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
 						}
-						{ ( siteProfilerData || isSpecial ) && (
+						{ ( siteProfilerData || isDomainSpecial ) && (
 							<LayoutBlockSection>
 								<HeadingInformation
 									domain={ domain }
