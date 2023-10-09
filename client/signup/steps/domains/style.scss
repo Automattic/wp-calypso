@@ -175,13 +175,15 @@
 				}
 
 				&.limit-width {
-					width: 45%;
+					width: 35%;
 				}
 			}
 
 			.domains__domain-cart-remove {
 				color: var(--studio-gray-50);
 				font-size: $font-body-extra-small;
+				min-width: 50px;
+				margin-right: 10px;
 			}
 
 			.domain-product-price__price {
@@ -191,7 +193,8 @@
 
 				del {
 					font-size: 0.75rem;
-					margin-right: 5px;
+					margin-right: 7px;
+					margin-left: 7px;
 				}
 			}
 		}
