@@ -100,7 +100,7 @@ function ApplicationPasswords() {
 						) }{ ' ' }
 						<a
 							href={ localizeUrl(
-								' wordpress.com/support/security/two-step-authentication/application-specific-passwords'
+								'https://wordpress.com/support/security/two-step-authentication/application-specific-passwords'
 							) }
 							target="_blank"
 							rel="noopener noreferrer"
