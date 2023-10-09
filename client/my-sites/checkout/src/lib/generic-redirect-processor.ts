@@ -30,6 +30,7 @@ export default async function genericRedirectProcessor(
 		reduxDispatch,
 		responseCart,
 		contactDetails,
+		fromSiteSlug,
 	} = transactionOptions;
 	if ( ! isValidTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
@@ -47,6 +48,7 @@ export default async function genericRedirectProcessor(
 	const thankYouUrl = getThankYouUrl() || 'https://wordpress.com';
 	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
 		siteSlug,
+		fromSiteSlug,
 		urlType: 'absolute',
 	} );
 	const cancelUrl = `${ origin }${ pathname }${ search }`;
