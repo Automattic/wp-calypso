@@ -33,7 +33,13 @@ interface Command {
 	label: string;
 	searchLabel: string;
 	context: string;
-	callback: ( { close }: { close: CloseFunction } ) => void;
+	callback: ( {
+		close,
+		setSearch,
+	}: {
+		close: CloseFunction;
+		setSearch: ( search: string ) => void;
+	} ) => void;
 	siteFunctions?: SiteFunctions;
 	icon: JSX.Element;
 }
@@ -66,9 +72,12 @@ export const useSMPCommands = ( {
 		( site ) => ! site.options?.is_domain_only
 	);
 	const commands: Command[] = useMemo( () => {
-		const setStateCallback = ( actionName: string ) => () => {
-			setSelectedCommandName( actionName );
-		};
+		const setStateCallback: ( actionName: string ) => Command[ 'callback' ] =
+			( actionName: string ) =>
+			( { setSearch } ) => {
+				setSearch( '' );
+				setSelectedCommandName( actionName );
+			};
 		return [
 			{
 				name: 'addNewSite',

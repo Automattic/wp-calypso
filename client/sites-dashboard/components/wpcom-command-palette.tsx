@@ -26,8 +26,16 @@ interface CommandMenuLoaderProps {
 	hook: any;
 	setLoader: ( loaders: any, isLoading?: boolean ) => void;
 	close: () => void;
+	setSearch: ( search: string ) => void;
 }
-function CommandMenuLoader( { name, search, hook, setLoader, close }: CommandMenuLoaderProps ) {
+function CommandMenuLoader( {
+	name,
+	search,
+	hook,
+	setLoader,
+	close,
+	setSearch,
+}: CommandMenuLoaderProps ) {
 	const { isLoading, commands = [] } = hook( { search } ) ?? {};
 	useEffect( () => {
 		setLoader( name, isLoading );
@@ -44,7 +52,9 @@ function CommandMenuLoader( { name, search, hook, setLoader, close }: CommandMen
 					<Command.Item
 						key={ command.name }
 						value={ command.searchLabel ?? command.label }
-						onSelect={ () => command.callback( { close } ) }
+						onSelect={ () => {
+							command.callback( { close, setSearch } );
+						} }
 						id={ command.name }
 					>
 						<HStack
@@ -107,6 +117,7 @@ interface CommandMenuGroupProps {
 	search: string;
 	setLoader: ( loaders: any ) => void;
 	close: () => void;
+	setSearch: ( search: string ) => void;
 }
 
 export function CommandMenuGroup( {
@@ -114,6 +125,7 @@ export function CommandMenuGroup( {
 	search,
 	setLoader,
 	close,
+	setSearch,
 }: CommandMenuGroupProps ) {
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const { commands: smpDefaultCommands } = useSMPCommands( {
@@ -142,7 +154,7 @@ export function CommandMenuGroup( {
 				<Command.Item
 					key={ command.name }
 					value={ command.searchLabel ?? command.label }
-					onSelect={ () => command.callback( { close } ) }
+					onSelect={ () => command.callback( { close, setSearch } ) }
 					id={ command.name }
 				>
 					<HStack
@@ -280,9 +292,15 @@ export const WpcomCommandPalette = () => {
 							setLoader={ setLoader }
 							close={ closeAndReset }
 							isContextual
+							setSearch={ setSearch }
 						/>
 						{ search && (
-							<CommandMenuGroup search={ search } setLoader={ setLoader } close={ closeAndReset } />
+							<CommandMenuGroup
+								search={ search }
+								setLoader={ setLoader }
+								close={ closeAndReset }
+								setSearch={ setSearch }
+							/>
 						) }
 					</Command.List>
 				</Command>
