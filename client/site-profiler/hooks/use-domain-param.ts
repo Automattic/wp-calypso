@@ -12,6 +12,7 @@ export default function useDomainParam( value: string = '' ) {
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
 	const [ isSpecial, setIsSpecial ] = useState( isSpecialDomain( value ) );
 	const [ category, setCategory ] = useState< SPECIAL_DOMAIN_CATEGORY >();
+	const [ readyForDataFetch, setReadyForDataFetch ] = useState( false );
 
 	useEffect( () => {
 		const preparedDomain = prepareDomain( value, isSpecial );
@@ -20,9 +21,10 @@ export default function useDomainParam( value: string = '' ) {
 		setIsSpecial( isSpecialDomain( preparedDomain ) );
 		setCategory( getDomainCategory( preparedDomain ) );
 		setDomain( preparedDomain );
-	}, [ value, isSpecial ] );
+		setReadyForDataFetch( ! isSpecial && !! domain && !! isValid );
+	}, [ value, isSpecial, isValid ] );
 
-	return { domain, isValid, isSpecial, category };
+	return { domain, isValid, isSpecial, category, readyForDataFetch };
 }
 
 function prepareDomain( domain: string, isSpecial: boolean ) {

@@ -28,15 +28,19 @@ export default function SiteProfiler( props: Props ) {
 		category: domainCategory,
 		isValid: isDomainValid,
 		isSpecial: isDomainSpecial,
+		readyForDataFetch,
 	} = useDomainParam( routerDomain );
 
 	const {
 		data: siteProfilerData,
 		error: errorSP,
 		isFetching: isFetchingSP,
-	} = useDomainAnalyzerQuery( domain, isDomainValid );
-	const { data: urlData, isError: isErrorUrlData } = useAnalyzeUrlQuery( domain, isDomainValid );
-	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
+	} = useDomainAnalyzerQuery( domain, readyForDataFetch );
+	const { data: urlData, isError: isErrorUrlData } = useAnalyzeUrlQuery(
+		domain,
+		readyForDataFetch
+	);
+	const { data: hostingProviderData } = useHostingProviderQuery( domain, readyForDataFetch );
 	const isBusyForWhile = useLongFetchingDetection( domain, isFetchingSP );
 	const conversionAction = useDefineConversionAction(
 		domain,
