@@ -156,7 +156,6 @@ export function generateFlows( {
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
 			lastModified: '2023-07-18',
 			showRecaptcha: true,
-			hideProgressIndicator: true,
 		},
 		{
 			name: 'onboarding-media',
