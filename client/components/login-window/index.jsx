@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 export default function useLoginWindow( { onLoginSuccess, domain } ) {
 	const isBrowser = typeof window !== 'undefined';
-	const [ loginWindowRef, setLoginWindowRef ] = useState();
 	const baseURL = `https://${ domain }`;
 
 	const waitForLogin = ( event ) => {
@@ -36,11 +35,30 @@ export default function useLoginWindow( { onLoginSuccess, domain } ) {
 		const loginClosed = setInterval( () => {
 			if ( loginWindow?.closed ) {
 				clearInterval( loginClosed );
-				setLoginWindowRef( undefined );
 			}
 		}, 100 );
+	};
 
-		setLoginWindowRef( loginWindow );
+	const createAccount = () => {
+		if ( ! isBrowser ) {
+			return;
+		}
+
+		const createAccountWindow = window.open(
+			`https://wordpress.com/start/account/user?redirect_to=https%3A%2F%2Fwpcalypso.wordpress.com%2Fpublic.api%2Fconnect%2F%3Faction%3Dverify%26service%3Dwordpress%26domain%3D${ domain }`,
+			'CalyspoLogin',
+			'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500'
+		);
+
+		// Listen for login data
+		window.addEventListener( 'message', waitForLogin );
+
+		// Clean up loginWindow
+		const createAccountWindowClosed = setInterval( () => {
+			if ( createAccountWindow?.closed ) {
+				clearInterval( createAccountWindowClosed );
+			}
+		}, 100 );
 	};
 
 	//Cleanup event listener when component unmounts
@@ -52,5 +70,5 @@ export default function useLoginWindow( { onLoginSuccess, domain } ) {
 		};
 	}, [] );
 
-	return { login, loginWindowRef };
+	return { login, createAccount };
 }
