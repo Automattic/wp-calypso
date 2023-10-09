@@ -100,8 +100,10 @@ export class EditorPage {
 	/**
 	 * Opens the "new post/page" page. By default it will open the "new post" page.
 	 *
-	 * Example "new post": {@link https://wordpress.com/post}
-	 * Example "new page": {@link https://wordpress.com/page}
+	 * Example "calypsofy new post": {@link https://wordpress.com/post}
+	 * Example "calypsofy new page": {@link https://wordpress.com/page}
+	 * Example "calypsofy new page": {@link https://siteslug.wordpress.com/wp-admin/post-new.php?post_type=page}
+	 *
 	 */
 	async visit( type: 'post' | 'page' = 'post', { siteSlug = '' }: { siteSlug?: string } = {} ) {
 		if ( envVariables.TEST_ON_ATOMIC ) {
@@ -123,15 +125,12 @@ export class EditorPage {
 	 * Initialization steps to ensure the page is fully loaded.
 	 */
 	async waitUntilLoaded(): Promise< void > {
-		// In a typical loading scenario, this request is one of the last to fire.
-		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
-		// it is a fairly good stand-in.
-		await Promise.all( [
-			this.page.waitForURL( /(post|page|post-new.php)/, { timeout: 60 * 1000 } ),
-		] );
+		// Wait for the editor ULR to load.
+		await this.page.waitForURL( /(post|page|post-new.php)/, { timeout: 60 * 1000 } );
 
-		const editorParent = await this.getEditorParent();
-		editorParent.waitFor( { timeout: 60 * 1000 } );
+		// Then wait for the editor parent to load.
+		const editorCanvas = await this.getEditorCanvas();
+		await editorCanvas.waitFor( { timeout: 60 * 1000 } );
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
