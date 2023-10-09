@@ -1,13 +1,17 @@
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { fetchSyncStatus, setSyncInProgress } from 'calypso/state/sync/actions';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
 import { getSyncStatus, getSyncProgress, getSyncSiteType } from 'calypso/state/sync/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { getSyncStatusError } from 'calypso/state/sync/selectors/get-sync-status-error';
+const stagingSiteSyncSuccess = 'staging-site-sync-success';
 
 export const useCheckSyncStatus = ( siteId: number ) => {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 
 	const intervalIdRef = useRef< NodeJS.Timer >();
 	const syncStatus = useSelector( ( state ) => getSyncStatus( state, siteId ) );
@@ -30,12 +34,18 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 			return;
 		}
 
+		if ( syncStatus === SiteSyncStatus.COMPLETED ) {
+			dispatch(
+				successNotice( translate( 'Site synced successfully.' ), { id: stagingSiteSyncSuccess } )
+			);
+		}
+
 		if ( isSyncInProgress === true && ! intervalIdRef.current ) {
 			intervalIdRef.current = setInterval( () => dispatch( fetchSyncStatus( siteId ) ), 5000 );
 		}
 
 		return clearIntervalId;
-	}, [ clearIntervalId, dispatch, siteId, syncStatus, isSyncInProgress ] );
+	}, [ clearIntervalId, dispatch, siteId, syncStatus, isSyncInProgress, translate ] );
 
 	const resetSyncStatus = useCallback( () => {
 		if ( ! siteId ) {
@@ -43,6 +53,7 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 		}
 		clearIntervalId();
 		dispatch( setSyncInProgress( siteId, true ) );
+		dispatch( removeNotice( stagingSiteSyncSuccess ) );
 	}, [ dispatch, siteId, clearIntervalId ] );
 
 	// Fetch the status once on mount to avoid waiting the interval delay

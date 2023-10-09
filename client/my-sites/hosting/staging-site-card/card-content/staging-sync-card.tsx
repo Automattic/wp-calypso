@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { translate, useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
@@ -135,18 +135,10 @@ const OptionsTreeTitle = styled.p( {
 	marginBottom: '16px',
 } );
 
-interface StagingCardProps {
-	onPull: () => void;
-	onPush: ( items?: string[] ) => void;
-	disabled: boolean;
-	productionSiteId: number;
-	stagingSiteId?: number;
-	error?: string | null;
-}
-
-interface ProductionCardProps {
-	onPull: ( items?: string[] ) => void;
-	onPush: () => void;
+interface SyncCardProps {
+	type: 'production' | 'staging';
+	onPull: ( ( items?: string[] ) => void ) | ( () => void );
+	onPush: ( ( items?: string[] ) => void ) | ( () => void );
 	disabled: boolean;
 	productionSiteId: number;
 	stagingSiteId?: number;
@@ -325,132 +317,22 @@ const SyncCardContainer = ( {
 	);
 };
 
-export const StagingSiteSyncCard = ( {
-	productionSiteId,
-	onPush,
-	onPull,
-	disabled,
-	error,
-}: StagingCardProps ) => {
-	const [ selectedItems, setSelectedItems ] = useState( [] as CheckboxOptionItem[] );
-	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, productionSiteId ) );
-	const {
-		progress,
-		resetSyncStatus,
-		isSyncInProgress,
-		error: checkStatusError,
-		siteType,
-	} = useCheckSyncStatus( productionSiteId );
-
-	const transformSelectedItems = useCallback( ( items: CheckboxOptionItem[] ) => {
-		return (
-			items.map( ( item ) => {
-				return item.name;
-			} ) || ( [] as string[] )
-		);
-	}, [] );
-
-	const onPushInternal = useCallback( () => {
-		resetSyncStatus();
-		onPush?.( transformSelectedItems( selectedItems ) );
-	}, [ onPush, selectedItems, resetSyncStatus, transformSelectedItems ] );
-
-	const onPullInternal = useCallback( () => {
-		resetSyncStatus();
-		onPull?.();
-	}, [ onPull, resetSyncStatus ] );
-
-	const isSyncButtonDisabled =
-		disabled || ( selectedItems.length === 0 && selectedOption === 'push' );
-	const syncError = error || checkStatusError;
-
-	let siteToSync: 'production' | 'staging' | null = null;
-	if ( siteType ) {
-		siteToSync = siteType;
-	} else {
-		siteToSync = selectedOption === 'push' ? 'production' : 'staging';
-	}
-
-	useEffect( () => {
-		if ( isSyncInProgress ) {
-			setSelectedOption( null );
-			setSelectedItems( [] );
-		}
-	}, [ isSyncInProgress ] );
-
-	return (
-		<SyncCardContainer
-			siteToSync={ siteToSync }
-			isSyncInProgress={ isSyncInProgress }
-			progress={ progress }
-			error={ syncError }
-			onRetry={ () => {
-				if ( selectedOption === 'push' ) {
-					onPushInternal();
-				}
-				if ( selectedOption === 'pull' ) {
-					onPullInternal();
-				}
-			} }
-		>
-			<FormRadioContainer>
-				<FormLabel>
-					<FormRadio
-						className="staging-site-sync-card__radio"
-						label={ translate( 'Push to production' ) }
-						value="push"
-						checked={ selectedOption === 'push' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setSelectedOption( event.target.value )
-						}
-					/>
-				</FormLabel>
-				<FormLabel>
-					<FormRadio
-						className="staging-site-sync-card__radio"
-						label={ translate( 'Pull from production' ) }
-						value="pull"
-						checked={ selectedOption === 'pull' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setSelectedOption( event.target.value )
-						}
-					/>
-				</FormLabel>
-			</FormRadioContainer>
-			{ selectedOption === 'push' && (
-				<StagingToProductionSync
-					siteSlug={ siteSlug || '' }
-					disabled={ disabled }
-					onSelectItems={ setSelectedItems }
-					selectedItems={ selectedItems }
-					isSyncButtonDisabled={ isSyncButtonDisabled }
-					onConfirm={ onPushInternal }
-				/>
-			) }
-			{ selectedOption === 'pull' && (
-				<ProductionToStagingSync
-					disabled={ disabled }
-					isSyncButtonDisabled={ isSyncButtonDisabled }
-					onConfirm={ onPullInternal }
-				/>
-			) }
-		</SyncCardContainer>
-	);
-};
-
-export const ProductionSiteSyncCard = ( {
+export const SiteSyncCard = ( {
+	type,
 	onPush,
 	onPull,
 	disabled,
 	productionSiteId,
 	error,
-}: ProductionCardProps ) => {
+}: SyncCardProps ) => {
+	const actionForType = useMemo( () => ( type === 'production' ? 'pull' : 'push' ), [ type ] );
 	const [ selectedItems, setSelectedItems ] = useState< CheckboxOptionItem[] >(
 		[] as CheckboxOptionItem[]
 	);
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useSelector(
+		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
+	);
 	const {
 		progress,
 		resetSyncStatus,
@@ -458,12 +340,6 @@ export const ProductionSiteSyncCard = ( {
 		error: checkStatusError,
 		siteType,
 	} = useCheckSyncStatus( productionSiteId );
-
-	const onPushInternal = useCallback( () => {
-		resetSyncStatus();
-		onPush?.();
-	}, [ onPush, resetSyncStatus ] );
-	const syncError = error || checkStatusError;
 
 	const transformSelectedItems = useCallback( ( items: CheckboxOptionItem[] ) => {
 		return (
@@ -473,23 +349,39 @@ export const ProductionSiteSyncCard = ( {
 		);
 	}, [] );
 
+	const onPushInternal = useCallback( () => {
+		resetSyncStatus();
+		if ( type === 'production' ) {
+			onPush?.();
+		}
+		if ( type === 'staging' ) {
+			onPush?.( transformSelectedItems( selectedItems ) );
+		}
+	}, [ onPush, resetSyncStatus, selectedItems, transformSelectedItems, type ] );
+
+	const syncError = error || checkStatusError;
 	const onPullInternal = useCallback( () => {
 		resetSyncStatus();
-		onPull?.( transformSelectedItems( selectedItems ) );
-	}, [ onPull, selectedItems, resetSyncStatus, transformSelectedItems ] );
+		if ( type === 'production' ) {
+			onPull?.( transformSelectedItems( selectedItems ) );
+		}
+		if ( type === 'staging' ) {
+			onPull?.();
+		}
+	}, [ resetSyncStatus, type, onPull, transformSelectedItems, selectedItems ] );
 
 	const isSyncButtonDisabled =
-		disabled || ( selectedItems.length === 0 && selectedOption === 'pull' );
+		disabled || ( selectedItems.length === 0 && selectedOption === actionForType );
 
-	let siteToSync: 'production' | 'staging' | null = null;
+	let targetSiteType: 'production' | 'staging' | null = null;
 	if ( siteType ) {
-		siteToSync = siteType;
+		targetSiteType = siteType;
 	} else {
-		siteToSync = selectedOption === 'pull' ? 'production' : 'staging';
+		targetSiteType = selectedOption === actionForType ? 'production' : 'staging';
 	}
 
 	useEffect( () => {
-		if ( isSyncInProgress ) {
+		if ( isSyncInProgress === false ) {
 			setSelectedOption( null );
 			setSelectedItems( [] );
 		}
@@ -497,7 +389,7 @@ export const ProductionSiteSyncCard = ( {
 
 	return (
 		<SyncCardContainer
-			siteToSync={ siteToSync }
+			siteToSync={ targetSiteType }
 			progress={ progress }
 			isSyncInProgress={ isSyncInProgress }
 			error={ syncError }
@@ -514,7 +406,9 @@ export const ProductionSiteSyncCard = ( {
 				<FormLabel>
 					<FormRadio
 						className="staging-site-sync-card__radio"
-						label={ translate( 'Pull from staging' ) }
+						label={ translate( 'Pull from %s', {
+							args: [ type === 'production' ? 'staging' : 'production' ],
+						} ) }
 						value="pull"
 						checked={ selectedOption === 'pull' }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -525,7 +419,9 @@ export const ProductionSiteSyncCard = ( {
 				<FormLabel>
 					<FormRadio
 						className="staging-site-sync-card__radio"
-						label={ translate( 'Push to staging' ) }
+						label={ translate( 'Push to %s', {
+							args: [ type === 'production' ? 'staging' : 'production' ],
+						} ) }
 						value="push"
 						checked={ selectedOption === 'push' }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -534,21 +430,21 @@ export const ProductionSiteSyncCard = ( {
 					/>
 				</FormLabel>
 			</FormRadioContainer>
-			{ selectedOption === 'pull' && (
+			{ selectedOption === actionForType && (
 				<StagingToProductionSync
 					siteSlug={ siteSlug || '' }
 					disabled={ disabled }
 					onSelectItems={ setSelectedItems }
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
-					onConfirm={ onPullInternal }
+					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
 				/>
 			) }
-			{ selectedOption === 'push' && (
+			{ selectedOption !== actionForType && (
 				<ProductionToStagingSync
 					disabled={ disabled }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
-					onConfirm={ onPushInternal }
+					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
 				/>
 			) }
 		</SyncCardContainer>
