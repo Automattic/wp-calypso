@@ -13,7 +13,7 @@ export const useVerifyEmail = () => {
 	const sendEmail = useSendEmailVerification();
 
 	const [ data, setData ] = useState( {
-		isVerified: false,
+		isVerified: user.email_verified,
 		isSending: false,
 		email: user.email,
 		resent: false,
@@ -44,9 +44,9 @@ export const useVerifyEmail = () => {
 	};
 
 	useEffect( () => {
-		const interval = setInterval( () => {
+		const interval = setInterval( async () => {
 			if ( ! user.email_verified ) {
-				dispatch( fetchCurrentUser() );
+				await dispatch( fetchCurrentUser() );
 			} else {
 				setData( ( prevState ) => ( {
 					...prevState,
@@ -60,6 +60,7 @@ export const useVerifyEmail = () => {
 	return {
 		isVerified: data.isVerified,
 		isSending: data.isSending,
+		hasUser: Boolean( user ),
 		email: data.email,
 		resendEmail,
 	};
