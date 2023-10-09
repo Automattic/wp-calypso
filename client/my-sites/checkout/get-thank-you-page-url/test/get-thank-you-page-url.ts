@@ -786,7 +786,7 @@ describe( 'getThankYouPageUrl', () => {
 			isInModal: true,
 			saveUrlToCookie,
 		} );
-		expect( saveUrlToCookie ).toBeCalledWith( url );
+		expect( saveUrlToCookie ).toHaveBeenCalledWith( url );
 	} );
 
 	it( 'Should store the thank you URL in the redirect cookie when called from the editor with an e-commerce plan', () => {
@@ -807,7 +807,7 @@ describe( 'getThankYouPageUrl', () => {
 			isInModal: true,
 			saveUrlToCookie,
 		} );
-		expect( saveUrlToCookie ).toBeCalledWith( '/checkout/thank-you/foo.bar/:receiptId' );
+		expect( saveUrlToCookie ).toHaveBeenCalledWith( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
 	it( 'redirects to url from cookie followed by purchase id if there is no site', () => {
