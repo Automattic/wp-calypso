@@ -1,6 +1,10 @@
 import { getCurrencyObject } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
+import {
+	PLAN_YEARLY_FREQUENCY,
+	PLAN_MONTHLY_FREQUENCY,
+} from 'calypso/my-sites/earn/memberships/constants';
 import { Subscriber, SubscriptionPlan } from '../types';
 
 type SubscriptionPlanData = {
@@ -16,9 +20,9 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 	const getPaymentInterval = ( renew_interval: string ) => {
 		if ( renew_interval === null ) {
 			return translate( 'one time' );
-		} else if ( renew_interval === '1 month' ) {
+		} else if ( renew_interval === PLAN_MONTHLY_FREQUENCY ) {
 			return translate( 'Monthly' );
-		} else if ( renew_interval === '1 year' ) {
+		} else if ( renew_interval === PLAN_YEARLY_FREQUENCY ) {
 			return translate( 'Yearly' );
 		}
 	};

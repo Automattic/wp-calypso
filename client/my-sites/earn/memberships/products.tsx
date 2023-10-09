@@ -26,7 +26,7 @@ import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal
 import { Product, Query } from '../types';
 import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
-import MembershipsSection from './';
+import MembershipsSection from './section';
 import './style.scss';
 
 type MembersProductsSectionProps = {
@@ -43,6 +43,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( showAddEditDialogInitially );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ product, setProduct ] = useState< Product | null >( null );
+	const [ annualProduct, setAnnualProduct ] = useState< Product | null >( null );
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
 	const hasLoadedFeatures = features?.active.length > 0;
@@ -59,6 +60,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const hasRecurringPaymentsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_RECURRING_PAYMENTS )
 	);
+
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
 
@@ -69,7 +71,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const trackUpgrade = () =>
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
 
-	function renderEllipsisMenu( productId: string | null ) {
+	function renderEllipsisMenu( productId: number ) {
 		return (
 			<EllipsisMenu position="bottom left">
 				{ hasStripeFeature && (
@@ -86,22 +88,27 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 		);
 	}
 
-	function openAddEditDialog( productId: string | null ) {
+	function openAddEditDialog( productId?: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( currentProduct ) => currentProduct.ID === productId );
+			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
+			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
 			setShowAddEditDialog( true );
 			setProduct( currentProduct ?? null );
+			setAnnualProduct( currentAnnualProduct ?? null );
 		} else {
 			setShowAddEditDialog( true );
 			setProduct( null );
+			setAnnualProduct( null );
 		}
 	}
 
-	function openDeleteDialog( productId: string | null ) {
+	function openDeleteDialog( productId: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( currentProduct ) => currentProduct.ID === productId );
+			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
+			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
 			setShowDeleteDialog( true );
 			setProduct( currentProduct ?? null );
+			setAnnualProduct( currentAnnualProduct ?? null );
 		}
 	}
 
@@ -138,44 +145,74 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 			{ hasLoadedFeatures && ! connectedAccountId && <MembershipsSection query={ query } /> }
 			{ hasLoadedFeatures && hasStripeFeature && connectedAccountId && (
 				<SectionHeader>
-					<Button primary compact onClick={ () => openAddEditDialog( null ) }>
+					<Button primary compact onClick={ () => openAddEditDialog() }>
 						{ translate( 'Add a new payment plan' ) }
 					</Button>
 				</SectionHeader>
 			) }
 			{ hasLoadedFeatures &&
-				products.map( ( currentProduct ) => (
-					<CompactCard className="memberships__products-product-card" key={ currentProduct?.ID }>
-						<div className="memberships__products-product-details">
-							<div className="memberships__products-product-price">
-								{ formatCurrency( currentProduct?.price || 0, currentProduct?.currency || '' ) }
-							</div>
-							<div className="memberships__products-product-title">{ currentProduct?.title }</div>
-							{ currentProduct?.subscribe_as_site_subscriber && (
-								<div className="memberships__products-product-badge">
-									<Badge type="info">{ translate( 'Newsletter' ) }</Badge>
+				products
+					.filter( ( currentProduct: Product ) => ! currentProduct.tier ) // We remove the "tiers" (the annual products with "tier" type)
+					.map( function ( currentProduct: Product ) {
+						const currentAnnualProduct = products.find(
+							( _prod: Product ) => _prod.tier === currentProduct.ID
+						);
+						const price = formatCurrency(
+							currentProduct?.price || 0,
+							currentProduct?.currency || ''
+						);
+						let annualPrice = '';
+						if ( currentAnnualProduct ) {
+							annualPrice = formatCurrency(
+								currentAnnualProduct?.price || 0,
+								currentAnnualProduct?.currency || ''
+							);
+						}
+						return (
+							<CompactCard
+								className="memberships__products-product-card"
+								key={ currentProduct?.ID }
+							>
+								<div className="memberships__products-product-details">
+									<div className="memberships__products-product-title">
+										{ currentProduct?.title }
+									</div>
+									<sub className="memberships__products-product-price">
+										{ currentProduct.subscribe_as_site_subscriber
+											? translate( '%s/month', { args: price } )
+											: price }
+										{ currentAnnualProduct && translate( ' (%s/year)', { args: annualPrice } ) }
+									</sub>
+									{ currentProduct?.subscribe_as_site_subscriber && (
+										<div className="memberships__products-product-badge">
+											<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
+										</div>
+									) }
+									{ currentProduct?.type === 'donation' && (
+										<div className="memberships__products-product-badge">
+											<Badge type="info">{ translate( 'Donation' ) }</Badge>
+										</div>
+									) }
 								</div>
-							) }
-							{ currentProduct?.type === 'donation' && (
-								<div className="memberships__products-product-badge">
-									<Badge type="info">{ translate( 'Donation' ) }</Badge>
-								</div>
-							) }
-						</div>
-
-						{ renderEllipsisMenu( currentProduct?.ID ?? null ) }
-					</CompactCard>
-				) ) }
+								{ currentProduct && currentProduct.ID && renderEllipsisMenu( currentProduct.ID ) }
+							</CompactCard>
+						);
+					} ) }
 			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && connectedAccountId && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }
 					product={ Object.assign( product ?? {}, {
 						subscribe_as_site_subscriber: subscribe_as_site_subscriber,
 					} ) }
+					annualProduct={ annualProduct }
 				/>
 			) }
 			{ hasLoadedFeatures && showDeleteDialog && product && (
-				<RecurringPaymentsPlanDeleteModal closeDialog={ closeDialog } product={ product } />
+				<RecurringPaymentsPlanDeleteModal
+					closeDialog={ closeDialog }
+					product={ product }
+					annualProduct={ annualProduct }
+				/>
 			) }
 			{ ! hasLoadedFeatures && (
 				<div className="memberships__loading">

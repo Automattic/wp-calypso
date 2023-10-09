@@ -53,27 +53,20 @@ const NOTICE_ID = 'wpcom-live-preview/notice';
  */
 const LivePreviewNotice = () => {
 	const { createWarningNotice } = useDispatch( 'core/notices' );
-	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
-	const { dashboardLink, previewingTheme } = useSelect(
-		( select ) => {
-			if ( ! siteEditorStore ) {
-				return {
-					previewingTheme: undefined,
-					dashboardLink: undefined,
-				};
-			}
 
-			const { getSettings } = unlock( siteEditorStore );
-			const themeSlug = currentlyPreviewingTheme();
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const theme = ( select( 'core' ) as any ).getTheme( themeSlug );
-			return {
-				previewingTheme: theme?.name?.rendered || themeSlug,
-				dashboardLink: getSettings().__experimentalDashboardLink,
-			};
-		},
-		[ siteEditorStore ]
-	);
+	const themeSlug = currentlyPreviewingTheme();
+	const previewingTheme = useSelect( ( select ) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const theme = ( select( 'core' ) as any ).getTheme( themeSlug );
+		return theme?.name?.rendered || themeSlug;
+	}, [] );
+
+	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
+	const dashboardLink =
+		unlock &&
+		siteEditorStore &&
+		unlock( siteEditorStore ).getSettings().__experimentalDashboardLink;
+
 	useEffect( () => {
 		// Do nothing in the Post Editor context.
 		if ( ! siteEditorStore ) {
@@ -94,7 +87,7 @@ const LivePreviewNotice = () => {
 			{
 				id: NOTICE_ID,
 				isDismissible: false,
-				actions: [
+				actions: dashboardLink && [
 					{
 						label: __( 'Back to themes', 'wpcom-live-preview' ),
 						url: dashboardLink,

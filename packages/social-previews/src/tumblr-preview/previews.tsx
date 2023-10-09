@@ -48,7 +48,7 @@ export const TumblrPreviews: React.FC< TumblrPreviewsProps > = ( {
 							{ __( 'Learn more about links', 'social-previews' ) }
 						</ExternalLink>
 					</p>
-					<TumblrLinkPreview { ...props } />
+					<TumblrLinkPreview { ...props } user={ undefined } />
 				</section>
 			) }
 		</div>

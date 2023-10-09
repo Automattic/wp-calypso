@@ -1,15 +1,20 @@
-import { applyTestFiltersToPlansList, isMonthly } from '@automattic/calypso-products';
+import {
+	FEATURE_CUSTOM_DOMAIN,
+	applyTestFiltersToPlansList,
+	isMonthly,
+} from '@automattic/calypso-products';
 import getPlanFeaturesObject from '../../../lib/get-plan-features-object';
 import useHighlightedFeatures from './use-highlighted-features';
-import type { FeatureObject, FeatureList, PlanSlug } from '@automattic/calypso-products';
+import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
 import type {
 	TransformedFeatureObject,
 	PlanFeaturesForGridPlan,
 	PlansIntent,
+	GridPlan,
 } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 export type UsePlanFeaturesForGridPlans = ( {
-	planSlugs,
+	gridPlans,
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList,
 	intent,
@@ -17,7 +22,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	isInSignup,
 }: {
-	planSlugs: PlanSlug[];
+	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
@@ -31,7 +36,7 @@ export type UsePlanFeaturesForGridPlans = ( {
  * - this hook can migrate to data store once features definitions migrate to calypso-products
  */
 const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
-	planSlugs,
+	gridPlans,
 	allFeaturesList,
 	intent,
 	selectedFeature,
@@ -40,8 +45,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 
-	return planSlugs.reduce(
-		( acc, planSlug ) => {
+	return gridPlans.reduce(
+		( acc, gridPlan ) => {
+			const planSlug = gridPlan.planSlug;
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const isMonthlyPlan = isMonthly( planSlug );
 
@@ -68,6 +74,31 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					allFeaturesList,
 					planConstantObj.getBlogOnboardingSignupJetpackFeatures?.() ?? []
 				);
+			} else if ( 'plans-woocommerce' === intent ) {
+				wpcomFeatures = getPlanFeaturesObject(
+					allFeaturesList,
+					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+				);
+
+				jetpackFeatures = getPlanFeaturesObject(
+					allFeaturesList,
+					planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
+				);
+
+				/*
+				 * Woo Express plans with an introductory offer need some features removed:
+				 * - custom domain feature removed for all Woo Express plans
+				 */
+				if ( gridPlan.pricing.introOffer ) {
+					wpcomFeatures = wpcomFeatures.filter( ( feature ) => {
+						// Remove the custom domain feature for Woo Express plans with an introductory offer.
+						if ( FEATURE_CUSTOM_DOMAIN === feature.getSlug() ) {
+							return false;
+						}
+
+						return true;
+					} );
+				}
 			} else {
 				wpcomFeatures = getPlanFeaturesObject(
 					allFeaturesList,

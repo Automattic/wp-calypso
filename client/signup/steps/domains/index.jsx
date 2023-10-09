@@ -1,9 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { isMobile } from '@automattic/viewport';
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -18,6 +19,7 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
@@ -68,7 +70,7 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getExternalBackUrl } from './utils';
+import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 
 import './style.scss';
 
@@ -116,7 +118,7 @@ export class RenderDomainsStep extends Component {
 			this.skipRender = true;
 			const productSlug = getDomainProductSlug( domain );
 			const domainItem = domainRegistration( { productSlug, domain } );
-			const domainCart = this.shouldUseMultipleDomainsInCart()
+			const domainCart = shouldUseMultipleDomainsInCart( props.flowName, props.step?.suggestion )
 				? getDomainRegistrations( this.props.cart )
 				: {};
 
@@ -304,34 +306,17 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
-	shouldUseMultipleDomainsInCart = () => {
-		const { step, flowName } = this.props;
-		if ( ! step ) {
-			return;
-		}
-		const { suggestion } = step;
-
-		const enabledFlows = [ 'onboarding' ];
-
-		return (
-			isEnabled( 'domains/add-multiple-domains-to-cart' ) &&
-			enabledFlows.includes( flowName ) &&
-			( ! suggestion || ( suggestion && ! suggestion.is_free ) )
-		);
-	};
-
 	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
-		const { step } = this.props;
+		const { step, flowName } = this.props;
 		const { suggestion } = step;
 
-		if ( this.shouldUseMultipleDomainsInCart() && suggestion ) {
+		if ( shouldUseMultipleDomainsInCart( flowName, suggestion ) && suggestion ) {
 			return this.handleDomainToDomainCart( {
 				googleAppsCartItem,
 				shouldHideFreePlan,
 				signupDomainOrigin,
 			} );
 		}
-		const { flowName } = this.props;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -669,8 +654,8 @@ export class RenderDomainsStep extends Component {
 	};
 
 	getSideContent = () => {
-		const { translate } = this.props;
-		const domainsInCart = this.shouldUseMultipleDomainsInCart()
+		const { translate, flowName, step } = this.props;
+		const domainsInCart = shouldUseMultipleDomainsInCart( flowName, step?.suggestion )
 			? getDomainRegistrations( this.props.cart )
 			: [];
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
@@ -678,7 +663,9 @@ export class RenderDomainsStep extends Component {
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div
 				className={ classNames( 'domains__domain-side-content', {
-					'fade-out': this.shouldUseMultipleDomainsInCart() && domainsInCart.length > 0,
+					'fade-out':
+						shouldUseMultipleDomainsInCart( flowName, step?.suggestion ) &&
+						domainsInCart.length > 0,
 				} ) }
 			>
 				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
@@ -737,8 +724,70 @@ export class RenderDomainsStep extends Component {
 			);
 		};
 
-		const DomainsInCart =
-			this.shouldUseMultipleDomainsInCart() && ! cartIsLoading ? (
+		const DomainsInCart = () => {
+			if (
+				! shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) ||
+				cartIsLoading
+			) {
+				return null;
+			}
+
+			if ( isMobile() ) {
+				const MobileHeader = (
+					<div className="domains__domain-cart-title">
+						<div className="domains__domain-cart-total">
+							<div key="rowtotal" className="domains__domain-cart-total-items">
+								{ this.props.translate( '%d domain', '%d domains', {
+									count: domainsInCart.length,
+									args: [ domainsInCart.length ],
+								} ) }
+							</div>
+							<div key="rowtotalprice" className="domains__domain-cart-total-price">
+								{ formatCurrency(
+									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
+									domainsInCart ? domainsInCart[ 0 ].currency : 'USD'
+								) }
+							</div>
+						</div>
+						<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+							{ this.props.translate( 'Continue' ) }
+						</Button>
+					</div>
+				);
+
+				return (
+					<FoldableCard
+						clickableHeader
+						className="domains__domain-side-content domains__domain-cart-foldable-card"
+						header={ MobileHeader }
+						expanded={ false }
+						actionButton={
+							<button className="foldable-card__action foldable-card__expand">
+								<span className="screen-reader-text">More</span>
+								<Icon icon={ chevronDown } viewBox="6 4 12 14" size={ 16 } />
+							</button>
+						}
+						actionButtonExpanded={
+							<button className="foldable-card__action foldable-card__expand">
+								<span className="screen-reader-text">More</span>
+								<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
+							</button>
+						}
+					>
+						<div className="domains__domain-side-content domains__domain-cart">
+							<div className="domains__domain-cart-rows">
+								{ domainsInCart.map( ( domain, i ) => (
+									<div key={ `row${ i }` } className="domains__domain-cart-row">
+										<DomainNameAndCost domain={ domain } />
+									</div>
+								) ) }
+							</div>
+						</div>
+					</FoldableCard>
+				);
+			}
+
+			return (
 				<div className="domains__domain-side-content domains__domain-cart">
 					<div className="domains__domain-cart-title">
 						{ this.props.translate( 'Your domains' ) }
@@ -770,12 +819,13 @@ export class RenderDomainsStep extends Component {
 						{ this.props.translate( 'Choose my domain later' ) }
 					</Button>
 				</div>
-			) : null;
+			);
+		};
 
 		return (
 			<div className="domains__domain-side-content-container">
 				{ domainsInCart.length > 0
-					? DomainsInCart
+					? DomainsInCart()
 					: ! this.shouldHideDomainExplainer() &&
 					  this.props.isPlanSelectionAvailableLaterInFlow && (
 							<div className="domains__domain-side-content domains__free-domain">
@@ -940,7 +990,7 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
+		const { flowName, isAllDomains, stepSectionName, isReskinned, translate, step } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -981,14 +1031,14 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		if ( this.shouldUseMultipleDomainsInCart() ) {
+		if ( shouldUseMultipleDomainsInCart( flowName, step?.suggestion ) ) {
 			return translate( 'Find and claim one or more domain names' );
 		}
 
 		if ( isReskinned ) {
 			return (
 				! stepSectionName &&
-				'domain-transfer' !== this.props.flowName &&
+				'domain-transfer' !== flowName &&
 				translate( 'Enter some descriptive keywords to get started' )
 			);
 		}
@@ -999,9 +1049,10 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, isReskinned, stepSectionName, translate } = this.props;
+		const { headerText, isAllDomains, isReskinned, stepSectionName, translate, flowName, step } =
+			this.props;
 
-		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === this.props.flowName ) {
+		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
 			return '';
 		}
 
@@ -1014,7 +1065,7 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			if ( this.shouldUseMultipleDomainsInCart() ) {
+			if ( shouldUseMultipleDomainsInCart( flowName, step?.suggestion ) ) {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
 			return ! stepSectionName && translate( 'Choose a domain' );

@@ -1,5 +1,6 @@
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, calendar } from '@wordpress/icons';
 import moment from 'moment';
 import page from 'page';
 import qs from 'qs';
@@ -79,13 +80,10 @@ const DateControlPicker = ( {
 	};
 
 	return (
-		<>
-			<Button
-				className="stats-date-control-picker__button"
-				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
-				ref={ infoReferenceElement }
-			>
+		<div className="stats-date-control-picker">
+			<Button onClick={ () => togglePopoverOpened( ! popoverOpened ) } ref={ infoReferenceElement }>
 				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
+				<Icon className="gridicon" icon={ calendar } />
 			</Button>
 			<Popover
 				position="bottom"
@@ -107,7 +105,7 @@ const DateControlPicker = ( {
 					onClick={ handleShortcutSelected }
 				/>
 			</Popover>
-		</>
+		</div>
 	);
 };
 
