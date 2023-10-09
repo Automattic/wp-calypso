@@ -7,20 +7,20 @@ import {
 import validateDomain from 'calypso/site-profiler/utils/validate-domain';
 import isSpecialDomain, { prepareSpecialDomain } from '../utils/is-special-domain';
 
-export default function useDomainParam( value?: string ) {
-	const [ domain, setDomain ] = useState( value || '' );
+export default function useDomainParam( value: string = '' ) {
+	const [ domain, setDomain ] = useState( value );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
-	const [ isSpecial, setIsSpecial ] = useState( isSpecialDomain( value || '' ) );
+	const [ isSpecial, setIsSpecial ] = useState( isSpecialDomain( value ) );
 	const [ category, setCategory ] = useState< SPECIAL_DOMAIN_CATEGORY >();
 
 	useEffect( () => {
-		const finalizedDomain = prepareDomain( value || '', isSpecial );
+		const preparedDomain = prepareDomain( value, isSpecial );
 
-		setDomain( finalizedDomain );
-		setCategory( getDomainCategory( finalizedDomain ) );
-		setIsValid( validateDomain( value || '' ) );
-		setIsSpecial( isSpecialDomain( value || '' ) );
-	}, [ value ] );
+		setIsValid( validateDomain( preparedDomain ) );
+		setIsSpecial( isSpecialDomain( preparedDomain ) );
+		setCategory( getDomainCategory( preparedDomain ) );
+		setDomain( preparedDomain );
+	}, [ value, isSpecial ] );
 
 	return { domain, isValid, isSpecial, category };
 }
@@ -30,9 +30,9 @@ function prepareDomain( domain: string, isSpecial: boolean ) {
 		return '';
 	}
 
-	const domain_lc = domain.toLowerCase();
+	const domainLc = domain.toLowerCase();
 
 	return isSpecial
-		? prepareSpecialDomain( domain_lc )
-		: getFixedDomainSearch( extractDomainFromInput( domain_lc ) );
+		? prepareSpecialDomain( domainLc )
+		: getFixedDomainSearch( extractDomainFromInput( domainLc ) );
 }
