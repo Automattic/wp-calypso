@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { translate, useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
@@ -372,6 +372,13 @@ export const StagingSiteSyncCard = ( {
 		siteToSync = selectedOption === 'push' ? 'production' : 'staging';
 	}
 
+	useEffect( () => {
+		if ( isSyncInProgress ) {
+			setSelectedOption( null );
+			setSelectedItems( [] );
+		}
+	}, [ isSyncInProgress ] );
+
 	return (
 		<SyncCardContainer
 			siteToSync={ siteToSync }
@@ -480,6 +487,14 @@ export const ProductionSiteSyncCard = ( {
 	} else {
 		siteToSync = selectedOption === 'pull' ? 'production' : 'staging';
 	}
+
+	useEffect( () => {
+		if ( isSyncInProgress ) {
+			setSelectedOption( null );
+			setSelectedItems( [] );
+		}
+	}, [ isSyncInProgress ] );
+
 	return (
 		<SyncCardContainer
 			siteToSync={ siteToSync }
