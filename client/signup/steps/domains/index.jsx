@@ -71,6 +71,16 @@ import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 
 import './style.scss';
 
+const BoldTLD = ( { domain } ) => {
+	const tld = domain.split( '.' ).pop();
+	return (
+		<>
+			<span>{ domain.replace( `.${ tld }`, '' ) }</span>
+			<b>.{ tld }</b>
+		</>
+	);
+};
+
 export class RenderDomainsStep extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
@@ -141,7 +151,7 @@ export class RenderDomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
-			showFreeSubdomain: JSON.parse( localStorage.getItem( 'showFreeSubdomain' ) || 'false' ),
+			showFreeSubdomain: false,
 		};
 	}
 
@@ -180,22 +190,12 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
-	state = { showFreeSubdomain: false };
-
-	handleIsSubDomainSuggestion = () => {
-		// Toggle the value based on the current state
-		const newShowFreeSubdomainValue = ! this.state.showFreeSubdomain;
-
-		this.setState( { showFreeSubdomain: newShowFreeSubdomainValue } );
-		localStorage.setItem( 'showFreeSubdomain', String( newShowFreeSubdomainValue ) );
-	};
-
 	handleAddDomain = ( suggestion, position ) => {
 		if (
 			shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) &&
 			suggestion?.isSubDomainSuggestion
 		) {
-			this.handleIsSubDomainSuggestion();
+			this.setState( { showFreeSubdomain: suggestion } );
 			return;
 		}
 
@@ -688,16 +688,6 @@ export class RenderDomainsStep extends Component {
 			</div>
 		) : null;
 
-		const BoldTLD = ( { domain } ) => {
-			const tld = domain.split( '.' ).pop();
-			return (
-				<>
-					<span>{ domain.replace( `.${ tld }`, '' ) }</span>
-					<b>.{ tld }</b>
-				</>
-			);
-		};
-
 		const DomainNameAndCost = ( { domain } ) => {
 			const priceText = translate( '%(cost)s/year', {
 				args: { cost: domain.item_original_cost_display },
@@ -713,7 +703,7 @@ export class RenderDomainsStep extends Component {
 								'limit-width': hasPromotion,
 							} ) }
 						>
-							<BoldTLD domain={ domain.meta } data={ domain } />
+							<BoldTLD domain={ domain.meta } />
 						</div>
 						<div className="domain-product-price__price">
 							{ hasPromotion && <del>{ priceText }</del> }
@@ -750,27 +740,25 @@ export class RenderDomainsStep extends Component {
 					</div>
 					<div className="domains__domain-cart-rows">
 						{ this.state.showFreeSubdomain && (
-							<div className="domains__domain-cart-row free-subdomain">
+							<div key="row-free" className="domains__domain-cart-row">
 								<div>
 									<div className="domains__domain-cart-domain">
-										<span>test</span>
-										<b>.wordpress.com</b>
+										<BoldTLD domain={ this.state.showFreeSubdomain.domain_name } />
 									</div>
 									<div className="domain-product-price__price">
-										<span className="domains__price">Free</span>
+										<span className="domains__price-free">Free</span>
 									</div>
 								</div>
 								<div>
-									<button
-										type="button"
-										className="button domains__domain-cart-remove is-borderless"
+									<Button
+										borderless
+										className="button domains__domain-cart-remove"
 										onClick={ () => {
-											localStorage.setItem( 'showFreeSubdomain', 'false' );
 											this.setState( { showFreeSubdomain: false } );
 										} }
 									>
 										{ this.props.translate( 'Remove' ) }
-									</button>
+									</Button>
 								</div>
 							</div>
 						) }
@@ -782,8 +770,8 @@ export class RenderDomainsStep extends Component {
 					</div>
 					<div key="rowtotal" className="domains__domain-cart-total">
 						{ this.props.translate( '%d domain', '%d domains', {
-							count: domainsInCart.length,
-							args: [ domainsInCart.length ],
+							count: domainsInCart.length + ( this.state.showFreeSubdomain ? 1 : 0 ),
+							args: [ domainsInCart.length + ( this.state.showFreeSubdomain ? 1 : 0 ) ],
 						} ) }
 					</div>
 					<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
