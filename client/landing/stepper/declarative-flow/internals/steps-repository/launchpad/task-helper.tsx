@@ -24,7 +24,6 @@ import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { Dispatch, SetStateAction } from 'react';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import useCheckout from 'calypso/landing/stepper/hooks/use-checkout';
@@ -50,16 +49,15 @@ export function getEnhancedTasks(
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
 	globalStylesMinimumPlan: string,
-	setShowPlansModal: Dispatch< SetStateAction< boolean > >,
 	queryClient: QueryClient,
-	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
 	checklistStatuses: LaunchpadStatuses = {},
+	setShowConfirmModal: () => void,
+	goToStep?: NavigationControls[ 'goToStep' ],
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
 	stripeConnectUrl?: string,
-	setShowConfirmModal: () => void = () => {},
 	isDomainEmailUnverified = false
 ) {
 	if ( ! tasks ) {
@@ -584,11 +582,9 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							completePaidNewsletterTask();
-							site?.ID
-								? setShowPlansModal( true )
-								: window.location.assign(
-										`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
-								  );
+							window.location.assign(
+								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
+							);
 						},
 					};
 					break;

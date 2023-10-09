@@ -16,7 +16,6 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import wpcom from 'calypso/lib/wp';
-import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
@@ -67,7 +66,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ stripeConnectUrl, setStripeConnectUrl ] = useState< string >( '' );
-	const [ showPlansModal, setShowPlansModal ] = useState( false );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const queryClient = useQueryClient();
 
@@ -113,16 +111,15 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
 			PLAN_PREMIUM,
-			setShowPlansModal,
 			queryClient,
-			goToStep,
 			flow,
 			isEmailVerified,
 			checklistStatuses,
+			() => setShowConfirmModal( true ),
+			goToStep,
 			getPlanCartItem(),
 			getDomainCartItem(),
 			stripeConnectUrl,
-			() => setShowConfirmModal( true ),
 			isDomainEmailUnverified
 		);
 
@@ -260,14 +257,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 						taskFilter={ () => enhancedTasks || [] }
 						makeLastTaskPrimaryAction={ true }
 					/>
-					{ showPlansModal && site?.ID && (
-						<RecurringPaymentsPlanAddEditModal
-							closeDialog={ () => setShowPlansModal( false ) }
-							product={ { subscribe_as_site_subscriber: true, price: 5 } }
-							annualProduct={ { subscribe_as_site_subscriber: true, price: 5 * 12 } }
-							siteId={ site.ID }
-						/>
-					) }
 				</div>
 			</div>
 			<Dialog
