@@ -324,10 +324,7 @@ export class RenderDomainsStep extends Component {
 
 	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
 		const { step, flowName } = this.props;
-		let { suggestion } = step;
-		if ( this.state.wpcomSubdomainSelected ) {
-			suggestion = this.state.wpcomSubdomainSelected;
-		}
+		const { suggestion } = step;
 
 		if ( shouldUseMultipleDomainsInCart( flowName ) && suggestion ) {
 			return this.handleDomainToDomainCart( {
