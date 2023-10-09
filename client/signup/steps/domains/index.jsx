@@ -425,6 +425,7 @@ export class RenderDomainsStep extends Component {
 					isPurchasingItem,
 					siteUrl: domain,
 					stepSectionName: this.props.stepSectionName,
+					domainCart: {},
 				},
 				this.getThemeArgs()
 			),
@@ -434,7 +435,8 @@ export class RenderDomainsStep extends Component {
 				{
 					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 				},
-				{ siteUrl: domain }
+				{ siteUrl: domain },
+				{ domainCart: {} }
 			)
 		);
 
@@ -466,10 +468,16 @@ export class RenderDomainsStep extends Component {
 					isPurchasingItem,
 					siteUrl: domain,
 					stepSectionName: this.props.stepSectionName,
+					domainCart: {},
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem, { siteUrl: domain } )
+			Object.assign(
+				{ domainItem },
+				useThemeHeadstartItem,
+				{ siteUrl: domain },
+				{ domainCart: {} }
+			)
 		);
 
 		this.props.goToNextStep();
