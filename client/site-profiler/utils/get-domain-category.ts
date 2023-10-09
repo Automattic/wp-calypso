@@ -1,4 +1,4 @@
-export type SPECIAL_DOMAIN_CASES =
+export type SPECIAL_DOMAIN_CATEGORY =
 	| 'wordpress-com'
 	| 'wordpress-org'
 	| 'automattic-com'
@@ -9,9 +9,9 @@ export type SPECIAL_DOMAIN_CASES =
 	| 'wpcom-sp'
 	| 'local-development';
 
-export function getSpecialDomainMapping( domain: string ): SPECIAL_DOMAIN_CASES | undefined {
+export function getDomainCategory( domain: string ): SPECIAL_DOMAIN_CATEGORY | undefined {
 	const domain_lc = domain.toLowerCase();
-	let specialDomainCase: SPECIAL_DOMAIN_CASES | undefined;
+	let specialDomainCase: SPECIAL_DOMAIN_CATEGORY | undefined;
 
 	switch ( domain_lc ) {
 		case 'wordpress.com':

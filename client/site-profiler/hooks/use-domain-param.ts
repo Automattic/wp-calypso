@@ -1,16 +1,16 @@
 import { useEffect, useState, useCallback } from 'react';
 import { extractDomainFromInput, getFixedDomainSearch } from 'calypso/lib/domains';
 import {
-	SPECIAL_DOMAIN_CASES,
-	getSpecialDomainMapping,
-} from 'calypso/site-profiler/utils/get-special-domain-mapping';
+	SPECIAL_DOMAIN_CATEGORY,
+	getDomainCategory,
+} from 'calypso/site-profiler/utils/get-domain-category';
 import validateDomain from 'calypso/site-profiler/utils/validate-domain';
 import isSpecialDomain from '../utils/is-special-domain';
 
 export default function useDomainParam( value?: string, sanitize = true ) {
 	const [ domain, setDomain ] = useState( value || '' );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
-	const [ specialDomainMapping, setSpecialDomainMapping ] = useState< SPECIAL_DOMAIN_CASES >();
+	const [ specialDomainMapping, setSpecialDomainMapping ] = useState< SPECIAL_DOMAIN_CATEGORY >();
 	const isDomainSpecialInput = isSpecialDomain( domain );
 
 	const getFinalizedDomain = useCallback(
@@ -33,7 +33,7 @@ export default function useDomainParam( value?: string, sanitize = true ) {
 	useEffect( () => {
 		setIsValid( validateDomain( value || '' ) );
 		const finalizedDomain = getFinalizedDomain( value || '' );
-		const specialDomains = getSpecialDomainMapping( finalizedDomain );
+		const specialDomains = getDomainCategory( finalizedDomain );
 		setSpecialDomainMapping( specialDomains );
 		setDomain( finalizedDomain );
 	}, [ value, getFinalizedDomain, isDomainSpecialInput ] );

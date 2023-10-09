@@ -7,7 +7,7 @@ import { HostingProvider } from 'calypso/data/site-profiler/types';
 import StatusCtaInfo from '../heading-information/status-cta-info';
 import StatusInfo from '../heading-information/status-info';
 import type { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
-import type { SPECIAL_DOMAIN_CASES } from '../../utils/get-special-domain-mapping';
+import type { SPECIAL_DOMAIN_CATEGORY } from '../../utils/get-domain-category';
 import './styles.scss';
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 	hostingProvider?: HostingProvider;
 	urlData?: UrlData;
 	onCheckAnotherSite?: () => void;
-	specialDomainMapping?: SPECIAL_DOMAIN_CASES;
+	specialDomainMapping?: SPECIAL_DOMAIN_CATEGORY;
 }
 
 export default function HeadingInformation( props: Props ) {

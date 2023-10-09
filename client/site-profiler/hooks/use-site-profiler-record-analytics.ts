@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect } from 'react';
-import { SPECIAL_DOMAIN_CASES } from 'calypso/site-profiler/utils/get-special-domain-mapping';
+import { SPECIAL_DOMAIN_CATEGORY } from 'calypso/site-profiler/utils/get-domain-category';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { HostingProvider } from 'calypso/data/site-profiler/types';
 import type { CONVERSION_ACTION } from 'calypso/site-profiler/hooks/use-define-conversion-action';
@@ -13,7 +13,7 @@ export default function useSiteProfilerRecordAnalytics(
 	domain: string,
 	isDomainValid?: boolean,
 	conversionAction?: CONVERSION_ACTION,
-	specialDomainMapping?: SPECIAL_DOMAIN_CASES,
+	specialDomainMapping?: SPECIAL_DOMAIN_CATEGORY,
 	hostingProvider?: HostingProvider,
 	urlData?: UrlData
 ) {
