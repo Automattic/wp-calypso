@@ -5,11 +5,13 @@ import {
 	PLAN_BUSINESS,
 	getPlan,
 } from '@automattic/calypso-products';
-import { NextButton } from '@automattic/onboarding';
+import { NextButton, SubTitle } from '@automattic/onboarding';
+import { Button, Spinner } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { TrialPlan } from './trial-plan';
+import { useVerifyEmail } from './use-verify-email';
 import type { Step } from '../../types';
 
 const FEATURES_NOT_INCLUDED_IN_FREE_TRIAL = [
@@ -24,11 +26,17 @@ interface CallToActionProps {
 
 const CallToAction = ( { onStartTrialClick }: CallToActionProps ) => {
 	const { __ } = useI18n();
+	const { isVerified, isSending, email, resendEmail } = useVerifyEmail();
 
 	return (
-		<NextButton isBusy={ false } onClick={ onStartTrialClick }>
-			{ __( 'Start the Business trial' ) }
-		</NextButton>
+		<>
+			{ ! isVerified && (
+				<EmailVerification isSending={ isSending } email={ email } resendEmail={ resendEmail } />
+			) }
+			<NextButton isBusy={ false } onClick={ onStartTrialClick } disabled={ ! isVerified }>
+				{ __( 'Start the Business trial' ) }
+			</NextButton>
+		</>
 	);
 };
 
@@ -71,6 +79,46 @@ const HostingTrialAcknowledgeInternal = ( { onStartTrialClick }: CallToActionPro
 		/>
 	);
 };
+
+function EmailVerification( {
+	isSending,
+	email,
+	resendEmail,
+}: {
+	isSending: boolean;
+	email?: string;
+	resendEmail: () => void;
+} ) {
+	const { __ } = useI18n();
+	return (
+		<SubTitle>
+			<p>
+				{ sprintf(
+					/* translators: the email address of the account*/
+					__(
+						'To start your Business plan 7-day trial, verify your email address by clicking the link we sent to %(email)s.'
+					),
+					{
+						email: email,
+					}
+				) }
+				<Button
+					onClick={ () => resendEmail() }
+					variant="link"
+					size="default"
+					style={ {
+						marginLeft: '0.3em',
+						fontSize: 'inherit',
+						color: 'inherit',
+					} }
+				>
+					{ __( 'Resend verification email' ) }
+				</Button>
+				{ isSending && <Spinner /> }
+			</p>
+		</SubTitle>
+	);
+}
 
 export const HostingTrialAcknowledge: Step = ( { navigation } ) => {
 	return <HostingTrialAcknowledgeInternal onStartTrialClick={ () => navigation.submit?.() } />;
