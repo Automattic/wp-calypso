@@ -38,7 +38,14 @@ export function CommandMenuGroup( {
 			{ commands.map( ( command ) => {
 				return (
 					<>
-						{ command.separator && <Command.Separator /> }
+						{ command.separator && (
+							<Command.Separator
+								style={ {
+									backgroundColor: 'var(--studio-gray-20)',
+									height: 1,
+								} }
+							/>
+						) }
 						<Command.Item
 							key={ command.name }
 							value={ command.searchLabel ?? command.label }
