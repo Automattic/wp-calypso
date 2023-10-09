@@ -6,6 +6,7 @@ import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversatio
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
@@ -25,6 +26,16 @@ class ReaderLikeButton extends Component {
 		clearTimeout( this.hidePopoverTimeout );
 	}
 
+	onLikeToggle = ( liked ) => {
+		// Check if the user is logged in
+		if ( ! this.props.isLoggedIn ) {
+			return this.showJoinConversationModal();
+		}
+
+		// Record the like
+		this.recordLikeToggle( liked );
+	};
+
 	recordLikeToggle = ( liked ) => {
 		const post = this.props.post || this.props.postByKey;
 
@@ -38,6 +49,10 @@ class ReaderLikeButton extends Component {
 		if ( liked && ! this.props.fullPost && ! post._seen ) {
 			this.props.markPostSeen( post, this.props.site );
 		}
+	};
+
+	hideJoinConversationModal = () => {
+		this.setState( { showJoinConversationModal: false } );
 	};
 
 	showJoinConversationModal = () => {
@@ -73,10 +88,9 @@ class ReaderLikeButton extends Component {
 					ref={ this.likeButtonRef }
 					onMouseEnter={ this.showLikesPopover }
 					onMouseLeave={ this.hideLikesPopover }
-					onLikeToggle={ this.recordLikeToggle }
+					onLikeToggle={ this.onLikeToggle }
 					likeSource="reader"
 					icon={ likeIcon }
-					onLoggedOut={ this.showJoinConversationModal }
 				/>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover
@@ -89,12 +103,10 @@ class ReaderLikeButton extends Component {
 						context={ this.likeButtonRef.current }
 					/>
 				) }
-				{ showJoinConversationModal && (
-					<ReaderJoinConversationDialog
-						onClose={ () => this.setState( { showJoinConversationModal: false } ) }
-						isVisible={ this.state.showJoinConversationModal }
-					/>
-				) }
+				<ReaderJoinConversationDialog
+					onClose={ this.hideJoinConversationModal }
+					isVisible={ showJoinConversationModal }
+				/>
 			</Fragment>
 		);
 	}
@@ -109,6 +121,7 @@ export default connect(
 			} ),
 			likeCount: getPostLikeCount( state, siteId, postId ),
 			iLike: isLikedPost( state, siteId, postId ),
+			isLoggedIn: isUserLoggedIn( state ),
 		};
 	},
 	{ markPostSeen }

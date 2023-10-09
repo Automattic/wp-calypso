@@ -21,7 +21,6 @@ class LikeButtonContainer extends Component {
 		iLike: PropTypes.bool,
 		likeSource: PropTypes.string,
 		icon: PropTypes.object,
-		onLoggedOut: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -55,7 +54,6 @@ class LikeButtonContainer extends Component {
 					animateLike={ true }
 					onLikeToggle={ this.handleLikeToggle }
 					icon={ this.props.icon }
-					onLoggedOut={ this.props.onLoggedOut }
 				/>
 			</Fragment>
 		);
