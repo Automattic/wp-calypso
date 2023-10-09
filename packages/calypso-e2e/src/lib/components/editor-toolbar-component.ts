@@ -298,7 +298,10 @@ export class EditorToolbarComponent {
 
 		// To support i18n tests.
 		const translatedTargetName = await this.translateFromPage( target );
-		const button = editorParent.getByRole( 'button', { name: translatedTargetName, exact: true } );
+		const translatedEditorTopBarName = await this.translateFromPage( 'Editor top bar' );
+		const button = editorParent
+			.getByRole( 'region', { name: translatedEditorTopBarName } )
+			.getByRole( 'button', { name: translatedTargetName, exact: true } );
 
 		if ( await this.targetIsOpen( button ) ) {
 			return;
