@@ -72,15 +72,6 @@ const JetpackIconContainer = styled.div`
 	line-height: 1;
 `;
 
-const PlanComparisonHeader = styled.h1`
-	.plans .step-container .step-container__content &&,
-	&& {
-		font-size: 2rem;
-		text-align: center;
-		margin: 48px 0;
-	}
-`;
-
 const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	font-weight: 500;
 	font-size: 20px;
@@ -842,7 +833,6 @@ const ComparisonGrid = ( {
 	onStorageAddOnClick,
 	isHidden,
 }: ComparisonGridProps ) => {
-	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
@@ -1008,9 +998,6 @@ const ComparisonGrid = ( {
 
 	return (
 		<div className="plan-comparison-grid">
-			<PlanComparisonHeader className="wp-brand-font">
-				{ translate( 'Compare our plans and find yours' ) }
-			</PlanComparisonHeader>
 			{ isHidden ? null : (
 				<PlanTypeSelector
 					{ ...planTypeSelectorProps }
