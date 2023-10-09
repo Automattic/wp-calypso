@@ -1,18 +1,22 @@
 import styled from '@emotion/styled';
 import { translate, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useSelector } from 'calypso/state';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { SiteSyncStatus } from 'calypso/state/sync/constants';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ConfirmationModal } from '../confirmation-modal';
 import SyncOptionsPanel, { CheckboxOptionItem } from '../sync-options-panel';
 import { useCheckSyncStatus } from '../use-site-sync-status';
 import { StagingSiteSyncLoadingBarCardContent } from './staging-site-sync-loading-bar-card-content';
+const stagingSiteSyncSuccess = 'staging-site-sync-success';
 
 const synchronizationOptions: CheckboxOptionItem[] = [
 	{
@@ -325,6 +329,7 @@ export const SiteSyncCard = ( {
 	productionSiteId,
 	error,
 }: SyncCardProps ) => {
+	const dispatch = useDispatch();
 	const actionForType = useMemo( () => ( type === 'production' ? 'pull' : 'push' ), [ type ] );
 	const [ selectedItems, setSelectedItems ] = useState< CheckboxOptionItem[] >(
 		[] as CheckboxOptionItem[]
@@ -338,6 +343,7 @@ export const SiteSyncCard = ( {
 		resetSyncStatus,
 		isSyncInProgress,
 		error: checkStatusError,
+		status,
 		siteType,
 	} = useCheckSyncStatus( productionSiteId );
 
@@ -351,24 +357,26 @@ export const SiteSyncCard = ( {
 
 	const onPushInternal = useCallback( () => {
 		resetSyncStatus();
+		dispatch( removeNotice( stagingSiteSyncSuccess ) );
 		if ( type === 'production' ) {
 			onPush?.();
 		}
 		if ( type === 'staging' ) {
 			onPush?.( transformSelectedItems( selectedItems ) );
 		}
-	}, [ onPush, resetSyncStatus, selectedItems, transformSelectedItems, type ] );
+	}, [ dispatch, onPush, resetSyncStatus, selectedItems, transformSelectedItems, type ] );
 
 	const syncError = error || checkStatusError;
 	const onPullInternal = useCallback( () => {
 		resetSyncStatus();
+		dispatch( removeNotice( stagingSiteSyncSuccess ) );
 		if ( type === 'production' ) {
 			onPull?.( transformSelectedItems( selectedItems ) );
 		}
 		if ( type === 'staging' ) {
 			onPull?.();
 		}
-	}, [ resetSyncStatus, type, onPull, transformSelectedItems, selectedItems ] );
+	}, [ resetSyncStatus, dispatch, type, onPull, transformSelectedItems, selectedItems ] );
 
 	const isSyncButtonDisabled =
 		disabled || ( selectedItems.length === 0 && selectedOption === actionForType );
@@ -386,6 +394,14 @@ export const SiteSyncCard = ( {
 			setSelectedItems( [] );
 		}
 	}, [ isSyncInProgress ] );
+
+	useEffect( () => {
+		if ( selectedOption && status === SiteSyncStatus.COMPLETED ) {
+			dispatch(
+				successNotice( translate( 'Site synced successfully.' ), { id: stagingSiteSyncSuccess } )
+			);
+		}
+	}, [ dispatch, selectedOption, status ] );
 
 	return (
 		<SyncCardContainer
