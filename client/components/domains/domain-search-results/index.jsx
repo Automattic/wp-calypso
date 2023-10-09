@@ -56,6 +56,7 @@ class DomainSearchResults extends Component {
 		unavailableDomains: PropTypes.array,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
+		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
 	renderDomainAvailability() {

@@ -137,7 +137,7 @@ class RegisterDomainStep extends Component {
 		 */
 		otherManagedSubdomainsCountOverride: PropTypes.number,
 		handleClickUseYourDomain: PropTypes.func,
-		wpcomSubdomainSelected: PropTypes.object,
+		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
 	static defaultProps = {
