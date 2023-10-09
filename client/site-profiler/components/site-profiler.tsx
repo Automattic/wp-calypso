@@ -6,7 +6,7 @@ import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-an
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
-import useDomainQueryParam from 'calypso/site-profiler/hooks/use-domain-query-param';
+import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
 import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
@@ -24,7 +24,7 @@ export default function SiteProfiler() {
 		isValid: isDomainValid,
 		specialDomainMapping,
 		isDomainSpecialInput,
-	} = useDomainQueryParam();
+	} = useDomainParam();
 
 	const {
 		data: siteProfilerData,

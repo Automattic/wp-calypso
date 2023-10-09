@@ -7,7 +7,7 @@ import {
 	getSpecialDomainMapping,
 } from 'calypso/site-profiler/utils/get-special-domain-mapping';
 
-export default function useDomainQueryParam( sanitize = true ) {
+export default function useDomainParam( sanitize = true ) {
 	const [ domain, setDomain ] = useState( '' );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
 	const [ specialDomainMapping, setSpecialDomainMapping ] = useState< SPECIAL_DOMAIN_CASES >();
