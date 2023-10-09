@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
@@ -11,6 +12,7 @@ export const useVerifyEmail = () => {
 	const dispatch = useDispatch();
 	const user = useSelector( getCurrentUser ) as UserData;
 	const sendEmail = useSendEmailVerification();
+	const { __ } = useI18n();
 
 	const [ data, setData ] = useState( {
 		isVerified: user.email_verified,
@@ -28,7 +30,7 @@ export const useVerifyEmail = () => {
 
 		sendEmail()
 			.then( () => {
-				dispatch( successNotice( 'Email verification sent!' ) );
+				dispatch( successNotice( __( 'Email verification sent!' ) ) );
 				setData( ( prevState ) => ( {
 					...prevState,
 					isSending: false,
