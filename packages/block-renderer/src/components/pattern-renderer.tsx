@@ -10,7 +10,7 @@ interface Props {
 	minHeight?: number;
 	maxHeight?: 'none' | number;
 	placeholder?: JSX.Element;
-	isNewSite: boolean;
+	shouldShufflePosts: boolean;
 }
 
 const PatternRenderer = ( {
@@ -19,12 +19,12 @@ const PatternRenderer = ( {
 	viewportHeight,
 	minHeight,
 	maxHeight,
-	isNewSite,
+	shouldShufflePosts,
 }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 	const patternHtml = usePatternMinHeightVh( pattern?.html, viewportHeight );
-	const inlineCss = usePatternInlineCss( patternId, patternHtml, isNewSite );
+	const inlineCss = usePatternInlineCss( patternId, patternHtml, shouldShufflePosts );
 
 	return (
 		<BlockRendererContainer

@@ -85,7 +85,7 @@ const PatternListItem = ( {
 						viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
 						viewportHeight={ DEFAULT_VIEWPORT_HEIGHT }
 						minHeight={ PLACEHOLDER_HEIGHT }
-						isNewSite={ isNewSite }
+						shouldShufflePosts={ isNewSite }
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
