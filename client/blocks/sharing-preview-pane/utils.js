@@ -36,13 +36,73 @@ export const getPostAutoSharingOptions = ( post ) => {
 	return post?.metadata?.find( ( meta ) => meta.key === '_wpas_options' )?.value;
 };
 
+export function getPostAttachedMedia( post ) {
+	return getPostAutoSharingOptions( post )?.attached_media || [];
+}
+
 export const getPostCustomImage = ( post ) => {
-	return getPostAutoSharingOptions( post )?.attached_media?.[ 0 ]?.url;
+	const [ firstMedia ] = getPostAttachedMedia( post );
+
+	if ( firstMedia?.id ) {
+		// Get the attachment from the post data
+		const attachment = post?.attachments?.[ firstMedia.id ];
+
+		if ( attachment?.mime_type?.startsWith( 'image/' ) && firstMedia.url ) {
+			return firstMedia.url;
+		}
+	}
+	return null;
 };
+
+export function getPostImageGeneratorSettings( post ) {
+	return getPostAutoSharingOptions( post )?.image_generator_settings || {};
+}
 
 export const isSocialPost = ( post ) => {
 	return !! getPostAutoSharingOptions( post )?.should_upload_attached_media;
 };
+
+export function getPostCustomMedia( post ) {
+	const media = [];
+
+	// Attach media only if "Share as a social post" option is enabled.
+	if ( isSocialPost( post ) ) {
+		const sigImageUrl = getSigImageUrl( post );
+
+		if ( sigImageUrl ) {
+			media.push( {
+				type: 'image/jpeg',
+				url: sigImageUrl,
+				alt: '',
+			} );
+		} else {
+			for ( const { id } of getPostAttachedMedia( post ) ) {
+				const attachment = post.attachments?.[ id ];
+
+				if ( attachment?.URL ) {
+					media.push( {
+						type: attachment.mime_type,
+						url: attachment.URL,
+						alt: '',
+					} );
+				}
+			}
+		}
+	}
+
+	return media;
+}
+
+export function getSigImageUrl( post ) {
+	const sigSettings = getPostImageGeneratorSettings( post );
+
+	if ( sigSettings.enabled && sigSettings.token ) {
+		const baseUrl = 'https://jetpack.com/redirect/?source=sigenerate&query=';
+
+		return baseUrl + encodeURIComponent( `t=${ sigSettings.token }` );
+	}
+	return '';
+}
 
 export const getExcerptForPost = ( post ) => {
 	if ( ! post ) {
