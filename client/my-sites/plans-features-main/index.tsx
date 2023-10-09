@@ -42,6 +42,7 @@ import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -236,6 +237,11 @@ const PlansFeaturesMain = ( {
 	);
 	const shouldDisplayFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
+
+	const purchase = useSelector(
+		( state: IAppState ) => currentPlan && getByPurchaseId( state, currentPlan.id || 0 )
+	);
+
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
@@ -531,6 +537,23 @@ const PlansFeaturesMain = ( {
 					( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
 			  )
 			: undefined;
+
+	/**
+	 * Ensure the spotlight plan shows the price with which the plans was purchased.
+	 */
+	if (
+		gridPlanForSpotlight &&
+		purchase &&
+		gridPlanForSpotlight.planSlug === purchase.productSlug
+	) {
+		if ( gridPlanForSpotlight.isMonthlyPlan ) {
+			gridPlanForSpotlight.pricing.originalPrice.monthly = purchase.priceInteger;
+			gridPlanForSpotlight.pricing.originalPrice.full = Math.floor( purchase.priceInteger * 12 );
+		} else {
+			gridPlanForSpotlight.pricing.originalPrice.monthly = Math.floor( purchase.priceInteger / 12 );
+			gridPlanForSpotlight.pricing.originalPrice.full = purchase.priceInteger;
+		}
+	}
 
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	/**
