@@ -280,7 +280,7 @@ export default withCurrentRoute(
 		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection =
 			! isWooOAuth2Client( oauth2Client ) &&
-			[ 'accept-invite', 'signup', 'jetpack-connect' ].includes( sectionName );
+			[ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
