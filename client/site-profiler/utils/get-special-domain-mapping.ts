@@ -9,8 +9,6 @@ export type SPECIAL_DOMAIN_CASES =
 	| 'wpcom-sp'
 	| 'local-development';
 
-const SPECIAL_CASES = [ /wordpress\.com\/site-profiler/, /localhost/, /127\.0\.0\.1/ ];
-
 export function getSpecialDomainMapping( domain: string ): SPECIAL_DOMAIN_CASES | undefined {
 	const domain_lc = domain.toLowerCase();
 	let specialDomainCase: SPECIAL_DOMAIN_CASES | undefined;
@@ -56,10 +54,4 @@ export function getSpecialDomainMapping( domain: string ): SPECIAL_DOMAIN_CASES 
 	}
 
 	return specialDomainCase;
-}
-
-export function isSpecialInput( domain: string ): boolean {
-	const domain_lc = domain.toLowerCase();
-
-	return SPECIAL_CASES.some( ( pattern ) => pattern.test( domain_lc ) );
 }

@@ -1,17 +1,17 @@
 import { useEffect, useState, useCallback } from 'react';
 import { extractDomainFromInput, getFixedDomainSearch } from 'calypso/lib/domains';
 import {
-	isSpecialInput,
 	SPECIAL_DOMAIN_CASES,
 	getSpecialDomainMapping,
 } from 'calypso/site-profiler/utils/get-special-domain-mapping';
 import validateDomain from 'calypso/site-profiler/utils/validate-domain';
+import isSpecialDomain from '../utils/is-special-domain';
 
 export default function useDomainParam( value?: string, sanitize = true ) {
 	const [ domain, setDomain ] = useState( value || '' );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
 	const [ specialDomainMapping, setSpecialDomainMapping ] = useState< SPECIAL_DOMAIN_CASES >();
-	const isDomainSpecialInput = isSpecialInput( domain );
+	const isDomainSpecialInput = isSpecialDomain( domain );
 
 	const getFinalizedDomain = useCallback(
 		( _domain: string ) => {
