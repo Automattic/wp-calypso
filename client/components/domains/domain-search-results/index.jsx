@@ -301,6 +301,9 @@ class DomainSearchResults extends Component {
 						isCartPendingUpdate={ this.props.isCartPendingUpdate }
 						isDomainOnly={ isDomainOnly }
 						suggestion={ suggestion }
+						suggestionSelected={
+							this.props.wpcomSubdomainSelected.domain_name === suggestion.domain_name
+						}
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
 						isSignupStep={ this.props.isSignupStep }

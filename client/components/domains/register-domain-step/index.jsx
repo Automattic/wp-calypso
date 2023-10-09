@@ -137,6 +137,7 @@ class RegisterDomainStep extends Component {
 		 */
 		otherManagedSubdomainsCountOverride: PropTypes.number,
 		handleClickUseYourDomain: PropTypes.func,
+		wpcomSubdomainSelected: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -1461,6 +1462,7 @@ class RegisterDomainStep extends Component {
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&

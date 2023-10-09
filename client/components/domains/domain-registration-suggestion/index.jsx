@@ -51,6 +51,7 @@ class DomainRegistrationSuggestion extends Component {
 			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 			currency_code: PropTypes.string,
 		} ).isRequired,
+		suggestionSelected: PropTypes.bool,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		premiumDomain: PropTypes.object,
@@ -130,6 +131,7 @@ class DomainRegistrationSuggestion extends Component {
 			isSignupStep,
 			selectedSite,
 			suggestion,
+			suggestionSelected,
 			translate,
 			pendingCheckSuggestion,
 			premiumDomain,
@@ -137,8 +139,7 @@ class DomainRegistrationSuggestion extends Component {
 			flowName,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
-		const isAdded = hasDomainInCart( cart, domain );
-
+		const isAdded = suggestionSelected || hasDomainInCart( cart, domain );
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
 
@@ -150,7 +151,7 @@ class DomainRegistrationSuggestion extends Component {
 
 			buttonStyles = { ...buttonStyles, primary: false };
 
-			if ( shouldUseMultipleDomainsInCart( flowName, suggestion ) ) {
+			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 				buttonStyles = { ...buttonStyles, borderless: true };
 
 				buttonContent = translate( '{{checkmark/}} Selected', {
@@ -192,7 +193,7 @@ class DomainRegistrationSuggestion extends Component {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 
-		if ( shouldUseMultipleDomainsInCart( flowName, suggestion ) ) {
+		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 			buttonStyles = { ...buttonStyles, primary: false };
 		}
 
