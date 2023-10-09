@@ -12,7 +12,6 @@ export default function useDomainParam( value?: string, sanitize = true ) {
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
 	const [ isSpecial, setIsSpecial ] = useState< undefined | boolean >();
 	const [ specialDomainMapping, setSpecialDomainMapping ] = useState< SPECIAL_DOMAIN_CATEGORY >();
-	const isDomainSpecialInput = isSpecialDomain( domain );
 
 	const getFinalizedDomain = useCallback(
 		( _domain: string ) => {
@@ -38,7 +37,7 @@ export default function useDomainParam( value?: string, sanitize = true ) {
 		setSpecialDomainMapping( specialDomains );
 		setDomain( finalizedDomain );
 		setIsSpecial( isSpecialDomain( value || '' ) );
-	}, [ value, getFinalizedDomain, isDomainSpecialInput ] );
+	}, [ value, getFinalizedDomain ] );
 
 	return { domain, isValid, isSpecial, specialDomainMapping };
 }
