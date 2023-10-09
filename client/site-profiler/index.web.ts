@@ -1,3 +1,4 @@
+import { getAnyLanguageRouteParam } from '@automattic/i18n-utils/';
 import {
 	clientRouter,
 	makeLayout,
@@ -12,6 +13,13 @@ import {
 } from 'calypso/site-profiler/controller';
 
 export default function ( router: typeof clientRouter ) {
+	const lang = getAnyLanguageRouteParam();
+	const langSiteProfilerMiddleware = [
+		featureFlagFirewall,
+		setLocaleMiddleware(),
+		redirectToBaseSiteProfilerRoute,
+	];
+
 	const siteProfilerMiddleware = [
 		featureFlagFirewall,
 		handleDomainQueryParam,
@@ -20,12 +28,8 @@ export default function ( router: typeof clientRouter ) {
 		clientRender,
 	];
 
-	router(
-		'/:lang/site-profiler/:domain?',
-		featureFlagFirewall,
-		setLocaleMiddleware(),
-		redirectToBaseSiteProfilerRoute
-	);
+	router( `/site-profiler/${ lang }/:domain?`, ...langSiteProfilerMiddleware );
+	router( `/${ lang }/site-profiler/:domain?`, ...langSiteProfilerMiddleware );
 
 	router( '/site-profiler', ...siteProfilerMiddleware );
 	router( '/site-profiler/:domain', ...siteProfilerMiddleware );
