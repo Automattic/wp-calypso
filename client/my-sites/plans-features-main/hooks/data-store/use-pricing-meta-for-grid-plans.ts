@@ -1,4 +1,8 @@
-import { isMonthly, type PlanSlug } from '@automattic/calypso-products';
+import {
+	PLAN_ANNUAL_PERIOD,
+	PLAN_MONTHLY_PERIOD,
+	type PlanSlug,
+} from '@automattic/calypso-products';
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
@@ -111,13 +115,13 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					 * Ensure the spotlight plan shows the price with which the plans was purchased.
 					 */
 					if ( purchasedPlan ) {
-						if (
-							isMonthly( purchasedPlan.productSlug ) &&
-							monthlyPrice !== purchasedPlan.priceInteger
-						) {
+						const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
+						const isYearly = purchasedPlan.billPeriodDays === PLAN_ANNUAL_PERIOD;
+
+						if ( isMonthly && monthlyPrice !== purchasedPlan.priceInteger ) {
 							monthlyPrice = purchasedPlan.priceInteger;
 							yearlyPrice = Math.floor( purchasedPlan.priceInteger * 12 );
-						} else if ( yearlyPrice !== purchasedPlan.priceInteger ) {
+						} else if ( isYearly && yearlyPrice !== purchasedPlan.priceInteger ) {
 							monthlyPrice = Math.floor( purchasedPlan.priceInteger / 12 );
 							yearlyPrice = purchasedPlan.priceInteger;
 						}
