@@ -90,7 +90,7 @@ const PatternLargePreview = ( {
 						viewportHeight={ viewportHeight }
 						// Disable default max-height
 						maxHeight="none"
-						isNewSite={ isNewSite }
+						shouldShufflePosts={ isNewSite }
 					/>
 				) }
 				<PatternActionBar
