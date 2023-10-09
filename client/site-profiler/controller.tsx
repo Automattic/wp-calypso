@@ -41,6 +41,7 @@ export function redirectToBaseSiteProfilerRoute( context: PageJS.Context ) {
 export function siteProfilerContext( context: PageJS.Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 	const pathName = context.pathname || '';
+	const routerDomain = pathName.split( '/site-profiler/' )[ 1 ]?.trim() || '';
 
 	const onLanguageChange = ( e: ChangeEvent< HTMLSelectElement > ) => {
 		page( `/${ e.target.value + pathName }` );
@@ -50,7 +51,7 @@ export function siteProfilerContext( context: PageJS.Context, next: () => void )
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
-				<SiteProfiler routerDomain={ context.params?.domain } />
+				<SiteProfiler routerDomain={ routerDomain } />
 			</Main>
 			<PureUniversalNavbarFooter isLoggedIn={ isLoggedIn } onLanguageChange={ onLanguageChange } />
 		</>
