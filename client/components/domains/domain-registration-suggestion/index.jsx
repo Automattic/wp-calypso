@@ -18,6 +18,7 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
+	getDomainRegistrations,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainPrice,
@@ -192,7 +193,10 @@ class DomainRegistrationSuggestion extends Component {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 
-		if ( shouldUseMultipleDomainsInCart( flowName, suggestion ) ) {
+		if (
+			shouldUseMultipleDomainsInCart( flowName, suggestion ) &&
+			getDomainRegistrations( cart ).length > 0
+		) {
 			buttonStyles = { ...buttonStyles, primary: false };
 		}
 
