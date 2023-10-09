@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { extractDomainFromInput, getFixedDomainSearch } from 'calypso/lib/domains';
 import {
 	SPECIAL_DOMAIN_CATEGORY,
@@ -10,29 +10,29 @@ import isSpecialDomain, { prepareSpecialDomain } from '../utils/is-special-domai
 export default function useDomainParam( value?: string ) {
 	const [ domain, setDomain ] = useState( value || '' );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
-	const [ isSpecial, setIsSpecial ] = useState< undefined | boolean >();
-	const [ specialDomainMapping, setSpecialDomainMapping ] = useState< SPECIAL_DOMAIN_CATEGORY >();
-
-	const getFinalizedDomain = useCallback(
-		( _domain: string ) => {
-			const domain_lc = _domain.toLowerCase();
-
-			return isSpecial
-				? prepareSpecialDomain( domain_lc )
-				: getFixedDomainSearch( extractDomainFromInput( domain_lc ) );
-		},
-		[ isSpecial ]
-	);
+	const [ isSpecial, setIsSpecial ] = useState( isSpecialDomain( value || '' ) );
+	const [ category, setCategory ] = useState< SPECIAL_DOMAIN_CATEGORY >();
 
 	useEffect( () => {
-		const finalizedDomain = getFinalizedDomain( value || '' );
-		const specialDomains = getDomainCategory( finalizedDomain );
+		const finalizedDomain = prepareDomain( value || '', isSpecial );
 
 		setDomain( finalizedDomain );
+		setCategory( getDomainCategory( finalizedDomain ) );
 		setIsValid( validateDomain( value || '' ) );
 		setIsSpecial( isSpecialDomain( value || '' ) );
-		setSpecialDomainMapping( specialDomains );
-	}, [ value, getFinalizedDomain ] );
+	}, [ value ] );
 
-	return { domain, isValid, isSpecial, specialDomainMapping };
+	return { domain, isValid, isSpecial, category };
+}
+
+function prepareDomain( domain: string, isSpecial: boolean ) {
+	if ( ! domain ) {
+		return '';
+	}
+
+	const domain_lc = domain.toLowerCase();
+
+	return isSpecial
+		? prepareSpecialDomain( domain_lc )
+		: getFixedDomainSearch( extractDomainFromInput( domain_lc ) );
 }

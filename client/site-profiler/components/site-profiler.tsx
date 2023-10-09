@@ -25,8 +25,8 @@ export default function SiteProfiler( props: Props ) {
 	const { routerDomain } = props;
 	const {
 		domain,
+		category: domainCategory,
 		isValid: isDomainValid,
-		specialDomainMapping,
 		isSpecial,
 	} = useDomainParam( routerDomain );
 
@@ -48,9 +48,9 @@ export default function SiteProfiler( props: Props ) {
 	useScrollToTop( !! siteProfilerData );
 	useSiteProfilerRecordAnalytics(
 		domain,
+		domainCategory,
 		isDomainValid,
 		conversionAction,
-		specialDomainMapping,
 		hostingProviderData?.hosting_provider,
 		urlData
 	);
@@ -60,7 +60,7 @@ export default function SiteProfiler( props: Props ) {
 		// URL param is the source of truth
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
-	const noNeedToFetchApi = specialDomainMapping && isSpecial;
+	const noNeedToFetchApi = domainCategory && isSpecial;
 	const showResultScreen = siteProfilerData || noNeedToFetchApi;
 
 	return (
@@ -87,7 +87,7 @@ export default function SiteProfiler( props: Props ) {
 							// Translators: %s is the domain name searched
 							<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
 						}
-						{ ( siteProfilerData || specialDomainMapping ) && (
+						{ ( siteProfilerData || isSpecial ) && (
 							<LayoutBlockSection>
 								<HeadingInformation
 									domain={ domain }
@@ -95,7 +95,7 @@ export default function SiteProfiler( props: Props ) {
 									onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
 									hostingProvider={ hostingProviderData?.hosting_provider }
 									urlData={ urlData }
-									specialDomainMapping={ specialDomainMapping }
+									domainCategory={ domainCategory }
 								/>
 							</LayoutBlockSection>
 						) }

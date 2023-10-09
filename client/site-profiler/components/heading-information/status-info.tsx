@@ -11,13 +11,15 @@ interface Props {
 	conversionAction?: CONVERSION_ACTION;
 	hostingProvider?: HostingProvider;
 	urlData?: UrlData;
-	specialDomainMapping?: SPECIAL_DOMAIN_CATEGORY;
+	domainCategory?: SPECIAL_DOMAIN_CATEGORY;
 }
 export default function StatusInfo( props: Props ) {
-	const { conversionAction, hostingProvider, urlData, specialDomainMapping } = props;
+	const { conversionAction, hostingProvider, urlData, domainCategory } = props;
 	const hostingProviderName = useHostingProviderName( hostingProvider, urlData );
-	// if there's a special domain mapping, use that instead of the conversion action
-	const finalStatus = specialDomainMapping ?? conversionAction;
+
+	// if there's a domain category, use that instead of the conversion action
+	const finalStatus = domainCategory ?? conversionAction;
+
 	switch ( finalStatus ) {
 		case 'wordpress-com':
 			return <p>{ translate( 'Well yes, WordPress.com runs on WordPress.com!' ) }</p>;
