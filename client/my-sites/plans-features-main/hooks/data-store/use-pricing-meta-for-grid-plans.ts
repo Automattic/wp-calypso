@@ -1,7 +1,10 @@
 import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
+	calculateMonthlyPrice,
 	type PlanSlug,
+	calculateYearlyPrice,
+	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
@@ -120,9 +123,9 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 
 						if ( isMonthly && monthlyPrice !== purchasedPlan.priceInteger ) {
 							monthlyPrice = purchasedPlan.priceInteger;
-							yearlyPrice = Math.floor( purchasedPlan.priceInteger * 12 );
+							yearlyPrice = calculateYearlyPrice( TERM_ANNUALLY, purchasedPlan.priceInteger );
 						} else if ( isYearly && yearlyPrice !== purchasedPlan.priceInteger ) {
-							monthlyPrice = Math.floor( purchasedPlan.priceInteger / 12 );
+							monthlyPrice = calculateMonthlyPrice( TERM_ANNUALLY, purchasedPlan.priceInteger );
 							yearlyPrice = purchasedPlan.priceInteger;
 						}
 					}
