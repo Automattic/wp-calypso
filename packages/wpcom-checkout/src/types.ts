@@ -242,7 +242,6 @@ export interface LineItemType {
 }
 
 export interface WPCOMCart {
-	total: LineItemType;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 }
 
