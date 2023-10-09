@@ -59,7 +59,7 @@ async function loginAndSaveCookies( testAccount: TestAccount, browser: Browser )
 	const page = await browser.newPage( pwConfig.contextOptions );
 	page.setDefaultTimeout( envVariables.TIMEOUT );
 	try {
-		await testAccount.logInViaLoginPage( page );
+		await testAccount.authenticate( page, { waitUntilStable: true } );
 		await testAccount.saveAuthCookies( page.context() );
 	} finally {
 		await page.close();

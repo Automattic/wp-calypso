@@ -1,4 +1,4 @@
-import { Page, Response } from 'playwright';
+import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry, clickNavTab } from '../../element-helper';
 
@@ -10,7 +10,6 @@ type PostsPageTabs = 'Published' | 'Drafts' | 'Scheduled' | 'Trashed';
 
 const selectors = {
 	// General
-	placeholder: `div.is-placeholder`,
 	addNewPostButton: 'a.post-type-list__add-post',
 
 	// Post Item
@@ -40,11 +39,13 @@ export class PostsPage {
 	 * Opens the Posts page.
 	 *
 	 * Example {@link https://wordpress.com/posts}
+	 * Example {@link https://wordpress.com/posts/usersiteslug.wordpress.com}
 	 */
-	async visit(): Promise< Response | null > {
-		const response = await this.page.goto( getCalypsoURL( 'posts' ) );
-		await this.waitUntilLoaded();
-		return response;
+	async visit( { siteSlug, timeout }: { siteSlug?: string; timeout?: number } = {} ) {
+		const url = `posts/${ siteSlug }`;
+		await this.page.goto( getCalypsoURL( url ), { timeout: timeout } );
+
+		await this.waitUntilLoaded( timeout );
 	}
 
 	/**
@@ -67,8 +68,9 @@ export class PostsPage {
 	/**
 	 * Wait until the page is completely loaded.
 	 */
-	async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForSelector( selectors.placeholder, { state: 'detached' } );
+	async waitUntilLoaded( timeout?: number ): Promise< void > {
+		// Wait for page entries (if any) to load. This also waits for the page to settle.
+		await this.page.locator( '.is-placeholder' ).waitFor( { state: 'detached', timeout: timeout } );
 	}
 
 	/**

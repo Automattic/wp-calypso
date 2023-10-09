@@ -31,9 +31,7 @@ export class PagesPage {
 		await this.page.goto( getCalypsoURL( url ), { timeout: timeout } );
 
 		// Wait for page entries (if any) to load. This also waits for the page to settle.
-		await this.page
-			.locator( 'card.is-placeholder' )
-			.waitFor( { state: 'detached', timeout: timeout } );
+		await this.page.locator( '.is-placeholder' ).waitFor( { state: 'detached', timeout: timeout } );
 	}
 
 	/**

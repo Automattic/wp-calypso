@@ -56,7 +56,15 @@ export class TestAccount {
 		}
 		if ( waitUntilStable ) {
 			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.waitForSidebarInitialization();
+
+			// Wait for either of the WP-Admin or Calypso
+			// sidebars to appear.
+			// @TODO Replace the raw WP-Admin selector with
+			// a POM.
+			await Promise.race( [
+				sidebarComponent.waitForSidebarInitialization(),
+				page.locator( 'div[id="adminmenuwrap"]' ).waitFor( { timeout: 20 * 1000 } ),
+			] );
 		}
 	}
 
@@ -79,13 +87,6 @@ export class TestAccount {
 		if ( this.credentials.smsNumber ) {
 			return await loginPage.submitVerificationCode( await this.getSMSOTP() );
 		}
-
-		// Wait for the `/home` endpoint to load.
-		// Note, even for eCommerce users (which eventually loads the wp-admin screen),
-		// the `/home` endpoint attempts to load first.
-		// When saving cookies, it is important to wait until the `/home` endpoint is
-		// first loaded, otherwise the cookie is invalid.
-		await page.waitForURL( /(home|read)/ );
 	}
 
 	/**
