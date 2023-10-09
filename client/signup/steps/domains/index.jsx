@@ -724,13 +724,11 @@ export class RenderDomainsStep extends Component {
 			);
 		};
 
-<<<<<<< HEAD
-		const DomainsInCart =
-			shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) &&
-			! cartIsLoading ? (
-=======
 		const DomainsInCart = () => {
-			if ( ! this.shouldUseMultipleDomainsInCart() || cartIsLoading ) {
+			if (
+				! shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) ||
+				cartIsLoading
+			) {
 				return null;
 			}
 
@@ -790,7 +788,6 @@ export class RenderDomainsStep extends Component {
 			}
 
 			return (
->>>>>>> 4baf41cf88 (Update CSS)
 				<div className="domains__domain-side-content domains__domain-cart">
 					<div className="domains__domain-cart-title">
 						{ this.props.translate( 'Your domains' ) }
