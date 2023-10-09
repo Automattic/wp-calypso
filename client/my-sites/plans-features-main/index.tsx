@@ -770,9 +770,10 @@ const PlansFeaturesMain = ( {
 										<PlanComparisonHeader className="wp-brand-font">
 											{ translate( 'Compare our plans and find yours' ) }
 										</PlanComparisonHeader>
-										{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
+										{ ! hidePlanSelector && showPlansComparisonGrid && (
+											<PlanTypeSelector { ...planTypeSelectorProps } />
+										) }
 										<ComparisonGrid
-											isHidden={ ! showPlansComparisonGrid }
 											gridPlans={ gridPlansForComparisonGrid }
 											gridPlanForSpotlight={ gridPlanForSpotlight }
 											paidDomainName={ paidDomainName }
