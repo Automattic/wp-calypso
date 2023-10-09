@@ -181,7 +181,7 @@ export const useSMPCommands = ( {
 						close();
 						navigate( `/settings/general/${ site.slug }#site-privacy-settings` );
 					},
-					filter: ( site ) => site?.is_coming_soon,
+					filter: ( site ) => site?.launch_status === 'unlaunched',
 				},
 				icon: publishIcon,
 			},
