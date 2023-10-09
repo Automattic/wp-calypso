@@ -6,7 +6,6 @@ import './style.scss';
 
 const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 	const translate = useTranslate();
-	//create function to handle when login is complete
 
 	const { login } = useLoginWindow( {
 		onLoginSuccess: () => window.location.reload(),
