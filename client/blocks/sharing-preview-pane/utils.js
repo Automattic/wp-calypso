@@ -43,13 +43,8 @@ export function getPostAttachedMedia( post ) {
 export const getPostCustomImage = ( post ) => {
 	const [ firstMedia ] = getPostAttachedMedia( post );
 
-	if ( firstMedia?.id ) {
-		// Get the attachment from the post data
-		const attachment = post?.attachments?.[ firstMedia.id ];
-
-		if ( attachment?.mime_type?.startsWith( 'image/' ) && firstMedia.url ) {
-			return firstMedia.url;
-		}
+	if ( firstMedia?.url && firstMedia.type?.startsWith( 'image/' ) ) {
+		return firstMedia.url;
 	}
 	return null;
 };
@@ -76,16 +71,12 @@ export function getPostCustomMedia( post ) {
 				alt: '',
 			} );
 		} else {
-			for ( const { id } of getPostAttachedMedia( post ) ) {
-				const attachment = post.attachments?.[ id ];
-
-				if ( attachment?.URL ) {
-					media.push( {
-						type: attachment.mime_type,
-						url: attachment.URL,
-						alt: '',
-					} );
-				}
+			for ( const { id, url, type } of getPostAttachedMedia( post ) ) {
+				media.push( {
+					type: type || post.attachments?.[ id ]?.mime_type,
+					url,
+					alt: '',
+				} );
 			}
 		}
 	}
