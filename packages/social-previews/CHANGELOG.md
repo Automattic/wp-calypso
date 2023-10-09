@@ -6,6 +6,7 @@
 - Fixed hyperlinks for Facebook
 - Fixed multiple empty lines issue in preview text
 - Fixed video previews for Instagram and Tumblr
+- Fixed empty Twitter preview when no text/description is provided
 
 ## v2.0.0 (2023-05-24)
 
