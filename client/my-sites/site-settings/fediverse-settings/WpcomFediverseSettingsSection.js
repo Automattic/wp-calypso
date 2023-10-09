@@ -1,4 +1,4 @@
-import { FEATURE_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import { FEATURE_CUSTOM_DOMAIN, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -11,7 +11,12 @@ import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { successNotice } from 'calypso/state/notices/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSiteTitle, getSiteDomain, getSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteTitle,
+	getSiteDomain,
+	getSite,
+	getSitePlanSlug,
+} from 'calypso/state/sites/selectors';
 
 const DomainUpsellCard = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
@@ -41,9 +46,14 @@ const DomainPendingWarning = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const translate = useTranslate();
 	return (
-		<Notice status="is-warning" translate={ translate } isCompact={ true }>
+		<Notice
+			status="is-warning"
+			translate={ translate }
+			isCompact={ true }
+			style={ { width: '100%' } }
+		>
 			{ translate(
-				'Recommended: wait until your new domain activates before sharing your profile URL. {{link}}Click here{{/link}} to check the status of your domain.',
+				'Wait until your new domain activates before sharing your profile URL. {{link}}Check your domain’s status{{/link}}.',
 				{
 					components: {
 						link: <a href={ `/domains/manage/${ domain }` } />,
@@ -51,6 +61,45 @@ const DomainPendingWarning = ( { siteId } ) => {
 				}
 			) }
 		</Notice>
+	);
+};
+
+const BusinessPlanUpsellCard = ( { siteId } ) => {
+	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ?? '' );
+	// If the user is already on Atomic, we won't be here. But they could have purchased the upgrade and not have transferred yet.
+	const isBusinessPlan = sitePlanSlug === PLAN_BUSINESS;
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const linkUrl = `/plans/select/business/${ domain }`;
+	const translate = useTranslate();
+	const recordClick = () => {
+		recordTracksEvent( 'calypso_activitypub_business_plan_upsell_click' );
+	};
+	if ( isBusinessPlan ) {
+		// show a card that links to the plugin page to install the ActivityPub plugin
+		return (
+			<Card className="site-settings__card">
+				<p>
+					{ translate(
+						'Install the ActivityPub plugin to unlock per-author profiles, fine-grained controls, and more.'
+					) }
+				</p>
+				<Button primary href={ `/plugins/activitypub/${ domain }` }>
+					{ translate( 'Install ActivityPub plugin' ) }
+				</Button>
+			</Card>
+		);
+	}
+	return (
+		<Card className="site-settings__card">
+			<p>
+				{ translate(
+					'Take your fediverse presence to the next level! The Business plan unlocks per-author profiles, fine-grained controls, and more, with the ActivityPub plugin.'
+				) }
+			</p>
+			<Button primary href={ linkUrl } onClick={ recordClick }>
+				{ translate( 'Upgrade to Business' ) }
+			</Button>
+		</Card>
 	);
 };
 
@@ -67,12 +116,17 @@ const EnabledSettingsSection = ( { data, siteId } ) => {
 		<>
 			{ ! hasDomain && <DomainUpsellCard siteId={ siteId } /> }
 			<Card className="site-settings__card">
-				<p>{ translate( 'Anyone in the fediverse can follow your site with this alias:' ) }</p>
+				<p>
+					{ translate(
+						'Anyone in the fediverse (eg Mastodon) can follow your site with this identifier:'
+					) }
+				</p>
 				{ isDomainPending && <DomainPendingWarning siteId={ siteId } /> }
 				<p>
 					<ClipboardButtonInput value={ blogIdentifier } />
 				</p>
 			</Card>
+			{ hasDomain && ! isDomainPending && <BusinessPlanUpsellCard siteId={ siteId } /> }
 		</>
 	);
 };
@@ -109,7 +163,12 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 			<Card className="site-settings__card">
 				<p>
 					{ translate(
-						'Broadcast your blog into the fediverse! Attract followers, deliver updates, and receive comments from a diverse user base of ActivityPub-compliant platforms.'
+						'Broadcast your blog into the fediverse! Attract followers, deliver updates, and receive comments from a diverse user base of ActivityPub-compliant platforms like {{b}}Mastodon{{/b}}.',
+						{
+							components: {
+								b: <strong />,
+							},
+						}
 					) }
 				</p>
 				<ToggleControl
