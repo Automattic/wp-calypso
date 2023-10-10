@@ -1850,7 +1850,6 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/format-currency": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@emotion/styled": ^11.11.0
     "@stripe/stripe-js": ^1.53.0
