@@ -48,6 +48,7 @@ export default function SiteProfiler( props: Props ) {
 		hostingProviderData,
 		isErrorUrlData ? null : urlData
 	);
+	const showResultScreen = siteProfilerData || isDomainSpecial;
 
 	useScrollToTop( !! siteProfilerData );
 	useSiteProfilerRecordAnalytics(
@@ -64,8 +65,6 @@ export default function SiteProfiler( props: Props ) {
 		// URL param is the source of truth
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
-	const noNeedToFetchApi = domainCategory && isDomainSpecial;
-	const showResultScreen = siteProfilerData || noNeedToFetchApi;
 
 	return (
 		<>
@@ -128,9 +127,7 @@ export default function SiteProfiler( props: Props ) {
 
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
-				isMonoBg={
-					!! showResultScreen && conversionAction !== 'register-domain' && ! noNeedToFetchApi
-				}
+				isMonoBg={ showResultScreen && conversionAction !== 'register-domain' && ! isDomainSpecial }
 			>
 				<HostingIntro />
 			</LayoutBlock>
