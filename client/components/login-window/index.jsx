@@ -1,10 +1,23 @@
+import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
 
 export default function useLoginWindow( { onLoginSuccess } ) {
 	const isBrowser = typeof window !== 'undefined';
+	const environment = config( 'env_id' );
+	let domain = 'wordpress.com';
+	let redirectTo = encodeURIComponent(
+		`https://${ domain }/public.api/connect/?action=verify&service=wordpress`
+	);
+	if ( environment === 'development' ) {
+		// We need to redirect to a sandboxed domain in development to allow us to test the postMessage returned from public_api_connect_close_window()
+		domain = 'wpcalypso.wordpress.com';
+		redirectTo = encodeURIComponent(
+			`https://${ domain }/public.api/connect/?action=verify&service=wordpress&domain=${ domain }`
+		);
+	}
 
 	const waitForLogin = ( event ) => {
-		if ( event.origin !== 'wordpress.com' ) {
+		if ( event.origin !== `https://${ domain }` ) {
 			return;
 		}
 
@@ -22,7 +35,7 @@ export default function useLoginWindow( { onLoginSuccess } ) {
 		}
 
 		const loginWindow = window.open(
-			`https://wordpress.com/public.api/connect/?action=request&service=wordpress`,
+			`https://wordpress.com/log-in?redirect_to=${ redirectTo }`,
 			'CalyspoLogin',
 			'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500'
 		);
@@ -44,7 +57,7 @@ export default function useLoginWindow( { onLoginSuccess } ) {
 		}
 
 		const createAccountWindow = window.open(
-			`https://wordpress.com/start/account/user?redirect_to=https%3A%2F%2Fwordpress.com%2Fpublic.api%2Fconnect%2F%3Faction%3Dverify%26service%3Dwordpress`,
+			`https://wordpress.com/start/account/user?redirect_to=${ redirectTo }`,
 			'CalyspoLogin',
 			'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500'
 		);
