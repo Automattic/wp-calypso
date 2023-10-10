@@ -1,14 +1,8 @@
-import { shuffle } from '@automattic/js-utils';
-
-// Shuffle order of blog posts to avoid repetition in previews
-const shufflePostOrder = ( blogPostCount: number ) =>
-	shuffle( [ ...Array( blogPostCount ).keys() ] );
-
 // Memoize order per pattern to show same order in previews
 const inlineCssByPatternId: { [ key: string ]: string } = {};
 
-// Memoize last order
-let lastPostOrder: number[] = [];
+// Memoize last offset
+let lastOffset = 0;
 
 const usePatternInlineCss = (
 	patternId: string,
@@ -29,24 +23,17 @@ const usePatternInlineCss = (
 		return inlineCss;
 	}
 
-	// Shuffle post order
-	let postOrder = shufflePostOrder( blogPostCount );
-
-	// Prevent repeating the last order shuffling once more
-	if ( lastPostOrder.toString() === postOrder.toString() ) {
-		postOrder = shufflePostOrder( blogPostCount );
-	}
-
 	// Create CSS rules
-	postOrder.forEach( ( order, index ) => {
+	[ ...Array( blogPostCount ).keys() ].forEach( ( order, index ) => {
 		const childIndex = index + 1;
-		const shuffledOrder = order + 1;
-		inlineCss += `.is-layout-grid > .wp-block-post:nth-child(${ childIndex }) { order: ${ shuffledOrder }; }`;
+		// Offset order of blog posts to avoid repetition in previews
+		const orderWithOffset = ( ( order - lastOffset + blogPostCount ) % blogPostCount ) + 1;
+		inlineCss += `.is-layout-grid > .wp-block-post:nth-child(${ childIndex }) { order: ${ orderWithOffset }; }`;
 	} );
 
 	// Memoize
 	inlineCssByPatternId[ patternId ] = inlineCss;
-	lastPostOrder = postOrder;
+	lastOffset += 1;
 
 	return inlineCss;
 };
