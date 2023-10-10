@@ -11,7 +11,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
-
 import './style.scss';
 
 interface SignupFormSocialFirst {
@@ -27,7 +26,6 @@ interface SignupFormSocialFirst {
 	isReskinned: boolean;
 	queryArgs: object;
 	notice: JSX.Element | false;
-	shouldDisplayUserExistsError: boolean;
 }
 
 const SignupFormSocialFirst = ( {
