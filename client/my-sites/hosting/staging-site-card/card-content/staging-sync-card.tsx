@@ -398,7 +398,7 @@ export const SiteSyncCard = ( {
 	useEffect( () => {
 		if ( selectedOption && status === SiteSyncStatus.COMPLETED ) {
 			dispatch(
-				successNotice( translate( 'Site synced successfully.' ), { id: stagingSiteSyncSuccess } )
+				successNotice( translate( 'Site synchronized successfully.' ), { id: stagingSiteSyncSuccess } )
 			);
 		}
 	}, [ dispatch, selectedOption, status ] );
