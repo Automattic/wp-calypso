@@ -6,6 +6,8 @@ import {
 	findPlansKeys,
 	TERMS_LIST,
 	TYPE_HOSTING_TRIAL,
+	TYPE_P2_FREE,
+	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
 import warn from '@wordpress/warning';
 
@@ -23,6 +25,8 @@ const usePlansFromTypes = ( { planTypes, term }: Props ): PlanSlug[] => {
 			TYPE_ENTERPRISE_GRID_WPCOM,
 			TYPE_WOO_EXPRESS_PLUS,
 			TYPE_HOSTING_TRIAL,
+			TYPE_P2_FREE,
+			TYPE_P2_PLUS,
 		].includes( type )
 			? { type }
 			: { type, term };

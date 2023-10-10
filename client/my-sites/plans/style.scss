@@ -35,45 +35,45 @@ body.is-section-plans.is-domain-plan-package-flow {
 		}
 	}
 
-	.plans__header {
-		display: block;
-		overflow: auto;
+	// .plans__header {
+	// 	display: block;
+	// 	overflow: auto;
 
-		.formatted-header__title,
-		.formatted-header__subtitle {
-			max-width: unset;
-		}
+	// 	.formatted-header__title,
+	// 	.formatted-header__subtitle {
+	// 		max-width: unset;
+	// 	}
 
-		h1 {
-			font-family: $brand-serif;
-			font-size: $font-headline-small;
-		}
+	// 	h1 {
+	// 		font-family: $brand-serif;
+	// 		font-size: $font-headline-small;
+	// 	}
 
-		p {
-			font-size: $font-body;
-			color: var(--color-text-subtle);
-			text-align: center;
-			padding: 0 10px;
-			margin-bottom: 0;
-			&:last-child {
-				margin-bottom: 1.5em;
-			}
-			button {
-				font-size: $font-body;
-				text-decoration: underline;
-				cursor: pointer;
-			}
-		}
-	}
+	// 	p {
+	// 		font-size: $font-body;
+	// 		color: var(--color-text-subtle);
+	// 		text-align: center;
+	// 		padding: 0 10px;
+	// 		margin-bottom: 0;
+	// 		&:last-child {
+	// 			margin-bottom: 1.5em;
+	// 		}
+	// 		button {
+	// 			font-size: $font-body;
+	// 			text-decoration: underline;
+	// 			cursor: pointer;
+	// 		}
+	// 	}
+	// }
 
 	@include break-small {
-		.plans__header {
-			h1 {
-				font-size: $font-headline-medium;
-			}
-			p {
-				padding: 0 80px;
-			}
-		}
+		// .plans__header {
+		// 	h1 {
+		// 		font-size: $font-headline-medium;
+		// 	}
+		// 	p {
+		// 		padding: 0 80px;
+		// 	}
+		// }
 	}
 }

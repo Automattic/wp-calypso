@@ -37,11 +37,16 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	// (or other) credits should not apply.
 	const yearlyVariantPlanSlug =
 		getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY ) ?? ( '' as PlanSlug );
-	const yearlyVariantPricing = helpers?.usePricingMetaForGridPlans( {
-		planSlugs: [ yearlyVariantPlanSlug ],
-		withoutProRatedCredits: true,
-		storageAddOns: storageAddOnsForPlan,
-	} )?.[ yearlyVariantPlanSlug ];
+
+	// TODO: It looks like yearlyVariantPlanSlug should never be an empty string, but for p2 plus plans it is.
+	// ( p2 plus has no yearly variant ). We need to address this before code review.
+	const yearlyVariantPricing =
+		yearlyVariantPlanSlug !== '' &&
+		helpers?.usePricingMetaForGridPlans( {
+			planSlugs: [ yearlyVariantPlanSlug ],
+			withoutProRatedCredits: true,
+			storageAddOns: storageAddOnsForPlan,
+		} )?.[ yearlyVariantPlanSlug ];
 
 	if (
 		isMonthlyPlan &&

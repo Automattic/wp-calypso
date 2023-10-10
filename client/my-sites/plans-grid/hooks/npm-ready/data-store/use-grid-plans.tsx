@@ -23,6 +23,8 @@ import {
 	isBusinessPlan,
 	isEcommercePlan,
 	TYPE_HOSTING_TRIAL,
+	TYPE_P2_FREE,
+	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
@@ -117,6 +119,7 @@ export type PlansIntent =
 	| 'plans-import'
 	| 'plans-woocommerce'
 	| 'plans-paid-media'
+	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
 	| 'default';
@@ -185,6 +188,8 @@ const usePlanTypesWithIntent = ( {
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 		TYPE_WOOEXPRESS_SMALL,
 		TYPE_WOOEXPRESS_MEDIUM,
+		TYPE_P2_FREE,
+		TYPE_P2_PLUS,
 	];
 
 	let planTypes;
@@ -223,6 +228,10 @@ const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-paid-media':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
+		case 'plans-p2':
+			// TODO: Handle P2_FREE
+			planTypes = [ TYPE_P2_FREE, TYPE_P2_PLUS ];
 			break;
 		case 'plans-default-wpcom':
 			planTypes = [

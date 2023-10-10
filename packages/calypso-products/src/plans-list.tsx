@@ -215,6 +215,7 @@ import {
 	TYPE_ECOMMERCE,
 	TYPE_ENTERPRISE_GRID_WPCOM,
 	TYPE_FREE,
+	TYPE_P2_FREE,
 	TYPE_P2_PLUS,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -3432,6 +3433,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	},
 
 	[ PLAN_P2_PLUS ]: {
+		...getDotcomPlanDetails(),
 		group: GROUP_WPCOM,
 		type: TYPE_P2_PLUS,
 		getTitle: () => i18n.translate( 'P2+' ),
@@ -3441,6 +3443,22 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				plansDescriptionHeadingComponent
 			),
 		getShortDescription: () => i18n.translate( 'Some short description' ),
+		get2023PricingGridSignupWpcomFeatures: () => [
+			FEATURE_P2_13GB_STORAGE,
+			FEATURE_P2_ADVANCED_SEARCH,
+			FEATURE_P2_VIDEO_SHARING,
+			FEATURE_P2_MORE_FILE_TYPES,
+			FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
+			FEATURE_P2_ACTIVITY_OVERVIEW,
+		],
+		get2023PricingGridSignupStorageOptions: () => {
+			return [
+				{
+					slug: FEATURE_P2_13GB_STORAGE,
+					isAddOn: false,
+				},
+			];
+		},
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_P2_13GB_STORAGE,
@@ -3478,12 +3496,29 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 PLANS_LIST[ PLAN_P2_FREE ] = {
 	...PLANS_LIST[ PLAN_FREE ],
+	type: TYPE_P2_FREE,
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
 			plansDescriptionHeadingComponent
 		),
+	getPlanTagline: () => '',
 	getTitle: () => i18n.translate( 'P2 Free' ),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_P2_3GB_STORAGE,
+		FEATURE_P2_UNLIMITED_USERS,
+		FEATURE_P2_UNLIMITED_POSTS_PAGES,
+		FEATURE_P2_SIMPLE_SEARCH,
+		FEATURE_P2_CUSTOMIZATION_OPTIONS,
+	],
+	get2023PricingGridSignupStorageOptions: () => {
+		return [
+			{
+				slug: FEATURE_P2_3GB_STORAGE,
+				isAddOn: false,
+			},
+		];
+	},
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_P2_3GB_STORAGE,

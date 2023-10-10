@@ -257,6 +257,10 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
+	if ( planSlug === PLAN_P2_FREE ) {
+		return null;
+	}
+
 	const isTrialPlan =
 		currentSitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
 		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
