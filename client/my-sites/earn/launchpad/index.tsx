@@ -1,5 +1,5 @@
 import { CircularProgressBar } from '@automattic/components';
-import { useLaunchpad, LaunchpadNavigator } from '@automattic/data-stores';
+import { LaunchpadNavigator } from '@automattic/data-stores';
 import { Launchpad, Task, setUpActionsForTasks } from '@automattic/launchpad';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -7,20 +7,22 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const EarnLaunchpad = () => {
+type EarnLaunchpadProps = {
+	tasklistCompleted: boolean;
+	numberOfSteps: number;
+	completedSteps: number;
+};
+
+const EarnLaunchpad = ( {
+	tasklistCompleted,
+	numberOfSteps,
+	completedSteps,
+}: EarnLaunchpadProps ) => {
 	const translate = useTranslate();
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
-	const {
-		data: { checklist },
-	} = useLaunchpad( site?.slug ?? null, 'earn' );
-
 	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
-
-	const numberOfSteps = checklist?.length || 0;
-	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
-	const tasklistCompleted = completedSteps >= numberOfSteps;
 
 	const tracksData = {
 		recordTracksEvent,
@@ -28,10 +30,6 @@ const EarnLaunchpad = () => {
 		tasklistCompleted,
 		launchpadContext: 'earn',
 	};
-
-	function shouldLoadLaunchpad() {
-		return numberOfSteps > 0;
-	}
 
 	const taskFilter = ( tasks: Task[] ) => {
 		return setUpActionsForTasks( {
@@ -41,10 +39,6 @@ const EarnLaunchpad = () => {
 			extraActions: { setActiveChecklist },
 		} );
 	};
-
-	if ( ! shouldLoadLaunchpad() ) {
-		return null;
-	}
 
 	return (
 		<div className="earn__launchpad">
