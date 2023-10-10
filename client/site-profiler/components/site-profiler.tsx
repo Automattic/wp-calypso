@@ -124,7 +124,7 @@ export default function SiteProfiler( props: Props ) {
 
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
-				isMonoBg={ showResultScreen && conversionAction !== 'register-domain' && ! isDomainSpecial }
+				isMonoBg={ showResultScreen && conversionAction && conversionAction !== 'register-domain' }
 			>
 				<HostingIntro />
 			</LayoutBlock>
