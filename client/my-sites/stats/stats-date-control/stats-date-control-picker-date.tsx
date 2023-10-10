@@ -15,16 +15,16 @@ const DateControlPickerDate = ( {
 	// of appropriate names once hierarchy is finalized.
 	return (
 		<div className="date-control-picker-date">
-			<div>
+			<div className="stats-date-control-picker-dates__inputs">
 				<TextControl value={ startDate } onChange={ onStartChange } />
-			</div>
-			<div>
 				<TextControl value={ endDate } onChange={ onEndChange } />
 			</div>
-			<Button onClick={ onCancel }>Cancel</Button>
-			<Button variant="primary" onClick={ onApply }>
-				Apply
-			</Button>
+			<div className="stats-date-control-picker-dates__buttons">
+				<Button onClick={ onCancel }>Cancel</Button>
+				<Button variant="primary" onClick={ onApply }>
+					Apply
+				</Button>
+			</div>
 		</div>
 	);
 };

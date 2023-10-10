@@ -62,4 +62,9 @@
 
 .date-control-picker-date {
 	margin: 16px;
+
+	// internal layout
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
