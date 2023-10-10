@@ -49,12 +49,12 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 					id="confirmation_email_message"
 					value={ value?.invitation }
 					onChange={ updateSubscriptionOptions( 'invitation' ) }
-					disabled={ disabled }
 					autoCapitalize="none"
+					disabled
 				/>
 				<FormSettingExplanation>
 					{ translate(
-						'The confirmation message sent out to new readers when they subscribe to your blog.'
+						'The ability to customize the confirmation email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
 					) }
 				</FormSettingExplanation>
 				<FormLabel htmlFor="comment_follow_email_message">

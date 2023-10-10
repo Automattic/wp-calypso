@@ -14,6 +14,7 @@ import { userCan } from 'calypso/lib/site/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
 	getConnectedAccountIdForSiteId,
@@ -24,7 +25,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
 import { Query } from '../types';
 import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH, LAUNCHPAD_HASH } from './constants';
-
 import './style.scss';
 
 type MembershipsSectionProps = {
@@ -42,6 +42,9 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const connectedAccountId = useSelector( ( state ) =>
 		getConnectedAccountIdForSiteId( state, site?.ID )
 	);
+
+	const products = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
+
 	const connectedAccountDescription = useSelector( ( state ) =>
 		getConnectedAccountDescriptionForSiteId( state, site?.ID )
 	);
@@ -173,18 +176,25 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		const stripe_connect_success = query?.stripe_connect_success;
 
 		if ( stripe_connect_success === 'earn' ) {
+			const siteHasPlans = products.length !== 0;
+
+			let congratsText;
+			if ( ! siteHasPlans ) {
+				congratsText = translate(
+					'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+				);
+			} else {
+				congratsText = translate( 'Congrats! Your site is now connected to Stripe.' );
+			}
+
 			return (
-				<Notice
-					status="is-success"
-					showDismiss={ false }
-					text={ translate(
-						'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
-					) }
-				>
-					<NoticeAction href={ `/earn/payments-plans/${ site?.slug }` } icon="create">
-						{ translate( 'Add a payment plan' ) }
-					</NoticeAction>
-				</Notice>
+				! siteHasPlans && (
+					<Notice status="is-success" showDismiss={ false } text={ congratsText }>
+						<NoticeAction href={ `/earn/payments-plans/${ site?.slug }` } icon="create">
+							{ translate( 'Add a payment plan' ) }
+						</NoticeAction>
+					</Notice>
+				)
 			);
 		}
 

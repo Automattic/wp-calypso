@@ -29,6 +29,7 @@ export default async function payPalProcessor(
 		siteId,
 		siteSlug,
 		contactDetails,
+		fromSiteSlug,
 	} = transactionOptions;
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal' } ) );
 
@@ -52,6 +53,7 @@ export default async function payPalProcessor(
 	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
 		siteSlug,
 		urlType: 'absolute',
+		fromSiteSlug,
 	} );
 
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {

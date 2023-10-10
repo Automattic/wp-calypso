@@ -46,9 +46,8 @@ type PlanRowOptions = {
 interface FeaturesGridType extends PlansGridProps {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
-	canUserPurchasePlan: boolean | null;
-	manageHref: string;
-	selectedSiteSlug: string | null;
+	canUserManageCurrentPlan?: boolean | null;
+	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
 }
@@ -358,10 +357,9 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			isInSignup,
 			isLaunchPage,
 			flowName,
-			canUserPurchasePlan,
-			manageHref,
+			canUserManageCurrentPlan,
+			currentPlanManageHref,
 			currentSitePlanSlug,
-			selectedSiteSlug,
 			translate,
 			planActionOverrides,
 			siteId,
@@ -398,8 +396,8 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					isTableCell={ options?.isTableCell }
 				>
 					<PlanFeatures2023GridActions
-						manageHref={ manageHref }
-						canUserPurchasePlan={ canUserPurchasePlan }
+						currentPlanManageHref={ currentPlanManageHref }
+						canUserManageCurrentPlan={ canUserManageCurrentPlan }
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planSlug ) }
 						trialPlan={ isFreeHostingTrial( planSlug ) }
@@ -412,7 +410,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						planSlug={ planSlug }
 						flowName={ flowName }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						selectedSiteSlug={ selectedSiteSlug }
 						buttonText={ buttonText }
 						planActionOverrides={ planActionOverrides }
 						showMonthlyPrice={ true }

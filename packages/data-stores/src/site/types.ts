@@ -132,6 +132,7 @@ export interface SiteDetails {
 	visible?: boolean;
 	was_ecommerce_trial?: boolean;
 	was_migration_trial?: boolean;
+	was_hosting_trial?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
 

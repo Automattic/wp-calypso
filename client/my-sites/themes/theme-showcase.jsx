@@ -18,6 +18,7 @@ import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
+import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -160,8 +161,8 @@ class ThemeShowcase extends Component {
 				MYTHEMES: staticFilters.MYTHEMES,
 			} ),
 			RECOMMENDED: staticFilters.RECOMMENDED,
-			...this.subjectFilters,
 			ALL: staticFilters.ALL,
+			...this.subjectFilters,
 		};
 	};
 
@@ -401,18 +402,54 @@ class ThemeShowcase extends Component {
 
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
+
+		const isDiscoveryEnabled =
+			( config.isEnabled( 'themes/discovery-lits' ) && this.props.isLoggedIn ) ||
+			( config.isEnabled( 'themes/discovery-lots' ) && ! this.props.isLoggedIn );
+
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
+			case staticFilters.RECOMMENDED.key:
+				if ( isDiscoveryEnabled ) {
+					return (
+						<ThemeCollectionsLayout
+							getOptions={ this.getThemeOptions }
+							getScreenshotUrl={ this.getScreenshotUrl }
+							getActionLabel={ this.getActionLabel }
+						/>
+					);
+				}
 			default:
 				return this.allThemes( { themeProps } );
 		}
 	};
 
+	getScreenshotUrl = ( theme, themeOptions ) => {
+		const { getScreenshotOption, locale, isLoggedIn } = this.props;
+
+		if ( ! getScreenshotOption( theme ).getUrl ) {
+			return null;
+		}
+
+		return localizeThemesPath(
+			getScreenshotOption( theme ).getUrl( theme, themeOptions ),
+			locale,
+			! isLoggedIn
+		);
+	};
+
+	getActionLabel = ( theme ) => this.props.getScreenshotOption( theme ).label;
+	getThemeOptions = ( theme ) => {
+		return pickBy(
+			addTracking( this.props.options ),
+			( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, this.props.siteId ) )
+		);
+	};
+
 	render() {
 		const {
 			siteId,
-			options,
 			getScreenshotOption,
 			search,
 			filter,
@@ -422,7 +459,6 @@ class ThemeShowcase extends Component {
 			featureStringFilter,
 			filterString,
 			isMultisite,
-			locale,
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
@@ -443,31 +479,17 @@ class ThemeShowcase extends Component {
 			secondaryOption: this.props.secondaryOption,
 			placeholderCount: this.props.placeholderCount,
 			bookmarkRef: this.bookmarkRef,
-			getScreenshotUrl: ( theme, themeOptions ) => {
-				if ( ! getScreenshotOption( theme ).getUrl ) {
-					return null;
-				}
-
-				return localizeThemesPath(
-					getScreenshotOption( theme ).getUrl( theme, themeOptions ),
-					locale,
-					! isLoggedIn
-				);
-			},
+			getScreenshotUrl: this.getScreenshotUrl,
 			onScreenshotClick: ( themeId ) => {
 				if ( ! getScreenshotOption( themeId ).action ) {
 					return;
 				}
 				getScreenshotOption( themeId ).action( themeId );
 			},
-			getActionLabel: ( theme ) => getScreenshotOption( theme ).label,
+			getActionLabel: this.getActionLabel,
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
-			getOptions: ( theme ) =>
-				pickBy(
-					addTracking( options ),
-					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-				),
+			getOptions: this.getThemeOptions,
 		};
 
 		const tabFilters = this.getTabFilters();

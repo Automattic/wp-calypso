@@ -7,6 +7,14 @@ export interface PendingPageRedirectOptions {
 	orderId?: string | number | undefined;
 	receiptId?: string | number | undefined;
 	urlType?: 'relative' | 'absolute';
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
 }
 
 export interface RedirectInstructions {
@@ -23,6 +31,14 @@ export interface RedirectForTransactionStatusArgs {
 	redirectTo?: string;
 	siteSlug?: string;
 	saasRedirectUrl?: string;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
 }
 
 /**
@@ -160,7 +176,13 @@ export function addUrlToPendingPageRedirect(
 	url: string,
 	options: PendingPageRedirectOptions
 ): string {
-	const { siteSlug, orderId, urlType = 'absolute', receiptId = ':receiptId' } = options;
+	const {
+		siteSlug,
+		orderId,
+		urlType = 'absolute',
+		receiptId = ':receiptId',
+		fromSiteSlug,
+	} = options;
 
 	const { origin = 'https://wordpress.com' } = typeof window !== 'undefined' ? window.location : {};
 	const successUrlPath =
@@ -170,6 +192,9 @@ export function addUrlToPendingPageRedirect(
 	const successUrlObject = new URL( successUrlBase );
 	successUrlObject.searchParams.set( 'redirectTo', url );
 	successUrlObject.searchParams.set( 'receiptId', String( receiptId ) );
+	if ( fromSiteSlug ) {
+		successUrlObject.searchParams.set( 'from_site_slug', fromSiteSlug );
+	}
 	if ( urlType === 'relative' ) {
 		return successUrlObject.pathname + successUrlObject.search + successUrlObject.hash;
 	}
@@ -314,6 +339,7 @@ export function getRedirectFromPendingPage( {
 	redirectTo,
 	siteSlug,
 	saasRedirectUrl,
+	fromSiteSlug,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
 	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
 	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
@@ -335,7 +361,7 @@ export function getRedirectFromPendingPage( {
 					redirectTo ?? getDefaultSuccessUrl( siteSlug, receiptId ),
 					receiptId
 				),
-				siteSlug,
+				siteSlug || fromSiteSlug,
 				getDefaultSuccessUrl( siteSlug, receiptId )
 			),
 		};
@@ -366,7 +392,7 @@ export function getRedirectFromPendingPage( {
 						redirectTo ?? getDefaultSuccessUrl( siteSlug, transactionReceiptId ),
 						transactionReceiptId
 					),
-					siteSlug,
+					siteSlug || fromSiteSlug,
 					getDefaultSuccessUrl( siteSlug, transactionReceiptId )
 				),
 			};

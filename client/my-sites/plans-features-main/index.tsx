@@ -47,8 +47,8 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import useAddOns from '../add-ons/hooks/use-add-ons';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
@@ -56,6 +56,7 @@ import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dia
 import { LoadingPlaceHolder } from './components/loading-placeholder';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
+import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
 import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
@@ -92,6 +93,15 @@ const FreePlanSubHeader = styled.p`
 	}
 	@media ( max-width: 960px ) {
 		margin-top: -16px;
+	}
+`;
+
+const PlanComparisonHeader = styled.h1`
+	.plans .step-container .step-container__content &&,
+	&& {
+		font-size: 2rem;
+		text-align: center;
+		margin: 48px 0;
 	}
 `;
 
@@ -246,6 +256,12 @@ const PlansFeaturesMain = ( {
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const observableForOdieRef = useObservableForOdie();
+	const currentPlanManageHref = useCurrentPlanManageHref();
+	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
+		siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null
+	);
 
 	const toggleShowPlansComparisonGrid = () => {
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
@@ -373,7 +389,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
+		gridPlans: gridPlans || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
 		selectedFeature,
@@ -382,7 +398,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
-		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
+		gridPlans: gridPlans || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
 		selectedFeature,
@@ -737,6 +753,8 @@ const PlansFeaturesMain = ( {
 								allFeaturesList={ FEATURES_LIST }
 								planTypeSelectorProps={ planTypeSelectorProps }
 								onStorageAddOnClick={ handleStorageAddOnClick }
+								currentPlanManageHref={ currentPlanManageHref }
+								canUserManageCurrentPlan={ canUserManageCurrentPlan }
 							/>
 							{ ! hidePlansFeatureComparison && (
 								<>
@@ -750,6 +768,9 @@ const PlansFeaturesMain = ( {
 										ref={ observableForOdieRef }
 									/>
 									<div ref={ plansComparisonGridRef } className={ comparisonGridContainerClasses }>
+										<PlanComparisonHeader className="wp-brand-font">
+											{ translate( 'Compare our plans and find yours' ) }
+										</PlanComparisonHeader>
 										<ComparisonGrid
 											isHidden={ ! showPlansComparisonGrid }
 											gridPlans={ gridPlansForComparisonGrid }
@@ -777,6 +798,8 @@ const PlansFeaturesMain = ( {
 											allFeaturesList={ FEATURES_LIST }
 											planTypeSelectorProps={ planTypeSelectorProps }
 											onStorageAddOnClick={ handleStorageAddOnClick }
+											currentPlanManageHref={ currentPlanManageHref }
+											canUserManageCurrentPlan={ canUserManageCurrentPlan }
 										/>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }

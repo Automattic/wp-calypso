@@ -1,11 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
-import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
-import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
-import { getManagePurchaseUrlFor } from '../purchases/paths';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlansGridContextProvider from './grid-context';
@@ -23,7 +17,6 @@ import type { PlanTypeSelectorProps } from '../plans-features-main/components/pl
 import type { FeatureList, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 /*
@@ -73,6 +66,8 @@ export interface PlansGridProps {
 	 * Normal react tree (like Popovers, Modals, etc) can also be forcibly hidden based on a tangible parameter
 	 */
 	isHidden?: boolean;
+	currentPlanManageHref?: string;
+	canUserManageCurrentPlan?: boolean | null;
 }
 
 const WrappedComparisonGrid = ( {
@@ -94,24 +89,9 @@ const WrappedComparisonGrid = ( {
 	showUpgradeableStorage,
 	onStorageAddOnClick,
 	isHidden,
+	currentPlanManageHref,
+	canUserManageCurrentPlan,
 }: PlansGridProps ) => {
-	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
-		siteId
-			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-			: null
-	);
-	const purchaseId = useSelector( ( state: IAppState ) =>
-		siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
-	);
-	// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
-	const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
-
-	const manageHref =
-		purchaseId && selectedSiteSlug
-			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-			: `/plans/my-plan/${ siteId }`;
-
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
@@ -133,9 +113,8 @@ const WrappedComparisonGrid = ( {
 					isLaunchPage={ isLaunchPage }
 					flowName={ flowName }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					manageHref={ manageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					selectedSiteSlug={ selectedSiteSlug }
+					currentPlanManageHref={ currentPlanManageHref }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ handleUpgradeClick }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -164,9 +143,8 @@ const WrappedComparisonGrid = ( {
 					isLaunchPage={ isLaunchPage }
 					flowName={ flowName }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					manageHref={ manageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					selectedSiteSlug={ selectedSiteSlug }
+					currentPlanManageHref={ currentPlanManageHref }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ handleUpgradeClick }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -181,8 +159,16 @@ const WrappedComparisonGrid = ( {
 };
 
 const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
-	const { siteId, intent, gridPlans, usePricingMetaForGridPlans, allFeaturesList, onUpgradeClick } =
-		props;
+	const {
+		siteId,
+		intent,
+		gridPlans,
+		usePricingMetaForGridPlans,
+		allFeaturesList,
+		onUpgradeClick,
+		currentPlanManageHref,
+		canUserManageCurrentPlan,
+	} = props;
 	const translate = useTranslate();
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
 		siteId,
@@ -195,23 +181,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 		prices,
 		currencyCode: currencyCode || 'USD',
 	} );
-
-	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
-		siteId
-			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-			: null
-	);
-	const purchaseId = useSelector( ( state: IAppState ) =>
-		siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
-	);
-	// TODO clk: selectedSiteSlug has no other use than computing manageRef below. stop propagating it through props
-	const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
-
-	const manageHref =
-		purchaseId && selectedSiteSlug
-			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-			: `/plans/my-plan/${ siteId }`;
 
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
@@ -230,9 +199,8 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					manageHref={ manageHref }
-					selectedSiteSlug={ selectedSiteSlug }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
+					currentPlanManageHref={ currentPlanManageHref }
 					translate={ translate }
 					handleUpgradeClick={ handleUpgradeClick }
 				/>
@@ -252,9 +220,8 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					manageHref={ manageHref }
-					selectedSiteSlug={ selectedSiteSlug }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
+					currentPlanManageHref={ currentPlanManageHref }
 					translate={ translate }
 					handleUpgradeClick={ handleUpgradeClick }
 				/>

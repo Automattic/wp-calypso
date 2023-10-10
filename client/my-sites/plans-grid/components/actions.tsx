@@ -27,12 +27,12 @@ import type { PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
-	canUserPurchasePlan?: boolean | null;
+	canUserManageCurrentPlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
 	trialPlan?: boolean;
 	freePlan: boolean;
-	manageHref: string;
+	currentPlanManageHref?: string;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
@@ -42,7 +42,6 @@ type PlanFeaturesActionsButtonProps = {
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
 	isWooExpressPlusPlan?: boolean;
-	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
 	siteId?: number | null;
@@ -195,8 +194,8 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
-	manageHref,
-	canUserPurchasePlan,
+	currentPlanManageHref,
+	canUserManageCurrentPlan,
 	currentSitePlanSlug,
 	buttonText,
 	planActionOverrides,
@@ -210,11 +209,10 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: string;
-	manageHref?: string;
-	canUserPurchasePlan?: boolean | null;
+	currentPlanManageHref?: string;
+	canUserManageCurrentPlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
-	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -234,7 +232,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				<Button
 					className={ classes }
 					onClick={ planActionOverrides.loggedInFreePlan.callback }
-					disabled={ ! manageHref } // not sure why this is here
+					disabled={ ! currentPlanManageHref } // not sure why this is here
 				>
 					{ planActionOverrides.loggedInFreePlan.text }
 				</Button>
@@ -250,8 +248,12 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
 		return (
-			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
-				{ canUserPurchasePlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
+			<Button
+				className={ classes }
+				href={ currentPlanManageHref }
+				disabled={ ! currentPlanManageHref }
+			>
+				{ canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
 	}
@@ -362,12 +364,12 @@ const LoggedInPlansFeatureActionButton = ( {
 
 const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( {
 	availableForPurchase = true,
-	canUserPurchasePlan,
+	canUserManageCurrentPlan,
 	className,
 	currentSitePlanSlug,
 	freePlan = false,
 	trialPlan = false,
-	manageHref,
+	currentPlanManageHref,
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
@@ -376,7 +378,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
 	isWooExpressPlusPlan = false,
-	selectedSiteSlug,
 	planActionOverrides,
 	isStuck,
 	isLargeCurrency,
@@ -497,11 +498,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
-			manageHref={ manageHref }
-			canUserPurchasePlan={ canUserPurchasePlan }
+			currentPlanManageHref={ currentPlanManageHref }
+			canUserManageCurrentPlan={ canUserManageCurrentPlan }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
-			selectedSiteSlug={ selectedSiteSlug }
 			planActionOverrides={ planActionOverrides }
 			priceString={ priceString }
 			isStuck={ isStuck }
