@@ -27,6 +27,11 @@ import {
 	getOwnershipsForSiteId,
 } from 'calypso/state/memberships/subscribers/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	PLAN_YEARLY_FREQUENCY,
+	PLAN_MONTHLY_FREQUENCY,
+	PLAN_ONE_TIME_FREQUENCY,
+} from '../memberships/constants';
 
 type Subscriber = {
 	id: string;
@@ -234,7 +239,7 @@ function CustomerSection() {
 
 	function renderSubscriberSubscriptionSummary( subscriber: Subscriber ) {
 		const title = subscriber.plan.title ? ` (${ subscriber.plan.title }) ` : ' ';
-		if ( subscriber.plan.renew_interval === 'one-time' ) {
+		if ( subscriber.plan.renew_interval === PLAN_ONE_TIME_FREQUENCY ) {
 			/* translators: Information about a one-time payment made by a subscriber to a site owner.
 				%(amount)s - the amount paid,
 				%(formattedDate) - the date it was paid
@@ -246,7 +251,7 @@ function CustomerSection() {
 					title,
 				},
 			} );
-		} else if ( subscriber.plan.renew_interval === '1 year' ) {
+		} else if ( subscriber.plan.renew_interval === PLAN_YEARLY_FREQUENCY ) {
 			/* translators: Information about a recurring yearly payment made by a subscriber to a site owner.
 				%(amount)s - the amount paid,
 				%(formattedDate)s - the date it was first paid
@@ -263,7 +268,7 @@ function CustomerSection() {
 					},
 				}
 			);
-		} else if ( subscriber.plan.renew_interval === '1 month' ) {
+		} else if ( subscriber.plan.renew_interval === PLAN_MONTHLY_FREQUENCY ) {
 			/* translators: Information about a recurring monthly payment made by a subscriber to a site owner.
 				%(amount)s - the amount paid,
 				%(formattedDate)s - the date it was first paid

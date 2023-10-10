@@ -76,6 +76,7 @@ export function generateSteps( {
 				'siteSlug',
 				'themeItem',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -445,6 +446,7 @@ export function generateSteps( {
 				'siteUrl',
 				'lastDomainSearched',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -490,6 +492,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'themeItem',
 				'useThemeHeadstart',
+				'domainCart',
 			], // note: siteId, siteSlug are not provided when used in domain flow
 			optionalDependencies: [
 				'signupDomainOrigin',
@@ -520,6 +523,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'signupDomainOrigin',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'siteUrl',
@@ -550,6 +554,7 @@ export function generateSteps( {
 				'siteUrl',
 				'lastDomainSearched',
 				'isManageSiteFlow',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -579,6 +584,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'siteUrl',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'signupDomainOrigin',

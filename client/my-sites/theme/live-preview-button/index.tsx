@@ -12,7 +12,6 @@ interface Props {
 
 /**
  * Live Preview leveraging Gutenberg's Block Theme Previews
- *
  * @see pbxlJb-3Uv-p2
  */
 export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
@@ -28,7 +27,7 @@ export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
 
 	return (
 		<Button onClick={ () => dispatch( livePreview( themeId, siteId, 'detail' ) ) }>
-			{ translate( 'Live preview' ) }
+			{ translate( 'Preview & Customize' ) }
 		</Button>
 	);
 };

@@ -447,7 +447,7 @@ export class UserStep extends Component {
 
 		const params = new URLSearchParams( window.location.search );
 		if ( isNewsletterFlow( params.get( 'variationName' ) ) ) {
-			return this.props.translate( 'Let’s get you signed up.' );
+			return translate( 'Let’s get you signed up.' );
 		}
 
 		if ( ! headerText ) {
@@ -520,7 +520,7 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					horizontal={ isReskinned }
+					horizontal={ false }
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
 				/>

@@ -87,29 +87,23 @@ export class UserSignupPage {
 	 * @see https://github.com/Automattic/wp-calypso/pull/82481
 	 *
 	 * @param {string} email Email address of the new user.
-	 * @returns Response from the REST API.
+	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
 		await this.page.getByRole( 'button', { name: 'Continue with Email' } ).click();
 
 		await this.page.fill( selectors.emailInput, email );
 
-		// Use CSS selector instead of text.
-		// Text displayed on button changes depending on the link directing
-		// user to this page.
-		const [ , response ] = await Promise.all( [
-			this.page.waitForNavigation(),
+		const [ response ] = await Promise.all( [
 			this.page.waitForResponse( /.*new\?.*/ ),
-			this.page.click( selectors.submitButton ),
+			this.page.getByRole( 'button', { name: 'Continue' } ).click(),
 		] );
 
 		if ( ! response ) {
-			throw new Error( 'Failed to create new user at signup.' );
+			throw new Error( `Failed to sign up as new user: no or unexpected API response.` );
 		}
 
-		const responseBody: NewUserResponse = await response.json();
-
-		return responseBody;
+		return await response.json();
 	}
 
 	/**

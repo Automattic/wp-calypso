@@ -83,6 +83,12 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			saleCost: validationResult.sale_cost,
 			currencyCode: validationResult.currency_code,
 		};
+	} else if ( validationResult?.is_price_limit_exceeded === true ) {
+		return {
+			valid: false,
+			loading: false,
+			message: __( "Sorry, we don't support some higher tier premium domain transfers." ),
+		};
 	} else if ( validationResult?.auth_code_valid === false ) {
 		// the auth check API has a bug and returns error 400 for incorrect auth codes,
 		// in which case, the `useIsDomainCodeValid` hook returns `false`.

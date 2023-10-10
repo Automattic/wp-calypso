@@ -53,6 +53,9 @@ export default function CheckoutMainWrapper( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+	connectAfterCheckout,
+	fromSiteSlug,
+	adminUrl,
 }: {
 	productAliasFromUrl?: string;
 	productSourceFromUrl?: string;
@@ -70,6 +73,16 @@ export default function CheckoutMainWrapper( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
+	connectAfterCheckout?: boolean;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
+	adminUrl?: string;
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -130,6 +143,9 @@ export default function CheckoutMainWrapper( {
 							jetpackSiteSlug={ jetpackSiteSlug }
 							jetpackPurchaseToken={ jetpackPurchaseToken }
 							isUserComingFromLoginForm={ isUserComingFromLoginForm }
+							connectAfterCheckout={ connectAfterCheckout }
+							fromSiteSlug={ fromSiteSlug }
+							adminUrl={ adminUrl }
 						/>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>

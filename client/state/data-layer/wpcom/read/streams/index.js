@@ -30,6 +30,7 @@ const noop = () => {};
  * `following`
  * `site:1234`
  * `search:a:value` ( prefix is `search`, suffix is `a:value` )
+ *
  * @param  {string} streamKey The stream ID to break apart
  * @returns {string}          The stream ID suffix
  */
@@ -103,15 +104,20 @@ function createStreamDataFromCards( cards, dateProperty ) {
 	// TODO: We may want to extract the related tags and update related tags stream too
 	const cardPosts = [];
 	let cardRecommendedSites = [];
+	let newSites = [];
 	cards.forEach( ( card ) => {
 		if ( card.type === 'post' ) {
 			cardPosts.push( card.data );
 		} else if ( card.type === 'recommended_blogs' ) {
 			cardRecommendedSites = card.data;
+		} else if ( card.type === 'new_sites' ) {
+			newSites = card.data;
 		}
 	} );
+
 	const streamSites = createStreamSitesFromRecommendedSites( cardRecommendedSites );
-	return { ...createStreamDataFromPosts( cardPosts, dateProperty ), streamSites };
+	const streamNewSites = createStreamSitesFromRecommendedSites( newSites );
+	return { ...createStreamDataFromPosts( cardPosts, dateProperty ), streamSites, streamNewSites };
 }
 
 function createStreamDataFromSites( sites, dateProperty ) {
@@ -307,7 +313,6 @@ const streamApis = {
 				tags: streamKeySuffix( streamKey ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
-				age_based_decay: 0.5,
 			} ),
 	},
 	list: {
@@ -321,6 +326,7 @@ const streamApis = {
 
 /**
  * Request a page for the given stream
+ *
  * @param  {Object}   action   Action being handled
  * @returns {Object | undefined} http action for data-layer to dispatch
  */
@@ -394,6 +400,7 @@ export function handlePage( action, data ) {
 	let streamItems = [];
 	let streamPosts = [];
 	let streamSites = [];
+	let streamNewSites = [];
 
 	// If the payload has posts, then this stream is intended to be a post stream
 	// If the payload has sites, then we need to extract the posts from the sites and update the post stream
@@ -413,6 +420,7 @@ export function handlePage( action, data ) {
 		streamItems = streamData.streamItems;
 		streamPosts = streamData.streamPosts;
 		streamSites = streamData.streamSites;
+		streamNewSites = streamData.streamNewSites;
 	}
 
 	const actions = analyticsForStream( {
@@ -430,6 +438,11 @@ export function handlePage( action, data ) {
 		if ( streamSites.length > 0 ) {
 			actions.push(
 				receiveRecommendedSites( { seed: 'discover-recommendations', sites: streamSites } )
+			);
+		}
+		if ( streamNewSites.length > 0 ) {
+			actions.push(
+				receiveRecommendedSites( { seed: 'discover-new-sites', sites: streamNewSites } )
 			);
 		}
 		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );

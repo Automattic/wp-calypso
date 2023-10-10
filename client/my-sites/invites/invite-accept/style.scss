@@ -1,3 +1,63 @@
+
+body {
+	background: #fdfdfd;
+	.invite-logged-out-header {
+		position: absolute;
+		top: 28px;
+		height: 60px;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		left: 0;
+		padding: 0 24px;
+		right: 0;
+
+		.wordpress-logo {
+			fill: var(--color-text);
+			margin: 0;
+		}
+
+		a.components-button {
+			color: var(--studio-gray-90, #1d2327) !important;
+			font-family: "SF Pro Text", sans-serif;
+			font-size: 0.875rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 20px;
+			text-underline-offset: 5px;
+			height: 22px;
+		}
+	}
+	.invite-logged-out-title {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 48px 0 24px;
+
+		.formatted-header__title {
+			margin: 0;
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-weight: 400;
+			color: #101517;
+			letter-spacing: 0.2px;
+			font-size: 2rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 3.25rem;
+		}
+
+	}
+	.logged-out-form__footer {
+		button.is-primary {
+			background-color: #117ac9;
+			border-color: transparent !important;
+			&:hover,
+			&:focus {
+				background-color: var(--studio-blue-60);
+			}
+		}
+	}
+
+}
 .invite-accept .locale-suggestions {
 	margin-top: 0;
 }
@@ -5,6 +65,7 @@
 .invite-accept__form {
 	margin: 0 auto;
 	max-width: 400px;
+	margin-top: 25vh;
 
 	&.is-error {
 		max-width: none;

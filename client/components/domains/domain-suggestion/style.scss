@@ -446,6 +446,33 @@ body.is-section-signup.is-white-signup {
 				font-size: $font-body-small;
 			}
 
+			.domain-suggestion__action.is-borderless {
+				color: var(--color-text);
+				padding: 0 1.5em;
+				line-height: 24px;
+				@include break-mobile {
+					width: auto;
+				}
+
+				.gridicons-checkmark {
+					color: var(--studio-green-60);
+				}
+
+				&:disabled {
+					color: var(--color-neutral-20);
+
+					.gridicons-checkmark {
+						color: var(--color-neutral-20);
+					}
+				}
+
+				&.is-busy {
+					pointer-events: none;
+					animation: button__busy-animation 3000ms infinite linear;
+					background-size: 120px 100%;
+					background-image: linear-gradient(-45deg, var(--color-neutral-10) 28%, var(--studio-gray-5) 28%, var(--studio-gray-5) 72%, var(--color-neutral-10) 72%);
+				}
+			}
 			.domain-suggestion__action:not(.is-borderless) {
 				width: 100%;
 				height: auto;
@@ -453,7 +480,6 @@ body.is-section-signup.is-white-signup {
 				padding: 0.57em 1.17em;
 				font-weight: 500;
 				border-radius: 4px;
-				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 				border: 1px solid #c3c4c7;
 				letter-spacing: 0.32px;
 				font-size: 0.875rem;
@@ -494,6 +520,32 @@ body.is-section-signup.is-white-signup {
 					fill: $cod-grey;
 					margin-left: 0;
 				}
+			}
+		}
+
+		&.featured-domain-suggestion .domain-suggestion__action-container .domain-suggestion__action.is-borderless {
+			padding: 0.57em 1.3em !important;
+			box-shadow: none !important;
+			color: var(--color-text);
+			font-weight: normal !important;
+
+			.gridicons-checkmark {
+				color: var(--studio-green-60);
+			}
+
+			&:disabled {
+				color: var(--color-neutral-20);
+
+				.gridicons-checkmark {
+					color: var(--color-neutral-20);
+				}
+			}
+
+			&.is-busy {
+				pointer-events: none;
+				animation: button__busy-animation 3000ms infinite linear;
+				background-size: 120px 100%;
+				background-image: linear-gradient(-45deg, var(--color-neutral-10) 28%, var(--studio-gray-5) 28%, var(--studio-gray-5) 72%, var(--color-neutral-10) 72%);
 			}
 		}
 	}

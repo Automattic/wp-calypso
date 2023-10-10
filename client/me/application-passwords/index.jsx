@@ -1,4 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -91,11 +92,22 @@ function ApplicationPasswords() {
 				) }
 
 				<p className="application-passwords__nobot">
-					{ translate(
-						'With Two-Step Authentication active, you can generate a custom password for ' +
-							'each third-party application you authorize to use your WordPress.com account. ' +
-							'You can revoke access for an individual application here if you ever need to.'
-					) }
+					<>
+						{ translate(
+							'With Two-Step Authentication active, you can generate a custom password for ' +
+								'each third-party application you authorize to use your WordPress.com account. ' +
+								'You can revoke access for an individual application here if you ever need to.'
+						) }{ ' ' }
+						<a
+							href={ localizeUrl(
+								'https://wordpress.com/support/security/two-step-authentication/application-specific-passwords'
+							) }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ translate( 'Learn more' ) }
+						</a>
+					</>
 				</p>
 
 				<AppPasswordsList appPasswords={ appPasswords } />

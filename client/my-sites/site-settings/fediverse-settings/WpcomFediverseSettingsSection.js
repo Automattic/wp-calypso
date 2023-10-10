@@ -1,3 +1,4 @@
+import { FEATURE_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -9,7 +10,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { successNotice } from 'calypso/state/notices/actions';
-import { getSiteTitle, getSiteDomain } from 'calypso/state/sites/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteTitle, getSiteDomain, getSite } from 'calypso/state/sites/selectors';
 
 const DomainUpsellCard = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
@@ -52,30 +54,14 @@ const DomainPendingWarning = ( { siteId } ) => {
 	);
 };
 
-const DomainCongratsCard = ( { user, isPending, siteId } ) => {
-	const translate = useTranslate();
-	return (
-		<Card className="site-settings__card">
-			<p>{ translate( 'Your site is using a custom domain! 🎉' ) }</p>
-			<p>
-				{ translate(
-					'Owning your domain unlocks account portability and a separate profile for each blog author. Here’s yours:'
-				) }
-			</p>
-			{ isPending && <DomainPendingWarning siteId={ siteId } /> }
-			<p>
-				<ClipboardButtonInput value={ user } />
-			</p>
-		</Card>
-	);
-};
-
 const EnabledSettingsSection = ( { data, siteId } ) => {
 	const translate = useTranslate();
-	const { blogIdentifier = '', userIdentifier } = data;
-	const hasDomain = !! userIdentifier;
+	const { blogIdentifier = '' } = data;
+	const hasDomain = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_CUSTOM_DOMAIN )
+	);
 	// if the domain has been purchased, but isn't active yet because the site is still using *.wordpress.com
-	const isDomainPending = hasDomain && userIdentifier.match( /\.wordpress\.com$/ );
+	const isDomainPending = hasDomain && blogIdentifier.match( /\.wordpress\.com$/ );
 
 	return (
 		<>
@@ -87,13 +73,6 @@ const EnabledSettingsSection = ( { data, siteId } ) => {
 					<ClipboardButtonInput value={ blogIdentifier } />
 				</p>
 			</Card>
-			{ hasDomain && (
-				<DomainCongratsCard
-					user={ userIdentifier }
-					isPending={ isDomainPending }
-					siteId={ siteId }
-				/>
-			) }
 		</>
 	);
 };
@@ -107,6 +86,9 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const translate = useTranslate();
 	const dispatchSuccessNotice = useDispatchSuccessNotice();
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const isPrivate = site?.is_private || site?.is_coming_soon;
 	const noticeArgs = {
 		args: {
 			site_title: siteTitle,
@@ -121,8 +103,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 			dispatchSuccessNotice( message );
 		}
 	);
-	const disabled = isLoading || isError;
-
+	const disabled = isLoading || isError || isPrivate;
 	return (
 		<>
 			<Card className="site-settings__card">
@@ -137,6 +118,18 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 					checked={ isEnabled }
 					onChange={ ( value ) => setEnabled( value ) }
 				/>
+				{ isPrivate && (
+					<Notice status="is-warning" translate={ translate } isCompact={ true }>
+						{ translate(
+							'You cannot enter the fediverse until your site is publicly launched. {{link}}Review Privacy settings{{/link}}.',
+							{
+								components: {
+									link: <a href={ `/settings/general/${ domain }` } />,
+								},
+							}
+						) }
+					</Notice>
+				) }
 			</Card>
 			{ isEnabled && <EnabledSettingsSection data={ data } siteId={ siteId } /> }
 		</>

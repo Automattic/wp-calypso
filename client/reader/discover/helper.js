@@ -30,7 +30,7 @@ export function getSelectedTabTitle( selectedTab ) {
 		return 'new';
 	}
 	if ( selectedTab === FIRST_POSTS_TAB ) {
-		return 'firstposts';
+		return 'fresh';
 	}
 	return selectedTab;
 }

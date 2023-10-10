@@ -22,6 +22,8 @@ import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
 
+import './style.scss';
+
 interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;

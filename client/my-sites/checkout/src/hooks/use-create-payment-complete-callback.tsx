@@ -64,6 +64,9 @@ export default function useCreatePaymentCompleteCallback( {
 	siteSlug,
 	sitelessCheckoutType,
 	checkoutFlow,
+	connectAfterCheckout,
+	adminUrl: wpAdminUrl,
+	fromSiteSlug,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -76,13 +79,23 @@ export default function useCreatePaymentCompleteCallback( {
 	siteSlug: string | undefined;
 	sitelessCheckoutType?: SitelessCheckoutType;
 	checkoutFlow?: string;
+	connectAfterCheckout?: boolean;
+	adminUrl?: string;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
 } ): PaymentEventCallback {
 	const cartKey = useCartKey();
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const selectedSiteData = useSelector( getSelectedSite );
-	const adminUrl = selectedSiteData?.options?.admin_url;
+	const adminUrl = selectedSiteData?.options?.admin_url || wpAdminUrl;
 	const sitePlanSlug = selectedSiteData?.plan?.product_slug;
 	const isJetpackNotAtomic =
 		useSelector(
@@ -134,6 +147,8 @@ export default function useCreatePaymentCompleteCallback( {
 				jetpackTemporarySiteId,
 				adminPageRedirect,
 				domains,
+				connectAfterCheckout,
+				fromSiteSlug,
 			};
 
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
@@ -227,6 +242,7 @@ export default function useCreatePaymentCompleteCallback( {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
+					fromSiteSlug,
 				} );
 				return;
 			}
@@ -261,6 +277,8 @@ export default function useCreatePaymentCompleteCallback( {
 			adminPageRedirect,
 			domains,
 			sitePlanSlug,
+			connectAfterCheckout,
+			fromSiteSlug,
 		]
 	);
 }

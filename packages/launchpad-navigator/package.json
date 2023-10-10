@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/launchpad-navigator",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"description": "Launchpad navigator components",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -44,7 +44,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1",
-		"typescript": "^5.1.6",
+		"typescript": "^5.2.2",
 		"webpack": "^5.68.0"
 	},
 	"peerDependencies": {
@@ -55,6 +55,5 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1"
-	},
-	"private": true
+	}
 }

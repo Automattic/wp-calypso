@@ -1666,6 +1666,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 	} );
 
+	// Siteless checkout flow
 	describe( 'Jetpack Siteless Checkout Thank You', () => {
 		it( 'redirects when jetpack checkout arg is set, but siteSlug is undefined.', () => {
 			const cart = {
@@ -1753,6 +1754,35 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily'
+			);
+		} );
+
+		// Jetpack siteless "Connect after checkout" flow.
+		// Triggered when `connectAfterCheckout: true`, `adminUrl` is set, `fromSiteSlug` is set,
+		// and `siteSlug` is falsy(undefined).
+		it( "redirects to the site's wp-admin `connect_url_redirect` url to initiate Jetpack connection", () => {
+			const adminUrl = 'https://my.site/wp-admin/';
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				sitelessCheckoutType: 'jetpack',
+				connectAfterCheckout: true,
+				adminUrl: adminUrl,
+				fromSiteSlug: 'my.site',
+				receiptId: 'invalid receipt ID' as any,
+			} );
+			expect( url ).toBe(
+				`${ adminUrl }admin.php?page=jetpack&connect_url_redirect=true&jetpack_connect_login_redirect=true&redirect_after_auth=${ adminUrl }admin.php?page=my-jetpack`
 			);
 		} );
 

@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import titlecase from 'to-title-case';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
@@ -10,6 +9,8 @@ import {
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
 
@@ -21,20 +22,28 @@ const exported = {
 		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Discover';
 		const streamKey = 'discover:recommended';
 		const mcKey = 'discover';
+		const state = context.store.getState();
+
+		const currentRoute = getCurrentRoute( state );
+		const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		recordTrack( 'calypso_reader_discover_viewed' );
+		recordTrack(
+			'calypso_reader_discover_viewed',
+			{},
+			{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
+		);
 
-		if ( ! isUserLoggedIn( context.store.getState() ) ) {
+		if ( ! isUserLoggedIn( state ) ) {
 			context.renderHeaderSection = renderHeaderSection;
 		}
 		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
-		const tabTitle = titlecase( getSelectedTabTitle( selectedTab ) || '' );
+		const tabTitle = getSelectedTabTitle( selectedTab ) || '';
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
 				<DocumentHead
-					title={ translate( 'Browse %s Blogs & Read Articles ‹ Reader', {
+					title={ translate( 'Browse %s blogs & read articles ‹ Reader', {
 						args: [ tabTitle ],
 						comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
 					} ) }
