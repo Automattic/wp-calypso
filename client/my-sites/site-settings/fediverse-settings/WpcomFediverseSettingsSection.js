@@ -58,7 +58,7 @@ const DomainPendingWarning = ( { siteId } ) => {
 			status="is-warning"
 			translate={ translate }
 			isCompact={ true }
-			style={ { width: '100%' } }
+			className="is-full-width"
 		>
 			{ message }
 		</Notice>
