@@ -446,7 +446,7 @@ export const SiteSyncCard = ( {
 					/>
 				</FormLabel>
 			</FormRadioContainer>
-			{ selectedOption === actionForType && (
+			{ selectedOption && selectedOption === actionForType && (
 				<StagingToProductionSync
 					siteSlug={ siteSlug || '' }
 					disabled={ disabled }
@@ -456,7 +456,7 @@ export const SiteSyncCard = ( {
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
 				/>
 			) }
-			{ selectedOption !== actionForType && (
+			{ selectedOption && selectedOption !== actionForType && (
 				<ProductionToStagingSync
 					disabled={ disabled }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
