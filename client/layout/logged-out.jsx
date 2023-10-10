@@ -204,7 +204,7 @@ const LayoutLoggedOut = ( {
 				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
 			) }
 
-			{ [ 'plugins', 'site-profiler' ].includes( sectionName ) && (
+			{ [ 'plugins' ].includes( sectionName ) && (
 				<>
 					<UniversalNavbarFooter
 						currentRoute={ currentRoute }
