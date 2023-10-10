@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 
-export default function useLoginWindow( { onLoginSuccess, domain } ) {
+export default function useLoginWindow( { onLoginSuccess } ) {
 	const isBrowser = typeof window !== 'undefined';
-	const baseURL = `https://${ domain }`;
 
 	const waitForLogin = ( event ) => {
-		if ( event.origin !== baseURL ) {
+		if ( event.origin !== 'wordpress.com' ) {
 			return;
 		}
 
@@ -23,7 +22,7 @@ export default function useLoginWindow( { onLoginSuccess, domain } ) {
 		}
 
 		const loginWindow = window.open(
-			`${ baseURL }/public.api/connect/?action=request&domain=${ domain }&service=wordpress`,
+			`https://wordpress.com/public.api/connect/?action=request&service=wordpress`,
 			'CalyspoLogin',
 			'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500'
 		);
@@ -45,7 +44,7 @@ export default function useLoginWindow( { onLoginSuccess, domain } ) {
 		}
 
 		const createAccountWindow = window.open(
-			`https://wordpress.com/start/account/user?redirect_to=https%3A%2F%2Fwpcalypso.wordpress.com%2Fpublic.api%2Fconnect%2F%3Faction%3Dverify%26service%3Dwordpress%26domain%3D${ domain }`,
+			`https://wordpress.com/start/account/user?redirect_to=https%3A%2F%2Fwordpress.com%2Fpublic.api%2Fconnect%2F%3Faction%3Dverify%26service%3Dwordpress`,
 			'CalyspoLogin',
 			'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500'
 		);
