@@ -56,7 +56,8 @@
 }
 
 .stats-date-control-picker__popover-content {
-	min-width: 220px;
+	display: flex;
+	min-width: 320px;
 }
 
 .date-control-picker-date {
