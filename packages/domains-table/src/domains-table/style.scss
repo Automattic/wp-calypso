@@ -1,9 +1,8 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
-$domains-table-mobile-breakpoint: 480px;
-
-@media ( max-width: $domains-table-mobile-breakpoint ) {
+@media ( max-width: $break-small ) {
 	.domains-table {
 		padding: 0 16px;
 	}
