@@ -19,9 +19,6 @@
 
 .date-control-picker-shortcuts__shortcut {
 	border-radius: 4px;
-	.gridicon {
-		display: none;
-	}
 	.components-button {
 		display: flex;
 		justify-content: space-between;
@@ -29,9 +26,6 @@
 	}
 	&.is-selected {
 		background-color: var(--color-accent-5);
-		.gridicon {
-			display: initial;
-		}
 	}
 	&:hover {
 		background-color: var(--color-primary-0);
