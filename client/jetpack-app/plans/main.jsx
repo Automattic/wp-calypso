@@ -43,26 +43,6 @@ const Header = ( { paidDomainName } ) => (
 	</div>
 );
 
-const Plans = ( { paidDomainName, onUpgradeClick, handleRedirect } ) => (
-	<PlansFeaturesMain
-		paidDomainName={ paidDomainName }
-		intent="plans-jetpack-app-site-creation"
-		isInSignup={ true }
-		intervalType="yearly"
-		onUpgradeClick={ onUpgradeClick }
-		plansWithScroll={ false }
-		removePaidDomain={ handleRedirect }
-		hidePlanTypeSelector={ true }
-		hidePlansFeatureComparison={ true }
-	/>
-);
-
-const Loading = () => (
-	<div className="plans__loading">
-		<LoadingEllipsis active />
-	</div>
-);
-
 const JetpackAppPlans = ( { paidDomainName, redirectTo } ) => {
 	const planSlug = useSelector( ( state ) =>
 		getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 )
@@ -93,14 +73,22 @@ const JetpackAppPlans = ( { paidDomainName, redirectTo } ) => {
 			{ plansLoaded ? (
 				<>
 					<Header paidDomainName={ paidDomainName } />
-					<Plans
+					<PlansFeaturesMain
 						paidDomainName={ paidDomainName }
+						intent="plans-jetpack-app-site-creation"
+						isInSignup={ true }
+						intervalType="yearly"
 						onUpgradeClick={ onUpgradeClick }
-						handleRedirect={ handleRedirect }
+						plansWithScroll={ false }
+						removePaidDomain={ handleRedirect }
+						hidePlanTypeSelector={ true }
+						hidePlansFeatureComparison={ true }
 					/>
 				</>
 			) : (
-				<Loading />
+				<div className="plans__loading">
+					<LoadingEllipsis active />
+				</div>
 			) }
 		</Main>
 	);
