@@ -46,9 +46,9 @@ export const useVerifyEmail = () => {
 	};
 
 	useEffect( () => {
-		const interval = setInterval( async () => {
+		const interval = setInterval( () => {
 			if ( ! user.email_verified ) {
-				await dispatch( fetchCurrentUser() );
+				dispatch( fetchCurrentUser() );
 			} else {
 				setData( ( prevState ) => ( {
 					...prevState,
