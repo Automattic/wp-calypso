@@ -15,14 +15,13 @@ require_once WP_CONTENT_DIR . '/themes/h4/landing/marketing/pages/_common/lib/fu
 if ( ! isset( $args ) ) {
 	$args = array();
 }
-$happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
-$website_clasname        = '';
+$website_classname = '';
 if ( isset( $args['website'] ) ) {
-	$website_clasname = 'is-' . $args['website'];
+	$website_classname = 'is-' . $args['website'];
 }
 
 ?>
-<div id="lpc-header-nav" class="lpc lpc-header-nav <?php echo esc_attr( $website_clasname ); ?>">
+<div id="lpc-header-nav" class="lpc lpc-header-nav <?php echo esc_attr( $website_classname ); ?>">
 	<div class="x-root lpc-header-nav-wrapper">
 		<div class="lpc-header-nav-container">
 			<!-- Nav bar starts here. -->

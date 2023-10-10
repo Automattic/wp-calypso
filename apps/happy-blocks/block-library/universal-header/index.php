@@ -15,14 +15,14 @@ require_once WP_CONTENT_DIR . '/themes/h4/landing/marketing/pages/_common/lib/fu
 if ( ! isset( $args ) ) {
 	$args = array();
 }
-$happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
-$website_clasname        = '';
+$website_classname = '';
+
 if ( isset( $args['website'] ) ) {
-	$website_clasname = 'is-' . $args['website'];
+	$website_classname = 'is-' . $args['website'];
 }
 
 ?>
-<div id="lpc-header-nav" class="lpc lpc-header-nav <?php esc_attr( $website_clasname ); ?>">
+<div id="lpc-header-nav" class="lpc lpc-header-nav <?php esc_attr( $website_classname ); ?>">
 	<div class="x-root lpc-header-nav-wrapper">
 		<div class="lpc-header-nav-container">
 			<!-- Nav bar starts here. -->
@@ -32,7 +32,7 @@ if ( isset( $args['website'] ) ) {
 						<ul class="x-nav-list x-nav-list--left" role="menu">
 							<li class="x-nav-item" role="menuitem">
 								<a class="x-nav-link x-nav-link--logo x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/' ) ); ?>">
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/' ) ); ?>">
 									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 36"
 										class="x-icon x-icon--logo">
 										<path
@@ -70,7 +70,7 @@ if ( isset( $args['website'] ) ) {
 							</li>
 							<li class="x-nav-item x-nav-item--wide" role="menuitem">
 								<a class="x-nav-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/pricing/' ) ); ?>">
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/pricing/' ) ); ?>">
 									<?php esc_html_e( 'Plans &amp; Pricing', 'happy-blocks' ); ?>
 								</a>
 							</li>
@@ -79,7 +79,7 @@ if ( isset( $args['website'] ) ) {
 							<?php if ( ! is_user_logged_in() ) : ?>
 							<li role="menuitem" class="x-nav-item x-nav-item--wide login-link">
 								<a class="x-nav-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/log-in/' ) ); ?>">
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/log-in/' ) ); ?>">
 								<?php esc_html_e( 'Log In', 'happy-blocks' ); ?>
 								</a>
 							</li>
@@ -120,63 +120,63 @@ if ( isset( $args['website'] ) ) {
 					<ul role="menu">
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/hosting/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/hosting/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( fixme__( 'WordPress Hosting', __( 'Hosting', 'happy-blocks' ) ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/domains/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/domains/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( fixme__( 'Domain Names', __( 'Domains', 'happy-blocks' ) ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/website-builder/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/website-builder/' ) ); ?>"
 								tabindex="-1">
 								<?php esc_html_e( 'Website Builder', 'happy-blocks' ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-blog/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/create-blog/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( fixme__( 'Create a Blog', __( 'Blogs', 'happy-blocks' ) ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/newsletter' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/newsletter/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/professional-email/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/professional-email/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/website-design-service/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/website-design-service/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( __( 'Website Design Services', 'happy-blocks' ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/ecommerce/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/ecommerce/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( __( 'Store', 'happy-blocks' ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/create-a-course/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( fixme__( 'Course Maker', __( 'Course', 'happy-blocks' ) ) ); ?>
 							</a>
@@ -204,7 +204,7 @@ if ( isset( $args['website'] ) ) {
 					<ul role="menu">
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/features/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/features/' ) ); ?>"
 								tabindex="-1">
 								<?php esc_html_e( 'Overview', 'happy-blocks' ); ?>
 							</a>
@@ -214,21 +214,21 @@ if ( isset( $args['website'] ) ) {
 					<ul role="menu">
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/themes' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/themes' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( fixme__( 'WordPress Themes', __( 'Themes', 'happy-blocks' ) ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/plugins' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/plugins' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( fixme__( 'WordPress Plugins', __( 'Plugins', 'happy-blocks' ) ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/google/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/google/' ) ); ?>"
 								tabindex="-1">
 								<?php esc_html_e( 'Google Apps', 'happy-blocks' ); ?>
 							</a>
@@ -240,56 +240,56 @@ if ( isset( $args['website'] ) ) {
 					<ul role="menu">
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( fixme__( 'WordPress.com Support', __( 'Support', 'happy-blocks' ) ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/blog/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/blog/' ) ); ?>"
 								tabindex="-1">
 								<?php esc_html_e( 'News', 'happy-blocks' ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/go/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/go/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( fixme__( 'Website Building Tips', __( 'Expert Tips', 'happy-blocks' ) ) ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/business-name-generator/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/business-name-generator/' ) ); ?>"
 								tabindex="-1">
 								<?php esc_html_e( 'Business Name Generator', 'happy-blocks' ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/logo-maker/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/logo-maker/' ) ); ?>"
 								tabindex="-1">
 								<?php esc_html_e( 'Logo Maker', 'happy-blocks' ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/discover/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/discover/' ) ); ?>"
 								tabindex="-1">
 							<?php esc_html_e( 'Discover New Posts', 'happy-blocks' ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/tags/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/tags/' ) ); ?>"
 								tabindex="-1">
 							<?php esc_html_e( 'Popular Tags', 'happy-blocks' ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/read/search/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/read/search/' ) ); ?>"
 								tabindex="-1">
 							<?php esc_html_e( 'Blog Search', 'happy-blocks' ); ?>
 							</a>
@@ -297,14 +297,14 @@ if ( isset( $args['website'] ) ) {
 						<?php if ( time() >= strtotime( '2021-02-17' ) ) : ?>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/webinars/' ) ); ?>"
 								tabindex="-1">
 							<?php esc_html_e( 'Daily Webinars', 'happy-blocks' ); ?>
 							</a>
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( '//wordpress.com/learn/' ); ?>" tabindex="-1">
+								href="<?php echo esc_url( 'https://wordpress.com/learn/' ); ?>" tabindex="-1">
 							<?php esc_html_e( 'Learn WordPress', 'happy-blocks' ); ?>
 							</a>
 						</li>
@@ -341,7 +341,7 @@ if ( isset( $args['website'] ) ) {
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/log-in/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/log-in/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'Log In', 'happy-blocks' ); ?> <span class="x-menu-link-chevron"
 										aria-hidden="true"></span>
@@ -356,7 +356,7 @@ if ( isset( $args['website'] ) ) {
 						<ul class="x-menu-grid" role="menu">
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/pricing/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/pricing/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'Plans &amp; Pricing', 'happy-blocks' ); ?>
 								</a>
@@ -370,63 +370,63 @@ if ( isset( $args['website'] ) ) {
 						<ul class="x-menu-grid" role="menu">
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/hosting/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/hosting/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'WordPress Hosting', __( 'Hosting', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/domains/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/domains/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'Domain Names', __( 'Domains', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/website-builder/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/website-builder/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'Website Builder', 'happy-blocks' ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-blog/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/create-blog/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'Create a Blog', __( 'Blogs', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/newsletter' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/newsletter' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/professional-email/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/professional-email/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'Professional Email', __( 'Email', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/website-design-service/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/website-design-service/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( __( 'Website Design Services', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/ecommerce/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/ecommerce/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( __( 'Store', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/create-a-course/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'Course Maker', __( 'Course', 'happy-blocks' ) ) ); ?>
 								</a>
@@ -453,7 +453,7 @@ if ( isset( $args['website'] ) ) {
 						<ul class="x-menu-grid" role="menu">
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/features/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/features/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'Overview', 'happy-blocks' ); ?>
 								</a>
@@ -462,21 +462,21 @@ if ( isset( $args['website'] ) ) {
 						<ul class="x-menu-grid" role="menu">
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/themes' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/themes' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'WordPress Themes', __( 'Themes', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/plugins' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/plugins' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'WordPress Plugins', __( 'Plugins', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/google/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/google/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'Google Apps', 'happy-blocks' ); ?>
 								</a>
@@ -490,56 +490,56 @@ if ( isset( $args['website'] ) ) {
 						<ul class="x-menu-grid" role="menu">
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'WordPress.com Support', __( 'Support', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/blog/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/blog/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'News', 'happy-blocks' ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/go/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/go/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'Website Building Tips', __( 'Expert Tips', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/business-name-generator/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/business-name-generator/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'Business Name Generator', 'happy-blocks' ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/logo-maker/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/logo-maker/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'Logo Maker', 'happy-blocks' ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/discover/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/discover/' ) ); ?>"
 									tabindex="-1">
 								<?php esc_html_e( 'Discover New Posts', 'happy-blocks' ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/tags/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/tags/' ) ); ?>"
 									tabindex="-1">
 								<?php esc_html_e( 'Popular Tags', 'happy-blocks' ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/read/search/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/read/search/' ) ); ?>"
 									tabindex="-1">
 								<?php esc_html_e( 'Blog Search', 'happy-blocks' ); ?>
 								</a>
@@ -547,14 +547,14 @@ if ( isset( $args['website'] ) ) {
 							<?php if ( time() >= strtotime( '2021-02-17' ) ) : ?>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/webinars/' ) ); ?>"
 									tabindex="-1">
 								<?php esc_html_e( 'Daily Webinars', 'happy-blocks' ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( '//wordpress.com/learn/' ); ?>" tabindex="-1">
+									href="<?php echo esc_url( 'https://wordpress.com/learn/' ); ?>" tabindex="-1">
 								<?php esc_html_e( 'Learn WordPress', 'happy-blocks' ); ?>
 								</a>
 							</li>
