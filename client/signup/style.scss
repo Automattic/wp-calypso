@@ -800,7 +800,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		.formatted-header {
 			.formatted-header__title {
 				font-size: rem(30px);
-				line-height: 2.5;
+				line-height: 40px;
 
 				@include break-small {
 					font-size: 2rem;
@@ -886,7 +886,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			.formatted-header__title {
 				@include break-small {
 					font-size: 3.25rem; /* stylelint-disable-line scales/font-sizes */
-					line-height: 3.5;
+					line-height: 56px;
 				}
 			}
 
