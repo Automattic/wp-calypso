@@ -67,12 +67,7 @@ declare global {
 }
 
 const getWidgetDSPJSURL = () => {
-	let dspWidgetJS: string = config( 'dsp_widget_js_src' );
-
-	if ( config.isEnabled( 'promote-post/widget-i2' ) ) {
-		dspWidgetJS = dspWidgetJS.replace( '/promote/', '/promote-v2/' );
-	}
-	return dspWidgetJS;
+	return config( 'dsp_widget_js_src' );
 };
 
 export async function loadDSPWidgetJS(): Promise< void > {
