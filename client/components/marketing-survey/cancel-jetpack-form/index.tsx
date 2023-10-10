@@ -471,6 +471,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 					siteId={ purchase.siteId }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 					productName={ productName }
+					isAkismet={ !! props?.isAkismet }
 				/>
 			);
 		}
