@@ -1,26 +1,36 @@
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Context } from 'page';
+import { FunctionComponent } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { Store } from 'redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 
 export { render, hydrate } from 'calypso/controller/web-util';
 
-export const ProviderWrappedLayout = ( {
+interface ProviderWrappedLayoutProps {
+	store: Store;
+	queryClient: QueryClient;
+	currentRoute: string;
+	currentQuery: object;
+	primary: React.ReactNode;
+	redirectUri: string;
+}
+
+export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProps > = ( {
 	store,
 	queryClient,
-	currentSection,
 	currentRoute,
 	currentQuery,
 	primary,
 } ) => {
 	return (
 		<CalypsoI18nProvider>
-			<RouteProvider
-				currentSection={ currentSection }
-				currentRoute={ currentRoute }
-				currentQuery={ currentQuery }
-			>
+			{ /* TS incorrectly infers RouteProvider types; ignore errors here. */ }
+			{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+			{ /* @ts-ignore */ }
+			<RouteProvider currentRoute={ currentRoute } currentQuery={ currentQuery }>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>{ primary }</ReduxProvider>
 					<CalypsoReactQueryDevtools />
@@ -30,16 +40,14 @@ export const ProviderWrappedLayout = ( {
 	);
 };
 
-export function makeJetpackAppLayoutMiddleware( LayoutComponent ) {
-	return ( context, next ) => {
-		const { i18n, store, queryClient, section, pathname, query, primary } = context;
+export function makeJetpackAppLayoutMiddleware( LayoutComponent: typeof ProviderWrappedLayout ) {
+	return ( context: Context, next: () => void ) => {
+		const { store, queryClient, pathname, query, primary } = context;
 
 		context.layout = (
 			<LayoutComponent
-				i18n={ i18n }
 				store={ store }
 				queryClient={ queryClient }
-				currentSection={ section }
 				currentRoute={ pathname }
 				currentQuery={ query }
 				primary={ primary }

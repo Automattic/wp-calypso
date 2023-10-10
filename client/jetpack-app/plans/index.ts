@@ -4,7 +4,7 @@ import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import { makeJetpackAppLayout } from '../page-middleware/layout';
 import { jetpackAppPlans } from './controller';
 
-export default () => {
+export default function () {
 	page(
 		'/jetpack-app/plans',
 		siteSelection,
@@ -13,4 +13,4 @@ export default () => {
 		makeJetpackAppLayout,
 		clientRender
 	);
-};
+}
