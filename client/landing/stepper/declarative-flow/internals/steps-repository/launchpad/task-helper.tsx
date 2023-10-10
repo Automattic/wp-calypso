@@ -584,11 +584,9 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							completePaidNewsletterTask();
-							site?.ID
-								? setShowPlansModal( true )
-								: window.location.assign(
-										`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
-								  );
+							window.location.assign(
+								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
+							);
 						},
 					};
 					break;
