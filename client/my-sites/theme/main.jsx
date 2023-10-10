@@ -88,6 +88,7 @@ import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
 	getIsLivePreviewSupported,
+	getThemeType,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -946,6 +947,7 @@ class ThemeSheet extends Component {
 			isLoggedIn,
 			tabFilter,
 			selectedStyleVariationSlug: styleVariationSlug,
+			themeType,
 		} = this.props;
 
 		return (
@@ -959,6 +961,7 @@ class ThemeSheet extends Component {
 				onClick={ () => {
 					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
 						theme: this.props.themeId,
+						theme_type: themeType,
 						...( key && { action: key } ),
 					} );
 
@@ -1530,6 +1533,7 @@ export default connect(
 			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
 			isLivePreviewSupported,
+			themeType: getThemeType( state, themeId ),
 		};
 	},
 	{
