@@ -9,6 +9,11 @@ const DateControlPickerDate = ( {
 	onEndChange,
 	onApply,
 }: DateControlPickerDateProps ) => {
+	// Handle Cancel button.
+	// Should call back to parent to handle closing of popover.
+	const onCancel = () => {
+		console.log( 'cancel button clicked' );
+	};
 	return (
 		<>
 			<div>
@@ -17,6 +22,7 @@ const DateControlPickerDate = ( {
 			<div>
 				<TextControl value={ endDate } onChange={ onEndChange } />
 			</div>
+			<Button onClick={ onCancel }>Cancel</Button>
 			<Button variant="primary" onClick={ onApply }>
 				Apply
 			</Button>
