@@ -367,7 +367,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			handleUpgradeClick,
 		} = this.props;
 
-		return renderedGridPlans.map( ( { planSlug, freeTrialPlanSlug, availableForPurchase } ) => {
+		return renderedGridPlans.map( ( { planSlug, availableForPurchase } ) => {
 			const classes = classNames(
 				'plan-features-2023-grid__table-item',
 				'is-top-buttons',
@@ -401,7 +401,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planSlug ) }
 						freePlan={ isFreePlan( planSlug ) }
-						freeTrialPlanSlug={ freeTrialPlanSlug }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
 						isInSignup={ isInSignup }
