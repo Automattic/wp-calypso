@@ -17,8 +17,9 @@ export default function useDomainParam( value: string = '' ) {
 	useEffect( () => {
 		const preparedDomain = prepareDomain( value, isSpecial );
 
+		// check if domain is special before preparing domain value
+		setIsSpecial( isSpecialDomain( value ) );
 		setIsValid( validateDomain( preparedDomain ) );
-		setIsSpecial( isSpecialDomain( preparedDomain ) );
 		setCategory( getDomainCategory( preparedDomain ) );
 		setDomain( preparedDomain );
 		setReadyForDataFetch( ! isSpecial && !! domain && !! isValid );
