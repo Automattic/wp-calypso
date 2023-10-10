@@ -2,12 +2,13 @@ import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Badge, CircularProgressBar, Dialog, Gridicon } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
-import { isBlogOnboardingFlow, isNewsletterFlow } from '@automattic/onboarding';
+import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useRef, useState } from '@wordpress/element';
 import { copy, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
 import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-email-verfication';
@@ -15,10 +16,10 @@ import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/int
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import wpcom from 'calypso/lib/wp';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getconnectedConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
@@ -33,13 +34,6 @@ type SidebarProps = {
 	flow: string | null;
 };
 
-type MembershipsData = {
-	connect_url: string | undefined;
-	connected_account_default_currency: string | undefined;
-	connected_account_description: string | undefined;
-	connected_account_id: string | undefined;
-};
-
 function getUrlInfo( url: string ) {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
 
@@ -49,11 +43,6 @@ function getUrlInfo( url: string ) {
 	const topLevelDomain = urlWithoutProtocol.match( /\..*/ )?.[ 0 ] || '';
 
 	return [ siteName, topLevelDomain ];
-}
-
-function fetchMembershipsData( siteId: number ): Promise< MembershipsData > {
-	const url = `/sites/${ siteId }/memberships/status?source=launchpad`;
-	return wpcom.req.get( url, { apiNamespace: 'wpcom/v2' } );
 }
 
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
@@ -66,7 +55,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const siteIntentOption = site?.options?.site_intent ?? null;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
-	const [ stripeConnectUrl, setStripeConnectUrl ] = useState< string >( '' );
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const queryClient = useQueryClient();
@@ -80,6 +68,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const selectedDomain = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 		[]
+	);
+
+	const stripeConnectUrl = useSelector( ( state ) =>
+		getconnectedConnectUrlForSiteId( state, site?.ID ?? 0 )
 	);
 
 	const showDomain =
@@ -175,16 +167,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 		);
 	}
 
-	useEffect( () => {
-		if ( site?.ID && isNewsletterFlow( flow ) ) {
-			fetchMembershipsData( site.ID ).then( ( { connect_url } ) => {
-				setStripeConnectUrl( connect_url || '' );
-			} );
-		}
-	}, [ site, flow ] );
+	if ( ! site ) {
+		return null;
+	}
 
 	return (
 		<>
+			<QueryMembershipsSettings siteId={ site.ID } source="launchpad" />
 			<div className="launchpad__sidebar">
 				<div className="launchpad__sidebar-content-container">
 					<div className="launchpad__progress-bar-container">
