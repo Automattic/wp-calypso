@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
-type ToggleLaunchpadIsVisible = ( shouldBeVisible: boolean ) => void;
+export type ToggleLaunchpadIsVisible = ( shouldBeVisible: boolean ) => void;
 
 export type FloatingNavigatorProps = {
 	siteSlug: string | null;
