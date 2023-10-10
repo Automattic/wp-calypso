@@ -19,7 +19,7 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { getconnectedConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
@@ -71,7 +71,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	);
 
 	const stripeConnectUrl = useSelector( ( state ) =>
-		getconnectedConnectUrlForSiteId( state, site?.ID ?? 0 )
+		getConnectUrlForSiteId( state, site?.ID ?? 0 )
 	);
 
 	const showDomain =
