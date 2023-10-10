@@ -194,23 +194,23 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleAddDomain = ( suggestion, position ) => {
+		const stepData = {
+			stepName: this.props.stepName,
+			suggestion,
+		};
+
 		if (
 			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
 			suggestion?.isSubDomainSuggestion
 		) {
 			this.setState( { wpcomSubdomainSelected: suggestion } );
+			this.props.saveSignupStep( stepData );
 			return;
 		}
 
 		const signupDomainOrigin = suggestion?.is_free
 			? SIGNUP_DOMAIN_ORIGIN.FREE
 			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
-
-		const stepData = {
-			stepName: this.props.stepName,
-			suggestion,
-		};
-
 		this.setState( { isCartPendingUpdateDomain: suggestion } );
 		this.props.recordAddDomainButtonClick(
 			suggestion.domain_name,
@@ -759,7 +759,7 @@ export class RenderDomainsStep extends Component {
 							<div key="rowtotalprice" className="domains__domain-cart-total-price">
 								{ formatCurrency(
 									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-									domainsInCart ? domainsInCart[ 0 ].currency : 'USD'
+									domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
 								) }
 							</div>
 						</div>
@@ -847,7 +847,7 @@ export class RenderDomainsStep extends Component {
 							<strong>
 								{ formatCurrency(
 									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-									domainsInCart ? domainsInCart[ 0 ].currency : 'USD'
+									domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
 								) }
 							</strong>
 						</div>
