@@ -195,10 +195,6 @@ class PluginSections extends Component {
 		const banner = this.props.plugin?.banners?.high || this.props.plugin?.banners?.low;
 		const videoUrl = this.props.plugin?.banner_video_src;
 
-		if ( ! this.getSelected() ) {
-			return null;
-		}
-
 		/*eslint-disable react/no-danger*/
 		if (
 			! this.props.addBanner ||
@@ -261,7 +257,12 @@ class PluginSections extends Component {
 	render() {
 		const availableSections = this.getAvailableSections();
 		// Defensively check if this plugin has sections. If not, don't render anything.
-		if ( ! this.props.plugin || ! this.props.plugin.sections || ! availableSections ) {
+		if (
+			! this.props.plugin ||
+			! this.props.plugin.sections ||
+			! availableSections ||
+			! this.getSelected()
+		) {
 			return null;
 		}
 
@@ -271,7 +272,7 @@ class PluginSections extends Component {
 
 		return (
 			<div className="plugin-sections">
-				{ this.getSelected() && ! hasOnlyDescriptionSection && (
+				{ ! hasOnlyDescriptionSection && (
 					<div className="plugin-sections__header">
 						<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
 							<NavTabs>
