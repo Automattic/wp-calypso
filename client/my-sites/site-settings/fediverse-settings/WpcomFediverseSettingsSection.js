@@ -1,4 +1,4 @@
-import { FEATURE_CUSTOM_DOMAIN, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -7,10 +7,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import { Notice } from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains.ts';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { successNotice } from 'calypso/state/notices/actions';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSiteTitle,
 	getSiteDomain,
@@ -45,6 +45,14 @@ const DomainUpsellCard = ( { siteId } ) => {
 const DomainPendingWarning = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const translate = useTranslate();
+	const message = translate(
+		'Wait until your new domain activates before sharing your profile. {{link}}Check your domain’s status{{/link}}.',
+		{
+			components: {
+				link: <a href={ `/domains/manage/${ domain }` } />,
+			},
+		}
+	);
 	return (
 		<Notice
 			status="is-warning"
@@ -52,14 +60,7 @@ const DomainPendingWarning = ( { siteId } ) => {
 			isCompact={ true }
 			style={ { width: '100%' } }
 		>
-			{ translate(
-				'Wait until your new domain activates before sharing your profile URL. {{link}}Check your domain’s status{{/link}}.',
-				{
-					components: {
-						link: <a href={ `/domains/manage/${ domain }` } />,
-					},
-				}
-			) }
+			{ message }
 		</Notice>
 	);
 };
@@ -103,14 +104,24 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 	);
 };
 
+const hasPendingDomain = ( domains ) => {
+	let pendingDomain = false;
+	domains.forEach( ( domain ) => {
+		// if the domain is a WPCOM domain and is not the primary domain, it's not pending
+		if ( domain.isWPCOMDomain && domain.isPrimary ) {
+			pendingDomain = true;
+		}
+	} );
+	return pendingDomain;
+};
+
 const EnabledSettingsSection = ( { data, siteId } ) => {
 	const translate = useTranslate();
+	const domains = useSiteDomains( siteId );
 	const { blogIdentifier = '' } = data;
-	const hasDomain = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, FEATURE_CUSTOM_DOMAIN )
-	);
+	const hasDomain = domains?.length > 1;
 	// if the domain has been purchased, but isn't active yet because the site is still using *.wordpress.com
-	const isDomainPending = hasDomain && blogIdentifier.match( /\.wordpress\.com$/ );
+	const isDomainPending = hasDomain && hasPendingDomain( domains );
 
 	return (
 		<>
