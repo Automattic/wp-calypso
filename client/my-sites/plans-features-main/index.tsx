@@ -14,7 +14,6 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
-	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -53,6 +52,7 @@ import { FeaturesGrid, ComparisonGrid } from 'calypso/my-sites/plans-grid';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
+import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-grid/hooks/npm-ready/use-free-trial-plan-slugs';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -381,6 +381,7 @@ const PlansFeaturesMain = ( {
 		allFeaturesList: FEATURES_LIST,
 		usePricedAPIPlans,
 		usePricingMetaForGridPlans,
+		useFreeTrialPlanSlugs,
 		selectedFeature,
 		term,
 		intent,
@@ -388,16 +389,10 @@ const PlansFeaturesMain = ( {
 		sitePlanSlug,
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
+		eligibleForFreeHostingTrial,
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
-		freeTrialPlanSlugs: eligibleForFreeHostingTrial
-			? {
-					'plans-new-hosted-site': {
-						[ TYPE_BUSINESS ]: PLAN_HOSTING_TRIAL_MONTHLY,
-					},
-			  }
-			: undefined,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
