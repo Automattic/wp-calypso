@@ -159,7 +159,7 @@
 				color: var(--studio-green);
 				display: flex;
 				align-items: center;
-				font-size: 0.875rem;
+				font-size: 0.75rem;
 			}
 
 			.domains__domain-cart-domain {
@@ -175,13 +175,16 @@
 				}
 
 				&.limit-width {
-					width: 45%;
+					width: 35%;
 				}
 			}
 
 			.domains__domain-cart-remove {
 				color: var(--studio-gray-50);
 				font-size: $font-body-extra-small;
+				min-width: 50px;
+				margin-right: 10px;
+				text-align: left;
 			}
 
 			.domain-product-price__price {
@@ -191,7 +194,8 @@
 
 				del {
 					font-size: 0.75rem;
-					margin-right: 5px;
+					margin-right: 7px;
+					margin-left: 7px;
 				}
 			}
 
@@ -204,11 +208,13 @@
 		.domains__domain-cart-total {
 			border-top: 1px solid;
 			border-top-color: var(--studio-gray-5);
-			padding-top: 10px;
-			margin-bottom: 10px;
+			padding-top: 28px;
+			margin-bottom: 28px;
 			margin-top: 12px;
 			color: var(--studio-gray-60);
 			font-size: $font-body-small;
+			display: flex;
+			justify-content: space-between;
 		}
 
 		.domains__domain-cart-continue {
@@ -224,6 +230,7 @@
 			height: 40px;
 			color: var(--studio-gray-100);
 			text-decoration: underline;
+			margin-top: 5px;
 		}
 	}
 }
@@ -312,7 +319,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			@include break-wide {
-				margin: 0 0 0 80px;
+				margin: 0 0 0 60px;
 			}
 
 			&.fade-out {

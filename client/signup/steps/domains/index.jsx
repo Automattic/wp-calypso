@@ -444,6 +444,7 @@ export class RenderDomainsStep extends Component {
 					isPurchasingItem,
 					siteUrl: domain,
 					stepSectionName: this.props.stepSectionName,
+					domainCart: {},
 				},
 				this.getThemeArgs()
 			),
@@ -453,7 +454,8 @@ export class RenderDomainsStep extends Component {
 				{
 					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 				},
-				{ siteUrl: domain }
+				{ siteUrl: domain },
+				{ domainCart: {} }
 			)
 		);
 
@@ -485,10 +487,16 @@ export class RenderDomainsStep extends Component {
 					isPurchasingItem,
 					siteUrl: domain,
 					stepSectionName: this.props.stepSectionName,
+					domainCart: {},
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem, { siteUrl: domain } )
+			Object.assign(
+				{ domainItem },
+				useThemeHeadstartItem,
+				{ siteUrl: domain },
+				{ domainCart: {} }
+			)
 		);
 
 		this.props.goToNextStep();
@@ -828,11 +836,21 @@ export class RenderDomainsStep extends Component {
 							</div>
 						) ) }
 					</div>
-					<div key="rowtotal" className="domains__domain-cart-total">
-						{ this.props.translate( '%d domain', '%d domains', {
-							count: domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ),
-							args: [ domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ) ],
-						} ) }
+					<div className="domains__domain-cart-total">
+						<div key="rowtotal" className="domains__domain-cart-count">
+							{ this.props.translate( '%d domain', '%d domains', {
+								count: domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ),
+								args: [ domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ) ],
+							} ) }
+						</div>
+						<div key="rowtotalprice" className="domains__domain-cart-total-price">
+							<strong>
+								{ formatCurrency(
+									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
+									domainsInCart ? domainsInCart[ 0 ].currency : 'USD'
+								) }
+							</strong>
+						</div>
 					</div>
 					<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
 						{ this.props.translate( 'Continue' ) }
