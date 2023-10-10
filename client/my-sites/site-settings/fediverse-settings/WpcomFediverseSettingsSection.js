@@ -67,7 +67,8 @@ const DomainPendingWarning = ( { siteId } ) => {
 
 const BusinessPlanUpsellCard = ( { siteId } ) => {
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ?? '' );
-	// If the user is already on Atomic, we won't be here. But they could have purchased the upgrade and not have transferred yet.
+	// If the user is already on Atomic, we'll be in `JetpackFediverseSettingsSection` instead.
+	// But they could have purchased the upgrade and not have transferred yet.
 	const isBusinessPlan = sitePlanSlug === PLAN_BUSINESS;
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const linkUrl = `/plans/select/business/${ domain }`;
