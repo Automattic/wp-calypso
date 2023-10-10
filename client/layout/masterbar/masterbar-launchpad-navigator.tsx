@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Item from './item';
-import type { ToggleLaunchpadIsVisible } from '@automattic/launchpad-navigator';
 
 const MasterbarLaunchpadNavigator = () => {
 	const [ launchpadIsVisible, setLaunchpadIsVisible ] = useState( false );
@@ -31,7 +30,7 @@ const MasterbarLaunchpadNavigator = () => {
 				<div className="masterbar__launchpad-navigator">
 					<FloatingNavigator
 						siteSlug={ siteSlug }
-						toggleLaunchpadIsVisible={ setLaunchpadIsVisible as ToggleLaunchpadIsVisible }
+						toggleLaunchpadIsVisible={ setLaunchpadIsVisible }
 					/>
 				</div>
 			) }
