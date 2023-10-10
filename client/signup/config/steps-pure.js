@@ -157,6 +157,30 @@ export function generateSteps( {
 			},
 		},
 
+		'user-social': {
+			stepName: 'user-social',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'redirect',
+				'allowUnauthenticated',
+				'oauth2_client_id',
+				'oauth2_redirect',
+			],
+			optionalDependencies: [
+				'redirect',
+				'allowUnauthenticated',
+				'oauth2_client_id',
+				'oauth2_redirect',
+			],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
 		'user-hosting': {
 			stepName: 'user-hosting',
 			apiRequestFunction: createAccount,

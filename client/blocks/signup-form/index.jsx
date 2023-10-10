@@ -47,6 +47,7 @@ import {
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { PasswordlessSignupForm, SocialSignupForm } from 'calypso/lib/signup';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/utils';
@@ -60,8 +61,6 @@ import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerc
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
-import PasswordlessSignupForm from './passwordless';
-import SocialSignupForm from './social';
 
 import './style.scss';
 

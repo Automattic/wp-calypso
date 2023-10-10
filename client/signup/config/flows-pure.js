@@ -83,7 +83,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'free',
-			steps: [ 'user', 'domains' ],
+			steps: [ 'user-social', 'domains' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2020-08-11',
