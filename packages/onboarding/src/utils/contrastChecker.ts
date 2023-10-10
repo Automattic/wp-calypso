@@ -35,14 +35,20 @@ export const hasMinContrast = (
 
 // Works also with shorthand hex triplets such as "#03F"
 export const hexToRgb = ( hex: string ) => {
-	const rgbHex = hex
-		.replace( /^#?([a-f\d])([a-f\d])([a-f\d])$/i, ( _m, r, g, b ) => '#' + r + r + g + g + b + b )
+	const expandedHex = hex
+		.replace(
+			/^#?([a-f\d])([a-f\d])([a-f\d])([a-f\d])?$/i,
+			( _m, r, g, b, a ) => '#' + r + r + g + g + b + b + ( a ? a + a : '' )
+		)
 		.substring( 1 )
 		.match( /.{2}/g );
 
-	if ( rgbHex?.length !== 3 ) {
-		throw 'Unexpected RGB hex value';
+	if ( ! expandedHex ) {
+		throw new Error( `Invalid hex color: ${ hex }` );
 	}
+
+	// Discard the alpha channel if it exists
+	const rgbHex = expandedHex.length > 3 ? expandedHex.slice( 0, 3 ) : expandedHex;
 
 	const [ r, g, b ] = rgbHex.map( ( x ) => parseInt( x, 16 ) );
 	return { r, g, b };
