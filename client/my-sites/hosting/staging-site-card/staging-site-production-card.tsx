@@ -23,6 +23,29 @@ import { IAppState } from 'calypso/state/types';
 import { SiteSyncCard } from './card-content/staging-sync-card';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 
+const SVGContainer = styled.div( {
+	marginTop: '16px',
+	height: '16px',
+} );
+const ProductionCard = styled( Card )( {} );
+
+function SlantedPatternSVG() {
+	return (
+		<svg viewBox="0 0 722 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<defs>
+				<pattern id="slantedPattern" patternUnits="userSpaceOnUse" width="24" height="40">
+					<rect width="24" height="40" fill="#F0C930" />
+					<rect x="16" y="-16" width="10" height="60" transform="rotate(35 8 -8)" fill="#4F3500" />
+				</pattern>
+				<clipPath id="clip_slanted">
+					<rect width="722" height="40" fill="white" />
+				</clipPath>
+			</defs>
+			<rect width="100%" height="100%" fill="url(#slantedPattern)" clip-path="url(#clip_slanted)" />
+		</svg>
+	);
+}
+
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
@@ -149,14 +172,19 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 		);
 	}
 	return (
-		<Card className="staging-site-card">
-			{
-				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<Gridicon icon="science" size={ 32 } />
-			}
-			<CardHeading id="staging-site">{ __( 'Staging site' ) }</CardHeading>
-			{ cardContent }
-		</Card>
+		<>
+			<SVGContainer>
+				<SlantedPatternSVG />
+			</SVGContainer>
+			<ProductionCard className="staging-site-card">
+				{
+					// eslint-disable-next-line wpcalypso/jsx-gridicon-size
+					<Gridicon icon="science" size={ 32 } />
+				}
+				<CardHeading id="staging-site">{ __( 'Staging site' ) }</CardHeading>
+				{ cardContent }
+			</ProductionCard>
+		</>
 	);
 }
 
