@@ -11,11 +11,23 @@
 	transition: max-height 0.5s;
 	min-width: 25em;
 
-	h2 {
-		font-family: $font-sf-pro-display;
-		font-size: $font-title-small;
-		font-weight: 500;
-		line-height: 50px;
+	.launchpad-navigator__floating-navigator-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		h2 {
+			font-family: $font-sf-pro-display;
+			font-size: $font-title-small;
+			font-weight: 500;
+			line-height: 50px;
+		}
+
+		.button.is-borderless .gridicon {
+			height: 18px;
+			top: 4px;
+			width: 18px;
+		}
 	}
 
 	.launchpad-navigator__floating-navigator-actions {
