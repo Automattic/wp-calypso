@@ -10,8 +10,11 @@ const DateControlPickerDate = ( {
 	onApply,
 	onCancel,
 }: DateControlPickerDateProps ) => {
+	// TODO: Rename component?
+	// Feels a bit confusing now. Should have a better idea
+	// of appropriate names once hierarchy is finalized.
 	return (
-		<>
+		<div className="date-control-picker-date">
 			<div>
 				<TextControl value={ startDate } onChange={ onStartChange } />
 			</div>
@@ -22,7 +25,7 @@ const DateControlPickerDate = ( {
 			<Button variant="primary" onClick={ onApply }>
 				Apply
 			</Button>
-		</>
+		</div>
 	);
 };
 
