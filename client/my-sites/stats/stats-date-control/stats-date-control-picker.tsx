@@ -51,7 +51,7 @@ const DateControlPicker = ( {
 	};
 
 	const handleOnCancel = () => {
-		console.log( 'handle the Cancel button' );
+		togglePopoverOpened( false );
 	};
 
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
