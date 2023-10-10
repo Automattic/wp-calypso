@@ -1,5 +1,5 @@
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -11,37 +11,41 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 
 import './style.scss';
 
-const Header = ( { paidDomainName } ) => (
-	<div className="plans__header">
-		<FormattedHeader
-			brandFont
-			headerText={ translate( 'Choose the perfect plan' ) }
-			align="center"
-		/>
-		{ paidDomainName ? (
-			<>
-				<p>
-					{ translate(
-						'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
-						{
-							args: {
-								domainName: paidDomainName,
-							},
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
-				<p>
-					{ translate(
-						'You’ll also unlock advanced features that make it easy to build and grow your site.'
-					) }
-				</p>
-			</>
-		) : (
-			<p>{ translate( 'See and compare the features available on each WordPress.com plan.' ) }</p>
-		) }
-	</div>
-);
+const Header = ( { paidDomainName } ) => {
+	const translate = useTranslate();
+
+	return (
+		<div className="plans__header">
+			<FormattedHeader
+				brandFont
+				headerText={ translate( 'Choose the perfect plan' ) }
+				align="center"
+			/>
+			{ paidDomainName ? (
+				<>
+					<p>
+						{ translate(
+							'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+							{
+								args: {
+									domainName: paidDomainName,
+								},
+								components: { strong: <strong /> },
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							'You’ll also unlock advanced features that make it easy to build and grow your site.'
+						) }
+					</p>
+				</>
+			) : (
+				<p>{ translate( 'See and compare the features available on each WordPress.com plan.' ) }</p>
+			) }
+		</div>
+	);
+};
 
 const JetpackAppPlans = ( { paidDomainName, redirectTo } ) => {
 	const planSlug = useSelector( ( state ) =>
