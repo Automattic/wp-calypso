@@ -157,7 +157,7 @@
 		"wpcom-user-bootstrap": true,
 		"yolo/hosting-metrics-i1": false,
 		"yolo/staging-sites-i3": true,
-		"yolo/wp-admin-site-default": false
+		"yolo/wp-admin-site-default": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",
