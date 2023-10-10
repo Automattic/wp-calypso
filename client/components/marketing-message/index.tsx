@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import cx from 'classnames';
 import { useEffect } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { useMarketingMessage } from './use-marketing-message';
 import './style.scss';
 
@@ -10,6 +12,7 @@ type NudgeProps = {
 	siteId: number | null;
 	className?: string;
 	path: string;
+	withDiscount: string;
 };
 
 const Container = styled.div< Pick< NudgeProps, 'path' > >`
@@ -84,6 +87,15 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 	}, [ hasNudge ] );
 
 	if ( ! hasNudge ) {
+		if ( config.isEnabled( 'jitms' ) ) {
+			return (
+				<AsyncLoad
+					require="calypso/blocks/jitm"
+					placeholder={ null }
+					messagePath="calypso:plans:lto_notices"
+				/>
+			);
+		}
 		return null;
 	}
 
@@ -107,4 +119,5 @@ MarketingMessage.defaultProps = {
 	useMockData: false,
 	siteId: null,
 	path: '',
+	withDiscount: null,
 };
