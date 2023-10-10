@@ -43,7 +43,7 @@ export const hexToRgb = ( hex: string ) => {
 		.substring( 1 )
 		.match( /.{2}/g );
 
-	if ( ! expandedHex ) {
+	if ( ! expandedHex || expandedHex.length < 3 ) {
 		throw new Error( `Invalid hex color: ${ hex }` );
 	}
 
