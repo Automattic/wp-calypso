@@ -9,7 +9,7 @@ import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { SocialSignupForm } from 'calypso/lib/signup';
+import SocialSignupForm from './social';
 
 import './crowdsignal.scss';
 

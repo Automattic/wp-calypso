@@ -6,10 +6,12 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { PasswordlessSignupForm, SocialSignupForm } from 'calypso/lib/signup';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import PasswordlessSignupForm from './passwordless';
+import SocialSignupForm from './social';
+
 import './style.scss';
 
 interface SignupFormSocialFirst {
@@ -25,6 +27,7 @@ interface SignupFormSocialFirst {
 	isReskinned: boolean;
 	queryArgs: object;
 	notice: JSX.Element | false;
+	shouldDisplayUserExistsError: boolean;
 }
 
 const SignupFormSocialFirst = ( {

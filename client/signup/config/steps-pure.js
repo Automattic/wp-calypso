@@ -177,7 +177,8 @@ export function generateSteps( {
 				'oauth2_redirect',
 			],
 			props: {
-				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				isSocialFirst: true,
+				isSocialSignupEnabled: true,
 			},
 		},
 

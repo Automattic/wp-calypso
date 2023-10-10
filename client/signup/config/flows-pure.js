@@ -88,6 +88,7 @@ export function generateFlows( {
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'with-theme',

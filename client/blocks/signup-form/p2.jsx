@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import LoggedOutForm from 'calypso/components/logged-out-form';
-import { SocialSignupForm } from 'calypso/lib/signup';
+import SocialSignupForm from './social';
 
 import './p2.scss';
 class P2SignupForm extends Component {

@@ -137,8 +137,9 @@
 	}
 }
 
-body.is-section-signup {
-	.signup__step.is-user {
+body.is-section-signup,
+body.is-section-accept-invite {
+	.signup__step.is-user-social {
 		.signup-form-social-first {
 			width: 327px;
 			margin: 0 auto;
