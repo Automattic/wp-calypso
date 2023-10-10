@@ -1,3 +1,4 @@
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
@@ -29,6 +30,7 @@ import {
 	getDomainRegistrations,
 	updatePrivacyForDomain,
 	hasDomainInCart,
+	planItem,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -172,6 +174,8 @@ export class RenderDomainsStep extends Component {
 				}
 			);
 		}
+
+		this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 
 		// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
 		if ( this.props.flowName === 'onboarding' ) {
@@ -1347,6 +1351,7 @@ const RenderDomainsStepConnect = connect(
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 		const selectedSite = getSelectedSite( state );
 		const eligibleForProPlan = isEligibleForProPlan( state, selectedSite?.ID );
+		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
 
 		return {
 			designType: getDesignType( state ),
@@ -1360,6 +1365,7 @@ const RenderDomainsStepConnect = connect(
 				[ 'pro', 'starter' ].includes( flowName ),
 			userLoggedIn: isUserLoggedIn( state ),
 			eligibleForProPlan,
+			multiDomainDefaultPlan,
 		};
 	},
 	{
