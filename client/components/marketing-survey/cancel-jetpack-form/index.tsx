@@ -458,6 +458,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 					offer={ cancellationOffer }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 					onGetDiscount={ onGetCancellationOffer }
+					isAkismet={ !! props?.isAkismet }
 				/>
 			);
 		}
