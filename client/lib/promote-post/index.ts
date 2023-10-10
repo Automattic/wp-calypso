@@ -66,12 +66,8 @@ declare global {
 	}
 }
 
-const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '22.9.blaze';
-
 const getWidgetDSPJSURL = () => {
-	let dspWidgetJS: string = shouldUseTestWidgetURL()
-		? config( 'dsp_widget_js_test_src' )
-		: config( 'dsp_widget_js_src' );
+	let dspWidgetJS: string = config( 'dsp_widget_js_src' );
 
 	if ( config.isEnabled( 'promote-post/widget-i2' ) ) {
 		dspWidgetJS = dspWidgetJS.replace( '/promote/', '/promote-v2/' );
@@ -85,11 +81,7 @@ export async function loadDSPWidgetJS(): Promise< void > {
 		return;
 	}
 
-	let src = `${ getWidgetDSPJSURL() }?ver=${ Math.round( Date.now() / ( 1000 * 60 * 60 ) ) }`;
-
-	if ( shouldUseTestWidgetURL() || getWidgetDSPJSURL().startsWith( 'https://dsp.wp.com' ) ) {
-		src = `${ getWidgetDSPJSURL() }`;
-	}
+	const src = `${ getWidgetDSPJSURL() }?ver=${ Math.round( Date.now() / ( 1000 * 60 * 60 ) ) }`;
 
 	await loadScript( src );
 	// Load the strings so that translations get associated with the module and loaded properly.
