@@ -9,7 +9,6 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 
 	const { login, createAccount } = useLoginWindow( {
 		onLoginSuccess: () => window.location.reload(),
-		domain: 'wpcalypso.wordpress.com', //Need to use this while testing locally (also needs to be sandboxed)
 	} );
 
 	return (
