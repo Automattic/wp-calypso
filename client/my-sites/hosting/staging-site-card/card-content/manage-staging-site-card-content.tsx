@@ -18,6 +18,18 @@ const SiteRow = styled.div( {
 	'.site-icon': { flexShrink: 0 },
 } );
 
+const BorderedContainer = styled.div( {
+	display: 'flex',
+	padding: '16px',
+	flexDirection: 'column',
+	alignItems: 'flex-start',
+	gap: '16px',
+	alignSelf: 'stretch',
+	borderRadius: '3px',
+	border: '1px solid var(--gray-gray-5, #DCDCDE)',
+	background: 'var(--White, #FFF)',
+} );
+
 const SyncActionsContainer = styled.div( {
 	marginTop: 24,
 	gap: '1em',
@@ -63,6 +75,7 @@ const ActionButtons = styled.div( {
 		gap: '0.5em',
 		flexDirection: 'column',
 		'.button': { flexGrow: 1 },
+		alignSelf: 'stretch',
 	},
 } );
 
@@ -134,29 +147,31 @@ export const ManageStagingSiteCardContent = ( {
 						}
 					) }
 				</p>
-				<SiteRow>
-					<SiteIcon siteId={ stagingSite.id } size={ 40 } />
-					<SiteInfo>
-						<SiteNameContainer>
-							<SiteName
-								href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
-								title={ translate( 'Visit Dashboard' ) }
-							>
-								{ stagingSite.name }
-							</SiteName>
-							<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
-						</SiteNameContainer>
-						<StagingSiteLink>
-							<a href={ stagingSite.url }>{ stagingSite.url }</a>
-						</StagingSiteLink>
-					</SiteInfo>
-				</SiteRow>
+				<BorderedContainer>
+					<SiteRow>
+						<SiteIcon siteId={ stagingSite.id } size={ 40 } />
+						<SiteInfo>
+							<SiteNameContainer>
+								<SiteName
+									href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+									title={ translate( 'Visit Dashboard' ) }
+								>
+									{ stagingSite.name }
+								</SiteName>
+								<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
+							</SiteNameContainer>
+							<StagingSiteLink>
+								<a href={ stagingSite.url }>{ stagingSite.url }</a>
+							</StagingSiteLink>
+						</SiteInfo>
+					</SiteRow>
+					<ActionButtons>
+						<ManageStagingSiteButton />
+						<ConfirmationDeleteButton />
+					</ActionButtons>
+				</BorderedContainer>
 				{ isStagingSitesI3Enabled ? (
 					<>
-						<ActionButtons>
-							<ManageStagingSiteButton />
-							<ConfirmationDeleteButton />
-						</ActionButtons>
 						<SyncActionsContainer>
 							<SiteSyncCard
 								type="production"
@@ -168,12 +183,7 @@ export const ManageStagingSiteCardContent = ( {
 							/>
 						</SyncActionsContainer>
 					</>
-				) : (
-					<ActionButtons>
-						<ManageStagingSiteButton />
-						<ConfirmationDeleteButton />
-					</ActionButtons>
-				) }
+				) : null }
 			</>
 		);
 	}
