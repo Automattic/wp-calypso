@@ -398,7 +398,9 @@ export const SiteSyncCard = ( {
 	useEffect( () => {
 		if ( selectedOption && status === SiteSyncStatus.COMPLETED ) {
 			dispatch(
-				successNotice( translate( 'Site synchronized successfully.' ), { id: stagingSiteSyncSuccess } )
+				successNotice( translate( 'Site synchronized successfully.' ), {
+					id: stagingSiteSyncSuccess,
+				} )
 			);
 		}
 	}, [ dispatch, selectedOption, status ] );
@@ -422,9 +424,11 @@ export const SiteSyncCard = ( {
 				<FormLabel>
 					<FormRadio
 						className="staging-site-sync-card__radio"
-						label={ translate( 'Pull from %s', {
-							args: [ type === 'production' ? 'staging' : 'production' ],
-						} ) }
+						label={
+							type === 'production'
+								? translate( 'Pull from staging' )
+								: translate( 'Pull from production' )
+						}
 						value="pull"
 						checked={ selectedOption === 'pull' }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -435,9 +439,11 @@ export const SiteSyncCard = ( {
 				<FormLabel>
 					<FormRadio
 						className="staging-site-sync-card__radio"
-						label={ translate( 'Push to %s', {
-							args: [ type === 'production' ? 'staging' : 'production' ],
-						} ) }
+						label={
+							type === 'production'
+								? translate( 'Push to staging' )
+								: translate( 'Push to production' )
+						}
 						value="push"
 						checked={ selectedOption === 'push' }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
