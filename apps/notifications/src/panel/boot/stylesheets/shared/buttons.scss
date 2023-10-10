@@ -112,7 +112,9 @@
 			background-color: $wpnc__rich-blue;
 			border-color: $wpnc__rich-blue;
 
-			&:hover:not(:disabled) {
+			&:active:not(:disabled),
+			&:hover:not(:disabled),
+			&:focus:not(:disabled) {
 				background-color: $wpnc__dark-rich-blue;
 				border-color: $wpnc__dark-rich-blue;
 			}
