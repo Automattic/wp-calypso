@@ -211,6 +211,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 
 		&:focus {
 			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
 
