@@ -70,10 +70,13 @@
 			}
 		}
 		.themes__showcase {
-			max-width: 1462px;
 			margin: 0 auto;
 			margin-top: 1em;
 		}
+	}
+
+	.theme-card__image-container {
+		padding-top: 56.25%;
 	}
 
 	.search-themes-card {
