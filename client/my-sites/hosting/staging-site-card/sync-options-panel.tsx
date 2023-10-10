@@ -45,15 +45,13 @@ export default function SyncOptionsPanel( {
 	disabled: boolean;
 	onChange: ( items: CheckboxOptionItem[] ) => void;
 } ) {
-	const initialItemsMap = items
-		.sort( ( a ) => ( a.isDangerous ? 1 : -1 ) )
-		.reduce(
-			( acc, item ) => {
-				acc[ item.name ] = item;
-				return acc;
-			},
-			{} as { [ key: string ]: CheckboxOptionItem }
-		);
+	const initialItemsMap = items.reduce(
+		( acc, item ) => {
+			acc[ item.name ] = item;
+			return acc;
+		},
+		{} as { [ key: string ]: CheckboxOptionItem }
+	);
 
 	const [ optionItemsMap, setOptionItemsMap ] = useState( initialItemsMap );
 
