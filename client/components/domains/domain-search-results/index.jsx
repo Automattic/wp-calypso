@@ -303,7 +303,7 @@ class DomainSearchResults extends Component {
 						isDomainOnly={ isDomainOnly }
 						suggestion={ suggestion }
 						suggestionSelected={
-							this.props.wpcomSubdomainSelected?.domain_name === suggestion.domain_name
+							this.props.wpcomSubdomainSelected?.domain_name === suggestion?.domain_name
 						}
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
