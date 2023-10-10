@@ -82,48 +82,45 @@ export default function SiteProfiler( props: Props ) {
 				</LayoutBlock>
 			) }
 
-			{
-				// For special valid domain category, we need to wait until the result comes back
-				showResultScreen && (
-					<LayoutBlock className="domain-result-block">
-						{
-							// Translators: %s is the domain name searched
-							<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
-						}
-						{ ( siteProfilerData || isDomainSpecial ) && (
+			{ showResultScreen && (
+				<LayoutBlock className="domain-result-block">
+					{
+						// Translators: %s is the domain name searched
+						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
+					}
+					{ showResultScreen && (
+						<LayoutBlockSection>
+							<HeadingInformation
+								domain={ domain }
+								conversionAction={ conversionAction }
+								onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+								urlData={ urlData }
+								domainCategory={ domainCategory }
+							/>
+						</LayoutBlockSection>
+					) }
+					{ siteProfilerData && ! siteProfilerData.is_domain_available && (
+						<>
 							<LayoutBlockSection>
-								<HeadingInformation
-									domain={ domain }
-									conversionAction={ conversionAction }
-									onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
-									hostingProvider={ hostingProviderData?.hosting_provider }
+								<HostingInformation
+									dns={ siteProfilerData.dns }
 									urlData={ urlData }
-									domainCategory={ domainCategory }
+									hostingProvider={ hostingProviderData?.hosting_provider }
 								/>
 							</LayoutBlockSection>
-						) }
-						{ siteProfilerData && ! siteProfilerData.is_domain_available && (
-							<>
-								<LayoutBlockSection>
-									<HostingInformation
-										dns={ siteProfilerData.dns }
-										urlData={ urlData }
-										hostingProvider={ hostingProviderData?.hosting_provider }
-									/>
-								</LayoutBlockSection>
-								<LayoutBlockSection>
-									<DomainInformation
-										domain={ domain }
-										whois={ siteProfilerData.whois }
-										hostingProvider={ hostingProviderData?.hosting_provider }
-										urlData={ urlData }
-									/>
-								</LayoutBlockSection>
-							</>
-						) }
-					</LayoutBlock>
-				)
-			}
+							<LayoutBlockSection>
+								<DomainInformation
+									domain={ domain }
+									whois={ siteProfilerData.whois }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									urlData={ urlData }
+								/>
+							</LayoutBlockSection>
+						</>
+					) }
+				</LayoutBlock>
+			) }
 
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
