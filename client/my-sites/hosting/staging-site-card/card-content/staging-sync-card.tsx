@@ -155,10 +155,12 @@ const StagingToProductionSync = ( {
 	onSelectItems,
 	selectedItems,
 	isSyncButtonDisabled,
+	isSyncInProgress,
 	onConfirm,
 }: {
 	disabled: boolean;
 	siteSlug: string;
+	isSyncInProgress: boolean;
 	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
 	selectedItems: CheckboxOptionItem[];
 	isSyncButtonDisabled: boolean;
@@ -170,6 +172,7 @@ const StagingToProductionSync = ( {
 		<>
 			<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
 			<SyncOptionsPanel
+				reset={ ! isSyncInProgress }
 				items={ synchronizationOptions }
 				disabled={ disabled }
 				onChange={ onSelectItems }
@@ -455,6 +458,7 @@ export const SiteSyncCard = ( {
 			{ selectedOption && selectedOption === actionForType && (
 				<StagingToProductionSync
 					siteSlug={ siteSlug || '' }
+					isSyncInProgress={ isSyncInProgress }
 					disabled={ disabled }
 					onSelectItems={ setSelectedItems }
 					selectedItems={ selectedItems }
