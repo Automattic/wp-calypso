@@ -763,26 +763,8 @@ export class RenderDomainsStep extends Component {
 			);
 		};
 
-		const addMultiDomainPlanToCart = () => {
-			if ( ! cartIsLoading && ! this.state.isCheckingMultiDomainPlan ) {
-				this.setState( { isCheckingMultiDomainPlan: true } );
-				if ( ! hasPlan( this.props.cart ) ) {
-					this.props.shoppingCartManager
-						.addProductsToCart( [ this.props.multiDomainDefaultPlan ] )
-						.then( () => {
-							this.setState( { isCheckingMultiDomainPlan: false } );
-						} );
-				}
-				return;
-			}
-		};
-
 		const DomainsInCart = () => {
 			if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) || cartIsLoading ) {
-				return null;
-			}
-			if ( ! cartIsLoading && ! hasPlan( this.props.cart ) ) {
-				addMultiDomainPlanToCart();
 				return null;
 			}
 
