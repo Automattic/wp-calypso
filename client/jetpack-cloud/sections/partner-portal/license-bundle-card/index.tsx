@@ -5,10 +5,10 @@ import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription, useURLQueryParams } from '../hooks';
+import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../lib';
 import LicenseLightbox from '../license-lightbox';
 import LicenseLightboxLink from '../license-lightbox-link';
 import ProductPriceWithDiscount from '../primary/product-price-with-discount-info';
-import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../utils';
 
 import './style.scss';
 

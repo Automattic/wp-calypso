@@ -15,6 +15,10 @@ import GlobalNotices from 'calypso/components/global-notices';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { WindowLocaleEffectManager } from 'calypso/landing/stepper/utils/window-locale-effect-manager';
 import { SiteSubscriptionPage } from 'calypso/landing/subscriptions/components/site-subscription-page';
+import {
+	SubscriptionManagerContextProvider,
+	SubscriptionsPortal,
+} from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { SubscriptionManagerPage } from 'calypso/landing/subscriptions/components/subscription-manager-page';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
@@ -63,7 +67,16 @@ window.AppBoot = async () => {
 						<BrowserRouter>
 							<RecordPageView />
 							<Routes>
-								<Route path="/subscriptions/site/:blogId/*" element={ <SiteSubscriptionPage /> } />
+								<Route
+									path="/subscriptions/site/:blogId/*"
+									element={
+										<SubscriptionManagerContextProvider
+											portal={ SubscriptionsPortal.Subscriptions }
+										>
+											<SiteSubscriptionPage />
+										</SubscriptionManagerContextProvider>
+									}
+								/>
 								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
 							</Routes>
 						</BrowserRouter>

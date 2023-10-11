@@ -8,7 +8,6 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createContext, useState, useContext } from 'react';
-import '@testing-library/jest-dom/extend-expect';
 import {
 	CheckoutProvider,
 	CheckoutStep,

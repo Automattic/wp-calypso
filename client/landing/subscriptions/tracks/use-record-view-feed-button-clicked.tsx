@@ -6,6 +6,7 @@ const useRecordViewFeedButtonClicked = () => {
 	const recordViewFeedButtonClicked = ( tracksProps: {
 		blogId: string | null;
 		feedId: string;
+		source?: string;
 	} ) => {
 		recordSubscriptionsTracksEvent( 'calypso_subscriptions_view_feed_button_clicked', tracksProps );
 	};

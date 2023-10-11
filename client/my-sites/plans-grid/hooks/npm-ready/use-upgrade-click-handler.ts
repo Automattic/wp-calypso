@@ -6,11 +6,11 @@ import type { GridPlan } from './data-store/use-grid-plans';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 interface Props {
-	gridPlansForFeaturesGrid: GridPlan[]; // TODO clk: to be removed, grabbed from context
+	gridPlans: GridPlan[]; // TODO clk: to be removed, grabbed from context
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 }
 
-const useUpgradeClickHandler = ( { gridPlansForFeaturesGrid, onUpgradeClick }: Props ) => {
+const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick }: Props ) => {
 	const selectedStorageOptions = useSelect( ( select ) => {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
@@ -19,7 +19,7 @@ const useUpgradeClickHandler = ( { gridPlansForFeaturesGrid, onUpgradeClick }: P
 		( planSlug: PlanSlug ) => {
 			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
 			const { cartItemForPlan, storageAddOnsForPlan } =
-				gridPlansForFeaturesGrid.find( ( gridPlan ) => gridPlan.planSlug === planSlug ) ?? {};
+				gridPlans.find( ( gridPlan ) => gridPlan.planSlug === planSlug ) ?? {};
 			const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
 				return selectedStorageOption && addOn
 					? addOn.featureSlugs?.includes( selectedStorageOption )
@@ -44,7 +44,7 @@ const useUpgradeClickHandler = ( { gridPlansForFeaturesGrid, onUpgradeClick }: P
 				return;
 			}
 		},
-		[ gridPlansForFeaturesGrid, onUpgradeClick, selectedStorageOptions ]
+		[ gridPlans, onUpgradeClick, selectedStorageOptions ]
 	);
 };
 

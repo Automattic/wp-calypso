@@ -4,7 +4,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
 import { act } from 'react-dom/test-utils';
 import { SiteSubscriptionsSortBy } from '../../constants';
 import {

@@ -16,6 +16,9 @@ const INITIAL_STATE = {
 	sites: {
 		items: {},
 	},
+	ui: {
+		selectedSiteId: 1,
+	},
 };
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );
@@ -85,6 +88,11 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-sync', () => 
 	usePushToStagingMutation: jest.fn( () => {
 		return {
 			pushToStaging: jest.fn(),
+		};
+	} ),
+	usePullFromStagingMutation: jest.fn( () => {
+		return {
+			pullFromStaging: jest.fn(),
 		};
 	} ),
 } ) );

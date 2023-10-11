@@ -191,7 +191,8 @@ function PluginDetails( props ) {
 
 	const existingPlugin = useMemo( () => {
 		if (
-			( ! isMarketplaceProduct && ( isWporgPluginFetching || ! isWporgPluginFetched ) ) ||
+			( ! isMarketplaceProduct &&
+				( isWporgPluginFetching || ( ! isWporgPluginFetched && ! wporgPluginError ) ) ) ||
 			( isMarketplaceProduct && ( isWpComPluginFetching || ! isWpComPluginFetched ) )
 		) {
 			return 'unknown';
@@ -217,6 +218,7 @@ function PluginDetails( props ) {
 		isWpComPluginFetched,
 		isWporgPluginFetching,
 		isWporgPluginFetched,
+		wporgPluginError,
 		fullPlugin,
 		requestingPluginsForSites,
 	] );

@@ -4,10 +4,12 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { ConfirmationModal } from 'calypso/my-sites/hosting/staging-site-card/confirmation-modal';
 import { StagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
+import { ProductionSiteSyncCard } from './staging-sync-card';
 
 const SiteRow = styled.div( {
 	display: 'flex',
@@ -16,7 +18,8 @@ const SiteRow = styled.div( {
 	'.site-icon': { flexShrink: 0 },
 } );
 
-const LeftActionsContainer = styled.div( {
+const SyncActionsContainer = styled.div( {
+	marginTop: 24,
 	gap: '1em',
 	display: 'flex',
 	flexDirection: 'row',
@@ -63,46 +66,30 @@ const ActionButtons = styled.div( {
 	},
 } );
 
-const ActionButtonsJustifyBetween = styled( ActionButtons )( {
-	justifyContent: 'space-between',
-} );
-
 type CardContentProps = {
 	stagingSite: StagingSite;
+	siteId: number;
+	error?: string | null;
 	onDeleteClick: () => void;
 	onPushClick: () => void;
+	onPullClick: () => void;
 	isButtonDisabled: boolean;
 	isBusy: boolean;
 };
 
 export const ManageStagingSiteCardContent = ( {
 	stagingSite,
+	siteId,
 	onDeleteClick,
 	onPushClick,
+	onPullClick,
+	error,
 	isButtonDisabled,
 	isBusy,
 }: CardContentProps ) => {
 	{
 		const translate = useTranslate();
 		const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
-
-		const ConfirmationPushChangesButton = () => {
-			return (
-				<ConfirmationModal
-					disabled={ isButtonDisabled }
-					onConfirm={ onPushClick }
-					modalTitle={ translate( 'Confirm pushing changes to your staging site' ) }
-					modalMessage={ translate(
-						'Are you sure you want to push your production changes to your staging site?'
-					) }
-					confirmLabel={ translate( 'Push to staging' ) }
-					cancelLabel={ translate( 'Cancel' ) }
-				>
-					<Gridicon icon="arrow-up" />
-					<span>{ translate( 'Push to staging' ) }</span>
-				</ConfirmationModal>
-			);
-		};
 
 		const ConfirmationDeleteButton = () => {
 			return (
@@ -128,7 +115,7 @@ export const ManageStagingSiteCardContent = ( {
 			return (
 				<Button
 					primary
-					href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+					onClick={ () => navigate( `/hosting-config/${ urlToSlug( stagingSite.url ) }` ) }
 					disabled={ isButtonDisabled }
 				>
 					<span>{ translate( 'Manage staging site' ) }</span>
@@ -165,13 +152,21 @@ export const ManageStagingSiteCardContent = ( {
 					</SiteInfo>
 				</SiteRow>
 				{ isStagingSitesI3Enabled ? (
-					<ActionButtonsJustifyBetween>
-						<LeftActionsContainer>
+					<>
+						<ActionButtons>
 							<ManageStagingSiteButton />
-							<ConfirmationPushChangesButton />
-						</LeftActionsContainer>
-						<ConfirmationDeleteButton />
-					</ActionButtonsJustifyBetween>
+							<ConfirmationDeleteButton />
+						</ActionButtons>
+						<SyncActionsContainer>
+							<ProductionSiteSyncCard
+								onPush={ onPushClick }
+								onPull={ onPullClick }
+								disabled={ isButtonDisabled }
+								productionSiteId={ siteId }
+								error={ error }
+							/>
+						</SyncActionsContainer>
+					</>
 				) : (
 					<ActionButtons>
 						<ManageStagingSiteButton />

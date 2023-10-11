@@ -100,6 +100,13 @@ export const isAnyHostingFlow = ( flowName?: string | null ) => {
 	);
 };
 
+export const isAnyMigrationFlow = ( flowName?: string | null ) => {
+	return Boolean(
+		flowName &&
+			[ MIGRATION_FLOW, IMPORT_FOCUSED_FLOW, IMPORT_HOSTED_SITE_FLOW ].includes( flowName )
+	);
+};
+
 export const isMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ MIGRATION_FLOW ].includes( flowName ) );
 };

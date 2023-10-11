@@ -16,15 +16,17 @@ import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { useDeleteStagingSite } from './use-delete-staging-site';
-import { usePushToStagingMutation } from './use-staging-sync';
+import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
@@ -43,7 +45,9 @@ export const StagingSiteCard = ( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ loadingError, setLoadingError ] = useState( false );
+	const [ syncError, setSyncError ] = useState( null );
 	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
+	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
 	const removeAllNotices = () => {
 		dispatch( removeNotice( stagingSiteAddSuccessNoticeId ) );
@@ -207,9 +211,26 @@ export const StagingSiteCard = ( {
 	};
 
 	const { pushToStaging } = usePushToStagingMutation( siteId, stagingSite?.id, {
+		onSuccess: () => {
+			setSyncError( null );
+		},
 		onError: ( error ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+					code: error.code,
+				} )
+			);
+			setSyncError( error.message );
+		},
+	} );
+
+	const { pullFromStaging } = usePullFromStagingMutation( siteId, stagingSite?.id, {
+		onSuccess: () => {
+			setSyncError( null );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
 					code: error.code,
 				} )
 			);
@@ -226,7 +247,7 @@ export const StagingSiteCard = ( {
 				/>
 			</>
 		);
-	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
+	}, [ progress, siteOwnerId, currentUserId, isReverting ] );
 
 	let stagingSiteCardContent;
 
@@ -269,10 +290,13 @@ export const StagingSiteCard = ( {
 		stagingSiteCardContent = (
 			<ManageStagingSiteCardContent
 				stagingSite={ stagingSite }
+				siteId={ siteId }
 				onDeleteClick={ deleteStagingSite }
 				onPushClick={ pushToStaging }
-				isButtonDisabled={ disabled }
+				onPullClick={ pullFromStaging }
+				isButtonDisabled={ disabled || isSyncInProgress }
 				isBusy={ isReverting }
+				error={ syncError }
 			/>
 		);
 	} else if ( showAddStagingSite && ! addingStagingSite ) {
@@ -284,6 +308,7 @@ export const StagingSiteCard = ( {
 					addingStagingSite ||
 					isLoadingQuotaValidation ||
 					! hasValidQuota ||
+					isSyncInProgress ||
 					isPossibleJetpackConnectionProblem
 				}
 				showQuotaError={ ! hasValidQuota && ! isLoadingQuotaValidation }

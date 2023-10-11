@@ -20,6 +20,7 @@ import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
@@ -65,6 +66,7 @@ const designFirst: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
+		const siteId = useSiteIdParam();
 
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
@@ -193,7 +195,18 @@ const designFirst: Flow = {
 					return window.location.assign( providedDependencies.destinationUrl as string );
 			}
 		}
-		return { submit };
+
+		const goNext = async () => {
+			switch ( currentStep ) {
+				case 'launchpad':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+					}
+					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+			}
+		};
+
+		return { goNext, submit };
 	},
 
 	useAssertConditions(): AssertConditionResult {

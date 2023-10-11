@@ -93,7 +93,6 @@ const PatternLargePreview = ( {
 				<PatternActionBar
 					patternType={ type }
 					category={ pattern.category }
-					isRemoveButtonTextOnly
 					source="large_preview"
 					{ ...getActionBarProps() }
 				/>

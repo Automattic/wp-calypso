@@ -40,6 +40,7 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	WOO_EXPRESS_PLANS,
 	TERM_CENTENNIALLY,
+	TYPE_HOSTING_TRIAL,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
@@ -170,6 +171,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isCompletePlan( planKey ) ) {
 		return 'is-complete-plan';
+	}
+
+	if ( isFreeHostingTrial( planKey ) ) {
+		return 'is-free-hosting-trial';
 	}
 
 	return '';
@@ -326,6 +331,10 @@ export function isBloggerPlan( planSlug: string ): boolean {
 
 export function isFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+export function isFreeHostingTrial( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_HOSTING_TRIAL } );
 }
 
 export function is100YearPlan( planSlug: string ): boolean {
@@ -554,6 +563,11 @@ export function calculateMonthlyPriceForPlan( planSlug: string, termPrice: numbe
 export function calculateMonthlyPrice( term: string, termPrice: number ): number {
 	const divisor = getBillingMonthsForTerm( term );
 	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
+}
+
+export function calculateYearlyPrice( term: string, termPrice: number ): number {
+	const multiplier = getBillingMonthsForTerm( term );
+	return parseFloat( ( termPrice * multiplier ).toFixed( 2 ) );
 }
 
 export function getBillingMonthsForTerm( term: string ): number {

@@ -23,6 +23,22 @@
 	}
 }
 
+// New navigation will not include a masterbar
+.theme-jetpack-cloud .layout.has-no-masterbar.is-jetpack-new-navigation {
+	--masterbar-height: 0;
+
+	// By default, there's 32px of top padding on the layout component.
+	// On mobile views this accommodates the masterbar, but we don't have one;
+	// so, we can remove it by default and re-add it when our width is >660px.
+	.layout__content {
+		padding-top: initial;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding-top: 32px;
+	}
+}
+
 .button {
 	color: var(--color-accent);
 	background: var(--studio-white);

@@ -13,8 +13,11 @@ export const TumblrPostPreview: React.FC< TumblrPreviewProps > = ( {
 	user,
 	url,
 	customText,
+	media,
 } ) => {
 	const avatarUrl = user?.avatarUrl;
+
+	const mediaItem = media?.[ 0 ];
 
 	return (
 		<div className="tumblr-preview__post">
@@ -27,12 +30,25 @@ export const TumblrPostPreview: React.FC< TumblrPreviewProps > = ( {
 					{ description && (
 						<div className="tumblr-preview__description">{ tumblrDescription( description ) }</div>
 					) }
-					{ image && (
-						<img
-							className="tumblr-preview__image"
-							src={ image }
-							alt={ __( 'Tumblr preview thumbnail', 'social-previews' ) }
-						/>
+					{ mediaItem ? (
+						<div className="tumblr-preview__media-item">
+							{ mediaItem.type.startsWith( 'video/' ) ? (
+								// eslint-disable-next-line jsx-a11y/media-has-caption
+								<video controls className="tumblr-preview__media--video">
+									<source src={ mediaItem.url } type={ mediaItem.type } />
+								</video>
+							) : (
+								<img className="tumblr-preview__image" src={ image } alt="" />
+							) }
+						</div>
+					) : (
+						image && (
+							<img
+								className="tumblr-preview__image"
+								src={ image }
+								alt={ __( 'Tumblr preview thumbnail', 'social-previews' ) }
+							/>
+						)
 					) }
 					<a className="tumblr-preview__url" href={ url } target="_blank" rel="noreferrer">
 						{ __( 'View On WordPress', 'social-previews' ) }

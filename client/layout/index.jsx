@@ -31,6 +31,7 @@ import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { OdieAssistantProvider } from 'calypso/odie/context';
 import { isOffline } from 'calypso/state/application/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -233,6 +234,8 @@ class Layout extends Component {
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
+			'is-logged-in': this.props.isLoggedIn,
+			'is-jetpack-new-navigation': this.props.isJetpackNewNavigation,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
@@ -355,6 +358,7 @@ export default withCurrentRoute(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
+		const isJetpackNewNavigation = config.isEnabled( 'jetpack/new-navigation' );
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
@@ -367,7 +371,8 @@ export default withCurrentRoute(
 			noMasterbarForSection ||
 			noMasterbarForRoute ||
 			isWpMobileApp() ||
-			isWcMobileApp();
+			isWcMobileApp() ||
+			isJetpackNewNavigation;
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
@@ -393,6 +398,7 @@ export default withCurrentRoute(
 			masterbarIsHidden,
 			sidebarIsHidden,
 			isJetpack,
+			isJetpackNewNavigation,
 			isJetpackLogin,
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
@@ -401,6 +407,7 @@ export default withCurrentRoute(
 			isEligibleForJITM,
 			oauth2Client,
 			wccomFrom,
+			isLoggedIn: isUserLoggedIn( state ),
 			isSupportSession: isSupportSession( state ),
 			sectionGroup,
 			sectionName,

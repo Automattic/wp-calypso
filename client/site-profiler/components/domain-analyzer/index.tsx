@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FormEvent } from 'react';
+import { FormEvent, KeyboardEvent } from 'react';
 import './styles.scss';
 
 interface Props {
@@ -10,12 +10,16 @@ interface Props {
 	isBusy?: boolean;
 	isBusyForWhile?: boolean;
 	isDomainValid?: boolean;
+	domainFetchingError?: Error;
 	onFormSubmit: ( domain: string ) => void;
 }
 
 export default function DomainAnalyzer( props: Props ) {
 	const translate = useTranslate();
-	const { domain, isBusy, isBusyForWhile, isDomainValid, onFormSubmit } = props;
+	const { domain, isBusy, isBusyForWhile, isDomainValid, domainFetchingError, onFormSubmit } =
+		props;
+
+	const showError = isDomainValid === false || domainFetchingError;
 
 	const onSubmit = ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
@@ -26,17 +30,24 @@ export default function DomainAnalyzer( props: Props ) {
 		onFormSubmit( domain );
 	};
 
+	const onInputEscape = ( e: KeyboardEvent< HTMLInputElement > ) => {
+		if ( e.key === 'Escape' ) {
+			e.currentTarget.value = '';
+			onFormSubmit( '' );
+		}
+	};
+
 	return (
 		<div className="domain-analyzer">
 			<h1>{ translate( 'Site Profiler' ) }</h1>
 			<p>
 				{ translate(
-					'Access essential information about a site, such as hosting provider, domain details, and contact information.'
+					'Access the essential information about any site, including hosting provider, domain details, and contact information.'
 				) }
 			</p>
 
 			<form
-				className={ classnames( 'domain-analyzer--form', { 'is-error': isDomainValid === false } ) }
+				className={ classnames( 'domain-analyzer--form', { 'is-error': showError } ) }
 				onSubmit={ onSubmit }
 			>
 				<div className="domain-analyzer--form-container">
@@ -44,9 +55,13 @@ export default function DomainAnalyzer( props: Props ) {
 						<input
 							type="text"
 							name="domain"
+							// eslint-disable-next-line jsx-a11y/no-autofocus
+							autoFocus={ true }
 							autoComplete="off"
 							defaultValue={ domain }
-							placeholder={ translate( 'Enter a website URL' ) }
+							placeholder={ translate( 'Enter a site URL' ) }
+							key={ domain || 'empty' }
+							onKeyDown={ onInputEscape }
 						/>
 					</div>
 					<div className="col-2">
@@ -63,11 +78,12 @@ export default function DomainAnalyzer( props: Props ) {
 				<div className="domain-analyzer--msg">
 					<p
 						className={ classnames( 'error', {
-							'vis-hidden': isDomainValid || isDomainValid === undefined,
+							'vis-hidden': ! showError,
 						} ) }
 					>
 						<Icon icon={ info } size={ 20 } />{ ' ' }
-						{ translate( 'Please enter a valid website address' ) }
+						{ isDomainValid === false && translate( 'Please enter a valid website address' ) }
+						{ domainFetchingError && domainFetchingError.message }
 					</p>
 				</div>
 			</form>

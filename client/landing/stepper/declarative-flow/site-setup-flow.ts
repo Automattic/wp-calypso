@@ -43,12 +43,12 @@ import ImporterSquarespace from './internals/steps-repository/importer-squarespa
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import IntentStep from './internals/steps-repository/intent-step';
-import MigrationTrial from './internals/steps-repository/migration-trial';
 import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import SiteOptions from './internals/steps-repository/site-options';
 import StoreAddress from './internals/steps-repository/store-address';
+import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
 import WooConfirm from './internals/steps-repository/woo-confirm';
 import WooInstallPlugins from './internals/steps-repository/woo-install-plugins';
 import WooTransfer from './internals/steps-repository/woo-transfer';
@@ -62,6 +62,10 @@ import {
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
+
+type ExitFlowOptions = {
+	skipLaunchpad?: boolean;
+};
 
 function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
@@ -108,7 +112,7 @@ const siteSetupFlow: Flow = {
 			{ slug: 'importerSquarespace', component: ImporterSquarespace },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
 			{ slug: 'verifyEmail', component: ImportVerifyEmail },
-			{ slug: 'migrationTrial', component: MigrationTrial },
+			{ slug: 'trialAcknowledge', component: TrialAcknowledge },
 			{ slug: 'businessInfo', component: BusinessInfo },
 			{ slug: 'storeAddress', component: StoreAddress },
 			{ slug: 'processing', component: ProcessingStep },
@@ -189,7 +193,7 @@ const siteSetupFlow: Flow = {
 			setStepProgress( flowProgress );
 		}
 
-		const exitFlow = ( to: string ) => {
+		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
 				/**
 				 * This implementation seems very hacky.
@@ -221,8 +225,12 @@ const siteSetupFlow: Flow = {
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
-						const launchpadScreen =
-							isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
+						let launchpadScreen;
+						if ( ! options.skipLaunchpad ) {
+							launchpadScreen = isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
+						} else {
+							launchpadScreen = 'skipped';
+						}
 
 						settings.launchpad_screen = launchpadScreen;
 					}
@@ -354,7 +362,9 @@ const siteSetupFlow: Flow = {
 							return navigate( 'courses' );
 						}
 						case 'skip-to-my-home': {
-							return exitFlow( `/home/${ siteId ?? siteSlug }` );
+							return exitFlow( `/home/${ siteId ?? siteSlug }`, {
+								skipLaunchpad: true,
+							} );
 						}
 						default: {
 							return navigate( intent );
@@ -476,7 +486,7 @@ const siteSetupFlow: Flow = {
 					return navigate( providedDependencies?.url as string );
 				}
 
-				case 'migrationTrial': {
+				case 'trialAcknowledge': {
 					switch ( providedDependencies?.action ) {
 						case 'verify-email':
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
@@ -490,7 +500,7 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'verifyEmail':
-					return navigate( `migrationTrial?${ urlQueryParams.toString() }` );
+					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
 
 				case 'difmStartingPoint': {
 					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
@@ -563,7 +573,7 @@ const siteSetupFlow: Flow = {
 					return navigate( 'goals' );
 
 				case 'verifyEmail':
-				case 'migrationTrial':
+				case 'trialAcknowledge':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'difmStartingPoint':
@@ -588,7 +598,9 @@ const siteSetupFlow: Flow = {
 				case 'goals':
 					// Skip to dashboard must have been pressed
 					setIntent( SiteIntent.Build );
-					return exitFlow( `/home/${ siteId ?? siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }`, {
+						skipLaunchpad: true,
+					} );
 
 				case 'import':
 					return navigate( 'importList' );

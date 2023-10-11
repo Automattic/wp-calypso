@@ -196,7 +196,7 @@ export class ImportEverything extends SectionMigrate {
 					onContentOnlyClick={ onContentOnlySelection }
 					sourceSite={ sourceSite }
 					onFreeTrialClick={ () => {
-						stepNavigator?.navigate( `migrationTrial${ window.location.search }` );
+						stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
 					} }
 					onNotAuthorizedClick={ () => {
 						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {

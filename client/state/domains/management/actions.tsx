@@ -1,5 +1,6 @@
 import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
+import { resendIcannVerification } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -16,7 +17,12 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 } from 'calypso/state/action-types';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import {
+	errorNotice,
+	infoNotice,
+	removeNotice,
+	successNotice,
+} from 'calypso/state/notices/actions';
 import type { WhoisData } from './types';
 import type {
 	ContactValidationResponseMessages,
@@ -153,7 +159,6 @@ export function requestWhois( domain: string ) {
 /**
  * Sends a network request to the server to save updated WHOIS details
  * at the domain's registrar.
- *
  * @param   {string}   domain		domain to query
  * @param   {Object}   whoisData	whois details object
  * @param	  {boolean}  transferLock set 60-day transfer lock after update
@@ -220,5 +225,34 @@ export const showUpdatePrimaryDomainErrorNotice = ( errorMessage: string ) => {
 				{ duration: 10000, isPersistent: true }
 			)
 		);
+	};
+};
+
+export const verifyIcannEmail = ( domain: string ) => {
+	return ( dispatch: CalypsoDispatch ) => {
+		const noticeId = 'icann-email-notice';
+
+		dispatch( removeNotice( noticeId ) );
+
+		dispatch( infoNotice( translate( 'Sending email…' ), { id: noticeId, duration: 4000 } ) );
+
+		resendIcannVerification( domain )
+			.then( () => {
+				dispatch( removeNotice( noticeId ) );
+
+				dispatch(
+					successNotice(
+						translate(
+							'We sent the ICANN verification email to your ' +
+								'email address. Please check your inbox and click the link in the email.'
+						)
+					)
+				);
+			} )
+			.catch( ( error: Error ) => {
+				dispatch( removeNotice( noticeId ) );
+
+				dispatch( errorNotice( error.message ) );
+			} );
 	};
 };

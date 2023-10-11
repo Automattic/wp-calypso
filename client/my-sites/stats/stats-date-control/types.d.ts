@@ -3,16 +3,19 @@ interface StatsDateControlProps {
 	queryParams: string;
 	period: 'day' | 'week' | 'month' | 'year';
 	pathTemplate: string;
+	onChangeChartQuantity: ( customQuantity: number ) => void;
 }
 
 interface DateControlPickerProps {
 	slug: string;
 	queryParams: string;
 	shortcutList: DateControlPickerShortcut[];
+	handleApply: ( startDate: string, endDate: string ) => void;
 }
 
 interface DateControlPickerShortcutsProps {
 	shortcutList: DateControlPickerShortcut[];
+	currentShortcut: string;
 	onClick: ( shortcut: DateControlPickerShortcut ) => void;
 }
 

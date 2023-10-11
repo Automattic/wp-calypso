@@ -35,6 +35,14 @@ function renderTemplate( template, props ) {
 					placeholder={ null }
 				/>
 			);
+		case 'home-task':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/home-task"
+					placeholder={ null }
+				/>
+			);
 		case 'spotlight':
 			return (
 				<AsyncLoad

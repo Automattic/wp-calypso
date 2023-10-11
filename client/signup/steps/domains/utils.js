@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import validUrl from 'valid-url';
 
 // Only override the back button from an external URL source on the below step(s) which is typically where we'd send them to as the 'entry'.
@@ -27,4 +28,16 @@ export function getExternalBackUrl( source, sectionName = null ) {
 	}
 
 	return false;
+}
+
+/**
+ * Check if we should use multiple domains in domain flows.
+ */
+export function shouldUseMultipleDomainsInCart( flowName ) {
+	const enabledFlows = [ 'onboarding' ];
+
+	const status =
+		isEnabled( 'domains/add-multiple-domains-to-cart' ) && enabledFlows.includes( flowName );
+
+	return status;
 }

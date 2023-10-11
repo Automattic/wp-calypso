@@ -18,8 +18,11 @@ import {
 	fetchSite,
 	fetchSiteDomains,
 } from '../domains-table-fetch-functions';
+import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
+
+import './style.scss';
 
 interface BulkAllDomainsProps {
 	analyticsPath: string;
@@ -64,8 +67,9 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			<Main>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
+				{ ! isLoading && <GoogleDomainOwnerBanner /> }
 				<DomainsTable
-					isFetchingDomains={ isLoading }
+					isLoadingDomains={ isLoading }
 					domains={ domains }
 					isAllSitesView
 					shouldDisplayContactInfoBulkAction={ isEnabled(

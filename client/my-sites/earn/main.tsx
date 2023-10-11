@@ -18,10 +18,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
 import CustomerSection from './customers';
 import Home from './home';
-import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
+import MembershipsSection from './memberships/section';
 import ReferAFriendSection from './refer-a-friend';
-import StatsSection from './stats';
 import { Query } from './types';
 
 type EarningsMainProps = {
@@ -42,8 +41,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
-		customers: translate( 'Customers' ),
-		stats: translate( 'Stats' ),
+		supporters: translate( 'Supporters' ),
 		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
@@ -52,22 +50,17 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		const pathSuffix = site?.slug ? '/' + site?.slug : '';
 		return [
 			{
-				title: translate( 'Tools' ),
+				title: translate( 'Monetization Options' ),
 				path: '/earn' + pathSuffix,
 				id: 'earn',
 			},
 			{
-				title: translate( 'Customers' ),
-				path: '/earn/customers' + pathSuffix,
-				id: 'customers',
+				title: translate( 'Supporters' ),
+				path: '/earn/supporters' + pathSuffix,
+				id: 'supporters',
 			},
 			{
-				title: translate( 'Stats' ),
-				path: '/earn/stats' + pathSuffix,
-				id: 'stats',
-			},
-			{
-				title: translate( 'Settings' ),
+				title: translate( 'Payment Settings' ),
 				path: '/earn/payments' + pathSuffix,
 				id: 'payments',
 			},
@@ -146,10 +139,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			case 'payments-plans':
 				return <MembershipsProductsSection />;
 
-			case 'stats':
-				return <StatsSection />;
-
-			case 'customers':
+			case 'supporters':
 				return <CustomerSection />;
 
 			case 'refer-a-friend':

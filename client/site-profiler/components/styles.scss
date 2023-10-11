@@ -1,5 +1,15 @@
 @import "@wordpress/base-styles/breakpoints";
 
+html[dir="rtl"] {
+	.is-section-site-profiler .main .hosting-intro-block.globe-bg {
+		background-image: url(calypso/assets/images/illustrations/globe-flip.svg);
+	}
+}
+
+.is-section-site-profiler > #wpcom {
+	background: #fff;
+}
+
 .layout__primary .main {
 	padding-bottom: 0;
 }
@@ -7,7 +17,10 @@
 .is-section-site-profiler .layout__content {
 	background: #fff;
 	padding: 0;
+	min-height: calc(100vh - 3.5rem);
+}
 
+.is-section-site-profiler .main {
 	h1 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		/* stylelint-disable-next-line */
@@ -15,6 +28,10 @@
 		line-height: 1;
 		margin-bottom: 1rem;
 		color: var(--studio-gray-100);
+
+		@media (max-width: $break-small ) {
+			font-size: 3rem;
+		}
 	}
 
 	h2 {
@@ -172,9 +189,51 @@
 		margin-right: 0.25rem;
 	}
 
+	.domain-analyzer-block {
+		padding-top: 10rem;
+		@media (max-width: $break-small ) {
+			padding-top: 4rem;
+		}
+	}
+
 	.hosting-intro-block {
 		h2 {
 			max-width: 400px;
+		}
+
+		@media (max-width: $break-medium) {
+			flex-direction: column-reverse;
+		}
+
+		&.globe-bg {
+			background-image: url(calypso/assets/images/illustrations/globe.svg);
+			background-repeat: no-repeat;
+			background-position: right top 60px;
+
+			.img-container {
+				min-height: 300px;
+			}
+
+			@media (max-width: $break-xlarge) {
+				background-size: 60%;
+			}
+
+			@media (max-width: $break-large) {
+				background-size: 50%;
+			}
+
+			@media (max-width: $break-medium) {
+				background-size: 85%;
+				background-position: right bottom -250px;
+
+				.img-container {
+					min-height: 250px;
+				}
+			}
+
+			@media (max-width: $break-small) {
+				background-position: right bottom -150px;
+			}
 		}
 	}
 
@@ -195,9 +254,12 @@
 	}
 
 	.domain-analyzer-block::after {
-		height: 280px;
-	}
+		height: 100%;
 
+		@media (min-width: $break-medium) {
+			height: 365px;
+		}
+	}
 	.domain-result-block::after {
 		height: 210px;
 	}

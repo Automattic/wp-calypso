@@ -14,7 +14,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { areLicenseKeysAssignableToMultisite, isWooCommerceProduct } from '../utils';
+import { areLicenseKeysAssignableToMultisite, isWooCommerceProduct } from '../lib';
 import './style.scss';
 
 function setPage( pageNumber: number ): void {
@@ -149,7 +149,7 @@ export default function AssignLicenseForm( {
 		return page.redirect( partnerPortalBasePath( '/licenses' ) );
 	}, [ assignLicensesToSite, dispatch, licenseKeysArray, selectedSite?.ID ] );
 
-	if ( ! results.length ) {
+	if ( ! results.length && search === '' ) {
 		return (
 			<div className="assign-license-form__empty-state">
 				<p>
