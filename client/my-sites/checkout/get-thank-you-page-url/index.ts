@@ -6,6 +6,7 @@
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  */
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -242,11 +243,35 @@ export default function getThankYouPageUrl( {
 		// siteless checkout - "Connect After Checkout" flow.
 		if ( connectAfterCheckout && adminUrl && fromSiteSlug ) {
 			debug( 'Redirecting to the site to initiate Jetpack connection' );
-			// Remove "/wp-admin/" from the beginning of the REMOTE_PATH_AUTH because it's already part of the `adminUrl`.
+			// Remove "/wp-admin/" from the beginning of the REMOTE_PATH_AUTH because it's already
+			// part of the `adminUrl` that we prepend to this path (below).
 			const jetpackSiteAuthPath = REMOTE_PATH_AUTH.replace( /^\/wp-admin\//, '' );
-			const redirectAfterAuthUrl = `${ adminUrl }admin.php?page=my-jetpack`;
-			const connectUrl = `${ adminUrl }${ jetpackSiteAuthPath }&redirect_after_auth=${ redirectAfterAuthUrl }`;
-			return connectUrl;
+
+			const calypsoHost =
+				typeof window !== 'undefined'
+					? window.location.protocol + '//' + window.location.host
+					: 'https://wordpress.com';
+
+			// Then After connection authorization, we'll redirect to the product license activation page.
+			const redirectAfterAuthUrl = addQueryArgs(
+				{
+					receiptId: receiptIdOrPlaceholder,
+					siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
+					fromSiteSlug,
+				},
+				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`
+			);
+
+			const remoteSiteConnectUrl = addQueryArgs(
+				{
+					redirect_after_auth: redirectAfterAuthUrl,
+					from: 'connect-after-checkout',
+					...( config( 'env_id' ) === 'development' && { calypso_env: 'development' } ),
+				},
+				`${ adminUrl }${ jetpackSiteAuthPath }`
+			);
+
+			return remoteSiteConnectUrl;
 		}
 
 		// siteless checkout
