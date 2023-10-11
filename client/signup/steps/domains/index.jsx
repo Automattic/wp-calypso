@@ -814,7 +814,7 @@ export class RenderDomainsStep extends Component {
 										<BoldTLD domain={ this.state.wpcomSubdomainSelected.domain_name } />
 									</div>
 									<div className="domain-product-price__price">
-										<span className="domains__price-free">{ this.props.tranlsate( 'Free' ) }</span>
+										<span className="domains__price-free">{ this.props.translate( 'Free' ) }</span>
 									</div>
 								</div>
 								<div>
