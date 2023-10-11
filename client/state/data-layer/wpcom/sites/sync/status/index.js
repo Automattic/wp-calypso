@@ -27,15 +27,16 @@ export const receiveStatus =
 	( { siteId }, { status, direction } ) =>
 	( dispatch ) => {
 		dispatch( setSiteSyncStatus( siteId, status ) );
-		if ( direction === 'pull' ) {
-			dispatch( setSyncingSiteType( siteId, 'production' ) );
-		}
-		if ( direction === 'push' ) {
-			dispatch( setSyncingSiteType( siteId, 'staging' ) );
-		}
 		if ( status === SiteSyncStatus.COMPLETED ) {
 			// Update the site object to reflect the new status
 			dispatch( requestSite( siteId ) );
+		} else {
+			if ( direction === 'pull' ) {
+				dispatch( setSyncingSiteType( siteId, 'production' ) );
+			}
+			if ( direction === 'push' ) {
+				dispatch( setSyncingSiteType( siteId, 'staging' ) );
+			}
 		}
 	};
 
