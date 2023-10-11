@@ -699,12 +699,13 @@ export class RenderDomainsStep extends Component {
 			</div>
 		) : null;
 
-		const DomainNameAndCost = ( { domain } ) => {
+		const DomainNameAndCost = ( { domain, index } ) => {
 			const priceText = translate( '%(cost)s/year', {
 				args: { cost: domain.item_original_cost_display },
 			} );
 			const costDifference = domain.item_original_cost - domain.cost;
 			const hasPromotion = costDifference > 0;
+			const displayCost = domain.item_subtotal_display;
 
 			return (
 				<>
@@ -716,10 +717,17 @@ export class RenderDomainsStep extends Component {
 						>
 							<BoldTLD domain={ domain.meta } />
 						</div>
-						<div className="domain-product-price__price">
-							{ hasPromotion && <del>{ priceText }</del> }
-							<span className="domains__price">{ domain.item_subtotal_display }</span>
-						</div>
+						{ index > 0 && (
+							<div className="domain-product-price__price">
+								{ hasPromotion && <del>{ priceText }</del> }
+								<span className="domains__price">{ displayCost }</span>
+							</div>
+						) }
+						{ index === 0 && (
+							<div className="domain-product-price__price">
+								<span className="domains__price-free">{ translate( 'Free' ) }</span>
+							</div>
+						) }
 					</div>
 					<div>
 						<Button
@@ -727,13 +735,18 @@ export class RenderDomainsStep extends Component {
 							className="domains__domain-cart-remove"
 							onClick={ this.removeDomainClickHandler( domain ) }
 						>
-							{ this.props.translate( 'Remove' ) }
+							{ translate( 'Remove' ) }
 						</Button>
-						{ hasPromotion && (
+						{ index > 0 && hasPromotion && (
 							<span className="savings-message">
 								{ translate( 'Up to %(costDifference)s off for a domain.', {
 									args: { costDifference: formatCurrency( costDifference, domain.currency ) },
 								} ) }
+							</span>
+						) }
+						{ index === 0 && (
+							<span className="savings-message">
+								{ translate( 'First year free with an annual paid plan.' ) }
 							</span>
 						) }
 					</div>
@@ -832,7 +845,7 @@ export class RenderDomainsStep extends Component {
 						) }
 						{ domainsInCart.map( ( domain, i ) => (
 							<div key={ `row${ i }` } className="domains__domain-cart-row">
-								<DomainNameAndCost domain={ domain } />
+								<DomainNameAndCost domain={ domain } index={ i } />
 							</div>
 						) ) }
 					</div>
