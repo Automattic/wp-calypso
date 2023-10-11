@@ -699,12 +699,18 @@ export class RenderDomainsStep extends Component {
 			</div>
 		) : null;
 
-		const DomainNameAndCost = ( { domain } ) => {
+		const DomainNameAndCost = ( { domain, index } ) => {
 			const priceText = translate( '%(cost)s/year', {
 				args: { cost: domain.item_original_cost_display },
 			} );
 			const costDifference = domain.item_original_cost - domain.cost;
-			const hasPromotion = costDifference > 0;
+			let hasPromotion = costDifference > 0;
+			let displayCost = domain.item_subtotal_display;
+
+			if ( index === 0 ) {
+				hasPromotion = false;
+				displayCost = formatCurrency( 0, domain.currency );
+			}
 
 			return (
 				<>
@@ -718,7 +724,7 @@ export class RenderDomainsStep extends Component {
 						</div>
 						<div className="domain-product-price__price">
 							{ hasPromotion && <del>{ priceText }</del> }
-							<span className="domains__price">{ domain.item_subtotal_display }</span>
+							<span className="domains__price">{ displayCost }</span>
 						</div>
 					</div>
 					<div>
@@ -734,6 +740,11 @@ export class RenderDomainsStep extends Component {
 								{ translate( 'Up to %(costDifference)s off for a domain.', {
 									args: { costDifference: formatCurrency( costDifference, domain.currency ) },
 								} ) }
+							</span>
+						) }
+						{ index === 0 && (
+							<span className="savings-message">
+								{ translate( 'First year free with an annual paid plan.' ) }
 							</span>
 						) }
 					</div>
@@ -832,7 +843,7 @@ export class RenderDomainsStep extends Component {
 						) }
 						{ domainsInCart.map( ( domain, i ) => (
 							<div key={ `row${ i }` } className="domains__domain-cart-row">
-								<DomainNameAndCost domain={ domain } />
+								<DomainNameAndCost domain={ domain } index={ i } />
 							</div>
 						) ) }
 					</div>
