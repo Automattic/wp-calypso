@@ -76,6 +76,7 @@ object CalypsoApps: BuildType({
 
 	// Incremented to 4 to make sure ETK updates continue to work:
 	params { param("build.prefix", "4") }
+	buildNumberPattern = "%build.prefix%.%build.counter%"
 	features {
 		perfmon {
 		}
