@@ -32,7 +32,7 @@ describe.only( DataHelper.createSuiteTitle( 'Fake editor load' ), function () {
 		// Simple sites do not have the ability to change SEO parameters.
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		await testAccount.authenticate( page, { waitUntilStable: true } );
 	} );
 
 	it( 'Navigate to the editor', async function () {

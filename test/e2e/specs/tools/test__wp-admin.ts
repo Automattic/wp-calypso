@@ -31,7 +31,7 @@ describe.only( DataHelper.createSuiteTitle( 'Fake wp-admin load' ), function () 
 		// Simple sites do not have the ability to change SEO parameters.
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		await testAccount.authenticate( page, { waitUntilStable: true } );
 	} );
 
 	it( 'Navigate to wp-admin', async function () {
