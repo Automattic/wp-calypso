@@ -18,9 +18,9 @@ import ImportReadyPreview from './internals/steps-repository/import-ready-previe
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
 import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
-import MigrationTrial from './internals/steps-repository/migration-trial';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
+import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -43,7 +43,7 @@ const importHostedSiteFlow: Flow = {
 			{ slug: 'sitePicker', component: SitePickerStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
-			{ slug: 'migrationTrial', component: MigrationTrial },
+			{ slug: 'trialAcknowledge', component: TrialAcknowledge },
 			{ slug: 'verifyEmail', component: ImportVerifyEmail },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: MigrationError },
@@ -148,7 +148,7 @@ const importHostedSiteFlow: Flow = {
 					return navigate( providedDependencies?.url as string );
 				}
 
-				case 'migrationTrial': {
+				case 'trialAcknowledge': {
 					switch ( providedDependencies?.action ) {
 						case 'verify-email':
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
@@ -162,7 +162,7 @@ const importHostedSiteFlow: Flow = {
 				}
 
 				case 'verifyEmail':
-					return navigate( `migrationTrial?${ urlQueryParams.toString() }` );
+					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
 
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
@@ -223,7 +223,7 @@ const importHostedSiteFlow: Flow = {
 					return navigate( `import?${ urlQueryParams.toString() }` );
 
 				case 'verifyEmail':
-				case 'migrationTrial':
+				case 'trialAcknowledge':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 			}
 		};

@@ -15,6 +15,7 @@ interface DateControlPickerProps {
 
 interface DateControlPickerShortcutsProps {
 	shortcutList: DateControlPickerShortcut[];
+	currentShortcut: string;
 	onClick: ( shortcut: DateControlPickerShortcut ) => void;
 }
 
@@ -31,6 +32,7 @@ interface DateControlPickerDateProps {
 	onStartChange: ( value: string ) => void;
 	onEndChange: ( value: string ) => void;
 	onApply: () => void;
+	onCancel: () => void;
 }
 
 export {

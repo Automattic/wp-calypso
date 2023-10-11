@@ -2,7 +2,7 @@ import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { createElement, createInterpolateElement } from '@wordpress/element';
+import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -16,7 +16,6 @@ import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscountPercentage,
 } from '../item-variation-picker/util';
-
 import './style.scss';
 
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
@@ -25,6 +24,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
 	const reduxDispatch = useDispatch();
 	const isFormLoading = FormStatus.READY !== formStatus;
+	const [ isClicked, setIsClicked ] = useState( false );
 	const { __ } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
@@ -32,6 +32,20 @@ export function CheckoutSidebarPlanUpsell() {
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
 	const variants = useGetProductVariants( plan );
+
+	function isBusy() {
+		// If the FormStatus is SUBMITTING and the user has not clicked this button, we want to return false for isBusy
+		if ( ! isClicked ) {
+			return false;
+		}
+
+		// If the FormStatus is LOADING, VALIDATING, or SUBMITTING, we want to return true for isBusy
+		if ( isFormLoading ) {
+			return true;
+		}
+		// If FormStatus is READY or COMPLETE, we want to return false for isBusy
+		return false;
+	}
 
 	if ( ! plan ) {
 		debug( 'no plan found in cart' );
@@ -63,7 +77,8 @@ export function CheckoutSidebarPlanUpsell() {
 		return null;
 	}
 
-	const onUpgradeClick = () => {
+	const onUpgradeClick = async () => {
+		setIsClicked( true );
 		if ( isFormLoading ) {
 			return;
 		}
@@ -79,7 +94,15 @@ export function CheckoutSidebarPlanUpsell() {
 				switching_to: newPlan.product_slug,
 			} )
 		);
-		replaceProductInCart( plan.uuid, newPlan );
+		try {
+			await replaceProductInCart( plan.uuid, newPlan );
+			setIsClicked( false );
+		} catch ( error ) {
+			// This will already be displayed to the user
+			// eslint-disable-next-line no-console
+			console.error( error );
+			setIsClicked( false );
+		}
 	};
 
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice(
@@ -153,7 +176,7 @@ export function CheckoutSidebarPlanUpsell() {
 			<PromoCardCTA
 				cta={ {
 					disabled: isFormLoading,
-					busy: isFormLoading,
+					busy: isBusy(),
 					text: __( 'Switch to a two-year plan' ),
 					action: onUpgradeClick,
 				} }

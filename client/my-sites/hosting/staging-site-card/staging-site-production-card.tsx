@@ -8,17 +8,19 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
+import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import {
 	useProductionSiteDetail,
 	ProductionSite,
 } from 'calypso/my-sites/hosting/staging-site-card/use-production-site-detail';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
-import { ConfirmationModal } from './confirmation-modal';
+import { SiteSyncCard } from './card-content/staging-sync-card';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 
 const ActionButtons = styled.div( {
@@ -27,7 +29,7 @@ const ActionButtons = styled.div( {
 } );
 
 const SyncActionsContainer = styled( ActionButtons )( {
-	marginTop: 12,
+	marginTop: 24,
 } );
 
 type CardProps = {
@@ -40,6 +42,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ loadingError, setLoadingError ] = useState( null );
+	const [ syncError, setSyncError ] = useState( null );
 	const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
 	const { data: productionSite, isLoading } = useProductionSiteDetail( siteId, {
 		enabled: ! disabled,
@@ -53,8 +56,14 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 			setLoadingError( error );
 		},
 	} );
+	const isSyncInProgress = useSelector( ( state ) =>
+		getIsSyncingInProgress( state, productionSite?.id as number )
+	);
 
 	const { pushToStaging } = usePushToStagingMutation( productionSite?.id as number, siteId, {
+		onSuccess: () => {
+			setSyncError( null );
+		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onError: ( error: any ) => {
 			dispatch(
@@ -62,11 +71,14 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setLoadingError( error );
+			setSyncError( error.message );
 		},
 	} );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSite?.id as number, siteId, {
+		onSuccess: () => {
+			setSyncError( null );
+		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onError: ( error: any ) => {
 			dispatch(
@@ -74,7 +86,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setLoadingError( error );
+			setSyncError( error.message );
 		},
 	} );
 
@@ -102,38 +114,22 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				<ActionButtons>
 					<Button
 						primary
-						href={ `/hosting-config/${ urlToSlug( productionSite.url ) }` }
-						disabled={ disabled }
+						onClick={ () => navigate( `/hosting-config/${ urlToSlug( productionSite.url ) }` ) }
+						disabled={ disabled || isSyncInProgress }
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
 				</ActionButtons>
 				{ isStagingSitesI3Enabled && (
 					<SyncActionsContainer>
-						<ConfirmationModal
-							onConfirm={ pushToStaging }
-							modalTitle={ translate( 'Confirm pulling changes from your production site.' ) }
-							modalMessage={ translate(
-								'Are you sure you want to pull your changes from your production site?'
-							) }
-							confirmLabel={ translate( 'Pull from production' ) }
-							cancelLabel={ translate( 'Cancel' ) }
-						>
-							<Gridicon icon="arrow-down" />
-							<span>{ translate( 'Pull from production' ) }</span>
-						</ConfirmationModal>
-						<ConfirmationModal
-							onConfirm={ pullFromStaging }
-							modalTitle={ translate( 'Confirm pushing changes to your production site.' ) }
-							modalMessage={ translate(
-								'Are you sure you want to push your changes to your production site?'
-							) }
-							confirmLabel={ translate( 'Push to production' ) }
-							cancelLabel={ translate( 'Cancel' ) }
-						>
-							<Gridicon icon="arrow-up" />
-							<span>{ translate( 'Push to production' ) }</span>
-						</ConfirmationModal>
+						<SiteSyncCard
+							type="staging"
+							productionSiteId={ productionSite.id }
+							onPush={ pullFromStaging }
+							onPull={ pushToStaging }
+							error={ syncError }
+							disabled={ disabled || isSyncInProgress }
+						/>
 					</SyncActionsContainer>
 				) }
 			</>

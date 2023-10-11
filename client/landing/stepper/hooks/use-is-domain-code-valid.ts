@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import sha256 from 'hash.js/lib/hash/sha/256';
 import wpcomRequest from 'wpcom-proxy-request';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 
 const VERSION = 2;
 
@@ -35,6 +36,7 @@ type DomainLockResponse = {
 	sale_cost?: number;
 	currency_code?: string;
 	tld?: string;
+	is_price_limit_exceeded?: boolean;
 };
 
 type DomainCodePair = { domain: string; auth: string };
@@ -51,19 +53,26 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 
 				// A `transferrability` property was added in D115244-code to check whether a mapped domain can be transferred
 				const isUnlocked =
-					[ 'transferrable', 'mapped_to_same_site_transferrable' ].includes(
+					[
+						domainAvailability.TRANSFERRABLE,
+						domainAvailability.TRANSFERRABLE_PREMIUM,
+						domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE,
+					].includes( availability.status ) ||
+					( [ domainAvailability.MAPPED, domainAvailability.MAPPED_OTHER_SITE_SAME_USER ].includes(
 						availability.status
-					) ||
-					( [ 'mapped_domain', 'mapped_to_other_site_same_user' ].includes( availability.status ) &&
-						'transferrable' === availability?.transferrability );
+					) &&
+						[ domainAvailability.TRANSFERRABLE, domainAvailability.TRANSFERRABLE_PREMIUM ].includes(
+							availability?.transferrability ?? ''
+						) );
 
-				if ( ! isUnlocked ) {
+				if ( ! isUnlocked || availability?.is_price_limit_exceeded === true ) {
 					return {
 						domain: pair.domain,
 						tld: availability.tld,
 						status: availability.status,
 						unlocked: false,
 						transferrability: availability.transferrability,
+						is_price_limit_exceeded: availability?.is_price_limit_exceeded,
 					};
 				}
 

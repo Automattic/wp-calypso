@@ -1,5 +1,6 @@
 import { TranslateResult, translate } from 'i18n-calypso';
 import { filePathValidator } from 'calypso/lib/validation';
+import { checkHostInput } from './utils';
 
 export enum FormMode {
 	Password,
@@ -104,7 +105,7 @@ export const validate = ( formState: FormState, mode: FormMode ): FormErrors => 
 		};
 	}
 	// host checking
-	if ( ! formState.host ) {
+	if ( ! formState.host || ! checkHostInput( formState.host ) ) {
 		formErrors.host = {
 			message: translate( 'Please enter a valid server address.' ),
 			waitForInteraction: true,

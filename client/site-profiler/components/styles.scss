@@ -1,5 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 
+html[dir="rtl"] {
+	.is-section-site-profiler .main .hosting-intro-block.globe-bg {
+		background-image: url(calypso/assets/images/illustrations/globe-flip.svg);
+	}
+}
+
 .is-section-site-profiler > #wpcom {
 	background: #fff;
 }
@@ -12,7 +18,9 @@
 	background: #fff;
 	padding: 0;
 	min-height: calc(100vh - 3.5rem);
+}
 
+.is-section-site-profiler .main {
 	h1 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		/* stylelint-disable-next-line */
@@ -255,5 +263,4 @@
 	.domain-result-block::after {
 		height: 210px;
 	}
-
 }

@@ -1,5 +1,5 @@
 export type Product = {
-	ID?: string;
+	ID?: number;
 	currency?: string;
 	price?: number;
 	title?: string;
@@ -11,6 +11,7 @@ export type Product = {
 	renewal_schedule?: string;
 	type?: string;
 	is_editable?: boolean;
+	tier?: number;
 };
 
 export type Query = {

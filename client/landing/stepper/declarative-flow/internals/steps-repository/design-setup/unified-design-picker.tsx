@@ -342,7 +342,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	useQueryThemes( 'wpcom', {
 		number: 1000,
-		...( ! isEnabled( 'design-picker/query-marketplace-themes' ) ? { tier: '-marketplace' } : {} ),
 	} );
 	useQueryProductsList();
 	useQuerySitePurchases( site ? site.ID : -1 );

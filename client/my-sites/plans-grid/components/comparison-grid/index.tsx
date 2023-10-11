@@ -20,7 +20,6 @@ import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
-import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
@@ -50,7 +49,6 @@ import type {
 	PlanSlug,
 	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
-import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 
 function DropdownIcon() {
 	return (
@@ -70,15 +68,6 @@ const JetpackIconContainer = styled.div`
 	display: inline-block;
 	vertical-align: middle;
 	line-height: 1;
-`;
-
-const PlanComparisonHeader = styled.h1`
-	.plans .step-container .step-container__content &&,
-	&& {
-		font-size: 2rem;
-		text-align: center;
-		margin: 48px 0;
-	}
 `;
 
 const Title = styled.div< { isHiddenInMobile?: boolean } >`
@@ -315,14 +304,12 @@ const FeatureFootnote = styled.span`
 
 type ComparisonGridProps = {
 	intervalType: string;
-	planTypeSelectorProps: PlanTypeSelectorProps;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
-	manageHref: string;
-	canUserPurchasePlan?: boolean | null;
-	selectedSiteSlug: string | null;
+	currentPlanManageHref?: string;
+	canUserManageCurrentPlan?: boolean | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
@@ -331,13 +318,6 @@ type ComparisonGridProps = {
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	/**
-	 * Due to the render heavy burden of the plans comparison grid the client consumer of this component, might chose to
-	 * hide the comparison grid with css but leave the render tree intact, mounted.
-	 * An isHidden prop is passed down the tree so that any elements that are not part of the
-	 * Normal react tree (like Popovers, Modals, etc) can also be forcibly hidden based on a tangible parameter
-	 */
-	isHidden?: boolean;
 };
 
 type ComparisonGridHeaderProps = {
@@ -349,9 +329,8 @@ type ComparisonGridHeaderProps = {
 	flowName?: string | null;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
-	manageHref: string;
-	canUserPurchasePlan?: boolean | null;
-	selectedSiteSlug: string | null;
+	currentPlanManageHref?: string;
+	canUserManageCurrentPlan?: boolean | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
@@ -381,11 +360,10 @@ const ComparisonGridHeaderCell = ( {
 	onPlanChange,
 	displayedGridPlans,
 	currentSitePlanSlug,
-	manageHref,
-	canUserPurchasePlan,
+	currentPlanManageHref,
+	canUserManageCurrentPlan,
 	isLaunchPage,
 	flowName,
-	selectedSiteSlug,
 	isLargeCurrency,
 	onUpgradeClick,
 	planActionOverrides,
@@ -466,8 +444,8 @@ const ComparisonGridHeaderCell = ( {
 			</div>
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }
-				manageHref={ manageHref }
-				canUserPurchasePlan={ canUserPurchasePlan }
+				currentPlanManageHref={ currentPlanManageHref }
+				canUserManageCurrentPlan={ canUserManageCurrentPlan }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				className={ getPlanClass( planSlug ) }
 				freePlan={ isFreePlan( planSlug ) }
@@ -476,7 +454,6 @@ const ComparisonGridHeaderCell = ( {
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
 				flowName={ flowName }
-				selectedSiteSlug={ selectedSiteSlug }
 				onUpgradeClick={ () => onUpgradeClick( planSlug ) }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
@@ -495,9 +472,8 @@ const ComparisonGridHeader = ( {
 	isFooter,
 	onPlanChange,
 	currentSitePlanSlug,
-	manageHref,
-	canUserPurchasePlan,
-	selectedSiteSlug,
+	currentPlanManageHref,
+	canUserManageCurrentPlan,
 	onUpgradeClick,
 	siteId,
 	planActionOverrides,
@@ -535,10 +511,9 @@ const ComparisonGridHeader = ( {
 					onPlanChange={ onPlanChange }
 					displayedGridPlans={ displayedGridPlans }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					manageHref={ manageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					currentPlanManageHref={ currentPlanManageHref }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					flowName={ flowName }
-					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
 					isLaunchPage={ isLaunchPage }
 					isLargeCurrency={ isLargeCurrency }
@@ -832,14 +807,12 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 
 const ComparisonGrid = ( {
 	intervalType,
-	planTypeSelectorProps,
 	isInSignup,
 	isLaunchPage,
 	flowName,
 	currentSitePlanSlug,
-	manageHref,
-	canUserPurchasePlan,
-	selectedSiteSlug,
+	currentPlanManageHref,
+	canUserManageCurrentPlan,
 	onUpgradeClick,
 	siteId,
 	planActionOverrides,
@@ -847,9 +820,7 @@ const ComparisonGrid = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
-	isHidden,
 }: ComparisonGridProps ) => {
-	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
@@ -1015,16 +986,6 @@ const ComparisonGrid = ( {
 
 	return (
 		<div className="plan-comparison-grid">
-			<PlanComparisonHeader className="wp-brand-font">
-				{ translate( 'Compare our plans and find yours' ) }
-			</PlanComparisonHeader>
-			{ isHidden ? null : (
-				<PlanTypeSelector
-					{ ...planTypeSelectorProps }
-					kind="interval"
-					plans={ displayedGridPlans.map( ( { planSlug } ) => planSlug ) }
-				/>
-			) }
 			<Grid isInSignup={ isInSignup }>
 				<ComparisonGridHeader
 					siteId={ siteId }
@@ -1035,9 +996,8 @@ const ComparisonGrid = ( {
 					flowName={ flowName }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					manageHref={ manageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					selectedSiteSlug={ selectedSiteSlug }
+					currentPlanManageHref={ currentPlanManageHref }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ onUpgradeClick }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
@@ -1107,9 +1067,8 @@ const ComparisonGrid = ( {
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					manageHref={ manageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
-					selectedSiteSlug={ selectedSiteSlug }
+					currentPlanManageHref={ currentPlanManageHref }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ onUpgradeClick }
 					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }
