@@ -147,6 +147,10 @@ object CalypsoApps: BuildType({
 				set -x
 				apps=""
 				for dir in ./apps/*/; do
+					# Only include apps which define the "teamcity:build-app" script.
+					if [ "$(cat ${'$'}dir/package.json | jq -r '.scripts["teamcity:build-app"]')" = "null" ] ; then
+						continue
+					fi
 					apps+="${'$'}(cat ${'$'}dir/package.json | jq -r '.name'),"
 				done
 
