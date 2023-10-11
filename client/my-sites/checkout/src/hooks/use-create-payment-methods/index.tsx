@@ -164,6 +164,7 @@ function useCreateBancontact( {
 			shouldLoad
 				? createBancontactMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
