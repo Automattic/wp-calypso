@@ -29,6 +29,7 @@ const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick }: Props ) => {
 				product_slug: storageAddOn.productSlug,
 				quantity: storageAddOn.quantity,
 				volume: 1,
+				extra: { feature_slug: selectedStorageOption },
 			};
 
 			if ( cartItemForPlan ) {
