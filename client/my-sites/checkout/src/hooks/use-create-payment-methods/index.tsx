@@ -23,6 +23,7 @@ import { useMemo } from 'react';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { CheckoutSubmitButtonContent } from '../../components/checkout-submit-button-content';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
@@ -63,8 +64,8 @@ export function useCreateCreditCard( {
 	isStripeLoading,
 	stripeLoadingError,
 	shouldUseEbanx,
-	shouldShowTaxFields = false,
-	activePayButtonText = undefined,
+	shouldShowTaxFields,
+	submitButtonContent,
 	initialUseForAllSubscriptions,
 	allowUseForAllSubscriptions,
 }: {
@@ -72,7 +73,7 @@ export function useCreateCreditCard( {
 	stripeLoadingError: StripeLoadingError;
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
-	activePayButtonText?: ReactNode;
+	submitButtonContent: ReactNode;
 	initialUseForAllSubscriptions?: boolean;
 	allowUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {
@@ -92,7 +93,7 @@ export function useCreateCreditCard( {
 						store: stripePaymentMethodStore,
 						shouldUseEbanx,
 						shouldShowTaxFields,
-						activePayButtonText,
+						submitButtonContent,
 						allowUseForAllSubscriptions,
 				  } )
 				: null,
@@ -101,7 +102,7 @@ export function useCreateCreditCard( {
 			stripePaymentMethodStore,
 			shouldUseEbanx,
 			shouldShowTaxFields,
-			activePayButtonText,
+			submitButtonContent,
 			allowUseForAllSubscriptions,
 		]
 	);
@@ -417,6 +418,7 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		shouldUseEbanx,
 		allowUseForAllSubscriptions,
+		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
 	const freePaymentMethod = useCreateFree();
