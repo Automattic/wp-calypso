@@ -71,6 +71,7 @@ function useCreateCreditCardMethod( store: CardStoreType, additionalArgs = {} ) 
 	const [ method ] = useState( () =>
 		createCreditCardMethod( {
 			store,
+			submitButtonContent: activePayButtonText,
 			...additionalArgs,
 		} )
 	);
