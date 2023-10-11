@@ -1,11 +1,4 @@
-import {
-	PLAN_ANNUAL_PERIOD,
-	PLAN_MONTHLY_PERIOD,
-	calculateMonthlyPrice,
-	type PlanSlug,
-	calculateYearlyPrice,
-	TERM_ANNUALLY,
-} from '@automattic/calypso-products';
+import { PLAN_MONTHLY_PERIOD, type PlanSlug } from '@automattic/calypso-products';
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
@@ -119,13 +112,13 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					 */
 					if ( purchasedPlan ) {
 						const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
-						const isYearly = purchasedPlan.billPeriodDays === PLAN_ANNUAL_PERIOD;
 
 						if ( isMonthly && monthlyPrice !== purchasedPlan.priceInteger ) {
 							monthlyPrice = purchasedPlan.priceInteger;
-							yearlyPrice = calculateYearlyPrice( TERM_ANNUALLY, purchasedPlan.priceInteger );
-						} else if ( isYearly && yearlyPrice !== purchasedPlan.priceInteger ) {
-							monthlyPrice = calculateMonthlyPrice( TERM_ANNUALLY, purchasedPlan.priceInteger );
+							yearlyPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
+						} else if ( yearlyPrice !== purchasedPlan.priceInteger ) {
+							const months = Math.round( purchasedPlan.billPeriodDays / PLAN_MONTHLY_PERIOD );
+							monthlyPrice = parseFloat( ( purchasedPlan.priceInteger / months ).toFixed( 2 ) );
 							yearlyPrice = purchasedPlan.priceInteger;
 						}
 					}
