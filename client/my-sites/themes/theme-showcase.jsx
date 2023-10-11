@@ -207,6 +207,8 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		let y = 0;
+
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
 			// If you are a larger screen where the theme info is displayed horizontally.
 			if ( window.innerWidth > 600 ) {
@@ -222,9 +224,10 @@ class ThemeShowcase extends Component {
 			const yOffset = -( headerHeight + screenOptionTab ); // Total height of admin bar and screen options on mobile.
 			const elementBoundary = this.scrollRef.current.getBoundingClientRect();
 
-			const y = elementBoundary.top + window.pageYOffset + yOffset;
-			window.scrollTo( { top: y } );
+			y = elementBoundary.top + window.pageYOffset + yOffset;
 		}
+
+		window.scrollTo( { top: y } );
 	};
 
 	doSearch = ( searchBoxContent ) => {
