@@ -98,6 +98,21 @@ object CalypsoApps: BuildType({
 		}
 	}
 
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+			triggerRules = """
+				-:test/e2e/**
+				-:docs/**.md
+				-:comment=stress test:**
+				-:packages/calypso-e2e/**
+			""".trimIndent()
+		}
+	}
+
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
