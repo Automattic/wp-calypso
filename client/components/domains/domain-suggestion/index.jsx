@@ -18,6 +18,7 @@ class DomainSuggestion extends Component {
 		domain: PropTypes.string,
 		hidePrice: PropTypes.bool,
 		showChevron: PropTypes.bool,
+		cart: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -34,6 +35,7 @@ class DomainSuggestion extends Component {
 			isSignupStep,
 			showStrikedOutPrice,
 			isReskinned,
+			cart,
 		} = this.props;
 
 		if ( hidePrice ) {
@@ -52,6 +54,7 @@ class DomainSuggestion extends Component {
 				isSignupStep={ isSignupStep }
 				showStrikedOutPrice={ showStrikedOutPrice }
 				isReskinned={ isReskinned }
+				cart={ cart }
 			/>
 		);
 	}

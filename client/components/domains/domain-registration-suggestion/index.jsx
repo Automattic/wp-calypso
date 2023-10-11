@@ -435,6 +435,7 @@ class DomainRegistrationSuggestion extends Component {
 				isFeatured={ isFeatured }
 				showStrikedOutPrice={ showStrikedOutPrice }
 				isReskinned={ isReskinned }
+				cart={ this.props?.cart }
 			>
 				{ this.renderDomain() }
 				{ this.renderMatchReason() }

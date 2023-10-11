@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
@@ -62,7 +63,7 @@ class DomainProductPrice extends Component {
 	}
 
 	renderReskinFreeWithPlanText() {
-		const { isMappingProduct, translate, isCurrentPlan100YearPlan } = this.props;
+		const { isMappingProduct, translate, isCurrentPlan100YearPlan, cart } = this.props;
 
 		const domainPriceElement = ( message ) => (
 			<div className="domain-product-price__free-text">{ message }</div>
@@ -76,6 +77,10 @@ class DomainProductPrice extends Component {
 			return domainPriceElement( translate( 'Free with your plan' ) );
 		}
 
+		if ( getDomainRegistrations( cart )?.length > 0 ) {
+			return domainPriceElement( '' );
+		}
+
 		const message = translate( '{{span}}Free for the first year with annual paid plans{{/span}}', {
 			components: { span: <span className="domain-product-price__free-price" /> },
 		} );
@@ -87,6 +92,9 @@ class DomainProductPrice extends Component {
 		const priceText = this.props.translate( '%(cost)s/year', {
 			args: { cost: this.props.price },
 		} );
+		if ( this.props.cart && getDomainRegistrations( this.props?.cart )?.length > 0 ) {
+			return <div className="domain-product-price__price">{ priceText }</div>;
+		}
 
 		return (
 			<div className="domain-product-price__price">
