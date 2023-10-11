@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import page from 'page';
@@ -8,6 +9,9 @@ import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import NavigationArrows from '../navigation-arrows';
+import IntervalDropdown from '../stats-interval-dropdown';
+import StatsDateControl from '../stats-date-control';
+import Intervals from 'calypso/blocks/stats-navigation/intervals';
 
 import './style.scss';
 
@@ -83,21 +87,60 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	render() {
-		const { children, date, moment, period, showArrows, disablePreviousArrow, disableNextArrow } =
-			this.props;
+		const {
+			children,
+			date,
+			moment,
+			period,
+			showArrows,
+			disablePreviousArrow,
+			disableNextArrow,
+			queryParams,
+			slug,
+			pathTemplate,
+			onChangeChartQuantity,
+		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
+		// For the new date picker
+		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
 
 		return (
 			<div className="stats-period-navigation">
 				<div className="stats-period-navigation__children">{ children }</div>
-				{ showArrows && (
-					<NavigationArrows
-						disableNextArrow={ disableNextArrow || isToday }
-						disablePreviousArrow={ disablePreviousArrow }
-						onClickNext={ this.handleArrowNext }
-						onClickPrevious={ this.handleArrowPrevious }
-					/>
+				{ isDateControlEnabled ? (
+					<div className="stats-period-navigation__date-control">
+						<StatsDateControl
+							slug={ slug }
+							queryParams={ queryParams }
+							period={ period }
+							pathTemplate={ pathTemplate }
+							onChangeChartQuantity={ onChangeChartQuantity }
+						/>
+						<div className="stats-period-navigation__period-control">
+							{ showArrows && (
+								<NavigationArrows
+									disableNextArrow={ disableNextArrow || isToday }
+									disablePreviousArrow={ disablePreviousArrow }
+									onClickNext={ this.handleArrowNext }
+									onClickPrevious={ this.handleArrowPrevious }
+								/>
+							) }
+							<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
+						</div>
+					</div>
+				) : (
+					<>
+						{ showArrows && (
+							<NavigationArrows
+								disableNextArrow={ disableNextArrow || isToday }
+								disablePreviousArrow={ disablePreviousArrow }
+								onClickNext={ this.handleArrowNext }
+								onClickPrevious={ this.handleArrowPrevious }
+							/>
+						) }
+						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+					</>
 				) }
 			</div>
 		);

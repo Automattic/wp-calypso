@@ -102,7 +102,7 @@ const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDat
 
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
-			<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
+			{ /* <IntervalDropdown period={ period } pathTemplate={ pathTemplate } /> */ }
 			<DateControlPicker
 				shortcutList={ shortcutList }
 				onShortcut={ onShortcutHandler }

@@ -21,4 +21,13 @@
 		font-size: $font-body-small;
 		line-height: 16px;
 	}
+
+	.stats-period-navigation__date-control {
+		display: flex;
+		flex-flow: column nowrap;
+
+		.stats-period-navigation__period-control {
+			display: flex;
+		}
+	}
 }
