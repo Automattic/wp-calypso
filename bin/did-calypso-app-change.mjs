@@ -51,8 +51,7 @@ async function downloadPrevBuild( appSlug, dir ) {
 	const prevBuildZip = `${ dir }/prev-archive-download.zip`;
 	const stream = createWriteStream( prevBuildZip );
 
-	// TODO change branch to trunk eventually.
-	const prevBuildUrl = `${ process.env.tc_sever_url }/repository/download/calypso_calypso_WPComPlugins_Build_Plugins/${ appSlug }-release-build.tcbuildtag/${ appSlug }.zip?guest=1&branch=combined-calypso-apps`;
+	const prevBuildUrl = `${ process.env.tc_sever_url }/repository/download/calypso_calypso_WPComPlugins_Build_Plugins/${ appSlug }-release-build.tcbuildtag/${ appSlug }.zip?guest=1&branch=trunk`;
 	console.info( `Fetching previous release build for ${ appSlug } from ${ prevBuildUrl }` );
 
 	const { body, status } = await fetch( prevBuildUrl );
