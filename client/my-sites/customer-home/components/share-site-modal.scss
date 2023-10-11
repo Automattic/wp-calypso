@@ -152,10 +152,6 @@
 	}
 
 	.popover__arrow {
-		border-color: var(--color-neutral-60);
-
-		&::before {
-			display: none;
-		}
+		display: none;
 	}
 }
