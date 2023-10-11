@@ -229,6 +229,7 @@ function useCreateIdeal( {
 			shouldLoad
 				? createIdealMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
