@@ -41,7 +41,7 @@ function SlantedPatternSVG() {
 					<rect width="722" height="40" fill="white" />
 				</clipPath>
 			</defs>
-			<rect width="100%" height="100%" fill="url(#slantedPattern)" clip-path="url(#clip_slanted)" />
+			<rect width="100%" height="100%" fill="url(#slantedPattern)" clipPath="url(#clip_slanted)" />
 		</svg>
 	);
 }

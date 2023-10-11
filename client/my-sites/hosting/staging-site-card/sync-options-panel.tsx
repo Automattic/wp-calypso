@@ -47,15 +47,24 @@ export default function SyncOptionsPanel( {
 	disabled: boolean;
 	onChange: ( items: CheckboxOptionItem[] ) => void;
 } ) {
-	const initialItemsMap = items
-		.sort( ( a ) => ( a.isDangerous ? 1 : -1 ) )
-		.reduce(
-			( acc, item ) => {
-				acc[ item.name ] = item;
-				return acc;
-			},
-			{} as { [ key: string ]: CheckboxOptionItem }
-		);
+	const initialItemsMap = useMemo(
+		() =>
+			items
+				.sort( ( a, b ) => {
+					if ( a.isDangerous === b.isDangerous ) {
+						return 0;
+					}
+					return a.isDangerous ? 1 : -1;
+				} )
+				.reduce(
+					( acc, item ) => {
+						acc[ item.name ] = { ...item };
+						return acc;
+					},
+					{} as { [ key: string ]: CheckboxOptionItem }
+				),
+		[ items ]
+	);
 
 	const [ optionItemsMap, setOptionItemsMap ] = useState( initialItemsMap );
 
@@ -63,14 +72,19 @@ export default function SyncOptionsPanel( {
 		if ( reset ) {
 			setOptionItemsMap(
 				items
-				.sort( ( a ) => ( a.isDangerous ? 1 : -1 ) )
-				.reduce(
-					( acc, item ) => {
-						acc[ item.name ] = item;
-						return acc;
-					},
-					{} as { [ key: string ]: CheckboxOptionItem }
-				);
+					.sort( ( a, b ) => {
+						if ( a.isDangerous === b.isDangerous ) {
+							return 0;
+						}
+						return a.isDangerous ? 1 : -1;
+					} )
+					.reduce(
+						( acc, item ) => {
+							acc[ item.name ] = { ...item };
+							return acc;
+						},
+						{} as { [ key: string ]: CheckboxOptionItem }
+					)
 			);
 		}
 	}, [ reset, items ] );
