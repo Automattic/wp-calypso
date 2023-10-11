@@ -65,6 +65,10 @@ object WPComTests : Project({
 	// Just desktop to start
 	buildType(jetpackAtomicDeploymentE2eBuildType("desktop", "81015cf6-27e7-40bd-a52d-df6bd19ffb01"));
 
+	// E2E Tests for smoke testing each new Jetpack build on Atomic
+	// Also just desktop to start
+	buildType(jetpackAtomicBuildSmokeE2eBuildType("desktop", "f39587ab-f526-42aa-a88b-814702135af3"));
+
 	buildType(I18NTests);
 	buildType(P2E2ETests)
 })
@@ -286,7 +290,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
-		description = "Runs E2E tests validating the deployment of Jetpack on Atomic sites on $targetDevice viewport"
+		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations."
 		
 		artifactRules = defaultE2eArtifactRules();
 
@@ -329,6 +333,48 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		}
 	});
 }
+
+fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
+	return BuildType({
+		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
+		uuid = buildUuid
+		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
+		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
+		
+		artifactRules = defaultE2eArtifactRules();
+
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
+		params {
+			defaultE2eParams()
+			calypsoBaseUrlParam()
+			param("env.VIEWPORT_NAME", "$targetDevice")
+			param("env.JETPACK_TARGET", "wpcom-deployment")
+			param("env.TEST_ON_ATOMIC", "true")
+			param("env.ATOMIC_VARIATION", "mixed")
+		}
+
+		steps {
+			prepareE2eEnvironment()
+
+			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
+
+			collectE2eResults()
+		}
+
+		features {
+			perfmon {}
+		}
+
+		failureConditions {
+			defaultE2eFailureConditions()
+		}
+	});
+}
+
 
 private object I18NTests : E2EBuildType(
 	buildId = "WPComTests_i18n",
