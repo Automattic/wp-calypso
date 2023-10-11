@@ -39,7 +39,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { loadExperimentAssignment, ProvideExperimentData } from 'calypso/lib/explat';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import wpcom from 'calypso/lib/wp';
@@ -945,57 +945,67 @@ export class RenderDomainsStep extends Component {
 		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? null;
 
 		return (
-			<RegisterDomainStep
-				key="domainForm"
-				path={ this.props.path }
-				initialState={ initialState }
-				onAddDomain={ this.handleAddDomain }
-				isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
-				isCartPendingUpdateDomain={ this.state.isCartPendingUpdateDomain }
-				products={ this.props.productsList }
-				basePath={ this.props.path }
-				promoTlds={ promoTlds }
-				mapDomainUrl={ this.getUseYourDomainUrl() }
-				otherManagedSubdomains={ this.props.otherManagedSubdomains }
-				otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
-				transferDomainUrl={ this.getUseYourDomainUrl() }
-				useYourDomainUrl={ this.getUseYourDomainUrl() }
-				onAddMapping={ this.handleAddMapping.bind( this, { sectionName: 'domainForm' } ) }
-				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerUnavailableOption={ ! this.props.isDomainOnly }
-				isDomainOnly={ this.props.isDomainOnly }
-				analyticsSection={ this.getAnalyticsSection() }
-				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ includeWordPressDotCom }
-				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
-				isSignupStep
-				isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
-				showExampleSuggestions={ showExampleSuggestions }
-				suggestion={ initialQuery }
-				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( {
-					isSignup: true,
-					isDomainOnly: this.props.isDomainOnly,
-					flowName: this.props.flowName,
-				} ) }
-				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
-				selectedSite={ this.props.selectedSite }
-				showSkipButton={ this.props.showSkipButton }
-				onSkip={ this.handleSkip }
-				hideFreePlan={ this.handleSkip }
-				forceHideFreeDomainExplainerAndStrikeoutUi={
-					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
-				}
-				isReskinned={ this.props.isReskinned }
-				reskinSideContent={ this.getSideContent() }
-				isInLaunchFlow={ 'launch-site' === this.props.flowName }
-				promptText={
-					this.isHostingFlow()
-						? this.props.translate( 'Stand out with a short and memorable domain' )
-						: undefined
-				}
-				wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-			/>
+			<ProvideExperimentData
+				name="calypso_domains_hide_free_subdomain_onboarding_pm"
+				options={ { isEligible: this.props.flowName === 'onboarding-pm' } }
+			>
+				{ ( isLoadingExperiment, experimentAssignment ) => (
+					<RegisterDomainStep
+						key="domainForm"
+						path={ this.props.path }
+						initialState={ initialState }
+						onAddDomain={ this.handleAddDomain }
+						isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
+						isCartPendingUpdateDomain={ this.state.isCartPendingUpdateDomain }
+						products={ this.props.productsList }
+						basePath={ this.props.path }
+						promoTlds={ promoTlds }
+						mapDomainUrl={ this.getUseYourDomainUrl() }
+						otherManagedSubdomains={ this.props.otherManagedSubdomains }
+						otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
+						transferDomainUrl={ this.getUseYourDomainUrl() }
+						useYourDomainUrl={ this.getUseYourDomainUrl() }
+						onAddMapping={ this.handleAddMapping.bind( this, { sectionName: 'domainForm' } ) }
+						onSave={ this.handleSave.bind( this, 'domainForm' ) }
+						offerUnavailableOption={ ! this.props.isDomainOnly }
+						isDomainOnly={ this.props.isDomainOnly }
+						analyticsSection={ this.getAnalyticsSection() }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						includeWordPressDotCom={
+							experimentAssignment?.variationName === 'treatment' ? false : includeWordPressDotCom
+						}
+						includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
+						isSignupStep
+						isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
+						showExampleSuggestions={ showExampleSuggestions }
+						suggestion={ initialQuery }
+						designType={ this.getDesignType() }
+						vendor={ getSuggestionsVendor( {
+							isSignup: true,
+							isDomainOnly: this.props.isDomainOnly,
+							flowName: this.props.flowName,
+						} ) }
+						deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
+						selectedSite={ this.props.selectedSite }
+						showSkipButton={ this.props.showSkipButton }
+						onSkip={ this.handleSkip }
+						hideFreePlan={ this.handleSkip }
+						forceHideFreeDomainExplainerAndStrikeoutUi={
+							this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+						}
+						isReskinned={ this.props.isReskinned }
+						reskinSideContent={ this.getSideContent() }
+						isInLaunchFlow={ 'launch-site' === this.props.flowName }
+						promptText={
+							this.isHostingFlow()
+								? this.props.translate( 'Stand out with a short and memorable domain' )
+								: undefined
+						}
+						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
+						pauseAndSaveSearch={ isLoadingExperiment }
+					/>
+				) }
+			</ProvideExperimentData>
 		);
 	};
 
