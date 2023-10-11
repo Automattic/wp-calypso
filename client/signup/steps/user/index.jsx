@@ -665,6 +665,7 @@ export class UserStep extends Component {
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
 				customizedActionButtons={ this.getCustomizedActionButtons() }
+				isSticky={ this.getIsSticky() }
 			/>
 		);
 	}
