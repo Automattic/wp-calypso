@@ -318,6 +318,42 @@ export type FeatureObject = FeatureObjectPackaged;
 
 export type FeatureList = FeatureListPackaged;
 
+const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
+	switch ( variation ) {
+		case 'woo':
+			return i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for standard WooCommerce payment features',
+				{
+					args: { commission },
+				}
+			);
+
+		case 'all':
+			return i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for all payment features',
+				{
+					args: { commission },
+				}
+			);
+
+		case 'regular':
+			return i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for standard payment features',
+				{
+					args: { commission },
+				}
+			);
+
+		default:
+			return i18n.translate(
+				'%(commission)d%% commission fee (plus standard processing fee) for payments',
+				{
+					args: { commission },
+				}
+			);
+	}
+};
+
 export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BLANK ]: {
 		getSlug: () => FEATURE_BLANK,
@@ -1690,49 +1726,23 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES ]: {
 		getSlug: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 		getTitle: () => i18n.translate( 'Transaction fees for payments' ),
-		getDescription: () =>
-			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
-		getTitle: () =>
-			i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for payments',
-				{
-					args: { commission: 10 },
-				}
-			),
-		get getAlternativeTitle() {
-			return this.getTitle();
-		},
+		getTitle: () => getTransactionFeeCopy( 10 ),
+		getAlternativeTitle: () => getTransactionFeeCopy( 10 ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
-		getTitle: () =>
-			i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for payments',
-				{
-					args: { commission: 8 },
-				}
-			),
-		get getAlternativeTitle() {
-			return this.getTitle();
-		},
+		getTitle: () => getTransactionFeeCopy( 8 ),
+		getAlternativeTitle: () => getTransactionFeeCopy( 8 ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
-		getTitle: () =>
-			i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for payments',
-				{
-					args: { commission: 4 },
-				}
-			),
-		get getAlternativeTitle() {
-			return this.getTitle();
-		},
+		getTitle: () => getTransactionFeeCopy( 4 ),
+		getAlternativeTitle: () => getTransactionFeeCopy( 4 ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
@@ -1755,49 +1765,28 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
-		getTitle: () =>
-			i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for standard WooCommerce payment features',
-				{
-					args: { commission: 0 },
-				}
-			),
+		getTitle: () => getTransactionFeeCopy( 0, 'woo' ),
 		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
-		getTitle: () =>
-			i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for all payment features',
-				{
-					args: { commission: 0 },
-				}
-			),
-		get getAlternativeTitle() {
-			return this.getTitle();
-		},
+		getTitle: () => getTransactionFeeCopy( 0, 'all' ),
+		getAlternativeTitle: () => getTransactionFeeCopy( 0, 'all' ),
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
-		getTitle: () =>
-			i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for standard payment features',
-				{
-					args: { commission: 2 },
-				}
-			),
-		get getAlternativeTitle() {
-			return i18n.translate(
-				'%(stdcommission)d%% commission fee (plus standard processing fee) for standard payment features.{{br /}} %(woocommission)d%% commission fee (plus standard processing fee) for standard WooCommerce payment features',
-				{
-					args: { stdcommission: 2, woocommission: 0 },
-					components: { br: <br /> },
-				}
+		getTitle: () => getTransactionFeeCopy( 2, 'regular' ),
+		getAlternativeTitle: () => {
+			return (
+				<>
+					{ getTransactionFeeCopy( 2, 'regular' ) }
+					<br />
+					{ getTransactionFeeCopy( 0, 'woo' ) }
+				</>
 			);
 		},
-
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {

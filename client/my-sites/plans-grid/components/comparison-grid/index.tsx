@@ -644,7 +644,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 										</span>
 									</Plans2023Tooltip>
 									<span className="plan-comparison-grid__plan-conditional-title">
-										{ planPaymentTransactionFees?.getAlternativeTitle }
+										{ planPaymentTransactionFees?.getAlternativeTitle?.() }
 									</span>
 								</>
 							) : (
