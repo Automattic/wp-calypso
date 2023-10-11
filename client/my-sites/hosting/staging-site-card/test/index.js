@@ -16,6 +16,9 @@ const INITIAL_STATE = {
 	sites: {
 		items: {},
 	},
+	ui: {
+		selectedSiteId: 1,
+	},
 };
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );

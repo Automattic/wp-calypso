@@ -1,5 +1,6 @@
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, calendar } from '@wordpress/icons';
 import moment from 'moment';
 import page from 'page';
 import qs from 'qs';
@@ -49,6 +50,10 @@ const DateControlPicker = ( {
 		page( href );
 	};
 
+	const handleOnCancel = () => {
+		togglePopoverOpened( false );
+	};
+
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
 		// Shared date math.
 		const calcNewDateWithOffset = ( date: Date, offset: number ): Date => {
@@ -79,35 +84,33 @@ const DateControlPicker = ( {
 	};
 
 	return (
-		<>
-			<Button
-				className="stats-date-control-picker__button"
-				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
-				ref={ infoReferenceElement }
-			>
+		<div className="stats-date-control-picker">
+			<Button onClick={ () => togglePopoverOpened( ! popoverOpened ) } ref={ infoReferenceElement }>
 				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
+				<Icon className="gridicon" icon={ calendar } />
 			</Button>
 			<Popover
 				position="bottom"
 				context={ infoReferenceElement?.current }
 				isVisible={ popoverOpened }
-				// TODO: Remove this inline CSS.
-				style={ { minWidth: '260px' } }
 			>
-				<DateControlPickerDate
-					startDate={ inputStartDate }
-					endDate={ inputEndDate }
-					onStartChange={ changeStartDate }
-					onEndChange={ changeEndDate }
-					onApply={ handleOnApply }
-				/>
-				<DateControlPickerShortcuts
-					shortcutList={ shortcutList }
-					currentShortcut={ currentShortcut }
-					onClick={ handleShortcutSelected }
-				/>
+				<div className="stats-date-control-picker__popover-content">
+					<DateControlPickerDate
+						startDate={ inputStartDate }
+						endDate={ inputEndDate }
+						onStartChange={ changeStartDate }
+						onEndChange={ changeEndDate }
+						onApply={ handleOnApply }
+						onCancel={ handleOnCancel }
+					/>
+					<DateControlPickerShortcuts
+						shortcutList={ shortcutList }
+						currentShortcut={ currentShortcut }
+						onClick={ handleShortcutSelected }
+					/>
+				</div>
 			</Popover>
-		</>
+		</div>
 	);
 };
 

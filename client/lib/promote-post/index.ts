@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
+import debugFactory from 'debug';
 import { translate } from 'i18n-calypso/types';
 import { Dispatch } from 'redux';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
@@ -16,6 +17,9 @@ import {
 	isJetpackMinimumVersion,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+
+const debug = debugFactory( 'calypso:promote-post' );
+
 const DSP_ERROR_NO_LOCAL_USER = 'no_local_user';
 const DSP_URL_CHECK_UPSERT_USER = '/user/check';
 
@@ -68,36 +72,34 @@ declare global {
 	}
 }
 
-const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '22.9.blaze';
-
 const getWidgetDSPJSURL = () => {
-	let dspWidgetJS: string = shouldUseTestWidgetURL()
-		? config( 'dsp_widget_js_test_src' )
-		: config( 'dsp_widget_js_src' );
-
-	if ( config.isEnabled( 'promote-post/widget-i2' ) ) {
-		dspWidgetJS = dspWidgetJS.replace( '/promote/', '/promote-v2/' );
-	}
-	return dspWidgetJS;
+	return config( 'dsp_widget_js_src' );
 };
 
-export async function loadDSPWidgetJS(): Promise< void > {
+export async function loadDSPWidgetJS(): Promise< boolean > {
 	// check if already loaded
 	if ( window.BlazePress ) {
-		return;
+		debug( 'loadDSPWidgetJS: [Loaded] widget assets already loaded' );
+		return true;
 	}
 
-	let src = `${ getWidgetDSPJSURL() }?ver=${ Math.round( Date.now() / ( 1000 * 60 * 60 ) ) }`;
+	const src = `${ getWidgetDSPJSURL() }?ver=${ Math.round( Date.now() / ( 1000 * 60 * 60 ) ) }`;
 
-	if ( shouldUseTestWidgetURL() || getWidgetDSPJSURL().startsWith( 'https://dsp.wp.com' ) ) {
-		src = `${ getWidgetDSPJSURL() }`;
+	try {
+		await loadScript( src );
+		debug( 'loadDSPWidgetJS: [Loaded]', src );
+
+		// Load the strings so that translations get associated with the module and loaded properly.
+		// The module will assign the placeholder component to `window.BlazePress.strings` as a side-effect,
+		// in order to ensure that translate calls are not removed from the production build.
+		await import( './string' );
+		debug( 'loadDSPWidgetJS: [Translation Loaded]' );
+
+		return true;
+	} catch ( error ) {
+		debug( 'loadDSPWidgetJS: [Load Error] the script failed to load: ', error );
+		return false;
 	}
-
-	await loadScript( src );
-	// Load the strings so that translations get associated with the module and loaded properly.
-	// The module will assign the placeholder component to `window.BlazePress.strings` as a side-effect,
-	// in order to ensure that translate calls are not removed from the production build.
-	await import( './string' );
 }
 
 const shouldHideGoToCampaignButton = () => {
@@ -110,6 +112,18 @@ const getWidgetOptions = () => {
 	return {
 		hideGoToCampaignsButton: shouldHideGoToCampaignButton(),
 	};
+};
+
+export const getDSPOrigin = () => {
+	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+		return 'jetpack';
+	} else if ( isWpMobileApp() ) {
+		return 'wp-mobile-app';
+	} else if ( isWcMobileApp() ) {
+		return 'wc-mobile-app';
+	}
+
+	return 'calypso';
 };
 
 export async function showDSP(
@@ -125,11 +139,20 @@ export async function showDSP(
 	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string,
 	isV2?: boolean,
-	recordDSPEvent?: ( name: string, props: any ) => void
+	dispatch?: Dispatch
 ) {
 	await loadDSPWidgetJS();
+
 	return new Promise( ( resolve, reject ) => {
-		if ( window.BlazePress ) {
+		if ( ! window.BlazePress ) {
+			dispatch?.(
+				recordTracksEvent( 'calypso_dsp_widget_failed_to_load', { origin: getDSPOrigin() } )
+			);
+			reject( false );
+			return;
+		}
+
+		try {
 			const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 
 			window.BlazePress.render( {
@@ -143,7 +166,10 @@ export async function showDSP(
 				// todo fetch rlt somehow
 				authToken: 'wpcom-proxy-request',
 				template: 'article',
-				onLoaded: () => resolve( true ),
+				onLoaded: () => {
+					debug( 'showDSP: [Widget loaded]' );
+					resolve( true );
+				},
 				onClose: onClose,
 				translateFn: translateFn,
 				localizeUrlFn: localizeUrlFn,
@@ -163,26 +189,21 @@ export async function showDSP(
 					: undefined,
 				isV2,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
-				recordDSPEvent,
+				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch ) : undefined,
 				options: getWidgetOptions(),
 			} );
-		} else {
+
+			debug( 'showDSP: [Widget started]' );
+		} catch ( error ) {
+			debug( 'showDSP: [Widget start error] the widget render method execution failed: ', error );
+
+			dispatch?.(
+				recordTracksEvent( 'calypso_dsp_widget_failed_to_start', { origin: getDSPOrigin() } )
+			);
 			reject( false );
 		}
 	} );
 }
-
-export const getDSPOrigin = () => {
-	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-		return 'jetpack';
-	} else if ( isWpMobileApp() ) {
-		return 'wp-mobile-app';
-	} else if ( isWcMobileApp() ) {
-		return 'wc-mobile-app';
-	}
-
-	return 'calypso';
-};
 
 /**
  * Add tracking when launching the DSP widget, in both tracks event and MC stats.

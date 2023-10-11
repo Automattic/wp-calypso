@@ -11,12 +11,7 @@ import { useDispatch } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import {
-	showDSP,
-	usePromoteWidget,
-	PromoteWidgetStatus,
-	getRecordDSPEventHandler,
-} from 'calypso/lib/promote-post';
+import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
@@ -41,10 +36,9 @@ export function goToOriginalEndpoint() {
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	const dispatch = useDispatch();
-
 	const { isVisible = false, keyValue, siteId } = props;
 	const [ isLoading, setIsLoading ] = useState( true );
+	const [ error, setError ] = useState( false );
 	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
 	const [ showCancelButton, setShowCancelButton ] = useState( true );
 	const [ hiddenHeader, setHiddenHeader ] = useState( true );
@@ -58,6 +52,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const { closeModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const queryClient = useQueryClient();
 	const localeSlug = useLocale();
+	const dispatch = useDispatch();
 
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
@@ -93,21 +88,26 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				}
 				const source = props.source || 'blazepress';
 
-				await showDSP(
-					selectedSiteSlug,
-					props.siteId,
-					props.postId,
-					onClose,
-					source,
-					translate,
-					localizeUrl,
-					widgetContainer.current,
-					handleShowCancel,
-					handleShowTopBar,
-					localeSlug,
-					config.isEnabled( 'promote-post/widget-i2' ),
-					getRecordDSPEventHandler( dispatch )
-				);
+				try {
+					await showDSP(
+						selectedSiteSlug,
+						props.siteId,
+						props.postId,
+						onClose,
+						source,
+						translate,
+						localizeUrl,
+						widgetContainer.current,
+						handleShowCancel,
+						handleShowTopBar,
+						localeSlug,
+						config.isEnabled( 'promote-post/widget-i2' ),
+						dispatch
+					);
+				} catch ( error ) {
+					setError( true );
+					setHiddenHeader( false );
+				}
 				setIsLoading( false );
 			} )();
 	}, [ isVisible, props.postId, props.siteId, selectedSiteSlug ] );
@@ -149,7 +149,15 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							className={ classNames( 'blazepress-widget__header-bar', {
 								'no-back-button': ! showCancelButton,
 							} ) }
-							onBackClick={ () => setShowCancelDialog( true ) }
+							onBackClick={ () => {
+								if ( error ) {
+									// Close without dialog if we are displaying the error page (no need to confirmation there)
+									setShowCancelDialog( false );
+									onClose();
+								} else {
+									setShowCancelDialog( true );
+								}
+							} }
 						>
 							<h2>{ translate( 'Blaze - Powered by Jetpack' ) }</h2>
 						</BlankCanvas.Header>
@@ -171,11 +179,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						</div>
 					) }
 
-					<div
-						className={
-							isLoading ? 'blazepress-widget__content loading' : 'blazepress-widget__content'
-						}
-					>
+					<div className={ classNames( 'blazepress-widget__content', { loading: isLoading } ) }>
 						<Dialog
 							showCloseIcon={ true }
 							additionalOverlayClassNames="blazepress-widget"
@@ -191,6 +195,26 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							</p>
 						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
+						{ error && (
+							<div className="error-notice">
+								<h3 className="error-notice__title">
+									{ translate( 'Oops, something went wrong' ) }
+								</h3>
+								<p className="error-notice__body">
+									{ translate( 'Please try again soon or {{a}}contact support{{/a}} for help.', {
+										components: {
+											a: (
+												<a
+													href="https://wordpress.com/help/contact"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									} ) }
+								</p>
+							</div>
+						) }
 						<div className="blazepress-widget__widget-container" ref={ widgetContainer }></div>
 					</div>
 				</BlankCanvas>

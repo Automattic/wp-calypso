@@ -27,7 +27,7 @@ import type { PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
-	canUserPurchasePlan?: boolean | null;
+	canUserManageCurrentPlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
 	trialPlan?: boolean;
@@ -195,7 +195,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	handleUpgradeButtonClick,
 	planSlug,
 	currentPlanManageHref,
-	canUserPurchasePlan,
+	canUserManageCurrentPlan,
 	currentSitePlanSlug,
 	buttonText,
 	planActionOverrides,
@@ -210,7 +210,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	handleUpgradeButtonClick: () => void;
 	planSlug: string;
 	currentPlanManageHref?: string;
-	canUserPurchasePlan?: boolean | null;
+	canUserManageCurrentPlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -253,7 +253,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				href={ currentPlanManageHref }
 				disabled={ ! currentPlanManageHref }
 			>
-				{ canUserPurchasePlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
+				{ canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
 	}
@@ -364,7 +364,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( {
 	availableForPurchase = true,
-	canUserPurchasePlan,
+	canUserManageCurrentPlan,
 	className,
 	currentSitePlanSlug,
 	freePlan = false,
@@ -499,7 +499,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
 			currentPlanManageHref={ currentPlanManageHref }
-			canUserPurchasePlan={ canUserPurchasePlan }
+			canUserManageCurrentPlan={ canUserManageCurrentPlan }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
 			planActionOverrides={ planActionOverrides }

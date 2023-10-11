@@ -184,11 +184,13 @@ class HandleEmailedLinkForm extends Component {
 		}
 
 		const line = [
-			translate( 'Logging in as %(emailAddress)s', {
-				args: {
-					emailAddress,
-				},
-			} ),
+			<p>
+				{ translate( 'Logging in as %(emailAddress)s', {
+					args: {
+						emailAddress,
+					},
+				} ) }
+			</p>,
 		];
 
 		if ( currentUser && currentUser.username ) {

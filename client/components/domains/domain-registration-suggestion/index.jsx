@@ -18,6 +18,7 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
+	getDomainRegistrations,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainPrice,
@@ -27,6 +28,7 @@ import {
 	isDotGayNoticeRequired,
 } from 'calypso/lib/domains';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
+import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -50,6 +52,7 @@ class DomainRegistrationSuggestion extends Component {
 			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 			currency_code: PropTypes.string,
 		} ).isRequired,
+		suggestionSelected: PropTypes.bool,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		premiumDomain: PropTypes.object,
@@ -129,24 +132,34 @@ class DomainRegistrationSuggestion extends Component {
 			isSignupStep,
 			selectedSite,
 			suggestion,
+			suggestionSelected,
 			translate,
 			pendingCheckSuggestion,
 			premiumDomain,
 			isCartPendingUpdateDomain,
+			flowName,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
-		const isAdded = hasDomainInCart( cart, domain );
-
+		const isAdded = suggestionSelected || hasDomainInCart( cart, domain );
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
 
 		if ( isAdded ) {
-			buttonContent = translate( '{{checkmark/}} Selected', {
+			buttonContent = translate( '{{checkmark/}} In Cart', {
 				context: 'Domain is already added to shopping cart',
 				components: { checkmark: <Gridicon icon="checkmark" /> },
 			} );
 
-			buttonStyles = { ...buttonStyles, primary: false, borderless: true };
+			buttonStyles = { ...buttonStyles, primary: false };
+
+			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+				buttonStyles = { ...buttonStyles, borderless: true };
+
+				buttonContent = translate( '{{checkmark/}} Selected', {
+					context: 'Domain is already added to shopping cart',
+					components: { checkmark: <Gridicon icon="checkmark" /> },
+				} );
+			}
 		} else {
 			buttonContent =
 				! isSignupStep &&
@@ -180,6 +193,11 @@ class DomainRegistrationSuggestion extends Component {
 		) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
+
+		if ( shouldUseMultipleDomainsInCart( flowName ) && getDomainRegistrations( cart ).length > 0 ) {
+			buttonStyles = { ...buttonStyles, primary: false };
+		}
+
 		return {
 			buttonContent,
 			buttonStyles,
@@ -212,7 +230,6 @@ class DomainRegistrationSuggestion extends Component {
 	 * becomes the tld. This is not very comprehensive since there can be
 	 * subdomains which would fail this test. However, for our purpose of
 	 * highlighting the TLD in domain suggestions, this is good enough.
-	 *
 	 * @param {string} domain The domain to be parsed
 	 */
 	getDomainParts( domain ) {

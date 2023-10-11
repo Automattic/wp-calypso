@@ -102,6 +102,16 @@ export interface CheckoutMainProps {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	connectAfterCheckout?: boolean;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
+	adminUrl?: string;
 }
 
 export default function CheckoutMain( {
@@ -129,6 +139,9 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	connectAfterCheckout,
+	fromSiteSlug,
+	adminUrl,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -257,6 +270,9 @@ export default function CheckoutMain( {
 		sitelessCheckoutType,
 		isInModal,
 		domains,
+		connectAfterCheckout,
+		adminUrl,
+		fromSiteSlug,
 	} );
 
 	const getThankYouUrl = useCallback( () => {
@@ -436,6 +452,7 @@ export default function CheckoutMain( {
 			stripeConfiguration,
 			stripe,
 			recaptchaClientId,
+			fromSiteSlug,
 		} ),
 		[
 			contactDetails,
@@ -450,6 +467,7 @@ export default function CheckoutMain( {
 			stripeConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
+			fromSiteSlug,
 		]
 	);
 
@@ -590,6 +608,9 @@ export default function CheckoutMain( {
 		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
 		checkoutFlow,
+		connectAfterCheckout,
+		adminUrl,
+		fromSiteSlug,
 	} );
 
 	const handleStepChanged = useCallback(

@@ -6,6 +6,7 @@
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  */
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -29,6 +30,7 @@ import {
 } from '@automattic/calypso-url';
 import { isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
+import { REMOTE_PATH_AUTH } from 'calypso/jetpack-connect/constants';
 import {
 	getGoogleApps,
 	hasGoogleApps,
@@ -98,6 +100,15 @@ export interface PostCheckoutUrlArguments {
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
+	connectAfterCheckout?: boolean;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
 }
 
 /**
@@ -134,6 +145,8 @@ export default function getThankYouPageUrl( {
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
+	connectAfterCheckout,
+	fromSiteSlug,
 }: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -217,7 +230,7 @@ export default function getThankYouPageUrl( {
 	const firstRenewalInCart =
 		cart && hasRenewalItem( cart ) ? getRenewalItems( cart )[ 0 ] : undefined;
 
-	// jetpack userless & siteless checkout uses a special thank you page
+	// Jetpack userless & siteless checkout uses a special thank you page
 	if ( sitelessCheckoutType === 'jetpack' ) {
 		// extract a product from the cart, in userless/siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
@@ -225,6 +238,40 @@ export default function getThankYouPageUrl( {
 		if ( siteSlug ) {
 			debug( 'redirecting to userless jetpack thank you' );
 			return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug }`;
+		}
+
+		// siteless checkout - "Connect After Checkout" flow.
+		if ( connectAfterCheckout && adminUrl && fromSiteSlug ) {
+			debug( 'Redirecting to the site to initiate Jetpack connection' );
+			// Remove "/wp-admin/" from the beginning of the REMOTE_PATH_AUTH because it's already
+			// part of the `adminUrl` that we prepend to this path (below).
+			const jetpackSiteAuthPath = REMOTE_PATH_AUTH.replace( /^\/wp-admin\//, '' );
+
+			const calypsoHost =
+				typeof window !== 'undefined'
+					? window.location.protocol + '//' + window.location.host
+					: 'https://wordpress.com';
+
+			// Then After connection authorization, we'll redirect to the product license activation page.
+			const redirectAfterAuthUrl = addQueryArgs(
+				{
+					receiptId: receiptIdOrPlaceholder,
+					siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
+					fromSiteSlug,
+				},
+				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`
+			);
+
+			const remoteSiteConnectUrl = addQueryArgs(
+				{
+					redirect_after_auth: redirectAfterAuthUrl,
+					from: 'connect-after-checkout',
+					...( config( 'env_id' ) === 'development' && { calypso_env: 'development' } ),
+				},
+				`${ adminUrl }${ jetpackSiteAuthPath }`
+			);
+
+			return remoteSiteConnectUrl;
 		}
 
 		// siteless checkout

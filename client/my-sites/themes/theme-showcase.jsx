@@ -161,8 +161,8 @@ class ThemeShowcase extends Component {
 				MYTHEMES: staticFilters.MYTHEMES,
 			} ),
 			RECOMMENDED: staticFilters.RECOMMENDED,
-			...this.subjectFilters,
 			ALL: staticFilters.ALL,
+			...this.subjectFilters,
 		};
 	};
 
@@ -420,7 +420,6 @@ class ThemeShowcase extends Component {
 						/>
 					);
 				}
-				return <ThemesSelection { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
 		}

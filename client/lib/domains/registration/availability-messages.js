@@ -434,6 +434,7 @@ function getAvailabilityNotice(
 			);
 			break;
 
+		case domainAvailability.TRANSFERRABLE_PREMIUM:
 		case domainAvailability.TRANSFERRABLE:
 			if ( availabilityPreCheck ) {
 				message = translate(
@@ -483,37 +484,6 @@ function getAvailabilityNotice(
 					},
 				}
 			);
-			break;
-
-		case domainAvailability.TRANSFERRABLE_PREMIUM:
-			if ( site ) {
-				message = translate(
-					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you are the owner of this domain, you can {{a}}map it to your site{{/a}}.",
-					{
-						args: { domain },
-						components: {
-							strong: <strong />,
-							a: (
-								<a
-									target={ linksTarget }
-									rel="noopener noreferrer"
-									href={ domainMapping( site, domain ) }
-								/>
-							),
-						},
-					}
-				);
-			} else {
-				message = translate(
-					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com.",
-					{
-						args: { domain },
-						components: {
-							strong: <strong />,
-						},
-					}
-				);
-			}
 			break;
 
 		case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
