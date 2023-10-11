@@ -31,6 +31,7 @@ import {
 	updatePrivacyForDomain,
 	hasDomainInCart,
 	planItem,
+	hasPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -175,7 +176,10 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
+		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart
+		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
+		}
 
 		// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
 		if ( this.props.flowName === 'onboarding' ) {
@@ -591,7 +595,12 @@ export class RenderDomainsStep extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		await this.props.shoppingCartManager.addProductsToCart( [ registration ] ).then( () => {
+		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart
+		const productsToAdd = ! hasPlan( this.props.cart )
+			? [ registration, this.props.multiDomainDefaultPlan ]
+			: [ registration ];
+
+		await this.props.shoppingCartManager.addProductsToCart( productsToAdd ).then( () => {
 			this.setState( { isCartPendingUpdateDomain: null } );
 		} );
 	}
@@ -660,6 +669,7 @@ export class RenderDomainsStep extends Component {
 				  } )
 				: undefined;
 			const domainCart = getDomainRegistrations( this.props.cart );
+
 			this.props.submitSignupStep(
 				Object.assign(
 					{
@@ -680,7 +690,15 @@ export class RenderDomainsStep extends Component {
 					{ domainCart }
 				)
 			);
-			this.props.goToNextStep();
+
+			const productToRemove = this.props.cart.products.find(
+				( product ) => product.product_slug === this.props.multiDomainDefaultPlan.product_slug
+			);
+			const uuidToRemove = productToRemove.uuid;
+
+			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).then( () => {
+				this.props.goToNextStep();
+			} );
 		};
 	};
 
