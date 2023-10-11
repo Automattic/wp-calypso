@@ -19,9 +19,6 @@
 
 .date-control-picker-shortcuts__shortcut {
 	border-radius: 4px;
-	.gridicon {
-		display: none;
-	}
 	.components-button {
 		display: flex;
 		justify-content: space-between;
@@ -29,9 +26,6 @@
 	}
 	&.is-selected {
 		background-color: var(--color-accent-5);
-		.gridicon {
-			display: initial;
-		}
 	}
 	&:hover {
 		background-color: var(--color-primary-0);
@@ -59,4 +53,23 @@
 		align-items: center;
 		gap: 8px;
 	}
+}
+
+.stats-date-control-picker__popover-content {
+	display: flex;
+	min-width: 320px;
+}
+
+.date-control-picker-date {
+	margin: 16px;
+
+	// internal layout
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.stats-date-control-picker-dates__buttons {
+	display: flex;
+	justify-content: flex-end;
 }

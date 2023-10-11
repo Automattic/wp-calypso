@@ -1,7 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
-import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
@@ -16,11 +13,9 @@ import type {
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { DataResponse, PlanActionOverrides } from './types';
-import type { PlanTypeSelectorProps } from '../plans-features-main/components/plan-type-selector';
 import type { FeatureList, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 /*
@@ -62,15 +57,8 @@ export interface PlansGridProps {
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	planTypeSelectorProps: PlanTypeSelectorProps;
-	/**
-	 * Due to the render heavy burden of the plans comparison grid the client consumer of this component, might chose to
-	 * hide the comparison grid with css but leave the render tree intact, mounted.
-	 * An isHidden prop is passed down the tree so that any elements that are not part of the
-	 * Normal react tree (like Popovers, Modals, etc) can also be forcibly hidden based on a tangible parameter
-	 */
-	isHidden?: boolean;
 	currentPlanManageHref?: string;
+	canUserManageCurrentPlan?: boolean | null;
 }
 
 const WrappedComparisonGrid = ( {
@@ -80,7 +68,6 @@ const WrappedComparisonGrid = ( {
 	usePricingMetaForGridPlans,
 	allFeaturesList,
 	onUpgradeClick,
-	planTypeSelectorProps,
 	intervalType,
 	isInSignup,
 	isLaunchPage,
@@ -91,16 +78,9 @@ const WrappedComparisonGrid = ( {
 	showLegacyStorageFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
-	isHidden,
 	currentPlanManageHref,
+	canUserManageCurrentPlan,
 }: PlansGridProps ) => {
-	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
-		siteId
-			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-			: null
-	);
-
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
@@ -115,15 +95,13 @@ const WrappedComparisonGrid = ( {
 				allFeaturesList={ allFeaturesList }
 			>
 				<ComparisonGrid
-					isHidden={ isHidden }
-					planTypeSelectorProps={ planTypeSelectorProps }
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
 					flowName={ flowName }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					currentPlanManageHref={ currentPlanManageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ handleUpgradeClick }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -145,15 +123,13 @@ const WrappedComparisonGrid = ( {
 		>
 			<CalypsoShoppingCartProvider>
 				<ComparisonGrid
-					isHidden={ isHidden }
-					planTypeSelectorProps={ planTypeSelectorProps }
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
 					flowName={ flowName }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					currentPlanManageHref={ currentPlanManageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ handleUpgradeClick }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -176,6 +152,7 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 		allFeaturesList,
 		onUpgradeClick,
 		currentPlanManageHref,
+		canUserManageCurrentPlan,
 	} = props;
 	const translate = useTranslate();
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
@@ -189,13 +166,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 		prices,
 		currencyCode: currencyCode || 'USD',
 	} );
-
-	// TODO clk: canUserManagePlan should be passed through props instead of being calculated here
-	const canUserPurchasePlan = useSelector( ( state: IAppState ) =>
-		siteId
-			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-			: null
-	);
 
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
@@ -214,7 +184,7 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					currentPlanManageHref={ currentPlanManageHref }
 					translate={ translate }
 					handleUpgradeClick={ handleUpgradeClick }
@@ -235,7 +205,7 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 					{ ...props }
 					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					isLargeCurrency={ isLargeCurrency }
-					canUserPurchasePlan={ canUserPurchasePlan }
+					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					currentPlanManageHref={ currentPlanManageHref }
 					translate={ translate }
 					handleUpgradeClick={ handleUpgradeClick }

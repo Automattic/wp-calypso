@@ -8,11 +8,15 @@ const DateControlPickerShortcuts = ( {
 	currentShortcut,
 	onClick,
 }: DateControlPickerShortcutsProps ) => {
+	// Simple selection test.
+	function isSelectedShortcut( shortcut: DateControlPickerShortcut ) {
+		return shortcut.id === currentShortcut;
+	}
 	// Apply selection state via CSS.
 	function classNameForShortcut( shortcut: DateControlPickerShortcut ): string {
 		const defaultClassName = 'date-control-picker-shortcuts__shortcut';
 		const selectedClassName = defaultClassName + ' is-selected';
-		return shortcut.id !== currentShortcut ? defaultClassName : selectedClassName;
+		return isSelectedShortcut( shortcut ) ? selectedClassName : defaultClassName;
 	}
 
 	return (
@@ -27,7 +31,7 @@ const DateControlPickerShortcuts = ( {
 							} }
 						>
 							{ shortcut.label }
-							<Icon className="gridicon" icon={ check } />
+							{ isSelectedShortcut( shortcut ) && <Icon icon={ check } /> }
 						</Button>
 					</li>
 				) ) }

@@ -251,7 +251,7 @@ const sections = [
 	},
 	{
 		name: 'site-profiler',
-		paths: [ '/site-profiler' ],
+		paths: [ '/site-profiler', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/site-profiler` ],
 		module: 'calypso/site-profiler',
 		enableLoggedOut: true,
 		group: 'site-profiler',

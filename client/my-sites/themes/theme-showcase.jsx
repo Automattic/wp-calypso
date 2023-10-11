@@ -161,8 +161,8 @@ class ThemeShowcase extends Component {
 				MYTHEMES: staticFilters.MYTHEMES,
 			} ),
 			RECOMMENDED: staticFilters.RECOMMENDED,
-			...this.subjectFilters,
 			ALL: staticFilters.ALL,
+			...this.subjectFilters,
 		};
 	};
 

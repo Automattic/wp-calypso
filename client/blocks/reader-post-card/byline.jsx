@@ -1,6 +1,6 @@
-import { get } from 'lodash';
+import { get, debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
@@ -28,6 +28,66 @@ class PostByline extends Component {
 	static defaultProps = {
 		showAvatar: true,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.secondaryBylineRef = createRef();
+		this.organizeBullets = this.organizeBullets.bind( this );
+		this.debouncedOrganizeBullets = debounce( this.organizeBullets, 100 );
+	}
+
+	/**
+	 * Goes through items in the secondary byline ref and compares their height to determine whether
+	 * or not to hide the bullet separator.
+	 */
+	organizeBullets() {
+		// Query all items in the secondary byline, as well as the bullets between them.
+		const secondaryItems =
+			this.secondaryBylineRef.current?.querySelectorAll(
+				'.reader-post-card__byline-secondary-item'
+			) || [];
+		const bullets =
+			this.secondaryBylineRef.current?.querySelectorAll(
+				'.reader-post-card__byline-secondary-bullet'
+			) || [];
+
+		// Go through all the items to determine if the corresponding bullets should be shown.
+		let lastItem;
+		secondaryItems.forEach( ( item, index ) => {
+			// We cant compare heights unless we have a lastItem set.
+			if ( ! lastItem ) {
+				lastItem = item;
+				return;
+			}
+			// This should always exist given the elements below, but lets do a safe return if not.
+			if ( ! bullets[ index - 1 ] ) {
+				return;
+			}
+
+			// If the items arent at the same vertical position, hide the bullet.
+			if ( item.offsetTop !== lastItem.offsetTop ) {
+				bullets[ index - 1 ].style.visibility = 'hidden';
+			} else {
+				// Otherwise, reset the inline style.
+				bullets[ index - 1 ].removeAttribute( 'style' );
+			}
+			// Prepare for next iteration.
+			lastItem = item;
+		} );
+	}
+
+	componentDidMount() {
+		this.organizeBullets();
+		window.addEventListener( 'resize', this.debouncedOrganizeBullets );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.debouncedOrganizeBullets );
+	}
+
+	componentDidUpdate() {
+		this.organizeBullets();
+	}
 
 	recordDateClick = () => {
 		recordPermalinkClick( 'timestamp_card', this.props.post );
@@ -88,11 +148,10 @@ class PostByline extends Component {
 					) }
 					<div className="reader-post-card__author-and-timestamp">
 						{ ( shouldDisplayAuthor || bylineSiteName || showDate ) && (
-							<span className="reader-post-card__byline-secondary">
+							<span className="reader-post-card__byline-secondary" ref={ this.secondaryBylineRef }>
 								{ shouldDisplayAuthor && (
 									<>
 										<ReaderAuthorLink
-											// className="reader-post-card__link"
 											className="reader-post-card__byline-secondary-item"
 											author={ post.author }
 											siteUrl={ streamUrl }
@@ -101,7 +160,9 @@ class PostByline extends Component {
 											{ post.author.name }
 										</ReaderAuthorLink>
 										{ ( bylineSiteName || showDate ) && (
-											<span className="reader-post-card__byline-secondary-bullet">·</span>
+											<span className="reader-post-card__byline-secondary-bullet-wrapper">
+												<span className="reader-post-card__byline-secondary-bullet">·</span>
+											</span>
 										) }
 									</>
 								) }
@@ -117,7 +178,9 @@ class PostByline extends Component {
 											{ bylineSiteName }
 										</a>
 										{ showDate && (
-											<span className="reader-post-card__byline-secondary-bullet">·</span>
+											<span className="reader-post-card__byline-secondary-bullet-wrapper">
+												<span className="reader-post-card__byline-secondary-bullet">·</span>
+											</span>
 										) }
 									</>
 								) }
