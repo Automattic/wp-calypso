@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import useLoginWindow from 'calypso/components/login-window';
 import './style.scss';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 
 const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 	const translate = useTranslate();
@@ -22,6 +23,7 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 			shouldCloseOnEsc={ true }
 		>
 			<div className="reader-join-conversation-dialog__content">
+				<WordPressLogo size={ 32 } />
 				<h1>{ translate( 'Join the conversation' ) }</h1>
 				<p>{ translate( 'Sign in to like, comment, reblog, and follow your favorite blogs.' ) }</p>
 				<Button

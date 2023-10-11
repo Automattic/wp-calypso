@@ -1,25 +1,54 @@
 .reader-join-conversation-dialog {
 	border-radius: 6px; /* stylelint-disable scales/radii */
+	width: 321px;
 
 	.dialog__action-buttons-close {
-		padding: 28px 28px 5px 5px;
+		padding: 24px;
 	}
 	.dialog__content {
-		padding: 24px 32px 8px;
+		padding: 24px 32px;
 	}
 }
 
 .reader-join-conversation-dialog__content {
-	width: 534px;
+	width: 257px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 
-	.reader-join-conversation-dialog__header {
-		margin-bottom: 30px;
+	h1 {
+		color: var(--color-neutral-70);
+		font-size: 1.25rem;
+		font-weight: 600;
+		margin-bottom: 9px;
+	}
 
-		h2 {
-			color: var(--color-neutral-70);
-			font-size: $font-title-large;
-			font-weight: 600;
-			margin-bottom: 9px;
+	p {
+		font-size: 1rem;
+		text-align: center;
+	}
+
+	svg.wordpress-logo {
+		fill: var(--color-neutral-70);
+	}
+
+	button.components-button.is-primary {
+		background-color: #117ac9;
+		border-color: #117ac9;
+
+		&:active:not(:disabled),
+		&:hover:not(:disabled),
+		&:focus:not(:disabled) {
+			background-color: #0e64a5;
+			border-color: #0e64a5;
+		}
+	}
+
+	button.components-button.is-link {
+		color: #1d2333;
+
+		&:hover:not(:disabled) {
+			color: var(--studio-blue-50);
 		}
 	}
 }
