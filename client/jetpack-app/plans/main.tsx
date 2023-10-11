@@ -1,5 +1,4 @@
-import { getPlan, Plan, PLAN_FREE } from '@automattic/calypso-products';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -9,7 +8,9 @@ import Main from 'calypso/components/main';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
-import { AppState } from 'calypso/types';
+import type { Plan } from '@automattic/calypso-products';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
