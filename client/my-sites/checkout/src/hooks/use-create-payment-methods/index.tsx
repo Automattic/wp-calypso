@@ -278,6 +278,7 @@ function useCreateNetbanking(): PaymentMethod {
 		() =>
 			createNetBankingMethod( {
 				store: paymentMethodStore,
+				submitButtonContent: <CheckoutSubmitButtonContent />,
 			} ),
 		[ paymentMethodStore ]
 	);
