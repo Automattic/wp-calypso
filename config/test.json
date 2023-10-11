@@ -98,6 +98,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"signup/social": true,
+		"signup/social-first": true,
 		"site-indicator": true,
 		"site-profiler": true,
 		"ssr/prefetch-timebox": true,

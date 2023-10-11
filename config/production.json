@@ -141,6 +141,7 @@
 		"signup/design-picker-preview-fonts": true,
 		"signup/professional-email-step": false,
 		"signup/social": true,
+		"signup/social-first": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"site-profiler": true,
