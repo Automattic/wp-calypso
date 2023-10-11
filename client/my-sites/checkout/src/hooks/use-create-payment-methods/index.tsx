@@ -123,6 +123,7 @@ function useCreateAlipay( {
 			shouldLoad
 				? createAlipayMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
