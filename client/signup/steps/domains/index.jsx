@@ -158,7 +158,6 @@ export class RenderDomainsStep extends Component {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
 			wpcomSubdomainSelected: false,
-			isCheckingMultiDomainPlan: false,
 		};
 	}
 
