@@ -33,14 +33,24 @@
 		background-color: unset;
 	}
 
-	.all-sites .all-sites__content {
+	.all-sites .all-sites__content,
+	.site .site__content {
 		padding: initial;
+		align-items: center;
+
+		cursor: pointer;
 
 		// Slightly hacky rule to get around rigid element-based rules
 		// specified in <IconContainer />, for the All Sites icon
-		> div[class*="IconContainer"] {
+		> div[class*="IconContainer"],
+		.site-icon {
+			border-radius: 2px;
 			margin-inline-end: 12px;
 		}
+	}
+
+	.site__domain {
+		display: none;
 	}
 
 	.site__title {

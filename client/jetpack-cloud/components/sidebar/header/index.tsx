@@ -1,13 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackLogo from './jetpack-logo.svg';
 
 type Props = {
-	selectedSiteId?: number | string;
+	forceAllSitesView?: boolean;
 };
 
 const AllSitesIcon = () => (
@@ -19,9 +20,10 @@ const AllSitesIcon = () => (
 	/>
 );
 
-const Header = ( { selectedSiteId }: Props ) => {
+const Header = ( { forceAllSitesView = false }: Props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const onSelectSite = useCallback( () => {
 		dispatch( setLayoutFocus( 'sites' ) );
@@ -29,14 +31,18 @@ const Header = ( { selectedSiteId }: Props ) => {
 
 	return (
 		<div className="jetpack-cloud-sidebar__header">
-			{ selectedSiteId ? (
-				<Site className="jetpack-cloud-sidebar__selected-site" />
-			) : (
+			{ forceAllSitesView ? (
 				<AllSites
 					showIcon
 					showCount={ false }
 					icon={ <AllSitesIcon /> }
 					title={ translate( 'All Sites' ) }
+					onSelect={ onSelectSite }
+				/>
+			) : (
+				<Site
+					className="jetpack-cloud-sidebar__selected-site"
+					siteId={ selectedSiteId }
 					onSelect={ onSelectSite }
 				/>
 			) }

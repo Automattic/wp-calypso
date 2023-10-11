@@ -13,7 +13,7 @@ type Props = {
 };
 const Sidebar = ( { className, isJetpackManage = false }: Props ) => (
 	<nav className={ classNames( 'jetpack-cloud-sidebar', className ) }>
-		<Header />
+		<Header forceAllSitesView={ isJetpackManage } />
 		<div className="jetpack-cloud-sidebar__main">
 			<ul role="menu" className="jetpack-cloud-sidebar__navigation-list">
 				<li
@@ -30,10 +30,10 @@ const Sidebar = ( { className, isJetpackManage = false }: Props ) => (
 
 		<SiteSelector
 			showAddNewSite
-			showAllSites
+			showAllSites={ isJetpackManage }
 			isJetpackAgencyDashboard={ isJetpackManage }
 			className="jetpack-cloud-sidebar__site-selector"
-			allSitesPath="/"
+			allSitesPath="/dashboard"
 			siteBasePath="/landing"
 			wpcomSiteBasePath="https://wordpress.com/home"
 		/>

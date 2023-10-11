@@ -41,6 +41,11 @@
 
 .theme-jetpack-cloud .is-jetpack-new-navigation .layout__secondary {
 	border-right: initial;
+
+	// Make the selected-site navigation full-height
+	.my-sites__navigation {
+		height: 100%;
+	}
 }
 
 .button {
