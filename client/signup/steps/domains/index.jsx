@@ -753,9 +753,7 @@ export class RenderDomainsStep extends Component {
 						</Button>
 						{ hasPromotion && (
 							<span className="savings-message">
-								{ translate( 'Up to %(costDifference)s off for a domain.', {
-									args: { costDifference: formatCurrency( costDifference, domain.currency ) },
-								} ) }
+								{ translate( 'Free for the first year with annual paid plans.' ) }
 							</span>
 						) }
 					</div>
