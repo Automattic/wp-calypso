@@ -6,7 +6,7 @@ import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 const PurchasesSidebar = () => (
 	<>
 		-- Purchases sidebar --
-		<NewSidebar />
+		<NewSidebar isJetpackManage />
 	</>
 );
 

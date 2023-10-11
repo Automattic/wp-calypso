@@ -39,6 +39,10 @@
 	}
 }
 
+.theme-jetpack-cloud .is-jetpack-new-navigation .layout__secondary {
+	border-right: initial;
+}
+
 .button {
 	color: var(--color-accent);
 	background: var(--studio-white);
