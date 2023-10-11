@@ -1,4 +1,3 @@
-import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
@@ -30,8 +29,6 @@ import {
 	getDomainRegistrations,
 	updatePrivacyForDomain,
 	hasDomainInCart,
-	planItem,
-	hasPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -174,11 +171,6 @@ export class RenderDomainsStep extends Component {
 					step: 'domains',
 				}
 			);
-		}
-
-		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart
-		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
 
 		// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
@@ -595,12 +587,7 @@ export class RenderDomainsStep extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart
-		const productsToAdd = ! hasPlan( this.props.cart )
-			? [ registration, this.props.multiDomainDefaultPlan ]
-			: [ registration ];
-
-		await this.props.shoppingCartManager.addProductsToCart( productsToAdd ).then( () => {
+		await this.props.shoppingCartManager.addProductsToCart( [ registration ] ).then( () => {
 			this.setState( { isCartPendingUpdateDomain: null } );
 		} );
 	}
@@ -669,7 +656,6 @@ export class RenderDomainsStep extends Component {
 				  } )
 				: undefined;
 			const domainCart = getDomainRegistrations( this.props.cart );
-
 			this.props.submitSignupStep(
 				Object.assign(
 					{
@@ -690,15 +676,7 @@ export class RenderDomainsStep extends Component {
 					{ domainCart }
 				)
 			);
-
-			const productToRemove = this.props.cart.products.find(
-				( product ) => product.product_slug === this.props.multiDomainDefaultPlan.product_slug
-			);
-			const uuidToRemove = productToRemove.uuid;
-
-			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).then( () => {
-				this.props.goToNextStep();
-			} );
+			this.props.goToNextStep();
 		};
 	};
 
@@ -744,11 +722,6 @@ export class RenderDomainsStep extends Component {
 						</div>
 					</div>
 					<div>
-						{ hasPromotion && domain.item_subtotal === 0 && (
-							<span className="savings-message">
-								{ translate( 'Free for the first year with annual paid plans.' ) }
-							</span>
-						) }
 						<Button
 							borderless
 							className="domains__domain-cart-remove"
@@ -756,6 +729,13 @@ export class RenderDomainsStep extends Component {
 						>
 							{ this.props.translate( 'Remove' ) }
 						</Button>
+						{ hasPromotion && (
+							<span className="savings-message">
+								{ translate( 'Up to %(costDifference)s off for a domain.', {
+									args: { costDifference: formatCurrency( costDifference, domain.currency ) },
+								} ) }
+							</span>
+						) }
 					</div>
 				</>
 			);
@@ -1367,7 +1347,6 @@ const RenderDomainsStepConnect = connect(
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 		const selectedSite = getSelectedSite( state );
 		const eligibleForProPlan = isEligibleForProPlan( state, selectedSite?.ID );
-		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
 
 		return {
 			designType: getDesignType( state ),
@@ -1381,7 +1360,6 @@ const RenderDomainsStepConnect = connect(
 				[ 'pro', 'starter' ].includes( flowName ),
 			userLoggedIn: isUserLoggedIn( state ),
 			eligibleForProPlan,
-			multiDomainDefaultPlan,
 		};
 	},
 	{
