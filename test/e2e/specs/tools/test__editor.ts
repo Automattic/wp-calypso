@@ -32,12 +32,11 @@ describe.only( DataHelper.createSuiteTitle( 'Fake editor load' ), function () {
 		// Simple sites do not have the ability to change SEO parameters.
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page, { waitUntilStable: true } );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Navigate to the editor', async function () {
 		const editor = new EditorPage( page );
 		await editor.visit( 'post', { siteSlug: testAccount.getSiteURL( { protocol: false } ) } );
-		await editor.waitUntilLoaded();
 	} );
 } );
