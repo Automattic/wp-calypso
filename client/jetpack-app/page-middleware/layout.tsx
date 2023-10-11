@@ -3,7 +3,6 @@ import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import type { Context } from 'page';
 import type { FunctionComponent } from 'react';
 import type { Store } from 'redux';
 
@@ -41,7 +40,7 @@ export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProp
 };
 
 export function makeJetpackAppLayoutMiddleware( LayoutComponent: typeof ProviderWrappedLayout ) {
-	return ( context: Context, next: () => void ) => {
+	return ( context: PageJS.Context, next: () => void ) => {
 		const { store, queryClient, pathname, query, primary } = context;
 
 		context.layout = (
