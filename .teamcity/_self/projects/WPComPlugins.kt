@@ -11,6 +11,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WPComPlugins : Project({
 	id("WPComPlugins")
@@ -75,6 +76,7 @@ object CalypsoApps: BuildType({
 
 	// Incremented to 4 to make sure ETK updates continue to work:
 	params { param("build.prefix", "4") }
+	buildNumberPattern = "%build.prefix%.%build.counter%"
 	features {
 		perfmon {
 		}
@@ -95,6 +97,21 @@ object CalypsoApps: BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+			triggerRules = """
+				-:test/e2e/**
+				-:docs/**.md
+				-:comment=stress test:**
+				-:packages/calypso-e2e/**
+			""".trimIndent()
 		}
 	}
 
@@ -132,6 +149,10 @@ object CalypsoApps: BuildType({
 				set -x
 				apps=""
 				for dir in ./apps/*/; do
+					# Only include apps which define the "teamcity:build-app" script.
+					if [ "$(cat ${'$'}dir/package.json | jq -r '.scripts["teamcity:build-app"]')" = "null" ] ; then
+						continue
+					fi
 					apps+="${'$'}(cat ${'$'}dir/package.json | jq -r '.name'),"
 				done
 
