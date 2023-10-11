@@ -10,7 +10,7 @@ import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selec
 import './style.scss';
 
 export interface Tour {
-	id: string;
+	targetId: string;
 	title: string;
 	description: string;
 }
@@ -33,15 +33,15 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 
 	const isDismissed = preference?.dismiss;
 
-	const { title, description, id } = tours[ currentStep ];
+	const { title, description, targetId } = tours[ currentStep ];
 
 	// Set the target element for the popover
 	useEffect( () => {
-		if ( id ) {
-			const element = document.querySelector( `#${ id }` ) as HTMLElement | null;
+		if ( targetId ) {
+			const element = document.querySelector( `#${ targetId }` ) as HTMLElement | null;
 			setTargetElement( element );
 		}
-	}, [ id ] );
+	}, [ targetId ] );
 
 	// Show the popover after a short delay to allow the popover to be positioned correctly
 	useEffect( () => {
@@ -78,13 +78,39 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 		return null;
 	}
 
+	const lastTourLabel = tours.length === 1 ? translate( 'Got it' ) : translate( 'Done' );
+
 	return (
 		<Popover isVisible={ isVisible } context={ targetElement } className="guided-tour__popover">
 			<h2 className="guided-tour__popover-heading">{ title }</h2>
 			<p className="guided-tour__popover-description">{ description }</p>
-			<Button className="guided-tour__popover-button" onClick={ nextStep }>
-				{ translate( 'Got it' ) }
-			</Button>
+			<div className="guided-tour__popover-footer">
+				<div>
+					{
+						// Show the step count if there are multiple steps and we're not on the last step
+						tours.length > 1 && (
+							<span className="guided-tour__popover-step-count">
+								{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
+									args: { currentStep: currentStep + 1, totalSteps: tours.length },
+								} ) }
+							</span>
+						)
+					}
+				</div>
+				<div className="guided-tour__popover-footer-right-content">
+					{
+						// Show the skip button if there are multiple steps and we're not on the last step
+						tours.length > 1 && currentStep < tours.length - 1 && (
+							<Button borderless onClick={ endTour }>
+								{ translate( 'Skip' ) }
+							</Button>
+						)
+					}
+					<Button onClick={ nextStep }>
+						{ currentStep === tours.length - 1 ? lastTourLabel : translate( 'Next' ) }
+					</Button>
+				</div>
+			</div>
 		</Popover>
 	);
 };
