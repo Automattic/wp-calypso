@@ -69,23 +69,11 @@ describe(
 			} );
 
 			it( 'Make purchase', async function () {
-				try {
-					await cartCheckoutPage.purchase( { timeout: 75 * 1000 } );
-				} catch {
-					// Work around an issue where purchase flow does not
-					// complete and redirect the user to the next screen
-					// beyond the timeout.
-					// See: https://github.com/Automattic/wp-calypso/issues/75867
-					await page.goto(
-						DataHelper.getCalypsoURL(
-							`setup/site-setup/goals?siteSlug=${ newSiteDetails.blog_details.site_slug }&notice=purchase-success`
-						)
-					);
-				}
+				await cartCheckoutPage.purchase( { timeout: 75 * 1000 } );
 			} );
 
 			it( 'Skip Onboarding', async function () {
-				await page.waitForURL( /setup\/site-setup\/goals/, { waitUntil: 'networkidle' } );
+				await page.waitForURL( /setup\/site-setup\/goals/ );
 				const startSiteFlow = new StartSiteFlow( page );
 				await startSiteFlow.clickButton( 'Skip to dashboard' );
 			} );
