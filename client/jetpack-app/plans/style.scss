@@ -1,4 +1,6 @@
 @import "calypso/my-sites/plans-grid/media-queries";
+@import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/fonts";
 
 body {
 	background-color: var(--studio-white);
@@ -19,14 +21,14 @@ body {
 		h1 {
 			font-family: $brand-serif;
 			font-size: $font-headline-small;
-			margin-bottom: 16px;
+			margin-bottom: $grid-unit-20;
 		}
 
 		p {
 			font-size: $font-body;
 			color: var(--color-text-subtle);
 			text-align: center;
-			padding: 0 16px;
+			padding: 0 $grid-unit-20;
 			margin-bottom: 0;
 		}
 	}
