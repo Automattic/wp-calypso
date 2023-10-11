@@ -1,6 +1,5 @@
 const path = require( 'path' );
 const process = require( 'process' ); // eslint-disable-line
-const BuildMetaPlugin = require( '@automattic/calypso-apps-builder/build-meta-webpack-plugin.cjs' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
@@ -127,7 +126,6 @@ module.exports = {
 	},
 	node: false,
 	plugins: [
-		BuildMetaPlugin( { outputPath } ),
 		new webpack.DefinePlugin( {
 			global: 'window',
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),

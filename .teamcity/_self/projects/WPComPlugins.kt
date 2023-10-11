@@ -7,6 +7,10 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 
 object WPComPlugins : Project({
 	id("WPComPlugins")
@@ -67,7 +71,32 @@ object CalypsoApps: BuildType({
 	id("calypso_WPComPlugins_Build_Plugins")
 	uuid = "8453b8fe-226f-4e91-b5cc-8bdad15e0814"
 	name = "CalypsoApps"
-	description = "Test description"
+	description = "Builds all Calypso apps and saves release artifacts for each. This replaces the separate build configurations for each app."
+
+	// Incremented to 4 to make sure ETK updates continue to work:
+	params { param("build.prefix", "4") }
+	features {
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -75,48 +104,62 @@ object CalypsoApps: BuildType({
 	}
 
 	artifactRules = """
-		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/notifications/dist => notifications.zip
+		apps/wpcom-block-editor/dist => wpcom-block-editor.zip
+		apps/notifications/dist => notifications.zip
+		apps/odyssey-stats/dist => odyssey-stats.zip
+		apps/blaze-dashboard/dist => blaze-dashboard.zip
+		apps/o2-blocks/release-files => o2-blocks.zip
+		apps/happy-blocks/release-files => happy-blocks.zip
+		apps/editing-toolkit/editing-toolkit-plugin => editing-toolkit.zip
 	""".trimIndent()
 
 	steps {
 		mergeTrunk()
-
 		bashNodeScript {
-			name = "Prepare environment"
+			name = "Install dependencies"
 			scriptContent = """
-				set -x
-
-				# Update composer
 				composer install
-
-				# Install dependencies
-				yarn
+				yarn install
 			"""
 		}
 
+		// Automatically generate a list of apps to build by scanning the directories,
+		// then build every app in parallel using yarn workspaces.
 		bashNodeScript {
 			name = "Build artifacts"
 			scriptContent = """
-				# Run `yarn build-ci` script for the plugins specified in the glob.
-				# `build-ci` is a specialized build for CI environment.
-				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build-ci
+				set -x
+				apps=""
+				for dir in ./apps/*/; do
+					apps+="${'$'}(cat ${'$'}dir/package.json | jq -r '.name'),"
+				done
+
+				# These env vars are used by the build process. (See calypso app builder.)
+				export build_number="%build.number%"
+				export commit_sha="%build.vcs.number%"
+
+				yarn workspaces foreach --verbose --parallel --include "{${'$'}apps}" run teamcity:build-app
 			"""
 		}
 
+		// After the artifacts are built, we process them. This includes comparing
+		// with each previous release (to determine if a new release is needed),
+		// and then sending Slack/GitHub notifications as needed.
 		bashNodeScript {
 			name = "Process artifact"
 			scriptContent = """
 				export tc_auth="%system.teamcity.auth.userId%:%system.teamcity.auth.password%"
+				export tc_sever_url="%teamcity.serverUrl%"
+				export mc_auth_secret="%mc_auth_secret%"
+				export mc_post_root="%mc_post_root%"
+				export GH_TOKEN="%matticbot_oauth_token%"
+
+				export commit_sha="%build.vcs.number%"
 				export git_branch="%teamcity.build.branch%"
 				export build_id="%teamcity.build.id%"
-				export GH_TOKEN="%matticbot_oauth_token%"
 				export is_default_branch="%teamcity.build.branch.is_default%"
 				export skip_build_diff="%skip_release_diff%"
-				export mc_auth_secret="%mc_auth_secret%"
-				export commit_sha="%build.vcs.number%"
-				export mc_post_root="%mc_post_root%"
-				export tc_sever_url="%teamcity.serverUrl%"
 
 				node ./bin/process-calypso-app-artifacts.mjs
 			"""
@@ -284,7 +327,7 @@ private object HappyBlocks : WPComPluginBuild(
 				cd apps/happy-blocks
 
 				# Run build release script
-				yarn build-ci
+				yarn teamcity:build-app
 			"""
 		}
 	}
