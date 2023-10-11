@@ -67,6 +67,7 @@ skipDescribeIf( ! envVariables.TEST_ON_ATOMIC )(
 
 		it( 'Land in phpMyAdmin', async function () {
 			await popupPage.waitForURL( /_pma/ );
+			await popupPage.getByRole( 'link', { name: 'phpMyAdmin', exact: true } ).waitFor();
 		} );
 	}
 );
