@@ -1,5 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { LaunchpadNavigator, useLaunchpad } from '@automattic/data-stores';
+import {
+	LaunchpadNavigator,
+	sortLaunchpadTasksByCompletionStatus,
+	useLaunchpad,
+} from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Launchpad from './launchpad';
@@ -71,8 +75,17 @@ const DefaultWiredLaunchpad = ( {
 		} );
 	};
 
+	const launchpadOptions = {
+		onSuccess: sortLaunchpadTasksByCompletionStatus,
+	};
+
 	return (
-		<Launchpad siteSlug={ siteSlug } checklistSlug={ checklistSlug } taskFilter={ taskFilter } />
+		<Launchpad
+			siteSlug={ siteSlug }
+			checklistSlug={ checklistSlug }
+			taskFilter={ taskFilter }
+			useLaunchpadOptions={ launchpadOptions }
+		/>
 	);
 };
 
