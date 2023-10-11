@@ -56,7 +56,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import useAddOns from '../add-ons/hooks/use-add-ons';
+import useStorageAddOns from '../add-ons/hooks/use-storage-add-ons';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
@@ -238,9 +238,7 @@ const PlansFeaturesMain = ( {
 	const [ isFreePlanFreeDomainDialogOpen, setIsFreePlanFreeDomainDialogOpen ] = useState( false );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const storageAddOns = useAddOns( siteId ?? undefined, isInSignup ).filter(
-		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
-	);
+	const storageAddOns = useStorageAddOns( { siteId, isInSignup } );
 	const shouldDisplayFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
