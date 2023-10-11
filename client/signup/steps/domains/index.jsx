@@ -744,6 +744,11 @@ export class RenderDomainsStep extends Component {
 						</div>
 					</div>
 					<div>
+						{ hasPromotion && domain.item_subtotal === 0 && (
+							<span className="savings-message">
+								{ translate( 'Free for the first year with annual paid plans.' ) }
+							</span>
+						) }
 						<Button
 							borderless
 							className="domains__domain-cart-remove"
@@ -751,11 +756,6 @@ export class RenderDomainsStep extends Component {
 						>
 							{ this.props.translate( 'Remove' ) }
 						</Button>
-						{ hasPromotion && (
-							<span className="savings-message">
-								{ translate( 'Free for the first year with annual paid plans.' ) }
-							</span>
-						) }
 					</div>
 				</>
 			);
