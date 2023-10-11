@@ -1,6 +1,7 @@
 import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -59,6 +60,10 @@ export const isStagingSite = ( site: SiteExcerptNetworkData | undefined ) => {
 
 export const isMigrationTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_MIGRATION_TRIAL_MONTHLY;
+};
+
+export const isHostingTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return site?.plan?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY;
 };
 
 export const isECommerceTrialSite = ( site: SiteExcerptNetworkData ) => {

@@ -163,7 +163,7 @@ class PluginSections extends Component {
 		const sections = this.props.plugin.sections;
 		return find( this.getFilteredSections(), function ( section ) {
 			return sections[ section.key ];
-		} ).key;
+		} )?.key;
 	};
 
 	getAvailableSections = () => {
@@ -257,7 +257,12 @@ class PluginSections extends Component {
 	render() {
 		const availableSections = this.getAvailableSections();
 		// Defensively check if this plugin has sections. If not, don't render anything.
-		if ( ! this.props.plugin || ! this.props.plugin.sections || ! availableSections ) {
+		if (
+			! this.props.plugin ||
+			! this.props.plugin.sections ||
+			! availableSections ||
+			! this.getSelected()
+		) {
 			return null;
 		}
 

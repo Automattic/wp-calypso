@@ -34,6 +34,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/launchpad": "workspace:^",
 		"classnames": "^2.3.1",
+		"i18n-calypso": "workspace:^",
 		"tslib": "^2.3.0",
 		"wpcom-proxy-request": "workspace:^"
 	},

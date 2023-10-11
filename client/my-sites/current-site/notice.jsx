@@ -13,7 +13,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
-import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
+import { isHostingTrialSite, isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
@@ -204,7 +204,7 @@ export default connect( ( state, ownProps ) => {
 		activeDiscount: getActiveDiscount( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
-		isTrialSite: isMigrationTrialSite( site ),
+		isTrialSite: isMigrationTrialSite( site ) || isHostingTrialSite( site ),
 		isMigrationInProgress,
 	};
 } )( localize( SiteNotice ) );

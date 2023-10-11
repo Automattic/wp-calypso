@@ -74,6 +74,16 @@ import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 
 import './style.scss';
 
+const BoldTLD = ( { domain } ) => {
+	const tld = domain.split( '.' ).pop();
+	return (
+		<>
+			<span>{ domain.replace( `.${ tld }`, '' ) }</span>
+			<b>.{ tld }</b>
+		</>
+	);
+};
+
 export class RenderDomainsStep extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
@@ -118,7 +128,7 @@ export class RenderDomainsStep extends Component {
 			this.skipRender = true;
 			const productSlug = getDomainProductSlug( domain );
 			const domainItem = domainRegistration( { productSlug, domain } );
-			const domainCart = shouldUseMultipleDomainsInCart( props.flowName, props.step?.suggestion )
+			const domainCart = shouldUseMultipleDomainsInCart( props.flowName )
 				? getDomainRegistrations( this.props.cart )
 				: {};
 
@@ -144,6 +154,7 @@ export class RenderDomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
+			wpcomSubdomainSelected: false,
 		};
 	}
 
@@ -183,15 +194,23 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleAddDomain = ( suggestion, position ) => {
-		const signupDomainOrigin = suggestion?.is_free
-			? SIGNUP_DOMAIN_ORIGIN.FREE
-			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
-
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
 		};
 
+		if (
+			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
+			suggestion?.isSubDomainSuggestion
+		) {
+			this.setState( { wpcomSubdomainSelected: suggestion } );
+			this.props.saveSignupStep( stepData );
+			return;
+		}
+
+		const signupDomainOrigin = suggestion?.is_free
+			? SIGNUP_DOMAIN_ORIGIN.FREE
+			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
 		this.setState( { isCartPendingUpdateDomain: suggestion } );
 		this.props.recordAddDomainButtonClick(
 			suggestion.domain_name,
@@ -310,7 +329,7 @@ export class RenderDomainsStep extends Component {
 		const { step, flowName } = this.props;
 		const { suggestion } = step;
 
-		if ( shouldUseMultipleDomainsInCart( flowName, suggestion ) && suggestion ) {
+		if ( shouldUseMultipleDomainsInCart( flowName ) && suggestion ) {
 			return this.handleDomainToDomainCart( {
 				googleAppsCartItem,
 				shouldHideFreePlan,
@@ -662,8 +681,8 @@ export class RenderDomainsStep extends Component {
 	};
 
 	getSideContent = () => {
-		const { translate, flowName, step } = this.props;
-		const domainsInCart = shouldUseMultipleDomainsInCart( flowName, step?.suggestion )
+		const { translate, flowName } = this.props;
+		const domainsInCart = shouldUseMultipleDomainsInCart( flowName )
 			? getDomainRegistrations( this.props.cart )
 			: [];
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
@@ -672,23 +691,13 @@ export class RenderDomainsStep extends Component {
 			<div
 				className={ classNames( 'domains__domain-side-content', {
 					'fade-out':
-						shouldUseMultipleDomainsInCart( flowName, step?.suggestion ) &&
-						domainsInCart.length > 0,
+						shouldUseMultipleDomainsInCart( flowName ) &&
+						( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ),
 				} ) }
 			>
 				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		) : null;
-
-		const BoldTLD = ( { domain } ) => {
-			const tld = domain.split( '.' ).pop();
-			return (
-				<>
-					<span>{ domain.replace( `.${ tld }`, '' ) }</span>
-					<b>.{ tld }</b>
-				</>
-			);
-		};
 
 		const DomainNameAndCost = ( { domain } ) => {
 			const priceText = translate( '%(cost)s/year', {
@@ -705,7 +714,7 @@ export class RenderDomainsStep extends Component {
 								'limit-width': hasPromotion,
 							} ) }
 						>
-							<BoldTLD domain={ domain.meta } data={ domain } />
+							<BoldTLD domain={ domain.meta } />
 						</div>
 						<div className="domain-product-price__price">
 							{ hasPromotion && <del>{ priceText }</del> }
@@ -733,10 +742,7 @@ export class RenderDomainsStep extends Component {
 		};
 
 		const DomainsInCart = () => {
-			if (
-				! shouldUseMultipleDomainsInCart( this.props.flowName, this.props.step?.suggestion ) ||
-				cartIsLoading
-			) {
+			if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) || cartIsLoading ) {
 				return null;
 			}
 
@@ -753,7 +759,7 @@ export class RenderDomainsStep extends Component {
 							<div key="rowtotalprice" className="domains__domain-cart-total-price">
 								{ formatCurrency(
 									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-									domainsInCart ? domainsInCart[ 0 ].currency : 'USD'
+									domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
 								) }
 							</div>
 						</div>
@@ -801,6 +807,29 @@ export class RenderDomainsStep extends Component {
 						{ this.props.translate( 'Your domains' ) }
 					</div>
 					<div className="domains__domain-cart-rows">
+						{ this.state.wpcomSubdomainSelected && (
+							<div key="row-free" className="domains__domain-cart-row">
+								<div>
+									<div className="domains__domain-cart-domain">
+										<BoldTLD domain={ this.state.wpcomSubdomainSelected.domain_name } />
+									</div>
+									<div className="domain-product-price__price">
+										<span className="domains__price-free">{ this.props.translate( 'Free' ) }</span>
+									</div>
+								</div>
+								<div>
+									<Button
+										borderless
+										className="button domains__domain-cart-remove"
+										onClick={ () => {
+											this.setState( { wpcomSubdomainSelected: false } );
+										} }
+									>
+										{ this.props.translate( 'Remove' ) }
+									</Button>
+								</div>
+							</div>
+						) }
 						{ domainsInCart.map( ( domain, i ) => (
 							<div key={ `row${ i }` } className="domains__domain-cart-row">
 								<DomainNameAndCost domain={ domain } />
@@ -810,15 +839,15 @@ export class RenderDomainsStep extends Component {
 					<div className="domains__domain-cart-total">
 						<div key="rowtotal" className="domains__domain-cart-count">
 							{ this.props.translate( '%d domain', '%d domains', {
-								count: domainsInCart.length,
-								args: [ domainsInCart.length ],
+								count: domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ),
+								args: [ domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ) ],
 							} ) }
 						</div>
 						<div key="rowtotalprice" className="domains__domain-cart-total-price">
 							<strong>
 								{ formatCurrency(
 									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-									domainsInCart ? domainsInCart[ 0 ].currency : 'USD'
+									domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
 								) }
 							</strong>
 						</div>
@@ -842,7 +871,7 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<div className="domains__domain-side-content-container">
-				{ domainsInCart.length > 0
+				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected
 					? DomainsInCart()
 					: ! this.shouldHideDomainExplainer() &&
 					  this.props.isPlanSelectionAvailableLaterInFlow && (
@@ -953,6 +982,7 @@ export class RenderDomainsStep extends Component {
 						? this.props.translate( 'Stand out with a short and memorable domain' )
 						: undefined
 				}
+				wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
 			/>
 		);
 	};
@@ -1008,7 +1038,7 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, stepSectionName, isReskinned, translate, step } = this.props;
+		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1049,7 +1079,7 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		if ( shouldUseMultipleDomainsInCart( flowName, step?.suggestion ) ) {
+		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 			return translate( 'Find and claim one or more domain names' );
 		}
 
@@ -1067,7 +1097,7 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, isReskinned, stepSectionName, translate, flowName, step } =
+		const { headerText, isAllDomains, isReskinned, stepSectionName, translate, flowName } =
 			this.props;
 
 		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
@@ -1083,7 +1113,7 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			if ( shouldUseMultipleDomainsInCart( flowName, step?.suggestion ) ) {
+			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
 			return ! stepSectionName && translate( 'Choose a domain' );
