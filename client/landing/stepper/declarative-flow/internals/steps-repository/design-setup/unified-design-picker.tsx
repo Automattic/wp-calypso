@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -398,11 +397,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
-	const isEligibleForProPlan = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isEligibleForProPlan( site.ID ),
-		[ site ]
-	);
-
 	const eligibility = useSelector( ( state ) => site && getEligibility( state, site.ID ) );
 
 	const hasEligibilityMessages =
@@ -455,7 +449,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
 		} else {
-			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+			plan = 'premium';
 		}
 
 		// When the user is done with checkout, send them back to the current url

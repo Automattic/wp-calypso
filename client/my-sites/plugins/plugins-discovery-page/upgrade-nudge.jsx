@@ -3,9 +3,6 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	findFirstSimilarPlanKey,
 	getPlan,
-	isBlogger,
-	isPersonal,
-	isPremium,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	TYPE_BUSINESS,
@@ -16,7 +13,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -52,10 +48,6 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 	);
 	const plansForInstallPurchasedPlugins = useSelector( ( state ) =>
 		getPlansForFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
 	);
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
@@ -132,24 +124,6 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 				feature={ FEATURE_INSTALL_PLUGINS }
 				plan={ PLAN_ECOMMERCE_MONTHLY }
 				title={ translate( 'To install additional plugins, please upgrade to a paid plan.' ) }
-			/>
-		);
-	}
-	// This banner upsells the ability to install free and paid plugins on a Pro plan.
-	const isLegacyPlan = isBlogger( sitePlan ) || isPersonal( sitePlan ) || isPremium( sitePlan );
-	const shouldUpsellProPlan = eligibleForProPlan && ! isLegacyPlan;
-	if ( shouldUpsellProPlan ) {
-		return (
-			<UpsellNudge
-				event="calypso_plugins_browser_upgrade_nudge"
-				className="plugins-discovery-page__upsell"
-				callToAction={ translate( 'Upgrade now' ) }
-				icon="notice-outline"
-				showIcon={ true }
-				href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/pro` }
-				feature={ FEATURE_INSTALL_PLUGINS }
-				plan={ plan }
-				title={ translate( 'Upgrade to the Pro plan to install plugins.' ) }
 			/>
 		);
 	}
