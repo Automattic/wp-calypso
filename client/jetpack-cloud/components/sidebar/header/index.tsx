@@ -6,6 +6,7 @@ import Site from 'calypso/blocks/site';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackLogo from './jetpack-logo.svg';
+import ProfileDropdown from './profile-dropdown';
 
 type Props = {
 	forceAllSitesView?: boolean;
@@ -46,6 +47,7 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 					onSelect={ onSelectSite }
 				/>
 			) }
+			<ProfileDropdown />
 		</div>
 	);
 };

@@ -10,23 +10,28 @@ import './style.scss';
 type Props = {
 	className?: string;
 	isJetpackManage?: boolean;
+	navItems?: React.ReactNode[];
+	footer?: React.ReactNode;
 };
-const Sidebar = ( { className, isJetpackManage = false }: Props ) => (
+const Sidebar = ( { className, isJetpackManage = false, navItems = [], footer }: Props ) => (
 	<nav className={ classNames( 'jetpack-cloud-sidebar', className ) }>
 		<Header forceAllSitesView={ isJetpackManage } />
 		<div className="jetpack-cloud-sidebar__main">
-			<ul role="menu" className="jetpack-cloud-sidebar__navigation-list">
-				<li
-					className={ classNames(
-						'jetpack-cloud-sidebar__navigation-item',
-						'jetpack-cloud-sidebar__navigation-item--highlighted'
-					) }
-				>
-					Navigation items
-				</li>
-				<li className="jetpack-cloud-sidebar__navigation-item">Will go here</li>
+			<ul className="jetpack-cloud-sidebar__navigation-list">
+				{ navItems.map( ( item, index ) => (
+					<li
+						key={ index }
+						className={ classNames(
+							'jetpack-cloud-sidebar__navigation-item',
+							'jetpack-cloud-sidebar__navigation-item--highlighted'
+						) }
+					>
+						{ item }
+					</li>
+				) ) }
 			</ul>
 		</div>
+		{ footer && <div className="jetpack-cloud-sidebar__footer">{ footer }</div> }
 
 		<SiteSelector
 			showAddNewSite
