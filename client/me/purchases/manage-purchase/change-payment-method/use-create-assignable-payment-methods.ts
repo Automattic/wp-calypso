@@ -29,7 +29,7 @@ export default function useCreateAssignablePaymentMethods(
 		stripeLoadingError,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		activePayButtonText: String( translate( 'Save card' ) ),
+		submitButtonContent: translate( 'Save card' ),
 		allowUseForAllSubscriptions: true,
 	} );
 
@@ -46,7 +46,7 @@ export default function useCreateAssignablePaymentMethods(
 		isStripeLoading,
 		stripeLoadingError,
 		storedCards,
-		activePayButtonText: String( translate( 'Use this card' ) ),
+		submitButtonContent: translate( 'Use this card' ),
 		allowEditingTaxInfo: true,
 		isTaxInfoRequired: true,
 	} );

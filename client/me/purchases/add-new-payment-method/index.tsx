@@ -32,7 +32,7 @@ function AddNewPaymentMethod() {
 		stripeLoadingError,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		activePayButtonText: String( translate( 'Save card' ) ),
+		submitButtonContent: translate( 'Save card' ),
 		allowUseForAllSubscriptions: true,
 		initialUseForAllSubscriptions: true,
 	} );
