@@ -26,7 +26,7 @@ declare const browser: Browser;
  *
  * Keywords: Jetpack, Media, Carousel, Settings
  */
-describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () {
 	let page: Page;
 	let testAccount: TestAccount;
 

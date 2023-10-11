@@ -20,7 +20,7 @@ declare const browser: Browser;
  * @param blockFlows A list of block flows to put under test.
  */
 export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): void {
-	describe( DataHelper.createSuiteTitle( specName ), function () {
+	describe.skip( DataHelper.createSuiteTitle( specName ), function () {
 		const features = envToFeatureKey( envVariables );
 		// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
 		// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.

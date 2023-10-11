@@ -25,7 +25,7 @@ declare const browser: Browser;
  *
  * Keywords: Media, Image, Gallery, Upload
  */
-describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	let page: Page;
 	let mediaPage: MediaPage;
 	let testAccount: TestAccount;

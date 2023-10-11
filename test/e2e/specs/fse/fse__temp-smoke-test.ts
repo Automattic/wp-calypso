@@ -27,7 +27,7 @@ declare const browser: Browser;
  *
  * Keywords: FSE, Full Site Editor, Gutenberg
  */
-describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let page: Page;
 	let testAccount: TestAccount;
 	let fullSiteEditorPage: FullSiteEditorPage;

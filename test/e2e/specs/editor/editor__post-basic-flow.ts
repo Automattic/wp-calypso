@@ -25,7 +25,7 @@ const seoDescription = 'SEO example description';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },

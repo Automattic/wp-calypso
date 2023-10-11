@@ -21,7 +21,7 @@ declare const browser: Browser;
  * Keywords: Jetpack, SEO, Traffic, Marketing.
  */
 // eslint-disable-next-line jest/no-focused-tests
-describe.only( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
+describe.only( DataHelper.createSuiteTitle( 'Fake wp-admin load' ), function () {
 	let page: Page;
 	let testAccount: TestAccount;
 

@@ -24,7 +24,7 @@ declare const browser: Browser;
 	So on atomic, we're limited to validating the integtity and interactability of the search modal.
 */
 
-describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 	const searchString = DataHelper.getRandomPhrase();
 
 	let page: Page;

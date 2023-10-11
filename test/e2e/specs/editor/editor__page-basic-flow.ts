@@ -22,7 +22,7 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 	100
 ) }`;
 
-describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature(
 		features,

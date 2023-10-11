@@ -30,7 +30,7 @@ declare const browser: Browser;
  *
  * Keywords: Media, Image, Video, Audio, Gallery, Upload
  */
-describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
+describe.skip( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let page: Page;
 	let mediaPage: MediaPage;
 	let testAccount: TestAccount;

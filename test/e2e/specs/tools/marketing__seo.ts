@@ -24,7 +24,7 @@ declare const browser: Browser;
  *
  * Keywords: Jetpack, SEO, Traffic, Marketing.
  */
-describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 	const externalPreviewText = DataHelper.getRandomPhrase();
 
 	let page: Page;

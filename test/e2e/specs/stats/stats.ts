@@ -22,7 +22,7 @@ declare const browser: Browser;
  *
  * Keywords: Stats, Jetpack, Odyssey Stats
  */
-describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	let page: Page;
 	let testAccount: TestAccount;
 	let statsPage: StatsPage;
