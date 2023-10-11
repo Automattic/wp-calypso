@@ -14,7 +14,9 @@ const IS_DEFAULT_BRANCH = process.env.is_default_branch === 'true';
 const dirname = fileURLToPath( new URL( '.', import.meta.url ) );
 const appRoot = path.resolve( dirname, '../apps' );
 
-// Most apps don't need extra config, but some do.
+// Most apps don't need extra config, but some do. To enable slack notifications
+// when a trunk build changes an app, set "slackNotify: true" for the app which
+// requires it.
 const APP_CONFIG = {
 	'editing-toolkit': {
 		artifactDir: path.resolve( appRoot, 'editing-toolkit/editing-toolkit-plugin' ),
@@ -24,7 +26,6 @@ const APP_CONFIG = {
 	},
 	'happy-blocks': {
 		artifactDir: path.resolve( appRoot, 'happy-blocks/release-files' ),
-		slackNotify: true,
 	},
 };
 
