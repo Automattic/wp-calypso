@@ -268,6 +268,7 @@ function useCreateEps( {
 			shouldLoad
 				? createEpsMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
