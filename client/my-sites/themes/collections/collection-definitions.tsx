@@ -27,6 +27,6 @@ export const THEME_COLLECTIONS = {
 		title: translate( 'Partner Themes' ),
 		collectionSlug: 'partner-themes',
 		description: <p>Lorem ipsum dolor sit amet</p>,
-		seeAllLink: '/themes/partner',
+		seeAllLink: '/themes/marketplace',
 	},
 };

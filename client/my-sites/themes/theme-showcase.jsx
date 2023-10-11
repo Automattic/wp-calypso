@@ -256,7 +256,6 @@ class ThemeShowcase extends Component {
 
 	/**
 	 * Returns a full showcase url from current props.
-	 *
 	 * @param {Object} sections fields from this object will override current props.
 	 * @param {string} sections.vertical override vertical prop
 	 * @param {string} sections.tier override tier prop
@@ -287,9 +286,6 @@ class ThemeShowcase extends Component {
 	};
 
 	onTierSelect = ( { value: tier } ) => {
-		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
-		trackClick( 'search bar filter', tier );
-
 		const url = this.constructUrl( {
 			tier,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
@@ -300,6 +296,12 @@ class ThemeShowcase extends Component {
 		} );
 		page( url );
 		this.scrollToSearchInput();
+	};
+
+	onTierSelectFilter = ( { value: tier } ) => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
+		trackClick( 'search bar filter', tier );
+		this.onTierSelect( { value: tier } );
 	};
 
 	onFilterClick = ( tabFilter ) => {
@@ -403,20 +405,23 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 
-		const isDiscoveryEnabled =
-			( config.isEnabled( 'themes/discovery-lits' ) && this.props.isLoggedIn ) ||
-			( config.isEnabled( 'themes/discovery-lots' ) && ! this.props.isLoggedIn );
+		const showCollections =
+			this.props.tier === '' &&
+			( this.props.isLoggedIn
+				? config.isEnabled( 'themes/discovery-lits' )
+				: config.isEnabled( 'themes/discovery-lots' ) );
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
 			case staticFilters.RECOMMENDED.key:
-				if ( isDiscoveryEnabled ) {
+				if ( showCollections ) {
 					return (
 						<ThemeCollectionsLayout
 							getOptions={ this.getThemeOptions }
 							getScreenshotUrl={ this.getScreenshotUrl }
 							getActionLabel={ this.getActionLabel }
+							onTierSelect={ ( tier ) => this.onTierSelect( { value: tier } ) }
 						/>
 					);
 				}
@@ -532,12 +537,12 @@ class ThemeShowcase extends Component {
 							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
 								<SelectDropdown
 									className="section-nav-tabs__dropdown"
-									onSelect={ this.onTierSelect }
+									onSelect={ this.onTierSelectFilter }
 									selectedText={ translate( 'View: %s', {
 										args: getOptionLabel( tiers, tier ) || '',
 									} ) }
 									options={ tiers }
-									initialSelected={ this.props.tier }
+									initialSelected={ tier }
 								></SelectDropdown>
 							) }
 						</div>

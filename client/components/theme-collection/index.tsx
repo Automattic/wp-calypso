@@ -9,7 +9,7 @@ interface ThemeCollectionProps {
 	collectionSlug: string;
 	title: string;
 	description: ReactElement;
-	seeAllLink: string;
+	onSeeAll: () => void;
 }
 
 export default function ThemeCollection( {
@@ -17,7 +17,7 @@ export default function ThemeCollection( {
 	title,
 	description,
 	children,
-	seeAllLink,
+	onSeeAll,
 }: PropsWithChildren< ThemeCollectionProps > ): ReactElement {
 	const swiperInstance = useRef< SwiperType | null >( null );
 	const swiperContainerId = `swiper-container-${ collectionSlug }`;
@@ -88,9 +88,9 @@ export default function ThemeCollection( {
 					<div className="theme-collection__description">{ description }</div>
 				</div>
 				<div className="theme-collection__carousel-controls">
-					<div className="theme-collection__see-all">
-						<a href={ seeAllLink }>{ translate( 'See all' ) }</a>
-					</div>
+					<Button className="theme-collection__see-all" onClick={ onSeeAll }>
+						{ translate( 'See all' ) }
+					</Button>
 					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous">
 						<Icon icon={ chevronLeft } />
 					</Button>
