@@ -185,6 +185,7 @@ function useCreateGiropay( {
 			shouldLoad
 				? createGiropayMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
