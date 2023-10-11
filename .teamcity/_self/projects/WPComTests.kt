@@ -305,6 +305,10 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
+			// We run all the tests on all variations, and go through each variation sequentially.
+			// We can easily overwhlem the target Atomic site under test if we have too much parallelization.
+			// This number of works plays nicely with the expected load handling on these Atomic sites.
+			param("JEST_E2E_WORKERS", "5")
 		}
 
 		steps {
@@ -355,6 +359,10 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
 			param("env.ATOMIC_VARIATION", "mixed")
+			// We need to be careful of overwhelming the Atomic sites under test.
+			// The mixing of Atomic variations happens per-worker.
+			// There are currently 7 variations. So let's do 2 workers per variation for 14 workers total.
+			param("JEST_E2E_WORKERS", "14")
 		}
 
 		steps {
