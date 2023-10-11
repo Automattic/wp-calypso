@@ -21,7 +21,7 @@ interface HeaderProps {
 
 interface JetpackAppPlansProps {
 	paidDomainName?: string;
-	redirectTo?: string;
+	originalUrl: string;
 }
 
 const Header: React.FC< HeaderProps > = ( { paidDomainName } ) => {
@@ -60,29 +60,26 @@ const Header: React.FC< HeaderProps > = ( { paidDomainName } ) => {
 	);
 };
 
-const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, redirectTo } ) => {
+const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, originalUrl } ) => {
 	const planSlug = useSelector( ( state: AppState ) =>
 		getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 )
 	) as string | null;
 	const plansLoaded = Boolean( planSlug );
 
-	const handleRedirect = ( planId?: number ) => {
-		if ( redirectTo ) {
-			const args = planId ? { plan_id: planId } : {};
-			window.location.href = addQueryArgs( redirectTo, args );
-		}
-	};
-
 	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null | undefined ) => {
 		const productSlug = getPlanCartItem( cartItems )?.product_slug;
 
+		type PlansParameters = { plan_id?: number; plan_slug: string };
+		let args: PlansParameters;
+
 		if ( ! productSlug ) {
-			return handleRedirect();
+			args = { plan_slug: PLAN_FREE };
+		} else {
+			const plan = getPlan( productSlug ) as Plan;
+			args = { plan_id: plan.getProductId(), plan_slug: productSlug };
 		}
 
-		const plan = getPlan( productSlug ) as Plan;
-
-		handleRedirect( plan.getProductId() );
+		window.location.href = addQueryArgs( originalUrl, args );
 	};
 
 	return (
@@ -98,7 +95,6 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, re
 						intervalType="yearly"
 						onUpgradeClick={ onUpgradeClick }
 						plansWithScroll={ false }
-						removePaidDomain={ handleRedirect }
 						hidePlanTypeSelector
 						hidePlansFeatureComparison
 					/>
