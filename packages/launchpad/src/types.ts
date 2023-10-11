@@ -62,10 +62,15 @@ export interface PermittedActions {
 	setActiveChecklist: ( siteSlug: string, activeChecklistSlug: string ) => void;
 }
 
+export type EventHandlers = {
+	onSiteLaunched?: () => void;
+};
+
 export interface LaunchpadTaskActionsProps {
 	siteSlug: string | null;
 	tasks: Task[];
 	tracksData: LaunchpadTracksData;
 	extraActions: PermittedActions;
 	uiContext?: 'calypso';
+	eventHandlers?: EventHandlers;
 }
