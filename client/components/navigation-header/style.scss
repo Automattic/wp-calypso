@@ -9,6 +9,7 @@
 
 	@include break-small {
 		margin-top: 0;
+		padding: 0;
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
