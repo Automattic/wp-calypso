@@ -23,6 +23,7 @@ import {
 	PRICING_PAGE,
 	TEAM_PAGE,
 	SHOP_PAGE,
+	CUSTOM_PAGE,
 } from 'calypso/signup/difm/constants';
 import {
 	BBE_ONBOARDING_PAGE_PICKER_STEP,
@@ -287,6 +288,12 @@ function PageSelector( {
 			<PageCell
 				context={ context }
 				pageId={ TEAM_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ CUSTOM_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>

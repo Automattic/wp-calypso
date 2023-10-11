@@ -14,13 +14,13 @@ import {
 	PRICING_PAGE,
 	TEAM_PAGE,
 	SHOP_PAGE,
+	CUSTOM_PAGE,
 } from 'calypso/signup/difm/constants';
 import type { PageId } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
 /**
  * Provides the universal translated set of page titles available for DIFM
- *
  * @returns
  */
 export function useTranslatedPageTitles() {
@@ -40,6 +40,7 @@ export function useTranslatedPageTitles() {
 			[ PRICING_PAGE ]: translate( 'Pricing' ),
 			[ TEAM_PAGE ]: translate( 'Team' ),
 			[ SHOP_PAGE ]: translate( 'Shop' ),
+			[ CUSTOM_PAGE ]: translate( 'Custom Page' ),
 		};
 		return pages;
 	}, [ translate ] );
@@ -102,6 +103,9 @@ export function useTranslatedPageDescriptions(
 		[ SHOP_PAGE ]: translate(
 			'Your shop page will display all the products you have for sale. We will set up the shop page and explain how you can add products to your new site.'
 		),
+		[ CUSTOM_PAGE ]: translate(
+			"Craft a page that's perfect for anything you have in mind. You decide the title and content, and we'll create a custom layout."
+		),
 	};
 
 	const contextualDescriptions: Record< BBETranslationContext, typeof defaultDescriptions > = {
@@ -118,6 +122,9 @@ export function useTranslatedPageDescriptions(
 			),
 			[ SHOP_PAGE ]: translate(
 				'Add a short description to explain what type of products will appear on your site. We will set up the page so this description appears above your products; you can add the products later with the editor.'
+			),
+			[ CUSTOM_PAGE ]: translate(
+				"Provide the title and content for this page, and we'll create a custom layout."
 			),
 		},
 		[ BBE_STORE_ONBOARDING_PAGE_PICKER_STEP ]: {

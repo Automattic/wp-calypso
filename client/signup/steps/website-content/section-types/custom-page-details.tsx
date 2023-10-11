@@ -1,7 +1,11 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
-import { TextAreaField, CheckboxField } from 'calypso/signup/accordion-form/form-components';
+import {
+	TextAreaField,
+	CheckboxField,
+	TextInputField,
+} from 'calypso/signup/accordion-form/form-components';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -17,17 +21,17 @@ export interface PageDetailsParams< T > {
 	context: BBETranslationContext;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 }
-export function DefaultPageDetails( {
+export function CustomPageDetails( {
 	page,
 	formErrors,
 	context,
 	onChangeField,
 }: PageDetailsParams< PageData > ) {
 	const translate = useTranslate();
-
 	const site = useSelector( getSelectedSite );
 	const description = useTranslatedPageDescriptions( page.id, context );
 	const isEnglishLocale = useIsEnglishLocale();
+
 	const { onCheckboxChanged, onFieldChanged } = useChangeHandlers( {
 		pageId: page.id,
 		onChangeField,
@@ -35,6 +39,14 @@ export function DefaultPageDetails( {
 
 	return (
 		<>
+			<TextInputField
+				label={ translate( 'Page Title' ) }
+				placeholder={ translate( 'My Custom Page' ) }
+				onChange={ onFieldChanged }
+				name="title"
+				error={ formErrors[ 'title' ] }
+				value={ page.title }
+			/>
 			<TextAreaField
 				name="content"
 				onChange={ onFieldChanged }
