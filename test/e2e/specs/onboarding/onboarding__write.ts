@@ -49,11 +49,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 
 		it( 'Sign up as a new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signup(
-				testUser.email,
-				testUser.username,
-				testUser.password
-			);
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 		} );
 
 		it( 'Select a .wordpress.com domain name', async function () {

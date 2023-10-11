@@ -35,11 +35,7 @@ describe( 'Signup: Tailored Free Flow', function () {
 
 		it( 'Sign up as new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			userDetails = await userSignupPage.signup(
-				testUser.email,
-				testUser.username,
-				testUser.password
-			);
+			userDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 
 			userCreatedFlag = true;
 		} );

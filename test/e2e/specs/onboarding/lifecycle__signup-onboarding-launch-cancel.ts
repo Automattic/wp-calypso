@@ -67,11 +67,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 
 		it( 'Sign up as new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signup(
-				testUser.email,
-				testUser.username,
-				testUser.password
-			);
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 		} );
 
 		it( 'Skip domain selection', async function () {
