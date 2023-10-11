@@ -251,6 +251,7 @@ function useCreateSofort( {
 			shouldLoad
 				? createSofortMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
