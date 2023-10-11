@@ -20,6 +20,7 @@ import { useCreateCreditCard } from 'calypso/my-sites/checkout/src/hooks/use-cre
 import { useSelector, useDispatch } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { PaymentMethodSelectorSubmitButtonContent } from '../manage-purchase/payment-method-selector/payment-method-selector-submit-button-content';
 
 function AddNewPaymentMethod() {
 	const goToPaymentMethods = () => page( paymentMethods );
@@ -32,7 +33,9 @@ function AddNewPaymentMethod() {
 		stripeLoadingError,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		submitButtonContent: translate( 'Save card' ),
+		submitButtonContent: (
+			<PaymentMethodSelectorSubmitButtonContent text={ translate( 'Save card' ) } />
+		),
 		allowUseForAllSubscriptions: true,
 		initialUseForAllSubscriptions: true,
 	} );

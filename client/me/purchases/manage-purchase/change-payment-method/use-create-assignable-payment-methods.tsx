@@ -9,9 +9,18 @@ import {
 } from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
+import { PaymentMethodSelectorSubmitButtonContent } from '../payment-method-selector/payment-method-selector-submit-button-content';
 import useFetchAvailablePaymentMethods from './use-fetch-available-payment-methods';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 
+/**
+ * Hook to create the payment method objects required by the
+ * PaymentMethodSelector for assigning payment methods to existing
+ * subscriptions.
+ *
+ * Payment methods created for checkout use a quite different hook although a
+ * similar system.
+ */
 export default function useCreateAssignablePaymentMethods(
 	currentPaymentMethodId: string
 ): PaymentMethod[] {
@@ -29,7 +38,9 @@ export default function useCreateAssignablePaymentMethods(
 		stripeLoadingError,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		submitButtonContent: translate( 'Save card' ),
+		submitButtonContent: (
+			<PaymentMethodSelectorSubmitButtonContent text={ translate( 'Save card' ) } />
+		),
 		allowUseForAllSubscriptions: true,
 	} );
 
@@ -46,7 +57,9 @@ export default function useCreateAssignablePaymentMethods(
 		isStripeLoading,
 		stripeLoadingError,
 		storedCards,
-		submitButtonContent: translate( 'Use this card' ),
+		submitButtonContent: (
+			<PaymentMethodSelectorSubmitButtonContent text={ translate( 'Use this card' ) } />
+		),
 		allowEditingTaxInfo: true,
 		isTaxInfoRequired: true,
 	} );
