@@ -4,10 +4,10 @@ body {
 	background-color: var(--studio-white);
 }
 
-.jetpack-app-plans {
+.jetpack-app__plans {
 	@include plan-features-layout-switcher;
 
-	.plans__header {
+	.jetpack-app__plans-header {
 		display: block;
 		overflow: auto;
 
@@ -29,5 +29,13 @@ body {
 			padding: 0 16px;
 			margin-bottom: 0;
 		}
+	}
+
+	.jetpack-app__plans-loading {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		position: relative;
 	}
 }

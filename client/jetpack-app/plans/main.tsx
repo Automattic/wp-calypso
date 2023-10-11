@@ -28,7 +28,7 @@ const Header: React.FC< HeaderProps > = ( { paidDomainName } ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className="plans__header">
+		<div className="jetpack-app__plans-header">
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'Choose the perfect plan' ) }
@@ -86,7 +86,7 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, re
 	};
 
 	return (
-		<Main className="jetpack-app-plans">
+		<Main className="jetpack-app__plans">
 			<QueryPlans />
 			{ plansLoaded ? (
 				<>
@@ -104,7 +104,7 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, re
 					/>
 				</>
 			) : (
-				<div className="plans__loading">
+				<div className="jetpack-app__plans-loading">
 					<LoadingEllipsis />
 				</div>
 			) }
