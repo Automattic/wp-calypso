@@ -85,12 +85,13 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	const [ error, setError ] = useState< TranslateResult | false >( false );
 
 	const initialSelectedSite = useMemo( () => {
+		if ( ! fromSiteSlug ) {
+			return '';
+		}
 		const validSiteThatMatchesFromSiteSlugProp = ( site: JetpackSite ) =>
 			site.is_wpcom_atomic === false && site.slug === fromSiteSlug;
 
-		return (
-			( !! fromSiteSlug && jetpackSites.find( validSiteThatMatchesFromSiteSlugProp )?.URL ) || ''
-		);
+		return jetpackSites.find( validSiteThatMatchesFromSiteSlugProp )?.URL || '';
 	}, [ jetpackSites, fromSiteSlug ] );
 
 	useEffect( () => {
