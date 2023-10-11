@@ -235,7 +235,7 @@ open class WPComPluginBuild(
 							commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
 							build_number=%build.number%
 						EOM
-						rm build_meta.json
+						rm -f build_meta.json
 					fi
 
 					# 5. Create artifact of cwd.
