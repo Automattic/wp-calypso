@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { like, unlike } from 'calypso/state/posts/likes/actions';
 import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
@@ -29,9 +30,11 @@ class LikeButtonContainer extends Component {
 	};
 
 	handleLikeToggle = ( liked ) => {
+		if ( ! this.props.isLoggedIn && this.props.onLoggedOut !== noop ) {
+			return this.props.onLoggedOut();
+		}
 		const toggler = liked ? this.props.like : this.props.unlike;
 		toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
-
 		this.props.onLikeToggle( liked );
 	};
 
@@ -65,6 +68,7 @@ export default connect(
 		return {
 			likeCount: getPostLikeCount( state, siteId, postId ),
 			iLike: isLikedPost( state, siteId, postId ),
+			isLoggedIn: isUserLoggedIn( state ),
 		};
 	},
 	{ like, unlike },

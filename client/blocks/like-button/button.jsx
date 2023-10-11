@@ -21,7 +21,6 @@ class LikeButton extends PureComponent {
 		slug: PropTypes.string,
 		icon: PropTypes.object,
 		defaultLabel: PropTypes.string,
-		onLoggedOut: PropTypes.func,
 	};
 
 	static defaultProps = {

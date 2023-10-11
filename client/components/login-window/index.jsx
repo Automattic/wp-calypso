@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
+import { createAccountUrl } from 'calypso/lib/paths';
 
 export default function useLoginWindow( { onLoginSuccess } ) {
 	const isBrowser = typeof window !== 'undefined';
@@ -56,8 +57,9 @@ export default function useLoginWindow( { onLoginSuccess } ) {
 			return;
 		}
 
+		const url = createAccountUrl( { redirectTo: redirectTo, ref: 'reader-lw' } );
 		const createAccountWindow = window.open(
-			`https://wordpress.com/start/account/user?redirect_to=${ redirectTo }`,
+			url,
 			'CalyspoLogin',
 			'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500'
 		);
