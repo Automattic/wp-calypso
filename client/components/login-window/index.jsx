@@ -17,6 +17,10 @@ export default function useLoginWindow( { onLoginSuccess } ) {
 		);
 	}
 
+	const windowFeatures =
+		'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500';
+	const windowName = 'CalypsoLogin';
+
 	const waitForLogin = ( event ) => {
 		if ( event.origin !== `https://${ domain }` ) {
 			return;
@@ -37,8 +41,8 @@ export default function useLoginWindow( { onLoginSuccess } ) {
 
 		const loginWindow = window.open(
 			`https://wordpress.com/log-in?redirect_to=${ redirectTo }`,
-			'CalyspoLogin',
-			'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500'
+			windowName,
+			windowFeatures
 		);
 
 		// Listen for login data
@@ -57,11 +61,10 @@ export default function useLoginWindow( { onLoginSuccess } ) {
 			return;
 		}
 
-		const url = createAccountUrl( { redirectTo: redirectTo, ref: 'reader-lw' } );
 		const createAccountWindow = window.open(
-			url,
-			'CalyspoLogin',
-			'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500'
+			`https://wordpress.com${ createAccountUrl( { redirectTo: redirectTo, ref: 'reader-lw' } ) }`,
+			windowName,
+			windowFeatures
 		);
 
 		// Listen for login data
