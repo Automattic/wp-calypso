@@ -1,4 +1,5 @@
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -67,8 +68,8 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, re
 
 	const handleRedirect = ( planId?: number ) => {
 		if ( redirectTo ) {
-			const cartItemParam = planId ? `?plan_id=${ planId }` : '';
-			window.location.href = `${ redirectTo }${ cartItemParam }`;
+			const args = planId ? { plan_id: planId } : {};
+			window.location.href = addQueryArgs( redirectTo, args );
 		}
 	};
 
