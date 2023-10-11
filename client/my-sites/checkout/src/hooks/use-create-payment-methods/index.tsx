@@ -443,6 +443,7 @@ export default function useCreatePaymentMethods( {
 		isStripeLoading,
 		stripeLoadingError,
 		storedCards,
+		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
 	// The order is the order of Payment Methods in Checkout.
