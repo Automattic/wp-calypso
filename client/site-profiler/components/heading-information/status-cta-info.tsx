@@ -8,7 +8,7 @@ interface Props {
 }
 export default function StatusCtaInfo( props: Props ) {
 	const { conversionAction, domainCategory } = props;
-	// if there's a special domain mapping, use that instead of the conversion action
+	// if there's a domain category, use that instead of the conversion action
 	const finalStatus = domainCategory ?? conversionAction;
 
 	switch ( finalStatus ) {
