@@ -40,7 +40,7 @@ import type PageJS from 'page';
 
 const setSidebar = ( context: PageJS.Context ): void => {
 	if ( isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewPurchasesSidebar />;
+		context.secondary = <NewPurchasesSidebar path={ context.path } />;
 	} else {
 		context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	}
