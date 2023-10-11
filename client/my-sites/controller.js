@@ -7,7 +7,12 @@ import page from 'page';
 import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	setSectionMiddleware,
+	redirectLoggedOut,
+} from 'calypso/controller';
 import { composeHandlers } from 'calypso/controller/shared';
 import { render } from 'calypso/controller/web-util';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
@@ -49,7 +54,11 @@ import {
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
-import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	isUserLoggedIn,
+	getCurrentUserSiteCount,
+} from 'calypso/state/current-user/selectors';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
@@ -815,6 +824,13 @@ export function getJetpackAuthorizeURL( context, site ) {
 	);
 }
 
+export function selectSite( context ) {
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	composeHandlers( siteSelection, sites, makeLayout, render )( context );
+}
+
 export function selectSiteIfLoggedIn( context, next ) {
 	const state = context.store.getState();
 	if ( ! isUserLoggedIn( state ) ) {
@@ -822,8 +838,40 @@ export function selectSiteIfLoggedIn( context, next ) {
 		return;
 	}
 
-	// Logged in: Terminate the regular handler path by not calling next()
-	// and render the site selection screen, redirecting the user if they
-	// only have one site.
-	composeHandlers( siteSelection, sites, makeLayout, render )( context );
+	selectSite( context );
+}
+
+export function selectSiteIfLoggedInWithSites( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) && ! context.params.site_id ) {
+		selectSite( context );
+		return;
+	}
+
+	siteSelection( context, next );
+}
+
+export function hideNavigationIfLoggedInWithNoSites( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) === 0 ) {
+		context.hideLeftNavigation = true;
+	}
+	next();
+}
+
+export function addNavigationIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
+		navigation( context, next );
+	}
+	next();
+}
+
+export function redirectToLoginIfSiteRequested( context, next ) {
+	if ( context.params.site_id ) {
+		redirectLoggedOut( context, next );
+		return;
+	}
+
+	next();
 }

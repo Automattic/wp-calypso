@@ -183,6 +183,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		action: activateAction,
 		hideForTheme: ( state, themeId, siteId ) =>
 			! isUserLoggedIn( state ) ||
+			! siteId ||
 			isJetpackSiteMultiSite( state, siteId ) ||
 			( isExternallyManagedTheme( state, themeId ) &&
 				! isMarketplaceThemeSubscribed( state, themeId, siteId ) ) ||
@@ -283,7 +284,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		label: signupLabel,
 		extendedLabel: signupLabel,
 		getUrl: ( state, themeId, siteId, options ) => getThemeSignupUrl( state, themeId, options ),
-		hideForTheme: ( state ) => isUserLoggedIn( state ),
+		hideForTheme: ( state, themeId, siteId ) => isUserLoggedIn( state ) && siteId,
 	};
 
 	const separator = {

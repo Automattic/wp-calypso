@@ -846,6 +846,7 @@ class ThemeSheet extends Component {
 
 	getDefaultOptionLabel = () => {
 		const {
+			siteId,
 			defaultOption,
 			isActive,
 			isLoggedIn,
@@ -866,7 +867,7 @@ class ThemeSheet extends Component {
 					{ translate( 'Customize site' ) }
 				</span>
 			);
-		} else if ( isLoggedIn ) {
+		} else if ( isLoggedIn && siteId ) {
 			if ( isPremium && ! isThemePurchased && ! isExternallyManagedTheme ) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
@@ -1154,8 +1155,7 @@ class ThemeSheet extends Component {
 			section ? ' > ' + titlecase( section ) : ''
 		}${ siteId ? ' > Site' : '' }`;
 
-		let plansUrl = '/plans';
-
+		let plansUrl = '';
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
@@ -1165,9 +1165,9 @@ class ThemeSheet extends Component {
 			const feature =
 				PLAN_PREMIUM === plan ? FEATURE_PREMIUM_THEMES_V2 : FEATURE_UPLOAD_THEMES_PLUGINS;
 
-			plansUrl =
-				plansUrl +
-				`/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
+			plansUrl = `/plans/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
+		} else {
+			plansUrl = '/start/premium';
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
@@ -1420,7 +1420,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		secondaryOption = null;
 	}
 
-	if ( ! isLoggedIn ) {
+	if ( ! isLoggedIn || ! siteId ) {
 		defaultOption = 'signup';
 		secondaryOption = null;
 	} else if ( isActive ) {
