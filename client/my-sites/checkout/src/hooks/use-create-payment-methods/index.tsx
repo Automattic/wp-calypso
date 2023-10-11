@@ -144,6 +144,7 @@ function useCreateP24( {
 			shouldLoad
 				? createP24Method( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
