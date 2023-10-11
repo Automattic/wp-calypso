@@ -92,13 +92,13 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, re
 					<PlansFeaturesMain
 						paidDomainName={ paidDomainName }
 						intent="plans-jetpack-app-site-creation"
-						isInSignup={ true }
+						isInSignup
 						intervalType="yearly"
 						onUpgradeClick={ onUpgradeClick }
 						plansWithScroll={ false }
 						removePaidDomain={ handleRedirect }
-						hidePlanTypeSelector={ true }
-						hidePlansFeatureComparison={ true }
+						hidePlanTypeSelector
+						hidePlansFeatureComparison
 					/>
 				</>
 			) : (
