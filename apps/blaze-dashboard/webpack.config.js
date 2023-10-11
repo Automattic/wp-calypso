@@ -112,7 +112,6 @@ module.exports = {
 							'features',
 							'dsp_stripe_pub_key',
 							'dsp_widget_js_src',
-							'dsp_widget_js_test_src',
 							'client_slug',
 							'hotjar_enabled',
 						],
