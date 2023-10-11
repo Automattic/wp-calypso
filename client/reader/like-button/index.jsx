@@ -1,9 +1,13 @@
+import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import { navigate } from 'calypso/lib/navigate';
+import { createAccountUrl } from 'calypso/lib/paths';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -26,14 +30,13 @@ class ReaderLikeButton extends Component {
 		clearTimeout( this.hidePopoverTimeout );
 	}
 
-	onLikeToggle = ( liked ) => {
-		// Check if the user is logged in
-		if ( ! this.props.isLoggedIn ) {
+	onLoggedOut = () => {
+		if ( config.isEnabled( 'reader/login-window' ) ) {
 			return this.showJoinConversationModal();
 		}
-
-		// Record the like
-		this.recordLikeToggle( liked );
+		// Redirect to create account page
+		const { pathname } = getUrlParts( window.location.href );
+		return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 	};
 
 	recordLikeToggle = ( liked ) => {
@@ -88,7 +91,8 @@ class ReaderLikeButton extends Component {
 					ref={ this.likeButtonRef }
 					onMouseEnter={ this.showLikesPopover }
 					onMouseLeave={ this.hideLikesPopover }
-					onLikeToggle={ this.onLikeToggle }
+					onLikeToggle={ this.recordLikeToggle }
+					onLoggedOut={ this.onLoggedOut }
 					likeSource="reader"
 					icon={ likeIcon }
 				/>
@@ -103,10 +107,12 @@ class ReaderLikeButton extends Component {
 						context={ this.likeButtonRef.current }
 					/>
 				) }
-				<ReaderJoinConversationDialog
-					onClose={ this.hideJoinConversationModal }
-					isVisible={ showJoinConversationModal }
-				/>
+				{ config.isEnabled( 'reader/login-window' ) && (
+					<ReaderJoinConversationDialog
+						onClose={ this.hideJoinConversationModal }
+						isVisible={ showJoinConversationModal }
+					/>
+				) }
 			</Fragment>
 		);
 	}
