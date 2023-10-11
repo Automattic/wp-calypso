@@ -601,7 +601,11 @@ async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug
 		.forCartKey( cartKey )
 		.actions.addProductsToCart( cartItems )
 		.then( () => {
-			page( `/checkout/${ siteSlug }` );
+			page(
+				`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent(
+					`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }&onboarding`
+				) }`
+			);
 		} )
 		.finally( () => {
 			dispatch( setIsLoadingCart( false ) );
