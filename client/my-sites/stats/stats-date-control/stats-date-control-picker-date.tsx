@@ -8,6 +8,7 @@ const DateControlPickerDate = ( {
 	onStartChange,
 	onEndChange,
 	onApply,
+	onCancel,
 }: DateControlPickerDateProps ) => {
 	return (
 		<>
@@ -17,6 +18,7 @@ const DateControlPickerDate = ( {
 			<div>
 				<TextControl value={ endDate } onChange={ onEndChange } />
 			</div>
+			<Button onClick={ onCancel }>Cancel</Button>
 			<Button variant="primary" onClick={ onApply }>
 				Apply
 			</Button>

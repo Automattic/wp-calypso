@@ -50,6 +50,10 @@ const DateControlPicker = ( {
 		page( href );
 	};
 
+	const handleOnCancel = () => {
+		togglePopoverOpened( false );
+	};
+
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
 		// Shared date math.
 		const calcNewDateWithOffset = ( date: Date, offset: number ): Date => {
@@ -98,6 +102,7 @@ const DateControlPicker = ( {
 					onStartChange={ changeStartDate }
 					onEndChange={ changeEndDate }
 					onApply={ handleOnApply }
+					onCancel={ handleOnCancel }
 				/>
 				<DateControlPickerShortcuts
 					shortcutList={ shortcutList }
