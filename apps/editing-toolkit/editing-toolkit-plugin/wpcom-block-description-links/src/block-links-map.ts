@@ -1,3 +1,5 @@
+/* URLs are localized within the function where these URLs are used. */
+/* eslint-disable wpcalypso/i18n-unlocalized-url */
 const blockLinks: { [ key: string ]: string } = {
 	/**
 	 * Core Blocks
@@ -185,6 +187,8 @@ const blockLinks: { [ key: string ]: string } = {
 	'jetpack/layout-grid': 'https://wordpress.com/support/wordpress-editor/blocks/layout-grid-block/',
 
 	'jetpack/mailchimp': 'https://wordpress.com/support/wordpress-editor/blocks/mailchimp-block/',
+
+	'jetpack/paywall': 'https://wordpress.com/support/paid-newsletters/#use-the-paywall-block',
 };
 
 export const blockLinksWithVariations: {
