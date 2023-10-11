@@ -467,7 +467,7 @@ export class UserStep extends Component {
 			return translate( 'Let’s get you signed up.' );
 		}
 
-		if ( isSocialFirst && ! headerText ) {
+		if ( isSocialFirst ) {
 			return translate( 'Create your account' );
 		}
 
@@ -665,7 +665,6 @@ export class UserStep extends Component {
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
 				customizedActionButtons={ this.getCustomizedActionButtons() }
-				isSticky={ this.getIsSticky() }
 			/>
 		);
 	}
