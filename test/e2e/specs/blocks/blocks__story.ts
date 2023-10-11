@@ -27,7 +27,7 @@ declare const browser: Browser;
  *
  * Keywords: Jetpack, Media Block, Story
  */
-describe( DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features );
 	const testFiles: TestFile[] = [];

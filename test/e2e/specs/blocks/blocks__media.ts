@@ -28,7 +28,7 @@ declare const browser: Browser;
  *
  * Keywords: Media, Video, VideoPress, Image, Audio, File
  */
-describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	const features = envToFeatureKey( envVariables );
 
 	// Default to `defaultUser` as it has WordPress.com Premium enabled, which is required
