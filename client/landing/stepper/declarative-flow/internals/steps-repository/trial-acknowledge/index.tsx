@@ -1,4 +1,4 @@
-import { StepContainer, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import { StepContainer, isNewHostedSiteCreationFlow } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { HostingTrialAcknowledge } from './hosting-trial-acknowledge';
 import { MigrationTrialAcknowledge } from './migration-trial-acknowledge';
@@ -9,7 +9,7 @@ const TrialAcknowledge: Step = function TrialAcknowledge( { navigation, flow, st
 	const { goBack } = navigation;
 
 	const getStepContent = () => {
-		if ( flow === NEW_HOSTED_SITE_FLOW ) {
+		if ( isNewHostedSiteCreationFlow( flow ) ) {
 			return (
 				<HostingTrialAcknowledge flow={ flow } navigation={ navigation } stepName={ stepName } />
 			);
