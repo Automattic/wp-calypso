@@ -1,0 +1,15 @@
+.sidebar-v2 {
+	margin: 0;
+	padding: 0;
+
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	height: 100%;
+}
+
+.sidebar-v2__footer {
+	margin-block-start: auto;
+	padding: 0 16px 16px;
+}
