@@ -64,7 +64,7 @@ import useStorageAddOns from '../add-ons/hooks/use-storage-add-ons';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import { LoadingPlaceHolder } from './components/loading-placeholder';
 import ModalContainer from './components/plan-upsell-modal';
-import { useProgressBlockingModal } from './components/plan-upsell-modal/hooks/use-progress-blocking-model';
+import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
@@ -239,7 +239,7 @@ const PlansFeaturesMain = ( {
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
-	const { resolveDisplayedModal } = useProgressBlockingModal( { paidDomainName } );
+	const resolveModal = useModalResolutionCallback( { paidDomainName } );
 
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
@@ -320,7 +320,7 @@ const PlansFeaturesMain = ( {
 				recordTracksEvent( 'calypso_signup_free_plan_click' );
 			}
 
-			const shouldDisplayBlockingModal = resolveDisplayedModal( planSlug ) !== null;
+			const shouldDisplayBlockingModal = resolveModal( planSlug ) !== null;
 			if ( shouldDisplayBlockingModal ) {
 				setIsModalOpen( true );
 				return;
@@ -350,7 +350,7 @@ const PlansFeaturesMain = ( {
 
 			page( checkoutUrlWithArgs );
 		},
-		[ onUpgradeClick, resolveDisplayedModal, siteSlug, withDiscount ]
+		[ onUpgradeClick, resolveModal, siteSlug, withDiscount ]
 	);
 
 	const term = usePlanBillingPeriod( {
