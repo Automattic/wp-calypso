@@ -13,7 +13,7 @@ import {
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { skipItIf } from '../../jest-helpers';
+import { skipDescribeIf, skipItIf } from '../../jest-helpers';
 
 const quote =
 	'The problem with quotes on the Internet is that it is hard to verify their authenticity.\n- Abraham Lincoln';
@@ -168,7 +168,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 	} );
 
-	describe( 'View post', function () {
+	// Skip test on Private site, because posts are not visible to non-logged out users.
+	skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'View post', function () {
 		let newPage: Page;
 
 		beforeAll( async function () {
@@ -182,8 +183,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			);
 			await newPage.goto( publishedURL.href );
 			const response = await trackingPixelLoaded;
-
 			expect( response.status() ).toBe( 200 );
+
 			expect( publishedURL.href ).toStrictEqual( newPage.url() );
 		} );
 
@@ -200,13 +201,12 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		// Not checking the `Press This` button as it is not available on AT.
 		// @see: paYJgx-1lp-p2
-		// Skip test on Private user because social sharing only works on public sites.
-		skipItIf( accountName === 'jetpackAtomicPrivateUser' ).each( [
-			{ name: 'Twitter' },
-			{ name: 'Facebook' },
-		] )( 'Social sharing button for $name can be clicked', async function ( { name } ) {
-			publishedPostPage = new PublishedPostPage( newPage );
-			await publishedPostPage.validateSocialButton( name, { click: true } );
-		} );
+		it.each( [ { name: 'Twitter' }, { name: 'Facebook' } ] )(
+			'Social sharing button for $name can be clicked',
+			async function ( { name } ) {
+				publishedPostPage = new PublishedPostPage( newPage );
+				await publishedPostPage.validateSocialButton( name, { click: true } );
+			}
+		);
 	} );
 } );
