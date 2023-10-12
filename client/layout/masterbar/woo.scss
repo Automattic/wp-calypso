@@ -278,11 +278,25 @@
 		margin-top: 25px;
 	}
 
-	.login__social-buttons {
+	.login__social {
+		border-top: 1px solid #eaeaeb;
+		padding-top: 2rem;
+		padding-bottom: 2rem;
+
+		.login__social-buttons {
 		align-items: center;
+		display: flex;
+		flex-direction: column;
 
 		@media screen and ( max-width: 660px ) {
 			align-items: flex-start;
+		}
+
+		.login__social-button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
 		}
 
 		.login__social-buttons-container {
@@ -318,6 +332,7 @@
 				font-size: inherit;
 				line-height: inherit;
 			}
+		}
 		}
 	}
 

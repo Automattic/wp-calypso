@@ -629,9 +629,9 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			height: 100%;
 			justify-content: center;
 			gap: 16px;
-		}
+		
 
-		.social-buttons__button {
+			.social-buttons__button {
 			display: flex;
 			height: 48px;
 			padding: 4px 16px !important;
@@ -682,6 +682,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				letter-spacing: 0.32px;
 				margin-right: auto;
 				margin-left: -20px;
+			}
 			}
 		}
 

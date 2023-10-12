@@ -158,12 +158,13 @@
 		}
 	}
 
-	.signup-form__social {
+	.login__social {
 		display: flex;
 		align-items: center;
+		max-width: 400px;
 	}
 
-	.signup-form__social-buttons button {
+	.login__social-buttons button {
 		background: none;
 		border: none;
 		border-radius: 0;
@@ -205,11 +206,11 @@
 		}
 	}
 
-	& .signup-form__social p {
+	& .login__social p {
 		font-size: 0.75rem;
 	}
 
-	.signup-form__social > p {
+	.login__social > p {
 		display: none;
 	}
 
@@ -275,7 +276,7 @@
 			padding: 24px 0;
 		}
 
-		.signup-form__social-buttons button {
+		.login__social-buttons button {
 			text-align: start;
 		}
 	}
