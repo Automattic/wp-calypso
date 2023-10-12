@@ -102,7 +102,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 						returnMonthly: true,
 						returnSmallestUnit: true,
 					} );
-					let yearlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+					let fullPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 						returnMonthly: false,
 						returnSmallestUnit: true,
 					} );
@@ -115,11 +115,11 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 
 						if ( isMonthly && monthlyPrice !== purchasedPlan.priceInteger ) {
 							monthlyPrice = purchasedPlan.priceInteger;
-							yearlyPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
-						} else if ( yearlyPrice !== purchasedPlan.priceInteger ) {
+							fullPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
+						} else if ( fullPrice !== purchasedPlan.priceInteger ) {
 							const months = Math.ceil( purchasedPlan.billPeriodDays / PLAN_MONTHLY_PERIOD );
 							monthlyPrice = parseFloat( ( purchasedPlan.priceInteger / months ).toFixed( 2 ) );
-							yearlyPrice = purchasedPlan.priceInteger;
+							fullPrice = purchasedPlan.priceInteger;
 						}
 					}
 
@@ -128,7 +128,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 						[ planSlug ]: {
 							originalPrice: {
 								monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
-								full: yearlyPrice ? yearlyPrice + storageAddOnPriceYearly : null,
+								full: fullPrice ? fullPrice + storageAddOnPriceYearly : null,
 							},
 							discountedPrice: {
 								monthly: null,
