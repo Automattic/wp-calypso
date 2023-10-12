@@ -8,7 +8,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { useCheckMigrationTrialPlanEligibility } from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
+import { useCheckMigrationTrialPlanEligibility } from 'calypso/data/plans/use-check-trial-plan-eligibility';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
