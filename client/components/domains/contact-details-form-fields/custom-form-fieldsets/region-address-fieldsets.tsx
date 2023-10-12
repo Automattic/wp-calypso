@@ -1,10 +1,8 @@
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import {
-	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './constants';
