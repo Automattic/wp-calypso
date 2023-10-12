@@ -35,6 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let testAccount: TestAccount;
 	let editorPage: EditorPage;
 	let publishedPostPage: PublishedPostPage;
+	let publishedURL: URL;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -161,22 +162,33 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		skipItIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Save draft', async function () {
 			await editorPage.saveDraft();
 		} );
+
+		it( 'Publish post', async function () {
+			publishedURL = await editorPage.publish();
+		} );
 	} );
 
-	describe( 'Publish', function () {
-		it( 'Publish and visit post', async function () {
-			const publishedURL: URL = await editorPage.publish( { visit: true } );
-			expect( publishedURL.href ).toStrictEqual( page.url() );
+	describe( 'View post', function () {
+		let newPage: Page;
+
+		beforeAll( async function () {
+			newPage = await browser.newPage();
 		} );
 
-		it( 'Stats tracking pixel is loaded', async function () {
-			await page.waitForResponse(
-				new RegExp( `pixel.wp.com/g.gif?blog=${ testAccount.credentials.testSites?.primary.id }` )
+		it( 'View published post', async function () {
+			// Check for `blog` and `post` query params, used for stats tracking.
+			const trackingPixelLoaded = newPage.waitForResponse(
+				/pixel\.wp\.com\/g\.gif.*blog=[\d]+.*&post=[\d]+/
 			);
+			await newPage.goto( publishedURL.href );
+			const response = await trackingPixelLoaded;
+
+			expect( response.status() ).toBe( 200 );
+			expect( publishedURL.href ).toStrictEqual( newPage.url() );
 		} );
 
 		it( 'Post content is found in published post', async function () {
-			publishedPostPage = new PublishedPostPage( page );
+			publishedPostPage = new PublishedPostPage( newPage );
 			await publishedPostPage.validateTitle( title );
 			await publishedPostPage.validateTextInPost( quote );
 		} );
@@ -193,7 +205,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			{ name: 'Twitter' },
 			{ name: 'Facebook' },
 		] )( 'Social sharing button for $name can be clicked', async function ( { name } ) {
-			publishedPostPage = new PublishedPostPage( page );
+			publishedPostPage = new PublishedPostPage( newPage );
 			await publishedPostPage.validateSocialButton( name, { click: true } );
 		} );
 	} );
