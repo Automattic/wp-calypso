@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect } from 'react';
-import { SPECIAL_DOMAIN_CASES } from 'calypso/site-profiler/utils/get-special-domain-mapping';
+import { SPECIAL_DOMAIN_CATEGORY } from 'calypso/site-profiler/utils/get-domain-category';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { HostingProvider } from 'calypso/data/site-profiler/types';
 import type { CONVERSION_ACTION } from 'calypso/site-profiler/hooks/use-define-conversion-action';
@@ -11,9 +11,9 @@ import type { CONVERSION_ACTION } from 'calypso/site-profiler/hooks/use-define-c
  */
 export default function useSiteProfilerRecordAnalytics(
 	domain: string,
+	domainCategory?: SPECIAL_DOMAIN_CATEGORY,
 	isDomainValid?: boolean,
 	conversionAction?: CONVERSION_ACTION,
-	specialDomainMapping?: SPECIAL_DOMAIN_CASES,
 	hostingProvider?: HostingProvider,
 	urlData?: UrlData
 ) {
@@ -22,15 +22,15 @@ export default function useSiteProfilerRecordAnalytics(
 	}, [] );
 
 	useEffect( () => {
-		const noNeedToFetchApi = specialDomainMapping && ! isDomainValid;
+		const noNeedToFetchApi = domainCategory && ! isDomainValid;
 
 		domain &&
 			( conversionAction || noNeedToFetchApi ) &&
 			recordTracksEvent( 'calypso_site_profiler_domain_analyze', {
 				domain,
+				domain_category: domainCategory,
 				is_domain_valid: isDomainValid,
 				conversion_action: conversionAction,
-				special_domain_mapping: specialDomainMapping,
 			} );
 	}, [ domain, isDomainValid, conversionAction ] );
 

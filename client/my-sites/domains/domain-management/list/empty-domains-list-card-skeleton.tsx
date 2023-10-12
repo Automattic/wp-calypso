@@ -10,6 +10,7 @@ interface EmptyDomainsListCardSkeletonProps {
 	isCompact?: boolean;
 	title?: string;
 	line?: string;
+	secondLine?: string;
 	actionURL: string;
 	contentType: string;
 	action: string;
@@ -22,6 +23,7 @@ export const EmptyDomainsListCardSkeleton = ( {
 	isCompact,
 	title,
 	line,
+	secondLine,
 	actionURL,
 	contentType,
 	action,
@@ -58,6 +60,7 @@ export const EmptyDomainsListCardSkeleton = ( {
 					<div className="empty-domains-list-card__text">
 						{ title ? <h2>{ title }</h2> : null }
 						{ line ? <h3>{ line }</h3> : null }
+						{ secondLine ? <h3 style={ { fontStyle: 'italic' } }>{ secondLine }</h3> : null }
 					</div>
 					<div className="empty-domains-list-card__actions">
 						<Button

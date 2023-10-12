@@ -1,15 +1,15 @@
 import { translate } from 'i18n-calypso';
 import { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
-import type { SPECIAL_DOMAIN_CASES } from '../../utils/get-special-domain-mapping';
+import type { SPECIAL_DOMAIN_CATEGORY } from '../../utils/get-domain-category';
 
 interface Props {
 	conversionAction?: CONVERSION_ACTION;
-	specialDomainMapping?: SPECIAL_DOMAIN_CASES;
+	domainCategory?: SPECIAL_DOMAIN_CATEGORY;
 }
 export default function StatusCtaInfo( props: Props ) {
-	const { conversionAction, specialDomainMapping } = props;
-	// if there's a special domain mapping, use that instead of the conversion action
-	const finalStatus = specialDomainMapping ?? conversionAction;
+	const { conversionAction, domainCategory } = props;
+	// if there's a domain category, use that instead of the conversion action
+	const finalStatus = domainCategory ?? conversionAction;
 
 	switch ( finalStatus ) {
 		case 'wordpress-com':
