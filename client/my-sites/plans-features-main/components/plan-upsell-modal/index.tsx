@@ -2,7 +2,7 @@ import { PLAN_PERSONAL, PlanSlug } from '@automattic/calypso-products';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { FreePlanFreeDomainDialog } from './free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './free-plan-paid-domain-dialog';
-import { useProgressBlockingModal } from './hooks/use-progress-blocking-model';
+import { useModalResolutionCallback } from './hooks/use-modal-resolution-callback';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
@@ -42,12 +42,12 @@ export default function ModalContainer( {
 	onFreePlanSelected,
 	onPlanSelected,
 }: ModalContainerProps ) {
-	const { resolveDisplayedModal } = useProgressBlockingModal( { paidDomainName } );
+	const resolveModal = useModalResolutionCallback( { paidDomainName } );
 
 	if ( ! isModalOpen ) {
 		return;
 	}
-	switch ( resolveDisplayedModal( selectedPlan ) ) {
+	switch ( resolveModal( selectedPlan ) ) {
 		case PAID_DOMAIN_FREE_PLAN_SELECTED_MODAL:
 			return (
 				<FreePlanPaidDomainDialog
