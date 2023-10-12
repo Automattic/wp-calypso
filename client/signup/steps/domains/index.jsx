@@ -875,16 +875,18 @@ export class RenderDomainsStep extends Component {
 					<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
 						{ this.props.translate( 'Continue' ) }
 					</Button>
-					<Button
-						borderless
-						className="domains__domain-cart-choose-later"
-						onClick={ () => {
-							this.removeAllDomains();
-							this.handleSkip( undefined, false );
-						} }
-					>
-						{ this.props.translate( 'Choose my domain later' ) }
-					</Button>
+					{ this.props.flowName !== 'domain' && (
+						<Button
+							borderless
+							className="domains__domain-cart-choose-later"
+							onClick={ () => {
+								this.removeAllDomains();
+								this.handleSkip( undefined, false );
+							} }
+						>
+							{ this.props.translate( 'Choose my domain later' ) }
+						</Button>
+					) }
 				</div>
 			);
 		};
