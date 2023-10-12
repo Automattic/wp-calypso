@@ -3,13 +3,13 @@ import {
 	ABOUT_PAGE,
 	BLOG_PAGE,
 	CONTACT_PAGE,
+	CUSTOM_PAGE,
 	FAQ_PAGE,
 	HOME_PAGE,
 	PHOTO_GALLERY_PAGE,
 	PRICING_PAGE,
-	SERVICE_SHOWCASE_PAGE,
+	PageId,
 	SHOP_PAGE,
-	SITEMAP_PAGE,
 	TEAM_PAGE,
 	TESTIMONIALS_PAGE,
 } from 'calypso/signup/difm/constants';
@@ -20,8 +20,6 @@ import faqPage from 'calypso/signup/difm/images/page-descriptions/faq-page.svg';
 import homePage from 'calypso/signup/difm/images/page-descriptions/home-page.svg';
 import photoGallery from 'calypso/signup/difm/images/page-descriptions/photo-gallery.svg';
 import pricingPage from 'calypso/signup/difm/images/page-descriptions/pricing-page.svg';
-import serviceShowcase from 'calypso/signup/difm/images/page-descriptions/service-showcase.svg';
-import sitemapPage from 'calypso/signup/difm/images/page-descriptions/sitemap-page.svg';
 import teamPage from 'calypso/signup/difm/images/page-descriptions/team-page.svg';
 import testimonials from 'calypso/signup/difm/images/page-descriptions/testimonials.svg';
 import threeDots from 'calypso/signup/difm/images/three-dots.svg';
@@ -117,6 +115,34 @@ const SelectedCount = styled.div`
 	bottom: 5px;
 `;
 
+const getPageImage = ( pageId: PageId ) => {
+	switch ( pageId ) {
+		case ABOUT_PAGE:
+			return aboutPage;
+		case BLOG_PAGE:
+			return blogPage;
+		case CONTACT_PAGE:
+			return contactPage;
+		case HOME_PAGE:
+			return homePage;
+		case PHOTO_GALLERY_PAGE:
+		case SHOP_PAGE:
+			return photoGallery;
+		case TESTIMONIALS_PAGE:
+			return testimonials;
+		case PRICING_PAGE:
+			return pricingPage;
+		case FAQ_PAGE:
+			return faqPage;
+		case TEAM_PAGE:
+			return teamPage;
+		case CUSTOM_PAGE:
+			return null;
+		default:
+			return homePage;
+	}
+};
+
 export function BrowserView( {
 	pageId,
 	isSelected,
@@ -124,50 +150,19 @@ export function BrowserView( {
 	selectedIndex,
 	onClick,
 }: {
-	pageId: string;
+	pageId: PageId;
 	isSelected?: boolean;
 	isClickDisabled?: boolean;
 	selectedIndex: number;
 	onClick: () => void;
 } ) {
-	const getPageImage = () => {
-		switch ( pageId ) {
-			case ABOUT_PAGE:
-				return aboutPage;
-			case BLOG_PAGE:
-				return blogPage;
-			case CONTACT_PAGE:
-				return contactPage;
-			case SITEMAP_PAGE:
-				return sitemapPage;
-			case HOME_PAGE:
-				return homePage;
-			case PHOTO_GALLERY_PAGE:
-			case SHOP_PAGE:
-				return photoGallery;
-			case SERVICE_SHOWCASE_PAGE:
-				return serviceShowcase;
-			case TESTIMONIALS_PAGE:
-				return testimonials;
-			case PRICING_PAGE:
-				return pricingPage;
-			case FAQ_PAGE:
-				return faqPage;
-			case TEAM_PAGE:
-				return teamPage;
-			default:
-				return homePage;
-		}
-	};
-
 	const selectionProps = { isSelected, isClickDisabled };
+	const imageSrc = getPageImage( pageId );
 	return (
 		<Container { ...selectionProps } onClick={ onClick }>
 			{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }
 			<Header { ...selectionProps } />
-			<Content>
-				<img src={ getPageImage() } alt="page preview" />
-			</Content>
+			<Content>{ imageSrc && <img src={ imageSrc } alt="page preview" /> }</Content>
 		</Container>
 	);
 }
