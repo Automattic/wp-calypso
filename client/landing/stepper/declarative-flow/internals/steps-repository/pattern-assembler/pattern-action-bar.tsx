@@ -82,7 +82,7 @@ const PatternActionBar = ( {
 				} }
 				icon={ shuffle }
 				iconSize={ 23 }
-				text={ translate( 'Shuffle' ) }
+				text={ category?.label }
 			/>
 			{ onReplace && (
 				<Button
