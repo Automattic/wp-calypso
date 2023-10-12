@@ -64,6 +64,7 @@ declare global {
 				};
 				isV2?: boolean;
 				hotjarSiteSettings?: object;
+				recordDSPEvent?: ( name: string, props?: any ) => void;
 				options?: object;
 			} ) => void;
 			strings: any;
@@ -188,6 +189,7 @@ export async function showDSP(
 					: undefined,
 				isV2,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
+				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch ) : undefined,
 				options: getWidgetOptions(),
 			} );
 
@@ -218,6 +220,21 @@ export function recordDSPEntryPoint( entryPoint: string ) {
 		recordTracksEvent( 'calypso_dsp_widget_start', eventProps ),
 		bumpStat( 'calypso_dsp_widget_start', entryPoint )
 	);
+}
+
+/**
+ * Gets the recordTrack function to be used in the DSP widget
+ *
+ * @param {Dispatch} dispatch - Redux disptach function
+ */
+export function getRecordDSPEventHandler( dispatch: Dispatch ) {
+	return ( eventName: string, props?: any ) => {
+		const eventProps = {
+			origin: getDSPOrigin(),
+			...props,
+		};
+		dispatch( recordTracksEvent( eventName, eventProps ) );
+	};
 }
 
 export const requestDSP = async < T >(
