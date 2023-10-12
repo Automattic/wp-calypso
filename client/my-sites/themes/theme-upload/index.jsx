@@ -14,8 +14,8 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -287,7 +287,12 @@ class Upload extends Component {
 			<WrapperComponent>
 				<Card>
 					{ ! inProgress && ! complete && (
-						<UploadDropZone doUpload={ uploadAction } disabled={ isDisabled } />
+						<AsyncLoad
+							require="calypso/blocks/upload-drop-zone"
+							placeholder={ null }
+							doUpload={ uploadAction }
+							disabled={ isDisabled }
+						/>
 					) }
 					{ inProgress && this.renderProgressBar() }
 					{ complete && ! failed && uploadedTheme && this.renderTheme() }

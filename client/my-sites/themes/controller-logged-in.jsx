@@ -7,7 +7,7 @@ import { getProps, loggedOut } from './controller';
 import SingleSiteComponent from './single-site';
 import Upload from './theme-upload';
 
-// Renders <SingleSiteComponent, which assumes context.params.site_id always exists
+// Renders the SingleSiteComponent
 export function loggedIn( context, next ) {
 	// Block direct access for P2 sites
 	const state = context.store.getState();

@@ -14,7 +14,7 @@ import {
 	hideNavigationIfLoggedInWithNoSites,
 	addNavigationIfLoggedIn,
 } from 'calypso/my-sites/controller';
-import { fetchThemeData, loggedOut, redirectToThemeDetails } from './controller';
+import { fetchThemeData, redirectToThemeDetails } from './controller';
 import { renderThemes, upload } from './controller-logged-in';
 import { fetchAndValidateVerticalsAndFilters } from './validate-filters';
 
@@ -90,5 +90,5 @@ export default function ( router ) {
 			redirectToThemeDetails( page.redirect, site_id, theme, section, next )
 	);
 
-	router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
+	router( '/themes/*', fetchThemeData, renderThemes, makeLayout );
 }
