@@ -292,6 +292,7 @@ function PageSelector( {
 				onClick={ onPageClick }
 			/>
 			<PageCell
+				popular
 				context={ context }
 				pageId={ CUSTOM_PAGE }
 				selectedPages={ selectedPages }
