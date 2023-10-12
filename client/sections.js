@@ -219,6 +219,7 @@ const sections = [
 		name: 'jetpack-app',
 		paths: [ '/jetpack-app' ],
 		module: 'calypso/jetpack-app/',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'stats',
