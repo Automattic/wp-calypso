@@ -36,7 +36,7 @@ const AddNewSiteButton = ( {
 			toggleIcon={ showMainButtonLabel ? undefined : 'plus' }
 			onToggle={ onToggleMenu }
 			onClick={ onClickAddNewSite }
-			href="/partner-portal/create-site"
+			href="https://wordpress.com/jetpack/connect"
 		>
 			<PopoverMenuItem onClick={ onClickWpcomMenuItem } href="/partner-portal/create-site">
 				<WordPressLogo className="gridicon" size={ 18 } />
