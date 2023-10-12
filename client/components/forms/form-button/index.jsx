@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
@@ -20,14 +20,15 @@ class FormButton extends Component {
 	};
 
 	render() {
-		const { children, className, isPrimary, ...props } = this.props;
+		const { children, className, isPrimary, isSubmitting, ...props } = this.props;
 		const buttonClasses = classNames( className, 'form-button' );
 
 		return (
 			<Button
 				{ ...omit( props, [ 'isSubmitting', 'moment', 'numberFormat', 'translate' ] ) }
-				primary={ isPrimary }
+				variant={ isPrimary ? 'primary' : 'secondary' }
 				className={ buttonClasses }
+				isBusy={ isSubmitting }
 			>
 				{ Children.count( children ) ? children : this.getDefaultButtonAction() }
 			</Button>
