@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchSyncStatus, setSyncInProgress } from 'calypso/state/sync/actions';
@@ -8,6 +9,7 @@ import { getSyncStatusError } from 'calypso/state/sync/selectors/get-sync-status
 
 export const useCheckSyncStatus = ( siteId: number ) => {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 
 	const intervalIdRef = useRef< NodeJS.Timer >();
 	const syncStatus = useSelector( ( state ) => getSyncStatus( state, siteId ) );
@@ -35,7 +37,7 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 		}
 
 		return clearIntervalId;
-	}, [ clearIntervalId, dispatch, siteId, syncStatus, isSyncInProgress ] );
+	}, [ clearIntervalId, dispatch, siteId, syncStatus, isSyncInProgress, translate ] );
 
 	const resetSyncStatus = useCallback( () => {
 		if ( ! siteId ) {

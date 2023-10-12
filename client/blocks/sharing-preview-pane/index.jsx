@@ -35,7 +35,7 @@ import './style.scss';
 const serviceNames = {
 	facebook: 'Facebook',
 	'instagram-business': 'Instagram',
-	twitter: 'Twitter',
+	x: 'X',
 	linkedin: 'LinkedIn',
 	tumblr: 'Tumblr',
 	mastodon: 'Mastodon',
@@ -101,7 +101,6 @@ class SharingPreviewPane extends PureComponent {
 		/**
 		 * Props to pass to the preview component. Will be populated with the connection
 		 * specific data if the selected service is connected.
-		 *
 		 * @type {Object}
 		 */
 		const previewProps = {
@@ -146,7 +145,7 @@ class SharingPreviewPane extends PureComponent {
 				);
 			case 'linkedin':
 				return <LinkedinSharePreview { ...previewProps } />;
-			case 'twitter':
+			case 'x':
 				return <TwitterSharePreview { ...previewProps } />;
 			case 'mastodon':
 				return (

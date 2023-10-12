@@ -176,12 +176,10 @@
 
 	.search-component {
 		border: 1px solid var(--color-border-subtle);
-		border-radius: 4px;
 	}
 
 	.search-component.is-open {
-		border: 1px solid #a7aaad;
-		border-radius: 4px;
+		border: 1px solid var(--color-border-subtle);
 		height: 48px;
 	}
 

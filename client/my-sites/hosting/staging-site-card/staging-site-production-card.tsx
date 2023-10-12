@@ -20,7 +20,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
-import { StagingSiteSyncCard } from './card-content/staging-sync-card';
+import { SiteSyncCard } from './card-content/staging-sync-card';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 
 const ActionButtons = styled.div( {
@@ -122,9 +122,9 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				</ActionButtons>
 				{ isStagingSitesI3Enabled && (
 					<SyncActionsContainer>
-						<StagingSiteSyncCard
+						<SiteSyncCard
+							type="staging"
 							productionSiteId={ productionSite.id }
-							stagingSiteId={ siteId }
 							onPush={ pullFromStaging }
 							onPull={ pushToStaging }
 							error={ syncError }

@@ -1,3 +1,4 @@
+import { useMemo } from '@wordpress/element';
 import { useExperiment } from 'calypso/lib/explat';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
@@ -14,17 +15,19 @@ const useIsCustomDomainAllowedOnFreePlan = (
 	} );
 
 	/** Ships experiment variant to onboarding-pm flow only  */
-	if ( flowName === 'onboarding-pm' ) {
-		return {
-			isLoading: false,
-			result: true,
-		};
-	}
+	return useMemo( () => {
+		if ( flowName === 'onboarding-pm' ) {
+			return {
+				isLoading: false,
+				result: true,
+			};
+		}
 
-	return {
-		isLoading,
-		result: assignment?.variationName === 'treatment',
-	};
+		return {
+			isLoading,
+			result: assignment?.variationName === 'treatment',
+		};
+	}, [ isLoading, assignment, flowName ] );
 };
 
 export default useIsCustomDomainAllowedOnFreePlan;

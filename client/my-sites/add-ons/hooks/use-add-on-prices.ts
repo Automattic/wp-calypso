@@ -1,13 +1,14 @@
 import formatCurrency from '@automattic/format-currency';
+import { useMemo } from '@wordpress/element';
 import { useSelector } from 'calypso/state';
 import { getProductCurrencyCode, getProductBySlug } from 'calypso/state/products-list/selectors';
 
 const useAddOnPrices = ( productSlug: string, quantity?: number ) => {
-	return useSelector( ( state ) => {
-		const product = getProductBySlug( state, productSlug );
-		let cost = product?.cost_smallest_unit;
-		const currencyCode = getProductCurrencyCode( state, productSlug );
+	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
+	const currencyCode = useSelector( ( state ) => getProductCurrencyCode( state, productSlug ) );
 
+	return useMemo( () => {
+		let cost = product?.cost_smallest_unit;
 		if ( ! cost || ! currencyCode ) {
 			return null;
 		}
@@ -45,7 +46,7 @@ const useAddOnPrices = ( productSlug: string, quantity?: number ) => {
 				isSmallestUnit: true,
 			} ),
 		};
-	} );
+	}, [ product, currencyCode, quantity ] );
 };
 
 export default useAddOnPrices;
