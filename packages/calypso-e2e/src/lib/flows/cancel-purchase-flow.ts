@@ -3,7 +3,7 @@ import { Page } from 'playwright';
 type CancelReason = 'Another reason…';
 
 /**
- *
+ * Cancels a purchased plan.
  */
 export async function cancelPurchaseFlow(
 	page: Page,

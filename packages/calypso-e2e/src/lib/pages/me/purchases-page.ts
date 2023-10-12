@@ -33,9 +33,10 @@ export class PurchasesPage {
 	/* Purchases list view */
 
 	/**
+	 * Clicks on the matching purchase.
 	 *
-	 * @param name
-	 * @param siteSlug
+	 * @param {string} name Name of the purchased subscription.
+	 * @param {string} siteSlug Site slug.
 	 */
 	async clickOnPurchase( name: string, siteSlug: string ) {
 		await this.page
