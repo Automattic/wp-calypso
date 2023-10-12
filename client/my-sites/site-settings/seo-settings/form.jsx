@@ -412,9 +412,7 @@ export class SiteSettingsFormSEO extends Component {
 											{ translate( 'Show Previews' ) }
 										</Button>
 										<span className="seo-settings__preview-explanation">
-											{ translate(
-												'See how this will look on ' + 'Google, Facebook, and Twitter.'
-											) }
+											{ translate( 'See how this will look on Google, Facebook, and X.' ) }
 										</span>
 									</FormSettingExplanation>
 								</Card>

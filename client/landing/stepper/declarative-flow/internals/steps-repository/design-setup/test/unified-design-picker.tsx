@@ -3,7 +3,6 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -129,7 +128,6 @@ const renderComponent = ( component, initialState = {} ) => {
 
 describe( 'UnifiedDesignPickerStep', () => {
 	let originalScrollTo;
-	const user = userEvent.setup();
 
 	const navigation = {
 		goBack: jest.fn(),
@@ -184,17 +182,6 @@ describe( 'UnifiedDesignPickerStep', () => {
 					1
 				);
 			} );
-		} );
-	} );
-
-	describe( 'Skip for now', () => {
-		it( 'should call submit successfully', async () => {
-			renderComponent( <UnifiedDesignPickerStep flow="site-setup" navigation={ navigation } /> );
-
-			await waitFor( () => screen.getByText( 'Pick a design' ) );
-			await user.click( screen.getByText( 'Skip for now' ) );
-
-			expect( navigation.submit ).toHaveBeenCalled();
 		} );
 	} );
 } );

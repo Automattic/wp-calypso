@@ -39,7 +39,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			showLegacyStorageFeature,
 		} );
 
-		const restructuredFeatures = useMemo( () => {
+		return useMemo( () => {
 			let previousPlan = null;
 			const planFeatureMap: Record< string, PlanFeaturesForGridPlan > = {};
 
@@ -145,9 +145,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			}
 
 			return planFeatureMap;
-		}, [ gridPlans, allFeaturesList, intent, planFeaturesForGridPlans ] );
-
-		return restructuredFeatures;
+		}, [ gridPlans, allFeaturesList, planFeaturesForGridPlans, intent ] );
 	};
 
 export default useRestructuredPlanFeaturesForComparisonGrid;

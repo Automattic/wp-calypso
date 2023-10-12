@@ -64,6 +64,23 @@ $heading-font-body-small: 15px;
 		flex: auto;
 		flex-direction: row;
 	}
+	.blazepress-widget__content .error-notice {
+		margin-top: 64px;
+		width: 80%;
+		align-self: center;
+		text-align: center;
+
+		.error-notice__title {
+			font-size: $font-title-medium;
+			font-style: normal;
+			font-weight: 500;
+			margin-bottom: 20px;
+		}
+		.error-notice__notice {
+			font-size: $font-body-large;
+		}
+	}
+
 	.blazepress-widget__widget-container {
 		height: 100%;
 

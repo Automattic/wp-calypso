@@ -1,9 +1,10 @@
 import configApi from '@automattic/calypso-config';
 import { DomainSuggestions } from '@automattic/data-stores';
+import { useMemo } from '@wordpress/element';
 import { logToLogstash } from 'calypso/lib/logstash';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
-export function useGetFreeSubdomainSuggestion( query: string ): {
+export function useGetFreeSubdomainSuggestion( query: string | null ): {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestions.DomainSuggestion >;
 	invalidateDomainSuggestionCache: () => void;
 } {
@@ -16,7 +17,7 @@ export function useGetFreeSubdomainSuggestion( query: string ): {
 
 	const result = ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined;
 
-	if ( ! isLoading && ! result ) {
+	if ( query && ! isLoading && ! result ) {
 		logToLogstash( {
 			feature: 'calypso_client',
 			message: `Sub domain suggestion wasn't available for query: ${ query }`,
@@ -27,13 +28,16 @@ export function useGetFreeSubdomainSuggestion( query: string ): {
 		} );
 	}
 
-	return {
-		wpcomFreeDomainSuggestion: {
-			isLoading,
-			result,
-		},
-		invalidateDomainSuggestionCache,
-	};
+	return useMemo(
+		() => ( {
+			wpcomFreeDomainSuggestion: {
+				isLoading,
+				result,
+			},
+			invalidateDomainSuggestionCache,
+		} ),
+		[ isLoading, result, invalidateDomainSuggestionCache ]
+	);
 }
 
 export default useGetFreeSubdomainSuggestion;

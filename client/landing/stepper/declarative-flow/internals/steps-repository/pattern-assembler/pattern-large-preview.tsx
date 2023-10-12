@@ -22,6 +22,7 @@ interface Props {
 	onDeleteFooter: () => void;
 	onShuffle: ( type: string, pattern: Pattern, position?: number ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
+	isNewSite: boolean;
 }
 
 // The pattern renderer element has 1px min height before the pattern is loaded
@@ -39,6 +40,7 @@ const PatternLargePreview = ( {
 	onDeleteFooter,
 	onShuffle,
 	recordTracksEvent,
+	isNewSite,
 }: Props ) => {
 	const translate = useTranslate();
 	const hasSelectedPattern = header || sections.length || footer;
@@ -88,6 +90,7 @@ const PatternLargePreview = ( {
 						viewportHeight={ viewportHeight }
 						// Disable default max-height
 						maxHeight="none"
+						shouldShufflePosts={ isNewSite }
 					/>
 				) }
 				<PatternActionBar

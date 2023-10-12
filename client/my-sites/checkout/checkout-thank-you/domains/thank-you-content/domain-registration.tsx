@@ -97,7 +97,7 @@ const domainRegistrationThankYouProps = ( {
 
 	const fediverseSettingsStep = {
 		stepKey: 'domain_registration_whats_next_fediverse_settings',
-		stepTitle: translate( 'Connect to the Fediverse' ),
+		stepTitle: translate( 'Connect to the fediverse' ),
 		stepDescription: translate(
 			'You’ve unlocked a durable, portable social networking presence with your domain!'
 		),
