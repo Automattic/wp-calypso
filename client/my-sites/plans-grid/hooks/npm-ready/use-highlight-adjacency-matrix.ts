@@ -1,4 +1,5 @@
-import { usePlansGridContext } from '../../grid-context';
+import { useMemo } from '@wordpress/element';
+import type { GridPlan } from './data-store/use-grid-plans';
 import type { PlanSlug } from '@automattic/calypso-products';
 
 type HighlightAdjacencyMatrix = {
@@ -10,43 +11,48 @@ type HighlightAdjacencyMatrix = {
 };
 
 interface Props {
-	renderedPlans: PlanSlug[];
+	renderedGridPlans: GridPlan[];
 }
 
-const useHighlightIndices = ( { renderedPlans }: Props ) => {
-	const { gridPlansIndex } = usePlansGridContext();
+const useHighlightIndices = ( { renderedGridPlans }: Props ) => {
+	return useMemo(
+		() =>
+			renderedGridPlans.reduce< number[] >( ( acc, gridPlan, index ) => {
+				if ( gridPlan.highlightLabel ) {
+					acc.push( index );
+				}
 
-	return renderedPlans.reduce< number[] >( ( acc, planSlug, index ) => {
-		if ( gridPlansIndex[ planSlug ].highlightLabel ) {
-			acc.push( index );
-		}
-
-		return acc;
-	}, [] );
+				return acc;
+			}, [] ),
+		[ renderedGridPlans ]
+	);
 };
 
-const useHighlightAdjacencyMatrix = ( { renderedPlans }: Props ) => {
-	const highlightIndices = useHighlightIndices( { renderedPlans } );
-	const adjacencyMatrix = {} as HighlightAdjacencyMatrix;
+const useHighlightAdjacencyMatrix = ( { renderedGridPlans }: Props ) => {
+	const highlightIndices = useHighlightIndices( { renderedGridPlans } );
 
-	renderedPlans.forEach( ( planSlug, index ) => {
-		adjacencyMatrix[ planSlug ] = { leftOfHighlight: false, rightOfHighlight: false };
+	return useMemo( () => {
+		const adjacencyMatrix = {} as HighlightAdjacencyMatrix;
 
-		highlightIndices.forEach( ( highlightIndex ) => {
-			if ( highlightIndex === index - 1 ) {
-				adjacencyMatrix[ planSlug ].rightOfHighlight = true;
-			}
-			if ( highlightIndex === index + 1 ) {
-				adjacencyMatrix[ planSlug ].leftOfHighlight = true;
-			}
+		renderedGridPlans.forEach( ( { planSlug }, index ) => {
+			adjacencyMatrix[ planSlug ] = { leftOfHighlight: false, rightOfHighlight: false };
+
+			highlightIndices.forEach( ( highlightIndex ) => {
+				if ( highlightIndex === index - 1 ) {
+					adjacencyMatrix[ planSlug ].rightOfHighlight = true;
+				}
+				if ( highlightIndex === index + 1 ) {
+					adjacencyMatrix[ planSlug ].leftOfHighlight = true;
+				}
+			} );
 		} );
-	} );
 
-	if ( highlightIndices.length === 1 ) {
-		adjacencyMatrix[ renderedPlans[ highlightIndices[ 0 ] ] ].isOnlyHighlight = true;
-	}
+		if ( highlightIndices.length === 1 ) {
+			adjacencyMatrix[ renderedGridPlans[ highlightIndices[ 0 ] ].planSlug ].isOnlyHighlight = true;
+		}
 
-	return adjacencyMatrix;
+		return adjacencyMatrix;
+	}, [ renderedGridPlans, highlightIndices ] );
 };
 
 export default useHighlightAdjacencyMatrix;

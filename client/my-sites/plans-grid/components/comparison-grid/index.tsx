@@ -376,7 +376,7 @@ const ComparisonGridHeaderCell = ( {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
-		renderedPlans: visibleGridPlans.map( ( { planSlug } ) => planSlug ),
+		renderedGridPlans: visibleGridPlans,
 	} );
 
 	if ( ! gridPlan ) {
@@ -559,7 +559,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
-		renderedPlans: visibleGridPlans.map( ( { planSlug } ) => planSlug ),
+		renderedGridPlans: visibleGridPlans,
 	} );
 
 	if ( ! gridPlan ) {
