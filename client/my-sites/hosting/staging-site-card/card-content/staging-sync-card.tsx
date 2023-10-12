@@ -31,18 +31,23 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 	{
 		name: 'themes',
 		label: translate( 'Themes' ),
+		subTitle: translate( 'Everything in the themes directory.' ),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'plugins',
 		label: translate( 'Plugins' ),
+		subTitle: translate( 'Everything in the plugins directory.' ),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'uploads',
 		label: translate( 'Media Uploads' ),
+		subTitle: translate(
+			'Everything in the media library. You must also select ‘Site database‘ for restored media uploads to appear.'
+		),
 		checked: false,
 		isDangerous: false,
 	},
@@ -50,7 +55,7 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 		name: 'contents',
 		label: translate( 'wp-content Directory' ),
 		subTitle: translate(
-			'Everything in the wp-content directory, excluding themes, plugins, and uploads'
+			'Everything in the wp-content directory, excluding themes, plugins, and uploads.'
 		),
 		checked: false,
 		isDangerous: false,
@@ -58,7 +63,7 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 	{
 		name: 'roots',
 		label: translate( 'Web Root' ),
-		subTitle: translate( 'Everything in the WordPress root, including any non WordPress files' ),
+		subTitle: translate( 'Everything in the WordPress root, including any non WordPress files.' ),
 		checked: false,
 		isDangerous: false,
 	},
