@@ -250,14 +250,20 @@ class Signup extends Component {
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
+		// User-social is recorded as user, to avoid messing up the tracks funnels that we have
+		const stepName = this.props.stepName === 'user-social' ? 'user' : this.props.stepName;
+
 		if ( ! this.state.shouldShowLoadingScreen ) {
-			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+			recordSignupStep( this.props.flowName, stepName, this.getRecordProps() );
 		}
 		this.preloadNextStep();
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, sitePlanName, sitePlanSlug } = this.props;
+		const { flowName, sitePlanName, sitePlanSlug } = this.props;
+
+		// User-social is recorded as user, to avoid messing up the tracks funnels that we have
+		const stepName = this.props.stepName === 'user-social' ? 'user' : this.props.stepName;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
