@@ -305,7 +305,9 @@ const SyncCardContainer = ( {
 					) }
 					{ ! error && (
 						<>
-							<SyncContainerTitle>{ translate( 'Choose direction:' ) }</SyncContainerTitle>
+							<SyncContainerTitle>
+								{ translate( 'Choose synchronization direction:' ) }
+							</SyncContainerTitle>
 							{ children }
 							<StagingSyncCardFooter>
 								{ translate(
@@ -434,8 +436,8 @@ export const SiteSyncCard = ( {
 						className="staging-site-sync-card__radio"
 						label={
 							type === 'production'
-								? translate( 'Pull staging into production' )
-								: translate( 'Pull production into staging' )
+								? translate( 'Staging into production' )
+								: translate( 'Production into staging' )
 						}
 						value="pull"
 						checked={ selectedOption === 'pull' }
@@ -449,8 +451,8 @@ export const SiteSyncCard = ( {
 						className="staging-site-sync-card__radio"
 						label={
 							type === 'production'
-								? translate( 'Push production to staging' )
-								: translate( 'Push staging to production' )
+								? translate( 'Production to staging' )
+								: translate( 'Staging to production' )
 						}
 						value="push"
 						checked={ selectedOption === 'push' }
