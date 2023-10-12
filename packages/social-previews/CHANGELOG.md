@@ -6,6 +6,7 @@
 - Fixed hyperlinks for Facebook
 - Fixed multiple empty lines issue in preview text
 - Fixed video previews for Instagram and Tumblr
+- Changed Twitter text and icon to X
 
 ## v2.0.0 (2023-05-24)
 
