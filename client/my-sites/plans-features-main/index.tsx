@@ -257,10 +257,7 @@ const PlansFeaturesMain = ( {
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
-	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan(
-		flowName,
-		!! paidDomainName
-	);
+	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( flowName );
 	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain( flowName );
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );

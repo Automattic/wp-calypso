@@ -26,6 +26,7 @@ export function FreePlanPaidDomainDialog( {
 	onPlanSelected,
 	onClose,
 }: DomainPlanDialogProps & {
+	paidDomainName: string;
 	onClose: () => void;
 } ) {
 	const translate = useTranslate();
