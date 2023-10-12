@@ -160,4 +160,13 @@ export default async function () {
 		makeLayout,
 		clientRender
 	);
+	page(
+		'/read/site/subscription/:blog_id',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		siteSubscription,
+		makeLayout,
+		clientRender
+	);
 }

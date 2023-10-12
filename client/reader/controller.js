@@ -338,9 +338,12 @@ export async function siteSubscriptionsManager( context, next ) {
 }
 
 export async function siteSubscription( context, next ) {
-	const subscription_id = Number( context.params.subscription_id );
 	context.primary = (
-		<AsyncLoad require="calypso/reader/site-subscription" subscriptionId={ subscription_id } />
+		<AsyncLoad
+			require="calypso/reader/site-subscription"
+			subscriptionId={ context.params.subscription_id }
+			blogId={ context.params.blog_id }
+		/>
 	);
 	return next();
 }
