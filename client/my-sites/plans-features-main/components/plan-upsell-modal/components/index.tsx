@@ -89,7 +89,7 @@ export const StyledButton = styled( Button )< { fitContent?: boolean } >`
 		opacity: 0.85;
 		transition: 0.7s;
 	}
-	&:focus {
+	&:focus:not( .is-borderless ) {
 		box-shadow:
 			0 0 0 2px var( --studio-white ),
 			0 0 0 4px var( --studio-blue-50 );
@@ -98,5 +98,13 @@ export const StyledButton = styled( Button )< { fitContent?: boolean } >`
 	@media ( min-width: 780px ) {
 		max-width: ${ ( { fitContent } ) => ( fitContent ? 'fit-content' : '260px' ) };
 		width: unset;
+	}
+
+	&.is-borderless {
+		text-decoration: underline;
+		border: none;
+		font-weight: 600;
+		padding: 0px;
+		color: var( --studio-gray-50 );
 	}
 `;
