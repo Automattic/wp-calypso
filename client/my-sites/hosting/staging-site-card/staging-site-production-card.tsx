@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
+import dividerPattern from 'calypso/assets/images/hosting/divider-pattern.svg';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
@@ -23,28 +24,28 @@ import { IAppState } from 'calypso/state/types';
 import { SiteSyncCard } from './card-content/staging-sync-card';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 
-const SVGContainer = styled.div( {
-	marginTop: '16px',
-	height: '16px',
+const ProductionCard = styled( Card )( {
+	paddingTop: '0',
 } );
-const ProductionCard = styled( Card )( {} );
 
-function SlantedPatternSVG() {
-	return (
-		<svg viewBox="0 0 722 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<defs>
-				<pattern id="slantedPattern" patternUnits="userSpaceOnUse" width="24" height="40">
-					<rect width="24" height="40" fill="#F0C930" />
-					<rect x="16" y="-16" width="10" height="60" transform="rotate(35 8 -8)" fill="#4F3500" />
-				</pattern>
-				<clipPath id="clip_slanted">
-					<rect width="722" height="40" fill="white" />
-				</clipPath>
-			</defs>
-			<rect width="100%" height="100%" fill="url(#slantedPattern)" clipPath="url(#clip_slanted)" />
-		</svg>
-	);
-}
+const DividerContainer = styled.div( {
+	position: 'absolute',
+	left: 0,
+	right: 0,
+	height: '16px',
+	overflow: 'hidden',
+	img: {
+		position: 'absolute',
+	},
+} );
+
+const ProductionCardIcon = styled( Gridicon )( {
+	marginTop: '36px',
+} );
+
+const ProductionCardHeading = styled( CardHeading )( {
+	marginTop: '36px!important',
+} );
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -172,19 +173,17 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 		);
 	}
 	return (
-		<>
-			<SVGContainer>
-				<SlantedPatternSVG />
-			</SVGContainer>
-			<ProductionCard className="staging-site-card">
-				{
-					// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-					<Gridicon icon="science" size={ 32 } />
-				}
-				<CardHeading id="staging-site">{ __( 'Staging site' ) }</CardHeading>
-				{ cardContent }
-			</ProductionCard>
-		</>
+		<ProductionCard className="staging-site-card">
+			<DividerContainer>
+				<img src={ dividerPattern } alt="staging site production card divider" />
+			</DividerContainer>
+			{
+				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
+				<ProductionCardIcon icon="science" size={ 32 } />
+			}
+			<ProductionCardHeading id="staging-site">{ __( 'Staging site' ) }</ProductionCardHeading>
+			{ cardContent }
+		</ProductionCard>
 	);
 }
 

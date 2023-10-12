@@ -23,7 +23,6 @@ const BorderedContainer = styled.div( {
 	padding: '16px',
 	flexDirection: 'column',
 	alignItems: 'flex-start',
-	gap: '16px',
 	alignSelf: 'stretch',
 	borderRadius: '3px',
 	border: '1px solid var(--gray-gray-5, #DCDCDE)',
