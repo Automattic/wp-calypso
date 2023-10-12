@@ -28,8 +28,13 @@ export default function SiteTopHeaderButtons() {
 			path: '/jetpack-licensing/create-simple-site',
 		} );
 
-		const { blog_id } = response;
-		window.location = `https://wordpress.com/post/${ blog_id }`;
+		const { siteurl } = response;
+		const editorPageUrl = `${ decodeURI(
+			siteurl
+		) }/wp-admin/site-editor.php?postType=wp_template&postId=${ encodeURIComponent(
+			'pub/twentytwentythree//home'
+		) }&canvas=edit`;
+		window.location = editorPageUrl;
 	};
 
 	return (
@@ -51,7 +56,7 @@ export default function SiteTopHeaderButtons() {
 			</Button>
 
 			<Button className="sites-overview__issue-license-button" onClick={ handleNewLandingPage }>
-				New Landing Page
+				{ translate( 'New landing page' ) }
 			</Button>
 
 			{ isWPCOMAtomicSiteCreationEnabled ? (
