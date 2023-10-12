@@ -317,8 +317,8 @@ const PlansFeaturesMain = ( {
 				recordTracksEvent( 'calypso_signup_free_plan_click' );
 			}
 
-			const shouldDisplayBlockingModal = resolveModal( planSlug ) !== null;
-			if ( shouldDisplayBlockingModal ) {
+			const displayedModal = resolveModal( planSlug );
+			if ( displayedModal ) {
 				setIsModalOpen( true );
 				return;
 			}
