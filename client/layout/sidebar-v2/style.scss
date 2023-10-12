@@ -1,6 +1,7 @@
 .sidebar-v2 {
 	margin: 0;
-	padding: 0;
+	padding: 16px;
+	box-sizing: border-box;
 
 	display: flex;
 	flex-direction: column;
@@ -9,7 +10,10 @@
 	height: 100%;
 }
 
+.sidebar-v2__main {
+	flex-grow: 1;
+}
+
 .sidebar-v2__footer {
 	margin-block-start: auto;
-	padding: 0 16px 16px;
 }
