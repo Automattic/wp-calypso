@@ -1,5 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import {
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -26,7 +29,12 @@ const BusinessTrialExpired = (): JSX.Element => {
 
 	const nonBusinessTrialPurchases = useMemo(
 		() =>
-			sitePurchases.filter( ( purchase ) => purchase.productSlug !== PLAN_MIGRATION_TRIAL_MONTHLY ),
+			sitePurchases.filter(
+				( purchase ) =>
+					! [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ].includes(
+						purchase.productSlug
+					)
+			),
 		[ sitePurchases ]
 	);
 
