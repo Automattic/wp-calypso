@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -11,24 +11,29 @@ import {
 import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
 import UsAddressFieldset from './us-address-fieldset';
+import type { FieldProps } from '../managed-contact-details-form-fields';
+import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 
 const noop = () => {};
 
-export class RegionAddressFieldsets extends Component {
-	static propTypes = {
-		getFieldProps: PropTypes.func,
-		translate: PropTypes.func,
-		arePostalCodesSupported: PropTypes.bool,
-		countryCode: PropTypes.string,
-		shouldAutoFocusAddressField: PropTypes.bool,
-		hasCountryStates: PropTypes.bool,
-		contactDetailsErrors: PropTypes.shape(
-			Object.fromEntries(
-				CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, PropTypes.node ] )
-			)
-		),
-	};
+export interface RegionAddressFieldsetsProps {
+	countryCode: string;
+	shouldAutoFocusAddressField?: boolean;
+	arePostalCodesSupported?: boolean;
+	hasCountryStates?: boolean;
+	contactDetailsErrors: DomainContactDetailsErrors;
+	getFieldProps: (
+		name: string,
+		options: {
+			customErrorMessage?: DomainContactDetailsErrors[ 'firstName' ];
+			needsChildRef?: boolean;
+		}
+	) => FieldProps;
+}
 
+export class RegionAddressFieldsets extends Component<
+	RegionAddressFieldsetsProps & LocalizeProps
+> {
 	static defaultProps = {
 		getFieldProps: noop,
 		countryCode: 'US',
@@ -37,7 +42,7 @@ export class RegionAddressFieldsets extends Component {
 		hasCountryStates: false,
 	};
 
-	inputRefCallback( input ) {
+	inputRefCallback( input: { focus: () => void } | undefined | null ) {
 		input && input.focus();
 	}
 
