@@ -28,7 +28,7 @@ const ProductionCard = styled( Card )( {
 	paddingTop: '0',
 } );
 
-const DividerContainer = styled.div( {
+const Divider = styled.div( {
 	position: 'absolute',
 	left: 0,
 	right: 0,
@@ -37,6 +37,7 @@ const DividerContainer = styled.div( {
 	img: {
 		position: 'absolute',
 	},
+	backgroundImage: `url(${ dividerPattern })`,
 } );
 
 const ProductionCardIcon = styled( Gridicon )( {
@@ -174,9 +175,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	}
 	return (
 		<ProductionCard className="staging-site-card">
-			<DividerContainer>
-				<img src={ dividerPattern } alt="staging site production card divider" />
-			</DividerContainer>
+			<Divider />
 			{
 				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
 				<ProductionCardIcon icon="science" size={ 32 } />
