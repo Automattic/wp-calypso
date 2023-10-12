@@ -10,6 +10,7 @@ export interface SelectItem< T > {
 	badge?: TranslateResult;
 	description: TranslateResult;
 	icon: React.ReactElement;
+	titleIcon?: React.ReactElement; // If titleIcon is set, it will show on the same line of title and, icon will be ignored
 	value: T;
 	actionText: TranslateResult | null;
 	hidden?: boolean;
@@ -20,41 +21,51 @@ interface Props< T > {
 	className?: string;
 	items: SelectItem< T >[];
 	onSelect: ( value: T ) => void;
+	onItemSelect?: () => void;
 	preventWidows: ( text: TranslateResult, wordsToKeep?: number ) => string;
 }
 
 function SelectItems< T >( { className, items, onSelect, preventWidows }: Props< T > ) {
 	return (
 		<div className={ classnames( 'select-items', className ) }>
-			{ items.map( ( { key, title, badge, description, icon, actionText, value, isPrimary } ) => (
-				<div key={ key } className="select-items__item">
-					<Icon className="select-items__item-icon" icon={ icon } size={ 24 } />
-					<div className="select-items__item-info-wrapper">
-						<div className="select-items__item-info">
-							<h2 className="select-items__item-title">
-								<span className="select-items__item-title-text">{ preventWidows( title ) }</span>
-								{ badge && (
-									<span className="select-items__item-title-badge">
-										<Badge className="free-domain__primary-badge" type="info-green">
-											{ preventWidows( badge ) }
-										</Badge>
-									</span>
-								) }
-							</h2>
-							<div className="select-items__item-description">{ preventWidows( description ) }</div>
-						</div>
-						{ actionText && (
-							<Button
-								primary={ isPrimary }
-								className="select-items__item-button"
-								onClick={ () => onSelect( value ) }
-							>
-								{ actionText }
-							</Button>
+			{ items.map(
+				( { key, title, badge, description, icon, titleIcon, actionText, value, isPrimary } ) => (
+					<div key={ key } className="select-items__item">
+						{ ! titleIcon && (
+							<Icon className="select-items__item-icon" icon={ icon } size={ 24 } />
 						) }
+						<div className="select-items__item-info-wrapper">
+							<div className="select-items__item-info">
+								<h2 className="select-items__item-title">
+									{ titleIcon && (
+										<Icon className="select-items__item-icon" icon={ titleIcon } size={ 24 } />
+									) }
+									<span className="select-items__item-title-text">{ preventWidows( title ) }</span>
+									{ badge && (
+										<span className="select-items__item-title-badge">
+											<Badge className="free-domain__primary-badge" type="info-green">
+												{ preventWidows( badge ) }
+											</Badge>
+										</span>
+									) }
+								</h2>
+								<div className="select-items__item-description">
+									{ preventWidows( description ) }
+								</div>
+							</div>
+							{ actionText && (
+								<Button
+									primary={ isPrimary }
+									className="select-items__item-button"
+									onClick={ () => onSelect( value ) }
+								>
+									{ actionText }
+								</Button>
+							) }
+						</div>
 					</div>
-				</div>
-			) ) }
+				)
+			) }
 		</div>
 	);
 }

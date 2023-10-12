@@ -3,25 +3,17 @@
 
 .is-site-or-domain {
 	.step-wrapper__header {
-		.formatted-header__title {
-			color: var(--studio-gray-100, #101517);
-			text-align: center;
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-			font-size: rem(44px);
-			font-style: normal;
-			font-weight: 400;
-			line-height: 52px;
-			letter-spacing: 0.2px;
-		}
+		margin-bottom: 60px !important;
+
 		.formatted-header__subtitle {
-			color: var(--gray-50, #646970);
-			text-align: center;
+			color: var(--gray-50, #646970) !important;
 			font-family: "SF Pro Display", $sans;
-			font-size: $font-body-large;
+			font-size: $font-body-large !important;
 			font-style: normal;
 			font-weight: 400;
 			line-height: 26px;
 			letter-spacing: 0.24px;
+			margin-top: 4px !important;
 		}
 	}
 }
@@ -33,6 +25,7 @@
 
 	.select-items {
 		gap: 24px;
+		padding: 0;
 	}
 
 	.select-items__item {
@@ -43,23 +36,55 @@
 		justify-content: center;
 		align-items: start;
 		gap: 8px;
+		max-width: 385px;
 		.select-items__item-icon {
 			position: initial;
 		}
-		.select-items__item-button {
-			border: 0;
-			box-shadow: none;
-			min-width: auto;
-			padding: 0;
+		.select-items__item-info-wrapper {
+			gap: 16px;
+			.select-items__item-info {
+				padding: 0;
 
-			svg {
-				position: initial;
-				top: 0;
-				margin-top: 0;
-				width: 24px;
-				height: 24px;
+				.select-items__item-title {
+					font-size: $font-body-large;
+					font-family: "SF Pro Display", $sans;
+					font-style: normal;
+					font-weight: 500;
+					line-height: 26px;
+					display: flex;
+					gap: 8px;
+					margin-bottom: 0;
+				}
+				.select-items__item-description {
+					color: var(--studio-gray-60, #50575e);
+					font-size: $font-body-small;
+					font-style: normal;
+					font-weight: 400;
+					line-height: 20px;
+					letter-spacing: -0.15px;
+					padding-left: 32px;
+
+					strong {
+						color: var(--studio-green-40, #00a32a);
+						font-weight: 400;
+					}
+				}
+			}
+			.select-items__item-button {
+				border: 0;
+				box-shadow: none;
+				min-width: auto;
+				padding: 0;
+				height: 68px;
+
+				svg {
+					position: initial;
+					top: 0;
+					margin-top: 0;
+				}
 			}
 		}
+
 	}
 	.select-items__item-description {
 		strong {

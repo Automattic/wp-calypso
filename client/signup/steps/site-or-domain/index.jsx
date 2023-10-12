@@ -65,9 +65,10 @@ class SiteOrDomain extends Component {
 				key: 'domain',
 				title: buyADomainTitle,
 				description: buyADomainDescription,
-				icon: globe,
+				icon: null,
+				titleIcon: globe,
 				value: 'domain',
-				actionText: <Gridicon icon="chevron-right" size={ 24 } />,
+				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
 			} );
 			choices.push( {
 				key: 'page',
@@ -81,9 +82,10 @@ class SiteOrDomain extends Component {
 						},
 					}
 				),
-				icon: addCard,
+				icon: null,
+				titleIcon: addCard,
 				value: 'page',
-				actionText: <Gridicon icon="chevron-right" size={ 24 } />,
+				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
 			} );
 			if ( isLoggedIn && siteCount > 0 ) {
 				choices.push( {
@@ -98,9 +100,10 @@ class SiteOrDomain extends Component {
 							},
 						}
 					),
-					icon: layout,
+					icon: null,
+					titleIcon: layout,
 					value: 'existing-site',
-					actionText: <Gridicon icon="chevron-right" size={ 24 } />,
+					actionText: <Gridicon icon="chevron-right" size={ 18 } />,
 				} );
 			}
 		} else {
