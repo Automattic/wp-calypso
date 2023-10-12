@@ -308,6 +308,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			// We run all the tests on all variations, and go through each variation sequentially.
 			// We can easily overwhlem the target Atomic site under test if we have too much parallelization.
 			// This number of works plays nicely with the expected load handling on these Atomic sites.
+			// See: pMz3w-ix0-p2
 			param("JEST_E2E_WORKERS", "8")
 		}
 
