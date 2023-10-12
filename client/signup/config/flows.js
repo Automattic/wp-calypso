@@ -160,10 +160,10 @@ function getWithThemeDestination( {
 	themeParameter,
 	styleVariation,
 	themeType,
-	cartItem,
+	cartItems,
 } ) {
 	if (
-		! cartItem &&
+		! cartItems &&
 		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, WOOCOMMERCE_THEME ].includes( themeType )
 	) {
 		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
@@ -171,6 +171,10 @@ function getWithThemeDestination( {
 
 	if ( DOT_ORG_THEME === themeType ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
+	}
+
+	if ( MARKETPLACE_THEME === themeType ) {
+		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }`;
 	}
 
 	const style = styleVariation ? `&style=${ styleVariation }` : '';
