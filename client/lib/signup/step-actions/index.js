@@ -96,9 +96,15 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			siteId,
 			siteSlug,
 		};
-		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
-			.filter( Boolean )
-			.map( ( item ) => prepareItemForAddingToCart( item ) );
+
+		const products =
+			domainCart && domainCart.length > 0
+				? [ ...Object.values( domainCart ), dependencies.privacyItem, dependencies.cartItem ]
+						.filter( Boolean )
+						.map( ( item ) => prepareItemForAddingToCart( item ) )
+				: [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
+						.filter( Boolean )
+						.map( ( item ) => prepareItemForAddingToCart( item ) );
 
 		cartManagerClient
 			.forCartKey( siteId )
