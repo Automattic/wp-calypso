@@ -4,28 +4,31 @@ import {
 	SPECIAL_DOMAIN_CATEGORY,
 	getDomainCategory,
 } from 'calypso/site-profiler/utils/get-domain-category';
-import trimDomain from 'calypso/site-profiler/utils/trim-domain';
 import validateDomain from 'calypso/site-profiler/utils/validate-domain';
 import isSpecialDomain, { prepareSpecialDomain } from '../utils/is-special-domain';
 
 export default function useDomainParam( value = '' ) {
-	const trimmedDomain = trimDomain( value );
-	const [ domain, setDomain ] = useState( trimmedDomain );
+	const [ domain, setDomain ] = useState( value );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
-	const [ isSpecial, setIsSpecial ] = useState( isSpecialDomain( trimmedDomain ) );
+	const [ isSpecial, setIsSpecial ] = useState( isSpecialDomain( value ) );
 	const [ category, setCategory ] = useState< SPECIAL_DOMAIN_CATEGORY >();
 	const [ readyForDataFetch, setReadyForDataFetch ] = useState( false );
 
 	useEffect( () => {
-		const preparedDomain = prepareDomain( trimmedDomain, isSpecial );
-
 		// check if domain is special before preparing domain value
-		setIsSpecial( isSpecialDomain( trimmedDomain ) );
-		setIsValid( validateDomain( preparedDomain ) );
+		setIsSpecial( isSpecialDomain( value ) );
+		setIsValid( validateDomain( value ) );
+		setReadyForDataFetch( ! isSpecial && !! domain && !! isValid );
+	}, [ value, isSpecial, isValid, domain ] );
+
+	useEffect( () => {
+		if ( value && ! isSpecial && ! isValid ) {
+			return;
+		}
+		const preparedDomain = prepareDomain( value, isSpecial );
 		setCategory( getDomainCategory( preparedDomain ) );
 		setDomain( preparedDomain );
-		setReadyForDataFetch( ! isSpecial && !! domain && !! isValid );
-	}, [ trimmedDomain, isSpecial, isValid ] );
+	}, [ value, isSpecial, isValid ] );
 
 	return { domain, isValid, isSpecial, category, readyForDataFetch };
 }

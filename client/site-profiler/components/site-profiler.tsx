@@ -7,7 +7,6 @@ import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
-import trimDomain from 'calypso/site-profiler/utils/trim-domain';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
 import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
@@ -64,8 +63,7 @@ export default function SiteProfiler( props: Props ) {
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
-		const trimmedDomain = trimDomain( value );
-		trimmedDomain ? page( `/site-profiler/${ trimmedDomain }` ) : page( '/site-profiler' );
+		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 
 	return (
