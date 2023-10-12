@@ -13,7 +13,6 @@ import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-import page from 'page';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -534,7 +533,9 @@ export function addWithThemePlanToCart( callback, dependencies, stepProvidedItem
 				reduxStore.dispatch,
 				themeSlug,
 				dependencies.siteSlug,
-				planCartItem
+				planCartItem,
+				callback,
+				{ cartItems: stepProvidedItems.cartItems }
 			).then( () => {} );
 		} else {
 			addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore );
@@ -560,9 +561,19 @@ const setIsLoadingCart = ( isLoading ) => ( dispatch ) => {
  * @param themeId
  * @param siteSlug
  * @param planCartItem
+ * @param callback
+ * @param providedDependencies
  * @returns {Promise<void>}
  */
-async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug, planCartItem ) {
+async function addExternalManagedThemeToCart(
+	state,
+	dispatch,
+	themeId,
+	siteSlug,
+	planCartItem,
+	callback,
+	providedDependencies
+) {
 	const products = getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( themeId ) );
 
 	if ( undefined === products || products.length === 0 ) {
@@ -601,7 +612,7 @@ async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug
 		.forCartKey( cartKey )
 		.actions.addProductsToCart( cartItems )
 		.then( () => {
-			page( `/checkout/${ siteSlug }` );
+			callback( undefined, providedDependencies );
 		} )
 		.finally( () => {
 			dispatch( setIsLoadingCart( false ) );
@@ -784,8 +795,9 @@ export function createAccount(
 	const flowToCheck = flowName || lastKnownFlow;
 
 	if ( 'onboarding-registrationless' === flowToCheck ) {
-		const { cartItem, domainItem } = dependencies;
-		const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
+		const { cartItem, domainItem, cartItems } = dependencies;
+		const isPurchasingItem =
+			! isEmpty( cartItem ) || ! isEmpty( domainItem ) || ! isEmpty( cartItems );
 
 		// If purchasing item in this flow, return without creating a user account.
 		if ( isPurchasingItem ) {
