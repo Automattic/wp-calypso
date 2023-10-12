@@ -22,6 +22,7 @@ const CommentActions = ( {
 	onReplyCancel,
 	showReadMore,
 	onReadMore,
+	onLoggedOut,
 } ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
 	const showCancelReplyButton = activeReplyCommentId === commentId;
@@ -73,6 +74,7 @@ const CommentActions = ( {
 				siteId={ post.site_ID }
 				postId={ post.ID }
 				commentId={ commentId }
+				onLoggedOut={ onLoggedOut }
 			/>
 		</div>
 	);
@@ -80,6 +82,7 @@ const CommentActions = ( {
 
 CommentActions.defaultProps = {
 	onReadMore: noop,
+	onLoggedOut: noop,
 };
 
 export default localize( CommentActions );

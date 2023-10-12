@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
@@ -7,6 +8,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
+import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import Gravatar from 'calypso/components/gravatar';
 import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -100,22 +102,39 @@ class PostComment extends PureComponent {
 	state = {
 		showReplies: false,
 		showFull: false,
+		showJoinConversationModal: false,
 	};
 
 	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	};
 
+	hideJoinConversationModal = () => {
+		this.setState( { showJoinConversationModal: false } );
+	};
+
+	showJoinConversationModal = () => {
+		this.setState( { showJoinConversationModal: true } );
+	};
+
+	onLoggedOut = () => {
+		if ( config.isEnabled( 'reader/login-window' ) ) {
+			return this.showJoinConversationModal();
+		}
+		// Redirect to create account page
+		const { pathname } = getUrlParts( window.location.href );
+		if ( isReaderTagEmbedPage( window.location ) ) {
+			return window.open(
+				createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
+				'_blank'
+			);
+		}
+		return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+	};
+
 	handleReply = () => {
 		if ( ! this.props.isLoggedIn ) {
-			const { pathname } = getUrlParts( window.location.href );
-			if ( isReaderTagEmbedPage( window.location ) ) {
-				return window.open(
-					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
-					'_blank'
-				);
-			}
-			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+			return this.onLoggedOut();
 		}
 		this.props.onReplyClick( this.props.commentId );
 		this.setState( { showReplies: true } ); // show the comments when replying
@@ -469,6 +488,7 @@ class PostComment extends PureComponent {
 					activeReplyCommentId={ this.props.activeReplyCommentId }
 					commentId={ this.props.commentId }
 					handleReply={ this.handleReply }
+					onLoggedOut={ this.onLoggedOut }
 					onReplyCancel={ this.props.onReplyCancel }
 					showReadMore={ overflowY && ! this.state.showFull && showReadMoreInActions }
 					onReadMore={ this.onReadMore }
@@ -484,6 +504,12 @@ class PostComment extends PureComponent {
 					/>
 				) }
 				{ this.renderRepliesList() }
+				{ config.isEnabled( 'reader/login-window' ) && (
+					<ReaderJoinConversationDialog
+						onClose={ this.hideJoinConversationModal }
+						isVisible={ this.state.showJoinConversationModal }
+					/>
+				) }
 			</li>
 		);
 	}
