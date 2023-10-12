@@ -1,20 +1,9 @@
 import { useMemo } from '@wordpress/element';
-import { useExperiment } from 'calypso/lib/explat';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
 const useIsCustomDomainAllowedOnFreePlan = (
-	flowName?: string | null,
-	hasPaidDomainName?: boolean
+	flowName?: string | null
 ): DataResponse< boolean > => {
-	const EXPERIMENT_NAME =
-		flowName === 'onboarding'
-			? 'calypso_onboarding_plans_paid_domain_on_free_plan_confidence_check'
-			: '';
-	const [ isLoading, assignment ] = useExperiment( EXPERIMENT_NAME, {
-		isEligible: flowName === 'onboarding' && hasPaidDomainName,
-	} );
-
-	/** Ships experiment variant to onboarding-pm flow only  */
 	return useMemo( () => {
 		if ( flowName === 'onboarding-pm' ) {
 			return {
@@ -24,10 +13,10 @@ const useIsCustomDomainAllowedOnFreePlan = (
 		}
 
 		return {
-			isLoading,
-			result: assignment?.variationName === 'treatment',
+			isLoading: false,
+			result: false,
 		};
-	}, [ isLoading, assignment, flowName ] );
+	}, [ flowName ] );
 };
 
 export default useIsCustomDomainAllowedOnFreePlan;

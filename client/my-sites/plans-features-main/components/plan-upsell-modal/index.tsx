@@ -3,16 +3,16 @@ import { DomainSuggestions } from '@automattic/data-stores';
 import { FreePlanFreeDomainDialog } from './free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './free-plan-paid-domain-dialog';
 import { useModalResolutionCallback } from './hooks/use-modal-resolution-callback';
+import PaidPlanIsRequiredDialog from './paid-plan-is-required-dialog';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
-export const PAID_DOMAIN_PAID_PLAN_REQUIRED = 'PAID_DOMAIN_PAID_PLAN_REQUIRED';
-export const PAID_DOMAIN_FREE_PLAN_SELECTED_MODAL = 'PAID_DOMAIN_FREE_PLAN_SELECTED_MODAL';
-export const FREE_DOMAIN_FREE_PLAN_SELECTED_MODAL = 'FREE_DOMAIN_FREE_PLAN_SELECTED_MODAL';
+export const PAID_PLAN_IS_REQUIRED_DIALOG = 'PAID_PLAN_IS_REQUIRED_DIALOG';
+export const FREE_PLAN_PAID_DOMAIN_DIALOG = 'FREE_PLAN_PAID_DOMAIN_DIALOG';
+export const FREE_PLAN_FREE_DOMAIN_DIALOG = 'FREE_PLAN_FREE_DOMAIN_DIALOG';
 export const MODAL_LOADER = 'MODAL_LOADER';
 
 export type DomainPlanDialogProps = {
-	paidDomainName: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	suggestedPlanSlug: PlanSlug;
 	onFreePlanSelected: () => void;
@@ -48,7 +48,7 @@ export default function ModalContainer( {
 		return;
 	}
 	switch ( resolveModal( selectedPlan ) ) {
-		case PAID_DOMAIN_FREE_PLAN_SELECTED_MODAL:
+		case FREE_PLAN_PAID_DOMAIN_DIALOG:
 			return (
 				<FreePlanPaidDomainDialog
 					paidDomainName={ paidDomainName as string }
@@ -63,12 +63,24 @@ export default function ModalContainer( {
 					} }
 				/>
 			);
-		case FREE_DOMAIN_FREE_PLAN_SELECTED_MODAL:
+		case FREE_PLAN_FREE_DOMAIN_DIALOG:
 			return (
 				<FreePlanFreeDomainDialog
 					suggestedPlanSlug={ PLAN_PERSONAL }
-					freeSubdomain={ wpcomFreeDomainSuggestion }
+					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 					onClose={ onClose }
+					onFreePlanSelected={ onFreePlanSelected }
+					onPlanSelected={ () => {
+						onPlanSelected( PLAN_PERSONAL );
+					} }
+				/>
+			);
+		case PAID_PLAN_IS_REQUIRED_DIALOG:
+			return (
+				<PaidPlanIsRequiredDialog
+					paidDomainName={ paidDomainName as string }
+					suggestedPlanSlug={ PLAN_PERSONAL }
+					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 					onFreePlanSelected={ onFreePlanSelected }
 					onPlanSelected={ () => {
 						onPlanSelected( PLAN_PERSONAL );

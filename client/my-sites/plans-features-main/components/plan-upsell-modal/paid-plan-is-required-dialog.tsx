@@ -15,13 +15,13 @@ import {
 import SuggestedPlanSection from './components/suggested-plan-section';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 
-export default function DialogPaidPlanIsRequired( {
+export default function PaidPlanIsRequiredDialog( {
 	paidDomainName,
 	wpcomFreeDomainSuggestion,
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps ) {
+}: DomainPlanDialogProps & { paidDomainName: string } ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 

@@ -1,6 +1,5 @@
-import { domainProductSlugs, getPlan, PlanSlug } from '@automattic/calypso-products';
+import { domainProductSlugs, getPlan } from '@automattic/calypso-products';
 import { Dialog, Gridicon } from '@automattic/components';
-import { DomainSuggestions } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -9,13 +8,12 @@ import { useEffect } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
-import { DataResponse } from 'calypso/my-sites/plans-grid/types';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { LoadingPlaceHolder } from '../loading-placeholder';
 import { DialogContainer, StyledButton } from './components';
-import { MODAL_VIEW_EVENT_NAME } from '.';
+import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 import type { TranslateResult } from 'i18n-calypso';
 
 export const Heading = styled.div`
@@ -90,17 +88,13 @@ function LazyDisplayText( {
  * 2 - Select the free plan
  */
 export function FreePlanFreeDomainDialog( {
-	freeSubdomain,
+	wpcomFreeDomainSuggestion,
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
 	suggestedPlanSlug,
-}: {
-	freeSubdomain: DataResponse< DomainSuggestions.DomainSuggestion >;
+}: DomainPlanDialogProps & {
 	onClose: () => void;
-	onFreePlanSelected: () => void;
-	onPlanSelected: () => void;
-	suggestedPlanSlug: PlanSlug;
 } ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
@@ -168,8 +162,8 @@ export function FreePlanFreeDomainDialog( {
 										strong: <strong></strong>,
 										subdomain: (
 											<LazyDisplayText
-												displayText={ freeSubdomain?.result?.domain_name }
-												isLoading={ freeSubdomain?.isLoading }
+												displayText={ wpcomFreeDomainSuggestion?.result?.domain_name }
+												isLoading={ wpcomFreeDomainSuggestion?.isLoading }
 											/>
 										),
 									},
@@ -254,7 +248,7 @@ export function FreePlanFreeDomainDialog( {
 				<ButtonRow>
 					<StyledButton
 						className="free-plan-free-domain-dialog__plan-button is-upsell-modal-personal-plan"
-						disabled={ freeSubdomain.isLoading || ! freeSubdomain.result }
+						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
 						primary
 						onClick={ () => {
 							onPlanSelected();
@@ -270,7 +264,7 @@ export function FreePlanFreeDomainDialog( {
 
 					<StyledButton
 						className="free-plan-free-domain-dialog__plan-button is-upsell-modal-free-plan"
-						disabled={ freeSubdomain.isLoading || ! freeSubdomain.result }
+						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
 						onClick={ () => {
 							onFreePlanSelected();
 						} }
