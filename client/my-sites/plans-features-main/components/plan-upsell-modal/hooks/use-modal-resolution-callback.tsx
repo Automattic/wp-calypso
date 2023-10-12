@@ -33,7 +33,7 @@ export function useModalResolutionCallback( {
 					return FREE_PLAN_FREE_DOMAIN_DIALOG;
 				}
 
-				if ( isCustomDomainAllowedOnFreePlan ) {
+				if ( isCustomDomainAllowedOnFreePlan.result ) {
 					return FREE_PLAN_PAID_DOMAIN_DIALOG;
 				}
 
