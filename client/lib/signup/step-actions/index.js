@@ -60,7 +60,7 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
-	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
+	const { cartItem, domainCart, designType, siteUrl, themeSlugWithRepo } = dependencies;
 	const reduxState = reduxStore.getState();
 	const domainItem = dependencies.domainItem
 		? prepareItemForAddingToCart(
@@ -77,7 +77,11 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			domainItem,
 		};
 
-		const domainChoiceCart = [ domainItem ].filter( Boolean );
+		const domainChoiceCart =
+			domainCart && domainCart.length > 0
+				? domainCart.filter( Boolean )
+				: [ domainItem ].filter( Boolean );
+
 		cartManagerClient
 			.forCartKey( cartKey )
 			.actions.replaceProductsInCart( domainChoiceCart )

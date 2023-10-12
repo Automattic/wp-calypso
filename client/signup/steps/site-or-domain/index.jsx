@@ -36,6 +36,13 @@ class SiteOrDomain extends Component {
 		return isValidDomain && domain;
 	}
 
+	getDomainCart() {
+		const { signupDependencies } = this.props;
+		const domainCart = get( signupDependencies, 'domainCart', [] );
+
+		return domainCart;
+	}
+
 	isLeanDomainSearch() {
 		const { signupDependencies } = this.props;
 		return 'leandomainsearch' === signupDependencies?.refParameter;
@@ -179,6 +186,7 @@ class SiteOrDomain extends Component {
 		const { stepName } = this.props;
 
 		const domain = this.getDomainName();
+		const domainCart = this.getDomainCart();
 		const productSlug = getDomainProductSlug( domain );
 		const domainItem = domainRegistration( { productSlug, domain } );
 		const siteUrl = domain;
@@ -191,18 +199,20 @@ class SiteOrDomain extends Component {
 				siteSlug: domain,
 				siteUrl,
 				isPurchasingItem: true,
+				domainCart,
 			},
-			{ designType, domainItem, siteUrl }
+			{ designType, domainItem, siteUrl, domainCart }
 		);
 	}
 
 	submitDomainOnlyChoice() {
 		const { goToStep } = this.props;
 
+		const domainCart = this.getDomainCart();
 		// we can skip the next two steps in the `domain-first` flow if the
 		// user is only purchasing a domain
 		this.props.submitSignupStep(
-			{ stepName: 'site-picker', wasSkipped: true },
+			{ stepName: 'site-picker', wasSkipped: true, domainCart },
 			{ themeSlugWithRepo: 'pub/twentysixteen' }
 		);
 		this.props.submitSignupStep(
