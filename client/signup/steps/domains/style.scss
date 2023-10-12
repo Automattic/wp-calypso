@@ -279,7 +279,12 @@ body.is-section-signup.is-white-signup {
 		.search-component.is-open {
 			border: 1px solid #a7aaad;
 			border-radius: 4px;
-			height: 48px;
+			box-sizing: border-box;
+			height: 40px;
+
+			@include break-mobile {
+				height: 48px;
+			}
 		}
 
 		.search-component.is-open.has-focus {
@@ -422,7 +427,11 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.search-filters__dropdown-filters {
-		height: 48px;
+		height: 40px;
+
+		@include break-mobile {
+			height: 48px;
+		}
 
 		&.search-filters__dropdown-filters--is-open {
 			box-shadow: none;
