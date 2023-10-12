@@ -117,7 +117,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 							monthlyPrice = purchasedPlan.priceInteger;
 							yearlyPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
 						} else if ( yearlyPrice !== purchasedPlan.priceInteger ) {
-							const months = Math.round( purchasedPlan.billPeriodDays / PLAN_MONTHLY_PERIOD );
+							const months = Math.ceil( purchasedPlan.billPeriodDays / PLAN_MONTHLY_PERIOD );
 							monthlyPrice = parseFloat( ( purchasedPlan.priceInteger / months ).toFixed( 2 ) );
 							yearlyPrice = purchasedPlan.priceInteger;
 						}
