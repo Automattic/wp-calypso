@@ -949,13 +949,15 @@ class ThemeSheet extends Component {
 			tabFilter,
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
+			siteId,
 		} = this.props;
 
 		return (
 			<Button
 				className="theme__sheet-primary-button"
 				href={
-					getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
+					getUrl &&
+					( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn || ! siteId )
 						? getUrl( this.props.themeId, { tabFilter, styleVariationSlug } )
 						: null
 				}
@@ -1167,7 +1169,8 @@ class ThemeSheet extends Component {
 
 			plansUrl = `/plans/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
 		} else {
-			plansUrl = '/start/premium';
+			plansUrl =
+				isExternallyManagedTheme || isBundledSoftwareSet ? '/start/business' : '/start/premium';
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
@@ -1221,7 +1224,7 @@ class ThemeSheet extends Component {
 
 		let onClick = null;
 
-		if ( isExternallyManagedTheme && isLoggedIn ) {
+		if ( isExternallyManagedTheme && isLoggedIn && siteId ) {
 			onClick = this.onButtonClick;
 		} else if ( ! isLoggedIn ) {
 			onClick = launchPricing;

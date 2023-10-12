@@ -60,6 +60,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		hideForTheme: ( state, themeId, siteId ) =>
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in
+			! siteId ||
 			! isThemePremium( state, themeId ) || // Not a premium theme
 			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased
@@ -81,6 +82,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isSiteWpcomStaging( state, siteId ) || // No individual theme purchase on a staging site
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in
+			! siteId ||
 			isMarketplaceThemeSubscribed( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased ||
 			! isExternallyManagedTheme( state, themeId ) || // We're currently only subscribing to third-party themes
@@ -107,6 +109,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isJetpackSite( state, siteId ) ||
 			isSiteWpcomAtomic( state, siteId ) ||
 			! isUserLoggedIn( state ) ||
+			! siteId ||
 			! isThemePremium( state, themeId ) ||
 			isExternallyManagedTheme( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
@@ -144,6 +147,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isJetpackSite( state, siteId ) ||
 			isSiteWpcomAtomic( state, siteId ) ||
 			! isUserLoggedIn( state ) ||
+			! siteId ||
 			! isThemePremium( state, themeId ) ||
 			! doesThemeBundleSoftwareSet( state, themeId ) ||
 			isExternallyManagedTheme( state, themeId ) ||
@@ -167,6 +171,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isJetpackSite( state, siteId ) ||
 			isSiteWpcomAtomic( state, siteId ) ||
 			! isUserLoggedIn( state ) ||
+			! siteId ||
 			! isExternallyManagedTheme( state, themeId ) ||
 			( isExternallyManagedTheme( state, themeId ) &&
 				isSiteEligibleForManagedExternalThemes( state, siteId ) ) ||
