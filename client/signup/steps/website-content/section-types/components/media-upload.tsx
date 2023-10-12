@@ -73,29 +73,38 @@ export const MediaUpload = ( { site, page, onChangeField }: Props ) => {
 		);
 	};
 
-	const imageCaption = translate(
-		'Upload up to %(noOfImages)d images. You can find stock images {{a}}here{{/a}}, or we’ll select some during the build.',
-		{
-			args: { noOfImages: page.media.length },
-			components: {
-				a: <a href="https://www.pexels.com/" target="_blank" rel="noreferrer" />,
-			},
-		}
-	);
-	const videoCaption = translate(
-		'Upload up to %(noOfVideos)d videos to be used on your %(pageTitle)s page.',
-		{
-			args: { pageTitle, noOfVideos: page.media.length },
-		}
-	);
 	const getMediaCaption = () => {
 		const [ firstMedia ] = page.media;
 		switch ( firstMedia.mediaType ) {
 			case 'VIDEO':
-				return videoCaption;
+				return translate(
+					'Upload up to %(noOfVideos)d videos to be used on your %(pageTitle)s page.',
+					{
+						args: { pageTitle, noOfVideos: page.media.length },
+					}
+				);
 			case 'IMAGE':
+				return translate(
+					'Upload up to %(noOfImages)d images. You can find stock images {{a}}here{{/a}}, or we’ll select some during the build.',
+					{
+						args: { noOfImages: page.media.length },
+						components: {
+							a: <a href="https://www.pexels.com/" target="_blank" rel="noreferrer" />,
+						},
+					}
+				);
+			case 'IMAGE-AND-VIDEO':
+				return translate(
+					'Upload up to %(noOfImages)d images or videos. You can find stock images {{a}}here{{/a}}, or we’ll select some during the build.',
+					{
+						args: { noOfImages: page.media.length },
+						components: {
+							a: <a href="https://www.pexels.com/" target="_blank" rel="noreferrer" />,
+						},
+					}
+				);
 			default:
-				return imageCaption;
+				return '';
 		}
 	};
 

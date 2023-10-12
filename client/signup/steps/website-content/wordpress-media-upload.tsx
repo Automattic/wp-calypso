@@ -29,12 +29,16 @@ const MediaPlaceholderIcon = styled( Gridicon )`
 	height: 45px;
 `;
 
-const MediaPlaceholder = ( { mediaType }: { mediaType: MediaUploadType } ) =>
-	mediaType === 'VIDEO' ? (
-		<MediaPlaceholderIcon icon="video-camera" />
-	) : (
-		<MediaPlaceholderIcon icon="image" />
-	);
+const MediaPlaceholder = ( { mediaType }: { mediaType: MediaUploadType } ) => {
+	switch ( mediaType ) {
+		case 'IMAGE':
+			return <MediaPlaceholderIcon icon="image" />;
+		case 'VIDEO':
+			return <MediaPlaceholderIcon icon="video" />;
+		case 'IMAGE-AND-VIDEO':
+			return <MediaPlaceholderIcon icon="attachment" />;
+	}
+};
 
 const StyledGridIcon = styled( Gridicon )`
 	z-index: 101;
@@ -134,6 +138,19 @@ interface WordpressMediaUploadProps {
 	media?: Media;
 }
 
+function getAllowedFileTypes( mediaType: MediaUploadType ) {
+	switch ( mediaType ) {
+		case 'IMAGE':
+			return allowedImageExtensions;
+		case 'VIDEO':
+			return allowedVideoExtensions;
+		case 'IMAGE-AND-VIDEO':
+			return allowedImageExtensions.concat( allowedVideoExtensions );
+		default:
+			return [];
+	}
+}
+
 export function WordpressMediaUpload( {
 	mediaIndex,
 	site,
@@ -153,7 +170,7 @@ export function WordpressMediaUpload( {
 	const [ imageCaption, setImageCaption ] = useState( caption );
 	const [ isImageLoading, setIsImageLoading ] = useState( false );
 
-	const allowedFileTypes = mediaType === 'VIDEO' ? allowedVideoExtensions : allowedImageExtensions;
+	const allowedFileTypes = getAllowedFileTypes( mediaType );
 	const allowedFileTypesString = allowedFileTypes.map( ( type ) => `.${ type }` ).join();
 
 	// Initialize uploadState if media has already been uploaded.

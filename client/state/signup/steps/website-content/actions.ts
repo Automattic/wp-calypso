@@ -1,16 +1,7 @@
 import {
-	HOME_PAGE,
-	BLOG_PAGE,
-	CONTACT_PAGE,
-	ABOUT_PAGE,
 	PHOTO_GALLERY_PAGE,
 	VIDEO_GALLERY_PAGE,
 	PORTFOLIO_PAGE,
-	FAQ_PAGE,
-	SERVICES_PAGE,
-	TESTIMONIALS_PAGE,
-	PRICING_PAGE,
-	TEAM_PAGE,
 	PageId,
 	CUSTOM_PAGE,
 } from 'calypso/signup/difm/constants';
@@ -135,15 +126,8 @@ function getMediaPlaceholders( pageId: PageId ): Array< Media > {
 		case PORTFOLIO_PAGE:
 		case PHOTO_GALLERY_PAGE:
 			return Array( 8 ).fill( getSingleMediaPlaceholder( 'IMAGE' ) );
-		case HOME_PAGE:
-		case BLOG_PAGE:
-		case CONTACT_PAGE:
-		case ABOUT_PAGE:
-		case FAQ_PAGE:
-		case SERVICES_PAGE:
-		case TESTIMONIALS_PAGE:
-		case PRICING_PAGE:
-		case TEAM_PAGE:
+		case CUSTOM_PAGE:
+			return Array( 8 ).fill( getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ) );
 		default:
 			return Array( 4 ).fill( getSingleMediaPlaceholder( 'IMAGE' ) );
 	}
