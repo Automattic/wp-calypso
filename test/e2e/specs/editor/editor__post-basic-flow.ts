@@ -32,6 +32,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	] );
 
 	let page: Page;
+	let testAccount: TestAccount;
 	let editorPage: EditorPage;
 	let publishedPostPage: PublishedPostPage;
 
@@ -39,7 +40,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		page = await browser.newPage();
 		editorPage = new EditorPage( page );
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
@@ -166,6 +167,12 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Publish and visit post', async function () {
 			const publishedURL: URL = await editorPage.publish( { visit: true } );
 			expect( publishedURL.href ).toStrictEqual( page.url() );
+		} );
+
+		it( 'Stats tracking pixel is loaded', async function () {
+			await page.waitForResponse(
+				new RegExp( `pixel.wp.com/g.gif?blog=${ testAccount.credentials.testSites?.primary.id }` )
+			);
 		} );
 
 		it( 'Post content is found in published post', async function () {
