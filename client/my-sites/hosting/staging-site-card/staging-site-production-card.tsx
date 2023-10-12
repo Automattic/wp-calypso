@@ -34,9 +34,6 @@ const Divider = styled.div( {
 	right: 0,
 	height: '16px',
 	overflow: 'hidden',
-	img: {
-		position: 'absolute',
-	},
 	backgroundImage: `url(${ dividerPattern })`,
 } );
 
