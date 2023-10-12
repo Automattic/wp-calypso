@@ -27,7 +27,8 @@ const usePatternInlineCss = (
 	[ ...Array( blogPostCount ).keys() ].forEach( ( order, index ) => {
 		const childIndex = index + 1;
 		// Offset order of blog posts to avoid repetition in previews
-		const orderWithOffset = ( ( order - lastOffset + blogPostCount ) % blogPostCount ) + 1;
+		const offset = lastOffset % blogPostCount;
+		const orderWithOffset = ( order - offset + blogPostCount ) % blogPostCount;
 		inlineCss += `.is-layout-grid > .wp-block-post:nth-child(${ childIndex }) { order: ${ orderWithOffset }; }`;
 	} );
 
