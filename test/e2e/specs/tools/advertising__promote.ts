@@ -35,6 +35,8 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 	DataHelper.createSuiteTitle( 'Advertising: Promote' ),
 	function () {
 		const pageTitle = DataHelper.getRandomPhrase();
+		// The input has a limit, so let's stay way under to be safe!
+		const pageTitleInAd = pageTitle.slice( 0, 20 );
 		const snippet = Array( 2 ).fill( DataHelper.getRandomPhrase() ).toString();
 
 		let newPostDetails: PostResponse;
@@ -104,12 +106,12 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		} );
 
 		it( 'Enter title and snippet', async function () {
-			await blazeCampaignPage.enterText( 'Page title', pageTitle );
+			await blazeCampaignPage.enterText( 'Page title', pageTitleInAd );
 			await blazeCampaignPage.enterText( 'Ad text', snippet );
 		} );
 
 		it( 'Validate preview', async function () {
-			await blazeCampaignPage.validatePreview( { title: pageTitle, snippet: snippet } );
+			await blazeCampaignPage.validatePreview( { title: pageTitleInAd, snippet: snippet } );
 		} );
 
 		afterAll( async function () {
