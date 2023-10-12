@@ -17,6 +17,11 @@ export default function useLoginWindow( { onLoginSuccess } ) {
 		);
 	}
 
+	const loginURL = `https://wordpress.com/log-in?redirect_to=${ redirectTo }`;
+	const createAccountURL = `https://wordpress.com${ createAccountUrl( {
+		redirectTo: redirectTo,
+		ref: 'reader-lw',
+	} ) }`;
 	const windowFeatures =
 		'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500';
 	const windowName = 'CalypsoLogin';
@@ -34,48 +39,30 @@ export default function useLoginWindow( { onLoginSuccess } ) {
 		}
 	};
 
-	const login = () => {
+	const openWindow = ( url ) => {
 		if ( ! isBrowser ) {
 			return;
 		}
 
-		const loginWindow = window.open(
-			`https://wordpress.com/log-in?redirect_to=${ redirectTo }`,
-			windowName,
-			windowFeatures
-		);
+		const loginWindow = window.open( url, windowName, windowFeatures );
 
 		// Listen for login data
 		window.addEventListener( 'message', waitForLogin );
 
 		// Clean up loginWindow
-		const loginClosed = setInterval( () => {
+		const loginWindowClosed = setInterval( () => {
 			if ( loginWindow?.closed ) {
-				clearInterval( loginClosed );
+				clearInterval( loginWindowClosed );
 			}
 		}, 100 );
 	};
 
+	const login = () => {
+		openWindow( loginURL );
+	};
+
 	const createAccount = () => {
-		if ( ! isBrowser ) {
-			return;
-		}
-
-		const createAccountWindow = window.open(
-			`https://wordpress.com${ createAccountUrl( { redirectTo: redirectTo, ref: 'reader-lw' } ) }`,
-			windowName,
-			windowFeatures
-		);
-
-		// Listen for login data
-		window.addEventListener( 'message', waitForLogin );
-
-		// Clean up loginWindow
-		const createAccountWindowClosed = setInterval( () => {
-			if ( createAccountWindow?.closed ) {
-				clearInterval( createAccountWindowClosed );
-			}
-		}, 100 );
+		openWindow( createAccountURL );
 	};
 
 	//Cleanup event listener when component unmounts
