@@ -63,7 +63,9 @@ export default function SiteProfiler( props: Props ) {
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
-		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
+		// Remove all white space from the value string
+		const trimmedValue = value.replace( /\s/g, '' );
+		return trimmedValue ? page( `/site-profiler/${ trimmedValue }` ) : page( '/site-profiler' );
 	};
 
 	return (
