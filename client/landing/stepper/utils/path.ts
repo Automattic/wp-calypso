@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Plans } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -45,11 +46,15 @@ export function useLangRouteParam() {
 	return match?.params.lang;
 }
 
+const getUserStep = (): string => {
+	return `/start/account/${ isEnabled( 'signup/social-first' ) ? 'user-social' : 'user' }`;
+};
+
 export const getLoginUrl = ( {
 	variationName,
 	redirectTo,
 	pageTitle,
-	loginPath = `/start/account/user/`,
+	loginPath,
 	locale,
 }: {
 	/**
@@ -59,10 +64,12 @@ export const getLoginUrl = ( {
 	redirectTo?: string | null;
 	pageTitle?: string | null;
 	loginPath?: string;
-	locale?: string;
-} ) => {
-	const localizedLoginPath =
-		locale && locale !== 'en' ? `${ trailingslashit( loginPath ) }${ locale }` : loginPath;
+	locale: string;
+} ): string => {
+	if ( ! loginPath ) {
+		loginPath = getUserStep();
+	}
+	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
 
 	// Empty values are ignored down the call stack, so we don't need to check for them here.
 	return addQueryArgs( localizedLoginPath, {
@@ -77,7 +84,7 @@ export const useLoginUrl = ( {
 	variationName,
 	redirectTo,
 	pageTitle,
-	loginPath = `/start/account/user/`,
+	loginPath,
 	locale,
 }: {
 	/**
@@ -89,6 +96,9 @@ export const useLoginUrl = ( {
 	loginPath?: string;
 	locale?: string;
 } ): string => {
+	if ( ! loginPath ) {
+		loginPath = getUserStep();
+	}
 	const currentLocale = useLocale();
 	return getLoginUrl( {
 		variationName,
