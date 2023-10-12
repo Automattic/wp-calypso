@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import useLoginWindow from 'calypso/components/login-window';
 import './style.scss';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 	const translate = useTranslate();
@@ -11,6 +12,16 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 	const { login, createAccount } = useLoginWindow( {
 		onLoginSuccess: () => window.location.reload(),
 	} );
+
+	const onLoginClick = () => {
+		recordTracksEvent( 'calypso_reader_dialog_login_clicked' );
+		login();
+	};
+
+	const onCreateAccountClick = () => {
+		recordTracksEvent( 'calypso_reader_dialog_create_account_clicked' );
+		createAccount();
+	};
 
 	return (
 		<Dialog
@@ -28,13 +39,13 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 				<p>{ translate( 'Sign in to like, comment, reblog, and follow your favorite blogs.' ) }</p>
 				<Button
 					isPrimary
-					onClick={ createAccount }
+					onClick={ onCreateAccountClick }
 					className="reader-join-conversation-dialog__create-account-button"
 				>
 					{ translate( 'Create a new account' ) }
 				</Button>
 				<br />
-				<Button isLink onClick={ login } className="reader-join-conversation-dialog__login">
+				<Button isLink onClick={ onLoginClick } className="reader-join-conversation-dialog__login">
 					{ translate( 'Log in' ) }
 				</Button>
 			</div>
