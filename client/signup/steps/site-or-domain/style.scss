@@ -4,7 +4,15 @@
 .is-site-or-domain {
 	.step-wrapper__header {
 		margin-bottom: 60px !important;
+		@media (max-width: $break-mobile) {
+			margin: 32px 20px 24px !important;
+		}
 
+		.formatted-header__title {
+			@media (max-width: $break-mobile) {
+				padding: 0 !important;
+			}
+		}
 		.formatted-header__subtitle {
 			color: var(--gray-50, #646970) !important;
 			font-family: "SF Pro Display", $sans;
@@ -14,7 +22,14 @@
 			line-height: 26px;
 			letter-spacing: 0.24px;
 			margin-top: 4px !important;
+			@media (max-width: $break-mobile) {
+				padding: 0 !important;
+			}
 		}
+	}
+
+	.step-wrapper__content {
+		margin: 0 20px;
 	}
 }
 
@@ -41,6 +56,9 @@
 			position: initial;
 		}
 		.select-items__item-info-wrapper {
+			display: flex;
+			align-items: center;
+			width: 100%;
 			gap: 16px;
 			.select-items__item-info {
 				padding: 0;
@@ -76,6 +94,7 @@
 				min-width: auto;
 				padding: 0;
 				height: 68px;
+				margin: 0;
 
 				svg {
 					position: initial;
