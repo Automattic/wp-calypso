@@ -15,6 +15,7 @@ interface PatternListItemProps {
 	isSelected?: boolean;
 	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
+	isNewSite: boolean;
 }
 
 interface PatternListRendererProps {
@@ -26,6 +27,7 @@ interface PatternListRendererProps {
 	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	isShowMorePatterns?: boolean;
+	isNewSite: boolean;
 }
 
 const DEFAULT_VIEWPORT_WIDTH = 1060;
@@ -40,6 +42,7 @@ const PatternListItem = ( {
 	isSelected,
 	composite,
 	onSelect,
+	isNewSite,
 }: PatternListItemProps ) => {
 	const ref = useRef< HTMLButtonElement >();
 	const { ref: inViewRef, inView: inViewOnce } = useInView( {
@@ -82,6 +85,7 @@ const PatternListItem = ( {
 						viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
 						viewportHeight={ DEFAULT_VIEWPORT_HEIGHT }
 						minHeight={ PLACEHOLDER_HEIGHT }
+						shouldShufflePosts={ isNewSite }
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
@@ -100,6 +104,7 @@ const PatternListRenderer = ( {
 	composite,
 	onSelect,
 	isShowMorePatterns,
+	isNewSite,
 }: PatternListRendererProps ) => {
 	const filterPriorityPatterns = ( pattern: Pattern ) =>
 		isShowMorePatterns || isPriorityPattern( pattern );
@@ -120,6 +125,7 @@ const PatternListRenderer = ( {
 					isSelected={ pattern.ID === selectedPattern?.ID }
 					composite={ composite }
 					onSelect={ onSelect }
+					isNewSite={ isNewSite }
 				/>
 			) ) }
 		</>
