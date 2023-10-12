@@ -1,5 +1,7 @@
 import { PLAN_PERSONAL, PlanSlug } from '@automattic/calypso-products';
+import { Dialog } from '@automattic/components';
 import { DomainSuggestions } from '@automattic/data-stores';
+import { Global, css } from '@emotion/react';
 import { FreePlanFreeDomainDialog } from './free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './free-plan-paid-domain-dialog';
 import { useModalResolutionCallback } from './hooks/use-modal-resolution-callback';
@@ -33,20 +35,15 @@ type ModalContainerProps = {
 // See p2-pbxNRc-2Ri#comment-4703 for more context
 export const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
 
-export default function ModalContainer( {
-	isModalOpen,
+function DisplayedModal( {
 	paidDomainName,
 	selectedPlan,
 	wpcomFreeDomainSuggestion,
-	onClose,
 	onFreePlanSelected,
 	onPlanSelected,
 }: ModalContainerProps ) {
 	const resolveModal = useModalResolutionCallback( { paidDomainName } );
 
-	if ( ! isModalOpen ) {
-		return;
-	}
 	switch ( resolveModal( selectedPlan ) ) {
 		case FREE_PLAN_PAID_DOMAIN_DIALOG:
 			return (
@@ -54,7 +51,6 @@ export default function ModalContainer( {
 					paidDomainName={ paidDomainName as string }
 					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 					suggestedPlanSlug={ PLAN_PERSONAL }
-					onClose={ onClose }
 					onFreePlanSelected={ () => {
 						onFreePlanSelected();
 					} }
@@ -68,7 +64,6 @@ export default function ModalContainer( {
 				<FreePlanFreeDomainDialog
 					suggestedPlanSlug={ PLAN_PERSONAL }
 					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-					onClose={ onClose }
 					onFreePlanSelected={ onFreePlanSelected }
 					onPlanSelected={ () => {
 						onPlanSelected( PLAN_PERSONAL );
@@ -92,4 +87,33 @@ export default function ModalContainer( {
 	}
 
 	return null;
+}
+
+export default function ModalContainer( props: ModalContainerProps ) {
+	if ( ! props.isModalOpen ) {
+		return;
+	}
+	return (
+		<Dialog
+			isBackdropVisible={ true }
+			isVisible={ true }
+			onClose={ props.onClose }
+			showCloseIcon={ true }
+			labelledby="free-plan-modal-title"
+			describedby="free-plan-modal-description"
+		>
+			<Global
+				styles={ css`
+					.dialog__backdrop.is-full-screen {
+						background-color: rgba( 0, 0, 0, 0.6 );
+					}
+					.ReactModal__Content--after-open.dialog.card {
+						border-radius: 4px;
+						width: 639px;
+					}
+				` }
+			/>
+			<DisplayedModal { ...props } />
+		</Dialog>
+	);
 }
