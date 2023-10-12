@@ -218,7 +218,7 @@ const sections = [
 	{
 		name: 'jetpack-app',
 		paths: [ '/jetpack-app' ],
-		module: 'calypso/jetpack-app/',
+		module: 'calypso/jetpack-app',
 	},
 	{
 		name: 'stats',
