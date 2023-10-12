@@ -69,6 +69,7 @@ class SiteOrDomain extends Component {
 				titleIcon: globe,
 				value: 'domain',
 				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+				allItemClickable: true,
 			} );
 			choices.push( {
 				key: 'page',
@@ -86,6 +87,7 @@ class SiteOrDomain extends Component {
 				titleIcon: addCard,
 				value: 'page',
 				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+				allItemClickable: true,
 			} );
 			if ( isLoggedIn && siteCount > 0 ) {
 				choices.push( {
@@ -104,6 +106,7 @@ class SiteOrDomain extends Component {
 					titleIcon: layout,
 					value: 'existing-site',
 					actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+					allItemClickable: true,
 				} );
 			}
 		} else {

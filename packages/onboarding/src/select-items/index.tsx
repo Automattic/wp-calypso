@@ -15,13 +15,13 @@ export interface SelectItem< T > {
 	actionText: TranslateResult | null;
 	hidden?: boolean;
 	isPrimary?: boolean;
+	allItemClickable?: boolean;
 }
 
 interface Props< T > {
 	className?: string;
 	items: SelectItem< T >[];
 	onSelect: ( value: T ) => void;
-	onItemSelect?: () => void;
 	preventWidows: ( text: TranslateResult, wordsToKeep?: number ) => string;
 }
 
@@ -29,7 +29,18 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 	return (
 		<div className={ classnames( 'select-items', className ) }>
 			{ items.map(
-				( { key, title, badge, description, icon, titleIcon, actionText, value, isPrimary } ) => (
+				( {
+					key,
+					title,
+					badge,
+					description,
+					icon,
+					titleIcon,
+					actionText,
+					value,
+					isPrimary,
+					allItemClickable,
+				} ) => (
 					<div key={ key } className="select-items__item">
 						{ ! titleIcon && (
 							<Icon className="select-items__item-icon" icon={ icon } size={ 24 } />
@@ -63,6 +74,12 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 								</Button>
 							) }
 						</div>
+						{ allItemClickable && (
+							<button
+								className="select-items__item-clickable"
+								onClick={ () => onSelect( value ) }
+							/>
+						) }
 					</div>
 				)
 			) }
