@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { PureUniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import page from 'page';
 import { ChangeEvent } from 'react';
 import Main from 'calypso/components/main';
@@ -53,7 +53,7 @@ export function siteProfilerContext( context: PageJS.Context, next: () => void )
 			<Main fullWidthLayout>
 				<SiteProfiler routerDomain={ routerDomain } />
 			</Main>
-			<PureUniversalNavbarFooter isLoggedIn={ isLoggedIn } onLanguageChange={ onLanguageChange } />
+			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } onLanguageChange={ onLanguageChange } />
 		</>
 	);
 
