@@ -113,6 +113,7 @@ export type PlansIntent =
 	| 'plans-new-hosted-site'
 	| 'plans-plugins'
 	| 'plans-jetpack-app'
+	| 'plans-jetpack-app-site-creation'
 	| 'plans-import'
 	| 'plans-woocommerce'
 	| 'plans-paid-media'
@@ -216,6 +217,9 @@ const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
+		case 'plans-jetpack-app-site-creation':
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-paid-media':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
