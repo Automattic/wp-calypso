@@ -45,7 +45,8 @@ export class EditorGutenbergComponent {
 	async resetSelectedBlock(): Promise< void > {
 		const editorCanvas = await this.editor.canvas();
 		const locator = editorCanvas.locator( selectors.title );
-		await locator.click();
+		// Every now and then, a block toolbar can cover the title, so we "force" the click by doing it via the event directly.
+		await locator.dispatchEvent( 'click' );
 	}
 
 	/* Title block */
