@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
 import useHostingProviderName from '../../hooks/use-hosting-provider-name';
 import { Skeleton } from '../skeleton-screen';
-import type { SPECIAL_DOMAIN_CASES } from '../../utils/get-special-domain-mapping';
+import type { SPECIAL_DOMAIN_CATEGORY } from '../../utils/get-domain-category';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { HostingProvider } from 'calypso/data/site-profiler/types';
 
@@ -11,13 +11,15 @@ interface Props {
 	conversionAction?: CONVERSION_ACTION;
 	hostingProvider?: HostingProvider;
 	urlData?: UrlData;
-	specialDomainMapping?: SPECIAL_DOMAIN_CASES;
+	domainCategory?: SPECIAL_DOMAIN_CATEGORY;
 }
 export default function StatusInfo( props: Props ) {
-	const { conversionAction, hostingProvider, urlData, specialDomainMapping } = props;
+	const { conversionAction, hostingProvider, urlData, domainCategory } = props;
 	const hostingProviderName = useHostingProviderName( hostingProvider, urlData );
-	// if there's a special domain mapping, use that instead of the conversion action
-	const finalStatus = specialDomainMapping ?? conversionAction;
+
+	// if there's a domain category, use that instead of the conversion action
+	const finalStatus = domainCategory ?? conversionAction;
+
 	switch ( finalStatus ) {
 		case 'wordpress-com':
 			return <p>{ translate( 'Well yes, WordPress.com runs on WordPress.com!' ) }</p>;
