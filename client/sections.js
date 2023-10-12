@@ -216,9 +216,9 @@ const sections = [
 		isomorphic: true,
 	},
 	{
-		name: 'jetpack-app-plans',
-		paths: [ '/jetpack-app/plans' ],
-		module: 'calypso/jetpack-app/plans',
+		name: 'jetpack-app',
+		paths: [ '/jetpack-app' ],
+		module: 'calypso/jetpack-app/',
 	},
 	{
 		name: 'stats',

@@ -1,4 +1,4 @@
-import JetpackAppPlans from './main';
+import JetpackAppPlans from './plans/main';
 
 export function jetpackAppPlans( context: PageJS.Context, next: () => void ) {
 	context.primary = (
