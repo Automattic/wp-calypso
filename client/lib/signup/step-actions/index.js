@@ -116,6 +116,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			isPurchasingItem: true,
 			siteUrl,
 			themeSlugWithRepo,
+			domainCart,
 		};
 
 		createSiteWithCart(

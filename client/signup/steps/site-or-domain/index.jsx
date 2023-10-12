@@ -224,6 +224,7 @@ class SiteOrDomain extends Component {
 
 	handleClickChoice = ( designType ) => {
 		const { goToStep, goToNextStep } = this.props;
+		const domainCart = this.getDomainCart();
 
 		this.submitDomain( designType );
 
@@ -233,7 +234,7 @@ class SiteOrDomain extends Component {
 			goToNextStep();
 		} else {
 			this.props.submitSignupStep(
-				{ stepName: 'site-picker', wasSkipped: true },
+				{ stepName: 'site-picker', wasSkipped: true, domainCart },
 				{ themeSlugWithRepo: 'pub/twentysixteen' }
 			);
 			goToStep( 'plans-site-selected' );
