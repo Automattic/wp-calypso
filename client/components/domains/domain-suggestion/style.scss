@@ -52,26 +52,53 @@
 }
 
 .domain-suggestion:not(.featured-domain-suggestion) {
-	display: flex;
-	flex-direction: column;
+	// display: flex;
+	// flex-direction: column;
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	column-gap: 20px;
+	grid-template-columns: 2fr 1fr 1fr;
+	grid-template-areas:
+		"domain price select"
+		"promo promo select";
+
+
+	/* e.g.
+      1fr 1fr
+      minmax(10px, 1fr) 3fr
+      repeat(5, 1fr)
+      50px auto 100px 1fr
+  */
+	// grid-template-rows: ... ...;
+	/* e.g.
+      min-content 1fr min-content
+      100px 1fr max-content
+  */
+
 
 	@include break-mobile {
-		flex-direction: row;
-		align-items: center;
+		// flex-direction: row;
+		// align-items: center;
 		padding: 15px 20px;
+		grid-template-rows: auto;
+		column-gap: 20px;
+		grid-template-columns: 2fr 1fr 1fr;
+		grid-template-areas:
+			"domain price select"
+			"promo promo select";
 	}
 
 	.is-section-signup & {
 		@include breakpoint-deprecated( ">480px" ) {
-			flex-direction: row;
-			align-items: center;
+			// flex-direction: row;
+			// align-items: center;
 		}
 	}
 
 	.is-section-domains & {
 		@include breakpoint-deprecated( ">800px" ) {
-			flex-direction: row;
-			align-items: center;
+			// flex-direction: row;
+			// align-items: center;
 		}
 	}
 
@@ -103,8 +130,8 @@
 	min-height: 32px;
 
 	@include breakpoint-deprecated( ">660px" ) {
-		display: flex;
-		justify-content: space-between;
+		// display: flex;
+		// justify-content: space-between;
 	}
 
 	.notice.is-compact {
@@ -170,6 +197,7 @@
 }
 
 .domain-registration-suggestion__title-wrapper {
+	grid-area: domain;
 	display: flex;
 	flex-direction: column-reverse;
 	flex-wrap: nowrap;
@@ -179,17 +207,17 @@
 	}
 
 	&.domain-registration-suggestion__title-domain {
-		@include breakpoint-deprecated( ">480px" ) {
-			max-width: 50%;
-			min-width: 50%;
-			margin-right: 1em;
-		}
+		// @include breakpoint-deprecated( ">480px" ) {
+		// 	max-width: 50%;
+		// 	min-width: 50%;
+		// 	margin-right: 1em;
+		// }
 
-		@include breakpoint-deprecated( ">800px" ) {
-			max-width: 55%;
-			min-width: 55%;
-			margin-right: 1em;
-		}
+		// @include breakpoint-deprecated( ">800px" ) {
+		// 	max-width: 55%;
+		// 	min-width: 55%;
+		// 	margin-right: 1em;
+		// }
 	}
 
 	.domain-registration-suggestion__title {
@@ -245,6 +273,9 @@
 	}
 }
 
+.domain-suggestion__action-container {
+	grid-area: select;
+}
 .button.domain-suggestion__action {
 	height: 40px;
 	min-width: 66px;
@@ -361,15 +392,17 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-suggestion__content-domain {
 			justify-content: space-between;
-			margin-right: 40px;
+			// margin-right: 40px;
 		}
 
 		.domain-product-price__free-text {
+			grid-area: promo;
 			color: var(--color-neutral-60);
 			font-size: $font-body;
 		}
 
 		.domain-product-price__price {
+			grid-area: price;
 			font-size: $font-body-small;
 			font-weight: initial;
 

@@ -9,6 +9,7 @@
 	box-sizing: border-box;
 	background: var(--color-surface);
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	max-width: 690px;
 
 	@include break-mobile {
 		padding: 24px;
