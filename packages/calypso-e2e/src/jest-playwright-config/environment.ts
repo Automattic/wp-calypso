@@ -64,6 +64,11 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
+		// We need the test file name for some ENV var calculation.
+		// Set the global value both in the Jest context (the code here)...
+		global.testFileName = this.testFilename;
+		// ...and pass the global value to the environment running the test code. (What the "this" does here.)
+		// Yes, we need to do both!
 		this.global.testFileName = this.testFilename;
 		this.testArtifactsPath = '';
 		this.allure = this.initializeAllureReporter( config.projectConfig );
@@ -149,6 +154,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				let artifactPrefix = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
 
 				if ( env.RUN_ID ) {
+					console.log( 'RUN_ID', env.RUN_ID );
 					artifactPrefix = `${ artifactPrefix }__${ sanitizeString( env.RUN_ID ) }`;
 				}
 
