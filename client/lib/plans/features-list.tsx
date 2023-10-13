@@ -1765,12 +1765,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
 		getTitle: () =>
 			i18n.translate(
-				'Commission fee for standard WooCommerce payment features (plus standard {{span}}processing&nbsp;fee{{/span}})',
-				{
-					components: {
-						span: <span />,
-					},
-				}
+				'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
 			),
 		getConditionalTitle: ( planSlug ) => {
 			if ( ! planSlug ) {
