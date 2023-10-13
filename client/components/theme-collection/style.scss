@@ -4,6 +4,10 @@
 .theme-collection__container {
 	padding-bottom: 32px;
 
+	@include break-xlarge {
+		margin: 0 48px;
+	}
+
 	&:last-child {
 		padding-bottom: 0;
 
@@ -14,6 +18,10 @@
 
 	.theme-collection__list-wrapper {
 		padding-right: 32px;
+
+		@include break-xlarge {
+			padding-right: 0;
+		}
 
 		&.swiper-wrapper {
 			overflow-y: clip;
@@ -68,16 +76,6 @@
 }
 
 .theme-collection__list-item.swiper-slide {
-	width: 80%;
-
-	@include break-small {
-		width: 45%;
-	}
-
-	@include break-large {
-		width: 32%;
-	}
-
 	.card.theme-card {
 		margin: 0;
 		padding: 0;
