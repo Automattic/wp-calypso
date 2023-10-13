@@ -2,7 +2,9 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
+import { useJetpackAgencyDashboardRecordTrackEvent } from '../../../hooks';
 import SitesOverviewContext from '../../context';
+import DashboardDataContext from '../../dashboard-data-context';
 import useInstallBoost from '../../hooks/use-install-boost';
 import LicenseInfoModal from '../../license-info-modal';
 import type { Site } from '../../types';
@@ -19,6 +21,10 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 	const translate = useTranslate();
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
+	const { isLargeScreen } = useContext( DashboardDataContext );
+
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], isLargeScreen );
+
 	const { blog_id: siteId, url: siteUrl } = site;
 
 	// queryKey is needed to optimistically update the site list
@@ -30,15 +36,15 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	const handleInstallBoost = () => {
 		installBoost();
-		// TODO: Track events here
+		recordEvent( 'boost_info_modal_start_free_click' );
 	};
 
 	const handlePurchaseBoost = () => {
-		// TODO: Track events here
+		recordEvent( 'boost_info_modal_purchase_click' );
 	};
 
 	const onJetpackBoostClick = () => {
-		// TODO: Track events here
+		recordEvent( 'boost_info_modal_jetpack_boost_click' );
 	};
 
 	const inProgress = status === 'loading';
