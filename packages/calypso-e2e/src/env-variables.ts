@@ -33,6 +33,25 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	RETRY_COUNT: 0,
 };
 
+const getAtomicVariationInMixedRun = () => {
+	const allVariations: AtomicVariation[] = [
+		'default',
+		'php-old',
+		'php-new',
+		'wp-beta',
+		'wp-previous',
+		'private',
+		'ecomm-plan',
+	];
+	const currentHour = new Date().getHours();
+	const jestWorkerId = Number( process.env.JEST_WORKER_ID );
+	// We want there to be both some randomness in the variations, but as much of an even distribution as possible.
+	// By combining the current hour plus the Jest Worker ID, we get a nice evenish mix of the variations within each full run
+	// that also has variation throughout the day.
+	const variationIndex = ( currentHour + jestWorkerId ) % allVariations.length;
+	return allVariations[ variationIndex ];
+};
+
 /**
  * Captures and performs type check on all known environment variables.
  *
@@ -138,6 +157,7 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 				'wp-previous',
 				'private',
 				'ecomm-plan',
+				'mixed',
 			];
 			if ( ! supportedValues.includes( output as AtomicVariation ) ) {
 				throw new Error(
@@ -145,6 +165,10 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 						' | '
 					) }`
 				);
+			}
+
+			if ( output === 'mixed' ) {
+				output = getAtomicVariationInMixedRun();
 			}
 			break;
 		}
@@ -162,6 +186,17 @@ supportedEnvVariableNames.forEach( ( name ) => {
 		currentEnvVariables[ name ] = castKnownEnvVariable( name, originalValue );
 	}
 } );
+
+// Support our Jetpack "mixed" atomic test strategy.
+// We still want to preserve test history as we randomly rotate through the variations.
+// And we won't know the variation at the command line to use as the run ID.
+if (
+	! currentEnvVariables.RUN_ID &&
+	currentEnvVariables.JETPACK_TARGET === 'wpcom-deployment' &&
+	currentEnvVariables.TEST_ON_ATOMIC
+) {
+	currentEnvVariables.RUN_ID = `Atomic: ${ currentEnvVariables.ATOMIC_VARIATION }`;
+}
 
 // @{TODO}: Should we add proxy trap to fallback to process.env values?
 export default Object.freeze( currentEnvVariables );

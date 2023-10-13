@@ -25,6 +25,7 @@ import { ConnectionStatus, StatusState } from './connection-status';
 import CredentialsForm from './credentials-form';
 import { FormMode, FormState, INITIAL_FORM_ERRORS, INITIAL_FORM_STATE, validate } from './form';
 import HostSelection from './host-selection';
+import { getHostInput } from './utils';
 import Verification from './verification';
 import './style.scss';
 import type { ClickHandler } from 'calypso/components/step-progress';
@@ -263,6 +264,11 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 			credentials.kpri = '';
 		} else if ( formMode === FormMode.PrivateKey ) {
 			credentials.pass = '';
+		}
+
+		const host = getHostInput( formState.host );
+		if ( host ) {
+			credentials.host = host;
 		}
 
 		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );

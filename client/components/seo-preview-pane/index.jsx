@@ -200,7 +200,7 @@ export class SeoPreviewPane extends PureComponent {
 
 		const { selectedService } = this.state;
 
-		const services = compact( [ post && 'wordpress', 'google', 'facebook', 'twitter' ] );
+		const services = compact( [ post && 'wordpress', 'google', 'facebook', 'x' ] );
 
 		if ( showNudge ) {
 			return <SeoPreviewUpgradeNudge { ...{ site } } />;
@@ -234,7 +234,7 @@ export class SeoPreviewPane extends PureComponent {
 									wordpress: ReaderPost( site, post, frontPageMetaDescription ),
 									facebook: FacebookPost( site, post, frontPageMetaDescription ),
 									google: GooglePost( site, post, frontPageMetaDescription ),
-									twitter: TwitterPost( site, post, frontPageMetaDescription ),
+									x: TwitterPost( site, post, frontPageMetaDescription ),
 								},
 								selectedService,
 								ComingSoonMessage( translate )
@@ -244,7 +244,7 @@ export class SeoPreviewPane extends PureComponent {
 								{
 									facebook: FacebookSite( site, frontPageMetaDescription ),
 									google: GoogleSite( site, frontPageMetaDescription ),
-									twitter: TwitterSite( site, frontPageMetaDescription ),
+									x: TwitterSite( site, frontPageMetaDescription ),
 								},
 								selectedService,
 								ComingSoonMessage( translate )

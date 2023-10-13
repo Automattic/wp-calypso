@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
+import dividerPattern from 'calypso/assets/images/hosting/divider-pattern.svg';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
@@ -20,8 +21,22 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
-import { StagingSiteSyncCard } from './card-content/staging-sync-card';
+import { SiteSyncCard } from './card-content/staging-sync-card';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
+
+const ProductionCard = styled( Card )( {
+	paddingTop: '0',
+	backgroundImage: `url(${ dividerPattern })`,
+	backgroundRepeat: 'repeat-x',
+} );
+
+const ProductionCardIcon = styled( Gridicon )( {
+	marginTop: '36px',
+} );
+
+const ProductionCardHeading = styled( CardHeading )( {
+	marginTop: '36px!important',
+} );
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -122,9 +137,9 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				</ActionButtons>
 				{ isStagingSitesI3Enabled && (
 					<SyncActionsContainer>
-						<StagingSiteSyncCard
+						<SiteSyncCard
+							type="staging"
 							productionSiteId={ productionSite.id }
-							stagingSiteId={ siteId }
 							onPush={ pullFromStaging }
 							onPull={ pushToStaging }
 							error={ syncError }
@@ -149,14 +164,14 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 		);
 	}
 	return (
-		<Card className="staging-site-card">
+		<ProductionCard className="staging-site-card">
 			{
 				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<Gridicon icon="science" size={ 32 } />
+				<ProductionCardIcon icon="science" size={ 32 } />
 			}
-			<CardHeading id="staging-site">{ __( 'Staging site' ) }</CardHeading>
+			<ProductionCardHeading id="staging-site">{ __( 'Staging site' ) }</ProductionCardHeading>
 			{ cardContent }
-		</Card>
+		</ProductionCard>
 	);
 }
 

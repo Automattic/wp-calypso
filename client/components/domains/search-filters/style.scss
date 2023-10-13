@@ -3,12 +3,13 @@
 
 .search-filters__dropdown-filters {
 	align-items: center;
-	height: 51px; // same as .search
+	height: 40px;
 	z-index: z-index("root", ".search");
 	margin-left: 12px;
 
 	@include break-mobile {
 		margin-left: 20px;
+		height: 48px;
 	}
 
 	.button {

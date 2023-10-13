@@ -27,13 +27,19 @@ interface CallToActionProps {
 const CallToAction = ( { onStartTrialClick }: CallToActionProps ) => {
 	const { __ } = useI18n();
 	const { isVerified, hasUser, isSending, email, resendEmail } = useVerifyEmail();
+	const startTrial = () => {
+		if ( ! isVerified ) {
+			return;
+		}
+		onStartTrialClick();
+	};
 
 	return (
 		<>
 			{ ! isVerified && hasUser && (
 				<EmailVerification isSending={ isSending } email={ email } resendEmail={ resendEmail } />
 			) }
-			<NextButton isBusy={ false } onClick={ onStartTrialClick } disabled={ ! isVerified }>
+			<NextButton isBusy={ false } onClick={ startTrial } disabled={ ! isVerified }>
 				{ __( 'Start the Business trial' ) }
 			</NextButton>
 		</>

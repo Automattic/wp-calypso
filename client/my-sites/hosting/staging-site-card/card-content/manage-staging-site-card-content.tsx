@@ -9,13 +9,24 @@ import { urlToSlug } from 'calypso/lib/url';
 import { ConfirmationModal } from 'calypso/my-sites/hosting/staging-site-card/confirmation-modal';
 import { StagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
-import { ProductionSiteSyncCard } from './staging-sync-card';
+import { SiteSyncCard } from './staging-sync-card';
 
 const SiteRow = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	marginBottom: 24,
 	'.site-icon': { flexShrink: 0 },
+} );
+
+const BorderedContainer = styled.div( {
+	display: 'flex',
+	padding: '16px',
+	flexDirection: 'column',
+	alignItems: 'flex-start',
+	alignSelf: 'stretch',
+	borderRadius: '3px',
+	border: '1px solid var(--gray-gray-5, #DCDCDE)',
+	background: 'var(--White, #FFF)',
 } );
 
 const SyncActionsContainer = styled.div( {
@@ -63,6 +74,7 @@ const ActionButtons = styled.div( {
 		gap: '0.5em',
 		flexDirection: 'column',
 		'.button': { flexGrow: 1 },
+		alignSelf: 'stretch',
 	},
 } );
 
@@ -134,31 +146,34 @@ export const ManageStagingSiteCardContent = ( {
 						}
 					) }
 				</p>
-				<SiteRow>
-					<SiteIcon siteId={ stagingSite.id } size={ 40 } />
-					<SiteInfo>
-						<SiteNameContainer>
-							<SiteName
-								href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
-								title={ translate( 'Visit Dashboard' ) }
-							>
-								{ stagingSite.name }
-							</SiteName>
-							<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
-						</SiteNameContainer>
-						<StagingSiteLink>
-							<a href={ stagingSite.url }>{ stagingSite.url }</a>
-						</StagingSiteLink>
-					</SiteInfo>
-				</SiteRow>
+				<BorderedContainer>
+					<SiteRow>
+						<SiteIcon siteId={ stagingSite.id } size={ 40 } />
+						<SiteInfo>
+							<SiteNameContainer>
+								<SiteName
+									href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+									title={ translate( 'Visit Dashboard' ) }
+								>
+									{ stagingSite.name }
+								</SiteName>
+								<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
+							</SiteNameContainer>
+							<StagingSiteLink>
+								<a href={ stagingSite.url }>{ stagingSite.url }</a>
+							</StagingSiteLink>
+						</SiteInfo>
+					</SiteRow>
+					<ActionButtons>
+						<ManageStagingSiteButton />
+						<ConfirmationDeleteButton />
+					</ActionButtons>
+				</BorderedContainer>
 				{ isStagingSitesI3Enabled ? (
 					<>
-						<ActionButtons>
-							<ManageStagingSiteButton />
-							<ConfirmationDeleteButton />
-						</ActionButtons>
 						<SyncActionsContainer>
-							<ProductionSiteSyncCard
+							<SiteSyncCard
+								type="production"
 								onPush={ onPushClick }
 								onPull={ onPullClick }
 								disabled={ isButtonDisabled }
@@ -167,12 +182,7 @@ export const ManageStagingSiteCardContent = ( {
 							/>
 						</SyncActionsContainer>
 					</>
-				) : (
-					<ActionButtons>
-						<ManageStagingSiteButton />
-						<ConfirmationDeleteButton />
-					</ActionButtons>
-				) }
+				) : null }
 			</>
 		);
 	}
