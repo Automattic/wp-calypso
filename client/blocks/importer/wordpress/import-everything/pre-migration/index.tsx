@@ -59,6 +59,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const urlQueryParams = useQuery();
+	const sourceSiteSlug = urlQueryParams.get( 'from' ) ?? '';
+	const sourceSiteUrl = formatSlugToURL( sourceSiteSlug );
 
 	const [ showCredentials, setShowCredentials ] = useState( false );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
@@ -67,9 +70,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
 	const [ hasLoaded, setHasLoaded ] = useState( false );
 	const [ continueImport, setContinueImport ] = useState( false );
-	const urlQueryParams = useQuery();
-	const sourceSiteSlug = urlQueryParams.get( 'from' ) ?? '';
-	const sourceSiteUrl = formatSlugToURL( sourceSiteSlug );
 
 	const {
 		sourceSiteId,
