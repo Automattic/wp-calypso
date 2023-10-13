@@ -24,11 +24,11 @@ type ModalType =
 export function useModalResolutionCallback( {
 	paidDomainName,
 	flowName,
-}: Props ): ( currentSelectedPlan: string ) => ModalType | null {
+}: Props ): ( currentSelectedPlan?: string ) => ModalType | null {
 	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( flowName );
 	return useCallback(
-		( currentSelectedPlan: string ): ModalType | null => {
-			if ( isFreePlan( currentSelectedPlan ) ) {
+		( currentSelectedPlan?: string ): ModalType | null => {
+			if ( currentSelectedPlan && flowName && isFreePlan( currentSelectedPlan ) ) {
 				if ( ! paidDomainName ) {
 					return FREE_PLAN_FREE_DOMAIN_DIALOG;
 				}
@@ -45,6 +45,6 @@ export function useModalResolutionCallback( {
 			}
 			return null;
 		},
-		[ isCustomDomainAllowedOnFreePlan, paidDomainName ]
+		[ flowName, isCustomDomainAllowedOnFreePlan.result, paidDomainName ]
 	);
 }

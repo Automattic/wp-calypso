@@ -63,7 +63,7 @@ import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/s
 import useStorageAddOns from '../add-ons/hooks/use-storage-add-ons';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import { LoadingPlaceHolder } from './components/loading-placeholder';
-import ModalContainer from './components/plan-upsell-modal';
+import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
@@ -636,33 +636,31 @@ const PlansFeaturesMain = ( {
 			<QuerySites siteId={ siteId } />
 			<QuerySitePlans siteId={ siteId } />
 			<QueryActivePromotions />
-			{ lastClickedPlan && flowName && (
-				<ModalContainer
-					isModalOpen={ isModalOpen }
-					paidDomainName={ paidDomainName }
-					selectedPlan={ lastClickedPlan }
-					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-					flowName={ flowName }
-					onClose={ () => setIsModalOpen( false ) }
-					onFreePlanSelected={ () => {
-						removePaidDomain?.();
-						// Since this domain will not be available after it is selected, invalidate the cache.
-						invalidateDomainSuggestionCache();
-						wpcomFreeDomainSuggestion.result &&
-							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
-						onUpgradeClick?.( null );
-					} }
-					onPlanSelected={ ( planSlug ) => {
-						if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
-							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
-						}
-						invalidateDomainSuggestionCache();
-						const cartItemForPlan = getCartItemForPlan( planSlug );
-						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
-						onUpgradeClick?.( cartItems );
-					} }
-				/>
-			) }
+			<PlanUpsellModal
+				isModalOpen={ isModalOpen }
+				paidDomainName={ paidDomainName }
+				selectedPlan={ lastClickedPlan }
+				wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+				flowName={ flowName }
+				onClose={ () => setIsModalOpen( false ) }
+				onFreePlanSelected={ () => {
+					removePaidDomain?.();
+					// Since this domain will not be available after it is selected, invalidate the cache.
+					invalidateDomainSuggestionCache();
+					wpcomFreeDomainSuggestion.result &&
+						setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
+					onUpgradeClick?.( null );
+				} }
+				onPlanSelected={ ( planSlug ) => {
+					if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
+						setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
+					}
+					invalidateDomainSuggestionCache();
+					const cartItemForPlan = getCartItemForPlan( planSlug );
+					const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
+					onUpgradeClick?.( cartItems );
+				} }
+			/>
 			{ siteId && (
 				<PlanNotice
 					visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
