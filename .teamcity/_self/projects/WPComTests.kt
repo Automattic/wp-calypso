@@ -309,7 +309,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			// We can easily overwhlem the target Atomic site under test if we have too much parallelization.
 			// This number of works plays nicely with the expected load handling on these Atomic sites.
 			// See: pMz3w-ix0-p2
-			param("JEST_E2E_WORKERS", "8")
+			param("JEST_E2E_WORKERS", "5")
 		}
 
 		steps {
@@ -335,6 +335,9 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		failureConditions {
 			defaultE2eFailureConditions()
+			// These are long-running tests, and we have to scale back the parallelization too.
+			// Let's give them some more breathing room.
+			executionTimeoutMin = 25
 		}
 	});
 }
