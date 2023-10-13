@@ -47,8 +47,8 @@ const JetpackCloudSidebar = ( { className, isJetpackManage }: Props ) => {
 				</ul>
 			</SidebarMain>
 
-			<SidebarFooter>
-				{ ! isJetpackManage && (
+			{ ! isJetpackManage && (
+				<SidebarFooter>
 					<SidebarItem
 						label={ translate( 'WP Admin', {
 							comment: 'Jetpack Cloud sidebar navigation item',
@@ -56,8 +56,8 @@ const JetpackCloudSidebar = ( { className, isJetpackManage }: Props ) => {
 						link={ jetpackAdminUrl }
 						customIcon={ <JetpackIcons icon="wordpress" /> }
 					/>
-				) }
-			</SidebarFooter>
+				</SidebarFooter>
+			) }
 
 			<SiteSelector
 				showAddNewSite
