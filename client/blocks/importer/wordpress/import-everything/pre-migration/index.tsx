@@ -141,6 +141,22 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		fetchMigrationEnabledStatus();
 	};
 
+	function displayConfirmModal() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_confirm_modal_display', migrationTrackingProps )
+		);
+
+		setShowConfirmModal( true );
+	}
+
+	function hideConfirmModal() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_confirm_modal_hide', migrationTrackingProps )
+		);
+
+		setShowConfirmModal( false );
+	}
+
 	// We want to record the tracks event, so we use the same condition as the one in the render function
 	// This should be better handled by using a state after the refactor
 	useEffect( () => {
@@ -276,22 +292,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				</div>
 			</>
 		);
-	}
-
-	function displayConfirmModal() {
-		dispatch(
-			recordTracksEvent( 'calypso_site_migration_confirm_modal_display', migrationTrackingProps )
-		);
-
-		setShowConfirmModal( true );
-	}
-
-	function hideConfirmModal() {
-		dispatch(
-			recordTracksEvent( 'calypso_site_migration_confirm_modal_hide', migrationTrackingProps )
-		);
-
-		setShowConfirmModal( false );
 	}
 
 	function renderUpdatePluginInfo() {
