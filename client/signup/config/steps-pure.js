@@ -668,6 +668,7 @@ export function generateSteps( {
 				'siteUrl',
 				'domainItem',
 				'themeSlugWithRepo',
+				'domainCart',
 			],
 			defaultDependencies: {
 				themeSlugWithRepo: 'pub/twentytwentytwo',
@@ -682,7 +683,7 @@ export function generateSteps( {
 				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
+			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo', 'domainCart' ],
 			delayApiRequestUntilComplete: true,
 		},
 
