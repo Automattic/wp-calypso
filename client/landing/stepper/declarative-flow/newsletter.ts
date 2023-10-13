@@ -4,7 +4,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -26,16 +25,7 @@ const newsletter: Flow = {
 		return translate( 'Newsletter' );
 	},
 	useSteps() {
-		const query = useQuery();
-		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
-
 		return [
-			// Load intro step component only when not coming from the marketing page
-			...( ! isComingFromMarketingPage
-				? [
-						{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
-				  ]
-				: [] ),
 			{
 				slug: 'newsletterSetup',
 				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
@@ -80,10 +70,6 @@ const newsletter: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const query = useQuery();
-		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
-		const isLoadingIntroScreen =
-			! isComingFromMarketingPage && ( 'intro' === _currentStep || undefined === _currentStep );
 
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
@@ -104,8 +90,8 @@ const newsletter: Flow = {
 			}
 		};
 
-		// Unless showing intro step, send non-logged-in users to account screen.
-		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
+		// Send non-logged-in users straight to account screen first.
+		if ( ! userIsLoggedIn ) {
 			window.location.assign( logInUrl );
 		}
 
@@ -126,12 +112,6 @@ const newsletter: Flow = {
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
-				case 'intro':
-					if ( userIsLoggedIn ) {
-						return navigate( 'newsletterSetup' );
-					}
-					return window.location.assign( logInUrl );
-
 				case 'newsletterSetup':
 					return navigate( 'newsletterGoals' );
 
@@ -191,7 +171,7 @@ const newsletter: Flow = {
 					}
 					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
 				default:
-					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
+					return navigate( 'newsletterSetup' );
 			}
 		};
 
