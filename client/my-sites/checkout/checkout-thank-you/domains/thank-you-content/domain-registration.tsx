@@ -14,6 +14,7 @@ import type {
 
 const domainRegistrationThankYouProps = ( {
 	domain,
+	domains,
 	email,
 	hasProfessionalEmail,
 	hideProfessionalEmailStep,
@@ -114,9 +115,10 @@ const domainRegistrationThankYouProps = ( {
 
 	const returnProps: DomainThankYouProps = {
 		thankYouNotice: {
-			noticeTitle: translate(
-				'It may take up to 30 minutes for your domain to start working properly.'
-			),
+			noticeTitle:
+				domains.length > 1
+					? translate( 'It may take up to 30 minutes for your domains to start working properly.' )
+					: translate( 'It may take up to 30 minutes for your domain to start working properly.' ),
 			noticeIconCustom: <Icon icon={ info } size={ 24 } />,
 		},
 		sections: [
@@ -140,15 +142,15 @@ const domainRegistrationThankYouProps = ( {
 			height: 'auto',
 		},
 		thankYouTitle: translate( 'All ready to go!' ),
-		thankYouSubtitle: translate(
-			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',
-			{
-				args: {
-					domain,
-				},
-				components: { strong: <strong /> },
-			}
-		),
+		thankYouSubtitle:
+			domains.length > 1
+				? translate( 'Your new domains are being set up.' )
+				: translate( 'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.', {
+						args: {
+							domain,
+						},
+						components: { strong: <strong /> },
+				  } ),
 	};
 	return returnProps;
 };

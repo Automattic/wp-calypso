@@ -10,6 +10,7 @@ export type DomainThankYouProps = Required<
 
 export type DomainThankYouParams = {
 	domain: string;
+	domains: string[];
 	email?: string;
 	shouldDisplayVerifyEmailStep?: boolean;
 	onResendEmailVerificationClick?(): void;
