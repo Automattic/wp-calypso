@@ -24,9 +24,9 @@ export type DomainPlanDialogProps = {
 type ModalContainerProps = {
 	isModalOpen: boolean;
 	paidDomainName?: string;
-	selectedPlan: string;
+	selectedPlan?: string | null;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestions.DomainSuggestion >;
-	flowName: string;
+	flowName?: string | null;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
 	onPlanSelected: ( planSlug: string ) => void;
@@ -41,8 +41,9 @@ function DisplayedModal( {
 	wpcomFreeDomainSuggestion,
 	onFreePlanSelected,
 	onPlanSelected,
+	flowName,
 }: ModalContainerProps ) {
-	const resolveModal = useModalResolutionCallback( { paidDomainName } );
+	const resolveModal = useModalResolutionCallback( { paidDomainName, flowName } );
 
 	switch ( resolveModal( selectedPlan ) ) {
 		case FREE_PLAN_PAID_DOMAIN_DIALOG:
@@ -90,7 +91,8 @@ function DisplayedModal( {
 }
 
 export default function ModalContainer( props: ModalContainerProps ) {
-	if ( ! props.isModalOpen ) {
+	const { isModalOpen, flowName, selectedPlan } = props;
+	if ( ! isModalOpen || ! flowName || ! selectedPlan ) {
 		return;
 	}
 	return (
