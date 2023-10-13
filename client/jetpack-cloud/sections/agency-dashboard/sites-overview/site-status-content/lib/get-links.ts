@@ -12,7 +12,8 @@ const getLinks = (
 	type: AllowedTypes,
 	status: string,
 	siteUrl: string,
-	siteUrlWithScheme: string
+	siteUrlWithScheme: string,
+	isAtomicSite: boolean
 ): {
 	link: string;
 	isExternalLink: boolean;
@@ -25,7 +26,10 @@ const getLinks = (
 	switch ( type ) {
 		case 'backup': {
 			if ( status !== 'inactive' ) {
-				link = `/backup/${ siteUrlWithMultiSiteSupport }`;
+				link = isAtomicSite
+					? `https://wordpress.com/backup/${ siteUrlWithMultiSiteSupport }`
+					: `/backup/${ siteUrlWithMultiSiteSupport }`;
+				isExternalLink = isAtomicSite;
 			}
 			break;
 		}

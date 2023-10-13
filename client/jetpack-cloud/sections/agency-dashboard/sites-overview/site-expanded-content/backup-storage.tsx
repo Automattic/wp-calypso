@@ -27,11 +27,13 @@ const BACKUP_ERROR_STATUSES = [ 'rewind_backup_error', 'backup_only_error' ];
 const BackupStorageContent = ( {
 	siteId,
 	siteUrl,
+	isAtomicSite,
 	trackEvent,
 }: {
 	siteId: number;
 	siteUrl: string;
 	trackEvent: ( eventName: string ) => void;
+	isAtomicSite?: boolean;
 } ) => {
 	const translate = useTranslate();
 
@@ -92,11 +94,16 @@ const BackupStorageContent = ( {
 			<div className="site-expanded-content__card-footer">
 				<Button
 					onClick={ () => trackEvent( 'expandable_block_activity_log_click' ) }
-					href={ `/activity-log/${ urlToSlug( siteUrl ) }` }
+					href={
+						isAtomicSite
+							? `https://wordpress.com/activity-log/${ urlToSlug( siteUrl ) }`
+							: `/activity-log/${ urlToSlug( siteUrl ) }`
+					}
+					target={ isAtomicSite ? '_blank' : undefined }
 					className="site-expanded-content__card-button"
 					compact
 				>
-					{ translate( 'Activity log' ) }
+					{ translate( 'Activity log' ) } { isAtomicSite && <Gridicon icon="external" /> }
 				</Button>
 			</div>
 		</div>
@@ -194,6 +201,7 @@ export default function BackupStorage( { site, trackEvent, hasError }: Props ) {
 				<BackupStorageContent
 					siteId={ site.blog_id }
 					siteUrl={ site.url }
+					isAtomicSite={ site.is_atomic }
 					trackEvent={ trackEvent }
 				/>
 			) }
