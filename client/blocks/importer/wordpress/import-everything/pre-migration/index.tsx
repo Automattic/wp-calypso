@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
-import MigrationCredentialsForm from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-credentials-form';
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
 import { FormState } from 'calypso/components/advanced-credentials/form';
@@ -23,7 +22,7 @@ import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-s
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import NotAuthorized from '../../../components/not-authorized';
 import ConfirmModal from './confirm-modal';
-import { CredentialsHelper } from './credentials-helper';
+import { Credentials } from './credentials';
 import { StartImportTrackingProps } from './types';
 
 import './style.scss';
@@ -66,8 +65,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const [ showCredentials, setShowCredentials ] = useState( false );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ migrationConfirmed, setMigrationConfirmed ] = useMigrationConfirmation();
-	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
-	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
 	const [ hasLoaded, setHasLoaded ] = useState( false );
 	const [ continueImport, setContinueImport ] = useState( false );
 
@@ -128,14 +125,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isRequestingSiteCredentials( state, sourceSiteId as number )
 	);
 
-	const changeCredentialsHelperHost = ( host: string ) => {
-		setSelectedHost( host );
-	};
-
-	const changeCredentialsProtocol = ( protocol: 'ftp' | 'ssh' ) => {
-		setSelectedProtocol( protocol );
-	};
-
 	const onUpgradeAndMigrateClick = () => {
 		setContinueImport( true );
 		fetchMigrationEnabledStatus();
@@ -193,55 +182,26 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 	}, [ continueImport, sourceSiteId, startImport, requiresPluginUpdate ] );
 
-	function renderCredentialsFormSection() {
-		// We do not show the credentials form if we already have credentials
-		if ( hasCredentials ) {
-			return;
-		}
-
+	const CredentialsFormCTA = function () {
 		return (
-			<>
-				{ ! showCredentials && (
-					<div className="pre-migration__content pre-migration__credentials">
-						{ translate(
-							'Want to speed up the migration? {{button}}Provide the server credentials{{/button}} of your site',
-							{
-								components: {
-									button: (
-										<Button
-											borderless={ true }
-											className="action-buttons__borderless"
-											onClick={ toggleCredentialsForm }
-										/>
-									),
-								},
-							}
-						) }
-					</div>
+			<div className="pre-migration__content pre-migration__credentials">
+				{ translate(
+					'Want to speed up the migration? {{button}}Provide the server credentials{{/button}} of your site',
+					{
+						components: {
+							button: (
+								<Button
+									borderless={ true }
+									className="action-buttons__borderless"
+									onClick={ toggleCredentialsForm }
+								/>
+							),
+						},
+					}
 				) }
-				{ showCredentials && sourceSite && (
-					<div className="pre-migration__form-container pre-migration__credentials-form">
-						<div className="pre-migration__form">
-							<MigrationCredentialsForm
-								sourceSite={ sourceSite }
-								targetSite={ targetSite }
-								startImport={ startImport }
-								selectedHost={ selectedHost }
-								migrationTrackingProps={ migrationTrackingProps }
-								onChangeProtocol={ changeCredentialsProtocol }
-							/>
-						</div>
-						<div className="pre-migration__credentials-help">
-							<CredentialsHelper
-								onHostChange={ changeCredentialsHelperHost }
-								selectedProtocol={ selectedProtocol }
-							/>
-						</div>
-					</div>
-				) }
-			</>
+			</div>
 		);
-	}
+	};
 
 	function renderPreMigration() {
 		// Show a loading state when we are trying to fetch existing credentials
@@ -274,7 +234,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					<div className="import__heading-title">
 						<Title>{ translate( 'You are ready to migrate' ) }</Title>
 					</div>
-					{ renderCredentialsFormSection() }
+					{ ! hasCredentials && <CredentialsFormCTA /> }
 					{ ! showCredentials && (
 						<div className="import__footer-button-container pre-migration__proceed">
 							<NextButton
@@ -327,10 +287,25 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		);
 	}
 
+	function renderCredentials() {
+		return (
+			<Credentials
+				sourceSite={ sourceSite }
+				targetSite={ targetSite }
+				migrationTrackingProps={ migrationTrackingProps }
+				startImport={ startImport }
+			/>
+		);
+	}
+
 	function render() {
 		// If the source site is not capable of being migrated, we show the update info screen
 		if ( requiresPluginUpdate ) {
 			return renderUpdatePluginInfo();
+		}
+
+		if ( showCredentials && sourceSite ) {
+			return renderCredentials();
 		}
 
 		// If the target site is plan compatible, we show the pre-migration screen
