@@ -1076,7 +1076,27 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Quick and accurate spelling correction' ),
 	];
 	const boostIncludesInfo = [
-		translate( '{{strong}}Automated critical CSS (Premium){{/strong}}', {
+		translate( '{{strong}}Automated critical CSS generation (Premium){{/strong}}', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
+		translate( '{{strong}}Reduce image sizes with image guide (Premium){{/strong}}', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
+		translate( '{{strong}}Historical site performance chart (Premium){{/strong}}', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
+		translate( '{{strong}}Additional image quality control options (Premium){{/strong}}', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
+		translate( '{{strong}}Priority support (Premium){{/strong}}', {
 			components: {
 				strong: <strong />,
 			},
