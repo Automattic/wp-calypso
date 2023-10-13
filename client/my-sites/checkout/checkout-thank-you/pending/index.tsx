@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
-import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
@@ -85,7 +84,7 @@ function CheckoutPending( {
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 
-	const { headingText } = useRedirectOnTransactionSuccess( {
+	useRedirectOnTransactionSuccess( {
 		orderId,
 		receiptId,
 		siteSlug,
@@ -105,15 +104,18 @@ function CheckoutPending( {
 				title="Checkout Pending"
 				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
 			/>
-			<PendingContent heading={ headingText } />
+			<PendingContent />
 		</Main>
 	);
 }
 
-function PendingContent( { heading }: { heading: React.ReactNode } ) {
+function PendingContent() {
+	const translate = useTranslate();
 	return (
 		<div className="pending-content__wrapper">
-			<div className="pending-content__title">{ heading }</div>
+			<div className="pending-content__title">
+				{ translate( "Almost there – we're currently finalizing your order." ) }
+			</div>
 			<LoadingEllipsis />
 		</div>
 	);
@@ -162,7 +164,7 @@ function useRedirectOnTransactionSuccess( {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
-} ): { headingText: React.ReactNode } {
+} ): void {
 	const translate = useTranslate();
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
 		orderId ? getOrderTransaction( state, orderId ) : null
@@ -185,19 +187,6 @@ function useRedirectOnTransactionSuccess( {
 	const productName = firstPurchase?.productName ?? '';
 	const willAutoRenew = firstPurchase?.willAutoRenew ?? false;
 	const saasRedirectUrl = getSaaSProductRedirectUrl( receipt );
-
-	const { searchParams } = getUrlParts( redirectTo || '/' );
-	const isConnectAfterCheckoutFlow =
-		Boolean( searchParams.size ) &&
-		searchParams.get( 'from' ) === 'connect-after-checkout' &&
-		searchParams.get( 'connect_url_redirect' ) === 'true';
-
-	const defaultPendingText = translate( "Almost there – we're currently finalizing your order." );
-	const connectingJetpackText = translate(
-		"Transaction finalized – We're now connecting Jetpack."
-	);
-
-	const [ headingText, setHeadingText ] = useState( defaultPendingText );
 
 	// Fetch receipt data once we have a receipt Id.
 	const didFetchReceipt = useRef( false );
@@ -248,10 +237,6 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		didRedirect.current = true;
-		if ( isConnectAfterCheckoutFlow ) {
-			setHeadingText( connectingJetpackText );
-		}
-
 		triggerPostRedirectNotices( {
 			redirectInstructions,
 			isRenewal,
@@ -278,8 +263,6 @@ function useRedirectOnTransactionSuccess( {
 		willAutoRenew,
 		fromSiteSlug,
 	] );
-
-	return { headingText };
 }
 
 function isTransactionSuccessful(
