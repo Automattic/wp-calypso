@@ -1848,6 +1848,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
