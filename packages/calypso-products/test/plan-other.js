@@ -15,7 +15,7 @@ import {
 import {
 	calculateMonthlyPrice,
 	getBillingMonthsForTerm,
-	getBillingTermForPeriod,
+	getTermFromDuration,
 	getTermDuration,
 } from '../src/index';
 
@@ -50,36 +50,6 @@ describe( 'calculateMonthlyPrice', () => {
 		expect( calculateMonthlyPrice( TERM_TRIENNIALLY, 36 ) ).toBe( 1.0 );
 		expect( calculateMonthlyPrice( TERM_TRIENNIALLY, 72 ) ).toBe( 2.0 );
 		expect( calculateMonthlyPrice( TERM_TRIENNIALLY, 252 ) ).toBe( 7.0 );
-	} );
-} );
-
-describe( 'getBillingTermForPeriod', () => {
-	it( 'should return the correct billing term for a monthly period', () => {
-		expect( getBillingTermForPeriod( PLAN_MONTHLY_PERIOD ) ).toEqual( TERM_MONTHLY );
-	} );
-
-	it( 'should return the correct billing term for an annual period', () => {
-		expect( getBillingTermForPeriod( PLAN_ANNUAL_PERIOD ) ).toEqual( TERM_ANNUALLY );
-	} );
-
-	it( 'should return the correct billing term for a biennial period', () => {
-		expect( getBillingTermForPeriod( PLAN_BIENNIAL_PERIOD ) ).toEqual( TERM_BIENNIALLY );
-	} );
-
-	it( 'should return the correct billing term for a triennial period', () => {
-		expect( getBillingTermForPeriod( PLAN_TRIENNIAL_PERIOD ) ).toEqual( TERM_TRIENNIALLY );
-	} );
-
-	it( 'should return the correct billing term for a decennial period', () => {
-		expect( getBillingTermForPeriod( PLAN_DECENNIAL_PERIOD ) ).toEqual( TERM_DECENNIALLY );
-	} );
-
-	it( 'should return the correct billing term for a centennial period', () => {
-		expect( getBillingTermForPeriod( PLAN_CENTENNIAL_PERIOD ) ).toEqual( TERM_CENTENNIALLY );
-	} );
-
-	it( 'should throw an error for an unknown period', () => {
-		expect( () => getBillingTermForPeriod( 30 ) ).toThrow( 'Unknown period: 30' );
 	} );
 } );
 
@@ -119,5 +89,35 @@ describe( 'getTermDuration', () => {
 	} );
 	test( 'should return undefined for unknown term', () => {
 		expect( getTermDuration( 'fake' ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'getTermFromDuration', () => {
+	it( 'should return the correct billing term for a monthly period', () => {
+		expect( getTermFromDuration( PLAN_MONTHLY_PERIOD ) ).toEqual( TERM_MONTHLY );
+	} );
+
+	it( 'should return the correct billing term for an annual period', () => {
+		expect( getTermFromDuration( PLAN_ANNUAL_PERIOD ) ).toEqual( TERM_ANNUALLY );
+	} );
+
+	it( 'should return the correct billing term for a biennial period', () => {
+		expect( getTermFromDuration( PLAN_BIENNIAL_PERIOD ) ).toEqual( TERM_BIENNIALLY );
+	} );
+
+	it( 'should return the correct billing term for a triennial period', () => {
+		expect( getTermFromDuration( PLAN_TRIENNIAL_PERIOD ) ).toEqual( TERM_TRIENNIALLY );
+	} );
+
+	it( 'should return the correct billing term for a decennial period', () => {
+		expect( getTermFromDuration( PLAN_DECENNIAL_PERIOD ) ).toEqual( TERM_DECENNIALLY );
+	} );
+
+	it( 'should return the correct billing term for a centennial period', () => {
+		expect( getTermFromDuration( PLAN_CENTENNIAL_PERIOD ) ).toEqual( TERM_CENTENNIALLY );
+	} );
+
+	test( 'should return undefined for unknown term', () => {
+		expect( getTermFromDuration( 3.14 ) ).toBeUndefined();
 	} );
 } );
