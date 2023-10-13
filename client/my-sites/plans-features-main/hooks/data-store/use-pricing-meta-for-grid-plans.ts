@@ -1,4 +1,9 @@
-import { PLAN_MONTHLY_PERIOD, type PlanSlug } from '@automattic/calypso-products';
+import {
+	PLAN_MONTHLY_PERIOD,
+	getBillingTermForPeriod,
+	type PlanSlug,
+	getBillingMonthsForTerm,
+} from '@automattic/calypso-products';
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
@@ -117,7 +122,8 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 							monthlyPrice = purchasedPlan.priceInteger;
 							fullPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
 						} else if ( fullPrice !== purchasedPlan.priceInteger ) {
-							const months = Math.ceil( purchasedPlan.billPeriodDays / PLAN_MONTHLY_PERIOD );
+							const term = getBillingTermForPeriod( purchasedPlan.billPeriodDays );
+							const months = getBillingMonthsForTerm( term );
 							monthlyPrice = parseFloat( ( purchasedPlan.priceInteger / months ).toFixed( 2 ) );
 							fullPrice = purchasedPlan.priceInteger;
 						}

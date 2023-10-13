@@ -41,6 +41,18 @@ import {
 	WOO_EXPRESS_PLANS,
 	TERM_CENTENNIALLY,
 	TYPE_HOSTING_TRIAL,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
+	PLAN_QUADRENNIAL_PERIOD,
+	PLAN_QUINQUENNIAL_PERIOD,
+	PLAN_SEXENNIAL_PERIOD,
+	PLAN_SEPTENNIAL_PERIOD,
+	PLAN_OCTENNIAL_PERIOD,
+	PLAN_NOVENNIAL_PERIOD,
+	PLAN_DECENNIAL_PERIOD,
+	PLAN_CENTENNIAL_PERIOD,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
@@ -563,6 +575,35 @@ export function calculateMonthlyPriceForPlan( planSlug: string, termPrice: numbe
 export function calculateMonthlyPrice( term: string, termPrice: number ): number {
 	const divisor = getBillingMonthsForTerm( term );
 	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
+}
+
+export function getBillingTermForPeriod( days: number ): string {
+	if ( days === PLAN_MONTHLY_PERIOD ) {
+		return TERM_MONTHLY;
+	} else if ( days === PLAN_ANNUAL_PERIOD ) {
+		return TERM_ANNUALLY;
+	} else if ( days === PLAN_BIENNIAL_PERIOD ) {
+		return TERM_BIENNIALLY;
+	} else if ( days === PLAN_TRIENNIAL_PERIOD ) {
+		return TERM_TRIENNIALLY;
+	} else if ( days === PLAN_QUADRENNIAL_PERIOD ) {
+		return TERM_QUADRENNIALLY;
+	} else if ( days === PLAN_QUINQUENNIAL_PERIOD ) {
+		return TERM_QUINQUENNIALLY;
+	} else if ( days === PLAN_SEXENNIAL_PERIOD ) {
+		return TERM_SEXENNIALLY;
+	} else if ( days === PLAN_SEPTENNIAL_PERIOD ) {
+		return TERM_SEPTENNIALLY;
+	} else if ( days === PLAN_OCTENNIAL_PERIOD ) {
+		return TERM_OCTENNIALLY;
+	} else if ( days === PLAN_NOVENNIAL_PERIOD ) {
+		return TERM_NOVENNIALLY;
+	} else if ( days === PLAN_DECENNIAL_PERIOD ) {
+		return TERM_DECENNIALLY;
+	} else if ( days === PLAN_CENTENNIAL_PERIOD ) {
+		return TERM_CENTENNIALLY;
+	}
+	throw new Error( `Unknown period: ${ days }` );
 }
 
 export function getBillingMonthsForTerm( term: string ): number {
