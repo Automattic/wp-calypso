@@ -100,7 +100,7 @@ describe( 'Onboarding: Site Assembler', () => {
 		it( 'Select "Sections"', async function () {
 			await siteAssemblerFlow.clickLayoutComponentType( 'Sections' );
 			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
-			await siteAssemblerFlow.clickButton( 'Save and continue' );
+			await siteAssemblerFlow.clickButton( 'Save sections' );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
 		} );
@@ -113,7 +113,7 @@ describe( 'Onboarding: Site Assembler', () => {
 		} );
 
 		it( 'Pick default style', async function () {
-			await siteAssemblerFlow.clickButton( 'Pick your style' );
+			await siteAssemblerFlow.clickButton( 'Select styles' );
 			await siteAssemblerFlow.pickStyle( 'Color: Free style' );
 			await siteAssemblerFlow.clickButton( 'Save and continue' );
 		} );
