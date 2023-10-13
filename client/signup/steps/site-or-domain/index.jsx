@@ -31,9 +31,16 @@ class SiteOrDomain extends Component {
 				const productSlug = getDomainProductSlug( domain );
 				isValidDomain = !! this.props.productsList[ productSlug ];
 			}
+			return isValidDomain && domain;
 		}
 
-		return isValidDomain && domain;
+		const domainCart = this.getDomainCart();
+		if ( domainCart.length ) {
+			const productSlug = domainCart[ 0 ].product_slug;
+			isValidDomain = !! this.props.productsList[ productSlug ];
+			return isValidDomain && domainCart[ 0 ].meta;
+		}
+		return false;
 	}
 
 	getDomainCart() {
