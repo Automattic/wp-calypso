@@ -64,7 +64,7 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 		name: 'roots',
 		label: translate( 'Web Root' ),
 		subTitle: translate(
-			'All files and directories in the WordPress root, including any non WordPress files.'
+			'All files and directories in the WordPress root other than wp-content, including any non WordPress files.'
 		),
 		checked: false,
 		isDangerous: false,
