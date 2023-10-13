@@ -253,22 +253,6 @@ export class EditorPage {
 	//#region Block and Pattern Insertion
 
 	/**
-	 * Resets the selected block.
-	 *
-	 * The Gutenberg block-based editor 'remembers' what block was last
-	 * selected. This behavior impacts the block options that are shown
-	 * in the block inserter.
-	 *
-	 * For instance, if a Contact Form block is currently selected, the
-	 * block inserter will display a filtered set of blocks that are
-	 * permitted to be inserted within the parent Contact Form block.
-	 */
-	async resetSelectedBlock() {
-		const editorParent = await this.getEditorParent();
-		await editorParent.getByRole( 'region', { name: 'Editor top bar' } ).dispatchEvent( 'click' );
-	}
-
-	/**
 	 * Adds a Gutenberg block from the sidebar block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
@@ -290,7 +274,7 @@ export class EditorPage {
 		blockEditorSelector: string,
 		{ noSearch }: { noSearch?: boolean } = {}
 	): Promise< ElementHandle > {
-		await this.resetSelectedBlock();
+		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent, {
 			noSearch: noSearch,
@@ -382,7 +366,7 @@ export class EditorPage {
 	 * @param {string} patternName Name of the pattern to insert.
 	 */
 	async addPatternFromSidebar( patternName: string ): Promise< void > {
-		await this.resetSelectedBlock();
+		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addPatternFromInserter( patternName, this.editorSidebarBlockInserterComponent );
 	}
