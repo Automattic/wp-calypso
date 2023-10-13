@@ -181,6 +181,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 		if (
 			! /^calypso(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
 			! /^jetpack(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
+			! /^wpcom_dsp_widget(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
 			! EVENT_NAME_EXCEPTIONS.includes( eventName )
 		) {
 			// eslint-disable-next-line no-console
@@ -229,6 +230,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	if (
 		! eventName.startsWith( 'calypso_' ) &&
 		! eventName.startsWith( 'jetpack_' ) &&
+		! eventName.startsWith( 'wpcom_dsp_widget_' ) &&
 		! EVENT_NAME_EXCEPTIONS.includes( eventName )
 	) {
 		debug(

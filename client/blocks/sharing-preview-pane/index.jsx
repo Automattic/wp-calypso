@@ -36,7 +36,7 @@ import './style.scss';
 const serviceNames = {
 	facebook: 'Facebook',
 	'instagram-business': 'Instagram',
-	twitter: 'Twitter',
+	x: 'X',
 	linkedin: 'LinkedIn',
 	tumblr: 'Tumblr',
 	mastodon: 'Mastodon',
@@ -145,7 +145,7 @@ class SharingPreviewPane extends PureComponent {
 				);
 			case 'linkedin':
 				return <LinkedinSharePreview { ...previewProps } />;
-			case 'twitter':
+			case 'x':
 				return <TwitterSharePreview { ...previewProps } />;
 			case 'mastodon':
 				return (

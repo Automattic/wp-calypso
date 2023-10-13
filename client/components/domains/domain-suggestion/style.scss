@@ -421,7 +421,7 @@ body.is-section-signup.is-white-signup {
 			padding: 16px 20px;
 
 			@include break-mobile {
-				padding: 16px 5px;
+				padding: 16px 24px;
 			}
 
 			.domain-registration-suggestion__domain-title {
@@ -480,7 +480,6 @@ body.is-section-signup.is-white-signup {
 				padding: 0.57em 1.17em;
 				font-weight: 500;
 				border-radius: 4px;
-				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 				border: 1px solid #c3c4c7;
 				letter-spacing: 0.32px;
 				font-size: 0.875rem;

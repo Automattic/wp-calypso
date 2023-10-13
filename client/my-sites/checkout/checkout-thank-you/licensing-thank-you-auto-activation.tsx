@@ -28,6 +28,7 @@ interface Props {
 	receiptId?: number;
 	source?: string;
 	jetpackTemporarySiteId?: number;
+	fromSiteSlug?: string;
 }
 
 type JetpackSite = {
@@ -36,6 +37,7 @@ type JetpackSite = {
 	is_wpcom_atomic: boolean;
 	products: Product[];
 	plan: Product;
+	slug: string;
 };
 
 type Product = {
@@ -53,6 +55,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	receiptId = 0,
 	source = 'onboarding-calypso-ui',
 	jetpackTemporarySiteId = 0,
+	fromSiteSlug,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -80,6 +83,20 @@ const LicensingActivationThankYou: FC< Props > = ( {
 
 	const [ selectedSite, setSelectedSite ] = useState( '' );
 	const [ error, setError ] = useState< TranslateResult | false >( false );
+
+	const initialSelectedSite = useMemo( () => {
+		if ( ! fromSiteSlug ) {
+			return '';
+		}
+		const validSiteThatMatchesFromSiteSlugProp = ( site: JetpackSite ) =>
+			site.is_wpcom_atomic === false && site.slug === fromSiteSlug;
+
+		return jetpackSites.find( validSiteThatMatchesFromSiteSlugProp )?.URL || '';
+	}, [ jetpackSites, fromSiteSlug ] );
+
+	useEffect( () => {
+		setSelectedSite( initialSelectedSite );
+	}, [ initialSelectedSite ] );
 
 	const manualActivationUrl = useMemo( () => {
 		return addQueryArgs(

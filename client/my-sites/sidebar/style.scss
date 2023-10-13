@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 // The following changes should be merged in their respective files before nav unification goes to production
 @import url( //s1.wp.com/wp-includes/css/dashicons.css?v=20150727 );
 
@@ -740,7 +741,7 @@ $font-size: rem(14px);
 	}
 }
 
-@media screen and ( max-width: 660px ) {
+@media screen and ( max-width: $break-small ) {
 	.theme-default {
 		// client/layout/style.scss
 		.layout__content {

@@ -37,6 +37,14 @@ interface CheckoutPendingProps {
 	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -72,6 +80,7 @@ function CheckoutPending( {
 	receiptId,
 	siteSlug,
 	redirectTo,
+	fromSiteSlug,
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 
@@ -80,6 +89,7 @@ function CheckoutPending( {
 		receiptId,
 		siteSlug,
 		redirectTo,
+		fromSiteSlug,
 	} );
 
 	return (
@@ -140,11 +150,20 @@ function useRedirectOnTransactionSuccess( {
 	receiptId,
 	siteSlug,
 	redirectTo,
+	fromSiteSlug,
 }: {
 	orderId: number | undefined;
 	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
 } ): void {
 	const translate = useTranslate();
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
@@ -210,6 +229,7 @@ function useRedirectOnTransactionSuccess( {
 			redirectTo,
 			siteSlug,
 			saasRedirectUrl,
+			fromSiteSlug,
 		} );
 
 		if ( ! redirectInstructions ) {
@@ -241,6 +261,7 @@ function useRedirectOnTransactionSuccess( {
 		transaction,
 		translate,
 		willAutoRenew,
+		fromSiteSlug,
 	] );
 }
 
