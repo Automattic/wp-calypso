@@ -49,13 +49,20 @@ export default function SyncOptionsPanel( {
 } ) {
 	const initialItemsMap = useMemo(
 		() =>
-			items.reduce(
-				( acc, item ) => {
-					acc[ item.name ] = item;
-					return acc;
-				},
-				{} as { [ key: string ]: CheckboxOptionItem }
-			),
+			items
+				.sort( ( a, b ) => {
+					if ( a.isDangerous === b.isDangerous ) {
+						return 0;
+					}
+					return a.isDangerous ? 1 : -1;
+				} )
+				.reduce(
+					( acc, item ) => {
+						acc[ item.name ] = { ...item };
+						return acc;
+					},
+					{} as { [ key: string ]: CheckboxOptionItem }
+				),
 		[ items ]
 	);
 
@@ -64,13 +71,20 @@ export default function SyncOptionsPanel( {
 	useEffect( () => {
 		if ( reset ) {
 			setOptionItemsMap(
-				items.reduce(
-					( acc, item ) => {
-						acc[ item.name ] = { ...item };
-						return acc;
-					},
-					{} as { [ key: string ]: CheckboxOptionItem }
-				)
+				items
+					.sort( ( a, b ) => {
+						if ( a.isDangerous === b.isDangerous ) {
+							return 0;
+						}
+						return a.isDangerous ? 1 : -1;
+					} )
+					.reduce(
+						( acc, item ) => {
+							acc[ item.name ] = { ...item };
+							return acc;
+						},
+						{} as { [ key: string ]: CheckboxOptionItem }
+					)
 			);
 		}
 	}, [ reset, items ] );

@@ -119,6 +119,12 @@ describe( 'SyncOptionsPanel component', () => {
 		expect( onChange ).toHaveBeenNthCalledWith( 4, [
 			{
 				checked: true,
+				isDangerous: false,
+				label: 'Test 2',
+				name: 'test2',
+			},
+			{
+				checked: true,
 				isDangerous: true,
 				label: 'Test Dangerous',
 				name: 'testDangerous',
@@ -128,12 +134,6 @@ describe( 'SyncOptionsPanel component', () => {
 				isDangerous: true,
 				label: 'Test Dangerous 2',
 				name: 'testDangerous2',
-			},
-			{
-				checked: true,
-				isDangerous: false,
-				label: 'Test 2',
-				name: 'test2',
 			},
 		] );
 	} );

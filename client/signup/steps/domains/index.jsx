@@ -180,12 +180,6 @@ export class RenderDomainsStep extends Component {
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
-
-		// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
-		if ( this.props.flowName === 'onboarding' ) {
-			loadExperimentAssignment( 'calypso_srm_test_domain_page_view_free_plan_button_click' );
-			loadExperimentAssignment( 'calypso_srm_test_domain_page_view_free_plan_modal_view' );
-		}
 	}
 
 	getLocale() {
@@ -372,10 +366,6 @@ export class RenderDomainsStep extends Component {
 					loadExperimentAssignment(
 						'calypso_onboarding_plans_paid_domain_on_free_plan_confidence_check'
 					);
-
-					// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
-					loadExperimentAssignment( 'calypso_srm_test_paid_domain_click_free_plan_button_click' );
-					loadExperimentAssignment( 'calypso_srm_test_paid_domain_click_free_plan_modal_view' );
 				} else {
 					loadExperimentAssignment(
 						'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'

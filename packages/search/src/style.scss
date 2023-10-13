@@ -174,7 +174,11 @@ $input-z-index: 20;
 	}
 
 	.components-button {
-		padding: 0;
+		padding: 8px;
+
+		@include break-mobile {
+			padding: 0;
+		}
 
 		&:focus {
 			z-index: 9999;
