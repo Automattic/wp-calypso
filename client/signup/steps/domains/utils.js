@@ -34,7 +34,7 @@ export function getExternalBackUrl( source, sectionName = null ) {
  * Check if we should use multiple domains in domain flows.
  */
 export function shouldUseMultipleDomainsInCart( flowName ) {
-	const enabledFlows = [ 'onboarding' ];
+	const enabledFlows = [ 'onboarding', 'domain' ];
 
 	const status =
 		isEnabled( 'domains/add-multiple-domains-to-cart' ) && enabledFlows.includes( flowName );
