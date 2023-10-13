@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProgressBar, Gridicon, Spinner } from '@automattic/components';
 import { getLocaleSlug, localize } from 'i18n-calypso';
@@ -234,7 +233,6 @@ export class SectionMigrate extends Component {
 
 	startMigration = ( trackingProps = {} ) => {
 		const { sourceSiteId, targetSiteId, targetSite, isMigrateFromWp } = this.props;
-		const shouldCheckMigrationPlugin = isMigrateFromWp && isEnabled( 'onboarding/import-redesign' );
 
 		if ( ! sourceSiteId || ! targetSiteId ) {
 			return;
@@ -259,7 +257,7 @@ export class SectionMigrate extends Component {
 				path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
 				apiNamespace: 'wpcom/v2',
 				body: {
-					check_migration_plugin: shouldCheckMigrationPlugin,
+					check_migration_plugin: isMigrateFromWp,
 				},
 			} )
 			.then( () => this.updateFromAPI() )

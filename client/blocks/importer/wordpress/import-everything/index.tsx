@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -251,14 +250,11 @@ export class ImportEverything extends SectionMigrate {
 	renderMigrationComplete() {
 		const { isMigrateFromWp } = this.props;
 		return (
-			<>
-				<Hooray>
-					{ ! isMigrateFromWp
-						? this.renderDefaultHoorayScreen()
-						: this.renderHoorayScreenWithDomainInfo() }
-				</Hooray>
-				{ ! isEnabled( 'onboarding/import-redesign' ) && <GettingStartedVideo /> }
-			</>
+			<Hooray>
+				{ ! isMigrateFromWp
+					? this.renderDefaultHoorayScreen()
+					: this.renderHoorayScreenWithDomainInfo() }
+			</Hooray>
 		);
 	}
 
