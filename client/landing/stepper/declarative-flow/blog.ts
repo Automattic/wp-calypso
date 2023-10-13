@@ -10,6 +10,7 @@ import {
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useLoginUrl } from '../utils/path';
 
 const Blog: Flow = {
 	name: 'blog',
@@ -43,10 +44,11 @@ const Blog: Flow = {
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?redirect_to=/setup/blog&variationName=blogger-intent`
-				: `/start/account/user?redirect_to=/setup/blog&variationName=blogger-intent`;
+		const logInUrl = useLoginUrl( {
+			variationName: 'blogger-intent',
+			redirectTo: `/setup/blog`,
+			locale,
+		} );
 
 		// Despite sending a CHECKING state, this function gets called again with the
 		// /setup/blog/blogger-intent route which has no locale in the path so we need to
