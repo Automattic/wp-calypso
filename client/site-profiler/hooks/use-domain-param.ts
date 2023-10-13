@@ -16,12 +16,12 @@ export default function useDomainParam( value = '' ) {
 
 	useEffect( () => {
 		const isSpecialDomainValue = isSpecialDomain( value );
-		const validateDomainValue = validateDomain( value );
+		const isValidDomainValue = validateDomain( value );
 		// check if domain is special before preparing domain value
 		setIsSpecial( isSpecialDomainValue );
-		setIsValid( validateDomainValue );
+		setIsValid( isValidDomainValue );
 
-		if ( value && ! isSpecialDomainValue && ! validateDomainValue ) {
+		if ( value && ! isSpecialDomainValue && ! isValidDomainValue ) {
 			return;
 		}
 
