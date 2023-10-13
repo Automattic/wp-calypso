@@ -194,7 +194,7 @@ function useRedirectOnTransactionSuccess( {
 
 	const defaultPendingText = translate( "Almost there – we're currently finalizing your order." );
 	const connectingJetpackText = translate(
-		"Transaction finalized – We're now connecting Jetpack."
+		"Transaction finalized – we're now connecting Jetpack."
 	);
 
 	const [ headingText, setHeadingText ] = useState( defaultPendingText );
