@@ -1,4 +1,4 @@
-import { Dialog, Gridicon } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
@@ -77,7 +77,9 @@ export default function LivePreviewModal() {
 			isFullScreen
 		>
 			<Button className="live-preview-modal__close-icon" onClick={ onClose }>
-				<Gridicon icon="cross" size={ 24 } />
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24">
+					<path d="M18.36 19.78L12 13.41l-6.36 6.37-1.42-1.42L10.59 12 4.22 5.64l1.42-1.42L12 10.59l6.36-6.36 1.41 1.41L13.41 12l6.36 6.36z" />
+				</svg>
 			</Button>
 			<h1>{ translate( 'Previewing %(themeName)s', { args: { themeName } } ) }</h1>
 			<p>
@@ -94,7 +96,8 @@ export default function LivePreviewModal() {
 			</p>
 			<p>
 				{ translate(
-					'To exit the Editor preview and get back to the theme showcase, click the WordPress logo at the top left corner.'
+					'To exit the Editor preview and go back to the theme showcase, click the small arrow next to {{strong}}Previewing{{/strong}} or the site icon in the top left corner.',
+					{ components: { strong: <strong /> } }
 				) }
 			</p>
 			<CheckboxControl

@@ -8,6 +8,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
 import { useFilteredWhoisData } from 'calypso/site-profiler/hooks/use-filtered-whois-data';
 import { normalizeWhoisField } from 'calypso/site-profiler/utils/normalize-whois-entry';
+import { normalizeWhoisList } from 'calypso/site-profiler/utils/normalize-whois-list';
 import { normalizeWhoisURL } from 'calypso/site-profiler/utils/normalize-whois-url';
 import VerifiedProvider from '../verified-provider';
 import type { HostingProvider, WhoIs } from 'calypso/data/site-profiler/types';
@@ -39,7 +40,7 @@ export default function DomainInformation( props: Props ) {
 	useEffect( () => {
 		fetchWhoisRawData &&
 			recordTracksEvent( 'calypso_site_profiler_domain_whois_raw_data_fetch', { domain } );
-	}, [ fetchWhoisRawData ] );
+	}, [ domain, fetchWhoisRawData ] );
 
 	const contactArgs = ( args?: string | string[] ): TranslateOptions => {
 		return {
@@ -126,7 +127,7 @@ export default function DomainInformation( props: Props ) {
 						<div className="name">{ translate( 'Name servers' ) }</div>
 						<div>
 							<ul>
-								{ whois.name_server.map( ( x, i ) => (
+								{ normalizeWhoisList( whois.name_server ).map( ( x, i ) => (
 									<li key={ i }>{ x }</li>
 								) ) }
 							</ul>

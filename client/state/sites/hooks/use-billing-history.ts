@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from '@wordpress/element';
 import wp from 'calypso/lib/wp';
 import { BillingTransaction } from 'calypso/state/billing-transactions/types';
 
@@ -21,10 +22,12 @@ export const usePastBillingTransactions = ( disabled: boolean ) => {
 		queryFn: () => fetchPastBillingTransactions(),
 	} );
 
-	return {
-		billingTransactions: data?.billing_history || null,
-		isLoading: disabled ? false : isLoading,
-		error: error?.message || null,
-		enabled: ! disabled,
-	};
+	return useMemo( () => {
+		return {
+			billingTransactions: data?.billing_history || null,
+			isLoading: disabled ? false : isLoading,
+			error: error?.message || null,
+			enabled: ! disabled,
+		};
+	}, [ data, isLoading, error, disabled ] );
 };

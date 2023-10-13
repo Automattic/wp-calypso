@@ -342,7 +342,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	useQueryThemes( 'wpcom', {
 		number: 1000,
-		...( ! isEnabled( 'design-picker/query-marketplace-themes' ) ? { tier: '-marketplace' } : {} ),
 	} );
 	useQueryProductsList();
 	useQuerySitePurchases( site ? site.ID : -1 );
@@ -908,12 +907,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			className="unified-design-picker__has-categories"
 			skipButtonAlign="top"
 			hideFormattedHeader
+			hideSkip
 			backLabelText={ translate( 'Back' ) }
-			skipLabelText={
-				intent === SiteIntent.Write
-					? translate( 'Skip and draft first post' )
-					: translate( 'Skip for now' )
-			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }

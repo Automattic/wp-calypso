@@ -3,19 +3,22 @@ import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { check, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import React, { useState } from 'react';
-import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import useSupportedTrialFeatureList from './hooks/use-supported-trial-feature-list';
-import TrialPlanFeaturesModal from './trial-plan-features-modal';
-import type { ProvidedDependencies } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { TrialPlan } from './trial-plan';
+import type {
+	Step,
+	ProvidedDependencies,
+} from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { UserData } from 'calypso/lib/user/user';
 import type { SiteSlug } from 'calypso/types';
 
@@ -27,16 +30,16 @@ interface Props {
 	stepName: string;
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
 }
-const TrialPlan = function ( props: Props ) {
+
+const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const { user, site, siteSlug, flowName, stepName, submit } = props;
-	const [ showPlanFeaturesModal, setShowPlanFeaturesModal ] = useState( false );
+
 	const { data: migrationTrialEligibility, isLoading: isCheckingEligibility } =
 		useCheckEligibilityMigrationTrialPlan( site?.ID );
 	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
 
-	const trialFeatureList = useSupportedTrialFeatureList();
 	const plan = getPlan( PLAN_BUSINESS );
 	const checkoutUrl = useCheckoutUrl( site.ID, siteSlug );
 	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
@@ -91,65 +94,58 @@ const TrialPlan = function ( props: Props ) {
 	}
 
 	return (
-		<>
-			{ showPlanFeaturesModal && (
-				<TrialPlanFeaturesModal
-					plan={ plan }
-					onClose={ () => {
-						setShowPlanFeaturesModal( false );
-					} }
-				/>
+		<TrialPlan
+			planFeatures={ [
+				__( 'Beautiful themes' ),
+				__( 'Advanced Design Tools' ),
+				__( 'Newsletters' ),
+				__( 'Jetpack backups and restores' ),
+				__( 'Spam protection with Akismet' ),
+				__( 'SEO tools' ),
+				__( 'Google Analytics' ),
+				__( 'Best-in-class hosting' ),
+			] }
+			subtitle={ sprintf(
+				/* translators: the planName could be "Pro" or "Business" */
+				__(
+					'Give the %(planName)s plan a try with the 7-day free trial, and migrate your site without costs'
+				),
+				{ planName: plan?.getTitle() }
 			) }
-
-			<div className="trial-plan--container">
-				<Title>{ __( 'Try before you buy' ) }</Title>
-				<SubTitle>
-					{ sprintf(
-						/* translators: the planName could be "Pro" or "Business" */
-						__(
-							'Give the %(planName)s plan a try with the 7-day free trial, and migrate your site without costs'
-						),
-						{ planName: plan?.getTitle() }
-					) }
-				</SubTitle>
-
-				<p>
-					{ sprintf(
-						/* translators: the planName could be "Pro" or "Business" */
-						__(
-							'The 7-day trial includes every feature in the %(planName)s plan with a few exceptions. To enjoy all the features without limits, upgrade to the paid plan at any time before your trial ends.'
-						),
-						{ planName: plan?.getTitle() }
-					) }
-				</p>
-
-				<div className="trial-plan--details">
-					<div className="trial-plan--details-features">
-						<ul>
-							{ trialFeatureList.map( ( feature, i ) => (
-								<li key={ i }>
-									<Icon size={ 20 } icon={ check } /> { feature }
-								</li>
-							) ) }
-						</ul>
-					</div>
-				</div>
-
-				<div className="trial-plan--details-limitation">
-					<img src={ clockIcon } alt={ __( 'Limit' ) } />
-					<p>
-						<strong>{ __( 'Trial limitations' ) }</strong>
-						<br />
-						<small>{ __( '100 subscribers, no SSH or SFTP access' ) }</small>
-					</p>
-				</div>
-
+			supportingCopy={ sprintf(
+				/* translators: the planName could be "Pro" or "Business" */
+				__(
+					'The 7-day trial includes every feature in the %(planName)s plan with a few exceptions. To enjoy all the features without limits, upgrade to the paid plan at any time before your trial ends.'
+				),
+				{ planName: plan?.getTitle() }
+			) }
+			callToAction={
 				<NextButton isBusy={ isAddingTrial } onClick={ onStartTrialClick }>
 					{ __( 'Start the trial and migrate' ) }
 				</NextButton>
-			</div>
-		</>
+			}
+			trialLimitations={ [ __( '100 subscribers' ), __( 'no SSH or SFTP access' ) ] }
+		/>
 	);
 };
 
-export default TrialPlan;
+export const MigrationTrialAcknowledge: Step = ( { flow, stepName, navigation } ) => {
+	const site = useSite();
+	const siteSlug = useSiteSlug();
+	const user = useSelector( getCurrentUser ) as UserData;
+
+	if ( ! site || ! siteSlug ) {
+		return null;
+	}
+
+	return (
+		<MigrationTrialAcknowledgeInternal
+			flowName={ flow }
+			stepName={ stepName }
+			user={ user }
+			site={ site }
+			siteSlug={ siteSlug }
+			submit={ navigation.submit }
+		/>
+	);
+};

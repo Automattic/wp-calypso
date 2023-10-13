@@ -1,16 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	getPlan,
+	FEATURE_LEGACY_STORAGE_200GB,
 	getIntervalTypeForTerm,
-	PLAN_FREE,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	getPlan,
 	isFreePlanProduct,
-	PLAN_WOOEXPRESS_SMALL,
-	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_FREE,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	FEATURE_LEGACY_STORAGE_200GB,
-	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -336,16 +337,17 @@ class Plans extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan } ) {
+	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan, isHostingTrial } ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
 		if ( isWooExpressPlan ) {
 			return this.renderWooExpressPlansPage();
 		}
-		if ( isBusinessTrial ) {
+		if ( isBusinessTrial || isHostingTrial ) {
 			return this.renderBusinessTrialPage();
 		}
+
 		return this.renderPlansMain();
 	}
 
@@ -373,6 +375,7 @@ class Plans extends Component {
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const isBusinessTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+		const isHostingTrial = currentPlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
 		const isWooExpressPlan = [
 			PLAN_WOOEXPRESS_MEDIUM,
 			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
@@ -453,6 +456,7 @@ class Plans extends Component {
 									isEcommerceTrial,
 									isBusinessTrial,
 									isWooExpressPlan,
+									isHostingTrial,
 								} ) }
 								<PerformanceTrackerStop />
 							</Main>

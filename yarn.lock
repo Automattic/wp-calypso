@@ -1078,6 +1078,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/launchpad": "workspace:^"
     classnames: ^2.3.1
+    i18n-calypso: "workspace:^"
     postcss: ^8.4.5
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -1847,6 +1848,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"

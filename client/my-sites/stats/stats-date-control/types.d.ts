@@ -32,6 +32,7 @@ interface DateControlPickerDateProps {
 	onStartChange: ( value: string ) => void;
 	onEndChange: ( value: string ) => void;
 	onApply: () => void;
+	onCancel: () => void;
 }
 
 export {

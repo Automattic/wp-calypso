@@ -469,7 +469,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 	const userHasJetpackSites = currentUser && currentUser.jetpack_visible_site_count >= 1;
 
 	const { product } = context.params;
-	const { receiptId, source, siteId } = context.query;
+	const { receiptId, source, siteId, fromSiteSlug } = context.query;
 
 	if ( ! userHasJetpackSites ) {
 		page.redirect(
@@ -486,6 +486,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 				receiptId={ receiptId }
 				source={ source }
 				jetpackTemporarySiteId={ siteId }
+				fromSiteSlug={ fromSiteSlug }
 			/>
 		);
 	}

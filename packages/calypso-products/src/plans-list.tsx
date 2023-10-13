@@ -426,6 +426,7 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
 	FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
 	TERM_CENTENNIALLY,
@@ -589,6 +590,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SECURITY_MALWARE,
 		FEATURE_SECURITY_DDOS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_10,
+		FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
@@ -838,6 +840,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_FAST_DNS,
+		FEATURE_SUPPORT_EMAIL,
+		FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	],
+	get2023PlanComparisonFeatureOverride: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
@@ -1646,13 +1655,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_STAGING_SITES,
 		FEATURE_WP_UPDATES,
 		FEATURE_MULTI_SITE,
-		...( ( i18n.hasTranslation(
-			'%(commission)d%% transaction fee for WooCommerce payment features'
-		) &&
-			i18n.hasTranslation( '%(commission)d%% transaction fee for regular payment features' ) ) ||
-		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
-			? [ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO, FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]
-			: [ FEATURE_PAYMENT_TRANSACTION_FEES_2 ] ),
+		FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
+		FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
 	],
 	getCheckoutFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,

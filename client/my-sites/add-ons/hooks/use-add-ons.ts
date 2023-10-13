@@ -9,6 +9,8 @@ import {
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
+import { createSelector } from '@automattic/state-utils';
+import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
@@ -22,6 +24,7 @@ import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-tr
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { getSiteOption } from 'calypso/state/sites/selectors';
+import { AppState } from 'calypso/types';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
@@ -34,107 +37,21 @@ import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 import useAddOnPrices from './use-add-on-prices';
 import type { AddOnMeta } from '@automattic/data-stores';
 
-// some memoization. executes far too many times
-const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[] => {
-	const translate = useTranslate();
+const useSpaceUpgradesPurchased = ( {
+	isInSignup,
+	siteId,
+}: {
+	isInSignup: boolean;
+	siteId?: number;
+} ) => {
+	const { billingTransactions } = usePastBillingTransactions( isInSignup );
+	const filter = useSelector( ( state ) => getBillingTransactionFilters( state, 'past' ) );
 
-	const addOnsActive = [
-		{
-			productSlug: PRODUCT_JETPACK_AI_MONTHLY,
-			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_AI_MONTHLY ),
-			icon: jetpackAIIcon,
-			overrides: null,
-			displayCost: useAddOnDisplayCost( PRODUCT_JETPACK_AI_MONTHLY ),
-			featured: true,
-			description: translate(
-				'Elevate your content with Jetpack AI, your AI assistant in the WordPress Editor. Save time writing with effortless content crafting, tone adjustment, title generation, grammar checks, translation, and more.'
-			),
-		},
-		{
-			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
-			featureSlugs: useAddOnFeatureSlugs( PRODUCT_WPCOM_UNLIMITED_THEMES ),
-			icon: unlimitedThemesIcon,
-			overrides: null,
-			displayCost: useAddOnDisplayCost( PRODUCT_WPCOM_UNLIMITED_THEMES ),
-			featured: true,
-		},
-		{
-			productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
-			featureSlugs: useAddOnFeatureSlugs( PRODUCT_WPCOM_CUSTOM_DESIGN ),
-			icon: customDesignIcon,
-			overrides: null,
-			displayCost: useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN ),
-			featured: false,
-		},
-		{
-			productSlug: PRODUCT_1GB_SPACE,
-			featureSlugs: useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 50 ),
-			icon: spaceUpgradeIcon,
-			quantity: 50,
-			name: translate( '50 GB Storage' ),
-			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
-			prices: useAddOnPrices( PRODUCT_1GB_SPACE, 50 ),
-			description: translate(
-				'Make more space for high-quality photos, videos, and other media. '
-			),
-			featured: false,
-			purchased: false,
-		},
-		{
-			productSlug: PRODUCT_1GB_SPACE,
-			featureSlugs: useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 100 ),
-			icon: spaceUpgradeIcon,
-			quantity: 100,
-			name: translate( '100 GB Storage' ),
-			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
-			prices: useAddOnPrices( PRODUCT_1GB_SPACE, 100 ),
-			description: translate(
-				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
-			),
-			featured: false,
-			purchased: false,
-		},
-		{
-			productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_STATS_PWYW_YEARLY ),
-			icon: jetpackStatsIcon,
-			overrides: null,
-			displayCost: translate( 'Varies', {
-				comment:
-					'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
-			} ),
-			featured: true,
-			description: translate(
-				'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
-			),
-		},
-		{
-			productSlug: PRODUCT_JETPACK_STATS_YEARLY,
-			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_STATS_YEARLY ),
-			icon: jetpackStatsIcon,
-			overrides: null,
-			displayCost: useAddOnDisplayCost( PRODUCT_JETPACK_STATS_YEARLY ),
-			featured: true,
-			description: translate(
-				'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
-			),
-		},
-	];
-
-	// if upgrade is bought - show as manage
-	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
-	const { data: mediaStorage } = useMediaStorageQuery( siteId );
-	const { billingTransactions, isLoading } = usePastBillingTransactions( isInSignup );
-
-	return useSelector( ( state ): ( AddOnMeta | null )[] => {
-		// get the list of supported features
-		const siteFeatures = getFeaturesBySiteId( state, siteId );
+	return useMemo( () => {
 		const spaceUpgradesPurchased: number[] = [];
 
 		if ( billingTransactions && ! isInSignup ) {
-			const filter = getBillingTransactionFilters( state, 'past' );
 			const filteredTransactions = filterTransactions( billingTransactions, filter, siteId );
-
 			if ( filteredTransactions?.length ) {
 				for ( const transaction of filteredTransactions ) {
 					transaction.items?.length &&
@@ -146,11 +63,161 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 				}
 			}
 		}
-		// Determine which Stats Add-On to show based on the site's commercial classification.
+
+		return spaceUpgradesPurchased;
+	}, [ billingTransactions, filter, isInSignup, siteId ] );
+};
+
+const useActiveAddOnsDefs = () => {
+	const translate = useTranslate();
+
+	/*
+	 * TODO: `useAddOnFeatureSlugs` be refactored instead to return an index of `{ [ slug ]: featureSlug[] }`
+	 */
+	const featureSlugsJetpackAIMonthly = useAddOnFeatureSlugs( PRODUCT_JETPACK_AI_MONTHLY );
+	const featureSlugsUnlimitedThemes = useAddOnFeatureSlugs( PRODUCT_WPCOM_UNLIMITED_THEMES );
+	const featureSlugsCustomDesign = useAddOnFeatureSlugs( PRODUCT_WPCOM_CUSTOM_DESIGN );
+	const featureSlugs1GBSpace50 = useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 50 );
+	const featureSlugs1GBSpace100 = useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 100 );
+	const featureSlugsJetpackStatsYearly = useAddOnFeatureSlugs( PRODUCT_JETPACK_STATS_YEARLY );
+	const featureSlugsJetpackStatsPWYWYearly = useAddOnFeatureSlugs(
+		PRODUCT_JETPACK_STATS_PWYW_YEARLY
+	);
+
+	/*
+	 * TODO: `useAddOnDisplayCost` be refactored instead to return an index of `{ [ slug ]: "display cost" }`
+	 */
+	const displayCostJetpackAIMonthly = useAddOnDisplayCost( PRODUCT_JETPACK_AI_MONTHLY );
+	const displayCostUnlimitedThemes = useAddOnDisplayCost( PRODUCT_WPCOM_UNLIMITED_THEMES );
+	const displayCostCustomDesign = useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN );
+	const displayCost1GBSpace50 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 );
+	const displayCost1GBSpace100 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 );
+	const displayCostJetpackStatsYearly = useAddOnDisplayCost( PRODUCT_JETPACK_STATS_YEARLY );
+
+	/*
+	 * TODO: `useAddOnPrices` be refactored instead to return an index of `{ [ slug ]: AddOnPrice }`
+	 */
+	const addOnPrices1GBSpace50 = useAddOnPrices( PRODUCT_1GB_SPACE, 50 );
+	const addOnPrices1GBSpace100 = useAddOnPrices( PRODUCT_1GB_SPACE, 100 );
+
+	return useMemo(
+		() => [
+			{
+				productSlug: PRODUCT_JETPACK_AI_MONTHLY,
+				featureSlugs: featureSlugsJetpackAIMonthly,
+				icon: jetpackAIIcon,
+				overrides: null,
+				displayCost: displayCostJetpackAIMonthly,
+				featured: true,
+				description: translate(
+					'Elevate your content with Jetpack AI, your AI assistant in the WordPress Editor. Save time writing with effortless content crafting, tone adjustment, title generation, grammar checks, translation, and more.'
+				),
+			},
+			{
+				productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
+				featureSlugs: featureSlugsUnlimitedThemes,
+				icon: unlimitedThemesIcon,
+				overrides: null,
+				displayCost: displayCostUnlimitedThemes,
+				featured: true,
+			},
+			{
+				productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
+				featureSlugs: featureSlugsCustomDesign,
+				icon: customDesignIcon,
+				overrides: null,
+				displayCost: displayCostCustomDesign,
+				featured: false,
+			},
+			{
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: featureSlugs1GBSpace50,
+				icon: spaceUpgradeIcon,
+				quantity: 50,
+				name: translate( '50 GB Storage' ),
+				displayCost: displayCost1GBSpace50,
+				prices: addOnPrices1GBSpace50,
+				description: translate(
+					'Make more space for high-quality photos, videos, and other media. '
+				),
+				featured: false,
+				purchased: false,
+			},
+			{
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: featureSlugs1GBSpace100,
+				icon: spaceUpgradeIcon,
+				quantity: 100,
+				name: translate( '100 GB Storage' ),
+				displayCost: displayCost1GBSpace100,
+				prices: addOnPrices1GBSpace100,
+				description: translate(
+					'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+				),
+				featured: false,
+				purchased: false,
+			},
+			{
+				productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+				featureSlugs: featureSlugsJetpackStatsPWYWYearly,
+				icon: jetpackStatsIcon,
+				overrides: null,
+				displayCost: translate( 'Varies', {
+					comment:
+						'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
+				} ),
+				featured: true,
+				description: translate(
+					'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
+				),
+			},
+			{
+				productSlug: PRODUCT_JETPACK_STATS_YEARLY,
+				featureSlugs: featureSlugsJetpackStatsYearly,
+				icon: jetpackStatsIcon,
+				overrides: null,
+				displayCost: displayCostJetpackStatsYearly,
+				featured: true,
+				description: translate(
+					'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
+				),
+			},
+		],
+		[
+			addOnPrices1GBSpace100,
+			addOnPrices1GBSpace50,
+			displayCost1GBSpace100,
+			displayCost1GBSpace50,
+			displayCostCustomDesign,
+			displayCostJetpackAIMonthly,
+			displayCostJetpackStatsYearly,
+			displayCostUnlimitedThemes,
+			featureSlugs1GBSpace100,
+			featureSlugs1GBSpace50,
+			featureSlugsCustomDesign,
+			featureSlugsJetpackAIMonthly,
+			featureSlugsJetpackStatsPWYWYearly,
+			featureSlugsJetpackStatsYearly,
+			featureSlugsUnlimitedThemes,
+			translate,
+		]
+	);
+};
+
+const getAddOnsTransformed = createSelector(
+	(
+		state: AppState,
+		activeAddOns,
+		spaceUpgradesPurchased,
+		siteId,
+		isLoadingBillingTransactions,
+		mediaStorage
+	) => {
+		const siteFeatures = getFeaturesBySiteId( state, siteId );
 		const isSiteMarkedCommercial = getSiteOption( state, siteId, 'is_commercial' );
 
-		return addOnsActive
-			.filter( ( addOn ) => {
+		return activeAddOns
+			.filter( ( addOn: any ) => {
 				// if a user already has purchased a storage upgrade
 				// remove all upgrades smaller than the smallest purchased upgrade (we only allow purchasing upgrades in ascending order)
 				if ( spaceUpgradesPurchased.length && addOn.productSlug === PRODUCT_1GB_SPACE ) {
@@ -206,7 +273,7 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 
 				return true;
 			} )
-			.map( ( addOn ) => {
+			.map( ( addOn: any ) => {
 				const product = getProductBySlug( state, addOn.productSlug );
 				const name = addOn.name ? addOn.name : getProductName( state, addOn.productSlug );
 				const description = addOn.description ?? getProductDescription( state, addOn.productSlug );
@@ -219,19 +286,19 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 					}
 
 					// if storage add on hasn't loaded yet
-					if ( isLoading || ! product ) {
+					if ( isLoadingBillingTransactions || ! product ) {
 						return {
 							...addOn,
 							name,
 							description,
-							isLoading,
+							isLoading: isLoadingBillingTransactions,
 						};
 					}
 
 					// if storage add on is already purchased
 					if (
 						spaceUpgradesPurchased.findIndex(
-							( spaceUpgrade ) => spaceUpgrade === addOn.quantity
+							( spaceUpgrade: any ) => spaceUpgrade === addOn.quantity
 						) >= 0 &&
 						product
 					) {
@@ -264,6 +331,43 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 					description,
 				};
 			} );
+	},
+	(
+		state,
+		activeAddOns,
+		spaceUpgradesPurchased,
+		siteId,
+		isLoadingBillingTransactions,
+		mediaStorage
+	) => [
+		getFeaturesBySiteId( state, siteId ),
+		getSiteOption( state, siteId, 'is_commercial' ),
+		state.productsList,
+		activeAddOns,
+		spaceUpgradesPurchased,
+		siteId,
+		isLoadingBillingTransactions,
+		mediaStorage,
+	]
+);
+
+const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[] => {
+	// if upgrade is bought - show as manage
+	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
+	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+	const { isLoading } = usePastBillingTransactions( isInSignup );
+	const spaceUpgradesPurchased = useSpaceUpgradesPurchased( { isInSignup, siteId } );
+	const activeAddOns = useActiveAddOnsDefs();
+
+	return useSelector( ( state ): ( AddOnMeta | null )[] => {
+		return getAddOnsTransformed(
+			state,
+			activeAddOns,
+			spaceUpgradesPurchased,
+			siteId,
+			isLoading,
+			mediaStorage
+		);
 	} );
 };
 

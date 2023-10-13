@@ -52,13 +52,19 @@ const NOTICE_ID = 'wpcom-live-preview/notice';
  * @see https://github.com/Automattic/wp-calypso/issues/82218
  */
 const LivePreviewNotice = () => {
-	const { createWarningNotice } = useDispatch( 'core/notices' );
+	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 
-	const themeSlug = currentlyPreviewingTheme();
-	const previewingTheme = useSelect( ( select ) => {
+	const { previewingThemeName, currentTheme } = useSelect( ( select ) => {
+		const previewingThemeSlug = currentlyPreviewingTheme();
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const theme = ( select( 'core' ) as any ).getTheme( themeSlug );
-		return theme?.name?.rendered || themeSlug;
+		const previewingTheme = ( select( 'core' ) as any ).getTheme( previewingThemeSlug );
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const currentTheme = ( select( 'core' ) as any ).getCurrentTheme();
+
+		return {
+			previewingThemeName: previewingTheme?.name?.rendered || previewingThemeSlug,
+			currentTheme,
+		};
 	}, [] );
 
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
@@ -73,30 +79,39 @@ const LivePreviewNotice = () => {
 			return;
 		}
 		if ( ! isPreviewingTheme() ) {
-			return;
-		}
-		createWarningNotice(
-			sprintf(
-				// translators: %s: theme name
-				__(
-					'You are previewing the %s theme. You can try out your own style customizations, which will only be saved if you activate this theme.',
-					'wpcom-live-preview'
+			removeNotice( NOTICE_ID );
+		} else {
+			createWarningNotice(
+				sprintf(
+					// translators: %s: theme name
+					__(
+						'You are previewing the %s theme. You can try out your own style customizations, which will only be saved if you activate this theme.',
+						'wpcom-live-preview'
+					),
+					previewingThemeName
 				),
-				previewingTheme
-			),
-			{
-				id: NOTICE_ID,
-				isDismissible: false,
-				actions: dashboardLink && [
-					{
-						label: __( 'Back to themes', 'wpcom-live-preview' ),
-						url: dashboardLink,
-						variant: 'secondary',
-					},
-				],
-			}
-		);
-	}, [ siteEditorStore, dashboardLink, createWarningNotice, previewingTheme ] );
+				{
+					id: NOTICE_ID,
+					isDismissible: false,
+					actions: dashboardLink && [
+						{
+							label: __( 'Back to themes', 'wpcom-live-preview' ),
+							url: dashboardLink,
+							variant: 'secondary',
+						},
+					],
+				}
+			);
+		}
+		return () => removeNotice( NOTICE_ID );
+	}, [
+		siteEditorStore,
+		dashboardLink,
+		createWarningNotice,
+		removeNotice,
+		previewingThemeName,
+		currentTheme,
+	] );
 	return null;
 };
 
