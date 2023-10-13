@@ -76,6 +76,9 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ), function () {
 	} );
 
 	it( 'Validate the published post', async function () {
+		if ( envVariables.RETRY_COUNT === 0 ) {
+			throw new Error( 'Testing story error' );
+		}
 		await StoryBlock.validatePublishedContent( page );
 	} );
 } );
