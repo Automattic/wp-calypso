@@ -31,24 +31,6 @@ export class EditorGutenbergComponent {
 		this.editor = editor;
 	}
 
-	/**
-	 * Resets the selected block.
-	 *
-	 * The Gutenberg block-based editor 'remembers' what block was last
-	 * selected. This behavior impacts the block options that are shown
-	 * in the block inserter.
-	 *
-	 * For instance, if a Contact Form block is currently selected, the
-	 * block inserter will display a filtered set of blocks that are
-	 * permitted to be inserted within the parent Contact Form block.
-	 */
-	async resetSelectedBlock(): Promise< void > {
-		const editorCanvas = await this.editor.canvas();
-		const locator = editorCanvas.locator( selectors.title );
-		// Every now and then, a block toolbar can cover the title, so we "force" the click by doing it via the event directly.
-		await locator.dispatchEvent( 'click' );
-	}
-
 	/* Title block */
 
 	/**
