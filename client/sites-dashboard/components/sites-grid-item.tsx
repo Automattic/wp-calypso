@@ -143,7 +143,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						/>
 					</ThumbnailWrapper>
 					{ showSiteRenewLink && site.plan?.expired && (
-						<SitesGridActionRenew site={ site } hideRenewLink={ isTrialSitePlan } />
+						<SitesGridActionRenew site={ site } isUpgradeable={ isTrialSitePlan } />
 					) }
 				</>
 			}
