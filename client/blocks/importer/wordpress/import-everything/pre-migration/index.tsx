@@ -210,10 +210,12 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 
 		if ( ! sourceSite || ( sourceSite && sourceSite.ID !== sourceSiteId ) ) {
-			<NotAuthorized
-				onStartBuilding={ onNotAuthorizedClick }
-				onStartBuildingText={ translate( 'Skip to dashboard' ) }
-			/>;
+			return (
+				<NotAuthorized
+					onStartBuilding={ onNotAuthorizedClick }
+					onStartBuildingText={ translate( 'Skip to dashboard' ) }
+				/>
+			);
 		}
 
 		return (
