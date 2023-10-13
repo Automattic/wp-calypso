@@ -2,8 +2,8 @@ import { SiteDetails } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import { CredentialsForm } from './credentials-form';
 import { CredentialsHelper } from './credentials-helper';
-import MigrationCredentialsForm from './migration-credentials-form';
 import type { StartImportTrackingProps } from './types';
 
 interface Props {
@@ -39,7 +39,7 @@ export function Credentials( props: Props ) {
 
 			<div className="pre-migration__form-container pre-migration__credentials-form">
 				<div className="pre-migration__form">
-					<MigrationCredentialsForm
+					<CredentialsForm
 						sourceSite={ sourceSite }
 						targetSite={ targetSite }
 						startImport={ startImport }
