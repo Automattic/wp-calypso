@@ -154,7 +154,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				let artifactPrefix = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
 
 				if ( env.RUN_ID ) {
-					console.log( 'RUN_ID', env.RUN_ID );
 					artifactPrefix = `${ artifactPrefix }__${ sanitizeString( env.RUN_ID ) }`;
 				}
 
