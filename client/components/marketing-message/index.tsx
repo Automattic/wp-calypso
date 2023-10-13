@@ -93,6 +93,11 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 					require="calypso/blocks/jitm"
 					placeholder={ null }
 					messagePath="calypso:plans:lto_notices"
+					onClick={ ( jitmInstance ) => {
+						jitmInstance.message =
+							'Discount coupon applied! Select your plan below and check your final discounted price at checkout.'; //
+						jitmInstance.CTA = {};
+					} }
 				/>
 			);
 		}

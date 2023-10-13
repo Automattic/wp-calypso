@@ -73,7 +73,7 @@ function renderTemplate( template, props ) {
 }
 
 function getEventHandlers( props, dispatch ) {
-	const { jitm, currentSite, messagePath, searchQuery } = props;
+	const { jitm, currentSite, messagePath, searchQuery, onClick } = props;
 	const tracks = jitm.tracks || {};
 	const eventProps = {
 		id: jitm.id,
@@ -101,6 +101,12 @@ function getEventHandlers( props, dispatch ) {
 	handlers.onClick = () => {
 		tracks.click &&
 			props.recordTracksEvent( tracks.click.name, { ...tracks.click.props, ...eventProps } );
+
+		// Invoke the provided onClick function defined in props
+		if ( onClick ) {
+			onClick( jitm );
+		}
+
 		if ( jitm.action ) {
 			switch ( jitm.action.type ) {
 				// Cases for dispatching action thunks
