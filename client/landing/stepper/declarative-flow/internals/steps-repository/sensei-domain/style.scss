@@ -176,14 +176,6 @@
 
 	.search-component {
 		border: 1px solid var(--color-border-subtle);
-
-		.components-button {
-			padding: 8px;
-
-			@include break-mobile {
-				padding: 0;
-			}
-		}
 	}
 
 
