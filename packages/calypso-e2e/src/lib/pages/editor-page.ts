@@ -147,7 +147,9 @@ export class EditorPage {
 	}
 
 	/**
+	 * Waits for the editor to be fully loaded by keying off of requests.
 	 *
+	 * @param {number} timeout Timeout for waiting for the final requests.
 	 */
 	private async waitForEditorLoadedRequests( timeout: number = 60 * 1000 ): Promise< void > {
 		// In a typical loading scenario, this request is one of the last to fire.
@@ -160,7 +162,7 @@ export class EditorPage {
 	}
 
 	/**
-	 *
+	 * Accepts the WordPress version database update prompt that can happen on lagging AT sites.
 	 */
 	private async acceptDatabaseUpdate(): Promise< void > {
 		const databaseUpdateButton = this.page.getByRole( 'link', {
