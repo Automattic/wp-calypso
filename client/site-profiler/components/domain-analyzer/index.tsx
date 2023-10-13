@@ -16,8 +16,15 @@ interface Props {
 
 export default function DomainAnalyzer( props: Props ) {
 	const translate = useTranslate();
-	const { domain, isBusy, isBusyForWhile, isDomainValid, domainFetchingError, onFormSubmit } =
-		props;
+	const {
+		domain,
+		rawDomain,
+		isBusy,
+		isBusyForWhile,
+		isDomainValid,
+		domainFetchingError,
+		onFormSubmit,
+	} = props;
 
 	const showError = isDomainValid === false || domainFetchingError;
 
@@ -58,9 +65,9 @@ export default function DomainAnalyzer( props: Props ) {
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus={ true }
 							autoComplete="off"
-							defaultValue={ domain }
+							defaultValue={ rawDomain }
 							placeholder={ translate( 'Enter a site URL' ) }
-							key={ domain || 'empty' }
+							key={ rawDomain || 'empty' }
 							onKeyDown={ onInputEscape }
 							spellCheck="false"
 						/>

@@ -25,6 +25,7 @@ export default function SiteProfiler( props: Props ) {
 	const { routerDomain } = props;
 	const {
 		domain,
+		rawDomain,
 		category: domainCategory,
 		isValid: isDomainValid,
 		isSpecial: isDomainSpecial,
@@ -73,6 +74,7 @@ export default function SiteProfiler( props: Props ) {
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<DomainAnalyzer
 						domain={ domain }
+						rawDomain={ rawDomain }
 						isDomainValid={ isDomainValid }
 						isBusy={ isFetchingSP }
 						isBusyForWhile={ isBusyForWhile }
@@ -86,12 +88,13 @@ export default function SiteProfiler( props: Props ) {
 				<LayoutBlock className="domain-result-block">
 					{
 						// Translators: %s is the domain name searched
-						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
+						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ rawDomain ] } ) } />
 					}
 					{ showResultScreen && (
 						<LayoutBlockSection>
 							<HeadingInformation
 								domain={ domain }
+								rawDomain={ rawDomain }
 								conversionAction={ conversionAction }
 								onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
 								hostingProvider={ hostingProviderData?.hosting_provider }
