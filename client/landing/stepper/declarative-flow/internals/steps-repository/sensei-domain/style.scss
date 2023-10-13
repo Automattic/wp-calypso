@@ -198,15 +198,6 @@
 		}
 	}
 
-	.search-filters__dropdown-filters {
-		height: 40px;
-
-		@include break-mobile {
-			height: 48px;
-
-		}
-	}
-
 	.domain-suggestion {
 
 		.domain-suggestion__action {
