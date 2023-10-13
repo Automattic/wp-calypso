@@ -655,7 +655,10 @@ export function generateSteps( {
 					return i18n.translate( 'Choose how to use your domain' );
 				},
 				get subHeaderText() {
-					return i18n.translate( 'Don’t worry, you can easily add a site later' );
+					return i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation( 'Don’t worry, you can easily change it later.' )
+						? i18n.translate( 'Don’t worry, you can easily change it later.' )
+						: i18n.translate( 'Don’t worry, you can easily add a site later' );
 				},
 			},
 			providesDependencies: [
@@ -665,7 +668,6 @@ export function generateSteps( {
 				'siteUrl',
 				'domainItem',
 				'themeSlugWithRepo',
-				'domainCart',
 			],
 			defaultDependencies: {
 				themeSlugWithRepo: 'pub/twentytwentytwo',
@@ -680,7 +682,7 @@ export function generateSteps( {
 				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo', 'domainCart' ],
+			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
 

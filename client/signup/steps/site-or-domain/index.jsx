@@ -88,15 +88,29 @@ class SiteOrDomain extends Component {
 			choices.push( {
 				key: 'page',
 				title: translate( 'New site' ),
-				description: translate(
-					'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
-					{
-						components: {
-							strong: <strong />,
-							br: <br />,
-						},
-					}
-				),
+				description:
+					i18n.getLocaleSlug() === 'en' ||
+					i18n.hasTranslation(
+						'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}'
+					)
+						? translate(
+								'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+								{
+									components: {
+										strong: <strong />,
+										br: <br />,
+									},
+								}
+						  )
+						: translate(
+								'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+								{
+									components: {
+										strong: <strong />,
+										br: <br />,
+									},
+								}
+						  ),
 				icon: null,
 				titleIcon: addCard,
 				value: 'page',
@@ -107,15 +121,29 @@ class SiteOrDomain extends Component {
 				choices.push( {
 					key: 'existing-site',
 					title: translate( 'Existing WordPress.com site' ),
-					description: translate(
-						'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
-						{
-							components: {
-								strong: <strong />,
-								br: <br />,
-							},
-						}
-					),
+					description:
+						i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation(
+							'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}'
+						)
+							? translate(
+									'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+									{
+										components: {
+											strong: <strong />,
+											br: <br />,
+										},
+									}
+							  )
+							: translate(
+									'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+									{
+										components: {
+											strong: <strong />,
+											br: <br />,
+										},
+									}
+							  ),
 					icon: null,
 					titleIcon: layout,
 					value: 'existing-site',
