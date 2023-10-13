@@ -19,6 +19,8 @@ import {
 	getSignupCompleteFlowNameAndClear,
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
+import { useSelector } from 'calypso/state';
+import { getSite } from 'calypso/state/sites/selectors';
 import { useSite } from '../../hooks/use-site';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
@@ -64,6 +66,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const urlQueryParams = useQuery();
 
 	const site = useSite();
+	const selectedSite = useSelector( ( state ) => site && getSite( state, site.ID ) );
 	const ref = urlQueryParams.get( 'ref' ) || '';
 
 	const stepProgress = useSelect(
@@ -134,7 +137,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( ! currentStepRoute ) {
+		if ( ! currentStepRoute || ! selectedSite ) {
 			return;
 		}
 
@@ -158,7 +161,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow.name, currentStepRoute ] );
+	}, [ flow.name, currentStepRoute, selectedSite ] );
 
 	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
 		state: AssertConditionState.SUCCESS,
