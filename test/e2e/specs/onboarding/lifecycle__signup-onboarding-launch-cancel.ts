@@ -19,13 +19,23 @@ import {
 	NewSiteResponse,
 	RestAPIClient,
 	NewUserResponse,
+	MyProfilePage,
+	MeSidebarComponent,
+	cancelPurchaseFlow,
+	NoticeComponent,
+	PurchasesPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( 'Onboarding: Sell Focus', function () {
+/**
+ * Checks the entire user lifecycle, from signup, onboarding, launch and plan cancellation.
+ *
+ * Keywords: Onboarding, Store Checkout, Coupon, Signup, Plan, Subscription, Cancel
+ */
+describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Personal';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
@@ -201,6 +211,41 @@ describe( 'Onboarding: Sell Focus', function () {
 		it( 'Navigated to Home dashboard', async function () {
 			const myHomePage = new MyHomePage( page );
 			await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
+		} );
+	} );
+
+	describe( 'Cancel and remove plan', function () {
+		let noticeComponent: NoticeComponent;
+		let purchasesPage: PurchasesPage;
+
+		it( 'Navigate to Me > Purchases', async function () {
+			const mePage = new MyProfilePage( page );
+			await mePage.visit();
+
+			const meSidebarComponent = new MeSidebarComponent( page );
+			await meSidebarComponent.navigate( 'Purchases' );
+		} );
+
+		it( 'View details of purchased plan', async function () {
+			purchasesPage = new PurchasesPage( page );
+
+			await purchasesPage.clickOnPurchase(
+				`WordPress.com ${ planName }`,
+				newSiteDetails.blog_details.site_slug
+			);
+			await purchasesPage.purchaseAction( 'Cancel plan' );
+		} );
+
+		it( 'Cancel plan renewal', async function () {
+			await cancelPurchaseFlow( page, {
+				reason: 'Another reason…',
+				customReasonText: 'E2E TEST CANCELLATION',
+			} );
+
+			noticeComponent = new NoticeComponent( page );
+			await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
+				timeout: 30 * 1000,
+			} );
 		} );
 	} );
 
