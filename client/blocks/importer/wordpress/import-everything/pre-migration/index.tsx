@@ -29,15 +29,15 @@ import { StartImportTrackingProps } from './types';
 import './style.scss';
 
 interface PreMigrationProps {
-	targetSite: SiteDetails;
-	startImport: ( props?: StartImportTrackingProps ) => void;
-	initImportRun?: boolean;
-	isTargetSitePlanCompatible: boolean;
-	isMigrateFromWp: boolean;
-	isTrial?: boolean;
-	onContentOnlyClick: () => void;
 	sourceSite?: SiteDetails;
+	targetSite: SiteDetails;
+	initImportRun?: boolean;
+	isTrial?: boolean;
+	isMigrateFromWp: boolean;
+	isTargetSitePlanCompatible: boolean;
+	startImport: ( props?: StartImportTrackingProps ) => void;
 	onFreeTrialClick: () => void;
+	onContentOnlyClick: () => void;
 	onNotAuthorizedClick: () => void;
 }
 
@@ -45,15 +45,15 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	props: PreMigrationProps
 ) => {
 	const {
-		startImport,
-		initImportRun,
+		sourceSite,
 		targetSite,
+		initImportRun,
 		isTargetSitePlanCompatible,
 		isMigrateFromWp,
 		isTrial,
-		onContentOnlyClick,
+		startImport,
 		onFreeTrialClick,
-		sourceSite,
+		onContentOnlyClick,
 		onNotAuthorizedClick,
 	} = props;
 
