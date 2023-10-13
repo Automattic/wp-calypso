@@ -34,7 +34,8 @@ const getLinks = (
 			break;
 		}
 		case 'scan': {
-			if ( status !== 'inactive' ) {
+			// Scan link should not be available for Atomic sites.
+			if ( status !== 'inactive' && ! isAtomicSite ) {
 				link = `/scan/${ siteUrlWithMultiSiteSupport }`;
 			}
 			break;
