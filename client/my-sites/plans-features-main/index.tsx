@@ -338,6 +338,7 @@ const PlansFeaturesMain = ( {
 			const cartItemForStorageAddOn = cartItems?.find(
 				( items ) => items.product_slug === PRODUCT_1GB_SPACE
 			);
+
 			if ( cartItemForStorageAddOn?.extra ) {
 				recordTracksEvent( 'calypso_signup_storage_add_on_upgrade_click', {
 					add_on_slug: cartItemForStorageAddOn.extra.feature_slug,
@@ -352,9 +353,14 @@ const PlansFeaturesMain = ( {
 			const planPath = cartItemForPlan?.product_slug
 				? getPlanPath( cartItemForPlan.product_slug )
 				: '';
+
+			const checkoutUrl = cartItemForStorageAddOn
+				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
+				: `/checkout/${ siteSlug }/${ planPath }`;
+
 			const checkoutUrlWithArgs = addQueryArgs(
 				{ ...( withDiscount && { coupon: withDiscount } ) },
-				`/checkout/${ siteSlug }/${ planPath }`
+				checkoutUrl
 			);
 
 			page( checkoutUrlWithArgs );
