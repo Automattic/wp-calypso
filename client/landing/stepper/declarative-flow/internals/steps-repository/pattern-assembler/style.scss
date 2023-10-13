@@ -309,6 +309,13 @@ $font-family: "SF Pro Text", $sans;
 
 	.screen-container__footer {
 		margin-top: auto;
+
+		.screen-container__footer-description {
+			display: inline-block;
+			margin-bottom: 8px;
+			font-size: $font-body-small;
+			color: var(--studio-gray-80);
+		}
 	}
 
 	.screen-container__description {
