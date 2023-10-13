@@ -43,4 +43,5 @@ export type OptionalUserData = {
 	visible_site_count: number;
 	jetpack_visible_site_count?: number;
 	is_google_domain_owner: boolean;
+	had_hosting_trial: boolean;
 };
