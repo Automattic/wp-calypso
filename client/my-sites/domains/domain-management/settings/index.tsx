@@ -6,6 +6,9 @@ import { removeQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { connect } from 'react-redux';
+import { useAsyncToast } from 'calypso/components/async-toast';
+import { AsyncToastProvider } from 'calypso/components/async-toast/context';
+import { withAsyncToastProvider } from 'calypso/components/async-toast/with-async-toast';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
@@ -31,12 +34,14 @@ import {
 	domainUseMyDomain,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { lookupToastForSiteByKey } from 'calypso/state/async-toast/types';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { requestWhois } from 'calypso/state/domains/management/actions';
 import { getWhoisData } from 'calypso/state/domains/management/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
@@ -81,6 +86,22 @@ const Settings = ( {
 	const contactInformation = findRegistrantWhois( whoisData );
 
 	const queryParams = new URLSearchParams( window.location.search );
+
+	const { toasts } = useAsyncToast();
+	const asyncToast = lookupToastForSiteByKey( {
+		toasts,
+		siteId: selectedSite?.ID,
+		toastKey: 'test_toast',
+	} );
+	const message = asyncToast?.message;
+
+	const reduxDispatch = useDispatch();
+	useEffect( () => {
+		if ( ! message ) {
+			return;
+		}
+		reduxDispatch( successNotice( message, { displayOnNextPage: true } ) );
+	}, [ message, reduxDispatch ] );
 
 	useEffect( () => {
 		if ( ! contactInformation ) {
@@ -617,15 +638,16 @@ const Settings = ( {
 		// TODO: Update this placeholder
 		return <DomainMainPlaceholder breadcrumbs={ renderHeader } />;
 	}
-
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		<Main wideLayout className="domain-settings-page">
-			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
-			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderHeader() }
-			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
-		</Main>
+		<AsyncToastProvider selectedSiteId={ selectedSite?.ID }>
+			<Main wideLayout className="domain-settings-page">
+				{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
+				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+				{ renderHeader() }
+				<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
+			</Main>
+		</AsyncToastProvider>
 	);
 };
 
@@ -645,10 +667,11 @@ export default connect(
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			dns: getDomainDns( state, ownProps.selectedDomainName ),
+			selectedSiteId: ownProps.selectedSite?.ID,
 		};
 	},
 	{
 		requestWhois,
 		recordTracksEvent,
 	}
-)( withDomainNameservers( Settings ) );
+)( withAsyncToastProvider( withDomainNameservers( Settings ) ) );

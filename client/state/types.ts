@@ -1,4 +1,5 @@
 import type { CountriesState } from './countries/types';
+import type { AsyncToastState } from 'calypso/state/async-toast/types';
 import type { BillingTransactionsState } from 'calypso/state/billing-transactions/types';
 import type { IMarketplaceState } from 'calypso/state/marketplace/types';
 import type { IMembershipsState } from 'calypso/state/memberships/reducer';
@@ -22,6 +23,7 @@ export interface IAppState {
 	memberships?: IMembershipsState;
 	countries?: CountriesState;
 	billingTransactions?: BillingTransactionsState;
+	asyncToast?: AsyncToastState;
 }
 
 /**

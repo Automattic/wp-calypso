@@ -119,7 +119,6 @@ class SiteRedirectCard extends Component {
 	render() {
 		const { location, translate } = this.props;
 		const { isUpdating, isFetching } = location;
-
 		return (
 			<form>
 				<FormFieldset>

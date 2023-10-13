@@ -16,6 +16,7 @@ const withDomainNameservers = createHigherOrderComponent( ( Wrapped ) => {
 		const { selectedDomainName } = props;
 		const dispatch = useDispatch();
 		const translate = useTranslate();
+		console.log( 'GET NAMESERVERS' );
 		const { data, isLoading, isError, error } = useDomainNameserversQuery( selectedDomainName );
 		const { updateNameservers } = useUpdateNameserversMutation( selectedDomainName, {
 			onSuccess() {

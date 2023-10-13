@@ -18,6 +18,7 @@ export function getSelectedDomain<
 		return undefined;
 	}
 	const domainList = Array.isArray( domains ) ? domains : Object.values( domains );
+	console.log( { domainList: domainList } );
 	return domainList.find( ( domain ) => {
 		const isType = ( type: string ) => domain.type === type;
 

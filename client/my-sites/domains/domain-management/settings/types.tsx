@@ -2,6 +2,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { DnsRequest, ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { SiteId } from 'calypso/types';
 
 export type WhoisData = {
 	fname: string;
@@ -35,6 +36,7 @@ export type SettingsPageConnectedProps = {
 	purchase: Purchase | null;
 	whoisData: WhoisData[];
 	dns: DnsRequest;
+	selectedSiteId: SiteId;
 };
 
 export type SettingsPageNameServerHocProps = {
