@@ -11,11 +11,10 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
-import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
@@ -383,7 +382,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isLargeCurrency,
 } ) => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
 		planTitle,
@@ -408,34 +406,19 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		onUpgradeClick && onUpgradeClick();
 	};
 
-	const vipLandingPageUrlWithoutUtmCampaign =
-		'https://wpvip.com/wordpress-vip-agile-content-platform?utm_source=WordPresscom&utm_medium=automattic_referral';
-
 	if ( isWpcomEnterpriseGridPlan ) {
-		const translateComponents = {
-			ExternalLink: (
-				<ExternalLinkWithTracking
-					href={ `${ vipLandingPageUrlWithoutUtmCampaign }&utm_campaign=calypso_signup` }
-					target="_blank"
-					tracksEventName="calypso_plan_step_enterprise_click"
-					tracksEventProps={ { flow: flowName } }
-				/>
-			),
-		};
-
-		const shouldShowNewCta =
-			isEnglishLocale || i18n.hasTranslation( '{{ExternalLink}}Learn more{{/ExternalLink}}' );
+		const vipLandingPageUrlWithoutUtmCampaign =
+			'https://wpvip.com/wordpress-vip-agile-content-platform?utm_source=WordPresscom&utm_medium=automattic_referral';
 
 		return (
-			<Button className={ classes }>
-				{ shouldShowNewCta
-					? translate( '{{ExternalLink}}Learn more{{/ExternalLink}}', {
-							components: translateComponents,
-					  } )
-					: translate( '{{ExternalLink}}Get in touch{{/ExternalLink}}', {
-							components: translateComponents,
-					  } ) }
-			</Button>
+			<ExternalLinkWithTracking
+				href={ `${ vipLandingPageUrlWithoutUtmCampaign }&utm_campaign=calypso_signup` }
+				target="_blank"
+				tracksEventName="calypso_plan_step_enterprise_click"
+				tracksEventProps={ { flow: flowName } }
+			>
+				<Button className={ classNames( classes ) }>{ translate( 'Learn more' ) }</Button>
+			</ExternalLinkWithTracking>
 		);
 	}
 
