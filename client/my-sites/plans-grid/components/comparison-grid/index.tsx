@@ -4,13 +4,13 @@ import {
 	isFreePlan,
 	isWooExpressPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
-	PLAN_WOOEXPRESS_PLUS,
 	getPlanFeaturesGrouped,
 	getWooExpressFeaturesGrouped,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
 	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
@@ -1031,6 +1031,32 @@ const ComparisonGrid = ( {
 		setVisiblePlans( newVisiblePlans );
 	}, [ isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, displayedGridPlans, isInSignup ] );
 
+	const visibleGridPlans = useMemo(
+		() =>
+			visiblePlans.reduce( ( acc, planSlug ) => {
+				const gridPlan = displayedGridPlans.find( ( gridPlan ) => gridPlan.planSlug === planSlug );
+
+				if ( gridPlan ) {
+					acc.push( gridPlan );
+				}
+
+				return acc;
+			}, [] as GridPlan[] ),
+		[ visiblePlans, displayedGridPlans ]
+	);
+
+	const onPlanChange = useCallback(
+		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
+			const newPlan = event.currentTarget.value;
+			const newVisiblePlans = visiblePlans.map( ( plan ) =>
+				plan === currentPlan ? ( newPlan as PlanSlug ) : plan
+			);
+
+			setVisiblePlans( newVisiblePlans );
+		},
+		[ visiblePlans ]
+	);
+
 	const planFeatureFootnotes = useMemo( () => {
 		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.
 		const footnoteList: string[] = [];
@@ -1063,32 +1089,6 @@ const ComparisonGrid = ( {
 			footnotesByFeature,
 		};
 	}, [ featureGroupMap ] );
-
-	const onPlanChange = useCallback(
-		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
-			const newPlan = event.currentTarget.value;
-			const newVisiblePlans = visiblePlans.map( ( plan ) =>
-				plan === currentPlan ? ( newPlan as PlanSlug ) : plan
-			);
-
-			setVisiblePlans( newVisiblePlans );
-		},
-		[ visiblePlans ]
-	);
-
-	const visibleGridPlans = useMemo(
-		() =>
-			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = displayedGridPlans.find( ( gridPlan ) => gridPlan.planSlug === planSlug );
-
-				if ( gridPlan ) {
-					acc.push( gridPlan );
-				}
-
-				return acc;
-			}, [] as GridPlan[] ),
-		[ visiblePlans, displayedGridPlans ]
-	);
 
 	return (
 		<div className="plan-comparison-grid">
