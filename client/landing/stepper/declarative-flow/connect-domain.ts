@@ -58,14 +58,10 @@ const connectDomain: Flow = {
 			};
 		}
 
-		const redirectTo = encodeURIComponent(
-			`/setup/${ flowName }/plans?domain=${ domain }&provider=${ provider }}`
-		);
-
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
-			redirectTo: redirectTo,
-			pageTitle: 'Connect%20your%20Domain',
+			redirectTo: `/setup/${ flowName }/plans?domain=${ domain }&provider=${ provider }}`,
+			pageTitle: 'Connect your Domain',
 			locale,
 		} );
 

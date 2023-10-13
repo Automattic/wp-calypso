@@ -58,7 +58,7 @@ export const getLoginUrl = ( {
 	redirectTo?: string | null;
 	pageTitle?: string | null;
 	loginPath?: string;
-	locale?: string | null;
+	locale?: string;
 } ) => {
 	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
 

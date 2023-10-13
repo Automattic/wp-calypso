@@ -65,7 +65,7 @@ const domainUserTransfer: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }?domain=${ domain }`,
-			pageTitle: 'Receive%20domain',
+			pageTitle: 'Receive domain',
 			locale,
 		} );
 

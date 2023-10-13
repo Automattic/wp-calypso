@@ -223,7 +223,7 @@ const startWriting: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }`,
-			pageTitle: 'Start%20writing',
+			pageTitle: 'Start writing',
 			locale,
 		} );
 		// Despite sending a CHECKING state, this function gets called again with the

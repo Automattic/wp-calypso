@@ -65,7 +65,7 @@ const domainTransfer: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/domains`,
-			pageTitle: 'Bulk+Transfer',
+			pageTitle: 'Bulk Transfer',
 		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
