@@ -9,7 +9,7 @@ import SidebarMain from 'calypso/layout/sidebar-v2/main';
 import { useSelector } from 'calypso/state';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import Header from './header';
+import SidebarHeader from './header';
 
 import './style.scss';
 
@@ -31,7 +31,7 @@ const JetpackCloudSidebar = ( { className, isJetpackManage }: Props ) => {
 
 	return (
 		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
-			<Header forceAllSitesView={ isJetpackManage } />
+			<SidebarHeader forceAllSitesView={ isJetpackManage } />
 
 			<SidebarMain>
 				<ul role="menu" className="jetpack-cloud-sidebar__navigation-list">
@@ -48,7 +48,7 @@ const JetpackCloudSidebar = ( { className, isJetpackManage }: Props ) => {
 			</SidebarMain>
 
 			<SidebarFooter>
-				{ jetpackAdminUrl && (
+				{ ! isJetpackManage && (
 					<SidebarItem
 						label={ translate( 'WP Admin', {
 							comment: 'Jetpack Cloud sidebar navigation item',
