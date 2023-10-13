@@ -70,6 +70,10 @@ export const isECommerceTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 };
 
+export const isTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return isMigrationTrialSite( site ) || isHostingTrialSite( site ) || isECommerceTrialSite( site );
+};
+
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';
 
 export const MEDIA_QUERIES = {

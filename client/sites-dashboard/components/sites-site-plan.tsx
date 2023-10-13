@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { useSelector } from '../../state';
-import { isNotAtomicJetpack } from '../utils';
+import { isNotAtomicJetpack, isTrialSite } from '../utils';
 import { PlanRenewNag } from './sites-plan-renew-nag';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -32,7 +30,7 @@ const STAGING_PLAN_LABEL = 'Staging';
 
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 	const isWpcomStagingSite = site?.is_wpcom_staging_site ?? false;
-	const trialSite = useSelector( ( state ) => isTrialSite( state, site.ID ) );
+	const trialSite = isTrialSite( site );
 
 	return (
 		<SitePlanContainer>
