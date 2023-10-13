@@ -62,7 +62,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				{
 					label: translate( 'Auto-optimize' ),
 					onClick: () => {
-						trackEvent( 'expandable_block_auto_optimize_click' );
+						trackEvent( 'boost_expandable_block_auto_optimize_click' );
 						showBoostModal( true );
 					},
 					primary: true,
@@ -70,7 +70,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				{
 					label: translate( 'Settings' ),
 					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=${ jetpackDashboardPage }`,
-					onClick: () => trackEvent( 'expandable_block_settings_click' ),
+					onClick: () => trackEvent( 'boost_expandable_block_settings_click' ),
 				},
 			];
 		}
@@ -80,7 +80,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				{
 					label: translate( 'Boost Settings' ),
 					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
-					onClick: () => trackEvent( 'expandable_block_settings_click' ),
+					onClick: () => trackEvent( 'boost_expandable_block_settings_click' ),
 				},
 			];
 		}
@@ -89,7 +89,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 			{
 				label: translate( 'Optimize performance' ),
 				href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
-				onClick: () => trackEvent( 'expandable_block_optimize_performance_click' ),
+				onClick: () => trackEvent( 'boost_expandable_block_optimize_performance_click' ),
 				primary: true,
 			},
 		];
