@@ -3,7 +3,6 @@ import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button, Popover } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -52,11 +51,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	}, [] );
 
 	return (
-		<div
-			className={ classnames( 'import__import-everything', {
-				'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
-			} ) }
-		>
+		<div className="import__import-everything import__import-everything--redesign">
 			<div className="import__heading-title">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
