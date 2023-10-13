@@ -26,7 +26,6 @@ import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
 import { MigrationStatus } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
-import { Confirm } from './confirm';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
@@ -159,11 +158,8 @@ export class ImportEverything extends SectionMigrate {
 		const {
 			sourceSite,
 			targetSite,
-			targetSiteSlug,
-			sourceUrlAnalyzedData,
 			isTargetSitePlanCompatible,
 			stepNavigator,
-			showConfirmDialog = true,
 			isMigrateFromWp,
 			onContentOnlySelection,
 			translate,
@@ -184,50 +180,25 @@ export class ImportEverything extends SectionMigrate {
 			);
 		}
 
-		if ( isEnabled( 'onboarding/import-redesign' ) ) {
-			return (
-				<PreMigrationScreen
-					startImport={ this.startMigration }
-					initImportRun={ this.props.initImportRun }
-					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-					targetSite={ targetSite }
-					isMigrateFromWp={ isMigrateFromWp }
-					isTrial={ isMigrationTrialSite( this.props.targetSite ) }
-					onContentOnlyClick={ onContentOnlySelection }
-					sourceSite={ sourceSite }
-					onFreeTrialClick={ () => {
-						stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
-					} }
-					onNotAuthorizedClick={ () => {
-						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
-							from: 'pre-migration',
-						} );
-						stepNavigator?.goToDashboardPage();
-					} }
-				/>
-			);
-		}
-
-		if ( sourceSite ) {
-			return (
-				<Confirm
-					startImport={ this.startMigration }
-					isMigrateFromWp={ isMigrateFromWp }
-					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-					targetSite={ targetSite }
-					targetSiteSlug={ targetSiteSlug }
-					sourceSite={ sourceSite }
-					sourceSiteUrl={ sourceSite.URL }
-					sourceUrlAnalyzedData={ sourceUrlAnalyzedData }
-					showConfirmDialog={ showConfirmDialog }
-				/>
-			);
-		}
-
 		return (
-			<NotAuthorized
-				onStartBuilding={ stepNavigator?.goToIntentPage }
-				onBackToStart={ stepNavigator?.goToImportCapturePage }
+			<PreMigrationScreen
+				startImport={ this.startMigration }
+				initImportRun={ this.props.initImportRun }
+				isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+				targetSite={ targetSite }
+				isMigrateFromWp={ isMigrateFromWp }
+				isTrial={ isMigrationTrialSite( this.props.targetSite ) }
+				onContentOnlyClick={ onContentOnlySelection }
+				sourceSite={ sourceSite }
+				onFreeTrialClick={ () => {
+					stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
+				} }
+				onNotAuthorizedClick={ () => {
+					recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+						from: 'pre-migration',
+					} );
+					stepNavigator?.goToDashboardPage();
+				} }
 			/>
 		);
 	}
