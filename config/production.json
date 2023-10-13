@@ -34,7 +34,6 @@
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
 		"desktop-promo": true,
-		"domains/add-multiple-domains-to-cart": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
