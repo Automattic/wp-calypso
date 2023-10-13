@@ -47,7 +47,7 @@ export default function ToggleActivateMonitoring( {
 	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
 	const shouldDisplayUpgradePopover =
-		status === 'success' && isPaidTierEnabled && ! site.has_paid_agency_monitor;
+		status === 'success' && isPaidTierEnabled && ! site.has_paid_agency_monitor && ! site.is_atomic;
 
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
@@ -144,11 +144,12 @@ export default function ToggleActivateMonitoring( {
 	};
 
 	const toggleContent = (
+		// For Atomic sites which do not support monitoring, we show the toggle as disabled while in active state.
 		<ToggleControl
 			onChange={ handleToggleActivateMonitoring }
-			checked={ isChecked }
-			disabled={ isLoading || siteError }
-			label={ isChecked && currentSettings() }
+			checked={ site.is_atomic || isChecked }
+			disabled={ site.is_atomic || isLoading || siteError }
+			label={ ! site.is_atomic && isChecked && currentSettings() }
 		/>
 	);
 
@@ -172,10 +173,14 @@ export default function ToggleActivateMonitoring( {
 				/>
 			);
 		}
+
 		let tooltipText = tooltip;
-		if ( isPaidTierEnabled && smsLimitReached && status === 'success' ) {
+		if ( site.is_atomic ) {
+			tooltipText = translate( 'Monitoring is managed by host.' );
+		} else if ( isPaidTierEnabled && smsLimitReached && status === 'success' ) {
 			tooltipText = translate( 'You have reached the SMS limit' );
 		}
+
 		if ( tooltipText ) {
 			return (
 				<Tooltip

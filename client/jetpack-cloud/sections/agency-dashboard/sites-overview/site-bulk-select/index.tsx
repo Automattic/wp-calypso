@@ -83,7 +83,7 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 				</div>
 			</div>
 			<DashboardBulkActions
-				selectedSites={ selectedSites }
+				selectedSites={ selectedSites.filter( ( site ) => ! site.is_atomic ) } // Bulk action (Monitoring) is not supported for Atomic sites.
 				bulkUpdateSettings={ sites?.[ 0 ]?.monitor?.settings }
 				isLargeScreen={ isLargeScreen }
 			/>
