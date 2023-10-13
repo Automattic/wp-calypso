@@ -18,6 +18,8 @@
 
 .sidebar-v2__main {
 	flex-grow: 1;
+	overflow-y: auto;
+	height: 0;  // To support scrollable in the main content area, we set height to 0.
 }
 
 .sidebar-v2__footer {
