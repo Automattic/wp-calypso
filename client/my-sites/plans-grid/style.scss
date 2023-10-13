@@ -816,6 +816,7 @@ body.is-section-signup.is-white-signup,
 			padding-top: 34px;
 
 			&.popular-plan-parent-class {
+				justify-content: space-between;
 				&::before,
 				&::after {
 					height: 100%;

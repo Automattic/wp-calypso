@@ -148,6 +148,7 @@ const PlanRow = styled( Row )`
 
 	${ plansBreakSmall( css`
 		border-bottom: none;
+		align-items: stretch;
 
 		&:last-of-type {
 			display: flex;
