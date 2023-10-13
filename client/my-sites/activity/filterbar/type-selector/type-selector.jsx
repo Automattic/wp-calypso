@@ -196,15 +196,6 @@ export class TypeSelector extends Component {
 
 	isSelected = ( key ) => this.getSelectedCheckboxes().includes( key );
 
-	handleButtonClick = () => {
-		const { isVisible, onButtonClick } = this.props;
-
-		if ( isVisible ) {
-			this.handleClose();
-		}
-		onButtonClick();
-	};
-
 	render() {
 		const { title, isVisible, isNested } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
@@ -221,7 +212,7 @@ export class TypeSelector extends Component {
 					className={ buttonClass }
 					compact
 					borderless
-					onClick={ this.handleButtonClick }
+					onClick={ this.props.onButtonClick }
 					ref={ this.typeButton }
 				>
 					{ ( ! isNested || ( isNested && ! hasSelectedCheckboxes ) ) && title }
