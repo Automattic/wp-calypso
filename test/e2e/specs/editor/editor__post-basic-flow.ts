@@ -12,7 +12,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser, Response } from 'playwright';
 import { skipDescribeIf, skipItIf } from '../../jest-helpers';
 
 const quote =
@@ -88,11 +88,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	describe( 'Jetpack features', function () {
 		it( 'Open Jetpack settings', async function () {
+			// @TODO https://github.com/Automattic/wp-calypso/pull/82301
 			await editorPage.openEditorOptionsMenu();
 			const page = await editorPage.getEditorParent();
 
-			const button = await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } );
-			await button.click();
+			await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } ).click();
 		} );
 
 		skipItIf( envVariables.TEST_ON_ATOMIC !== true )(
@@ -171,6 +171,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	// Skip test on Private site, because posts are not visible to non-logged out users.
 	skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'View post', function () {
 		let newPage: Page;
+		let response: Response;
 
 		beforeAll( async function () {
 			newPage = await browser.newPage();
@@ -179,13 +180,18 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'View published post', async function () {
 			// Check for `blog` and `post` query params, used for stats tracking.
 			const trackingPixelLoaded = newPage.waitForResponse(
-				/pixel\.wp\.com\/g\.gif.*blog=[\d]+.*&post=[\d]+/
+				new RegExp(
+					`pixel.wp.com/g.gif.*blog=${ testAccount.credentials.testSites?.primary.id }+.*&post=[\\d]+`
+				)
 			);
 			await newPage.goto( publishedURL.href );
-			const response = await trackingPixelLoaded;
-			expect( response.status() ).toBe( 200 );
+			response = await trackingPixelLoaded;
 
 			expect( publishedURL.href ).toStrictEqual( newPage.url() );
+		} );
+
+		it( 'Jetpack Stats tracking pixel is loaded', async function () {
+			expect( response.status() ).toBe( 200 );
 		} );
 
 		it( 'Post content is found in published post', async function () {
