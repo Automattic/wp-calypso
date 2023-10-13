@@ -185,12 +185,21 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 				)
 			);
 			await newPage.goto( publishedURL.href );
-			response = await trackingPixelLoaded;
+
+			// Wrap the `waitForResponse` wait so it does not fail this step should the tracking pixel
+			// fail to load.
+			// This way if the tracking pixel ever fails to load, the most accurate test step fails.
+			try {
+				response = await trackingPixelLoaded;
+			} catch {
+				// noop - will throw in next step.
+			}
 
 			expect( publishedURL.href ).toStrictEqual( newPage.url() );
 		} );
 
 		it( 'Jetpack Stats tracking pixel is loaded', async function () {
+			expect( response ).toBeDefined();
 			expect( response.status() ).toBe( 200 );
 		} );
 
