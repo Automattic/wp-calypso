@@ -1,6 +1,6 @@
 import page from 'page';
 import { render as clientRender } from 'calypso/controller';
-import { jetpackAppPlans, redirectIfNotJetpackApp } from './controller';
+import { jetpackAppPlans, pageNotFound, redirectIfNotJetpackApp } from './controller';
 import { makeJetpackAppLayout } from './page-middleware/layout';
 
 export default function () {
@@ -14,4 +14,7 @@ export default function () {
 
 	// Default to /plans page until we have more pages
 	page( '/jetpack-app', '/jetpack-app/plans' );
+
+	// Show 404 page in all the other cases
+	page( '/jetpack-app/*', pageNotFound, makeJetpackAppLayout, clientRender );
 }
