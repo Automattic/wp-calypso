@@ -64,6 +64,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
+		this.global.testFileName = this.testFilename;
 		this.testArtifactsPath = '';
 		this.allure = this.initializeAllureReporter( config.projectConfig );
 	}
@@ -96,6 +97,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 */
 	async setup() {
 		await super.setup();
+
+		// Make sure we have valid env variables, and fail early if we don't!
+		env.validate();
 
 		// Determine the browser that should be used for the spec.
 		const browserType: BrowserType = await determineBrowser( this.testFilePath );
