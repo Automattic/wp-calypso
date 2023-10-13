@@ -341,10 +341,16 @@ const LoggedInPlansFeatureActionButton = ( {
 			comment: '%(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
 		} );
 	} else if ( isStuck && isLargeCurrency ) {
-		buttonTextFallback = translate( 'Upgrade – %(plan)s', {
-			context: 'verb',
-			args: { plan: planTitle ?? '' },
-			comment: '%(plan)s is the name of the plan ',
+		buttonTextFallback = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
+			args: {
+				plan: planTitle,
+				priceString: priceString ?? '',
+			},
+			comment:
+				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+			components: {
+				span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
+			},
 		} );
 	} else {
 		buttonTextFallback = translate( 'Upgrade', { context: 'verb' } );
