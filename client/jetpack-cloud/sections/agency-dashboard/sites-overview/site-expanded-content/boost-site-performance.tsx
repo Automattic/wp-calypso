@@ -80,7 +80,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				{
 					label: translate( 'Boost Settings' ),
 					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
-					onClick: () => trackEvent( 'boost_expandable_block_settings_click' ),
+					onClick: () => trackEvent( 'boost_expandable_block_boost_settings_click' ),
 				},
 			];
 		}
