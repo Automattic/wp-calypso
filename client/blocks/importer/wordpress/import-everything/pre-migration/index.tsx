@@ -78,7 +78,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		siteCanMigrate,
 	} = useSiteMigrateInfo( targetSite.ID, sourceSiteSlug, isTargetSitePlanCompatible );
 
-	const showUpdatePluginInfo = typeof siteCanMigrate === 'boolean' ? ! siteCanMigrate : false;
+	const requiresPluginUpdate = siteCanMigrate === false;
 
 	const migrationTrackingProps = {
 		source_site_id: sourceSiteId,
@@ -144,7 +144,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	// We want to record the tracks event, so we use the same condition as the one in the render function
 	// This should be better handled by using a state after the refactor
 	useEffect( () => {
-		if ( ! showUpdatePluginInfo && isTargetSitePlanCompatible ) {
+		if ( ! requiresPluginUpdate && isTargetSitePlanCompatible ) {
 			const _migrationTrackingProps: { [ key: string ]: unknown } = { ...migrationTrackingProps };
 			// There is a case where source_site_id is 0|undefined, so we need to delete it
 			delete _migrationTrackingProps?.source_site_id;
@@ -153,7 +153,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				recordTracksEvent( 'calypso_site_migration_ready_screen', _migrationTrackingProps )
 			);
 		}
-	}, [ showUpdatePluginInfo, isTargetSitePlanCompatible ] );
+	}, [ requiresPluginUpdate, isTargetSitePlanCompatible ] );
 
 	// Initiate the migration if initImportRun is set
 	useEffect( () => {
@@ -169,13 +169,13 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	useEffect( () => {
 		// If we are blocked by plugin upgrade check or has continueImport set to false, we do not start the migration
-		if ( showUpdatePluginInfo || ! continueImport ) {
+		if ( requiresPluginUpdate || ! continueImport ) {
 			return;
 		}
 		if ( sourceSiteId ) {
 			startImport( migrationTrackingProps );
 		}
-	}, [ continueImport, sourceSiteId, startImport, showUpdatePluginInfo ] );
+	}, [ continueImport, sourceSiteId, startImport, requiresPluginUpdate ] );
 
 	function renderCredentialsFormSection() {
 		// We do not show the credentials form if we already have credentials
@@ -329,7 +329,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	function render() {
 		// If the source site is not capable of being migrated, we show the update info screen
-		if ( showUpdatePluginInfo ) {
+		if ( requiresPluginUpdate ) {
 			return renderUpdatePluginInfo();
 		}
 
