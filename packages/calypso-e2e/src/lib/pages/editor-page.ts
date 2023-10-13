@@ -122,20 +122,51 @@ export class EditorPage {
 		// When the WordPress version updates on Jetpack AT sites,
 		// `wp-beta` and`wp-previous` require a database update.
 		// @see https://github.com/Automattic/wp-calypso/issues/82412
-		if (
+		const databaseUpdateMaybeRequired =
 			envVariables.ATOMIC_VARIATION === 'wp-beta' ||
-			envVariables.ATOMIC_VARIATION === 'wp-previous'
-		) {
-			try {
-				const databaseUpdateButton = this.page.getByRole( 'link', {
-					name: 'Update WordPress Database',
-				} );
-				await databaseUpdateButton.waitFor( { timeout: 5 * 1000 } );
-				await databaseUpdateButton.click();
-			} catch {
-				// noop
-			}
+			envVariables.ATOMIC_VARIATION === 'wp-previous';
+
+		if ( databaseUpdateMaybeRequired ) {
+			const loadEditorWithDatabaseUpdate = async () => {
+				await this.acceptDatabaseUpdate();
+				await this.waitForEditorLoadedRequests( 30 * 1000 );
+			};
+			await Promise.race( [
+				loadEditorWithDatabaseUpdate(),
+				this.waitForEditorLoadedRequests( 60 * 1000 ),
+			] );
+		} else {
+			await this.waitForEditorLoadedRequests( 60 * 1000 );
 		}
+
+		// Dismiss the Welcome Tour.
+		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
+
+		// Accept the Cookie banner.
+		await this.cookieBannerComponent.acceptCookie();
+	}
+
+	/**
+	 *
+	 */
+	private async waitForEditorLoadedRequests( timeout: number = 60 * 1000 ): Promise< void > {
+		// In a typical loading scenario, this request is one of the last to fire.
+		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
+		// it is a fairly good stand-in.
+		await Promise.all( [
+			this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php)/, { timeout } ),
+			this.page.waitForResponse( /.*posts.*/, { timeout } ),
+		] );
+	}
+
+	/**
+	 *
+	 */
+	private async acceptDatabaseUpdate(): Promise< void > {
+		const databaseUpdateButton = this.page.getByRole( 'link', {
+			name: 'Update WordPress Database',
+		} );
+		await databaseUpdateButton.click( { timeout: 30 * 1000 } );
 	}
 
 	/**
