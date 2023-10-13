@@ -593,6 +593,44 @@ export class RenderDomainsStep extends Component {
 		await this.props.shoppingCartManager.addProductsToCart( productsToAdd ).then( () => {
 			this.setState( { isCartPendingUpdateDomain: null } );
 		} );
+
+		// The first product in the cart gets the free domain promotion applied to it. So, we sort the products to give
+		// the user the best deal and avoid encouraging them to "game" the cart for the best deal.
+		this.sortProductsByPriceDescending();
+	}
+
+	async sortProductsByPriceDescending() {
+		// We aim to sort domains, but we sort all products to keep it "simple."
+		const productsInCart = this.props.cart.products;
+
+		// Sort the domains descending by item_subtotal_integer. However, the most expensive domain already in the cart
+		// has a item_subtotal_integer = 0 because the bundle promotion has been applied. So, if item_subtotal_integer
+		// is 0, we use the lowest non-zero new_price in cost_overrides (multiplied by 100). This is price after all
+		// promotions have been applied. If there are no non-zero new_prices, we assume the only promo being applied is
+		// free domain with bundle, so we use item_original_cost_integer.
+		productsInCart.sort( ( a, b ) => {
+			const getSortingValue = ( product ) => {
+				if ( product.item_subtotal_integer !== 0 ) {
+					return product.item_subtotal_integer;
+				}
+				// Find the lowest non-zero new_price in cost_overrides (multiplied by 100 because its in dollars). If
+				// none is found, use item_original_cost_integer.
+				const nonZeroPrices =
+					product.cost_overrides
+						?.map( ( override ) => override.new_price * 100 )
+						.filter( ( price ) => price > 0 ) || [];
+				return nonZeroPrices.length
+					? Math.min( ...nonZeroPrices )
+					: product.item_original_cost_integer;
+			};
+
+			return getSortingValue( b ) - getSortingValue( a );
+		} );
+
+		// Replace the products in the cart with the freshly sorted products.
+		await this.props.shoppingCartManager.replaceProductsInCart( productsInCart ).then( () => {
+			this.setState( { isCartPendingUpdateDomain: null } );
+		} );
 	}
 
 	removeDomainClickHandler = ( domain ) => {
