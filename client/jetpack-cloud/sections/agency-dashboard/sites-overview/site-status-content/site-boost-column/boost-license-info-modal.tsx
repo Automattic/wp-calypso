@@ -5,20 +5,21 @@ import ExternalLink from 'calypso/components/external-link';
 import SitesOverviewContext from '../../context';
 import useInstallBoost from '../../hooks/use-install-boost';
 import LicenseInfoModal from '../../license-info-modal';
+import type { Site } from '../../types';
 
 import './style.scss';
 
 interface Props {
 	onClose: () => void;
-	siteId: number;
-	siteUrl: string;
+	site: Site;
 	upgradeOnly?: boolean;
 }
 
-export default function BoostLicenseInfoModal( { onClose, siteId, siteUrl, upgradeOnly }: Props ) {
+export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: Props ) {
 	const translate = useTranslate();
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
+	const { blog_id: siteId, url: siteUrl } = site;
 
 	// queryKey is needed to optimistically update the site list
 	const queryKey = useMemo(

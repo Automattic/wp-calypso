@@ -30,7 +30,6 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 	const {
 		blog_id: siteId,
 		url_with_scheme: siteUrlWithScheme,
-		url: siteUrl,
 		is_atomic: isAtomicSite,
 		has_boost: hasBoost,
 		jetpack_boost_scores: boostData,
@@ -200,8 +199,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 			{ boostModalState.show && (
 				<BoostLicenseInfoModal
 					onClose={ () => setBoostModalState( { show: false } ) }
-					siteId={ siteId }
-					siteUrl={ siteUrl }
+					site={ site }
 					upgradeOnly={ boostModalState.upgradeOnly }
 				/>
 			) }

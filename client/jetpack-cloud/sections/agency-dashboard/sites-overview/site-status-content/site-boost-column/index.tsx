@@ -70,11 +70,7 @@ export default function SiteBoostColumn( { site }: Props ) {
 				{ translate( 'Get Score' ) }
 			</button>
 			{ showBoostModal && (
-				<BoostLicenseInfoModal
-					onClose={ () => setShowBoostModal( false ) }
-					siteId={ site.blog_id }
-					siteUrl={ site.url }
-				/>
+				<BoostLicenseInfoModal onClose={ () => setShowBoostModal( false ) } site={ site } />
 			) }
 		</>
 	);
