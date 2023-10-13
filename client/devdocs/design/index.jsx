@@ -27,6 +27,7 @@ import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/doc
 import ActionCard from 'calypso/components/action-card/docs/example';
 import ActionPanel from 'calypso/components/action-panel/docs/example';
 import Animate from 'calypso/components/animate/docs/example';
+import AppPromo from 'calypso/components/app-promo/docs/example';
 import BackButton from 'calypso/components/back-button/docs/example';
 import Banner from 'calypso/components/banner/docs/example';
 import Breadcrumb from 'calypso/components/breadcrumb/docs/example';
@@ -182,6 +183,7 @@ export default class DesignAssets extends Component {
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />
 					<Animate readmeFilePath="animate" />
+					<AppPromo readmeFilePath="app-promo" />
 					<BackButton readmeFilePath="back-button" />
 					<Badge readmeFilePath="badge" />
 					<Banner readmeFilePath="banner" />

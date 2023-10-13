@@ -1,5 +1,6 @@
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export { default as Animate } from 'calypso/components/animate/docs/example';
+export { default as AppPromo } from 'calypso/components/app-promo/docs/example';
 export { default as BackButton } from 'calypso/components/back-button/docs/example';
 export { default as Badge } from '@automattic/components/src/badge/docs/example';
 export { default as Banner } from 'calypso/components/banner/docs/example';
