@@ -34,10 +34,13 @@ export function getExternalBackUrl( source, sectionName = null ) {
  * Check if we should use multiple domains in domain flows.
  */
 export function shouldUseMultipleDomainsInCart( flowName ) {
-	const enabledFlows = [ 'onboarding', 'domain' ];
+	const enabledFlows = [ 'domain' ];
+	const enabledFlowsUnderFlag = [ 'onboarding' ];
 
 	const status =
-		isEnabled( 'domains/add-multiple-domains-to-cart' ) && enabledFlows.includes( flowName );
+		enabledFlows.includes( flowName ) ||
+		( isEnabled( 'domains/add-multiple-domains-to-cart' ) &&
+			enabledFlowsUnderFlag.includes( flowName ) );
 
 	return status;
 }
