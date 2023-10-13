@@ -158,7 +158,6 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		} );
 
 		it( `VideoPress block is visible`, async function () {
-			throw new Error( 'Testing Media error' );
 			await VideoPressBlock.validatePublishedContent( page );
 		} );
 	} );
