@@ -48,7 +48,7 @@ class MySitesNavigation extends Component {
 		}
 
 		return (
-			<div>
+			<div className="my-sites__navigation">
 				<SitePicker
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }

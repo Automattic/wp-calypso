@@ -1,4 +1,6 @@
 import classNames from 'classnames';
+import SiteSelector from 'calypso/components/site-selector';
+import Header from './header';
 import './style.scss';
 
 // This is meant to be the "base" sidebar component. All context-specific sidebars
@@ -7,10 +9,11 @@ import './style.scss';
 
 type Props = {
 	className?: string;
+	isJetpackManage?: boolean;
 };
-const Sidebar = ( { className }: Props ) => (
+const Sidebar = ( { className, isJetpackManage = false }: Props ) => (
 	<nav className={ classNames( 'jetpack-cloud-sidebar', className ) }>
-		<header className="jetpack-cloud-sidebar__header">Header</header>
+		<Header forceAllSitesView={ isJetpackManage } />
 		<div className="jetpack-cloud-sidebar__main">
 			<ul role="menu" className="jetpack-cloud-sidebar__navigation-list">
 				<li
@@ -24,7 +27,16 @@ const Sidebar = ( { className }: Props ) => (
 				<li className="jetpack-cloud-sidebar__navigation-item">Will go here</li>
 			</ul>
 		</div>
-		<div className="jetpack-cloud-sidebar__footer">Footer</div>
+
+		<SiteSelector
+			showAddNewSite
+			showAllSites={ isJetpackManage }
+			isJetpackAgencyDashboard={ isJetpackManage }
+			className="jetpack-cloud-sidebar__site-selector"
+			allSitesPath="/dashboard"
+			siteBasePath="/landing"
+			wpcomSiteBasePath="https://wordpress.com/home"
+		/>
 	</nav>
 );
 
