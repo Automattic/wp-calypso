@@ -7,35 +7,29 @@ import { HostingProvider } from 'calypso/data/site-profiler/types';
 import StatusCtaInfo from '../heading-information/status-cta-info';
 import StatusInfo from '../heading-information/status-info';
 import type { CONVERSION_ACTION } from '../../hooks/use-define-conversion-action';
-import type { SPECIAL_DOMAIN_CASES } from '../../utils/get-special-domain-mapping';
+import type { SPECIAL_DOMAIN_CATEGORY } from '../../utils/get-domain-category';
 import './styles.scss';
 
 interface Props {
 	domain: string;
+	domainCategory?: SPECIAL_DOMAIN_CATEGORY;
 	conversionAction?: CONVERSION_ACTION;
 	hostingProvider?: HostingProvider;
 	urlData?: UrlData;
 	onCheckAnotherSite?: () => void;
-	specialDomainMapping?: SPECIAL_DOMAIN_CASES;
 }
 
 export default function HeadingInformation( props: Props ) {
-	const {
-		domain,
-		conversionAction,
-		hostingProvider,
-		urlData,
-		onCheckAnotherSite,
-		specialDomainMapping,
-	} = props;
-	const finalStatus = specialDomainMapping ?? conversionAction;
+	const { domain, domainCategory, conversionAction, hostingProvider, urlData, onCheckAnotherSite } =
+		props;
+	const finalStatus = domainCategory ?? conversionAction;
 
 	const recordCtaEvent = ( ctaName: string ) => {
 		recordTracksEvent( 'calypso_site_profiler_cta', {
 			domain,
 			cta_name: ctaName,
 			conversion_action: conversionAction,
-			special_domain_mapping: specialDomainMapping,
+			domain_category: domainCategory,
 		} );
 	};
 
@@ -97,15 +91,12 @@ export default function HeadingInformation( props: Props ) {
 				<StatusInfo
 					conversionAction={ conversionAction }
 					hostingProvider={ hostingProvider }
+					domainCategory={ domainCategory }
 					urlData={ urlData }
-					specialDomainMapping={ specialDomainMapping }
 				/>
 			</summary>
 			<footer>
-				<StatusCtaInfo
-					conversionAction={ conversionAction }
-					specialDomainMapping={ specialDomainMapping }
-				/>
+				<StatusCtaInfo conversionAction={ conversionAction } domainCategory={ domainCategory } />
 				<div className="cta-wrapper">
 					{ ( finalStatus === 'wordpress-com' ||
 						finalStatus === 'local-development' ||

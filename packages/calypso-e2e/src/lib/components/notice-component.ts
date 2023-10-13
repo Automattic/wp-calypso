@@ -47,14 +47,18 @@ export class NoticeComponent {
 	 * @param {string} text Full or partial text to validate on page.
 	 * @param param1 Optional parameters.
 	 * @param {NoticeType} param1.type Type of notice to limit validation to.
+	 * @param {number} param1.timeout Custom timeout value.
 	 */
-	async noticeShown( text: string, { type }: { type?: NoticeType } = {} ): Promise< void > {
+	async noticeShown(
+		text: string,
+		{ type, timeout }: { type?: NoticeType; timeout?: number } = {}
+	): Promise< void > {
 		const noticeType = type ? `.is-${ type?.toLowerCase() }` : '';
 
 		const selector = `div.notice${ noticeType } :text("${ text }")`;
 
 		const locator = this.page.locator( selector );
-		await locator.waitFor( { state: 'visible' } );
+		await locator.waitFor( { state: 'visible', timeout: timeout } );
 	}
 
 	/**

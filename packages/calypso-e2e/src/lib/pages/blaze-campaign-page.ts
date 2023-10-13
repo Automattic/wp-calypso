@@ -32,6 +32,8 @@ export class BlazeCampaignPage {
 	 * @param {string} text Text to enter.
 	 */
 	async enterText( name: string, text: string ) {
+		// Clear out the field first.
+		await this.page.getByRole( 'textbox', { name: name } ).clear();
 		await this.page.getByRole( 'textbox', { name: name } ).fill( text );
 	}
 

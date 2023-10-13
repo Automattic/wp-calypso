@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, ReactElement, useEffect, useRef, useState } from 'react';
 import './style.scss';
 import { Swiper as SwiperType } from 'swiper/types';
@@ -8,6 +9,7 @@ interface ThemeCollectionProps {
 	collectionSlug: string;
 	title: string;
 	description: ReactElement;
+	onSeeAll: () => void;
 }
 
 export default function ThemeCollection( {
@@ -15,9 +17,12 @@ export default function ThemeCollection( {
 	title,
 	description,
 	children,
+	onSeeAll,
 }: PropsWithChildren< ThemeCollectionProps > ): ReactElement {
 	const swiperInstance = useRef< SwiperType | null >( null );
 	const swiperContainerId = `swiper-container-${ collectionSlug }`;
+
+	const translate = useTranslate();
 
 	const [ isSwiperLoaded, setSwiperLoaded ] = useState( false );
 	useEffect( () => {
@@ -83,6 +88,9 @@ export default function ThemeCollection( {
 					<div className="theme-collection__description">{ description }</div>
 				</div>
 				<div className="theme-collection__carousel-controls">
+					<Button className="theme-collection__see-all" onClick={ onSeeAll }>
+						{ translate( 'See all' ) }
+					</Button>
 					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous">
 						<Icon icon={ chevronLeft } />
 					</Button>

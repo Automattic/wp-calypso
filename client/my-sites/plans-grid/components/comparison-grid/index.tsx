@@ -121,6 +121,7 @@ const Row = styled.div< {
 
 	${ plansBreakSmall( css`
 		display: flex;
+		align-items: center;
 		margin: 0 20px;
 		padding: 12px 0;
 		border-bottom: 1px solid #eee;
@@ -147,6 +148,7 @@ const PlanRow = styled( Row )`
 
 	${ plansBreakSmall( css`
 		border-bottom: none;
+		align-items: stretch;
 
 		&:last-of-type {
 			display: flex;
@@ -631,9 +633,21 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 					{ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES === featureSlug ? (
 						<>
 							{ planPaymentTransactionFees ? (
-								<span className="plan-comparison-grid__plan-conditional-title">
-									{ planPaymentTransactionFees?.getAlternativeTitle?.() }
-								</span>
+								<>
+									<Plans2023Tooltip
+										text={ feature?.getDescription?.() }
+										setActiveTooltipId={ setActiveTooltipId }
+										activeTooltipId={ activeTooltipId }
+										id={ `${ planSlug }-${ featureSlug }` }
+									>
+										<span className="plan-comparison-grid__plan-title">
+											{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
+										</span>
+									</Plans2023Tooltip>
+									<span className="plan-comparison-grid__plan-conditional-title">
+										{ planPaymentTransactionFees?.getAlternativeTitle?.() }
+									</span>
+								</>
 							) : (
 								<Gridicon icon="minus-small" color="#C3C4C7" />
 							) }

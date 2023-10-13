@@ -35,6 +35,15 @@ const TextSelector: FunctionComponent< Props > = ( { siteId, filter } ) => {
 	};
 
 	const onChange = ( value: string ) => {
+		if ( value !== searchQuery && value.length === 0 ) {
+			// Field was cleared, so clear the filter without waiting for enter
+			dispatch( updateFilter( siteId, { textSearch: '' } ) );
+			dispatch(
+				recordTracksEvent( 'calypso_activitylog_filterbar_text_search', {
+					characters: value.length,
+				} )
+			);
+		}
 		setSearchQuery( value );
 	};
 

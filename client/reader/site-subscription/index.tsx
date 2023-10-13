@@ -1,5 +1,5 @@
-import SiteSubscription from './site-subscription';
+import SiteSubscription, { SiteSubscriptionProps } from './site-subscription';
 
-export default ( { subscriptionId }: { subscriptionId: number } ) => {
-	return <SiteSubscription subscriptionId={ subscriptionId } />;
+export default ( { blogId, subscriptionId }: SiteSubscriptionProps ) => {
+	return <SiteSubscription blogId={ blogId } subscriptionId={ subscriptionId } />;
 };

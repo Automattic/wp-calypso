@@ -18,7 +18,8 @@
 		"build:wpcom-block-editor": "NODE_ENV=production calypso-build",
 		"clean": "rm -rf dist",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/wpcom-block-editor",
-		"build": "NODE_ENV=production yarn dev"
+		"build": "NODE_ENV=production yarn dev",
+		"teamcity:build-app": "yarn run build"
 	},
 	"dependencies": {
 		"@automattic/calypso-url": "workspace:^",

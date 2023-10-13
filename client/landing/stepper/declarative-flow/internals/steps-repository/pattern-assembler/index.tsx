@@ -5,12 +5,7 @@ import {
 	getVariationType,
 } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
-import {
-	StepContainer,
-	isSiteAssemblerFlow,
-	isSiteSetupFlow,
-	NavigatorScreen,
-} from '@automattic/onboarding';
+import { StepContainer, isSiteAssemblerFlow, NavigatorScreen } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalUseNavigator as useNavigator,
@@ -22,7 +17,6 @@ import { useState, useRef, useMemo } from 'react';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
-import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -40,6 +34,7 @@ import {
 	usePatternsMapByCategory,
 	useRecipe,
 	useSyncNavigatorScreen,
+	useIsNewSite,
 } from './hooks';
 import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -91,9 +86,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
-
-	// New sites are created from 'site-setup' and 'with-site-assembler' flows
-	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
+	const isNewSite = useIsNewSite( flow );
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
@@ -581,6 +574,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						patternsMapByCategory={ patternsMapByCategory }
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
+						isNewSite={ isNewSite }
 					/>
 				</NavigatorScreen>
 
@@ -593,6 +587,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						patternsMapByCategory={ patternsMapByCategory }
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
+						isNewSite={ isNewSite }
 					/>
 				</NavigatorScreen>
 
@@ -625,6 +620,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				onDeleteFooter={ onDeleteFooter }
 				onShuffle={ onShuffle }
 				recordTracksEvent={ recordTracksEvent }
+				isNewSite={ isNewSite }
 			/>
 		</div>
 	);

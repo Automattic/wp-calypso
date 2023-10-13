@@ -14,6 +14,7 @@ import type {
 
 const domainRegistrationThankYouProps = ( {
 	domain,
+	domains,
 	email,
 	hasProfessionalEmail,
 	hideProfessionalEmailStep,
@@ -51,9 +52,12 @@ const domainRegistrationThankYouProps = ( {
 	const confirmEmailStep = {
 		stepKey: 'domain_registration_whats_next_confirm-email',
 		stepTitle: translate( 'Confirm email address' ),
-		stepDescription: translate(
-			'You must confirm your email address to avoid your domain getting suspended.'
-		),
+		stepDescription:
+			domains.length > 1
+				? translate( 'You must confirm your email address to avoid your domains being suspended.' )
+				: translate(
+						'You must confirm your email address to avoid your domain getting suspended.'
+				  ),
 		stepCta: (
 			<FullWidthButton onClick={ onResendEmailVerificationClick } busy={ false } disabled={ false }>
 				{ translate( 'Resend email' ) }
@@ -97,7 +101,7 @@ const domainRegistrationThankYouProps = ( {
 
 	const fediverseSettingsStep = {
 		stepKey: 'domain_registration_whats_next_fediverse_settings',
-		stepTitle: translate( 'Connect to the Fediverse' ),
+		stepTitle: translate( 'Connect to the fediverse' ),
 		stepDescription: translate(
 			'You’ve unlocked a durable, portable social networking presence with your domain!'
 		),
@@ -114,9 +118,10 @@ const domainRegistrationThankYouProps = ( {
 
 	const returnProps: DomainThankYouProps = {
 		thankYouNotice: {
-			noticeTitle: translate(
-				'It may take up to 30 minutes for your domain to start working properly.'
-			),
+			noticeTitle:
+				domains.length > 1
+					? translate( 'It may take up to 30 minutes for your domains to start working properly.' )
+					: translate( 'It may take up to 30 minutes for your domain to start working properly.' ),
 			noticeIconCustom: <Icon icon={ info } size={ 24 } />,
 		},
 		sections: [
@@ -140,15 +145,15 @@ const domainRegistrationThankYouProps = ( {
 			height: 'auto',
 		},
 		thankYouTitle: translate( 'All ready to go!' ),
-		thankYouSubtitle: translate(
-			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',
-			{
-				args: {
-					domain,
-				},
-				components: { strong: <strong /> },
-			}
-		),
+		thankYouSubtitle:
+			domains.length > 1
+				? translate( 'Your new domains are being set up.' )
+				: translate( 'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.', {
+						args: {
+							domain,
+						},
+						components: { strong: <strong /> },
+				  } ),
 	};
 	return returnProps;
 };

@@ -15,7 +15,8 @@ export type AtomicVariation =
 	| 'wp-beta'
 	| 'wp-previous'
 	| 'private'
-	| 'ecomm-plan';
+	| 'ecomm-plan'
+	| 'mixed';
 
 export interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;
