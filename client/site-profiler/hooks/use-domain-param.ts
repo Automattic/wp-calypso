@@ -15,19 +15,20 @@ export default function useDomainParam( value = '' ) {
 	const [ readyForDataFetch, setReadyForDataFetch ] = useState( false );
 
 	useEffect( () => {
+		const isSpecialDomainValue = isSpecialDomain( value );
+		const validateDomainValue = validateDomain( value );
 		// check if domain is special before preparing domain value
-		setIsSpecial( isSpecialDomain( value ) );
-		setIsValid( validateDomain( value ) );
-		setReadyForDataFetch( ! isSpecial && !! domain && !! isValid );
-	}, [ value, isSpecial, isValid, domain ] );
+		setIsSpecial( isSpecialDomainValue );
+		setIsValid( validateDomainValue );
 
-	useEffect( () => {
-		if ( value && ! isSpecial && ! isValid ) {
+		if ( value && ! isSpecialDomainValue && ! validateDomainValue ) {
 			return;
 		}
+
 		const preparedDomain = prepareDomain( value, isSpecial );
 		setCategory( getDomainCategory( preparedDomain ) );
 		setDomain( preparedDomain );
+		setReadyForDataFetch( ! isSpecial && !! domain && !! isValid );
 	}, [ value, isSpecial, isValid ] );
 
 	return { domain, isValid, isSpecial, category, readyForDataFetch };
