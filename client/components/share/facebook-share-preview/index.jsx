@@ -26,8 +26,8 @@ export class FacebookSharePreview extends PureComponent {
 			externalProfilePicture,
 			imageUrl,
 			message,
+			media,
 			seoTitle,
-			customImage,
 			hidePostPreview,
 		} = this.props;
 
@@ -46,7 +46,7 @@ export class FacebookSharePreview extends PureComponent {
 				description={ decodeEntities( originalExcerpt || articleContent ) }
 				image={ imageUrl }
 				customText={ decodeEntities( message || originalExcerpt || articleContent || seoTitle ) }
-				customImage={ customImage }
+				media={ media }
 				user={ { displayName: externalDisplay, avatarUrl: externalProfilePicture } }
 				type={ TYPE_ARTICLE }
 				hidePostPreview={ hidePostPreview }
