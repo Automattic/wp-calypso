@@ -23,7 +23,6 @@ import {
 	isBusinessPlan,
 	isEcommercePlan,
 	TYPE_HOSTING_TRIAL,
-	TYPE_P2_FREE,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
@@ -92,7 +91,7 @@ export type GridPlan = {
 		storageOptions: StorageOption[];
 		conditionalFeatures?: FeatureObject[];
 	};
-	tagline: string;
+	tagline: TranslateResult;
 	availableForPurchase: boolean;
 	productNameShort?: string | null;
 	planTitle: TranslateResult;
@@ -188,7 +187,6 @@ const usePlanTypesWithIntent = ( {
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 		TYPE_WOOEXPRESS_SMALL,
 		TYPE_WOOEXPRESS_MEDIUM,
-		TYPE_P2_FREE,
 		TYPE_P2_PLUS,
 	];
 
@@ -230,7 +228,7 @@ const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-p2':
-			planTypes = [ TYPE_P2_FREE, TYPE_P2_PLUS ];
+			planTypes = [ TYPE_FREE, TYPE_P2_PLUS ];
 			break;
 		case 'plans-default-wpcom':
 			planTypes = [
@@ -288,6 +286,7 @@ const useGridPlans = ( {
 			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
+		intent,
 	} );
 	const planSlugsForIntent = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -299,6 +298,7 @@ const useGridPlans = ( {
 			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
+		intent,
 	} );
 	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs: availablePlanSlugs } );
 
@@ -329,7 +329,7 @@ const useGridPlans = ( {
 		const isMonthlyPlan = isMonthly( planSlug );
 		const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
 
-		let tagline = '';
+		let tagline: TranslateResult = '';
 		if ( 'plans-newsletter' === intent ) {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
 		} else if ( 'plans-link-in-bio' === intent ) {

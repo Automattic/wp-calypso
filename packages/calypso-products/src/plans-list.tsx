@@ -215,7 +215,6 @@ import {
 	TYPE_ECOMMERCE,
 	TYPE_ENTERPRISE_GRID_WPCOM,
 	TYPE_FREE,
-	TYPE_P2_FREE,
 	TYPE_P2_PLUS,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -443,6 +442,7 @@ import {
 	FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 	TYPE_HOSTING_TRIAL,
+	GROUP_P2,
 } from './constants';
 import type {
 	BillingTerm,
@@ -3434,7 +3434,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_P2_PLUS ]: {
 		...getDotcomPlanDetails(),
-		group: GROUP_WPCOM,
+		group: GROUP_P2,
 		type: TYPE_P2_PLUS,
 		getTitle: () => i18n.translate( 'P2+' ),
 		getDescription: () => '',
@@ -3497,7 +3497,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 PLANS_LIST[ PLAN_P2_FREE ] = {
 	...PLANS_LIST[ PLAN_FREE ],
-	type: TYPE_P2_FREE,
+	group: GROUP_P2,
+	getStoreSlug: () => PLAN_P2_FREE,
 	getPlanTagline: () =>
 		i18n.translate(
 			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',

@@ -35,13 +35,10 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	// We want the yearly-variant plan's price to be the raw price the user
 	// would pay if they choose an annual plan instead of the monthly one. So pro-rated
 	// (or other) credits should not apply.
-	const yearlyVariantPlanSlug =
-		getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY ) ?? ( '' as PlanSlug );
+	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
-	// TODO: It looks like yearlyVariantPlanSlug should never be an empty string, but for p2 plus plans it is.
-	// ( p2 plus has no yearly variant ). We need to address this before code review.
 	const yearlyVariantPricing =
-		yearlyVariantPlanSlug !== '' &&
+		yearlyVariantPlanSlug &&
 		helpers?.usePricingMetaForGridPlans( {
 			planSlugs: [ yearlyVariantPlanSlug ],
 			withoutProRatedCredits: true,

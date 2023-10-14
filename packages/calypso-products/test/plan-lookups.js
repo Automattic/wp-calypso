@@ -80,6 +80,7 @@ import {
 	TYPE_100_YEAR,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	TYPE_HOSTING_TRIAL,
+	GROUP_P2,
 } from '../src/constants';
 import {
 	getPlan,
@@ -1193,8 +1194,6 @@ describe( 'findPlansKeys', () => {
 			PLAN_WOOEXPRESS_PLUS,
 			PLAN_ENTERPRISE_GRID_WPCOM,
 			PLAN_ECOMMERCE_3_YEARS,
-			PLAN_P2_PLUS,
-			PLAN_P2_FREE,
 			PLAN_WPCOM_STARTER,
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
@@ -1228,6 +1227,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_STARTER_MONTHLY,
 			PLAN_JETPACK_GOLDEN_TOKEN,
 		] );
+		expect( findPlansKeys( { group: GROUP_P2 } ) ).toEqual( [ PLAN_P2_PLUS, PLAN_P2_FREE ] );
 	} );
 	test( 'all matching plans keys - by group and type', () => {
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BLOGGER } ) ).toEqual( [
