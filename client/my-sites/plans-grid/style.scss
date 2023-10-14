@@ -109,6 +109,15 @@ $mobile-card-max-width: 440px;
 				}
 			}
 
+			&.is-p2-plus-plan {
+				background-color: var(--color-accent);
+				color: var(--color-text-inverted);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-accent);
+				}
+			}
+
 			&.is-current-plan {
 				background-color: var(--studio-white);
 				color: var(--studio-gray-100);
