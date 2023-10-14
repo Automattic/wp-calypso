@@ -64,7 +64,7 @@ export interface WPComPlan extends Plan {
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
-	getPlanTagline?: () => string;
+	getPlanTagline?: () => TranslateResult;
 	getNewsletterTagLine?: () => string;
 	getLinkInBioTagLine?: () => string;
 	getBlogOnboardingTagLine?: () => string;

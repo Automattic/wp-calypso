@@ -3437,7 +3437,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		group: GROUP_WPCOM,
 		type: TYPE_P2_PLUS,
 		getTitle: () => i18n.translate( 'P2+' ),
-		getDescription: () =>
+		getDescription: () => '',
+		getPlanTagline: () =>
 			i18n.translate(
 				'{{strong}}Best for professionals:{{/strong}} Enhance your P2 with more space for audio and video, advanced search, an activity overview panel, and priority customer support.',
 				plansDescriptionHeadingComponent
@@ -3497,12 +3498,11 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 PLANS_LIST[ PLAN_P2_FREE ] = {
 	...PLANS_LIST[ PLAN_FREE ],
 	type: TYPE_P2_FREE,
-	getDescription: () =>
+	getPlanTagline: () =>
 		i18n.translate(
 			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
 			plansDescriptionHeadingComponent
 		),
-	getPlanTagline: () => '',
 	getTitle: () => i18n.translate( 'P2 Free' ),
 	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_P2_3GB_STORAGE,
