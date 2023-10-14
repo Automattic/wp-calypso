@@ -25,6 +25,7 @@ import {
 	TYPE_HOSTING_TRIAL,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
+import { isCurrentPlan } from './is-current-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
 import type { AddOnMeta, PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
@@ -328,6 +329,7 @@ const useGridPlans = ( {
 		const planObject = pricedAPIPlans[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
 		const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
+		const current = sitePlanSlug ? isCurrentPlan( sitePlanSlug, planSlug ) : false;
 
 		let tagline: TranslateResult = '';
 		if ( 'plans-newsletter' === intent ) {
@@ -364,7 +366,7 @@ const useGridPlans = ( {
 			productNameShort,
 			planTitle: planConstantObj.getTitle?.() ?? '',
 			billingTimeframe: planConstantObj.getBillingTimeFrame?.(),
-			current: sitePlanSlug === planSlug,
+			current,
 			isMonthlyPlan,
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],

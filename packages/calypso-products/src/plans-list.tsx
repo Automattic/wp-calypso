@@ -3498,7 +3498,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 PLANS_LIST[ PLAN_P2_FREE ] = {
 	...PLANS_LIST[ PLAN_FREE ],
 	group: GROUP_P2,
-	getStoreSlug: () => PLAN_P2_FREE,
 	getPlanTagline: () =>
 		i18n.translate(
 			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
