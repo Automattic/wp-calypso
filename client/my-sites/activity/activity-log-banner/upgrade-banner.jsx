@@ -27,9 +27,9 @@ class UpgradeBanner extends Component {
 						href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }` }
 						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(
-							'With your free plan, you can monitor the 20 most ' +
-								'recent events on your site. Upgrade to a paid plan to ' +
-								'unlock powerful features:'
+							'You currently have access to the 20 most recent events ' +
+								'on your site. Upgrade to Jetpack VaultPress Backup ' +
+								'or Jetpack Security to unlock powerful features:'
 						) }
 						showIcon={ true }
 						list={ [
