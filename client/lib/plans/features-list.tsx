@@ -1733,7 +1733,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
 			i18n.translate(
-				'Commission fee for standard payment features (plus standard processing fee)'
+				'Commission fee for standard payment features (plus standard processing\u00A0fee)'
 			),
 		getConditionalTitle: ( planSlug ) => {
 			if ( ! planSlug ) {
