@@ -1,4 +1,3 @@
-// import { PLAN_P2_FREE, PLAN_P2_PLUS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -9,7 +8,6 @@ import PlansFeaturesMain from '../plans-features-main';
 
 export class P2PlansMain extends Component {
 	render() {
-		// const { selectedFeature, selectedPlan, redirectTo, siteId } = this.props;
 		const { siteId } = this.props;
 
 		return (
@@ -19,19 +17,11 @@ export class P2PlansMain extends Component {
 				<QuerySitePlans siteId={ siteId } />
 				<PlansFeaturesMain
 					siteId={ siteId }
-					// hideFreePlan={ hideFreePlan }
 					intervalType={ [ 'monthly' ] }
-					// onUpgradeClick={ onSelectPlan }
-					// paidDomainName={ getPaidDomainName() }
-					// customerType={ customerType }
-					// flowName={ flowName }
-					// isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ true }
 					hidePlanTypeSelector={ true }
 					intent="plans-p2"
 					isInSignup={ false }
-					// removePaidDomain={ removePaidDomain }
-					// setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 				/>
 			</>
 		);

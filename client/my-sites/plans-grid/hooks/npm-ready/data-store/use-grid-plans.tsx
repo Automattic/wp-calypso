@@ -230,7 +230,6 @@ const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-p2':
-			// TODO: Handle P2_FREE
 			planTypes = [ TYPE_P2_FREE, TYPE_P2_PLUS ];
 			break;
 		case 'plans-default-wpcom':
