@@ -138,6 +138,13 @@ class RegisterDomainStep extends Component {
 		otherManagedSubdomainsCountOverride: PropTypes.number,
 		handleClickUseYourDomain: PropTypes.func,
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+
+		/**
+		 * Force the loading spinner to show even if the search request has been completed.
+		 * Although it is a general functionality, but it's only needed by the hiding free subdomain test for now.
+		 * It will be removed if there is still no need of it once the test concludes.
+		 */
+		forceLoadingSpinner: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -156,6 +163,7 @@ class RegisterDomainStep extends Component {
 		showSkipButton: false,
 		useProvidedProductsList: false,
 		otherManagedSubdomains: null,
+		forceLoadingSpinner: false,
 	};
 
 	constructor( props ) {
@@ -1455,7 +1463,7 @@ class RegisterDomainStep extends Component {
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }
-				isLoadingSuggestions={ this.state.loadingResults }
+				isLoadingSuggestions={ this.state.loadingResults || this.props.forceLoadingSpinner }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerUnavailableOption={ this.props.offerUnavailableOption }
