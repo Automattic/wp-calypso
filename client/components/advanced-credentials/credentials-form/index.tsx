@@ -1,6 +1,7 @@
 import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, FormEventHandler } from 'react';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -101,6 +102,13 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			case 'kpri':
 				setFormInteractions( { ...interactions, kpri: true } );
 				onFormStateChange( { ...formState, kpri: currentTarget.value } );
+				break;
+			case 'save_for_later':
+				setFormInteractions( { ...interactions, save_for_later: true } );
+				onFormStateChange( {
+					...formState,
+					save_for_later: ( currentTarget as HTMLInputElement ).checked,
+				} );
 				break;
 		}
 	};
@@ -537,6 +545,20 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 
 			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
 
+			{ isAlternate && (
+				<FormFieldset className="credentials-form__save-for-later">
+					<FormLabel htmlFor="save-for-later">
+						<FormInputCheckbox
+							checked={ formState.save_for_later }
+							id="save-for-later"
+							name="save_for_later"
+							onChange={ handleFormChange }
+							value="true"
+						/>
+						<span>{ translate( 'Save for later' ) }</span>
+					</FormLabel>
+				</FormFieldset>
+			) }
 			<FormFieldset className="credentials-form__buttons">
 				<div className="credentials-form__buttons-flex">{ children }</div>
 			</FormFieldset>
