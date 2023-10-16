@@ -153,7 +153,7 @@ class DomainProductPrice extends Component {
 						components: { small: <small /> },
 					} ) }
 				</div>
-				<div className="domain-product-price__renewal-price">
+				<div className="domain-product-price__regular-price">
 					{ translate( '%(cost)s {{small}}/year{{/small}}', {
 						args: { cost: price },
 						components: { small: <small /> },
