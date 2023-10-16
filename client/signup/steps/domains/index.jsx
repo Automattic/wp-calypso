@@ -946,7 +946,7 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<ProvideExperimentData
-				name="calypso_domains_hide_free_subdomain_onboarding_pm"
+				name="calypso_gf_signup_onboardingpm_domains_hide_free_subdomain"
 				options={ { isEligible: this.props.flowName === 'onboarding-pm' } }
 			>
 				{ ( isLoadingExperiment, experimentAssignment ) => (
@@ -1002,7 +1002,7 @@ export class RenderDomainsStep extends Component {
 								: undefined
 						}
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-						pauseAndSaveSearch={ isLoadingExperiment }
+						forceLoadingPlaceholder={ isLoadingExperiment }
 					/>
 				) }
 			</ProvideExperimentData>

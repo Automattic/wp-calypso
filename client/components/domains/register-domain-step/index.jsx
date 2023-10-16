@@ -140,11 +140,11 @@ class RegisterDomainStep extends Component {
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 
 		/**
-		 * Force the loading spinner to show even if the search request has been completed.
+		 * Force the loading placeholder to show even if the search request has been completed.
 		 * Although it is a general functionality, but it's only needed by the hiding free subdomain test for now.
 		 * It will be removed if there is still no need of it once the test concludes.
 		 */
-		forceLoadingSpinner: PropTypes.bool,
+		forceLoadingPlaceholder: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -163,7 +163,7 @@ class RegisterDomainStep extends Component {
 		showSkipButton: false,
 		useProvidedProductsList: false,
 		otherManagedSubdomains: null,
-		forceLoadingSpinner: false,
+		forceLoadingPlaceholder: false,
 	};
 
 	constructor( props ) {
@@ -279,7 +279,11 @@ class RegisterDomainStep extends Component {
 		// same should also be ported to the dotblog subdomain flag. However, this code is likely
 		// temporary specific for the hiding free subdomain test, so it's not practical to implement
 		// the complete version for now.
-		if ( ! nextProps.includeWordPressDotCom && this.props.includeWordPressDotCom ) {
+		if (
+			! nextProps.includeWordPressDotCom &&
+			this.props.includeWordPressDotCom &&
+			this.state.subdomainSearchResults
+		) {
 			this.setState( {
 				subdomainSearchResults: this.state.subdomainSearchResults.filter(
 					( subdomain ) => ! isFreeWordPressComDomain( subdomain )
@@ -1463,7 +1467,7 @@ class RegisterDomainStep extends Component {
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }
-				isLoadingSuggestions={ this.state.loadingResults || this.props.forceLoadingSpinner }
+				isLoadingSuggestions={ this.state.loadingResults || this.props.forceLoadingPlaceholder }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerUnavailableOption={ this.props.offerUnavailableOption }
