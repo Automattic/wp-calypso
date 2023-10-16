@@ -6,6 +6,7 @@ import { useTranslate, localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 
@@ -22,7 +23,7 @@ const ToggleLabel = styled.p( {
 	fontSize: '14px',
 } );
 
-export const SiteWpAdminCard = ( { siteId } ) => {
+export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 	const translate = useTranslate();
 
 	const toggleSiteInterfaceMutation = useSiteInterfaceMutation( siteId );
@@ -57,8 +58,7 @@ export const SiteWpAdminCard = ( { siteId } ) => {
 					/>
 					{ wpAdminEnabled && (
 						<div>
-							{ /* Display content when the toggle is checked */ }
-							<p>This is displayed when the toggle is checked.</p>
+							<p>The interface is currently set to: { adminInterface }</p>
 						</div>
 					) }
 				</ToggleContainer>
@@ -69,6 +69,7 @@ export const SiteWpAdminCard = ( { siteId } ) => {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
 
-	return { siteId };
+	return { siteId, adminInterface };
 } )( localize( SiteWpAdminCard ) );
