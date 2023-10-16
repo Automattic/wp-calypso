@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -23,6 +22,7 @@ import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import NotAuthorized from '../../../components/not-authorized';
 import ConfirmModal from './confirm-modal';
 import { Credentials } from './credentials';
+import { CredentialsCta } from './credentials-cta';
 import { StartImportTrackingProps } from './types';
 
 import './style.scss';
@@ -182,27 +182,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 	}, [ continueImport, sourceSiteId, startImport, requiresPluginUpdate ] );
 
-	const CredentialsFormCTA = function () {
-		return (
-			<div className="pre-migration__content pre-migration__credentials">
-				{ translate(
-					'Want to speed up the migration? {{button}}Provide the server credentials{{/button}} of your site',
-					{
-						components: {
-							button: (
-								<Button
-									borderless={ true }
-									className="action-buttons__borderless"
-									onClick={ toggleCredentialsForm }
-								/>
-							),
-						},
-					}
-				) }
-			</div>
-		);
-	};
-
 	function renderPreMigration() {
 		// Show a loading state when we are trying to fetch existing credentials
 		if ( ! hasLoaded || isRequestingCredentials ) {
@@ -236,7 +215,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					<div className="import__heading-title">
 						<Title>{ translate( 'You are ready to migrate' ) }</Title>
 					</div>
-					{ ! hasCredentials && <CredentialsFormCTA /> }
+					{ ! hasCredentials && <CredentialsCta onButtonClick={ toggleCredentialsForm } /> }
 					{ ! showCredentials && (
 						<div className="import__footer-button-container pre-migration__proceed">
 							<NextButton
