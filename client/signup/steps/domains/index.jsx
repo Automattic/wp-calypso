@@ -594,13 +594,15 @@ export class RenderDomainsStep extends Component {
 			this.setState( { isCartPendingUpdateDomain: null } );
 		} );
 
-		// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-		const sortedProducts = await this.sortProductsByPriceDescending();
+		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
+			const sortedProducts = await this.sortProductsByPriceDescending();
 
-		// Replace the products in the cart with the freshly sorted products.
-		await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts ).then( () => {
-			this.setState( { isCartPendingUpdateDomain: null } );
-		} );
+			// Replace the products in the cart with the freshly sorted products.
+			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts ).then( () => {
+				this.setState( { isCartPendingUpdateDomain: null } );
+			} );
+		}
 	}
 
 	async sortProductsByPriceDescending() {
