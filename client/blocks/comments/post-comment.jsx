@@ -21,6 +21,7 @@ import { expandComments } from 'calypso/state/comments/actions';
 import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { triggeredLoggedInAction } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
@@ -101,42 +102,33 @@ class PostComment extends PureComponent {
 	state = {
 		showReplies: false,
 		showFull: false,
-		showJoinConversationModal: false,
 	};
 
 	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	};
 
-	hideJoinConversationModal = () => {
-		this.setState( { showJoinConversationModal: false } );
-	};
-
-	showJoinConversationModal = () => {
-		this.setState( { showJoinConversationModal: true } );
-	};
-
 	onLoggedOut = () => {
-		if ( config.isEnabled( 'reader/login-window' ) ) {
-			return this.showJoinConversationModal();
+		this.props.triggeredLoggedInAction( 'like' );
+		if ( ! config.isEnabled( 'reader/login-window' ) ) {
+			// Redirect to create account page
+			const { pathname } = getUrlParts( window.location.href );
+			if ( isReaderTagEmbedPage( window.location ) ) {
+				return window.open(
+					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
+					'_blank'
+				);
+			}
+			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
-		// Redirect to create account page
-		const { pathname } = getUrlParts( window.location.href );
-		if ( isReaderTagEmbedPage( window.location ) ) {
-			return window.open(
-				createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
-				'_blank'
-			);
-		}
-		return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 	};
 
 	handleReply = () => {
-		if ( ! this.props.isLoggedIn ) {
-			return this.onLoggedOut();
+		this.props.triggeredLoggedInAction( 'reply' );
+		if ( this.props.isLoggedIn ) {
+			this.props.onReplyClick( this.props.commentId );
+			this.setState( { showReplies: true } ); // show the comments when replying
 		}
-		this.props.onReplyClick( this.props.commentId );
-		this.setState( { showReplies: true } ); // show the comments when replying
 	};
 
 	handleAuthorClick = ( event ) => {
@@ -513,7 +505,7 @@ const ConnectedPostComment = connect(
 		currentUser: getCurrentUser( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ expandComments, recordReaderTracksEvent }
+	{ expandComments, recordReaderTracksEvent, triggeredLoggedInAction }
 )( withDimensions( PostComment ) );
 
 export default ConnectedPostComment;

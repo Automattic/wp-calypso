@@ -4,7 +4,6 @@ import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
-import { useShowJoinConversationDialog } from 'calypso/client/layout/logged-out';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
@@ -15,9 +14,8 @@ import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-co
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-
-import './style.scss';
 import { triggeredLoggedInAction } from 'calypso/state/reader-ui/actions';
+import './style.scss';
 
 class ReaderLikeButton extends Component {
 	state = {
@@ -32,6 +30,7 @@ class ReaderLikeButton extends Component {
 	}
 
 	onLoggedOut = () => {
+		this.props.triggeredLoggedInAction( 'like' );
 		if ( ! config.isEnabled( 'reader/login-window' ) ) {
 			// Redirect to create account page
 			const { pathname } = getUrlParts( window.location.href );

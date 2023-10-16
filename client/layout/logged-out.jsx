@@ -33,6 +33,7 @@ import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
 } from 'calypso/state/oauth2-clients/ui/selectors';
+import { cancelledLoggedInAction } from 'calypso/state/reader-ui/actions';
 import { getLoggedInAction } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
@@ -67,6 +68,8 @@ const LayoutLoggedOut = ( {
 	isPartnerSignupStart,
 	isWooCoreProfilerFlow,
 	locale,
+	/* eslint-disable no-shadow */
+	cancelledLoggedInAction,
 } ) => {
 	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -188,8 +191,6 @@ const LayoutLoggedOut = ( {
 
 	const bodyClass = [ 'font-smoothing-antialiased' ];
 
-	console.log( 'loggedInAction', loggedInAction );
-
 	return (
 		<div className={ classNames( 'layout', classes ) }>
 			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
@@ -245,8 +246,8 @@ const LayoutLoggedOut = ( {
 
 			{ ! isLoggedIn && config.isEnabled( 'reader/login-window' ) && (
 				<ReaderJoinConversationDialog
-					onClose={ () => console.log( 'close' ) }
-					isVisible={ loggedInAction?.name }
+					onClose={ () => cancelledLoggedInAction() }
+					isVisible={ !! loggedInAction?.length }
 				/>
 			) }
 		</div>
@@ -266,7 +267,8 @@ LayoutLoggedOut.propTypes = {
 };
 
 export default withCurrentRoute(
-	connect( ( state, { currentSection, currentRoute, currentQuery } ) => {
+	connect(
+	( state, { currentSection, currentRoute, currentQuery } ) => {
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 		const sectionTitle = currentSection?.title ?? '';
@@ -305,27 +307,28 @@ export default withCurrentRoute(
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
-
-		return {
-			isJetpackLogin,
-			isWhiteLogin,
-			isPopup,
-			isJetpackWooCommerceFlow,
-			isJetpackWooDnaFlow,
-			isP2Login,
-			isGravatar,
-			isWPJobManager,
-			isGravPoweredClient,
-			wccomFrom,
-			masterbarIsHidden,
-			sectionGroup,
-			sectionName,
-			sectionTitle,
-			oauth2Client,
-			useOAuth2Layout: showOAuth2Layout( state ),
-			isPartnerSignup,
-			isPartnerSignupStart,
-			isWooCoreProfilerFlow,
-		};
-	} )( localize( LayoutLoggedOut ) )
+			return {
+				isJetpackLogin,
+				isWhiteLogin,
+				isPopup,
+				isJetpackWooCommerceFlow,
+				isJetpackWooDnaFlow,
+				isP2Login,
+				isGravatar,
+				isWPJobManager,
+				isGravPoweredClient,
+				wccomFrom,
+				masterbarIsHidden,
+				sectionGroup,
+				sectionName,
+				sectionTitle,
+				oauth2Client,
+				useOAuth2Layout: showOAuth2Layout( state ),
+				isPartnerSignup,
+				isPartnerSignupStart,
+				isWooCoreProfilerFlow,
+			};
+		},
+		{ cancelledLoggedInAction }
+	)( localize( LayoutLoggedOut ) )
 );

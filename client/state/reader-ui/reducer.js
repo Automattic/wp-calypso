@@ -1,6 +1,7 @@
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	READER_TRIGGERED_LOGGED_IN_ACTION,
+	READER_CANCELLED_LOGGED_IN_ACTION,
 	READER_VIEW_STREAM,
 } from 'calypso/state/reader-ui/action-types';
 import { combineReducers, withPersistence } from 'calypso/state/utils';
@@ -45,6 +46,8 @@ export const loggedInAction = ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_TRIGGERED_LOGGED_IN_ACTION:
 			return action.name;
+		case READER_CANCELLED_LOGGED_IN_ACTION:
+			return '';
 		default:
 			return state;
 	}
