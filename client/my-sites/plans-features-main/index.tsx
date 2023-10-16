@@ -239,7 +239,7 @@ const PlansFeaturesMain = ( {
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
-	const resolveModal = useModalResolutionCallback( { paidDomainName } );
+	const resolveModal = useModalResolutionCallback( { paidDomainName, flowName } );
 
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
