@@ -83,14 +83,20 @@ export class TypeSelector extends Component {
 	};
 
 	handleClose = () => {
-		const { onClose, selectType } = this.props;
+		const { onClose } = this.props;
 
-		selectType( this.getSelectedCheckboxes() );
 		this.setState( {
 			userHasSelected: false,
 			selectedCheckboxes: [],
 		} );
 		onClose();
+	};
+
+	handleApplyFilters = () => {
+		const { selectType } = this.props;
+		const selectedCheckboxes = this.getSelectedCheckboxes();
+		selectType( selectedCheckboxes );
+		this.handleClose();
 	};
 
 	humanReadable = ( count ) => {
@@ -164,7 +170,7 @@ export class TypeSelector extends Component {
 								primary
 								compact
 								disabled={ ! this.state.userHasSelected }
-								onClick={ this.handleClose }
+								onClick={ this.handleApplyFilters }
 							>
 								{ translate( 'Apply' ) }
 							</Button>
@@ -190,15 +196,6 @@ export class TypeSelector extends Component {
 
 	isSelected = ( key ) => this.getSelectedCheckboxes().includes( key );
 
-	handleButtonClick = () => {
-		const { isVisible, onButtonClick } = this.props;
-
-		if ( isVisible ) {
-			this.handleClose();
-		}
-		onButtonClick();
-	};
-
 	render() {
 		const { title, isVisible, isNested } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
@@ -215,7 +212,7 @@ export class TypeSelector extends Component {
 					className={ buttonClass }
 					compact
 					borderless
-					onClick={ this.handleButtonClick }
+					onClick={ this.props.onButtonClick }
 					ref={ this.typeButton }
 				>
 					{ ( ! isNested || ( isNested && ! hasSelectedCheckboxes ) ) && title }

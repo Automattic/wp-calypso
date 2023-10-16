@@ -42,6 +42,9 @@ describe( '<SitesOverview>', () => {
 		currentUser: {
 			capabilities: {},
 		},
+		productsList: {
+			isFetching: false,
+		},
 	};
 	const middlewares = [ thunk ];
 
@@ -71,7 +74,7 @@ describe( '<SitesOverview>', () => {
 	const setData = (): void => {
 		const data = {
 			sites: [],
-			total: 1,
+			total: 0,
 			perPage: 1,
 			totalFavorites: 1,
 		};
