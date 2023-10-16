@@ -1,4 +1,6 @@
+import { RangeControl } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
+import { search } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
@@ -16,6 +18,7 @@ interface Props {
 	isShowFrameShadow?: boolean;
 	isFixedViewport?: boolean;
 	isFullscreen?: boolean;
+	isZoomable?: boolean;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
 	onViewportChange?: ( height?: number ) => void;
@@ -33,6 +36,7 @@ const DeviceSwitcher = ( {
 	isShowFrameShadow = true,
 	isFixedViewport,
 	isFullscreen,
+	isZoomable,
 	frameRef,
 	onDeviceChange,
 	onViewportChange,
@@ -43,6 +47,7 @@ const DeviceSwitcher = ( {
 	const viewportElement = frameRef?.current?.parentElement;
 	const viewportWidth = viewportElement?.clientWidth as number;
 	const viewportScale = useViewportScale( device, viewportWidth );
+	const [ scale, setScale ] = useState( 1 );
 
 	const handleDeviceClick = ( nextDevice: Device ) => {
 		setDevice( nextDevice );
@@ -84,9 +89,22 @@ const DeviceSwitcher = ( {
 				'device-switcher__container--is-fullscreen': isFullscreen,
 			} ) }
 		>
-			{ isShowDeviceSwitcherToolbar && (
-				<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
-			) }
+			<div className="device-switcher__header">
+				{ isShowDeviceSwitcherToolbar && (
+					<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
+				) }
+				{ isZoomable && (
+					<RangeControl
+						className="device-switcher__zoom"
+						beforeIcon={ search }
+						withInputField={ false }
+						value={ scale }
+						onChange={ ( value ) => value !== undefined && setScale( value ) }
+						min={ 0 }
+						max={ 100 }
+					/>
+				) }
+			</div>
 			{ isFixedViewport ? (
 				<FixedViewport device={ device } frameRef={ frameRef }>
 					{ frame }

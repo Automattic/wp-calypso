@@ -43,7 +43,7 @@ const PatternLargePreview = ( {
 	isNewSite,
 }: Props ) => {
 	const translate = useTranslate();
-	const hasSelectedPattern = header || sections.length || footer;
+	const hasSelectedPattern = Boolean( header || sections.length || footer );
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
@@ -154,6 +154,7 @@ const PatternLargePreview = ( {
 			isShowFrameBorder
 			isShowFrameShadow={ false }
 			isFixedViewport={ !! hasSelectedPattern }
+			isZoomable
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
