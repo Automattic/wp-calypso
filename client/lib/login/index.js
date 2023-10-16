@@ -82,10 +82,9 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		signupUrl = '/jetpack/connect';
 	} else if ( signupFlow ) {
 		signupUrl += '/' + signupFlow;
-	} else if (
-		isAkismetOAuth2Client( oauth2Client ) ||
-		isIntenseDebateOAuth2Client( oauth2Client )
-	) {
+	}
+
+	if ( isAkismetOAuth2Client( oauth2Client ) || isIntenseDebateOAuth2Client( oauth2Client ) ) {
 		const oauth2Flow = 'wpcc';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
