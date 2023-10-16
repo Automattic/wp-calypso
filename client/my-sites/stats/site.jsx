@@ -166,6 +166,14 @@ class StatsSite extends Component {
 		}
 	}
 
+	getValidDateOrNullFromInput( inputDate ) {
+		if ( inputDate === undefined ) {
+			return null;
+		}
+		const isValid = moment( inputDate ).isValid();
+		return isValid ? inputDate : null;
+	}
+
 	renderStats() {
 		const {
 			date,
@@ -198,22 +206,18 @@ class StatsSite extends Component {
 		let customChartRange = null;
 		if ( isDateControlEnabled ) {
 			// Sort out end date for chart.
-			const chartEnd = context.query?.chartEnd;
-			const chartEndMoment = moment( chartEnd );
-			const isValidEndDate = chartEndMoment.isValid();
-			if ( chartEnd && isValidEndDate ) {
+			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+			if ( chartEnd ) {
 				customChartRange = { chartEnd };
 			} else {
 				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 			}
 			// Sort out quantity for chart.
 			// ToDo: Update to take period into account.
-			const chartStart = context.query?.chartStart;
-			const chartStartMoment = moment( chartStart );
-			const isValidStartDate = chartStartMoment.isValid();
-			const isSameOrBefore = chartStartMoment.isSameOrBefore( chartEndMoment );
-			if ( isValidStartDate && isSameOrBefore ) {
-				const diff = chartEndMoment.diff( chartStartMoment, 'days' );
+			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
+			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+			if ( chartStart && isSameOrBefore ) {
+				const diff = moment( chartEnd ).diff( moment( chartStart ), 'days' );
 				// Make sure quantity includes start date.
 				this.state.customChartQuantity = diff + 1;
 			} else {
