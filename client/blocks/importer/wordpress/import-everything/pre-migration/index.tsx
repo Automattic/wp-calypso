@@ -125,7 +125,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		dispatch(
 			recordTracksEvent( 'calypso_site_migration_confirm_modal_display', migrationTrackingProps )
 		);
-
 		setShowConfirmModal( true );
 	}
 
@@ -133,7 +132,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		dispatch(
 			recordTracksEvent( 'calypso_site_migration_confirm_modal_hide', migrationTrackingProps )
 		);
-
 		setShowConfirmModal( false );
 	}
 
