@@ -1,10 +1,8 @@
 import {
-	PLAN_ANNUAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
-	calculateMonthlyPrice,
 	type PlanSlug,
-	calculateYearlyPrice,
-	TERM_ANNUALLY,
+	getTermFromDuration,
+	calculateMonthlyPrice,
 } from '@automattic/calypso-products';
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
@@ -109,7 +107,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 						returnMonthly: true,
 						returnSmallestUnit: true,
 					} );
-					let yearlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+					let fullPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 						returnMonthly: false,
 						returnSmallestUnit: true,
 					} );
@@ -119,14 +117,14 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					 */
 					if ( purchasedPlan ) {
 						const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
-						const isYearly = purchasedPlan.billPeriodDays === PLAN_ANNUAL_PERIOD;
 
 						if ( isMonthly && monthlyPrice !== purchasedPlan.priceInteger ) {
 							monthlyPrice = purchasedPlan.priceInteger;
-							yearlyPrice = calculateYearlyPrice( TERM_ANNUALLY, purchasedPlan.priceInteger );
-						} else if ( isYearly && yearlyPrice !== purchasedPlan.priceInteger ) {
-							monthlyPrice = calculateMonthlyPrice( TERM_ANNUALLY, purchasedPlan.priceInteger );
-							yearlyPrice = purchasedPlan.priceInteger;
+							fullPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
+						} else if ( fullPrice !== purchasedPlan.priceInteger ) {
+							const term = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
+							monthlyPrice = calculateMonthlyPrice( term, purchasedPlan.priceInteger );
+							fullPrice = purchasedPlan.priceInteger;
 						}
 					}
 
@@ -135,7 +133,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 						[ planSlug ]: {
 							originalPrice: {
 								monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
-								full: yearlyPrice ? yearlyPrice + storageAddOnPriceYearly : null,
+								full: fullPrice ? fullPrice + storageAddOnPriceYearly : null,
 							},
 							discountedPrice: {
 								monthly: null,

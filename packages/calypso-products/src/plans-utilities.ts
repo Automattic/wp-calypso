@@ -35,7 +35,6 @@ export function isBestValue( plan: string ): boolean {
 
 /**
  * Return estimated duration of given PLAN_TERM in days
- *
  * @param {string} term TERM_ constant
  * @returns {number} Term duration
  */
@@ -68,12 +67,45 @@ export function getTermDuration( term: string ): number | undefined {
 	}
 }
 
+/**
+ * Gvien duration in days returnn the PLAN_TERM
+ * @param {number} days Term duration in days
+ * @returns {string} TERM_ constant
+ */
+export function getTermFromDuration( days: number ): string | undefined {
+	switch ( days ) {
+		case PLAN_MONTHLY_PERIOD:
+			return TERM_MONTHLY;
+		case PLAN_ANNUAL_PERIOD:
+			return TERM_ANNUALLY;
+		case PLAN_BIENNIAL_PERIOD:
+			return TERM_BIENNIALLY;
+		case PLAN_TRIENNIAL_PERIOD:
+			return TERM_TRIENNIALLY;
+		case PLAN_QUADRENNIAL_PERIOD:
+			return TERM_QUADRENNIALLY;
+		case PLAN_QUINQUENNIAL_PERIOD:
+			return TERM_QUINQUENNIALLY;
+		case PLAN_SEXENNIAL_PERIOD:
+			return TERM_SEXENNIALLY;
+		case PLAN_SEPTENNIAL_PERIOD:
+			return TERM_SEPTENNIALLY;
+		case PLAN_OCTENNIAL_PERIOD:
+			return TERM_OCTENNIALLY;
+		case PLAN_NOVENNIAL_PERIOD:
+			return TERM_NOVENNIALLY;
+		case PLAN_DECENNIAL_PERIOD:
+			return TERM_DECENNIALLY;
+		case PLAN_CENTENNIAL_PERIOD:
+			return TERM_CENTENNIALLY;
+	}
+}
+
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
 
 /**
  * Given an array of plan Features and an array of Product slugs, it returns which products are
  * included in the plan Features.
- *
  * @param {ReadonlyArray< string >} planFeatures Array of plan Feature slugs
  * @param {ReadonlyArray< string >} products Array of Product slugs
  * @returns {string[]} Array of Product slugs
