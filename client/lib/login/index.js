@@ -131,7 +131,8 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	} else if (
 		isFromMigrationPlugin ||
 		isFromPublicAPIConnectFlow ||
-		( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) )
+		( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) ) ||
+		redirectTo
 	) {
 		const params = new URLSearchParams( {
 			redirect_to: redirectTo,
