@@ -2,9 +2,9 @@ import { Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import useLoginWindow from 'calypso/components/login-window';
-import './style.scss';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import './style.scss';
 
 const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 	const translate = useTranslate();

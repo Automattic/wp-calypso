@@ -4,7 +4,7 @@ import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
-import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
+import { useShowJoinConversationDialog } from 'calypso/client/layout/logged-out';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
@@ -15,12 +15,13 @@ import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-co
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+
 import './style.scss';
+import { triggeredLoggedInAction } from 'calypso/state/reader-ui/actions';
 
 class ReaderLikeButton extends Component {
 	state = {
 		showLikesPopover: false,
-		showJoinConversationModal: false,
 	};
 
 	hidePopoverTimeout = null;
@@ -31,12 +32,11 @@ class ReaderLikeButton extends Component {
 	}
 
 	onLoggedOut = () => {
-		if ( config.isEnabled( 'reader/login-window' ) ) {
-			return this.showJoinConversationModal();
+		if ( ! config.isEnabled( 'reader/login-window' ) ) {
+			// Redirect to create account page
+			const { pathname } = getUrlParts( window.location.href );
+			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
-		// Redirect to create account page
-		const { pathname } = getUrlParts( window.location.href );
-		return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 	};
 
 	recordLikeToggle = ( liked ) => {
@@ -54,14 +54,6 @@ class ReaderLikeButton extends Component {
 		}
 	};
 
-	hideJoinConversationModal = () => {
-		this.setState( { showJoinConversationModal: false } );
-	};
-
-	showJoinConversationModal = () => {
-		this.setState( { showJoinConversationModal: true } );
-	};
-
 	showLikesPopover = () => {
 		clearTimeout( this.hidePopoverTimeout );
 		this.setState( { showLikesPopover: true } );
@@ -75,7 +67,7 @@ class ReaderLikeButton extends Component {
 
 	render() {
 		const { siteId, postId, likeCount, iLike, iconSize } = this.props;
-		const { showLikesPopover, showJoinConversationModal } = this.state;
+		const { showLikesPopover } = this.state;
 		const hasEnoughLikes = ( likeCount > 0 && ! iLike ) || ( likeCount > 1 && iLike );
 
 		const likeIcon = ReaderLikeIcon( {
@@ -107,12 +99,6 @@ class ReaderLikeButton extends Component {
 						context={ this.likeButtonRef.current }
 					/>
 				) }
-				{ config.isEnabled( 'reader/login-window' ) && (
-					<ReaderJoinConversationDialog
-						onClose={ this.hideJoinConversationModal }
-						isVisible={ showJoinConversationModal }
-					/>
-				) }
 			</Fragment>
 		);
 	}
@@ -130,5 +116,5 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 		};
 	},
-	{ markPostSeen }
+	{ markPostSeen, triggeredLoggedInAction }
 )( ReaderLikeButton );
