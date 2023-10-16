@@ -595,7 +595,12 @@ export class RenderDomainsStep extends Component {
 		} );
 
 		// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-		this.sortProductsByPriceDescending();
+		const sortedProducts = await this.sortProductsByPriceDescending();
+
+		// Replace the products in the cart with the freshly sorted products.
+		await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts ).then( () => {
+			this.setState( { isCartPendingUpdateDomain: null } );
+		} );
 	}
 
 	async sortProductsByPriceDescending() {
@@ -623,10 +628,7 @@ export class RenderDomainsStep extends Component {
 			return getSortingValue( b ) - getSortingValue( a );
 		} );
 
-		// Replace the products in the cart with the freshly sorted products.
-		await this.props.shoppingCartManager.replaceProductsInCart( productsInCart ).then( () => {
-			this.setState( { isCartPendingUpdateDomain: null } );
-		} );
+		return productsInCart;
 	}
 
 	removeDomainClickHandler = ( domain ) => {
