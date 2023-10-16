@@ -197,15 +197,29 @@ class StatsSite extends Component {
 		// Dependant on new date range picker controls.
 		let customChartRange = null;
 		if ( isDateControlEnabled ) {
+			// Sort out end date for chart.
 			const chartEnd = context.query?.chartEnd;
-			const isValidEndDate = moment( chartEnd ).isValid();
+			const chartEndMoment = moment( chartEnd );
+			const isValidEndDate = chartEndMoment.isValid();
 			if ( chartEnd && isValidEndDate ) {
 				customChartRange = { chartEnd };
 			} else {
 				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 			}
-			// Quantity should come from URL params too!
-			this.state.customChartQuantity = 7;
+			// Sort out quantity for chart.
+			// ToDo: Update to take period into account.
+			const chartStart = context.query?.chartStart;
+			const chartStartMoment = moment( chartStart );
+			const isValidStartDate = chartStartMoment.isValid();
+			const isBeforeEndDate = chartStartMoment.isBefore( chartEndMoment );
+			if ( isValidStartDate && isBeforeEndDate ) {
+				const diff = chartEndMoment.diff( chartStartMoment, 'days' );
+				// Make sure quantity includes start date.
+				this.state.customChartQuantity = diff + 1;
+			} else {
+				// If we have a goofy start date, ignore it.
+				this.state.customChartQuantity = 7;
+			}
 		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
