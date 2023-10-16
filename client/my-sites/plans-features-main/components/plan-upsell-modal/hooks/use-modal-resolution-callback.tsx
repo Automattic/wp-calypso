@@ -9,7 +9,7 @@ import {
 } from '..';
 type Props = {
 	paidDomainName?: string | null;
-	flowName?: string;
+	flowName?: string | null;
 };
 
 type ModalType =
@@ -21,13 +21,10 @@ type ModalType =
 /**
  * Provides a callback that resolves a ModalType based on a set of predefined parameters
  */
-export function useModalResolutionCallback( {
-	paidDomainName,
-	flowName,
-}: Props ): ( currentSelectedPlan?: string ) => ModalType | null {
+export function useModalResolutionCallback( { paidDomainName, flowName }: Props ) {
 	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( flowName );
 	return useCallback(
-		( currentSelectedPlan?: string ): ModalType | null => {
+		( currentSelectedPlan?: string | null ): ModalType | null => {
 			if ( currentSelectedPlan && flowName && isFreePlan( currentSelectedPlan ) ) {
 				if ( ! paidDomainName ) {
 					return FREE_PLAN_FREE_DOMAIN_DIALOG;
