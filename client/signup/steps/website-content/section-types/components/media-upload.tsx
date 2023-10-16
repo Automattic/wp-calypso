@@ -115,7 +115,7 @@ export const MediaUpload = ( { site, page, onChangeField }: Props ) => {
 				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload
 						media={ media }
-						key={ media.uploadID ?? i }
+						key={ `${ i }` }
 						mediaIndex={ i }
 						site={ site }
 						onMediaUploadStart={ onMediaUploadStart }
