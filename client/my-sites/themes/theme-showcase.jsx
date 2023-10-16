@@ -359,8 +359,6 @@ class ThemeShowcase extends Component {
 				title = THEME_COLLECTIONS.partner.title;
 				description = THEME_COLLECTIONS.partner.description;
 				break;
-			default:
-				return '';
 		}
 
 		return (
@@ -372,8 +370,8 @@ class ThemeShowcase extends Component {
 					<Icon icon={ chevronLeft } />
 					{ translate( 'Back' ) }
 				</Button>
-				<h2 className="collection-header__title">{ title }</h2>
-				<div className="collection-header__description">{ description }</div>
+				{ title && <h2 className="collection-header__title">{ title }</h2> }
+				{ description && <div className="collection-header__description">{ description }</div> }
 			</div>
 		);
 	};
