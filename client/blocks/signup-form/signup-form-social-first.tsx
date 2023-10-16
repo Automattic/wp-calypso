@@ -1,8 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
@@ -42,7 +43,9 @@ const SignupFormSocialFirst = ( {
 	notice,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
+	const translate = useTranslate();
 
 	const { isWoo, isGravatar } = useSelector( ( state ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
@@ -56,6 +59,11 @@ const SignupFormSocialFirst = ( {
 
 	const renderContent = () => {
 		if ( currentStep === 'initial' ) {
+			const buttonEmailText =
+				hasTranslation( 'Continue with Email' ) || isEnglishLocale
+					? __( 'Continue with Email' )
+					: __( 'Email' );
+
 			return (
 				<>
 					{ notice }
@@ -73,7 +81,7 @@ const SignupFormSocialFirst = ( {
 							onClick={ () => setCurrentStep( 'email' ) }
 						>
 							<MailIcon width="20" height="20" />
-							<span className="social-buttons__service-name">{ __( 'Continue with Email' ) }</span>
+							<span className="social-buttons__service-name">{ buttonEmailText }</span>
 						</Button>
 					</SocialSignupForm>
 				</>
@@ -86,6 +94,11 @@ const SignupFormSocialFirst = ( {
 				  }
 				: {};
 
+			const labelEmailText =
+				hasTranslation( 'Your email' ) || isEnglishLocale
+					? __( 'Your email' )
+					: __( 'Your email address' );
+
 			return (
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
@@ -95,7 +108,7 @@ const SignupFormSocialFirst = ( {
 						goToNextStep={ goToNextStep }
 						logInUrl={ logInUrl }
 						queryArgs={ queryArgs }
-						labelText={ __( 'Your email' ) }
+						labelText={ labelEmailText }
 						submitButtonLabel={ __( 'Continue' ) }
 						{ ...gravatarProps }
 					/>
@@ -131,24 +144,55 @@ const SignupFormSocialFirst = ( {
 			),
 		};
 
+		const oldTranslationOptions = {
+			components: {
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				privacyLink: (
+					<a
+						href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+						onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		};
+
 		if ( isWoo ) {
 			return (
 				<p className="signup-form-social-first__tos-link">
-					{ createInterpolateElement(
-						__( 'By continuing, you agree to our <tosLink>Terms of Service</tosLink>.' ),
-						options
-					) }
+					{ isEnglishLocale
+						? createInterpolateElement(
+								__( 'By continuing, you agree to our <tosLink>Terms of Service</tosLink>.' ),
+								options
+						  )
+						: translate(
+								'By continuing, you agree to our {{tosLink}}Terms of Service{{/tosLink}}',
+								oldTranslationOptions
+						  ) }
 				</p>
 			);
 		} else if ( isGravatar ) {
 			return (
 				<p className="signup-form-social-first__tos-link">
-					{ createInterpolateElement(
-						__(
-							'By entering your email address, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-						),
-						options
-					) }
+					{ isEnglishLocale
+						? createInterpolateElement(
+								__(
+									'By entering your email address, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+								),
+								options
+						  )
+						: translate(
+								'By entering your email address, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+								oldTranslationOptions
+						  ) }
 				</p>
 			);
 		}
@@ -156,19 +200,38 @@ const SignupFormSocialFirst = ( {
 		let tosText;
 
 		if ( currentStep === 'initial' ) {
-			tosText = createInterpolateElement(
-				__(
+			if (
+				hasTranslation(
 					'If you continue with Google or Apple, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-				),
-				options
-			);
+				) ||
+				isEnglishLocale
+			) {
+				tosText = createInterpolateElement(
+					__(
+						'If you continue with Google or Apple, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+				);
+			} else {
+				tosText = translate(
+					'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+					oldTranslationOptions
+				);
+			}
 		} else if ( currentStep === 'email' ) {
-			tosText = createInterpolateElement(
-				__(
-					'By creating an account you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-				),
-				options
-			);
+			if ( isEnglishLocale ) {
+				tosText = createInterpolateElement(
+					__(
+						'By creating an account you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+				);
+			} else {
+				tosText = translate(
+					'By entering your email address, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+					oldTranslationOptions
+				);
+			}
 		}
 
 		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;

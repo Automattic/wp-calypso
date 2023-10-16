@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { SelectItems } from '@automattic/onboarding';
 import { globe, addCard, layout } from '@wordpress/icons';
@@ -257,7 +256,7 @@ class SiteOrDomain extends Component {
 			{ stepName: 'plans-site-selected', wasSkipped: true },
 			{ cartItems: null }
 		);
-		goToStep( config.isEnabled( 'signup/social-first' ) ? 'user-social' : 'user' );
+		goToStep( 'user' );
 	}
 
 	handleClickChoice = ( designType ) => {

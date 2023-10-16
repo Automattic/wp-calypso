@@ -38,12 +38,6 @@ const props = {
 	},
 };
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = () => 'development';
-	config.isEnabled = ( property ) => property === 'signup/social-first';
-	return config;
-} );
-
 describe( 'siteHasPaidPlan', () => {
 	[
 		PLAN_BLOGGER,
@@ -110,7 +104,7 @@ describe( 'SitePickerSubmit', () => {
 		test( `Goes to step "user" when paid plan is passed (${ plan })`, () => {
 			expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
 			render( <SitePickerSubmit { ...props } selectedSite={ { plan: { product_slug: plan } } } /> );
-			expect( props.goToStep ).toHaveBeenCalledWith( 'user-social' );
+			expect( props.goToStep ).toHaveBeenCalledWith( 'user' );
 		} );
 	} );
 

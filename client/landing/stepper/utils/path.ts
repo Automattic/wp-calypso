@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Plans } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -46,15 +45,11 @@ export function useLangRouteParam() {
 	return match?.params.lang;
 }
 
-const getUserStep = (): string => {
-	return `/start/account/${ isEnabled( 'signup/social-first' ) ? 'user-social' : 'user' }`;
-};
-
 export const getLoginUrl = ( {
 	variationName,
 	redirectTo,
 	pageTitle,
-	loginPath,
+	loginPath = `/start/account/user/`,
 	locale,
 }: {
 	/**
@@ -64,11 +59,8 @@ export const getLoginUrl = ( {
 	redirectTo?: string | null;
 	pageTitle?: string | null;
 	loginPath?: string;
-	locale: string;
-} ): string => {
-	if ( ! loginPath ) {
-		loginPath = getUserStep();
-	}
+	locale?: string;
+} ) => {
 	const localizedLoginPath =
 		locale && locale !== 'en' ? `${ trailingslashit( loginPath ) }${ locale }` : loginPath;
 
@@ -85,7 +77,7 @@ export const useLoginUrl = ( {
 	variationName,
 	redirectTo,
 	pageTitle,
-	loginPath,
+	loginPath = `/start/account/user/`,
 	locale,
 }: {
 	/**
@@ -97,9 +89,6 @@ export const useLoginUrl = ( {
 	loginPath?: string;
 	locale?: string;
 } ): string => {
-	if ( ! loginPath ) {
-		loginPath = getUserStep();
-	}
 	const currentLocale = useLocale();
 	return getLoginUrl( {
 		variationName,

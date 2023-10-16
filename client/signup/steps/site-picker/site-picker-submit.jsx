@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { isFreePlan } from '@automattic/calypso-products';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -31,7 +30,7 @@ export class SitePickerSubmit extends Component {
 				{ cartItems: null, themeSlugWithRepo: 'pub/twentysixteen' }
 			);
 
-			goToStep( config.isEnabled( 'signup/social-first' ) ? 'user-social' : 'user' );
+			goToStep( 'user' );
 		} else {
 			goToStep( 'plans-site-selected' );
 		}
