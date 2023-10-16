@@ -60,6 +60,15 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	 */
 	const isFromPublicAPIConnectFlow = includes( redirectTo, 'public.api/connect/?action=verify' );
 
+	// When there is a redirect_to provided we want to pass that down to the signup page
+	// we also want to skip the normal onboarding flow using /start/account to bypass it.
+	if ( redirectTo ) {
+		const params = new URLSearchParams( {
+			redirect_to: redirectTo,
+		} );
+		signupUrl = `/start/account?${ params.toString() }`;
+	}
+
 	if (
 		// Match locales like `/log-in/jetpack/es`
 		startsWith( currentRoute, '/log-in/jetpack' )
