@@ -71,7 +71,6 @@ const useScreens = ( {
 									globalStylesVariations={ variations as GlobalStylesObject[] }
 									selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
 									splitDefaultVariation={ splitDefaultVariation }
-									displayFreeLabel={ splitDefaultVariation }
 									showOnlyHoverViewDefaultVariation={ false }
 									onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 										onSelectVariation( globalStyleVariation as StyleVariation )
