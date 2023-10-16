@@ -93,9 +93,6 @@
 	}
 
 	.action-panel__cta {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
 		.button {
 			margin: 0 1em 4px 0;
 		}
@@ -124,20 +121,6 @@
 			font-size: $font-body-small;
 			color: var(--studio-green-50);
 			margin-left: 8px;
-		}
-	}
-	.promo-card__availability {
-		display: flex;
-		align-items: center;
-		gap: 0.5em;
-		margin: 8px 0;
-
-		.promo-card__checkmark {
-			color: var(--studio-green-30);
-		}
-
-		.promo-card__cross {
-			color: var(--studio-red-30);
 		}
 	}
 }
