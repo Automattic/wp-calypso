@@ -13,12 +13,11 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
+import { EmailsTextSetting } from './EmailsTextSetting';
+import { ExcerptSetting } from './ExcerptSetting';
+import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
+import { SubscribeModalSetting } from './SubscribeModalSetting';
 import { NewsletterCategoriesSection } from './newsletter-categories-section';
-// import { NewsletterSettingsSection } from './newsletter-section';
-import { EmailsTextSetting } from './newsletter-section/EmailsTextSetting';
-import { ExcerptSetting } from './newsletter-section/ExcerptSetting';
-import { FeaturedImageEmailSetting } from './newsletter-section/FeaturedImageEmailSetting';
-import { SubscribeModalSetting } from './newsletter-section/SubscribeModalSetting';
 
 const defaultNewsletterCategoryIds: number[] = [];
 
@@ -116,59 +115,46 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	}, [ savedSubscriptionOptions, updateFields ] );
 
 	return (
-		<>
+		<form onSubmit={ handleSubmitForm }>
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			{ /*
-			<form onSubmit={ handleSubmitForm }>
-				<NewsletterSettingsSection
-					fields={ fields }
-					handleToggle={ handleToggle }
-					handleSubmitForm={ handleSubmitForm }
-					disabled={ disabled }
-					isSavingSettings={ isSavingSettings }
-					savedSubscriptionOptions={ savedSubscriptionOptions }
-					updateFields={ updateFields }
-				/>
-			</form>
-			*/ }
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
-				id="subscriptions"
-				title={ translate( 'Subscriptions' ) }
-				showButton
-				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
+				id="subscriptions"
 				isSaving={ isSavingSettings }
+				onButtonClick={ handleSubmitForm }
+				showButton
+				title={ translate( 'Subscriptions' ) }
 			/>
 			<Card className="site-settings__card">
 				<SubscribeModalSetting
-					value={ sm_enabled }
-					handleToggle={ handleToggle }
 					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ sm_enabled }
 				/>
 			</Card>
 
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
-				id="email-settings"
-				title={ translate( 'Email' ) }
-				showButton
-				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
+				id="email-settings"
 				isSaving={ isSavingSettings }
+				onButtonClick={ handleSubmitForm }
+				showButton
+				title={ translate( 'Email' ) }
 			/>
 			<Card className="site-settings__card">
 				<FeaturedImageEmailSetting
-					value={ wpcom_featured_image_in_email }
-					handleToggle={ handleToggle }
 					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ wpcom_featured_image_in_email }
 				/>
 			</Card>
 			<Card className="site-settings__card">
 				<ExcerptSetting
-					value={ wpcom_subscription_emails_use_excerpt }
-					updateFields={ updateFields }
 					disabled={ disabled }
+					updateFields={ updateFields }
+					value={ wpcom_subscription_emails_use_excerpt }
 				/>
 			</Card>
 
@@ -191,21 +177,21 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
-				id="messages"
-				title={ translate( 'Messages' ) }
-				showButton
-				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
+				id="messages"
 				isSaving={ isSavingSettings }
+				onButtonClick={ handleSubmitForm }
+				showButton
+				title={ translate( 'Messages' ) }
 			/>
 			<Card className="site-settings__card">
 				<EmailsTextSetting
-					value={ subscription_options }
-					updateFields={ updateFields }
 					disabled={ disabled }
+					updateFields={ updateFields }
+					value={ subscription_options }
 				/>
 			</Card>
-		</>
+		</form>
 	);
 } );
 
