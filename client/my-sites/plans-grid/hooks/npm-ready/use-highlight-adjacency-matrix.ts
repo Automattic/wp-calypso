@@ -14,25 +14,15 @@ interface Props {
 	renderedGridPlans: GridPlan[];
 }
 
-const useHighlightIndices = ( { renderedGridPlans }: Props ) => {
-	return useMemo(
-		() =>
-			renderedGridPlans.reduce< number[] >( ( acc, gridPlan, index ) => {
-				if ( gridPlan.highlightLabel ) {
-					acc.push( index );
-				}
-
-				return acc;
-			}, [] ),
-		[ renderedGridPlans ]
-	);
-};
-
 const useHighlightAdjacencyMatrix = ( { renderedGridPlans }: Props ) => {
-	const highlightIndices = useHighlightIndices( { renderedGridPlans } );
-
 	return useMemo( () => {
 		const adjacencyMatrix = {} as HighlightAdjacencyMatrix;
+		const highlightIndices = renderedGridPlans.reduce( ( acc, gridPlan, index ) => {
+			if ( gridPlan.highlightLabel ) {
+				acc.push( index );
+			}
+			return acc;
+		}, [] as number[] );
 
 		renderedGridPlans.forEach( ( { planSlug }, index ) => {
 			adjacencyMatrix[ planSlug ] = { leftOfHighlight: false, rightOfHighlight: false };
@@ -52,7 +42,7 @@ const useHighlightAdjacencyMatrix = ( { renderedGridPlans }: Props ) => {
 		}
 
 		return adjacencyMatrix;
-	}, [ renderedGridPlans, highlightIndices ] );
+	}, [ renderedGridPlans ] );
 };
 
 export default useHighlightAdjacencyMatrix;
