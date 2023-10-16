@@ -1,4 +1,4 @@
-import { Gravatar } from '@automattic/components';
+import { Button, Gravatar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -27,17 +27,20 @@ const DropdownMenu = ( { isExpanded }: DropdownMenuProps ) => {
 	return (
 		<ul className="jetpack-cloud-sidebar__profile-dropdown-menu" hidden={ ! isExpanded }>
 			<li className="jetpack-cloud-sidebar__profile-dropdown-menu-item">
-				<a
+				<Button
+					borderless
 					href="https://jetpack.com/support"
 					rel="noreferrer"
 					target="_blank"
 					onClick={ onGetHelp }
 				>
 					{ translate( 'Get help' ) }
-				</a>
+				</Button>
 			</li>
 			<li className="jetpack-cloud-sidebar__profile-dropdown-menu-item">
-				<button onClick={ onSignOut }>{ translate( 'Sign out' ) }</button>
+				<Button borderless onClick={ onSignOut }>
+					{ translate( 'Sign out' ) }
+				</Button>
 			</li>
 		</ul>
 	);
@@ -75,7 +78,8 @@ const ProfileDropdown = () => {
 				} ) as string
 			}
 		>
-			<button
+			<Button
+				borderless
 				className="jetpack-cloud-sidebar__profile-dropdown-button"
 				onClick={ onToggleMenu }
 				aria-expanded={ isMenuExpanded }
@@ -87,7 +91,7 @@ const ProfileDropdown = () => {
 					size={ 32 }
 					alt={ translate( 'My Profile', { textOnly: true } ) }
 				/>
-			</button>
+			</Button>
 			<DropdownMenu isExpanded={ isMenuExpanded } />
 		</nav>
 	);
