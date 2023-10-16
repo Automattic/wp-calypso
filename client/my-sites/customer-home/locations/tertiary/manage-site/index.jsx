@@ -1,6 +1,6 @@
 import { createElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import AppPromo from 'calypso/components/app-promo';
+import AppPromo from 'calypso/blocks/app-promo';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import QuickLinks from 'calypso/my-sites/customer-home/cards/actions/quick-links';
 import QuickLinksForHostedSites from 'calypso/my-sites/customer-home/cards/actions/quick-links-for-hosted-sites';
