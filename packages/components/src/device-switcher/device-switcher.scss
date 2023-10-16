@@ -22,7 +22,33 @@
 	box-sizing: border-box;
 
 	.device-switcher__zoom-out {
+		--wp-components-color-accent: var(--studio-gray-50, #50575e);
 		width: 156px;
+
+		svg {
+			width: 21px;
+			height: 21px;
+			margin-top: -4px;
+			fill: var(--studio-gray-50);
+		}
+
+		.components-range-control__slider + span,
+		.components-range-control__track {
+			height: 3px;
+		}
+
+		.components-range-control__thumb-wrapper {
+			width: 7px;
+			height: 7px;
+			margin-top: 11px;
+
+			> span::before {
+				width: 11px;
+				height: 11px;
+				top: -2px;
+				left: -2px;
+			}
+		}
 	}
 
 	&:not(:empty) {

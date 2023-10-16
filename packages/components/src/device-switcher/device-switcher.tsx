@@ -102,6 +102,9 @@ const DeviceSwitcher = ( {
 						className="device-switcher__zoom-out"
 						beforeIcon={ search }
 						withInputField={ false }
+						showTooltip={ false }
+						color="#C3C4C7"
+						trackColor="#50575E"
 						__nextHasNoMarginBottom
 						value={ Math.round( zoomOutScale * 100 ) }
 						onChange={ ( value ) => value !== undefined && onZoomOutScaleChange( value / 100 ) }
