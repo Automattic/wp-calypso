@@ -69,7 +69,8 @@ export const getLoginUrl = ( {
 	if ( ! loginPath ) {
 		loginPath = getUserStep();
 	}
-	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
+	const localizedLoginPath =
+		locale && locale !== 'en' ? `${ trailingslashit( loginPath ) }${ locale }` : loginPath;
 
 	// Empty values are ignored down the call stack, so we don't need to check for them here.
 	return addQueryArgs( localizedLoginPath, {
