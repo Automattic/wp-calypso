@@ -45,12 +45,15 @@
 	}
 
 	button.components-button.is-link {
+		padding: 20px 0 6px 0;
 		color: #1d2333;
 
 		&:hover:not(:disabled) {
 			color: var(--studio-blue-50);
 		}
 	}
+
+
 }
 @media only screen and (max-width: 600px) {
 	.reader-join-conversation-dialog__content {
