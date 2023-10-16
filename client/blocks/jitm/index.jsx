@@ -101,12 +101,6 @@ function getEventHandlers( props, dispatch ) {
 	handlers.onClick = () => {
 		tracks.click &&
 			props.recordTracksEvent( tracks.click.name, { ...tracks.click.props, ...eventProps } );
-
-		// Invoke the provided onClick function defined in props
-		if ( onClick ) {
-			onClick( jitm );
-		}
-
 		if ( jitm.action ) {
 			switch ( jitm.action.type ) {
 				// Cases for dispatching action thunks
@@ -117,6 +111,11 @@ function getEventHandlers( props, dispatch ) {
 					// Dispatch regular actions
 					dispatch( jitm.action );
 			}
+		}
+
+		// Invoke the provided onClick function defined in props
+		if ( onClick ) {
+			onClick( jitm );
 		}
 	};
 

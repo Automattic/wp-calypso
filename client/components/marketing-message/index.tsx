@@ -78,6 +78,21 @@ function slugify( text: string ) {
 		.replace( /^-+|-+$/g, '' );
 }
 
+const limitedTimeOfferDiscountNudge = () => {
+	return (
+		<AsyncLoad
+			require="calypso/blocks/jitm"
+			placeholder={ null }
+			messagePath="calypso:plans:lto_notices"
+			onClick={ ( jitm ) => {
+				jitm.message =
+					'Discount coupon applied! Select your plan below and check your final discounted price at checkout.';
+				jitm.CTA = {};
+			} }
+		/>
+	);
+};
+
 export default function MarketingMessage( { siteId, useMockData, ...props }: NudgeProps ) {
 	const [ isFetching, messages, removeMessage ] = useMarketingMessage( siteId, useMockData );
 	const hasNudge = ! isFetching && messages.length > 0;
@@ -88,18 +103,7 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 
 	if ( ! hasNudge ) {
 		if ( config.isEnabled( 'jitms' ) ) {
-			return (
-				<AsyncLoad
-					require="calypso/blocks/jitm"
-					placeholder={ null }
-					messagePath="calypso:plans:lto_notices"
-					onClick={ ( jitmInstance ) => {
-						jitmInstance.message =
-							'Discount coupon applied! Select your plan below and check your final discounted price at checkout.'; //
-						jitmInstance.CTA = {};
-					} }
-				/>
-			);
+			return limitedTimeOfferDiscountNudge();
 		}
 		return null;
 	}
