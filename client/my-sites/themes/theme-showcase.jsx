@@ -1,11 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import { Button } from '@wordpress/components';
+import { chevronLeft, Icon } from '@wordpress/icons';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import React, { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -18,6 +20,7 @@ import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
+import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -78,6 +81,7 @@ class ThemeShowcase extends Component {
 	static propTypes = {
 		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
+		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
@@ -288,8 +292,8 @@ class ThemeShowcase extends Component {
 		return buildRelativeSearchUrl( url, search );
 	};
 
-	onTierSelect = ( { value: tier } ) => {
-		const url = this.constructUrl( {
+	onTierSelect = ( { value: tier, isCollectionView: isCollectionView = false } ) => {
+		let url = this.constructUrl( {
 			tier,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
@@ -297,6 +301,11 @@ class ThemeShowcase extends Component {
 					category: staticFilters.RECOMMENDED.key,
 				} ),
 		} );
+
+		if ( isCollectionView ) {
+			url += `?v=collection`;
+		}
+
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -335,6 +344,38 @@ class ThemeShowcase extends Component {
 		page( this.constructUrl( newUrlParams ) );
 
 		this.scrollToSearchInput();
+	};
+
+	getCollectionHeader = () => {
+		let title;
+		let description;
+
+		switch ( this.props.tier ) {
+			case 'premium':
+				title = THEME_COLLECTIONS.premium.title;
+				description = THEME_COLLECTIONS.premium.description;
+				break;
+			case 'marketplace':
+				title = THEME_COLLECTIONS.partner.title;
+				description = THEME_COLLECTIONS.partner.description;
+				break;
+			default:
+				return '';
+		}
+
+		return (
+			<div className="collection-header">
+				<Button
+					className="collection-header__back"
+					onClick={ () => this.onTierSelect( { value: '' } ) }
+				>
+					<Icon icon={ chevronLeft } />
+					{ translate( 'Back to Discover' ) }
+				</Button>
+				<h2 className="collection-header__title">{ title }</h2>
+				<div className="collection-header__description">{ description }</div>
+			</div>
+		);
 	};
 
 	allThemes = ( { themeProps } ) => {
@@ -424,7 +465,9 @@ class ThemeShowcase extends Component {
 							getOptions={ this.getThemeOptions }
 							getScreenshotUrl={ this.getScreenshotUrl }
 							getActionLabel={ this.getActionLabel }
-							onTierSelect={ ( tier ) => this.onTierSelect( { value: tier } ) }
+							onTierSelect={ ( tier ) =>
+								this.onTierSelect( { value: tier, isCollectionView: true } )
+							}
 						/>
 					);
 				}
@@ -469,6 +512,7 @@ class ThemeShowcase extends Component {
 			isMultisite,
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
+			isCollectionView,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
@@ -515,53 +559,57 @@ class ThemeShowcase extends Component {
 					filter={ this.props.filter }
 					tier={ this.props.tier }
 					vertical={ this.props.vertical }
+					metaOnly={ isCollectionView }
 				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
-					<div className="themes__controls">
-						<div className="theme__search">
-							<div className="theme__search-input">
-								{ isSearchV2 ? (
-									<SearchThemesV2
-										query={ featureStringFilter + search }
-										onSearch={ this.doSearch }
-									/>
-								) : (
-									<SearchThemes
-										query={ filterString + search }
-										onSearch={ this.doSearch }
-										recordTracksEvent={ this.recordSearchThemesTracksEvent }
-									/>
+					{ ! isCollectionView && (
+						<div className="themes__controls">
+							<div className="theme__search">
+								<div className="theme__search-input">
+									{ isSearchV2 ? (
+										<SearchThemesV2
+											query={ featureStringFilter + search }
+											onSearch={ this.doSearch }
+										/>
+									) : (
+										<SearchThemes
+											query={ filterString + search }
+											onSearch={ this.doSearch }
+											recordTracksEvent={ this.recordSearchThemesTracksEvent }
+										/>
+									) }
+								</div>
+								{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+									<SelectDropdown
+										className="section-nav-tabs__dropdown"
+										onSelect={ this.onTierSelectFilter }
+										selectedText={ translate( 'View: %s', {
+											args: getOptionLabel( tiers, tier ) || '',
+										} ) }
+										options={ tiers }
+										initialSelected={ tier }
+									></SelectDropdown>
 								) }
 							</div>
-							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-								<SelectDropdown
-									className="section-nav-tabs__dropdown"
-									onSelect={ this.onTierSelectFilter }
-									selectedText={ translate( 'View: %s', {
-										args: getOptionLabel( tiers, tier ) || '',
-									} ) }
-									options={ tiers }
-									initialSelected={ tier }
-								></SelectDropdown>
+							{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+								<ThemesToolbarGroup
+									items={ Object.values( tabFilters ) }
+									selectedKey={ this.getSelectedTabFilter().key }
+									onSelect={ ( key ) =>
+										this.onFilterClick(
+											Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+										)
+									}
+								/>
 							) }
 						</div>
-						{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
-							<ThemesToolbarGroup
-								items={ Object.values( tabFilters ) }
-								selectedKey={ this.getSelectedTabFilter().key }
-								onSelect={ ( key ) =>
-									this.onFilterClick(
-										Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-									)
-								}
-							/>
-						) }
-					</div>
+					) }
 					<div className="themes__showcase">
+						{ isCollectionView && this.getCollectionHeader() }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
