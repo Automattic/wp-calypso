@@ -32,6 +32,13 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 	// 4px below the bottom of the icon
 	top: calc(100% + 4px);
 
+	// Float the dropdown to the left on small screens,
+	// and to the right on larger screens
+	right: 0;
+	@include breakpoint-deprecated( ">660px" ) {
+		right: initial;
+	}
+
 	// The menu should render "on top" of the profile picture
 	z-index: 1;
 
@@ -70,10 +77,10 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 		color: var(--color-text);
 	}
 
-	button {
+	.button {
 		width: 100%;
 		height: 100%;
 		text-align: start;
-		cursor: pointer;
+		// cursor: pointer;
 	}
 }
