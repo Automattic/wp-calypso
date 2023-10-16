@@ -211,8 +211,8 @@ class StatsSite extends Component {
 			const chartStart = context.query?.chartStart;
 			const chartStartMoment = moment( chartStart );
 			const isValidStartDate = chartStartMoment.isValid();
-			const isBeforeEndDate = chartStartMoment.isBefore( chartEndMoment );
-			if ( isValidStartDate && isBeforeEndDate ) {
+			const isSameOrBefore = chartStartMoment.isSameOrBefore( chartEndMoment );
+			if ( isValidStartDate && isSameOrBefore ) {
 				const diff = chartEndMoment.diff( chartStartMoment, 'days' );
 				// Make sure quantity includes start date.
 				this.state.customChartQuantity = diff + 1;
