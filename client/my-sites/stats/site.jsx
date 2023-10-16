@@ -196,7 +196,13 @@ class StatsSite extends Component {
 		// Dependant on new date range picker controls.
 		let customChartRange = null;
 		if ( isDateControlEnabled ) {
-			customChartRange = { chartEnd: '2023-10-07', note: 'Custom range yo!' };
+			const chartEnd = context.query?.chartEnd;
+			if ( chartEnd ) {
+				customChartRange = { chartEnd };
+			} else {
+				customChartRange = { chartEnd: '2023-10-07', note: 'Dont forget to update me!' };
+			}
+			// Quantity should come from URL params too!
 			this.state.customChartQuantity = 7;
 		}
 
