@@ -1,10 +1,10 @@
+import { Popover } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
 import { Icon, link } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './share-site-modal.scss';
@@ -54,13 +54,14 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 									{ site?.slug }
 								</p>
 
-								<Tooltip
-									context={ clipboardTextEl.current }
+								<Popover
+									className="share-site-modal__popover"
 									isVisible={ clipboardCopied }
+									context={ clipboardTextEl.current }
 									position="top"
 								>
 									{ translate( 'Copied to clipboard!' ) }
-								</Tooltip>
+								</Popover>
 							</div>
 
 							<Button onClick={ copyHandler } className="share-site-modal__modal-view-site">
