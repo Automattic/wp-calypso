@@ -1,3 +1,7 @@
+export * from './header';
+export * from './main';
+export * from './footer';
+
 import classNames from 'classnames';
 
 import './style.scss';

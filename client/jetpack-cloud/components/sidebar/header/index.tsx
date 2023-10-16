@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
-import SidebarHeader from 'calypso/layout/sidebar-v2/header';
+import { SidebarV2Header as SidebarHeader } from 'calypso/layout/sidebar-v2';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackLogo from './jetpack-logo.svg';

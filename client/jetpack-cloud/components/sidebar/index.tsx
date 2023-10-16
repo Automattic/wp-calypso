@@ -3,9 +3,10 @@ import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import SiteSelector from 'calypso/components/site-selector';
 import SidebarItem from 'calypso/layout/sidebar/item';
-import Sidebar from 'calypso/layout/sidebar-v2';
-import SidebarFooter from 'calypso/layout/sidebar-v2/footer';
-import SidebarMain from 'calypso/layout/sidebar-v2/main';
+import Sidebar, {
+	SidebarV2Main as SidebarMain,
+	SidebarV2Footer as SidebarFooter,
+} from 'calypso/layout/sidebar-v2';
 import { useSelector } from 'calypso/state';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
