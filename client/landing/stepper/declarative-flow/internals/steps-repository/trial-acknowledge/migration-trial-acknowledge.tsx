@@ -79,7 +79,6 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	useEffect( () => {
 		switch ( eligibilityErrorCode ) {
 			case 'email-unverified':
-			default:
 				navigateToVerifyEmailStep();
 				break;
 		}
