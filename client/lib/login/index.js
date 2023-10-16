@@ -82,37 +82,32 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		signupUrl = '/jetpack/connect';
 	} else if ( signupFlow ) {
 		signupUrl += '/' + signupFlow;
-	}
-
-	if ( isAkismetOAuth2Client( oauth2Client ) || isIntenseDebateOAuth2Client( oauth2Client ) ) {
+	} else if (
+		isAkismetOAuth2Client( oauth2Client ) ||
+		isIntenseDebateOAuth2Client( oauth2Client )
+	) {
 		const oauth2Flow = 'wpcc';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
 		signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
-	}
-
-	// Gravatar powered clients signup via the magic login page
-	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+	} else if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+		// Gravatar powered clients signup via the magic login page
 		signupUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
 			oauth2ClientId: oauth2Client.id,
 			redirectTo: redirectTo,
 		} );
-	}
-
-	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+	} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 		const oauth2Flow = 'crowdsignal';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
 		signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
-	}
-
-	if ( oauth2Client && isWooOAuth2Client( oauth2Client ) ) {
+	} else if ( oauth2Client && isWooOAuth2Client( oauth2Client ) ) {
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
@@ -121,17 +116,19 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2Params.set( 'wccom-from', wccomFrom );
 		}
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
-	}
-
-	if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
+	} else if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
-	}
-
-	if (
+	} else if ( oauth2Client ) {
+		const oauth2Params = new URLSearchParams( {
+			oauth2_client_id: oauth2Client.id,
+			oauth2_redirect: redirectTo,
+		} );
+		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+	} else if (
 		isFromMigrationPlugin ||
 		isFromPublicAPIConnectFlow ||
 		( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) )
