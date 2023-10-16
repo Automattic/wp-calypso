@@ -593,6 +593,44 @@ export class RenderDomainsStep extends Component {
 		await this.props.shoppingCartManager.addProductsToCart( productsToAdd ).then( () => {
 			this.setState( { isCartPendingUpdateDomain: null } );
 		} );
+
+		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
+			const sortedProducts = await this.sortProductsByPriceDescending();
+
+			// Replace the products in the cart with the freshly sorted products.
+			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts ).then( () => {
+				this.setState( { isCartPendingUpdateDomain: null } );
+			} );
+		}
+	}
+
+	async sortProductsByPriceDescending() {
+		// Get products from cart.
+		const productsInCart = this.props.cart.products;
+
+		// Sort products by price descending, considering promotions.
+		productsInCart.sort( ( a, b ) => {
+			const getSortingValue = ( product ) => {
+				if ( product.item_subtotal_integer !== 0 ) {
+					return product.item_subtotal_integer;
+				}
+
+				// Use the lowest non-zero new_price or fallback to item_original_cost_integer.
+				const nonZeroPrices =
+					product.cost_overrides
+						?.map( ( override ) => override.new_price * 100 )
+						.filter( ( price ) => price > 0 ) || [];
+
+				return nonZeroPrices.length
+					? Math.min( ...nonZeroPrices )
+					: product.item_original_cost_integer;
+			};
+
+			return getSortingValue( b ) - getSortingValue( a );
+		} );
+
+		return productsInCart;
 	}
 
 	removeDomainClickHandler = ( domain ) => {
