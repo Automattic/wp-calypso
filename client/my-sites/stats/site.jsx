@@ -202,7 +202,7 @@ class StatsSite extends Component {
 			if ( chartEnd && isValidEndDate ) {
 				customChartRange = { chartEnd };
 			} else {
-				customChartRange = { chartEnd: '2023-10-07', note: 'Dont forget to update me!' };
+				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 			}
 			// Quantity should come from URL params too!
 			this.state.customChartQuantity = 7;
