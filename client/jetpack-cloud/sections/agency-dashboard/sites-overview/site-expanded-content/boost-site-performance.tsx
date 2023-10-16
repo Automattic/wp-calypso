@@ -110,6 +110,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				// Allow to click on the card only if Boost is not active
 				onClick={ () => {
 					if ( ! isEnabled ) {
+						trackEvent( 'boost_expandable_block_get_score_click' );
 						showBoostModal( false );
 					}
 				} }
