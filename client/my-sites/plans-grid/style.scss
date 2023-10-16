@@ -910,6 +910,11 @@ body.is-section-signup.is-white-signup,
 					/* stylelint-disable-next-line */
 					border-radius: 5px 5px 0 0;
 					border-style: solid;
+					transition: top 0.2s ease;
+				}
+
+				.popular-badge-is-stuck {
+					top: -10px;
 				}
 
 				&.is-left-of-highlight {
