@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isBlogger } from '@automattic/calypso-products';
+import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -262,6 +262,21 @@ class RegisterDomainStep extends Component {
 		) {
 			this.setState( this.getState( nextProps ) );
 			nextProps.suggestion && this.onSearch( nextProps.suggestion );
+		}
+
+		// Filter out the free wp.com subdomains to avoid doing another API request.
+		// Please note that it's intentional to be incomplete -- the complete version of this
+		// should be able to handle flag transition the other way around, i.e.
+		// when `includeWordPressDotCom` is first `false` and then transit to `true`. The
+		// same should also be ported to the dotblog subdomain flag. However, this code is likely
+		// temporary specific for the hiding free subdomain test, so it's not practical to implement
+		// the complete version for now.
+		if ( ! nextProps.includeWordPressDotCom && this.props.includeWordPressDotCom ) {
+			this.setState( {
+				subdomainSearchResults: this.state.subdomainSearchResults.filter(
+					( subdomain ) => ! isFreeWordPressComDomain( subdomain )
+				),
+			} );
 		}
 	}
 
