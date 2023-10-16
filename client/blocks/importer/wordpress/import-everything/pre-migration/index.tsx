@@ -300,26 +300,22 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		);
 	}
 
-	function render() {
-		// If the source site is not capable of being migrated, we show the update info screen
-		if ( requiresPluginUpdate ) {
-			return renderUpdatePluginInfo();
-		}
-
-		if ( showCredentials && sourceSite ) {
-			return renderCredentials();
-		}
-
-		// If the target site is plan compatible, we show the pre-migration screen
-		if ( isTargetSitePlanCompatible ) {
-			return renderPreMigration();
-		}
-
-		// If the target site is not plan compatible, we show the upgrade plan screen
-		return renderUpgradePlan();
+	// If the source site is not capable of being migrated, we show the update info screen
+	if ( requiresPluginUpdate ) {
+		return renderUpdatePluginInfo();
 	}
 
-	return render();
+	if ( showCredentials && sourceSite ) {
+		return renderCredentials();
+	}
+
+	// If the target site is plan compatible, we show the pre-migration screen
+	if ( isTargetSitePlanCompatible ) {
+		return renderPreMigration();
+	}
+
+	// If the target site is not plan compatible, we show the upgrade plan screen
+	return renderUpgradePlan();
 };
 
 export default PreMigrationScreen;
