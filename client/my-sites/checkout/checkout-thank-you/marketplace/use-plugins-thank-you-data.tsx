@@ -8,6 +8,8 @@ import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
@@ -121,7 +123,16 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( ! siteId || allPluginsFetched || pluginSlugs.length === 0 ) {
+		if ( transferStatus === null ) {
+			dispatch( fetchAutomatedTransferStatus( siteId as number ) );
+		}
+
+		if (
+			! siteId ||
+			( ! isJetpackSelfHosted && transferStatus !== transferStates.COMPLETE ) ||
+			allPluginsFetched ||
+			pluginSlugs.length === 0
+		) {
 			return;
 		}
 
