@@ -10,8 +10,8 @@ import {
 	PLAN_FREE,
 	PlanSlug,
 } from '@automattic/calypso-products';
+import { useProRatedCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-pro-rated-credits-applicable';
 import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import isAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -52,7 +52,7 @@ const plansList: PlanSlug[] = [
 	PLAN_ECOMMERCE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 ];
-describe( 'useIsPlanUpgradeCreditVisible hook', () => {
+describe( 'useProRatedCreditsApplicable hook', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
 
@@ -65,17 +65,17 @@ describe( 'useIsPlanUpgradeCreditVisible hook', () => {
 
 	test( 'Show a plans upgrade credit when the necessary conditions are met above', () => {
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			useProRatedCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( true );
+		expect( result.current ).toEqual( 100 );
 	} );
 
 	test( 'Plan upgrade credits should not be shown when a site is on the highest purchasable plan', () => {
 		mGetSitePlanSlug.mockImplementation( () => PLAN_ECOMMERCE );
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			useProRatedCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( false );
+		expect( result.current ).toEqual( null );
 	} );
 
 	test( 'A non atomic jetpack site is not shown the plan upgrade credit', () => {
@@ -83,26 +83,26 @@ describe( 'useIsPlanUpgradeCreditVisible hook', () => {
 		mIsJetpackSite.mockImplementation( () => true );
 
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			useProRatedCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( false );
+		expect( result.current ).toEqual( null );
 	} );
 
 	test( 'Plan upgrade credit should NOT be shown if there are no discounts provided by the pricing API', () => {
 		mUsePlanUpgradeCredits.mockImplementation( () => 0 );
 
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			useProRatedCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( false );
+		expect( result.current ).toEqual( null );
 	} );
 
 	test( 'Site on a free plan should not show the plan upgrade credit', () => {
 		mIsCurrentPlanPaid.mockImplementation( () => false );
 
 		const { result } = renderHookWithProvider( () =>
-			useIsPlanUpgradeCreditVisible( siteId, plansList )
+			useProRatedCreditsApplicable( siteId, plansList )
 		);
-		expect( result.current ).toEqual( false );
+		expect( result.current ).toEqual( null );
 	} );
 } );

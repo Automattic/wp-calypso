@@ -80,6 +80,7 @@ import useObservableForOdie from './hooks/use-observable-for-odie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import { useProRatedCreditsApplicable } from './hooks/use-pro-rated-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
@@ -781,6 +782,10 @@ const PlansFeaturesMain = ( {
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;
+	const proRatedCreditsApplicable = useProRatedCreditsApplicable(
+		siteId,
+		gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
+	);
 
 	return (
 		<>
@@ -900,6 +905,7 @@ const PlansFeaturesMain = ( {
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
+									proRatedCreditsApplicable={ proRatedCreditsApplicable }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -964,6 +970,7 @@ const PlansFeaturesMain = ( {
 												}
 												coupon={ coupon }
 												recordTracksEvent={ recordTracksEvent }
+												proRatedCreditsApplicable={ proRatedCreditsApplicable }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }
