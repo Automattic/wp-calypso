@@ -6,7 +6,7 @@
 		border-bottom: none;
 
 		@include break-large {
-			padding-left: 0;
+			padding-left: 48px;
 			box-shadow: none;
 		}
 	}

@@ -123,6 +123,14 @@ body.is-section-home.theme-default.color-scheme {
 		@include grid-column( 9, 4 );
 	}
 
+	.card.app-promo.customer-home__card {
+		padding-left: 16px;
+
+		@include break-large {
+			padding-left: 0;
+		}
+	}
+
 	@include break-mobile {
 		> .card,
 		> .card.quick-links,
