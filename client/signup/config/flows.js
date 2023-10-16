@@ -28,9 +28,12 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 			ref: getQueryArgs()?.ref,
 			...( [ 'domain' ].includes( flowName ) && {
 				isDomainOnly: 1,
-				checkoutBackUrl: `${ config( 'protocol' ) ? config( 'protocol' ) : 'https' }://${ config(
-					'hostname'
-				) }${ config( 'port' ) ? ':' + config( 'port' ) : '' }/start/domain`,
+				checkoutBackUrl:
+					config( 'env' ) === 'production'
+						? `https://${ config( 'hostname' ) }/start/domain/domain-only`
+						: `${ config( 'protocol' ) ? config( 'protocol' ) : 'https' }://${ config(
+								'hostname'
+						  ) }${ config( 'port' ) ? ':' + config( 'port' ) : '' }/start/domain/domain-only`,
 			} ),
 		},
 		checkoutURL
