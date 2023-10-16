@@ -29,7 +29,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const dispatch = useDispatch();
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
-	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, true );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, false );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ expandedColumn, setExpandedColumn ] = useState< AllowedTypes | null >( null );
