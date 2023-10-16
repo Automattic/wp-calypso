@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
+import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
@@ -32,6 +33,7 @@ import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
 } from 'calypso/state/oauth2-clients/ui/selectors';
+import { getLoggedInAction } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -69,6 +71,7 @@ const LayoutLoggedOut = ( {
 	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
+	const loggedInAction = useSelector( getLoggedInAction );
 	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
 
 	const isCheckout = sectionName === 'checkout';
@@ -185,6 +188,8 @@ const LayoutLoggedOut = ( {
 
 	const bodyClass = [ 'font-smoothing-antialiased' ];
 
+	console.log( 'loggedInAction', loggedInAction );
+
 	return (
 		<div className={ classNames( 'layout', classes ) }>
 			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
@@ -235,6 +240,13 @@ const LayoutLoggedOut = ( {
 					} }
 					currentRoute={ currentRoute }
 					isLoggedIn={ isLoggedIn }
+				/>
+			) }
+
+			{ ! isLoggedIn && config.isEnabled( 'reader/login-window' ) && (
+				<ReaderJoinConversationDialog
+					onClose={ () => console.log( 'close' ) }
+					isVisible={ loggedInAction?.name }
 				/>
 			) }
 		</div>

@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
-import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import Gravatar from 'calypso/components/gravatar';
 import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -504,12 +503,6 @@ class PostComment extends PureComponent {
 					/>
 				) }
 				{ this.renderRepliesList() }
-				{ config.isEnabled( 'reader/login-window' ) && (
-					<ReaderJoinConversationDialog
-						onClose={ this.hideJoinConversationModal }
-						isVisible={ this.state.showJoinConversationModal }
-					/>
-				) }
 			</li>
 		);
 	}
