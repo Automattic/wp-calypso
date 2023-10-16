@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { addQueryArgs } from '@wordpress/url';
 import { useMatch } from 'react-router-dom';
+import { trailingslashit } from 'calypso/lib/route';
 
 const plansPaths = Plans.plansSlugs;
 
@@ -60,7 +61,8 @@ export const getLoginUrl = ( {
 	loginPath?: string;
 	locale?: string;
 } ) => {
-	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
+	const localizedLoginPath =
+		locale && locale !== 'en' ? `${ trailingslashit( loginPath ) }${ locale }` : loginPath;
 
 	// Empty values are ignored down the call stack, so we don't need to check for them here.
 	return addQueryArgs( localizedLoginPath, {
