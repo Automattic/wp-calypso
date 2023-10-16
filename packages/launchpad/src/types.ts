@@ -58,7 +58,6 @@ export interface LaunchpadResponse {
 
 export interface PermittedActions {
 	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
-	siteLaunched?: () => void;
 	setActiveChecklist: ( siteSlug: string, activeChecklistSlug: string ) => void;
 }
 

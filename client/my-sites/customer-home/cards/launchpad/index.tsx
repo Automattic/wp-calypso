@@ -7,7 +7,6 @@ import {
 } from '@automattic/data-stores';
 import {
 	Launchpad,
-	PermittedActions,
 	Task,
 	setUpActionsForTasks,
 	ShareSiteModal,
@@ -26,12 +25,12 @@ import './style.scss';
 
 interface CustomerHomeLaunchpadProps {
 	checklistSlug: string;
-	extraActions?: Omit< PermittedActions, 'setActiveChecklist' >;
+	onSiteLaunched?: () => void;
 }
 
 const CustomerHomeLaunchpad = ( {
 	checklistSlug,
-	extraActions = {},
+	onSiteLaunched,
 }: CustomerHomeLaunchpadProps ): JSX.Element => {
 	const launchpadContext = 'customer-home';
 	const siteId = useSelector( getSelectedSiteId );
@@ -63,7 +62,6 @@ const CustomerHomeLaunchpad = ( {
 
 	const defaultExtraActions = {
 		...( hasShareSiteTask ? { setShareSiteModalIsOpen } : {} ),
-		...extraActions,
 		setActiveChecklist,
 	};
 
@@ -82,6 +80,9 @@ const CustomerHomeLaunchpad = ( {
 			siteSlug,
 			tracksData,
 			extraActions: defaultExtraActions,
+			eventHandlers: {
+				onSiteLaunched,
+			},
 		} );
 	};
 

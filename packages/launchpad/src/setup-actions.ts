@@ -23,7 +23,7 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions;
+	const { setShareSiteModalIsOpen, setActiveChecklist } = extraActions;
 	const { onSiteLaunched } = eventHandlers || {};
 
 	//Record click events for tasks
@@ -127,13 +127,7 @@ export const setUpActionsForTasks = ( {
 							apiVersion: '1.1',
 							method: 'post',
 						} );
-						// TODO: Remove this check once we migrate the siteLaunched event
-						// to the new event handler
-						if ( onSiteLaunched ) {
-							onSiteLaunched();
-						} else {
-							siteLaunched?.();
-						}
+						onSiteLaunched?.();
 					};
 					useCalypsoPath = false;
 					break;
