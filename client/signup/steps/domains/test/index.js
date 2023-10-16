@@ -42,13 +42,13 @@ describe( 'sortProductsByPriceDescending', () => {
 		instance.props.cart.products = [
 			{
 				meta: 'domain.com',
-				item_subtotal_integer: 200,
+				item_subtotal_integer: 200, // The price we consider when sorting.
 				cost_overrides: [],
 				item_original_cost_integer: 200,
 			},
 			{
 				meta: 'domain.net',
-				item_subtotal_integer: 100,
+				item_subtotal_integer: 100, // The price we consider when sorting.
 				cost_overrides: [],
 				item_original_cost_integer: 100,
 			},
@@ -63,7 +63,7 @@ describe( 'sortProductsByPriceDescending', () => {
 		instance.props.cart.products = [
 			{
 				meta: 'domain.com',
-				item_subtotal_integer: 2000,
+				item_subtotal_integer: 2000, // The price we consider when sorting.
 				cost_overrides: [],
 				item_original_cost_integer: 2000,
 			},
@@ -77,7 +77,7 @@ describe( 'sortProductsByPriceDescending', () => {
 						reason: 'bundled domain credit for 1st year',
 					},
 				],
-				item_original_cost_integer: 4000,
+				item_original_cost_integer: 4000, // The price we consider when sorting.
 			},
 		];
 
@@ -94,7 +94,7 @@ describe( 'sortProductsByPriceDescending', () => {
 				cost_overrides: [
 					{
 						old_price: 48,
-						new_price: 0.96,
+						new_price: 0.96, // The price we consider when sorting.
 						reason: 'Sale_Coupon->apply_sale_discount',
 					},
 				],
@@ -106,7 +106,7 @@ describe( 'sortProductsByPriceDescending', () => {
 				cost_overrides: [
 					{
 						old_price: 22,
-						new_price: 4.84,
+						new_price: 4.84, // The price we consider when sorting.
 						reason: 'Sale_Coupon->apply_sale_discount',
 					},
 				],
@@ -114,7 +114,7 @@ describe( 'sortProductsByPriceDescending', () => {
 			},
 			{
 				meta: 'domain.fish',
-				item_subtotal_integer: 3000,
+				item_subtotal_integer: 3000, // The price we consider when sorting.
 				cost_overrides: [],
 				item_original_cost_integer: 3000,
 			},
@@ -124,7 +124,7 @@ describe( 'sortProductsByPriceDescending', () => {
 				cost_overrides: [
 					{
 						old_price: 40,
-						new_price: 19.6, // This is the price when disregarding the free with plan discount.
+						new_price: 19.6, // The price we consider when sorting.
 						reason: 'Sale_Coupon->apply_sale_discount',
 					},
 					{
