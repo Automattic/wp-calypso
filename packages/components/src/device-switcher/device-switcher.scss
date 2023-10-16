@@ -21,6 +21,10 @@
 	padding: 0 10px;
 	box-sizing: border-box;
 
+	.device-switcher__zoom-out {
+		width: 156px;
+	}
+
 	&:not(:empty) {
 		margin-bottom: 13px;
 	}
@@ -120,5 +124,9 @@
 		min-height: var(--viewport-height);
 		max-height: var(--viewport-height);
 		transition: width 0.2s ease-out, max-width 0.2s ease-out;
+	}
+
+	.device-switcher__container--is-zoomable & {
+		overflow: auto;
 	}
 }

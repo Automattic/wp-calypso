@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
 import FixedViewport, { useViewportScale } from './fixed-viewport';
 import DeviceSwitcherToolbar from './toolbar';
+import useZoomOut from './use-zoom-out';
 import type { Device } from './types';
 import './device-switcher.scss';
 
@@ -47,7 +48,7 @@ const DeviceSwitcher = ( {
 	const viewportElement = frameRef?.current?.parentElement;
 	const viewportWidth = viewportElement?.clientWidth as number;
 	const viewportScale = useViewportScale( device, viewportWidth );
-	const [ scale, setScale ] = useState( 1 );
+	const { zoomOutScale, zoomOutStyles, onZoomOutScaleChange } = useZoomOut();
 
 	const handleDeviceClick = ( nextDevice: Device ) => {
 		setDevice( nextDevice );
@@ -71,9 +72,11 @@ const DeviceSwitcher = ( {
 		return clearAnimationEndTimer;
 	}, [ width, height, viewportScale, isFixedViewport ] );
 
+	const content = isZoomable ? <div style={ zoomOutStyles }>{ children }</div> : children;
+
 	const frame = (
 		<div className="device-switcher__frame" ref={ frameRef }>
-			{ children }
+			{ content }
 		</div>
 	);
 
@@ -87,6 +90,7 @@ const DeviceSwitcher = ( {
 				'device-switcher__container--is-tablet': device === 'tablet',
 				'device-switcher__container--is-phone': device === 'phone',
 				'device-switcher__container--is-fullscreen': isFullscreen,
+				'device-switcher__container--is-zoomable': isZoomable,
 			} ) }
 		>
 			<div className="device-switcher__header">
@@ -95,12 +99,13 @@ const DeviceSwitcher = ( {
 				) }
 				{ isZoomable && (
 					<RangeControl
-						className="device-switcher__zoom"
+						className="device-switcher__zoom-out"
 						beforeIcon={ search }
 						withInputField={ false }
-						value={ scale }
-						onChange={ ( value ) => value !== undefined && setScale( value ) }
-						min={ 0 }
+						__nextHasNoMarginBottom
+						value={ Math.round( zoomOutScale * 100 ) }
+						onChange={ ( value ) => value !== undefined && onZoomOutScaleChange( value / 100 ) }
+						min={ 1 }
 						max={ 100 }
 					/>
 				) }
