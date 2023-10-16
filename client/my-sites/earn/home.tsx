@@ -510,11 +510,7 @@ const Home = () => {
 			{ ! isLoading && (
 				<div>
 					{ shouldLoadLaunchpad() ? (
-						<EarnLaunchpad
-							tasklistCompleted={ tasklistCompleted }
-							numberOfSteps={ numberOfSteps }
-							completedSteps={ completedSteps }
-						/>
+						<EarnLaunchpad numberOfSteps={ numberOfSteps } completedSteps={ completedSteps } />
 					) : (
 						<StatsSection />
 					) }
