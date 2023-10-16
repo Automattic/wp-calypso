@@ -28,9 +28,9 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 			ref: getQueryArgs()?.ref,
 			...( [ 'domain' ].includes( flowName ) && {
 				isDomainOnly: 1,
-				checkoutBackUrl: `http://${ config( 'hostname' ) }${
-					config( 'port' ) ? ':' + config( 'port' ) : ''
-				}/start/domain`,
+				checkoutBackUrl: `${ config( 'protocol' ) ? config( 'protocol' ) : 'https' }://${ config(
+					'hostname'
+				) }${ config( 'port' ) ? ':' + config( 'port' ) : '' }/start/domain`,
 			} ),
 		},
 		checkoutURL
