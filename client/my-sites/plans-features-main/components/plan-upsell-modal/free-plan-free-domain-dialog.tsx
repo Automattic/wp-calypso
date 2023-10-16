@@ -45,6 +45,10 @@ const ButtonRow = styled.div`
 	display: flex;
 	justify-content: flex-start;
 	margin: 16px 0;
+	flex-direction: column;
+	@media ( min-width: 780px ) {
+		flex-direction: row;
+	}
 `;
 
 const TextBox = styled.div< { fontSize?: number; bold?: boolean; color?: 'gray' } >`

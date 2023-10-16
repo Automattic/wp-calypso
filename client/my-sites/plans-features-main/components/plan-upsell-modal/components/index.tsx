@@ -2,13 +2,16 @@ import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 
 export const DialogContainer = styled.div`
-	padding: 24px;
+	padding: 24px 12px;
+	@media ( min-width: 780px ) {
+		padding: 24px;
+	}
 `;
 
 export const Heading = styled.div`
 	font-family: Recoleta;
 	color: var( --studio-gray-100 );
-	font-size: 22px;
+	font-size: 32px;
 	line-height: 26px;
 	letter-spacing: 0.38px;
 	@media ( min-width: 780px ) {
@@ -71,7 +74,7 @@ export const DomainName = styled.div`
 	}
 `;
 
-export const StyledButton = styled( Button )< { fitContent?: boolean } >`
+export const StyledButton = styled( Button )`
 	padding: 10px 24px;
 	border-radius: 4px;
 	font-weight: 500;
@@ -95,10 +98,6 @@ export const StyledButton = styled( Button )< { fitContent?: boolean } >`
 			0 0 0 4px var( --studio-blue-50 );
 	}
 	width: 100%;
-	@media ( min-width: 780px ) {
-		max-width: ${ ( { fitContent } ) => ( fitContent ? 'fit-content' : '260px' ) };
-		width: unset;
-	}
 
 	&.is-borderless {
 		text-decoration: underline;
@@ -106,5 +105,16 @@ export const StyledButton = styled( Button )< { fitContent?: boolean } >`
 		font-weight: 600;
 		padding: 0px;
 		color: var( --studio-gray-50 );
+	}
+
+	&:first-child {
+		margin-bottom: 20px;
+	}
+	@media ( min-width: 780px ) {
+		max-width: fit-content;
+		width: unset;
+		&:first-child {
+			margin-bottom: 0;
+		}
 	}
 `;
