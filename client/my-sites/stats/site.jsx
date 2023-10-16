@@ -192,6 +192,14 @@ class StatsSite extends Component {
 		// For the new date picker
 		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
 
+		// Set up a custom range for the chart.
+		// Dependant on new date range picker controls.
+		let customChartRange = null;
+		if ( isDateControlEnabled ) {
+			customChartRange = { chartEnd: '2023-10-07', note: 'Custom range yo!' };
+			this.state.customChartQuantity = 7;
+		}
+
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
 		// For period option links
@@ -314,6 +322,7 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
 							customQuantity={ this.state.customChartQuantity }
+							customRange={ customChartRange }
 						/>
 					</>
 
