@@ -6,18 +6,15 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import NewsletterCategoriesToggle from './newsletter-categories-toggle';
 import './style.scss';
 
 type NewsletterCategoriesSectionProps = {
 	disabled?: boolean;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
-	handleSubmitForm: () => void;
 	newsletterCategoriesEnabled?: boolean;
 	newsletterCategoryIds: number[];
 	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
-	isSavingSettings: boolean;
 };
 
 const NewsletterCategoriesSection = ( {
@@ -25,9 +22,7 @@ const NewsletterCategoriesSection = ( {
 	handleToggle,
 	newsletterCategoriesEnabled,
 	newsletterCategoryIds,
-	handleSubmitForm,
 	updateFields,
-	isSavingSettings,
 }: NewsletterCategoriesSectionProps ) => {
 	const translate = useTranslate();
 	const { hasTranslation } = useI18n();
@@ -35,16 +30,6 @@ const NewsletterCategoriesSection = ( {
 
 	return (
 		<>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
-			<SettingsSectionHeader
-				id="newsletter-categories-settings"
-				title={ translate( 'Newsletter categories' ) }
-				showButton
-				onButtonClick={ handleSubmitForm }
-				disabled={ disabled }
-				isSaving={ isSavingSettings }
-			/>
-
 			<Card className="site-settings__card">
 				<NewsletterCategoriesToggle
 					disabled={ disabled }

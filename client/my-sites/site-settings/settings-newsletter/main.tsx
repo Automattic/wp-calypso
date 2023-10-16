@@ -172,19 +172,22 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				/>
 			</Card>
 
-			<form onSubmit={ handleSubmitForm }>
-				<NewsletterCategoriesSection
-					disabled={ disabled }
-					newsletterCategoryIds={
-						fields.wpcom_newsletter_categories || defaultNewsletterCategoryIds
-					}
-					newsletterCategoriesEnabled={ fields.wpcom_newsletter_categories_enabled }
-					handleToggle={ handleToggle }
-					handleSubmitForm={ handleSubmitForm }
-					updateFields={ updateFields }
-					isSavingSettings={ isSavingSettings }
-				/>
-			</form>
+			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+			<SettingsSectionHeader
+				id="newsletter-categories-settings"
+				title={ translate( 'Newsletter categories' ) }
+				showButton
+				onButtonClick={ handleSubmitForm }
+				disabled={ disabled }
+				isSaving={ isSavingSettings }
+			/>
+			<NewsletterCategoriesSection
+				disabled={ disabled }
+				newsletterCategoryIds={ fields.wpcom_newsletter_categories || defaultNewsletterCategoryIds }
+				newsletterCategoriesEnabled={ fields.wpcom_newsletter_categories_enabled }
+				handleToggle={ handleToggle }
+				updateFields={ updateFields }
+			/>
 
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
