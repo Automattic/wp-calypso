@@ -1,4 +1,5 @@
 import { getUrlParts } from '@automattic/calypso-url';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -25,29 +26,33 @@ export default function SiteBoostColumn( { site }: Props ) {
 		setShowBoostModal( true );
 	};
 
+	const { origin, pathname } = getUrlParts( adminUrl ?? '' );
+
+	const href = adminUrl
+		? `${ origin }${ pathname }?page=jetpack-boost`
+		: `https://${ site.url }/wp-admin/admin.php?page=jetpack`;
+
 	if ( overallScore ) {
 		return (
-			<div
+			<Button
+				borderless
 				className={ classNames(
 					'sites-overview__boost-score',
 					getBoostRatingClass( overallScore )
 				) }
+				href={ href }
+				target="_blank"
 			>
 				{ getBoostRating( overallScore ) }
-			</div>
+			</Button>
 		);
 	}
 
 	if ( hasBoost ) {
-		const { origin, pathname } = getUrlParts( adminUrl ?? '' );
 		return (
 			<a
 				className="sites-overview__column-action-button is-link"
-				href={
-					adminUrl
-						? `${ origin }${ pathname }?page=jetpack-boost`
-						: `https://${ site.url }/wp-admin/admin.php?page=jetpack`
-				}
+				href={ href }
 				target="_blank"
 				rel="noreferrer"
 			>
