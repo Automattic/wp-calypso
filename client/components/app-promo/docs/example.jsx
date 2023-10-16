@@ -4,4 +4,4 @@ export default function AppPromoExample() {
 	return <AppPromo />;
 }
 
-AppPromoExample.displayName = 'AppPromoExample';
+AppPromoExample.displayName = 'AppPromo';
