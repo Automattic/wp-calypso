@@ -5,6 +5,12 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
+function getSiteSlugOrIdFromURLSearchParams() {
+	const { search = '' } = typeof window !== 'undefined' ? window.location : {};
+	const queryParams = new URLSearchParams( search );
+	return queryParams.get( 'siteSlug' ) || queryParams.get( 'siteId' );
+}
+
 const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 	const state = reduxStore.getState();
 
@@ -24,17 +30,10 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 	}
 
 	const path = eventProperties.path ?? getCurrentRoute( state );
-	const isStepper = path.startsWith( '/setup' );
-	let selectedSite;
-
-	if ( isStepper ) {
-		const { search = '' } = typeof window !== 'undefined' ? window.location : {};
-		const params = new URLSearchParams( search );
-		selectedSite = getSite( state, params.get( 'siteSlug' ) || params.get( 'siteId' ) );
-	} else {
-		const omitSelectedSite = eventProperties.force_site_id && shouldReportOmitBlogId( path );
-		selectedSite = omitSelectedSite ? null : getSelectedSite( state );
-	}
+	const omitSelectedSite = ! eventProperties.force_site_id && shouldReportOmitBlogId( path );
+	const selectedSite = omitSelectedSite
+		? null
+		: getSelectedSite( state ) || getSite( state, getSiteSlugOrIdFromURLSearchParams() );
 
 	if ( selectedSite ) {
 		Object.assign( superProps, {

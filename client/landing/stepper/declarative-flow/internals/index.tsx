@@ -64,10 +64,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 
 	const urlQueryParams = useQuery();
+	const siteSlugOrIdInUrl = urlQueryParams.get( 'siteSlug' ) || urlQueryParams.get( 'siteId' );
+	const ref = urlQueryParams.get( 'ref' ) || '';
 
 	const site = useSite();
 	const selectedSite = useSelector( ( state ) => site && getSite( state, site.ID ) );
-	const ref = urlQueryParams.get( 'ref' ) || '';
+	const isFetchingSelectedSite = siteSlugOrIdInUrl && ! selectedSite;
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
@@ -137,7 +139,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( ! currentStepRoute || ! selectedSite ) {
+		if ( ! currentStepRoute || isFetchingSelectedSite ) {
 			return;
 		}
 
@@ -161,7 +163,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow.name, currentStepRoute, selectedSite ] );
+	}, [ flow.name, currentStepRoute, isFetchingSelectedSite ] );
 
 	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
 		state: AssertConditionState.SUCCESS,
