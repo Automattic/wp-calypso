@@ -370,7 +370,7 @@ class ThemeShowcase extends Component {
 					onClick={ () => this.onTierSelect( { value: '' } ) }
 				>
 					<Icon icon={ chevronLeft } />
-					{ translate( 'Back to Discover' ) }
+					{ translate( 'Back' ) }
 				</Button>
 				<h2 className="collection-header__title">{ title }</h2>
 				<div className="collection-header__description">{ description }</div>
