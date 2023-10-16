@@ -5,6 +5,7 @@ import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
+import moment from 'moment';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -197,7 +198,8 @@ class StatsSite extends Component {
 		let customChartRange = null;
 		if ( isDateControlEnabled ) {
 			const chartEnd = context.query?.chartEnd;
-			if ( chartEnd ) {
+			const isValidEndDate = moment( chartEnd ).isValid();
+			if ( chartEnd && isValidEndDate ) {
 				customChartRange = { chartEnd };
 			} else {
 				customChartRange = { chartEnd: '2023-10-07', note: 'Dont forget to update me!' };
