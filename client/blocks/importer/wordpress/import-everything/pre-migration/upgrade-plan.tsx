@@ -40,7 +40,10 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
 		targetSite.ID
 	);
-	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
+	const isEligibleForTrialPlan =
+		migrationTrialEligibility?.eligible ||
+		// If the user's email is unverified, we still want to show the trial plan option
+		migrationTrialEligibility?.error_code === 'email-unverified';
 	const [ popoverVisible, setPopoverVisible ] = useState( false );
 	const trialBtnRef: React.RefObject< HTMLButtonElement > = useRef( null );
 
