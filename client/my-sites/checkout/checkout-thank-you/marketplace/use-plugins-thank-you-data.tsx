@@ -9,7 +9,10 @@ import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-quer
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import {
+	getAutomatedTransferStatus,
+	isFetchingAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -78,6 +81,9 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
+	const isFetchingTransferStatus = useSelector( ( state ) =>
+		isFetchingAutomatedTransferStatus( state, siteId )
+	);
 	// Consolidate the plugin information from the .org and .com sources in a single list
 	const pluginsInformationList = useMemo( () => {
 		return pluginsOnSite.reduce(
@@ -118,6 +124,12 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		// we only rerun when areWporgPluginsFetched changes
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, pluginSlugs, dispatch, wporgPlugins ] );
+
+	useEffect( () => {
+		if ( ! isFetchingTransferStatus && transferStatus !== transferStates.COMPLETE ) {
+			dispatch( fetchAutomatedTransferStatus( siteId as number ) );
+		}
+	}, [ dispatch, isFetchingTransferStatus, siteId, transferStatus ] );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
