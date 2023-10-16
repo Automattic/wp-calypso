@@ -1076,29 +1076,51 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Quick and accurate spelling correction' ),
 	];
 	const boostIncludesInfo = [
-		translate( '{{strong}}Automated critical CSS generation (Premium){{/strong}}', {
+		translate(
+			'{{div}}{{strong}}Automated critical CSS generation{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: {
+					div: <div className="premium-feature" />,
+					strong: <strong />,
+					badge: <span />,
+				},
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Reduce image sizes with image guide{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: {
+					div: <div className="premium-feature" />,
+					strong: <strong />,
+					badge: <span />,
+				},
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Historical site performance chart{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: {
+					div: <div className="premium-feature" />,
+					strong: <strong />,
+					badge: <span />,
+				},
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Additional image quality control options{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: {
+					div: <div className="premium-feature" />,
+					strong: <strong />,
+					badge: <span />,
+				},
+			}
+		),
+		translate( '{{div}}{{strong}}Priority support{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}', {
 			components: {
+				div: <div className="premium-feature" />,
 				strong: <strong />,
-			},
-		} ),
-		translate( '{{strong}}Reduce image sizes with image guide (Premium){{/strong}}', {
-			components: {
-				strong: <strong />,
-			},
-		} ),
-		translate( '{{strong}}Historical site performance chart (Premium){{/strong}}', {
-			components: {
-				strong: <strong />,
-			},
-		} ),
-		translate( '{{strong}}Additional image quality control options (Premium){{/strong}}', {
-			components: {
-				strong: <strong />,
-			},
-		} ),
-		translate( '{{strong}}Priority support (Premium){{/strong}}', {
-			components: {
-				strong: <strong />,
+				badge: <span />,
 			},
 		} ),
 		translate( 'Site performance scores' ),
