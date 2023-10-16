@@ -4,6 +4,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import InstallThemeButton from './install-theme-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
@@ -74,8 +75,8 @@ export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, verti
 			) : (
 				<div className="themes__header-logged-out">
 					<div className="themes__page-heading">
-						<h1>{ themesHeaderTitle }</h1>
-						<p className="page-sub-header">{ themesHeaderDescription }</p>
+						<h1>{ preventWidows( themesHeaderTitle ) }</h1>
+						<p className="page-sub-header">{ preventWidows( themesHeaderDescription ) }</p>
 					</div>
 				</div>
 			) }
