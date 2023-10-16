@@ -4,13 +4,8 @@ import { translate } from 'i18n-calypso';
 
 const noop = () => {};
 
-const getUserSocialStepOrFallback = () => {
-	if ( isEnabled( 'signup/social-first' ) ) {
-		return 'user-social';
-	}
-
-	return 'user';
-};
+const getUserSocialStepOrFallback = () =>
+	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -172,7 +167,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ 'user', 'domains', 'plans-pm' ],
+			steps: [ userSocialStep, 'domains', 'plans-pm' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
