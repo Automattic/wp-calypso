@@ -21,7 +21,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
-import { useSite } from '../../hooks/use-site';
+import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
@@ -64,12 +64,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 
 	const urlQueryParams = useQuery();
-	const siteSlugOrIdInUrl = urlQueryParams.get( 'siteSlug' ) || urlQueryParams.get( 'siteId' );
 	const ref = urlQueryParams.get( 'ref' ) || '';
 
-	const site = useSite();
+	const { site, siteSlugOrId } = useSiteData();
 	const selectedSite = useSelector( ( state ) => site && getSite( state, site.ID ) );
-	const isFetchingSelectedSite = siteSlugOrIdInUrl && ! selectedSite;
+	const isFetchingSelectedSite = siteSlugOrId && ! selectedSite;
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
