@@ -33,7 +33,11 @@ export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 
 	// Define a function to toggle the site interface when the ToggleControl is changed
 	const handleToggleChange = async () => {
-		await toggleSiteInterfaceMutation();
+		if ( wpAdminEnabled ) {
+			toggleSiteInterfaceMutation( true ); // Enable the interface
+		} else {
+			toggleSiteInterfaceMutation( false ); // Disable the interface
+		}
 		setWpAdminEnabled( ! wpAdminEnabled );
 	};
 
@@ -56,11 +60,13 @@ export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 						onChange={ handleToggleChange }
 						checked={ wpAdminEnabled }
 					/>
-					{ wpAdminEnabled && (
-						<div>
-							<p>The interface is currently set to: { adminInterface }</p>
-						</div>
-					) }
+					<div>
+						{ wpAdminEnabled ? (
+							<p>Currently the activated mode is { adminInterface }</p>
+						) : (
+							<p>Now that the toggle is off, we have activated { adminInterface }.</p>
+						) }
+					</div>
 				</ToggleContainer>
 			</CardBody>
 		</Card>

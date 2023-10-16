@@ -9,9 +9,10 @@ export const useSiteInterfaceMutation = ( siteId: number ) => {
 	const queryClient = useQueryClient();
 	const queryKey = [ TOGGLE_SITE_INTERFACE_MUTATION_KEY, siteId ];
 	const mutation = useMutation( {
-		mutationFn: async () => {
+		mutationFn: async ( enabled: boolean ) => {
+			const selectedInterface = enabled ? 'calypso' : 'wp-admin';
 			return wp.req.post( {
-				path: `/sites/${ siteId }/hosting/admin-interface?interface=${ interfaceName }`,
+				path: `/sites/${ siteId }/hosting/admin-interface?interface=${ selectedInterface }`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
