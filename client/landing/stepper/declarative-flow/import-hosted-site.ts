@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
@@ -171,20 +170,15 @@ const importHostedSiteFlow: Flow = {
 					}
 
 					if ( providedDependencies?.siteSlug ) {
-						if ( isEnabled( 'onboarding/import-redesign' ) && fromParam ) {
-							const slectedSiteSlug = providedDependencies?.siteSlug as string;
-							urlQueryParams.set( 'siteSlug', slectedSiteSlug );
+						if ( fromParam ) {
+							const selectedSiteSlug = providedDependencies?.siteSlug as string;
+							urlQueryParams.set( 'siteSlug', selectedSiteSlug );
 							urlQueryParams.set( 'from', fromParam );
 							urlQueryParams.set( 'option', 'everything' );
 
 							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 						}
-
-						return ! fromParam
-							? navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` )
-							: navigate(
-									`import?siteSlug=${ providedDependencies?.siteSlug }&from=${ fromParam }`
-							  );
+						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` );
 					}
 
 					return exitFlow( `/home/${ siteSlugParam }` );

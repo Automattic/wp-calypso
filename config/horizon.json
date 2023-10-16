@@ -80,7 +80,6 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
-		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": false,
 		"plans/migration-trial": true,

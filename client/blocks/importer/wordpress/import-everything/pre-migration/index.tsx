@@ -1,8 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, Title } from '@automattic/onboarding';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -256,11 +254,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						} }
 					/>
 				) }
-				<div
-					className={ classnames( 'import__pre-migration import__import-everything', {
-						'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
-					} ) }
-				>
+				<div className="import__pre-migration import__import-everything import__import-everything--redesign">
 					<div className="import__heading-title">
 						<Title>{ translate( 'You are ready to migrate' ) }</Title>
 					</div>

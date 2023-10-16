@@ -109,7 +109,6 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/import-light": false,
 		"onboarding/import-redirect-to-themes": true,
-		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
