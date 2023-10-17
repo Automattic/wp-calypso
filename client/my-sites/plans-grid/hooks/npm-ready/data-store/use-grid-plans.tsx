@@ -25,7 +25,7 @@ import {
 	TYPE_HOSTING_TRIAL,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
-import { isCurrentPlan } from './is-current-plan';
+import { isCurrentPlan } from '../../../lib/is-current-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
 import type { AddOnMeta, PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';

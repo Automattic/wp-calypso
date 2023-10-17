@@ -6,7 +6,7 @@ import {
 	type PlanSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { isCurrentPlan } from './is-current-plan';
+import { isCurrentPlan } from '../../../lib/is-current-plan';
 import { isPopularPlan } from './is-popular-plan';
 import type { PlansIntent } from './use-grid-plans';
 import type { TranslateResult } from 'i18n-calypso';
