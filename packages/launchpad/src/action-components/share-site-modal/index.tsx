@@ -17,7 +17,21 @@ interface ShareSiteModalProps {
 const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const siteSlug = site?.slug || ( site?.URL && new URL( site.URL ).host );
+	const getSiteSlug = ( site: SiteDetails | null ): string | null => {
+		if ( ! site ) {
+			return null;
+		}
+
+		if ( site.slug ) {
+			return site.slug;
+		}
+
+		if ( site.URL ) {
+			return new URL( site.URL ).host;
+		}
+		return null;
+	};
+	const siteSlug = getSiteSlug( site );
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardTextEl = useRef( null );
