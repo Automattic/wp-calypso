@@ -102,8 +102,8 @@ export default function ModalContainer( props: ModalContainerProps ) {
 			isVisible={ true }
 			onClose={ props.onClose }
 			showCloseIcon={ true }
-			labelledby="free-plan-modal-title"
-			describedby="free-plan-modal-description"
+			labelledby="plan-upsell-modal-title"
+			describedby="plan-upsell-modal-description"
 		>
 			<Global
 				styles={ css`

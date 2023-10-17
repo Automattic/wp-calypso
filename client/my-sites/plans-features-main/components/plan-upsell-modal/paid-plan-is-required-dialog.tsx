@@ -43,8 +43,10 @@ export default function PaidPlanIsRequiredDialog( {
 
 	return (
 		<DialogContainer>
-			<Heading>{ translate( 'A paid plan is required for your domain.' ) }</Heading>
-			<SubHeading>
+			<Heading id="plan-upsell-modal-title">
+				{ translate( 'A paid plan is required for your domain.' ) }
+			</Heading>
+			<SubHeading id="plan-upsell-modal-description">
 				{ translate(
 					'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
 				) }
