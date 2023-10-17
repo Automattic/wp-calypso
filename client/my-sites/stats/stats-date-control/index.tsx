@@ -49,7 +49,6 @@ const StatsDateControl = ( {
 	pathTemplate,
 	onChangeChartQuantity,
 }: StatsDateControlProps ) => {
-
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
 		const newRangeQuery = qs.stringify(
@@ -82,12 +81,7 @@ const StatsDateControl = ( {
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
-			<DateControlPicker
-				slug={ slug }
-				queryParams={ queryParams }
-				shortcutList={ shortcutList }
-				handleApply={ onApplyButtonHandler }
-			/>
+			<DateControlPicker shortcutList={ shortcutList } handleApply={ onApplyButtonHandler } />
 		</div>
 	);
 };
