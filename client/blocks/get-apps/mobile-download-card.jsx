@@ -1,12 +1,11 @@
 import { Card } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { compose } from '@wordpress/compose';
 import i18n, { localize, translate, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { QRCodeSVG } from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AppImage from 'calypso/assets/images/jetpack/jetpack-app-graphic.png';
+import QrCode from 'calypso/blocks/app-promo/qr-code';
 import AnimatedIcon from 'calypso/components/animated-icon';
 import phoneValidation from 'calypso/lib/phone-validation';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
@@ -183,34 +182,6 @@ class MobileDownloadCard extends Component {
 		);
 	}
 
-	getQrCode() {
-		return (
-			<div className="get-apps__qr-code-subpanel">
-				<QRCodeSVG
-					value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
-					size={ 150 }
-				/>
-				<p className="get-apps__card-text">
-					{ translate(
-						'Visit {{a}}wp.com/app{{/a}} from your mobile device, or scan the code to download the Jetpack mobile app.',
-						{
-							components: {
-								a: (
-									<a
-										className="get-apps__jetpack-branded-link"
-										href={ localizeUrl(
-											'https://apps.wordpress.com/get?campaign=calypso-get-apps-link'
-										) }
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-			</div>
-		);
-	}
-
 	getJetpackBrandedPanel() {
 		const { isMobile } = userAgent;
 		return (
@@ -238,7 +209,7 @@ class MobileDownloadCard extends Component {
 						<img src={ AppImage } alt="" width="220px" height="212px" />
 					</div>
 				</div>
-				{ isMobile ? this.getAppStoreBadges() : this.getQrCode() }
+				{ isMobile ? this.getAppStoreBadges() : <QrCode /> }
 			</>
 		);
 	}
