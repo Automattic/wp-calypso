@@ -359,6 +359,10 @@ class ThemeShowcase extends Component {
 		const key = ( this.props.tier ?? '' ) + ( this.props.filter ?? '' );
 		const { title, description } = THEME_COLLECTIONS[ key ];
 
+		if ( ! title || ! description || ( !! this.props.filter && !! this.props.tier ) ) {
+			return;
+		}
+
 		return (
 			<div className="collection-header">
 				<Button
@@ -522,6 +526,7 @@ class ThemeShowcase extends Component {
 			isMultisite,
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
+			isCollectionView,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
