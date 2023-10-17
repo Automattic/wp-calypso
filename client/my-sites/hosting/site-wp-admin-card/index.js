@@ -3,7 +3,7 @@ import { Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { CardBody, ToggleControl } from '@wordpress/components';
 import { useTranslate, localize } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -23,27 +23,34 @@ const ToggleLabel = styled.p( {
 	fontSize: '14px',
 } );
 
+const SITE_WP_ADMIN_CARD_STORAGE_KEY = 'siteWpAdminCardToggleState';
+
 export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 	const translate = useTranslate();
 
 	const toggleSiteInterfaceMutation = useSiteInterfaceMutation( siteId );
 
-	// Define a state to track whether the toggle is checked
-	const [ wpAdminEnabled, setWpAdminEnabled ] = useState( false );
+	// Initialize the state with the value from localStorage if available, or false if not.
+	const [ wpAdminEnabled, setWpAdminEnabled ] = useState(
+		localStorage.getItem( SITE_WP_ADMIN_CARD_STORAGE_KEY ) === 'true' || false
+	);
 
 	// Define a function to toggle the site interface when the ToggleControl is changed
 	const handleToggleChange = async () => {
-		if ( wpAdminEnabled ) {
-			toggleSiteInterfaceMutation( true ); // Enable the interface
-		} else {
-			toggleSiteInterfaceMutation( false ); // Disable the interface
-		}
+		// Toggle the site interface
+		toggleSiteInterfaceMutation( ! wpAdminEnabled );
+
+		// Toggle the local state
 		setWpAdminEnabled( ! wpAdminEnabled );
 	};
-
 	const defaultWpAdminToggleDescription = translate(
 		'Default the site interface and navigation to wp-admin'
 	);
+
+	// Use localStorage to persist the toggle state
+	useEffect( () => {
+		localStorage.setItem( SITE_WP_ADMIN_CARD_STORAGE_KEY, wpAdminEnabled );
+	}, [ wpAdminEnabled ] );
 
 	return (
 		<Card className="sitewpadmin-card">
