@@ -79,7 +79,6 @@ export { default as JetpackLogo } from 'calypso/components/jetpack-logo';
 export { default as LanguagePicker } from 'calypso/components/language-picker';
 export { default as Layout } from 'calypso/components/layout';
 export { default as ListEnd } from 'calypso/components/list-end';
-export { default as LoginWindow } from 'calypso/components/login-window';
 export { default as Main } from 'calypso/components/main';
 export { default as MaterialIcon } from 'calypso/components/material-icon';
 export { default as MarkedLines } from 'calypso/components/marked-lines';
