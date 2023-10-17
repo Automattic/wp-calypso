@@ -3,15 +3,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .theme-collection__container {
-	padding-bottom: 32px;
-
-	&:last-child {
-		padding-bottom: 0;
-
-		@include break-xlarge {
-			padding-bottom: 32px;
-		}
-	}
+	margin-top: 48px;
 
 	.theme-collection__list-wrapper.swiper-wrapper {
 		overflow-y: clip;

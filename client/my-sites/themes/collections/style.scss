@@ -3,28 +3,33 @@
 
 .themes__showcase {
 	.theme-collection__container {
-		margin: 0 -16px;
+		margin-left: -16px;
+		margin-right: -16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
-			margin: 0 -32px;
+			margin-left: -32px;
+			margin-right: -32px;
 		}
 	}
 
 	.theme-collection__meta {
-		margin: 0 16px;
+		margin-left: 16px;
+		margin-right: 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
-			margin: 0 32px;
+			margin-left: 32px;
+			margin-right: 32px;
 		}
 	}
 
 	.theme-collection__list-item.swiper-slide .card.theme-card {
 		@include breakpoint-deprecated( ">660px" ) {
-			padding: 0 0 0 32px;
+			padding-left: 32px;
 		}
 
 		@include break-xlarge {
-			padding: 0 32px;
+			padding-left: 32px;
+			padding-right: 32px;
 		}
 	}
 }
