@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Legend from 'calypso/components/chart/legend';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
@@ -126,45 +125,31 @@ class StatsPeriodNavigation extends PureComponent {
 		const isToday = moment( date ).isSame( moment(), period );
 
 		return (
-			<>
-				<div
-					className={ classNames( 'stats-period-navigation', {
-						'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
-					} ) }
-				>
-					<div className="stats-period-navigation__children">{ children }</div>
-					{ isWithNewDateControl ? (
-						<div className="stats-period-navigation__date-control">
-							<StatsDateControl
-								slug={ slug }
-								queryParams={ queryParams }
-								period={ period }
-								pathTemplate={ pathTemplate }
-								onChangeChartQuantity={ onChangeChartQuantity }
-							/>
-							<div className="stats-period-navigation__period-control">
-								{ this.props.activeTab && (
-									<Legend
-										activeCharts={ this.props.activeLegend }
-										activeTab={ this.props.activeTab }
-										availableCharts={ this.props.availableLegend }
-										clickHandler={ this.onLegendClick }
-										tabs={ this.props.charts }
-									/>
-								) }
-								{ showArrows && (
-									<NavigationArrows
-										disableNextArrow={ disableNextArrow || isToday }
-										disablePreviousArrow={ disablePreviousArrow }
-										onClickNext={ this.handleArrowNext }
-										onClickPrevious={ this.handleArrowPrevious }
-									/>
-								) }
-								<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
-							</div>
-						</div>
-					) : (
-						<>
+			<div
+				className={ classNames( 'stats-period-navigation', {
+					'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
+				} ) }
+			>
+				<div className="stats-period-navigation__children">{ children }</div>
+				{ isWithNewDateControl ? (
+					<div className="stats-period-navigation__date-control">
+						<StatsDateControl
+							slug={ slug }
+							queryParams={ queryParams }
+							period={ period }
+							pathTemplate={ pathTemplate }
+							onChangeChartQuantity={ onChangeChartQuantity }
+						/>
+						<div className="stats-period-navigation__period-control">
+							{ this.props.activeTab && (
+								<Legend
+									activeCharts={ this.props.activeLegend }
+									activeTab={ this.props.activeTab }
+									availableCharts={ this.props.availableLegend }
+									clickHandler={ this.onLegendClick }
+									tabs={ this.props.charts }
+								/>
+							) }
 							{ showArrows && (
 								<NavigationArrows
 									disableNextArrow={ disableNextArrow || isToday }
@@ -173,13 +158,22 @@ class StatsPeriodNavigation extends PureComponent {
 									onClickPrevious={ this.handleArrowPrevious }
 								/>
 							) }
-						</>
-					) }
-				</div>
-				{ ! isWithNewDateControl && (
-					<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+							<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
+						</div>
+					</div>
+				) : (
+					<>
+						{ showArrows && (
+							<NavigationArrows
+								disableNextArrow={ disableNextArrow || isToday }
+								disablePreviousArrow={ disablePreviousArrow }
+								onClickNext={ this.handleArrowNext }
+								onClickPrevious={ this.handleArrowPrevious }
+							/>
+						) }
+					</>
 				) }
-			</>
+			</div>
 		);
 	}
 }
