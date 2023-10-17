@@ -45,8 +45,6 @@ export default function ThemeShowcaseHeader( {
 		  }
 		: loggedOutSeoContent;
 
-	const links = [ { rel: 'canonical', href: canonicalUrl } ];
-
 	const metas = [
 		{
 			name: 'description',
