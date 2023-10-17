@@ -12,14 +12,13 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { FunctionComponent } from 'react';
 
 interface Props {
 	sourceSiteSlug: string;
 	targetSite: SiteDetails | null;
 }
 
-export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
+export const UpgradePlanDetails = ( props: Props ) => {
 	const { __ } = useI18n();
 	const initialFeaturesNumber = 6;
 
@@ -84,4 +83,4 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default ConfirmUpgradePlan;
+export default UpgradePlanDetails;
