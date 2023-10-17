@@ -144,6 +144,13 @@ body.is-section-accept-invite {
 			width: 327px;
 			margin: 0 auto;
 
+			.signup-form__notice {
+				.notice__icon-wrapper {
+					align-items: flex-start;
+					padding-top: 13px;
+				}
+			}
+
 			.signup-form__social {
 				padding: 0 !important;
 			}
