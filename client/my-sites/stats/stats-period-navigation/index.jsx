@@ -88,6 +88,7 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleArrowEvent( 'previous', href );
 	};
 
+	// Copied from`client/my-sites/stats/stats-chart-tabs/index.jsx`
 	onLegendClick = ( chartItem ) => {
 		const activeLegend = this.props.activeLegend.slice();
 		const chartIndex = activeLegend.indexOf( chartItem );
