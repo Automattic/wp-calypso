@@ -17,14 +17,15 @@ interface ShareSiteModalProps {
 const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
+	const siteSlug = site?.slug || ( site?.URL && new URL( site.URL ).host );
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardTextEl = useRef( null );
 
 	const copyHandler = async () => {
-		navigator.clipboard.writeText( `https://${ site?.slug }` );
-		if ( site?.slug ) {
-			await updateLaunchpadSettings( site.slug, {
+		navigator.clipboard.writeText( `https://${ siteSlug }` );
+		if ( siteSlug ) {
+			await updateLaunchpadSettings( siteSlug, {
 				checklist_statuses: { share_site: true },
 			} );
 		}
@@ -51,7 +52,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 						<div className="share-site-modal__modal-site">
 							<div className="share-site-modal__modal-domain">
 								<p className="share-site-modal__modal-domain-text" ref={ clipboardTextEl }>
-									{ site?.slug }
+									{ siteSlug }
 								</p>
 
 								<Popover
