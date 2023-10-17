@@ -150,3 +150,13 @@
 		opacity: 1;
 	}
 }
+
+.comments-tips__action-panel {
+	.action-panel__figure {
+		margin-bottom: 0;
+	}
+	ul {
+		color: var(--color-neutral-70);
+		line-height: 24px;
+	}
+}

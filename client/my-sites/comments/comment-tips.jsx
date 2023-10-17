@@ -8,7 +8,7 @@ const CommentTips = () => {
 	const translate = useTranslate();
 
 	return (
-		<ActionPanel>
+		<ActionPanel className="comments-tips__action-panel">
 			<ActionPanelBody>
 				<ActionPanelFigure align="left">
 					<img
