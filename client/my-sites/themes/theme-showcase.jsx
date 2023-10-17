@@ -361,10 +361,11 @@ class ThemeShowcase extends Component {
 	};
 
 	getCollectionHeader = () => {
+		const { tier, filter } = this.props;
 		let title;
 		let description;
 
-		switch ( this.props.tier ) {
+		switch ( tier ) {
 			case 'premium':
 				title = THEME_COLLECTIONS.premium.title;
 				description = THEME_COLLECTIONS.premium.description;
@@ -373,6 +374,10 @@ class ThemeShowcase extends Component {
 				title = THEME_COLLECTIONS.partner.title;
 				description = THEME_COLLECTIONS.partner.description;
 				break;
+		}
+
+		if ( ! title || ! description || ( !! filter && !! tier ) ) {
+			return;
 		}
 
 		return (
