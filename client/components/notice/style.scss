@@ -251,6 +251,10 @@ a.notice__action {
 	vertical-align: middle;
 	line-height: 1.5;
 
+	&.is-full-width {
+		width: 100%;
+	}
+
 	.notice__content {
 		font-size: $font-body-extra-small;
 		padding: 6px 10px;

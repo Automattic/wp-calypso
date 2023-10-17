@@ -37,6 +37,7 @@
 	"dependencies": {
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-stripe": "workspace:^",
+		"@automattic/components": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
@@ -55,7 +56,7 @@
 		"@testing-library/react": "^14.0.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"typescript": "^5.1.6"
+		"typescript": "^5.2.2"
 	},
 	"peerDependencies": {
 		"@emotion/react": "^11.4.1",

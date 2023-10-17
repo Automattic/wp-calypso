@@ -420,11 +420,13 @@ import {
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_THE_READER,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 	FEATURE_PAYMENT_BUTTONS_JP,
 	FEATURE_PAYPAL_JP,
 	FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
 	FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
 	TERM_CENTENNIALLY,
@@ -439,6 +441,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
+	TYPE_HOSTING_TRIAL,
 } from './constants';
 import type {
 	BillingTerm,
@@ -587,6 +590,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SECURITY_MALWARE,
 		FEATURE_SECURITY_DDOS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_10,
+		FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
@@ -836,6 +840,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_FAST_DNS,
+		FEATURE_SUPPORT_EMAIL,
+		FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	],
+	get2023PlanComparisonFeatureOverride: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
@@ -1644,13 +1655,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_STAGING_SITES,
 		FEATURE_WP_UPDATES,
 		FEATURE_MULTI_SITE,
-		...( ( i18n.hasTranslation(
-			'%(commission)d%% transaction fee for WooCommerce payment features'
-		) &&
-			i18n.hasTranslation( '%(commission)d%% transaction fee for regular payment features' ) ) ||
-		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
-			? [ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO, FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]
-			: [ FEATURE_PAYMENT_TRANSACTION_FEES_2 ] ),
+		FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
+		FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
 	],
 	getCheckoutFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -2666,6 +2672,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1018,
 		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
@@ -2692,6 +2699,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_MONTHLY,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1008,
 		getStoreSlug: () => PLAN_BUSINESS,
@@ -2720,6 +2728,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_PRO_2_YEARS,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1028,
 		getStoreSlug: () => PLAN_BUSINESS_2_YEARS,
@@ -2751,6 +2760,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_PRO_2_YEARS,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1048,
 		getStoreSlug: () => PLAN_BUSINESS_3_YEARS,
@@ -2790,6 +2800,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_MONTHLY,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1061,
 		getStoreSlug: () => PLAN_100_YEARS,
@@ -2816,6 +2827,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1021,
 		getStoreSlug: () => PLAN_ECOMMERCE_MONTHLY,
@@ -2846,6 +2858,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
@@ -2878,6 +2891,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
@@ -2987,6 +3001,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE_2_YEARS,
 				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				PLAN_MIGRATION_TRIAL_MONTHLY,
+				PLAN_HOSTING_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1051,
 		getStoreSlug: () => PLAN_ECOMMERCE_3_YEARS,
@@ -3609,3 +3624,18 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 		getTitle: () => i18n.translate( 'Business Trial' ),
 	};
 }
+
+PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
+	...getPlanBusinessDetails(),
+	getPlanTagline: () => i18n.translate( 'Try all the features of our Business plan.' ),
+	type: TYPE_HOSTING_TRIAL,
+	group: GROUP_WPCOM,
+	getProductId: () => 1058,
+	getPathSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
+	term: TERM_MONTHLY,
+	getBillingTimeFrame: () => i18n.translate( 'Try it for 3 days' ),
+	getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
+	getTitle: () => i18n.translate( 'Business trial' ),
+	getDescription: () => i18n.translate( 'Hosting free trial' ),
+	getTagline: () => i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
+};

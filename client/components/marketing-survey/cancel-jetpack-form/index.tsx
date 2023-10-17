@@ -458,6 +458,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 					offer={ cancellationOffer }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 					onGetDiscount={ onGetCancellationOffer }
+					isAkismet={ !! props?.isAkismet }
 				/>
 			);
 		}
@@ -470,6 +471,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 					siteId={ purchase.siteId }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 					productName={ productName }
+					isAkismet={ !! props?.isAkismet }
 				/>
 			);
 		}

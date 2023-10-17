@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FormEvent } from 'react';
+import { FormEvent, KeyboardEvent } from 'react';
 import './styles.scss';
 
 interface Props {
@@ -30,6 +30,13 @@ export default function DomainAnalyzer( props: Props ) {
 		onFormSubmit( domain );
 	};
 
+	const onInputEscape = ( e: KeyboardEvent< HTMLInputElement > ) => {
+		if ( e.key === 'Escape' ) {
+			e.currentTarget.value = '';
+			onFormSubmit( '' );
+		}
+	};
+
 	return (
 		<div className="domain-analyzer">
 			<h1>{ translate( 'Site Profiler' ) }</h1>
@@ -48,9 +55,14 @@ export default function DomainAnalyzer( props: Props ) {
 						<input
 							type="text"
 							name="domain"
+							// eslint-disable-next-line jsx-a11y/no-autofocus
+							autoFocus={ true }
 							autoComplete="off"
 							defaultValue={ domain }
 							placeholder={ translate( 'Enter a site URL' ) }
+							key={ domain || 'empty' }
+							onKeyDown={ onInputEscape }
+							spellCheck="false"
 						/>
 					</div>
 					<div className="col-2">

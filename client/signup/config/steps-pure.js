@@ -76,6 +76,7 @@ export function generateSteps( {
 				'siteSlug',
 				'themeItem',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -153,6 +154,31 @@ export function generateSteps( {
 			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
+		'user-social': {
+			stepName: 'user-social',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'redirect',
+				'allowUnauthenticated',
+				'oauth2_client_id',
+				'oauth2_redirect',
+			],
+			optionalDependencies: [
+				'redirect',
+				'allowUnauthenticated',
+				'oauth2_client_id',
+				'oauth2_redirect',
+			],
+			props: {
+				isSocialFirst: true,
+				isSocialSignupEnabled: true,
 			},
 		},
 
@@ -445,6 +471,7 @@ export function generateSteps( {
 				'siteUrl',
 				'lastDomainSearched',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -490,6 +517,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'themeItem',
 				'useThemeHeadstart',
+				'domainCart',
 			], // note: siteId, siteSlug are not provided when used in domain flow
 			optionalDependencies: [
 				'signupDomainOrigin',
@@ -520,6 +548,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'signupDomainOrigin',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'siteUrl',
@@ -550,6 +579,7 @@ export function generateSteps( {
 				'siteUrl',
 				'lastDomainSearched',
 				'isManageSiteFlow',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -579,6 +609,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'siteUrl',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'signupDomainOrigin',
@@ -649,7 +680,10 @@ export function generateSteps( {
 					return i18n.translate( 'Choose how to use your domain' );
 				},
 				get subHeaderText() {
-					return i18n.translate( 'Don’t worry, you can easily add a site later' );
+					return i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation( 'Don’t worry, you can easily change it later.' )
+						? i18n.translate( 'Don’t worry, you can easily change it later.' )
+						: i18n.translate( 'Don’t worry, you can easily add a site later' );
 				},
 			},
 			providesDependencies: [
@@ -659,6 +693,7 @@ export function generateSteps( {
 				'siteUrl',
 				'domainItem',
 				'themeSlugWithRepo',
+				'domainCart',
 			],
 			defaultDependencies: {
 				themeSlugWithRepo: 'pub/twentytwentytwo',
@@ -673,7 +708,7 @@ export function generateSteps( {
 				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
+			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo', 'domainCart' ],
 			delayApiRequestUntilComplete: true,
 		},
 

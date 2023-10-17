@@ -1,0 +1,45 @@
+// This file is meant to house style rules that all implementations of the base
+// sidebar will implement by default.
+
+.jetpack-cloud-sidebar {
+	.jetpack-cloud-sidebar__site-selector {
+		background-color: var(--color-sidebar-background);
+	}
+}
+
+.jetpack-cloud-sidebar__header {
+	display: flex;
+	align-items: center;
+	padding: 16px 8px;
+	gap: 12px;
+
+	.all-sites:hover {
+		background-color: unset;
+	}
+
+	.all-sites .all-sites__content,
+	.site .site__content {
+		padding: initial;
+		align-items: center;
+
+		cursor: pointer;
+
+		// Slightly hacky rule to get around rigid element-based rules
+		// specified in <IconContainer />, for the All Sites icon
+		> div[class*="IconContainer"],
+		.site-icon {
+			border-radius: 2px;
+			margin-inline-end: 12px;
+		}
+	}
+
+	.site__domain {
+		display: none;
+	}
+
+	.site__title {
+		// TODO: Value taken directly from designs;
+		// confirm this weight is correct and refactor as necessary
+		font-weight: 500;
+	}
+}

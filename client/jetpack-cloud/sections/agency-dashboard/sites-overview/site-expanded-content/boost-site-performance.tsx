@@ -30,7 +30,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 	const {
 		blog_id: siteId,
 		url_with_scheme: siteUrlWithScheme,
-		url: siteUrl,
+		is_atomic: isAtomicSite,
 		has_boost: hasBoost,
 		jetpack_boost_scores: boostData,
 		has_pending_boost_one_time_score: hasPendingScore,
@@ -56,19 +56,21 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 
 	const ctaButtons = useMemo( () => {
 		if ( ! hasBoost ) {
+			const jetpackDashboardPage = isAtomicSite ? 'jetpack' : 'my-jetpack';
+
 			return [
 				{
 					label: translate( 'Auto-optimize' ),
 					onClick: () => {
-						trackEvent( 'expandable_block_auto_optimize_click' );
+						trackEvent( 'boost_expandable_block_auto_optimize_click' );
 						showBoostModal( true );
 					},
 					primary: true,
 				},
 				{
 					label: translate( 'Settings' ),
-					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack`,
-					onClick: () => trackEvent( 'expandable_block_settings_click' ),
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=${ jetpackDashboardPage }`,
+					onClick: () => trackEvent( 'boost_expandable_block_settings_click' ),
 				},
 			];
 		}
@@ -77,8 +79,8 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 			return [
 				{
 					label: translate( 'Boost Settings' ),
-					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack`,
-					onClick: () => trackEvent( 'expandable_block_settings_click' ),
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
+					onClick: () => trackEvent( 'boost_expandable_block_boost_settings_click' ),
 				},
 			];
 		}
@@ -86,12 +88,12 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		return [
 			{
 				label: translate( 'Optimize performance' ),
-				href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack`,
-				onClick: () => trackEvent( 'expandable_block_optimize_performance_click' ),
+				href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
+				onClick: () => trackEvent( 'boost_expandable_block_optimize_performance_click' ),
 				primary: true,
 			},
 		];
-	}, [ hasBoost, ScoreRating, translate, siteUrlWithScheme, trackEvent ] );
+	}, [ isAtomicSite, hasBoost, ScoreRating, translate, siteUrlWithScheme, trackEvent ] );
 
 	return (
 		<>
@@ -108,6 +110,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				// Allow to click on the card only if Boost is not active
 				onClick={ () => {
 					if ( ! isEnabled ) {
+						trackEvent( 'boost_expandable_block_get_score_click' );
 						showBoostModal( false );
 					}
 				} }
@@ -197,8 +200,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 			{ boostModalState.show && (
 				<BoostLicenseInfoModal
 					onClose={ () => setBoostModalState( { show: false } ) }
-					siteId={ siteId }
-					siteUrl={ siteUrl }
+					site={ site }
 					upgradeOnly={ boostModalState.upgradeOnly }
 				/>
 			) }

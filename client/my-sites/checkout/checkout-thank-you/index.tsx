@@ -657,6 +657,7 @@ export class CheckoutThankYou extends Component<
 			return (
 				<DomainThankYou
 					domain={ domainName ?? '' }
+					domains={ purchases.filter( predicate ).map( ( purchase ) => purchase?.meta ) }
 					email={ professionalEmailPurchase ? professionalEmailPurchase.meta : emailFallback }
 					hasProfessionalEmail={ wasTitanEmailProduct }
 					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace || wasDomainOnly }

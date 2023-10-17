@@ -1,25 +1,8 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
-$domains-table-mobile-breakpoint: 480px;
-
-@media ( max-width: $domains-table-mobile-breakpoint ) {
-	.navigation-header {
-		position: sticky;
-		/*
-		 * The 47px value comes from https://github.com/Automattic/wp-calypso/blob/d7e2ada/client/my-sites/sidebar/style.scss#L751.
-		 * Using 46px, which is the masterbar height CSS variable, introduces an annoying 1px scroll.
-		 * We're using this magic number elsewhere too, so a clean up would be appreciated.
-		 */
-		top: 47px;
-		z-index: 1;
-	}
-
-	.domains-table-toolbar {
-		position: sticky;
-		z-index: 1;
-	}
-
+@media ( max-width: $break-small ) {
 	.domains-table {
 		padding: 0 16px;
 	}
@@ -29,11 +12,6 @@ $domains-table-mobile-breakpoint: 480px;
 	.domains-table-toolbar {
 		--domains-table-toolbar-height: 40px;
 		background: var(--color-surface-backdrop);
-
-		@media ( min-width: $domains-table-mobile-breakpoint ) {
-			position: relative;
-			z-index: 2; // Ensure the dropdown appears overtop of the sticky table header
-		}
 	}
 
 	table {

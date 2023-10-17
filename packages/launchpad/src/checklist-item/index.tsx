@@ -23,6 +23,11 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 		null !== task.repetition_count &&
 		undefined !== task.repetition_count;
 
+	// If the task says we should use the Calypso path, ensure we use that link for the button's href.
+	// This allows the UI routing code to hook into the URL changes and should reduce full-page (re)loads
+	// when clicking on the task list items.
+	const buttonHref = task.useCalypsoPath && task.calypso_path ? task.calypso_path : undefined;
+
 	return (
 		<li
 			className={ classnames( 'checklist-item__task', {
@@ -37,6 +42,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 					className="checklist-item__checklist-primary-button"
 					disabled={ disabled }
 					data-task={ id }
+					href={ buttonHref }
 					onClick={ handlePrimaryAction }
 				>
 					{ title }
@@ -46,6 +52,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 					className="checklist-item__task-content"
 					disabled={ disabled }
 					data-task={ id }
+					href={ buttonHref }
 					onClick={ actionDispatch }
 				>
 					{ completed && (

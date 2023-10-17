@@ -36,6 +36,8 @@ export function recordPermalinkClick( source, post, eventProperties = {} ) {
 }
 
 function getLocation( path ) {
+	const searchParams = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
+
 	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
@@ -49,7 +51,8 @@ function getLocation( path ) {
 		return 'following_p2';
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
-		return 'topic_page';
+		const sort = searchParams.get( 'sort' );
+		return `topic_page:${ sort || 'relevance' }`;
 	}
 	if ( path.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
 		return 'single_post';
@@ -73,8 +76,8 @@ function getLocation( path ) {
 		return 'following_manage';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		const searchParams = new URLSearchParams( window.location.search );
 		const selectedTab = searchParams.get( 'selectedTab' );
+
 		if ( ! selectedTab || selectedTab === 'recommended' ) {
 			return 'discover_recommended';
 		} else if ( selectedTab === 'latest' ) {
@@ -108,7 +111,9 @@ function getLocation( path ) {
  * @returns new eventProperties object with default reader values added.
  */
 export function buildReaderTracksEventProps( eventProperties, pathnameOverride, post ) {
-	const location = getLocation( pathnameOverride || window.location.pathname );
+	const location = getLocation(
+		pathnameOverride || window.location.pathname + window.location.search
+	);
 	let composedProperties = Object.assign( { ui_algo: location }, eventProperties );
 	if ( post ) {
 		composedProperties = Object.assign( getTracksPropertiesForPost( post ), composedProperties );
@@ -239,7 +244,9 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 }
 
 export function recordFollow( url, railcar, additionalProps = {} ) {
-	const source = additionalProps.follow_source || getLocation( window.location.pathname );
+	const source =
+		additionalProps.follow_source ||
+		getLocation( window.location.pathname + window.location.search );
 	bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
@@ -254,7 +261,9 @@ export function recordFollow( url, railcar, additionalProps = {} ) {
 }
 
 export function recordUnfollow( url, railcar, additionalProps = {} ) {
-	const source = additionalProps.follow_source || getLocation( window.location.pathname );
+	const source =
+		additionalProps.follow_source ||
+		getLocation( window.location.pathname + window.location.search );
 	bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );

@@ -1,0 +1,72 @@
+.theme-collection__meta {
+	display: flex;
+	justify-content: space-between;
+}
+
+.theme-collection__headings {
+	flex-basis: 45%;
+}
+
+.theme-collection__title {
+	font-size: 1.75rem;
+	line-height: 1;
+}
+
+.theme-collection__description * {
+	margin-bottom: 0;
+}
+
+.theme-collection__list-item.swiper-slide {
+	/* TODO: Needs a better solution. Testing on more screen widths etc */
+	width: 32%;
+}
+
+.theme-collection__list-wrapper {
+	margin-top: 1em;
+}
+
+/* TODO: Don't display on mobile? */
+.theme-collection__carousel-controls {
+	display: flex;
+	justify-content: flex-end;
+	/*!rtl:ignore*/
+	direction: ltr;
+	align-self: end;
+	align-items: center;
+
+	.theme-collection__see-all {
+		font-size: 0.875rem;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		padding: 0;
+		margin-right: 24px;
+
+		&:focus {
+			box-shadow: none;
+		}
+	}
+
+	.theme-collection__carousel-nav-button {
+		padding: 0;
+		width: 32px;
+		height: 32px;
+		background: #eee;
+		border-radius: 50%;
+		display: flex;
+		justify-content: center;
+		margin: 0 8px;
+		transition: opacity 0.3s linear;
+		pointer-events: all;
+
+		&:hover {
+			filter: brightness(0.9);
+		}
+
+		&.swiper-button-disabled {
+			pointer-events: none;
+		}
+
+	}
+}

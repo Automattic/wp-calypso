@@ -7,6 +7,7 @@ export type UrlData = {
 	platform_data?: {
 		is_wpcom: boolean;
 		is_wpengine: boolean;
+		is_pressable: boolean;
 		slug?: string;
 		name?: string;
 		support_url?: string;

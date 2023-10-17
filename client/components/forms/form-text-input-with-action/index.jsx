@@ -1,7 +1,7 @@
+import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { useState, useCallback } from 'react';
-import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 import './style.scss';
@@ -92,13 +92,14 @@ function FormTextInputWithAction( {
 				onBlur={ handleBlur }
 				onKeyDown={ handleKeyDown }
 			/>
-			<FormButton
-				className="form-text-input-with-action__button is-compact"
+			<Button
+				size="compact"
+				className="form-text-input-with-action__button"
 				disabled={ disabled || ! value }
 				onClick={ handleAction }
 			>
 				{ action }
-			</FormButton>
+			</Button>
 		</div>
 	);
 }

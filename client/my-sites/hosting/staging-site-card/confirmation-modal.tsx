@@ -6,6 +6,7 @@ import { useState } from 'react';
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
+	justifyContent: 'flex-end',
 } );
 
 type ConfirmationModalButtonProps = {
@@ -18,10 +19,12 @@ type ConfirmationModalButtonProps = {
 	isPlain?: boolean;
 	isTransparent?: boolean;
 	isCompact?: boolean;
+	isConfirmationDisabled?: boolean;
 	disabled?: boolean;
 	children: React.ReactNode;
 	modalTitle: string;
-	modalMessage: string;
+	modalMessage?: string;
+	extraModalContent?: React.ReactNode;
 	confirmLabel: string;
 	cancelLabel: string;
 };
@@ -30,6 +33,7 @@ export function ConfirmationModal( {
 	onConfirm,
 	onCancel,
 	disabled = false,
+	isConfirmationDisabled,
 	isBusy = false,
 	isPrimary = false,
 	isScary = false,
@@ -40,6 +44,7 @@ export function ConfirmationModal( {
 	children,
 	modalTitle,
 	modalMessage,
+	extraModalContent,
 	confirmLabel,
 	cancelLabel,
 }: ConfirmationModalButtonProps ) {
@@ -64,9 +69,19 @@ export function ConfirmationModal( {
 			</Button>
 			{ isOpen && (
 				<Modal title={ modalTitle } onRequestClose={ closeModal }>
-					<p>{ modalMessage }</p>
+					{ modalMessage && <p>{ modalMessage }</p> }
+					{ extraModalContent }
 					<ActionButtons>
 						<Button
+							onClick={ () => {
+								onCancel?.();
+								closeModal();
+							} }
+						>
+							{ cancelLabel }
+						</Button>
+						<Button
+							disabled={ isConfirmationDisabled }
 							primary
 							onClick={ () => {
 								onConfirm?.();
@@ -75,14 +90,6 @@ export function ConfirmationModal( {
 							busy={ isBusy }
 						>
 							{ confirmLabel }
-						</Button>
-						<Button
-							onClick={ () => {
-								onCancel?.();
-								closeModal();
-							} }
-						>
-							{ cancelLabel }
 						</Button>
 					</ActionButtons>
 				</Modal>

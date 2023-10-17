@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
-import { getProductTitle } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import getProductSlugFromLicenseKey from '../lib/get-product-slug-from-license-key';
+import { getProductSlugFromLicenseKey, getProductTitle } from '../lib';
 import type {
 	ProductInfo,
 	PurchasedProductsInfo,

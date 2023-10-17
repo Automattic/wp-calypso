@@ -24,6 +24,7 @@ interface SignupFormSocialFirst {
 	handleSocialResponse: () => void;
 	isReskinned: boolean;
 	queryArgs: object;
+	notice: JSX.Element | false;
 }
 
 const SignupFormSocialFirst = ( {
@@ -38,6 +39,7 @@ const SignupFormSocialFirst = ( {
 	handleSocialResponse,
 	isReskinned,
 	queryArgs,
+	notice,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
@@ -55,23 +57,26 @@ const SignupFormSocialFirst = ( {
 	const renderContent = () => {
 		if ( currentStep === 'initial' ) {
 			return (
-				<SocialSignupForm
-					handleResponse={ handleSocialResponse }
-					socialService={ socialService }
-					socialServiceResponse={ socialServiceResponse }
-					isReskinned={ isReskinned }
-					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-					disableTosText={ true }
-					compact={ true }
-				>
-					<Button
-						className="social-buttons__button button"
-						onClick={ () => setCurrentStep( 'email' ) }
+				<>
+					{ notice }
+					<SocialSignupForm
+						handleResponse={ handleSocialResponse }
+						socialService={ socialService }
+						socialServiceResponse={ socialServiceResponse }
+						isReskinned={ isReskinned }
+						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+						disableTosText={ true }
+						compact={ true }
 					>
-						<MailIcon width="20" height="20" />
-						<span className="social-buttons__service-name">{ __( 'Continue with Email' ) }</span>
-					</Button>
-				</SocialSignupForm>
+						<Button
+							className="social-buttons__button button"
+							onClick={ () => setCurrentStep( 'email' ) }
+						>
+							<MailIcon width="20" height="20" />
+							<span className="social-buttons__service-name">{ __( 'Continue with Email' ) }</span>
+						</Button>
+					</SocialSignupForm>
+				</>
 			);
 		} else if ( currentStep === 'email' ) {
 			const gravatarProps = isGravatar

@@ -67,7 +67,7 @@ describe( 'BoostSitePerformance', () => {
 		);
 
 		fireEvent.click( settingsButton );
-		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_settings_click' );
+		expect( trackEventMock ).toHaveBeenCalledWith( 'boost_expandable_block_settings_click' );
 	} );
 
 	test( 'renders the Boost settings button when there is a high score and has boost', () => {
@@ -86,11 +86,11 @@ describe( 'BoostSitePerformance', () => {
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=jetpack-boost`
 		);
 
 		fireEvent.click( button );
-		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_settings_click' );
+		expect( trackEventMock ).toHaveBeenCalledWith( 'boost_expandable_block_boost_settings_click' );
 	} );
 
 	test( 'renders the Boost settings button when there is a low score and has boost', () => {
@@ -109,10 +109,12 @@ describe( 'BoostSitePerformance', () => {
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=jetpack-boost`
 		);
 
 		fireEvent.click( button );
-		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_optimize_performance_click' );
+		expect( trackEventMock ).toHaveBeenCalledWith(
+			'boost_expandable_block_optimize_performance_click'
+		);
 	} );
 } );

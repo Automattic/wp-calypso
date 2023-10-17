@@ -15,6 +15,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
+import useOneDollarOfferTrack from '../../hooks/use-onedollar-offer-track';
 
 const ECommerceTrialExpired = (): JSX.Element => {
 	const translate = useTranslate();
@@ -29,6 +30,8 @@ const ECommerceTrialExpired = (): JSX.Element => {
 			sitePurchases.filter( ( purchase ) => purchase.productSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY ),
 		[ sitePurchases ]
 	);
+
+	useOneDollarOfferTrack( siteId, 'trialexpired' );
 
 	const [ interval, setInterval ] = useState( 'monthly' as 'monthly' | 'yearly' );
 

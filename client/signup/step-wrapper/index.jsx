@@ -203,7 +203,7 @@ class StepWrapper extends Component {
 		if ( isSticky !== undefined ) {
 			sticky = isSticky;
 		} else {
-			sticky = isReskinnedFlow( flowName ) ? true : false;
+			sticky = isReskinnedFlow( flowName ) ? null : false;
 		}
 
 		return (

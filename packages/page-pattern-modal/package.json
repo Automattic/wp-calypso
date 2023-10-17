@@ -46,7 +46,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"resize-observer-polyfill": "1.5.1",
-		"typescript": "^5.1.6"
+		"typescript": "^5.2.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.11.0",

@@ -26,13 +26,6 @@
 		width: 100%;
 	}
 
-	@media ( min-width: 480px ) {
-		.search-component.domains-table-filter__search {
-			max-width: 50%;
-		}
-	}
-
-
 	&__search {
 		--color-surface: var(--studio-white);
 

@@ -5,6 +5,7 @@ import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
+import moment from 'moment';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -165,6 +166,14 @@ class StatsSite extends Component {
 		}
 	}
 
+	getValidDateOrNullFromInput( inputDate ) {
+		if ( inputDate === undefined ) {
+			return null;
+		}
+		const isValid = moment( inputDate ).isValid();
+		return isValid ? inputDate : null;
+	}
+
 	renderStats() {
 		const {
 			date,
@@ -191,6 +200,31 @@ class StatsSite extends Component {
 
 		// For the new date picker
 		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
+
+		// Set up a custom range for the chart.
+		// Dependant on new date range picker controls.
+		let customChartRange = null;
+		if ( isDateControlEnabled ) {
+			// Sort out end date for chart.
+			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+			if ( chartEnd ) {
+				customChartRange = { chartEnd };
+			} else {
+				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
+			}
+			// Sort out quantity for chart.
+			// ToDo: Update to take period into account.
+			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
+			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+			if ( chartStart && isSameOrBefore ) {
+				const diff = moment( chartEnd ).diff( moment( chartStart ), 'days' );
+				// Make sure quantity includes start date.
+				this.state.customChartQuantity = diff + 1;
+			} else {
+				// If we have a goofy start date, ignore it.
+				this.state.customChartQuantity = 7;
+			}
+		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -314,6 +348,7 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
 							customQuantity={ this.state.customChartQuantity }
+							customRange={ customChartRange }
 						/>
 					</>
 

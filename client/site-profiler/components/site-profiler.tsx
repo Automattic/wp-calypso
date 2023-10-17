@@ -1,14 +1,16 @@
 import { translate } from 'i18n-calypso';
-import { useNavigate, useLocation } from 'react-router-dom';
+import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
-import useDomainQueryParam from 'calypso/site-profiler/hooks/use-domain-query-param';
+import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
+import useScrollToTop from '../hooks/use-scroll-to-top';
+import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
+import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
@@ -16,39 +18,59 @@ import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
 import './styles.scss';
 
-export default function SiteProfiler() {
-	const location = useLocation();
-	const navigate = useNavigate();
-	const queryParams = useQuery();
-	const { domain, isValid: isDomainValid } = useDomainQueryParam();
+interface Props {
+	routerDomain?: string;
+}
+
+export default function SiteProfiler( props: Props ) {
+	const { routerDomain } = props;
+	const {
+		domain,
+		category: domainCategory,
+		isValid: isDomainValid,
+		isSpecial: isDomainSpecial,
+		readyForDataFetch,
+	} = useDomainParam( routerDomain );
 
 	const {
 		data: siteProfilerData,
 		error: errorSP,
 		isFetching: isFetchingSP,
-	} = useDomainAnalyzerQuery( domain, isDomainValid );
-	const { data: urlData } = useAnalyzeUrlQuery( domain, isDomainValid );
-	const { data: hostingProviderData } = useHostingProviderQuery( domain, isDomainValid );
+	} = useDomainAnalyzerQuery( domain, readyForDataFetch );
+	const { data: urlData, isError: isErrorUrlData } = useAnalyzeUrlQuery(
+		domain,
+		readyForDataFetch
+	);
+	const { data: hostingProviderData } = useHostingProviderQuery( domain, readyForDataFetch );
 	const isBusyForWhile = useLongFetchingDetection( domain, isFetchingSP );
 	const conversionAction = useDefineConversionAction(
 		domain,
-		siteProfilerData?.whois,
-		siteProfilerData?.is_domain_available,
-		siteProfilerData?.eligible_google_transfer,
-		hostingProviderData?.hosting_provider
+		siteProfilerData,
+		hostingProviderData,
+		isErrorUrlData ? null : urlData
+	);
+	const showResultScreen = siteProfilerData || isDomainSpecial;
+
+	useScrollToTop( !! siteProfilerData );
+	useSiteProfilerRecordAnalytics(
+		domain,
+		domainCategory,
+		isDomainValid,
+		conversionAction,
+		hostingProviderData?.hosting_provider,
+		normalizeWhoisField( siteProfilerData?.whois?.registrar ),
+		urlData
 	);
 
-	const updateDomainQueryParam = ( value: string ) => {
-		// Update the domain query param;
+	const updateDomainRouteParam = ( value: string ) => {
+		// Update the domain param;
 		// URL param is the source of truth
-		value ? queryParams.set( 'domain', value ) : queryParams.delete( 'domain' );
-
-		navigate( location.pathname + '?' + queryParams.toString() );
+		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 
 	return (
 		<>
-			{ ! siteProfilerData && (
+			{ ! showResultScreen && (
 				<LayoutBlock className="domain-analyzer-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<DomainAnalyzer
@@ -57,46 +79,55 @@ export default function SiteProfiler() {
 						isBusy={ isFetchingSP }
 						isBusyForWhile={ isBusyForWhile }
 						domainFetchingError={ errorSP instanceof Error ? errorSP : undefined }
-						onFormSubmit={ updateDomainQueryParam }
+						onFormSubmit={ updateDomainRouteParam }
 					/>
 				</LayoutBlock>
 			) }
 
-			{ siteProfilerData && (
+			{ showResultScreen && (
 				<LayoutBlock className="domain-result-block">
 					{
 						// Translators: %s is the domain name searched
 						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
 					}
-					{ siteProfilerData && (
+					{ showResultScreen && (
 						<LayoutBlockSection>
 							<HeadingInformation
 								domain={ domain }
 								conversionAction={ conversionAction }
-								onCheckAnotherSite={ () => updateDomainQueryParam( '' ) }
+								onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+								urlData={ urlData }
+								domainCategory={ domainCategory }
 							/>
 						</LayoutBlockSection>
 					) }
-					{ ! siteProfilerData.is_domain_available && (
+					{ siteProfilerData && ! siteProfilerData.is_domain_available && (
 						<>
-							{ siteProfilerData && (
-								<LayoutBlockSection>
-									<HostingInformation
-										dns={ siteProfilerData.dns }
-										urlData={ urlData }
-										hostingProvider={ hostingProviderData?.hosting_provider }
-									/>
-								</LayoutBlockSection>
-							) }
 							<LayoutBlockSection>
-								<DomainInformation domain={ domain } whois={ siteProfilerData.whois } />
+								<HostingInformation
+									dns={ siteProfilerData.dns }
+									urlData={ urlData }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+								/>
+							</LayoutBlockSection>
+							<LayoutBlockSection>
+								<DomainInformation
+									domain={ domain }
+									whois={ siteProfilerData.whois }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									urlData={ urlData }
+								/>
 							</LayoutBlockSection>
 						</>
 					) }
 				</LayoutBlock>
 			) }
 
-			<LayoutBlock isMonoBg={ !! siteProfilerData }>
+			<LayoutBlock
+				className="hosting-intro-block globe-bg"
+				isMonoBg={ showResultScreen && conversionAction && conversionAction !== 'register-domain' }
+			>
 				<HostingIntro />
 			</LayoutBlock>
 		</>

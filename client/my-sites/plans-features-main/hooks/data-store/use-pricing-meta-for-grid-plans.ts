@@ -1,16 +1,22 @@
+import {
+	PLAN_MONTHLY_PERIOD,
+	type PlanSlug,
+	getTermFromDuration,
+	calculateMonthlyPrice,
+} from '@automattic/calypso-products';
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
 import { PlanPrices } from 'calypso/state/plans/types';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import {
+	getCurrentPlan,
 	getSitePlanRawPrice,
 	isPlanAvailableForPurchase,
 } from 'calypso/state/sites/plans/selectors';
-import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import type { PlanSlug } from '@automattic/calypso-products';
 import type { AddOnMeta } from '@automattic/data-stores';
 import type {
 	UsePricingMetaForGridPlans,
@@ -51,14 +57,20 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	storageAddOns,
 }: Props ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
-	const currentSitePlanSlug = useSelector( ( state: IAppState ) =>
-		getSitePlanSlug( state, selectedSiteId )
+	const currentPlan = useSelector( ( state: IAppState ) =>
+		getCurrentPlan( state, selectedSiteId )
 	);
+	const currentSitePlanSlug = currentPlan?.productSlug;
+
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
 	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
 	const selectedStorageOptions = useSelect( ( select ) => {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
+
+	const purchasedPlan = useSelector(
+		( state: IAppState ) => currentPlan && getByPurchaseId( state, currentPlan.id || 0 )
+	);
 	const planPrices = useSelector( ( state: IAppState ) => {
 		return planSlugs.reduce(
 			( acc, planSlug ) => {
@@ -91,21 +103,37 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 
 				// raw prices for current site's plan
 				if ( selectedSiteId && currentSitePlanSlug === planSlug ) {
-					const monthlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+					let monthlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 						returnMonthly: true,
 						returnSmallestUnit: true,
 					} );
-					const yearlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+					let fullPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 						returnMonthly: false,
 						returnSmallestUnit: true,
 					} );
+
+					/**
+					 * Ensure the spotlight plan shows the price with which the plans was purchased.
+					 */
+					if ( purchasedPlan ) {
+						const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
+
+						if ( isMonthly && monthlyPrice !== purchasedPlan.priceInteger ) {
+							monthlyPrice = purchasedPlan.priceInteger;
+							fullPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
+						} else if ( fullPrice !== purchasedPlan.priceInteger ) {
+							const term = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
+							monthlyPrice = calculateMonthlyPrice( term, purchasedPlan.priceInteger );
+							fullPrice = purchasedPlan.priceInteger;
+						}
+					}
 
 					return {
 						...acc,
 						[ planSlug ]: {
 							originalPrice: {
 								monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
-								full: yearlyPrice ? yearlyPrice + storageAddOnPriceYearly : null,
+								full: fullPrice ? fullPrice + storageAddOnPriceYearly : null,
 							},
 							discountedPrice: {
 								monthly: null,
@@ -182,6 +210,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					billingPeriod: pricedAPIPlan?.bill_period,
 					currencyCode: pricedAPIPlan?.currency_code,
 					introOffer: sitePlan?.introOffer,
+					expiry: sitePlan?.expiry,
 				},
 			};
 		},

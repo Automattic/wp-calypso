@@ -1,0 +1,27 @@
+.sidebar-v2 {
+	// TODO: Existing variables, overridden with values directly from designs;
+	// confirm these colors are correct and refactor as necessary
+	--color-sidebar-menu-hover-background: var(--studio-gray-0);
+	--color-sidebar-background: #fcfcfc;
+
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	height: 100vh;
+	background-color: var(--color-sidebar-background);
+
+	margin: 0;
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+.sidebar-v2__main {
+	flex-grow: 1;
+	overflow-y: auto;
+	height: 0;  // To support scrollable in the main content area, we set height to 0.
+}
+
+.sidebar-v2__footer {
+	margin-block-start: auto;
+}

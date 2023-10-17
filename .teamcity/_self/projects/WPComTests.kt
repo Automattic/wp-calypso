@@ -65,6 +65,10 @@ object WPComTests : Project({
 	// Just desktop to start
 	buildType(jetpackAtomicDeploymentE2eBuildType("desktop", "81015cf6-27e7-40bd-a52d-df6bd19ffb01"));
 
+	// E2E Tests for smoke testing each new Jetpack build on Atomic
+	// Also just desktop to start
+	buildType(jetpackAtomicBuildSmokeE2eBuildType("desktop", "f39587ab-f526-42aa-a88b-814702135af3"));
+
 	buildType(I18NTests);
 	buildType(P2E2ETests)
 })
@@ -139,7 +143,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				name = "Post Failure Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @kitkat-team @calypso-platform-team! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @kit-squad @calypso-platform-team! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 		},
 		buildFeatures = {
@@ -286,7 +290,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
-		description = "Runs E2E tests validating the deployment of Jetpack on Atomic sites on $targetDevice viewport"
+		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations."
 		
 		artifactRules = defaultE2eArtifactRules();
 
@@ -301,6 +305,11 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
+			// We run all the tests on all variations, and go through each variation sequentially.
+			// We can easily overwhlem the target Atomic site under test if we have too much parallelization.
+			// This number of works plays nicely with the expected load handling on these Atomic sites.
+			// See: pMz3w-ix0-p2
+			param("JEST_E2E_WORKERS", "5")
 		}
 
 		steps {
@@ -322,6 +331,84 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		features {
 			perfmon {}
+
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#jetpack-alerts"
+					messageFormat = verboseMessageFormat {
+						addStatusText = true
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailedToStart = true
+				buildFailed = true
+				buildFinishedSuccessfully = false
+				buildProbablyHanging = true
+			}
+		}
+
+		failureConditions {
+			defaultE2eFailureConditions()
+			// These are long-running tests, and we have to scale back the parallelization too.
+			// Let's give them some more breathing room.
+			executionTimeoutMin = 25
+		}
+	});
+}
+
+fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
+	return BuildType({
+		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
+		uuid = buildUuid
+		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
+		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
+		
+		artifactRules = defaultE2eArtifactRules();
+
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
+		params {
+			defaultE2eParams()
+			calypsoBaseUrlParam()
+			param("env.VIEWPORT_NAME", "$targetDevice")
+			param("env.JETPACK_TARGET", "wpcom-deployment")
+			param("env.TEST_ON_ATOMIC", "true")
+			param("env.ATOMIC_VARIATION", "mixed")
+			// We need to be careful of overwhelming the Atomic sites under test.
+			// The mixing of Atomic variations happens per-worker.
+			// There are currently 7 variations. So let's do 2 workers per variation for 14 workers total.
+			param("JEST_E2E_WORKERS", "14")
+		}
+
+		steps {
+			prepareE2eEnvironment()
+
+			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
+
+			collectE2eResults()
+		}
+
+		features {
+			perfmon {}
+
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#jetpack-alerts"
+					messageFormat = verboseMessageFormat {
+						addStatusText = true
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailedToStart = true
+				buildFailed = true
+				buildFinishedSuccessfully = false
+				buildProbablyHanging = true
+			}
 		}
 
 		failureConditions {
@@ -329,6 +416,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		}
 	});
 }
+
 
 private object I18NTests : E2EBuildType(
 	buildId = "WPComTests_i18n",

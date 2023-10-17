@@ -512,11 +512,8 @@ class ReaderStream extends Component {
 			if ( ! sidebarContentFn || streamType === 'search' ) {
 				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
-				const streamClassNames = classnames( {
-					'stream__two-column': this.props.selectedStreamName !== 'firstposts',
-				} );
 				body = (
-					<div className={ streamClassNames }>
+					<div className="stream__two-column">
 						<div className="reader__content">
 							{ streamHeader?.() }
 							{ bodyContent }
@@ -524,12 +521,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = classnames(
-					{
-						'reader-two-column': this.props.selectedStreamName !== 'firstposts',
-					},
-					baseClassnames
-				);
+				baseClassnames = classnames( 'reader-two-column', baseClassnames );
 			} else {
 				body = (
 					<>

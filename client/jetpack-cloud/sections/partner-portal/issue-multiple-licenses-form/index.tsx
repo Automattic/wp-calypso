@@ -3,14 +3,14 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
-import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
-import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
 import {
 	isJetpackBundle,
 	isWooCommerceProduct,
 	isWpcomHostingProduct,
-} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+} from 'calypso/jetpack-cloud/sections/partner-portal/lib';
+import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
+import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
+import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';

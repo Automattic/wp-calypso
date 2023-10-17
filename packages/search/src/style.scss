@@ -5,6 +5,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 $input-z-index: 20;
 
@@ -91,10 +92,14 @@ $input-z-index: 20;
 	&__open-icon,
 	&__close-icon {
 		flex: 0 0 auto;
-		width: 50px;
+		width: 19px;
 		z-index: 20;
 		color: var(--color-primary);
 		cursor: pointer;
+
+		@include break-mobile {
+			width: 50px;
+		}
 	}
 
 	&__open-icon:hover {
@@ -169,7 +174,11 @@ $input-z-index: 20;
 	}
 
 	.components-button {
-		padding: 0;
+		padding: 8px;
+
+		@include break-mobile {
+			padding: 0;
+		}
 
 		&:focus {
 			z-index: 9999;
