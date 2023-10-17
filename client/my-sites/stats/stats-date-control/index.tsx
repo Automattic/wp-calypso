@@ -1,4 +1,7 @@
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import page from 'page';
+import qs from 'qs';
 import React from 'react';
 import IntervalDropdown from '../stats-interval-dropdown';
 import DateControlPicker from './stats-date-control-picker';
@@ -14,34 +17,36 @@ const StatsDateControl = ( {
 	pathTemplate,
 	onChangeChartQuantity,
 }: StatsDateControlProps ) => {
+	const translate = useTranslate();
+
 	const shortcutList = [
 		{
 			id: 'today',
-			label: 'Today',
+			label: translate( 'Today' ),
 			offset: 0,
 			range: 0,
 		},
 		{
 			id: 'yesterday',
-			label: 'Yesterday',
+			label: translate( 'Yesterday' ),
 			offset: 1,
 			range: 0,
 		},
 		{
 			id: 'last-7-days',
-			label: 'Last 7 Days',
+			label: translate( 'Last 7 Days' ),
 			offset: 0,
 			range: 7,
 		},
 		{
 			id: 'last-30-days',
-			label: 'Last 30 Days',
+			label: translate( 'Last 30 Days' ),
 			offset: 0,
 			range: 30,
 		},
 		{
 			id: 'last-year',
-			label: 'Last Year',
+			label: translate( 'Last Year' ),
 			offset: 0,
 			range: 365,
 		},
@@ -58,20 +63,37 @@ const StatsDateControl = ( {
 		// TODO: take period into account
 		const offset = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
 
-		// TODO: add period update if the offet is too big to accomodate the chart
+		if ( offset <= 30 ) {
+			// 30 bars, one day is one bar
+			onChangeChartQuantity( offset + 1 );
+		} else {
+			const nextDay = startDate;
+			const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
+				addQueryPrefix: true,
+			} );
+			let period;
 
-		onChangeChartQuantity( offset + 1 );
+			if ( offset <= 7 * 25 ) {
+				// 25 bars, 7 days one bar
+				period = 'week';
+			} else if ( offset <= 30 * 25 ) {
+				// 25 bars, 30 days one bar
+				period = 'month';
+			} else {
+				period = 'year';
+			}
+
+			const url = `/stats/${ period }/${ slug }`;
+			const href = `${ url }${ nextDayQuery }`;
+
+			page( href );
+		}
 	};
 
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
-			<DateControlPicker
-				slug={ slug }
-				queryParams={ queryParams }
-				shortcutList={ shortcutList }
-				handleApply={ handleApply }
-			/>
+			<DateControlPicker shortcutList={ shortcutList } handleApply={ handleApply } />
 		</div>
 	);
 };

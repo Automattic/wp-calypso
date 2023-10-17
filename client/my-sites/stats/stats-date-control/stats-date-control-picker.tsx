@@ -2,20 +2,13 @@ import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
 import moment from 'moment';
-import page from 'page';
-import qs from 'qs';
 import React, { useState, useRef } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
-const DateControlPicker = ( {
-	slug,
-	queryParams,
-	shortcutList,
-	handleApply,
-}: DateControlPickerProps ) => {
+const DateControlPicker = ( { shortcutList, handleApply }: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
 	const [ inputStartDate, setInputStartDate ] = useState( new Date().toISOString().slice( 0, 10 ) );
 	const [ inputEndDate, setInputEndDate ] = useState(
@@ -36,18 +29,8 @@ const DateControlPicker = ( {
 	};
 
 	const handleOnApply = () => {
-		const nextDay = inputStartDate;
-		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
-			addQueryPrefix: true,
-		} );
-		const period = 'day'; // TODO: make this dynamic
-		const url = `/stats/${ period }/${ slug }`;
-		const href = `${ url }${ nextDayQuery }`;
-
 		// expose the values externally
 		handleApply( inputStartDate, inputEndDate );
-
-		page( href );
 	};
 
 	const handleOnCancel = () => {
