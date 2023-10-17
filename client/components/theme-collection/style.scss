@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -45,21 +46,23 @@
 
 .theme-collection__title {
 	line-height: 1;
-	font-size: 1.25rem;
-	font-weight: 400;
+	font-size: $font-body;
+	font-weight: 600;
 	color: var(--gray-gray-100, #101517);
 
 	@include break-small {
-		font-size: 1.75rem;
+		font-size: rem(24px);
+		font-weight: 400;
 	}
 }
 
 .theme-collection__description * {
 	color: var(--gray-gray-70, #3c434a);
+	font-size: $font-body-small;
 	margin-bottom: 0;
 
 	@include break-small {
-		font-size: 1rem;
+		font-size: $font-body;
 	}
 }
 
@@ -83,7 +86,7 @@
 	align-items: center;
 
 	.theme-collection__see-all {
-		font-size: 1rem;
+		font-size: $font-body-small;
 		font-style: normal;
 		font-weight: 400;
 		line-height: 20px;
@@ -100,8 +103,11 @@
 		@include break-small {
 			text-decoration: none;
 			align-items: inherit;
-			font-size: 0.875rem;
 			margin-right: 24px;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 
