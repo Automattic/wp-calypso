@@ -3,7 +3,6 @@ interface StatsDateControlProps {
 	queryParams: string;
 	period: 'day' | 'week' | 'month' | 'year';
 	pathTemplate: string;
-	onChangeChartQuantity: ( customQuantity: number ) => void;
 }
 
 interface DateControlPickerProps {

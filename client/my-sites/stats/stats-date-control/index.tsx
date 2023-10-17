@@ -47,13 +47,7 @@ const shortcutList = [
 	},
 ];
 
-const StatsDateControl = ( {
-	slug,
-	queryParams,
-	period,
-	pathTemplate,
-	onChangeChartQuantity,
-}: StatsDateControlProps ) => {
+const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDateControlProps ) => {
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
 		const newRangeQuery = qs.stringify(
@@ -80,17 +74,6 @@ const StatsDateControl = ( {
 			return 'month';
 		}
 		return 'year';
-	};
-
-	// Previous Apply button handling.
-	const handleApply = ( startDate: string, endDate: string ) => {
-		// calculate offset between start and end to influcence the number of points for the chart
-		// TODO: take period into account
-		const offset = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
-
-		// TODO: add period update if the offet is too big to accomodate the chart
-
-		onChangeChartQuantity( offset + 1 );
 	};
 
 	// New Apply button handling.
