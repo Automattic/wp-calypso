@@ -14,7 +14,7 @@ import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-co
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { triggeredLoggedInAction } from 'calypso/state/reader-ui/actions';
+import { registerLastLoggedInAction } from 'calypso/state/reader-ui/actions';
 import './style.scss';
 
 class ReaderLikeButton extends Component {
@@ -29,8 +29,14 @@ class ReaderLikeButton extends Component {
 		clearTimeout( this.hidePopoverTimeout );
 	}
 
-	onLoggedOut = () => {
-		this.props.triggeredLoggedInAction( 'like' );
+	onLikeToggle = ( liked ) => {
+		this.props.registerLastLoggedInAction( 'like' );
+
+		if ( this.props.isLoggedIn ) {
+			return this.recordLikeToggle( liked );
+		}
+
+		// If not logged in and the login window component is disabled, redirect to create account page
 		if ( ! config.isEnabled( 'reader/login-window' ) ) {
 			// Redirect to create account page
 			const { pathname } = getUrlParts( window.location.href );
@@ -82,8 +88,7 @@ class ReaderLikeButton extends Component {
 					ref={ this.likeButtonRef }
 					onMouseEnter={ this.showLikesPopover }
 					onMouseLeave={ this.hideLikesPopover }
-					onLikeToggle={ this.recordLikeToggle }
-					onLoggedOut={ this.onLoggedOut }
+					onLikeToggle={ this.onLikeToggle }
 					likeSource="reader"
 					icon={ likeIcon }
 				/>
@@ -115,5 +120,5 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 		};
 	},
-	{ markPostSeen, triggeredLoggedInAction }
+	{ markPostSeen, registerLastLoggedInAction }
 )( ReaderLikeButton );
