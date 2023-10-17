@@ -60,6 +60,7 @@ const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDat
 		return `${ url }${ newRangeQuery }`;
 	};
 
+	// Determine period based on number of days in date range.
 	const bestPeriodForDays = ( days: number ): string => {
 		// 30 bars, one day is one bar
 		if ( days <= 30 ) {
@@ -76,12 +77,13 @@ const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDat
 		return 'year';
 	};
 
-	// New Apply button handling.
+	// Handler for Apply button.
 	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
+		// Determine period based on date range.
 		const rangeInDays = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
 		const period = bestPeriodForDays( rangeInDays );
-		const href = generateNewLink( period, startDate, endDate );
-		page( href );
+		// Update chart via routing.
+		page( generateNewLink( period, startDate, endDate ) );
 	};
 
 	// Handler for shortcut selection.
@@ -90,9 +92,8 @@ const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDat
 		const anchor = moment().subtract( shortcut.offset, 'days' );
 		const endDate = anchor.format( 'YYYY-MM-DD' );
 		const startDate = anchor.subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
-
-		const href = generateNewLink( shortcut.period, startDate, endDate );
-		page( href );
+		// Update chart via routing.
+		page( generateNewLink( shortcut.period, startDate, endDate ) );
 	};
 
 	return (
