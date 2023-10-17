@@ -11,23 +11,9 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { LoadingPlaceHolder } from '../loading-placeholder';
-import { DialogContainer, StyledButton } from './components';
+import { DialogContainer, Heading, StyledButton } from './components';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 import type { TranslateResult } from 'i18n-calypso';
-
-export const Heading = styled.div`
-	font-family: Recoleta;
-	color: var( --studio-gray-100 );
-	font-size: 22px;
-	line-height: 26px;
-	letter-spacing: 0.38px;
-	margin-bottom: 12px;
-	@media ( min-width: 780px ) {
-		font-size: 32px;
-		line-height: 40px;
-		letter-spacing: -0.32px;
-	}
-`;
 
 const List = styled.ul`
 	list-style: none;

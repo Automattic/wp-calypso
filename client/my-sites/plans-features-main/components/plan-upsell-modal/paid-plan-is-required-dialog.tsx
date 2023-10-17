@@ -43,7 +43,7 @@ export default function PaidPlanIsRequiredDialog( {
 
 	return (
 		<DialogContainer>
-			<Heading id="plan-upsell-modal-title">
+			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
 				{ translate( 'A paid plan is required for your domain.' ) }
 			</Heading>
 			<SubHeading id="plan-upsell-modal-description">
