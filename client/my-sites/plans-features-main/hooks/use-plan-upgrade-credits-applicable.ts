@@ -1,5 +1,5 @@
 import { PlanSlug, PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
-import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
+import { useMaxProRatedCreditsForPlans } from 'calypso/my-sites/plans-features-main/hooks/use-max-pro-rated-credits-for-plans';
 import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
@@ -22,7 +22,7 @@ export function usePlanUpgradeCreditsApplicable(
 	const currentSitePlanSlug = useSelector( ( state ) =>
 		siteId ? getSitePlanSlug( state, siteId ) : undefined
 	);
-	const creditsValue = useCalculateMaxPlanUpgradeCredit( { siteId, plans: visiblePlans } );
+	const creditsValue = useMaxProRatedCreditsForPlans( { siteId, plans: visiblePlans } );
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 	);
