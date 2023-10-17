@@ -77,7 +77,6 @@ import LayoutExample from 'calypso/components/layout/docs/example';
 import LineChart from 'calypso/components/line-chart/docs/example';
 import LinkCard from 'calypso/components/link-card/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
-import LoginWindowExample from 'calypso/components/login-window/docs/example';
 import Main from 'calypso/components/main';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
 import MultipleChoiceQuestionExample from 'calypso/components/multiple-choice-question/docs/example';
@@ -244,7 +243,6 @@ export default class DesignAssets extends Component {
 					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
 					<ListTile readmeFilePath="/packages/components/src/list-tile" />
-					<LoginWindowExample readmeFilePath="login-window" />
 					<ProductLogoExample />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />

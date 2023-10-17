@@ -1,15 +1,15 @@
 import { Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import LoginWindow from 'calypso/components/login-window';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import useLoginWindow from 'calypso/data/reader/use-login-window';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import './style.scss';
 
 const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 	const translate = useTranslate();
 
-	const { login, createAccount } = LoginWindow( {
+	const { login, createAccount } = useLoginWindow( {
 		onLoginSuccess: () => window.location.reload(),
 	} );
 
