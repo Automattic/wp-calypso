@@ -2,7 +2,6 @@ import moment from 'moment';
 import page from 'page';
 import qs from 'qs';
 import React from 'react';
-import IntervalDropdown from '../stats-interval-dropdown';
 import DateControlPicker from './stats-date-control-picker';
 import { StatsDateControlProps, DateControlPickerShortcut } from './types';
 import './style.scss';
@@ -47,7 +46,7 @@ const shortcutList = [
 	},
 ];
 
-const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDateControlProps ) => {
+const StatsDateControl = ( { slug, queryParams }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
 	// consistent with the custom ranges.
@@ -102,7 +101,6 @@ const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDat
 
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
-			{ /* <IntervalDropdown period={ period } pathTemplate={ pathTemplate } /> */ }
 			<DateControlPicker
 				shortcutList={ shortcutList }
 				onShortcut={ onShortcutHandler }
