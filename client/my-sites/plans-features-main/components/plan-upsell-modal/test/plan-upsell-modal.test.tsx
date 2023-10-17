@@ -3,8 +3,8 @@
  */
 import { PLAN_FREE, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
-import useIsFreeDomainFreePlanUpsellEnabled from 'my-sites/plans-features-main/hooks/use-is-free-domain-free-plan-upsell-enabled';
-import useIsFreePlanCustomDomainUpsellEnabled from 'my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
+import useIsFreeDomainFreePlanUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-domain-free-plan-upsell-enabled';
+import useIsFreePlanCustomDomainUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
