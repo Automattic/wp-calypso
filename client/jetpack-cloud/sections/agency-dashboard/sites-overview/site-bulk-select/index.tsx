@@ -30,9 +30,10 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 	};
 
 	const handleToggleSelect = () => {
-		// Filter sites with site error or monitor error as they are not selectable.
+		// Filter sites with site error or monitor error or is an Atomic sites as they are not selectable
 		const filteredSites = sites.filter(
-			( site ) => site.site.value.is_connected && ! site.monitor.error
+			( site ) =>
+				site.site.value.is_connected && ! site.monitor.error && ! site.site.value.is_atomic
 		);
 		const isChecked = isAllChecked( filteredSites );
 
@@ -83,7 +84,7 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 				</div>
 			</div>
 			<DashboardBulkActions
-				selectedSites={ selectedSites.filter( ( site ) => ! site.is_atomic ) } // Bulk action (Monitoring) is not supported for Atomic sites.
+				selectedSites={ selectedSites }
 				bulkUpdateSettings={ sites?.[ 0 ]?.monitor?.settings }
 				isLargeScreen={ isLargeScreen }
 			/>

@@ -29,7 +29,7 @@ export default function SiteSelectCheckbox( { item, siteError, isLargeScreen }: 
 				onClick={ handleCheckboxClick }
 				checked={ item.isSelected }
 				readOnly={ true }
-				disabled={ siteError }
+				disabled={ item.site?.value?.is_atomic || siteError }
 			/>
 		</span>
 	);
