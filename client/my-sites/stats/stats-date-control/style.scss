@@ -1,12 +1,14 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography.scss";
 
-.stats-date-control {
-	display: flex;
-	flex-direction: row-reverse;
-}
+.date-control-picker-date {
+	margin: 16px;
 
-// TODO: Add final colors to shortcuts.
+	// Internal layout
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
 
 .date-control-picker-shortcuts {
 	margin: 10px 0;
@@ -19,39 +21,55 @@
 
 .date-control-picker-shortcuts__shortcut {
 	border-radius: 4px;
+
+	&.is-selected {
+		background-color: var(--color-accent-5);
+	}
+
+	&:hover {
+		background-color: var(--color-primary-0);
+	}
+
 	.components-button {
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
 	}
-	&.is-selected {
-		background-color: var(--color-accent-5);
-	}
-	&:hover {
-		background-color: var(--color-primary-0);
+}
+
+.input-group {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 16px; // spacing between "From" and "To" groups
+
+	label {
+		margin-bottom: 8px; // Adjust based on the design's spacing
+		text-align: left;
 	}
 }
 
-// Button styling for date control picker dropdown
+.stats-date-control {
+	display: flex;
+	flex-direction: row-reverse;
+}
 
 .stats-date-control-picker {
-
 	> .components-button {
-		border-radius: 4px;
-		border: 1px solid var(--gray-gray-10, #c3c4c7);
+		align-items: center;
 		background: #fff;
+		border: 1px solid var(--gray-gray-10, #c3c4c7);
+		border-radius: 4px;
 		color: var(--studio-black);
+		display: flex;
 		font-family: $font-sf-pro-display;
-		font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
 		font-style: normal;
 		font-weight: 500;
-		line-height: 20px;
-		letter-spacing: 0.32px;
-		display: flex;
-		padding: var(--grid-unit-15, 12px) var(--grid-unit-20, 16px);
-		justify-content: flex-end;
-		align-items: center;
 		gap: 8px;
+		justify-content: flex-end;
+		letter-spacing: 0.32px;
+		line-height: 20px;
+		padding: var(--grid-unit-15, 12px) var(--grid-unit-20, 16px);
 	}
 }
 
@@ -60,16 +78,14 @@
 	min-width: 320px;
 }
 
-.date-control-picker-date {
-	margin: 16px;
-
-	// internal layout
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-}
-
 .stats-date-control-picker-dates__buttons {
 	display: flex;
 	justify-content: flex-end;
 }
+
+.stats-date-control-picker-dates__inputs {
+	display: flex; // to position "From" and "To" groups side by side
+	gap: 16px; // spacing between the "From" input and the "To" input
+}
+
+// TODO: Add final colors to shortcuts.
