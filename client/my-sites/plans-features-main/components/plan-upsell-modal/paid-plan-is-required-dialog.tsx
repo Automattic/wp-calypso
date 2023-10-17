@@ -1,5 +1,5 @@
+import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { LoadingPlaceHolder } from '../loading-placeholder';
 import {
