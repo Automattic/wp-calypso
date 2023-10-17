@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -27,6 +26,7 @@ class StatsPeriodNavigation extends PureComponent {
 		queryParams: PropTypes.object,
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
+		isWithNewDateControl: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -37,6 +37,7 @@ class StatsPeriodNavigation extends PureComponent {
 		queryParams: {},
 		startDate: false,
 		endDate: false,
+		isWithNewDateControl: false,
 	};
 
 	handleArrowEvent = ( arrow, href ) => {
@@ -119,21 +120,20 @@ class StatsPeriodNavigation extends PureComponent {
 			slug,
 			pathTemplate,
 			onChangeChartQuantity,
+			isWithNewDateControl,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
-		// For the new date picker
-		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
 
 		return (
 			<>
 				<div
 					className={ classNames( 'stats-period-navigation', {
-						'stats-period-navigation__is-with-new-date-control': isDateControlEnabled,
+						'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
 					} ) }
 				>
 					<div className="stats-period-navigation__children">{ children }</div>
-					{ isDateControlEnabled ? (
+					{ isWithNewDateControl ? (
 						<div className="stats-period-navigation__date-control">
 							<StatsDateControl
 								slug={ slug }
@@ -143,13 +143,15 @@ class StatsPeriodNavigation extends PureComponent {
 								onChangeChartQuantity={ onChangeChartQuantity }
 							/>
 							<div className="stats-period-navigation__period-control">
-								<Legend
-									activeCharts={ this.props.activeLegend }
-									activeTab={ this.props.activeTab }
-									availableCharts={ this.props.availableLegend }
-									clickHandler={ this.onLegendClick }
-									tabs={ this.props.charts }
-								/>
+								{ this.props.activeTab && (
+									<Legend
+										activeCharts={ this.props.activeLegend }
+										activeTab={ this.props.activeTab }
+										availableCharts={ this.props.availableLegend }
+										clickHandler={ this.onLegendClick }
+										tabs={ this.props.charts }
+									/>
+								) }
 								{ showArrows && (
 									<NavigationArrows
 										disableNextArrow={ disableNextArrow || isToday }
@@ -174,7 +176,7 @@ class StatsPeriodNavigation extends PureComponent {
 						</>
 					) }
 				</div>
-				{ ! isDateControlEnabled && (
+				{ ! isWithNewDateControl && (
 					<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
 				) }
 			</>

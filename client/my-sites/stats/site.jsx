@@ -320,6 +320,7 @@ class StatsSite extends Component {
 								activeTab={ getActiveTab( this.props.chartTab ) }
 								activeLegend={ this.state.activeLegend }
 								onChangeLegend={ this.onChangeLegend }
+								isWithNewDateControl={ isDateControlEnabled }
 							>
 								{ ' ' }
 								<DatePicker
