@@ -4,18 +4,12 @@ import {
 	isAkismetPro,
 	isAkismetFree,
 	isAkismetEnterprise,
-	PRODUCT_AKISMET_PLUS_MONTHLY,
-	PRODUCT_AKISMET_PLUS_20K_MONTHLY,
-	PRODUCT_AKISMET_PLUS_30K_MONTHLY,
-	PRODUCT_AKISMET_PLUS_40K_MONTHLY,
-	PRODUCT_AKISMET_ENTERPRISE_350K_MONTHLY,
-	PRODUCT_AKISMET_ENTERPRISE_2M_MONTHLY,
-	PRODUCT_AKISMET_PLUS_YEARLY,
-	PRODUCT_AKISMET_PLUS_20K_YEARLY,
-	PRODUCT_AKISMET_PLUS_30K_YEARLY,
-	PRODUCT_AKISMET_PLUS_40K_YEARLY,
-	PRODUCT_AKISMET_ENTERPRISE_350K_YEARLY,
-	PRODUCT_AKISMET_ENTERPRISE_2M_YEARLY,
+	isAkismetPlus10k,
+	isAkismetPlus20k,
+	isAkismetPlus30k,
+	isAkismetPlus40k,
+	isAkismetEnterprise350k,
+	isAkismetEnterprise2m,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
@@ -84,29 +78,16 @@ export default function getAkismetProductFeatures(
 	}
 
 	if ( isAkismetPro( product ) ) {
-		const productSlug = product.product_slug;
-		if (
-			productSlug === PRODUCT_AKISMET_PLUS_MONTHLY ||
-			productSlug === PRODUCT_AKISMET_PLUS_YEARLY
-		) {
+		if ( isAkismetPlus10k( product ) ) {
 			return getFeatureStrings( 'pro_10k', translate );
 		}
-		if (
-			productSlug === PRODUCT_AKISMET_PLUS_20K_MONTHLY ||
-			productSlug === PRODUCT_AKISMET_PLUS_20K_YEARLY
-		) {
+		if ( isAkismetPlus20k( product ) ) {
 			return getFeatureStrings( 'pro_20k', translate );
 		}
-		if (
-			productSlug === PRODUCT_AKISMET_PLUS_30K_MONTHLY ||
-			productSlug === PRODUCT_AKISMET_PLUS_30K_YEARLY
-		) {
+		if ( isAkismetPlus30k( product ) ) {
 			return getFeatureStrings( 'pro_30k', translate );
 		}
-		if (
-			productSlug === PRODUCT_AKISMET_PLUS_40K_MONTHLY ||
-			productSlug === PRODUCT_AKISMET_PLUS_40K_YEARLY
-		) {
+		if ( isAkismetPlus40k( product ) ) {
 			return getFeatureStrings( 'pro_40k', translate );
 		}
 	}
@@ -116,19 +97,11 @@ export default function getAkismetProductFeatures(
 	}
 
 	if ( isAkismetEnterprise( product ) ) {
-		const productSlug = product.product_slug;
-
-		if (
-			productSlug === PRODUCT_AKISMET_ENTERPRISE_350K_MONTHLY ||
-			productSlug === PRODUCT_AKISMET_ENTERPRISE_350K_YEARLY
-		) {
+		if ( isAkismetEnterprise350k( product ) ) {
 			return getFeatureStrings( 'enterprise_350k', translate );
 		}
 
-		if (
-			productSlug === PRODUCT_AKISMET_ENTERPRISE_2M_MONTHLY ||
-			productSlug === PRODUCT_AKISMET_ENTERPRISE_2M_YEARLY
-		) {
+		if ( isAkismetEnterprise2m( product ) ) {
 			return getFeatureStrings( 'enterprise_2m', translate );
 		}
 	}
