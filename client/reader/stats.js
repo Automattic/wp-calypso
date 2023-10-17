@@ -1,6 +1,5 @@
 import { localeRegexString } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
-import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -190,11 +189,10 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {}, 
 	recordTrack( eventName, { ...getTracksPropertiesForPost( post ), ...additionalProps }, options );
 	if ( post.railcar && allowedTracksRailcarEventNames.has( eventName ) ) {
 		// check for overrides for the railcar
-		recordTracksRailcarInteract(
-			eventName,
-			post.railcar,
-			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
-		);
+		recordTracksRailcarInteract( eventName, post.railcar, {
+			ui_algo: additionalProps?.ui_algo,
+			ui_position: additionalProps?.ui_position,
+		} );
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
 		// eslint-disable-next-line no-console
 		console.warn( 'Consider allowing reader track', eventName );
@@ -212,11 +210,10 @@ export function getTracksPropertiesForPost( post = {} ) {
 }
 
 export function recordRailcar( eventName, railcar, eventProperties ) {
-	recordTracksRailcarInteract(
-		eventName,
-		railcar,
-		pick( eventProperties, [ 'ui_position', 'ui_algo' ] )
-	);
+	recordTracksRailcarInteract( eventName, railcar, {
+		ui_algo: eventProperties?.ui_algo,
+		ui_position: eventProperties?.ui_position,
+	} );
 }
 
 export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
