@@ -4,7 +4,14 @@ import { NOTICE_READER_FIRST_POSTS } from 'calypso/my-sites/customer-home/cards/
 
 const ReaderFirstPosts = () => {
 	const translate = useTranslate();
-	// @TODO: Add Tracks events.
+
+	const clickButton = () => {
+		// @TODO: Add Tracks events.
+		//recordTracksEvent( 'calypso_home_reader_first_posts_nudge_click' );
+
+		page.redirect( '/discover?selectedTab=first-posts' );
+	};
+
 	return (
 		<Card className="reader-first-posts__nudge">
 			<TrackComponentView
