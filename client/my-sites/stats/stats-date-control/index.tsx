@@ -63,31 +63,33 @@ const StatsDateControl = ( {
 		// TODO: take period into account
 		const offset = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
 
+		// set quntiry
+		onChangeChartQuantity( offset + 1 );
+
+		const nextDay = startDate;
+		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
+			addQueryPrefix: true,
+		} );
+		let period;
+
 		if ( offset <= 30 ) {
 			// 30 bars, one day is one bar
-			onChangeChartQuantity( offset + 1 );
+			period = 'day';
+		} else if ( offset <= 7 * 25 ) {
+			// 25 bars, 7 days one bar
+			period = 'week';
+		} else if ( offset <= 30 * 25 ) {
+			// 25 bars, 30 days one bar
+			period = 'month';
 		} else {
-			const nextDay = startDate;
-			const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
-				addQueryPrefix: true,
-			} );
-			let period;
-
-			if ( offset <= 7 * 25 ) {
-				// 25 bars, 7 days one bar
-				period = 'week';
-			} else if ( offset <= 30 * 25 ) {
-				// 25 bars, 30 days one bar
-				period = 'month';
-			} else {
-				period = 'year';
-			}
-
-			const url = `/stats/${ period }/${ slug }`;
-			const href = `${ url }${ nextDayQuery }`;
-
-			page( href );
+			period = 'year';
 		}
+
+		const url = `/stats/${ period }/${ slug }`;
+		const href = `${ url }${ nextDayQuery }`;
+
+		// apply an interval
+		page( href );
 	};
 
 	return (
