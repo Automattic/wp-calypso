@@ -156,7 +156,16 @@ describe( 'getSignupUrl', () => {
 				'en',
 				''
 			)
-		).toEqual( '/start/test' );
+		).toEqual( '/start/test?redirect_to=https%3A%2F%2Fexample.com' );
+		expect(
+			getSignupUrl(
+				{ signup_flow: 'account', redirect_to: 'https://example.com' },
+				'/log-in',
+				null,
+				'en',
+				''
+			)
+		).toEqual( '/start/account?redirect_to=https%3A%2F%2Fexample.com' );
 	} );
 
 	test( '/log-in/jetpack uses /jetpack/connect', () => {
