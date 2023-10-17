@@ -31,7 +31,7 @@ export const Heading = styled.div`
 
 const List = styled.ul`
 	list-style: none;
-	margin: 20px 0 12px;
+	margin: 20px 0 20px;
 	font-weight: 600;
 	font-size: 14px;
 `;
@@ -51,17 +51,23 @@ const ButtonRow = styled.div`
 	}
 `;
 
-const TextBox = styled.div< { fontSize?: number; bold?: boolean; color?: 'gray' } >`
+type TextBoxProps = {
+	fontSize?: number;
+	bold?: boolean;
+	color?: 'gray';
+	noBottomGap?: boolean;
+};
+const TextBox = styled.div< TextBoxProps >`
 	font-size: ${ ( { fontSize } ) => fontSize || 14 }px;
 	font-weight: ${ ( { bold } ) => ( bold ? 600 : 400 ) };
 	line-height: 20px;
-	margin-bottom: 8px;
 	color: ${ ( { color } ) => {
 		if ( color === 'gray' ) {
 			return 'var(--studio-gray-50)';
 		}
 		return 'var(--color-text)';
 	} };
+	margin-bottom: ${ ( { noBottomGap } ) => ( noBottomGap ? 0 : '8px' ) };
 `;
 
 const CrossIcon = styled( Gridicon )`
@@ -182,7 +188,7 @@ export function FreePlanFreeDomainDialog( {
 					<div>
 						<CrossIcon icon="cross" size={ 24 } />
 					</div>
-					<TextBox>
+					<TextBox noBottomGap>
 						{ translate(
 							'{{strong}}No extra storage:{{/strong}} You only get 1GB for photos, videos, media, and documents.',
 							{
@@ -231,6 +237,7 @@ export function FreePlanFreeDomainDialog( {
 					className="free-plan-free-domain-dialog__plan-button is-upsell-modal-personal-plan"
 					disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
 					primary
+					maxWidth="260px"
 					onClick={ () => {
 						onPlanSelected();
 					} }
@@ -255,7 +262,7 @@ export function FreePlanFreeDomainDialog( {
 					{ translate( 'Continue with Free' ) }
 				</StyledButton>
 			</ButtonRow>
-			<TextBox fontSize={ 12 } color="gray">
+			<TextBox fontSize={ 12 } color="gray" noBottomGap>
 				{ planTitle &&
 					translate(
 						'%(planTitle)s plan: %(monthlyPlanPrice)s per month, %(annualPlanPrice)s billed annually. Excluding taxes.',

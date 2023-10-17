@@ -22,7 +22,7 @@ export type ModalType =
 export type DomainPlanDialogProps = {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	suggestedPlanSlug: PlanSlug;
-	onFreePlanSelected: () => void;
+	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
 	onPlanSelected: () => void;
 };
 
@@ -32,7 +32,7 @@ type ModalContainerProps = {
 	modalType?: ModalType | null;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestions.DomainSuggestion >;
 	onClose: () => void;
-	onFreePlanSelected: () => void;
+	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
 	onPlanSelected: ( planSlug: string ) => void;
 };
 
@@ -53,9 +53,7 @@ function DisplayedModal( {
 					paidDomainName={ paidDomainName as string }
 					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 					suggestedPlanSlug={ PLAN_PERSONAL }
-					onFreePlanSelected={ () => {
-						onFreePlanSelected();
-					} }
+					onFreePlanSelected={ onFreePlanSelected }
 					onPlanSelected={ () => {
 						onPlanSelected( PLAN_PERSONAL );
 					} }
@@ -96,6 +94,17 @@ export default function ModalContainer( props: ModalContainerProps ) {
 	if ( ! isModalOpen || ! modalType ) {
 		return;
 	}
+
+	const modalWidth = () => {
+		switch ( modalType ) {
+			case FREE_PLAN_PAID_DOMAIN_DIALOG:
+			case FREE_PLAN_FREE_DOMAIN_DIALOG:
+				return '605px';
+			case PAID_PLAN_IS_REQUIRED_DIALOG:
+			default:
+				return '639px';
+		}
+	};
 	return (
 		<Dialog
 			isBackdropVisible={ true }
@@ -112,7 +121,7 @@ export default function ModalContainer( props: ModalContainerProps ) {
 					}
 					.ReactModal__Content--after-open.dialog.card {
 						border-radius: 4px;
-						width: 639px;
+						width: ${ modalWidth() };
 					}
 				` }
 			/>

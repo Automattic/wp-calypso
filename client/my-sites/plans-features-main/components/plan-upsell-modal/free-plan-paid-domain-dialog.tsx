@@ -41,7 +41,7 @@ export function FreePlanPaidDomainDialog( {
 
 	function handleFreePlanClick() {
 		setIsBusy( true );
-		onFreePlanSelected();
+		onFreePlanSelected( true );
 	}
 
 	return (

@@ -74,7 +74,7 @@ export const DomainName = styled.div`
 	}
 `;
 
-export const StyledButton = styled( Button )`
+export const StyledButton = styled( Button )< { maxWidth?: string } >`
 	padding: 10px 24px;
 	border-radius: 4px;
 	font-weight: 500;
@@ -111,10 +111,13 @@ export const StyledButton = styled( Button )`
 		margin-bottom: 20px;
 	}
 	@media ( min-width: 780px ) {
-		max-width: fit-content;
+		max-width: ${ ( { maxWidth } ) => maxWidth ?? 'fit-content' };
 		width: unset;
 		&:first-child {
 			margin-bottom: 0;
+		}
+		&:nth-child( 2 ) {
+			margin-left: 31.5px;
 		}
 	}
 `;
