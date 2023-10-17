@@ -77,6 +77,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 
 	const { pushToStaging } = usePushToStagingMutation( productionSite?.id as number, siteId, {
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
 			setSyncError( null );
 		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,6 +93,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSite?.id as number, siteId, {
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
 			setSyncError( null );
 		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
