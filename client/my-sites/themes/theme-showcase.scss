@@ -192,6 +192,29 @@
 
 .theme-showcase {
 
+	.navigation-header {
+		@media (min-width: $break-mobile) {
+			margin-left: -32px;
+			margin-right: -32px;
+			padding: 24px 32px;
+			width: calc(100% + 64px);
+		}
+
+		@media (min-width: $break-small) {
+			border-bottom: 1px solid #eee;
+		}
+
+		@media (max-width: $break-small) {
+			padding: 24px 48px;
+		}
+
+		@media (max-width: $break-mobile) {
+			margin: 0;
+			padding: 16px;
+		}
+
+	}
+
 	.theme__search {
 		.keyed-suggestions {
 			top: 42px;
@@ -411,7 +434,7 @@
 
 	.themes__controls,
 	.themes__showcase {
-		@include breakpoint-deprecated( "<660px" ) {
+		@media (max-width: $break-small) {
 			padding: 0 16px;
 		}
 	}
