@@ -4,10 +4,6 @@
 .theme-collection__container {
 	padding-bottom: 32px;
 
-	@include break-xlarge {
-		margin: 0 48px;
-	}
-
 	&:last-child {
 		padding-bottom: 0;
 
@@ -16,16 +12,8 @@
 		}
 	}
 
-	.theme-collection__list-wrapper {
-		padding-right: 32px;
-
-		@include break-xlarge {
-			padding-right: 0;
-		}
-
-		&.swiper-wrapper {
-			overflow-y: clip;
-		}
+	.theme-collection__list-wrapper.swiper-wrapper {
+		overflow-y: clip;
 	}
 
 	.theme-card__info-options {
@@ -78,7 +66,7 @@
 .theme-collection__list-item.swiper-slide {
 	.card.theme-card {
 		margin: 0;
-		padding: 0;
+		padding: 0 16px;
 	}
 }
 

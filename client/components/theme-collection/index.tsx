@@ -65,11 +65,12 @@ export default function ThemeCollection( {
 							prevEl: '.theme-collection__carousel-nav-button--previous',
 						},
 						threshold: 5,
-						slideToClickedSlide: true,
+						slideToClickedSlide: false,
+						rewind: true,
 						slidesPerView: 1.2,
 						breakpoints: {
-							// break-small in Gutenberg breakpoints
-							'600': {
+							// deprecated Calypso breakpoints used in the Theme Showcase
+							'660': {
 								slidesPerView: 2.2,
 							},
 							// break-xlarge in Gutenberg breakpoints
@@ -77,7 +78,6 @@ export default function ThemeCollection( {
 								slidesPerView: 3,
 							},
 						},
-						spaceBetween: 32,
 						modules: [ Navigation, Keyboard, Mousewheel ],
 					} );
 					setSwiperLoaded( true );

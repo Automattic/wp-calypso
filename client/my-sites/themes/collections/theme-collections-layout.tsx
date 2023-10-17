@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
+import './style.scss';
 
 type OnSeeAll = {
 	tier?: string;
