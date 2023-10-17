@@ -4,10 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
+import { useSiteCredentialsInfo } from 'calypso/blocks/importer/hooks/use-site-credentials-info';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
 import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
-import { FormState } from 'calypso/components/advanced-credentials/form';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -16,8 +16,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
-import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
-import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import NotAuthorized from '../../../components/not-authorized';
 import ConfirmModal from './confirm-modal';
@@ -115,15 +113,8 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		},
 	} );
 
-	const credentials = useSelector( ( state ) =>
-		getJetpackCredentials( state, sourceSiteId, 'main' )
-	) as FormState & { abspath: string };
-
-	const hasCredentials = credentials && Object.keys( credentials ).length > 0;
-
-	const isRequestingCredentials = useSelector( ( state ) =>
-		isRequestingSiteCredentials( state, sourceSiteId as number )
-	);
+	const { hasCredentials, isRequesting: isRequestingCredentials } =
+		useSiteCredentialsInfo( sourceSiteId );
 
 	const onUpgradeAndMigrateClick = () => {
 		setContinueImport( true );
@@ -134,7 +125,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		dispatch(
 			recordTracksEvent( 'calypso_site_migration_confirm_modal_display', migrationTrackingProps )
 		);
-
 		setShowConfirmModal( true );
 	}
 
@@ -142,7 +132,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		dispatch(
 			recordTracksEvent( 'calypso_site_migration_confirm_modal_hide', migrationTrackingProps )
 		);
-
 		setShowConfirmModal( false );
 	}
 
