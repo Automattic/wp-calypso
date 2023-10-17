@@ -651,8 +651,10 @@ const PlansFeaturesMain = ( {
 				modalType={ resolveModal( lastClickedPlan ) }
 				wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 				onClose={ () => setIsModalOpen( false ) }
-				onFreePlanSelected={ () => {
-					removePaidDomain?.();
+				onFreePlanSelected={ ( isDomainRetained ) => {
+					if ( ! isDomainRetained ) {
+						removePaidDomain?.();
+					}
 					// Since this domain will not be available after it is selected, invalidate the cache.
 					invalidateDomainSuggestionCache();
 					wpcomFreeDomainSuggestion.result &&
