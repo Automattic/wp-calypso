@@ -1,6 +1,6 @@
 import { NextButton, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { StartImportTrackingProps } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/types';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
@@ -33,6 +33,14 @@ export function MigrationReady( props: Props ) {
 
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ migrationConfirmed, setMigrationConfirmed ] = useMigrationConfirmation();
+
+	useEffect( () => {
+		const _migrationTrackingProps: { [ key: string ]: unknown } = { ...migrationTrackingProps };
+		// There is a case where source_site_id is 0|undefined, so we need to delete it
+		delete _migrationTrackingProps?.source_site_id;
+
+		dispatch( recordTracksEvent( 'calypso_site_migration_ready_screen', _migrationTrackingProps ) );
+	}, [ migrationTrackingProps, dispatch ] );
 
 	function displayConfirmModal() {
 		dispatch(
