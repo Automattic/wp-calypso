@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import page from 'page';
@@ -125,25 +126,43 @@ class StatsPeriodNavigation extends PureComponent {
 		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
 
 		return (
-			<div className="stats-period-navigation">
-				<div className="stats-period-navigation__children">{ children }</div>
-				{ isDateControlEnabled ? (
-					<div className="stats-period-navigation__date-control">
-						<StatsDateControl
-							slug={ slug }
-							queryParams={ queryParams }
-							period={ period }
-							pathTemplate={ pathTemplate }
-							onChangeChartQuantity={ onChangeChartQuantity }
-						/>
-						<div className="stats-period-navigation__period-control">
-							<Legend
-								activeCharts={ this.props.activeLegend }
-								activeTab={ this.props.activeTab }
-								availableCharts={ this.props.availableLegend }
-								clickHandler={ this.onLegendClick }
-								tabs={ this.props.charts }
+			<>
+				<div
+					className={ classNames( 'stats-period-navigation', {
+						'stats-period-navigation__is-with-new-date-control': isDateControlEnabled,
+					} ) }
+				>
+					<div className="stats-period-navigation__children">{ children }</div>
+					{ isDateControlEnabled ? (
+						<div className="stats-period-navigation__date-control">
+							<StatsDateControl
+								slug={ slug }
+								queryParams={ queryParams }
+								period={ period }
+								pathTemplate={ pathTemplate }
+								onChangeChartQuantity={ onChangeChartQuantity }
 							/>
+							<div className="stats-period-navigation__period-control">
+								<Legend
+									activeCharts={ this.props.activeLegend }
+									activeTab={ this.props.activeTab }
+									availableCharts={ this.props.availableLegend }
+									clickHandler={ this.onLegendClick }
+									tabs={ this.props.charts }
+								/>
+								{ showArrows && (
+									<NavigationArrows
+										disableNextArrow={ disableNextArrow || isToday }
+										disablePreviousArrow={ disablePreviousArrow }
+										onClickNext={ this.handleArrowNext }
+										onClickPrevious={ this.handleArrowPrevious }
+									/>
+								) }
+								<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
+							</div>
+						</div>
+					) : (
+						<>
 							{ showArrows && (
 								<NavigationArrows
 									disableNextArrow={ disableNextArrow || isToday }
@@ -152,23 +171,13 @@ class StatsPeriodNavigation extends PureComponent {
 									onClickPrevious={ this.handleArrowPrevious }
 								/>
 							) }
-							<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
-						</div>
-					</div>
-				) : (
-					<>
-						{ showArrows && (
-							<NavigationArrows
-								disableNextArrow={ disableNextArrow || isToday }
-								disablePreviousArrow={ disablePreviousArrow }
-								onClickNext={ this.handleArrowNext }
-								onClickPrevious={ this.handleArrowPrevious }
-							/>
-						) }
-						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-					</>
+						</>
+					) }
+				</div>
+				{ ! isDateControlEnabled && (
+					<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
 				) }
-			</div>
+			</>
 		);
 	}
 }

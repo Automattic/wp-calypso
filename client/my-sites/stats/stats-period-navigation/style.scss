@@ -1,7 +1,8 @@
 .stats-period-navigation {
 	display: flex;
+	flex-flow: row wrap;
 	justify-content: space-between;
-	align-items: baseline;
+	align-items: center;
 	margin: 1.5em 0;
 	padding: 0 20px;
 
@@ -42,4 +43,8 @@
 	.chart__legend {
 		margin-bottom: initial;
 	}
+}
+
+.stats-period-navigation.stats-period-navigation__is-with-new-date-control {
+	padding: 0;
 }
