@@ -4,7 +4,7 @@ import {
 	__experimentalHStack as HStack,
 	FlexBlock,
 } from '@wordpress/components';
-import { Icon, chevronRightSmall } from '@wordpress/icons';
+import { Icon, chevronRightSmall, external } from '@wordpress/icons';
 import classnames from 'classnames';
 
 import './style.scss';
@@ -18,6 +18,7 @@ interface Props {
 	title: string;
 	onClickMenuItem: ( path: string ) => void;
 	withChevron?: boolean;
+	isExternalLink?: boolean;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -27,6 +28,7 @@ export const SidebarNavigatorMenuItem = ( {
 	title,
 	onClickMenuItem,
 	withChevron,
+	isExternalLink,
 }: Props ) => {
 	const pathname = window.location.pathname;
 
@@ -42,6 +44,9 @@ export const SidebarNavigatorMenuItem = ( {
 					{ icon && <Icon style={ { fill: 'currentcolor' } } icon={ icon } size={ ICON_SIZE } /> }
 					<FlexBlock>{ children }</FlexBlock>
 					{ withChevron && <Icon icon={ chevronRightSmall } size={ ICON_SIZE } /> }
+					{ isExternalLink && (
+						<Icon className="sidebar-v2__external-icon" icon={ external } size={ ICON_SIZE } />
+					) }
 				</HStack>
 			</Item>
 		);

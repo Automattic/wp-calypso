@@ -32,6 +32,7 @@ type Props = {
 		title: string;
 		onClickMenuItem: ( path: string ) => void;
 		withChevron?: boolean;
+		isExternalLink?: boolean;
 	}[];
 	description?: string;
 	backButtonProps?: {
