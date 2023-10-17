@@ -14,7 +14,6 @@ import illustration404 from 'calypso/assets/images/illustrations/illustration-40
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { AVAILABLE_PAGE_MODULES } from 'calypso/blocks/stats-navigation/constants';
-import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -315,6 +314,7 @@ class StatsSite extends Component {
 								period={ period }
 								url={ `/stats/${ period }/${ slug }` }
 								queryParams={ context.query }
+								pathTemplate={ pathTemplate }
 							>
 								{ ' ' }
 								<DatePicker
