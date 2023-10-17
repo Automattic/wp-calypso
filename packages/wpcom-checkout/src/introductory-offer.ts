@@ -1,3 +1,5 @@
+import { isDomainRegistration } from '@automattic/calypso-products/dist/esm';
+import { formatCurrency } from '@automattic/format-currency';
 import i18n from 'i18n-calypso';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -122,7 +124,7 @@ export function getItemIntroductoryOfferDisplay(
 	}
 
 	const isFreeTrial = product.item_subtotal_integer === 0;
-	const text = getIntroductoryOfferIntervalDisplay(
+	let text = getIntroductoryOfferIntervalDisplay(
 		translate,
 		product.introductory_offer_terms.interval_unit,
 		product.introductory_offer_terms.interval_count,
@@ -130,6 +132,22 @@ export function getItemIntroductoryOfferDisplay(
 		'checkout',
 		product.introductory_offer_terms.transition_after_renewal_count
 	);
+
+	if (
+		isDomainRegistration( product ) &&
+		product.item_original_cost_integer < product.item_subtotal_integer
+	) {
+		text = String(
+			translate( 'Renews for %(renewalPrice)s/year', {
+				args: {
+					renewalPrice: formatCurrency( product.item_original_cost_integer, product.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				},
+			} )
+		);
+	}
 
 	return { enabled: true, text };
 }
