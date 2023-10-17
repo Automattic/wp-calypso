@@ -413,21 +413,16 @@ export const SiteSyncCard = ( {
 	}
 
 	useEffect( () => {
-		if ( isSyncInProgress === false ) {
-			setSelectedOption( null );
-			setSelectedItems( [] );
-		}
-	}, [ isSyncInProgress ] );
-
-	useEffect( () => {
-		if ( selectedOption && status === SiteSyncStatus.COMPLETED ) {
+		if ( selectedOption && status === SiteSyncStatus.COMPLETED && ! syncError ) {
 			dispatch(
 				successNotice( translate( 'Site synchronized successfully.' ), {
 					id: stagingSiteSyncSuccess,
 				} )
 			);
+			setSelectedOption( null );
+			setSelectedItems( [] );
 		}
-	}, [ dispatch, selectedOption, status ] );
+	}, [ dispatch, selectedOption, status, syncError ] );
 
 	return (
 		<SyncCardContainer
