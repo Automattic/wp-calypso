@@ -8,7 +8,7 @@ interface StatsDateControlProps {
 
 interface DateControlPickerProps {
 	shortcutList: DateControlPickerShortcut[];
-	handleApply: ( startDate: string, endDate: string ) => void;
+	onApply: ( startDate: string, endDate: string ) => void;
 }
 
 interface DateControlPickerShortcutsProps {

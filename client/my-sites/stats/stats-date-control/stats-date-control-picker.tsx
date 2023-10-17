@@ -8,7 +8,7 @@ import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
-const DateControlPicker = ( { shortcutList, handleApply }: DateControlPickerProps ) => {
+const DateControlPicker = ( { shortcutList, onApply }: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
 	const [ inputStartDate, setInputStartDate ] = useState(
 		moment().subtract( 6, 'days' ).format( 'YYYY-MM-DD' )
@@ -30,7 +30,7 @@ const DateControlPicker = ( { shortcutList, handleApply }: DateControlPickerProp
 
 	const handleOnApply = () => {
 		togglePopoverOpened( false );
-		handleApply( inputStartDate, inputEndDate );
+		onApply( inputStartDate, inputEndDate );
 	};
 
 	const handleOnCancel = () => {

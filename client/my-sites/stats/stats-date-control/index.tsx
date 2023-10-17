@@ -81,7 +81,7 @@ const StatsDateControl = ( {
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
-			<DateControlPicker shortcutList={ shortcutList } handleApply={ onApplyButtonHandler } />
+			<DateControlPicker shortcutList={ shortcutList } onApply={ onApplyButtonHandler } />
 		</div>
 	);
 };
