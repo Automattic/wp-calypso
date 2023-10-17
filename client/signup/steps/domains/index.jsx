@@ -158,6 +158,7 @@ export class RenderDomainsStep extends Component {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
 			wpcomSubdomainSelected: false,
+			isRemovingDomain: null,
 		};
 	}
 
@@ -633,9 +634,9 @@ export class RenderDomainsStep extends Component {
 		return productsInCart;
 	}
 
-	removeDomainClickHandler = ( domain ) => {
-		return () =>
-			this.removeDomain( { domain_name: domain.meta, product_slug: domain.product_slug } );
+	removeDomainClickHandler = ( domain ) => () => {
+		this.setState( { isRemovingDomain: domain.meta } );
+		this.removeDomain( { domain_name: domain.meta, product_slug: domain.product_slug } );
 	};
 
 	removeDomain( { domain_name, product_slug } ) {
@@ -652,6 +653,9 @@ export class RenderDomainsStep extends Component {
 				} )
 				.catch( () => {
 					this.setState( { isCartPendingUpdateDomain: null } );
+				} )
+				.finally( () => {
+					this.setState( { isRemovingDomain: null } );
 				} );
 		}
 	}
@@ -782,7 +786,9 @@ export class RenderDomainsStep extends Component {
 							className="domains__domain-cart-remove"
 							onClick={ this.removeDomainClickHandler( domain ) }
 						>
-							{ this.props.translate( 'Remove' ) }
+							{ domain.meta === this.state.isRemovingDomain
+								? this.props.translate( 'Removing' )
+								: this.props.translate( 'Remove' ) }
 						</Button>
 					</div>
 				</>
