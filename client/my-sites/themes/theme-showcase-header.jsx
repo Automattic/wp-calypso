@@ -16,6 +16,7 @@ export default function ThemeShowcaseHeader( {
 	tier,
 	vertical,
 	metaOnly = false,
+	noIndex = false,
 } ) {
 	// eslint-disable-next-line no-shadow
 	const translate = useTranslate();
@@ -44,8 +45,6 @@ export default function ThemeShowcaseHeader( {
 		  }
 		: loggedOutSeoContent;
 
-	const links = [ { rel: 'canonical', href: canonicalUrl } ];
-
 	const metas = [
 		{
 			name: 'description',
@@ -58,9 +57,16 @@ export default function ThemeShowcaseHeader( {
 		{ property: 'og:site_name', content: 'WordPress.com' },
 	];
 
+	if ( noIndex ) {
+		metas.push( {
+			name: 'robots',
+			content: 'noindex',
+		} );
+	}
+
 	return (
 		<>
-			<DocumentHead title={ documentHeadTitle } meta={ metas } link={ links } />
+			<DocumentHead title={ documentHeadTitle } meta={ metas } />
 			{ ! metaOnly && (
 				<ThemesHeader title={ themesHeaderTitle } description={ themesHeaderDescription }>
 					{ isLoggedIn && (
