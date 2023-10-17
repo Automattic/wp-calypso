@@ -15,30 +15,35 @@ const shortcutList = [
 		label: 'Today',
 		offset: 0,
 		range: 0,
+		period: 'day',
 	},
 	{
 		id: 'yesterday',
 		label: 'Yesterday',
 		offset: 1,
 		range: 0,
+		period: 'day',
 	},
 	{
 		id: 'last-7-days',
 		label: 'Last 7 Days',
 		offset: 0,
 		range: 6,
+		period: 'day',
 	},
 	{
 		id: 'last-30-days',
 		label: 'Last 30 Days',
 		offset: 0,
 		range: 29,
+		period: 'day',
 	},
 	{
 		id: 'last-year',
 		label: 'Last Year',
 		offset: 0,
 		range: 364, // ranges are zero based!
+		period: 'month',
 	},
 ];
 
@@ -85,7 +90,7 @@ const StatsDateControl = ( {
 		const endDate = anchor.format( 'YYYY-MM-DD' );
 		const startDate = anchor.subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
 
-		const href = generateNewLink( 'day', startDate, endDate );
+		const href = generateNewLink( shortcut.period, startDate, endDate );
 		page( href );
 	};
 

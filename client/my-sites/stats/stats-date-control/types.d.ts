@@ -23,6 +23,7 @@ interface DateControlPickerShortcut {
 	label: string;
 	offset: number;
 	range: number;
+	period: string;
 }
 
 interface DateControlPickerDateProps {
