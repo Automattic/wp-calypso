@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import { Button } from '@wordpress/components';
+import { chevronLeft, Icon } from '@wordpress/icons';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
@@ -100,6 +102,12 @@ class ThemeShowcase extends Component {
 		search: '',
 		upsellBanner: false,
 		showUploadButton: true,
+	};
+
+	state = {
+		collectionFilter: '',
+		collectionTier: '',
+		isSingleCollectionView: false,
 	};
 
 	componentDidMount() {
@@ -307,6 +315,14 @@ class ThemeShowcase extends Component {
 		this.onTierSelect( { value: tier } );
 	};
 
+	onCollectionSeeAll = ( { filter = '', tier = '' } ) => {
+		this.setState( {
+			collectionFilter: filter,
+			collectionTier: tier,
+			isSingleCollectionView: true,
+		} );
+	};
+
 	onFilterClick = ( tabFilter ) => {
 		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
@@ -338,14 +354,46 @@ class ThemeShowcase extends Component {
 	};
 
 	allThemes = ( { themeProps } ) => {
-		const { isJetpackSite, children } = this.props;
+		const { isJetpackSite, isLoggedIn, children } = this.props;
 		if ( isJetpackSite ) {
 			return children;
 		}
 
+		const { collectionFilter, collectionTier, isSingleCollectionView } = this.state;
+		const isSingleCollection =
+			isSingleCollectionView &&
+			( isLoggedIn
+				? config.isEnabled( 'themes/discovery-lits' )
+				: config.isEnabled( 'themes/discovery-lots' ) );
+
+		const themeSelectionProps = {
+			...themeProps,
+			...( isSingleCollection && {
+				isCollectionView: isSingleCollection,
+				filter: collectionFilter,
+				tabFilter: collectionFilter,
+				tier: collectionTier,
+			} ),
+		};
+
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themeProps } />
+				{ isSingleCollection && (
+					<Button
+						onClick={ () =>
+							this.setState( {
+								collectionFilter: '',
+								collectionTier: '',
+								isSingleCollectionView: false,
+							} )
+						}
+					>
+						<Icon icon={ chevronLeft } />
+						{ translate( 'Back' ) }
+					</Button>
+				) }
+
+				<ThemesSelection { ...themeSelectionProps } />
 			</div>
 		);
 	};
@@ -406,11 +454,13 @@ class ThemeShowcase extends Component {
 	};
 
 	renderThemes = ( themeProps ) => {
+		const { isLoggedIn } = this.props;
+		const { isSingleCollectionView } = this.state;
 		const tabKey = this.getSelectedTabFilter().key;
 
 		const showCollections =
-			this.props.tier === '' &&
-			( this.props.isLoggedIn
+			! isSingleCollectionView &&
+			( isLoggedIn
 				? config.isEnabled( 'themes/discovery-lits' )
 				: config.isEnabled( 'themes/discovery-lots' ) );
 
@@ -424,7 +474,7 @@ class ThemeShowcase extends Component {
 							getOptions={ this.getThemeOptions }
 							getScreenshotUrl={ this.getScreenshotUrl }
 							getActionLabel={ this.getActionLabel }
-							onTierSelect={ ( tier ) => this.onTierSelect( { value: tier } ) }
+							onSeeAll={ this.onCollectionSeeAll }
 						/>
 					);
 				}

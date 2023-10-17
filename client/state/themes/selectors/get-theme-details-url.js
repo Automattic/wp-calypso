@@ -17,7 +17,7 @@ export function getThemeDetailsUrl( state, themeId, siteId, options = {} ) {
 	}
 
 	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
-	const { tabFilter, styleVariationSlug } = options;
+	const { isCollectionView, tabFilter, tier, styleVariationSlug } = options;
 	const searchParams = {};
 	if ( tabFilter ) {
 		searchParams.tab_filter = tabFilter;
@@ -25,6 +25,14 @@ export function getThemeDetailsUrl( state, themeId, siteId, options = {} ) {
 
 	if ( styleVariationSlug ) {
 		searchParams.style_variation = styleVariationSlug;
+	}
+
+	if ( isCollectionView ) {
+		const collectionParams = [
+			...( tier && [ `tier:${ tier }` ] ),
+			...( tabFilter && [ `filter:${ tabFilter }` ] ),
+		].join( '|' );
+		searchParams.collection_view = collectionParams;
 	}
 
 	return addQueryArgs( `/theme/${ themeId }${ sitePart }`, searchParams );

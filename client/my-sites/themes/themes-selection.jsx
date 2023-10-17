@@ -186,7 +186,7 @@ class ThemesSelection extends Component {
 	getOptions = ( themeId, styleVariation, context ) => {
 		let options = this.props.getOptions( themeId, styleVariation );
 
-		const { tabFilter } = this.props;
+		const { tabFilter, tier, isCollectionView } = this.props;
 		const wrappedActivateAction = ( action ) => {
 			return ( t ) => {
 				this.props.setThemePreviewOptions( themeId, null, null, { styleVariation, tabFilter } );
@@ -233,6 +233,8 @@ class ThemesSelection extends Component {
 		if ( options ) {
 			options = addOptionsToGetUrl( options, {
 				tabFilter,
+				tier,
+				isCollectionView,
 				styleVariationSlug: styleVariation?.slug,
 			} );
 			if ( options.activate ) {

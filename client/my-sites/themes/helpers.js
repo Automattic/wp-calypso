@@ -70,11 +70,15 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
 	return path;
 }
 
-export function addOptionsToGetUrl( options, { tabFilter, styleVariationSlug } ) {
+export function addOptionsToGetUrl(
+	options,
+	{ tabFilter, styleVariationSlug, isCollectionView, tier }
+) {
 	return mapValues( options, ( option ) =>
 		Object.assign( {}, option, {
 			...( option.getUrl && {
-				getUrl: ( t ) => option.getUrl( t, { tabFilter, styleVariationSlug } ),
+				getUrl: ( t ) =>
+					option.getUrl( t, { tabFilter, styleVariationSlug, isCollectionView, tier } ),
 			} ),
 		} )
 	);

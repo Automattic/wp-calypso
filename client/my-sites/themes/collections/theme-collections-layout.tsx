@@ -6,23 +6,23 @@ export interface ThemeCollectionsLayoutProps {
 	getActionLabel: ( themeId: string ) => string;
 	getOptions: ( themeId: string ) => void;
 	getScreenshotUrl: ( themeId: string ) => string;
-	onTierSelect: ( tier: string ) => void;
+	onSeeAll: ( filters: object ) => void;
 }
 
 function ThemeCollectionsLayout( props: ThemeCollectionsLayoutProps ) {
-	const { onTierSelect } = props;
+	const { onSeeAll, ...rest } = props;
 
 	return (
 		<>
 			<ShowcaseThemeCollection
 				{ ...THEME_COLLECTIONS.premium }
-				{ ...props }
-				onSeeAll={ () => onTierSelect( 'premium' ) }
+				{ ...rest }
+				onSeeAll={ () => onSeeAll( { tier: 'premium' } ) }
 			/>
 			<ShowcaseThemeCollection
 				{ ...THEME_COLLECTIONS.partner }
-				{ ...props }
-				onSeeAll={ () => onTierSelect( 'marketplace' ) }
+				{ ...rest }
+				onSeeAll={ () => onSeeAll( { tier: 'marketplace' } ) }
 			/>
 		</>
 	);
