@@ -11,7 +11,6 @@ import { getCommentLike } from 'calypso/state/comments/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-const noop = () => {};
 class CommentLikeButtonContainer extends Component {
 	constructor() {
 		super();
@@ -19,10 +18,10 @@ class CommentLikeButtonContainer extends Component {
 	}
 
 	handleLikeToggle( liked ) {
-		if ( ! this.props.isLoggedIn && this.props.onLoggedOut !== noop ) {
-			return this.props.onLoggedOut();
+		if ( this.props.isLoggedIn ) {
+			this.recordLikeToggle( liked );
 		}
-		this.recordLikeToggle( liked );
+		this.props.onLikeToggle( liked );
 	}
 
 	recordLikeToggle = ( liked ) => {
@@ -80,7 +79,7 @@ CommentLikeButtonContainer.propTypes = {
 	commentLike: PropTypes.object,
 	likeComment: PropTypes.func.isRequired,
 	unlikeComment: PropTypes.func.isRequired,
-	onLoggedOut: PropTypes.func.isRequired,
+	onLikeToggle: PropTypes.func.isRequired,
 };
 
 export default connect(

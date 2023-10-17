@@ -26,15 +26,13 @@ class LikeButtonContainer extends Component {
 
 	static defaultProps = {
 		onLikeToggle: noop,
-		onLoggedOut: noop,
 	};
 
 	handleLikeToggle = ( liked ) => {
-		if ( ! this.props.isLoggedIn && this.props.onLoggedOut !== noop ) {
-			return this.props.onLoggedOut();
+		if ( this.props.isLoggedIn ) {
+			const toggler = liked ? this.props.like : this.props.unlike;
+			toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 		}
-		const toggler = liked ? this.props.like : this.props.unlike;
-		toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 		this.props.onLikeToggle( liked );
 	};
 

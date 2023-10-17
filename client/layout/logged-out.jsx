@@ -33,8 +33,8 @@ import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
 } from 'calypso/state/oauth2-clients/ui/selectors';
-import { cancelledLoggedInAction } from 'calypso/state/reader-ui/actions';
-import { getLoggedInAction } from 'calypso/state/reader-ui/selectors';
+import { clearLastLoggedInAction } from 'calypso/state/reader-ui/actions';
+import { getLastLoggedInAction } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -69,12 +69,12 @@ const LayoutLoggedOut = ( {
 	isWooCoreProfilerFlow,
 	locale,
 	/* eslint-disable no-shadow */
-	cancelledLoggedInAction,
+	clearLastLoggedInAction,
 } ) => {
 	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
-	const loggedInAction = useSelector( getLoggedInAction );
+	const loggedInAction = useSelector( getLastLoggedInAction );
 	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
 
 	const isCheckout = sectionName === 'checkout';
@@ -246,7 +246,7 @@ const LayoutLoggedOut = ( {
 
 			{ ! isLoggedIn && config.isEnabled( 'reader/login-window' ) && (
 				<ReaderJoinConversationDialog
-					onClose={ () => cancelledLoggedInAction() }
+					onClose={ () => clearLastLoggedInAction() }
 					isVisible={ !! loggedInAction?.length }
 				/>
 			) }
@@ -329,6 +329,6 @@ export default withCurrentRoute(
 				isWooCoreProfilerFlow,
 			};
 		},
-		{ cancelledLoggedInAction }
+		{ clearLastLoggedInAction }
 	)( localize( LayoutLoggedOut ) )
 );

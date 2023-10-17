@@ -1,7 +1,7 @@
 import { withStorageKey } from '@automattic/state-utils';
 import {
-	READER_TRIGGERED_LOGGED_IN_ACTION,
-	READER_CANCELLED_LOGGED_IN_ACTION,
+	READER_REGISTER_LAST_LOGGED_IN_ACTION,
+	READER_CLEAR_LAST_LOGGED_IN_ACTION,
 	READER_VIEW_STREAM,
 } from 'calypso/state/reader-ui/action-types';
 import { combineReducers, withPersistence } from 'calypso/state/utils';
@@ -42,12 +42,12 @@ export const currentStream = ( state = null, action ) => {
 /*
  * Holds the last action that requires the user to be logged in
  */
-export const loggedInAction = ( state = null, action ) => {
+export const lastLoggedInAction = ( state = null, action ) => {
 	switch ( action.type ) {
-		case READER_TRIGGERED_LOGGED_IN_ACTION:
+		case READER_REGISTER_LAST_LOGGED_IN_ACTION:
 			return action.name;
-		case READER_CANCELLED_LOGGED_IN_ACTION:
-			return '';
+		case READER_CLEAR_LAST_LOGGED_IN_ACTION:
+			return null;
 		default:
 			return state;
 	}
@@ -58,7 +58,7 @@ const combinedReducer = combineReducers( {
 	cardExpansions,
 	lastPath,
 	currentStream,
-	loggedInAction,
+	lastLoggedInAction,
 	hasUnseenPosts,
 } );
 

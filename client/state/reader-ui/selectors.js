@@ -8,10 +8,10 @@ export function getLastPath( state ) {
 }
 
 /**
- * Get reader action that requires user to be logged in
+ * Get last reader action that requires user to be logged in
  * @param state redux state
  * @returns string|null {loggedInAction} logged in action clicked in the reader
  */
-export function getLoggedInAction( state ) {
-	return state.readerUi.loggedInAction;
+export function getLastLoggedInAction( state ) {
+	return state.readerUi.lastLoggedInAction;
 }
