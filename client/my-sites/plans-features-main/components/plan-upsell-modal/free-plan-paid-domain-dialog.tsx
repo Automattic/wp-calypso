@@ -46,7 +46,7 @@ export function FreePlanPaidDomainDialog( {
 
 	return (
 		<DialogContainer>
-			<Heading id="plan-upsell-modal-title">
+			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
 				{ translate( 'A paid plan is required for a custom primary domain.' ) }
 			</Heading>
 			<SubHeading id="plan-upsell-modal-description">

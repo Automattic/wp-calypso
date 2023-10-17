@@ -8,10 +8,10 @@ export const DialogContainer = styled.div`
 	}
 `;
 
-export const Heading = styled.div`
+export const Heading = styled.div< { shrinkMobileFont?: boolean } >`
 	font-family: Recoleta;
 	color: var( --studio-gray-100 );
-	font-size: 32px;
+	font-size: ${ ( { shrinkMobileFont } ) => ( shrinkMobileFont ? '22px' : '32px' ) };
 	line-height: 26px;
 	letter-spacing: 0.38px;
 	@media ( min-width: 780px ) {
