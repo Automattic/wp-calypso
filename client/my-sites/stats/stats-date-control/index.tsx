@@ -47,6 +47,7 @@ const StatsDateControl = ( {
 	pathTemplate,
 	onChangeChartQuantity,
 }: StatsDateControlProps ) => {
+	// Previous Apply button handling.
 	const handleApply = ( startDate: string, endDate: string ) => {
 		// calculate offset between start and end to influcence the number of points for the chart
 		// TODO: take period into account
@@ -57,6 +58,12 @@ const StatsDateControl = ( {
 		onChangeChartQuantity( offset + 1 );
 	};
 
+	// New Apply button handling.
+	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
+		console.log( 'new handler called' );
+		// do something...
+	};
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
@@ -64,7 +71,7 @@ const StatsDateControl = ( {
 				slug={ slug }
 				queryParams={ queryParams }
 				shortcutList={ shortcutList }
-				handleApply={ handleApply }
+				handleApply={ onApplyButtonHandler }
 			/>
 		</div>
 	);

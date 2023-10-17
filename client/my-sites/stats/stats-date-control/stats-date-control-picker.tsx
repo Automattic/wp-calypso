@@ -48,6 +48,7 @@ const DateControlPicker = ( {
 
 	const handleOnApply = () => {
 		togglePopoverOpened( false );
+		handleApply( inputStartDate, inputEndDate );
 		const href = generateNewLink( 'day', inputStartDate, inputEndDate );
 		page( href );
 	};
