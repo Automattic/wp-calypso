@@ -17,7 +17,7 @@ const MyLoginForm = () => {
 	} );
 
 	return (
-		<div className="reader-join-conversation__content">
+		<div className="reader__content">
 			<WordPressLogo size={ 32 } />
 			<h1>You need to be logged in!</h1>
 			<Button	isPrimary onClick={ createAccount } >Create a new account</Button>
