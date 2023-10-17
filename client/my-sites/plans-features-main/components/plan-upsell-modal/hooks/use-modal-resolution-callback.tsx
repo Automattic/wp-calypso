@@ -1,5 +1,5 @@
 import { isFreePlan } from '@automattic/calypso-products';
-import { useCallback } from 'react';
+import { useCallback } from '@wordpress/element';
 import { DataResponse } from 'calypso/my-sites/plans-grid/types';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
