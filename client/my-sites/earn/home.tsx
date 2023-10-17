@@ -350,7 +350,7 @@ const Home = () => {
 			return;
 		}
 		const cta = {
-			text: translate( 'Learn more' ),
+			text: translate( 'Learn how to get started' ),
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {
@@ -369,7 +369,6 @@ const Home = () => {
 			icon: 'mail',
 			actions: {
 				cta,
-				featureIncludedInPlan: true,
 			},
 		};
 	};
