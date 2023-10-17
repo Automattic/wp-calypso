@@ -4,7 +4,9 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
+import { useLaunchpad } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Task } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
@@ -33,6 +35,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import StatsSection from './components/stats';
+import EarnLaunchpad from './launchpad';
 
 import './style.scss';
 
@@ -63,6 +66,17 @@ const Home = () => {
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
+
+	const {
+		data: { checklist },
+	} = useLaunchpad( site?.slug ?? null, 'earn' );
+	const numberOfSteps = checklist?.length || 0;
+	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
+	const tasklistCompleted = completedSteps >= numberOfSteps;
+
+	const shouldLoadLaunchpad = () => {
+		return ! tasklistCompleted && numberOfSteps > 0;
+	};
 
 	function trackUpgrade( plan: string, feature: string ) {
 		dispatch(
@@ -494,10 +508,14 @@ const Home = () => {
 				</div>
 			) }
 			{ ! isLoading && (
-				<>
-					<StatsSection />
+				<div>
+					{ shouldLoadLaunchpad() ? (
+						<EarnLaunchpad numberOfSteps={ numberOfSteps } completedSteps={ completedSteps } />
+					) : (
+						<StatsSection />
+					) }
 					<PromoSection { ...promos } />
-				</>
+				</div>
 			) }
 		</>
 	);

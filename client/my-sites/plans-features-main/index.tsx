@@ -10,6 +10,9 @@ import {
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
 	WPComStorageAddOnSlug,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -55,7 +58,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import useAddOns from '../add-ons/hooks/use-add-ons';
+import useStorageAddOns from '../add-ons/hooks/use-storage-add-ons';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
@@ -237,9 +240,7 @@ const PlansFeaturesMain = ( {
 	const [ isFreePlanFreeDomainDialogOpen, setIsFreePlanFreeDomainDialogOpen ] = useState( false );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const storageAddOns = useAddOns( siteId ?? undefined, isInSignup ).filter(
-		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
-	);
+	const storageAddOns = useStorageAddOns( { siteId, isInSignup } );
 	const shouldDisplayFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
@@ -426,8 +427,14 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useMemo( () => {
+		const hiddenPlans = [
+			PLAN_HOSTING_TRIAL_MONTHLY,
+			PLAN_WOOEXPRESS_PLUS,
+			PLAN_ENTERPRISE_GRID_WPCOM,
+		];
+
 		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
-			if ( gridPlan.isVisible ) {
+			if ( gridPlan.isVisible && ! hiddenPlans.includes( gridPlan.planSlug ) ) {
 				return [
 					...acc,
 					{

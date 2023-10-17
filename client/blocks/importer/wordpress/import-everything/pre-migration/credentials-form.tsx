@@ -4,7 +4,7 @@ import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CredentialsForm from 'calypso/components/advanced-credentials/credentials-form';
+import CredentialsFormAdvanced from 'calypso/components/advanced-credentials/credentials-form';
 import {
 	FormMode,
 	INITIAL_FORM_ERRORS,
@@ -29,7 +29,7 @@ interface Props {
 	onChangeProtocol: ( protocol: CredentialsProtocol ) => void;
 }
 
-export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( props ) => {
+export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 	const { sourceSite, targetSite, migrationTrackingProps, startImport } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -171,7 +171,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 				/>
 			) }
 			<form onSubmit={ submitCredentials }>
-				<CredentialsForm
+				<CredentialsFormAdvanced
 					disabled={ isFormSubmissionPending || isLoading }
 					formErrors={ formErrors }
 					formMode={ formMode }
@@ -236,4 +236,4 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	);
 };
 
-export default MigrationCredentialsForm;
+export default CredentialsForm;
