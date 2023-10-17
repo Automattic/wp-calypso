@@ -29,8 +29,8 @@ const FreePlanCustomDomainFeature: React.FC< {
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 } > = ( { paidDomainName, wpcomFreeDomainSuggestion, isCustomDomainAllowedOnFreePlan } ) => {
 	const translate = useTranslate();
-	const isLoading = wpcomFreeDomainSuggestion.isLoading;
-
+	const isLoading =
+		wpcomFreeDomainSuggestion.isLoading || isCustomDomainAllowedOnFreePlan.isLoading;
 	return (
 		<SubdomainSuggestion>
 			{ isLoading && <LoadingPlaceHolder /> }

@@ -46,8 +46,10 @@ export function FreePlanPaidDomainDialog( {
 
 	return (
 		<DialogContainer>
-			<Heading>{ translate( 'A paid plan is required for a custom primary domain.' ) }</Heading>
-			<SubHeading>
+			<Heading id="plan-upsell-modal-title">
+				{ translate( 'A paid plan is required for a custom primary domain.' ) }
+			</Heading>
+			<SubHeading id="plan-upsell-modal-description">
 				{ translate(
 					'Your custom domain can only be used as the primary domain with a paid plan and is free for the first year with an annual paid plan. For more details, please read {{a}}our support document{{/a}}.',
 					{

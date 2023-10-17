@@ -126,8 +126,8 @@ export function FreePlanFreeDomainDialog( {
 	return (
 		<DialogContainer>
 			<QueryProductsList />
-			<Heading id="free-plan-modal-title">{ translate( "Don't miss out" ) }</Heading>
-			<TextBox id="free-plan-modal-description">
+			<Heading id="plan-upsell-modal-title">{ translate( "Don't miss out" ) }</Heading>
+			<TextBox id="plan-upsell-modal-description">
 				{ translate( "With a Free plan, you'll miss out on a lot of great features:" ) }
 			</TextBox>
 			<List>
