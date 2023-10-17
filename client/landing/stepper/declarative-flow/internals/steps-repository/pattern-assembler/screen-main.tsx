@@ -104,14 +104,19 @@ const ScreenMain = ( {
 			<div className="screen-container__footer">
 				<span className="screen-container__footer-description">
 					{ totalPatternCount > 0 &&
-						translate( 'You’ve added {{strong}}%(count)s{{/strong}} patterns.', {
-							args: {
+						translate(
+							'You’ve selected {{strong}}%(count)s{{/strong}} pattern.',
+							'You’ve selected {{strong}}%(count)s{{/strong}} patterns.',
+							{
 								count: totalPatternCount,
-							},
-							components: {
-								strong: <strong />,
-							},
-						} ) }
+								args: {
+									count: totalPatternCount,
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
 				</span>
 				<Button
 					className="pattern-assembler__button"
@@ -119,7 +124,9 @@ const ScreenMain = ( {
 					showTooltip={ isButtonDisabled }
 					onClick={ onContinueClick }
 					label={
-						isButtonDisabled ? translate( 'Add your first pattern to get started.' ) : continueLabel
+						isButtonDisabled
+							? translate( 'Select your first pattern to get started.' )
+							: continueLabel
 					}
 					variant="primary"
 					text={ continueLabel }
