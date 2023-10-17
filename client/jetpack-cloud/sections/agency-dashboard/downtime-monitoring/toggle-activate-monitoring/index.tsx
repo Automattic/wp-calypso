@@ -144,10 +144,10 @@ export default function ToggleActivateMonitoring( {
 	};
 
 	const toggleContent = (
-		// For Atomic sites which do not support monitoring, we show the toggle as disabled while in active state.
+		// For Atomic sites which do not support monitoring, we show the toggle as disabled.
 		<ToggleControl
 			onChange={ handleToggleActivateMonitoring }
-			checked={ site.is_atomic || isChecked }
+			checked={ isChecked }
 			disabled={ site.is_atomic || isLoading || siteError }
 			label={ ! site.is_atomic && isChecked && currentSettings() }
 		/>
