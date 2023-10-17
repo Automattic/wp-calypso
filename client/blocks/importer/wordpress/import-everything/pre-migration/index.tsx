@@ -1,6 +1,6 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { useSiteCredentialsInfo } from 'calypso/blocks/importer/hooks/use-site-credentials-info';
@@ -70,14 +70,16 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const requiresPluginUpdate = siteCanMigrate === false;
 
-	const migrationTrackingProps = {
-		source_site_id: sourceSiteId,
-		source_site_url: sourceSiteUrl,
-		target_site_id: targetSite.ID,
-		target_site_slug: targetSite.slug,
-		is_migrate_from_wp: isMigrateFromWp,
-		is_trial: isTrial,
-	};
+	const migrationTrackingProps = useMemo( () => {
+		return {
+			source_site_id: sourceSiteId,
+			source_site_url: sourceSiteUrl,
+			target_site_id: targetSite.ID,
+			target_site_slug: targetSite.slug,
+			is_migrate_from_wp: isMigrateFromWp,
+			is_trial: isTrial,
+		};
+	}, [ sourceSiteId, sourceSiteUrl, targetSite.ID, targetSite.slug, isMigrateFromWp, isTrial ] );
 
 	const toggleCredentialsForm = () => {
 		setShowCredentials( ! showCredentials );
@@ -119,7 +121,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	// We want to record the tracks event, so we use the same condition as the one in the render function
 	// This should be better handled by using a state after the refactor
 	useEffect( () => {
-		if ( ! requiresPluginUpdate && isTargetSitePlanCompatible ) {
+		if ( siteCanMigrate === true && isTargetSitePlanCompatible ) {
 			const _migrationTrackingProps: { [ key: string ]: unknown } = { ...migrationTrackingProps };
 			// There is a case where source_site_id is 0|undefined, so we need to delete it
 			delete _migrationTrackingProps?.source_site_id;
@@ -128,7 +130,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				recordTracksEvent( 'calypso_site_migration_ready_screen', _migrationTrackingProps )
 			);
 		}
-	}, [ requiresPluginUpdate, isTargetSitePlanCompatible ] );
+	}, [ siteCanMigrate, isTargetSitePlanCompatible, migrationTrackingProps, dispatch ] );
 
 	// Initiate the migration if initImportRun is set
 	useEffect( () => {
