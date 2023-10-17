@@ -9,7 +9,6 @@ body.is-section-home.theme-default.color-scheme {
 .customer-home__heading {
 	display: block;
 
-	.customer-home__view-site-button,
 	.formatted-header__subtitle {
 		display: none;
 	}
@@ -65,23 +64,6 @@ body.is-section-home.theme-default.color-scheme {
 		margin-bottom: 4px;
 	}
 
-	.formatted-header {
-		margin-right: 12px;
-	}
-
-	.formatted-header__subtitle {
-		margin: 0;
-	}
-
-	.customer-home__view-site-button {
-		margin: auto;
-		margin-right: 0;
-
-		.button {
-			text-align: center;
-			white-space: nowrap;
-		}
-	}
 	@include break-medium {
 		display: flex;
 		flex: 0 0 auto;
@@ -90,7 +72,6 @@ body.is-section-home.theme-default.color-scheme {
 			display: none;
 		}
 
-		.customer-home__view-site-button,
 		.formatted-header__subtitle {
 			display: block;
 		}
