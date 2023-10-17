@@ -13,7 +13,7 @@
 }
 
 .is-logged-out {
-	.themes__header::before,
+	.themes__header-logged-out::before,
 	.themes__controls::before {
 		background-color: #e5f4ff;
 		content: "";
@@ -25,7 +25,8 @@
 		z-index: -1;
 	}
 
-	.themes__header {
+	.themes__header-logged-out {
+		padding: 24px 16px;
 		border: none;
 		margin: 0;
 		position: relative;
