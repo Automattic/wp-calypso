@@ -433,14 +433,20 @@ $mobile-card-max-width: 440px;
 			}
 
 			&.plan-features-2023-grid__header-billing-info {
-				padding-bottom: 32px;
+				padding-bottom: 16px;
 				@include plans-2023-break-small {
-					padding-bottom: 32px;
+					padding-bottom: 16px;
 				}
 			}
 
 			&.popular-plan-parent-class .plan-features-2023-grid__popular-badge {
 				padding-bottom: 23px;
+			}
+
+			&.plan-features-2023-grid__storage {
+				padding-top: 0;
+				padding-bottom: 32px;
+				width: 205px;
 			}
 
 			.plan-features-2023-grid__header-title {

@@ -147,6 +147,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
 					{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
 					{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
+					{ this.renderPlanStorageOptions( [ gridPlanForSpotlight ] ) }
 					{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
 				</div>
 			</div>
