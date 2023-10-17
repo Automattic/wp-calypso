@@ -108,6 +108,33 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
+const quantityForDaysAndPeriod = ( days, period ) => {
+	// If the period is 'day' use the value provided.
+	if ( period === 'day' ) {
+		return days;
+	}
+	// Confirm period is valid before trusting.
+	const validPeriods = [ 'week', 'month', 'year' ];
+	if ( validPeriods.includes( period ) === false ) {
+		return days;
+	}
+	// Determine denominator for math.
+	const daysInPeriod = {
+		week: 7,
+		month: 30,
+		year: 365,
+	};
+	const denominator = daysInPeriod[ period ];
+	// Determine quantity based on period.
+	// The +1 is to account for API date partitioning when using requesting weeks.
+	let newQuantity = Math.ceil( days / denominator );
+	if ( period === 'week' ) {
+		newQuantity += 1;
+	}
+	// Return new quantity for the chart.
+	return newQuantity;
+};
+
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -212,18 +239,15 @@ class StatsSite extends Component {
 			} else {
 				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 			}
-			// Sort out quantity for chart.
-			// ToDo: Update to take period into account.
+			// Sort out quantity for chart. Default to 7 days.
+			let daysInRange = 7;
 			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
 			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 			if ( chartStart && isSameOrBefore ) {
-				const diff = moment( chartEnd ).diff( moment( chartStart ), 'days' );
-				// Make sure quantity includes start date.
-				this.state.customChartQuantity = diff + 1;
-			} else {
-				// If we have a goofy start date, ignore it.
-				this.state.customChartQuantity = 7;
+				// Add one to calculation to include the start date.
+				daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
 			}
+			this.state.customChartQuantity = quantityForDaysAndPeriod( daysInRange, period );
 		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
