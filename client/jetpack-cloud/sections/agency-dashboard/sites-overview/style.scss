@@ -1,6 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.is-jetpack-new-navigation {
+	.sites-overview__page-title {
+		margin-block-end: 8px;
+		font-weight: 600;
+	}
+}
+
 .sites-overview__large-screen {
 	.site-search-filter-container__search .search.is-open .search__open-icon {
 		width: 60px;
