@@ -53,7 +53,8 @@ const getSiteAssemblerUrl = ( {
 		return siteEditorUrl;
 	}
 
-	const basePathname = isLoggedIn ? '/setup' : '/start';
+	// Redirect people to create a site first if they don't log in or they have no sites.
+	const basePathname = isLoggedIn && selectedSite ? '/setup' : '/start';
 	const params = new URLSearchParams( { ref: 'calypshowcase' } );
 
 	if ( selectedSite?.slug ) {
