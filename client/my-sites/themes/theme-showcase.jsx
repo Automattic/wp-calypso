@@ -76,12 +76,14 @@ class ThemeShowcase extends Component {
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
+		this.isDiscoveryEnabled = this.props.isLoggedIn
+			? config.isEnabled( 'themes/discovery-lits' )
+			: config.isEnabled( 'themes/discovery-lots' );
 	}
 
 	static propTypes = {
 		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
-		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
@@ -292,8 +294,8 @@ class ThemeShowcase extends Component {
 		return buildRelativeSearchUrl( url, search );
 	};
 
-	onTierSelect = ( { value: tier, isCollectionView: isCollectionView = false } ) => {
-		let url = this.constructUrl( {
+	onTierSelect = ( { value: tier } ) => {
+		const url = this.constructUrl( {
 			tier,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
@@ -301,10 +303,6 @@ class ThemeShowcase extends Component {
 					category: staticFilters.RECOMMENDED.key,
 				} ),
 		} );
-
-		if ( isCollectionView ) {
-			url += `?v=collection`;
-		}
 
 		page( url );
 		this.scrollToSearchInput();
@@ -365,7 +363,14 @@ class ThemeShowcase extends Component {
 			<div className="collection-header">
 				<Button
 					className="collection-header__back"
-					onClick={ () => this.onTierSelect( { value: '' } ) }
+					onClick={ () =>
+						page(
+							this.constructUrl( {
+								tier: '',
+								filter: '',
+							} )
+						)
+					}
 				>
 					<Icon icon={ chevronLeft } />
 					{ translate( 'Back' ) }
@@ -447,11 +452,7 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 
-		const showCollections =
-			this.props.tier === '' &&
-			( this.props.isLoggedIn
-				? config.isEnabled( 'themes/discovery-lits' )
-				: config.isEnabled( 'themes/discovery-lots' ) );
+		const showCollections = this.props.tier === '' && this.isDiscoveryEnabled;
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
@@ -463,9 +464,7 @@ class ThemeShowcase extends Component {
 							getOptions={ this.getThemeOptions }
 							getScreenshotUrl={ this.getScreenshotUrl }
 							getActionLabel={ this.getActionLabel }
-							onTierSelect={ ( tier ) =>
-								this.onTierSelect( { value: tier, isCollectionView: true } )
-							}
+							onTierSelect={ ( tier ) => this.onTierSelect( { value: tier } ) }
 						/>
 					);
 				}
@@ -510,7 +509,6 @@ class ThemeShowcase extends Component {
 			isMultisite,
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
-			isCollectionView,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
@@ -557,57 +555,56 @@ class ThemeShowcase extends Component {
 					filter={ this.props.filter }
 					tier={ this.props.tier }
 					vertical={ this.props.vertical }
-					metaOnly={ isCollectionView }
 				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
-					{ ! isCollectionView && (
-						<div className="themes__controls">
-							<div className="theme__search">
-								<div className="theme__search-input">
-									{ isSearchV2 ? (
-										<SearchThemesV2
-											query={ featureStringFilter + search }
-											onSearch={ this.doSearch }
-										/>
-									) : (
-										<SearchThemes
-											query={ filterString + search }
-											onSearch={ this.doSearch }
-											recordTracksEvent={ this.recordSearchThemesTracksEvent }
-										/>
-									) }
-								</div>
-								{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-									<SelectDropdown
-										className="section-nav-tabs__dropdown"
-										onSelect={ this.onTierSelectFilter }
-										selectedText={ translate( 'View: %s', {
-											args: getOptionLabel( tiers, tier ) || '',
-										} ) }
-										options={ tiers }
-										initialSelected={ tier }
-									></SelectDropdown>
+					<div className="themes__controls">
+						<div className="theme__search">
+							<div className="theme__search-input">
+								{ isSearchV2 ? (
+									<SearchThemesV2
+										query={ featureStringFilter + search }
+										onSearch={ this.doSearch }
+									/>
+								) : (
+									<SearchThemes
+										query={ filterString + search }
+										onSearch={ this.doSearch }
+										recordTracksEvent={ this.recordSearchThemesTracksEvent }
+									/>
 								) }
 							</div>
-							{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
-								<ThemesToolbarGroup
-									items={ Object.values( tabFilters ) }
-									selectedKey={ this.getSelectedTabFilter().key }
-									onSelect={ ( key ) =>
-										this.onFilterClick(
-											Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-										)
-									}
-								/>
+							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+								<SelectDropdown
+									className="section-nav-tabs__dropdown"
+									onSelect={ this.onTierSelectFilter }
+									selectedText={ translate( 'View: %s', {
+										args: getOptionLabel( tiers, tier ) || '',
+									} ) }
+									options={ tiers }
+									initialSelected={ tier }
+								></SelectDropdown>
 							) }
 						</div>
-					) }
+						{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+							<ThemesToolbarGroup
+								items={ Object.values( tabFilters ) }
+								selectedKey={ this.getSelectedTabFilter().key }
+								onSelect={ ( key ) =>
+									this.onFilterClick(
+										Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+									)
+								}
+							/>
+						) }
+					</div>
 					<div className="themes__showcase">
-						{ isCollectionView && this.getCollectionHeader() }
+						{ this.isDiscoveryEnabled &&
+							( !! this.props.tier || !! filter ) &&
+							this.getCollectionHeader() }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
