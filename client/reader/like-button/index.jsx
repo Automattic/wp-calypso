@@ -1,20 +1,14 @@
-import config from '@automattic/calypso-config';
-import { getUrlParts } from '@automattic/calypso-url';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
-import { navigate } from 'calypso/lib/navigate';
-import { createAccountUrl } from 'calypso/lib/paths';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { registerLastLoggedInAction } from 'calypso/state/reader-ui/actions';
 import './style.scss';
 
 class ReaderLikeButton extends Component {
@@ -28,21 +22,6 @@ class ReaderLikeButton extends Component {
 	componentWillUnmount() {
 		clearTimeout( this.hidePopoverTimeout );
 	}
-
-	onLikeToggle = ( liked ) => {
-		this.props.registerLastLoggedInAction( 'like' );
-
-		if ( this.props.isLoggedIn ) {
-			return this.recordLikeToggle( liked );
-		}
-
-		// If not logged in and the login window component is disabled, redirect to create account page
-		if ( ! config.isEnabled( 'reader/login-window' ) ) {
-			// Redirect to create account page
-			const { pathname } = getUrlParts( window.location.href );
-			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
-		}
-	};
 
 	recordLikeToggle = ( liked ) => {
 		const post = this.props.post || this.props.postByKey;
@@ -88,7 +67,7 @@ class ReaderLikeButton extends Component {
 					ref={ this.likeButtonRef }
 					onMouseEnter={ this.showLikesPopover }
 					onMouseLeave={ this.hideLikesPopover }
-					onLikeToggle={ this.onLikeToggle }
+					onLikeToggle={ this.recordLikeToggle }
 					likeSource="reader"
 					icon={ likeIcon }
 				/>
@@ -117,8 +96,7 @@ export default connect(
 			} ),
 			likeCount: getPostLikeCount( state, siteId, postId ),
 			iLike: isLikedPost( state, siteId, postId ),
-			isLoggedIn: isUserLoggedIn( state ),
 		};
 	},
-	{ markPostSeen, registerLastLoggedInAction }
+	{ markPostSeen }
 )( ReaderLikeButton );

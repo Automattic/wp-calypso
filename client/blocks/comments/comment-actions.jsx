@@ -22,7 +22,6 @@ const CommentActions = ( {
 	onReplyCancel,
 	showReadMore,
 	onReadMore,
-	onLikeToggle,
 } ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
 	const showCancelReplyButton = activeReplyCommentId === commentId;
@@ -74,7 +73,6 @@ const CommentActions = ( {
 				siteId={ post.site_ID }
 				postId={ post.ID }
 				commentId={ commentId }
-				onLikeToggle={ onLikeToggle }
 			/>
 		</div>
 	);

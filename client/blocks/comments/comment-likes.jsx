@@ -8,7 +8,6 @@ import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { likeComment, unlikeComment } from 'calypso/state/comments/actions';
 import { getCommentLike } from 'calypso/state/comments/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 class CommentLikeButtonContainer extends Component {
@@ -18,13 +17,6 @@ class CommentLikeButtonContainer extends Component {
 	}
 
 	handleLikeToggle( liked ) {
-		if ( this.props.isLoggedIn ) {
-			this.recordLikeToggle( liked );
-		}
-		this.props.onLikeToggle( liked );
-	}
-
-	recordLikeToggle = ( liked ) => {
 		if ( liked ) {
 			this.props.likeComment( this.props.siteId, this.props.postId, this.props.commentId );
 		} else {
@@ -40,7 +32,7 @@ class CommentLikeButtonContainer extends Component {
 				comment_id: this.props.commentId,
 			}
 		);
-	};
+	}
 
 	render() {
 		const props = pick( this.props, [ 'showZeroCount', 'tagName' ] );
@@ -79,13 +71,11 @@ CommentLikeButtonContainer.propTypes = {
 	commentLike: PropTypes.object,
 	likeComment: PropTypes.func.isRequired,
 	unlikeComment: PropTypes.func.isRequired,
-	onLikeToggle: PropTypes.func.isRequired,
 };
 
 export default connect(
 	( state, props ) => ( {
 		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId ),
-		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{ likeComment, recordReaderTracksEvent, unlikeComment }
 )( CommentLikeButtonContainer );
