@@ -54,3 +54,22 @@
 		gap: 8px;
 	}
 }
+
+.stats-date-control-picker__popover-content {
+	display: flex;
+	min-width: 320px;
+}
+
+.date-control-picker-date {
+	margin: 16px;
+
+	// internal layout
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.stats-date-control-picker-dates__buttons {
+	display: flex;
+	justify-content: flex-end;
+}

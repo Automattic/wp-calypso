@@ -24,6 +24,7 @@ export class LinkedinSharePreview extends PureComponent {
 			imageUrl,
 			seoTitle,
 			hidePostPreview,
+			media,
 		} = this.props;
 
 		return (
@@ -36,6 +37,7 @@ export class LinkedinSharePreview extends PureComponent {
 					description={ decodeEntities( articleSummary ) }
 					url={ articleUrl }
 					hidePostPreview={ hidePostPreview }
+					media={ media }
 				/>
 			</div>
 		);

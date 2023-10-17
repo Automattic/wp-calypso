@@ -23,4 +23,8 @@ export { default as isMigrationTrialExpired } from './trials/is-migration-trial-
 export { default as isSiteOnEcommerce } from './trials/is-site-on-ecommerce';
 export { default as isSiteOnECommerceTrial } from './trials/is-site-on-ecommerce-trial';
 export { default as isSiteOnWooExpressEcommerceTrial } from './is-site-on-woo-express-ecommerce-trial';
+export { default as isSiteOnHostingTrial } from './trials/is-site-on-hosting-trial';
+export { default as getHostingTrialDaysLeft } from './trials/get-hosting-trial-days-left';
+export { default as getHostingTrialExpiration } from './trials/get-hosting-trial-expiration';
+export { default as isHostingTrialExpired } from './trials/is-hosting-trial-expired';
 export { default as isTrialSite } from './trials/is-trial-site';

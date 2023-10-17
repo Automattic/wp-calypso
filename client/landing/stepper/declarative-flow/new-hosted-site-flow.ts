@@ -1,4 +1,4 @@
-import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { PLAN_HOSTING_TRIAL_MONTHLY, isFreeHostingTrial } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -25,6 +25,10 @@ const hosting: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/site-options' ),
 			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
+			{
+				slug: 'trialAcknowledge',
+				asyncComponent: () => import( './internals/steps-repository/trial-acknowledge' ),
+			},
 			{
 				slug: 'siteCreationStep',
 				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
@@ -62,6 +66,9 @@ const hosting: Flow = {
 			if ( _currentStepSlug === 'plans' ) {
 				navigate( 'options' );
 			}
+			if ( _currentStepSlug === 'trialAcknowledge' ) {
+				navigate( 'plans' );
+			}
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
@@ -89,6 +96,14 @@ const hosting: Flow = {
 						extra: { geo_affinity: siteGeoAffinity },
 					} );
 
+					if ( isFreeHostingTrial( productSlug ) ) {
+						return navigate( 'trialAcknowledge' );
+					}
+
+					return navigate( 'siteCreationStep' );
+				}
+
+				case 'trialAcknowledge': {
 					return navigate( 'siteCreationStep' );
 				}
 

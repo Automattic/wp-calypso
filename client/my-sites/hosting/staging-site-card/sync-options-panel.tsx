@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 const DangerousItemsContainer = styled.div( {
 	marginTop: '16px',
@@ -38,24 +38,57 @@ export interface CheckboxOptionItem {
 
 export default function SyncOptionsPanel( {
 	items,
+	reset,
 	disabled,
 	onChange,
 }: {
 	items: CheckboxOptionItem[];
+	reset: boolean;
 	disabled: boolean;
 	onChange: ( items: CheckboxOptionItem[] ) => void;
 } ) {
-	const initialItemsMap = items.reduce(
-		( acc, item ) => {
-			acc[ item.name ] = item;
-			return acc;
-		},
-		{} as { [ key: string ]: CheckboxOptionItem }
+	const initialItemsMap = useMemo(
+		() =>
+			items
+				.sort( ( a, b ) => {
+					if ( a.isDangerous === b.isDangerous ) {
+						return 0;
+					}
+					return a.isDangerous ? 1 : -1;
+				} )
+				.reduce(
+					( acc, item ) => {
+						acc[ item.name ] = { ...item };
+						return acc;
+					},
+					{} as { [ key: string ]: CheckboxOptionItem }
+				),
+		[ items ]
 	);
 
 	const [ optionItemsMap, setOptionItemsMap ] = useState( initialItemsMap );
 
-	// Change it to useMemo
+	useEffect( () => {
+		if ( reset ) {
+			setOptionItemsMap(
+				items
+					.sort( ( a, b ) => {
+						if ( a.isDangerous === b.isDangerous ) {
+							return 0;
+						}
+						return a.isDangerous ? 1 : -1;
+					} )
+					.reduce(
+						( acc, item ) => {
+							acc[ item.name ] = { ...item };
+							return acc;
+						},
+						{} as { [ key: string ]: CheckboxOptionItem }
+					)
+			);
+		}
+	}, [ reset, items ] );
+
 	const dangerousItems = Object.values( optionItemsMap ).filter( ( item ) => item.isDangerous );
 	const nonDangerousItems = Object.values( optionItemsMap ).filter(
 		( item ) => ! item.isDangerous

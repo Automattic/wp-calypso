@@ -33,13 +33,14 @@ export function getExternalBackUrl( source, sectionName = null ) {
 /**
  * Check if we should use multiple domains in domain flows.
  */
-export function shouldUseMultipleDomainsInCart( flowName, suggestion ) {
-	const enabledFlows = [ 'onboarding' ];
+export function shouldUseMultipleDomainsInCart( flowName ) {
+	const enabledFlows = [ 'domain' ];
+	const enabledFlowsUnderFlag = [ 'onboarding' ];
 
 	const status =
-		isEnabled( 'domains/add-multiple-domains-to-cart' ) &&
-		enabledFlows.includes( flowName ) &&
-		( ! suggestion || ( suggestion && ! suggestion.is_free ) );
+		enabledFlows.includes( flowName ) ||
+		( isEnabled( 'domains/add-multiple-domains-to-cart' ) &&
+			enabledFlowsUnderFlag.includes( flowName ) );
 
 	return status;
 }

@@ -14,6 +14,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
+		"teamcity:build-app": "./bin/ci-build-steps.sh",
 		"build": "NODE_ENV=production yarn dev",
 		"build:block-inserter-modifications": "calypso-build --env source='block-inserter-modifications/contextual-tips'",
 		"build:common": " calypso-build --env source='common','common/data-stores','common/hide-plugin-buttons-mobile','common/disable-heic-images','common/override-preview-button-url'",
@@ -111,7 +112,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-popper": "^2.3.0",
-		"react-redux": "^8.1.2",
+		"react-redux": "^8.1.3",
 		"redux": "^4.2.1",
 		"redux-thunk": "^2.4.2",
 		"swiper": "^8.4.5",

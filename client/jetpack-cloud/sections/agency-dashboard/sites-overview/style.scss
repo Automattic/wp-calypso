@@ -495,7 +495,20 @@
 	color: var(--studio-red-50);
 }
 
-.sites-overview__boost-score {
+@mixin boost-score-style($color, $background-color) {
+	@extend .sites-overview__column-content;
+	color: $color;
+	background-color: $background-color;
+
+	&:hover,
+	&:active,
+	&:focus {
+		color: $color;
+		background-color: $background-color;
+	}
+}
+
+a.sites-overview__boost-score {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -506,21 +519,15 @@
 	user-select: none;
 
 	&.boost-score-good {
-		@extend .sites-overview__column-content;
-		color: var(--studio-green-50);
-		background-color: var(--studio-green-0);
+		@include boost-score-style(var(--studio-green-50), var(--studio-green-0));
 	}
 
 	&.boost-score-okay {
-		@extend .sites-overview__column-content;
-		color: var(--studio-yellow-50);
-		background-color: var(--studio-yellow-0);
+		@include boost-score-style(var(--studio-yellow-50), var(--studio-yellow-0));
 	}
 
 	&.boost-score-bad {
-		@extend .sites-overview__column-content;
-		color: var(--studio-red-50);
-		background-color: var(--studio-red-0);
+		@include boost-score-style(var(--studio-red-50), var(--studio-red-0));
 	}
 }
 

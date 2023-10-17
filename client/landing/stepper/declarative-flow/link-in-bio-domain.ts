@@ -1,5 +1,4 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
@@ -13,6 +12,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useDomainParams } from '../hooks/use-domain-params';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
 import {
@@ -74,7 +74,6 @@ const linkInBioDomain: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const locale = useLocale();
 
 		setStepProgress( flowProgress );
 
@@ -93,10 +92,11 @@ const linkInBioDomain: Flow = {
 		const redirectTo = encodeURIComponent(
 			`/setup/${ variantSlug }/patterns?domain=${ domain }&provider=${ provider }`
 		);
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ variantSlug }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`
-				: `/start/account/user?variationName=${ variantSlug }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`;
+		const logInUrl = useLoginUrl( {
+			variationName: variantSlug,
+			redirectTo: redirectTo,
+			pageTitle: 'Link%20in%20Bio',
+		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug, variantSlug, {

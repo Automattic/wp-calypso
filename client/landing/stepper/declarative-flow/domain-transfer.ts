@@ -1,4 +1,3 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
@@ -11,6 +10,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE } from '../stores';
+import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import {
 	Flow,
@@ -61,12 +61,12 @@ const domainTransfer: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const locale = useLocale();
 
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domains`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Bulk+Transfer&redirect_to=/setup/${ flowName }/domains`;
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: `/setup/${ flowName }/domains`,
+			pageTitle: 'Bulk Transfer',
+		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );

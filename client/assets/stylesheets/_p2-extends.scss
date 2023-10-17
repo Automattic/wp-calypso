@@ -77,7 +77,7 @@
 %p2-form-button {
 	background-color: var(--p2-color-button);
 	color: var(--p2-color-text);
-	border: none;
+	border: none !important;
 	border-radius: 50px; /* stylelint-disable-line scales/radii */
 	display: flex;
 	align-items: center;
@@ -87,7 +87,7 @@
 	justify-content: center;
 	line-height: 1.5;
 	margin: 0 0 1em;
-	padding: 1em 2em;
+	padding: 1em 2em !important;
 	transition: 0.2s ease-in-out;
 	height: auto;
 	width: 100%;

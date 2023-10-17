@@ -19,6 +19,7 @@ const features = {
 	// Note: there is also a sign-in-with-apple/redirect flag
 	// that may/may not be relevant to override for the Desktop app.
 	'signup/social': false,
+	'signup/social-first': false,
 	'login/magic-login': false,
 	'bilmur-script': false,
 };

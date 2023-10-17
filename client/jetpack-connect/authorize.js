@@ -300,6 +300,17 @@ export class JetpackAuthorize extends Component {
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else if ( this.isFromMigrationPlugin() ) {
 			navigate( `/setup/import-focused/migrationHandler?from=${ urlToSlug( homeUrl ) }` );
+		} else if ( this.isFromMyJetpackConnectAfterCheckout() ) {
+			debug( `Redirecting to Calypso product license activation page: ${ redirectAfterAuth }` );
+			navigate(
+				// The /jetpack/connect/authorize controller requires `redirectAfterAuth` to be a
+				// valid well-formed uri (via validUrl.isWebUri()), so here we are removing the url host so that it is a
+				// relative url.
+				redirectAfterAuth.replace(
+					/^(https:\/\/wordpress\.com|http:\/\/calypso\.localhost:3000)/,
+					''
+				)
+			);
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -438,6 +449,11 @@ export class JetpackAuthorize extends Component {
 		const { partnerSlug, partnerID } = props;
 
 		return partnerID && 'pressable' !== partnerSlug;
+	}
+
+	isFromMyJetpackConnectAfterCheckout( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'connect-after-checkout' );
 	}
 
 	handleSignIn = async ( e, loginURL ) => {

@@ -23,6 +23,7 @@ import './style.scss';
 
 interface DomainThankYouContainerProps {
 	domain: string;
+	domains: string[];
 	email: string;
 	hasProfessionalEmail: boolean;
 	hideProfessionalEmailStep: boolean;
@@ -34,6 +35,7 @@ interface DomainThankYouContainerProps {
 
 const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	domain,
+	domains,
 	email,
 	hasProfessionalEmail,
 	selectedSiteSlug,
@@ -66,6 +68,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		return propsGetter( {
 			selectedSiteSlug,
 			domain,
+			domains,
 			email,
 			shouldDisplayVerifyEmailStep: isEmailUnverified,
 			onResendEmailVerificationClick: onResendVerificationEmail,
@@ -81,6 +84,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	}, [
 		type,
 		domain,
+		domains,
 		selectedSiteSlug,
 		email,
 		isEmailUnverified,

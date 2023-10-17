@@ -35,7 +35,7 @@ function GlobalStylesWarningNotice() {
 	}
 
 	const upgradeTranslation = __(
-		'Your site includes customized styles that are only visible to visitors after <a>upgrading to the Premium plan or higher</a>.',
+		'Your site includes premium styles that are only visible to visitors after <a>upgrading to the Premium plan or higher</a>.',
 		'full-site-editing'
 	);
 
@@ -143,7 +143,7 @@ function GlobalStylesEditNotice() {
 
 		if ( isPostEditor && canPreviewPost ) {
 			actions.push( {
-				label: __( 'Preview without custom styles', 'full-site-editing' ),
+				label: __( 'Preview without premium styles', 'full-site-editing' ),
 				onClick: previewPost,
 				variant: 'secondary',
 				noDefaultClasses: true,
@@ -152,7 +152,7 @@ function GlobalStylesEditNotice() {
 		}
 
 		actions.push( {
-			label: __( 'Remove custom styles', 'full-site-editing' ),
+			label: __( 'Remove premium styles', 'full-site-editing' ),
 			onClick: isSiteEditor ? resetGlobalStyles : openResetGlobalStylesSupport,
 			variant: isSiteEditor ? 'secondary' : 'link',
 			noDefaultClasses: true,
@@ -163,7 +163,7 @@ function GlobalStylesEditNotice() {
 
 		createWarningNotice(
 			__(
-				'Your site includes customized styles that are only visible to visitors after upgrading to the Premium plan or higher.',
+				'Your site includes premium styles that are only visible to visitors after upgrading to the Premium plan or higher.',
 				'full-site-editing'
 			),
 			{

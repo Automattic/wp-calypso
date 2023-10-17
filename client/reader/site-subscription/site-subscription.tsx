@@ -6,10 +6,15 @@ import {
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import SiteSubscriptionProvider from './site-subscription-provider';
 
-const SiteSubscription = ( { subscriptionId }: { subscriptionId: number } ) => {
+export type SiteSubscriptionProps = {
+	blogId?: string;
+	subscriptionId?: string;
+};
+
+const SiteSubscription = ( { blogId, subscriptionId }: SiteSubscriptionProps ) => {
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
-			<SiteSubscriptionProvider subscriptionId={ subscriptionId }>
+			<SiteSubscriptionProvider blogId={ blogId } subscriptionId={ subscriptionId }>
 				<Main className="site-subscriptions-manager">
 					<ReaderSiteSubscription />
 				</Main>

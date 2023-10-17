@@ -1,4 +1,5 @@
 /**
+ * @group jetpack-wpcom-integration
  */
 
 import {
@@ -13,7 +14,6 @@ import {
 	EmailClient,
 	SecretsManager,
 	SubscribersPage,
-	SubscriptionManagementPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
@@ -83,13 +83,6 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 				expect( confirmationURL ).not.toBe( null );
 
 				await page.goto( confirmationURL as string );
-			} );
-
-			it( 'Land in Subscription Management page', async function () {
-				const subscriptionManagementPage = new SubscriptionManagementPage( page );
-				await subscriptionManagementPage.validateSiteSubscribed(
-					testAccount.getSiteURL( { protocol: false } )
-				);
 			} );
 		} );
 

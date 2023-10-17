@@ -20,6 +20,7 @@ import {
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignSetup from './internals/steps-repository/design-setup';
 import ErrorStep from './internals/steps-repository/error-step';
@@ -234,12 +235,13 @@ const free: Flow = {
 				window?.location?.pathname +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 
-			const url =
-				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
-					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+			const logInUrl = getLoginUrl( {
+				variationName: flowName,
+				redirectTo: redirectTarget,
+				locale,
+			} );
 
-			return url + ( flags ? `&flags=${ flags }` : '' );
+			return logInUrl + ( flags ? `&flags=${ flags }` : '' );
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the

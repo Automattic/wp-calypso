@@ -21,7 +21,13 @@ const useRowMetadata = (
 		const siteUrlWithScheme = rows.site?.value?.url_with_scheme;
 		const siteId = rows.site?.value?.blog_id;
 
-		const { link, isExternalLink } = getLinks( type, row.status, siteUrl, siteUrlWithScheme );
+		const { link, isExternalLink } = getLinks(
+			type,
+			row.status,
+			siteUrl,
+			siteUrlWithScheme,
+			rows.site?.value?.is_atomic
+		);
 		const eventName = getRowEventName( type, row.status, isLargeScreen );
 
 		return {
@@ -38,6 +44,7 @@ const useRowMetadata = (
 		row,
 		rows.monitor.error,
 		rows.site?.value?.blog_id,
+		rows.site?.value?.is_atomic,
 		rows.site?.value?.url,
 		rows.site?.value?.url_with_scheme,
 		tooltip,

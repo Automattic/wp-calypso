@@ -102,9 +102,7 @@ $mobile-card-max-width: 440px;
 
 			&.is-wpcom-enterprise-grid-plan {
 				background-color: var(--studio-gray-80);
-				a {
-					color: var(--studio-gray-0);
-				}
+				color: var(--studio-gray-0);
 
 				&:focus {
 					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-gray-80);
@@ -818,6 +816,7 @@ body.is-section-signup.is-white-signup,
 			padding-top: 34px;
 
 			&.popular-plan-parent-class {
+				justify-content: space-between;
 				&::before,
 				&::after {
 					height: 100%;

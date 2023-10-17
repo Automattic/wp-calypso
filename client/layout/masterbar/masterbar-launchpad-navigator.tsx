@@ -28,7 +28,10 @@ const MasterbarLaunchpadNavigator = () => {
 			/>
 			{ launchpadIsVisible && (
 				<div className="masterbar__launchpad-navigator">
-					<FloatingNavigator siteSlug={ siteSlug } />
+					<FloatingNavigator
+						siteSlug={ siteSlug }
+						toggleLaunchpadIsVisible={ setLaunchpadIsVisible }
+					/>
 				</div>
 			) }
 		</>

@@ -250,8 +250,13 @@ class Signup extends Component {
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
+		// User-social is recorded as user, to avoid messing up the tracks funnels that we have
 		if ( ! this.state.shouldShowLoadingScreen ) {
-			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+			recordSignupStep(
+				this.props.flowName,
+				this.props.stepName === 'user-social' ? 'user' : this.props.stepName,
+				this.getRecordProps()
+			);
 		}
 		this.preloadNextStep();
 	}
@@ -263,7 +268,12 @@ class Signup extends Component {
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
 			! this.state.shouldShowLoadingScreen
 		) {
-			recordSignupStep( flowName, stepName, this.getRecordProps() );
+			// User-social is recorded as user, to avoid messing up the tracks funnels that we have
+			recordSignupStep(
+				flowName,
+				stepName === 'user-social' ? 'user' : stepName,
+				this.getRecordProps()
+			);
 		}
 
 		if ( stepName !== prevProps.stepName ) {
@@ -275,7 +285,7 @@ class Signup extends Component {
 		if ( sitePlanSlug && prevProps.sitePlanSlug && sitePlanSlug !== prevProps.sitePlanSlug ) {
 			recordSignupPlanChange(
 				flowName,
-				stepName,
+				stepName === 'user-social' ? 'user' : stepName,
 				prevProps.sitePlanName,
 				prevProps.sitePlanSlug,
 				sitePlanName,

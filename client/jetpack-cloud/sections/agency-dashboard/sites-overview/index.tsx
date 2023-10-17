@@ -172,7 +172,7 @@ export default function SitesOverview() {
 
 	const selectedTab = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
 	const hasAppliedFilter = !! search || filter?.issueTypes?.length > 0;
-	const showEmptyState = ! isLoading && ! isError && ! data?.sites?.length;
+	const showEmptyState = ! isLoading && ! isError && ! data?.total;
 
 	let emptyState;
 	if ( showEmptyState ) {

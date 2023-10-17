@@ -17,6 +17,7 @@ import {
 	isDIFMProduct,
 	isTieredVolumeSpaceAddon,
 } from '@automattic/calypso-products';
+import { Gridicon, Popover } from '@automattic/components';
 import {
 	CheckoutModal,
 	FormStatus,
@@ -28,7 +29,7 @@ import {
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState, PropsWithChildren } from 'react';
+import { useState, PropsWithChildren, useRef } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
@@ -117,6 +118,29 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	justify-content: space-between;
 	flex-wrap: wrap;
 	gap: 2px 10px;
+`;
+
+const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
+	justify-content: flex-start;
+	gap: 4px;
+	.gridicon {
+		fill: ${ ( props ) => props.theme.colors.textColorLight };
+	}
+`;
+
+const UpgradeCreditPopover = styled( Popover )< { theme?: Theme } >`
+	&.popover .popover__inner {
+		color: ${ ( props ) => props.theme.colors.textColorOnDarkBackground };
+		background: ${ ( props ) => props.theme.colors.textColorDark };
+		text-align: start;
+		border-radius: 4px;
+		min-height: 32px;
+		width: 300px;
+		align-items: center;
+		font-style: normal;
+		padding: 8px 10px;
+		overflow-wrap: break-word;
+	}
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
@@ -772,6 +796,39 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
+const UpgradeCreditHelpIconLink = () => {
+	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+	const translate = useTranslate();
+	const ref = useRef( null );
+
+	function toggleIsPopoverOpen() {
+		setIsPopoverOpen( ( isPopoverOpen ) => ! isPopoverOpen );
+	}
+
+	return (
+		<>
+			<span
+				ref={ ref }
+				onMouseEnter={ () => setIsPopoverOpen( true ) }
+				onMouseLeave={ () => setIsPopoverOpen( false ) }
+				onTouchStart={ toggleIsPopoverOpen }
+			>
+				<Gridicon icon="help-outline" size={ 18 } />
+			</span>
+			<UpgradeCreditPopover
+				autoPosition={ true }
+				context={ ref.current }
+				isVisible={ isPopoverOpen }
+				hideArrow={ true }
+			>
+				{ translate(
+					'Upgrade now and we’ll automatically apply the remaining credit from your current plan. Remember, upgrade credit can only be used toward plan upgrades for the same website.'
+				) }
+			</UpgradeCreditPopover>
+		</>
+	);
+};
+
 function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const origCost = product.item_original_subtotal_integer;
@@ -808,6 +865,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 						} ),
 					},
 				} ) }
+				<UpgradeCreditHelpIconLink />
 			</>
 		);
 	}
@@ -826,6 +884,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 						} ),
 					},
 				} ) }
+				<UpgradeCreditHelpIconLink />
 			</>
 		);
 	}
@@ -844,6 +903,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 						} ),
 					},
 				} ) }
+				<UpgradeCreditHelpIconLink />
 			</>
 		);
 	}
@@ -1055,9 +1115,9 @@ function CheckoutLineItem( {
 
 			{ product && ! containsPartnerCoupon && (
 				<>
-					<LineItemMeta>
+					<UpgradeCreditInformationLineItem>
 						<UpgradeCreditInformation product={ product } />
-					</LineItemMeta>
+					</UpgradeCreditInformationLineItem>
 					<LineItemMeta>
 						<LineItemSublabelAndPrice product={ product } />
 						<DomainDiscountCallout product={ product } />

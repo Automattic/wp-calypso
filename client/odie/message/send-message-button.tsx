@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { WAPUU_ERROR_MESSAGE } from '..';
@@ -20,9 +20,8 @@ export const SendMessageButton = ( {
 	const dispatch = useDispatch();
 	return (
 		<Button
-			borderless
+			variant="primary"
 			className="odie-chatbox-message-action-button"
-			primary
 			onClick={ async ( event: { preventDefault: () => void } ) => {
 				try {
 					event.preventDefault();

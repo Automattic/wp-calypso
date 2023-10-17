@@ -1,4 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { Component } from 'react';
@@ -112,7 +113,20 @@ class Security2faKey extends Component {
 				{ ! addingKey && ! security2faKeys.length && (
 					<Card>
 						{ isBrowserSupported && (
-							<p>{ this.props.translate( 'Use a second factor security key to sign in.' ) }</p>
+							<p>
+								<>
+									{ this.props.translate( 'Use a second factor security key to sign in.' ) }{ ' ' }
+									<a
+										href={ localizeUrl(
+											'https://wordpress.com/support/security/two-step-authentication/security-key-authentication'
+										) }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{ translate( 'Learn more' ) }
+									</a>
+								</>
+							</p>
 						) }
 						{ ! isBrowserSupported && (
 							<p>

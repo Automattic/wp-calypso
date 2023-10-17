@@ -14,6 +14,7 @@ interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
 	title: string;
 	description: ReactElement;
 	query: ThemesQuery;
+	onSeeAll: () => void;
 }
 
 export default function ShowcaseThemeCollection( {
@@ -24,6 +25,7 @@ export default function ShowcaseThemeCollection( {
 	getScreenshotUrl,
 	query,
 	title,
+	onSeeAll,
 }: ShowcaseThemeCollectionProps ): ReactElement {
 	const { getPrice, themes, isActive, isInstalling, siteId } = useThemeCollection( query );
 
@@ -34,6 +36,7 @@ export default function ShowcaseThemeCollection( {
 				collectionSlug={ collectionSlug }
 				title={ title }
 				description={ description }
+				onSeeAll={ onSeeAll }
 			>
 				{ themes &&
 					themes.map( ( theme, index ) => (

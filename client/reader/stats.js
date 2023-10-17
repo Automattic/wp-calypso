@@ -36,6 +36,8 @@ export function recordPermalinkClick( source, post, eventProperties = {} ) {
 }
 
 function getLocation( path ) {
+	const searchParams = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
+
 	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
@@ -49,7 +51,8 @@ function getLocation( path ) {
 		return 'following_p2';
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
-		return 'topic_page';
+		const sort = searchParams.get( 'sort' );
+		return `topic_page:${ sort || 'relevance' }`;
 	}
 	if ( path.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
 		return 'single_post';
@@ -73,7 +76,6 @@ function getLocation( path ) {
 		return 'following_manage';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		const searchParams = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
 		const selectedTab = searchParams.get( 'selectedTab' );
 
 		if ( ! selectedTab || selectedTab === 'recommended' ) {
