@@ -183,4 +183,18 @@ describe( 'getSignupUrl', () => {
 			getSignupUrl( { redirect_to: 'https://example.com' }, '/log-in/jetpack', null, 'en', '' )
 		).toEqual( '/jetpack/connect' );
 	} );
+
+	test( 'redirect_to=public.api/connect/?action=verify uses /start/account with ?redirect_to passthrough', () => {
+		expect(
+			getSignupUrl(
+				{ redirect_to: 'https://public-api.wordpress.com/public.api/connect/?action=verify' },
+				'/log-in',
+				null,
+				'en',
+				''
+			)
+		).toEqual(
+			'/start/account?redirect_to=https%3A%2F%2Fpublic-api.wordpress.com%2Fpublic.api%2Fconnect%2F%3Faction%3Dverify'
+		);
+	} );
 } );
