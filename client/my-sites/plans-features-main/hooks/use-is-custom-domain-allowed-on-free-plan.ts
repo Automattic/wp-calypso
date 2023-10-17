@@ -1,11 +1,12 @@
 import { useMemo } from '@wordpress/element';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
-const useIsCustomDomainAllowedOnFreePlan = (
-	flowName?: string | null
+const useIsFreePlanCustomDomainUpsellEnabled = (
+	flowName?: string | null,
+	paidDomainName?: string | null
 ): DataResponse< boolean > => {
 	return useMemo( () => {
-		if ( flowName === 'onboarding-pm' ) {
+		if ( flowName === 'onboarding-pm' && paidDomainName ) {
 			return {
 				isLoading: false,
 				result: true,
@@ -16,7 +17,7 @@ const useIsCustomDomainAllowedOnFreePlan = (
 			isLoading: false,
 			result: false,
 		};
-	}, [ flowName ] );
+	}, [ flowName, paidDomainName ] );
 };
 
-export default useIsCustomDomainAllowedOnFreePlan;
+export default useIsFreePlanCustomDomainUpsellEnabled;

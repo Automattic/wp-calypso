@@ -1,9 +1,10 @@
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
-const useIsPlanUpsellEnabledOnFreeDomain = (
-	flowName?: string | null
+const useIsFreeDomainFreePlanUpsellEnabled = (
+	flowName?: string | null,
+	paidDomainName?: string | null
 ): DataResponse< boolean > => {
-	if ( flowName === 'onboarding' || flowName === 'onboarding-pm' ) {
+	if ( ! paidDomainName && ( flowName === 'onboarding' || flowName === 'onboarding-pm' ) ) {
 		return {
 			isLoading: false,
 			result: true,
@@ -15,4 +16,4 @@ const useIsPlanUpsellEnabledOnFreeDomain = (
 	};
 };
 
-export default useIsPlanUpsellEnabledOnFreeDomain;
+export default useIsFreeDomainFreePlanUpsellEnabled;
