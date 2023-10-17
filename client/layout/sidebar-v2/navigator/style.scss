@@ -27,8 +27,6 @@
 
 	&.is-active {
 		border-radius: 4px !important;
-		background: var(--studio-green-0) !important;
-		color: var(--studio-green-50) !important;
 	}
 
 	&:hover:not(.is-active) {
