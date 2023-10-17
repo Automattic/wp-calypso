@@ -3,14 +3,14 @@
  */
 import { PLAN_FREE, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import useIsFreeDomainFreePlanUpsellEnabled from 'my-sites/plans-features-main/hooks/use-is-free-domain-free-plan-upsell-enabled';
+import useIsFreePlanCustomDomainUpsellEnabled from 'my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
 	PAID_PLAN_IS_REQUIRED_DIALOG,
 } from '..';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
-import useIsFreePlanCustomDomainUpsellEnabled from '../../../hooks/use-is-custom-domain-allowed-on-free-plan';
-import useIsFreeDomainFreePlanUpsellEnabled from '../../../hooks/use-is-plan-upsell-enabled-on-free-domain';
 import { useModalResolutionCallback } from '../hooks/use-modal-resolution-callback';
 
 function MockPlansFeaturesMain( {
