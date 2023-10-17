@@ -22,10 +22,25 @@ const ToggleControlWithHelpMargin = styled( ToggleControl )( {
 		marginLeft: '4em',
 		marginTop: 0,
 	},
+	label: {
+		fontSize: '14px',
+	},
 	marginBottom: '8px !important',
 	'.components-flex': {
 		gap: '8px',
 	},
+} );
+
+const ToggleWithLabelFontSize = styled( ToggleControl )( {
+	label: {
+		fontSize: '14px',
+	},
+} );
+
+const ItemSubtitle = styled.div( {
+	fontSize: '12px',
+	color: 'var(--color-text-subtle) (#646970)',
+	fontStyle: 'italic',
 } );
 
 export interface CheckboxOptionItem {
@@ -121,7 +136,7 @@ export default function SyncOptionsPanel( {
 					<ToggleControlWithHelpMargin
 						key={ item.name }
 						disabled={ disabled }
-						help={ item.subTitle }
+						help={ <ItemSubtitle>{ item.subTitle }</ItemSubtitle> }
 						label={ item.label }
 						checked={ item.checked }
 						onChange={ () => handleCheckChange( item ) }
@@ -133,10 +148,10 @@ export default function SyncOptionsPanel( {
 				{ dangerousItems.map( ( item ) => {
 					return (
 						<div data-testid="danger-zone-checkbox" key={ item.name }>
-							<ToggleControl
+							<ToggleWithLabelFontSize
 								data-testid="danger-zone-checkbox"
 								disabled={ disabled }
-								help={ item.subTitle }
+								help={ <ItemSubtitle>{ item.subTitle }</ItemSubtitle> }
 								label={ item.label }
 								checked={ item.checked }
 								onChange={ () => handleCheckChange( item ) }
