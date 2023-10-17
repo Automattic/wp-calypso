@@ -143,4 +143,44 @@ describe( 'getSignupUrl', () => {
 			'/start/wpcc?oauth2_client_id=69040&oauth2_redirect=https%3A%2F%2Fpublic-api.wordpress.com%2Foauth2%2Fauthorize%3Fresponse_type%3Dtoken%26client_id%3D69040%26redirect_uri%3Dhttps%253A%252F%252Fcloud.jetpack.com%252Fconnect%252Foauth%252Ftoken%253Fnext%253D%25252Fpricing%26scope%3Dglobal%26blog_id%3D0%26from-calypso%3D1'
 		);
 	} );
+
+	test( 'signup_flow modifies /start base', () => {
+		expect( getSignupUrl( { signup_flow: 'test' }, '/log-in', null, 'en', '' ) ).toEqual(
+			'/start/test'
+		);
+		expect(
+			getSignupUrl(
+				{ signup_flow: 'test', redirect_to: 'https://example.com' },
+				'/log-in',
+				null,
+				'en',
+				''
+			)
+		).toEqual( '/start/test' );
+	} );
+
+	test( '/log-in/jetpack uses /jetpack/connect', () => {
+		expect( getSignupUrl( {}, '/log-in/jetpack', null, 'en', '' ) ).toEqual( '/jetpack/connect' );
+		expect( getSignupUrl( {}, '/log-in/jetpack/es', null, 'es', '' ) ).toEqual(
+			'/jetpack/connect'
+		);
+	} );
+
+	test( '/log-in/jetpack?redirect_to with nonce uses redirect_to', () => {
+		expect(
+			getSignupUrl(
+				{ redirect_to: 'https://example.com/jetpack/connect/authorize?&_wp_nonce=example' },
+				'/log-in/jetpack',
+				null,
+				'en',
+				''
+			)
+		).toEqual( 'https://example.com/jetpack/connect/authorize?&_wp_nonce=example' );
+	} );
+
+	test( '/log-in/jetpack?redirect_to without nonce uses /jetpack/connect', () => {
+		expect(
+			getSignupUrl( { redirect_to: 'https://example.com' }, '/log-in/jetpack', null, 'en', '' )
+		).toEqual( '/jetpack/connect' );
+	} );
 } );
