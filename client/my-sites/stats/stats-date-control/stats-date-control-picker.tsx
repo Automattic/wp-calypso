@@ -17,10 +17,10 @@ const DateControlPicker = ( {
 	handleApply,
 }: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
-	const [ inputStartDate, setInputStartDate ] = useState( new Date().toISOString().slice( 0, 10 ) );
-	const [ inputEndDate, setInputEndDate ] = useState(
-		new Date( new Date().setMonth( new Date().getMonth() - 3 ) ).toISOString().slice( 0, 10 )
+	const [ inputStartDate, setInputStartDate ] = useState(
+		moment().subtract( 6, 'days' ).format( 'YYYY-MM-DD' )
 	);
+	const [ inputEndDate, setInputEndDate ] = useState( moment().format( 'YYYY-MM-DD' ) );
 	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
