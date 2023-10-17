@@ -1197,7 +1197,7 @@ export class RenderDomainsStep extends Component {
 	}
 
 	shouldHideNavButtons() {
-		return isWithThemeFlow( this.props.flowName ) || this.isTailoredFlow();
+		return this.isTailoredFlow();
 	}
 
 	renderContent() {
@@ -1290,7 +1290,15 @@ export class RenderDomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned, userSiteCount } = this.props;
+		const {
+			flowName,
+			stepName,
+			stepSectionName,
+			isAllDomains,
+			translate,
+			isReskinned,
+			userSiteCount,
+		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
@@ -1309,14 +1317,17 @@ export class RenderDomainsStep extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
-		} else if ( ! previousStepBackUrl && 'domain-transfer' === this.props.flowName ) {
+		} else if ( ! previousStepBackUrl && 'domain-transfer' === flowName ) {
 			backUrl = null;
 			backLabelText = null;
-		} else if ( 'with-plugin' === this.props.flowName ) {
+		} else if ( 'with-plugin' === flowName ) {
 			backUrl = '/plugins';
 			backLabelText = translate( 'Back to plugins' );
+		} else if ( isWithThemeFlow( flowName ) ) {
+			backUrl = '/themes';
+			backLabelText = translate( 'Back to themes' );
 		} else {
-			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
+			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
 			if ( 'site' === source && siteUrl ) {
 				backUrl = siteUrl;
@@ -1333,7 +1344,7 @@ export class RenderDomainsStep extends Component {
 				backLabelText = sitesBackLabelText;
 			}
 
-			const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
+			const externalBackUrl = getExternalBackUrl( source, stepSectionName );
 			if ( externalBackUrl ) {
 				backUrl = externalBackUrl;
 				backLabelText = translate( 'Back' );
@@ -1347,8 +1358,8 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
+				flowName={ flowName }
+				stepName={ stepName }
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
