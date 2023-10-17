@@ -79,7 +79,11 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 								</Popover>
 							</div>
 
-							<Button onClick={ copyHandler } className="share-site-modal__modal-view-site">
+							<Button
+								onClick={ copyHandler }
+								className="share-site-modal__modal-view-site"
+								disabled={ ! siteSlug }
+							>
 								<Icon icon={ link } size={ 22 } />
 								<span className="share-site-modal__modal-view-site-text">
 									{ translate( 'Copy' ) }
