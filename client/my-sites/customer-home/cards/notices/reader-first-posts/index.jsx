@@ -1,6 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { NOTICE_READER_FIRST_POSTS } from 'calypso/my-sites/customer-home/cards/constants';
+//import { NOTICE_READER_FIRST_POSTS } from 'calypso/my-sites/customer-home/cards/constants';
 
 const ReaderFirstPosts = () => {
 	const translate = useTranslate();
