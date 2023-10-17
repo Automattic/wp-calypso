@@ -16,6 +16,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import CommentList from './comment-list';
+import CommentTips from './comment-tips';
 import { NEWEST_FIRST } from './constants';
 
 import './style.scss';
@@ -98,17 +99,20 @@ export class CommentsManagement extends Component {
 					/>
 				) }
 				{ showCommentList && (
-					<CommentList
-						key={ `${ siteId }-${ status }` }
-						changePage={ changePage }
-						order={ order }
-						page={ page }
-						postId={ postId }
-						setOrder={ this.setOrder }
-						siteId={ siteId }
-						siteFragment={ siteFragment }
-						status={ status }
-					/>
+					<>
+						<CommentTips />
+						<CommentList
+							key={ `${ siteId }-${ status }` }
+							changePage={ changePage }
+							order={ order }
+							page={ page }
+							postId={ postId }
+							setOrder={ this.setOrder }
+							siteId={ siteId }
+							siteFragment={ siteFragment }
+							status={ status }
+						/>
+					</>
 				) }
 			</Main>
 		);
