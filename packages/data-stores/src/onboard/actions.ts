@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
@@ -54,7 +55,7 @@ export function* createVideoPressSite( {
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
 	const siteVertical = 'videomaker';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
-
+ 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: blogTitle,
