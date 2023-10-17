@@ -43,9 +43,9 @@ export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 		// Toggle the local state
 		setWpAdminEnabled( ! wpAdminEnabled );
 	};
-	const defaultWpAdminToggleDescription = translate(
-		'Default the site interface and navigation to wp-admin'
-	);
+
+	const calypsoToggleDescription = translate( 'Set the admin interface to wp-admin' );
+	const wpAdminToggleDescription = translate( 'The admin interface to wp-admin' );
 
 	// Use localStorage to persist the toggle state
 	useEffect( () => {
@@ -63,7 +63,7 @@ export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 				<ToggleContainer>
 					<ToggleLabel>{ translate( 'Default to wp-admin' ) }</ToggleLabel>
 					<ToggleControl
-						label={ defaultWpAdminToggleDescription }
+						label={ wpAdminEnabled ? wpAdminToggleDescription : calypsoToggleDescription }
 						onChange={ handleToggleChange }
 						checked={ wpAdminEnabled }
 					/>
