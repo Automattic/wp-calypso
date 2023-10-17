@@ -1,0 +1,22 @@
+.sidebar-v2__navigator-sub-menu {
+	padding: 0 !important;
+
+	.components-navigator-back-button {
+		margin-block-end: 8px !important;
+		color: var(--studio-gray-90) !important;
+		font-size: rem(16px);
+		font-weight: 600;
+		justify-content: start;
+
+		&:focus {
+			box-shadow: none;
+		}
+	}
+}
+
+.sidebar-v2__navigator-group-description {
+	color: var(--studio-gray-50) !important;
+	font-size: rem(12px);
+	margin-block-end: 16px !important;
+	padding: 0 12px;
+}
