@@ -1,8 +1,8 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { TextControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
