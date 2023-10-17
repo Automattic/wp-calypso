@@ -174,6 +174,14 @@ const videopress: Flow = {
 					blogdescription: siteDescription,
 				} );
 
+				if ( config.isEnabled( 'videomaker-trial' ) ) {
+					// Videomaker trial doesn't require payment, let's go to the next step
+					window.location.replace(
+						`/setup/videopress/launchpad?siteSlug=${ newSite.site_slug }&siteId=${ newSite.blogid }`
+					);
+					return;
+				}
+
 				let planObject = supportedPlans.find( ( plan ) => 'premium' === plan.periodAgnosticSlug );
 				if ( ! planObject ) {
 					planObject = supportedPlans.find( ( plan ) => 'business' === plan.periodAgnosticSlug );

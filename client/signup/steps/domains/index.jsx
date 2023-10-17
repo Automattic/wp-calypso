@@ -158,6 +158,8 @@ export class RenderDomainsStep extends Component {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
 			wpcomSubdomainSelected: false,
+			isRemovingDomain: null,
+			isGoingToNextStep: false,
 		};
 	}
 
@@ -633,9 +635,9 @@ export class RenderDomainsStep extends Component {
 		return productsInCart;
 	}
 
-	removeDomainClickHandler = ( domain ) => {
-		return () =>
-			this.removeDomain( { domain_name: domain.meta, product_slug: domain.product_slug } );
+	removeDomainClickHandler = ( domain ) => () => {
+		this.setState( { isRemovingDomain: domain.meta } );
+		this.removeDomain( { domain_name: domain.meta, product_slug: domain.product_slug } );
 	};
 
 	removeDomain( { domain_name, product_slug } ) {
@@ -652,6 +654,9 @@ export class RenderDomainsStep extends Component {
 				} )
 				.catch( () => {
 					this.setState( { isCartPendingUpdateDomain: null } );
+				} )
+				.finally( () => {
+					this.setState( { isRemovingDomain: null } );
 				} );
 		}
 	}
@@ -673,61 +678,60 @@ export class RenderDomainsStep extends Component {
 	}
 
 	goToNext = () => {
-		return () => {
-			const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
-			const useThemeHeadstartItem = shouldUseThemeAnnotation
-				? { useThemeHeadstart: shouldUseThemeAnnotation }
-				: {};
+		this.setState( { isGoingToNextStep: true } );
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
 
-			const { step } = this.props;
-			const { lastDomainSearched } = step.domainForm ?? {};
+		const { step } = this.props;
+		const { lastDomainSearched } = step.domainForm ?? {};
 
-			const { suggestion } = step;
-			const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
-			const siteUrl =
-				suggestion &&
-				( isPurchasingItem
-					? suggestion.domain_name
-					: suggestion.domain_name.replace( '.wordpress.com', '' ) );
+		const { suggestion } = step;
+		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
+		const siteUrl =
+			suggestion &&
+			( isPurchasingItem
+				? suggestion.domain_name
+				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
 
-			const domainItem = isPurchasingItem
-				? domainRegistration( {
-						domain: suggestion.domain_name,
-						productSlug: suggestion.product_slug,
-				  } )
-				: undefined;
-			const domainCart = getDomainRegistrations( this.props.cart );
+		const domainItem = isPurchasingItem
+			? domainRegistration( {
+					domain: suggestion.domain_name,
+					productSlug: suggestion.product_slug,
+			  } )
+			: undefined;
+		const domainCart = getDomainRegistrations( this.props.cart );
 
-			this.props.submitSignupStep(
-				Object.assign(
-					{
-						stepName: this.props.stepName,
-						domainItem,
-						isPurchasingItem,
-						siteUrl,
-						stepSectionName: this.props.stepSectionName,
-						domainCart,
-					},
-					this.getThemeArgs()
-				),
-				Object.assign(
-					{ domainItem, domainCart },
-					useThemeHeadstartItem,
-					suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
-					lastDomainSearched ? { lastDomainSearched } : {},
-					{ domainCart }
-				)
-			);
+		this.props.submitSignupStep(
+			Object.assign(
+				{
+					stepName: this.props.stepName,
+					domainItem,
+					isPurchasingItem,
+					siteUrl,
+					stepSectionName: this.props.stepSectionName,
+					domainCart,
+				},
+				this.getThemeArgs()
+			),
+			Object.assign(
+				{ domainItem, domainCart },
+				useThemeHeadstartItem,
+				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+				lastDomainSearched ? { lastDomainSearched } : {},
+				{ domainCart }
+			)
+		);
 
-			const productToRemove = this.props.cart.products.find(
-				( product ) => product.product_slug === this.props.multiDomainDefaultPlan.product_slug
-			);
-			const uuidToRemove = productToRemove.uuid;
+		const productToRemove = this.props.cart.products.find(
+			( product ) => product.product_slug === this.props.multiDomainDefaultPlan.product_slug
+		);
+		const uuidToRemove = productToRemove.uuid;
 
-			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).then( () => {
-				this.props.goToNextStep();
-			} );
-		};
+		this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).then( () => {
+			this.props.goToNextStep();
+		} );
 	};
 
 	getSideContent = () => {
@@ -782,7 +786,9 @@ export class RenderDomainsStep extends Component {
 							className="domains__domain-cart-remove"
 							onClick={ this.removeDomainClickHandler( domain ) }
 						>
-							{ this.props.translate( 'Remove' ) }
+							{ domain.meta === this.state.isRemovingDomain
+								? this.props.translate( 'Removing' )
+								: this.props.translate( 'Remove' ) }
 						</Button>
 					</div>
 				</>
@@ -811,7 +817,12 @@ export class RenderDomainsStep extends Component {
 								) }
 							</div>
 						</div>
-						<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+						<Button
+							primary
+							className="domains__domain-cart-continue"
+							onClick={ this.goToNext }
+							busy={ this.state.isGoingToNextStep }
+						>
 							{ this.props.translate( 'Continue' ) }
 						</Button>
 					</div>
@@ -900,7 +911,12 @@ export class RenderDomainsStep extends Component {
 							</strong>
 						</div>
 					</div>
-					<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+					<Button
+						primary
+						className="domains__domain-cart-continue"
+						onClick={ this.goToNext }
+						busy={ this.state.isGoingToNextStep }
+					>
 						{ this.props.translate( 'Continue' ) }
 					</Button>
 					{ this.props.flowName !== 'domain' && (

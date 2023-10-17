@@ -53,6 +53,8 @@ body.is-section-domains.is-domain-plan-package-flow {
 	}
 }
 
-.is-section-domains #primary header.formatted-header {
-	margin: 24px 0;
+@media screen and (max-width: $break-small) {
+	.is-section-domains .navigation-header {
+		margin-bottom: 10px;
+	}
 }

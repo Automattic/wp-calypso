@@ -38,6 +38,9 @@ const BlazePressStrings = () => {
 	translate( 'Visitors' );
 	translate( 'Likes' );
 	translate( 'Comments' );
+	translate(
+		'Cannot create subscription. Please {{supportLink}}contact support{{/supportLink}} or try again later.'
+	);
 	translate( 'Advanced Settings' );
 	translate( 'Targeted Devices' );
 	translate( 'Destination URL' );
@@ -45,21 +48,24 @@ const BlazePressStrings = () => {
 	translate( 'The post URL' );
 	translate( 'The blog page' );
 	translate( 'The site home' );
-	translate( 'Appearance' );
-	translate( 'Ad creative' );
-	translate( "Use post's media" );
-	translate( 'Title' );
-	translate( 'Page title' );
+	translate( 'URL parameters' );
+	translate( 'key1=value1&key2=value2&key3=value3' );
+	translate( 'URL parameters are invalid' );
 	translate( '%(charactersLeft)s character remaining', '%(charactersLeft)s characters remaining', {
 		count: 1,
 	} );
+	translate( 'Appearance' );
+	translate( 'Ad creative' );
+	translate( "Use post's media" );
+	translate( 'Site title' );
+	translate( 'Page title' );
 	translate( 'Snippet' );
-	translate( 'Article Snippet' );
 	translate(
 		'%(snippetCharactersLeft)s character remaining',
 		'%(snippetCharactersLeft)s characters remaining',
 		{ count: 1 }
 	);
+	translate( 'Ad text' );
 	translate( 'Use + / - or simply drag the image to adjust it' );
 	translate( 'Apply' );
 	translate( 'Reset' );
@@ -68,18 +74,17 @@ const BlazePressStrings = () => {
 	translate( 'Drop an image here to upload.' );
 	translate( 'Click or drag an image here to upload.' );
 	translate( 'Audience' );
-	translate( 'Future reach is unavailable' );
+	translate(
+		'Not enough reach to create a campaign with the current audience configuration. Please, expand your reach by changing or removing some of the audience settings'
+	);
+	translate( 'Location' );
 	translate( 'All languages' );
 	translate(
 		'Based on the language of your site we suggest targeting %(lang)s speaking users to ensure the ad is seen by the right audience and to increase its effectiveness.'
 	);
 	translate( 'Language' );
-	translate( 'Everywhere' );
-	translate( 'Location' );
-	translate( 'All Locations' );
 	translate( 'All topics' );
 	translate( 'Interests' );
-	translate( 'Pick a few categories, like food or pets, to narrow your audience.' );
 	translate( 'Budget and duration' );
 	translate( 'Total' );
 	translate(
@@ -102,11 +107,12 @@ const BlazePressStrings = () => {
 	translate( 'day' );
 	translate( 'Estimated impressions' );
 	translate( 'Payment' );
+	translate( 'Loading' );
+	translate( 'Start typing country, state or city to see available options' );
+	translate( 'No results found' );
+	translate( 'Search for locations' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
-	translate(
-		'Cannot create subscription. Please {{supportLink}}contact support{{/supportLink}} or try again later.'
-	);
 	translate( 'Could not retrieve countries. Please try again later.' );
 	translate( 'Error submitting payment. Please check payment information.' );
 	translate(
@@ -138,21 +144,33 @@ const BlazePressStrings = () => {
 	translate( 'View' );
 	translate( 'Promote' );
 	translate(
-		'By clicking "Submit campaign" you agree to the {{linkTos}}Terms of Service{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}, and authorize your payment method to be charged for the budget and duration you chose. {{linkMoreAboutAds}}Learn more{{/linkMoreAboutAds}} about how budgets and payments for Promoted Posts work.'
+		'By clicking "Submit campaign" you agree to the {{linkTos}}Terms of Service{{externalLinkIcon/}}{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{externalLinkIcon/}}{{/linkAdvertisingPolicy}}, and authorize your payment method to be charged for the budget and duration you chose. {{linkMoreAboutAds}}Learn more{{externalLinkIcon/}}{{/linkMoreAboutAds}} about how budgets and payments for Promoted Posts work.'
 	);
+	translate( 'Creating campaign' );
 	translate( 'Submit campaign' );
 	translate( 'Make changes' );
 	translate( 'Page Title' );
+	translate( 'Article Snippet' );
+	translate( 'Ad preview' );
+	translate( 'Mobile' );
+	translate( 'Tablet' );
+	translate( 'Desktop' );
+	translate( 'Everywhere' );
 	translate( 'Summary' );
 	translate( 'Ad Preview' );
+	translate( 'Preview' );
+	translate( 'Depending on the platform, the ad may look different from the preview.' );
 	translate( 'Estimated Impressions' );
 	translate( 'Max Budget' );
 	translate( 'Languages' );
 	translate( 'Devices' );
 	translate( 'Destination' );
+	translate( 'Suggested using AI' );
+	translate( 'Suggested by AI' );
 	translate( 'Loading site…' );
-	translate( 'Preparing the wizard…' );
 	translate( 'Fetching subscriptions…' );
+	translate( 'Preparing the wizard…' );
+	translate( 'Fetching the AI suggestions…' );
 	translate( 'Drop image here' );
 	translate( 'Click or Drag an image here' );
 	translate( '%(field)s is required.' );
@@ -160,11 +178,8 @@ const BlazePressStrings = () => {
 	translate( 'All fields marked as required ({{span}}*{{/span}}) must be completed to continue' );
 	translate( 'Pick a few categories, like food or movies, to narrow your audience.' );
 	translate( 'All' );
-	translate( 'Mobile' );
-	translate( 'Desktop' );
-	translate( 'hours ago', { context: 'message for recently created post' } );
-	translate( '1 day ago', { context: 'message for post created yesterday' } );
-	translate( '$%(creditUsed)s ($%(remainingCredit)s remain)', { context: 'amount of money' } );
+	translate( 'Now' );
+	translate( '%(creditUsed)s (%(remainingCredit)s remain)', { context: 'amount of money' } );
 	translate( 'Credits', { context: 'amount of money' } );
 };
 
