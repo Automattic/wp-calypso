@@ -29,7 +29,6 @@ export function getProps( context ) {
 		analyticsPageTitle,
 		analyticsPath,
 		search: context.query.s,
-		isCollectionView: context.query.v === 'collection',
 		pathName: context.pathname,
 		trackScrollPage: boundTrackScrollPage,
 	};
