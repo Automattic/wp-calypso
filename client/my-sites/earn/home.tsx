@@ -320,7 +320,7 @@ const Home = () => {
 			return;
 		}
 		const cta = {
-			text: translate( 'Learn how to get started' ),
+			text: translate( 'Learn more' ),
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {
