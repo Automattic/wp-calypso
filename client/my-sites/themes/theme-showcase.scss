@@ -6,9 +6,6 @@
 		--color-surface-backdrop: var(--studio-white);
 	}
 
-	.layout:not(.has-no-sidebar) .layout__content {
-		padding-top: var(--masterbar-height);
-	}
 	.main > .notice.is-error {
 		margin-top: 24px;
 		margin-bottom: 0;
@@ -191,6 +188,12 @@
 }
 
 .theme-showcase {
+
+	.navigation-header {
+		@media (max-width: $break-small) {
+			padding-bottom: 16px;
+		}
+	}
 
 	.theme__search {
 		.keyed-suggestions {
@@ -411,7 +414,7 @@
 
 	.themes__controls,
 	.themes__showcase {
-		@include breakpoint-deprecated( "<660px" ) {
+		@media (max-width: $break-small) {
 			padding: 0 16px;
 		}
 	}
