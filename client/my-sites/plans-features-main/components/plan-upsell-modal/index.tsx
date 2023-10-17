@@ -4,7 +4,6 @@ import { DomainSuggestions } from '@automattic/data-stores';
 import { Global, css } from '@emotion/react';
 import { FreePlanFreeDomainDialog } from './free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './free-plan-paid-domain-dialog';
-import { useModalResolutionCallback } from './hooks/use-modal-resolution-callback';
 import PaidPlanIsRequiredDialog from './paid-plan-is-required-dialog';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
@@ -13,6 +12,12 @@ export const PAID_PLAN_IS_REQUIRED_DIALOG = 'PAID_PLAN_IS_REQUIRED_DIALOG';
 export const FREE_PLAN_PAID_DOMAIN_DIALOG = 'FREE_PLAN_PAID_DOMAIN_DIALOG';
 export const FREE_PLAN_FREE_DOMAIN_DIALOG = 'FREE_PLAN_FREE_DOMAIN_DIALOG';
 export const MODAL_LOADER = 'MODAL_LOADER';
+
+export type ModalType =
+	| typeof FREE_PLAN_FREE_DOMAIN_DIALOG
+	| typeof FREE_PLAN_PAID_DOMAIN_DIALOG
+	| typeof PAID_PLAN_IS_REQUIRED_DIALOG
+	| typeof MODAL_LOADER;
 
 export type DomainPlanDialogProps = {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
@@ -24,9 +29,8 @@ export type DomainPlanDialogProps = {
 type ModalContainerProps = {
 	isModalOpen: boolean;
 	paidDomainName?: string;
-	selectedPlan?: string | null;
+	modalType?: ModalType | null;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestions.DomainSuggestion >;
-	flowName?: string | null;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
 	onPlanSelected: ( planSlug: string ) => void;
@@ -37,15 +41,12 @@ export const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
 
 function DisplayedModal( {
 	paidDomainName,
-	selectedPlan,
+	modalType,
 	wpcomFreeDomainSuggestion,
 	onFreePlanSelected,
 	onPlanSelected,
-	flowName,
-}: ModalContainerProps ) {
-	const resolveModal = useModalResolutionCallback( { paidDomainName, flowName } );
-
-	switch ( resolveModal( selectedPlan ) ) {
+}: Omit< ModalContainerProps, 'selectedPlan' > ) {
+	switch ( modalType ) {
 		case FREE_PLAN_PAID_DOMAIN_DIALOG:
 			return (
 				<FreePlanPaidDomainDialog
@@ -91,8 +92,8 @@ function DisplayedModal( {
 }
 
 export default function ModalContainer( props: ModalContainerProps ) {
-	const { isModalOpen, flowName, selectedPlan } = props;
-	if ( ! isModalOpen || ! flowName || ! selectedPlan ) {
+	const { isModalOpen, modalType } = props;
+	if ( ! isModalOpen || ! modalType ) {
 		return;
 	}
 	return (

@@ -1,32 +1,28 @@
 import { isFreePlan } from '@automattic/calypso-products';
 import { useCallback } from 'react';
-import useIsCustomDomainAllowedOnFreePlan from 'calypso/my-sites/plans-features-main/hooks/use-is-custom-domain-allowed-on-free-plan';
+import { DataResponse } from 'calypso/my-sites/plans-grid/types';
 import {
-	MODAL_LOADER,
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
+	ModalType,
 	PAID_PLAN_IS_REQUIRED_DIALOG,
 } from '..';
 type Props = {
-	paidDomainName?: string | null;
-	flowName?: string | null;
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
+	isPlanUpsellEnabledOnFreeDomain: DataResponse< boolean >;
 };
-
-type ModalType =
-	| typeof FREE_PLAN_FREE_DOMAIN_DIALOG
-	| typeof FREE_PLAN_PAID_DOMAIN_DIALOG
-	| typeof PAID_PLAN_IS_REQUIRED_DIALOG
-	| typeof MODAL_LOADER;
 
 /**
  * Provides a callback that resolves a ModalType based on a set of predefined parameters
  */
-export function useModalResolutionCallback( { paidDomainName, flowName }: Props ) {
-	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan( flowName );
+export function useModalResolutionCallback( {
+	isCustomDomainAllowedOnFreePlan,
+	isPlanUpsellEnabledOnFreeDomain,
+}: Props ) {
 	return useCallback(
 		( currentSelectedPlan?: string | null ): ModalType | null => {
-			if ( currentSelectedPlan && flowName && isFreePlan( currentSelectedPlan ) ) {
-				if ( ! paidDomainName ) {
+			if ( currentSelectedPlan && isFreePlan( currentSelectedPlan ) ) {
+				if ( isPlanUpsellEnabledOnFreeDomain.result ) {
 					return FREE_PLAN_FREE_DOMAIN_DIALOG;
 				}
 
@@ -42,6 +38,6 @@ export function useModalResolutionCallback( { paidDomainName, flowName }: Props 
 			}
 			return null;
 		},
-		[ flowName, isCustomDomainAllowedOnFreePlan.result, paidDomainName ]
+		[ isCustomDomainAllowedOnFreePlan.result, isPlanUpsellEnabledOnFreeDomain?.result ]
 	);
 }
