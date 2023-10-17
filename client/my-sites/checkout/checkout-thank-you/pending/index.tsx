@@ -188,7 +188,7 @@ function useRedirectOnTransactionSuccess( {
 
 	const { searchParams } = getUrlParts( redirectTo || '/' );
 	const isConnectAfterCheckoutFlow =
-		Boolean( searchParams.size ) &&
+		searchParams.size &&
 		searchParams.get( 'from' ) === 'connect-after-checkout' &&
 		searchParams.get( 'connect_url_redirect' ) === 'true';
 
