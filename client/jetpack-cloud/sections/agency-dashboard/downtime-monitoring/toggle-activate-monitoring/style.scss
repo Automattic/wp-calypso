@@ -26,10 +26,9 @@
 		}
 	}
 
-	&.sites-overview__disabled {
-		.components-form-toggle__input {
-			cursor: not-allowed;
-		}
+	&.sites-overview__disabled .components-form-toggle__input,
+	.components-form-toggle__input:disabled {
+		cursor: not-allowed;
 	}
 }
 
