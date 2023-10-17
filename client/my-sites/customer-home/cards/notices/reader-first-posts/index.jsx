@@ -1,21 +1,10 @@
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { NOTICE_READER_FIRST_POSTS } from 'calypso/my-sites/customer-home/cards/constants';
 
 const ReaderFirstPosts = () => {
 	const translate = useTranslate();
-
-	const clickButton = () => {
-		recordTracksEvent( 'calypso_my_home_reader_first_posts_nudge_click', {
-			id: NOTICE_READER_FIRST_POSTS,
-		} );
-
-		page.redirect( '/discover?selectedTab=firstposts' );
-	};
-
+	// @TODO: Add Tracks events.
 	return (
 		<Card className="reader-first-posts__nudge">
 			<TrackComponentView
