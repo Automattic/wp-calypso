@@ -209,6 +209,32 @@
 		color: var(--studio-white);
 	}
 }
+.is-section-login .app-promo.magic-link-app-promo {
+	margin-top: 20px;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	border-radius: 16px; /* stylelint-disable-line scales/radii */
+	background-color: var(--color-surface);
+	font-weight: 400;
+	letter-spacing: -0.4px;
+
+	.card-heading {
+		font-family: $brand-serif;
+	}
+
+	.app-promo__qr-code {
+		display: flex;
+		margin: 0;
+
+		svg {
+			flex: 0 0 100px;
+			order: 1;
+		}
+
+		.get-apps__card-text {
+			padding: 0 20px 0 0;
+		}
+	}
+}
 
 .magic-login__gutenboarding-wordpress-logo {
 	height: 64px;

@@ -7,6 +7,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AppPromo from 'calypso/blocks/app-promo';
 import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
@@ -132,8 +133,20 @@ class MagicLogin extends Component {
 
 	renderLinks() {
 		const { isJetpackLogin, locale, showCheckYourEmail, translate } = this.props;
-
-		if ( showCheckYourEmail || this.props.query?.client_id ) {
+		const appPromo = (
+			<AppPromo
+				title={ translate( 'Stay logged in' ) }
+				campaign="emailed-login-link"
+				className="magic-link-app-promo"
+				subheader=""
+				iconSize={ 50 }
+				hasQRCode={ true }
+			/>
+		);
+		if ( showCheckYourEmail ) {
+			return appPromo;
+		}
+		if ( this.props.query?.client_id ) {
 			return null;
 		}
 
@@ -148,12 +161,15 @@ class MagicLogin extends Component {
 		};
 
 		return (
-			<div className="magic-login__footer">
-				<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ translate( 'Enter a password instead' ) }
-				</a>
-			</div>
+			<>
+				<div className="magic-login__footer">
+					<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ translate( 'Enter a password instead' ) }
+					</a>
+				</div>
+				{ appPromo }
+			</>
 		);
 	}
 
