@@ -48,6 +48,10 @@ const shortcutList = [
 ];
 
 const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDateControlProps ) => {
+	// ToDo: Consider removing period from shortcuts.
+	// We could use the bestPeriodForDays() helper and keep the shortcuts
+	// consistent with the custom ranges.
+
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
 		const newRangeQuery = qs.stringify(
