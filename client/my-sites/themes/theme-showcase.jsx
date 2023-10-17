@@ -76,14 +76,12 @@ class ThemeShowcase extends Component {
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
-		this.isDiscoveryEnabled = this.props.isLoggedIn
-			? config.isEnabled( 'themes/discovery-lits' )
-			: config.isEnabled( 'themes/discovery-lots' );
 	}
 
 	static propTypes = {
 		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
+		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
@@ -271,10 +269,21 @@ class ThemeShowcase extends Component {
 	 * @param {string} sections.filter override filter prop
 	 * @param {string} sections.siteSlug override siteSlug prop
 	 * @param {string} sections.search override search prop
+	 * @param {string} sections.isCollectionView should display the collection view.
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
-		const { category, vertical, tier, filter, siteSlug, search, locale, isLoggedIn } = {
+		const {
+			category,
+			vertical,
+			tier,
+			filter,
+			siteSlug,
+			search,
+			locale,
+			isLoggedIn,
+			isCollectionView,
+		} = {
 			...this.props,
 			...sections,
 		};
@@ -286,16 +295,21 @@ class ThemeShowcase extends Component {
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
-		const url = localizeThemesPath(
-			`/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`,
-			locale,
-			! isLoggedIn
-		);
+
+		let url = `/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+
+		if ( isCollectionView ) {
+			url += '?v=collection';
+		}
+
+		url = localizeThemesPath( url, locale, ! isLoggedIn );
+
 		return buildRelativeSearchUrl( url, search );
 	};
 
-	onTierSelect = ( { value: tier } ) => {
+	onTierSelect = ( { value: tier, isCollectionView: isCollectionView = false } ) => {
 		const url = this.constructUrl( {
+			isCollectionView,
 			tier,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
@@ -345,11 +359,10 @@ class ThemeShowcase extends Component {
 	};
 
 	getCollectionHeader = () => {
-		const { tier, filter } = this.props;
 		let title;
 		let description;
 
-		switch ( tier ) {
+		switch ( this.props.tier ) {
 			case 'premium':
 				title = THEME_COLLECTIONS.premium.title;
 				description = THEME_COLLECTIONS.premium.description;
@@ -360,10 +373,6 @@ class ThemeShowcase extends Component {
 				break;
 		}
 
-		if ( ! title || ! description || ( !! filter && !! tier ) ) {
-			return;
-		}
-
 		return (
 			<div className="collection-header">
 				<Button
@@ -371,8 +380,10 @@ class ThemeShowcase extends Component {
 					onClick={ () =>
 						page(
 							this.constructUrl( {
+								isCollectionView: false,
 								tier: '',
 								filter: '',
+								category: staticFilters.RECOMMENDED.key,
 							} )
 						)
 					}
@@ -457,7 +468,11 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 
-		const showCollections = this.props.tier === '' && this.isDiscoveryEnabled;
+		const showCollections =
+			this.props.tier === '' &&
+			( this.props.isLoggedIn
+				? config.isEnabled( 'themes/discovery-lits' )
+				: config.isEnabled( 'themes/discovery-lots' ) );
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
@@ -469,7 +484,9 @@ class ThemeShowcase extends Component {
 							getOptions={ this.getThemeOptions }
 							getScreenshotUrl={ this.getScreenshotUrl }
 							getActionLabel={ this.getActionLabel }
-							onTierSelect={ ( tier ) => this.onTierSelect( { value: tier } ) }
+							onTierSelect={ ( tier ) =>
+								this.onTierSelect( { value: tier, isCollectionView: true } )
+							}
 						/>
 					);
 				}
@@ -514,6 +531,7 @@ class ThemeShowcase extends Component {
 			isMultisite,
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
+			isCollectionView,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
@@ -560,56 +578,57 @@ class ThemeShowcase extends Component {
 					filter={ this.props.filter }
 					tier={ this.props.tier }
 					vertical={ this.props.vertical }
+					metaOnly={ isCollectionView }
 				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
-					<div className="themes__controls">
-						<div className="theme__search">
-							<div className="theme__search-input">
-								{ isSearchV2 ? (
-									<SearchThemesV2
-										query={ featureStringFilter + search }
-										onSearch={ this.doSearch }
-									/>
-								) : (
-									<SearchThemes
-										query={ filterString + search }
-										onSearch={ this.doSearch }
-										recordTracksEvent={ this.recordSearchThemesTracksEvent }
-									/>
+					{ ! isCollectionView && (
+						<div className="themes__controls">
+							<div className="theme__search">
+								<div className="theme__search-input">
+									{ isSearchV2 ? (
+										<SearchThemesV2
+											query={ featureStringFilter + search }
+											onSearch={ this.doSearch }
+										/>
+									) : (
+										<SearchThemes
+											query={ filterString + search }
+											onSearch={ this.doSearch }
+											recordTracksEvent={ this.recordSearchThemesTracksEvent }
+										/>
+									) }
+								</div>
+								{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+									<SelectDropdown
+										className="section-nav-tabs__dropdown"
+										onSelect={ this.onTierSelectFilter }
+										selectedText={ translate( 'View: %s', {
+											args: getOptionLabel( tiers, tier ) || '',
+										} ) }
+										options={ tiers }
+										initialSelected={ tier }
+									></SelectDropdown>
 								) }
 							</div>
-							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-								<SelectDropdown
-									className="section-nav-tabs__dropdown"
-									onSelect={ this.onTierSelectFilter }
-									selectedText={ translate( 'View: %s', {
-										args: getOptionLabel( tiers, tier ) || '',
-									} ) }
-									options={ tiers }
-									initialSelected={ tier }
-								></SelectDropdown>
+							{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+								<ThemesToolbarGroup
+									items={ Object.values( tabFilters ) }
+									selectedKey={ this.getSelectedTabFilter().key }
+									onSelect={ ( key ) =>
+										this.onFilterClick(
+											Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+										)
+									}
+								/>
 							) }
 						</div>
-						{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
-							<ThemesToolbarGroup
-								items={ Object.values( tabFilters ) }
-								selectedKey={ this.getSelectedTabFilter().key }
-								onSelect={ ( key ) =>
-									this.onFilterClick(
-										Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-									)
-								}
-							/>
-						) }
-					</div>
+					) }
 					<div className="themes__showcase">
-						{ this.isDiscoveryEnabled &&
-							( !! this.props.tier || !! filter ) &&
-							this.getCollectionHeader() }
+						{ isCollectionView && this.getCollectionHeader() }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>

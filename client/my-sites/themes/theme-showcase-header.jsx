@@ -10,7 +10,13 @@ import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
 
-export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, vertical } ) {
+export default function ThemeShowcaseHeader( {
+	canonicalUrl,
+	filter,
+	tier,
+	vertical,
+	metaOnly = false,
+} ) {
 	// eslint-disable-next-line no-shadow
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -38,6 +44,8 @@ export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, verti
 		  }
 		: loggedOutSeoContent;
 
+	const links = [ { rel: 'canonical', href: canonicalUrl } ];
+
 	const metas = [
 		{
 			name: 'description',
@@ -52,17 +60,19 @@ export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, verti
 
 	return (
 		<>
-			<DocumentHead title={ documentHeadTitle } meta={ metas } />
-			<ThemesHeader title={ themesHeaderTitle } description={ themesHeaderDescription }>
-				{ isLoggedIn && (
-					<>
-						<div className="themes__install-theme-button-container">
-							<InstallThemeButton />
-						</div>
-						<ScreenOptionsTab wpAdminPath="themes.php" />
-					</>
-				) }
-			</ThemesHeader>
+			<DocumentHead title={ documentHeadTitle } meta={ metas } link={ links } />
+			{ ! metaOnly && (
+				<ThemesHeader title={ themesHeaderTitle } description={ themesHeaderDescription }>
+					{ isLoggedIn && (
+						<>
+							<div className="themes__install-theme-button-container">
+								<InstallThemeButton />
+							</div>
+							<ScreenOptionsTab wpAdminPath="themes.php" />
+						</>
+					) }
+				</ThemesHeader>
+			) }
 		</>
 	);
 }
