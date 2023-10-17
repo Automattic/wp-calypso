@@ -24,13 +24,13 @@ export function createCreditCardMethod( {
 	store,
 	shouldUseEbanx,
 	shouldShowTaxFields,
-	activePayButtonText,
+	submitButtonContent,
 	allowUseForAllSubscriptions,
 }: {
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
 	shouldShowTaxFields?: boolean;
-	activePayButtonText?: ReactNode;
+	submitButtonContent: ReactNode;
 	allowUseForAllSubscriptions?: boolean;
 } ) {
 	return {
@@ -48,7 +48,7 @@ export function createCreditCardMethod( {
 			<CreditCardPayButton
 				store={ store }
 				shouldUseEbanx={ shouldUseEbanx }
-				activeButtonText={ activePayButtonText }
+				submitButtonContent={ submitButtonContent }
 			/>
 		),
 		inactiveContent: <CreditCardSummary />,
