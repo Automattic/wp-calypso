@@ -6,12 +6,13 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import Legend from 'calypso/components/chart/legend';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import NavigationArrows from '../navigation-arrows';
-import IntervalDropdown from '../stats-interval-dropdown';
 import StatsDateControl from '../stats-date-control';
-import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import IntervalDropdown from '../stats-interval-dropdown';
 
 import './style.scss';
 
@@ -86,6 +87,24 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleArrowEvent( 'previous', href );
 	};
 
+	onLegendClick = ( chartItem ) => {
+		const activeLegend = this.props.activeLegend.slice();
+		const chartIndex = activeLegend.indexOf( chartItem );
+		let gaEventAction;
+		if ( -1 === chartIndex ) {
+			activeLegend.push( chartItem );
+			gaEventAction = ' on';
+		} else {
+			activeLegend.splice( chartIndex );
+			gaEventAction = ' off';
+		}
+		this.props.recordGoogleEvent(
+			'Stats',
+			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
+		);
+		this.props.onChangeLegend( activeLegend );
+	};
+
 	render() {
 		const {
 			children,
@@ -118,6 +137,13 @@ class StatsPeriodNavigation extends PureComponent {
 							onChangeChartQuantity={ onChangeChartQuantity }
 						/>
 						<div className="stats-period-navigation__period-control">
+							<Legend
+								activeCharts={ this.props.activeLegend }
+								activeTab={ this.props.activeTab }
+								availableCharts={ this.props.availableLegend }
+								clickHandler={ this.onLegendClick }
+								tabs={ this.props.charts }
+							/>
 							{ showArrows && (
 								<NavigationArrows
 									disableNextArrow={ disableNextArrow || isToday }

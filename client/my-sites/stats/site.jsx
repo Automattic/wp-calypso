@@ -315,6 +315,11 @@ class StatsSite extends Component {
 								url={ `/stats/${ period }/${ slug }` }
 								queryParams={ context.query }
 								pathTemplate={ pathTemplate }
+								charts={ CHARTS }
+								availableLegend={ this.getAvailableLegend() }
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								onChangeLegend={ this.onChangeLegend }
 							>
 								{ ' ' }
 								<DatePicker
@@ -341,6 +346,7 @@ class StatsSite extends Component {
 							chartTab={ this.props.chartTab }
 							customQuantity={ this.state.customChartQuantity }
 							customRange={ customChartRange }
+							hideLegend={ true }
 						/>
 					</>
 
