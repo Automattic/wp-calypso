@@ -70,6 +70,7 @@ export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, verti
 					) }
 				>
 					<InstallThemeButton />
+					<ScreenOptionsTab wpAdminPath="themes.php" />
 				</NavigationHeader>
 			) : (
 				<ThemesHeader title={ themesHeaderTitle } description={ themesHeaderDescription }>
