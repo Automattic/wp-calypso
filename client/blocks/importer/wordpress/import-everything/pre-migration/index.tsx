@@ -118,20 +118,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		fetchMigrationEnabledStatus();
 	};
 
-	// We want to record the tracks event, so we use the same condition as the one in the render function
-	// This should be better handled by using a state after the refactor
-	useEffect( () => {
-		if ( siteCanMigrate === true && isTargetSitePlanCompatible ) {
-			const _migrationTrackingProps: { [ key: string ]: unknown } = { ...migrationTrackingProps };
-			// There is a case where source_site_id is 0|undefined, so we need to delete it
-			delete _migrationTrackingProps?.source_site_id;
-
-			dispatch(
-				recordTracksEvent( 'calypso_site_migration_ready_screen', _migrationTrackingProps )
-			);
-		}
-	}, [ siteCanMigrate, isTargetSitePlanCompatible, migrationTrackingProps, dispatch ] );
-
 	// Initiate the migration if initImportRun is set
 	useEffect( () => {
 		initImportRun && startImport( { type: 'without-credentials', ...migrationTrackingProps } );
