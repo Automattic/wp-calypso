@@ -90,6 +90,7 @@ $brand-display: "SF Pro Display", $sans;
 		padding: 4px;
 		width: fit-content;
 		margin-bottom: 16px;
+		flex-wrap: wrap;
 
 		&-label {
 			background: $studio-gray-0;

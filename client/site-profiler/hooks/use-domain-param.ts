@@ -7,7 +7,7 @@ import {
 import validateDomain from 'calypso/site-profiler/utils/validate-domain';
 import isSpecialDomain, { prepareSpecialDomain } from '../utils/is-special-domain';
 
-export default function useDomainParam( value: string = '' ) {
+export default function useDomainParam( value = '' ) {
 	const [ domain, setDomain ] = useState( value );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
 	const [ isSpecial, setIsSpecial ] = useState( isSpecialDomain( value ) );
@@ -15,11 +15,17 @@ export default function useDomainParam( value: string = '' ) {
 	const [ readyForDataFetch, setReadyForDataFetch ] = useState( false );
 
 	useEffect( () => {
-		const preparedDomain = prepareDomain( value, isSpecial );
-
+		const isSpecialDomainValue = isSpecialDomain( value );
+		const isValidDomainValue = validateDomain( value );
 		// check if domain is special before preparing domain value
-		setIsSpecial( isSpecialDomain( value ) );
-		setIsValid( validateDomain( preparedDomain ) );
+		setIsSpecial( isSpecialDomainValue );
+		setIsValid( isValidDomainValue );
+
+		if ( value && ! isSpecialDomainValue && ! isValidDomainValue ) {
+			return;
+		}
+
+		const preparedDomain = prepareDomain( value, isSpecial );
 		setCategory( getDomainCategory( preparedDomain ) );
 		setDomain( preparedDomain );
 		setReadyForDataFetch( ! isSpecial && !! domain && !! isValid );

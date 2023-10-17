@@ -1,3 +1,8 @@
+export const checkValidChars = ( value: string ) => {
+	const validChars = /^([\u0E00-\u0E7Fa-z0-9-._*]+)$/g;
+	return validChars.test( value );
+};
+
 export default function validateDomain( value: string ) {
 	try {
 		if ( value ) {
@@ -17,7 +22,12 @@ export default function validateDomain( value: string ) {
 			const url = new URL( normalised );
 
 			// Check if the protocol is 'http' or 'https'.
-			return url.protocol === 'http:' || url.protocol === 'https:';
+			const protocolCheck = url.protocol === 'http:' || url.protocol === 'https:';
+			if ( ! protocolCheck ) {
+				return false;
+			}
+			const { hostname } = url;
+			return checkValidChars( hostname );
 		}
 
 		return undefined;

@@ -32,6 +32,7 @@ const allowedKeys = [
 	'i18n_empathy_mode',
 	'use_fallback_for_incomplete_languages',
 	'is_google_domain_owner',
+	'had_hosting_trial',
 ];
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];

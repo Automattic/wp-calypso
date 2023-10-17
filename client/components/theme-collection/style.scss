@@ -1,49 +1,141 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.theme-collection__container {
+	padding-bottom: 32px;
+
+	@include break-xlarge {
+		margin: 0 48px;
+	}
+
+	&:last-child {
+		padding-bottom: 0;
+
+		@include break-xlarge {
+			padding-bottom: 32px;
+		}
+	}
+
+	.theme-collection__list-wrapper {
+		padding-right: 32px;
+
+		@include break-xlarge {
+			padding-right: 0;
+		}
+
+		&.swiper-wrapper {
+			overflow-y: clip;
+		}
+	}
+
+	.theme-card__info-options {
+		display: none;
+
+		@include break-small {
+			display: inherit;
+		}
+	}
+
+	.theme-card__image-container {
+		border-radius: 4px;
+		box-shadow: none;
+	}
+}
+
 .theme-collection__meta {
 	display: flex;
 	justify-content: space-between;
 }
 
 .theme-collection__headings {
-	flex-basis: 45%;
+	flex-basis: 80%;
+
+	@include break-small {
+		flex-basis: 45%;
+	}
 }
 
 .theme-collection__title {
-	font-size: 1.75rem;
 	line-height: 1;
+	font-size: 1.25rem;
+	font-weight: 400;
+	color: var(--gray-gray-100, #101517);
+
+	@include break-small {
+		font-size: 1.75rem;
+	}
 }
 
 .theme-collection__description * {
+	color: var(--gray-gray-70, #3c434a);
 	margin-bottom: 0;
+
+	@include break-small {
+		font-size: 1rem;
+	}
 }
 
-
 .theme-collection__list-item.swiper-slide {
-	/* TODO: Needs a better solution. Testing on more screen widths etc */
-	width: 32%;
+	.card.theme-card {
+		margin: 0;
+		padding: 0;
+	}
 }
 
 .theme-collection__list-wrapper {
 	margin-top: 1em;
 }
 
-/* TODO: Don't display on mobile? */
 .theme-collection__carousel-controls {
 	display: flex;
 	justify-content: flex-end;
 	/*!rtl:ignore*/
 	direction: ltr;
 	align-self: end;
+	align-items: center;
 
-	button {
-		width: 40px;
-		height: 40px;
-		background: #eee;
-		border-radius: 50%;
-		display: flex;
-		justify-content: center;
-		margin: 0 1em;
-		transition: opacity 0.3s linear;
-		pointer-events: all;
+	.theme-collection__see-all {
+		font-size: 1rem;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		padding: 0;
+		margin-right: 0;
+		align-items: flex-end;
+		text-decoration: underline;
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		@include break-small {
+			text-decoration: none;
+			align-items: inherit;
+			font-size: 0.875rem;
+			margin-right: 24px;
+		}
+	}
+
+	.theme-collection__carousel-nav-button {
+		display: none;
+
+		@include break-small {
+			padding: 0;
+			width: 32px;
+			height: 32px;
+			background: #eee;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			margin: 0 8px;
+			transition: opacity 0.3s linear;
+			pointer-events: all;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
 
 		&:hover {
 			filter: brightness(0.9);
@@ -52,6 +144,5 @@
 		&.swiper-button-disabled {
 			pointer-events: none;
 		}
-
 	}
 }

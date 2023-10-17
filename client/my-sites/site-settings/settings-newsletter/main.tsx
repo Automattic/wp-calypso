@@ -4,14 +4,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import { useNewsletterCategoriesBlogSticker } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
-import {
-	isJetpackSite as isJetpackSiteSelector,
-	isSimpleSite as isSimpleSiteSelector,
-} from 'calypso/state/sites/selectors';
+import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
 import { NewsletterCategoriesSection } from './newsletter-categories-section';
@@ -77,15 +72,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	updateFields,
 }: NewsletterSettingsFormProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const isSimpleSite = useSelector( isSimpleSiteSelector );
-	const isAtomicSite = useSelector( ( state ) => {
-		if ( ! siteId ) {
-			return null;
-		}
-
-		return isAtomicSiteSelector( state, siteId );
-	} );
-	const hasNewsletterCategoriesBlogSticker = useNewsletterCategoriesBlogSticker( { siteId } );
 
 	const isSubscriptionModuleInactive = useSelector( ( state ) => {
 		if ( ! siteId ) {
@@ -107,21 +93,21 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	return (
 		<>
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			{ ( isSimpleSite || isAtomicSite || hasNewsletterCategoriesBlogSticker ) && (
-				<form onSubmit={ handleSubmitForm }>
-					<NewsletterCategoriesSection
-						disabled={ disabled }
-						newsletterCategoryIds={
-							fields.wpcom_newsletter_categories || defaultNewsletterCategoryIds
-						}
-						newsletterCategoriesEnabled={ fields.wpcom_newsletter_categories_enabled }
-						handleToggle={ handleToggle }
-						handleSubmitForm={ handleSubmitForm }
-						updateFields={ updateFields }
-						isSavingSettings={ isSavingSettings }
-					/>
-				</form>
-			) }
+
+			<form onSubmit={ handleSubmitForm }>
+				<NewsletterCategoriesSection
+					disabled={ disabled }
+					newsletterCategoryIds={
+						fields.wpcom_newsletter_categories || defaultNewsletterCategoryIds
+					}
+					newsletterCategoriesEnabled={ fields.wpcom_newsletter_categories_enabled }
+					handleToggle={ handleToggle }
+					handleSubmitForm={ handleSubmitForm }
+					updateFields={ updateFields }
+					isSavingSettings={ isSavingSettings }
+				/>
+			</form>
+
 			<form onSubmit={ handleSubmitForm }>
 				<NewsletterSettingsSection
 					fields={ fields }

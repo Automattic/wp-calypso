@@ -12,7 +12,7 @@ import {
 	JetpackInstantSearchModalComponent,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
-import { skipItIf } from '../../jest-helpers';
+import { skipDescribeIf, skipItIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -24,151 +24,151 @@ declare const browser: Browser;
 	So on atomic, we're limited to validating the integtity and interactability of the search modal.
 */
 
-describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
-	const searchString = DataHelper.getRandomPhrase();
+skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
+	DataHelper.createSuiteTitle( 'Jetpack Instant Search' ),
+	function () {
+		const searchString = DataHelper.getRandomPhrase();
 
-	let page: Page;
-	let testAccount: TestAccount;
-	let restAPIClient: RestAPIClient;
-	let siteId: number;
+		const postWithSearchBlockTitle = `Search Block ${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger(
+			1,
+			10
+		) }`;
+		let postWithSearchBlockUrl: string;
 
-	const features = envToFeatureKey( envVariables );
-	const accountName = getTestAccountByFeature( features );
+		let page: Page;
+		let testAccount: TestAccount;
+		let restAPIClient: RestAPIClient;
+		let siteId: number;
 
-	let searchModalComponent: JetpackInstantSearchModalComponent;
+		const features = envToFeatureKey( envVariables );
+		const accountName = getTestAccountByFeature( features );
 
-	beforeAll( async () => {
-		page = await browser.newPage();
+		let searchModalComponent: JetpackInstantSearchModalComponent;
 
-		testAccount = new TestAccount( accountName );
-		siteId = testAccount.credentials.testSites?.primary.id as number;
-		restAPIClient = new RestAPIClient( testAccount.credentials );
-	} );
+		beforeAll( async () => {
+			page = await browser.newPage();
 
-	skipItIf( envVariables.TEST_ON_ATOMIC )(
-		'Create a new post using the REST API',
-		async function () {
-			await restAPIClient.createPost( siteId, {
-				title: searchString,
-				content: searchString,
-			} );
-		}
-	);
-
-	skipItIf( envVariables.TEST_ON_ATOMIC )(
-		'Wait for index to update using the REST API',
-		async function () {
-			await waitForIndexToUpdate( restAPIClient, siteId, searchString );
-		}
-	);
-
-	it( 'Navigate to site homepage', async function () {
-		const isPrivateAtomicSite =
-			envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private';
-
-		if ( isPrivateAtomicSite ) {
-			// First, get a fresh cookie.
-			await testAccount.authenticate( page );
-		}
-
-		// We can't wait for the "load" event because WordAds mess with it.
-		// But, if Playwright outpaces the search JS load, you can get weird artifacts like the search term getting wiped out.
-		// So we need to wait for the search JS to load before we start interacting with the page.
-		const waitForSearchJsPromise = page.waitForResponse(
-			( response ) =>
-				response
-					.url()
-					.includes( 'jetpack-search/build/instant-search/jp-search.chunk-main-payload.js' ),
-			{ timeout: 30 * 1000 }
-		);
-
-		await page.goto( testAccount.getSiteURL( { protocol: true } ), {
-			timeout: 20 * 1000,
-			waitUntil: 'domcontentloaded',
+			testAccount = new TestAccount( accountName );
+			siteId = testAccount.credentials.testSites?.primary.id as number;
+			restAPIClient = new RestAPIClient( testAccount.credentials );
 		} );
 
-		if ( isPrivateAtomicSite ) {
-			// On private Atomic sites, still have to click the blue Log In button to use your cookie.
-			await page.getByRole( 'link', { name: 'Log in' } ).click();
-			// Then let all the redirects settle.
-			await page.waitForURL( testAccount.getSiteURL( { protocol: true } ), {
+		it( 'Create a post with the search block', async function () {
+			const response = await restAPIClient.createPost( siteId, {
+				title: postWithSearchBlockTitle,
+				content: '<!-- wp:search {"label":"Search","buttonText":"Search"} /-->',
+			} );
+
+			postWithSearchBlockUrl = response.URL;
+		} );
+
+		skipItIf( envVariables.TEST_ON_ATOMIC )(
+			'Create a new post to be searched using the REST API',
+			async function () {
+				await restAPIClient.createPost( siteId, {
+					title: searchString,
+					content: searchString,
+				} );
+			}
+		);
+
+		skipItIf( envVariables.TEST_ON_ATOMIC )(
+			'Wait for index to update using the REST API',
+			async function () {
+				await waitForIndexToUpdate( restAPIClient, siteId, searchString );
+			}
+		);
+
+		it( 'Navigate to post with search block', async function () {
+			// We can't wait for the "load" event because WordAds mess with it.
+			// But, if Playwright outpaces the search JS load, you can get weird artifacts like the search term getting wiped out.
+			// So we need to wait for the search JS to load before we start interacting with the page.
+			const waitForSearchJsPromise = page.waitForResponse(
+				( response ) =>
+					response
+						.url()
+						.includes( 'jetpack-search/build/instant-search/jp-search.chunk-main-payload.js' ),
+				{ timeout: 30 * 1000 }
+			);
+
+			await page.goto( postWithSearchBlockUrl, {
 				timeout: 20 * 1000,
 				waitUntil: 'domcontentloaded',
 			} );
-		}
 
-		await waitForSearchJsPromise;
+			await waitForSearchJsPromise;
 
-		searchModalComponent = new JetpackInstantSearchModalComponent( page );
-	} );
+			searchModalComponent = new JetpackInstantSearchModalComponent( page );
+		} );
 
-	it( 'Enter search term and launch search modal', async function () {
-		// Sometimes the parent block on a homepage has a very high-up aria-hidden.
-		// TODO: figure out what is adding that, and remove the "includeHidden" here.
-		const inputLocator = page
-			.getByRole( 'search', { includeHidden: true } )
-			.getByRole( 'searchbox', { name: 'Search', includeHidden: true } )
-			.first();
-		const buttonLocator = page
-			.getByRole( 'search', { includeHidden: true } )
-			.getByRole( 'button', { name: 'Search', includeHidden: true } )
-			.first();
+		it( 'Enter search term and launch search modal', async function () {
+			// Sometimes the parent block on a homepage has a very high-up aria-hidden.
+			// TODO: figure out what is adding that, and remove the "includeHidden" here.
+			const inputLocator = page
+				.getByRole( 'search', { includeHidden: true } )
+				.getByRole( 'searchbox', { name: 'Search', includeHidden: true } )
+				.first();
+			const buttonLocator = page
+				.getByRole( 'search', { includeHidden: true } )
+				.getByRole( 'button', { name: 'Search', includeHidden: true } )
+				.first();
 
-		// Adding a slightly longer timeout here because we can't fully wait for the "load" event above due to
-		// a collision with WordAds. This helps share some of the initial load wait with the first interaction.
-		await inputLocator.fill( searchString, { timeout: 20 * 1000 } );
-		await Promise.all( [
-			searchModalComponent.expectAndWaitForSearch( searchString ),
-			buttonLocator.click(),
-		] );
-	} );
+			// Adding a slightly longer timeout here because we can't fully wait for the "load" event above due to
+			// a collision with WordAds. This helps share some of the initial load wait with the first interaction.
+			await inputLocator.fill( searchString, { timeout: 20 * 1000 } );
+			await Promise.all( [
+				searchModalComponent.expectAndWaitForSearch( searchString ),
+				buttonLocator.click(),
+			] );
+		} );
 
-	it( 'The search term pulls into the modal', async function () {
-		// See: https://github.com/Automattic/jetpack/issues/32753
-		// There's a rare race condition where the spaces get URL encoded as "+" and that pulls into the modal.
-		// We don't wait to fail on that, so accounting for it specifically here.
-		const termInModal = ( await searchModalComponent.getSearchTerm() ).replace( /\+/g, ' ' );
-		expect( termInModal ).toEqual( searchString );
-	} );
+		it( 'The search term pulls into the modal', async function () {
+			// See: https://github.com/Automattic/jetpack/issues/32753
+			// There's a rare race condition where the spaces get URL encoded as "+" and that pulls into the modal.
+			// We don't wait to fail on that, so accounting for it specifically here.
+			const termInModal = ( await searchModalComponent.getSearchTerm() ).replace( /\+/g, ' ' );
+			expect( termInModal ).toEqual( searchString );
+		} );
 
-	skipItIf( envVariables.TEST_ON_ATOMIC )( 'There are search results', async function () {
-		expect( await searchModalComponent.getNumberOfResults() ).toBeGreaterThanOrEqual( 1 );
-	} );
-
-	skipItIf( envVariables.TEST_ON_ATOMIC )(
-		'The search term is present in the results as a highlighted match',
-		async function () {
-			await searchModalComponent.validateHighlightedMatch( searchString );
-		}
-	);
-
-	it( 'Clear the search term', async function () {
-		await Promise.all( [
-			searchModalComponent.expectAndWaitForSearch( '' ),
-			searchModalComponent.clearSearchTerm(),
-		] );
-
-		expect( await searchModalComponent.getSearchTerm() ).toEqual( '' );
-	} );
-
-	skipItIf( envVariables.TEST_ON_ATOMIC )(
-		'There are still default popular results',
-		async function () {
+		skipItIf( envVariables.TEST_ON_ATOMIC )( 'There are search results', async function () {
 			expect( await searchModalComponent.getNumberOfResults() ).toBeGreaterThanOrEqual( 1 );
-		}
-	);
+		} );
 
-	skipItIf( envVariables.TEST_ON_ATOMIC )(
-		'There are no highlighted matches in the results',
-		async function () {
-			expect( await searchModalComponent.getNumberOfHighlightedMatches() ).toBe( 0 );
-		}
-	);
+		skipItIf( envVariables.TEST_ON_ATOMIC )(
+			'The search term is present in the results as a highlighted match',
+			async function () {
+				await searchModalComponent.validateHighlightedMatch( searchString );
+			}
+		);
 
-	it( 'Close the modal', async function () {
-		await searchModalComponent.closeModal();
-	} );
-} );
+		it( 'Clear the search term', async function () {
+			await Promise.all( [
+				searchModalComponent.expectAndWaitForSearch( '' ),
+				searchModalComponent.clearSearchTerm(),
+			] );
+
+			expect( await searchModalComponent.getSearchTerm() ).toEqual( '' );
+		} );
+
+		skipItIf( envVariables.TEST_ON_ATOMIC )(
+			'There are still default popular results',
+			async function () {
+				expect( await searchModalComponent.getNumberOfResults() ).toBeGreaterThanOrEqual( 1 );
+			}
+		);
+
+		skipItIf( envVariables.TEST_ON_ATOMIC )(
+			'There are no highlighted matches in the results',
+			async function () {
+				expect( await searchModalComponent.getNumberOfHighlightedMatches() ).toBe( 0 );
+			}
+		);
+
+		it( 'Close the modal', async function () {
+			await searchModalComponent.closeModal();
+		} );
+	}
+);
 
 async function waitForIndexToUpdate(
 	restAPIClient: RestAPIClient,

@@ -114,15 +114,15 @@ const ColorPaletteVariations = ( {
 			<div className="global-styles-variations__group">
 				<h3 className="global-styles-variations__group-title">
 					<span className="global-styles-variations__group-title-actual">
-						{ translate( 'Custom styles' ) }
+						{ translate( 'Premium styles' ) }
 					</span>
-					{ limitGlobalStyles && (
-						<PremiumBadge
-							shouldHideTooltip
-							shouldCompactWithAnimation
-							labelText={ translate( 'Upgrade' ) }
-						/>
-					) }
+					<PremiumBadge
+						shouldHideTooltip
+						shouldCompactWithAnimation
+						labelText={
+							limitGlobalStyles ? translate( 'Upgrade' ) : translate( 'Included in your plan' )
+						}
+					/>
 				</h3>
 				<div className="color-palette-variations">
 					{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (

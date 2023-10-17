@@ -12,6 +12,7 @@ import {
 import { useDomainParams } from 'calypso/landing/stepper/hooks/use-domain-params';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useLoginUrl } from '../utils/path';
 import DomainContactInfo from './internals/steps-repository/domain-contact-info';
 
 const domainUserTransfer: Flow = {
@@ -61,10 +62,12 @@ const domainUserTransfer: Flow = {
 
 		const { domain } = useDomainParams();
 
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Receive%20domain&redirect_to=/setup/${ flowName }?domain=${ domain }`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Receive%20domain&redirect_to=/setup/${ flowName }?domain=${ domain }`;
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: `/setup/${ flowName }?domain=${ domain }`,
+			pageTitle: 'Receive domain',
+			locale,
+		} );
 
 		useEffect( () => {
 			if ( ! isLoggedIn ) {

@@ -178,9 +178,14 @@
 		border: 1px solid var(--color-border-subtle);
 	}
 
+
 	.search-component.is-open {
 		border: 1px solid var(--color-border-subtle);
-		height: 48px;
+		height: 40px;
+
+		@include break-mobile {
+			height: 48px;
+		}
 	}
 
 	.search-component.is-open.has-focus {

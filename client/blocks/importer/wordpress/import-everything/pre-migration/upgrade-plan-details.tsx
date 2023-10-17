@@ -1,7 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
-import { sprintf } from '@wordpress/i18n';
 import { check, plus, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -14,18 +12,17 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { FunctionComponent } from 'react';
 
 interface Props {
 	sourceSiteSlug: string;
 	targetSite: SiteDetails | null;
 }
 
-export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
+export const UpgradePlanDetails = ( props: Props ) => {
 	const { __ } = useI18n();
 	const initialFeaturesNumber = 6;
 
-	const { sourceSiteSlug, targetSite } = props;
+	const { targetSite } = props;
 	const targetSiteEligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, targetSite?.ID )
 	);
@@ -71,17 +68,6 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 	return (
 		<div className={ classnames( 'import__upgrade-plan' ) }>
 			<QueryPlans />
-			{ ! isEnabled( 'onboarding/import-redesign' ) && (
-				<p>
-					{ sprintf(
-						/* translators: the website could be any domain (eg: "yourname.com") */
-						__(
-							'To import your themes, plugins, users, and settings from %(website)s we need to upgrade your WordPress.com site. Select a plan below:'
-						),
-						{ website: sourceSiteSlug }
-					) }
-				</p>
-			) }
 
 			<div className={ classnames( 'import__upgrade-plan-container' ) }>
 				<div className={ classnames( 'import__upgrade-plan-price' ) }>
@@ -97,4 +83,4 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default ConfirmUpgradePlan;
+export default UpgradePlanDetails;

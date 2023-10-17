@@ -1,8 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { Title, SubTitle, SelectItems } from '@automattic/onboarding';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -85,17 +83,13 @@ export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props
 		return isMigrateFromWp ? onMigrationPluginUpdate() : installJetpack();
 	}
 
-	function onIntallJetpackManuallyClick() {
+	function onInstallJetpackManuallyClick() {
 		recordTracksEvent( 'calypso_site_importer_install_jetpack_manually' );
 		window.open( `https://jetpack.com/support/getting-started-with-jetpack/` );
 	}
 
 	return (
-		<div
-			className={ classnames( 'import__import-everything', {
-				'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
-			} ) }
-		>
+		<div className="import__import-everything import__import-everything--redesign">
 			<div className="import__heading-title">
 				<Title>{ renderTitle() }</Title>
 				<SubTitle>{ renderSubTitle() }</SubTitle>
@@ -112,7 +106,7 @@ export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props
 					<Button
 						borderless={ true }
 						className="action-buttons__install-jetpack-manually"
-						onClick={ onIntallJetpackManuallyClick }
+						onClick={ onInstallJetpackManuallyClick }
 					>
 						{ translate( 'Install Jetpack manually' ) }
 					</Button>
