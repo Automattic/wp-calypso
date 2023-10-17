@@ -1,4 +1,6 @@
 import moment from 'moment';
+import page from 'page';
+import qs from 'qs';
 import React from 'react';
 import IntervalDropdown from '../stats-interval-dropdown';
 import DateControlPicker from './stats-date-control-picker';
@@ -47,6 +49,19 @@ const StatsDateControl = ( {
 	pathTemplate,
 	onChangeChartQuantity,
 }: StatsDateControlProps ) => {
+
+	// Shared link generation helper.
+	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
+		const newRangeQuery = qs.stringify(
+			Object.assign( {}, queryParams, { chartStart: startDate, chartEnd: endDate } ),
+			{
+				addQueryPrefix: true,
+			}
+		);
+		const url = `/stats/${ period }/${ slug }`;
+		return `${ url }${ newRangeQuery }`;
+	};
+
 	// Previous Apply button handling.
 	const handleApply = ( startDate: string, endDate: string ) => {
 		// calculate offset between start and end to influcence the number of points for the chart
@@ -60,8 +75,8 @@ const StatsDateControl = ( {
 
 	// New Apply button handling.
 	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
-		console.log( 'new handler called' );
-		// do something...
+		const href = generateNewLink( 'day', startDate, endDate );
+		page( href );
 	};
 
 	return (

@@ -2,8 +2,6 @@ import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
 import moment from 'moment';
-import page from 'page';
-import qs from 'qs';
 import React, { useState, useRef } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
@@ -35,22 +33,9 @@ const DateControlPicker = ( {
 		setInputEndDate( value );
 	};
 
-	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
-		const newRangeQuery = qs.stringify(
-			Object.assign( {}, queryParams, { chartStart: startDate, chartEnd: endDate } ),
-			{
-				addQueryPrefix: true,
-			}
-		);
-		const url = `/stats/${ period }/${ slug }`;
-		return `${ url }${ newRangeQuery }`;
-	};
-
 	const handleOnApply = () => {
 		togglePopoverOpened( false );
 		handleApply( inputStartDate, inputEndDate );
-		const href = generateNewLink( 'day', inputStartDate, inputEndDate );
-		page( href );
 	};
 
 	const handleOnCancel = () => {
