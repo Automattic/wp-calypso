@@ -16,7 +16,7 @@ const DateControlPickerDate = ( {
 	return (
 		<div className="date-control-picker-date">
 			<div className="stats-date-control-picker-dates__inputs">
-				<TextControl type="date" value={ startDate } onChange={ onStartChange } />
+				<TextControl value={ startDate } onChange={ onStartChange } />
 				<TextControl type="date" value={ endDate } onChange={ onEndChange } />
 			</div>
 			<div className="stats-date-control-picker-dates__buttons">
