@@ -114,7 +114,7 @@ const ColorPaletteVariations = ( {
 			<div className="global-styles-variations__group">
 				<h3 className="global-styles-variations__group-title">
 					<span className="global-styles-variations__group-title-actual">
-						{ translate( 'Custom styles' ) }
+						{ translate( 'Premium styles' ) }
 					</span>
 					<PremiumBadge
 						shouldHideTooltip

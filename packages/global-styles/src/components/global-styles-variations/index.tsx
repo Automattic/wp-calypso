@@ -101,7 +101,7 @@ const GlobalStylesVariations = ( {
 }: GlobalStylesVariationsProps ) => {
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
 	const premiumStylesDescription = translate(
-		'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
+		'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
 	);
 
 	const baseGlobalStyles = useMemo(
@@ -172,7 +172,7 @@ const GlobalStylesVariations = ( {
 						<div className="global-styles-variations__header">
 							<h2>
 								<span>
-									{ translate( 'Custom Style', 'Custom Styles', {
+									{ translate( 'Premium Style', 'Premium Styles', {
 										count: nonDefaultStyles.length,
 									} ) }
 								</span>
