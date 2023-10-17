@@ -29,6 +29,7 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import { isAkismetTemporarySitePurchase, isTemporarySitePurchase } from '../utils';
+import PurchaseMetaEndDate from './purchase-meta-end-date';
 import PurchaseMetaExpiration from './purchase-meta-expiration';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
 import PurchaseMetaOwner from './purchase-meta-owner';
@@ -90,6 +91,12 @@ export default function PurchaseMeta( {
 					<span className="manage-purchase__detail">
 						<PurchaseMetaPrice purchase={ purchase } />
 						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
+					</span>
+				</li>
+				<li>
+					<em className="manage-purchase__detail-label"> Subscription End Date </em>
+					<span className="manage-purchase__detail">
+						<PurchaseMetaEndDate purchase={ purchase } />
 					</span>
 				</li>
 				<PurchaseMetaExpiration

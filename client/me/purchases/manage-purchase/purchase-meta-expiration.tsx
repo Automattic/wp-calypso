@@ -6,8 +6,10 @@ import {
 	isJetpackProduct,
 	JETPACK_LEGACY_PLANS,
 } from '@automattic/calypso-products';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	hasPaymentMethod,
@@ -152,6 +154,14 @@ function PurchaseMetaExpiration( {
 					} ) }
 				>
 					{ subsBillingText }
+					<InlineSupportLink
+						showText={ false }
+						supportPostId={ 267092 }
+						iconSize={ 16 }
+						supportLink={ localizeUrl(
+							'https://wordpress.com/support/manage-purchases/automatic-renewal/#when-renewal-occurs'
+						) }
+					/>
 				</span>
 				{ ! isAutorenewalEnabled &&
 					! hideAutoRenew &&
