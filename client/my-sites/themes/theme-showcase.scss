@@ -69,6 +69,10 @@
 				padding: 0 32px;
 			}
 		}
+		.themes__showcase {
+			margin: 0 auto;
+			margin-top: 1em;
+		}
 	}
 
 	.search-themes-card {
@@ -256,8 +260,12 @@
 		margin: 0;
 	}
 
+	.themes__showcase {
+		margin-top: 32px;
+	}
+
 	.themes__selection .themes-list {
-		margin: 32px -16px 0;
+		margin: 0 -16px;
 	}
 
 	.themes__content .upsell-nudge {
@@ -265,7 +273,7 @@
 		border: none;
 		box-shadow: none;
 		margin-top: 32px;
-		margin-bottom: 0;
+		margin-bottom: 32px;
 		padding: 24px 30px;
 		border-radius: 4px;
 

@@ -56,6 +56,7 @@ const FAKE_SITE: Site = {
 		desktop: 10,
 	},
 	php_version_num: 7.4,
+	is_atomic: false,
 };
 
 const scanThreats = 4;
@@ -127,6 +128,44 @@ describe( 'useRowMetadata', () => {
 		expect( metadata ).toEqual( expected );
 	} );
 
+	it( 'should return the expected Backup metadata for atomic sites.', () => {
+		const {
+			result: { current: metadata },
+		} = renderHook( () =>
+			useRowMetadata(
+				{
+					...rows,
+					site: {
+						...rows.site,
+						value: { ...FAKE_SITE, is_atomic: true },
+					},
+					backup: {
+						type: 'backup',
+						value: 'success',
+						status: 'success',
+					},
+				},
+				'backup',
+				true
+			)
+		);
+
+		const expected = {
+			eventName: 'calypso_jetpack_agency_dashboard_backup_success_click_large_screen',
+			isExternalLink: true,
+			link: `https://wordpress.com/backup/${ FAKE_SITE.url }`,
+			row: {
+				type: 'backup',
+				value: 'success',
+				status: 'success',
+			},
+			siteDown: false,
+			tooltip: 'Latest backup completed successfully',
+			tooltipId: `${ FAKE_SITE.blog_id }-backup`,
+		};
+		expect( metadata ).toEqual( expected );
+	} );
+
 	it( 'should return the expected Scan metadata', () => {
 		const {
 			result: { current: metadata },
@@ -136,6 +175,35 @@ describe( 'useRowMetadata', () => {
 			eventName: 'calypso_jetpack_agency_dashboard_scan_threats_click_large_screen',
 			isExternalLink: false,
 			link: `/scan/${ FAKE_SITE.url }`,
+			row: rows.scan,
+			siteDown: false,
+			tooltip: 'Potential threats found',
+			tooltipId: `${ FAKE_SITE.blog_id }-scan`,
+		};
+		expect( metadata ).toEqual( expected );
+	} );
+
+	it( 'should return the expected Scan metadata for atomic sites.', () => {
+		const {
+			result: { current: metadata },
+		} = renderHook( () =>
+			useRowMetadata(
+				{
+					...rows,
+					site: {
+						...rows.site,
+						value: { ...FAKE_SITE, is_atomic: true },
+					},
+				},
+				'scan',
+				true
+			)
+		);
+
+		const expected = {
+			eventName: 'calypso_jetpack_agency_dashboard_scan_threats_click_large_screen',
+			isExternalLink: false,
+			link: '',
 			row: rows.scan,
 			siteDown: false,
 			tooltip: 'Potential threats found',

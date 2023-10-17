@@ -7,7 +7,9 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
+import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { getFeedUrl } from 'calypso/reader/route';
 import CancelPaidSubscriptionModal from './cancel-paid-subscription-modal';
 import {
 	PaymentPlan,
@@ -161,16 +163,50 @@ const SiteSubscriptionDetails = ( {
 		name,
 	] );
 
+	const feedUrl = getFeedUrl( feedId );
+
+	const recordViewFeedButtonClicked = useRecordViewFeedButtonClicked();
+
+	const handleViewFeedButtonClicked = ( source: string ) => {
+		recordViewFeedButtonClicked( {
+			blogId: blogId ? String( blogId ) : null,
+			feedId: String( feedId ),
+			source,
+		} );
+	};
+
+	const siteTitle = (
+		<a
+			href={ feedUrl }
+			title={ translate( 'View feed' ) }
+			onClick={ () => {
+				handleViewFeedButtonClicked( 'subscription-site-title' );
+			} }
+		>
+			{ name }
+		</a>
+	);
+
 	return (
 		<>
 			<header className="site-subscription-page__header site-subscription-page__centered-content">
-				<SiteIcon iconUrl={ siteIcon } size={ 116 } alt={ name } />
+				<SiteIcon
+					iconUrl={ siteIcon }
+					size={ 116 }
+					alt={ name }
+					href={ feedUrl }
+					title={ translate( 'View feed' ) }
+					onClick={ () => {
+						handleViewFeedButtonClicked( 'subscription-site-icon' );
+					} }
+				/>
 				<FormattedHeader
 					brandFont
-					headerText={ name }
+					headerText={ siteTitle }
 					subHeaderAs="div"
 					subHeaderText={
 						<SiteSubscriptionSubheader
+							blogId={ blogId }
 							feedId={ feedId }
 							subscriberCount={ subscriberCount }
 							url={ url }

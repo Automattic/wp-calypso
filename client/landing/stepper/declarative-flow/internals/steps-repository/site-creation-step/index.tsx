@@ -1,3 +1,4 @@
+import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Site } from '@automattic/data-stores';
 import {
 	ECOMMERCE_FLOW,
@@ -23,6 +24,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -61,6 +63,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
 		[]
 	);
+
+	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
 
 	const urlData = useSelector( getUrlData );
 
@@ -158,6 +162,16 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			domainCartItem,
 			sourceSlug
 		);
+
+		if ( planCartItem?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY && site ) {
+			await addHostingTrial( { siteId: site.siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
+
+			return {
+				siteId: site.siteId,
+				siteSlug: site.siteSlug,
+				goToCheckout: false,
+			};
+		}
 
 		if ( planCartItem && site?.siteSlug ) {
 			await addPlanToCart( site.siteSlug, flow, true, theme, planCartItem );

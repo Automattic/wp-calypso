@@ -202,7 +202,7 @@ class DnsRecordsList extends Component {
 		if ( ! record.protected_field ) {
 			actions.push( { ...this.editRecordAction } );
 		}
-		if ( ! ( record.protected_field && 'MX' !== record.type ) ) {
+		if ( ! ( record.protected_field && 'MX' !== record.type ) || record.type === 'A' ) {
 			actions.push( { ...this.deleteRecordAction } );
 		}
 		return actions;

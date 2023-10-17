@@ -26,17 +26,17 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 	const screens: Record< ScreenName, Screen > = {
 		main: {
 			name: 'main',
-			title: hasEnTranslation( 'Select your patterns' )
-				? translate( 'Select your patterns' )
-				: translate( 'Design your own' ),
+			title: hasEnTranslation( 'Select patterns' )
+				? translate( 'Select patterns' )
+				: translate( 'Select your patterns' ),
 			description: translate( 'Create your homepage from our library of patterns.' )
 				? translate( 'Create your homepage from our library of patterns.' )
 				: translate(
 						'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				  ),
-			continueLabel: hasEnTranslation( 'Pick your styles' )
-				? translate( 'Pick your styles' )
-				: translate( 'Pick your style' ),
+			continueLabel: hasEnTranslation( 'Select styles' )
+				? translate( 'Select styles' )
+				: translate( 'Pick your styles' ),
 			backLabel: hasEnTranslation( 'patterns' ) ? translate( 'patterns' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.MAIN_HEADER,
 		},
@@ -50,14 +50,14 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 				: translate(
 						'Find the section patterns for your homepage by exploring the categories below.'
 				  ),
-			continueLabel: translate( 'Save and continue' ),
+			continueLabel: translate( 'Save sections' ),
 			initialPath: `${ NAVIGATOR_PATHS.SECTIONS }/${ INITIAL_CATEGORY }`,
 		},
 		styles: {
 			name: 'styles',
-			title: hasEnTranslation( 'Pick your styles' )
-				? translate( 'Pick your styles' )
-				: translate( 'Pick your style' ),
+			title: hasEnTranslation( 'Select styles' )
+				? translate( 'Select styles' )
+				: translate( 'Pick your styles' ),
 			description: hasEnTranslation(
 				'Add style to your page with our expertly curated color palettes and font pairings.'
 			)
@@ -73,10 +73,10 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		},
 		upsell: {
 			name: 'upsell',
-			title: translate( 'Custom styles' ),
-			description: translate( "You've chosen a custom style and action is required." ),
+			title: translate( 'Premium styles' ),
+			description: translate( "You've chosen a premium style and action is required." ),
 			continueLabel: translate( 'Continue' ),
-			backLabel: hasEnTranslation( 'custom styles' ) ? translate( 'custom styles' ) : undefined,
+			backLabel: hasEnTranslation( 'premium styles' ) ? translate( 'premium styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.UPSELL,
 		},
 		activation: {

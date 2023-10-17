@@ -11,11 +11,10 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
-import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
@@ -27,11 +26,12 @@ import type { PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
-	canUserPurchasePlan?: boolean | null;
+	canUserManageCurrentPlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
+	trialPlan?: boolean;
 	freePlan: boolean;
-	manageHref: string;
+	currentPlanManageHref?: string;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
@@ -41,7 +41,6 @@ type PlanFeaturesActionsButtonProps = {
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
 	isWooExpressPlusPlan?: boolean;
-	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
 	siteId?: number | null;
@@ -62,6 +61,7 @@ const DummyDisabledButton = styled.div`
 `;
 
 const SignupFlowPlanFeatureActionButton = ( {
+	trialPlan,
 	freePlan,
 	planTitle,
 	classes,
@@ -71,6 +71,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	handleUpgradeButtonClick,
 	busy,
 }: {
+	trialPlan: boolean;
 	freePlan: boolean;
 	planTitle: TranslateResult;
 	classes: string;
@@ -83,7 +84,9 @@ const SignupFlowPlanFeatureActionButton = ( {
 	const translate = useTranslate();
 	let btnText;
 
-	if ( freePlan ) {
+	if ( trialPlan ) {
+		btnText = translate( 'Start trial' );
+	} else if ( freePlan ) {
 		btnText = translate( 'Start with Free' );
 	} else if ( isStuck && ! isLargeCurrency ) {
 		btnText = translate( 'Get %(plan)s – %(priceString)s', {
@@ -93,6 +96,18 @@ const SignupFlowPlanFeatureActionButton = ( {
 			},
 			comment:
 				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+		} );
+	} else if ( isStuck && isLargeCurrency ) {
+		btnText = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
+			args: {
+				plan: planTitle,
+				priceString: priceString ?? '',
+			},
+			comment:
+				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+			components: {
+				span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
+			},
 		} );
 	} else {
 		btnText = translate( 'Get %(plan)s', {
@@ -178,8 +193,8 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
-	manageHref,
-	canUserPurchasePlan,
+	currentPlanManageHref,
+	canUserManageCurrentPlan,
 	currentSitePlanSlug,
 	buttonText,
 	planActionOverrides,
@@ -193,11 +208,10 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: string;
-	manageHref?: string;
-	canUserPurchasePlan?: boolean | null;
+	currentPlanManageHref?: string;
+	canUserManageCurrentPlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
-	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -217,7 +231,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				<Button
 					className={ classes }
 					onClick={ planActionOverrides.loggedInFreePlan.callback }
-					disabled={ ! manageHref } // not sure why this is here
+					disabled={ ! currentPlanManageHref } // not sure why this is here
 				>
 					{ planActionOverrides.loggedInFreePlan.text }
 				</Button>
@@ -233,8 +247,12 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
 		return (
-			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
-				{ canUserPurchasePlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
+			<Button
+				className={ classes }
+				href={ currentPlanManageHref }
+				disabled={ ! currentPlanManageHref }
+			>
+				{ canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
 	}
@@ -345,11 +363,12 @@ const LoggedInPlansFeatureActionButton = ( {
 
 const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( {
 	availableForPurchase = true,
-	canUserPurchasePlan,
+	canUserManageCurrentPlan,
 	className,
 	currentSitePlanSlug,
 	freePlan = false,
-	manageHref,
+	trialPlan = false,
+	currentPlanManageHref,
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
@@ -358,13 +377,11 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
 	isWooExpressPlusPlan = false,
-	selectedSiteSlug,
 	planActionOverrides,
 	isStuck,
 	isLargeCurrency,
 } ) => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
 		planTitle,
@@ -374,6 +391,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
 		'is-current-plan': current,
+		'is-stuck': isStuck,
+		'is-large-currency': isLargeCurrency,
 	} );
 
 	const handleUpgradeButtonClick = () => {
@@ -387,34 +406,19 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		onUpgradeClick && onUpgradeClick();
 	};
 
-	const vipLandingPageUrlWithoutUtmCampaign =
-		'https://wpvip.com/wordpress-vip-agile-content-platform?utm_source=WordPresscom&utm_medium=automattic_referral';
-
 	if ( isWpcomEnterpriseGridPlan ) {
-		const translateComponents = {
-			ExternalLink: (
-				<ExternalLinkWithTracking
-					href={ `${ vipLandingPageUrlWithoutUtmCampaign }&utm_campaign=calypso_signup` }
-					target="_blank"
-					tracksEventName="calypso_plan_step_enterprise_click"
-					tracksEventProps={ { flow: flowName } }
-				/>
-			),
-		};
-
-		const shouldShowNewCta =
-			isEnglishLocale || i18n.hasTranslation( '{{ExternalLink}}Learn more{{/ExternalLink}}' );
+		const vipLandingPageUrlWithoutUtmCampaign =
+			'https://wpvip.com/wordpress-vip-agile-content-platform?utm_source=WordPresscom&utm_medium=automattic_referral';
 
 		return (
-			<Button className={ classes }>
-				{ shouldShowNewCta
-					? translate( '{{ExternalLink}}Learn more{{/ExternalLink}}', {
-							components: translateComponents,
-					  } )
-					: translate( '{{ExternalLink}}Get in touch{{/ExternalLink}}', {
-							components: translateComponents,
-					  } ) }
-			</Button>
+			<ExternalLinkWithTracking
+				href={ `${ vipLandingPageUrlWithoutUtmCampaign }&utm_campaign=calypso_signup` }
+				target="_blank"
+				tracksEventName="calypso_plan_step_enterprise_click"
+				tracksEventProps={ { flow: flowName } }
+			>
+				<Button className={ classNames( classes ) }>{ translate( 'Learn more' ) }</Button>
+			</ExternalLinkWithTracking>
 		);
 	}
 
@@ -458,6 +462,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<SignupFlowPlanFeatureActionButton
 				freePlan={ freePlan }
+				trialPlan={ trialPlan }
 				planTitle={ planTitle }
 				classes={ classes }
 				priceString={ priceString }
@@ -476,11 +481,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
-			manageHref={ manageHref }
-			canUserPurchasePlan={ canUserPurchasePlan }
+			currentPlanManageHref={ currentPlanManageHref }
+			canUserManageCurrentPlan={ canUserManageCurrentPlan }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
-			selectedSiteSlug={ selectedSiteSlug }
 			planActionOverrides={ planActionOverrides }
 			priceString={ priceString }
 			isStuck={ isStuck }

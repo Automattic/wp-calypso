@@ -136,3 +136,22 @@
 		text-decoration: underline;
 	}
 }
+
+.share-site-modal__popover {
+	outline: none;
+	z-index: 100000;
+	.popover__inner {
+		border: 0;
+		box-shadow: none;
+		border-radius: 2px;
+		color: var(--color-text-inverted);
+		background: var(--color-neutral-60);
+		font-size: $font-body-extra-small;
+		padding: 6px 10px;
+		text-align: left;
+	}
+
+	.popover__arrow {
+		display: none;
+	}
+}

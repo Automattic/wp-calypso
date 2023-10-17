@@ -3,7 +3,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
@@ -14,6 +13,7 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_STARTER,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 
@@ -46,22 +46,6 @@ export function generateSteps( {
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		themes: {
-			stepName: 'themes',
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
-			optionalDependencies: [ 'useThemeHeadstart' ],
-		},
-
-		'portfolio-themes': {
-			stepName: 'portfolio-themes',
-			props: {
-				designType: 'grid',
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
 		// `themes` does not update the theme for an existing site as we normally
 		// do this when the site is created. In flows where a site is merely being
 		// updated, we need to use a different API request function.
@@ -92,6 +76,7 @@ export function generateSteps( {
 				'siteSlug',
 				'themeItem',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -169,6 +154,31 @@ export function generateSteps( {
 			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
+		'user-social': {
+			stepName: 'user-social',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'redirect',
+				'allowUnauthenticated',
+				'oauth2_client_id',
+				'oauth2_redirect',
+			],
+			optionalDependencies: [
+				'redirect',
+				'allowUnauthenticated',
+				'oauth2_client_id',
+				'oauth2_redirect',
+			],
+			props: {
+				isSocialFirst: true,
+				isSocialSignupEnabled: true,
 			},
 		},
 
@@ -461,6 +471,7 @@ export function generateSteps( {
 				'siteUrl',
 				'lastDomainSearched',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -506,6 +517,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'themeItem',
 				'useThemeHeadstart',
+				'domainCart',
 			], // note: siteId, siteSlug are not provided when used in domain flow
 			optionalDependencies: [
 				'signupDomainOrigin',
@@ -536,6 +548,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'signupDomainOrigin',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'siteUrl',
@@ -566,6 +579,7 @@ export function generateSteps( {
 				'siteUrl',
 				'lastDomainSearched',
 				'isManageSiteFlow',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
@@ -595,6 +609,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'siteUrl',
 				'useThemeHeadstart',
+				'domainCart',
 			],
 			optionalDependencies: [
 				'signupDomainOrigin',
@@ -665,7 +680,10 @@ export function generateSteps( {
 					return i18n.translate( 'Choose how to use your domain' );
 				},
 				get subHeaderText() {
-					return i18n.translate( 'Don’t worry, you can easily add a site later' );
+					return i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation( 'Don’t worry, you can easily change it later.' )
+						? i18n.translate( 'Don’t worry, you can easily change it later.' )
+						: i18n.translate( 'Don’t worry, you can easily add a site later' );
 				},
 			},
 			providesDependencies: [
@@ -675,7 +693,11 @@ export function generateSteps( {
 				'siteUrl',
 				'domainItem',
 				'themeSlugWithRepo',
+				'domainCart',
 			],
+			defaultDependencies: {
+				themeSlugWithRepo: 'pub/twentytwentytwo',
+			},
 		},
 		'site-picker': {
 			stepName: 'site-picker',
@@ -686,7 +708,7 @@ export function generateSteps( {
 				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
+			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo', 'domainCart' ],
 			delayApiRequestUntilComplete: true,
 		},
 
@@ -753,19 +775,6 @@ export function generateSteps( {
 		'clone-cloning': {
 			stepName: 'clone-cloning',
 			providesDependencies: [],
-		},
-
-		/* Imports */
-		'from-url': {
-			stepName: 'from-url',
-			providesDependencies: [
-				'importSiteEngine',
-				'importSiteFavicon',
-				'importSiteUrl',
-				'siteTitle',
-				'suggestedDomain',
-				'themeSlugWithRepo',
-			],
 		},
 
 		'reader-landing': {

@@ -7,6 +7,7 @@ import {
 	isWooExpressSmallPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	isFreeHostingTrial,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -21,16 +22,12 @@ import {
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { LocalizeProps } from 'i18n-calypso';
-import { Component, ForwardedRef } from 'react';
-import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
+import { Component } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
-import ComparisonGridToggle from '../../../plans-features-main/components/comparison-grid-toggle';
-import PlansGridContextProvider from '../../grid-context';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
-import PlanComparisonGrid from '../comparison-grid';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
@@ -49,12 +46,9 @@ type PlanRowOptions = {
 interface FeaturesGridType extends PlansGridProps {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
-	canUserPurchasePlan: boolean | null;
-	manageHref: string;
-	selectedSiteSlug: string | null;
+	canUserManageCurrentPlan?: boolean | null;
+	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
-	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
-	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
 }
 
@@ -113,12 +107,10 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	renderTabletView() {
-		const { gridPlansForFeaturesGrid, gridPlanForSpotlight } = this.props;
+		const { gridPlans, gridPlanForSpotlight } = this.props;
 		const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
-			? gridPlansForFeaturesGrid
-			: gridPlansForFeaturesGrid.filter(
-					( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug
-			  );
+			? gridPlans
+			: gridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
 		const numberOfPlansToShowOnTop = 4 === gridPlansWithoutSpotlight.length ? 2 : 3;
 		const plansForTopRow = gridPlansWithoutSpotlight.slice( 0, numberOfPlansToShowOnTop );
 		const plansForBottomRow = gridPlansWithoutSpotlight.slice( numberOfPlansToShowOnTop );
@@ -167,8 +159,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	renderMobileView() {
-		const { translate, selectedFeature, gridPlansForFeaturesGrid, gridPlanForSpotlight } =
-			this.props;
+		const { translate, selectedFeature, gridPlans, gridPlanForSpotlight } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
 		) => {
@@ -182,7 +173,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			);
 		};
 
-		return gridPlansForFeaturesGrid
+		return gridPlans
 			.reduce( ( acc, griPlan ) => {
 				// Bring the spotlight plan to the top
 				if ( gridPlanForSpotlight?.planSlug === griPlan.planSlug ) {
@@ -366,10 +357,9 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			isInSignup,
 			isLaunchPage,
 			flowName,
-			canUserPurchasePlan,
-			manageHref,
+			canUserManageCurrentPlan,
+			currentPlanManageHref,
 			currentSitePlanSlug,
-			selectedSiteSlug,
 			translate,
 			planActionOverrides,
 			siteId,
@@ -406,10 +396,11 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					isTableCell={ options?.isTableCell }
 				>
 					<PlanFeatures2023GridActions
-						manageHref={ manageHref }
-						canUserPurchasePlan={ canUserPurchasePlan }
+						currentPlanManageHref={ currentPlanManageHref }
+						canUserManageCurrentPlan={ canUserManageCurrentPlan }
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planSlug ) }
+						trialPlan={ isFreeHostingTrial( planSlug ) }
 						freePlan={ isFreePlan( planSlug ) }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
@@ -419,7 +410,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						planSlug={ planSlug }
 						flowName={ flowName }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						selectedSiteSlug={ selectedSiteSlug }
 						buttonText={ buttonText }
 						planActionOverrides={ planActionOverrides }
 						showMonthlyPrice={ true }
@@ -445,7 +435,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 				className="plan-features-2023-grid__table-item"
 				isTableCell={ options?.isTableCell }
 			>
-				{ ! isFreePlan( planSlug ) && (
+				{ ! isFreePlan( planSlug ) && ! isFreeHostingTrial( planSlug ) && (
 					<div className={ `plan-features-2023-grid__refund-notice ${ getPlanClass( planSlug ) }` }>
 						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
 							args: {
@@ -474,18 +464,18 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	renderPreviousFeaturesIncludedTitle( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { translate, gridPlansForFeaturesGrid } = this.props;
+		const { translate, gridPlans } = this.props;
 
 		return renderedGridPlans.map( ( { planSlug } ) => {
 			const shouldRenderEnterpriseLogos =
 				isWpcomEnterpriseGridPlan( planSlug ) || isWooExpressPlusPlan( planSlug );
 			const shouldShowFeatureTitle = ! isWpComFreePlan( planSlug ) && ! shouldRenderEnterpriseLogos;
-			const indexInGridPlansForFeaturesGrid = gridPlansForFeaturesGrid.findIndex(
+			const indexInGridPlansForFeaturesGrid = gridPlans.findIndex(
 				( { planSlug: slug } ) => slug === planSlug
 			);
 			const previousProductName =
 				indexInGridPlansForFeaturesGrid > 0
-					? gridPlansForFeaturesGrid[ indexInGridPlansForFeaturesGrid - 1 ].productNameShort
+					? gridPlans[ indexInGridPlansForFeaturesGrid - 1 ].productNameShort
 					: null;
 			const title =
 				previousProductName &&
@@ -577,7 +567,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					planSlug={ planSlug }
 					onStorageAddOnClick={ onStorageAddOnClick }
 					storageOptions={ storageOptions }
-					showPrice
 				/>
 			) : (
 				storageOptions.map( ( storageOption ) => {
@@ -607,116 +596,26 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	render() {
-		const {
-			isInSignup,
-			planTypeSelectorProps,
-			intervalType,
-			isLaunchPage,
-			flowName,
-			currentSitePlanSlug,
-			manageHref,
-			canUserPurchasePlan,
-			translate,
-			selectedSiteSlug,
-			hidePlansFeatureComparison,
-			siteId,
-			selectedPlan,
-			selectedFeature,
-			intent,
-			gridPlansForFeaturesGrid,
-			gridPlansForComparisonGrid,
-			showLegacyStorageFeature,
-			usePricingMetaForGridPlans,
-			allFeaturesList,
-			plansComparisonGridRef,
-			toggleShowPlansComparisonGrid,
-			showPlansComparisonGrid,
-			showUpgradeableStorage,
-			observableForOdieRef,
-			onStorageAddOnClick,
-			handleUpgradeClick,
-		} = this.props;
+		const { gridPlans } = this.props;
 
 		return (
 			<>
-				<QueryActivePromotions />
-				<PlansGridContextProvider
-					intent={ intent }
-					gridPlans={ gridPlansForFeaturesGrid }
-					usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-					allFeaturesList={ allFeaturesList }
-				>
-					{ this.renderSpotlightPlan() }
-				</PlansGridContextProvider>
+				{ this.renderSpotlightPlan() }
 				<div className="plan-features">
-					<PlansGridContextProvider
-						intent={ intent }
-						gridPlans={ gridPlansForFeaturesGrid }
-						usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-						allFeaturesList={ allFeaturesList }
-					>
-						<div className="plan-features-2023-grid__content">
-							<div>
-								<div className="plan-features-2023-grid__desktop-view">
-									{ this.renderTable( gridPlansForFeaturesGrid ) }
-								</div>
-								<div className="plan-features-2023-grid__tablet-view">
-									{ this.renderTabletView() }
-								</div>
-								<div className="plan-features-2023-grid__mobile-view">
-									{ this.renderMobileView() }
-								</div>
+					<div className="plan-features-2023-grid__content">
+						<div>
+							<div className="plan-features-2023-grid__desktop-view">
+								{ this.renderTable( gridPlans ) }
+							</div>
+							<div className="plan-features-2023-grid__tablet-view">
+								{ this.renderTabletView() }
+							</div>
+							<div className="plan-features-2023-grid__mobile-view">
+								{ this.renderMobileView() }
 							</div>
 						</div>
-					</PlansGridContextProvider>
-				</div>
-				{ ! hidePlansFeatureComparison && (
-					<ComparisonGridToggle
-						onClick={ toggleShowPlansComparisonGrid }
-						label={
-							showPlansComparisonGrid
-								? translate( 'Hide comparison' )
-								: translate( 'Compare plans' )
-						}
-						ref={ observableForOdieRef }
-					/>
-				) }
-				{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (
-					<div
-						ref={ plansComparisonGridRef }
-						className="plan-features-2023-grid__plan-comparison-grid-container"
-					>
-						<PlansGridContextProvider
-							intent={ intent }
-							gridPlans={ gridPlansForComparisonGrid }
-							usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-							allFeaturesList={ allFeaturesList }
-						>
-							<PlanComparisonGrid
-								planTypeSelectorProps={ planTypeSelectorProps }
-								intervalType={ intervalType }
-								isInSignup={ isInSignup }
-								isLaunchPage={ isLaunchPage }
-								flowName={ flowName }
-								currentSitePlanSlug={ currentSitePlanSlug }
-								manageHref={ manageHref }
-								canUserPurchasePlan={ canUserPurchasePlan }
-								selectedSiteSlug={ selectedSiteSlug }
-								onUpgradeClick={ handleUpgradeClick }
-								siteId={ siteId }
-								selectedPlan={ selectedPlan }
-								selectedFeature={ selectedFeature }
-								showLegacyStorageFeature={ showLegacyStorageFeature }
-								showUpgradeableStorage={ showUpgradeableStorage }
-								onStorageAddOnClick={ onStorageAddOnClick }
-							/>
-							<ComparisonGridToggle
-								onClick={ toggleShowPlansComparisonGrid }
-								label={ translate( 'Hide comparison' ) }
-							/>
-						</PlansGridContextProvider>
 					</div>
-				) : null }
+				</div>
 			</>
 		);
 	}

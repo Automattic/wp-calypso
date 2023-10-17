@@ -22,6 +22,7 @@ import {
 	isPremium,
 	isBusiness,
 	isEcommerce,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
@@ -705,6 +706,11 @@ function CheckoutSummaryAnnualUpsell( props: {
 		return null;
 	}
 
+	// Woo Express plans with introductory offer does not provide free domain.
+	const shouldShowFreeDomainUpsell = ! (
+		isWooExpressPlan( productSlug ) && Boolean( props.plan.introductory_offer_terms?.enabled )
+	);
+
 	return (
 		<CheckoutSummaryFeaturesUpsell>
 			<CheckoutSummaryFeaturesTitle>
@@ -715,10 +721,12 @@ function CheckoutSummaryAnnualUpsell( props: {
 				/>
 			</CheckoutSummaryFeaturesTitle>
 			<CheckoutSummaryFeaturesListWrapper>
-				<CheckoutSummaryFeaturesListItem isSupported={ false }>
-					<WPCheckoutCheckIcon id="annual-domain-credit" />
-					{ translate( 'Free domain for one year' ) }
-				</CheckoutSummaryFeaturesListItem>
+				{ shouldShowFreeDomainUpsell && (
+					<CheckoutSummaryFeaturesListItem isSupported={ false }>
+						<WPCheckoutCheckIcon id="annual-domain-credit" />
+						{ translate( 'Free domain for one year' ) }
+					</CheckoutSummaryFeaturesListItem>
+				) }
 				{ ! isWpComPersonalPlan( productSlug ) && (
 					<CheckoutSummaryFeaturesListItem isSupported={ false }>
 						<WPCheckoutCheckIcon id="annual-live-chat" />

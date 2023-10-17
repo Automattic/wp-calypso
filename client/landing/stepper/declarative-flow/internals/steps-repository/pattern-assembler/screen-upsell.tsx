@@ -1,6 +1,5 @@
 import { Button, Gridicon, PremiumBadge } from '@automattic/components';
 import { NavigatorHeader } from '@automattic/onboarding';
-import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import useGlobalStylesUpgradeTranslations from 'calypso/components/premium-global-styles-upgrade-modal/use-global-styles-upgrade-translations';
 import { useScreen } from './hooks';
@@ -8,24 +7,14 @@ import NavigatorTitle from './navigator-title';
 import './screen-upsell.scss';
 
 interface Props {
-	resetCustomStyles: boolean;
 	numOfSelectedGlobalStyles?: number;
-	setResetCustomStyles: ( value: boolean ) => void;
 	onCheckout: () => void;
 	onTryStyle: () => void;
-	onContinue: () => void;
 }
 
-const ScreenUpsell = ( {
-	resetCustomStyles,
-	numOfSelectedGlobalStyles = 1,
-	setResetCustomStyles,
-	onCheckout,
-	onTryStyle,
-	onContinue,
-}: Props ) => {
+const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }: Props ) => {
 	const translate = useTranslate();
-	const { title, description, continueLabel } = useScreen( 'upsell' );
+	const { title, description } = useScreen( 'upsell' );
 	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
 
 	return (
@@ -37,7 +26,7 @@ const ScreenUpsell = ( {
 			/>
 			<div className="screen-container__body">
 				<strong className="screen-upsell__heading">
-					{ translate( 'Custom styles' ) }
+					{ translate( 'Premium styles' ) }
 					<PremiumBadge
 						shouldHideTooltip
 						shouldCompactWithAnimation
@@ -46,11 +35,6 @@ const ScreenUpsell = ( {
 				</strong>
 				<div className="screen-upsell__description">
 					<p>{ translations.description }</p>
-					<ToggleControl
-						label={ translate( 'Reset custom styles' ) }
-						checked={ resetCustomStyles }
-						onChange={ () => setResetCustomStyles( ! resetCustomStyles ) }
-					/>
 				</div>
 				<strong>{ translations.featuresTitle }</strong>
 				<ul className="screen-upsell__features">
@@ -63,17 +47,11 @@ const ScreenUpsell = ( {
 				</ul>
 			</div>
 			<div className="screen-container__footer">
-				{ ! resetCustomStyles && (
-					<Button className="pattern-assembler__button" onClick={ onTryStyle }>
-						{ translations.cancel }
-					</Button>
-				) }
-				<Button
-					className="pattern-assembler__button"
-					primary
-					onClick={ ! resetCustomStyles ? onCheckout : onContinue }
-				>
-					{ ! resetCustomStyles ? translations.upgradeWithPlan : continueLabel }
+				<Button className="pattern-assembler__button" onClick={ onTryStyle }>
+					{ translations.cancel }
+				</Button>
+				<Button className="pattern-assembler__button" primary onClick={ onCheckout }>
+					{ translations.upgradeWithPlan }
 				</Button>
 			</div>
 		</>

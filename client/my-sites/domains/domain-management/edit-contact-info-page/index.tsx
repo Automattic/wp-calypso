@@ -1,9 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import ExternalLink from 'calypso/components/external-link';
 import Main from 'calypso/components/main';
+import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
@@ -34,6 +37,15 @@ const EditContactInfoPage = ( {
 	selectedSite,
 }: EditContactInfoPageProps ) => {
 	const translate = useTranslate();
+
+	const { data } = useDomainTransferRequestQuery( selectedSite?.slug ?? '', selectedDomainName );
+	const transferPending = !! data?.email;
+
+	useEffect( () => {
+		if ( transferPending ) {
+			page( domainManagementEdit( selectedSite?.slug ?? '', selectedDomainName, currentRoute ) );
+		}
+	}, [ transferPending, selectedSite, selectedDomainName, currentRoute ] );
 
 	const isDataLoading = () => {
 		return ! getSelectedDomain( { domains, selectedDomainName } ) || isRequestingWhois;

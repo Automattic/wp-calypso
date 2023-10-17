@@ -11,6 +11,8 @@ import {
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 
 const analyticsPageTitle = 'Reader';
@@ -23,18 +25,29 @@ export const tagListing = ( context, next ) => {
 		.replace( /\s+/g, '-' )
 		.replace( /-{2,}/g, '-' );
 	const tagTitle = titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' );
+	const state = context.store.getState();
 
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
-	const streamKey = 'tag:' + tagSlug;
+
+	// default to popular tags unless the user explicitly selects 'date'
+	const streamKey = context.query.sort === 'date' ? 'tag:' + tagSlug : 'tag_popular:' + tagSlug;
+
 	const mcKey = 'topic';
 	const startDate = getStartDate( context );
 
-	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-	recordTrack( 'calypso_reader_tag_loaded', {
-		tag: tagSlug,
-	} );
+	const currentRoute = getCurrentRoute( state );
+	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
 
-	if ( ! isUserLoggedIn( context.store.getState() ) ) {
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack(
+		'calypso_reader_tag_loaded',
+		{
+			tag: tagSlug,
+		},
+		{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
+	);
+
+	if ( ! isUserLoggedIn( state ) ) {
 		context.renderHeaderSection = renderHeaderSection;
 	}
 	context.primary = (
@@ -51,6 +64,7 @@ export const tagListing = ( context, next ) => {
 				streamKey={ streamKey }
 				encodedTagSlug={ encodedTag }
 				decodedTagSlug={ tagSlug }
+				sort={ context.query.sort }
 				trackScrollPage={ trackScrollPage.bind(
 					// eslint-disable-line
 					null,

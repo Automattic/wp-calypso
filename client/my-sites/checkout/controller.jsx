@@ -47,7 +47,24 @@ import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './u
 const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkoutJetpackSiteless( context, next ) {
-	sitelessCheckout( context, next, { sitelessCheckoutType: 'jetpack' } );
+	const connectAfterCheckout = context.query?.connect_after_checkout === 'true';
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
+	 * site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 *
+	 * @type {string|undefined}
+	 */
+	const fromSiteSlug = context.query?.from_site_slug;
+	const adminUrl = context.query?.admin_url;
+	sitelessCheckout( context, next, {
+		sitelessCheckoutType: 'jetpack',
+		connectAfterCheckout,
+		...( fromSiteSlug && { fromSiteSlug } ),
+		...( adminUrl && { adminUrl } ),
+	} );
 }
 
 export function checkoutAkismetSiteless( context, next ) {
@@ -253,6 +270,17 @@ export function checkoutPending( context, next ) {
 		? Number( context.query.receiptId )
 		: undefined;
 
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
+	 * site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 *
+	 * @type {string|undefined}
+	 */
+	const fromSiteSlug = context.query?.from_site_slug;
+
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
@@ -261,6 +289,7 @@ export function checkoutPending( context, next ) {
 			siteSlug={ siteSlug }
 			redirectTo={ redirectTo }
 			receiptId={ receiptId }
+			fromSiteSlug={ fromSiteSlug }
 		/>
 	);
 
@@ -440,7 +469,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 	const userHasJetpackSites = currentUser && currentUser.jetpack_visible_site_count >= 1;
 
 	const { product } = context.params;
-	const { receiptId, source, siteId } = context.query;
+	const { receiptId, source, siteId, fromSiteSlug } = context.query;
 
 	if ( ! userHasJetpackSites ) {
 		page.redirect(
@@ -457,6 +486,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 				receiptId={ receiptId }
 				source={ source }
 				jetpackTemporarySiteId={ siteId }
+				fromSiteSlug={ fromSiteSlug }
 			/>
 		);
 	}

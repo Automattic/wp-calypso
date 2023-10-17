@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import DomainUpsell from '../';
 
 const initialState = {
@@ -52,6 +53,9 @@ const initialState = {
 			primary_blog: 1,
 		},
 	},
+	productsList: {
+		isFetching: false,
+	},
 };
 
 jest.mock( '@automattic/domain-picker/src', () => {
@@ -79,7 +83,7 @@ const searchForDomainCta = 'Search for a domain';
 
 describe( 'index', () => {
 	test( 'Should show H3 content for the Home domain upsell and test search domain button link', async () => {
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( initialState );
 
 		render(
@@ -108,7 +112,7 @@ describe( 'index', () => {
 			.post( '/rest/v1.1/me/shopping-cart/1' )
 			.reply( 200 );
 
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( initialState );
 
 		render(
@@ -153,7 +157,7 @@ describe( 'index', () => {
 			},
 		};
 
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( newInitialState );
 
 		render(
@@ -190,7 +194,7 @@ describe( 'index', () => {
 			},
 		};
 
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( newInitialState );
 
 		render(
@@ -245,7 +249,7 @@ describe( 'index', () => {
 			},
 		};
 
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( newInitialState );
 
 		render(
@@ -269,7 +273,7 @@ describe( 'index', () => {
 			},
 		};
 
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( newInitialState );
 
 		render(

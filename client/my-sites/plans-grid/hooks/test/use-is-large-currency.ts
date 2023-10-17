@@ -2,71 +2,68 @@
  * @jest-environment jsdom
  */
 
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import useIsLargeCurrency from '../npm-ready/use-is-large-currency';
-import type { GridPlan } from '../npm-ready/data-store/use-grid-plans';
+
+jest.mock( '@wordpress/element', () => ( {
+	...jest.requireActual( '@wordpress/element' ),
+	useMemo: jest.fn().mockImplementation( ( fn ) => fn() ),
+} ) );
 
 describe( 'useIsLargeCurrency', () => {
-	const gridPlans = [
-		{
-			planSlug: PLAN_FREE,
-			pricing: {
-				originalPrice: {
-					monthly: 0,
-					full: 0,
-				},
-				discountedPrice: {
-					monthly: 0,
-					full: 0,
-				},
-				currencyCode: 'USD',
-			},
-		},
-		{
-			planSlug: PLAN_PERSONAL,
-			pricing: {
-				originalPrice: {
-					monthly: 100,
-					full: 100000,
-				},
-				discountedPrice: {
-					monthly: 0,
-					full: 0,
-				},
-				currencyCode: 'USD',
-			},
-		},
-		{
-			planSlug: PLAN_PREMIUM,
-			pricing: {
-				originalPrice: {
-					monthly: 2500,
-					full: 3000000,
-				},
-				discountedPrice: {
-					monthly: 0,
-					full: 20,
-				},
-				currencyCode: 'USD',
-			},
-		},
-	];
-
-	test( 'should return false for small values', () => {
-		expect(
-			useIsLargeCurrency( { gridPlans: gridPlans as GridPlan[], returnMonthly: true } )
-		).toEqual( false );
+	afterAll( () => {
+		jest.clearAllMocks();
 	} );
 
-	test( 'should return true for large values', () => {
-		expect(
-			useIsLargeCurrency( { gridPlans: gridPlans as GridPlan[], returnMonthly: false } )
-		).toEqual( true );
+	const smallPrices = [ 0, 0, 100, 0, 2500, 0 ];
+	const largePrices = [ 0, 0, 100000, 0, 30000000, 20 ];
+
+	describe( 'Given add on prices', () => {
+		describe( 'when all display prices are below 7 digits', () => {
+			test( 'should not consider prices to be large large', () => {
+				expect(
+					useIsLargeCurrency( { prices: smallPrices, isAddOn: true, currencyCode: 'USD' } )
+				).toEqual( false );
+			} );
+		} );
+
+		describe( 'when some display prices are above 7 digits', () => {
+			test( 'should consider prices to be large', () => {
+				expect(
+					useIsLargeCurrency( { prices: largePrices, isAddOn: true, currencyCode: 'USD' } )
+				).toEqual( true );
+			} );
+		} );
 	} );
 
-	test( 'should return true for large, when combined, original and discounted values', () => {
-		expect(
-			useIsLargeCurrency( { gridPlans: gridPlans as GridPlan[], returnMonthly: true } )
-		).toEqual( false );
+	describe( 'Given plan prices', () => {
+		describe( 'when all display prices are below 6 digits', () => {
+			test( 'should not consider prices to be large', () => {
+				expect(
+					useIsLargeCurrency( { prices: smallPrices, isAddOn: false, currencyCode: 'USD' } )
+				).toEqual( false );
+			} );
+		} );
+
+		describe( 'when some display prices are above 6 digits', () => {
+			test( 'should consider prices to be large', () => {
+				expect(
+					useIsLargeCurrency( { prices: largePrices, isAddOn: false, currencyCode: 'USD' } )
+				).toEqual( true );
+			} );
+		} );
+
+		describe( 'when a pair of original and discounted prices are above 9 digits', () => {
+			test( 'should consider it large', () => {
+				const largeCombinedPlanPrices = [ 20000, 3000 ];
+
+				expect(
+					useIsLargeCurrency( {
+						prices: largeCombinedPlanPrices,
+						isAddOn: false,
+						currencyCode: 'USD',
+					} )
+				).toEqual( false );
+			} );
+		} );
 	} );
 } );

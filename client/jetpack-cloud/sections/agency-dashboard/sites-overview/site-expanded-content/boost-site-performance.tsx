@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -22,12 +22,15 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 
 	const helpIconRef = useRef< HTMLElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
-	const [ showBoostModal, setShowBoostModal ] = useState( false );
+	const [ boostModalState, setBoostModalState ] = useState< {
+		show: boolean;
+		upgradeOnly?: boolean;
+	} >( { show: false } );
 
 	const {
 		blog_id: siteId,
 		url_with_scheme: siteUrlWithScheme,
-		url: siteUrl,
+		is_atomic: isAtomicSite,
 		has_boost: hasBoost,
 		jetpack_boost_scores: boostData,
 		has_pending_boost_one_time_score: hasPendingScore,
@@ -45,123 +48,162 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 
 	const isEnabled = hasBoost || Boolean( overallScore ) || hasPendingScore;
 
-	const buttonProps = useMemo(
-		() =>
-			hasBoost && overallScore
-				? {
-						label: translate( 'Optimize CSS' ),
-						href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
-						onClick: () => trackEvent( 'expandable_block_optimize_css_click' ),
-				  }
-				: {
-						label: translate( 'Configure Boost' ),
-						href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`,
-						onClick: () => trackEvent( 'expandable_block_configure_boost_click' ),
-				  },
-		[ hasBoost, siteUrlWithScheme, trackEvent, translate, overallScore ]
-	);
-
-	const handleOnClick = () => {
-		setShowBoostModal( true );
+	const showBoostModal = ( upgradeOnly: boolean ) => {
+		setBoostModalState( { show: true, upgradeOnly } );
 	};
 
-	return (
-		<ExpandedCard
-			header={ translate( 'Boost site performance' ) }
-			isEnabled={ isEnabled }
-			emptyContent={ translate(
-				'{{strong}}Get Score{{/strong}} to see your site performance scores',
-				{
-					components,
-				}
-			) }
-			hasError={ hasError }
-			// Allow to click on the card only if Boost is not active
-			onClick={ ! isEnabled ? handleOnClick : undefined }
-		>
-			<div className="site-expanded-content__card-content-container">
-				<div className="site-expanded-content__card-content">
-					<div className="site-expanded-content__card-content-column">
-						{ hasPendingScore ? (
-							<InProgressIcon />
-						) : (
-							<div
-								className={ classNames(
-									'site-expanded-content__card-content-score',
-									getBoostRatingClass( overallScore )
-								) }
-							>
-								{ getBoostRating( overallScore ) }
+	const ScoreRating = getBoostRating( overallScore );
 
-								<span
-									ref={ helpIconRef }
-									onMouseEnter={ () => setShowTooltip( true ) }
-									onMouseLeave={ () => setShowTooltip( false ) }
+	const ctaButtons = useMemo( () => {
+		if ( ! hasBoost ) {
+			const jetpackDashboardPage = isAtomicSite ? 'jetpack' : 'my-jetpack';
+
+			return [
+				{
+					label: translate( 'Auto-optimize' ),
+					onClick: () => {
+						trackEvent( 'boost_expandable_block_auto_optimize_click' );
+						showBoostModal( true );
+					},
+					primary: true,
+				},
+				{
+					label: translate( 'Settings' ),
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=${ jetpackDashboardPage }`,
+					onClick: () => trackEvent( 'boost_expandable_block_settings_click' ),
+				},
+			];
+		}
+
+		if ( ScoreRating === 'A' ) {
+			return [
+				{
+					label: translate( 'Boost Settings' ),
+					href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
+					onClick: () => trackEvent( 'boost_expandable_block_boost_settings_click' ),
+				},
+			];
+		}
+
+		return [
+			{
+				label: translate( 'Optimize performance' ),
+				href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`,
+				onClick: () => trackEvent( 'boost_expandable_block_optimize_performance_click' ),
+				primary: true,
+			},
+		];
+	}, [ isAtomicSite, hasBoost, ScoreRating, translate, siteUrlWithScheme, trackEvent ] );
+
+	return (
+		<>
+			<ExpandedCard
+				header={ translate( 'Boost site performance' ) }
+				isEnabled={ isEnabled }
+				emptyContent={ translate(
+					'{{strong}}Get Score{{/strong}} to see your site performance scores',
+					{
+						components,
+					}
+				) }
+				hasError={ hasError }
+				// Allow to click on the card only if Boost is not active
+				onClick={ () => {
+					if ( ! isEnabled ) {
+						trackEvent( 'boost_expandable_block_get_score_click' );
+						showBoostModal( false );
+					}
+				} }
+			>
+				<div className="site-expanded-content__card-content-container">
+					<div className="site-expanded-content__card-content">
+						<div className="site-expanded-content__card-content-column">
+							{ hasPendingScore ? (
+								<InProgressIcon />
+							) : (
+								<div
+									className={ classNames(
+										'site-expanded-content__card-content-score',
+										getBoostRatingClass( overallScore )
+									) }
 								>
-									<Icon size={ 20 } className="site-expanded-content__help-icon" icon={ help } />
-								</span>
-								<Tooltip
-									id={ `${ siteId }-boost-help-text` }
-									context={ helpIconRef.current }
-									isVisible={ showTooltip }
-									position="bottom"
-									className="site-expanded-content__tooltip"
-								>
-									{ tooltip }
-								</Tooltip>
+									{ ScoreRating }
+
+									<span
+										ref={ helpIconRef }
+										onMouseEnter={ () => setShowTooltip( true ) }
+										onMouseLeave={ () => setShowTooltip( false ) }
+									>
+										<Icon size={ 20 } className="site-expanded-content__help-icon" icon={ help } />
+									</span>
+									<Tooltip
+										id={ `${ siteId }-boost-help-text` }
+										context={ helpIconRef.current }
+										isVisible={ showTooltip }
+										position="bottom"
+										className="site-expanded-content__tooltip"
+									>
+										{ tooltip }
+									</Tooltip>
+								</div>
+							) }
+							<div className="site-expanded-content__card-content-score-title">
+								{ translate( 'Overall' ) }
 							</div>
-						) }
-						<div className="site-expanded-content__card-content-score-title">
-							{ translate( 'Overall' ) }
+						</div>
+						<div className="site-expanded-content__card-content-column">
+							{ hasPendingScore ? (
+								<InProgressIcon />
+							) : (
+								<div className="site-expanded-content__device-score-container">
+									<div className="site-expanded-content__card-content-column">
+										<Icon
+											size={ 24 }
+											className="site-expanded-content__device-icon"
+											icon={ jetpackBoostDesktopIcon }
+										/>
+										<span className="site-expanded-content__device-score">{ desktopScore }</span>
+									</div>
+									<div className="site-expanded-content__card-content-column site-expanded-content__card-content-column-mobile">
+										<Icon
+											className="site-expanded-content__device-icon"
+											size={ 24 }
+											icon={ jetpackBoostMobileIcon }
+										/>
+										<span className="site-expanded-content__device-score">{ mobileScore }</span>
+									</div>
+								</div>
+							) }
+							<div className="site-expanded-content__card-content-score-title">
+								{ translate( 'Devices' ) }
+							</div>
 						</div>
 					</div>
-					<div className="site-expanded-content__card-content-column">
-						{ hasPendingScore ? (
-							<InProgressIcon />
-						) : (
-							<div className="site-expanded-content__device-score-container">
-								<div className="site-expanded-content__card-content-column">
-									<Icon
-										size={ 24 }
-										className="site-expanded-content__device-icon"
-										icon={ jetpackBoostDesktopIcon }
-									/>
-									<span className="site-expanded-content__device-score">{ desktopScore }</span>
-								</div>
-								<div className="site-expanded-content__card-content-column site-expanded-content__card-content-column-mobile">
-									<Icon
-										className="site-expanded-content__device-icon"
-										size={ 24 }
-										icon={ jetpackBoostMobileIcon }
-									/>
-									<span className="site-expanded-content__device-score">{ mobileScore }</span>
-								</div>
-							</div>
-						) }
-						<div className="site-expanded-content__card-content-score-title">
-							{ translate( 'Devices' ) }
-						</div>
+					<div className="site-expanded-content__card-footer">
+						{ ctaButtons.map( ( ctaButton ) => (
+							<Button
+								key={ ctaButton.label }
+								href={ ctaButton.href }
+								target="_blank"
+								onClick={ ctaButton.onClick }
+								className="site-expanded-content__card-button"
+								primary={ ctaButton.primary }
+								compact
+							>
+								{ ctaButton.label } { !! ctaButton.href && <Gridicon icon="external" /> }
+							</Button>
+						) ) }
 					</div>
 				</div>
-				<div className="site-expanded-content__card-footer">
-					<Button
-						href={ buttonProps.href }
-						target="_blank"
-						onClick={ buttonProps.onClick }
-						className="site-expanded-content__card-button"
-						compact
-					>
-						{ buttonProps.label }
-					</Button>
-				</div>
-			</div>
-			{ showBoostModal && (
+			</ExpandedCard>
+
+			{ boostModalState.show && (
 				<BoostLicenseInfoModal
-					onClose={ () => setShowBoostModal( false ) }
-					siteId={ siteId }
-					siteUrl={ siteUrl }
+					onClose={ () => setBoostModalState( { show: false } ) }
+					site={ site }
+					upgradeOnly={ boostModalState.upgradeOnly }
 				/>
 			) }
-		</ExpandedCard>
+		</>
 	);
 }

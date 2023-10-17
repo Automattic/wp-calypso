@@ -1,9 +1,9 @@
 import { Reader } from '@automattic/data-stores';
+import { useSiteSubscriptionDetailsQuery } from '@automattic/data-stores/src/reader/queries';
 import { ReactNode, useMemo } from 'react';
 import { SiteSubscriptionContext } from 'calypso/blocks/reader-site-subscription';
 import { Path } from 'calypso/blocks/reader-site-subscription/context';
 import { navigate as calypsoNavigate } from 'calypso/lib/navigate';
-import useSiteSubscriptionQuery from '../hooks/use-site-subscription-query';
 
 const navigate = ( path: Path ) => {
 	switch ( path ) {
@@ -13,11 +13,18 @@ const navigate = ( path: Path ) => {
 	}
 };
 
-const SiteSubscriptionProvider: React.FC< { subscriptionId: number; children: ReactNode } > = ( {
+type SiteSubscriptionProviderProps = {
+	children: ReactNode;
+	blogId?: string;
+	subscriptionId?: string;
+};
+
+const SiteSubscriptionProvider: React.FC< SiteSubscriptionProviderProps > = ( {
 	children,
+	blogId,
 	subscriptionId,
 } ) => {
-	const { data, isLoading, error } = useSiteSubscriptionQuery( subscriptionId );
+	const { data, isLoading, error } = useSiteSubscriptionDetailsQuery( blogId, subscriptionId );
 
 	let subscriptionData: Reader.SiteSubscriptionDetails< string > | undefined;
 	let subscriptionError: Reader.ErrorResponse | undefined;

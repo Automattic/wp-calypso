@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -194,9 +193,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						'import__onboarding-page',
 						'import-layout__center',
 						'importer-wrapper',
+						'import__onboarding-page--redesign',
 						{
 							[ `importer-wrapper__${ importer }` ]: !! importer,
-							'import__onboarding-page--redesign': isEnabled( 'onboarding/import-redesign' ),
 						}
 					) }
 					stepName="importer-step"

@@ -1,4 +1,5 @@
-import { ToggleControl } from '@wordpress/components';
+import { Button, ToggleControl } from '@wordpress/components';
+import { Icon, settings } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -30,6 +31,7 @@ class ReaderSiteNotificationSettings extends Component {
 		iconSize: PropTypes.number,
 		showLabel: PropTypes.bool,
 		siteId: PropTypes.number,
+		subscriptionId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -110,6 +112,7 @@ class ReaderSiteNotificationSettings extends Component {
 			sendNewPostsByEmail,
 			sendNewPostsByNotification,
 			isEmailBlocked,
+			subscriptionId,
 		} = this.props;
 
 		if ( ! this.props.siteId ) {
@@ -225,6 +228,22 @@ class ReaderSiteNotificationSettings extends Component {
 								label={ translate( 'Email me new comments' ) }
 							/>
 						</div>
+					) }
+
+					{ subscriptionId && (
+						<Button
+							className="reader-site-notification-settings__manage-subscription-button"
+							icon={
+								<Icon
+									className="subscriptions-ellipsis-menu__item-icon"
+									size={ 20 }
+									icon={ settings }
+								/>
+							}
+							href={ `/read/subscriptions/${ subscriptionId }` }
+						>
+							{ translate( 'Manage subscription' ) }
+						</Button>
 					) }
 				</ReaderPopover>
 			</div>

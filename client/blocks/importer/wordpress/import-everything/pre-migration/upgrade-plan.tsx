@@ -3,14 +3,13 @@ import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button, Popover } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import ConfirmUpgradePlan from './../confirm-upgrade-plan';
+import UpgradePlanDetails from './upgrade-plan-details';
 import type { URL } from 'calypso/types';
 
 interface Props {
@@ -41,7 +40,10 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
 		targetSite.ID
 	);
-	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
+	const isEligibleForTrialPlan =
+		migrationTrialEligibility?.eligible ||
+		// If the user's email is unverified, we still want to show the trial plan option
+		migrationTrialEligibility?.error_code === 'email-unverified';
 	const [ popoverVisible, setPopoverVisible ] = useState( false );
 	const trialBtnRef: React.RefObject< HTMLButtonElement > = useRef( null );
 
@@ -52,11 +54,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	}, [] );
 
 	return (
-		<div
-			className={ classnames( 'import__import-everything', {
-				'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
-			} ) }
-		>
+		<div className="import__import-everything import__import-everything--redesign">
 			<div className="import__heading-title">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
@@ -78,7 +76,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 					}
 				) }
 			</p>
-			<ConfirmUpgradePlan sourceSiteSlug={ sourceSiteSlug } targetSite={ targetSite } />
+			<UpgradePlanDetails sourceSiteSlug={ sourceSiteSlug } targetSite={ targetSite } />
 			<div className="import__footer-button-container">
 				<NextButton isBusy={ isBusy } onClick={ () => startImport() }>
 					{ translate( 'Upgrade and migrate' ) }

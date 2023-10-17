@@ -6,6 +6,7 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 } from '@automattic/calypso-products';
+import { useMemo } from '@wordpress/element';
 import type { PlansIntent } from './use-grid-plans';
 
 export type UseHighlightedFeatures = ( {
@@ -31,18 +32,20 @@ export type UseHighlightedFeatures = ( {
  * TODO clk: move to plans data store
  */
 const useHighlightedFeatures: UseHighlightedFeatures = ( { intent, isInSignup } ) => {
-	if ( isInSignup && intent && 'plans-newsletter' === intent ) {
-		return [
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
-			FEATURE_UNLIMITED_SUBSCRIBERS,
-			FEATURE_PAYMENT_TRANSACTION_FEES_10,
-			FEATURE_PAYMENT_TRANSACTION_FEES_8,
-			FEATURE_PAYMENT_TRANSACTION_FEES_4,
-		];
-	}
+	return useMemo( () => {
+		if ( isInSignup && intent && 'plans-newsletter' === intent ) {
+			return [
+				FEATURE_CUSTOM_DOMAIN,
+				FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+				FEATURE_UNLIMITED_SUBSCRIBERS,
+				FEATURE_PAYMENT_TRANSACTION_FEES_10,
+				FEATURE_PAYMENT_TRANSACTION_FEES_8,
+				FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			];
+		}
 
-	return null;
+		return null;
+	}, [ intent, isInSignup ] );
 };
 
 export default useHighlightedFeatures;

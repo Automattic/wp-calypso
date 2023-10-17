@@ -12,12 +12,13 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import SearchThemes from 'calypso/components/search-themes';
+import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
+import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -160,8 +161,8 @@ class ThemeShowcase extends Component {
 				MYTHEMES: staticFilters.MYTHEMES,
 			} ),
 			RECOMMENDED: staticFilters.RECOMMENDED,
-			...this.subjectFilters,
 			ALL: staticFilters.ALL,
+			...this.subjectFilters,
 		};
 	};
 
@@ -206,6 +207,8 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		let y = 0;
+
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
 			// If you are a larger screen where the theme info is displayed horizontally.
 			if ( window.innerWidth > 600 ) {
@@ -221,16 +224,19 @@ class ThemeShowcase extends Component {
 			const yOffset = -( headerHeight + screenOptionTab ); // Total height of admin bar and screen options on mobile.
 			const elementBoundary = this.scrollRef.current.getBoundingClientRect();
 
-			const y = elementBoundary.top + window.pageYOffset + yOffset;
-			window.scrollTo( { top: y } );
+			y = elementBoundary.top + window.pageYOffset + yOffset;
 		}
+
+		window.scrollTo( { top: y } );
 	};
 
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
-		const { filterToTermTable, search: prevSearch } = this.props;
+		const { filterToTermTable, subjectStringFilter, isSearchV2 } = this.props;
 
-		const filters = searchBoxContent.match( filterRegex ) || [];
+		const filters =
+			`${ searchBoxContent } ${ isSearchV2 ? subjectStringFilter : '' }`.match( filterRegex ) || [];
+
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
 
@@ -240,12 +246,9 @@ class ThemeShowcase extends Component {
 			filter: filterString,
 			// Strip filters and excess whitespace
 			search,
-			// Activate the "All" tab when searching on "Recommended", since the
-			// search might include some results that are not in the recommended
-			// themes (e.g. WP.org themes).
+			// If a category isn't selected we search in the all category.
 			...( search &&
-				prevSearch !== search &&
-				this.getSelectedTabFilter().key === staticFilters.RECOMMENDED.key && {
+				! subjectStringFilter && {
 					category: staticFilters.ALL.key,
 				} ),
 		} );
@@ -256,7 +259,6 @@ class ThemeShowcase extends Component {
 
 	/**
 	 * Returns a full showcase url from current props.
-	 *
 	 * @param {Object} sections fields from this object will override current props.
 	 * @param {string} sections.vertical override vertical prop
 	 * @param {string} sections.tier override tier prop
@@ -287,9 +289,6 @@ class ThemeShowcase extends Component {
 	};
 
 	onTierSelect = ( { value: tier } ) => {
-		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
-		trackClick( 'search bar filter', tier );
-
 		const url = this.constructUrl( {
 			tier,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
@@ -300,6 +299,12 @@ class ThemeShowcase extends Component {
 		} );
 		page( url );
 		this.scrollToSearchInput();
+	};
+
+	onTierSelectFilter = ( { value: tier } ) => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
+		trackClick( 'search bar filter', tier );
+		this.onTierSelect( { value: tier } );
 	};
 
 	onFilterClick = ( tabFilter ) => {
@@ -402,26 +407,66 @@ class ThemeShowcase extends Component {
 
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
+
+		const showCollections =
+			this.props.tier === '' &&
+			( this.props.isLoggedIn
+				? config.isEnabled( 'themes/discovery-lits' )
+				: config.isEnabled( 'themes/discovery-lots' ) );
+
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
+			case staticFilters.RECOMMENDED.key:
+				if ( showCollections ) {
+					return (
+						<ThemeCollectionsLayout
+							getOptions={ this.getThemeOptions }
+							getScreenshotUrl={ this.getScreenshotUrl }
+							getActionLabel={ this.getActionLabel }
+							onTierSelect={ ( tier ) => this.onTierSelect( { value: tier } ) }
+						/>
+					);
+				}
 			default:
 				return this.allThemes( { themeProps } );
 		}
 	};
 
+	getScreenshotUrl = ( theme, themeOptions ) => {
+		const { getScreenshotOption, locale, isLoggedIn } = this.props;
+
+		if ( ! getScreenshotOption( theme ).getUrl ) {
+			return null;
+		}
+
+		return localizeThemesPath(
+			getScreenshotOption( theme ).getUrl( theme, themeOptions ),
+			locale,
+			! isLoggedIn
+		);
+	};
+
+	getActionLabel = ( theme ) => this.props.getScreenshotOption( theme ).label;
+	getThemeOptions = ( theme ) => {
+		return pickBy(
+			addTracking( this.props.options ),
+			( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, this.props.siteId ) )
+		);
+	};
+
 	render() {
 		const {
 			siteId,
-			options,
 			getScreenshotOption,
 			search,
 			filter,
 			isLoggedIn,
+			isSearchV2,
 			pathName,
+			featureStringFilter,
 			filterString,
 			isMultisite,
-			locale,
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
@@ -442,31 +487,17 @@ class ThemeShowcase extends Component {
 			secondaryOption: this.props.secondaryOption,
 			placeholderCount: this.props.placeholderCount,
 			bookmarkRef: this.bookmarkRef,
-			getScreenshotUrl: ( theme, themeOptions ) => {
-				if ( ! getScreenshotOption( theme ).getUrl ) {
-					return null;
-				}
-
-				return localizeThemesPath(
-					getScreenshotOption( theme ).getUrl( theme, themeOptions ),
-					locale,
-					! isLoggedIn
-				);
-			},
+			getScreenshotUrl: this.getScreenshotUrl,
 			onScreenshotClick: ( themeId ) => {
 				if ( ! getScreenshotOption( themeId ).action ) {
 					return;
 				}
 				getScreenshotOption( themeId ).action( themeId );
 			},
-			getActionLabel: ( theme ) => getScreenshotOption( theme ).label,
+			getActionLabel: this.getActionLabel,
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
-			getOptions: ( theme ) =>
-				pickBy(
-					addTracking( options ),
-					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-				),
+			getOptions: this.getThemeOptions,
 		};
 
 		const tabFilters = this.getTabFilters();
@@ -493,21 +524,28 @@ class ThemeShowcase extends Component {
 					<div className="themes__controls">
 						<div className="theme__search">
 							<div className="theme__search-input">
-								<SearchThemes
-									query={ filterString + search }
-									onSearch={ this.doSearch }
-									recordTracksEvent={ this.recordSearchThemesTracksEvent }
-								/>
+								{ isSearchV2 ? (
+									<SearchThemesV2
+										query={ featureStringFilter + search }
+										onSearch={ this.doSearch }
+									/>
+								) : (
+									<SearchThemes
+										query={ filterString + search }
+										onSearch={ this.doSearch }
+										recordTracksEvent={ this.recordSearchThemesTracksEvent }
+									/>
+								) }
 							</div>
 							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
 								<SelectDropdown
 									className="section-nav-tabs__dropdown"
-									onSelect={ this.onTierSelect }
+									onSelect={ this.onTierSelectFilter }
 									selectedText={ translate( 'View: %s', {
 										args: getOptionLabel( tiers, tier ) || '',
 									} ) }
 									options={ tiers }
-									initialSelected={ this.props.tier }
+									initialSelected={ tier }
 								></SelectDropdown>
 							) }
 						</div>
@@ -550,6 +588,8 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),
+		featureStringFilter: prependThemeFilterKeys( state, filter, [ 'subject' ] ),
+		subjectStringFilter: prependThemeFilterKeys( state, filter, [], [ 'subject' ] ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
 		isUpsellCardDisplayed: isUpsellCardDisplayedSelector( state ),
@@ -557,6 +597,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
 	};
 };
 

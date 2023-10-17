@@ -70,16 +70,14 @@ describe( 'PlanFeatures2023GridActions', () => {
 		const contactSupport = 'Contact support';
 		const defaultProps = {
 			availableForPurchase: true,
-			canUserPurchasePlan: true,
+			canUserManageCurrentPlan: true,
 			className: '',
 			current: false,
 			freePlan: false,
-			manageHref: '',
 			isInSignup: false,
 			onUpgradeClick: jest.fn(),
 			flowName: 'foo-flow',
 			isWpcomEnterpriseGridPlan: false,
-			selectedSiteSlug: 'foo.wordpress.com',
 			isStuck: false,
 			showMonthlyPrice: true,
 		};

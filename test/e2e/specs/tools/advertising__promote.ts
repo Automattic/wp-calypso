@@ -34,7 +34,8 @@ declare const browser: Browser;
 skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 	DataHelper.createSuiteTitle( 'Advertising: Promote' ),
 	function () {
-		const pageTitle = DataHelper.getRandomPhrase();
+		// The input has a limit, so let's stay way under to be safe!
+		const pageTitle = DataHelper.getRandomPhrase().slice( 0, 20 );
 		const snippet = Array( 2 ).fill( DataHelper.getRandomPhrase() ).toString();
 
 		let newPostDetails: PostResponse;
@@ -105,7 +106,7 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 
 		it( 'Enter title and snippet', async function () {
 			await blazeCampaignPage.enterText( 'Page title', pageTitle );
-			await blazeCampaignPage.enterText( 'Article Snippet', snippet );
+			await blazeCampaignPage.enterText( 'Ad text', snippet );
 		} );
 
 		it( 'Validate preview', async function () {

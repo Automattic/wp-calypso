@@ -109,6 +109,7 @@ const sections = [
 		module: 'calypso/my-sites/plugins',
 		group: 'sites',
 		enableLoggedOut: true,
+		enableNoSites: true,
 		isomorphic: true,
 		title: 'Plugins',
 	},
@@ -215,6 +216,11 @@ const sections = [
 		isomorphic: true,
 	},
 	{
+		name: 'jetpack-app',
+		paths: [ '/jetpack-app' ],
+		module: 'calypso/jetpack-app',
+	},
+	{
 		name: 'stats',
 		paths: [ '/stats' ],
 		module: 'calypso/my-sites/stats',
@@ -250,7 +256,7 @@ const sections = [
 	},
 	{
 		name: 'site-profiler',
-		paths: [ '/site-profiler' ],
+		paths: [ '/site-profiler', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/site-profiler` ],
 		module: 'calypso/site-profiler',
 		enableLoggedOut: true,
 		group: 'site-profiler',

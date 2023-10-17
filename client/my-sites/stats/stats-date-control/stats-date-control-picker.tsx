@@ -1,5 +1,6 @@
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, calendar } from '@wordpress/icons';
 import moment from 'moment';
 import page from 'page';
 import qs from 'qs';
@@ -7,13 +8,20 @@ import React, { useState, useRef } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
+import './style.scss';
 
-const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPickerProps ) => {
+const DateControlPicker = ( {
+	slug,
+	queryParams,
+	shortcutList,
+	handleApply,
+}: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
 	const [ inputStartDate, setInputStartDate ] = useState( new Date().toISOString().slice( 0, 10 ) );
 	const [ inputEndDate, setInputEndDate ] = useState(
 		new Date( new Date().setMonth( new Date().getMonth() - 3 ) ).toISOString().slice( 0, 10 )
 	);
+	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
@@ -36,7 +44,14 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 		const url = `/stats/${ period }/${ slug }`;
 		const href = `${ url }${ nextDayQuery }`;
 
+		// expose the values externally
+		handleApply( inputStartDate, inputEndDate );
+
 		page( href );
+	};
+
+	const handleOnCancel = () => {
+		togglePopoverOpened( false );
 	};
 
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
@@ -60,6 +75,8 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 		// Calc new end date based on start date plus range as specified in shortcut.
 		const newEndDate = calcNewDateWithOffset( newStartDate, shortcut.range );
 		setInputEndDate( formattedDate( newEndDate ) );
+
+		setCurrentShortcut( shortcut.id || '' );
 	};
 
 	const formatDate = ( date: string ) => {
@@ -67,34 +84,33 @@ const DateControlPicker = ( { slug, queryParams, shortcutList }: DateControlPick
 	};
 
 	return (
-		<>
-			<Button
-				variant="primary"
-				onClick={ () => togglePopoverOpened( ! popoverOpened ) }
-				ref={ infoReferenceElement }
-			>
+		<div className="stats-date-control-picker">
+			<Button onClick={ () => togglePopoverOpened( ! popoverOpened ) } ref={ infoReferenceElement }>
 				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
+				<Icon className="gridicon" icon={ calendar } />
 			</Button>
 			<Popover
-				placement="bottom end"
+				position="bottom"
 				context={ infoReferenceElement?.current }
 				isVisible={ popoverOpened }
-				// TODO: Remove this inline CSS.
-				style={ { minWidth: '260px' } }
 			>
-				<DateControlPickerDate
-					startDate={ inputStartDate }
-					endDate={ inputEndDate }
-					onStartChange={ changeStartDate }
-					onEndChange={ changeEndDate }
-					onApply={ handleOnApply }
-				/>
-				<DateControlPickerShortcuts
-					shortcutList={ shortcutList }
-					onClick={ handleShortcutSelected }
-				/>
+				<div className="stats-date-control-picker__popover-content">
+					<DateControlPickerDate
+						startDate={ inputStartDate }
+						endDate={ inputEndDate }
+						onStartChange={ changeStartDate }
+						onEndChange={ changeEndDate }
+						onApply={ handleOnApply }
+						onCancel={ handleOnCancel }
+					/>
+					<DateControlPickerShortcuts
+						shortcutList={ shortcutList }
+						currentShortcut={ currentShortcut }
+						onClick={ handleShortcutSelected }
+					/>
+				</div>
 			</Popover>
-		</>
+		</div>
 	);
 };
 

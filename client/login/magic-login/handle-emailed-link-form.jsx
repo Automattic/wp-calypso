@@ -96,7 +96,12 @@ class HandleEmailedLinkForm extends Component {
 			hasSubmitted: true,
 		} );
 
-		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal );
+		// To customize the login experience for Gravatar-powered clients in the backend, e.g. SMS messages
+		const flow = isGravPoweredOAuth2Client( this.props.oauth2Client )
+			? this.props.oauth2Client.name
+			: null;
+
+		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal, flow );
 	};
 
 	// Lifted from `blocks/login`
@@ -184,11 +189,13 @@ class HandleEmailedLinkForm extends Component {
 		}
 
 		const line = [
-			translate( 'Logging in as %(emailAddress)s', {
-				args: {
-					emailAddress,
-				},
-			} ),
+			<p>
+				{ translate( 'Logging in as %(emailAddress)s', {
+					args: {
+						emailAddress,
+					},
+				} ) }
+			</p>,
 		];
 
 		if ( currentUser && currentUser.username ) {

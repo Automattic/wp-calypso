@@ -27,11 +27,11 @@ module.exports = function storybookDefaultConfig( {
 					// Forces some plugins to load in loose mode, used by Storybook.
 					// See https://github.com/storybookjs/storybook/issues/14805
 					[
-						require.resolve( '@babel/plugin-proposal-private-property-in-object' ),
+						require.resolve( '@babel/plugin-transform-private-property-in-object' ),
 						{ loose: true },
 					],
 					[ require.resolve( '@babel/plugin-proposal-class-properties' ), { loose: true } ],
-					[ require.resolve( '@babel/plugin-proposal-private-methods' ), { loose: true } ],
+					[ require.resolve( '@babel/plugin-transform-private-methods' ), { loose: true } ],
 				],
 			};
 		},

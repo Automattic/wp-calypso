@@ -4,7 +4,6 @@
 
 const spawnSync = require( 'child_process' ).spawnSync;
 const path = require( 'path' );
-const BuildMetaPlugin = require( '@automattic/calypso-apps-builder/build-meta-webpack-plugin.cjs' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
@@ -99,7 +98,6 @@ function getWebpackConfig(
 					},
 				} ),
 			new ExtensiveLodashReplacementPlugin(),
-			BuildMetaPlugin( { outputPath } ),
 		].filter( Boolean ),
 	};
 }

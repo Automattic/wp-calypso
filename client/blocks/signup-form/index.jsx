@@ -61,6 +61,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
 import PasswordlessSignupForm from './passwordless';
+import SignupFormSocialFirst from './signup-form-social-first';
 import SocialSignupForm from './social';
 
 import './style.scss';
@@ -97,6 +98,7 @@ class SignupForm extends Component {
 		handleSocialResponse: PropTypes.func,
 		isPasswordless: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
+		isSocialFirst: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		save: PropTypes.func,
@@ -120,6 +122,7 @@ class SignupForm extends Component {
 		flowName: '',
 		isPasswordless: false,
 		isSocialSignupEnabled: false,
+		isSocialFirst: false,
 		horizontal: false,
 		shouldDisplayUserExistsError: false,
 	};
@@ -1160,12 +1163,32 @@ class SignupForm extends Component {
 			);
 		}
 
+		const logInUrl = this.getLoginLink();
+
+		if ( this.props.isSocialFirst ) {
+			return (
+				<SignupFormSocialFirst
+					step={ this.props.step }
+					stepName={ this.props.stepName }
+					flowName={ this.props.flowName }
+					goToNextStep={ this.props.goToNextStep }
+					logInUrl={ logInUrl }
+					handleSocialResponse={ this.props.handleSocialResponse }
+					socialService={ this.props.socialService }
+					socialServiceResponse={ this.props.socialServiceResponse }
+					isReskinned={ this.props.isReskinned }
+					redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+					queryArgs={ this.props.queryArgs }
+					notice={ this.getNotice() }
+				/>
+			);
+		}
+
 		const isGravatar = this.props.isGravatar;
 		const showSeparator =
 			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
 
 		if ( ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) || isGravatar ) {
-			const logInUrl = this.getLoginLink();
 			const gravatarProps = isGravatar
 				? {
 						inputPlaceholder: this.props.translate( 'Enter your email address' ),

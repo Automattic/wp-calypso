@@ -28,7 +28,7 @@
 	text-align: center;
 
 	a {
-		@include breakpoint-deprecated( ">480px" ) {
+		@include breakpoint-deprecated(">480px") {
 			white-space: pre;
 		}
 	}
@@ -117,7 +117,7 @@
 
 // Replace recaptcha badge with ToS text and space
 // everything out a little more.
-@media ( max-width: 660px ) {
+@media (max-width: 660px) {
 	.signup-form__recaptcha-tos {
 		display: block;
 	}
@@ -135,4 +135,96 @@
 			margin-bottom: 16px;
 		}
 	}
+}
+
+body.is-section-signup,
+body.is-section-accept-invite {
+	.signup__step.is-user-social {
+		.signup-form-social-first {
+			width: 327px;
+			margin: 0 auto;
+
+			.signup-form__social {
+				padding: 0 !important;
+			}
+
+			.signup-form-social-first__tos-link {
+				color: var(--studio-gray-50, #646970);
+				text-align: center;
+				font-family: "SF Pro Text", sans-serif;
+				font-size: 0.75rem;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 18px;
+				margin-top: 32px;
+
+				a {
+					color: var(--studio-gray-50, #646970);
+					text-decoration-line: underline;
+				}
+			}
+		}
+
+		.signup-form-social-first-email {
+			.card {
+				box-shadow: none;
+				padding-left: 0;
+				padding-right: 0;
+
+				button {
+					display: block;
+					max-width: 327px;
+					margin: 0 auto;
+				}
+			}
+
+			.form-label {
+				color: var(--studio-gray-60, #50575e);
+				font-family: "SF Pro Text", sans-serif;
+				font-size: 0.875rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 20px;
+			}
+
+			.logged-out-form__footer {
+				margin-top: 16px;
+			}
+
+			button.back-button {
+				color: #1d2327;
+				text-align: center;
+				font-family: "SF Pro Text", sans-serif;
+				font-size: 0.875rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 20px;
+				display: block;
+				margin: 0 auto;
+				text-underline-offset: 5px;
+
+				&:hover {
+					color: var(--studio-blue-50, #0675c4);
+				}
+
+				&:focus {
+					outline: 1px dashed var(--studio-blue-50, #0675c4);
+					outline-offset: 3px;
+					box-shadow: none;
+					border-radius: 0;
+				}
+			}
+
+			button.button {
+				border-radius: 4px;
+
+				&:focus {
+					box-shadow: none;
+					outline: 2px solid var(--studio-blue-60, #055d9c);
+					outline-offset: 1px;
+				}
+			}
+		}
+	}
+
 }

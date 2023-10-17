@@ -198,7 +198,7 @@ ThemesList.defaultProps = {
 	isInstalling: () => false,
 };
 
-function ThemeBlock( props ) {
+export function ThemeBlock( props ) {
 	const { theme, index, tabFilter } = props;
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
 
@@ -212,7 +212,7 @@ function ThemeBlock( props ) {
 
 	return (
 		<Theme
-			key={ 'theme-' + theme.id }
+			key={ `theme-${ theme.id }` }
 			buttonContents={ props.getButtonOptions( theme.id, selectedStyleVariation ) }
 			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, {
 				tabFilter,

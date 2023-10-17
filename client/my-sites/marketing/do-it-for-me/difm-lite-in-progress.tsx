@@ -86,7 +86,7 @@ function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: P
 	return (
 		<EmptyContent
 			title={ translate( 'Website content not submitted' ) }
-			line={ lineText }
+			line={ <h3 className="empty-content__line">{ lineText }</h3> }
 			action={ translate( 'Provide website content' ) }
 			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ siteSlug }` }
 			illustration={ WebsiteContentRequiredIllustration }
@@ -118,23 +118,27 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 	return (
 		<EmptyContent
 			title={ translate( 'Your content submission was successful!' ) }
-			line={ translate(
-				"We are currently building your site and will send you an email when it's ready, within %d business days.{{br}}{{/br}}" +
-					'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
-				{
-					components: {
-						br: <br />,
-						SupportLink: (
-							<a
-								href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
-									`I need help with my site: ${ primaryDomain.domain }`
-								) }` }
-							/>
-						),
-					},
-					args: [ 4 ],
-				}
-			) }
+			line={
+				<h3 className="empty-content__line">
+					{ translate(
+						"We are currently building your site and will send you an email when it's ready, within %d business days.{{br}}{{/br}}" +
+							'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
+						{
+							components: {
+								br: <br />,
+								SupportLink: (
+									<a
+										href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+											`I need help with my site: ${ primaryDomain.domain }`
+										) }` }
+									/>
+								),
+							},
+							args: [ 4 ],
+						}
+					) }
+				</h3>
+			}
 			action={ translate( 'Manage domain' ) }
 			actionURL={ domainManagementList( siteSlug, currentRoute ) }
 			secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }

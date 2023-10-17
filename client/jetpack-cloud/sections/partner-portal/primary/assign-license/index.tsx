@@ -7,7 +7,7 @@ import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import AssignLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
-import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product';
 
 import './styles.scss';
 

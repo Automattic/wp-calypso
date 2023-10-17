@@ -24,11 +24,14 @@ const MasterbarLaunchpadNavigator = () => {
 					'is-active': launchpadIsVisible,
 				} ) }
 				tooltip={ translate( 'My tasks' ) }
-				icon={ <LaunchpadNavigatorIcon /> }
+				icon={ <LaunchpadNavigatorIcon siteSlug={ siteSlug } /> }
 			/>
 			{ launchpadIsVisible && (
 				<div className="masterbar__launchpad-navigator">
-					<FloatingNavigator siteSlug={ siteSlug } />
+					<FloatingNavigator
+						siteSlug={ siteSlug }
+						toggleLaunchpadIsVisible={ setLaunchpadIsVisible }
+					/>
 				</div>
 			) }
 		</>

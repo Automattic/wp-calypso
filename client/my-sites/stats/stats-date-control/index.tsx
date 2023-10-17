@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React from 'react';
 import IntervalDropdown from '../stats-interval-dropdown';
 import DateControlPicker from './stats-date-control-picker';
@@ -6,7 +7,13 @@ import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
-const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDateControlProps ) => {
+const StatsDateControl = ( {
+	slug,
+	queryParams,
+	period,
+	pathTemplate,
+	onChangeChartQuantity,
+}: StatsDateControlProps ) => {
 	const shortcutList = [
 		{
 			id: 'today',
@@ -46,10 +53,25 @@ const StatsDateControl = ( { slug, queryParams, period, pathTemplate }: StatsDat
 		},
 	];
 
+	const handleApply = ( startDate: string, endDate: string ) => {
+		// calculate offset between start and end to influcence the number of points for the chart
+		// TODO: take period into account
+		const offset = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
+
+		// TODO: add period update if the offet is too big to accomodate the chart
+
+		onChangeChartQuantity( offset + 1 );
+	};
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
-			<DateControlPicker slug={ slug } queryParams={ queryParams } shortcutList={ shortcutList } />
+			<DateControlPicker
+				slug={ slug }
+				queryParams={ queryParams }
+				shortcutList={ shortcutList }
+				handleApply={ handleApply }
+			/>
 		</div>
 	);
 };

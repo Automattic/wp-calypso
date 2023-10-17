@@ -1,4 +1,4 @@
-import { isSiteOnMigrationTrial, isSiteOnECommerceTrial } from '..';
+import { isSiteOnMigrationTrial, isSiteOnECommerceTrial, isSiteOnHostingTrial } from '..';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -9,5 +9,9 @@ import type { AppState } from 'calypso/types';
  * @returns {boolean} Returns true if the site is on a trial
  */
 export default function isTrialSite( state: AppState, siteId: number ): boolean {
-	return isSiteOnECommerceTrial( state, siteId ) || isSiteOnMigrationTrial( state, siteId );
+	return (
+		isSiteOnECommerceTrial( state, siteId ) ||
+		isSiteOnMigrationTrial( state, siteId ) ||
+		isSiteOnHostingTrial( state, siteId )
+	);
 }

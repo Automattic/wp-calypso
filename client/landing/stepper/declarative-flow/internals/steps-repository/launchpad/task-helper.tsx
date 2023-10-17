@@ -59,7 +59,7 @@ export function getEnhancedTasks(
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
 	stripeConnectUrl?: string,
-	setShowConfirmModal: () => void = () => {},
+	setShowConfirmModal: () => void = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	isDomainEmailUnverified = false
 ) {
 	if ( ! tasks ) {
@@ -202,7 +202,7 @@ export function getEnhancedTasks(
 					let subtitle = task.subtitle;
 
 					if ( displayGlobalStylesWarning ) {
-						const removeCustomStyles = translate( 'Or, {{a}}remove your custom styles{{/a}}.', {
+						const removeCustomStyles = translate( 'Or, {{a}}remove your premium styles{{/a}}.', {
 							components: {
 								a: (
 									<ExternalLink
@@ -550,9 +550,22 @@ export function getEnhancedTasks(
 								: translate( 'Upgrade plan' ),
 					};
 					break;
+				case 'verify_domain_email':
+					taskData = {
+						completed: ! isDomainEmailUnverified,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.replace( task.calypso_path || `/domains/manage/${ siteSlug }` );
+						},
+					};
+					break;
 				case 'verify_email':
 					taskData = {
 						completed: isEmailVerified,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.replace( task.calypso_path || '/me/account' );
+						},
 					};
 					break;
 				case 'set_up_payments':

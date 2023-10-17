@@ -43,12 +43,46 @@ describe( 'BoostSitePerformance', () => {
 		expect( strongTag ).toHaveStyle( 'font-weight: bold' );
 	} );
 
-	test( 'renders the Optimize css button when there is a score and has boost', () => {
-		render(
-			<BoostSitePerformance site={ site } trackEvent={ trackEventMock } hasError={ false } />
+	test( "renders the 'Auto-optimize' and 'Settings' buttons when there is a score and has no boost", () => {
+		const props = {
+			site: {
+				...site,
+				has_boost: false,
+				jetpack_boost_scores: { overall: 90, mobile: 90, desktop: 90 },
+			},
+			trackEvent: trackEventMock,
+			hasError: false,
+		};
+
+		render( <BoostSitePerformance { ...props } /> );
+
+		const autoOptimizeButton = screen.getByText( /Auto-optimize/i );
+		expect( autoOptimizeButton ).toBeInTheDocument();
+
+		const settingsButton = screen.getByRole( 'link', { name: /settings/i } );
+		expect( settingsButton ).toBeInTheDocument();
+		expect( settingsButton ).toHaveAttribute(
+			'href',
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack`
 		);
 
-		const button = screen.getByRole( 'link', { name: /optimize css/i } );
+		fireEvent.click( settingsButton );
+		expect( trackEventMock ).toHaveBeenCalledWith( 'boost_expandable_block_settings_click' );
+	} );
+
+	test( 'renders the Boost settings button when there is a high score and has boost', () => {
+		const props = {
+			site: {
+				...site,
+				has_boost: true,
+				jetpack_boost_scores: { overall: 95, mobile: 95, desktop: 95 },
+			},
+			trackEvent: trackEventMock,
+			hasError: false,
+		};
+		render( <BoostSitePerformance { ...props } /> );
+
+		const button = screen.getByRole( 'link', { name: /boost settings/i } );
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
@@ -56,28 +90,31 @@ describe( 'BoostSitePerformance', () => {
 		);
 
 		fireEvent.click( button );
-		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_optimize_css_click' );
+		expect( trackEventMock ).toHaveBeenCalledWith( 'boost_expandable_block_boost_settings_click' );
 	} );
 
-	test( 'renders the Configure Boost button when there is a score and has no boost', () => {
+	test( 'renders the Boost settings button when there is a low score and has boost', () => {
 		const props = {
 			site: {
 				...site,
-				has_boost: false,
+				has_boost: true,
+				jetpack_boost_scores: { overall: 50, mobile: 50, desktop: 50 },
 			},
 			trackEvent: trackEventMock,
 			hasError: false,
 		};
 		render( <BoostSitePerformance { ...props } /> );
 
-		const button = screen.getByRole( 'link', { name: /configure boost/i } );
+		const button = screen.getByRole( 'link', { name: /optimize performance/i } );
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute(
 			'href',
-			`${ site.url_with_scheme }/wp-admin/admin.php?page=my-jetpack#/add-boost`
+			`${ site.url_with_scheme }/wp-admin/admin.php?page=jetpack-boost`
 		);
 
 		fireEvent.click( button );
-		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_configure_boost_click' );
+		expect( trackEventMock ).toHaveBeenCalledWith(
+			'boost_expandable_block_optimize_performance_click'
+		);
 	} );
 } );

@@ -5,12 +5,7 @@ import {
 	getVariationType,
 } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
-import {
-	StepContainer,
-	isSiteAssemblerFlow,
-	isSiteSetupFlow,
-	NavigatorScreen,
-} from '@automattic/onboarding';
+import { StepContainer, isSiteAssemblerFlow, NavigatorScreen } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalUseNavigator as useNavigator,
@@ -22,7 +17,6 @@ import { useState, useRef, useMemo } from 'react';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
-import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -40,6 +34,7 @@ import {
 	usePatternsMapByCategory,
 	useRecipe,
 	useSyncNavigatorScreen,
+	useIsNewSite,
 } from './hooks';
 import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -91,9 +86,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
-
-	// New sites are created from 'site-setup' and 'with-site-assembler' flows
-	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
+	const isNewSite = useIsNewSite( flow );
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
@@ -118,12 +111,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		resetRecipe,
 	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
-	const {
-		shouldUnlockGlobalStyles,
-		numOfSelectedGlobalStyles,
-		resetCustomStyles,
-		setResetCustomStyles,
-	} = useCustomStyles( {
+	const { shouldUnlockGlobalStyles, numOfSelectedGlobalStyles } = useCustomStyles( {
 		siteID: site?.ID,
 		hasColor: !! colorVariation,
 		hasFont: !! fontVariation,
@@ -151,11 +139,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	);
 
 	const selectedVariations = useMemo(
-		() =>
-			! resetCustomStyles
-				? ( [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[] )
-				: [],
-		[ colorVariation, fontVariation, resetCustomStyles ]
+		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
+		[ colorVariation, fontVariation ]
 	);
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
@@ -215,7 +200,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
-			reset_custom_styles: resetCustomStyles,
 		} );
 		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
@@ -226,16 +210,15 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		} );
 	};
 
-	const getDesign = () =>
-		( {
-			...selectedDesign,
-			recipe: {
-				...selectedDesign?.recipe,
-				header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
-				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
-				footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
-			} as DesignRecipe,
-		} ) as Design;
+	const getDesign = () => ( {
+		...selectedDesign,
+		recipe: {
+			...selectedDesign?.recipe,
+			header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
+			pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
+			footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
+		} as DesignRecipe,
+	} );
 
 	const updateActivePatternPosition = ( position: number ) => {
 		const patternPosition = header ? position + 1 : position;
@@ -346,7 +329,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	};
 
 	const onSubmit = () => {
-		const design = getDesign();
+		const design = getDesign() as Design;
 		const stylesheet = design.recipe?.stylesheet ?? '';
 		const themeId = getThemeIdFromStylesheet( stylesheet );
 		const hasBlogPatterns = !! sections.find(
@@ -375,7 +358,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 						headerHtml: header?.html,
 						footerHtml: footer?.html,
-						globalStyles: ! resetCustomStyles ? syncedGlobalStylesUserConfig : undefined,
+						globalStyles: syncedGlobalStylesUserConfig,
 						// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
 						// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
 						shouldResetContent: isNewSite && hasBlogPatterns,
@@ -414,7 +397,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		stepName,
 		nextScreenName: isNewSite ? 'confirmation' : 'activation',
 		onUpgradeLater: onContinue,
-		onContinue,
 		recordTracksEvent,
 	} );
 
@@ -431,11 +413,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	};
 
 	const onBack = () => {
-		// Turn off the resetting custom styles when going back from the upsell screen
-		if ( currentScreen.name === 'upsell' && resetCustomStyles ) {
-			setResetCustomStyles( false );
-		}
-
 		// Go back to the previous screen
 		if ( currentScreen.previousScreen ) {
 			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
@@ -584,8 +561,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					<ScreenUpsell
 						{ ...globalStylesUpgradeProps }
 						numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
-						resetCustomStyles={ resetCustomStyles }
-						setResetCustomStyles={ setResetCustomStyles }
 					/>
 				</NavigatorScreen>
 			</div>
@@ -599,6 +574,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						patternsMapByCategory={ patternsMapByCategory }
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
+						isNewSite={ isNewSite }
 					/>
 				</NavigatorScreen>
 
@@ -611,6 +587,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						patternsMapByCategory={ patternsMapByCategory }
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
+						isNewSite={ isNewSite }
 					/>
 				</NavigatorScreen>
 
@@ -643,6 +620,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				onDeleteFooter={ onDeleteFooter }
 				onShuffle={ onShuffle }
 				recordTracksEvent={ recordTracksEvent }
+				isNewSite={ isNewSite }
 			/>
 		</div>
 	);

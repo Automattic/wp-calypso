@@ -21,7 +21,7 @@
 		"@jest/types": "^29.5.0",
 		"@types/totp-generator": "^0.0.3",
 		"form-data": "^4.0.0",
-		"jest-docblock": "^29.6.3",
+		"jest-docblock": "^29.7.0",
 		"mailosaur": "^8.4.0",
 		"nock": "^13.3.3",
 		"playwright": "^1.37",
@@ -37,7 +37,7 @@
 		"@wordpress/i18n": "^4.41.0",
 		"asana-phrase": "^0.0.8",
 		"node-fetch": "^2.6.7",
-		"typescript": "^5.1.6"
+		"typescript": "^5.2.2"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",

@@ -5,6 +5,7 @@ import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
+import moment from 'moment';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -116,6 +117,7 @@ class StatsSite extends Component {
 	state = {
 		activeTab: null,
 		activeLegend: null,
+		customChartQuantity: null,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -143,6 +145,7 @@ class StatsSite extends Component {
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
+	onChangeChartQuantity = ( customChartQuantity ) => this.setState( { customChartQuantity } );
 
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
@@ -161,6 +164,14 @@ class StatsSite extends Component {
 		) {
 			return true;
 		}
+	}
+
+	getValidDateOrNullFromInput( inputDate ) {
+		if ( inputDate === undefined ) {
+			return null;
+		}
+		const isValid = moment( inputDate ).isValid();
+		return isValid ? inputDate : null;
 	}
 
 	renderStats() {
@@ -189,6 +200,31 @@ class StatsSite extends Component {
 
 		// For the new date picker
 		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
+
+		// Set up a custom range for the chart.
+		// Dependant on new date range picker controls.
+		let customChartRange = null;
+		if ( isDateControlEnabled ) {
+			// Sort out end date for chart.
+			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+			if ( chartEnd ) {
+				customChartRange = { chartEnd };
+			} else {
+				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
+			}
+			// Sort out quantity for chart.
+			// ToDo: Update to take period into account.
+			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
+			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+			if ( chartStart && isSameOrBefore ) {
+				const diff = moment( chartEnd ).diff( moment( chartStart ), 'days' );
+				// Make sure quantity includes start date.
+				this.state.customChartQuantity = diff + 1;
+			} else {
+				// If we have a goofy start date, ignore it.
+				this.state.customChartQuantity = 7;
+			}
+		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -274,6 +310,7 @@ class StatsSite extends Component {
 										queryParams={ context.query }
 										period={ period }
 										pathTemplate={ pathTemplate }
+										onChangeChartQuantity={ this.onChangeChartQuantity }
 									/>
 								</StatsPeriodHeader>
 							</>
@@ -310,6 +347,8 @@ class StatsSite extends Component {
 							queryDate={ queryDate }
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
+							customQuantity={ this.state.customChartQuantity }
+							customRange={ customChartRange }
 						/>
 					</>
 

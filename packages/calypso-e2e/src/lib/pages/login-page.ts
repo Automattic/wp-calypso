@@ -129,7 +129,8 @@ export class LoginPage {
 	 * Clicks the "Create a new account" link.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
-		const locator = await this.page.locator( ':text-is("Create a new account")' );
+		const locator = this.page.getByRole( 'link', { name: 'Create a new account' } );
+		await locator.waitFor();
 		await locator.click();
 
 		return locator;

@@ -159,6 +159,25 @@ $calypso-header-height: 31px;
 			@include grid-column( 3, 1 );
 		}
 	}
+
+	.plugin-details__plugin-download {
+		margin-top: 20px;
+		gap: 5px;
+		display: flex;
+		font-size: $font-body-extra-small;
+
+		@include breakpoint-deprecated( "<1280px" ) {
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.plugin-details__plugin-download-cta {
+			a {
+				font-size: $font-body-extra-small;
+				padding: 6px 14px;
+			}
+		}
+	}
 }
 
 .plugin-details__page {

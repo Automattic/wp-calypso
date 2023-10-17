@@ -117,9 +117,9 @@ const HorizontalBarListItem = ( {
 				) }
 				style={
 					! usePlainCard
-						? {
+						? ( {
 								[ `--${ BASE_CLASS_NAME }-fill` ]: `${ fillPercentage }%`,
-						  }
+						  } as React.CSSProperties )
 						: {}
 				}
 				onClick={ rowClick } // only execute onClick if url is not defined, otherwise anchor click will be ignored

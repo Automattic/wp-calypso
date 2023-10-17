@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
@@ -25,7 +26,15 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
-			...( [ 'domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
+			...( [ 'domain' ].includes( flowName ) && {
+				isDomainOnly: 1,
+				checkoutBackUrl:
+					config( 'env' ) === 'production'
+						? `https://${ config( 'hostname' ) }/start/domain/domain-only`
+						: `${ config( 'protocol' ) ? config( 'protocol' ) : 'https' }://${ config(
+								'hostname'
+						  ) }${ config( 'port' ) ? ':' + config( 'port' ) : '' }/start/domain/domain-only`,
+			} ),
 		},
 		checkoutURL
 	);

@@ -12,7 +12,7 @@ import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 
 interface SitesGridActionRenewProps {
 	site: SiteExcerptData;
-	hideRenewLink?: boolean;
+	isUpgradeable: boolean;
 }
 
 const Container = styled.div( {
@@ -37,7 +37,7 @@ const RenewLink = styled.a( {
 	},
 } );
 
-export function SitesGridActionRenew( { site, hideRenewLink }: SitesGridActionRenewProps ) {
+export function SitesGridActionRenew( { site, isUpgradeable }: SitesGridActionRenewProps ) {
 	const { __ } = useI18n();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const isSiteOwner = site.site_owner === userId;
@@ -64,9 +64,11 @@ export function SitesGridActionRenew( { site, hideRenewLink }: SitesGridActionRe
 						sprintf( __( '%s Plan expired.' ), site.plan?.product_name_short )
 					}
 				</span>
-				{ isSiteOwner && ! hideRenewLink && (
+				{ isSiteOwner && (
 					<RenewLink
-						href={ `/checkout/${ site.slug }/${ productSlug }` }
+						href={
+							isUpgradeable ? `/plans/${ site.slug }` : `/checkout/${ site.slug }/${ productSlug }`
+						}
 						onClick={ () => {
 							recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.ON_CLICK, {
 								product_slug: productSlug,
@@ -74,7 +76,7 @@ export function SitesGridActionRenew( { site, hideRenewLink }: SitesGridActionRe
 							} );
 						} }
 					>
-						{ __( 'Renew' ) }
+						{ isUpgradeable ? __( 'Upgrade' ) : __( 'Renew' ) }
 					</RenewLink>
 				) }
 			</Notice>

@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateFilter } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { CalypsoDispatch } from 'calypso/state/types';
 
 interface Props {
@@ -25,10 +26,24 @@ const TextSelector: FunctionComponent< Props > = ( { siteId, filter } ) => {
 
 		if ( event.key === 'Enter' ) {
 			dispatch( updateFilter( siteId, { textSearch: value } ) );
+			dispatch(
+				recordTracksEvent( 'calypso_activitylog_filterbar_text_search', {
+					characters: value.length,
+				} )
+			);
 		}
 	};
 
 	const onChange = ( value: string ) => {
+		if ( value !== searchQuery && value.length === 0 ) {
+			// Field was cleared, so clear the filter without waiting for enter
+			dispatch( updateFilter( siteId, { textSearch: '' } ) );
+			dispatch(
+				recordTracksEvent( 'calypso_activitylog_filterbar_text_search', {
+					characters: value.length,
+				} )
+			);
+		}
 		setSearchQuery( value );
 	};
 

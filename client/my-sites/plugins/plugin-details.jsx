@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
@@ -191,7 +191,8 @@ function PluginDetails( props ) {
 
 	const existingPlugin = useMemo( () => {
 		if (
-			( ! isMarketplaceProduct && ( isWporgPluginFetching || ! isWporgPluginFetched ) ) ||
+			( ! isMarketplaceProduct &&
+				( isWporgPluginFetching || ( ! isWporgPluginFetched && ! wporgPluginError ) ) ) ||
 			( isMarketplaceProduct && ( isWpComPluginFetching || ! isWpComPluginFetched ) )
 		) {
 			return 'unknown';
@@ -217,6 +218,7 @@ function PluginDetails( props ) {
 		isWpComPluginFetched,
 		isWporgPluginFetching,
 		isWporgPluginFetched,
+		wporgPluginError,
 		fullPlugin,
 		requestingPluginsForSites,
 	] );
@@ -437,17 +439,22 @@ function PluginDetails( props ) {
 						</div>
 
 						{ ! showPlaceholder && ! requestingPluginsForSites && isWporgPluginFetched && (
-							<Card className="plugin-details-download-card">
-								<Gridicon icon="cloud-download" size={ 48 } />
-								<p>{ downloadText }</p>
-								<Button
-									href={ `https://downloads.wordpress.org/plugin/${ fullPlugin?.slug || '' }.zip` }
-									rel="nofollow"
-								>
-									{ translate( 'Download' ) }
-								</Button>
+							<div className="plugin-details__plugin-download">
+								<div className="plugin-details__plugin-download-text">
+									<span>{ downloadText }</span>
+								</div>
+								<div className="plugin-details__plugin-download-cta">
+									<Button
+										href={ `https://downloads.wordpress.org/plugin/${
+											fullPlugin?.slug || ''
+										}.zip` }
+										rel="nofollow"
+									>
+										{ translate( 'Download' ) }
+									</Button>
+								</div>
 								<script type="application/ld+json">{ structuredData }</script>
-							</Card>
+							</div>
 						) }
 					</div>
 				</div>

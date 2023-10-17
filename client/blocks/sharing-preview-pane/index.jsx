@@ -27,7 +27,8 @@ import {
 	getExcerptForPost,
 	getSummaryForPost,
 	getPostCustomImage,
-	isSocialPost,
+	getSigImageUrl,
+	getPostCustomMedia,
 } from './utils';
 
 import './style.scss';
@@ -35,7 +36,7 @@ import './style.scss';
 const serviceNames = {
 	facebook: 'Facebook',
 	'instagram-business': 'Instagram',
-	twitter: 'Twitter',
+	x: 'X',
 	linkedin: 'LinkedIn',
 	tumblr: 'Tumblr',
 	mastodon: 'Mastodon',
@@ -94,14 +95,14 @@ class SharingPreviewPane extends PureComponent {
 		const articleContent = getExcerptForPost( post );
 		const articleSummary = getSummaryForPost( post, translate );
 		const siteDomain = get( site, 'domain', '' );
-		const imageUrl = getPostImage( post );
+		const imageUrl = getSigImageUrl( post ) || getPostCustomImage( post ) || getPostImage( post );
+		const media = getPostCustomMedia( post );
 
 		const connection = find( connections, { service: selectedService } ) ?? {};
 
 		/**
 		 * Props to pass to the preview component. Will be populated with the connection
 		 * specific data if the selected service is connected.
-		 *
 		 * @type {Object}
 		 */
 		const previewProps = {
@@ -115,14 +116,13 @@ class SharingPreviewPane extends PureComponent {
 			siteDomain,
 			siteIcon,
 			siteName,
+			media,
 			hidePostPreview: ! connection.ID,
 			externalDisplay: connection.external_display,
 			externalName: connection.external_name,
 			externalProfileURL: connection.external_profile_URL,
 			externalProfilePicture: connection.external_profile_picture,
 		};
-
-		const customImage = getPostCustomImage( post );
 
 		switch ( selectedService ) {
 			case 'facebook':
@@ -131,7 +131,6 @@ class SharingPreviewPane extends PureComponent {
 						{ ...previewProps }
 						articleExcerpt={ post.excerpt }
 						articleContent={ post.content }
-						customImage={ customImage }
 					/>
 				);
 			case 'instagram-business':
@@ -146,7 +145,7 @@ class SharingPreviewPane extends PureComponent {
 				);
 			case 'linkedin':
 				return <LinkedinSharePreview { ...previewProps } />;
-			case 'twitter':
+			case 'x':
 				return <TwitterSharePreview { ...previewProps } />;
 			case 'mastodon':
 				return (
@@ -154,8 +153,6 @@ class SharingPreviewPane extends PureComponent {
 						{ ...previewProps }
 						articleExcerpt={ post.excerpt }
 						articleContent={ post.content }
-						customImage={ customImage }
-						isSocialPost={ isSocialPost( post ) }
 					/>
 				);
 			default:
