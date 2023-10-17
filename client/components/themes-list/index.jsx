@@ -49,7 +49,7 @@ const getSiteAssemblerUrl = ( {
 	shouldGoToAssemblerStep,
 	siteEditorUrl,
 } ) => {
-	if ( isLoggedIn && ! shouldGoToAssemblerStep ) {
+	if ( isLoggedIn && selectedSite && ! shouldGoToAssemblerStep ) {
 		return siteEditorUrl;
 	}
 
@@ -267,10 +267,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	}, [ upsellCardDisplayed ] );
 
 	// Design your own theme / homepage.
-	if (
-		( isLoggedIn && isFSEActive ) ||
-		( ! isLoggedIn && assemblerCtaData.shouldGoToAssemblerStep )
-	) {
+	if ( isFSEActive || assemblerCtaData.shouldGoToAssemblerStep ) {
 		options.push( {
 			title: assemblerCtaData.title,
 			icon: addTemplate,
@@ -317,7 +314,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	} );
 
 	// Upload a theme.
-	if ( ! isLoggedIn ) {
+	if ( ! isLoggedIn || ! selectedSite ) {
 		options.push( {
 			title: translate( 'Upload a theme' ),
 			icon: cloudUpload,
