@@ -52,21 +52,6 @@ const DateControlPicker = ( {
 		page( href );
 	};
 
-	const handleOnApply2 = () => {
-		const nextDay = inputStartDate;
-		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
-			addQueryPrefix: true,
-		} );
-		const period = 'day'; // TODO: make this dynamic
-		const url = `/stats/${ period }/${ slug }`;
-		const href = `${ url }${ nextDayQuery }`;
-
-		// expose the values externally
-		handleApply( inputStartDate, inputEndDate );
-
-		page( href );
-	};
-
 	const handleOnCancel = () => {
 		togglePopoverOpened( false );
 	};
