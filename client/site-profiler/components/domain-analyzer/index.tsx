@@ -62,6 +62,7 @@ export default function DomainAnalyzer( props: Props ) {
 							placeholder={ translate( 'Enter a site URL' ) }
 							key={ domain || 'empty' }
 							onKeyDown={ onInputEscape }
+							spellCheck="false"
 						/>
 					</div>
 					<div className="col-2">

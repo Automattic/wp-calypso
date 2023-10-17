@@ -119,19 +119,56 @@ export class EditorPage {
 	 * Initialization steps to ensure the page is fully loaded.
 	 */
 	async waitUntilLoaded(): Promise< void > {
-		// In a typical loading scenario, this request is one of the last to fire.
-		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
-		// it is a fairly good stand-in.
-		await Promise.all( [
-			this.page.waitForURL( /(post|page|post-new.php)/, { timeout: 60 * 1000 } ),
-			this.page.waitForResponse( /.*posts.*/, { timeout: 60 * 1000 } ),
-		] );
+		// When the WordPress version updates on Jetpack AT sites,
+		// `wp-beta` and`wp-previous` require a database update.
+		// @see https://github.com/Automattic/wp-calypso/issues/82412
+		const databaseUpdateMaybeRequired =
+			envVariables.ATOMIC_VARIATION === 'wp-beta' ||
+			envVariables.ATOMIC_VARIATION === 'wp-previous';
+
+		if ( databaseUpdateMaybeRequired ) {
+			const loadEditorWithDatabaseUpdate = async () => {
+				await this.acceptDatabaseUpdate();
+				await this.waitForEditorLoadedRequests( 30 * 1000 );
+			};
+			await Promise.race( [
+				loadEditorWithDatabaseUpdate(),
+				this.waitForEditorLoadedRequests( 60 * 1000 ),
+			] );
+		} else {
+			await this.waitForEditorLoadedRequests( 60 * 1000 );
+		}
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 
 		// Accept the Cookie banner.
 		await this.cookieBannerComponent.acceptCookie();
+	}
+
+	/**
+	 * Waits for the editor to be fully loaded by keying off of requests.
+	 *
+	 * @param {number} timeout Timeout for waiting for the final requests.
+	 */
+	private async waitForEditorLoadedRequests( timeout: number = 60 * 1000 ): Promise< void > {
+		// In a typical loading scenario, this request is one of the last to fire.
+		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
+		// it is a fairly good stand-in.
+		await Promise.all( [
+			this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php)/, { timeout } ),
+			this.page.waitForResponse( /.*posts.*/, { timeout } ),
+		] );
+	}
+
+	/**
+	 * Accepts the WordPress version database update prompt that can happen on lagging AT sites.
+	 */
+	private async acceptDatabaseUpdate(): Promise< void > {
+		const databaseUpdateButton = this.page.getByRole( 'link', {
+			name: 'Update WordPress Database',
+		} );
+		await databaseUpdateButton.click( { timeout: 30 * 1000 } );
 	}
 
 	/**

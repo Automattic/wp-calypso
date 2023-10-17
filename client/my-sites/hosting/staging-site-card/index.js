@@ -212,6 +212,7 @@ export const StagingSiteCard = ( {
 
 	const { pushToStaging } = usePushToStagingMutation( siteId, stagingSite?.id, {
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
 			setSyncError( null );
 		},
 		onError: ( error ) => {
@@ -226,6 +227,7 @@ export const StagingSiteCard = ( {
 
 	const { pullFromStaging } = usePullFromStagingMutation( siteId, stagingSite?.id, {
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
 			setSyncError( null );
 		},
 		onError: ( error ) => {

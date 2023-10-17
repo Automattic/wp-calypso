@@ -384,40 +384,41 @@
 	display: none;
 	padding: 0 16px 16px;
 	position: relative;
-}
 
-.comment__reply-textarea {
-	font-size: $font-body-small;
-	height: 47px; // 1 line
-	line-height: 21px;
-	min-height: 47px; // 1 line
-	overflow: hidden;
-	padding: 12px 70px 12px 16px;
-	resize: vertical;
-	transition: min-height 0.15s linear;
-	white-space: pre-wrap;
-	word-wrap: break-word;
-
-	&::placeholder {
-		color: var(--color-text-subtle);
+	.comment__reply-textarea {
+		font-size: $font-body-small;
+		height: 47px; // 1 line
+		line-height: 21px;
+		min-height: 47px; // 1 line
 		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
+		padding: 12px 70px 12px 16px;
+		resize: vertical;
+		transition: min-height 0.15s linear;
+		white-space: pre-wrap;
+		word-wrap: break-word;
 
-	&:not(:focus) {
-		resize: none;
-	}
+		&::placeholder {
+			color: var(--color-text-subtle);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
 
-	&:focus,
-	&.has-focus {
-		min-height: 68px; // 2 lines
-	}
+		&:not(:focus) {
+			resize: none;
+		}
 
-	&.has-scrollbar {
-		overflow-y: auto;
+		&:focus,
+		&.has-focus {
+			min-height: 68px; // 2 lines
+		}
+
+		&.has-scrollbar {
+			overflow-y: auto;
+		}
 	}
 }
+
 
 .comment__reply-submit.button.is-compact.is-borderless {
 	color: var(--color-neutral-light);

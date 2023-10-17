@@ -13,6 +13,7 @@ export class TumblrSharePreview extends PureComponent {
 			articleContent,
 			imageUrl,
 			message,
+			media,
 			hidePostPreview,
 		} = this.props;
 
@@ -30,6 +31,7 @@ export class TumblrSharePreview extends PureComponent {
 					avatarUrl: externalProfilePicture,
 				} }
 				hidePostPreview={ hidePostPreview }
+				media={ media }
 			/>
 		);
 	}

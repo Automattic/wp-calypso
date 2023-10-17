@@ -1,10 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { getCurrentUser } from '../current-user/selectors';
+import type { AppState } from '../../types';
 
-export const isUserEligibleForFreeHostingTrial = () => {
-	/**
-	 * TODO: Possible criteria
-	 * - if the user has tried the platform already
-	 * - maybe if they already have a paid site
-	 */
-	return isEnabled( 'plans/hosting-trial' );
+export const isUserEligibleForFreeHostingTrial = ( state: AppState ) => {
+	if ( ! isEnabled( 'plans/hosting-trial' ) ) {
+		return false;
+	}
+
+	const currentUser = getCurrentUser( state );
+
+	if ( ! currentUser ) {
+		return false;
+	}
+
+	return ! currentUser.had_hosting_trial;
 };

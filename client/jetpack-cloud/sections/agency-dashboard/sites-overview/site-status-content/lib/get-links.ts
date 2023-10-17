@@ -12,7 +12,8 @@ const getLinks = (
 	type: AllowedTypes,
 	status: string,
 	siteUrl: string,
-	siteUrlWithScheme: string
+	siteUrlWithScheme: string,
+	isAtomicSite: boolean
 ): {
 	link: string;
 	isExternalLink: boolean;
@@ -25,12 +26,16 @@ const getLinks = (
 	switch ( type ) {
 		case 'backup': {
 			if ( status !== 'inactive' ) {
-				link = `/backup/${ siteUrlWithMultiSiteSupport }`;
+				link = isAtomicSite
+					? `https://wordpress.com/backup/${ siteUrlWithMultiSiteSupport }`
+					: `/backup/${ siteUrlWithMultiSiteSupport }`;
+				isExternalLink = isAtomicSite;
 			}
 			break;
 		}
 		case 'scan': {
-			if ( status !== 'inactive' ) {
+			// Scan link should not be available for Atomic sites.
+			if ( status !== 'inactive' && ! isAtomicSite ) {
 				link = `/scan/${ siteUrlWithMultiSiteSupport }`;
 			}
 			break;

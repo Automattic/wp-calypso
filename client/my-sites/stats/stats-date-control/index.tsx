@@ -60,7 +60,7 @@ const StatsDateControl = ( {
 
 		// TODO: add period update if the offet is too big to accomodate the chart
 
-		onChangeChartQuantity( offset );
+		onChangeChartQuantity( offset + 1 );
 	};
 
 	return (

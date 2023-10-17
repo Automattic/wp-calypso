@@ -180,12 +180,6 @@ export class RenderDomainsStep extends Component {
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
-
-		// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
-		if ( this.props.flowName === 'onboarding' ) {
-			loadExperimentAssignment( 'calypso_srm_test_domain_page_view_free_plan_button_click' );
-			loadExperimentAssignment( 'calypso_srm_test_domain_page_view_free_plan_modal_view' );
-		}
 	}
 
 	getLocale() {
@@ -372,10 +366,6 @@ export class RenderDomainsStep extends Component {
 					loadExperimentAssignment(
 						'calypso_onboarding_plans_paid_domain_on_free_plan_confidence_check'
 					);
-
-					// the A/A tests for identifying SRM issue. See peP6yB-11Y-p2
-					loadExperimentAssignment( 'calypso_srm_test_paid_domain_click_free_plan_button_click' );
-					loadExperimentAssignment( 'calypso_srm_test_paid_domain_click_free_plan_modal_view' );
 				} else {
 					loadExperimentAssignment(
 						'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'
@@ -603,6 +593,44 @@ export class RenderDomainsStep extends Component {
 		await this.props.shoppingCartManager.addProductsToCart( productsToAdd ).then( () => {
 			this.setState( { isCartPendingUpdateDomain: null } );
 		} );
+
+		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
+			const sortedProducts = await this.sortProductsByPriceDescending();
+
+			// Replace the products in the cart with the freshly sorted products.
+			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts ).then( () => {
+				this.setState( { isCartPendingUpdateDomain: null } );
+			} );
+		}
+	}
+
+	async sortProductsByPriceDescending() {
+		// Get products from cart.
+		const productsInCart = this.props.cart.products;
+
+		// Sort products by price descending, considering promotions.
+		productsInCart.sort( ( a, b ) => {
+			const getSortingValue = ( product ) => {
+				if ( product.item_subtotal_integer !== 0 ) {
+					return product.item_subtotal_integer;
+				}
+
+				// Use the lowest non-zero new_price or fallback to item_original_cost_integer.
+				const nonZeroPrices =
+					product.cost_overrides
+						?.map( ( override ) => override.new_price * 100 )
+						.filter( ( price ) => price > 0 ) || [];
+
+				return nonZeroPrices.length
+					? Math.min( ...nonZeroPrices )
+					: product.item_original_cost_integer;
+			};
+
+			return getSortingValue( b ) - getSortingValue( a );
+		} );
+
+		return productsInCart;
 	}
 
 	removeDomainClickHandler = ( domain ) => {
@@ -875,16 +903,18 @@ export class RenderDomainsStep extends Component {
 					<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
 						{ this.props.translate( 'Continue' ) }
 					</Button>
-					<Button
-						borderless
-						className="domains__domain-cart-choose-later"
-						onClick={ () => {
-							this.removeAllDomains();
-							this.handleSkip( undefined, false );
-						} }
-					>
-						{ this.props.translate( 'Choose my domain later' ) }
-					</Button>
+					{ this.props.flowName !== 'domain' && (
+						<Button
+							borderless
+							className="domains__domain-cart-choose-later"
+							onClick={ () => {
+								this.removeAllDomains();
+								this.handleSkip( undefined, false );
+							} }
+						>
+							{ this.props.translate( 'Choose my domain later' ) }
+						</Button>
+					) }
 				</div>
 			);
 		};

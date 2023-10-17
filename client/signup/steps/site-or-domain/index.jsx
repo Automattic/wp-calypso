@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { SelectItems } from '@automattic/onboarding';
 import { globe, addCard, layout } from '@wordpress/icons';
@@ -32,9 +33,23 @@ class SiteOrDomain extends Component {
 				const productSlug = getDomainProductSlug( domain );
 				isValidDomain = !! this.props.productsList[ productSlug ];
 			}
+			return isValidDomain && domain;
 		}
 
-		return isValidDomain && domain;
+		const domainCart = this.getDomainCart();
+		if ( domainCart.length ) {
+			const productSlug = domainCart[ 0 ].product_slug;
+			isValidDomain = !! this.props.productsList[ productSlug ];
+			return isValidDomain && domainCart[ 0 ].meta;
+		}
+		return false;
+	}
+
+	getDomainCart() {
+		const { signupDependencies } = this.props;
+		const domainCart = get( signupDependencies, 'domainCart', [] );
+
+		return domainCart;
 	}
 
 	isLeanDomainSearch() {
@@ -74,15 +89,29 @@ class SiteOrDomain extends Component {
 			choices.push( {
 				key: 'page',
 				title: translate( 'New site' ),
-				description: translate(
-					'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
-					{
-						components: {
-							strong: <strong />,
-							br: <br />,
-						},
-					}
-				),
+				description:
+					i18n.getLocaleSlug() === 'en' ||
+					i18n.hasTranslation(
+						'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}'
+					)
+						? translate(
+								'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+								{
+									components: {
+										strong: <strong />,
+										br: <br />,
+									},
+								}
+						  )
+						: translate(
+								'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+								{
+									components: {
+										strong: <strong />,
+										br: <br />,
+									},
+								}
+						  ),
 				icon: null,
 				titleIcon: addCard,
 				value: 'page',
@@ -93,15 +122,29 @@ class SiteOrDomain extends Component {
 				choices.push( {
 					key: 'existing-site',
 					title: translate( 'Existing WordPress.com site' ),
-					description: translate(
-						'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
-						{
-							components: {
-								strong: <strong />,
-								br: <br />,
-							},
-						}
-					),
+					description:
+						i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation(
+							'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}'
+						)
+							? translate(
+									'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+									{
+										components: {
+											strong: <strong />,
+											br: <br />,
+										},
+									}
+							  )
+							: translate(
+									'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+									{
+										components: {
+											strong: <strong />,
+											br: <br />,
+										},
+									}
+							  ),
 					icon: null,
 					titleIcon: layout,
 					value: 'existing-site',
@@ -181,6 +224,7 @@ class SiteOrDomain extends Component {
 		const { stepName } = this.props;
 
 		const domain = this.getDomainName();
+		const domainCart = this.getDomainCart();
 		const productSlug = getDomainProductSlug( domain );
 		const domainItem = domainRegistration( { productSlug, domain } );
 		const siteUrl = domain;
@@ -193,29 +237,32 @@ class SiteOrDomain extends Component {
 				siteSlug: domain,
 				siteUrl,
 				isPurchasingItem: true,
+				domainCart,
 			},
-			{ designType, domainItem, siteUrl }
+			{ designType, domainItem, siteUrl, domainCart }
 		);
 	}
 
 	submitDomainOnlyChoice() {
 		const { goToStep } = this.props;
 
+		const domainCart = this.getDomainCart();
 		// we can skip the next two steps in the `domain-first` flow if the
 		// user is only purchasing a domain
 		this.props.submitSignupStep(
-			{ stepName: 'site-picker', wasSkipped: true },
+			{ stepName: 'site-picker', wasSkipped: true, domainCart },
 			{ themeSlugWithRepo: 'pub/twentysixteen' }
 		);
 		this.props.submitSignupStep(
 			{ stepName: 'plans-site-selected', wasSkipped: true },
 			{ cartItems: null }
 		);
-		goToStep( 'user' );
+		goToStep( config.isEnabled( 'signup/social-first' ) ? 'user-social' : 'user' );
 	}
 
 	handleClickChoice = ( designType ) => {
 		const { goToStep, goToNextStep } = this.props;
+		const domainCart = this.getDomainCart();
 
 		this.submitDomain( designType );
 
@@ -225,7 +272,7 @@ class SiteOrDomain extends Component {
 			goToNextStep();
 		} else {
 			this.props.submitSignupStep(
-				{ stepName: 'site-picker', wasSkipped: true },
+				{ stepName: 'site-picker', wasSkipped: true, domainCart },
 				{ themeSlugWithRepo: 'pub/twentysixteen' }
 			);
 			goToStep( 'plans-site-selected' );
