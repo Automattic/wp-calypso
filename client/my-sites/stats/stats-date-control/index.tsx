@@ -66,6 +66,22 @@ const StatsDateControl = ( {
 		return `${ url }${ newRangeQuery }`;
 	};
 
+	const bestPeriodForDays = ( days: number ): string => {
+		// 30 bars, one day is one bar
+		if ( days <= 30 ) {
+			return 'day';
+		}
+		// 25 bars, 7 days one bar
+		if ( days <= 7 * 25 ) {
+			return 'week';
+		}
+		// 25 bars, 30 days one bar
+		if ( days <= 30 * 25 ) {
+			return 'month';
+		}
+		return 'year';
+	};
+
 	// Previous Apply button handling.
 	const handleApply = ( startDate: string, endDate: string ) => {
 		// calculate offset between start and end to influcence the number of points for the chart
@@ -79,7 +95,9 @@ const StatsDateControl = ( {
 
 	// New Apply button handling.
 	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
-		const href = generateNewLink( 'day', startDate, endDate );
+		const rangeInDays = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
+		const period = bestPeriodForDays( rangeInDays );
+		const href = generateNewLink( period, startDate, endDate );
 		page( href );
 	};
 
