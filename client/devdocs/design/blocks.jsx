@@ -5,6 +5,7 @@ import page from 'page';
 import { Component, Fragment } from 'react';
 import AllSites from 'calypso/blocks/all-sites/docs/example';
 import AnnouncementModalExample from 'calypso/blocks/announcement-modal/docs/example';
+import AppPromo from 'calypso/blocks/app-promo/docs/example';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/example';
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
 import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
@@ -120,6 +121,7 @@ export default class AppComponents extends Component {
 					<AnnouncementModalExample readmeFilePath="announcement-modal" />
 					<AllSites readmeFilePath="all-sites" />
 					<AuthorSelector readmeFilePath="author-selector" />
+					<AppPromo readmeFilePath="app-promo" />
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
 					<CommentButtons readmeFilePath="comment-button" />
