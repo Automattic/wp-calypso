@@ -4,7 +4,7 @@ import qs from 'qs';
 import React from 'react';
 import IntervalDropdown from '../stats-interval-dropdown';
 import DateControlPicker from './stats-date-control-picker';
-import { StatsDateControlProps } from './types';
+import { StatsDateControlProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
@@ -26,19 +26,19 @@ const shortcutList = [
 		id: 'last-7-days',
 		label: 'Last 7 Days',
 		offset: 0,
-		range: 7,
+		range: 6,
 	},
 	{
 		id: 'last-30-days',
 		label: 'Last 30 Days',
 		offset: 0,
-		range: 30,
+		range: 29,
 	},
 	{
 		id: 'last-year',
 		label: 'Last Year',
 		offset: 0,
-		range: 365,
+		range: 364, // ranges are zero based!
 	},
 ];
 
@@ -78,10 +78,25 @@ const StatsDateControl = ( {
 		page( href );
 	};
 
+	// Handler for shortcut selection.
+	const onShortcutHandler = ( shortcut: DateControlPickerShortcut ) => {
+		// Generate new dates.
+		const anchor = moment().subtract( shortcut.offset, 'days' );
+		const endDate = anchor.format( 'YYYY-MM-DD' );
+		const startDate = anchor.subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
+
+		const href = generateNewLink( 'day', startDate, endDate );
+		page( href );
+	};
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
-			<DateControlPicker shortcutList={ shortcutList } onApply={ onApplyButtonHandler } />
+			<DateControlPicker
+				shortcutList={ shortcutList }
+				onShortcut={ onShortcutHandler }
+				onApply={ onApplyButtonHandler }
+			/>
 		</div>
 	);
 };
