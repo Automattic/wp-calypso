@@ -34,4 +34,11 @@
 		display: flex;
 		margin-top: 1em;
 	}
+
+	.launchpad-navigator__floating-navigator-close-button {
+		&:focus {
+			outline: none;
+			box-shadow: none;
+		}
+	}
 }

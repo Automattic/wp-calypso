@@ -31,7 +31,6 @@ const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavi
 				<h2>{ translate( 'Next steps for your site' ) }</h2>
 				<Button
 					aria-label={ translate( 'Close task list modal' ) }
-					// borderless
 					className="launchpad-navigator__floating-navigator-close-button"
 					onClick={ () => setLaunchpadIsVisible( false ) }
 				>
