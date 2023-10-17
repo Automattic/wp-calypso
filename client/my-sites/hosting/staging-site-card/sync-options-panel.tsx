@@ -9,11 +9,15 @@ const DangerousItemsContainer = styled.div( {
 	marginBottom: '24px',
 	border: '1px solid #D63638',
 	borderRadius: '4px',
+	'.components-toggle-control': {
+		paddingTop: '8px',
+		marginBottom: '0px',
+	},
 } );
 
 const DangerousItemsTitle = styled.p( {
 	fontWeight: 500,
-	marginBottom: '16px',
+	marginBottom: '8px',
 	color: '#D63638',
 } );
 
@@ -34,6 +38,9 @@ const ToggleControlWithHelpMargin = styled( ToggleControl )( {
 const ToggleWithLabelFontSize = styled( ToggleControl )( {
 	label: {
 		fontSize: '14px',
+	},
+	'.components-flex': {
+		gap: '8px',
 	},
 } );
 
