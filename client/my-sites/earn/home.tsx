@@ -187,7 +187,6 @@ const Home = () => {
 			icon: 'credit-card',
 			actions: {
 				cta,
-				featureIncludedInPlan: hasSimplePayments,
 			},
 		};
 	};
@@ -229,7 +228,6 @@ const Home = () => {
 			icon: 'money',
 			actions: {
 				cta,
-				featureIncludedInPlan: true,
 			},
 		};
 	};
@@ -273,7 +271,6 @@ const Home = () => {
 			icon: 'heart-outline',
 			actions: {
 				cta,
-				featureIncludedInPlan: true,
 			},
 		};
 	};
@@ -311,7 +308,6 @@ const Home = () => {
 			icon: 'bookmark-outline',
 			actions: {
 				cta,
-				featureIncludedInPlan: true,
 			},
 		};
 	};
@@ -390,7 +386,6 @@ const Home = () => {
 			icon: 'user-add',
 			actions: {
 				cta,
-				featureIncludedInPlan: true,
 			},
 		};
 	};
@@ -444,7 +439,6 @@ const Home = () => {
 			actions: {
 				cta,
 				learnMoreLink,
-				featureIncludedInPlan: true,
 			},
 		};
 	};
