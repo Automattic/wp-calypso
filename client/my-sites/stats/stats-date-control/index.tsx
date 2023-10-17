@@ -38,12 +38,6 @@ const shortcutList = [
 		offset: 0,
 		range: 365,
 	},
-	{
-		id: 'all-time',
-		label: 'All Time',
-		offset: 0,
-		range: 400, // TODO: Don't hard code this value.
-	},
 ];
 
 const StatsDateControl = ( {
