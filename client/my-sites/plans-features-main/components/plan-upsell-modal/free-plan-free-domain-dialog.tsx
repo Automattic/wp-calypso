@@ -223,7 +223,7 @@ export function FreePlanFreeDomainDialog( {
 					className="free-plan-free-domain-dialog__plan-button is-upsell-modal-personal-plan"
 					disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
 					primary
-					maxWidth="260px"
+					maxwidth="260px"
 					onClick={ () => {
 						onPlanSelected();
 					} }

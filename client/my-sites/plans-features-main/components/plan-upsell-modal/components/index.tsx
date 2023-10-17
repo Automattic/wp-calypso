@@ -74,7 +74,7 @@ export const DomainName = styled.div`
 	}
 `;
 
-export const StyledButton = styled( Button )< { maxWidth?: string } >`
+export const StyledButton = styled( Button )< { maxwidth?: string } >`
 	padding: 10px 24px;
 	border-radius: 4px;
 	font-weight: 500;
@@ -107,16 +107,16 @@ export const StyledButton = styled( Button )< { maxWidth?: string } >`
 		color: var( --studio-gray-50 );
 	}
 
-	&:first-child {
+	&:first-of-type {
 		margin-bottom: 20px;
 	}
 	@media ( min-width: 780px ) {
-		max-width: ${ ( { maxWidth } ) => maxWidth ?? 'fit-content' };
+		max-width: ${ ( { maxwidth } ) => maxwidth ?? 'fit-content' };
 		width: unset;
-		&:first-child {
+		&:first-of-type {
 			margin-bottom: 0;
 		}
-		&:nth-child( 2 ) {
+		&:nth-of-type( 2 ) {
 			margin-left: 31.5px;
 		}
 	}
