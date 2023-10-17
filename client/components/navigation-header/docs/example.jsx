@@ -1,6 +1,8 @@
-import { Button } from '@automattic/components';
+import { translate } from 'i18n-calypso';
 import { Component } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
+import InstallThemeButton from 'calypso/my-sites/themes/install-theme-button';
 
 class NavigationHeaderExample extends Component {
 	navigationItems = [
@@ -25,16 +27,6 @@ class NavigationHeaderExample extends Component {
 			<div>
 				<NavigationHeader
 					compactBreadcrumb={ this.state.compact }
-					navigationItems={ [] }
-					mobileItem={ null }
-					title="My Home"
-					subtitle="Your hub for posting, editing, and growing your site."
-				>
-					<Button target="_blank">Visit site</Button>
-				</NavigationHeader>
-
-				<NavigationHeader
-					compactBreadcrumb={ this.state.compact }
 					navigationItems={ [
 						{ label: 'Domains', href: `/domains` },
 						{
@@ -50,6 +42,23 @@ class NavigationHeaderExample extends Component {
 					title="Title example"
 					subtitle="Subtitle example"
 				></NavigationHeader>
+
+				<NavigationHeader
+					compactBreadcrumb={ false }
+					navigationItems={ [] }
+					mobileItem={ null }
+					title={ translate( 'Themes' ) }
+					subtitle={ translate(
+						'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+							},
+						}
+					) }
+				>
+					<InstallThemeButton />
+				</NavigationHeader>
 			</div>
 		);
 	}
