@@ -42,6 +42,9 @@
 .theme-jetpack-cloud .is-jetpack-new-navigation .layout__secondary {
 	border-right: initial;
 
+	// Allow visible overflow, so the profile dropdown menu can be displayed
+	overflow: initial;
+
 	// Make the selected-site navigation full-height
 	.my-sites__navigation {
 		height: 100%;

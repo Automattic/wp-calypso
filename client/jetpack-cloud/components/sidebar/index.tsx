@@ -15,7 +15,7 @@ const Sidebar = ( { className, isJetpackManage = false }: Props ) => (
 	<nav className={ classNames( 'jetpack-cloud-sidebar', className ) }>
 		<Header forceAllSitesView={ isJetpackManage } />
 		<div className="jetpack-cloud-sidebar__main">
-			<ul role="menu" className="jetpack-cloud-sidebar__navigation-list">
+			<ul className="jetpack-cloud-sidebar__navigation-list">
 				<li
 					className={ classNames(
 						'jetpack-cloud-sidebar__navigation-item',
