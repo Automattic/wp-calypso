@@ -1,4 +1,4 @@
-import { isJetpackProduct, isJetpackPlan } from '@automattic/calypso-products';
+import { isJetpackProduct, isJetpackPlan, isAkismetProduct } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -59,7 +59,7 @@ const UpsellLine: FC< UpsellLineProps > = ( {
 	);
 };
 
-const JetpackCheckoutSidebarPlanUpsell: FC = () => {
+const NewCheckoutSidebarPlanUpsell: FC = () => {
 	const { formStatus } = useFormStatus();
 	const isFormLoading = FormStatus.READY !== formStatus;
 	const reduxDispatch = useDispatch();
@@ -67,7 +67,8 @@ const JetpackCheckoutSidebarPlanUpsell: FC = () => {
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const plan = responseCart.products.find(
-		( product ) => isJetpackProduct( product ) || isJetpackPlan( product )
+		( product ) =>
+			isJetpackProduct( product ) || isJetpackPlan( product ) || isAkismetProduct( product )
 	);
 
 	const variants = useGetProductVariants( plan );
@@ -202,4 +203,4 @@ const JetpackCheckoutSidebarPlanUpsell: FC = () => {
 	);
 };
 
-export default JetpackCheckoutSidebarPlanUpsell;
+export default NewCheckoutSidebarPlanUpsell;
