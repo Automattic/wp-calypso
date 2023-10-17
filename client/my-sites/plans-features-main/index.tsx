@@ -10,6 +10,9 @@ import {
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
 	WPComStorageAddOnSlug,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -424,8 +427,14 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useMemo( () => {
+		const hiddenPlans = [
+			PLAN_HOSTING_TRIAL_MONTHLY,
+			PLAN_WOOEXPRESS_PLUS,
+			PLAN_ENTERPRISE_GRID_WPCOM,
+		];
+
 		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
-			if ( gridPlan.isVisible ) {
+			if ( gridPlan.isVisible && ! hiddenPlans.includes( gridPlan.planSlug ) ) {
 				return [
 					...acc,
 					{
