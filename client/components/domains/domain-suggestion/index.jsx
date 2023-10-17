@@ -84,13 +84,8 @@ class DomainSuggestion extends Component {
 				role="button"
 				data-e2e-domain={ this.props.domain }
 			>
-				<div className={ contentClassName }>
-					{ children }
-					{ ( isReskinned || ! isFeatured ) && this.renderPrice() }
-				</div>
-				{ ! isReskinned && isFeatured && (
-					<div className="domain-suggestion__price-container">{ this.renderPrice() }</div>
-				) }
+				<div className={ contentClassName }>{ children }</div>
+				<div className="domain-suggestion__price-container">{ this.renderPrice() }</div>
 				<div className="domain-suggestion__action-container">
 					<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
 						{ this.props.buttonContent }

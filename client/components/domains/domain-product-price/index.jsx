@@ -103,8 +103,8 @@ class DomainProductPrice extends Component {
 		if ( this.props.isReskinned ) {
 			return (
 				<div className={ className }>
-					{ this.renderReskinFreeWithPlanText() }
 					{ this.renderReskinDomainPrice() }
+					{ this.renderReskinFreeWithPlanText() }
 				</div>
 			);
 		}
