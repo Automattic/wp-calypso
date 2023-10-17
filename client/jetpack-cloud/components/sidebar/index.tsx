@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import SiteSelector from 'calypso/components/site-selector';
-import SidebarItem from 'calypso/layout/sidebar/item';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
 	SidebarV2Footer as SidebarFooter,
@@ -76,14 +75,18 @@ const JetpackCloudSidebar = ( {
 				</SidebarNavigator>
 			</SidebarMain>
 
-			{ ! isJetpackManage && (
+			{ ! isJetpackManage && jetpackAdminUrl && (
 				<SidebarFooter>
-					<SidebarItem
-						label={ translate( 'WP Admin', {
-							comment: 'Jetpack Cloud sidebar navigation item',
-						} ) }
+					<SidebarNavigatorMenuItem
+						title={ translate( 'WP Admin' ) }
 						link={ jetpackAdminUrl }
-						customIcon={ <JetpackIcons icon="wordpress" /> }
+						path={ jetpackAdminUrl }
+						icon={ <JetpackIcons icon="wordpress" /> }
+						onClickMenuItem={ ( link ) => {
+							// TODO: Add track event here.
+							window.open( link, '_blank' );
+						} }
+						isExternalLink
 					/>
 				</SidebarFooter>
 			) }
