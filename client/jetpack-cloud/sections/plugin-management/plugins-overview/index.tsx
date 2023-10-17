@@ -45,9 +45,13 @@ export default function PluginsOverview( { filter, search, site, pluginSlug, pat
 	}
 
 	if ( hasFetched ) {
+		const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
+		const sectionTitle = isNewNavigation
+			? translate( 'Plugin Management' )
+			: translate( 'Plugins' );
 		return (
 			<div className="plugins-overview__container">
-				<SidebarNavigation sectionTitle={ translate( 'Plugins' ) } />
+				<SidebarNavigation sectionTitle={ sectionTitle } />
 				{ pluginSlug ? (
 					<PluginDetails isJetpackCloud siteUrl={ site } pluginSlug={ pluginSlug } path={ path } />
 				) : (
