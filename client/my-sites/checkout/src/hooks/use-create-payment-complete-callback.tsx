@@ -30,7 +30,6 @@ import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
-import type { FailedResponse } from '../lib/normalize-transaction-response';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
@@ -293,7 +292,7 @@ async function recordPaymentCompleteAnalytics( {
 	sitePlanSlug,
 }: {
 	paymentMethodId: string | null;
-	transactionResult: WPCOMTransactionEndpointResponse | FailedResponse | undefined;
+	transactionResult: WPCOMTransactionEndpointResponse | undefined;
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	checkoutFlow?: string;
