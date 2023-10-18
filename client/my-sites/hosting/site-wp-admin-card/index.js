@@ -23,17 +23,13 @@ const ToggleLabel = styled.p( {
 	fontSize: '14px',
 } );
 
-const SITE_WP_ADMIN_CARD_STORAGE_KEY = 'siteWpAdminCardToggleState';
-
 export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 	const translate = useTranslate();
 
 	const toggleSiteInterfaceMutation = useSiteInterfaceMutation( siteId );
 
-	// Initialize the state with the value from localStorage if available, or false if not.
-	const [ wpAdminEnabled, setWpAdminEnabled ] = useState(
-		localStorage.getItem( SITE_WP_ADMIN_CARD_STORAGE_KEY ) === 'true' || false
-	);
+	// Initialize the state with the value passed as a prop
+	const [ wpAdminEnabled, setWpAdminEnabled ] = useState( adminInterface === 'wp-admin' );
 
 	// Define a function to toggle the site interface when the ToggleControl is changed
 	const handleToggleChange = async () => {
@@ -44,13 +40,12 @@ export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 		setWpAdminEnabled( ! wpAdminEnabled );
 	};
 
+	useEffect( () => {
+		setWpAdminEnabled( adminInterface === 'wp-admin' );
+	}, [ adminInterface ] );
+
 	const calypsoToggleDescription = translate( 'Set the admin interface to wp-admin' );
 	const wpAdminToggleDescription = translate( 'The admin interface to wp-admin' );
-
-	// Use localStorage to persist the toggle state
-	useEffect( () => {
-		localStorage.setItem( SITE_WP_ADMIN_CARD_STORAGE_KEY, wpAdminEnabled );
-	}, [ wpAdminEnabled ] );
 
 	return (
 		<Card className="sitewpadmin-card">
@@ -69,7 +64,7 @@ export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 					/>
 					<div>
 						{ wpAdminEnabled ? (
-							<p>Currently the activated mode is { adminInterface }</p>
+							<p>Currently, the activated mode is { adminInterface }</p>
 						) : (
 							<p>Now that the toggle is off, we have activated { adminInterface }.</p>
 						) }

@@ -24,7 +24,6 @@ export const useSiteInterfaceMutation = ( siteId: number ) => {
 			await queryClient.cancelQueries( queryKey );
 			const previousData = queryClient.getQueryData( queryKey );
 			queryClient.setQueryData( queryKey, interfaceName );
-			dispatch( requestSite( siteId ) );
 			return previousData;
 		},
 		onError( _err, _newActive, prevValue ) {
@@ -32,7 +31,7 @@ export const useSiteInterfaceMutation = ( siteId: number ) => {
 			queryClient.setQueryData( queryKey, Boolean( prevValue ) );
 		},
 		onSettled: () => {
-			// Refetch settings regardless
+			dispatch( requestSite( siteId ) );
 			queryClient.invalidateQueries( queryKey );
 		},
 	} );
