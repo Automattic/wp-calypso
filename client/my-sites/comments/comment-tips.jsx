@@ -1,14 +1,30 @@
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
+import { useDispatch } from 'calypso/state';
+import { setPreference } from 'calypso/state/preferences/actions';
+
+export const COMMENTS_TIPS_DISMISSED_PREFERENCE = 'dismissible-comments-moderation-tips-test';
 
 const CommentTips = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const dismissTips = () => dispatch( setPreference( COMMENTS_TIPS_DISMISSED_PREFERENCE, true ) );
 
 	return (
 		<ActionPanel className="comments-tips__action-panel">
+			<Button
+				className="comments-tips__dismiss-button"
+				onClick={ dismissTips }
+				borderless
+				title={ translate( 'Dismiss tips' ) }
+			>
+				<Gridicon icon="cross" size="24px" />
+			</Button>
 			<ActionPanelBody>
 				<ActionPanelFigure align="left">
 					<img

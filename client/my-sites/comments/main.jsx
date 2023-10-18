@@ -12,13 +12,13 @@ import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import CommentList from './comment-list';
-import CommentTips from './comment-tips';
+import CommentTips, { COMMENTS_TIPS_DISMISSED_PREFERENCE } from './comment-tips';
 import { NEWEST_FIRST } from './constants';
-
 import './style.scss';
 
 export class CommentsManagement extends Component {
@@ -59,6 +59,7 @@ export class CommentsManagement extends Component {
 			siteFragment,
 			status,
 			translate,
+			hideModerationTips,
 		} = this.props;
 		const { order } = this.state;
 
@@ -100,7 +101,7 @@ export class CommentsManagement extends Component {
 				) }
 				{ showCommentList && (
 					<>
-						<CommentTips />
+						{ ! hideModerationTips && <CommentTips /> }
 						<CommentList
 							key={ `${ siteId }-${ status }` }
 							changePage={ changePage }
@@ -131,6 +132,7 @@ const mapStateToProps = ( state, { siteFragment } ) => {
 		siteId,
 		showCommentList,
 		showPermissionError,
+		hideModerationTips: getPreference( state, COMMENTS_TIPS_DISMISSED_PREFERENCE ),
 	};
 };
 
