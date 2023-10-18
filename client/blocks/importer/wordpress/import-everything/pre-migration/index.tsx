@@ -157,10 +157,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	 * Decide the render state based on the current component state
 	 */
 	useEffect( () => {
-		if ( ! isTargetSitePlanCompatible ) {
-			setRenderState( 'upgrade-plan' );
-		} else if ( requiresPluginUpdate ) {
+		if ( requiresPluginUpdate ) {
 			setRenderState( 'update-plugin' );
+		} else if ( ! isTargetSitePlanCompatible ) {
+			setRenderState( 'upgrade-plan' );
 		} else if ( showCredentials ) {
 			setRenderState( 'credentials' );
 		} else if ( isFetchingCredentials || isFetchingMigrationData ) {
