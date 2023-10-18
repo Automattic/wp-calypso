@@ -21,6 +21,7 @@ object WPComPlugins : Project({
 	// Default params for WPcom Plugins.
 	params {
 		param("docker_image", "registry.a8c.com/calypso/ci-wpcom:latest")
+		param("build.prefix", "1")
 	}
 
 	buildType(CalypsoApps)
@@ -68,14 +69,6 @@ object CalypsoApps: BuildType({
 	params {
 		// Incremented to 4 to make sure ETK updates continue to work:
 		param("build.prefix", "4")
-		checkbox(
-			name = "skip_release_diff",
-			value = "false",
-			label = "Skip release diff",
-			description = "Skips the diff against the previous successful build, uploading the artifact as the latest successful build.",
-			checked = "true",
-			unchecked = "false"
-		)
 	}
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
