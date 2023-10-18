@@ -19,11 +19,10 @@ describe( 'NewsletterCategoriesSettings', () => {
 	it( 'renders the toggle correctly', () => {
 		render(
 			<NewsletterCategoriesSection
-				handleSubmitForm={ jest.fn() }
 				updateFields={ jest.fn() }
 				newsletterCategoryIds={ [] }
 				handleToggle={ jest.fn() }
-				isSavingSettings={ false }
+				disabled={ false }
 			/>
 		);
 
@@ -34,17 +33,15 @@ describe( 'NewsletterCategoriesSettings', () => {
 		render(
 			<NewsletterCategoriesSection
 				newsletterCategoriesEnabled={ true }
-				handleSubmitForm={ jest.fn() }
 				updateFields={ jest.fn() }
 				newsletterCategoryIds={ [] }
 				handleToggle={ jest.fn() }
-				isSavingSettings={ false }
+				disabled={ false }
 			/>
 		);
 
 		expect( screen.getByText( 'MockTermTreeSelector' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'MockTermTreeSelector' ) ).toHaveAttribute( 'aria-hidden', 'false' );
-		expect( screen.getByText( 'Save settings' ) ).toBeInTheDocument();
 	} );
 
 	it( 'hides the term tree selector when toggleValue is false', () => {
@@ -53,9 +50,8 @@ describe( 'NewsletterCategoriesSettings', () => {
 				newsletterCategoriesEnabled={ false }
 				handleToggle={ jest.fn() }
 				updateFields={ jest.fn() }
-				handleSubmitForm={ jest.fn() }
 				newsletterCategoryIds={ [] }
-				isSavingSettings={ false }
+				disabled={ false }
 			/>
 		);
 
@@ -71,9 +67,8 @@ describe( 'NewsletterCategoriesSettings', () => {
 				newsletterCategoriesEnabled={ true }
 				handleToggle={ mockHandleToggle }
 				updateFields={ jest.fn() }
-				handleSubmitForm={ jest.fn() }
 				newsletterCategoryIds={ [] }
-				isSavingSettings={ false }
+				disabled={ false }
 			/>
 		);
 
@@ -91,10 +86,9 @@ describe( 'NewsletterCategoriesSettings', () => {
 			<NewsletterCategoriesSection
 				newsletterCategoriesEnabled={ false }
 				handleToggle={ mockHandleToggle }
-				handleSubmitForm={ jest.fn() }
 				newsletterCategoryIds={ [] }
 				updateFields={ jest.fn() }
-				isSavingSettings={ false }
+				disabled={ false }
 			/>
 		);
 
@@ -102,24 +96,5 @@ describe( 'NewsletterCategoriesSettings', () => {
 
 		expect( mockHandleToggle ).toHaveBeenCalledWith( NEWSLETTER_CATEGORIES_ENABLED_OPTION );
 		expect( mockHandleChange ).toHaveBeenCalledWith( true );
-	} );
-
-	it( 'calls handleSubmitForm when the save button is clicked', () => {
-		const handleSubmitForm = jest.fn();
-
-		render(
-			<NewsletterCategoriesSection
-				newsletterCategoriesEnabled={ true }
-				newsletterCategoryIds={ [] }
-				handleSubmitForm={ handleSubmitForm }
-				handleToggle={ jest.fn() }
-				updateFields={ jest.fn() }
-				isSavingSettings={ false }
-			/>
-		);
-
-		fireEvent.click( screen.getByText( 'Save settings' ) );
-
-		expect( handleSubmitForm ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
