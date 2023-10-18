@@ -192,10 +192,12 @@ async function copyMetaFiles( archiveDir ) {
 	// Use commit hash from the environment if available. In TeamCity, that reflects
 	// the GitHub data -- the local data may be different.
 	const commitHash = process.env.commit_sha ?? git( 'rev-parse HEAD' );
+	// Calypso repo short sha is currently at 11 characters.
+	const cacheBuster = commitHash.slice( 0, 11 );
 
 	const buildMeta = {
 		build_number: buildNumber ?? 'dev',
-		cache_buster: commitHash,
+		cache_buster: cacheBuster,
 		commit_hash: commitHash,
 		commit_url: `https://github.com/Automattic/wp-calypso/commit/${ commitHash }`,
 	};
