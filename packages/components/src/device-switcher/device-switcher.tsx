@@ -72,13 +72,23 @@ const DeviceSwitcher = ( {
 		return clearAnimationEndTimer;
 	}, [ width, height, viewportScale, isFixedViewport ] );
 
-	const content = isZoomable ? <div style={ zoomOutStyles }>{ children }</div> : children;
-
-	const frame = (
+	let frame = (
 		<div className="device-switcher__frame" ref={ frameRef }>
-			{ content }
+			{ children }
 		</div>
 	);
+
+	if ( isZoomable ) {
+		frame = <div style={ zoomOutStyles }>{ frame }</div>;
+	}
+
+	if ( isFixedViewport ) {
+		frame = (
+			<FixedViewport device={ device } frameRef={ frameRef }>
+				{ frame }
+			</FixedViewport>
+		);
+	}
 
 	return (
 		<div
@@ -90,7 +100,6 @@ const DeviceSwitcher = ( {
 				'device-switcher__container--is-tablet': device === 'tablet',
 				'device-switcher__container--is-phone': device === 'phone',
 				'device-switcher__container--is-fullscreen': isFullscreen,
-				'device-switcher__container--is-zoomable': isZoomable,
 			} ) }
 		>
 			<div className="device-switcher__header">
@@ -108,18 +117,12 @@ const DeviceSwitcher = ( {
 						__nextHasNoMarginBottom
 						value={ Math.round( zoomOutScale * 100 ) }
 						onChange={ ( value ) => value !== undefined && onZoomOutScaleChange( value / 100 ) }
-						min={ 1 }
+						min={ 25 }
 						max={ 100 }
 					/>
 				) }
 			</div>
-			{ isFixedViewport ? (
-				<FixedViewport device={ device } frameRef={ frameRef }>
-					{ frame }
-				</FixedViewport>
-			) : (
-				frame
-			) }
+			{ frame }
 			{ containerResizeListener }
 		</div>
 	);

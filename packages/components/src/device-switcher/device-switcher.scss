@@ -151,8 +151,4 @@
 		max-height: var(--viewport-height);
 		transition: width 0.2s ease-out, max-width 0.2s ease-out;
 	}
-
-	.device-switcher__container--is-zoomable & {
-		overflow: auto;
-	}
 }
