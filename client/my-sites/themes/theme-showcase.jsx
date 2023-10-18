@@ -307,9 +307,10 @@ class ThemeShowcase extends Component {
 		return buildRelativeSearchUrl( url, search );
 	};
 
-	onTierSelect = ( { value: tier, isCollectionView: isCollectionView = false } ) => {
+	onTierSelectFilter = ( { value: tier } ) => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
+		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( {
-			isCollectionView,
 			tier,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
@@ -320,12 +321,6 @@ class ThemeShowcase extends Component {
 
 		page( url );
 		this.scrollToSearchInput();
-	};
-
-	onTierSelectFilter = ( { value: tier } ) => {
-		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
-		trackClick( 'search bar filter', tier );
-		this.onTierSelect( { value: tier } );
 	};
 
 	onFilterClick = ( tabFilter ) => {
@@ -358,7 +353,7 @@ class ThemeShowcase extends Component {
 		this.scrollToSearchInput();
 	};
 
-	getCollectionHeader = () => {
+	getCollectionViewHeader = () => {
 		let title;
 		let description;
 
@@ -370,6 +365,25 @@ class ThemeShowcase extends Component {
 			case 'marketplace':
 				title = THEME_COLLECTIONS.partner.title;
 				description = THEME_COLLECTIONS.partner.description;
+				break;
+		}
+
+		switch ( this.props.filter ) {
+			case 'blog':
+				title = THEME_COLLECTIONS.blog.title;
+				description = THEME_COLLECTIONS.blog.description;
+				break;
+			case 'business':
+				title = THEME_COLLECTIONS.business.title;
+				description = THEME_COLLECTIONS.business.description;
+				break;
+			case 'portfolio':
+				title = THEME_COLLECTIONS.portfolio.title;
+				description = THEME_COLLECTIONS.portfolio.description;
+				break;
+			case 'art-design':
+				title = THEME_COLLECTIONS.artAndDesign.title;
+				description = THEME_COLLECTIONS.artAndDesign.description;
 				break;
 		}
 
@@ -484,9 +498,7 @@ class ThemeShowcase extends Component {
 							getOptions={ this.getThemeOptions }
 							getScreenshotUrl={ this.getScreenshotUrl }
 							getActionLabel={ this.getActionLabel }
-							onTierSelect={ ( tier ) =>
-								this.onTierSelect( { value: tier, isCollectionView: true } )
-							}
+							onSeeAll={ this.onCollectionSeeAll }
 						/>
 					);
 				}
@@ -515,6 +527,17 @@ class ThemeShowcase extends Component {
 			addTracking( this.props.options ),
 			( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, this.props.siteId ) )
 		);
+	};
+
+	onCollectionSeeAll = ( { filter = '', tier = '' } ) => {
+		const url = this.constructUrl( {
+			isCollectionView: true,
+			filter,
+			tier,
+		} );
+
+		page( url );
+		this.scrollToSearchInput();
 	};
 
 	render() {
@@ -629,7 +652,7 @@ class ThemeShowcase extends Component {
 						</div>
 					) }
 					<div className="themes__showcase">
-						{ isCollectionView && this.getCollectionHeader() }
+						{ isCollectionView && this.getCollectionViewHeader() }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
