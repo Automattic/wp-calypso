@@ -65,11 +65,7 @@ export default function ThemeShowcaseHeader( {
 	}
 
 	if ( isCollectionView ) {
-		return (
-			<>
-				<DocumentHead title={ documentHeadTitle } meta={ metas } />
-			</>
-		);
+		return <DocumentHead title={ documentHeadTitle } meta={ metas } />;
 	}
 
 	return (
