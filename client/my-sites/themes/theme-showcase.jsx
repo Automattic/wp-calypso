@@ -463,7 +463,7 @@ class ThemeShowcase extends Component {
 			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
 			case staticFilters.RECOMMENDED.key:
-				if ( showCollections ) {
+				if ( showCollections && ! this.props.isCollectionView ) {
 					return (
 						<ThemeCollectionsLayout
 							getOptions={ this.getThemeOptions }
