@@ -5,7 +5,6 @@ import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 
 const TOGGLE_SITE_INTERFACE_MUTATION_KEY = 'set-site-interface-mutation-key';
-const interfaceName = 'wp-admin';
 
 export const useSiteInterfaceMutation = ( siteId: number ) => {
 	const queryClient = useQueryClient();
@@ -20,19 +19,12 @@ export const useSiteInterfaceMutation = ( siteId: number ) => {
 			} );
 		},
 		mutationKey: queryKey,
-		onMutate: async () => {
-			await queryClient.cancelQueries( queryKey );
-			const previousData = queryClient.getQueryData( queryKey );
-			queryClient.setQueryData( queryKey, interfaceName );
-			return previousData;
-		},
 		onError( _err, _newActive, prevValue ) {
 			// Revert to previous settings on failure
 			queryClient.setQueryData( queryKey, Boolean( prevValue ) );
 		},
 		onSettled: () => {
 			dispatch( requestSite( siteId ) );
-			queryClient.invalidateQueries( queryKey );
 		},
 	} );
 
