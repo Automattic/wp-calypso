@@ -4,7 +4,9 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
+import { useLaunchpad } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Task } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
@@ -33,6 +35,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import StatsSection from './components/stats';
+import EarnLaunchpad from './launchpad';
 
 import './style.scss';
 
@@ -63,6 +66,17 @@ const Home = () => {
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
+
+	const {
+		data: { checklist },
+	} = useLaunchpad( site?.slug ?? null, 'earn' );
+	const numberOfSteps = checklist?.length || 0;
+	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
+	const tasklistCompleted = completedSteps >= numberOfSteps;
+
+	const shouldLoadLaunchpad = () => {
+		return ! tasklistCompleted && numberOfSteps > 0;
+	};
 
 	function trackUpgrade( plan: string, feature: string ) {
 		dispatch(
@@ -135,15 +149,14 @@ const Home = () => {
 	 * Return the content to display in the Simple Payments card based on the current plan.
 	 */
 	const getSimplePaymentsCard = (): PromoSectionCardProps => {
-		const supportLink = localizeUrl(
-			'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
-		);
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Learn how to get started' ),
+					text: translate( 'Learn more' ),
 					action: () => {
 						trackCtaButton( 'simple-payments' );
-						page( supportLink );
+						window.location.href = localizeUrl(
+							'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
+						);
 					},
 			  }
 			: {
@@ -158,9 +171,6 @@ const Home = () => {
 						);
 					},
 			  };
-		const learnMoreLink = hasSimplePayments
-			? null
-			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		const title = translate( 'Collect PayPal payments' );
 		const body = (
 			<>
@@ -177,7 +187,6 @@ const Home = () => {
 			icon: 'credit-card',
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -186,14 +195,17 @@ const Home = () => {
 	 * Return the content to display in the Recurring Payments card based on the current plan.
 	 */
 	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
-		const hasConnectionCtaTitle = translate( 'Manage Payment Button' );
-		const noConnectionCtaTitle = translate( 'Enable Payment Button' );
-		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = {
-			text: ctaTitle,
+			text: translate( 'Learn more' ),
 			action: () => {
 				trackCtaButton( 'recurring-payments' );
-				page( `/earn/payments/${ site?.slug }` );
+				const learnMoreLink = ! hasConnectedAccount
+					? 'https://wordpress.com/payments-donations/'
+					: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block';
+
+				if ( window && window.location ) {
+					window.location.href = localizeUrl( learnMoreLink );
+				}
 			},
 		};
 		const title = translate( 'Collect payments' );
@@ -210,25 +222,12 @@ const Home = () => {
 			</>
 		);
 
-		const learnMoreLink = ! hasConnectedAccount
-			? {
-					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
-					onClick: () => trackLearnLink( 'recurring-payments' ),
-			  }
-			: {
-					url: localizeUrl(
-						'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block'
-					),
-					onClick: () => trackLearnLink( 'recurring-payments' ),
-					label: translate( 'Support documentation' ),
-			  };
 		return {
 			title,
 			body,
 			icon: 'money',
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -237,16 +236,20 @@ const Home = () => {
 	 * Return the content to display in the Donations card based on the current plan.
 	 */
 	const getDonationsCard = (): PromoSectionCardProps => {
-		const hasConnectionCtaTitle = translate( 'Manage Donations Form' );
-		const noConnectionCtaTitle = translate( 'Enable Donations Form' );
-		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = {
-			text: ctaTitle,
+			text: translate( 'Learn more' ),
 			action: () => {
 				trackCtaButton( 'donations' );
-				page( `/earn/payments/${ site?.slug }` );
+				const learnMoreLink = ! hasConnectedAccount
+					? 'https://wordpress.com/payments-donations/'
+					: 'https://wordpress.com/support/wordpress-editor/blocks/donations/';
+
+				if ( window && window.location ) {
+					window.location.href = localizeUrl( learnMoreLink );
+				}
 			},
 		};
+
 		const title = translate( 'Accept donations and tips' );
 
 		const body = (
@@ -262,24 +265,12 @@ const Home = () => {
 			</>
 		);
 
-		const learnMoreLink = ! hasConnectedAccount
-			? {
-					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
-					onClick: () => trackLearnLink( 'donations' ),
-			  }
-			: {
-					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/donations/' ),
-					onClick: () => trackLearnLink( 'donations' ),
-					label: translate( 'Support documentation' ),
-			  };
-
 		return {
 			title,
 			body,
 			icon: 'heart-outline',
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -288,17 +279,18 @@ const Home = () => {
 	 * Return the content to display in the Premium Content Block card based on the current plan.
 	 */
 	const getPremiumContentCard = (): PromoSectionCardProps | undefined => {
-		const hasConnectionCtaTitle = translate( 'Manage Premium Content' );
-		const noConnectionCtaTitle = translate( 'Enable Premium Content' );
-		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
 		const cta = {
-			text: ctaTitle,
+			text: translate( 'Learn more' ),
 			action: () => {
-				trackCtaButton( 'premium-content' );
-				page( `/earn/payments/${ site?.slug }` );
+				trackLearnLink( 'premium-content' );
+				if ( window && window.location ) {
+					window.location.href = localizeUrl(
+						'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
+					);
+				}
 			},
 		};
 		const title = translate( 'Profit from subscriber-only content' );
@@ -309,13 +301,6 @@ const Home = () => {
 			'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
 		);
 		const body = <>{ hasConnectedAccount ? hasConnectionBodyText : noConnectionBodyText }</>;
-		const learnMoreLink = {
-			url: localizeUrl(
-				'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
-			),
-			onClick: () => trackLearnLink( 'premium-content' ),
-			label: hasConnectedAccount ? translate( 'Support documentation' ) : undefined,
-		};
 
 		return {
 			title,
@@ -323,7 +308,6 @@ const Home = () => {
 			icon: 'bookmark-outline',
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -355,7 +339,6 @@ const Home = () => {
 			icon: 'mail',
 			actions: {
 				cta,
-				featureIncludedInPlan: true,
 			},
 		};
 	};
@@ -448,6 +431,7 @@ const Home = () => {
 		const learnMoreLink = ! ( hasWordAdsFeature || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
+
 		return {
 			title,
 			body,
@@ -494,10 +478,14 @@ const Home = () => {
 				</div>
 			) }
 			{ ! isLoading && (
-				<>
-					<StatsSection />
+				<div>
+					{ shouldLoadLaunchpad() ? (
+						<EarnLaunchpad numberOfSteps={ numberOfSteps } completedSteps={ completedSteps } />
+					) : (
+						<StatsSection />
+					) }
 					<PromoSection { ...promos } />
-				</>
+				</div>
 			) }
 		</>
 	);

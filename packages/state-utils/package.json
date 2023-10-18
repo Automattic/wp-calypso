@@ -30,8 +30,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@wordpress/is-shallow-equal": "^4.41.0",
-		"@wordpress/warning": "^2.41.0",
+		"@wordpress/is-shallow-equal": "^4.43.0",
+		"@wordpress/warning": "^2.43.0",
 		"lodash": "^4.17.21",
 		"redux": "^4.2.1",
 		"redux-thunk": "^2.4.2",

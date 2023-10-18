@@ -5,6 +5,7 @@ import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
+import moment from 'moment';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -44,7 +45,6 @@ import MiniCarousel from './mini-carousel';
 import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
-import StatsDateControl from './stats-date-control';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
@@ -107,6 +107,33 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
+const quantityForDaysAndPeriod = ( days, period ) => {
+	// If the period is 'day' use the value provided.
+	if ( period === 'day' ) {
+		return days;
+	}
+	// Confirm period is valid before trusting.
+	const validPeriods = [ 'week', 'month', 'year' ];
+	if ( validPeriods.includes( period ) === false ) {
+		return days;
+	}
+	// Determine denominator for math.
+	const daysInPeriod = {
+		week: 7,
+		month: 30,
+		year: 365,
+	};
+	const denominator = daysInPeriod[ period ];
+	// Determine quantity based on period.
+	// The +1 is to account for API date partitioning when using requesting weeks.
+	let newQuantity = Math.ceil( days / denominator );
+	if ( period === 'week' ) {
+		newQuantity += 1;
+	}
+	// Return new quantity for the chart.
+	return newQuantity;
+};
+
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -165,6 +192,14 @@ class StatsSite extends Component {
 		}
 	}
 
+	getValidDateOrNullFromInput( inputDate ) {
+		if ( inputDate === undefined ) {
+			return null;
+		}
+		const isValid = moment( inputDate ).isValid();
+		return isValid ? inputDate : null;
+	}
+
 	renderStats() {
 		const {
 			date,
@@ -191,6 +226,28 @@ class StatsSite extends Component {
 
 		// For the new date picker
 		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
+
+		// Set up a custom range for the chart.
+		// Dependant on new date range picker controls.
+		let customChartRange = null;
+		if ( isDateControlEnabled ) {
+			// Sort out end date for chart.
+			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+			if ( chartEnd ) {
+				customChartRange = { chartEnd };
+			} else {
+				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
+			}
+			// Sort out quantity for chart. Default to 7 days.
+			let daysInRange = 7;
+			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
+			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+			if ( chartStart && isSameOrBefore ) {
+				// Add one to calculation to include the start date.
+				daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
+			}
+			this.state.customChartQuantity = quantityForDaysAndPeriod( daysInRange, period );
+		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -252,55 +309,35 @@ class StatsSite extends Component {
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
-						{ isDateControlEnabled ? (
-							<>
-								<StatsPeriodHeader>
-									<StatsPeriodNavigation
-										date={ date }
-										period={ period }
-										url={ `/stats/${ period }/${ slug }` }
-										queryParams={ context.query }
-									>
-										{ ' ' }
-										<DatePicker
-											period={ period }
-											date={ date }
-											query={ query }
-											statsType="statsTopPosts"
-											showQueryDate
-											isShort
-										/>
-									</StatsPeriodNavigation>
-									<StatsDateControl
-										slug={ slug }
-										queryParams={ context.query }
-										period={ period }
-										pathTemplate={ pathTemplate }
-										onChangeChartQuantity={ this.onChangeChartQuantity }
-									/>
-								</StatsPeriodHeader>
-							</>
-						) : (
-							<StatsPeriodHeader>
-								<StatsPeriodNavigation
-									date={ date }
+						<StatsPeriodHeader>
+							<StatsPeriodNavigation
+								date={ date }
+								period={ period }
+								url={ `/stats/${ period }/${ slug }` }
+								queryParams={ context.query }
+								pathTemplate={ pathTemplate }
+								charts={ CHARTS }
+								availableLegend={ this.getAvailableLegend() }
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								onChangeLegend={ this.onChangeLegend }
+								isWithNewDateControl={ isDateControlEnabled }
+								slug={ slug }
+							>
+								{ ' ' }
+								<DatePicker
 									period={ period }
-									url={ `/stats/${ period }/${ slug }` }
-									queryParams={ context.query }
-								>
-									{ ' ' }
-									<DatePicker
-										period={ period }
-										date={ date }
-										query={ query }
-										statsType="statsTopPosts"
-										showQueryDate
-										isShort
-									/>
-								</StatsPeriodNavigation>
+									date={ date }
+									query={ query }
+									statsType="statsTopPosts"
+									showQueryDate
+									isShort
+								/>
+							</StatsPeriodNavigation>
+							{ ! isDateControlEnabled && (
 								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							</StatsPeriodHeader>
-						) }
+							) }
+						</StatsPeriodHeader>
 
 						<ChartTabs
 							activeTab={ getActiveTab( this.props.chartTab ) }
@@ -314,6 +351,8 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
 							customQuantity={ this.state.customChartQuantity }
+							customRange={ customChartRange }
+							hideLegend={ true }
 						/>
 					</>
 

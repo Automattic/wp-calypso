@@ -3,9 +3,17 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type { SiteSlug, SiteId } from 'calypso/types';
 
+type ErrorCode =
+	| 'invalid-plan-slug'
+	| 'email-unverified'
+	| 'has-had-business-trial'
+	| 'existing-trial'
+	| 'no-upgrades-permitted';
+
 interface Response {
 	blog_id: SiteId;
 	eligible: boolean;
+	error_code: ErrorCode;
 	message: string;
 }
 

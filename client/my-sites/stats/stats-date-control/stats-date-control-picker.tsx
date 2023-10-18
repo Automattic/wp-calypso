@@ -2,25 +2,18 @@ import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
 import moment from 'moment';
-import page from 'page';
-import qs from 'qs';
 import React, { useState, useRef } from 'react';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
-const DateControlPicker = ( {
-	slug,
-	queryParams,
-	shortcutList,
-	handleApply,
-}: DateControlPickerProps ) => {
+const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
-	const [ inputStartDate, setInputStartDate ] = useState( new Date().toISOString().slice( 0, 10 ) );
-	const [ inputEndDate, setInputEndDate ] = useState(
-		new Date( new Date().setMonth( new Date().getMonth() - 3 ) ).toISOString().slice( 0, 10 )
+	const [ inputStartDate, setInputStartDate ] = useState(
+		moment().subtract( 6, 'days' ).format( 'YYYY-MM-DD' )
 	);
+	const [ inputEndDate, setInputEndDate ] = useState( moment().format( 'YYYY-MM-DD' ) );
 	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
@@ -36,18 +29,8 @@ const DateControlPicker = ( {
 	};
 
 	const handleOnApply = () => {
-		const nextDay = inputStartDate;
-		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
-			addQueryPrefix: true,
-		} );
-		const period = 'day'; // TODO: make this dynamic
-		const url = `/stats/${ period }/${ slug }`;
-		const href = `${ url }${ nextDayQuery }`;
-
-		// expose the values externally
-		handleApply( inputStartDate, inputEndDate );
-
-		page( href );
+		togglePopoverOpened( false );
+		onApply( inputStartDate, inputEndDate );
 	};
 
 	const handleOnCancel = () => {
@@ -55,6 +38,14 @@ const DateControlPicker = ( {
 	};
 
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
+		// Push logic to caller.
+		togglePopoverOpened( false );
+		onShortcut( shortcut );
+
+		// TODO: Remove following logic once the values properly
+		// trickle down from the caller. Currently sets the selected
+		// shortcut and updates the button label.
+
 		// Shared date math.
 		const calcNewDateWithOffset = ( date: Date, offset: number ): Date => {
 			// We do our date math based on 24 hour increments.
@@ -68,13 +59,13 @@ const DateControlPicker = ( {
 			return date.toISOString().split( 'T' )[ 0 ];
 		};
 
-		// Calc new start date based on offset value from shortcut.
-		const newStartDate = calcNewDateWithOffset( new Date(), shortcut.offset );
-		setInputStartDate( formattedDate( newStartDate ) );
-
-		// Calc new end date based on start date plus range as specified in shortcut.
-		const newEndDate = calcNewDateWithOffset( newStartDate, shortcut.range );
+		// Calc new end date based on offset value from shortcut.
+		const newEndDate = calcNewDateWithOffset( new Date(), shortcut.offset );
 		setInputEndDate( formattedDate( newEndDate ) );
+
+		// Calc new start date based on end date plus range as specified in shortcut.
+		const newStartDate = calcNewDateWithOffset( newEndDate, shortcut.range );
+		setInputStartDate( formattedDate( newStartDate ) );
 
 		setCurrentShortcut( shortcut.id || '' );
 	};

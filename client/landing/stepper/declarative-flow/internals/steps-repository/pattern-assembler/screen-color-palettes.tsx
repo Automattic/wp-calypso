@@ -24,7 +24,7 @@ const ScreenColorPalettes = ( {
 		<Panel
 			label={ translate( 'Colors' ) }
 			description={ translate(
-				'Find your perfect color style. Change the look and feel of your site in one click with our custom colors.'
+				'Find your perfect color style. Change the look and feel of your site in one click with our premium colors.'
 			) }
 		>
 			<ColorPaletteVariations

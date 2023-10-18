@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -26,7 +25,6 @@ import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
 import { MigrationStatus } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
-import { Confirm } from './confirm';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
@@ -159,11 +157,8 @@ export class ImportEverything extends SectionMigrate {
 		const {
 			sourceSite,
 			targetSite,
-			targetSiteSlug,
-			sourceUrlAnalyzedData,
 			isTargetSitePlanCompatible,
 			stepNavigator,
-			showConfirmDialog = true,
 			isMigrateFromWp,
 			onContentOnlySelection,
 			translate,
@@ -184,50 +179,25 @@ export class ImportEverything extends SectionMigrate {
 			);
 		}
 
-		if ( isEnabled( 'onboarding/import-redesign' ) ) {
-			return (
-				<PreMigrationScreen
-					startImport={ this.startMigration }
-					initImportRun={ this.props.initImportRun }
-					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-					targetSite={ targetSite }
-					isMigrateFromWp={ isMigrateFromWp }
-					isTrial={ isMigrationTrialSite( this.props.targetSite ) }
-					onContentOnlyClick={ onContentOnlySelection }
-					sourceSite={ sourceSite }
-					onFreeTrialClick={ () => {
-						stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
-					} }
-					onNotAuthorizedClick={ () => {
-						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
-							from: 'pre-migration',
-						} );
-						stepNavigator?.goToDashboardPage();
-					} }
-				/>
-			);
-		}
-
-		if ( sourceSite ) {
-			return (
-				<Confirm
-					startImport={ this.startMigration }
-					isMigrateFromWp={ isMigrateFromWp }
-					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-					targetSite={ targetSite }
-					targetSiteSlug={ targetSiteSlug }
-					sourceSite={ sourceSite }
-					sourceSiteUrl={ sourceSite.URL }
-					sourceUrlAnalyzedData={ sourceUrlAnalyzedData }
-					showConfirmDialog={ showConfirmDialog }
-				/>
-			);
-		}
-
 		return (
-			<NotAuthorized
-				onStartBuilding={ stepNavigator?.goToIntentPage }
-				onBackToStart={ stepNavigator?.goToImportCapturePage }
+			<PreMigrationScreen
+				sourceSite={ sourceSite }
+				targetSite={ targetSite }
+				initImportRun={ this.props.initImportRun }
+				isTrial={ isMigrationTrialSite( this.props.targetSite ) }
+				isMigrateFromWp={ isMigrateFromWp }
+				isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+				startImport={ this.startMigration }
+				onContentOnlyClick={ onContentOnlySelection }
+				onFreeTrialClick={ () => {
+					stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
+				} }
+				onNotAuthorizedClick={ () => {
+					recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+						from: 'pre-migration',
+					} );
+					stepNavigator?.goToDashboardPage();
+				} }
 			/>
 		);
 	}
@@ -280,14 +250,11 @@ export class ImportEverything extends SectionMigrate {
 	renderMigrationComplete() {
 		const { isMigrateFromWp } = this.props;
 		return (
-			<>
-				<Hooray>
-					{ ! isMigrateFromWp
-						? this.renderDefaultHoorayScreen()
-						: this.renderHoorayScreenWithDomainInfo() }
-				</Hooray>
-				{ ! isEnabled( 'onboarding/import-redesign' ) && <GettingStartedVideo /> }
-			</>
+			<Hooray>
+				{ ! isMigrateFromWp
+					? this.renderDefaultHoorayScreen()
+					: this.renderHoorayScreenWithDomainInfo() }
+			</Hooray>
 		);
 	}
 

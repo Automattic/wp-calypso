@@ -565,11 +565,6 @@ export function calculateMonthlyPrice( term: string, termPrice: number ): number
 	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
 }
 
-export function calculateYearlyPrice( term: string, termPrice: number ): number {
-	const multiplier = getBillingMonthsForTerm( term );
-	return parseFloat( ( termPrice * multiplier ).toFixed( 2 ) );
-}
-
 export function getBillingMonthsForTerm( term: string ): number {
 	if ( term === TERM_MONTHLY ) {
 		return 1;

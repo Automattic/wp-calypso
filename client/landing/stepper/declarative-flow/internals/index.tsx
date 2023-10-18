@@ -19,7 +19,9 @@ import {
 	getSignupCompleteFlowNameAndClear,
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
-import { useSite } from '../../hooks/use-site';
+import { useSelector } from 'calypso/state';
+import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
@@ -62,9 +64,21 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 
 	const urlQueryParams = useQuery();
-
-	const site = useSite();
 	const ref = urlQueryParams.get( 'ref' ) || '';
+
+	const { site, siteSlugOrId } = useSiteData();
+
+	// Ensure that the selected site is fetched, if available. This is used for event tracking purposes.
+	// See https://github.com/Automattic/wp-calypso/pull/82981.
+	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
+	const isRequestingSelectedSite = useSelector(
+		( state ) => site && isRequestingSite( state, siteSlugOrId )
+	);
+
+	// Short-circuit this if the site slug or ID is not available.
+	const hasRequestedSelectedSite = siteSlugOrId
+		? !! selectedSite && ! isRequestingSelectedSite
+		: true;
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
@@ -134,7 +148,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( ! currentStepRoute ) {
+		if ( ! currentStepRoute || ! hasRequestedSelectedSite ) {
 			return;
 		}
 
@@ -158,7 +172,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow.name, currentStepRoute ] );
+	}, [ flow.name, currentStepRoute, hasRequestedSelectedSite ] );
 
 	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
 		state: AssertConditionState.SUCCESS,
