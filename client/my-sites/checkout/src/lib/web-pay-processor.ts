@@ -40,8 +40,14 @@ export default async function webPayProcessor(
 		recordTransactionBeginAnalytics( { paymentMethodId: webPaymentType } )
 	);
 
-	const { includeDomainDetails, includeGSuiteDetails, responseCart, siteId, contactDetails } =
-		transactionOptions;
+	const {
+		includeDomainDetails,
+		includeGSuiteDetails,
+		responseCart,
+		reloadCart,
+		siteId,
+		contactDetails,
+	} = transactionOptions;
 
 	debug( 'formatting web-pay transaction', submitData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
@@ -99,6 +105,9 @@ export default async function webPayProcessor(
 			} );
 
 			handle3DSInFlightError( error, paymentIntentId );
+
+			// Refresh the cart in case things have changed during the transaction.
+			reloadCart();
 
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.

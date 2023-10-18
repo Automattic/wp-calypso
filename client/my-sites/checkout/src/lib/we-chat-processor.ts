@@ -34,6 +34,7 @@ export default async function weChatProcessor(
 		includeGSuiteDetails,
 		reduxDispatch,
 		responseCart,
+		reloadCart,
 		contactDetails,
 	} = options;
 	const paymentMethodId = 'wechat';
@@ -84,7 +85,12 @@ export default async function weChatProcessor(
 			}
 			return makeManualResponse( response );
 		} )
-		.catch( ( error ) => makeErrorResponse( error.message ) );
+		.catch( ( error ) => {
+			// Refresh the cart in case things have changed during the transaction.
+			reloadCart();
+
+			return makeErrorResponse( error.message );
+		} );
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is WeChatTransactionRequest {

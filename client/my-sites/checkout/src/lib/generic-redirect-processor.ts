@@ -29,6 +29,7 @@ export default async function genericRedirectProcessor(
 		includeGSuiteDetails,
 		reduxDispatch,
 		responseCart,
+		reloadCart,
 		contactDetails,
 		fromSiteSlug,
 	} = transactionOptions;
@@ -81,7 +82,12 @@ export default async function genericRedirectProcessor(
 			}
 			return makeRedirectResponse( response?.redirect_url );
 		} )
-		.catch( ( error ) => makeErrorResponse( error.message ) );
+		.catch( ( error ) => {
+			// Refresh the cart in case things have changed during the transaction.
+			reloadCart();
+
+			return makeErrorResponse( error.message );
+		} );
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is RedirectTransactionRequest {
