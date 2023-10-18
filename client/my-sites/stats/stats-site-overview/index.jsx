@@ -38,7 +38,6 @@ class StatsSiteOverview extends Component {
 		return (
 			<div>
 				<SectionHeader label={ title } href={ headerPath } />
-				aa
 				<Card className="stats__overview stats-module is-site-overview">
 					<StatsTabs borderless>
 						<StatsTab
