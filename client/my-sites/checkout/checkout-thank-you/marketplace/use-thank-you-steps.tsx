@@ -44,12 +44,23 @@ export function useThankYouSteps( {
 		[ translate ]
 	);
 
-	const steps = multipleProductTypes
-		? defaultSteps
-		: [
-				...( pluginSlugs.length > 0 ? pluginsProgressbarSteps : [] ),
-				...( themeSlugs.length > 0 ? themesProgressbarSteps : [] ),
-		  ];
+	const steps = useMemo(
+		() =>
+			multipleProductTypes
+				? defaultSteps
+				: [
+						...( pluginSlugs.length > 0 ? pluginsProgressbarSteps : [] ),
+						...( themeSlugs.length > 0 ? themesProgressbarSteps : [] ),
+				  ],
+		[
+			defaultSteps,
+			multipleProductTypes,
+			pluginSlugs.length,
+			pluginsProgressbarSteps,
+			themeSlugs.length,
+			themesProgressbarSteps,
+		]
+	);
 
 	return { steps, additionalSteps };
 }
