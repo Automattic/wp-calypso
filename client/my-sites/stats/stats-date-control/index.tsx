@@ -102,8 +102,9 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 	const getButtonLable = () => {
 		// ToDo: Add logic for button label.
 		// Custom range or shortcut label.
-		const newLabel = `${ dateRange.chartStart } - ${ dateRange.chartEnd }`;
-		return newLabel;
+		const startDate = moment( dateRange.chartStart ).format( 'MMMM Do, YYYY' );
+		const endDate = moment( dateRange.chartEnd ).format( 'MMMM Do, YYYY' );
+		return `${ startDate } - ${ endDate }`;
 	};
 
 	return (
