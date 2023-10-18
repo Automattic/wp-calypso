@@ -191,7 +191,7 @@ export function managePurchase( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
 				<Main wideLayout className={ classes }>
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 					<PageViewTracker
 						path="/me/purchases/:site/:purchaseId"
 						title="Purchases > Manage Purchase"
