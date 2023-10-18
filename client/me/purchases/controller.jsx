@@ -171,7 +171,7 @@ export function vatDetails( context, next ) {
 				<Main wideLayout className={ classes }>
 					<PageViewTracker path={ vatDetailsPath } title="Purchases > VAT Details" />
 
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 					<HeaderCake onClick={ goToBillingHistory }>{ title }</HeaderCake>
 
 					<VatInfoPage siteSlug={ context.params.site } />
