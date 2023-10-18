@@ -1,8 +1,9 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import '../intro/videopress-intro-modal-styles.scss';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import CheckmarkIcon from '../intro/icons/checkmark-icon';
@@ -18,6 +19,7 @@ export interface VideoPressOnboardingIntentModalContentProps extends IntroModalC
 		href?: string;
 		onClick?: () => void;
 	};
+	learnMoreText?: string | React.ReactNode;
 	isComingSoon?: boolean;
 	intent?: string;
 	surveyTitle?: string;
@@ -32,6 +34,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	intent,
 	featuresList,
 	actionButton,
+	learnMoreText,
 	isComingSoon,
 	surveyTitle,
 	surveyUrl,
@@ -143,19 +146,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 							>
 								{ actionButton.text }
 							</Button>
-							<div className="learn-more">
-								{ translate( '{{a}}Or learn more about VideoPress.{{/a}}', {
-									components: {
-										a: (
-											<a
-												href="https://videopress.com/"
-												target="_blank"
-												rel="external noreferrer noopener"
-											/>
-										),
-									},
-								} ) }
-							</div>
+							<div className="learn-more">{ learnMoreText }</div>
 						</>
 					) }
 					{ isComingSoon && (
