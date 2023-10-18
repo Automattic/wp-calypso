@@ -47,7 +47,14 @@ export class Notice extends Component {
 		isLoading: PropTypes.bool,
 		onDismissClick: PropTypes.func,
 		showDismiss: PropTypes.bool,
-		status: PropTypes.oneOf( [ 'is-error', 'is-info', 'is-success', 'is-warning', 'is-plain' ] ),
+		status: PropTypes.oneOf( [
+			'is-error',
+			'is-info',
+			'is-success',
+			'is-warning',
+			'is-plain',
+			'is-transparent-info',
+		] ),
 		text: PropTypes.node,
 		translate: PropTypes.func.isRequired,
 		isReskinned: PropTypes.bool,
@@ -89,6 +96,7 @@ export class Notice extends Component {
 				icon = 'notice';
 				break;
 			case 'is-warning':
+			case 'is-transparent-info':
 				icon = 'notice';
 				break;
 			default:
