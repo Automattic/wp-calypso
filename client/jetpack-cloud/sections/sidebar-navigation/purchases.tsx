@@ -2,51 +2,64 @@ import { chevronLeft, formatListBulletsRTL, payment, receipt, store, tag } from 
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+
+const PARTNER_PORTAL_ROOT_PATH = '/partner-portal';
+
+const onClickMenuItem = ( path: string ) => {
+	page.redirect( path );
+};
+
+const isSelected = ( link: string ) => {
+	const pathname = window.location.pathname;
+	return itemLinkMatches( link, pathname );
+};
+
+type ItemProps = {
+	icon: JSX.Element;
+	link: string;
+	title: string;
+};
+const createItem = ( { icon, link, title }: ItemProps ) => ( {
+	icon,
+	path: PARTNER_PORTAL_ROOT_PATH,
+	link,
+	title,
+	onClickMenuItem,
+	isSelected: isSelected( link ),
+} );
 
 const PurchasesSidebar = () => {
 	const translate = useTranslate();
 
-	const onClickMenuItem = ( path: string ) => {
-		page.redirect( path );
-	};
-
 	const menuItems = [
-		{
+		createItem( {
 			icon: store,
-			path: '/partner-portal',
-			link: '/partner-portal/billing',
+			link: `${ PARTNER_PORTAL_ROOT_PATH }/billing`,
 			title: translate( 'Billing' ),
-			onClickMenuItem: onClickMenuItem,
-		},
-		{
+		} ),
+		createItem( {
 			icon: payment,
-			path: '/partner-portal',
-			link: '/partner-portal/payment-methods',
+			link: `${ PARTNER_PORTAL_ROOT_PATH }/payment-methods`,
 			title: translate( 'Payment Methods' ),
-			onClickMenuItem: onClickMenuItem,
-		},
-		{
+		} ),
+		createItem( {
 			icon: receipt,
-			path: '/partner-portal',
-			link: '/partner-portal/invoices',
+			link: `${ PARTNER_PORTAL_ROOT_PATH }/invoices`,
 			title: translate( 'Invoices' ),
-			onClickMenuItem: onClickMenuItem,
-		},
-		{
+		} ),
+		createItem( {
 			icon: tag,
-			path: '/partner-portal',
-			link: '/partner-portal/prices',
+			link: `${ PARTNER_PORTAL_ROOT_PATH }/prices`,
 			title: translate( 'Prices' ),
-			onClickMenuItem: onClickMenuItem,
-		},
-		{
+		} ),
+		createItem( {
 			icon: formatListBulletsRTL,
-			path: '/partner-portal',
-			link: '/partner-portal/company-details',
+			link: `${ PARTNER_PORTAL_ROOT_PATH }/company-details`,
 			title: translate( 'Company Details' ),
-			onClickMenuItem: onClickMenuItem,
-		},
+		} ),
 	];
+
 	return (
 		<NewSidebar
 			isJetpackManage
