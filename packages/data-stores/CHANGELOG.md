@@ -2,6 +2,33 @@
 
 ## 4.0.0
 
+- Add `useSiteSubscribeMutation` (#77033)
+- Fix fetching of pending subscription data for users who are not logged in (#77105)
+- Add `is_wpforteams_site` flag to `PostSubscription` type (#77103)
+- Add `useSiteSubscriptionDetailsQuery` hook (#77148)
+- Fix API called with user fields for tickets (#77169)
+- Add `is_paid_subscription` field to `PostSubscription` type and broader filtering options in `usePostSubscriptionsQuery` (#75930)
+- Support optimistic fetching for subscriptions (#77160)
+- Remove conditional logic for global styles (#77202)
+- Fix logic for building API paths for Reader subscription APIs (#77252)
+- Use object syntax for many `react-query` queries and mutations (#77266)
+- Add fallback context for `initiateAtomicTransfer` action in Site store (#77186)
+- Add `is_paid_subscription` field to `SiteSubscription` type (#77268)
+- Specify user locale in API call from `useLaunchpad` (#77348)
+- Add `assembleSite` action to Site data store (#77152)
+- Add `source_blog_id` field to `SourceSiteMigrationDetails` type (#77395)
+- Make it easier to detect error responses for subscription hooks (#77396)
+- Fix infinite fetching bug in `usePostSubscriptionsQuery` (#77408)
+- Add `siteSetupOption` argument to Site `assembleSite` action (#77426)
+- Add `SiteSubscriptionDetails.payment_details` type (#77690)
+- Add action to Help Center store to show messaging chat (#77499)
+- Ensure that `useWpcomSite` and Site store only fetch WordPress.com sites (#77749)
+- Add `source` field to `useJetpackSearchAIQuery` results (#77803)
+- Fix `SiteSubscriptionDetails.payment_details` to be an array (#78078)
+- Update how we calculate `design_type` in `useStarterDesignsQuery` (#77752)
+- Add some chat-related status flags to `HappyChatAvailability` (#78173)
+- Add support for re-enabling blog subscriptions (#78067)
+- Add optional `emailId` argument to some subscription APIs (#78283)
 - Add `SubscriptionManager.useCacheKey` (#78434)
 - Add handling for bulk domain transfers (#78599)
 - Updates to be compatible with React 18 (#77046)
@@ -81,6 +108,7 @@
 
 ### Dependency updates
 
+- Update `redux` from ^4.1.2 to ^4.2.1 (#77121)
 - Remove workspace dependency on `@automattic/happychat-connection` (#78433)
 - Update `react` from ^17.0.2 to ^18.2.0 (#77046)
 - Update `react-dom` from ^17.0.2 to ^18.2.0 (#77046)
@@ -123,6 +151,13 @@
  
 ### Breaking changes
 
+- Change signature for `useJetpackSearchAIQuery` (#77076)
+- Rename and change `filter` argument to `filterOption` in `usePostSubscriptionsQuery` (#75930)
+- Remove `getVerticalId` selector from Onboard store (#77250)
+- Rename `SiteSubscriptionDetailsAPIResponse` type to `SiteSubscriptionDetailsResponse` (#77396)
+- Rename and change filter option for `useSiteSubscriptionsQuery` (#77349)
+- Remove `SiteSubscriptionsFilterBy` export for Reader (#77553)
+- Remove `is_chat_closed` field from `HappyChatAvailability` (#77499)
 - Remove `chatTag` and `iframe` data and related `set<X>` actions from Help Center store (#78179)
 - Only allow `string` values for `title` and `description` fields in `LinksForSection` type (#78292)
 - Remove `useHas3PC` hook; rename `HappyChatAvailability` type to `ChatAvailability`; update response type for `useSupportAvailability` (#78433)
