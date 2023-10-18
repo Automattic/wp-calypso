@@ -2,8 +2,10 @@ import { CircularProgressBar } from '@automattic/components';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
-import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
+import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { Product } from '../types';
 
 type EarnLaunchpadProps = {
 	numberOfSteps: number;
@@ -12,11 +14,10 @@ type EarnLaunchpadProps = {
 
 const EarnLaunchpad = ( { numberOfSteps, completedSteps }: EarnLaunchpadProps ) => {
 	const translate = useTranslate();
-
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
-
-	const stripeConnectUrl = useSelector( ( state ) =>
-		getConnectUrlForSiteId( state, site?.ID ?? 0 )
+	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
+	const connectedAccountId = useSelector( ( state ) =>
+		getConnectedAccountIdForSiteId( state, site?.ID )
 	);
 
 	const taskFilter = ( tasks: Task[] ): Task[] => {
@@ -29,18 +30,12 @@ const EarnLaunchpad = ( { numberOfSteps, completedSteps }: EarnLaunchpadProps ) 
 				case 'stripe_connected':
 					return {
 						...task,
-						actionDispatch: () => {
-							window.location.assign( stripeConnectUrl );
-						},
+						is_complete: !! connectedAccountId,
 					};
 				case 'paid_offer_created':
 					return {
 						...task,
-						actionDispatch: () => {
-							window.location.assign(
-								`/earn/payments-plans/${ site?.slug }?launchpad=add-product#add-newsletter-payment-plan`
-							);
-						},
+						is_complete: !! ( products && products.length > 0 ),
 					};
 				default:
 					return task;
