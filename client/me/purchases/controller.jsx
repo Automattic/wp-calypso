@@ -245,7 +245,7 @@ export function changePaymentMethod( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.changePaymentMethod }>
 				<Main wideLayout className="purchases__edit-payment-method">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 					<CheckoutErrorBoundary
 						errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 						onError={ logPurchasesError }
