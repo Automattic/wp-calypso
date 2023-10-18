@@ -5,13 +5,7 @@ import {
 	sortLaunchpadTasksByCompletionStatus,
 	LaunchpadNavigator,
 } from '@automattic/data-stores';
-import {
-	Launchpad,
-	PermittedActions,
-	Task,
-	setUpActionsForTasks,
-	ShareSiteModal,
-} from '@automattic/launchpad';
+import { Launchpad, Task, setUpActionsForTasks, ShareSiteModal } from '@automattic/launchpad';
 import { select, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -26,12 +20,12 @@ import './style.scss';
 
 interface CustomerHomeLaunchpadProps {
 	checklistSlug: string;
-	extraActions?: Omit< PermittedActions, 'setActiveChecklist' >;
+	onSiteLaunched?: () => void;
 }
 
 const CustomerHomeLaunchpad = ( {
 	checklistSlug,
-	extraActions = {},
+	onSiteLaunched,
 }: CustomerHomeLaunchpadProps ): JSX.Element => {
 	const launchpadContext = 'customer-home';
 	const siteId = useSelector( getSelectedSiteId );
@@ -63,7 +57,6 @@ const CustomerHomeLaunchpad = ( {
 
 	const defaultExtraActions = {
 		...( hasShareSiteTask ? { setShareSiteModalIsOpen } : {} ),
-		...extraActions,
 		setActiveChecklist,
 	};
 
@@ -82,6 +75,9 @@ const CustomerHomeLaunchpad = ( {
 			siteSlug,
 			tracksData,
 			extraActions: defaultExtraActions,
+			eventHandlers: {
+				onSiteLaunched,
+			},
 		} );
 	};
 

@@ -16,7 +16,6 @@ import DomainHeader from 'calypso/my-sites/domains/domain-management/components/
 import {
 	domainManagementEdit,
 	domainManagementList,
-	domainManagementContactsPrivacy,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -49,12 +48,6 @@ const EditContactInfoPage = ( {
 
 	const isDataLoading = () => {
 		return ! getSelectedDomain( { domains, selectedDomainName } ) || isRequestingWhois;
-	};
-
-	const goToContactsPrivacy = () => {
-		page(
-			domainManagementContactsPrivacy( selectedSite?.slug ?? '', selectedDomainName, currentRoute )
-		);
 	};
 
 	const renderHeader = () => {
@@ -191,7 +184,7 @@ const EditContactInfoPage = ( {
 	};
 
 	if ( isDataLoading() ) {
-		return <DomainMainPlaceholder goBack={ goToContactsPrivacy } />;
+		return <DomainMainPlaceholder />;
 	}
 
 	return (
