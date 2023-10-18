@@ -508,7 +508,7 @@ class ThemeShowcase extends Component {
 		} );
 
 		page( url );
-		this.scrollToSearchInput();
+		window.scrollTo( { top: 0 } );
 	};
 
 	render() {
