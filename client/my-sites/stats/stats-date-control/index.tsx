@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
 import qs from 'qs';
@@ -8,48 +9,50 @@ import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
-const shortcutList = [
-	{
-		id: 'today',
-		label: 'Today',
-		offset: 0,
-		range: 0,
-		period: 'day',
-	},
-	{
-		id: 'yesterday',
-		label: 'Yesterday',
-		offset: 1,
-		range: 0,
-		period: 'day',
-	},
-	{
-		id: 'last-7-days',
-		label: 'Last 7 Days',
-		offset: 0,
-		range: 6,
-		period: 'day',
-	},
-	{
-		id: 'last-30-days',
-		label: 'Last 30 Days',
-		offset: 0,
-		range: 29,
-		period: 'day',
-	},
-	{
-		id: 'last-year',
-		label: 'Last Year',
-		offset: 0,
-		range: 364, // ranges are zero based!
-		period: 'month',
-	},
-];
-
 const StatsDateControl = ( { slug, queryParams }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
 	// consistent with the custom ranges.
+
+	const translate = useTranslate();
+
+	const shortcutList = [
+		{
+			id: 'today',
+			label: translate( 'Today' ),
+			offset: 0,
+			range: 0,
+			period: 'day',
+		},
+		{
+			id: 'yesterday',
+			label: translate( 'Yesterday' ),
+			offset: 1,
+			range: 0,
+			period: 'day',
+		},
+		{
+			id: 'last-7-days',
+			label: translate( 'Last 7 Days' ),
+			offset: 0,
+			range: 6,
+			period: 'day',
+		},
+		{
+			id: 'last-30-days',
+			label: translate( 'Last 30 Days' ),
+			offset: 0,
+			range: 29,
+			period: 'day',
+		},
+		{
+			id: 'last-year',
+			label: translate( 'Last Year' ),
+			offset: 0,
+			range: 364, // ranges are zero based!
+			period: 'month',
+		},
+	];
 
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
