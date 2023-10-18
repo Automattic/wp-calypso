@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
@@ -83,7 +84,7 @@ const JetpackCloudSidebar = ( {
 						path={ jetpackAdminUrl }
 						icon={ <JetpackIcons icon="wordpress" /> }
 						onClickMenuItem={ ( link ) => {
-							// TODO: Add track event here.
+							recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' );
 							window.open( link, '_blank' );
 						} }
 						isExternalLink
