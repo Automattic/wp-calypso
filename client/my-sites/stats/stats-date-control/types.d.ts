@@ -3,6 +3,7 @@ interface StatsDateControlProps {
 	queryParams: string;
 	period: 'day' | 'week' | 'month' | 'year';
 	pathTemplate: string;
+	dateRange: any;
 }
 
 interface DateControlPickerProps {
