@@ -238,8 +238,8 @@ class StatsSite extends Component {
 			} else {
 				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 			}
-			// Sort out quantity for chart. Default to 7 days.
-			let daysInRange = 7;
+			// Sort out quantity for chart. Default to 30 days.
+			let daysInRange = 30;
 			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
 			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 			if ( chartStart && isSameOrBefore ) {
