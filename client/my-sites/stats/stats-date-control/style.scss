@@ -112,3 +112,21 @@
 }
 
 // TODO: Add final colors to shortcuts.
+.stats-date-control-picker__popover-content .date-control-picker-date .date-control-picker-date__heading {
+	color: var(--gray-gray-80, #2c3338);
+	font-family: $font-sf-pro-text;
+	font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-style: normal;
+	font-weight: 500;
+	line-height: 24px;
+	letter-spacing: -0.28px;
+
+	span {
+		color: var(--gray-gray-50, #646970);
+		font-size: 12px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		line-height: 18px;
+		letter-spacing: -0.24px;
+	}
+
+}
+

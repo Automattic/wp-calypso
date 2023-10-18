@@ -18,6 +18,11 @@ const DateControlPickerDate = ( {
 
 	return (
 		<div className="date-control-picker-date">
+			<p className="date-control-picker-date__heading">
+				Date Range
+				<span> (dd/mm/yyyy)</span>
+				{ /* TODO: should date range example be localized? */ }
+			</p>
 			<div className="stats-date-control-picker-dates__inputs">
 				<div className="stats-date-control-picker-dates__inputs-input-group">
 					<label htmlFor="startDate">From</label>
