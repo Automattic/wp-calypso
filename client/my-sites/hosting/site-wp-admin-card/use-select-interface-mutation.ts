@@ -1,12 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { requestSite } from 'calypso/state/sites/actions';
 
 const TOGGLE_SITE_INTERFACE_MUTATION_KEY = 'set-site-interface-mutation-key';
 const interfaceName = 'wp-admin';
 
 export const useSiteInterfaceMutation = ( siteId: number ) => {
 	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
 	const queryKey = [ TOGGLE_SITE_INTERFACE_MUTATION_KEY, siteId ];
 	const mutation = useMutation( {
 		mutationFn: async ( enabled: boolean ) => {
@@ -21,6 +24,7 @@ export const useSiteInterfaceMutation = ( siteId: number ) => {
 			await queryClient.cancelQueries( queryKey );
 			const previousData = queryClient.getQueryData( queryKey );
 			queryClient.setQueryData( queryKey, interfaceName );
+			dispatch( requestSite( siteId ) );
 			return previousData;
 		},
 		onError( _err, _newActive, prevValue ) {
