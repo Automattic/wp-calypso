@@ -440,7 +440,7 @@ fun BuildSteps.uploadPluginSourceMaps(
 			rm -rf code code.zip
 
 			# Downloads the latest release build for the plugin.
-			wget "%teamcity.serverUrl%/repository/download/calypso_WPComPlugins_Build_Plugins/$buildTag.tcbuildtag/$slug.zip?guest=1&branch=trunk" -O ./code.zip
+			wget "%teamcity.serverUrl%/repository/download/calypso_calypso_WPComPlugins_Build_Plugins/$buildTag.tcbuildtag/$slug.zip?guest=1&branch=trunk" -O ./code.zip
 
 			unzip -q ./code.zip -d ./code
 			cd code

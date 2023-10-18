@@ -189,10 +189,11 @@ function git( cmd ) {
 async function copyMetaFiles( archiveDir ) {
 	const buildNumber = process.env.build_number;
 
-	const cacheBuster = git( 'describe --always --dirty --long' );
 	// Use commit hash from the environment if available. In TeamCity, that reflects
 	// the GitHub data -- the local data may be different.
 	const commitHash = process.env.commit_sha ?? git( 'rev-parse HEAD' );
+	// Calypso repo short sha is currently at 11 characters.
+	const cacheBuster = commitHash.slice( 0, 11 );
 
 	const buildMeta = {
 		build_number: buildNumber ?? 'dev',
