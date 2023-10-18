@@ -6,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { addDotSuffix } from 'calypso/utils';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
@@ -130,7 +131,10 @@ export const SitesContentControls = ( {
 		<FilterBar>
 			<SitesSearch
 				searchIcon={ <SearchIcon /> }
-				onSearch={ ( term ) => onQueryParamChange( { search: term?.trim(), page: undefined } ) }
+				onSearch={ ( term ) => {
+					term = term?.trim();
+					onQueryParamChange( { search: addDotSuffix( term ), page: undefined } );
+				} }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }

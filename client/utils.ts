@@ -51,3 +51,16 @@ export function isEligibleForProductSampling( userId: number, percentage: number
 
 	return userSegment < percentage;
 }
+
+/**
+ * Adds a dot suffix to a string if it doesn't already have one.
+ * @param str string
+ * @returns string
+ */
+export function addDotSuffix( str: string ) {
+	if ( str.endsWith( '.' ) ) {
+		return str;
+	}
+
+	return str + '.';
+}

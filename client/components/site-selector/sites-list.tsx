@@ -9,6 +9,7 @@ import {
 	SitesSortingPreferenceProps,
 	withSitesSortingPreference,
 } from 'calypso/state/sites/hooks/with-sites-sorting';
+import { addDotSuffix } from 'calypso/utils';
 
 // Why isn't `title` part of SiteDetails, though?
 type SiteDetailsWithTitle = SiteDetails & { title: string };
@@ -44,7 +45,7 @@ const SitesList = ( {
 	const { __ } = useI18n();
 	return (
 		<SiteSelectorSitesList
-			filtering={ { search: searchTerm } }
+			filtering={ { search: addDotSuffix( searchTerm ) } }
 			sites={ originalSites }
 			sorting={ sitesSorting }
 		>
