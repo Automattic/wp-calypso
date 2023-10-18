@@ -322,6 +322,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								onChangeLegend={ this.onChangeLegend }
 								isWithNewDateControl={ isDateControlEnabled }
+								slug={ slug }
 							>
 								{ ' ' }
 								<DatePicker
