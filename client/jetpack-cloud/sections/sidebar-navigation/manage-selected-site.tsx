@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
-import { Icon, chevronLeft, plugins } from '@wordpress/icons';
+import { chevronLeft, cloud, cog, currencyDollar, plugins, search, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useMemo } from 'react';
@@ -58,7 +58,7 @@ const ManageSelectedSiteSidebar = () => {
 		() =>
 			[
 				{
-					icon: <JetpackIcons icon="activity-log" />,
+					icon: <JetpackIcons icon="activity-log" size={ 24 } />,
 					path: '/',
 					link: `/activity-log/${ siteSlug }`,
 					title: translate( 'Activity Log' ),
@@ -67,7 +67,7 @@ const ManageSelectedSiteSidebar = () => {
 					enabled: isAdmin,
 				},
 				{
-					icon: <JetpackIcons icon="backup" />,
+					icon: cloud,
 					path: '/',
 					link: backupPath( siteSlug ),
 					title: translate( 'VaultPress Backup' ),
@@ -76,7 +76,7 @@ const ManageSelectedSiteSidebar = () => {
 					enabled: isAdmin && ! isWPForTeamsSite,
 				},
 				{
-					icon: <JetpackIcons icon="scan" />,
+					icon: shield,
 					path: '/',
 					link: scanPath( siteSlug ),
 					title: translate( 'Scan' ),
@@ -85,7 +85,7 @@ const ManageSelectedSiteSidebar = () => {
 					enabled: isAdmin && ! isWPCOM && ! isWPForTeamsSite,
 				},
 				{
-					icon: <JetpackIcons icon="search" />,
+					icon: search,
 					path: '/',
 					link: `/jetpack-search/${ siteSlug }`,
 					title: translate( 'Search' ),
@@ -94,7 +94,7 @@ const ManageSelectedSiteSidebar = () => {
 					enabled: isAdmin,
 				},
 				{
-					icon: <JetpackIcons icon="social" />,
+					icon: <JetpackIcons icon="activity-log" size={ 24 } />,
 					path: '/',
 					link: `/jetpack-social/${ siteSlug }`,
 					title: translate( 'Social' ),
@@ -103,7 +103,7 @@ const ManageSelectedSiteSidebar = () => {
 					enabled: isAdmin && isSectionNameEnabled( 'jetpack-social' ) && ! isWPForTeamsSite,
 				},
 				{
-					icon: <Icon className="sidebar__menu-icon" size={ 28 } icon={ plugins } />,
+					icon: plugins,
 					path: '/',
 					link: pluginsPath( siteSlug ),
 					title: translate( 'Plugins' ),
@@ -112,7 +112,7 @@ const ManageSelectedSiteSidebar = () => {
 					enabled: isPluginManagementEnabled && isAgency,
 				},
 				{
-					icon: <JetpackIcons icon="settings" />,
+					icon: cog,
 					path: '/',
 					link: settingsPath( siteSlug ),
 					title: translate( 'Settings' ),
@@ -121,7 +121,7 @@ const ManageSelectedSiteSidebar = () => {
 					enabled: shouldShowSettings,
 				},
 				{
-					icon: <JetpackIcons icon="money" />,
+					icon: currencyDollar,
 					path: '/',
 					link: purchasesPath( siteSlug ),
 					title: translate( 'Purchases' ),
