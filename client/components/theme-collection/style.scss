@@ -115,7 +115,7 @@
 			display: flex;
 			justify-content: center;
 			margin: 0 8px;
-			transition: opacity 0.3s linear;
+			transition: filter 0.1s linear;
 			pointer-events: all;
 		}
 
@@ -125,10 +125,6 @@
 
 		&:hover {
 			filter: brightness(0.9);
-		}
-
-		&.swiper-button-disabled {
-			pointer-events: none;
 		}
 	}
 }
