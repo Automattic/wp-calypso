@@ -1,10 +1,9 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -15,7 +14,7 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { AnyAction } from 'redux';
 
 // Disabling this to make migration easier
@@ -85,14 +84,20 @@ function useCustomerData() {
 	};
 }
 
-export function createP24Method( { store }: { store: P24Store } ): PaymentMethod {
+export function createP24Method( {
+	store,
+	submitButtonContent,
+}: {
+	store: P24Store;
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
 	return {
 		id: 'p24',
 		paymentProcessorId: 'p24',
 		label: <P24Label />,
 		activeContent: <P24Fields />,
 		inactiveContent: <P24Summary />,
-		submitButton: <P24PayButton store={ store } />,
+		submitButton: <P24PayButton store={ store } submitButtonContent={ submitButtonContent } />,
 		getAriaLabel: () => 'Przelewy24',
 	};
 }
@@ -166,12 +171,13 @@ function P24PayButton( {
 	disabled,
 	onClick,
 	store,
+	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: P24Store;
+	submitButtonContent: ReactNode;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const { customerName, customerEmail } = useCustomerData();
 
@@ -200,21 +206,9 @@ function P24PayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			{ submitButtonContent }
 		</Button>
 	);
-}
-
-function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
-	const { __ } = useI18n();
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function isFormValid( store: P24Store ): boolean {

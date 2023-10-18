@@ -1,11 +1,11 @@
 import {
 	Button,
 	FormStatus,
-	useTotal,
 	useFormStatus,
 	useTransactionStatus,
 	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -21,11 +21,7 @@ import {
 } from 'calypso/my-sites/checkout/src/components/summary-details';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
-import type {
-	LineItem,
-	PaymentMethod,
-	PaymentMethodSubmitButtonProps,
-} from '@automattic/composite-checkout';
+import type { PaymentMethod, PaymentMethodSubmitButtonProps } from '@automattic/composite-checkout';
 import type {
 	PaymentMethodStore,
 	StoreSelectors,
@@ -181,7 +177,6 @@ function WeChatPayButton( {
 	store: WeChatStore;
 	siteSlug?: string;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const { resetTransaction } = useTransactionStatus();
 	const customerName = useSelect(
@@ -189,7 +184,7 @@ function WeChatPayButton( {
 		[]
 	);
 	const cartKey = useCartKey();
-	const { responseCart: cart } = useShoppingCart( cartKey );
+	const { responseCart } = useShoppingCart( cartKey );
 	const [ stripeResponseWithCode, setStripeResponseWithCode ] =
 		useState< null | WeChatStripeResponse >( null );
 
@@ -199,7 +194,7 @@ function WeChatPayButton( {
 		return (
 			<WeChatPaymentQRcode
 				orderId={ stripeResponseWithCode.order_id }
-				cart={ cart }
+				cart={ responseCart }
 				redirectUrl={ stripeResponseWithCode.redirect_url }
 				slug={ siteSlug }
 				reset={ () => {
@@ -238,7 +233,13 @@ function WeChatPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+			/>
 		</Button>
 	);
 }
@@ -248,7 +249,7 @@ function ButtonContents( {
 	total,
 }: {
 	formStatus: FormStatus;
-	total: LineItem;
+	total: string;
 } ): JSX.Element {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
@@ -256,7 +257,7 @@ function ButtonContents( {
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
+		return <>{ sprintf( __( 'Pay %s' ), total ) }</>;
 	}
 	return <>{ __( 'Please wait…' ) }</>;
 }

@@ -14,12 +14,14 @@ type DefaultWiredLaunchpadProps = {
 	siteSlug: string | null;
 	checklistSlug: string;
 	launchpadContext: string;
+	onSiteLaunched?: () => void;
 };
 
 const DefaultWiredLaunchpad = ( {
 	siteSlug,
 	checklistSlug,
 	launchpadContext,
+	onSiteLaunched,
 }: DefaultWiredLaunchpadProps ) => {
 	const {
 		data: { checklist },
@@ -71,6 +73,9 @@ const DefaultWiredLaunchpad = ( {
 			tracksData,
 			extraActions: {
 				setActiveChecklist,
+			},
+			eventHandlers: {
+				onSiteLaunched,
 			},
 		} );
 	};

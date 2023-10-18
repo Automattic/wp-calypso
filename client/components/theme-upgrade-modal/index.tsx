@@ -327,7 +327,7 @@ export const ThemeUpgradeModal = ( {
 				<ul>
 					{ featureList.map( ( feature, i ) => (
 						<li key={ i } className="theme-upgrade-modal__included-item">
-							<Tooltip text={ feature.getDescription?.() } position="top left">
+							<Tooltip text={ feature.getDescription?.() as string } position="top left">
 								<div>
 									<Gridicon icon="checkmark" size={ 16 } />
 									{ feature.getTitle() }
