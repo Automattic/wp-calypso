@@ -161,7 +161,12 @@ class StatsPeriodNavigation extends PureComponent {
 									onClickPrevious={ this.handleArrowPrevious }
 								/>
 							) }
-							<IntervalDropdown period={ period } pathTemplate={ pathTemplate } />
+							<IntervalDropdown
+								slug={ slug }
+								period={ period }
+								queryParams={ queryParams }
+								pathTemplate={ pathTemplate }
+							/>
 						</div>
 					</div>
 				) : (
