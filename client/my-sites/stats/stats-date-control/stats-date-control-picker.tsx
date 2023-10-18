@@ -8,13 +8,21 @@ import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
-const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPickerProps ) => {
-	// TODO: remove placeholder values
+const DateControlPicker = ( {
+	buttonLabel,
+	dateRange,
+	shortcutList,
+	selectedShortcut,
+	onShortcut,
+	onApply,
+}: DateControlPickerProps ) => {
+	// Pull dates from provided range.
 	const [ inputStartDate, setInputStartDate ] = useState(
-		moment().subtract( 6, 'days' ).format( 'YYYY-MM-DD' )
+		moment( dateRange.chartStart ).format( 'YYYY-MM-DD' )
 	);
-	const [ inputEndDate, setInputEndDate ] = useState( moment().format( 'YYYY-MM-DD' ) );
-	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
+	const [ inputEndDate, setInputEndDate ] = useState(
+		moment( dateRange.chartEnd ).format( 'YYYY-MM-DD' )
+	);
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
@@ -66,18 +74,12 @@ const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPi
 		// Calc new start date based on end date plus range as specified in shortcut.
 		const newStartDate = calcNewDateWithOffset( newEndDate, shortcut.range );
 		setInputStartDate( formattedDate( newStartDate ) );
-
-		setCurrentShortcut( shortcut.id || '' );
-	};
-
-	const formatDate = ( date: string ) => {
-		return moment( date ).format( 'MMM D, YYYY' );
 	};
 
 	return (
 		<div className="stats-date-control-picker">
 			<Button onClick={ () => togglePopoverOpened( ! popoverOpened ) } ref={ infoReferenceElement }>
-				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
+				{ buttonLabel }
 				<Icon className="gridicon" icon={ calendar } />
 			</Button>
 			<Popover
@@ -96,7 +98,7 @@ const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPi
 					/>
 					<DateControlPickerShortcuts
 						shortcutList={ shortcutList }
-						currentShortcut={ currentShortcut }
+						currentShortcut={ selectedShortcut }
 						onClick={ handleShortcutSelected }
 					/>
 				</div>

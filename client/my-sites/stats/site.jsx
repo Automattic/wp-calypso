@@ -238,15 +238,21 @@ class StatsSite extends Component {
 			} else {
 				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 			}
-			// Sort out quantity for chart. Default to 7 days.
-			let daysInRange = 7;
+			// Sort out quantity for chart. Default to 30 days.
+			let daysInRange = 30;
 			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
 			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 			if ( chartStart && isSameOrBefore ) {
 				// Add one to calculation to include the start date.
 				daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
+				customChartRange.chartStart = chartStart;
+			} else {
+				customChartRange.chartStart = moment()
+					.subtract( daysInRange, 'days' )
+					.format( 'YYYY-MM-DD' );
 			}
 			this.state.customChartQuantity = quantityForDaysAndPeriod( daysInRange, period );
+			customChartRange.daysInRange = daysInRange;
 		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
@@ -323,6 +329,7 @@ class StatsSite extends Component {
 								onChangeLegend={ this.onChangeLegend }
 								isWithNewDateControl={ isDateControlEnabled }
 								slug={ slug }
+								dateRange={ customChartRange }
 							>
 								{ ' ' }
 								<DatePicker
