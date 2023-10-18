@@ -2,7 +2,7 @@
 
 ## Next / TBD
 
-## 7.0.5 / 2023-10-13
+## 7.0.5 / 2023-10-18
 
 - Don't reference `window` from module initialization code.
 - Trigger request error when proxy iframe is not present and loaded.
