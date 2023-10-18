@@ -7,7 +7,7 @@ The component's header contains two adjacent content areas that are set by the `
 ## Usage
 
 ```js
-import FoldableCard from '@automattic/components';
+import { FoldableCard } from '@automattic/components';
 
 function render() {
 	return (
