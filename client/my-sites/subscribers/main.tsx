@@ -4,7 +4,6 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
-import { Item } from 'calypso/components/breadcrumb';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -18,7 +17,7 @@ import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { SubscribersHeaderPopover } from './components/subscribers-header-popover';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { SubscribersFilterBy, SubscribersSortBy } from './constants';
-import { getSubscriberDetailsUrl, getSubscribersUrl } from './helpers';
+import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
 import { Subscriber } from './types';
 
@@ -26,19 +25,33 @@ import './style.scss';
 
 type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
-	navigationItems: Item[];
 };
 
-const SubscribersHeader = ( { navigationItems, selectedSiteId }: SubscribersHeaderProps ) => {
+const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
+	const localizeUrl = useLocalizeUrl();
 
 	return (
 		<NavigationHeader
 			className="stats__section-header modernized-header"
-			title={ translate( 'Jetpack Stats' ) }
-			subtitle={ translate( "View your site's performance and learn from trends." ) }
+			title={ translate( 'Subscribers' ) }
+			subtitle={ translate(
+				'Add subscribers to your site and send them a free or paid {{link}}newsletter{{/link}}.',
+				{
+					components: {
+						link: (
+							<a
+								href={ localizeUrl(
+									'https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers'
+								) }
+								target="blank"
+							/>
+						),
+					},
+				}
+			) }
 			screenReader={ navItems.insights?.label }
-			navigationItems={ navigationItems }
+			navigationItems={ [] }
 		>
 			<Button
 				className="add-subscribers-button"
@@ -91,34 +104,6 @@ const SubscribersPage = ( {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
 
-	const localizeUrl = useLocalizeUrl();
-
-	const navigationItems: Item[] = [
-		{
-			label: translate( 'Subscribers' ),
-			href: getSubscribersUrl( selectedSite?.slug, pageArgs ),
-			helpBubble: (
-				<span>
-					{ translate(
-						'Add subscribers to your site and send them a free or paid {{link}}newsletter{{/link}}.',
-						{
-							components: {
-								link: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers'
-										) }
-										target="blank"
-									/>
-								),
-							},
-						}
-					) }
-				</span>
-			),
-		},
-	];
-
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -134,10 +119,7 @@ const SubscribersPage = ( {
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
-				<SubscribersHeader
-					navigationItems={ navigationItems }
-					selectedSiteId={ selectedSite?.ID }
-				/>
+				<SubscribersHeader selectedSiteId={ selectedSite?.ID } />
 
 				<SubscriberListContainer
 					onClickView={ onClickView }
