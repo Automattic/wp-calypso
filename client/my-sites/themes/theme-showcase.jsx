@@ -307,9 +307,10 @@ class ThemeShowcase extends Component {
 		return buildRelativeSearchUrl( url, search );
 	};
 
-	onTierSelect = ( { value: tier, isCollectionView: isCollectionView = false } ) => {
+	onTierSelectFilter = ( { value: tier } ) => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
+		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( {
-			isCollectionView,
 			tier,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
@@ -320,12 +321,6 @@ class ThemeShowcase extends Component {
 
 		page( url );
 		this.scrollToSearchInput();
-	};
-
-	onTierSelectFilter = ( { value: tier } ) => {
-		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
-		trackClick( 'search bar filter', tier );
-		this.onTierSelect( { value: tier } );
 	};
 
 	onFilterClick = ( tabFilter ) => {
@@ -358,20 +353,9 @@ class ThemeShowcase extends Component {
 		this.scrollToSearchInput();
 	};
 
-	getCollectionHeader = () => {
-		let title;
-		let description;
-
-		switch ( this.props.tier ) {
-			case 'premium':
-				title = THEME_COLLECTIONS.premium.title;
-				description = THEME_COLLECTIONS.premium.description;
-				break;
-			case 'marketplace':
-				title = THEME_COLLECTIONS.partner.title;
-				description = THEME_COLLECTIONS.partner.description;
-				break;
-		}
+	getCollectionViewHeader = () => {
+		const key = ( this.props.tier ?? '' ) + ( this.props.filter ?? '' );
+		const { title, description } = THEME_COLLECTIONS[ key ];
 
 		return (
 			<div className="collection-header">
@@ -484,9 +468,7 @@ class ThemeShowcase extends Component {
 							getOptions={ this.getThemeOptions }
 							getScreenshotUrl={ this.getScreenshotUrl }
 							getActionLabel={ this.getActionLabel }
-							onTierSelect={ ( tier ) =>
-								this.onTierSelect( { value: tier, isCollectionView: true } )
-							}
+							onSeeAll={ this.onCollectionSeeAll }
 						/>
 					);
 				}
@@ -515,6 +497,17 @@ class ThemeShowcase extends Component {
 			addTracking( this.props.options ),
 			( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, this.props.siteId ) )
 		);
+	};
+
+	onCollectionSeeAll = ( { filter = '', tier = '' } ) => {
+		const url = this.constructUrl( {
+			isCollectionView: true,
+			filter,
+			tier,
+		} );
+
+		page( url );
+		this.scrollToSearchInput();
 	};
 
 	render() {
@@ -629,7 +622,7 @@ class ThemeShowcase extends Component {
 						</div>
 					) }
 					<div className="themes__showcase">
-						{ isCollectionView && this.getCollectionHeader() }
+						{ isCollectionView && this.getCollectionViewHeader() }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
