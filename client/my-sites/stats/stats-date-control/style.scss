@@ -85,6 +85,12 @@
 	gap: 16px; // spacing between the "From" input and the "To" input
 
 	input[type="text"] {
+		font-family: $font-sf-pro-text;
+		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+		letter-spacing: -0.15px;
 		border: 1px solid var(--gray-gray-10, #c3c4c7);
 		background: var(--black-white-white, #fff);
 		padding: 10px 16px;
