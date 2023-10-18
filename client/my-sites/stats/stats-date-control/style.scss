@@ -43,7 +43,7 @@
 	margin-bottom: 16px; // spacing between "From" and "To" groups
 
 	label {
-		margin-bottom: 8px; // Adjust based on the design's spacing
+		margin-bottom: 0;
 		text-align: left;
 	}
 }
@@ -54,7 +54,7 @@
 }
 
 .date-control-picker-date .stats-date-control-picker-dates__inputs .input-group .components-base-control .components-base-control__field input.components-text-control__input {
-	max-width: 90px; //todo find a way to shorten this chain, and perhaps stop hard coding the max-width
+	max-width: 120px;
 }
 
 .stats-date-control-picker {
@@ -85,6 +85,8 @@
 	gap: 16px; // spacing between the "From" input and the "To" input
 
 	input[type="text"] {
+		border: 1px solid var(--gray-gray-10, #c3c4c7);
+		background: var(--black-white-white, #fff);
 		padding: 10px 16px;
 		width: auto;
 		max-width: 95%; // this is to ensure it doesn't overflow its container
