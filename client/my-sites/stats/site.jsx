@@ -359,7 +359,7 @@ class StatsSite extends Component {
 							chartTab={ this.props.chartTab }
 							customQuantity={ this.state.customChartQuantity }
 							customRange={ customChartRange }
-							hideLegend={ true }
+							hideLegend={ isDateControlEnabled }
 						/>
 					</>
 
