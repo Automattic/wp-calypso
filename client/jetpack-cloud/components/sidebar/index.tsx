@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import SiteSelector from 'calypso/components/site-selector';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -57,6 +58,7 @@ const JetpackCloudSidebar = ( {
 	);
 
 	const translate = useTranslate();
+	useQueryJetpackPartnerPortalPartner();
 
 	return (
 		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
