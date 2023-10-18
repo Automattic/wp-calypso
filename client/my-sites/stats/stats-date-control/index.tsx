@@ -103,35 +103,26 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 	};
 
 	const getShortcutForRange = () => {
+		// Search the shortcut array for something matching the current date range.
+		// Returns shortcut or null;
 		const today = moment().format( 'YYYY-MM-DD' );
-		// Today
-		if ( today === dateRange.chartEnd && dateRange.daysInRange === 1 ) {
-			return shortcutList[ 0 ];
-		}
-		// Last 7 days
-		if ( today === dateRange.chartEnd && dateRange.daysInRange === 7 ) {
-			return shortcutList[ 2 ];
-		}
-		// Last 30 days
-		if ( today === dateRange.chartEnd && dateRange.daysInRange === 30 ) {
-			return shortcutList[ 3 ];
-		}
-		// Last year
-		if ( today === dateRange.chartEnd && dateRange.daysInRange === 365 ) {
-			return shortcutList[ 4 ];
-		}
 		const yesterday = moment().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
-		// Yesterday
-		if ( yesterday === dateRange.chartEnd && dateRange.daysInRange === 1 ) {
-			return shortcutList[ 1 ];
-		}
-		return null;
+		const shortcut = shortcutList.find( ( element ) => {
+			if ( today === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
+				return element;
+			}
+			if ( yesterday === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
+				return element;
+			}
+			return null;
+		} );
+		return shortcut;
 	};
 
 	const getButtonLabel = () => {
 		// Test for a shortcut match.
 		const shortcut = getShortcutForRange();
-		if ( shortcut !== null ) {
+		if ( shortcut ) {
 			return shortcut.label;
 		}
 		// Generate a full date range for the label.
