@@ -578,7 +578,7 @@ class ThemeShowcase extends Component {
 					filter={ this.props.filter }
 					tier={ this.props.tier }
 					vertical={ this.props.vertical }
-					metaOnly={ isCollectionView }
+					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
 				/>
 				<div className="themes__content" ref={ this.scrollRef }>

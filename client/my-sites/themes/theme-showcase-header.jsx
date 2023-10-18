@@ -15,7 +15,7 @@ export default function ThemeShowcaseHeader( {
 	filter,
 	tier,
 	vertical,
-	metaOnly = false,
+	isCollectionView = false,
 	noIndex = false,
 } ) {
 	// eslint-disable-next-line no-shadow
@@ -64,7 +64,7 @@ export default function ThemeShowcaseHeader( {
 		} );
 	}
 
-	if ( metaOnly ) {
+	if ( isCollectionView ) {
 		return (
 			<>
 				<DocumentHead title={ documentHeadTitle } meta={ metas } />
