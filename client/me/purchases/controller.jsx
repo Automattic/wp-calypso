@@ -8,6 +8,7 @@ import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -115,7 +116,8 @@ export function confirmCancelDomain( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.confirmCancelDomain }>
 				<Main wideLayout className="purchases__cancel-domain confirm-cancel-domain">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+
 					<ConfirmCancelDomain
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
