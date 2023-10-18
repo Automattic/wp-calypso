@@ -132,7 +132,7 @@
 		color: #101517;
 	}
 
-	.share-site-modal__modal-view-site:hover {
+	.share-site-modal__modal-view-site:hover:not(:disabled) {
 		text-decoration: underline;
 	}
 }
