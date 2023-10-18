@@ -9,7 +9,7 @@ import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
-const StatsDateControl = ( { slug, queryParams }: StatsDateControlProps ) => {
+const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
 	// consistent with the custom ranges.
@@ -105,7 +105,8 @@ const StatsDateControl = ( { slug, queryParams }: StatsDateControlProps ) => {
 	const getButtonLable = () => {
 		// ToDo: Add logic for button label.
 		// Custom range or shortcut label.
-		return 'All your dates...';
+		const newLabel = `${ dateRange.chartStart } - ${ dateRange.chartEnd }`;
+		return newLabel;
 	};
 
 	return (

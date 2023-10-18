@@ -121,6 +121,7 @@ class StatsPeriodNavigation extends PureComponent {
 			pathTemplate,
 			onChangeChartQuantity,
 			isWithNewDateControl,
+			dateRange,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
@@ -140,6 +141,7 @@ class StatsPeriodNavigation extends PureComponent {
 							period={ period }
 							pathTemplate={ pathTemplate }
 							onChangeChartQuantity={ onChangeChartQuantity }
+							dateRange={ dateRange }
 						/>
 						<div className="stats-period-navigation__period-control">
 							{ this.props.activeTab && (
