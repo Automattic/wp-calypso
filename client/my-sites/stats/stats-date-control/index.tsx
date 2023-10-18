@@ -99,9 +99,34 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 		page( generateNewLink( shortcut.period, startDate, endDate ) );
 	};
 
+	const getLabelForRange = () => {
+		const today = moment().format( 'YYYY-MM-DD' );
+		if ( today === dateRange.chartEnd && dateRange.daysInRange === 1 ) {
+			return 'Today';
+		}
+		if ( today === dateRange.chartEnd && dateRange.daysInRange === 7 ) {
+			return 'Last 7 days';
+		}
+		if ( today === dateRange.chartEnd && dateRange.daysInRange === 30 ) {
+			return 'Last 30 days';
+		}
+		if ( today === dateRange.chartEnd && dateRange.daysInRange === 365 ) {
+			return 'Last year';
+		}
+		const yesterday = moment().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
+		if ( yesterday === dateRange.chartEnd && dateRange.daysInRange === 1 ) {
+			return 'Yesterday';
+		}
+		return null;
+	};
+
 	const getButtonLable = () => {
-		// ToDo: Add logic for button label.
-		// Custom range or shortcut label.
+		// Test for a shortcut match.
+		const label = getLabelForRange();
+		if ( label !== null ) {
+			return label;
+		}
+		// Generate a full date range for the label.
 		const startDate = moment( dateRange.chartStart ).format( 'MMMM Do, YYYY' );
 		const endDate = moment( dateRange.chartEnd ).format( 'MMMM Do, YYYY' );
 		return `${ startDate } - ${ endDate }`;
