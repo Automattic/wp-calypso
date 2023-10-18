@@ -55,6 +55,7 @@ const VideoPressOnboardingIntentModalPortfolio: React.FC< IntroModalContentProps
 
 			if ( config.isEnabled( 'videomaker-trial' ) ) {
 				learnMoreText = translate(
+					/* translators: Displayed on VideoPress signup flow intro page. %(price)s is monthly price. */
 					'After trial, plans start as low as %(price)s/month. {{a}}Learn more about VideoPress{{/a}}',
 					{
 						args: { price: planProductObject.price },
