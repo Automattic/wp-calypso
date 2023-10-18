@@ -91,6 +91,8 @@ function DisplayedModal( {
 
 export default function ModalContainer( props: ModalContainerProps ) {
 	const { isModalOpen, modalType } = props;
+
+	/** Explore using the isVisible flag on Dialog instead. */
 	if ( ! isModalOpen || ! modalType ) {
 		return;
 	}
