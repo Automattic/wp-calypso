@@ -12,8 +12,8 @@ import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
 import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
 import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -228,15 +228,14 @@ class Help extends PureComponent {
 			<Main className="help" wideLayout>
 				<PageViewTracker path="/help" title="Help" />
 
-				<div className="help__heading">
-					<FormattedHeader
-						brandFont
-						headerText={ translate( 'Support' ) }
-						subHeaderText={ translate( 'Get help with your WordPress.com site' ) }
-						align="left"
-					/>
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Support' ) }
+					subtitle={ translate( 'Get help with your WordPress.com site' ) }
+				>
 					<HelpContactUsHeader />
-				</div>
+				</NavigationHeader>
+
 				<HelpSearch onSearch={ this.setIsSearching } />
 				{ ! this.state.isSearching && (
 					<div className="help__inner-wrapper">
