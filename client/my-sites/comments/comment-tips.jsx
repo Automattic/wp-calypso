@@ -5,15 +5,15 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
 import { useDispatch } from 'calypso/state';
-import { setPreference } from 'calypso/state/preferences/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 
-export const COMMENTS_TIPS_DISMISSED_PREFERENCE = 'dismissible-comments-moderation-tips-test';
+export const COMMENTS_TIPS_DISMISSED_PREFERENCE = 'dismissible-comments-moderation-tips';
 
 const CommentTips = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const dismissTips = () => dispatch( setPreference( COMMENTS_TIPS_DISMISSED_PREFERENCE, true ) );
+	const dismissTips = () => dispatch( savePreference( COMMENTS_TIPS_DISMISSED_PREFERENCE, true ) );
 
 	return (
 		<ActionPanel className="comments-tips__action-panel">
