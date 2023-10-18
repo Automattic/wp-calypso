@@ -7,7 +7,7 @@ import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { createRef, Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -138,6 +138,10 @@ class ThemeShowcase extends Component {
 		this.props.setBackPath( this.constructUrl() );
 	}
 
+	isThemeDiscoveryEnabled = () =>
+		( this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lits' ) ) ||
+		config.isEnabled( 'themes/discovery-lots' );
+
 	isStaticFilter = ( tabFilter ) => {
 		return Object.values( staticFilters ).some(
 			( staticFilter ) => tabFilter.key === staticFilter.key
@@ -160,11 +164,17 @@ class ThemeShowcase extends Component {
 			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
+		const recommendedFilter = {
+			...staticFilters.RECOMMENDED,
+			...( this.props.tier === '' &&
+				this.isThemeDiscoveryEnabled() && { text: this.props.translate( 'Discover' ) } ),
+		};
+
 		return {
 			...( shouldShowMyThemesFilter && {
 				MYTHEMES: staticFilters.MYTHEMES,
 			} ),
-			RECOMMENDED: staticFilters.RECOMMENDED,
+			RECOMMENDED: recommendedFilter,
 			ALL: staticFilters.ALL,
 			...this.subjectFilters,
 		};
@@ -453,11 +463,7 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 
-		const showCollections =
-			this.props.tier === '' &&
-			( this.props.isLoggedIn
-				? config.isEnabled( 'themes/discovery-lits' )
-				: config.isEnabled( 'themes/discovery-lots' ) );
+		const showCollections = this.props.tier === '' && this.isThemeDiscoveryEnabled();
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
