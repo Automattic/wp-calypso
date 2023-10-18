@@ -1,5 +1,8 @@
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { NOTICE_READER_FIRST_POSTS } from 'calypso/my-sites/customer-home/cards/constants';
 
 import './style.scss';
@@ -8,8 +11,9 @@ const ReaderFirstPosts = () => {
 	const translate = useTranslate();
 
 	const clickButton = () => {
-		// @TODO: Add Tracks events.
-		//recordTracksEvent( 'calypso_home_reader_first_posts_nudge_click' );
+		recordTracksEvent( 'calypso_my_home_reader_first_posts_nudge_click', {
+			id: NOTICE_READER_FIRST_POSTS,
+		} );
 
 		page.redirect( '/discover?selectedTab=first-posts' );
 	};
