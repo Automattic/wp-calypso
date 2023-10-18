@@ -103,7 +103,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-theme',
-			steps: [ userSocialStep, 'domains-theme-preselected', 'plans-theme-preselected' ],
+			steps: [ 'domains-theme-preselected', 'plans-theme-preselected', userSocialStep ],
 			destination: getWithThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
 			lastModified: '2023-10-11',
