@@ -34,6 +34,7 @@ type Props = {
 		withChevron?: boolean;
 		isExternalLink?: boolean;
 		isSelected: boolean;
+		trackEventName?: string;
 	}[];
 	description?: string;
 	backButtonProps?: {
@@ -70,7 +71,16 @@ const JetpackCloudSidebar = ( {
 						backButtonProps={ backButtonProps }
 					>
 						{ menuItems.map( ( item ) => (
-							<SidebarNavigatorMenuItem key={ item.link } { ...item } />
+							<SidebarNavigatorMenuItem
+								key={ item.link }
+								{ ...item }
+								onClickMenuItem={ ( path ) => {
+									if ( item.trackEventName ) {
+										recordTracksEvent( item.trackEventName );
+									}
+									item.onClickMenuItem( path );
+								} }
+							/>
 						) ) }
 					</SidebarNavigatorMenu>
 				</SidebarNavigator>

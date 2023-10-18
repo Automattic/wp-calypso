@@ -2,13 +2,13 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
 
 const backupBasePath = () => '/backup';
-export const backupPath = ( siteSlug?: string, query = {} ): string => {
+export const backupPath = ( siteSlug?: string | null, query = {} ): string => {
 	const path = siteSlug ? `${ backupBasePath() }/${ siteSlug }` : backupBasePath();
 	return addQueryArgs( query, path );
 };
 
 const scanBasePath = () => '/scan';
-export const scanPath = ( siteSlug?: string ): string =>
+export const scanPath = ( siteSlug?: string | null ): string =>
 	siteSlug ? `${ scanBasePath() }/${ siteSlug }` : scanBasePath();
 
 const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : '/settings/jetpack' );
@@ -42,7 +42,7 @@ export const agencySignupBasePath = () => '/agency/signup';
 
 const pluginsBasePath = '/plugins/manage';
 
-export const pluginsPath = ( siteSlug?: string, query = {} ): string => {
+export const pluginsPath = ( siteSlug?: string | null, query = {} ): string => {
 	const path = siteSlug ? `${ pluginsBasePath }/${ siteSlug }` : pluginsBasePath;
 	return addQueryArgs( query, path );
 };
