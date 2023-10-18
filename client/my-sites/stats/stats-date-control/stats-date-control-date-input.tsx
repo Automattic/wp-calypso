@@ -8,20 +8,17 @@ interface Props {
 	max?: string;
 }
 
-const DateInput: React.FC< Props > = ( { value, onChange, id } ) => {
+const DateInput: React.FC< Props > = ( {
+	value,
+	onChange,
+	id,
+	max = moment().format( 'YYYY-MM-DD' ),
+} ) => {
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		onChange && onChange( event.target.value );
 	};
 
-	return (
-		<input
-			id={ id }
-			type="date"
-			value={ value }
-			onChange={ handleChange }
-			max={ moment().format( 'YYYY-MM-DD' ) }
-		/>
-	);
+	return <input id={ id } type="date" value={ value } onChange={ handleChange } max={ max } />;
 };
 
 export default DateInput;
