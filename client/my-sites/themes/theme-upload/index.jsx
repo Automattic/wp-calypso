@@ -26,6 +26,7 @@ import FeatureExample from 'calypso/components/feature-example';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -68,7 +69,6 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import ThemesHeader from '../themes-header';
 
 import './style.scss';
 
@@ -342,8 +342,8 @@ class Upload extends Component {
 				<ThanksModal source="upload" />
 				<ActivationModal source="upload" />
 
-				<ThemesHeader
-					description={ translate(
+				<NavigationHeader
+					subtitle={ translate(
 						'If you have a theme in .zip format, you may install or update it by uploading it here. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -353,7 +353,8 @@ class Upload extends Component {
 							},
 						}
 					) }
-				/>
+				></NavigationHeader>
+
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
 
 				{ showUpgradeBanner && this.renderUpgradeBanner() }

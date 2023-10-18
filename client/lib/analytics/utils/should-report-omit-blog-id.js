@@ -19,5 +19,10 @@ export default ( path ) => {
 		return false;
 	}
 
+	// Stepper routes start with /setup/, and might contain site slug or ID via URL parameters.
+	if ( path.startsWith( '/setup/' ) ) {
+		return false;
+	}
+
 	return ! getSiteFragment( path );
 };

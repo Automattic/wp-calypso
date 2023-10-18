@@ -1,5 +1,5 @@
 import { TextControl, Button } from '@wordpress/components';
-import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 import { DateControlPickerDateProps } from './types';
 
 const DateControlPickerDate = ( {
@@ -10,19 +10,28 @@ const DateControlPickerDate = ( {
 	onApply,
 	onCancel,
 }: DateControlPickerDateProps ) => {
-	// TODO: Rename component?
-	// Feels a bit confusing now. Should have a better idea
-	// of appropriate names once hierarchy is finalized.
+	const translate = useTranslate();
+
 	return (
 		<div className="date-control-picker-date">
+			<h2 className="date-control-picker-date__heading">
+				{ translate( 'Date Range' ) }
+				<span> (dd/mm/yyyy)</span>
+			</h2>
 			<div className="stats-date-control-picker-dates__inputs">
-				<TextControl value={ startDate } onChange={ onStartChange } />
-				<TextControl value={ endDate } onChange={ onEndChange } />
+				<div className="stats-date-control-picker-dates__inputs-input-group">
+					<label htmlFor="startDate">From</label>
+					<TextControl id="startDate" value={ startDate } onChange={ onStartChange } />
+				</div>
+				<div className="stats-date-control-picker-dates__inputs-input-group">
+					<label htmlFor="endDate">To</label>
+					<TextControl id="endDate" value={ endDate } onChange={ onEndChange } />
+				</div>
 			</div>
 			<div className="stats-date-control-picker-dates__buttons">
-				<Button onClick={ onCancel }>Cancel</Button>
+				<Button onClick={ onCancel }>{ translate( 'Cancel' ) }</Button>
 				<Button variant="primary" onClick={ onApply }>
-					Apply
+					{ translate( 'Apply' ) }
 				</Button>
 			</div>
 		</div>

@@ -2,10 +2,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import InstallThemeButton from './install-theme-button';
-import ThemesHeader from './themes-header';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
@@ -53,16 +53,32 @@ export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, verti
 	return (
 		<>
 			<DocumentHead title={ documentHeadTitle } meta={ metas } />
-			<ThemesHeader title={ themesHeaderTitle } description={ themesHeaderDescription }>
-				{ isLoggedIn && (
-					<>
-						<div className="themes__install-theme-button-container">
-							<InstallThemeButton />
-						</div>
-						<ScreenOptionsTab wpAdminPath="themes.php" />
-					</>
-				) }
-			</ThemesHeader>
+			{ isLoggedIn ? (
+				<NavigationHeader
+					compactBreadcrumb={ false }
+					navigationItems={ [] }
+					mobileItem={ null }
+					title={ translate( 'Themes' ) }
+					subtitle={ translate(
+						'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+							},
+						}
+					) }
+				>
+					<InstallThemeButton />
+					<ScreenOptionsTab wpAdminPath="themes.php" />
+				</NavigationHeader>
+			) : (
+				<div className="themes__header-logged-out">
+					<div className="themes__page-heading">
+						<h1>{ themesHeaderTitle }</h1>
+						<p className="page-sub-header">{ themesHeaderDescription }</p>
+					</div>
+				</div>
+			) }
 		</>
 	);
 }
