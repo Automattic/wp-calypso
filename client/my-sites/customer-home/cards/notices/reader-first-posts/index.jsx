@@ -15,7 +15,7 @@ const ReaderFirstPosts = () => {
 			id: NOTICE_READER_FIRST_POSTS,
 		} );
 
-		page.redirect( '/discover?selectedTab=first-posts' );
+		page.redirect( '/discover?selectedTab=firstposts' );
 	};
 
 	return (
