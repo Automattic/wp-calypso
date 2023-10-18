@@ -59,11 +59,11 @@ function getFeatureStrings(
 			];
 		case 'boost':
 			return [
-				translate( 'Automated critical CSS generation (Premium)' ),
-				translate( 'Reduce image sizes with image guide (Premium)' ),
-				translate( 'Historical site performance chart (Premium)' ),
-				translate( 'Additional image quality control options (Premium)' ),
-				translate( 'Priority support (Premium)' ),
+				translate( 'Automated critical CSS generation' ),
+				translate( 'Reduce image sizes with Image Guide' ),
+				translate( 'Historical site performance chart' ),
+				translate( 'Additional image quality control options' ),
+				translate( 'Priority support' ),
 				translate( 'Site performance scores' ),
 				translate( 'One-click optimization' ),
 				translate( 'Deferred non-essential JavaScript' ),
