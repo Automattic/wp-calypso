@@ -108,10 +108,14 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 		const today = moment().format( 'YYYY-MM-DD' );
 		const yesterday = moment().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
 		const shortcut = shortcutList.find( ( element ) => {
-			if ( today === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
+			if (
+				yesterday === dateRange.chartEnd &&
+				dateRange.daysInRange === element.range + 1 &&
+				element.id === 'yesterday'
+			) {
 				return element;
 			}
-			if ( yesterday === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
+			if ( today === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
 				return element;
 			}
 			return null;
