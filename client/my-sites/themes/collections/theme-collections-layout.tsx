@@ -21,6 +21,7 @@ function ThemeCollectionsLayout( props: ThemeCollectionsLayoutProps ) {
 		const { filter, tier } = collection.query;
 		return (
 			<ShowcaseThemeCollection
+				key={ collection.collectionSlug }
 				{ ...collection }
 				{ ...props }
 				onSeeAll={ () => onSeeAll( { tier, filter } ) }

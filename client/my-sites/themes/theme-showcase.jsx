@@ -354,7 +354,7 @@ class ThemeShowcase extends Component {
 	};
 
 	getCollectionViewHeader = () => {
-		const key = `${ this.props.tier ?? '' }-${ this.props.filter ?? '' }`;
+		const key = ( this.props.tier ?? '' ) + ( this.props.filter ?? '' );
 		const { title, description } = THEME_COLLECTIONS[ key ];
 
 		return (
