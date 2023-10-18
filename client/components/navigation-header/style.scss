@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .navigation-header {
 	box-sizing: border-box;
@@ -8,8 +9,8 @@
 	margin-bottom: 32px;
 	@include break-small {
 
-		padding: 0 0 24px 0;
-		margin-bottom: 16px;
+		padding: 0;
+		margin-bottom: 24px;
 	}
 
 	.breadcrumbs-back {
@@ -32,15 +33,21 @@
 	}
 
 	.formatted-header__title {
-		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-		font-size: $font-title-medium;
+		font-family: "SF Pro Display", $sans;
+		font-size: $font-title-small;
 		font-weight: 500;
 		margin-bottom: 4px;
-		min-height: 33px;
+		line-height: 26px;
 	}
 	.formatted-header__subtitle {
-		min-height: 20px;
+		color: var(--color-neutral-60);
 		margin: 0;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+	}
+
+	.button {
+		line-height: 20px;
 	}
 }
 
