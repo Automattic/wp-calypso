@@ -37,6 +37,7 @@ import ReaderCombinedCard from 'calypso/blocks/reader-combined-card/docs/example
 import ReaderExportButton from 'calypso/blocks/reader-export-button/docs/example';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video/docs/example';
 import ReaderImportButton from 'calypso/blocks/reader-import-button/docs/example';
+import ReaderJoinConversationDialogExample from 'calypso/blocks/reader-join-conversation/docs/example';
 import ReaderPostCard from 'calypso/blocks/reader-post-card/docs/example';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu/docs/example';
 import ReaderRecommendedSites from 'calypso/blocks/reader-recommended-sites/docs/example';
@@ -174,6 +175,7 @@ export default class AppComponents extends Component {
 					<TimeMismatchWarning readmeFilePath="time-mismatch-warning" />
 					<UpsellNudge />
 					<JetpackReviewPrompt readmeFilePath="jetpack-review-prompt" />
+					<ReaderJoinConversationDialogExample readmeFilePath="reader-join-conversation" />
 				</Collection>
 			</Main>
 		);

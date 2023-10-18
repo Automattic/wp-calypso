@@ -11,6 +11,7 @@ import {
 	LAUNCHPAD_INTENT_FREE_NEWSLETTER,
 	LAUNCHPAD_INTENT_PAID_NEWSLETTER,
 	LAUNCHPAD_PRE_LAUNCH,
+	NOTICE_READER_FIRST_POSTS,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
@@ -22,6 +23,7 @@ import {
 } from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
 import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
 import LaunchpadPreLaunch from 'calypso/my-sites/customer-home/cards/launchpad/pre-launch';
+import ReaderFirstPosts from 'calypso/my-sites/customer-home/cards/notices/reader-first-posts';
 import LearnGrow from './learn-grow';
 
 const cardComponents = {
@@ -30,6 +32,7 @@ const cardComponents = {
 	[ SECTION_LEARN_GROW ]: LearnGrow,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ FEATURE_SUPPORT ]: HelpSearch,
+	[ NOTICE_READER_FIRST_POSTS ]: ReaderFirstPosts,
 	[ LAUNCHPAD_INTENT_BUILD ]: LaunchpadIntentBuild,
 	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadIntentWrite,
 	[ LAUNCHPAD_INTENT_FREE_NEWSLETTER ]: LaunchpadIntentFreeNewsletter,

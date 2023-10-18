@@ -86,6 +86,7 @@ describe( 'streams', () => {
 							site_recs_per_card: 5,
 							tags: [],
 							age_based_decay: 0.5,
+							orderBy: 'popular',
 						},
 					},
 				},

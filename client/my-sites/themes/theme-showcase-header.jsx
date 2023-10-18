@@ -10,7 +10,14 @@ import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
 
-export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, vertical } ) {
+export default function ThemeShowcaseHeader( {
+	canonicalUrl,
+	filter,
+	tier,
+	vertical,
+	isCollectionView = false,
+	noIndex = false,
+} ) {
 	// eslint-disable-next-line no-shadow
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -49,6 +56,17 @@ export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, verti
 		{ property: 'og:type', content: 'website' },
 		{ property: 'og:site_name', content: 'WordPress.com' },
 	];
+
+	if ( noIndex ) {
+		metas.push( {
+			name: 'robots',
+			content: 'noindex',
+		} );
+	}
+
+	if ( isCollectionView ) {
+		return <DocumentHead title={ documentHeadTitle } meta={ metas } />;
+	}
 
 	return (
 		<>

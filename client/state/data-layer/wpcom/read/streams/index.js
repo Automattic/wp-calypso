@@ -229,6 +229,8 @@ const streamApis = {
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
 				age_based_decay: 0.5,
+				// Default order is by date (latest) unless we're on the recommended tab which shows popular instead.
+				orderBy: streamKeySuffix( streamKey ).includes( 'recommended' ) ? 'popular' : 'date',
 			} ),
 		apiNamespace: 'wpcom/v2',
 	},

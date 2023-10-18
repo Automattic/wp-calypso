@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import { PRIVACY_PROTECTION, PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
-import ContactDisplay from 'calypso/my-sites/domains/domain-management/contacts-privacy/contact-display';
 import {
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
@@ -19,6 +18,7 @@ import {
 } from 'calypso/state/sites/domains/actions';
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
 import { IAppState } from 'calypso/state/types';
+import ContactDisplay from './contact-display';
 import type { ContactsCardPassedProps, ContactsCardProps } from './types';
 
 const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
