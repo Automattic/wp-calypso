@@ -29,10 +29,11 @@ describe( 'payPalExpressProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
+	const reloadCart = jest.fn();
 	const options: PaymentProcessorOptions = {
 		...processorOptions,
 		responseCart: cart,
-		reloadCart: () => Promise.resolve( cart ),
+		reloadCart,
 	};
 
 	const basicExpectedRequest = {
@@ -61,6 +62,10 @@ describe( 'payPalExpressProcessor', () => {
 
 	beforeEach( () => {
 		setMockLocation( 'https://example.com/' );
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
@@ -96,6 +101,24 @@ describe( 'payPalExpressProcessor', () => {
 				},
 			} )
 		).resolves.toStrictEqual( expected );
+	} );
+
+	it( 'reloads the cart if the transaction fails', async () => {
+		mockPayPalEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		await payPalExpressProcessor( {
+			...options,
+			contactDetails: {
+				countryCode,
+				postalCode,
+			},
+		} );
+		expect( reloadCart ).toHaveBeenCalled();
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {

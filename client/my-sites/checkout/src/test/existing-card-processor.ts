@@ -27,11 +27,12 @@ describe( 'existingCardProcessor', () => {
 	const stripe = {
 		confirmCardPayment: mockConfirmCardPayment as Stripe[ 'confirmCardPayment' ],
 	} as Stripe;
+	const reloadCart = jest.fn();
 	const options: PaymentProcessorOptions = {
 		...processorOptions,
 		stripe,
 		responseCart: cart,
-		reloadCart: () => Promise.resolve( cart ),
+		reloadCart,
 	};
 
 	const basicExpectedStripeRequest = {
@@ -69,6 +70,10 @@ describe( 'existingCardProcessor', () => {
 
 	beforeEach( () => {
 		mockLogStashEndpoint();
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	it( 'throws an error if there is no storedDetailsId passed', async () => {
@@ -170,6 +175,30 @@ describe( 'existingCardProcessor', () => {
 				},
 			} )
 		).resolves.toStrictEqual( expected );
+	} );
+
+	it( 'reloads the cart if the transaction fails', async () => {
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		const submitData = {
+			storedDetailsId: 'stored-details-id',
+			name: 'test name',
+			paymentMethodToken: 'stripe-token',
+			paymentPartnerProcessorId: 'stripe_ie',
+		};
+		await existingCardProcessor( submitData, {
+			...options,
+			contactDetails: {
+				countryCode,
+				postalCode,
+			},
+		} );
+		expect( reloadCart ).toHaveBeenCalled();
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {

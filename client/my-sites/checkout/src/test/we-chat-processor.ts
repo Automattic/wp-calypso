@@ -23,10 +23,11 @@ describe( 'weChatProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
+	const reloadCart = jest.fn();
 	const options: PaymentProcessorOptions = {
 		...processorOptions,
 		responseCart: cart,
-		reloadCart: () => Promise.resolve( cart ),
+		reloadCart,
 	};
 
 	const basicExpectedStripeRequest = {
@@ -64,6 +65,10 @@ describe( 'weChatProcessor', () => {
 	};
 
 	const redirect_url = 'https://test-redirect-url';
+
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
 		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
@@ -104,6 +109,27 @@ describe( 'weChatProcessor', () => {
 				},
 			} )
 		).resolves.toStrictEqual( expected );
+	} );
+
+	it( 'reloads the cart if the transaction fails', async () => {
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		const submitData = {
+			name: 'test name',
+		};
+		await weChatProcessor( submitData, {
+			...options,
+			contactDetails: {
+				countryCode,
+				postalCode,
+			},
+		} );
+		expect( reloadCart ).toHaveBeenCalled();
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
