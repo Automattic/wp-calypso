@@ -148,33 +148,6 @@
 		font-weight: 400;
 		font-size: $font-body;
 		color: var(--studio-gray-70);
-		margin-block: 2px;
-
-		.premium-feature {
-			display: flex;
-			align-items: center;
-
-			strong {
-				flex: auto;
-			}
-
-			span {
-				background-color: var(--studio-jetpack-green-5);
-				color: var(--studio-jetpack-green-50);
-				padding: 2px 8px;
-				border-radius: 4px;
-				font-weight: bold;
-				font-size: rem(11px);
-			}
-
-			@include break-medium {
-				width: 90%;
-			}
-
-			@include break-xlarge {
-				width: 80%;
-			}
-		}
 	}
 
 	&:not(.jetpack-product-info__faq-list) li {

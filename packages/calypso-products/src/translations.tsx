@@ -1075,53 +1075,40 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Supports 38 languages' ),
 		translate( 'Quick and accurate spelling correction' ),
 	];
+
+	const boostPremiumFeatureComponents = {
+		div: <div className="premium-feature" />,
+		strong: <span className="premium-feature-title" />,
+		badge: <span style={ { display: 'none' } } className="premium-feature-badge" />,
+	};
+
 	const boostIncludesInfo = [
 		translate(
 			'{{div}}{{strong}}Automated critical CSS generation{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
 			{
-				components: {
-					div: <div className="premium-feature" />,
-					strong: <strong />,
-					badge: <span />,
-				},
+				components: boostPremiumFeatureComponents,
 			}
 		),
 		translate(
-			'{{div}}{{strong}}Reduce image sizes with image guide{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			'{{div}}{{strong}}Reduce image sizes with Image Guide{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
 			{
-				components: {
-					div: <div className="premium-feature" />,
-					strong: <strong />,
-					badge: <span />,
-				},
+				components: boostPremiumFeatureComponents,
 			}
 		),
 		translate(
 			'{{div}}{{strong}}Historical site performance chart{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
 			{
-				components: {
-					div: <div className="premium-feature" />,
-					strong: <strong />,
-					badge: <span />,
-				},
+				components: boostPremiumFeatureComponents,
 			}
 		),
 		translate(
 			'{{div}}{{strong}}Additional image quality control options{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
 			{
-				components: {
-					div: <div className="premium-feature" />,
-					strong: <strong />,
-					badge: <span />,
-				},
+				components: boostPremiumFeatureComponents,
 			}
 		),
 		translate( '{{div}}{{strong}}Priority support{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}', {
-			components: {
-				div: <div className="premium-feature" />,
-				strong: <strong />,
-				badge: <span />,
-			},
+			components: boostPremiumFeatureComponents,
 		} ),
 		translate( 'Site performance scores' ),
 		translate( 'One-click optimization' ),
