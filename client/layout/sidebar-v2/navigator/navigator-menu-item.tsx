@@ -19,6 +19,7 @@ interface Props {
 	onClickMenuItem: ( path: string ) => void;
 	withChevron?: boolean;
 	isExternalLink?: boolean;
+	isSelected: boolean;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -29,14 +30,13 @@ export const SidebarNavigatorMenuItem = ( {
 	onClickMenuItem,
 	withChevron,
 	isExternalLink,
+	isSelected,
 }: Props ) => {
-	const pathname = window.location.pathname;
-
 	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
 		return (
 			<Item
 				className={ classnames( 'sidebar-v2__menu-item', {
-					'is-active': pathname === link,
+					'is-active': isSelected,
 				} ) }
 				onClick={ () => onClickMenuItem( link ) }
 			>
