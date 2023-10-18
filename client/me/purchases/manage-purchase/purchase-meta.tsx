@@ -93,12 +93,14 @@ export default function PurchaseMeta( {
 						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
 					</span>
 				</li>
-				<li>
-					<em className="manage-purchase__detail-label"> Subscription End Date </em>
-					<span className="manage-purchase__detail">
-						<PurchaseMetaEndDate purchase={ purchase } />
-					</span>
-				</li>
+				{ purchase.expiryDate && (
+					<li>
+						<em className="manage-purchase__detail-label"> Subscription End Date </em>
+						<span className="manage-purchase__detail">
+							<PurchaseMetaEndDate purchase={ purchase } />
+						</span>
+					</li>
+				) }
 				<PurchaseMetaExpiration
 					purchase={ purchase }
 					site={ site ?? undefined }
