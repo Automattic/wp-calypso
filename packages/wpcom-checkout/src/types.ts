@@ -17,6 +17,20 @@ export type WPCOMTransactionEndpointResponseSuccess = {
 	currency: string;
 };
 
+export type WPCOMTransactionEndpointResponseFailed = {
+	success: false;
+	purchases: Record< PurchaseSiteId, Purchase[] > | [];
+	failed_purchases: Record< PurchaseSiteId, FailedPurchase[] > | [];
+	receipt_id: number;
+	order_id: number;
+	redirect_url?: string;
+	is_gift_purchase: boolean;
+	display_price: string;
+	price_integer: number;
+	price_float: number;
+	currency: string;
+};
+
 export type WPCOMTransactionEndpointResponseRedirect = {
 	message: { payment_intent_client_secret: string } | '';
 	order_id: number;
@@ -25,6 +39,7 @@ export type WPCOMTransactionEndpointResponseRedirect = {
 
 export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponseSuccess
+	| WPCOMTransactionEndpointResponseFailed
 	| WPCOMTransactionEndpointResponseRedirect;
 
 export interface TaxVendorInfo {
