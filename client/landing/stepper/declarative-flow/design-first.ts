@@ -104,6 +104,10 @@ const designFirst: Flow = {
 							launchpad_screen: 'full',
 						} );
 
+						if ( providedDependencies?.shouldSkipDesignSetup ) {
+							return navigate( 'launchpad' );
+						}
+
 						return window.location.assign(
 							addQueryArgs( `/setup/update-design/designSetup`, {
 								siteSlug: siteSlug,
