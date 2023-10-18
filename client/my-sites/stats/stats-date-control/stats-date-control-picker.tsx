@@ -36,6 +36,21 @@ const DateControlPicker = ( {
 		setInputEndDate( value );
 	};
 
+	const updateLocalStateFromShortcut = ( shortcut: DateControlPickerShortcut ) => {
+		const endDate =
+			shortcut.offset === 0
+				? moment().format( 'YYYY-MM-DD' )
+				: moment().subtract( shortcut.offset, 'days' ).format( 'YYYY-MM-DD' );
+
+		const startDate =
+			shortcut.range === 0
+				? endDate
+				: moment( endDate ).subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
+
+		setInputStartDate( startDate );
+		setInputEndDate( endDate );
+	};
+
 	const handleOnApply = () => {
 		togglePopoverOpened( false );
 		onApply( inputStartDate, inputEndDate );
@@ -50,21 +65,6 @@ const DateControlPicker = ( {
 		updateLocalStateFromShortcut( shortcut );
 		onShortcut( shortcut );
 	};
-
-	function updateLocalStateFromShortcut( shortcut: DateControlPickerShortcut ) {
-		const endDate =
-			shortcut.offset === 0
-				? moment().format( 'YYYY-MM-DD' )
-				: moment().subtract( shortcut.offset, 'days' ).format( 'YYYY-MM-DD' );
-
-		const startDate =
-			shortcut.range === 0
-				? endDate
-				: moment( endDate ).subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
-
-		setInputStartDate( startDate );
-		setInputEndDate( endDate );
-	}
 
 	return (
 		<div className="stats-date-control-picker">
