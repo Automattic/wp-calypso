@@ -23,8 +23,6 @@ type Props = {
 	shouldCloseOnEsc?: boolean;
 	showCloseIcon?: boolean;
 	shouldCloseOnOverlayClick?: boolean;
-	labelledby?: string;
-	describedby?: string;
 };
 
 const Dialog = ( {
@@ -43,8 +41,6 @@ const Dialog = ( {
 	shouldCloseOnEsc,
 	showCloseIcon = false,
 	shouldCloseOnOverlayClick = true,
-	labelledby,
-	describedby,
 }: PropsWithChildren< Props > ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const onButtonClick = useCallback(
@@ -70,7 +66,6 @@ const Dialog = ( {
 
 	return (
 		<Modal
-			aria={ { labelledby, describedby } }
 			isOpen={ isVisible }
 			onRequestClose={ close }
 			closeTimeoutMS={ leaveTimeout }
@@ -83,11 +78,7 @@ const Dialog = ( {
 			shouldCloseOnOverlayClick={ shouldCloseOnOverlayClick }
 		>
 			{ showCloseIcon && (
-				<button
-					aria-label="Close"
-					className="dialog__action-buttons-close"
-					onClick={ () => onClose?.( this ) }
-				>
+				<button className="dialog__action-buttons-close" onClick={ () => onClose?.( this ) }>
 					<Gridicon icon="cross" size={ 24 } />
 				</button>
 			) }

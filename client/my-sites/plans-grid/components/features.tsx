@@ -31,6 +31,7 @@ const FreePlanCustomDomainFeature: React.FC< {
 	const translate = useTranslate();
 	const isLoading =
 		wpcomFreeDomainSuggestion.isLoading || isCustomDomainAllowedOnFreePlan.isLoading;
+
 	return (
 		<SubdomainSuggestion>
 			{ isLoading && <LoadingPlaceHolder /> }
