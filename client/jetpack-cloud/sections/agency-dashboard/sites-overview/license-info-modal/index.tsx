@@ -10,6 +10,7 @@ import DashboardDataContext from '../dashboard-data-context';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 
 interface Props {
+	className?: string;
 	label?: string;
 	currentLicenseInfo: string | null;
 	onClose?: () => void;
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export default function LicenseInfoModal( {
+	className,
 	label,
 	currentLicenseInfo,
 	onClose,
@@ -75,6 +77,7 @@ export default function LicenseInfoModal( {
 	return (
 		currentLicenseProduct && (
 			<LicenseLightbox
+				className={ className }
 				product={ currentLicenseProduct }
 				ctaLabel={ label ?? translate( 'Issue License' ) }
 				isDisabled={ isDisabled }
