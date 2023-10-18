@@ -4,6 +4,9 @@ import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 // navigate around Jetpack Cloud with no specific site selected.
 // It'll display menu options like Sites Management, Plugin Management,
 // and Purchases.
-const JetpackManageSidebar = () => <NewSidebar isJetpackManage />;
+// FIXME: Add menu items
+const JetpackManageSidebar = () => {
+	return <NewSidebar isJetpackManage path="/" menuItems={ [] } />;
+};
 
 export default JetpackManageSidebar;

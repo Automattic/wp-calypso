@@ -4,13 +4,21 @@ import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import InstallThemeButton from './install-theme-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
 
-export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, vertical } ) {
+export default function ThemeShowcaseHeader( {
+	canonicalUrl,
+	filter,
+	tier,
+	vertical,
+	isCollectionView = false,
+	noIndex = false,
+} ) {
 	// eslint-disable-next-line no-shadow
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -50,6 +58,17 @@ export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, verti
 		{ property: 'og:site_name', content: 'WordPress.com' },
 	];
 
+	if ( noIndex ) {
+		metas.push( {
+			name: 'robots',
+			content: 'noindex',
+		} );
+	}
+
+	if ( isCollectionView ) {
+		return <DocumentHead title={ documentHeadTitle } meta={ metas } />;
+	}
+
 	return (
 		<>
 			<DocumentHead title={ documentHeadTitle } meta={ metas } />
@@ -74,8 +93,8 @@ export default function ThemeShowcaseHeader( { canonicalUrl, filter, tier, verti
 			) : (
 				<div className="themes__header-logged-out">
 					<div className="themes__page-heading">
-						<h1>{ themesHeaderTitle }</h1>
-						<p className="page-sub-header">{ themesHeaderDescription }</p>
+						<h1>{ preventWidows( themesHeaderTitle ) }</h1>
+						<p className="page-sub-header">{ preventWidows( themesHeaderDescription ) }</p>
 					</div>
 				</div>
 			) }

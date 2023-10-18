@@ -169,18 +169,20 @@ const videopress: Flow = {
 
 				setSelectedSite( newSite.blogid );
 				setIntentOnSite( newSite.site_slug, VIDEOPRESS_FLOW );
+
+				if ( config.isEnabled( 'videomaker-trial' ) ) {
+					saveSiteSettings( newSite.blogid, {
+						launchpad_screen: 'off',
+						blogdescription: siteDescription,
+					} );
+					clearOnboardingSiteOptions();
+					return window.location.assign( `/site-editor/${ newSite.site_slug }` );
+				}
+
 				saveSiteSettings( newSite.blogid, {
 					launchpad_screen: 'full',
 					blogdescription: siteDescription,
 				} );
-
-				if ( config.isEnabled( 'videomaker-trial' ) ) {
-					// Videomaker trial doesn't require payment, let's go to the next step
-					window.location.replace(
-						`/setup/videopress/launchpad?siteSlug=${ newSite.site_slug }&siteId=${ newSite.blogid }`
-					);
-					return;
-				}
 
 				let planObject = supportedPlans.find( ( plan ) => 'premium' === plan.periodAgnosticSlug );
 				if ( ! planObject ) {

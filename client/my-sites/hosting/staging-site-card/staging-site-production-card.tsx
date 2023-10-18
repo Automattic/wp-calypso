@@ -40,7 +40,10 @@ const ProductionCardHeading = styled( CardHeading )( {
 
 const ActionButtons = styled.div( {
 	display: 'flex',
-	gap: '1em',
+	'@media ( max-width: 768px )': {
+		flexDirection: 'column',
+		alignItems: 'stretch',
+	},
 } );
 
 const SyncActionsContainer = styled( ActionButtons )( {

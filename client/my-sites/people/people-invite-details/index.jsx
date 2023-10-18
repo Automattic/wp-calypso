@@ -8,10 +8,10 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { deleteInvite } from 'calypso/state/invites/actions';
@@ -169,15 +169,10 @@ export class PeopleInviteDetails extends PureComponent {
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 
 				{ isEnabled( 'user-management-revamp' ) && (
-					<FormattedHeader
-						brandFont
-						className="people__page-heading"
-						headerText={ translate( 'Users' ) }
-						subHeaderText={ translate(
-							'People who have subscribed to your site and team members.'
-						) }
-						align="left"
-						hasScreenOptions
+					<NavigationHeader
+						navigationItems={ [] }
+						title={ translate( 'Users' ) }
+						subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
 					/>
 				) }
 
