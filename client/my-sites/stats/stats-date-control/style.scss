@@ -37,7 +37,7 @@
 	}
 }
 
-.input-group {
+.stats-date-control-picker-dates__inputs-input-group {
 	display: flex;
 	flex-direction: column;
 	margin-bottom: 16px; // spacing between "From" and "To" groups
@@ -53,7 +53,7 @@
 	flex-direction: row-reverse;
 }
 
-.date-control-picker-date .stats-date-control-picker-dates__inputs .input-group .components-base-control .components-base-control__field input.components-text-control__input {
+.date-control-picker-date .stats-date-control-picker-dates__inputs .stats-date-control-picker-dates__inputs-input-group .components-base-control .components-base-control__field input.components-text-control__input {
 	max-width: 120px;
 }
 

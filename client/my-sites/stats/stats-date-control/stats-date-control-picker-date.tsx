@@ -16,11 +16,11 @@ const DateControlPickerDate = ( {
 	return (
 		<div className="date-control-picker-date">
 			<div className="stats-date-control-picker-dates__inputs">
-				<div className="input-group">
+				<div className="stats-date-control-picker-dates__inputs-input-group">
 					<label htmlFor="startDate">From</label>
 					<TextControl id="startDate" value={ startDate } onChange={ onStartChange } />
 				</div>
-				<div className="input-group">
+				<div className="stats-date-control-picker-dates__inputs-input-group">
 					<label htmlFor="endDate">To</label>
 					<TextControl id="endDate" value={ endDate } onChange={ onEndChange } />
 				</div>
