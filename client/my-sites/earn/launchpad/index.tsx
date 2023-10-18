@@ -1,9 +1,13 @@
 import { CircularProgressBar } from '@automattic/components';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
+import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import { useSelector } from 'calypso/state';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
+import {
+	getConnectUrlForSiteId,
+	getConnectedAccountIdForSiteId,
+} from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { Product } from '../types';
 
@@ -19,6 +23,9 @@ const EarnLaunchpad = ( { numberOfSteps, completedSteps }: EarnLaunchpadProps ) 
 	const connectedAccountId = useSelector( ( state ) =>
 		getConnectedAccountIdForSiteId( state, site?.ID )
 	);
+	const stripeConnectUrl = useSelector( ( state ) =>
+		getConnectUrlForSiteId( state, site?.ID ?? 0 )
+	);
 
 	const taskFilter = ( tasks: Task[] ): Task[] => {
 		if ( ! tasks ) {
@@ -30,12 +37,20 @@ const EarnLaunchpad = ( { numberOfSteps, completedSteps }: EarnLaunchpadProps ) 
 				case 'stripe_connected':
 					return {
 						...task,
-						is_complete: !! connectedAccountId,
+						completed: Boolean( connectedAccountId ),
+						actionDispatch: () => {
+							window.location.assign( stripeConnectUrl );
+						},
 					};
 				case 'paid_offer_created':
 					return {
 						...task,
-						is_complete: !! ( products && products.length > 0 ),
+						completed: Boolean( products && products.length > 0 ),
+						actionDispatch: () => {
+							window.location.assign(
+								`/earn/payments-plans/${ site?.slug }?launchpad=add-product#add-newsletter-payment-plan`
+							);
+						},
 					};
 				default:
 					return task;
@@ -61,6 +76,7 @@ const EarnLaunchpad = ( { numberOfSteps, completedSteps }: EarnLaunchpadProps ) 
 					{ translate( 'Let your fans support your art, writing, or project directly.' ) }
 				</p>
 			</div>
+			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
 			<Launchpad siteSlug={ site?.slug ?? null } checklistSlug="earn" taskFilter={ taskFilter } />
 		</div>
 	);
