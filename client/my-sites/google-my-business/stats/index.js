@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -217,8 +218,9 @@ class GoogleMyBusinessStats extends Component {
 								components: {
 									learnMoreLink: (
 										<a
-											// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-											href="https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection"
+											href={ localizeUrl(
+												'https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection'
+											) }
 											target="_blank"
 											rel="noreferrer noopener"
 										/>
