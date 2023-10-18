@@ -176,18 +176,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'onboarding-media',
-			steps: [ userSocialStep ],
-			destination: getRedirectDestination,
-			description:
-				'The intermittent user step for the GF foundation version of the paid media flow.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'import',
 			steps: [ userSocialStep, 'domains', 'plans-import' ],
 			destination: ( dependencies ) =>
