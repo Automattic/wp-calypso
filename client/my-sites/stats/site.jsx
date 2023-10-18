@@ -245,8 +245,12 @@ class StatsSite extends Component {
 			if ( chartStart && isSameOrBefore ) {
 				// Add one to calculation to include the start date.
 				daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
+				customChartRange.chartStart = chartStart;
+			} else {
+				customChartRange.chartStart = moment().subtract( daysInRange, 'days' ).format( 'YYYY-MM-DD' );
 			}
 			this.state.customChartQuantity = quantityForDaysAndPeriod( daysInRange, period );
+			customChartRange.daysInRange = daysInRange;
 		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
