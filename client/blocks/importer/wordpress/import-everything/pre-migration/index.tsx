@@ -171,11 +171,11 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			setRenderState( 'ready' );
 		}
 	}, [
+		sourceSiteId,
+		showCredentials,
+		requiresPluginUpdate,
 		isFetchingCredentials,
 		isFetchingMigrationData,
-		sourceSiteId,
-		requiresPluginUpdate,
-		showCredentials,
 		isTargetSitePlanCompatible,
 	] );
 
