@@ -165,7 +165,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			setRenderState( 'credentials' );
 		} else if ( isFetchingCredentials || isFetchingMigrationData ) {
 			setRenderState( 'loading' );
-		} else if ( ! sourceSite || ( sourceSite && sourceSite.ID !== sourceSiteId ) ) {
+		} else if ( ! sourceSiteId ) {
 			setRenderState( 'not-authorized' );
 		} else {
 			setRenderState( 'ready' );
@@ -173,7 +173,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	}, [
 		isFetchingCredentials,
 		isFetchingMigrationData,
-		sourceSite,
 		sourceSiteId,
 		requiresPluginUpdate,
 		showCredentials,
