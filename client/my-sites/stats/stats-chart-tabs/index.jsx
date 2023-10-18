@@ -98,6 +98,7 @@ class StatModuleChartTabs extends Component {
 			'is-chart-tabs',
 			{
 				'is-loading': isActiveTabLoading,
+				'has-less-than-three-bars': this.props.chartData.length < 3,
 			},
 		];
 
