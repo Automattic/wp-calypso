@@ -8,13 +8,21 @@ import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
-const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPickerProps ) => {
-	// TODO: remove placeholder values
+const DateControlPicker = ( {
+	buttonLabel,
+	dateRange,
+	shortcutList,
+	selectedShortcut,
+	onShortcut,
+	onApply,
+}: DateControlPickerProps ) => {
+	// Pull dates from provided range.
 	const [ inputStartDate, setInputStartDate ] = useState(
-		moment().subtract( 6, 'days' ).format( 'YYYY-MM-DD' )
+		moment( dateRange.chartStart ).format( 'YYYY-MM-DD' )
 	);
-	const [ inputEndDate, setInputEndDate ] = useState( moment().format( 'YYYY-MM-DD' ) );
-	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
+	const [ inputEndDate, setInputEndDate ] = useState(
+		moment( dateRange.chartEnd ).format( 'YYYY-MM-DD' )
+	);
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
@@ -28,6 +36,21 @@ const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPi
 		setInputEndDate( value );
 	};
 
+	const updateLocalStateFromShortcut = ( shortcut: DateControlPickerShortcut ) => {
+		const endDate =
+			shortcut.offset === 0
+				? moment().format( 'YYYY-MM-DD' )
+				: moment().subtract( shortcut.offset, 'days' ).format( 'YYYY-MM-DD' );
+
+		const startDate =
+			shortcut.range === 0
+				? endDate
+				: moment( endDate ).subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
+
+		setInputStartDate( startDate );
+		setInputEndDate( endDate );
+	};
+
 	const handleOnApply = () => {
 		togglePopoverOpened( false );
 		onApply( inputStartDate, inputEndDate );
@@ -38,46 +61,15 @@ const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPi
 	};
 
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
-		// Push logic to caller.
 		togglePopoverOpened( false );
+		updateLocalStateFromShortcut( shortcut );
 		onShortcut( shortcut );
-
-		// TODO: Remove following logic once the values properly
-		// trickle down from the caller. Currently sets the selected
-		// shortcut and updates the button label.
-
-		// Shared date math.
-		const calcNewDateWithOffset = ( date: Date, offset: number ): Date => {
-			// We do our date math based on 24 hour increments.
-			const millisecondsInOneDay = 1000 * 60 * 60 * 24;
-			const newDateInMilliseconds = date.getTime() - millisecondsInOneDay * offset;
-			return new Date( newDateInMilliseconds );
-		};
-
-		// Shared date formatting.
-		const formattedDate = ( date: Date ) => {
-			return date.toISOString().split( 'T' )[ 0 ];
-		};
-
-		// Calc new end date based on offset value from shortcut.
-		const newEndDate = calcNewDateWithOffset( new Date(), shortcut.offset );
-		setInputEndDate( formattedDate( newEndDate ) );
-
-		// Calc new start date based on end date plus range as specified in shortcut.
-		const newStartDate = calcNewDateWithOffset( newEndDate, shortcut.range );
-		setInputStartDate( formattedDate( newStartDate ) );
-
-		setCurrentShortcut( shortcut.id || '' );
-	};
-
-	const formatDate = ( date: string ) => {
-		return moment( date ).format( 'MMM D, YYYY' );
 	};
 
 	return (
 		<div className="stats-date-control-picker">
 			<Button onClick={ () => togglePopoverOpened( ! popoverOpened ) } ref={ infoReferenceElement }>
-				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
+				{ buttonLabel }
 				<Icon className="gridicon" icon={ calendar } />
 			</Button>
 			<Popover
@@ -96,7 +88,7 @@ const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPi
 					/>
 					<DateControlPickerShortcuts
 						shortcutList={ shortcutList }
-						currentShortcut={ currentShortcut }
+						currentShortcut={ selectedShortcut }
 						onClick={ handleShortcutSelected }
 					/>
 				</div>

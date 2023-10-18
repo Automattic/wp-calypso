@@ -1,31 +1,36 @@
 import { memo } from 'react';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
+import './style.scss';
+
+type OnSeeAll = {
+	tier?: string;
+	filter?: string;
+};
 
 export interface ThemeCollectionsLayoutProps {
 	getActionLabel: ( themeId: string ) => string;
 	getOptions: ( themeId: string ) => void;
 	getScreenshotUrl: ( themeId: string ) => string;
-	onTierSelect: ( tier: string ) => void;
+	onSeeAll: ( object: OnSeeAll ) => void;
 }
 
 function ThemeCollectionsLayout( props: ThemeCollectionsLayoutProps ) {
-	const { onTierSelect } = props;
+	const { onSeeAll } = props;
 
-	return (
-		<>
+	const collections = Object.values( THEME_COLLECTIONS ).map( ( collection ) => {
+		const { filter, tier } = collection.query;
+		return (
 			<ShowcaseThemeCollection
-				{ ...THEME_COLLECTIONS.premium }
+				key={ collection.collectionSlug }
+				{ ...collection }
 				{ ...props }
-				onSeeAll={ () => onTierSelect( 'premium' ) }
+				onSeeAll={ () => onSeeAll( { tier, filter } ) }
 			/>
-			<ShowcaseThemeCollection
-				{ ...THEME_COLLECTIONS.partner }
-				{ ...props }
-				onSeeAll={ () => onTierSelect( 'marketplace' ) }
-			/>
-		</>
-	);
+		);
+	} );
+
+	return <>{ collections }</>;
 }
 
 export default memo( ThemeCollectionsLayout );

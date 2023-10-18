@@ -9,7 +9,7 @@ import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
-const StatsDateControl = ( { slug, queryParams }: StatsDateControlProps ) => {
+const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
 	// consistent with the custom ranges.
@@ -102,10 +102,51 @@ const StatsDateControl = ( { slug, queryParams }: StatsDateControlProps ) => {
 		page( generateNewLink( shortcut.period, startDate, endDate ) );
 	};
 
+	const getShortcutForRange = () => {
+		const today = moment().format( 'YYYY-MM-DD' );
+		// Today
+		if ( today === dateRange.chartEnd && dateRange.daysInRange === 1 ) {
+			return shortcutList[ 0 ];
+		}
+		// Last 7 days
+		if ( today === dateRange.chartEnd && dateRange.daysInRange === 7 ) {
+			return shortcutList[ 2 ];
+		}
+		// Last 30 days
+		if ( today === dateRange.chartEnd && dateRange.daysInRange === 30 ) {
+			return shortcutList[ 3 ];
+		}
+		// Last year
+		if ( today === dateRange.chartEnd && dateRange.daysInRange === 365 ) {
+			return shortcutList[ 4 ];
+		}
+		const yesterday = moment().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
+		// Yesterday
+		if ( yesterday === dateRange.chartEnd && dateRange.daysInRange === 1 ) {
+			return shortcutList[ 1 ];
+		}
+		return null;
+	};
+
+	const getButtonLabel = () => {
+		// Test for a shortcut match.
+		const shortcut = getShortcutForRange();
+		if ( shortcut !== null ) {
+			return shortcut.label;
+		}
+		// Generate a full date range for the label.
+		const startDate = moment( dateRange.chartStart ).format( 'MMMM Do, YYYY' );
+		const endDate = moment( dateRange.chartEnd ).format( 'MMMM Do, YYYY' );
+		return `${ startDate } - ${ endDate }`;
+	};
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<DateControlPicker
+				buttonLabel={ getButtonLabel() }
+				dateRange={ dateRange }
 				shortcutList={ shortcutList }
+				selectedShortcut={ getShortcutForRange()?.id }
 				onShortcut={ onShortcutHandler }
 				onApply={ onApplyButtonHandler }
 			/>

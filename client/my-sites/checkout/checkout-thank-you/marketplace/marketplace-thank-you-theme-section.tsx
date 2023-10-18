@@ -3,7 +3,7 @@ import { Gridicon, Button } from '@automattic/components';
 import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
@@ -143,7 +143,7 @@ export const ThankYouThemeSection = ( {
 		[ siteId, theme ]
 	);
 
-	const handleActivateTheme = () => {
+	const handleActivateTheme = useCallback( () => {
 		if ( isActive ) {
 			return;
 		}
@@ -151,7 +151,13 @@ export const ThankYouThemeSection = ( {
 		dispatch(
 			activate( theme.id, siteId, 'marketplace-thank-you', false, false, isOnboardingFlow )
 		);
-	};
+	}, [ theme.id, siteId, isOnboardingFlow, dispatch, isActive, sendTrackEvent ] );
+
+	useEffect( () => {
+		if ( isOnboardingFlow ) {
+			handleActivateTheme();
+		}
+	}, [ isOnboardingFlow, handleActivateTheme ] );
 
 	return (
 		<ThemeSectionContainer>
