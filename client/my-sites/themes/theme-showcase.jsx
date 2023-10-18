@@ -140,7 +140,7 @@ class ThemeShowcase extends Component {
 
 	isThemeDiscoveryEnabled = () =>
 		( this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lits' ) ) ||
-		config.isEnabled( 'themes/discovery-lots' );
+		( ! this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lots' ) );
 
 	isStaticFilter = ( tabFilter ) => {
 		return Object.values( staticFilters ).some(
