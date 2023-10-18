@@ -1,6 +1,20 @@
 import { translate } from 'i18n-calypso';
 
 export const THEME_COLLECTIONS = {
+	recommended: {
+		query: {
+			collection: 'recommended',
+			filter: '',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: '',
+		},
+		title: translate( 'Recommended Themes' ),
+		collectionSlug: 'recommended',
+		description: <p>Lorem ipsum dolor sit amet</p>,
+		seeAllLink: '/themes',
+	},
 	premium: {
 		query: {
 			collection: 'recommended',
