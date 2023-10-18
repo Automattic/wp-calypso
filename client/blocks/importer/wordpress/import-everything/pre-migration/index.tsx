@@ -118,36 +118,47 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		fetchMigrationEnabledStatus();
 	};
 
-	// Initiate the migration if initImportRun is set
+	/**
+	 * Initiate the migration immediately without the user having to click on the start button
+	 * This is used when the query param is set
+	 */
 	useEffect( () => {
 		initImportRun && startImport( { type: 'without-credentials', ...migrationTrackingProps } );
 	}, [] );
 
+	/**
+	 * Fetch the credentials if the site is eligible for migration
+	 */
 	useEffect( () => {
-		if ( isTargetSitePlanCompatible && sourceSiteId ) {
-			dispatch( getCredentials( sourceSiteId ) );
-			setHasLoaded( true );
+		if ( ! sourceSiteId || ! isTargetSitePlanCompatible ) {
+			return;
 		}
+		dispatch( getCredentials( sourceSiteId ) );
 	}, [ isTargetSitePlanCompatible, sourceSiteId, dispatch ] );
 
+	/**
+	 * Start (continue) the import after:
+	 * - the plugin update
+	 * - or the plan upgrade
+	 */
 	useEffect( () => {
 		// If we are blocked by plugin upgrade check or has continueImport set to false, we do not start the migration
 		if ( requiresPluginUpdate || ! continueImport ) {
 			return;
 		}
-		if ( sourceSiteId ) {
-			startImport( migrationTrackingProps );
-		}
+		sourceSiteId && startImport( migrationTrackingProps );
 	}, [ continueImport, sourceSiteId, startImport, requiresPluginUpdate ] );
 
-	// Set the render state based on the current component state
+	/**
+	 * Decide the render state based on the current component state
+	 */
 	useEffect( () => {
-		if ( requiresPluginUpdate ) {
+		if ( ! isTargetSitePlanCompatible ) {
+			setRenderState( 'upgrade-plan' );
+		} else if ( requiresPluginUpdate ) {
 			setRenderState( 'update-plugin' );
 		} else if ( showCredentials ) {
 			setRenderState( 'credentials' );
-		} else if ( ! isTargetSitePlanCompatible ) {
-			setRenderState( 'upgrade-plan' );
 		} else if ( isFetchingCredentials || isFetchingMigrationData ) {
 			setRenderState( 'loading' );
 		} else if ( ! sourceSite || ( sourceSite && sourceSite.ID !== sourceSiteId ) ) {
