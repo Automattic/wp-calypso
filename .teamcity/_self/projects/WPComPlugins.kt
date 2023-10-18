@@ -71,7 +71,7 @@ object WPComPlugins : Project({
 object CalypsoApps: BuildType({
 	id("calypso_WPComPlugins_Build_Plugins")
 	uuid = "8453b8fe-226f-4e91-b5cc-8bdad15e0814"
-	name = "CalypsoApps"
+	name = "Build Calypso Apps"
 	description = "Builds all Calypso apps and saves release artifacts for each. This replaces the separate build configurations for each app."
 
 	// Incremented to 4 to make sure ETK updates continue to work:
