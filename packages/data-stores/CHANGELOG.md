@@ -2,6 +2,36 @@
 
 ## 4.0.0
 
+- Fix rounding for plan discounts (#65990)
+- Add `setPaidSubscribers` action, `paidSubscribers` reducer, and `getPaidSubscribers` selector in Onboard store (#76042)
+- Add `useIsLoggedIn` hook (#76295)
+- Update logic for fetching subscription data (#76352)
+- Add `fetchLaunchpad`, `updateLaunchpadSettings`, and `useLaunchpad` (#76248)
+- Remove handling for `include_virtual_designs` and `include_pattern_virtual_designs` parameters for `useStarterDesignsQuery` argument interface (#76359)
+- Add `domain_upsell_deferred` and `plan_selected` fields to `LaunchPadCheckListTasksStatuses` interface (#76154)
+- Add `useSiteNotifyMeOfNewPostsMutation` hook and `SiteSubscriptionPage` and `SiteSubscriptionPage` types (#76410)
+- Add `PaidSubscribers` to `SiteGoal` enum (#76386)
+- Add `plan_completed` field to `LaunchPadCheckListTasksStatuses` interface (#76374)
+- Add `useSiteEmailMeNewPostsMutation` (#76504)
+- Add `useGetDomainSuggestions` and `useGetWordPressSubdomain` hooks (#76454)
+- Add `setHidePlansFeatureComparison` action and `getHidePlansFeatureComparison` selector in Onboard store (#75174)
+- Add `useSiteEmailMeNewCommentsMutation` to improve logged in user support (#76595)
+- Fix logic for unsubscribes when logged in (#76508)
+- Fix API call in `updateLaunchpadSettings` (#76541)
+- Fix API call in `updateLaunchpadSettings` (#76543)
+- Fix internal logic in `usePostSubscriptionsQuery` (#76679)
+- Add `title` field to `SiteDetails` type (#76521)
+- Relax requirements for arguments to `useLaunchpad` (#76596)
+- Add `useHasActiveSupport` hook and `SupportSession` interface (#76817)
+- Add `useJetpackSearchAIQuery` hook (#75838)
+- Allow undefined argument to `setInitialRoute` Help Center action (#76894)
+- Add `SiteIntent.StartWriting` enum value (#76740)
+- Fix cache keys used in `useSiteUnsubscribeMutation` (#76978)
+- Switch chat to ZenDesk Messaging (#76777) and revert (#77016)
+- Reduce hard-coded content for contextual help (#76734)
+- Add `setSiteGeoAffinity` action and `getSelectedSiteGeoAffinity` selector to Onboard store (#76854)
+- Add reducers and selectors for showing ZenDesk messaging in Help Center store (#77024)
+- Add `is_wpforteams_site` flag to `SiteSubscription` type (#76239)
 - Add `useSiteSubscribeMutation` (#77033)
 - Fix fetching of pending subscription data for users who are not logged in (#77105)
 - Add `is_wpforteams_site` flag to `PostSubscription` type (#77103)
@@ -108,6 +138,7 @@
 
 ### Dependency updates
 
+- Update from `react-query` ^3.32.1 to `@tanstack/react-query` ^4.29.1 (#76077)
 - Update `redux` from ^4.1.2 to ^4.2.1 (#77121)
 - Remove workspace dependency on `@automattic/happychat-connection` (#78433)
 - Update `react` from ^17.0.2 to ^18.2.0 (#77046)
@@ -151,6 +182,11 @@
  
 ### Breaking changes
 
+- Rename `PostSubscription.subscription_date` to `PostSubscription.date_subscribed` and `PendingPostSubscription.subscription_date` to `PendingPostSubscription.date_subscribed` (#76276)
+- Remove `setPatternContent` action and `getPatternContent` selector from Onboard store (#75831)
+- Remove `SiteSubscriptionDeliveryFrequency` type and switch to `EmailDeliveryFrequency` enum (#76881)
+- Remove `useSibylQuery` hook (#76734)
+- Remove `useHasActiveSupport` and change `SupportSession` type to `SupportActivity` (#77024)
 - Change signature for `useJetpackSearchAIQuery` (#77076)
 - Rename and change `filter` argument to `filterOption` in `usePostSubscriptionsQuery` (#75930)
 - Remove `getVerticalId` selector from Onboard store (#77250)
@@ -185,7 +221,7 @@
 
 ## 3.0.1
 
-- Add missing dependency @automattic/domain-utils, use-debounce
+- Add missing dependency @automattic/domain-utils, use-debounce (#64406)
 
 ## 3.0.0
 
