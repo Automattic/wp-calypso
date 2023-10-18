@@ -88,6 +88,7 @@ const JetpackCloudSidebar = ( {
 							window.open( link, '_blank' );
 						} }
 						isExternalLink
+						isSelected={ false }
 					/>
 				</SidebarFooter>
 			) }
