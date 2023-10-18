@@ -4,6 +4,7 @@
 
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import payPalExpressProcessor from '../lib/paypal-express-processor';
+import { PaymentProcessorOptions } from '../types/payment-processors';
 import {
 	mockPayPalEndpoint,
 	mockPayPalRedirectResponse,
@@ -28,9 +29,10 @@ describe( 'payPalExpressProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
-	const options = {
+	const options: PaymentProcessorOptions = {
 		...processorOptions,
 		responseCart: cart,
+		reloadCart: () => Promise.resolve( cart ),
 	};
 
 	const basicExpectedRequest = {

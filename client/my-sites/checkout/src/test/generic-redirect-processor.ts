@@ -1,5 +1,6 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
+import { PaymentProcessorOptions } from '../types/payment-processors';
 import {
 	mockTransactionsEndpoint,
 	mockTransactionsRedirectResponse,
@@ -18,9 +19,10 @@ describe( 'genericRedirectProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
-	const options = {
+	const options: PaymentProcessorOptions = {
 		...processorOptions,
 		responseCart: cart,
+		reloadCart: () => Promise.resolve( cart ),
 	};
 
 	const basicExpectedStripeRequest = {

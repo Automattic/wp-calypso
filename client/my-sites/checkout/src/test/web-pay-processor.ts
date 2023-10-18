@@ -1,5 +1,6 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import webPayProcessor from '../lib/web-pay-processor';
+import { PaymentProcessorOptions } from '../types/payment-processors';
 import {
 	mockTransactionsEndpoint,
 	mockTransactionsSuccessResponse,
@@ -20,9 +21,10 @@ describe( 'webPayProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
-	const options = {
+	const options: PaymentProcessorOptions = {
 		...processorOptions,
 		responseCart: cart,
+		reloadCart: () => Promise.resolve( cart ),
 	};
 
 	const stripe = {};
@@ -65,14 +67,14 @@ describe( 'webPayProcessor', () => {
 
 	it( 'throws an error if there is no stripe object', async () => {
 		const submitData = { paymentPartner: 'stripe' };
-		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrowError(
+		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrow(
 			/requires stripe and none was provided/
 		);
 	} );
 
 	it( 'throws an error if there is no stripeConfiguration object', async () => {
 		const submitData = { paymentPartner: 'stripe', stripe };
-		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrowError(
+		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrow(
 			/requires stripeConfiguration and none was provided/
 		);
 	} );
