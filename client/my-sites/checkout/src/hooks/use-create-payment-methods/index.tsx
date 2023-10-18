@@ -23,6 +23,7 @@ import { useMemo } from 'react';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { CheckoutSubmitButtonContent } from '../../components/checkout-submit-button-content';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
@@ -63,8 +64,8 @@ export function useCreateCreditCard( {
 	isStripeLoading,
 	stripeLoadingError,
 	shouldUseEbanx,
-	shouldShowTaxFields = false,
-	activePayButtonText = undefined,
+	shouldShowTaxFields,
+	submitButtonContent,
 	initialUseForAllSubscriptions,
 	allowUseForAllSubscriptions,
 }: {
@@ -72,7 +73,7 @@ export function useCreateCreditCard( {
 	stripeLoadingError: StripeLoadingError;
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
-	activePayButtonText?: ReactNode;
+	submitButtonContent: ReactNode;
 	initialUseForAllSubscriptions?: boolean;
 	allowUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {
@@ -92,7 +93,7 @@ export function useCreateCreditCard( {
 						store: stripePaymentMethodStore,
 						shouldUseEbanx,
 						shouldShowTaxFields,
-						activePayButtonText,
+						submitButtonContent,
 						allowUseForAllSubscriptions,
 				  } )
 				: null,
@@ -101,7 +102,7 @@ export function useCreateCreditCard( {
 			stripePaymentMethodStore,
 			shouldUseEbanx,
 			shouldShowTaxFields,
-			activePayButtonText,
+			submitButtonContent,
 			allowUseForAllSubscriptions,
 		]
 	);
@@ -122,6 +123,7 @@ function useCreateAlipay( {
 			shouldLoad
 				? createAlipayMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
@@ -142,6 +144,7 @@ function useCreateP24( {
 			shouldLoad
 				? createP24Method( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
@@ -162,6 +165,7 @@ function useCreateBancontact( {
 			shouldLoad
 				? createBancontactMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
@@ -182,6 +186,7 @@ function useCreateGiropay( {
 			shouldLoad
 				? createGiropayMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
@@ -225,6 +230,7 @@ function useCreateIdeal( {
 			shouldLoad
 				? createIdealMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
@@ -245,6 +251,7 @@ function useCreateSofort( {
 			shouldLoad
 				? createSofortMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
@@ -265,6 +272,7 @@ function useCreateEps( {
 			shouldLoad
 				? createEpsMethod( {
 						store: paymentMethodStore,
+						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
 		[ shouldLoad, paymentMethodStore ]
@@ -277,6 +285,7 @@ function useCreateNetbanking(): PaymentMethod {
 		() =>
 			createNetBankingMethod( {
 				store: paymentMethodStore,
+				submitButtonContent: <CheckoutSubmitButtonContent />,
 			} ),
 		[ paymentMethodStore ]
 	);
@@ -417,6 +426,7 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		shouldUseEbanx,
 		allowUseForAllSubscriptions,
+		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
 	const freePaymentMethod = useCreateFree();
@@ -441,6 +451,7 @@ export default function useCreatePaymentMethods( {
 		isStripeLoading,
 		stripeLoadingError,
 		storedCards,
+		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
 	// The order is the order of Payment Methods in Checkout.

@@ -1,11 +1,15 @@
 import { Button, Dropdown } from '@wordpress/components';
 import { check, Icon, chevronDown } from '@wordpress/icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import './style.scss';
 
 const IntervalDropdown = ( { period, pathTemplate } ) => {
 	const [ currentInterval, setCurrentInterval ] = useState( period );
+
+	useEffect( () => {
+		setCurrentInterval( period );
+	}, [ period ] );
 
 	const intervalLabels = {
 		day: 'Days',

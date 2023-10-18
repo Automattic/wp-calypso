@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import type { SiteDetails } from '@automattic/data-stores';
 
-import './share-site-modal.scss';
+import './style.scss';
 
 interface ShareSiteModalProps {
 	setModalIsOpen: ( isOpen: boolean ) => void;

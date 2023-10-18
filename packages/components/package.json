@@ -32,10 +32,10 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@wordpress/base-styles": "^4.32.0",
-		"@wordpress/components": "^25.7.0",
-		"@wordpress/icons": "^9.32.0",
-		"@wordpress/react-i18n": "^3.39.0",
+		"@wordpress/base-styles": "^4.34.0",
+		"@wordpress/components": "^25.9.1",
+		"@wordpress/icons": "^9.34.0",
+		"@wordpress/react-i18n": "^3.41.0",
 		"canvas-confetti": "^1.6.0",
 		"classnames": "^2.3.1",
 		"framer-motion": "6.2.8",
@@ -50,7 +50,7 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.11.0",
+		"@wordpress/data": "^9.13.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

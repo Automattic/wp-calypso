@@ -6,9 +6,9 @@ import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
@@ -81,11 +81,10 @@ class PeopleInvites extends PureComponent {
 			<Main className="people-invites">
 				<PageViewTracker path="/people/invites/:site" title="People > Invites" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
-				<FormattedHeader
-					brandFont
-					className="people-invites__page-heading"
-					headerText={ translate( 'Users' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Users' ) }
+					subtitle={ translate(
 						'View and Manage the invites to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -95,7 +94,6 @@ class PeopleInvites extends PureComponent {
 							},
 						}
 					) }
-					align="left"
 				/>
 				<PeopleSectionNav
 					filter="invites"

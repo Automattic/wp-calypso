@@ -6,9 +6,6 @@
 		--color-surface-backdrop: var(--studio-white);
 	}
 
-	.layout:not(.has-no-sidebar) .layout__content {
-		padding-top: var(--masterbar-height);
-	}
 	.main > .notice.is-error {
 		margin-top: 24px;
 		margin-bottom: 0;
@@ -16,7 +13,7 @@
 }
 
 .is-logged-out {
-	.themes__header::before,
+	.themes__header-logged-out::before,
 	.themes__controls::before {
 		background-color: #e5f4ff;
 		content: "";
@@ -28,7 +25,8 @@
 		z-index: -1;
 	}
 
-	.themes__header {
+	.themes__header-logged-out {
+		padding: 24px 16px;
 		border: none;
 		margin: 0;
 		position: relative;
@@ -68,10 +66,6 @@
 			@include breakpoint-deprecated( ">660px" ) {
 				padding: 0 32px;
 			}
-		}
-		.themes__showcase {
-			margin: 0 auto;
-			margin-top: 1em;
 		}
 	}
 
@@ -195,6 +189,12 @@
 }
 
 .theme-showcase {
+
+	.navigation-header {
+		@media (max-width: $break-small) {
+			padding-bottom: 16px;
+		}
+	}
 
 	.theme__search {
 		.keyed-suggestions {
@@ -415,7 +415,7 @@
 
 	.themes__controls,
 	.themes__showcase {
-		@include breakpoint-deprecated( "<660px" ) {
+		@media (max-width: $break-small) {
 			padding: 0 16px;
 		}
 	}
