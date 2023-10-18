@@ -10,13 +10,14 @@ interface DateControlPickerProps {
 	buttonLabel: string;
 	dateRange: any;
 	shortcutList: DateControlPickerShortcut[];
+	selectedShortcut: string | undefined;
 	onShortcut: ( shortcut: DateControlPickerShortcut ) => void;
 	onApply: ( startDate: string, endDate: string ) => void;
 }
 
 interface DateControlPickerShortcutsProps {
 	shortcutList: DateControlPickerShortcut[];
-	currentShortcut: string;
+	currentShortcut: string | undefined;
 	onClick: ( shortcut: DateControlPickerShortcut ) => void;
 }
 

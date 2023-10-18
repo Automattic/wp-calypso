@@ -12,17 +12,17 @@ const DateControlPicker = ( {
 	buttonLabel,
 	dateRange,
 	shortcutList,
+	selectedShortcut,
 	onShortcut,
 	onApply,
 }: DateControlPickerProps ) => {
-	// TODO: remove placeholder values
+	// Pull dates from provided range.
 	const [ inputStartDate, setInputStartDate ] = useState(
 		moment( dateRange.chartStart ).format( 'YYYY-MM-DD' )
 	);
 	const [ inputEndDate, setInputEndDate ] = useState(
 		moment( dateRange.chartEnd ).format( 'YYYY-MM-DD' )
 	);
-	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
@@ -74,8 +74,6 @@ const DateControlPicker = ( {
 		// Calc new start date based on end date plus range as specified in shortcut.
 		const newStartDate = calcNewDateWithOffset( newEndDate, shortcut.range );
 		setInputStartDate( formattedDate( newStartDate ) );
-
-		setCurrentShortcut( shortcut.id || '' );
 	};
 
 	return (
@@ -100,7 +98,7 @@ const DateControlPicker = ( {
 					/>
 					<DateControlPickerShortcuts
 						shortcutList={ shortcutList }
-						currentShortcut={ currentShortcut }
+						currentShortcut={ selectedShortcut }
 						onClick={ handleShortcutSelected }
 					/>
 				</div>
