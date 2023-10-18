@@ -9,7 +9,7 @@ import {
 	TERM_ANNUALLY,
 	type PlanSlug,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
@@ -115,24 +115,29 @@ const SignupFlowPlanFeatureActionButton = ( {
 		} );
 	}
 
-	return (
-		<div className="plan-features-2023-grid__actions-button-container">
-			<Button
-				className={ classes }
-				onClick={ () => handleUpgradeButtonClick( false ) }
-				busy={ busy }
-			>
-				{ btnText }
-			</Button>
-			{ hasFreeTrialPlan && (
+	if ( hasFreeTrialPlan ) {
+		return (
+			<div className="plan-features-2023-grid__multiple-actions-container">
 				<Button
+					className={ classes }
 					onClick={ () => handleUpgradeButtonClick( true ) }
-					className="plan-features-2023-grid__actions-trial-button"
+					busy={ busy }
 				>
 					{ translate( 'Try for free' ) }
 				</Button>
-			) }
-		</div>
+				{ ! isStuck && (
+					<Button borderless onClick={ () => handleUpgradeButtonClick( false ) }>
+						{ btnText } <Gridicon icon="arrow-right" />
+					</Button>
+				) }
+			</div>
+		);
+	}
+
+	return (
+		<Button className={ classes } onClick={ () => handleUpgradeButtonClick( false ) } busy={ busy }>
+			{ btnText }
+		</Button>
 	);
 };
 

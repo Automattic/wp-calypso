@@ -253,7 +253,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		} = this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
 			const isWooExpressPlus = isWooExpressPlusPlan( planSlug );
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
 
@@ -368,11 +368,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		} = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, availableForPurchase } ) => {
-			const classes = classNames(
-				'plan-features-2023-grid__table-item',
-				'is-top-buttons',
-				'is-bottom-aligned'
-			);
+			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			// Leaving it `undefined` makes it use the default label
 			let buttonText;

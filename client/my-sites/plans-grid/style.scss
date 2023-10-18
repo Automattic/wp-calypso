@@ -11,8 +11,7 @@ $mobile-card-max-width: 440px;
 .plan-features-2023-grid__table-item.is-top-buttons,
 .plan-comparison-grid {
 	.plan-features-2023-gridrison__actions-buttons {
-		.plan-features-2023-grid__actions-button,
-		.plan-features-2023-grid__actions-trial-button {
+		.plan-features-2023-grid__actions-button {
 			font-weight: 500;
 			line-height: 20px;
 			border-radius: 4px;
@@ -59,12 +58,19 @@ $mobile-card-max-width: 440px;
 					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
 				}
 
-				+ .plan-features-2023-grid__actions-trial-button {
-					box-shadow: inset 0 0 0 1px #7f54b3;
+				+ .button {
+					font-size: $font-body-small;
 					color: #7f54b3;
+					text-decoration: none;
 
 					&:focus {
-						box-shadow: 0 0 0 2px var(--studio-white), inset 0 0 0 1px #7f54b3, 0 0 0 4px #7f54b3;
+						box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+					}
+
+					.gridicon {
+						width: 18px;
+						height: 18px;
+						top: 4px;
 					}
 				}
 			}
@@ -382,20 +388,15 @@ $mobile-card-max-width: 440px;
 	border: none;
 	background-color: var(--color-surface);
 	position: relative;
-	vertical-align: baseline;
+	vertical-align: top;
 
 	.is-bold {
 		font-weight: 600;
 	}
 
-	&.is-bottom-aligned {
-		vertical-align: bottom;
-	}
-
 
 	&.is-top-buttons {
 		padding: 0 20px;
-		vertical-align: bottom;
 		@include plans-2023-break-small {
 			padding-top: 16px;
 			padding-bottom: 16px;
@@ -500,8 +501,9 @@ $mobile-card-max-width: 440px;
 	}
 }
 
-.plan-features-2023-grid__actions-button-container {
+.plan-features-2023-grid__multiple-actions-container {
 	display: flex;
+	flex-direction: column;
 	gap: 8px;
 }
 
@@ -820,8 +822,12 @@ body.is-section-signup.is-white-signup,
 
 
 .plan-comparison-grid {
-	.plan-features-2023-gridrison__actions-buttons {
-		min-height: 40px;
+	.plan-features-2023-gridrison__actions {
+		margin-bottom: auto;
+
+		&-buttons {
+			min-height: 40px;
+		}
 	}
 	.plan-comparison-grid__header-cell {
 		display: flex;
