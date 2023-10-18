@@ -15,7 +15,7 @@ export const THEME_COLLECTIONS = {
 		description: <p>Lorem ipsum dolor sit amet</p>,
 		seeAllLink: '/themes/premium',
 	},
-	partner: {
+	marketplace: {
 		query: {
 			collection: 'recommended',
 			filter: '',
