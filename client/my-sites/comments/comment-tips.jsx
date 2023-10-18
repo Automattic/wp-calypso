@@ -1,5 +1,7 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
@@ -13,7 +15,14 @@ const CommentTips = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const dismissTips = () => dispatch( savePreference( COMMENTS_TIPS_DISMISSED_PREFERENCE, true ) );
+	const dismissTips = () => {
+		dispatch( savePreference( COMMENTS_TIPS_DISMISSED_PREFERENCE, true ) );
+		recordTracksEvent( 'calypso_comments_moderation_tips_dismissed' );
+	};
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_comments_moderation_tips_viewed' );
+	}, [] );
 
 	return (
 		<ActionPanel className="comments-tips__action-panel">
