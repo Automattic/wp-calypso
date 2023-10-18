@@ -16,6 +16,7 @@ import {
 	backupPath,
 	scanPath,
 } from 'calypso/lib/jetpack/paths';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -24,7 +25,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const ManageSelectedSiteSidebar = () => {
+const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const isAgency = useSelector( isAgencyUser );
@@ -50,8 +51,8 @@ const ManageSelectedSiteSidebar = () => {
 
 	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
 
-	const onClickMenuItem = ( path: string ) => {
-		page.redirect( path );
+	const onClickMenuItem = ( url: string ) => {
+		page.redirect( url );
 	};
 
 	const menuItems = useMemo(
@@ -65,6 +66,7 @@ const ManageSelectedSiteSidebar = () => {
 					onClickMenuItem: onClickMenuItem,
 					trackEventName: 'calypso_jetpack_sidebar_activity_clicked',
 					enabled: isAdmin,
+					isSelected: itemLinkMatches( path, `/activity-log/${ siteSlug }` ),
 				},
 				{
 					icon: cloud,
@@ -74,6 +76,7 @@ const ManageSelectedSiteSidebar = () => {
 					onClickMenuItem: onClickMenuItem,
 					trackEventName: 'calypso_jetpack_sidebar_backup_clicked',
 					enabled: isAdmin && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, backupPath( siteSlug ) ),
 				},
 				{
 					icon: shield,
@@ -83,6 +86,7 @@ const ManageSelectedSiteSidebar = () => {
 					onClickMenuItem: onClickMenuItem,
 					trackEventName: 'calypso_jetpack_sidebar_scan_clicked',
 					enabled: isAdmin && ! isWPCOM && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, scanPath( siteSlug ) ),
 				},
 				{
 					icon: search,
@@ -92,6 +96,7 @@ const ManageSelectedSiteSidebar = () => {
 					onClickMenuItem: onClickMenuItem,
 					trackEventName: 'calypso_jetpack_sidebar_search_clicked',
 					enabled: isAdmin,
+					isSelected: itemLinkMatches( path, `/jetpack-search/${ siteSlug }` ),
 				},
 				{
 					icon: <JetpackIcons icon="activity-log" size={ 24 } />,
@@ -101,6 +106,7 @@ const ManageSelectedSiteSidebar = () => {
 					onClickMenuItem: onClickMenuItem,
 					trackEventName: 'calypso_jetpack_sidebar_social_clicked',
 					enabled: isAdmin && isSectionNameEnabled( 'jetpack-social' ) && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, `/jetpack-social/${ siteSlug }` ),
 				},
 				{
 					icon: plugins,
@@ -110,6 +116,7 @@ const ManageSelectedSiteSidebar = () => {
 					onClickMenuItem: onClickMenuItem,
 					trackEventName: 'calypso_jetpack_sidebar_plugins_clicked',
 					enabled: isPluginManagementEnabled && isAgency,
+					isSelected: itemLinkMatches( path, pluginsPath( siteSlug ) ),
 				},
 				{
 					icon: cog,
@@ -119,6 +126,7 @@ const ManageSelectedSiteSidebar = () => {
 					onClickMenuItem: onClickMenuItem,
 					trackEventName: 'calypso_jetpack_sidebar_settings_clicked',
 					enabled: shouldShowSettings,
+					isSelected: itemLinkMatches( path, settingsPath( siteSlug ) ),
 				},
 				{
 					icon: currencyDollar,
@@ -128,6 +136,7 @@ const ManageSelectedSiteSidebar = () => {
 					onClickMenuItem: onClickMenuItem,
 					trackEventName: 'calypso_jetpack_sidebar_purchases_clicked',
 					enabled: shouldShowPurchases,
+					isSelected: itemLinkMatches( path, purchasesPath( siteSlug ) ),
 				},
 			].filter( ( { enabled } ) => enabled ),
 		[
@@ -136,6 +145,7 @@ const ManageSelectedSiteSidebar = () => {
 			isPluginManagementEnabled,
 			isWPCOM,
 			isWPForTeamsSite,
+			path,
 			shouldShowPurchases,
 			shouldShowSettings,
 			siteSlug,
