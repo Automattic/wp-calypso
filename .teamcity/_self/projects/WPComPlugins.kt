@@ -69,6 +69,14 @@ object CalypsoApps: BuildType({
 	params {
 		// Incremented to 4 to make sure ETK updates continue to work:
 		param("build.prefix", "4")
+		checkbox(
+			name = "skip_release_diff",
+			value = "false",
+			label = "Skip release diff",
+			description = "Skips the diff against the previous successful build, uploading the artifact as the latest successful build.",
+			checked = "true",
+			unchecked = "false"
+		)
 	}
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
