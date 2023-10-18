@@ -4,14 +4,12 @@
 .navigation-header {
 	box-sizing: border-box;
 	width: 100%;
-	background-color: var(--studio-white);
-	padding: 16px 16px 0 16px;
-	margin: 0;
-
+	padding: 16px;
+	margin-bottom: 32px;
 	@include break-small {
-		margin-bottom: 24px;
-		margin-top: 0;
-		padding: 0;
+
+		padding: 0 0 24px 0;
+		margin-bottom: 16px;
 	}
 
 	.breadcrumbs-back {
