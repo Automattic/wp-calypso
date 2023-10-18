@@ -216,7 +216,7 @@ export function managePurchaseByOwnership( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
 				<Main wideLayout className={ classes }>
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 					<PageViewTracker
 						path="/me/purchases/:ownershipId"
 						title="Purchases > Manage Purchase by Ownership"
