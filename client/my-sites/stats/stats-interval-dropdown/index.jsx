@@ -2,17 +2,9 @@ import { Button, Dropdown } from '@wordpress/components';
 import { check, Icon, chevronDown } from '@wordpress/icons';
 import page from 'page';
 import qs from 'qs';
-import React, { useEffect, useState } from 'react';
-import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import './style.scss';
 
-const IntervalDropdown = ( { slug, period, queryParams, pathTemplate } ) => {
-	const [ currentInterval, setCurrentInterval ] = useState( period );
-
-	useEffect( () => {
-		setCurrentInterval( period );
-	}, [ period ] );
-
+const IntervalDropdown = ( { slug, period, queryParams } ) => {
 	const intervalLabels = {
 		day: 'Days',
 		week: 'Weeks',
@@ -20,17 +12,8 @@ const IntervalDropdown = ( { slug, period, queryParams, pathTemplate } ) => {
 		year: 'Years',
 	};
 
-	/*
-	const getCurrentIntervalLabel = ( intervalValue ) => {
-		return intervalLabels[ intervalValue ] || intervalValue;
-	};
-	*/
-
 	// New interval listing that preserves date range.
-	// TODO: Remove Intervals code.
-	// TODO: Remove local state.
 	// TODO: Update class names.
-	// TODO: Remove pathTemplate prop.
 	// TODO: Figure out how to dismiss on select.
 
 	function generateNewLink( newPeriod ) {
@@ -60,13 +43,6 @@ const IntervalDropdown = ( { slug, period, queryParams, pathTemplate } ) => {
 			) }
 			renderContent={ () => (
 				<div className="stats-interval-dropdown__container">
-					<Intervals
-						selected={ currentInterval }
-						pathTemplate={ pathTemplate }
-						compact={ false }
-						onChange={ setCurrentInterval }
-						icon={ check }
-					/>
 					<SuperGroovyPeriodSelector selected={ period } onSelection={ onSelectionHandler } />
 				</div>
 			) }
