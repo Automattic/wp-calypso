@@ -354,38 +354,9 @@ class ThemeShowcase extends Component {
 	};
 
 	getCollectionViewHeader = () => {
-		let title;
-		let description;
-
-		switch ( this.props.tier ) {
-			case 'premium':
-				title = THEME_COLLECTIONS.premium.title;
-				description = THEME_COLLECTIONS.premium.description;
-				break;
-			case 'marketplace':
-				title = THEME_COLLECTIONS.partner.title;
-				description = THEME_COLLECTIONS.partner.description;
-				break;
-		}
-
-		switch ( this.props.filter ) {
-			case 'blog':
-				title = THEME_COLLECTIONS.blog.title;
-				description = THEME_COLLECTIONS.blog.description;
-				break;
-			case 'business':
-				title = THEME_COLLECTIONS.business.title;
-				description = THEME_COLLECTIONS.business.description;
-				break;
-			case 'portfolio':
-				title = THEME_COLLECTIONS.portfolio.title;
-				description = THEME_COLLECTIONS.portfolio.description;
-				break;
-			case 'art-design':
-				title = THEME_COLLECTIONS.artAndDesign.title;
-				description = THEME_COLLECTIONS.artAndDesign.description;
-				break;
-		}
+		const key = this.props.tier + this.props.filter;
+		const title = THEME_COLLECTIONS[ key ]?.title;
+		const description = THEME_COLLECTIONS[ key ]?.description;
 
 		return (
 			<div className="collection-header">

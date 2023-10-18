@@ -71,7 +71,7 @@ export const THEME_COLLECTIONS = {
 		description: <p>Lorem ipsum dolor sit amet</p>,
 		seeAllLink: '/themes/filter/business',
 	},
-	artAndDesign: {
+	'art-design': {
 		query: {
 			collection: 'recommended',
 			filter: 'art-design',
