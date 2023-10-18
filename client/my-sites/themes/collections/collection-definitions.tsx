@@ -1,4 +1,6 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
+import ExternalLink from 'calypso/components/external-link';
 
 export const THEME_COLLECTIONS = {
 	recommended: {
@@ -49,7 +51,21 @@ export const THEME_COLLECTIONS = {
 		title: translate( 'Partner Themes' ),
 		collectionSlug: 'partner-themes',
 		description: (
-			<p>{ translate( 'Professional themes designed and developed by our partners.' ) }</p>
+			<p>
+				{ translate(
+					'Professional themes designed and developed by our partners. {{link}}Learn more{{/link}}.',
+					{
+						components: {
+							link: (
+								<ExternalLink
+									href={ localizeUrl( 'https://wordpress.com/support/partner-themes/' ) }
+									target="_blank"
+								/>
+							),
+						},
+					}
+				) }
+			</p>
 		),
 		seeAllLink: '/themes/marketplace',
 	},
