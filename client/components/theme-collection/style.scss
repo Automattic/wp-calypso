@@ -51,7 +51,10 @@
 .theme-collection__description {
 	color: var(--gray-gray-70, #3c434a);
 	font-size: $font-body-small;
-	margin-bottom: 0;
+
+	& > * {
+		margin-bottom: 0;
+	}
 
 	@include break-small {
 		font-size: $font-body;
