@@ -439,7 +439,10 @@ const ComparisonGridHeaderCell = ( {
 				siteId={ siteId }
 			/>
 			<div className="plan-comparison-grid__billing-info">
-				<PlanFeatures2023GridBillingTimeframe planSlug={ planSlug } />
+				<PlanFeatures2023GridBillingTimeframe
+					planSlug={ planSlug }
+					flowName={ flowName ?? undefined }
+				/>
 			</div>
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }

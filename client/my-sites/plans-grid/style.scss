@@ -1123,26 +1123,3 @@ body.is-section-signup.is-white-signup,
 	margin-left: auto !important;
 	margin-right: auto !important;
 }
-
-.plan-features-2023-grid__refund-notice {
-	text-align: center;
-	padding-top: 8px;
-	font-size: $font-body-extra-small;
-	line-height: 16px;
-
-	&.is-personal-plan {
-		color: var(--studio-blue-60);
-	}
-
-	&.is-premium-plan {
-		color: #004687;
-	}
-
-	&.is-business-plan {
-		color: #7f54b3;
-	}
-
-	&.is-ecommerce-plan {
-		color: #55347d;
-	}
-}

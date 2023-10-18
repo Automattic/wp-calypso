@@ -9,11 +9,14 @@ import {
 	TERM_ANNUALLY,
 	isWooExpressPlan,
 	PLAN_HOSTING_TRIAL_MONTHLY,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
+import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
+import { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 
 function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const translate = useTranslate();
@@ -287,17 +290,43 @@ const DiscountPromotion = styled.div`
 	margin-top: 6px;
 `;
 
-interface Props {
-	planSlug: PlanSlug;
+interface RefundNoticeProps {
+	flowName?: string;
+	planSlug: string;
+	billingPeriod: GridPlan[ 'pricing' ][ 'billingPeriod' ];
 }
 
-const PlanFeatures2023GridBillingTimeframe = ( { planSlug }: Props ) => {
+const RefundNotice = ( { planSlug, flowName, billingPeriod }: RefundNoticeProps ) => {
+	const translate = useTranslate();
+
+	if ( ! isAnyHostingFlow( flowName ) || isFreePlan( planSlug ) ) {
+		return null;
+	}
+
+	return (
+		<>
+			<br />
+			{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
+				args: {
+					dayCount: billingPeriod === 365 ? 14 : 7,
+				},
+			} ) }
+		</>
+	);
+};
+
+interface Props {
+	planSlug: PlanSlug;
+	flowName?: string;
+}
+
+const PlanFeatures2023GridBillingTimeframe = ( { flowName, planSlug }: Props ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
 		isMonthlyPlan,
 		billingTimeframe,
-		pricing: { introOffer },
+		pricing: { introOffer, billingPeriod },
 	} = gridPlansIndex[ planSlug ];
 	const perMonthDescription = usePerMonthDescription( { planSlug } );
 	const description = perMonthDescription || billingTimeframe;
@@ -329,7 +358,12 @@ const PlanFeatures2023GridBillingTimeframe = ( { planSlug }: Props ) => {
 		);
 	}
 
-	return <div>{ description }</div>;
+	return (
+		<div>
+			{ description }
+			<RefundNotice flowName={ flowName } planSlug={ planSlug } billingPeriod={ billingPeriod } />
+		</div>
+	);
 };
 
 export default PlanFeatures2023GridBillingTimeframe;
