@@ -67,14 +67,17 @@ export default function ThemeCollection( {
 						slideToClickedSlide: false,
 						rewind: true,
 						slidesPerView: 1.2,
+						spaceBetween: -16,
 						breakpoints: {
 							// deprecated Calypso breakpoints used in the Theme Showcase
 							'660': {
-								slidesPerView: 2.3,
+								slidesPerView: 2.2,
+								spaceBetween: -32,
 							},
 							// break-xlarge in Gutenberg breakpoints
 							'1080': {
 								slidesPerView: 3,
+								spaceBetween: -16,
 							},
 						},
 						modules: [ Navigation, Keyboard, Mousewheel ],

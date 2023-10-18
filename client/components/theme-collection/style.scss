@@ -61,7 +61,13 @@
 .theme-collection__list-item.swiper-slide {
 	.card.theme-card {
 		margin: 0;
-		padding: 0 16px;
+		padding-left: 16px;
+		padding-right: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding-left: 32px;
+			padding-right: 32px;
+		}
 	}
 }
 

@@ -27,15 +27,4 @@
 			margin-right: 32px;
 		}
 	}
-
-	.theme-collection__list-item.swiper-slide .card.theme-card {
-		@include breakpoint-deprecated( ">660px" ) {
-			padding-left: 32px;
-		}
-
-		@include break-xlarge {
-			padding-left: 32px;
-			padding-right: 32px;
-		}
-	}
 }
