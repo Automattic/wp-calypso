@@ -21,7 +21,7 @@ const DateControlPickerDate = ( {
 		<div className="date-control-picker-date">
 			<h2 className="date-control-picker-date__heading">
 				{ translate( 'Date Range' ) }
-				<span> { translate( '(dd/mm/yyyy)' ) }</span>
+				<span>(dd/mm/yyyy)</span>
 			</h2>
 			<div className="stats-date-control-picker-dates__inputs">
 				<div className="stats-date-control-picker-dates__inputs-input-group">
