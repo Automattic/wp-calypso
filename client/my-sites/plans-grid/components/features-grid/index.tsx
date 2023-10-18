@@ -84,7 +84,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
 					>
 						{ ( isStuck: boolean ) => {
-							console.log( { isStuck, topOffset: stickyRowOffset + ( isInSignup ? 0 : 20 ) } );
 							return this.renderTopButtons( gridPlansWithoutSpotlight, {
 								isTableCell: true,
 								isStuck,

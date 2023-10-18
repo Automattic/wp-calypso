@@ -23,7 +23,6 @@ export class P2PlansMain extends Component {
 					hidePlansFeatureComparison={ true }
 					hidePlanTypeSelector={ true }
 					intent="plans-p2"
-					isInSignup={ false }
 				/>
 			</>
 		);
