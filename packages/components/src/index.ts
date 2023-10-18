@@ -4,6 +4,7 @@ export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
+export { default as FoldableCard } from './foldable-card';
 export { default as Count } from './count';
 export * from './device-switcher';
 export { default as Dialog } from './dialog';
