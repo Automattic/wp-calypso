@@ -189,14 +189,13 @@ function git( cmd ) {
 async function copyMetaFiles( archiveDir ) {
 	const buildNumber = process.env.build_number;
 
-	const cacheBuster = git( 'describe --always --dirty --long' );
 	// Use commit hash from the environment if available. In TeamCity, that reflects
 	// the GitHub data -- the local data may be different.
 	const commitHash = process.env.commit_sha ?? git( 'rev-parse HEAD' );
 
 	const buildMeta = {
 		build_number: buildNumber ?? 'dev',
-		cache_buster: cacheBuster,
+		cache_buster: commitHash,
 		commit_hash: commitHash,
 		commit_url: `https://github.com/Automattic/wp-calypso/commit/${ commitHash }`,
 	};
