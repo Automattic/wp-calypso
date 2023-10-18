@@ -8,7 +8,12 @@ import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
-const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPickerProps ) => {
+const DateControlPicker = ( {
+	buttonLabel,
+	shortcutList,
+	onShortcut,
+	onApply,
+}: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
 	const [ inputStartDate, setInputStartDate ] = useState(
 		moment().subtract( 6, 'days' ).format( 'YYYY-MM-DD' )
@@ -70,14 +75,10 @@ const DateControlPicker = ( { shortcutList, onShortcut, onApply }: DateControlPi
 		setCurrentShortcut( shortcut.id || '' );
 	};
 
-	const formatDate = ( date: string ) => {
-		return moment( date ).format( 'MMM D, YYYY' );
-	};
-
 	return (
 		<div className="stats-date-control-picker">
 			<Button onClick={ () => togglePopoverOpened( ! popoverOpened ) } ref={ infoReferenceElement }>
-				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
+				{ buttonLabel }
 				<Icon className="gridicon" icon={ calendar } />
 			</Button>
 			<Popover
