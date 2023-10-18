@@ -96,14 +96,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isRequestingSitePlans( state, targetSite.ID )
 	);
 
-	useEffect( () => {
-		if ( queryTargetSitePlanStatus === 'fetching' && ! isRequestingTargetSitePlans ) {
-			setQueryTargetSitePlanStatus( 'fetched' );
-			setContinueImport( true );
-			fetchMigrationEnabledStatus();
-		}
-	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
-
 	const { isLoading: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			setQueryTargetSitePlanStatus( 'fetching' );
@@ -135,6 +127,18 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 		dispatch( getCredentials( sourceSiteId ) );
 	}, [ isTargetSitePlanCompatible, sourceSiteId, dispatch ] );
+
+	/**
+	 * Recognize when the plan upgrade is done
+	 * and fetch the migration enabled status
+	 */
+	useEffect( () => {
+		if ( queryTargetSitePlanStatus === 'fetching' && ! isRequestingTargetSitePlans ) {
+			setQueryTargetSitePlanStatus( 'fetched' );
+			setContinueImport( true );
+			fetchMigrationEnabledStatus();
+		}
+	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
 
 	/**
 	 * Start (continue) the import after:
