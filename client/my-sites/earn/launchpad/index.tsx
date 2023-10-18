@@ -9,7 +9,6 @@ import {
 	getConnectedAccountIdForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { Product } from '../types';
 
 type EarnLaunchpadProps = {
 	numberOfSteps: number;
@@ -19,13 +18,12 @@ type EarnLaunchpadProps = {
 const EarnLaunchpad = ( { numberOfSteps, completedSteps }: EarnLaunchpadProps ) => {
 	const translate = useTranslate();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
-	const connectedAccountId = useSelector( ( state ) =>
-		getConnectedAccountIdForSiteId( state, site?.ID )
-	);
-	const stripeConnectUrl = useSelector( ( state ) =>
-		getConnectUrlForSiteId( state, site?.ID ?? 0 )
-	);
+
+	const { products, connectedAccountId, stripeConnectUrl } = useSelector( ( state ) => ( {
+		products: getProductsForSiteId( state, site?.ID ),
+		connectedAccountId: getConnectedAccountIdForSiteId( state, site?.ID ),
+		stripeConnectUrl: getConnectUrlForSiteId( state, site?.ID ?? 0 ),
+	} ) );
 
 	const taskFilter = ( tasks: Task[] ): Task[] => {
 		if ( ! tasks ) {
