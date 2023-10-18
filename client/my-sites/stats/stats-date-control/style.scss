@@ -11,7 +11,9 @@
 }
 
 .date-control-picker-shortcuts {
-	margin: 10px 0;
+	padding: 10px 0;
+	border-left: 1px solid var(--gray-gray-5, #dcdcde);
+	box-sizing: border-box;
 }
 
 .date-control-picker-shortcuts__list {
