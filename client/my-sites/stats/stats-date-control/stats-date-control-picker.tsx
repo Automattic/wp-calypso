@@ -46,34 +46,8 @@ const DateControlPicker = ( {
 	};
 
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
-		// Push logic to caller.
 		togglePopoverOpened( false );
 		onShortcut( shortcut );
-
-		// TODO: Remove following logic once the values properly
-		// trickle down from the caller. Currently sets the selected
-		// shortcut and updates the button label.
-
-		// Shared date math.
-		const calcNewDateWithOffset = ( date: Date, offset: number ): Date => {
-			// We do our date math based on 24 hour increments.
-			const millisecondsInOneDay = 1000 * 60 * 60 * 24;
-			const newDateInMilliseconds = date.getTime() - millisecondsInOneDay * offset;
-			return new Date( newDateInMilliseconds );
-		};
-
-		// Shared date formatting.
-		const formattedDate = ( date: Date ) => {
-			return date.toISOString().split( 'T' )[ 0 ];
-		};
-
-		// Calc new end date based on offset value from shortcut.
-		const newEndDate = calcNewDateWithOffset( new Date(), shortcut.offset );
-		setInputEndDate( formattedDate( newEndDate ) );
-
-		// Calc new start date based on end date plus range as specified in shortcut.
-		const newStartDate = calcNewDateWithOffset( newEndDate, shortcut.range );
-		setInputStartDate( formattedDate( newStartDate ) );
 	};
 
 	return (
