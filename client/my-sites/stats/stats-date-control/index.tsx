@@ -139,6 +139,7 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 		<div className={ COMPONENT_CLASS_NAME }>
 			<DateControlPicker
 				buttonLabel={ getButtonLable() }
+				dateRange={ dateRange }
 				shortcutList={ shortcutList }
 				onShortcut={ onShortcutHandler }
 				onApply={ onApplyButtonHandler }

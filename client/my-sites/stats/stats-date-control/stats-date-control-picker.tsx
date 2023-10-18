@@ -10,15 +10,18 @@ import './style.scss';
 
 const DateControlPicker = ( {
 	buttonLabel,
+	dateRange,
 	shortcutList,
 	onShortcut,
 	onApply,
 }: DateControlPickerProps ) => {
 	// TODO: remove placeholder values
 	const [ inputStartDate, setInputStartDate ] = useState(
-		moment().subtract( 6, 'days' ).format( 'YYYY-MM-DD' )
+		moment( dateRange.chartStart ).format( 'YYYY-MM-DD' )
 	);
-	const [ inputEndDate, setInputEndDate ] = useState( moment().format( 'YYYY-MM-DD' ) );
+	const [ inputEndDate, setInputEndDate ] = useState(
+		moment( dateRange.chartEnd ).format( 'YYYY-MM-DD' )
+	);
 	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
