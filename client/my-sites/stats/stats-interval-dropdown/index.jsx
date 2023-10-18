@@ -13,7 +13,6 @@ const IntervalDropdown = ( { slug, period, queryParams } ) => {
 	};
 
 	// New interval listing that preserves date range.
-	// TODO: Update class names.
 	// TODO: Figure out how to dismiss on select.
 
 	function generateNewLink( newPeriod ) {
@@ -43,14 +42,14 @@ const IntervalDropdown = ( { slug, period, queryParams } ) => {
 			) }
 			renderContent={ () => (
 				<div className="stats-interval-dropdown__container">
-					<SuperGroovyPeriodSelector selected={ period } onSelection={ onSelectionHandler } />
+					<StatsIntervalDropdownListing selected={ period } onSelection={ onSelectionHandler } />
 				</div>
 			) }
 		/>
 	);
 };
 
-function SuperGroovyPeriodSelector( props ) {
+function StatsIntervalDropdownListing( props ) {
 	const intervals = [ 'day', 'week', 'month', 'year' ];
 	const labels = [ 'Days', 'Weeks', 'Months', 'Years' ];
 	function isSelectedItem( interval ) {
@@ -60,10 +59,10 @@ function SuperGroovyPeriodSelector( props ) {
 		props.onSelection( interval );
 	}
 	return (
-		<div className="groovy-interval-dropdown">
-			<ul className="groovy-interval-dropdown__list">
+		<div className="stats-interval-dropdown-listing">
+			<ul className="stats-interval-dropdown-listing__list">
 				{ intervals.map( ( interval, idx ) => (
-					<li className="groovy-interval-dropdown__interval" key={ interval }>
+					<li className="stats-interval-dropdown-listing__interval" key={ interval }>
 						<Button
 							onClick={ () => {
 								clickHandler( interval );
