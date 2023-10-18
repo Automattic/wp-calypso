@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import AppleIcon from 'calypso/components/social-icons/apple';
 import GoogleIcon from 'calypso/components/social-icons/google';
@@ -77,7 +77,7 @@ class SocialLogin extends Component {
 				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
 				<DocumentHead title={ title } />
 
-				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
 
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (
