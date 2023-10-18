@@ -74,41 +74,41 @@ export function useTranslatedPageDescriptions(
 	const translate = useTranslate();
 	const defaultDescriptions: Record< PageId, TranslateResult > = {
 		[ HOME_PAGE ]: translate(
-			'An introduction of your business, writing, or yourself. What can visitors expect to find on your site?'
+			'Introduce your business, writing, or yourself. Highlight what visitors can expect on your site.'
 		),
 		[ ABOUT_PAGE ]: translate(
-			'Provide background information about you or the business. Why did you start this website? What is your personal story?'
+			'Share your story or business background. Explain why you created this website.'
 		),
 		[ CONTACT_PAGE ]: translate(
-			'Visitors want to get in touch with you. How can they reach you?'
+			'Provide ways for visitors to contact you. Highlight your preferred contact methods: telephone, email, etc'
 		),
 		[ BLOG_PAGE ]: translate(
-			'Blog posts can be news stories, journal entries, or even recipes! We will set up the blog page and explain how you can add posts to your new site.'
+			"Share news, journal entries, or recipes! We'll set up three posts to get you started."
 		),
 
 		[ PHOTO_GALLERY_PAGE ]: translate(
-			'A visual space to share pictures with your website visitors. Add a text summary to describe the gallery to your visitors.'
+			'Showcase creative work or memories. Perfect for photographers, artists, or for visual storytelling.'
 		),
 		[ SERVICES_PAGE ]: translate(
-			'Describe what services you offer to the website visitor. Imagine if the visitor is unfamiliar with your field of expertise: how would you explain what you offer?'
+			'Describe your skills and services to potential clients, highlighting what sets you apart.'
 		),
 		[ VIDEO_GALLERY_PAGE ]: translate(
-			'A perfect place to showcase videos of you or your business. Add a text summary to describe the gallery to your visitors.'
+			'Show videos of your work or business. Include a description to guide your visitors.'
 		),
 		[ PRICING_PAGE ]: translate(
-			"What's for sale? This can be food on the menu, hair styling costs, books, services, consulting, etc. You can list the prices of anything you're selling!"
+			'List what you sell: food, services, books, etc. Highlight pricing details.'
 		),
 		[ PORTFOLIO_PAGE ]: translate(
-			'A space to showcase your work, including examples of completed projects, photography, artwork, or even books or articles you’ve written.'
+			'Display your completed projects, photos, artwork, or articles. Let your work shine.'
 		),
 		[ FAQ_PAGE ]: translate(
-			'Do customers/readers tend to ask similar questions? List the most common questions with the answers to help people find information.'
+			'Answer common questions from customers or readers. Offer quick information access.'
 		),
 		[ TESTIMONIALS_PAGE ]: translate(
-			'Use this page to build credibility. Share reviews or quotes about you and/or your business.'
+			'Build trust with reviews or quotes about your work or business. Share success stories.'
 		),
 		[ TEAM_PAGE ]: translate(
-			'Showcase a mini profile of each member of your business, with an image, name, and role description.'
+			'Profile your team members with pictures, names, and roles or job titles. Introduce the people behind your business.'
 		),
 		[ SHOP_PAGE ]: translate(
 			'Your shop page will display all the products you have for sale. We will set up the shop page and explain how you can add products to your new site.'
@@ -140,10 +140,10 @@ export function useTranslatedPageDescriptions(
 		[ BBE_WEBSITE_CONTENT_FILLING_STEP ]: {
 			...defaultDescriptions,
 			[ BLOG_PAGE ]: translate(
-				'Add a short description to explain what type of posts will appear on your blog. We will set up the page so this description appears above your posts; you can add the posts later with the editor.'
+				"Describe the type of blog posts you'll feature, and we'll set up the page with this description. If there are no existing posts, we'll create three to get you started."
 			),
 			[ CONTACT_PAGE ]: translate(
-				'This page will include a contact form. Optionally provide text to appear above the form to let visitors know other ways they can reach you.'
+				'This page includes a contact form. You may also include other contact methods as well.'
 			),
 			[ SHOP_PAGE ]: translate(
 				'Add a short description to explain what type of products will appear on your site. We will set up the page so this description appears above your products; you can add the products later with the editor.'
@@ -160,15 +160,11 @@ export function useTranslatedPageDescriptions(
 		},
 		[ BBE_STORE_ONBOARDING_PAGE_PICKER_STEP ]: {
 			...defaultDescriptions,
-			[ HOME_PAGE ]: translate(
-				'An introduction of your business, shop, or yourself. What can visitors expect to find on your site?'
-			),
+			// Add customized text for page descriptions for the page picker step in the store flow here.
 		},
 		[ BBE_STORE_WEBSITE_CONTENT_FILLING_STEP ]: {
 			...defaultDescriptions,
-			[ HOME_PAGE ]: translate(
-				'An introduction of your business, shop, or yourself. What can visitors expect to find on your site?'
-			),
+			// Add customized text for page descriptions for the website content form here.
 		},
 	};
 	if ( ! context ) {
