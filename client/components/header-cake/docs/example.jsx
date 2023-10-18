@@ -43,6 +43,7 @@ export default class extends PureComponent {
 					mobileItem={ null }
 					title="My Home"
 					subtitle="NavigationHeader header with action button."
+					screenReader="Home"
 				>
 					<Button target="_blank">Visit site</Button>
 				</NavigationHeader>

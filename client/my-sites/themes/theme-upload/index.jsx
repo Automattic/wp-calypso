@@ -343,6 +343,7 @@ class Upload extends Component {
 				<ActivationModal source="upload" />
 
 				<NavigationHeader
+					title={ translate( 'Themes' ) }
 					subtitle={ translate(
 						'If you have a theme in .zip format, you may install or update it by uploading it here. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
