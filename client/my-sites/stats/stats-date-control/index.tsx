@@ -99,32 +99,37 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 		page( generateNewLink( shortcut.period, startDate, endDate ) );
 	};
 
-	const getLabelForRange = () => {
+	const getShortcutForRange = () => {
 		const today = moment().format( 'YYYY-MM-DD' );
+		// Today
 		if ( today === dateRange.chartEnd && dateRange.daysInRange === 1 ) {
-			return 'Today';
+			return shortcutList[ 0 ];
 		}
+		// Last 7 days
 		if ( today === dateRange.chartEnd && dateRange.daysInRange === 7 ) {
-			return 'Last 7 days';
+			return shortcutList[ 2 ];
 		}
+		// Last 30 days
 		if ( today === dateRange.chartEnd && dateRange.daysInRange === 30 ) {
-			return 'Last 30 days';
+			return shortcutList[ 3 ];
 		}
+		// Last year
 		if ( today === dateRange.chartEnd && dateRange.daysInRange === 365 ) {
-			return 'Last year';
+			return shortcutList[ 4 ];
 		}
 		const yesterday = moment().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
+		// Yesterday
 		if ( yesterday === dateRange.chartEnd && dateRange.daysInRange === 1 ) {
-			return 'Yesterday';
+			return shortcutList[ 1 ];
 		}
 		return null;
 	};
 
 	const getButtonLable = () => {
 		// Test for a shortcut match.
-		const label = getLabelForRange();
-		if ( label !== null ) {
-			return label;
+		const shortcut = getShortcutForRange();
+		if ( shortcut !== null ) {
+			return shortcut.label;
 		}
 		// Generate a full date range for the label.
 		const startDate = moment( dateRange.chartStart ).format( 'MMMM Do, YYYY' );
@@ -138,6 +143,7 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 				buttonLabel={ getButtonLable() }
 				dateRange={ dateRange }
 				shortcutList={ shortcutList }
+				selectedShortcut={ getShortcutForRange()?.id }
 				onShortcut={ onShortcutHandler }
 				onApply={ onApplyButtonHandler }
 			/>
