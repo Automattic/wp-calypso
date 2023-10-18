@@ -1128,7 +1128,6 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Defer non-essential JavaScript' ),
 		translate( 'Optimize CSS loading' ),
 		translate( 'Lazy image loading' ),
-		translate( 'Image Guide to discover and fix large images on your site' ),
 	];
 	const socialBasicIncludesInfo = [
 		translate( 'Automatically share your posts and products on social media' ),
