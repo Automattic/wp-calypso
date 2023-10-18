@@ -412,6 +412,9 @@ export default function WPCheckout( {
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 
+	const urlParams = new URLSearchParams( window.location.search );
+	const checkoutVersion = urlParams.get( 'checkoutVersion' );
+
 	const nextStepButtonText =
 		locale.startsWith( 'en' ) || i18n.hasTranslation( 'Continue to payment' )
 			? translate( 'Continue to payment', { textOnly: true } )
@@ -444,6 +447,16 @@ export default function WPCheckout( {
 								</CheckoutSummaryTitleContent>
 							</CheckoutSummaryTitleLink>
 							<CheckoutSummaryBody className="checkout__summary-body">
+								{ checkoutVersion === '2' && (
+									<WPCheckoutOrderReview
+										removeProductFromCart={ removeProductFromCart }
+										couponFieldStateProps={ couponFieldStateProps }
+										onChangeSelection={ changeSelection }
+										siteUrl={ siteUrl }
+										createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+									/>
+								) }
+
 								<WPCheckoutOrderSummary
 									siteId={ siteId }
 									onChangeSelection={ changeSelection }
@@ -473,24 +486,26 @@ export default function WPCheckout( {
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
-					<CheckoutStepBody
-						onError={ onReviewError }
-						className="wp-checkout__review-order-step"
-						stepId="review-order-step"
-						isStepActive={ false }
-						isStepComplete={ true }
-						titleContent={ <OrderReviewTitle /> }
-						completeStepContent={
-							<WPCheckoutOrderReview
-								removeProductFromCart={ removeProductFromCart }
-								couponFieldStateProps={ couponFieldStateProps }
-								onChangeSelection={ changeSelection }
-								siteUrl={ siteUrl }
-								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-							/>
-						}
-						formStatus={ formStatus }
-					/>
+					{ checkoutVersion !== '2' && (
+						<CheckoutStepBody
+							onError={ onReviewError }
+							className="wp-checkout__review-order-step"
+							stepId="review-order-step"
+							isStepActive={ false }
+							isStepComplete={ true }
+							titleContent={ <OrderReviewTitle /> }
+							completeStepContent={
+								<WPCheckoutOrderReview
+									removeProductFromCart={ removeProductFromCart }
+									couponFieldStateProps={ couponFieldStateProps }
+									onChangeSelection={ changeSelection }
+									siteUrl={ siteUrl }
+									createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+								/>
+							}
+							formStatus={ formStatus }
+						/>
+					) }
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							className="checkout-contact-form-step"
