@@ -2,6 +2,8 @@ import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { NOTICE_READER_FIRST_POSTS } from 'calypso/my-sites/customer-home/cards/constants';
 
+import './style.scss';
+
 const ReaderFirstPosts = () => {
 	const translate = useTranslate();
 
@@ -20,11 +22,17 @@ const ReaderFirstPosts = () => {
 					id: NOTICE_READER_FIRST_POSTS,
 				} }
 			/>
-			<h2>{ translate( 'Looking for inspiration?' ) }</h2>
-			<p>{ translate( 'See what other brand new sites are writing about.' ) }</p>
-			<Button primary onClick={ () => clickButton() } className="reader-first-posts__button">
-				{ translate( 'Take a look' ) }
-			</Button>
+			<div className="reader-first-posts__content">
+				<h2 className="reader-first-posts__title">{ translate( 'Looking for inspiration?' ) }</h2>
+				<p className="reader-first-posts__body">
+					{ translate( 'See what other brand new sites are writing about.' ) }
+				</p>
+			</div>
+			<div className="reader-first-posts__actions">
+				<Button primary onClick={ () => clickButton() } className="reader-first-posts__button">
+					{ translate( 'Take a look' ) }
+				</Button>
+			</div>
 		</Card>
 	);
 };
