@@ -32,12 +32,15 @@ export function StickyContainer( props: Props ) {
 		const observer = new IntersectionObserver(
 			( [ entry ] ) => {
 				if ( entry.intersectionRatio === 0 ) {
+					console.log( 'sticky container 1' );
 					// The element is out of view
 					setIsStuck( false );
 				} else if ( entry.intersectionRect.bottom === entry.rootBounds?.bottom ) {
+					console.log( 'sticky container 2 intersectionRect' );
 					// The element is intersecting, but it is at the bottom of the screen
 					setIsStuck( false );
 				} else {
+					console.log( 'sticky container 3', entry.intersectionRatio );
 					// The element is in the "stuck" state
 					setIsStuck( entry.intersectionRatio < 1 );
 				}
