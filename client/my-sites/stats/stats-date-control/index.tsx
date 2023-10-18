@@ -99,9 +99,16 @@ const StatsDateControl = ( { slug, queryParams }: StatsDateControlProps ) => {
 		page( generateNewLink( shortcut.period, startDate, endDate ) );
 	};
 
+	const getButtonLable = () => {
+		// ToDo: Add logic for button label.
+		// Custom range or shortcut label.
+		return 'All your dates...';
+	};
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<DateControlPicker
+				buttonLabel={ getButtonLable() }
 				shortcutList={ shortcutList }
 				onShortcut={ onShortcutHandler }
 				onApply={ onApplyButtonHandler }
