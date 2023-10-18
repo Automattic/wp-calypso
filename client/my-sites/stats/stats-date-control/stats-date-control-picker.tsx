@@ -52,25 +52,18 @@ const DateControlPicker = ( {
 	};
 
 	function updateLocalStateFromShortcut( shortcut: DateControlPickerShortcut ) {
-		// Shared date math.
-		const calcNewDateWithOffset = ( date: Date, offset: number ): Date => {
-			// We do our date math based on 24 hour increments.
-			const millisecondsInOneDay = 1000 * 60 * 60 * 24;
-			const newDateInMilliseconds = date.getTime() - millisecondsInOneDay * offset;
-			return new Date( newDateInMilliseconds );
-		};
-		// Shared date formatting.
-		const formattedDate = ( date: Date ) => {
-			return date.toISOString().split( 'T' )[ 0 ];
-		};
+		const endDate =
+			shortcut.offset === 0
+				? moment().format( 'YYYY-MM-DD' )
+				: moment().subtract( shortcut.offset, 'days' ).format( 'YYYY-MM-DD' );
 
-		// Calc new end date based on offset value from shortcut.
-		const newEndDate = calcNewDateWithOffset( new Date(), shortcut.offset );
-		setInputEndDate( formattedDate( newEndDate ) );
+		const startDate =
+			shortcut.range === 0
+				? endDate
+				: moment( endDate ).subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
 
-		// Calc new start date based on end date plus range as specified in shortcut.
-		const newStartDate = calcNewDateWithOffset( newEndDate, shortcut.range );
-		setInputStartDate( formattedDate( newStartDate ) );
+		setInputStartDate( startDate );
+		setInputEndDate( endDate );
 	}
 
 	return (
