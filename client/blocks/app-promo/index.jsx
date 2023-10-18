@@ -58,6 +58,13 @@ export const AppPromo = ( {
 
 			{ showBadge && (
 				<div className="app-promo__app-badges">
+					{ subheader === '' && (
+						<p className="app-promo__app-badges-text">
+							{ translate(
+								'Download the Jetpack Mobile App for the best WordPress.com experiance on the go.'
+							) }
+						</p>
+					) }
 					<AppsBadge
 						storeName={ showIosBadge ? 'ios' : 'android' }
 						utm_source={ source }
