@@ -6,6 +6,9 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
 	SidebarV2Footer as SidebarFooter,
+	SidebarNavigator,
+	SidebarNavigatorMenu,
+	SidebarNavigatorMenuItem,
 } from 'calypso/layout/sidebar-v2';
 import { useSelector } from 'calypso/state';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
@@ -21,8 +24,33 @@ import './style.scss';
 type Props = {
 	className?: string;
 	isJetpackManage?: boolean;
+	path: string;
+	menuItems: {
+		icon: JSX.Element;
+		path: string;
+		link: string;
+		title: string;
+		onClickMenuItem: ( path: string ) => void;
+		withChevron?: boolean;
+		isExternalLink?: boolean;
+		isSelected: boolean;
+	}[];
+	description?: string;
+	backButtonProps?: {
+		icon: JSX.Element;
+		label: string;
+		onClick: () => void;
+	};
 };
-const JetpackCloudSidebar = ( { className, isJetpackManage }: Props ) => {
+
+const JetpackCloudSidebar = ( {
+	className,
+	isJetpackManage,
+	path,
+	menuItems,
+	description,
+	backButtonProps,
+}: Props ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const jetpackAdminUrl = useSelector( ( state ) =>
 		siteId ? getJetpackAdminUrl( state, siteId ) : null
@@ -35,17 +63,17 @@ const JetpackCloudSidebar = ( { className, isJetpackManage }: Props ) => {
 			<SidebarHeader forceAllSitesView={ isJetpackManage } />
 
 			<SidebarMain>
-				<ul role="menu" className="jetpack-cloud-sidebar__navigation-list">
-					<li
-						className={ classNames(
-							'jetpack-cloud-sidebar__navigation-item',
-							'jetpack-cloud-sidebar__navigation-item--highlighted'
-						) }
+				<SidebarNavigator initialPath={ path }>
+					<SidebarNavigatorMenu
+						path={ path }
+						description={ description }
+						backButtonProps={ backButtonProps }
 					>
-						Navigation items
-					</li>
-					<li className="jetpack-cloud-sidebar__navigation-item">Will go here</li>
-				</ul>
+						{ menuItems.map( ( item ) => (
+							<SidebarNavigatorMenuItem key={ item.link } { ...item } />
+						) ) }
+					</SidebarNavigatorMenu>
+				</SidebarNavigator>
 			</SidebarMain>
 
 			{ ! isJetpackManage && (
