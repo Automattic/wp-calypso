@@ -19,8 +19,14 @@ const DateControlPickerDate = ( {
 	return (
 		<div className="date-control-picker-date">
 			<div className="stats-date-control-picker-dates__inputs">
-				<TextControl value={ startDate } onChange={ onStartChange } />
-				<TextControl value={ endDate } onChange={ onEndChange } />
+				<div className="stats-date-control-picker-dates__inputs-input-group">
+					<label htmlFor="startDate">From</label>
+					<TextControl id="startDate" value={ startDate } onChange={ onStartChange } />
+				</div>
+				<div className="stats-date-control-picker-dates__inputs-input-group">
+					<label htmlFor="endDate">To</label>
+					<TextControl id="endDate" value={ endDate } onChange={ onEndChange } />
+				</div>
 			</div>
 			<div className="stats-date-control-picker-dates__buttons">
 				<Button onClick={ onCancel }>{ translate( 'Cancel' ) }</Button>
