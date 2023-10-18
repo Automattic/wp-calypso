@@ -24,6 +24,7 @@ import { IAppState } from 'calypso/state/types';
 import { SiteSyncCard } from './card-content/staging-sync-card';
 import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 
+const breakMobile = '480px';
 const ProductionCard = styled( Card )( {
 	paddingTop: '0',
 	backgroundImage: `url(${ dividerPattern })`,
@@ -38,11 +39,13 @@ const ProductionCardHeading = styled( CardHeading )( {
 	marginTop: '36px!important',
 } );
 
-const ActionButtons = styled.div( {
+const ActionButtons = styled.div`
 	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'stretch',
-} );
+	@media ( max-width: ${ breakMobile } ): {
+		flexDirection: 'column',
+		alignItems: 'stretch',
+	},
+`;
 
 const SyncActionsContainer = styled( ActionButtons )( {
 	marginTop: 24,
