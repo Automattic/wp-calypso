@@ -10,6 +10,7 @@ const DateControlPickerDate = ( {
 	onApply,
 	onCancel,
 }: DateControlPickerDateProps ) => {
+	const translate = useTranslate();
 	// TODO: Rename component?
 	// Feels a bit confusing now. Should have a better idea
 	// of appropriate names once hierarchy is finalized.
@@ -18,11 +19,10 @@ const DateControlPickerDate = ( {
 
 	return (
 		<div className="date-control-picker-date">
-			<p className="date-control-picker-date__heading">
-				Date Range
-				<span> (dd/mm/yyyy)</span>
-				{ /* TODO: should date range example be localized? */ }
-			</p>
+			<h2 className="date-control-picker-date__heading">
+				{ translate( 'Date Range' ) }
+				<span> { translate( '(dd/mm/yyyy)' ) }</span>
+			</h2>
 			<div className="stats-date-control-picker-dates__inputs">
 				<div className="stats-date-control-picker-dates__inputs-input-group">
 					<label htmlFor="startDate">From</label>
