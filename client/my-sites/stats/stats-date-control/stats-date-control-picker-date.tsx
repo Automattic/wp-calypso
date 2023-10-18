@@ -11,11 +11,6 @@ const DateControlPickerDate = ( {
 	onCancel,
 }: DateControlPickerDateProps ) => {
 	const translate = useTranslate();
-	// TODO: Rename component?
-	// Feels a bit confusing now. Should have a better idea
-	// of appropriate names once hierarchy is finalized.
-
-	const translate = useTranslate();
 
 	return (
 		<div className="date-control-picker-date">
