@@ -1,4 +1,5 @@
 export const GROUP_WPCOM = 'GROUP_WPCOM';
+export const GROUP_P2 = 'GROUP_P2';
 
 // Products
 export const PRODUCT_NO_ADS = 'no-adverts/no-adverts.php';
