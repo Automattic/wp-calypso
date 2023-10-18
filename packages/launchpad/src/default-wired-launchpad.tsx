@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	LaunchpadNavigator,
 	Site,
-	SiteSelect,
+	type SiteSelect,
 	sortLaunchpadTasksByCompletionStatus,
 	useLaunchpad,
 } from '@automattic/data-stores';
