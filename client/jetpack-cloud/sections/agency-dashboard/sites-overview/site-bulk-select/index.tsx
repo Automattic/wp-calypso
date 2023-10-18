@@ -32,8 +32,7 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 	const handleToggleSelect = () => {
 		// Filter sites with site error or monitor error or is an Atomic sites as they are not selectable
 		const filteredSites = sites.filter(
-			( site ) =>
-				site.site.value.is_connected && ! site.monitor.error && ! site.site.value.is_atomic
+			( { site, monitor } ) => site.value.is_connected && ! monitor.error && ! site.value.is_atomic
 		);
 		const isChecked = isAllChecked( filteredSites );
 

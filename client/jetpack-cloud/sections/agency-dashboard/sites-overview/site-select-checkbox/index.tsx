@@ -43,36 +43,34 @@ export default function SiteSelectCheckbox( {
 	};
 
 	return (
-		<>
-			<span
-				className="site-select-checkbox"
-				ref={ checkboxRef }
-				role="button"
-				tabIndex={ 0 }
-				onMouseEnter={ handleShowTooltip }
-				onMouseLeave={ handleHideTooltip }
-				onMouseDown={ handleHideTooltip }
-			>
-				<FormInputCheckbox
-					className="disable-card-expand"
-					id={ `${ item.site.value.blog_id }` }
-					onClick={ handleCheckboxClick }
-					checked={ item.isSelected }
-					readOnly={ true }
-					disabled={ disabled || siteError }
-				/>
+		<span
+			className="site-select-checkbox"
+			ref={ checkboxRef }
+			role="button"
+			tabIndex={ 0 }
+			onMouseEnter={ handleShowTooltip }
+			onMouseLeave={ handleHideTooltip }
+			onMouseDown={ handleHideTooltip }
+		>
+			<FormInputCheckbox
+				className="disable-card-expand"
+				id={ `${ item.site.value.blog_id }` }
+				onClick={ handleCheckboxClick }
+				checked={ item.isSelected }
+				readOnly={ true }
+				disabled={ disabled || siteError }
+			/>
 
-				{ tooltip && (
-					<Tooltip
-						context={ checkboxRef.current }
-						isVisible={ showTooltip }
-						position="bottom"
-						className="site-select-checkbox__tooltip"
-					>
-						{ tooltip }
-					</Tooltip>
-				) }
-			</span>
-		</>
+			{ tooltip && (
+				<Tooltip
+					context={ checkboxRef.current }
+					isVisible={ showTooltip }
+					position="bottom"
+					className="site-select-checkbox__tooltip"
+				>
+					{ tooltip }
+				</Tooltip>
+			) }
+		</span>
 	);
 }

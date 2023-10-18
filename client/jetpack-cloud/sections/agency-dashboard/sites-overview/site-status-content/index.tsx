@@ -179,7 +179,9 @@ export default function SiteStatusContent( {
 						siteError={ hasAnyError }
 						disabled={ rows.site.value.is_atomic }
 						tooltip={
-							rows.site.value.is_atomic ? translate( 'Monitoring is managed by host' ) : undefined
+							rows.site.value.is_atomic
+								? translate( 'Monitoring is managed by WordPress.com' )
+								: undefined
 						}
 					/>
 				) : (

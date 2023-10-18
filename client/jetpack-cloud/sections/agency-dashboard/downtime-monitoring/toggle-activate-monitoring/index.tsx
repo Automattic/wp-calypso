@@ -176,7 +176,7 @@ export default function ToggleActivateMonitoring( {
 
 		let tooltipText = tooltip;
 		if ( site.is_atomic ) {
-			tooltipText = translate( 'Monitoring is managed by host' );
+			tooltipText = translate( 'Monitoring is managed by WordPress.com' );
 		} else if ( isPaidTierEnabled && smsLimitReached && status === 'success' ) {
 			tooltipText = translate( 'You have reached the SMS limit' );
 		}
