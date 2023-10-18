@@ -67,11 +67,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							allFeaturesList,
 							planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 						);
-					} else if ( 'plans-p2' === intent ) {
-						wpcomFeatures = getPlanFeaturesObject(
-							allFeaturesList,
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
-						);
 					} else if ( 'plans-blog-onboarding' === intent ) {
 						wpcomFeatures = getPlanFeaturesObject(
 							allFeaturesList,
