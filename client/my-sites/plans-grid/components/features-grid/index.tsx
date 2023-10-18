@@ -64,6 +64,8 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			`has-${ gridPlansWithoutSpotlight.length }-cols`
 		);
 
+		console.log( 'props', this.props );
+
 		return (
 			<table className={ tableClasses }>
 				<caption className="plan-features-2023-grid__screen-reader-text screen-reader-text">
@@ -83,9 +85,13 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						stickyOffset={ stickyRowOffset }
 						topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
 					>
-						{ ( isStuck: boolean ) =>
-							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
-						}
+						{ ( isStuck: boolean ) => {
+							console.log( { isStuck } );
+							return this.renderTopButtons( gridPlansWithoutSpotlight, {
+								isTableCell: true,
+								isStuck,
+							} );
+						} }
 					</StickyContainer>
 					<tr>
 						{ this.maybeRenderRefundNotice( gridPlansWithoutSpotlight, { isTableCell: true } ) }
