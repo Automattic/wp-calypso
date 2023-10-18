@@ -91,9 +91,6 @@ const DefaultWiredLaunchpad = ( {
 			eventHandlers: {
 				onSiteLaunched,
 			},
-			eventHandlers: {
-				onSiteLaunched,
-			},
 		} );
 	};
 
