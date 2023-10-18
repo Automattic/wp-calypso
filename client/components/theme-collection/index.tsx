@@ -64,14 +64,13 @@ export default function ThemeCollection( {
 							nextEl: '.theme-collection__carousel-nav-button--next',
 							prevEl: '.theme-collection__carousel-nav-button--previous',
 						},
-						threshold: 5,
 						slideToClickedSlide: false,
 						rewind: true,
 						slidesPerView: 1.2,
 						breakpoints: {
 							// deprecated Calypso breakpoints used in the Theme Showcase
 							'660': {
-								slidesPerView: 2.2,
+								slidesPerView: 2.3,
 							},
 							// break-xlarge in Gutenberg breakpoints
 							'1080': {
