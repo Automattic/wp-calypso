@@ -3,8 +3,8 @@ import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collectio
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 
 type OnSeeAll = {
-	tier?: 'premium' | 'marketplace';
-	filter?: 'blog' | 'portfolio' | 'business' | 'art-design';
+	tier?: string;
+	filter?: string;
 };
 
 export interface ThemeCollectionsLayoutProps {
@@ -17,40 +17,18 @@ export interface ThemeCollectionsLayoutProps {
 function ThemeCollectionsLayout( props: ThemeCollectionsLayoutProps ) {
 	const { onSeeAll } = props;
 
-	return (
-		<>
+	const collections = Object.values( THEME_COLLECTIONS ).map( ( collection ) => {
+		const { filter, tier } = collection.query;
+		return (
 			<ShowcaseThemeCollection
-				{ ...THEME_COLLECTIONS.premium }
+				{ ...collection }
 				{ ...props }
-				onSeeAll={ () => onSeeAll( { tier: 'premium' } ) }
+				onSeeAll={ () => onSeeAll( { tier, filter } ) }
 			/>
-			<ShowcaseThemeCollection
-				{ ...THEME_COLLECTIONS.partner }
-				{ ...props }
-				onSeeAll={ () => onSeeAll( { tier: 'marketplace' } ) }
-			/>
-			<ShowcaseThemeCollection
-				{ ...THEME_COLLECTIONS.blog }
-				{ ...props }
-				onSeeAll={ () => onSeeAll( { filter: 'blog' } ) }
-			/>
-			<ShowcaseThemeCollection
-				{ ...THEME_COLLECTIONS.portfolio }
-				{ ...props }
-				onSeeAll={ () => onSeeAll( { filter: 'portfolio' } ) }
-			/>
-			<ShowcaseThemeCollection
-				{ ...THEME_COLLECTIONS.business }
-				{ ...props }
-				onSeeAll={ () => onSeeAll( { filter: 'business' } ) }
-			/>
-			<ShowcaseThemeCollection
-				{ ...THEME_COLLECTIONS.artAndDesign }
-				{ ...props }
-				onSeeAll={ () => onSeeAll( { filter: 'art-design' } ) }
-			/>
-		</>
-	);
+		);
+	} );
+
+	return <>{ collections }</>;
 }
 
 export default memo( ThemeCollectionsLayout );
