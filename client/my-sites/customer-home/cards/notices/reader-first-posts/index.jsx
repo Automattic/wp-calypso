@@ -11,7 +11,7 @@ const ReaderFirstPosts = () => {
 		// @TODO: Add Tracks events.
 		//recordTracksEvent( 'calypso_home_reader_first_posts_nudge_click' );
 
-		page.redirect( '/discover?selectedTab=first-posts' );
+		page.redirect( '/discover?selectedTab=firstposts' );
 	};
 
 	return (
