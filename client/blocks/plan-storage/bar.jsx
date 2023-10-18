@@ -40,7 +40,7 @@ export class PlanStorageBar extends Component {
 			'is-warn': percent > WARN_PERCENT && percent <= ALERT_PERCENT,
 		} );
 
-		const max = filesize( Math.round( mediaStorage.max_storage_bytes ) );
+		const max = filesize( mediaStorage.max_storage_bytes, { round: 0 } );
 
 		return (
 			<div className={ classes }>
