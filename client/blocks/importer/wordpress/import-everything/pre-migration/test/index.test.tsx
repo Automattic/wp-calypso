@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
+import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
@@ -45,6 +46,8 @@ jest.mock( 'react-router-dom', () => ( {
 
 jest.mock( 'calypso/blocks/importer/hooks/use-site-can-migrate' );
 jest.mock( 'calypso/state/selectors/is-requesting-site-credentials' );
+jest.mock( 'calypso/state/selectors/get-jetpack-credentials' );
+jest.mock( 'calypso/data/plans/use-check-eligibility-migration-trial-plan' );
 
 function renderPreMigrationScreen( props?: any ) {
 	const initialState = getInitialState( initialReducer, user.ID );
@@ -82,13 +85,20 @@ describe( 'PreMigration', () => {
 		// @ts-ignore
 		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
-			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: true,
 		} );
 
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		useCheckEligibilityMigrationTrialPlan.mockReturnValue( {
+			blog_id: 777712,
+			eligible: false,
+		} );
+
 		renderPreMigrationScreen( {
+			sourceSite: sourceSite,
 			targetSite: targetSite,
 			isTargetSitePlanCompatible: false,
 			isMigrateFromWp: true,
@@ -108,15 +118,22 @@ describe( 'PreMigration', () => {
 	test( 'should show "Move to wordpress.com" plugin update', () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		useSiteMigrateInfo.mockImplementationOnce( () => ( {
+		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
-			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: false,
+		} );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		useCheckEligibilityMigrationTrialPlan.mockImplementationOnce( () => ( {
+			blog_id: 777712,
+			eligible: true,
 		} ) );
 
 		renderPreMigrationScreen( {
+			sourceSite: sourceSite,
 			targetSite: targetSite,
 			isTargetSitePlanCompatible: false,
 			isMigrateFromWp: true,
@@ -130,15 +147,15 @@ describe( 'PreMigration', () => {
 	test( 'should show "Jetpack" plugin update', () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		useSiteMigrateInfo.mockImplementationOnce( () => ( {
+		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
-			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: false,
-		} ) );
+		} );
 
 		renderPreMigrationScreen( {
+			sourceSite: sourceSite as SiteDetails,
 			targetSite: targetSite,
 			isTargetSitePlanCompatible: false,
 			isMigrateFromWp: false,
@@ -155,18 +172,17 @@ describe( 'PreMigration', () => {
 		// @ts-ignore
 		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
-			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: true,
 		} );
 
 		renderPreMigrationScreen( {
+			sourceSite: sourceSite,
 			targetSite: targetSite,
 			isTargetSitePlanCompatible: true,
 			isMigrateFromWp: true,
 			onContentOnlyClick,
-			sourceSite: sourceSite,
 		} );
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
