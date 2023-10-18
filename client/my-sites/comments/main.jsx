@@ -19,6 +19,7 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import CommentList from './comment-list';
 import CommentTips, { COMMENTS_TIPS_DISMISSED_PREFERENCE } from './comment-tips';
 import { NEWEST_FIRST } from './constants';
+
 import './style.scss';
 
 export class CommentsManagement extends Component {
