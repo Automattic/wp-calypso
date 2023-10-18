@@ -11,10 +11,12 @@
 			margin-right: -32px;
 		}
 
-		// Ensure the bottom is well padded.
-		// @see https://github.com/Automattic/wp-calypso/blob/af56132740bb9890a99a9caf55fdd4b8b38a4d50/client/layout/style.scss#L124-L132
-		@include breakpoint-deprecated( ">1400px" ) {
-			padding-bottom: 88px;
+		&:last-child {
+			// Ensure the bottom is well padded.
+			// @see https://github.com/Automattic/wp-calypso/blob/af56132740bb9890a99a9caf55fdd4b8b38a4d50/client/layout/style.scss#L124-L132
+			@include breakpoint-deprecated( ">1400px" ) {
+				padding-bottom: 88px;
+			}
 		}
 	}
 
