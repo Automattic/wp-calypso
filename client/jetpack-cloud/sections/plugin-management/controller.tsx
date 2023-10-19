@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
+import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import Header from '../agency-dashboard/header';
 import DashboardSidebar from '../agency-dashboard/sidebar';
@@ -17,6 +18,14 @@ const redirectIfHasNoAccess = ( context: PageJS.Context ) => {
 	}
 };
 
+const setSidebar = ( context: PageJS.Context ): void => {
+	if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
+		context.secondary = <NewJetpackManageSidebar />;
+	} else {
+		context.secondary = <DashboardSidebar path={ context.path } />;
+	}
+};
+
 export function pluginManagementContext( context: PageJS.Context, next: VoidFunction ): void {
 	redirectIfHasNoAccess( context );
 	const { filter = 'all', site } = context.params;
@@ -24,7 +33,7 @@ export function pluginManagementContext( context: PageJS.Context, next: VoidFunc
 	context.header = <Header />;
 	// Set secondary context only on multi-site view
 	if ( ! site ) {
-		context.secondary = <DashboardSidebar path={ context.path } />;
+		setSidebar( context );
 	}
 	context.primary = (
 		<PluginsOverview
@@ -42,7 +51,7 @@ export function pluginDetailsContext( context: PageJS.Context, next: VoidFunctio
 	context.header = <Header />;
 	// Set secondary context only on multi-site view
 	if ( ! site ) {
-		context.secondary = <DashboardSidebar path={ context.path } />;
+		setSidebar( context );
 	}
 	context.primary = <PluginsOverview pluginSlug={ plugin } site={ site } path={ context.path } />;
 	next();
