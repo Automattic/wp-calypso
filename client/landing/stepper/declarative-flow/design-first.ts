@@ -105,7 +105,7 @@ const designFirst: Flow = {
 						} );
 
 						if ( providedDependencies?.hasSetPreselectedTheme ) {
-							await updateLaunchpadSettings( siteSlug, {
+							updateLaunchpadSettings( siteSlug as string, {
 								checklist_statuses: { design_completed: true },
 							} );
 
