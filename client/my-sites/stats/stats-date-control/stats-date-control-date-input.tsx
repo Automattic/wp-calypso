@@ -1,0 +1,27 @@
+import moment from 'moment';
+import React from 'react';
+
+interface Props {
+	id?: string;
+	value: string;
+	onChange?: ( value: string ) => void;
+	max?: string;
+}
+
+const DateInput: React.FC< Props > = ( { value, onChange, id } ) => {
+	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		onChange && onChange( event.target.value );
+	};
+
+	return (
+		<input
+			id={ id }
+			type="date"
+			value={ value }
+			onChange={ handleChange }
+			max={ moment().format( 'YYYY-MM-DD' ) }
+		/>
+	);
+};
+
+export default DateInput;

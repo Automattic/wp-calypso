@@ -1,5 +1,6 @@
-import { TextControl, Button } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import DateInput from './stats-date-control-date-input';
 import { DateControlPickerDateProps } from './types';
 
 const DateControlPickerDate = ( {
@@ -21,11 +22,11 @@ const DateControlPickerDate = ( {
 			<div className="stats-date-control-picker-dates__inputs">
 				<div className="stats-date-control-picker-dates__inputs-input-group">
 					<label htmlFor="startDate">From</label>
-					<TextControl id="startDate" value={ startDate } onChange={ onStartChange } />
+					<DateInput id="startDate" value={ startDate } onChange={ onStartChange } />
 				</div>
 				<div className="stats-date-control-picker-dates__inputs-input-group">
 					<label htmlFor="endDate">To</label>
-					<TextControl id="endDate" value={ endDate } onChange={ onEndChange } />
+					<DateInput id="endDate" value={ endDate } onChange={ onEndChange } />
 				</div>
 			</div>
 			<div className="stats-date-control-picker-dates__buttons">
