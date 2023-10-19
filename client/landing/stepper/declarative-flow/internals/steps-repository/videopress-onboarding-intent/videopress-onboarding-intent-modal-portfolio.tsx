@@ -46,7 +46,7 @@ const VideoPressOnboardingIntentModalPortfolio: React.FC< IntroModalContentProps
 		if ( planProductObject ) {
 			// eslint-disable-next-line @wordpress/valid-sprintf
 			getStartedText = config.isEnabled( 'videomaker-trial' )
-				? translate( 'Start free trial' )
+				? translate( 'Start a free trial' )
 				: sprintf(
 						/* translators: Price displayed on VideoPress intro page. %s is monthly price. */
 						translate( 'Get started - from %s/month' ),
