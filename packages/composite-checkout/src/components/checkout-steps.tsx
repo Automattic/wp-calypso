@@ -246,8 +246,6 @@ export const CheckoutSummaryArea = ( {
 	);
 };
 
-export const CheckoutSummaryCard = styled.div``;
-
 function isElementAStep( el: ReactNode ): boolean {
 	const childStep = el as { type?: { isCheckoutStep?: boolean } };
 	return !! childStep?.type?.isCheckoutStep;
