@@ -1,15 +1,51 @@
 import { Button, Dropdown } from '@wordpress/components';
 import { check, Icon, chevronDown } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
 import './style.scss';
 
+const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) => {
+	const isSelectedItem = ( interval ) => {
+		return interval === selected;
+	};
+
+	const clickHandler = ( interval ) => {
+		onSelection( interval );
+	};
+
+	return (
+		<div className="stats-interval-dropdown-listing">
+			<ul className="stats-interval-dropdown-listing__list">
+				{ Object.keys( intervals ).map( ( intervalKey ) => {
+					const intervalLabel = intervals[ intervalKey ];
+
+					return (
+						<li className="stats-interval-dropdown-listing__interval" key={ intervalKey }>
+							<Button
+								onClick={ () => {
+									clickHandler( intervalKey );
+								} }
+							>
+								{ intervalLabel }
+								{ isSelectedItem( intervalKey ) && <Icon icon={ check } /> }
+							</Button>
+						</li>
+					);
+				} ) }
+			</ul>
+		</div>
+	);
+};
+
 const IntervalDropdown = ( { slug, period, queryParams } ) => {
+	const translate = useTranslate();
+
 	const intervalLabels = {
-		day: 'Days',
-		week: 'Weeks',
-		month: 'Months',
-		year: 'Years',
+		day: translate( 'Days' ),
+		week: translate( 'Weeks' ),
+		month: translate( 'Months' ),
+		year: translate( 'Years' ),
 	};
 
 	// New interval listing that preserves date range.
@@ -42,40 +78,15 @@ const IntervalDropdown = ( { slug, period, queryParams } ) => {
 			) }
 			renderContent={ () => (
 				<div className="stats-interval-dropdown__container">
-					<StatsIntervalDropdownListing selected={ period } onSelection={ onSelectionHandler } />
+					<StatsIntervalDropdownListing
+						selected={ period }
+						onSelection={ onSelectionHandler }
+						intervals={ intervalLabels }
+					/>
 				</div>
 			) }
 		/>
 	);
 };
-
-function StatsIntervalDropdownListing( props ) {
-	const intervals = [ 'day', 'week', 'month', 'year' ];
-	const labels = [ 'Days', 'Weeks', 'Months', 'Years' ];
-	function isSelectedItem( interval ) {
-		return interval === props.selected;
-	}
-	function clickHandler( interval ) {
-		props.onSelection( interval );
-	}
-	return (
-		<div className="stats-interval-dropdown-listing">
-			<ul className="stats-interval-dropdown-listing__list">
-				{ intervals.map( ( interval, idx ) => (
-					<li className="stats-interval-dropdown-listing__interval" key={ interval }>
-						<Button
-							onClick={ () => {
-								clickHandler( interval );
-							} }
-						>
-							{ labels[ idx ] }
-							{ isSelectedItem( interval ) && <Icon icon={ check } /> }
-						</Button>
-					</li>
-				) ) }
-			</ul>
-		</div>
-	);
-}
 
 export default IntervalDropdown;
