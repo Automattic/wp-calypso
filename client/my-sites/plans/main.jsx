@@ -61,7 +61,7 @@ import ModernizedLayout from './modernized-layout';
 import BusinessTrialPlansPage from './trials/business-trial-plans-page';
 import WooExpressPlansPage from './woo-express-plans-page';
 
-import './style.scss';
+// import './style.scss';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
