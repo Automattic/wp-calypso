@@ -296,7 +296,6 @@ export default class SignupFlowController {
 	/**
 	 * Returns a list of non-excluded steps in the flow which enable the branch steps. Otherwise, return a list
 	 * of all steps
-	 *
 	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowSteps() {
@@ -314,7 +313,6 @@ export default class SignupFlowController {
 
 	/**
 	 * Returns a list of the dependencies provided in the flow configuration.
-	 *
 	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies() {
@@ -342,10 +340,12 @@ export default class SignupFlowController {
 		}
 
 		if ( completedSteps.length === currentSteps.length && undefined !== this._onComplete ) {
-			this._assertFlowProvidedRequiredDependencies();
 			// deferred to ensure that the onComplete function is called after the stores have
 			// emitted their final change events.
-			defer( () => this._onComplete( dependencies, this._destination( dependencies ) ) );
+			defer( () => {
+				this._assertFlowProvidedRequiredDependencies();
+				this._onComplete( dependencies, this._destination( dependencies ) );
+			} );
 		}
 	}
 
