@@ -154,7 +154,7 @@ const PatternLargePreview = ( {
 			isShowFrameBorder
 			isShowFrameShadow={ false }
 			isFixedViewport={ !! hasSelectedPattern }
-			isZoomable
+			isZoomable={ hasSelectedPattern }
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
