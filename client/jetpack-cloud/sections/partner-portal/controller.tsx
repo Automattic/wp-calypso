@@ -25,6 +25,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import NewPurchasesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/purchases';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
@@ -83,7 +84,11 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 	);
 
 	context.header = <Header />;
-	setSidebar( context );
+	if ( isEnabled( 'jetpack/new-navigation' ) ) {
+		context.secondary = <NewJetpackManageSidebar />;
+	} else {
+		context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	}
 	context.primary = (
 		<Licenses
 			filter={ filter }
