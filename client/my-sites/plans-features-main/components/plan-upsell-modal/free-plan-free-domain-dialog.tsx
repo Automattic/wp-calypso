@@ -83,7 +83,7 @@ function LazyDisplayText( {
  * 2 - Select the free plan
  */
 export function FreePlanFreeDomainDialog( {
-	wpcomFreeDomainSuggestion,
+	generatedWPComSubdomain,
 	onFreePlanSelected,
 	onPlanSelected,
 	suggestedPlanSlug,
@@ -135,8 +135,8 @@ export function FreePlanFreeDomainDialog( {
 									strong: <strong></strong>,
 									subdomain: (
 										<LazyDisplayText
-											displayText={ wpcomFreeDomainSuggestion?.result?.domain_name }
-											isLoading={ wpcomFreeDomainSuggestion?.isLoading }
+											displayText={ generatedWPComSubdomain?.result?.domain_name }
+											isLoading={ generatedWPComSubdomain?.isLoading }
 										/>
 									),
 								},
@@ -221,7 +221,7 @@ export function FreePlanFreeDomainDialog( {
 			<ButtonRow>
 				<StyledButton
 					className="free-plan-free-domain-dialog__plan-button is-upsell-modal-personal-plan"
-					disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
+					disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 					primary
 					maxwidth="260px"
 					onClick={ () => {
@@ -238,7 +238,7 @@ export function FreePlanFreeDomainDialog( {
 
 				<StyledButton
 					className="free-plan-free-domain-dialog__plan-button is-upsell-modal-free-plan"
-					disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
+					disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 					onClick={ () => {
 						onFreePlanSelected();
 					} }
