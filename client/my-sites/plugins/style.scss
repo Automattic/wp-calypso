@@ -4,14 +4,25 @@
 @import "./woocommerce-box.scss";
 
 .is-section-plugins .main {
-	padding-top: 24px; // Compensate for the fixed header.
 
-	@media ( max-width: 782px ) {
-		padding-top: 45px;
+	&.is-logged-out:not(.is-plugin-details) {
+		.navigation-header {
+			visibility: hidden;
+			position: absolute;
+			top: 0;
+		}
+	}
+	&.is-logged-out.is-plugin-details {
+		.navigation-header {
+			margin-top: -47px;
+		}
 	}
 
-	@media ( max-width: 660px ) {
-		padding-top: 60px;
+	.navigation-header {
+		@media (max-width: $break-small) {
+			padding-bottom: 16px;
+			margin-bottom: 0;
+		}
 	}
 
 	.upsell-nudge {

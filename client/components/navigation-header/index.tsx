@@ -55,13 +55,13 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 	return (
 		<header id={ id } className={ 'navigation-header ' + className } ref={ ref }>
 			<Container>
-				<Breadcrumb
-					items={ navigationItems }
-					mobileItem={ mobileItem }
-					compact={ compactBreadcrumb }
-					hideWhenOnlyOneLevel
-				/>
 				<div className="navigation-header__main">
+					<Breadcrumb
+						items={ navigationItems }
+						mobileItem={ mobileItem }
+						compact={ compactBreadcrumb }
+						hideWhenOnlyOneLevel
+					/>
 					<FormattedHeader
 						align="left"
 						headerText={ title }
