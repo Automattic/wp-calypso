@@ -78,7 +78,7 @@ export default function ThemeCollection( {
 							// break-xlarge in Gutenberg breakpoints
 							'1080': {
 								slidesPerView: 3,
-								spaceBetween: -16,
+								spaceBetween: -48,
 							},
 						},
 						modules: [ Navigation, Keyboard, Mousewheel ],

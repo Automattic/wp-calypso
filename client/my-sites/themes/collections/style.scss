@@ -10,6 +10,10 @@
 			margin-left: -32px;
 			margin-right: -32px;
 		}
+		@include break-xlarge {
+			margin-left: -48px;
+			margin-right: -48px;
+		}
 
 		&:last-child {
 			// Ensure the bottom is well padded.
@@ -31,6 +35,10 @@
 		@include breakpoint-deprecated( ">660px" ) {
 			margin-left: 32px;
 			margin-right: 32px;
+		}
+		@include break-xlarge {
+			margin-left: 48px;
+			margin-right: 48px;
 		}
 	}
 }

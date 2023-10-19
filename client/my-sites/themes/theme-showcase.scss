@@ -35,6 +35,10 @@
 		@include breakpoint-deprecated( ">660px" ) {
 			padding: 64px 32px 16px;
 		}
+		@include break-xlarge {
+			padding-left: 48px;
+			padding-right: 48px;
+		}
 
 		h1 {
 			color: var(--studio-blue-50);
@@ -66,6 +70,9 @@
 
 			@include breakpoint-deprecated( ">660px" ) {
 				padding: 0 32px;
+			}
+			@include break-xlarge {
+				padding: 0 48px;
 			}
 		}
 	}
