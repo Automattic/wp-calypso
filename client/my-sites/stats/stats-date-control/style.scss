@@ -8,6 +8,17 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+
+	button.components-button {
+
+		color: #3858e9;
+
+		&.is-primary {
+			background-color: #3858e9;
+			color: var(--black-white-white, #fff);
+		}
+	}
+
 }
 
 .date-control-picker-shortcuts {
@@ -25,11 +36,11 @@
 	border-radius: 4px;
 
 	&.is-selected {
-		background-color: var(--color-accent-5);
+		background-color: #e1e6fc;
 	}
 
 	&:hover {
-		background-color: var(--color-primary-0);
+		background-color: #e1e6fc;
 	}
 
 	.components-button {
@@ -127,4 +138,3 @@
 	}
 
 }
-
