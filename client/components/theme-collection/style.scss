@@ -1,31 +1,80 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.theme-collection__container {
+	margin-top: 48px;
+
+	.theme-collection__list-wrapper.swiper-wrapper {
+		overflow-y: clip;
+	}
+
+	.theme-card__info-options {
+		display: none;
+
+		@include break-small {
+			display: inherit;
+		}
+	}
+
+	.theme-card__image-container {
+		border-radius: 4px;
+		box-shadow: none;
+	}
+}
+
 .theme-collection__meta {
 	display: flex;
 	justify-content: space-between;
 }
 
 .theme-collection__headings {
-	flex-basis: 45%;
+	flex-basis: 80%;
+
+	@include break-small {
+		flex-basis: 45%;
+	}
 }
 
 .theme-collection__title {
-	font-size: 1.75rem;
 	line-height: 1;
+	font-size: $font-body;
+	font-weight: 600;
+	color: var(--gray-gray-100, #101517);
+
+	@include break-small {
+		font-size: rem(24px);
+		font-weight: 400;
+	}
 }
 
 .theme-collection__description * {
+	color: var(--gray-gray-70, #3c434a);
+	font-size: $font-body-small;
 	margin-bottom: 0;
+
+	@include break-small {
+		font-size: $font-body;
+	}
 }
 
 .theme-collection__list-item.swiper-slide {
-	/* TODO: Needs a better solution. Testing on more screen widths etc */
-	width: 32%;
+	.card.theme-card {
+		margin: 0;
+		padding-left: 16px;
+		padding-right: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding-left: 32px;
+			padding-right: 32px;
+		}
+	}
 }
 
 .theme-collection__list-wrapper {
 	margin-top: 1em;
 }
 
-/* TODO: Don't display on mobile? */
 .theme-collection__carousel-controls {
 	display: flex;
 	justify-content: flex-end;
@@ -35,38 +84,53 @@
 	align-items: center;
 
 	.theme-collection__see-all {
-		font-size: 0.875rem;
+		font-size: $font-body-small;
 		font-style: normal;
 		font-weight: 400;
 		line-height: 20px;
 		letter-spacing: -0.15px;
 		padding: 0;
-		margin-right: 24px;
+		margin-right: 0;
+		align-items: flex-end;
+		text-decoration: underline;
 
 		&:focus {
 			box-shadow: none;
 		}
+
+		@include break-small {
+			text-decoration: none;
+			align-items: inherit;
+			margin-right: 24px;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
 	}
 
 	.theme-collection__carousel-nav-button {
-		padding: 0;
-		width: 32px;
-		height: 32px;
-		background: #eee;
-		border-radius: 50%;
-		display: flex;
-		justify-content: center;
-		margin: 0 8px;
-		transition: opacity 0.3s linear;
-		pointer-events: all;
+		display: none;
+
+		@include break-small {
+			padding: 0;
+			width: 32px;
+			height: 32px;
+			background: #eee;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			margin: 0 8px;
+			transition: filter 0.1s linear;
+			pointer-events: all;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
 
 		&:hover {
 			filter: brightness(0.9);
 		}
-
-		&.swiper-button-disabled {
-			pointer-events: none;
-		}
-
 	}
 }

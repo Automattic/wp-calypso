@@ -14,6 +14,7 @@ import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { backupClonePath } from 'calypso/my-sites/backup/paths';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -71,8 +72,13 @@ const ActivityLogV2: FunctionComponent = () => {
 	) : (
 		<Upsell
 			headerText={ translate( 'Activity Log' ) }
-			bodyText={ translate(
-				'With your free plan, you can monitor the 20 most recent events. A paid plan unlocks more powerful features. You can access all site activity for the last 30 days and filter events by type and date range to quickly find the information you need. '
+			bodyText={ preventWidows(
+				translate(
+					'You currently have access to the 20 most recent events. Upgrade to Jetpack ' +
+						'VaultPress Backup or Jetpack Security to unlock more powerful features. ' +
+						'You can access all site activity for the last 30 days and filter events ' +
+						'by type and date range to quickly find the information you need.'
+				)
 			) }
 			buttonLink={ `https://cloud.jetpack.com/pricing/${ selectedSiteSlug }` }
 			buttonText={ translate( 'Upgrade Now' ) }

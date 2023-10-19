@@ -203,7 +203,7 @@ class ThemesSelection extends Component {
 			}
 
 			return ( t ) => {
-				if ( ! this.props.isLoggedIn ) {
+				if ( ! this.props.isLoggedIn || ! this.props.siteId ) {
 					defaultOption = options.signup;
 					secondaryOption = null;
 				} else if ( this.props.isThemeActive( themeId ) ) {

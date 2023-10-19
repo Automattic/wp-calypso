@@ -1,6 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.is-jetpack-new-navigation {
+	.plugins__page-title {
+		font-weight: 600;
+		margin-block-end: 8px;
+	}
+}
+
 .plugins-overview__container {
 	display: flex;
 	flex-direction: column;

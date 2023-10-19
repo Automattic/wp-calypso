@@ -25,6 +25,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import NewPurchasesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/purchases';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
@@ -38,8 +39,10 @@ import Header from './header';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 import type PageJS from 'page';
 
+const isNewNavigationEnabled = isEnabled( 'jetpack/new-navigation' );
+
 const setSidebar = ( context: PageJS.Context ): void => {
-	if ( isEnabled( 'jetpack/new-navigation' ) ) {
+	if ( isNewNavigationEnabled ) {
 		context.secondary = <NewPurchasesSidebar />;
 	} else {
 		context.secondary = <PartnerPortalSidebar path={ context.path } />;
@@ -83,7 +86,11 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 	);
 
 	context.header = <Header />;
-	setSidebar( context );
+	if ( isEnabled( 'jetpack/new-navigation' ) ) {
+		context.secondary = <NewJetpackManageSidebar />;
+	} else {
+		context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	}
 	context.primary = (
 		<Licenses
 			filter={ filter }
@@ -171,7 +178,7 @@ export function pricesContext( context: PageJS.Context, next: () => void ): void
 }
 
 export function landingPageContext() {
-	page.redirect( '/partner-portal/licenses' );
+	page.redirect( isNewNavigationEnabled ? '/partner-portal/billing' : '/partner-portal/licenses' );
 	return;
 }
 

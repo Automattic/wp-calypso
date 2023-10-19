@@ -58,9 +58,12 @@ export interface LaunchpadResponse {
 
 export interface PermittedActions {
 	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
-	siteLaunched?: () => void;
 	setActiveChecklist: ( siteSlug: string, activeChecklistSlug: string ) => void;
 }
+
+export type EventHandlers = {
+	onSiteLaunched?: () => void;
+};
 
 export interface LaunchpadTaskActionsProps {
 	siteSlug: string | null;
@@ -68,4 +71,5 @@ export interface LaunchpadTaskActionsProps {
 	tracksData: LaunchpadTracksData;
 	extraActions: PermittedActions;
 	uiContext?: 'calypso';
+	eventHandlers?: EventHandlers;
 }

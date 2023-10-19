@@ -49,11 +49,12 @@ const getSiteAssemblerUrl = ( {
 	shouldGoToAssemblerStep,
 	siteEditorUrl,
 } ) => {
-	if ( isLoggedIn && ! shouldGoToAssemblerStep ) {
+	if ( isLoggedIn && selectedSite && ! shouldGoToAssemblerStep ) {
 		return siteEditorUrl;
 	}
 
-	const basePathname = isLoggedIn ? '/setup' : '/start';
+	// Redirect people to create a site first if they don't log in or they have no sites.
+	const basePathname = isLoggedIn && selectedSite ? '/setup' : '/start';
 	const params = new URLSearchParams( { ref: 'calypshowcase' } );
 
 	if ( selectedSite?.slug ) {
@@ -266,10 +267,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	}, [ upsellCardDisplayed ] );
 
 	// Design your own theme / homepage.
-	if (
-		( isLoggedIn && isFSEActive ) ||
-		( ! isLoggedIn && assemblerCtaData.shouldGoToAssemblerStep )
-	) {
+	if ( isFSEActive || assemblerCtaData.shouldGoToAssemblerStep ) {
 		options.push( {
 			title: assemblerCtaData.title,
 			icon: addTemplate,
@@ -316,7 +314,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	} );
 
 	// Upload a theme.
-	if ( ! isLoggedIn ) {
+	if ( ! isLoggedIn || ! selectedSite ) {
 		options.push( {
 			title: translate( 'Upload a theme' ),
 			icon: cloudUpload,

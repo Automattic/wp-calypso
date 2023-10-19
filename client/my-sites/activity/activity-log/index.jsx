@@ -30,6 +30,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { withSyncStatus } from 'calypso/my-sites/hosting/staging-site-card/use-site-sync-status';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -121,6 +122,7 @@ class ActivityLog extends Component {
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		isMultisite: PropTypes.bool,
+		hideRewindProgress: PropTypes.bool,
 	};
 
 	state = {
@@ -245,9 +247,9 @@ class ActivityLog extends Component {
 	 * @returns {Object} Component showing progress.
 	 */
 	renderActionProgress() {
-		const { siteId, restoreProgress, backupProgress } = this.props;
+		const { siteId, restoreProgress, backupProgress, hideRewindProgress } = this.props;
 
-		if ( ! restoreProgress && ! backupProgress ) {
+		if ( ( ! restoreProgress && ! backupProgress ) || hideRewindProgress ) {
 			return null;
 		}
 
@@ -361,9 +363,9 @@ class ActivityLog extends Component {
 	}
 
 	renderErrorMessage() {
-		const { rewindState, translate } = this.props;
+		const { rewindState, translate, hideRewindProgress } = this.props;
 
-		if ( ! rewindState.rewind || rewindState.rewind.status !== 'failed' ) {
+		if ( ! rewindState.rewind || rewindState.rewind.status !== 'failed' || hideRewindProgress ) {
 			return null;
 		}
 
@@ -377,12 +379,20 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, displayRulesLoaded, logsLoaded, siteId, translate, hasFullActivityLog, slug } =
-			this.props;
+		const {
+			filter,
+			displayRulesLoaded,
+			logsLoaded,
+			siteId,
+			translate,
+			hasFullActivityLog,
+			slug,
+			syncLoaded,
+		} = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
-		if ( displayRulesLoaded && logsLoaded ) {
+		if ( displayRulesLoaded && logsLoaded && syncLoaded ) {
 			return isFilterEmpty ? (
 				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ ! hasFullActivityLog } />
 			) : (
@@ -725,4 +735,4 @@ export default connect(
 		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
 		updateBreadcrumbs,
 	}
-)( withActivityLog( localize( withLocalizedMoment( ActivityLog ) ) ) );
+)( withSyncStatus( withActivityLog( localize( withLocalizedMoment( ActivityLog ) ) ) ) );

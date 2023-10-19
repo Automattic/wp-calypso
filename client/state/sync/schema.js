@@ -14,7 +14,15 @@ export const isSyncingInProgress = {
 	type: 'boolean',
 };
 
-export const syncingSiteType = {
+export const syncingTargetSite = {
+	type: [ 'string', 'null' ],
+};
+
+export const syncingSourceSite = {
+	type: [ 'string', 'null' ],
+};
+
+export const restoreId = {
 	type: [ 'string', 'null' ],
 };
 
@@ -29,7 +37,9 @@ export const siteSyncSite = {
 		fetchingStatus,
 		progress,
 		isSyncingInProgress,
-		syncingSiteType,
+		syncingSourceSite,
+		syncingTargetSite,
+		restoreId,
 		error,
 	},
 };

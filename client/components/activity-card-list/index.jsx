@@ -9,6 +9,7 @@ import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import EmptyContent from 'calypso/components/empty-content';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { withApplySiteOffset } from 'calypso/components/site-offset';
@@ -148,6 +149,7 @@ class ActivityCardList extends Component {
 			userLocale,
 			availableActions,
 			onClickClone,
+			siteSlug,
 		} = this.props;
 
 		const today = ( applySiteOffset ?? moment )();
@@ -163,6 +165,19 @@ class ActivityCardList extends Component {
 				: 'activity-card-list__secondary-card';
 
 		const dateFormat = userLocale === 'en' ? 'MMM Do' : 'LL';
+
+		if ( pageLogs.length === 0 ) {
+			return (
+				<>
+					<EmptyContent
+						title={ translate( 'No matching events found.' ) }
+						line={ translate( 'Try adjusting your date range or activity type filters' ) }
+						action={ translate( 'Remove all filters' ) }
+						actionURL={ '/activity-log/' + siteSlug }
+					/>
+				</>
+			);
+		}
 
 		return pageLogs.map( ( { date, logs: dateLogs, hasMore }, index ) => (
 			<div key={ `activity-card-list__date-group-${ index }` }>

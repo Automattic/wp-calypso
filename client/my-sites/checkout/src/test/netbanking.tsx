@@ -54,6 +54,7 @@ function getPaymentMethod( additionalArgs = {} ) {
 	const store = createNetBankingPaymentMethodStore();
 	return createNetBankingMethod( {
 		store,
+		submitButtonContent: activePayButtonText,
 		...additionalArgs,
 	} );
 }

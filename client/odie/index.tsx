@@ -7,7 +7,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import FormTextInputWithAction from '../components/forms/form-text-input-with-action';
 import { useOdieAssistantContext } from './context';
 import ChatMessage from './message';
-import { useOdieGetChatPollQuery, useOdieSendMessage } from './query';
+import { useOdieSendMessage } from './query';
 import WapuuRibbon from './wapuu-ribbon';
 
 import './style.scss';
@@ -40,22 +40,9 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 	} = useOdieAssistantContext();
 	const [ input, setInput ] = useState( '' );
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
-	const { data: chatData } = useOdieGetChatPollQuery( chat.chat_id ?? null );
 	const translate = useTranslate();
 
 	const dispatch = useDispatch();
-
-	useEffect( () => {
-		if ( chatData ) {
-			if ( chat.messages.length < chatData.messages.length ) {
-				const countNewMessages = chatData.messages.length - chat.messages.length;
-				const newMessages = chatData.messages.slice( -countNewMessages );
-				newMessages.forEach( ( message ) => {
-					addMessage( message );
-				} );
-			}
-		}
-	}, [ chat, chatData, addMessage ] );
 
 	const environmentBadge = document.querySelector( 'body > .environment-badge' );
 
@@ -113,6 +100,7 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 			addMessage( {
 				content: response.messages[ 0 ].content,
 				role: 'bot',
+				simulateTyping: response.messages[ 0 ].simulateTyping,
 				type: 'message',
 			} );
 		} catch ( e ) {

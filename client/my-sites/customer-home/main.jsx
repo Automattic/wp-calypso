@@ -11,9 +11,9 @@ import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
@@ -140,13 +140,17 @@ const Home = ( {
 
 	const header = (
 		<div className="customer-home__heading">
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'My Home' ) }
-				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
-				align="left"
-				hasScreenOptions
-			/>
+			<NavigationHeader
+				compactBreadcrumb={ false }
+				navigationItems={ [] }
+				mobileItem={ null }
+				title="My Home"
+				subtitle="Your hub for posting, editing, and growing your site."
+			>
+				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+					{ translate( 'Visit site' ) }
+				</Button>
+			</NavigationHeader>
 
 			<div className="customer-home__site-content">
 				<SiteIcon site={ site } size={ 58 } />
@@ -160,12 +164,6 @@ const Home = ( {
 						<span className="customer-home__site-domain-text">{ site.domain }</span>
 					</ExternalLink>
 				</div>
-			</div>
-
-			<div className="customer-home__view-site-button">
-				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-					{ translate( 'Visit site' ) }
-				</Button>
 			</div>
 		</div>
 	);

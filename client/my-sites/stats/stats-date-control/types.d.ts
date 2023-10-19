@@ -3,27 +3,30 @@ interface StatsDateControlProps {
 	queryParams: string;
 	period: 'day' | 'week' | 'month' | 'year';
 	pathTemplate: string;
-	onChangeChartQuantity: ( customQuantity: number ) => void;
+	dateRange: any;
 }
 
 interface DateControlPickerProps {
-	slug: string;
-	queryParams: string;
+	buttonLabel: string;
+	dateRange: any;
 	shortcutList: DateControlPickerShortcut[];
-	handleApply: ( startDate: string, endDate: string ) => void;
+	selectedShortcut: string | undefined;
+	onShortcut: ( shortcut: DateControlPickerShortcut ) => void;
+	onApply: ( startDate: string, endDate: string ) => void;
 }
 
 interface DateControlPickerShortcutsProps {
 	shortcutList: DateControlPickerShortcut[];
-	currentShortcut: string;
+	currentShortcut: string | undefined;
 	onClick: ( shortcut: DateControlPickerShortcut ) => void;
 }
 
 interface DateControlPickerShortcut {
-	id?: string;
+	id: string;
 	label: string;
 	offset: number;
 	range: number;
+	period: string;
 }
 
 interface DateControlPickerDateProps {

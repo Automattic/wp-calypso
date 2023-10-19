@@ -1,25 +1,32 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	LaunchpadNavigator,
+	Site,
+	type SiteSelect,
 	sortLaunchpadTasksByCompletionStatus,
 	useLaunchpad,
 } from '@automattic/data-stores';
-import { useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect, useState } from 'react';
+import { ShareSiteModal } from './action-components';
 import Launchpad from './launchpad';
 import { setUpActionsForTasks } from './setup-actions';
 import type { Task } from './types';
+
+export const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 
 type DefaultWiredLaunchpadProps = {
 	siteSlug: string | null;
 	checklistSlug: string;
 	launchpadContext: string;
+	onSiteLaunched?: () => void;
 };
 
 const DefaultWiredLaunchpad = ( {
 	siteSlug,
 	checklistSlug,
 	launchpadContext,
+	onSiteLaunched,
 }: DefaultWiredLaunchpadProps ) => {
 	const {
 		data: { checklist },
@@ -33,6 +40,14 @@ const DefaultWiredLaunchpad = ( {
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
+
+	const site = useSelect(
+		( select ) => {
+			return siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug );
+		},
+		[ siteSlug ]
+	);
+	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
 
 	useEffect( () => {
 		// Record task list view as a whole.
@@ -71,6 +86,10 @@ const DefaultWiredLaunchpad = ( {
 			tracksData,
 			extraActions: {
 				setActiveChecklist,
+				setShareSiteModalIsOpen,
+			},
+			eventHandlers: {
+				onSiteLaunched,
 			},
 		} );
 	};
@@ -80,12 +99,17 @@ const DefaultWiredLaunchpad = ( {
 	};
 
 	return (
-		<Launchpad
-			siteSlug={ siteSlug }
-			checklistSlug={ checklistSlug }
-			taskFilter={ taskFilter }
-			useLaunchpadOptions={ launchpadOptions }
-		/>
+		<>
+			{ shareSiteModalIsOpen && site && (
+				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
+			) }
+			<Launchpad
+				siteSlug={ siteSlug }
+				checklistSlug={ checklistSlug }
+				taskFilter={ taskFilter }
+				useLaunchpadOptions={ launchpadOptions }
+			/>
+		</>
 	);
 };
 

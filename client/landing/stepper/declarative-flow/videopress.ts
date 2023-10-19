@@ -169,6 +169,16 @@ const videopress: Flow = {
 
 				setSelectedSite( newSite.blogid );
 				setIntentOnSite( newSite.site_slug, VIDEOPRESS_FLOW );
+
+				if ( config.isEnabled( 'videomaker-trial' ) ) {
+					saveSiteSettings( newSite.blogid, {
+						launchpad_screen: 'off',
+						blogdescription: siteDescription,
+					} );
+					clearOnboardingSiteOptions();
+					return window.location.assign( `/site-editor/${ newSite.site_slug }` );
+				}
+
 				saveSiteSettings( newSite.blogid, {
 					launchpad_screen: 'full',
 					blogdescription: siteDescription,

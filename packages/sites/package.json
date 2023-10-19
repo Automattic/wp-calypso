@@ -23,7 +23,7 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"peerDependencies": {
-		"@wordpress/data": "^9.11.0",
+		"@wordpress/data": "^9.14.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1"

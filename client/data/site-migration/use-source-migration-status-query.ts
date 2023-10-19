@@ -24,6 +24,7 @@ export const useSourceMigrationStatusQuery = (
 		},
 		enabled: !! sourceIdOrSlug,
 		retry: false,
+		refetchOnWindowFocus: false,
 		onError: ( error: MigrationStatusError ) => {
 			onErrorCallback && onErrorCallback( error );
 		},
