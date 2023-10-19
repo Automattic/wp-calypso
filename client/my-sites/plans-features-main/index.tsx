@@ -77,7 +77,6 @@ import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import usePlanUpgradeabilityCheck from './hooks/use-plan-upgradeability-check';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type { IntervalType } from './types';
-import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	GridPlan,
@@ -133,7 +132,7 @@ export interface PlansFeaturesMainProps {
 	signupFlowUserName?: string;
 	flowName?: string | null;
 	removePaidDomain?: () => void;
-	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: DomainSuggestion ) => void;
+	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	intervalType?: IntervalType;
 	planTypeSelector?: 'customer' | 'interval';
 	withDiscount?: string;
@@ -277,6 +276,7 @@ const PlansFeaturesMain = ( {
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
 		isPlanUpsellEnabledOnFreeDomain,
+		flowName,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
@@ -293,12 +293,12 @@ const PlansFeaturesMain = ( {
 			paidDomainName || siteTitle || signupFlowUserName || currentUserName
 		);
 
-	const resolvedSubdomainName: DataResponse< string > = useMemo( () => {
+	const resolvedSubdomainName: DataResponse< { domain_name: string } > = useMemo( () => {
 		return {
 			isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
 			result: signupFlowSubdomain
-				? signupFlowSubdomain
-				: wpcomFreeDomainSuggestion.result?.domain_name,
+				? { domain_name: signupFlowSubdomain }
+				: wpcomFreeDomainSuggestion.result,
 		};
 	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion ] );
 
@@ -502,7 +502,7 @@ const PlansFeaturesMain = ( {
 			actionOverrides = {
 				loggedInFreePlan: {
 					status:
-						isPlanUpsellEnabledOnFreeDomain.isLoading || wpcomFreeDomainSuggestion.isLoading
+						isPlanUpsellEnabledOnFreeDomain.isLoading || resolvedSubdomainName.isLoading
 							? 'blocked'
 							: 'enabled',
 				},
@@ -513,7 +513,7 @@ const PlansFeaturesMain = ( {
 			actionOverrides = {
 				loggedInFreePlan: {
 					status:
-						isPlanUpsellEnabledOnFreeDomain.isLoading || wpcomFreeDomainSuggestion.isLoading
+						isPlanUpsellEnabledOnFreeDomain.isLoading || resolvedSubdomainName.isLoading
 							? 'blocked'
 							: 'enabled',
 					callback: () => {
@@ -537,7 +537,7 @@ const PlansFeaturesMain = ( {
 		isInSignup,
 		sitePlanSlug,
 		isPlanUpsellEnabledOnFreeDomain.isLoading,
-		wpcomFreeDomainSuggestion.isLoading,
+		resolvedSubdomainName.isLoading,
 		translate,
 		domainFromHomeUpsellFlow,
 		siteSlug,
@@ -649,7 +649,7 @@ const PlansFeaturesMain = ( {
 				isModalOpen={ isModalOpen }
 				paidDomainName={ paidDomainName }
 				modalType={ resolveModal( lastClickedPlan ) }
-				wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+				generatedWPComSubdomain={ resolvedSubdomainName }
 				onClose={ () => setIsModalOpen( false ) }
 				onFreePlanSelected={ ( isDomainRetained ) => {
 					if ( ! isDomainRetained ) {
@@ -657,13 +657,14 @@ const PlansFeaturesMain = ( {
 					}
 					// Since this domain will not be available after it is selected, invalidate the cache.
 					invalidateDomainSuggestionCache();
-					wpcomFreeDomainSuggestion.result &&
-						setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
+					if ( resolvedSubdomainName.result?.domain_name ) {
+						setSiteUrlAsFreeDomainSuggestion?.( resolvedSubdomainName.result );
+					}
 					onUpgradeClick?.( null );
 				} }
 				onPlanSelected={ ( planSlug ) => {
-					if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
-						setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
+					if ( resolvedSubdomainName.result?.domain_name ) {
+						setSiteUrlAsFreeDomainSuggestion?.( resolvedSubdomainName.result );
 					}
 					invalidateDomainSuggestionCache();
 					const cartItemForPlan = getCartItemForPlan( planSlug );
@@ -734,7 +735,7 @@ const PlansFeaturesMain = ( {
 								gridPlans={ gridPlansForFeaturesGrid }
 								gridPlanForSpotlight={ gridPlanForSpotlight }
 								paidDomainName={ paidDomainName }
-								wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+								generatedWPComSubdomain={ resolvedSubdomainName }
 								isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 								isInSignup={ isInSignup }
 								isLaunchPage={ isLaunchPage }
@@ -780,7 +781,7 @@ const PlansFeaturesMain = ( {
 											gridPlans={ gridPlansForComparisonGrid }
 											gridPlanForSpotlight={ gridPlanForSpotlight }
 											paidDomainName={ paidDomainName }
-											wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+											generatedWPComSubdomain={ resolvedSubdomainName }
 											isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 											isInSignup={ isInSignup }
 											isLaunchPage={ isLaunchPage }

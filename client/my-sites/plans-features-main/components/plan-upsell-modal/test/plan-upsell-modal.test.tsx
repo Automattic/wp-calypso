@@ -33,6 +33,7 @@ function MockPlansFeaturesMain( {
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
 		isPlanUpsellEnabledOnFreeDomain,
+		flowName,
 	} );
 	return <div data-testid="modal-render">{ resolveModal( selectedPlan ) }</div>;
 }

@@ -14,7 +14,6 @@ import type {
 } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { DataResponse, PlanActionOverrides } from './types';
 import type { FeatureList, WPComStorageAddOnSlug } from '@automattic/calypso-products';
-import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
 
@@ -42,7 +41,7 @@ export interface PlansGridProps {
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
+	generatedWPComSubdomain: DataResponse< { domain_name: string } >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	intervalType: string;
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206

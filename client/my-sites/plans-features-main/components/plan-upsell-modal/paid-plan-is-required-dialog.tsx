@@ -17,7 +17,7 @@ import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 
 export default function PaidPlanIsRequiredDialog( {
 	paidDomainName,
-	wpcomFreeDomainSuggestion,
+	generatedWPComSubdomain,
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
@@ -62,13 +62,13 @@ export default function PaidPlanIsRequiredDialog( {
 				</RowWithBorder>
 				<Row>
 					<DomainName>
-						{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
-						{ wpcomFreeDomainSuggestion.result && (
-							<div>{ wpcomFreeDomainSuggestion.result.domain_name }</div>
+						{ generatedWPComSubdomain.isLoading && <LoadingPlaceHolder /> }
+						{ generatedWPComSubdomain.result && (
+							<div>{ generatedWPComSubdomain.result.domain_name }</div>
 						) }
 					</DomainName>
 					<StyledButton
-						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
+						disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 						busy={ isBusy }
 						onClick={ handleFreeDomainClick }
 					>

@@ -18,7 +18,7 @@ import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 
 export function FreePlanPaidDomainDialog( {
 	paidDomainName,
-	wpcomFreeDomainSuggestion,
+	generatedWPComSubdomain,
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
@@ -78,18 +78,18 @@ export function FreePlanPaidDomainDialog( {
 				</RowWithBorder>
 				<Row>
 					<DomainName>
-						{ wpcomFreeDomainSuggestion.isLoading && <LoadingPlaceHolder /> }
-						{ wpcomFreeDomainSuggestion.result &&
+						{ generatedWPComSubdomain.isLoading && <LoadingPlaceHolder /> }
+						{ generatedWPComSubdomain.result &&
 							translate( '%(paidDomainName)s redirects to %(wpcomFreeDomain)s', {
 								args: {
 									paidDomainName,
-									wpcomFreeDomain: wpcomFreeDomainSuggestion.result.domain_name,
+									wpcomFreeDomain: generatedWPComSubdomain.result.domain_name,
 								},
 								comment: '%(wpcomFreeDomain)s is a WordPress.com subdomain, e.g. foo.wordpress.com',
 							} ) }
 					</DomainName>
 					<StyledButton
-						disabled={ wpcomFreeDomainSuggestion.isLoading || ! wpcomFreeDomainSuggestion.result }
+						disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 						busy={ isBusy }
 						onClick={ handleFreePlanClick }
 					>
