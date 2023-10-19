@@ -26,6 +26,7 @@
 	.stats-period-navigation__date-control {
 		display: flex;
 		flex-flow: column nowrap;
+		margin-left: auto;
 
 		.stats-period-navigation__period-control {
 			display: flex;
@@ -48,4 +49,5 @@
 .stats-period-navigation.stats-period-navigation__is-with-new-date-control {
 	padding: 0;
 	align-items: flex-start;
+	row-gap: 8px;
 }
