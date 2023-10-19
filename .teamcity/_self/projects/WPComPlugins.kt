@@ -22,14 +22,6 @@ object WPComPlugins : Project({
 	params {
 		param("docker_image", "registry.a8c.com/calypso/ci-wpcom:latest")
 		param("build.prefix", "1")
-		checkbox(
-			name = "skip_release_diff",
-			value = "false",
-			label = "Skip release diff",
-			description = "Skips the diff against the previous successful build, uploading the artifact as the latest successful build.",
-			checked = "true",
-			unchecked = "false"
-		)
 	}
 
 	buildType(CalypsoApps)
@@ -55,7 +47,7 @@ object WPComPlugins : Project({
 					"notifications-release-build",
 					"odyssey-stats-release-build",
 					"blaze-dashboard-release-build",
-					"etk-release-build",
+					"editing-toolkit-release-build",
 					"wpcom-block-editor-release-build",
 					"o2-blocks-release-build",
 					"happy-blocks-release-build",
@@ -71,11 +63,22 @@ object WPComPlugins : Project({
 object CalypsoApps: BuildType({
 	id("calypso_WPComPlugins_Build_Plugins")
 	uuid = "8453b8fe-226f-4e91-b5cc-8bdad15e0814"
-	name = "CalypsoApps"
+	name = "Build Calypso Apps"
 	description = "Builds all Calypso apps and saves release artifacts for each. This replaces the separate build configurations for each app."
 
-	// Incremented to 4 to make sure ETK updates continue to work:
-	params { param("build.prefix", "4") }
+	params {
+		// Incremented to 4 to make sure ETK updates continue to work:
+		param("build.prefix", "4")
+		checkbox(
+			name = "skip_release_diff",
+			value = "false",
+			label = "Skip release diff",
+			description = "Skips the diff against the previous successful build, uploading the artifact as the latest successful build.",
+			checked = "true",
+			unchecked = "false"
+		)
+	}
+
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 	features {
 		perfmon {
@@ -408,20 +411,16 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 
 			uploadPluginSourceMaps(
 				slug = "editing-toolkit",
-				buildId = "calypso_WPComPlugins_EditorToolKit",
-				buildTag = "etk-release-build",
 				wpcomURL = "~/wp-content/plugins/editing-toolkit-plugin/prod/"
 			)
 
 			uploadPluginSourceMaps(
 				slug = "wpcom-block-editor",
-				buildId = "calypso_WPComPlugins_WpcomBlockEditor",
 				wpcomURL = "~/wpcom-block-editor"
 			)
 
 			uploadPluginSourceMaps(
 				slug = "notifications",
-				buildId = "calypso_WPComPlugins_Notifications",
 				wpcomURL = "~/notifications"
 			)
 		}
@@ -432,7 +431,6 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 // to Sentry.
 fun BuildSteps.uploadPluginSourceMaps(
 	slug: String,
-	buildId: String,
 	wpcomURL: String,
 	buildTag: String = "$slug-release-build",
 ): ScriptBuildStep {
@@ -442,7 +440,7 @@ fun BuildSteps.uploadPluginSourceMaps(
 			rm -rf code code.zip
 
 			# Downloads the latest release build for the plugin.
-			wget "%teamcity.serverUrl%/repository/download/$buildId/$buildTag.tcbuildtag/$slug.zip?guest=1&branch=trunk" -O ./code.zip
+			wget "%teamcity.serverUrl%/repository/download/calypso_calypso_WPComPlugins_Build_Plugins/$buildTag.tcbuildtag/$slug.zip?guest=1&branch=trunk" -O ./code.zip
 
 			unzip -q ./code.zip -d ./code
 			cd code

@@ -19,7 +19,6 @@ import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import { withoutHttp } from 'calypso/lib/url';
 import {
-	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
@@ -178,7 +177,6 @@ function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
 
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) {
 	const allPaths = [
-		domainManagementContactsPrivacy,
 		domainManagementDns,
 		domainManagementDnsAddRecord,
 		domainManagementDnsEditRecord,

@@ -499,6 +499,7 @@ module.exports = {
 					'__experimentalItemGroup',
 					'__experimentalNavigationBackButton',
 					'__experimentalNavigatorBackButton',
+					'__experimentalNavigatorToParentButton',
 					'__experimentalNavigatorButton',
 					'__experimentalNavigatorProvider',
 					'__experimentalNavigatorScreen',

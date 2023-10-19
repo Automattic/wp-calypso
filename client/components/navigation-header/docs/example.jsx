@@ -41,6 +41,7 @@ class NavigationHeaderExample extends Component {
 					mobileItem={ null }
 					title="Title example"
 					subtitle="Subtitle example"
+					screenReader="Screen reader example"
 				></NavigationHeader>
 
 				<NavigationHeader

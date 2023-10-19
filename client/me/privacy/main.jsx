@@ -9,10 +9,10 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import ExternalLink from 'calypso/components/external-link';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
@@ -70,7 +70,7 @@ class Privacy extends Component {
 				<PageViewTracker path="/me/privacy" title="Me > Privacy" />
 				<DocumentHead title={ translate( 'Privacy Settings' ) } />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader brandFont headerText={ translate( 'Privacy' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Privacy' ) } />
 
 				<SectionHeader label={ translate( 'Usage information' ) } />
 				<Card className="privacy__settings">

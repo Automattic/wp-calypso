@@ -12,10 +12,6 @@
 	.add-subscribers-button {
 		display: flex;
 		gap: 10px;
-
-		&:not(:last-child) {
-			margin-right: 24px;
-		}
 	}
 }
 
@@ -42,7 +38,6 @@
 .is-section-subscribers .layout__content {
 	padding-left: var(--sidebar-width-max);
 	padding-right: 0;
-	padding-top: calc(var(--masterbar-height) + 71px);
 	padding-bottom: 0;
 }
 
