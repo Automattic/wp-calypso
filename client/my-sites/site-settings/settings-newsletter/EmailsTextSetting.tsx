@@ -57,6 +57,22 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 						'The ability to customize the confirmation email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
 					) }
 				</FormSettingExplanation>
+
+				<FormLabel htmlFor="welcome_email_message">
+					{ translate( 'Welcome email message' ) }
+				</FormLabel>
+				<FormTextarea
+					name="welcome_email_message"
+					id="welcome_email_message"
+					value={ value?.welcome }
+					onChange={ updateSubscriptionOptions( 'welcome' ) }
+					disabled={ disabled }
+					autoCapitalize="none"
+				/>
+				<FormSettingExplanation>
+					{ translate( 'The email sent out when someone confirms their subscription.' ) }
+				</FormSettingExplanation>
+
 				<FormLabel htmlFor="comment_follow_email_message">
 					{ translate( 'Comment follow email message' ) }
 				</FormLabel>
