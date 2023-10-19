@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import OdieAssistant from '..';
-import useOdieUserTracking from '../trackLocation/useOdieUserTracking';
+import useOdieUserTracking from '../track-location/useOdieUserTracking';
 import { getOdieInitialMessages } from './initial-messages';
 import { getOdieInitialPrompt } from './initial-prompts';
-import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
+import type { OdieUserTracking } from '../track-location/useOdieUserTracking';
 import type { Chat, Context, Message, Nudge, OdieAllowedSectionNames } from '../types';
 import type { ReactNode } from 'react';
 

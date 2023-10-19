@@ -96,22 +96,18 @@
 .chatbox-messages {
 	overflow-y: auto;
 	word-wrap: break-word;
-	padding: 12px 20px;
-	border-radius: 4px;
 	font-size: medium;
 	max-width: 100%;
 	line-height: 1.4;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	padding-bottom: 4px;
 	height: 100%;
-}
 
-.chatbox-input-area {
-	display: flex;
-	justify-content: space-between;
-	align-items: top;
+	.odie-chatbox-bottom-edge {
+		min-height: 10px;
+		width: 100%;
+	}
 }
 
 .chatbox-input {
@@ -257,4 +253,15 @@
 	font-weight: normal;
 	text-align: left;
 	width: 100%;
+}
+
+.odie-chat-message-input-container {
+	z-index: 10;
+	max-width: 410px;
+	flex-shrink: 0;
+	border-radius: 4px;
+	padding: 12px;
+	border: 1px solid var(--gray-gray-5, #dcdcde);
+	background: var(--black-white-white, #fff);
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 7px 7px 0 rgba(0, 0, 0, 0.04), 0 15px 9px 0 rgba(0, 0, 0, 0.02), 0 26px 11px 0 rgba(0, 0, 0, 0.01), 0 41px 12px 0 rgba(0, 0, 0, 0);
 }
