@@ -55,10 +55,6 @@
 	flex-direction: row-reverse;
 }
 
-.date-control-picker-date .stats-date-control-picker-dates__inputs .stats-date-control-picker-dates__inputs-input-group .components-base-control .components-base-control__field input.components-text-control__input {
-	max-width: 120px;
-}
-
 .stats-date-control-picker {
 
 	> .components-button {
@@ -86,7 +82,7 @@
 	display: flex; // to position "From" and "To" groups side by side
 	gap: 16px; // spacing between the "From" input and the "To" input
 
-	input[type="text"] {
+	input[type="date"] {
 		font-family: $font-sf-pro-text;
 		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
 		font-style: normal;
@@ -97,7 +93,7 @@
 		background: var(--black-white-white, #fff);
 		padding: 10px 16px;
 		width: auto;
-		max-width: 95%; // this is to ensure it doesn't overflow its container
+		max-width: 120px;
 		box-sizing: content-box; // this ensures padding isn't included in the total width
 	}
 }
