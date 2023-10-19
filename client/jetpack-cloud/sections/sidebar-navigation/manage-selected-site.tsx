@@ -25,10 +25,20 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
+const onClickMenuItem = ( url: string ) => {
+	page.redirect( url );
+};
+
+const useMenuItems = ( {
+	siteId,
+	path,
+	isAgency,
+}: {
+	siteId: number | null;
+	path: string;
+	isAgency: boolean;
+} ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-	const isAgency = useSelector( isAgencyUser );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
@@ -51,11 +61,7 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 
 	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
 
-	const onClickMenuItem = ( url: string ) => {
-		page.redirect( url );
-	};
-
-	const menuItems = useMemo(
+	return useMemo(
 		() =>
 			[
 				{
@@ -69,10 +75,20 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 					isSelected: itemLinkMatches( path, `/activity-log/${ siteSlug }` ),
 				},
 				{
+					icon: plugins,
+					path: '/',
+					link: pluginsPath( siteSlug ),
+					title: translate( 'Plugins' ),
+					onClickMenuItem: onClickMenuItem,
+					trackEventName: 'calypso_jetpack_sidebar_plugins_clicked',
+					enabled: isPluginManagementEnabled && isAgency,
+					isSelected: itemLinkMatches( path, pluginsPath( siteSlug ) ),
+				},
+				{
 					icon: cloud,
 					path: '/',
 					link: backupPath( siteSlug ),
-					title: translate( 'VaultPress Backup' ),
+					title: translate( 'Backup' ),
 					onClickMenuItem: onClickMenuItem,
 					trackEventName: 'calypso_jetpack_sidebar_backup_clicked',
 					enabled: isAdmin && ! isWPForTeamsSite,
@@ -109,16 +125,6 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 					isSelected: itemLinkMatches( path, `/jetpack-social/${ siteSlug }` ),
 				},
 				{
-					icon: plugins,
-					path: '/',
-					link: pluginsPath( siteSlug ),
-					title: translate( 'Plugins' ),
-					onClickMenuItem: onClickMenuItem,
-					trackEventName: 'calypso_jetpack_sidebar_plugins_clicked',
-					enabled: isPluginManagementEnabled && isAgency,
-					isSelected: itemLinkMatches( path, pluginsPath( siteSlug ) ),
-				},
-				{
 					icon: cog,
 					path: '/',
 					link: settingsPath( siteSlug ),
@@ -152,6 +158,13 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 			translate,
 		]
 	);
+};
+
+const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
+	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	const isAgency = useSelector( isAgencyUser );
+	const menuItems = useMenuItems( { siteId, isAgency, path } );
 
 	return (
 		<>
@@ -163,7 +176,7 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 				backButtonProps={
 					isAgency
 						? {
-								label: translate( 'Site Management' ),
+								label: translate( 'Site Settings' ),
 								icon: chevronLeft,
 								onClick: () => onClickMenuItem( '/dashboard' ),
 						  }
