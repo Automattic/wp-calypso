@@ -32,7 +32,7 @@ import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 let unlock;
 try {
 	unlock = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-		'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
+		'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
 		'@wordpress/edit-site'
 	).unlock;
 } catch ( error ) {

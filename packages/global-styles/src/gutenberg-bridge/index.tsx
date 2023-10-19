@@ -12,7 +12,7 @@ import { isPlainObject } from 'is-plain-object';
 import type { GlobalStylesObject, GlobalStylesContextObject } from '../types';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
+	'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
 	'@wordpress/block-editor'
 );
 
