@@ -68,7 +68,7 @@ function useSitePlans( { siteId }: Props ) {
 			}, {} );
 		}, [] ),
 		refetchOnWindowFocus: false,
-		staleTime: 1000 * 60 * 30, // 30 minutes
+		staleTime: 1000 * 60 * 5, // 5 minutes
 		enabled: !! siteId,
 	} );
 }

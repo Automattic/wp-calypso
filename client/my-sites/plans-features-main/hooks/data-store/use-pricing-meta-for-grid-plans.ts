@@ -191,7 +191,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	 * - For now a simple loader is shown until these are resolved
 	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
 	 */
-	if ( sitePlans.isFetching || ! pricedAPIPlans ) {
+	if ( ! sitePlans.data || ! pricedAPIPlans ) {
 		return null;
 	}
 
