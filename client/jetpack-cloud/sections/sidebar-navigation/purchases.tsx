@@ -1,32 +1,23 @@
 import { chevronLeft, formatListBulletsRTL, payment, receipt, store, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
-import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import {
+	JETPACK_MANAGE_BILLING_LINK,
+	JETPACK_MANAGE_COMPANY_DETAILS_LINK,
+	JETPACK_MANAGE_DASHBOARD_LINK,
+	JETPACK_MANAGE_INVOICES_LINK,
+	JETPACK_MANAGE_PARTNER_PORTAL_LINK,
+	JETPACK_MANAGE_PAYMENT_METHODS_LINK,
+	JETPACK_MANAGE_PRICES_LINK,
+} from './lib/constants';
+import { isMenuItemSelected, redirectPage } from './lib/sidebar';
+import { MenuItemProps } from './types';
 
-const PARTNER_PORTAL_ROOT_PATH = '/partner-portal';
-
-const onClickMenuItem = ( path: string ) => {
-	page.redirect( path );
-};
-
-const isSelected = ( link: string ) => {
-	const pathname = window.location.pathname;
-	return itemLinkMatches( link, pathname );
-};
-
-type ItemProps = {
-	icon: JSX.Element;
-	link: string;
-	title: string;
-};
-const createItem = ( { icon, link, title }: ItemProps ) => ( {
-	icon,
-	path: PARTNER_PORTAL_ROOT_PATH,
-	link,
-	title,
-	onClickMenuItem,
-	isSelected: isSelected( link ),
+const createItem = ( props: Omit< MenuItemProps, 'path' > ) => ( {
+	...props,
+	path: JETPACK_MANAGE_PARTNER_PORTAL_LINK,
+	onClickMenuItem: redirectPage,
+	isSelected: isMenuItemSelected( props.link ),
 } );
 
 const PurchasesSidebar = () => {
@@ -35,27 +26,27 @@ const PurchasesSidebar = () => {
 	const menuItems = [
 		createItem( {
 			icon: store,
-			link: `${ PARTNER_PORTAL_ROOT_PATH }/billing`,
+			link: JETPACK_MANAGE_BILLING_LINK,
 			title: translate( 'Billing' ),
 		} ),
 		createItem( {
 			icon: payment,
-			link: `${ PARTNER_PORTAL_ROOT_PATH }/payment-methods`,
+			link: JETPACK_MANAGE_PAYMENT_METHODS_LINK,
 			title: translate( 'Payment Methods' ),
 		} ),
 		createItem( {
 			icon: receipt,
-			link: `${ PARTNER_PORTAL_ROOT_PATH }/invoices`,
+			link: JETPACK_MANAGE_INVOICES_LINK,
 			title: translate( 'Invoices' ),
 		} ),
 		createItem( {
 			icon: tag,
-			link: `${ PARTNER_PORTAL_ROOT_PATH }/prices`,
+			link: JETPACK_MANAGE_PRICES_LINK,
 			title: translate( 'Prices' ),
 		} ),
 		createItem( {
 			icon: formatListBulletsRTL,
-			link: `${ PARTNER_PORTAL_ROOT_PATH }/company-details`,
+			link: JETPACK_MANAGE_COMPANY_DETAILS_LINK,
 			title: translate( 'Company Details' ),
 		} ),
 	];
@@ -63,13 +54,13 @@ const PurchasesSidebar = () => {
 	return (
 		<NewSidebar
 			isJetpackManage
-			path="/partner-portal"
+			path={ JETPACK_MANAGE_PARTNER_PORTAL_LINK }
 			menuItems={ menuItems }
 			description={ translate( 'Manage all your billing related settings from one place.' ) }
 			backButtonProps={ {
 				label: translate( 'Purchases' ),
 				icon: chevronLeft,
-				onClick: () => onClickMenuItem( '/dashboard' ),
+				onClick: () => redirectPage( JETPACK_MANAGE_DASHBOARD_LINK ),
 			} }
 		/>
 	);
