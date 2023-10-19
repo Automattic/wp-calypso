@@ -155,7 +155,7 @@ if ( isset( $args['website'] ) ) {
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/newsletter/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/newsletter/' ) ); ?>"
 								tabindex="-1">
 								<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
 							</a>
@@ -211,7 +211,7 @@ if ( isset( $args['website'] ) ) {
 					<ul role="menu">
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/features' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/features/' ) ); ?>"
 								tabindex="-1">
 								<?php esc_html_e( 'Overview', 'happy-blocks' ); ?>
 							</a>
@@ -235,7 +235,7 @@ if ( isset( $args['website'] ) ) {
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/google' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/google/' ) ); ?>"
 								tabindex="-1">
 								<?php esc_html_e( 'Google Apps', 'happy-blocks' ); ?>
 							</a>
@@ -423,7 +423,7 @@ if ( isset( $args['website'] ) ) {
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/newsletter/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/newsletter/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( __( 'Newsletter', 'happy-blocks' ) ); ?>
 								</a>
@@ -478,7 +478,7 @@ if ( isset( $args['website'] ) ) {
 						<ul class="x-menu-grid" role="menu">
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/features' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/features/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'Overview', 'happy-blocks' ); ?>
 								</a>
@@ -501,7 +501,7 @@ if ( isset( $args['website'] ) ) {
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/google' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/google/' ) ); ?>"
 									tabindex="-1">
 									<?php esc_html_e( 'Google Apps', 'happy-blocks' ); ?>
 								</a>
