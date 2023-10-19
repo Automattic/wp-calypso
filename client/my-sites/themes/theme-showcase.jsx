@@ -367,7 +367,7 @@ class ThemeShowcase extends Component {
 	getCollectionViewHeader = () => {
 		const keyParts = [ this.props.tier, this.props.filter ];
 		const key = keyParts.filter( ( part ) => !! part ).join( '-' ) || 'recommended';
-		const { title, description } = THEME_COLLECTIONS[ key ];
+		const { fullTitle, description } = THEME_COLLECTIONS[ key ];
 
 		return (
 			<div className="collection-header">
@@ -387,7 +387,7 @@ class ThemeShowcase extends Component {
 					<Icon icon={ chevronLeft } />
 					{ translate( 'Back' ) }
 				</Button>
-				{ title && <h2 className="collection-header__title">{ title }</h2> }
+				{ fullTitle && <h2 className="collection-header__title">{ fullTitle }</h2> }
 				{ description && (
 					<div className="collection-header__description">{ preventWidows( description ) }</div>
 				) }

@@ -12,7 +12,8 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Featured Themes' ),
+		title: translate( 'Featured' ),
+		fullTitle: translate( 'Featured Themes' ),
 		collectionSlug: 'recommended',
 		description: (
 			<p>{ translate( 'An expert-curated list of themes to get the most out of your site.' ) }</p>
@@ -28,7 +29,8 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: 'premium',
 		},
-		title: translate( 'Premium Themes' ),
+		title: translate( 'Premium' ),
+		fullTitle: translate( 'Premium Themes' ),
 		collectionSlug: 'premium-themes',
 		description: (
 			<p>
@@ -48,7 +50,8 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: 'marketplace',
 		},
-		title: translate( 'Partner Themes' ),
+		title: translate( 'Partner' ),
+		fullTitle: translate( 'Partner Themes' ),
 		collectionSlug: 'partner-themes',
 		description: (
 			<p>
@@ -78,7 +81,8 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Writers and Bloggers Themes' ),
+		title: translate( 'Writers and Bloggers' ),
+		fullTitle: translate( 'Writers and Bloggers Themes' ),
 		collectionSlug: 'blog-themes',
 		description: null,
 		seeAllLink: '/themes/filter/blog',
@@ -92,7 +96,8 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Portfolio Themes' ),
+		title: translate( 'Portfolio' ),
+		fullTitle: translate( 'Portfolio Themes' ),
 		collectionSlug: 'portfolio-themes',
 		description: null,
 		seeAllLink: '/themes/filter/portfolio',
@@ -106,7 +111,8 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Business Themes' ),
+		title: translate( 'Business' ),
+		fullTitle: translate( 'Business Themes' ),
 		collectionSlug: 'business-themes',
 		description: (
 			<p>
@@ -126,7 +132,8 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Art and Design Themes' ),
+		title: translate( 'Art and Design' ),
+		fullTitle: translate( 'Art and Design Themes' ),
 		collectionSlug: 'art-design-themes',
 		description: null,
 		seeAllLink: '/themes/filter/art-design',
