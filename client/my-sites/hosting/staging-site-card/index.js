@@ -236,6 +236,7 @@ export const StagingSiteCard = ( {
 					code: error.code,
 				} )
 			);
+			setSyncError( error.message );
 		},
 	} );
 
