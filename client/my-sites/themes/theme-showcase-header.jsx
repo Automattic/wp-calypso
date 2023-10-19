@@ -6,6 +6,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InstallThemeButton from './install-theme-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
@@ -22,6 +23,7 @@ export default function ThemeShowcaseHeader( {
 	// eslint-disable-next-line no-shadow
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
@@ -87,8 +89,12 @@ export default function ThemeShowcaseHeader( {
 						}
 					) }
 				>
-					<InstallThemeButton />
-					<ScreenOptionsTab wpAdminPath="themes.php" />
+					{ selectedSiteId && (
+						<>
+							<InstallThemeButton />
+							<ScreenOptionsTab wpAdminPath="themes.php" />
+						</>
+					) }
 				</NavigationHeader>
 			) : (
 				<div className="themes__header-logged-out">
