@@ -1,8 +1,8 @@
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
-import moment from 'moment';
 import React, { useState, useRef } from 'react';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
@@ -16,6 +16,7 @@ const DateControlPicker = ( {
 	onShortcut,
 	onApply,
 }: DateControlPickerProps ) => {
+	const moment = useLocalizedMoment();
 	// Pull dates from provided range.
 	const [ inputStartDate, setInputStartDate ] = useState(
 		moment( dateRange.chartStart ).format( 'YYYY-MM-DD' )
