@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import debugModule from 'debug';
 import {
 	defer,
@@ -46,6 +47,7 @@ import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getPlanCartItem } from '../cart-values/cart-items';
+import { logToLogstash } from '../logstash';
 import type { Flow, Dependencies } from '../../signup/types';
 
 const debug = debugModule( 'calypso:signup' );
@@ -276,15 +278,29 @@ export default class SignupFlowController {
 			);
 
 			if ( dependenciesNotProvided.length > 0 ) {
-				throw new Error(
+				const errorMessage =
 					'The dependencies [' +
-						dependenciesNotProvided +
-						'] were listed as provided by the ' +
-						step.stepName +
-						' step but were not provided by it [ current flow: ' +
-						this._flowName +
-						' ].'
-				);
+					dependenciesNotProvided +
+					'] were listed as provided by the ' +
+					step.stepName +
+					' step but were not provided by it [ current flow: ' +
+					this._flowName +
+					' ].';
+
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: errorMessage,
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					blog_id: this._flow.providesDependenciesInQuery?.includes( 'siteId' ),
+					properties: {
+						env: config( 'env_id' ),
+						type: 'calypso_dependency_check_error',
+					},
+				} );
+
+				if ( config( 'env_id' ) !== 'production' ) {
+					throw new Error( errorMessage );
+				}
 			}
 		} );
 	}
@@ -296,7 +312,6 @@ export default class SignupFlowController {
 	/**
 	 * Returns a list of non-excluded steps in the flow which enable the branch steps. Otherwise, return a list
 	 * of all steps
-	 *
 	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowSteps() {
@@ -314,7 +329,6 @@ export default class SignupFlowController {
 
 	/**
 	 * Returns a list of the dependencies provided in the flow configuration.
-	 *
 	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies() {
