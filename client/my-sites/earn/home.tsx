@@ -16,7 +16,6 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EmptyContent from 'calypso/components/empty-content';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import PromoSection, {
 	Props as PromoSectionProps,
 	PromoSectionCardProps,
@@ -35,6 +34,7 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import EarnSupportButton from './components/earn-support-button';
 import StatsSection from './components/stats';
 import EarnLaunchpad from './launchpad';
 
@@ -153,11 +153,7 @@ const Home = () => {
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Learn more' ),
-					component: (
-						<div className="action-panel__cta">
-							<InlineSupportLink supportContext="paypal" showIcon={ false } className="button" />
-						</div>
-					),
+					component: <EarnSupportButton supportContext="paypal" />,
 					action: () => {
 						trackCtaButton( 'simple-payments' );
 						window.location.href = localizeUrl(
@@ -204,15 +200,7 @@ const Home = () => {
 		const cta = {
 			text: translate( 'Learn more' ),
 			...( hasConnectedAccount && {
-				component: (
-					<div className="action-panel__cta">
-						<InlineSupportLink
-							supportContext="payment_button_block"
-							showIcon={ false }
-							className="button"
-						/>
-					</div>
-				),
+				component: <EarnSupportButton supportContext="payment_button_block" />,
 			} ),
 			action: () => {
 				trackCtaButton( 'recurring-payments' );
@@ -252,11 +240,7 @@ const Home = () => {
 		const cta = {
 			text: translate( 'Learn more' ),
 			...( hasConnectedAccount && {
-				component: (
-					<div className="action-panel__cta">
-						<InlineSupportLink supportContext="donations" showIcon={ false } className="button" />
-					</div>
-				),
+				component: <EarnSupportButton supportContext="donations" />,
 			} ),
 			action: () => {
 				trackCtaButton( 'donations' );
@@ -300,15 +284,7 @@ const Home = () => {
 		}
 		const cta = {
 			text: translate( 'Learn more' ),
-			component: (
-				<div className="action-panel__cta">
-					<InlineSupportLink
-						supportContext="premium_content_block"
-						showIcon={ false }
-						className="button"
-					/>
-				</div>
-			),
+			component: <EarnSupportButton supportContext="premium_content_block" />,
 			action: () => {
 				trackLearnLink( 'premium-content' );
 				if ( window && window.location ) {
@@ -346,15 +322,7 @@ const Home = () => {
 		}
 		const cta = {
 			text: translate( 'Learn more' ),
-			component: (
-				<div className="action-panel__cta">
-					<InlineSupportLink
-						supportContext="paid-newsletters"
-						showIcon={ false }
-						className="button"
-					/>
-				</div>
-			),
+			component: <EarnSupportButton supportContext="paid-newsletters" />,
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {
