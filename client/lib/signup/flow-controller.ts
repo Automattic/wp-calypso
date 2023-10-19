@@ -17,6 +17,7 @@ import {
 import page from 'page';
 import { Store, Unsubscribe as ReduxUnsubscribe } from 'redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import untypedSteps from 'calypso/signup/config/steps';
@@ -47,7 +48,6 @@ import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getPlanCartItem } from '../cart-values/cart-items';
-import { logToLogstash } from '../logstash';
 import type { Flow, Dependencies } from '../../signup/types';
 
 const debug = debugModule( 'calypso:signup' );
