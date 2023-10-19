@@ -43,6 +43,7 @@ window.configData = {
 		'help/gpt-response': true,
 	},
 	signup_url: '/',
+	wapuu: false,
 };
 window.process = {
 	env: {

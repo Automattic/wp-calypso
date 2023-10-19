@@ -9,13 +9,13 @@ import 'calypso/state/sync/init';
  * @param {Object} state sync ub-tree for a site
  * @returns {('production' | 'staging' | null)} string site that is syncing
  */
-export const getSyncSiteTypeData = ( state: AppState ): 'staging' | 'production' | null =>
-	get( state, 'syncingSiteType', '' );
+export const getSyncSourceSiteData = ( state: AppState ): 'staging' | 'production' | null =>
+	get( state, 'syncingSourceSite', '' );
 
 /**
  * Returns status info for sync progress
  * @param {Object} state global app state
  * @param {number} siteId requested site for site sync info
- * @returns {('production' | 'staging' | null)} string syncingSiteType type of the syncing site
+ * @returns {('production' | 'staging' | null)} string syncingSiteTarget type of the syncing site
  */
-export const getSyncSiteType = compose( getSyncSiteTypeData, getSiteSync );
+export const getSyncSourceSite = compose( getSyncSourceSiteData, getSiteSync );

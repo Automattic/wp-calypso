@@ -8,7 +8,7 @@ $button-border: 4px;
 		--color-surface-backdrop: var(--studio-white);
 	}
 
-	.layout:not(.has-no-sidebar) .layout__content {
+	.layout.is-logged-in .layout__content {
 		overflow: clip;
 		padding-top: var(--masterbar-height);
 
@@ -504,10 +504,12 @@ $button-border: 4px;
 }
 
 .theme__sheet-content {
-	box-shadow: none;
-	font-size: 1rem;
-	min-height: auto;
-	padding: 0;
+	&.card {
+		box-shadow: none;
+		font-size: 1rem;
+		min-height: auto;
+		padding: 0;
+	}
 
 	div {
 		width: auto !important; // override inline style in content markup

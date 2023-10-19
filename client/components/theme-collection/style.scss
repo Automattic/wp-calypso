@@ -1,31 +1,12 @@
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .theme-collection__container {
-	padding-bottom: 32px;
+	margin-top: 48px;
 
-	@include break-xlarge {
-		margin: 0 48px;
-	}
-
-	&:last-child {
-		padding-bottom: 0;
-
-		@include break-xlarge {
-			padding-bottom: 32px;
-		}
-	}
-
-	.theme-collection__list-wrapper {
-		padding-right: 32px;
-
-		@include break-xlarge {
-			padding-right: 0;
-		}
-
-		&.swiper-wrapper {
-			overflow-y: clip;
-		}
+	.theme-collection__list-wrapper.swiper-wrapper {
+		overflow-y: clip;
 	}
 
 	.theme-card__info-options {
@@ -57,28 +38,36 @@
 
 .theme-collection__title {
 	line-height: 1;
-	font-size: 1.25rem;
-	font-weight: 400;
+	font-size: $font-body;
+	font-weight: 600;
 	color: var(--gray-gray-100, #101517);
 
 	@include break-small {
-		font-size: 1.75rem;
+		font-size: rem(24px);
+		font-weight: 400;
 	}
 }
 
 .theme-collection__description * {
 	color: var(--gray-gray-70, #3c434a);
+	font-size: $font-body-small;
 	margin-bottom: 0;
 
 	@include break-small {
-		font-size: 1rem;
+		font-size: $font-body;
 	}
 }
 
 .theme-collection__list-item.swiper-slide {
 	.card.theme-card {
 		margin: 0;
-		padding: 0;
+		padding-left: 16px;
+		padding-right: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding-left: 32px;
+			padding-right: 32px;
+		}
 	}
 }
 
@@ -95,7 +84,7 @@
 	align-items: center;
 
 	.theme-collection__see-all {
-		font-size: 1rem;
+		font-size: $font-body-small;
 		font-style: normal;
 		font-weight: 400;
 		line-height: 20px;
@@ -112,8 +101,11 @@
 		@include break-small {
 			text-decoration: none;
 			align-items: inherit;
-			font-size: 0.875rem;
 			margin-right: 24px;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 
@@ -129,7 +121,7 @@
 			display: flex;
 			justify-content: center;
 			margin: 0 8px;
-			transition: opacity 0.3s linear;
+			transition: filter 0.1s linear;
 			pointer-events: all;
 		}
 
@@ -139,10 +131,6 @@
 
 		&:hover {
 			filter: brightness(0.9);
-		}
-
-		&.swiper-button-disabled {
-			pointer-events: none;
 		}
 	}
 }

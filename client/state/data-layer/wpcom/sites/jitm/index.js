@@ -36,6 +36,9 @@ const transformApiRequest = ( { data: jitms } ) =>
 		CTA: {
 			message: unescapeDecimalEntities( jitm.CTA.message ),
 			link: unescapeDecimalEntities( jitm.CTA.link || '' ),
+			target: unescapeDecimalEntities(
+				jitm.CTA.target || '' === jitm.CTA.target ? jitm.CTA.target : '_blank'
+			),
 		},
 		tracks: jitm.tracks,
 		action: jitm.action,

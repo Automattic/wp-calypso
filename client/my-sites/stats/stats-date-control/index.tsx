@@ -1,20 +1,21 @@
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import page from 'page';
 import qs from 'qs';
 import React from 'react';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import DateControlPicker from './stats-date-control-picker';
 import { StatsDateControlProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
-const StatsDateControl = ( { slug, queryParams }: StatsDateControlProps ) => {
+const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
 	// consistent with the custom ranges.
 
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
 	const shortcutList = [
 		{
@@ -102,10 +103,46 @@ const StatsDateControl = ( { slug, queryParams }: StatsDateControlProps ) => {
 		page( generateNewLink( shortcut.period, startDate, endDate ) );
 	};
 
+	const getShortcutForRange = () => {
+		// Search the shortcut array for something matching the current date range.
+		// Returns shortcut or null;
+		const today = moment().format( 'YYYY-MM-DD' );
+		const yesterday = moment().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
+		const shortcut = shortcutList.find( ( element ) => {
+			if (
+				yesterday === dateRange.chartEnd &&
+				dateRange.daysInRange === element.range + 1 &&
+				element.id === 'yesterday'
+			) {
+				return element;
+			}
+			if ( today === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
+				return element;
+			}
+			return null;
+		} );
+		return shortcut;
+	};
+
+	const getButtonLabel = () => {
+		// Test for a shortcut match.
+		const shortcut = getShortcutForRange();
+		if ( shortcut ) {
+			return shortcut.label;
+		}
+		// Generate a full date range for the label.
+		const startDate = moment( dateRange.chartStart ).format( 'MMMM Do, YYYY' );
+		const endDate = moment( dateRange.chartEnd ).format( 'MMMM Do, YYYY' );
+		return `${ startDate } - ${ endDate }`;
+	};
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<DateControlPicker
+				buttonLabel={ getButtonLabel() }
+				dateRange={ dateRange }
 				shortcutList={ shortcutList }
+				selectedShortcut={ getShortcutForRange()?.id }
 				onShortcut={ onShortcutHandler }
 				onApply={ onApplyButtonHandler }
 			/>

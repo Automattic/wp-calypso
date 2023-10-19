@@ -1,7 +1,7 @@
 import type { Design } from '@automattic/design-picker';
 import type { PageId } from 'calypso/signup/difm/constants';
 
-export type MediaUploadType = 'IMAGE' | 'VIDEO';
+export type MediaUploadType = 'IMAGE' | 'VIDEO' | 'IMAGE-AND-VIDEO';
 
 export type Media = {
 	caption?: string;

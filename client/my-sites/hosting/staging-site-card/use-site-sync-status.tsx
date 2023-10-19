@@ -1,11 +1,32 @@
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useCallback, useRef } from 'react';
+import { useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { fetchSyncStatus, setSyncInProgress } from 'calypso/state/sync/actions';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
-import { getSyncStatus, getSyncProgress, getSyncSiteType } from 'calypso/state/sync/selectors';
+import {
+	getSyncStatus,
+	getSyncProgress,
+	getSyncTargetSite,
+	getSyncRestoreId,
+	getSyncSourceSite,
+	isFetchingSyncStatus,
+} from 'calypso/state/sync/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { getSyncStatusError } from 'calypso/state/sync/selectors/get-sync-status-error';
+import { useProductionSiteDetail } from './use-production-site-detail';
+
+export type SyncStatus = {
+	status: SiteSyncStatus;
+	progress: number;
+	resetSyncStatus: () => void;
+	isSyncInProgress: boolean;
+	error: string;
+	siteSource: 'production' | 'staging' | null;
+	siteTarget: 'production' | 'staging' | null;
+	restoreId: string;
+};
 
 export const useCheckSyncStatus = ( siteId: number ) => {
 	const dispatch = useDispatch();
@@ -16,7 +37,10 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 	const syncProgress = useSelector( ( state ) => getSyncProgress( state, siteId ) );
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 	const syncStatusError = useSelector( ( state ) => getSyncStatusError( state, siteId ) );
-	const syncingSiteType = useSelector( ( state ) => getSyncSiteType( state, siteId ) );
+	const syncingTargetSite = useSelector( ( state ) => getSyncTargetSite( state, siteId ) );
+	const syncingSourceSite = useSelector( ( state ) => getSyncSourceSite( state, siteId ) );
+	const syncRestoreId = useSelector( ( state ) => getSyncRestoreId( state, siteId ) );
+	const fetchingStatus = useSelector( ( state ) => isFetchingSyncStatus( state, siteId ) );
 
 	const clearIntervalId = useCallback( () => {
 		if ( intervalIdRef.current ) {
@@ -62,7 +86,10 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 			resetSyncStatus,
 			isSyncInProgress,
 			error: syncStatusError,
-			siteType: syncingSiteType,
+			sourceSite: syncingSourceSite,
+			targetSite: syncingTargetSite,
+			restoreId: syncRestoreId,
+			fetchingStatus: fetchingStatus,
 		} ),
 		[
 			syncStatus,
@@ -70,7 +97,39 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 			resetSyncStatus,
 			isSyncInProgress,
 			syncStatusError,
-			syncingSiteType,
+			syncingTargetSite,
+			syncingSourceSite,
+			syncRestoreId,
+			fetchingStatus,
 		]
 	);
 };
+
+const withSyncStatus = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const { siteId, rewindState } = props;
+		const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+
+		const { data: productionSite } = useProductionSiteDetail( siteId, {
+			enabled: isWpcomStagingSite,
+		} );
+		const syncData = useCheckSyncStatus( isWpcomStagingSite ? productionSite?.id : siteId );
+		const [ hideRewindProgress, setHideRewindProgress ] = useState( false );
+
+		useEffect( () => {
+			setHideRewindProgress( rewindState?.rewind?.restoreId === syncData.restoreId );
+		}, [ syncData, rewindState, hideRewindProgress ] );
+
+		return (
+			<Wrapped
+				{ ...props }
+				syncLoaded={ syncData.fetchingStatus === false }
+				hideRewindProgress={ hideRewindProgress }
+				sync={ syncData }
+			/>
+		);
+	},
+	'withSiteSyncStatus'
+);
+
+export { withSyncStatus };

@@ -12,8 +12,8 @@ import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
 import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
 import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -43,7 +43,9 @@ class Help extends PureComponent {
 	getHelpfulArticles = () => {
 		const helpfulResults = [
 			{
-				link: 'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/',
+				link: localizeUrl(
+					'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/'
+				),
 				title: this.props.translate( 'Do I Need a Website, a Blog, or a Website with a Blog?' ),
 				description: this.props.translate(
 					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
@@ -51,7 +53,7 @@ class Help extends PureComponent {
 				image: helpWebsite,
 			},
 			{
-				link: 'https://wordpress.com/support/business-plan/',
+				link: localizeUrl( 'https://wordpress.com/support/business-plan/' ),
 				title: this.props.translate( 'Uploading custom plugins and themes' ),
 				description: this.props.translate(
 					'Learn more about installing a custom theme or plugin using the Business plan.'
@@ -59,7 +61,7 @@ class Help extends PureComponent {
 				image: helpPlugins,
 			},
 			{
-				link: 'https://wordpress.com/support/domains/',
+				link: localizeUrl( 'https://wordpress.com/support/domains/' ),
 				title: this.props.translate( 'All About Domains' ),
 				description: this.props.translate(
 					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
@@ -67,7 +69,7 @@ class Help extends PureComponent {
 				image: helpDomains,
 			},
 			{
-				link: 'https://wordpress.com/support/start/',
+				link: localizeUrl( 'https://wordpress.com/support/start/' ),
 				title: this.props.translate( 'Get Started' ),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
@@ -75,7 +77,7 @@ class Help extends PureComponent {
 				image: helpGetStarted,
 			},
 			{
-				link: 'https://wordpress.com/support/settings/privacy-settings/',
+				link: localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ),
 				title: this.props.translate( 'Privacy Settings' ),
 				description: this.props.translate(
 					'Limit your site’s visibility or make it completely private.'
@@ -83,7 +85,7 @@ class Help extends PureComponent {
 				image: helpPrivacy,
 			},
 			{
-				link: 'https://wordpress.com/support/manage-purchases/',
+				link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
 				title: this.props.translate( 'Managing Purchases, Renewals, and Cancellations' ),
 				description: this.props.translate(
 					'Have a question or need to change something about a purchase you have made? Learn how.'
@@ -228,15 +230,14 @@ class Help extends PureComponent {
 			<Main className="help" wideLayout>
 				<PageViewTracker path="/help" title="Help" />
 
-				<div className="help__heading">
-					<FormattedHeader
-						brandFont
-						headerText={ translate( 'Support' ) }
-						subHeaderText={ translate( 'Get help with your WordPress.com site' ) }
-						align="left"
-					/>
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Support' ) }
+					subtitle={ translate( 'Get help with your WordPress.com site' ) }
+				>
 					<HelpContactUsHeader />
-				</div>
+				</NavigationHeader>
+
 				<HelpSearch onSearch={ this.setIsSearching } />
 				{ ! this.state.isSearching && (
 					<div className="help__inner-wrapper">

@@ -40,12 +40,21 @@ function getWebpackConfig(
 		'output-path': outputPath,
 	} );
 
+	// While this used to be the output of "git describe", we don't really use
+	// tags enough to justify it. Now, the short sha will be good enough. The commit
+	// sha from process.env is set by TeamCity, and tracks GitHub. (rev-parse often
+	// does not.)
+	const gitDescribe = (
+		process.env.commit_sha ??
+		spawnSync( 'git', [ 'rev-parse', 'HEAD' ], {
+			encoding: 'utf8',
+		} ).stdout.replace( '\n', '' )
+	).slice( 0, 11 );
+
 	const pageMeta = {
 		nodePlatform: process.platform,
 		nodeVersion: process.version,
-		gitDescribe: spawnSync( 'git', [ 'describe', '--always', '--dirty', '--long' ], {
-			encoding: 'utf8',
-		} ).stdout.replace( '\n', '' ),
+		gitDescribe,
 	};
 
 	return {

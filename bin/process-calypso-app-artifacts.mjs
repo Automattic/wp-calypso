@@ -123,7 +123,11 @@ async function addGitHubComment( _changedApps ) {
 	const header = '**This PR modifies the release build for the following Calypso Apps:**';
 	const docsMsg = '_For info about this notification, see here: PCYsg-OT6-p2_';
 	const changedAppsMsg = notifyApps.map( ( { slug } ) => `* ${ slug }` ).join( '\n' );
-	const testMsg = `To test WordPress.com changes, run "install-plugin.sh $pluginSlug ${ process.env.git_branch }" on your sandbox.`;
+	// Note: extra escaping is necessary because the message is passed to bash.
+	const testMsg =
+		'To test WordPress.com changes, run \\`install-plugin.sh \\$pluginSlug ' +
+		process.env.git_branch +
+		'\\` on your sandbox.';
 
 	const appMsg = `${ header }\n\n${ docsMsg }\n\n${ changedAppsMsg }\n\n${ testMsg }`;
 
