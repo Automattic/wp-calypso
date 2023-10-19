@@ -46,7 +46,10 @@ export class SignupPickPlanPage {
 		}
 
 		if ( name === 'Free' ) {
-			if ( this.selectedDomain?.includes( 'wordpress.com' ) ) {
+			if (
+				this.selectedDomain?.includes( 'wordpress.com' ) &&
+				this.page.url().includes( 'onboarding-pm' )
+			) {
 				/** Shows a modal */
 				await this.plansPage.selectPlan( name );
 				actions = [
