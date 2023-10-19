@@ -4,7 +4,7 @@ const useIsFreeDomainFreePlanUpsellEnabled = (
 	flowName?: string | null,
 	paidDomainName?: string | null
 ): DataResponse< boolean > => {
-	if ( ! paidDomainName && ( flowName === 'onboarding' || flowName === 'onboarding-pm' ) ) {
+	if ( ! paidDomainName && flowName === 'onboarding-pm' ) {
 		return {
 			isLoading: false,
 			result: true,
