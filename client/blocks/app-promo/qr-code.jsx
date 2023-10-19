@@ -21,7 +21,7 @@ export const QrCode = ( { source = 'calypso-customer-home', size = 150 } ) => {
 							a: (
 								<a
 									className="get-apps__jetpack-branded-link"
-									href={ localizeUrl( `https://apps.wordpress.com/get?campaign=${ source }` ) }
+									href={ localizeUrl( `https://apps.wordpress.com/get?campaign=${ encodeURIComponent ( source ) }` ) }
 								/>
 							),
 						},
