@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@wordpress/components';
 import { chevronLeft, Icon } from '@wordpress/icons';
+import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
@@ -575,8 +576,14 @@ class ThemeShowcase extends Component {
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
 
+		const classnames = classNames( 'theme-showcase', {
+			'is-discovery-view':
+				this.props.tier === '' && this.isThemeDiscoveryEnabled() && ! isCollectionView,
+			'is-collection-view': isCollectionView,
+		} );
+
 		return (
-			<div className="theme-showcase">
+			<div className={ classnames }>
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
