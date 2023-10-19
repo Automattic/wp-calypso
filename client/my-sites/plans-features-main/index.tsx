@@ -276,6 +276,7 @@ const PlansFeaturesMain = ( {
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
 		isPlanUpsellEnabledOnFreeDomain,
+		flowName,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
