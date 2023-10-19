@@ -4,15 +4,14 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { useLaunchpad } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Task } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
 import { useState, useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EmptyContent from 'calypso/components/empty-content';
@@ -35,6 +34,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import StatsSection from './components/stats';
+import { useEarnLaunchpadTasks } from './hooks/use-earn-launchpad-tasks';
 import EarnLaunchpad from './launchpad';
 
 import './style.scss';
@@ -67,16 +67,7 @@ const Home = () => {
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
 
-	const {
-		data: { checklist },
-	} = useLaunchpad( site?.slug ?? null, 'earn' );
-	const numberOfSteps = checklist?.length || 0;
-	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
-	const tasklistCompleted = completedSteps >= numberOfSteps;
-
-	const shouldLoadLaunchpad = () => {
-		return ! tasklistCompleted && numberOfSteps > 0;
-	};
+	const launchpad = useEarnLaunchpadTasks();
 
 	function trackUpgrade( plan: string, feature: string ) {
 		dispatch(
@@ -472,6 +463,7 @@ const Home = () => {
 		<>
 			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
+			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] } />
@@ -479,11 +471,7 @@ const Home = () => {
 			) }
 			{ ! isLoading && (
 				<div>
-					{ shouldLoadLaunchpad() ? (
-						<EarnLaunchpad numberOfSteps={ numberOfSteps } completedSteps={ completedSteps } />
-					) : (
-						<StatsSection />
-					) }
+					{ launchpad.shouldLoad ? <EarnLaunchpad launchpad={ launchpad } /> : <StatsSection /> }
 					<PromoSection { ...promos } />
 				</div>
 			) }
