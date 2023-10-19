@@ -44,27 +44,11 @@ export class SignupPickPlanPage {
 		} else {
 			url = new RegExp( '.*setup/site-setup.*' );
 		}
-
-		if ( name === 'Free' ) {
-			if (
-				this.selectedDomain?.includes( 'wordpress.com' ) &&
-				this.page.url().includes( 'onboarding-pm' )
-			) {
-				/** Shows a modal */
-				await this.plansPage.selectPlan( name );
-				actions = [
-					this.page.waitForResponse( /.*sites\/new\?.*/ ),
-					this.page.waitForURL( url, { timeout: 30 * 1000 } ),
-					this.plansPage.selectModalUpsellPlan( name ),
-				];
-			}
-		} else if ( actions.length === 0 ) {
-			actions = [
-				this.page.waitForResponse( /.*sites\/new\?.*/ ),
-				this.page.waitForURL( url, { timeout: 30 * 1000 } ),
-				this.plansPage.selectPlan( name ),
-			];
-		}
+		actions = [
+			this.page.waitForResponse( /.*sites\/new\?.*/ ),
+			this.page.waitForURL( url, { timeout: 30 * 1000 } ),
+			this.plansPage.selectPlan( name ),
+		];
 
 		const [ response ] = await Promise.all( actions );
 
