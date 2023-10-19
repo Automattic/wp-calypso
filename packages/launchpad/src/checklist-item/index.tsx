@@ -37,10 +37,9 @@ const ChecklistItem = ( {
 	// when clicking on the task list items.
 	const buttonHref = task.useCalypsoPath && task.calypso_path ? task.calypso_path : undefined;
 
+	const hasContentOrActions = task.content || task.actions?.length;
 	const showBody =
-		task.body_context?.find( ( bodyContext ) => bodyContext === context ) &&
-		task.body &&
-		task.body.length;
+		task.body_context?.find( ( bodyContext ) => bodyContext === context ) && hasContentOrActions;
 
 	return (
 		<li
@@ -98,7 +97,7 @@ const ChecklistItem = ( {
 					{ subtitle && <p className="checklist-item__subtext">{ subtitle }</p> }
 				</Button>
 			) }
-			{ showBody && <Body body={ task.body || [] } /> }
+			{ showBody && <Body task={ task } /> }
 		</li>
 	);
 };

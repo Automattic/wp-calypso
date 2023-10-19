@@ -2,18 +2,15 @@ export interface TaskExtraData {
 	about_page_id?: number;
 }
 
-export type TaskBody =
-	| {
-			type: 'text';
-			content: string;
-	  }
-	| {
-			type: 'link';
-			content: string;
-			options: {
-				href: string;
-			};
-	  };
+export type TaskActionLink = {
+	type: 'link';
+	content: string;
+	options: {
+		href: string;
+	};
+};
+
+export type TaskAction = TaskActionLink;
 
 export interface Task {
 	id: string;
@@ -30,7 +27,8 @@ export interface Task {
 	repetition_count?: number;
 	order?: number;
 	useCalypsoPath?: boolean;
-	body?: TaskBody[];
+	content?: string;
+	actions?: TaskAction[];
 	body_context?: Array< string >;
 }
 

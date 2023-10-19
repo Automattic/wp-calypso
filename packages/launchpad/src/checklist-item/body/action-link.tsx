@@ -1,11 +1,11 @@
 import { Button } from '@wordpress/components';
 
-type BodyButtonProps = {
+type ActionLinkProps = {
 	label: string;
 	href: string;
 };
 
-const BodyButton = ( { label, href }: BodyButtonProps ) => {
+const ActionLink = ( { label, href }: ActionLinkProps ) => {
 	return (
 		<Button href={ href } variant="primary">
 			{ label }
@@ -13,4 +13,4 @@ const BodyButton = ( { label, href }: BodyButtonProps ) => {
 	);
 };
 
-export default BodyButton;
+export default ActionLink;

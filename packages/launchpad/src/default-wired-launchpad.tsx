@@ -108,6 +108,7 @@ const DefaultWiredLaunchpad = ( {
 				checklistSlug={ checklistSlug }
 				taskFilter={ taskFilter }
 				useLaunchpadOptions={ launchpadOptions }
+				context={ launchpadContext }
 			/>
 		</>
 	);

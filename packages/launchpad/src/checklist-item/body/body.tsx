@@ -1,38 +1,39 @@
-import { TaskBody } from '../../types';
-import BodyButton from './body-button';
-import BodyText from './body-text';
+import { Task, TaskAction } from '../../types';
+import ActionLink from './action-link';
 
-export const createBodyRow = ( body: TaskBody ) => {
-	switch ( body.type ) {
-		case 'text':
-			return <BodyText text={ body.content ?? '' } />;
+export const createAction = ( action: TaskAction, key: number ) => {
+	switch ( action.type ) {
 		case 'link':
-			return <BodyButton label={ body.content ?? '' } href={ body.options?.href ?? '#' } />;
+			return (
+				<ActionLink
+					key={ key }
+					label={ action.content ?? '' }
+					href={ action.options?.href ?? '#' }
+				/>
+			);
 		default:
 			return null;
 	}
 };
 
 type BodyProps = {
-	body: TaskBody[];
+	task: Task;
 };
 
-const Body = ( { body }: BodyProps ) => {
+const Body = ( { task }: BodyProps ) => {
+	const content = task.content;
+	const actions = task.actions || [];
 	return (
-		<>
-			{ body.length &&
-				body.map( ( bodyRow, index ) => {
-					const rowContent = Array.isArray( bodyRow )
-						? bodyRow.map( ( row ) => createBodyRow( row ) )
-						: createBodyRow( bodyRow );
-
-					return (
-						<div key={ index } className="checklist-item__body-row">
-							{ rowContent }
-						</div>
-					);
-				} ) }
-		</>
+		<div className="checklist-item__body">
+			{ content && <div className="checklist-item__body-row">{ content }</div> }
+			{ actions.length && (
+				<div className="checklist-item__body-row">
+					{ actions.map( ( action, index ) => {
+						return createAction( action, index );
+					} ) }
+				</div>
+			) }
+		</div>
 	);
 };
 

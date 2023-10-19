@@ -107,7 +107,9 @@
 .checklist-item__task:not(:nth-last-child(1)) {
 	border-bottom: 1px solid var(--studio-gray-5);
 }
-
+.checklist-item__body {
+	max-width: 277px;
+}
 .checklist-item__body-row {
 	padding-bottom: 16px;
 	.components-button:not(:last-child) {
