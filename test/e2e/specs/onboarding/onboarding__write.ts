@@ -59,7 +59,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		} );
 
 		it( `Select WordPress.com Free plan`, async function () {
-			const signupPickPlanPage = new SignupPickPlanPage( page, selectedFreeDomain );
+			const signupPickPlanPage = new SignupPickPlanPage( page );
 			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
 		} );
 	} );
