@@ -2,7 +2,7 @@ import moment from 'moment';
 import React from 'react';
 
 interface Props {
-	id?: string;
+	id: string;
 	value: string;
 	onChange?: ( value: string ) => void;
 	max?: string;
