@@ -108,7 +108,7 @@ export function HelpCenterGPT( { onResponseReceived }: Props ) {
 
 	const loadingMessage = useTyper( loadingMessages, ! data?.response, {
 		delayBetweenCharacters: 80,
-		delayBetweenWords: 1400,
+		delayBetweenPhrases: 1400,
 	} );
 
 	const doThumbsUp = ( source: string ) => {

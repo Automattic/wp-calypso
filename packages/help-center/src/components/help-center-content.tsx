@@ -74,7 +74,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 							<OdieAssistantProvider
 								sectionName="help-center"
 								botSetting="supportDocs"
-								botName="Help center"
+								botName="Wapuu"
 							/>
 						</div>
 					}
