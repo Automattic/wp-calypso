@@ -366,7 +366,7 @@ const useGridPlans = ( {
 			productNameShort,
 			planTitle: planConstantObj.getTitle?.() ?? '',
 			billingTimeframe: planConstantObj.getBillingTimeFrame?.(),
-			isCurrentPlan,
+			current: isCurrentPlan,
 			isMonthlyPlan,
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
