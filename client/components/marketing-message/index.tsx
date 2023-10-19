@@ -19,17 +19,14 @@ type JITMTProps = {
 	id: string;
 	template: string;
 	message?: string;
-	CTA?:
-		| {
-				message: string;
-				hook: string;
-				newWindow: boolean;
-				primary: boolean;
-				link: string;
-				// eslint-disable-next-line prettier/prettier
-				target: string;
-		  }
-		| undefined;
+	CTA?: Partial< {
+		message: string;
+		hook: string;
+		newWindow: boolean;
+		primary: boolean;
+		link: string;
+		target: string;
+	} >;
 };
 
 const Container = styled.div< Pick< NudgeProps, 'path' > >`
