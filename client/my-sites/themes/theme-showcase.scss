@@ -270,47 +270,6 @@
 
 	.themes__showcase {
 		margin-top: 32px;
-
-		.collection-header {
-			margin: 48px auto;
-		}
-
-		.collection-header__back {
-			padding-left: 0;
-			font-size: 1rem;
-			font-family: "SF Pro Text", serif;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 24px;
-			letter-spacing: -0.32px;
-
-			&.components-button {
-				&:focus {
-					box-shadow: none;
-				}
-			}
-		}
-
-		.collection-header__title {
-			color: var(--studio-gray-100);
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-			font-size: rem(56px);
-			font-style: normal;
-			font-weight: 400;
-			line-height: 1;
-			letter-spacing: 0.2px;
-			margin-bottom: 16px;
-		}
-
-		.collection-header__description {
-			color: var(--studio-gray-80);
-			font-family: "SF Pro Text", serif;
-			font-size: $font-body-large;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 1.4;
-			letter-spacing: 0.444px;
-		}
 	}
 
 	.themes__selection .themes-list {

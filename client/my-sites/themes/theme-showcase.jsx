@@ -1,8 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
-import { Button } from '@wordpress/components';
-import { chevronLeft, Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -20,9 +18,8 @@ import SelectDropdown from 'calypso/components/select-dropdown';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
-import { preventWidows } from 'calypso/lib/formatting';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
-import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
+import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -365,37 +362,6 @@ class ThemeShowcase extends Component {
 		this.scrollToSearchInput();
 	};
 
-	getCollectionViewHeader = () => {
-		const keyParts = [ this.props.tier, this.props.filter ];
-		const key = keyParts.filter( ( part ) => !! part ).join( '-' ) || 'recommended';
-		const { fullTitle, description } = THEME_COLLECTIONS[ key ];
-
-		return (
-			<div className="collection-header">
-				<Button
-					className="collection-header__back"
-					onClick={ () =>
-						page(
-							this.constructUrl( {
-								isCollectionView: false,
-								tier: '',
-								filter: '',
-								category: staticFilters.RECOMMENDED.key,
-							} )
-						)
-					}
-				>
-					<Icon icon={ chevronLeft } />
-					{ translate( 'Back' ) }
-				</Button>
-				{ fullTitle && <h2 className="collection-header__title">{ fullTitle }</h2> }
-				{ description && (
-					<div className="collection-header__description">{ preventWidows( description ) }</div>
-				) }
-			</div>
-		);
-	};
-
 	allThemes = ( { themeProps } ) => {
 		const { filter, isCollectionView, isJetpackSite, tier, children } = this.props;
 		if ( isJetpackSite ) {
@@ -644,8 +610,19 @@ class ThemeShowcase extends Component {
 							) }
 						</div>
 					) }
+					{ isCollectionView && (
+						<ThemeCollectionViewHeader
+							backUrl={ this.constructUrl( {
+								isCollectionView: false,
+								tier: '',
+								filter: '',
+								category: staticFilters.RECOMMENDED.key,
+							} ) }
+							filter={ this.props.filter }
+							tier={ this.props.tier }
+						/>
+					) }
 					<div className="themes__showcase">
-						{ isCollectionView && this.getCollectionViewHeader() }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
