@@ -105,6 +105,10 @@ const designFirst: Flow = {
 						} );
 
 						if ( providedDependencies?.hasSetPreselectedTheme ) {
+							await updateLaunchpadSettings( siteSlug, {
+								checklist_statuses: { design_completed: true },
+							} );
+
 							return navigate( `launchpad?siteSlug=${ siteSlug }` );
 						}
 
