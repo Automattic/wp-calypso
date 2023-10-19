@@ -123,13 +123,13 @@
 			padding: 0;
 			width: 32px;
 			height: 32px;
-			background: var(--studio-white);
+			background-color: var(--studio-white);
 			border: 1px solid var(--studio-gray-5);
 			border-radius: 50%;
 			display: flex;
 			justify-content: center;
 			margin: 0 8px;
-			transition: filter 0.1s linear;
+			transition: background-color 0.1s linear;
 			pointer-events: all;
 		}
 
@@ -138,7 +138,7 @@
 		}
 
 		&:hover {
-			filter: brightness(0.9);
+			background-color: var(--studio-gray-0);
 		}
 	}
 }
