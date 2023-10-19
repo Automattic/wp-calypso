@@ -104,7 +104,7 @@ const designFirst: Flow = {
 							launchpad_screen: 'full',
 						} );
 
-						if ( providedDependencies?.shouldSkipDesignSetup ) {
+						if ( providedDependencies?.hasSetPreselectedTheme ) {
 							return navigate( 'launchpad' );
 						}
 

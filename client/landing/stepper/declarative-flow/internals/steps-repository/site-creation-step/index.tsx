@@ -1,5 +1,6 @@
 import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Site } from '@automattic/data-stores';
+import { FREE_THEME } from '@automattic/design-picker';
 import {
 	ECOMMERCE_FLOW,
 	StepContainer,
@@ -109,7 +110,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		const styleVariation = getQueryArg( window.location.href, 'style_variation' );
 
 		// Only do this for preselected free themes with style variation.
-		if ( !! themeSlug && themeType === 'free' && !! styleVariation ) {
+		if ( !! themeSlug && themeType === FREE_THEME && !! styleVariation ) {
 			preselectedThemeSlug = `pub/${ themeSlug }`;
 		}
 	}
@@ -207,7 +208,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
 			goToCheckout: Boolean( planCartItem ),
-			shouldSkipDesignSetup: Boolean( preselectedThemeSlug ),
+			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 		};
 	}
 
