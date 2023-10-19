@@ -820,12 +820,11 @@ export default connect(
 			socialAccountLinkService: getSocialAccountLinkService( state ),
 			userEmail:
 				props.userEmail ||
-				getInitialQueryArguments( state ).email_address ||
-				getCurrentQueryArguments( state ).email_address,
+				getInitialQueryArguments( state )?.email_address ||
+				getCurrentQueryArguments( state )?.email_address,
 			useEmailFromUrl: !! (
-				props.useEmailFromUrl ||
-				getInitialQueryArguments( state ).use_email_from_url ||
-				getCurrentQueryArguments( state ).use_email_from_url
+				getInitialQueryArguments( state )?.use_email_from_url ||
+				getCurrentQueryArguments( state )?.use_email_from_url
 			),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 			currentQuery: getCurrentQueryArguments( state ),
