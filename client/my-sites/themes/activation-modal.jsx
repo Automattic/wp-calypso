@@ -121,7 +121,9 @@ export class ActivationModal extends Component {
 								components: {
 									a: (
 										<a
-											href={ localizeUrl( 'https://wordpress.com/support/themes/changing-themes' ) }
+											href={ localizeUrl(
+												'https://wordpress.com/support/themes/changing-themes/#what-happens-to-your-old-content'
+											) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
