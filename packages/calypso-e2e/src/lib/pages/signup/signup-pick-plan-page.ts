@@ -10,18 +10,15 @@ import type { SiteDetails, NewSiteResponse } from '../../../types/rest-api-clien
 export class SignupPickPlanPage {
 	private page: Page;
 	private plansPage: PlansPage;
-	private selectedDomain?: string;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {string} selectedDomain The selected domain in the previous step.
 	 */
-	constructor( page: Page, selectedDomain?: string ) {
+	constructor( page: Page ) {
 		this.page = page;
 		this.plansPage = new PlansPage( page );
-		this.selectedDomain = selectedDomain;
 	}
 
 	/**
@@ -37,14 +34,14 @@ export class SignupPickPlanPage {
 		] );
 
 		let url: RegExp;
-		let actions: Array< Promise< any > > = [];
 		if ( name !== 'Free' ) {
 			// Non-free plans should redirect to the Checkout cart.
 			url = new RegExp( '.*checkout.*' );
 		} else {
 			url = new RegExp( '.*setup/site-setup.*' );
 		}
-		actions = [
+
+		const actions = [
 			this.page.waitForResponse( /.*sites\/new\?.*/ ),
 			this.page.waitForURL( url, { timeout: 30 * 1000 } ),
 			this.plansPage.selectPlan( name ),
