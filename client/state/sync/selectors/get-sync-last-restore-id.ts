@@ -9,8 +9,8 @@ import 'calypso/state/sync/init';
  * @param {Object} state sync ub-tree for a site
  * @returns {string} string site that is syncing
  */
-export const getSyncSiteRestoreIdData = ( state: AppState ): string =>
-	get( state, 'restoreId', '' );
+export const getSyncSiteLastRestoreIdData = ( state: AppState ): string =>
+	get( state, 'lastRestoreId', '' );
 
 /**
  * Returns status info for sync progress
@@ -18,4 +18,4 @@ export const getSyncSiteRestoreIdData = ( state: AppState ): string =>
  * @param {number} siteId requested site for site sync info
  * @returns {string} string  type of the syncing site
  */
-export const getSyncRestoreId = compose( getSyncSiteRestoreIdData, getSiteSync );
+export const getSyncLastRestoreId = compose( getSyncSiteLastRestoreIdData, getSiteSync );

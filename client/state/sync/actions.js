@@ -5,7 +5,7 @@ import {
 	SITE_SYNC_IS_SYNCING_IN_PROGRESS,
 	SITE_SYNC_TARGET_SITE,
 	SITE_SYNC_SOURCE_SITE,
-	SITE_SYNC_RESTORE_ID,
+	SITE_SYNC_LAST_RESTORE_ID,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/sync/status';
@@ -36,16 +36,15 @@ export const setSiteSyncStatus = ( siteId, status ) => ( {
 } );
 
 /**
- * Sets the status of sync for a particular site.
- * @see state/sync/constants#SiteSyncStatus
+ * Sets the last restore id of the sync for a particular site.
  * @param {number} siteId The site id to which the status belongs
- * @param {string } restoreId The current restore id of the site sync
+ * @param {string } lastRestoreId The latest sync restore id
  * @returns {Object} An action object
  */
-export const setSiteSyncRestoreId = ( siteId, restoreId ) => ( {
-	type: SITE_SYNC_RESTORE_ID,
+export const setSiteSyncLastRestoreId = ( siteId, lastRestoreId ) => ( {
+	type: SITE_SYNC_LAST_RESTORE_ID,
 	siteId,
-	restoreId,
+	lastRestoreId,
 } );
 
 /**

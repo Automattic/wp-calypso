@@ -10,5 +10,5 @@ export { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-sync
 export { getSyncStatusError } from 'calypso/state/sync/selectors/get-sync-status-error';
 export { getSyncTargetSite } from './get-sync-target-site';
 export { getSyncSourceSite } from './get-sync-source-site';
-export { getSyncRestoreId } from './get-sync-restore-id';
+export { getSyncLastRestoreId } from './get-sync-last-restore-id';
 export { default as isFetchingSyncStatus } from 'calypso/state/sync/selectors/is-fetching-site-sync-status';

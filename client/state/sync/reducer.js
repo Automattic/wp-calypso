@@ -6,7 +6,7 @@ import {
 	SITE_SYNC_IS_SYNCING_IN_PROGRESS as IS_SYNCING_IN_PROGRESS,
 	SITE_SYNC_TARGET_SITE,
 	SITE_SYNC_SOURCE_SITE,
-	SITE_SYNC_RESTORE_ID,
+	SITE_SYNC_LAST_RESTORE_ID,
 } from 'calypso/state/action-types';
 import {
 	combineReducers,
@@ -34,18 +34,10 @@ export const status = withPersistence( ( state = null, action ) => {
 	}
 } );
 
-export const restoreId = withPersistence( ( state = null, action ) => {
+export const lastRestoreId = withPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
-		case IS_SYNCING_IN_PROGRESS: {
-			if ( action.isSyncingInProgress === true && state ) {
-				return null;
-			}
-			return state;
-		}
-		case SITE_SYNC_RESTORE_ID:
-			return action.restoreId || null;
-		case REQUEST_STATUS_FAILURE:
-			return null;
+		case SITE_SYNC_LAST_RESTORE_ID:
+			return action.lastRestoreId || state;
 		default:
 			return state;
 	}
@@ -171,7 +163,7 @@ export const siteReducer = combineReducers( {
 	isSyncingInProgress,
 	syncingTargetSite,
 	syncingSourceSite,
-	restoreId,
+	lastRestoreId,
 	error,
 } );
 

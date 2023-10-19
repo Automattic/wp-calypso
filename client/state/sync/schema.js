@@ -22,7 +22,7 @@ export const syncingSourceSite = {
 	type: [ 'string', 'null' ],
 };
 
-export const restoreId = {
+export const lastRestoreId = {
 	type: [ 'string', 'null' ],
 };
 
@@ -39,7 +39,7 @@ export const siteSyncSite = {
 		isSyncingInProgress,
 		syncingSourceSite,
 		syncingTargetSite,
-		restoreId,
+		lastRestoreId,
 		error,
 	},
 };
