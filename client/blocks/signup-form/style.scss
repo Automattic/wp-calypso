@@ -182,10 +182,19 @@ body.is-section-accept-invite {
 				padding-left: 0;
 				padding-right: 0;
 
-				button {
+				button:not(.is-borderless) {
 					display: block;
 					max-width: 327px;
 					margin: 0 auto;
+				}
+
+				button.is-borderless {
+					color: var(--color-link);
+					padding: 0;
+
+					&:hover {
+						color: var(--color-link-dark);
+					}
 				}
 			}
 
@@ -226,7 +235,7 @@ body.is-section-accept-invite {
 				}
 			}
 
-			button.button {
+			button.button:not(.is-borderless) {
 				border-radius: 4px;
 
 				&:focus {

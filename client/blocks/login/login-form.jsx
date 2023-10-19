@@ -82,6 +82,7 @@ export class LoginForm extends Component {
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
 		hideSignupLink: PropTypes.bool,
+		useEmailFromUrl: PropTypes.bool,
 	};
 
 	state = {
@@ -91,7 +92,12 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
-		const { disableAutoFocus } = this.props;
+		const { disableAutoFocus, useEmailFromUrl, userEmail } = this.props;
+
+		if ( useEmailFromUrl && userEmail ) {
+			this.props.getAuthAccountType( userEmail );
+		}
+
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
 			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
@@ -816,6 +822,11 @@ export default connect(
 				props.userEmail ||
 				getInitialQueryArguments( state ).email_address ||
 				getCurrentQueryArguments( state ).email_address,
+			useEmailFromUrl: !! (
+				props.useEmailFromUrl ||
+				getInitialQueryArguments( state ).use_email_from_url ||
+				getCurrentQueryArguments( state ).use_email_from_url
+			),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 			currentQuery: getCurrentQueryArguments( state ),
 		};

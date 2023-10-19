@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,6 +14,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -146,6 +148,18 @@ class PasswordlessSignupForm extends Component {
 		} );
 	};
 
+	goToLogin = () => {
+		page(
+			addQueryArgs(
+				{
+					email_address: this.state.email,
+					use_email_from_url: true,
+				},
+				this.props.logInUrl
+			)
+		);
+	};
+
 	getErrorMessage( errorObj = { error: null, message: null } ) {
 		const { translate } = this.props;
 
@@ -157,14 +171,10 @@ class PasswordlessSignupForm extends Component {
 					<>
 						{ translate( 'An account with this email address already exists.' ) }
 						&nbsp;
-						{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+						{ translate( '{{button}}Log in now{{/button}} to finish signing up.', {
 							components: {
-								a: (
-									<a
-										href={ `${ this.props.logInUrl }&email_address=${ encodeURIComponent(
-											this.state.email
-										) }` }
-									/>
+								button: (
+									<Button borderless={ true } className="button-plain" onClick={ this.goToLogin } />
 								),
 							},
 						} ) }
