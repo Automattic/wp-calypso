@@ -82,7 +82,18 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 				const confirmationURL = emailClient.getLinkFromMessageByKey( message, 'Confirm now' );
 				expect( confirmationURL ).not.toBe( null );
 
-				await page.goto( confirmationURL as string );
+				// Now, when you subscribe from a post, it uses a magic link login and redirects you to the post you subscribed from.
+				// All of this takes a good bit longer due to some behinds-the-scenes stuff, so we need a longer timeout.
+				// We also should make sure we have a fresh page so we know for sure when the redirect happens to the original post.
+				const pageForConfirming = await browser.newPage();
+				const waitForRedirectToOriginalPost = pageForConfirming.waitForURL(
+					( url ) => url.href.includes( newPostDetails.URL ),
+					{
+						timeout: 45 * 1000,
+					}
+				);
+				await pageForConfirming.goto( confirmationURL as string );
+				await waitForRedirectToOriginalPost;
 			} );
 		} );
 
