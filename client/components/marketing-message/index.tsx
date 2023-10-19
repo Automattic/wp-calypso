@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import cx from 'classnames';
 import { useEffect } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { useMarketingMessage } from './use-marketing-message';
 import './style.scss';
 
@@ -10,6 +12,21 @@ type NudgeProps = {
 	siteId: number | null;
 	className?: string;
 	path: string;
+	withDiscount: string;
+};
+
+type JITMTProps = {
+	id: string;
+	template: string;
+	message?: string;
+	CTA?: Partial< {
+		message: string;
+		hook: string;
+		newWindow: boolean;
+		primary: boolean;
+		link: string;
+		target: string;
+	} >;
 };
 
 const Container = styled.div< Pick< NudgeProps, 'path' > >`
@@ -75,6 +92,21 @@ function slugify( text: string ) {
 		.replace( /^-+|-+$/g, '' );
 }
 
+const limitedTimeOfferDiscountNudge = () => {
+	return (
+		<AsyncLoad
+			require="calypso/blocks/jitm"
+			placeholder={ null }
+			messagePath="calypso:plans:lto_notices"
+			onClick={ ( jitm: JITMTProps ) => {
+				jitm.message =
+					'Discount coupon applied! Select your plan below and check your final discounted price at checkout.';
+				jitm.CTA = {};
+			} }
+		/>
+	);
+};
+
 export default function MarketingMessage( { siteId, useMockData, ...props }: NudgeProps ) {
 	const [ isFetching, messages, removeMessage ] = useMarketingMessage( siteId, useMockData );
 	const hasNudge = ! isFetching && messages.length > 0;
@@ -84,6 +116,9 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 	}, [ hasNudge ] );
 
 	if ( ! hasNudge ) {
+		if ( config.isEnabled( 'jitms' ) ) {
+			return limitedTimeOfferDiscountNudge();
+		}
 		return null;
 	}
 
@@ -107,4 +142,5 @@ MarketingMessage.defaultProps = {
 	useMockData: false,
 	siteId: null,
 	path: '',
+	withDiscount: null,
 };
