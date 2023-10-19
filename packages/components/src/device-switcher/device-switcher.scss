@@ -21,12 +21,17 @@
 	padding: 0 10px;
 	box-sizing: border-box;
 
+	.device-switcher__toolbar {
+		margin-bottom: 13px;
+	}
+
 	.device-switcher__zoom-out {
 		--zoom-out-thumb-size: 8px;
 		--zoom-out-primary-color: var(--studio-gray-50, #50575e);
 		--zoom-out-secondary-color: var(--studio-gray-10, #c3c4c7);
 		--wp-components-color-accent: var(--zoom-out-primary-color);
 		width: 156px;
+		margin-bottom: 13px;
 
 		&:hover {
 			--zoom-out-primary-color: var(--studio-gray-100, #101517);
@@ -73,10 +78,6 @@
 				left: -2px;
 			}
 		}
-	}
-
-	&:not(:empty) {
-		margin-bottom: 13px;
 	}
 }
 
