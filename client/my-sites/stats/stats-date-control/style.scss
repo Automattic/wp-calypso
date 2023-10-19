@@ -11,14 +11,14 @@
 }
 
 .date-control-picker-shortcuts {
-	padding: 10px 0;
+	padding: 16px;
 	border-left: 1px solid var(--gray-gray-5, #dcdcde);
 	box-sizing: border-box;
 }
 
 .date-control-picker-shortcuts__list {
 	list-style: none;
-	margin: 0 12px;
+	margin: 0;
 }
 
 .date-control-picker-shortcuts__shortcut {
@@ -72,7 +72,7 @@
 		justify-content: flex-end;
 		letter-spacing: 0.32px;
 		line-height: 20px;
-		padding: var(--grid-unit-15, 12px) var(--grid-unit-20, 16px);
+		padding: 6px 8px;
 	}
 }
 
@@ -118,6 +118,7 @@
 	line-height: 24px;
 	letter-spacing: -0.28px;
 	text-align: left;
+	padding: 8px 0;
 
 	span {
 		color: var(--gray-gray-50, #646970);
