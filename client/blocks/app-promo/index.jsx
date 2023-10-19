@@ -74,7 +74,7 @@ export const AppPromo = ( {
 			{ isLoggedIn && ! showBadge && (
 				<Button
 					className="app-promo__link-button is-link"
-					href={ localizeUrl( `https://apps.wordpress.com/get/?campaign=${ source }` ) }
+					href={ localizeUrl( `https://apps.wordpress.com/get/?campaign=${ escapeURIComponent ( source ) }` ) }
 				>
 					{ translate( 'Get the Jetpack app' ) }
 				</Button>
