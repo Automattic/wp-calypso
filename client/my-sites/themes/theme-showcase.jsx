@@ -19,6 +19,7 @@ import SelectDropdown from 'calypso/components/select-dropdown';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
+import { preventWidows } from 'calypso/lib/formatting';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
@@ -387,7 +388,9 @@ class ThemeShowcase extends Component {
 					{ translate( 'Back' ) }
 				</Button>
 				{ title && <h2 className="collection-header__title">{ title }</h2> }
-				{ description && <div className="collection-header__description">{ description }</div> }
+				{ description && (
+					<div className="collection-header__description">{ preventWidows( description ) }</div>
+				) }
 			</div>
 		);
 	};
