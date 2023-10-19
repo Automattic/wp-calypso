@@ -9,7 +9,7 @@ import {
 	ComponentProps,
 } from 'react';
 
-type SubmenuPopoverProps = ComponentProps< typeof Popover > & {
+interface SubmenuPopoverProps extends ComponentProps< typeof Popover > {
 	isVisible?: boolean;
 	placement?:
 		| 'top'
@@ -28,7 +28,7 @@ type SubmenuPopoverProps = ComponentProps< typeof Popover > & {
 	flip?: boolean;
 	resize?: boolean;
 	inline?: boolean;
-};
+}
 
 /**
  * Adds a11y support to the submenu popover.
