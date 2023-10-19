@@ -1,6 +1,14 @@
 import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
-import { chevronLeft, cloud, cog, currencyDollar, plugins, search, shield } from '@wordpress/icons';
+import {
+	chevronLeft,
+	cloud,
+	settings,
+	currencyDollar,
+	plugins,
+	search,
+	shield,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -23,6 +31,11 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	JETPACK_CLOUD_ACTIVITY_LOG_LINK,
+	JETPACK_CLOUD_SEARCH_LINK,
+	JETPACK_CLOUD_SOCIAL_LINK,
+} from './lib/constants';
 import { redirectPage } from './lib/sidebar';
 
 const useMenuItems = ( {
@@ -63,12 +76,12 @@ const useMenuItems = ( {
 				{
 					icon: <JetpackIcons icon="activity-log" size={ 24 } />,
 					path: '/',
-					link: `/activity-log/${ siteSlug }`,
+					link: `${ JETPACK_CLOUD_ACTIVITY_LOG_LINK }/${ siteSlug }`,
 					title: translate( 'Activity Log' ),
 					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_activity_clicked',
 					enabled: isAdmin,
-					isSelected: itemLinkMatches( path, `/activity-log/${ siteSlug }` ),
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_ACTIVITY_LOG_LINK }/${ siteSlug }` ),
 				},
 				{
 					icon: plugins,
@@ -103,25 +116,25 @@ const useMenuItems = ( {
 				{
 					icon: search,
 					path: '/',
-					link: `/jetpack-search/${ siteSlug }`,
+					link: `${ JETPACK_CLOUD_SEARCH_LINK }/${ siteSlug }`,
 					title: translate( 'Search' ),
 					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_search_clicked',
 					enabled: isAdmin,
-					isSelected: itemLinkMatches( path, `/jetpack-search/${ siteSlug }` ),
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SEARCH_LINK }/${ siteSlug }` ),
 				},
 				{
-					icon: <JetpackIcons icon="activity-log" size={ 24 } />,
+					icon: <JetpackIcons icon="social" size={ 24 } />,
 					path: '/',
-					link: `/jetpack-social/${ siteSlug }`,
+					link: `${ JETPACK_CLOUD_SOCIAL_LINK }/${ siteSlug }`,
 					title: translate( 'Social' ),
 					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_social_clicked',
 					enabled: isAdmin && isSectionNameEnabled( 'jetpack-social' ) && ! isWPForTeamsSite,
-					isSelected: itemLinkMatches( path, `/jetpack-social/${ siteSlug }` ),
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SOCIAL_LINK }/${ siteSlug }` ),
 				},
 				{
-					icon: cog,
+					icon: settings,
 					path: '/',
 					link: settingsPath( siteSlug ),
 					title: translate( 'Settings' ),
