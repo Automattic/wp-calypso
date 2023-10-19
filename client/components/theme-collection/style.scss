@@ -38,13 +38,12 @@
 
 .theme-collection__title {
 	color: var(--studio-gray-100);
-	font-size: $font-body;
-	font-weight: 600;
-	line-height: 1.5;
+	font-size: $font-body-large;
+	font-weight: 400;
+	line-height: 1.4;
 
 	@include break-small {
 		font-size: rem(28px);
-		font-weight: 400;
 		line-height: 1.2;
 	}
 }
