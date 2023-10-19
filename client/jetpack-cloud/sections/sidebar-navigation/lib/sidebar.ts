@@ -16,5 +16,5 @@ export const isMenuItemSelected = ( link: string ) => {
  * @param path The path to redirect to.
  */
 export const redirectPage = ( path: string ) => {
-	page.redirect( path );
+	page( path );
 };

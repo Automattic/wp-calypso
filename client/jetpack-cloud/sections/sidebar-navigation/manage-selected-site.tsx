@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import { chevronLeft, cloud, cog, currencyDollar, plugins, search, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
@@ -24,10 +23,7 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
-const onClickMenuItem = ( url: string ) => {
-	page.redirect( url );
-};
+import { redirectPage } from './lib/sidebar';
 
 const useMenuItems = ( {
 	siteId,
@@ -69,7 +65,7 @@ const useMenuItems = ( {
 					path: '/',
 					link: `/activity-log/${ siteSlug }`,
 					title: translate( 'Activity Log' ),
-					onClickMenuItem: onClickMenuItem,
+					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_activity_clicked',
 					enabled: isAdmin,
 					isSelected: itemLinkMatches( path, `/activity-log/${ siteSlug }` ),
@@ -79,7 +75,7 @@ const useMenuItems = ( {
 					path: '/',
 					link: pluginsPath( siteSlug ),
 					title: translate( 'Plugins' ),
-					onClickMenuItem: onClickMenuItem,
+					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_plugins_clicked',
 					enabled: isPluginManagementEnabled && isAgency,
 					isSelected: itemLinkMatches( path, pluginsPath( siteSlug ) ),
@@ -89,7 +85,7 @@ const useMenuItems = ( {
 					path: '/',
 					link: backupPath( siteSlug ),
 					title: translate( 'Backup' ),
-					onClickMenuItem: onClickMenuItem,
+					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_backup_clicked',
 					enabled: isAdmin && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, backupPath( siteSlug ) ),
@@ -99,7 +95,7 @@ const useMenuItems = ( {
 					path: '/',
 					link: scanPath( siteSlug ),
 					title: translate( 'Scan' ),
-					onClickMenuItem: onClickMenuItem,
+					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_scan_clicked',
 					enabled: isAdmin && ! isWPCOM && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, scanPath( siteSlug ) ),
@@ -109,7 +105,7 @@ const useMenuItems = ( {
 					path: '/',
 					link: `/jetpack-search/${ siteSlug }`,
 					title: translate( 'Search' ),
-					onClickMenuItem: onClickMenuItem,
+					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_search_clicked',
 					enabled: isAdmin,
 					isSelected: itemLinkMatches( path, `/jetpack-search/${ siteSlug }` ),
@@ -119,7 +115,7 @@ const useMenuItems = ( {
 					path: '/',
 					link: `/jetpack-social/${ siteSlug }`,
 					title: translate( 'Social' ),
-					onClickMenuItem: onClickMenuItem,
+					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_social_clicked',
 					enabled: isAdmin && isSectionNameEnabled( 'jetpack-social' ) && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, `/jetpack-social/${ siteSlug }` ),
@@ -129,7 +125,7 @@ const useMenuItems = ( {
 					path: '/',
 					link: settingsPath( siteSlug ),
 					title: translate( 'Settings' ),
-					onClickMenuItem: onClickMenuItem,
+					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_settings_clicked',
 					enabled: shouldShowSettings,
 					isSelected: itemLinkMatches( path, settingsPath( siteSlug ) ),
@@ -139,7 +135,7 @@ const useMenuItems = ( {
 					path: '/',
 					link: purchasesPath( siteSlug ),
 					title: translate( 'Purchases' ),
-					onClickMenuItem: onClickMenuItem,
+					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_purchases_clicked',
 					enabled: shouldShowPurchases,
 					isSelected: itemLinkMatches( path, purchasesPath( siteSlug ) ),
@@ -178,7 +174,7 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 						? {
 								label: translate( 'Site Settings' ),
 								icon: chevronLeft,
-								onClick: () => onClickMenuItem( '/dashboard' ),
+								onClick: () => redirectPage( '/dashboard' ),
 						  }
 						: undefined
 				}
