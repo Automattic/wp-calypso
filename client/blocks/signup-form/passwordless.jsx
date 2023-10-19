@@ -95,23 +95,37 @@ class PasswordlessSignupForm extends Component {
 				} ),
 				anon_id: getTracksAnonymousUserId(),
 			} );
-			this.createAccountCallback( null, response );
+			this.createAccountCallback( response );
 		} catch ( err ) {
-			this.createAccountCallback( err );
+			this.createAccountError( err );
 		}
 	};
 
-	createAccountCallback = ( error, response ) => {
-		if ( error ) {
-			const errorMessage = this.getErrorMessage( error );
-			this.setState( {
-				errorMessages: [ errorMessage ],
-				isSubmitting: false,
-			} );
-			this.submitTracksEvent( false, { action_message: error.message } );
-			return;
+	createAccountError = ( error ) => {
+		const errorMessage = this.getErrorMessage( error );
+		this.setState( {
+			errorMessages: [ errorMessage ],
+			isSubmitting: false,
+		} );
+		this.submitTracksEvent( false, { action_message: error.message } );
+
+		// If the account already exists, we bring the user directly to login
+		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+			page(
+				addQueryArgs(
+					{
+						email_address: this.state.email,
+						is_signup_existing_account: true,
+					},
+					this.props.logInUrl
+				)
+			);
 		}
 
+		return;
+	};
+
+	createAccountCallback = ( response ) => {
 		this.setState( {
 			errorMessages: null,
 		} );

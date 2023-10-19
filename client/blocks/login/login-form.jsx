@@ -82,7 +82,7 @@ export class LoginForm extends Component {
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
 		hideSignupLink: PropTypes.bool,
-		useEmailFromUrl: PropTypes.bool,
+		isSignupExistingAccount: PropTypes.bool,
 	};
 
 	state = {
@@ -92,9 +92,9 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
-		const { disableAutoFocus, useEmailFromUrl, userEmail } = this.props;
+		const { disableAutoFocus, isSignupExistingAccount, userEmail } = this.props;
 
-		if ( useEmailFromUrl && userEmail ) {
+		if ( isSignupExistingAccount && userEmail ) {
 			this.props.getAuthAccountType( userEmail );
 		}
 
@@ -315,6 +315,16 @@ export class LoginForm extends Component {
 				</Notice>
 			);
 		}
+	}
+
+	renderLoginFromSignupNotice() {
+		return (
+			<Notice status="is-info" showDismiss={ false }>
+				{ this.props.translate( 'An account with this email address already exists.' ) }
+				&nbsp;
+				{ this.props.translate( 'Log in to your account' ) }
+			</Notice>
+		);
 	}
 
 	onWooCommerceSocialSuccess = ( ...args ) => {
@@ -570,6 +580,7 @@ export class LoginForm extends Component {
 			isPartnerSignup,
 			isWooCoreProfilerFlow,
 			hideSignupLink,
+			isSignupExistingAccount,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -669,6 +680,9 @@ export class LoginForm extends Component {
 								) }
 							</p>
 						) }
+
+						{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
+
 						<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
 						<FormTextInput
@@ -822,9 +836,9 @@ export default connect(
 				props.userEmail ||
 				getInitialQueryArguments( state )?.email_address ||
 				getCurrentQueryArguments( state )?.email_address,
-			useEmailFromUrl: !! (
-				getInitialQueryArguments( state )?.use_email_from_url ||
-				getCurrentQueryArguments( state )?.use_email_from_url
+			isSignupExistingAccount: !! (
+				getInitialQueryArguments( state )?.is_signup_existing_account ||
+				getCurrentQueryArguments( state )?.is_signup_existing_account
 			),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 			currentQuery: getCurrentQueryArguments( state ),
