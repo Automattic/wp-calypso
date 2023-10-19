@@ -285,7 +285,7 @@ export async function addProductsToCart(
 export async function setThemeOnSite(
 	siteSlug: string,
 	themeSlugWithRepo: string,
-	themeStyleVariation: string
+	themeStyleVariation?: string
 ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		return;
