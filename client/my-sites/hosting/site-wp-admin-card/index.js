@@ -64,9 +64,9 @@ export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 					/>
 					<div>
 						{ wpAdminEnabled ? (
-							<p>Currently, the activated mode is { adminInterface }</p>
+							<p>With toggle on, the activated mode is { adminInterface }</p>
 						) : (
-							<p>Now that the toggle is off, we have activated { adminInterface }.</p>
+							<p>With toggle off, the activated mode is { adminInterface }.</p>
 						) }
 					</div>
 				</ToggleContainer>
