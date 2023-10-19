@@ -10,6 +10,7 @@ import { likeComment, unlikeComment } from 'calypso/state/comments/actions';
 import { getCommentLike } from 'calypso/state/comments/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { registerLastLoggedInAction } from 'calypso/state/reader-ui/actions';
 
 class CommentLikeButtonContainer extends Component {
 	constructor() {
@@ -18,8 +19,10 @@ class CommentLikeButtonContainer extends Component {
 	}
 
 	handleLikeToggle( liked ) {
+		const likeAction = () => this.recordLikeToggle( liked );
+		this.props.registerLastLoggedInAction( likeAction );
 		if ( this.props.isLoggedIn ) {
-			this.recordLikeToggle( liked );
+			likeAction();
 		}
 		this.props.onLikeToggle( liked );
 	}
@@ -87,5 +90,5 @@ export default connect(
 		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ likeComment, recordReaderTracksEvent, unlikeComment }
+	{ likeComment, recordReaderTracksEvent, unlikeComment, registerLastLoggedInAction }
 )( CommentLikeButtonContainer );

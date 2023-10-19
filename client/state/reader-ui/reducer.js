@@ -45,7 +45,7 @@ export const currentStream = ( state = null, action ) => {
 export const lastLoggedInAction = ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_REGISTER_LAST_LOGGED_IN_ACTION:
-			return action.name;
+			return action.callback;
 		case READER_CLEAR_LAST_LOGGED_IN_ACTION:
 			return null;
 		default:

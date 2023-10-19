@@ -14,7 +14,7 @@ import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-co
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { registerLastLoggedInAction } from 'calypso/state/reader-ui/actions';
+
 import './style.scss';
 
 class ReaderLikeButton extends Component {
@@ -30,8 +30,6 @@ class ReaderLikeButton extends Component {
 	}
 
 	onLikeToggle = ( liked ) => {
-		this.props.registerLastLoggedInAction( 'like' );
-
 		if ( this.props.isLoggedIn ) {
 			return this.recordLikeToggle( liked );
 		}
@@ -120,5 +118,5 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 		};
 	},
-	{ markPostSeen, registerLastLoggedInAction }
+	{ markPostSeen }
 )( ReaderLikeButton );

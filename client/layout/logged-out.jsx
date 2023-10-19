@@ -247,7 +247,11 @@ const LayoutLoggedOut = ( {
 			{ ! isLoggedIn && config.isEnabled( 'reader/login-window' ) && (
 				<ReaderJoinConversationDialog
 					onClose={ () => clearLastLoggedInAction() }
-					isVisible={ !! loggedInAction?.length }
+					isVisible={ !! loggedInAction }
+					onLoginSuccess={ () => {
+						loggedInAction();
+						window.location.reload();
+					} }
 				/>
 			) }
 		</div>
@@ -268,45 +272,47 @@ LayoutLoggedOut.propTypes = {
 
 export default withCurrentRoute(
 	connect(
-	( state, { currentSection, currentRoute, currentQuery } ) => {
-		const sectionGroup = currentSection?.group ?? null;
-		const sectionName = currentSection?.name ?? null;
-		const sectionTitle = currentSection?.title ?? '';
-		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isPartnerSignup = isPartnerSignupQuery( currentQuery );
-		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
-		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
-		const oauth2Client = getCurrentOAuth2Client( state );
-		const isGravatar = isGravatarOAuth2Client( oauth2Client );
-		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
-		const redirectToOriginal = getRedirectToOriginal( state ) || '';
-		const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'client_id' );
-		const isGravPoweredClient =
-			isGravPoweredOAuth2Client( oauth2Client ) ||
-			// To cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
-			isGravPoweredOAuth2Client( { id: Number( clientId ) } );
-		const isReskinLoginRoute =
-			currentRoute.startsWith( '/log-in' ) &&
-			! isJetpackLogin &&
-			! isP2Login &&
-			Boolean( currentQuery?.client_id ) === false;
-		const isWhiteLogin =
-			isReskinLoginRoute ||
-			( isPartnerSignup && ! isPartnerSignupStart ) ||
-			isGravatar ||
-			isGravPoweredClient;
-		const noMasterbarForRoute =
-			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
-		const isPopup = '1' === currentQuery?.is_popup;
-		const noMasterbarForSection =
-			! isWooOAuth2Client( oauth2Client ) &&
-			[ 'signup', 'jetpack-connect' ].includes( sectionName );
-		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
-		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
-		const wccomFrom = currentQuery?.[ 'wccom-from' ];
-		const masterbarIsHidden =
-			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
+		( state, { currentSection, currentRoute, currentQuery } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
+			const sectionTitle = currentSection?.title ?? '';
+			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+			const isPartnerSignup = isPartnerSignupQuery( currentQuery );
+			const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
+			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
+			const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+			const oauth2Client = getCurrentOAuth2Client( state );
+			const isGravatar = isGravatarOAuth2Client( oauth2Client );
+			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
+			const redirectToOriginal = getRedirectToOriginal( state ) || '';
+			const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get(
+				'client_id'
+			);
+			const isGravPoweredClient =
+				isGravPoweredOAuth2Client( oauth2Client ) ||
+				// To cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
+				isGravPoweredOAuth2Client( { id: Number( clientId ) } );
+			const isReskinLoginRoute =
+				currentRoute.startsWith( '/log-in' ) &&
+				! isJetpackLogin &&
+				! isP2Login &&
+				Boolean( currentQuery?.client_id ) === false;
+			const isWhiteLogin =
+				isReskinLoginRoute ||
+				( isPartnerSignup && ! isPartnerSignupStart ) ||
+				isGravatar ||
+				isGravPoweredClient;
+			const noMasterbarForRoute =
+				isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
+			const isPopup = '1' === currentQuery?.is_popup;
+			const noMasterbarForSection =
+				! isWooOAuth2Client( oauth2Client ) &&
+				[ 'signup', 'jetpack-connect' ].includes( sectionName );
+			const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
+			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
+			const wccomFrom = currentQuery?.[ 'wccom-from' ];
+			const masterbarIsHidden =
+				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
 			return {
 				isJetpackLogin,
 				isWhiteLogin,

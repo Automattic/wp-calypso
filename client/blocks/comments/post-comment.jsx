@@ -109,7 +109,6 @@ class PostComment extends PureComponent {
 	};
 
 	onLikeToggle = () => {
-		this.props.registerLastLoggedInAction( 'like' );
 		if ( ! config.isEnabled( 'reader/login-window' ) && ! this.props.isLoggedIn ) {
 			// Redirect to create account page when not logged in and the login window component is not enabled
 			const { pathname } = getUrlParts( window.location.href );
@@ -124,10 +123,13 @@ class PostComment extends PureComponent {
 	};
 
 	handleReply = () => {
-		this.props.registerLastLoggedInAction( 'reply' );
-		if ( this.props.isLoggedIn ) {
+		const replyAction = () => {
 			this.props.onReplyClick( this.props.commentId );
 			this.setState( { showReplies: true } ); // show the comments when replying
+		};
+		this.props.registerLastLoggedInAction( replyAction );
+		if ( this.props.isLoggedIn ) {
+			replyAction();
 		}
 	};
 
