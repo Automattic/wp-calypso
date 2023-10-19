@@ -9,7 +9,7 @@ import './style.scss';
 interface ThemeCollectionProps {
 	collectionSlug: string;
 	title: string;
-	description: ReactElement;
+	description: ReactElement | null;
 	onSeeAll: () => void;
 }
 
