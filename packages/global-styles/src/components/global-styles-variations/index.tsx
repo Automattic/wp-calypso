@@ -150,7 +150,7 @@ const GlobalStylesVariations = ( {
 							{ ! splitDefaultVariation ? (
 								<>
 									<span>{ headerText }</span>
-									<PremiumBadge
+									{ ! splitDefaultVariation && <PremiumBadge
 										shouldHideTooltip
 										shouldCompactWithAnimation
 										labelText={ translate( 'Included in your plan' ) }
