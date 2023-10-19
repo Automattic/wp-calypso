@@ -130,12 +130,16 @@ class AddDomainButton extends Component {
 	}
 
 	render() {
-		const { specificSiteActions, ellipsisButton, borderless } = this.props;
+		const { specificSiteActions, ellipsisButton, disabled, borderless } = this.props;
 		const classes = classNames( 'options-domain-button', ellipsisButton && 'ellipsis' );
 
 		if ( ellipsisButton ) {
 			return (
-				<EllipsisMenu popoverClassName="options-domain-button__popover" position="bottom">
+				<EllipsisMenu
+					disabled={ disabled }
+					popoverClassName="options-domain-button__popover"
+					position="bottom"
+				>
 					{ this.renderOptions() }
 				</EllipsisMenu>
 			);
@@ -149,6 +153,7 @@ class AddDomainButton extends Component {
 					onClick={ this.toggleAddMenu }
 					ref={ this.addDomainButtonRef }
 					borderless={ borderless }
+					disabled={ disabled }
 				>
 					{ this.renderLabel() }
 				</Button>

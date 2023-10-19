@@ -1,10 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useMemo, useState } from 'react';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -38,7 +40,6 @@ import { ManageAllDomainsCTA } from './manage-domains-cta';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
 import { filterOutWpcomDomains } from './utils';
-
 import './style.scss';
 
 interface BulkSiteDomainsProps {
@@ -59,6 +60,10 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const { sendNudge } = useOdieAssistantContext();
 	const dispatch = useDispatch();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
+	const activeFeatures = site?.plan?.features?.active;
+	const sitePlanAllowsCustomDomain = activeFeatures
+		? activeFeatures.includes( FEATURE_CUSTOM_DOMAIN )
+		: true;
 
 	const hasNonWpcomDomains = useMemo( () => {
 		return filterOutWpcomDomains( data?.domains ?? [] ).length > 0;
@@ -78,7 +83,13 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 
 	const purchaseActions = usePurchaseActions();
 
-	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions /> ];
+	const buttons = [
+		<OptionsDomainButton
+			disabled={ ! sitePlanAllowsCustomDomain }
+			key="breadcrumb_button_1"
+			specificSiteActions
+		/>,
+	];
 
 	const [ changeSiteAddressSourceDomain, setChangeSiteAddressSourceDomain ] =
 		useState< ResponseDomain | null >( null );
@@ -88,6 +99,23 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
 			<Main>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
+				{ ! sitePlanAllowsCustomDomain && (
+					<div style={ { marginBottom: '32px' } }>
+						<UpsellNudge
+							event="domains_manage"
+							feature={ FEATURE_CUSTOM_DOMAIN }
+							forceDisplay
+							description={ translate(
+								'Upgrade your plan to register or transfer a custom domain.'
+							) }
+							showIcon
+							title={ translate( 'Get a custom domain' ) }
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+						/>
+					</div>
+				) }
+
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && <GoogleDomainOwnerBanner /> }
 				<DomainsTable
