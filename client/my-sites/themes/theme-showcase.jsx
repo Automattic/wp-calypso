@@ -396,14 +396,20 @@ class ThemeShowcase extends Component {
 	};
 
 	allThemes = ( { themeProps } ) => {
-		const { isJetpackSite, children } = this.props;
+		const { filter, isCollectionView, isJetpackSite, tier, children } = this.props;
 		if ( isJetpackSite ) {
 			return children;
 		}
 
+		// In Collection View of pricing tiers (e.g. Partner themes), prevent requesting only recommended themes.
+		const themesSelectionProps = {
+			...themeProps,
+			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
+		};
+
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themeProps } />
+				<ThemesSelection { ...themesSelectionProps } />
 			</div>
 		);
 	};
