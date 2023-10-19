@@ -5,8 +5,8 @@ import { find } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -66,10 +66,9 @@ class NotificationSettings extends Component {
 						{ this.props.translate( 'Manage all subscriptions' ) }
 					</Button>
 				) }
-				<FormattedHeader
-					brandFont
-					headerText={ this.props.translate( 'Notification Settings' ) }
-					align="left"
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ this.props.translate( 'Notification Settings' ) }
 				/>
 
 				<Navigation path={ this.props.path } />
