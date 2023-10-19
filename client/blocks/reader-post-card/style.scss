@@ -103,6 +103,7 @@
 				color: var(--color-text-inverted);
 				display: inline;
 				font-size: $font-body-extra-small;
+				line-height: 20px;
 			}
 
 			.reader-post-actions {
@@ -206,7 +207,7 @@
 	}
 
 	&:not(.is-compact) {
-		.reader-post-card__title {
+		.reader-post-card__post-details .reader-post-card__title {
 			margin-top: 24px;
 		}
 		.reader-excerpt__content {
