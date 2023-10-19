@@ -28,6 +28,8 @@ import {
 	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
+	getCreditsLineItemFromCart,
+	getSubtotalLineItemFromCart,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -50,6 +52,9 @@ import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
+const urlParams = new URLSearchParams( window.location.search );
+const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 export default function WPCheckoutOrderSummary( {
 	siteId,
@@ -108,32 +113,49 @@ export default function WPCheckoutOrderSummary( {
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const subtotalLineItem = getSubtotalLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
+	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 
 	return (
-		<CheckoutSummaryAmountWrapper>
-			{ couponLineItem && (
-				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
-					<span>{ couponLineItem.label }</span>
-					<span>{ couponLineItem.formattedAmount }</span>
-				</CheckoutSummaryLineItem>
-			) }
-			{ taxLineItems.map( ( taxLineItem ) => (
-				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
-					<span>{ taxLineItem.label }</span>
-					<span>{ taxLineItem.formattedAmount }</span>
-				</CheckoutSummaryLineItem>
-			) ) }
-			<CheckoutSummaryTotal>
-				<span>{ translate( 'Total' ) }</span>
-				<span className="wp-checkout-order-summary__total-price">
-					{ totalLineItem.formattedAmount }
-				</span>
-			</CheckoutSummaryTotal>
-		</CheckoutSummaryAmountWrapper>
+		<>
+			<CheckoutSummaryAmountWrapper>
+				{ checkoutVersion === '2' && (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + subtotalLineItem.id }>
+						<span>{ subtotalLineItem.label }</span>
+						<span>{ subtotalLineItem.formattedAmount }</span>
+					</CheckoutSummaryLineItem>
+				) }
+				{ couponLineItem && (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
+						<span>{ couponLineItem.label }</span>
+						<span>{ couponLineItem.formattedAmount }</span>
+					</CheckoutSummaryLineItem>
+				) }
+				{ taxLineItems.map( ( taxLineItem ) => (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+						<span>{ taxLineItem.label }</span>
+						<span>{ taxLineItem.formattedAmount }</span>
+					</CheckoutSummaryLineItem>
+				) ) }
+
+				{ checkoutVersion === '2' && creditsLineItem && responseCart.sub_total_integer > 0 && (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
+						<span>{ creditsLineItem?.label }</span>
+						<span>{ creditsLineItem.formattedAmount }</span>
+					</CheckoutSummaryLineItem>
+				) }
+				<CheckoutSummaryTotal>
+					<span>{ translate( 'Total' ) }</span>
+					<span className="wp-checkout-order-summary__total-price">
+						{ totalLineItem.formattedAmount }
+					</span>
+				</CheckoutSummaryTotal>
+			</CheckoutSummaryAmountWrapper>
+		</>
 	);
 }
 

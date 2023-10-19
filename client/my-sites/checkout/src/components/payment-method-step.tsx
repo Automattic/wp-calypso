@@ -10,7 +10,8 @@ import styled from '@emotion/styled';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
-
+const urlParams = new URLSearchParams( window.location.search );
+const checkoutVersion = urlParams.get( 'checkoutVersion' );
 const CheckoutTermsWrapper = styled.div`
 	& > * {
 		margin: 16px 0;
@@ -63,20 +64,22 @@ export default function PaymentMethodStep() {
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
-			<WPOrderReviewSection>
-				<NonTotalPrices>
-					<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
-					{ taxLineItems.map( ( taxLineItem ) => (
-						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-					) ) }
-					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-						<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-					) }
-				</NonTotalPrices>
-				<TotalPrice>
-					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-				</TotalPrice>
-			</WPOrderReviewSection>
+			{ checkoutVersion !== '2' && (
+				<WPOrderReviewSection>
+					<NonTotalPrices>
+						<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
+						{ taxLineItems.map( ( taxLineItem ) => (
+							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+						) ) }
+						{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+							<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+						) }
+					</NonTotalPrices>
+					<TotalPrice>
+						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+					</TotalPrice>
+				</WPOrderReviewSection>
+			) }
 		</>
 	);
 }
