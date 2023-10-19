@@ -6,9 +6,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import AppPasswords from 'calypso/me/application-passwords';
@@ -102,7 +102,7 @@ class TwoStep extends Component {
 
 				<DocumentHead title={ translate( 'Two-Step Authentication' ) } />
 
-				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
 
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (
