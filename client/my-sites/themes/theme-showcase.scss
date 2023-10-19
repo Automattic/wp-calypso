@@ -262,10 +262,9 @@
 	}
 
 	.themes__showcase {
-		margin-top: 32px;
 
 		.collection-header {
-			margin-bottom: 1.5em;
+			margin: 48px auto;
 		}
 
 		.collection-header__back {
@@ -285,21 +284,24 @@
 		}
 
 		.collection-header__title {
+			color: var(--studio-gray-100);
 			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-			font-size: rem(44px);
+			font-size: rem(56px);
 			font-style: normal;
 			font-weight: 400;
-			line-height: 52px;
+			line-height: 1;
 			letter-spacing: 0.2px;
+			margin-bottom: 16px;
 		}
 
 		.collection-header__description {
+			color: var(--studio-gray-80);
 			font-family: "SF Pro Text", serif;
-			font-size: $font-body;
+			font-size: $font-body-large;
 			font-style: normal;
 			font-weight: 400;
-			line-height: 24px;
-			letter-spacing: -0.32px;
+			line-height: 1.4;
+			letter-spacing: 0.444px;
 		}
 	}
 
