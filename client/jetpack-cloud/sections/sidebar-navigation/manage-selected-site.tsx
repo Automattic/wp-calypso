@@ -120,7 +120,7 @@ const useMenuItems = ( {
 					title: translate( 'Search' ),
 					onClickMenuItem: redirectPage,
 					trackEventName: 'calypso_jetpack_sidebar_search_clicked',
-					enabled: isAdmin,
+					enabled: true,
 					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SEARCH_LINK }/${ siteSlug }` ),
 				},
 				{
