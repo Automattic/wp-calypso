@@ -19,6 +19,7 @@ import {
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
 	isOnboardingPMFlow,
+	setThemeOnSite,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -101,9 +102,11 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
 
+	let preselectedThemeSlug = '';
+	let preselectedThemeStyleVariation = '';
+
 	// Maybe set the theme for the user instead of taking them to the update-design flow.
 	// See: https://github.com/Automattic/wp-calypso/issues/83077
-	let preselectedThemeSlug = '';
 	if ( isDesignFirstFlow( flow ) ) {
 		const themeSlug = getQueryArg( window.location.href, 'theme' );
 		const themeType = getQueryArg( window.location.href, 'theme_type' );
@@ -112,6 +115,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		// Only do this for preselected free themes with style variation.
 		if ( !! themeSlug && themeType === FREE_THEME && !! styleVariation ) {
 			preselectedThemeSlug = `pub/${ themeSlug }`;
+			preselectedThemeStyleVariation = styleVariation;
 		}
 	}
 
@@ -167,7 +171,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			flow,
 			true,
 			isPaidDomainItem,
-			preselectedThemeSlug || theme,
+			theme,
 			siteVisibility,
 			urlData?.meta.title ?? selectedSiteTitle,
 			// We removed the color option during newsletter onboarding.
@@ -180,6 +184,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			domainCartItem,
 			sourceSlug
 		);
+
+		if ( preselectedThemeSlug && site?.siteSlug ) {
+			await setThemeOnSite( site.siteSlug, preselectedThemeSlug, preselectedThemeStyleVariation );
+		}
 
 		if ( planCartItem?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY && site ) {
 			await addHostingTrial( { siteId: site.siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
