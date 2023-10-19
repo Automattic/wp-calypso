@@ -15,15 +15,7 @@ export class P2PlansMain extends Component {
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
-				<PlansFeaturesMain
-					siteId={ siteId }
-					selectedFeature={ selectedFeature }
-					selectedPlan={ selectedPlan }
-					intervalType={ [ 'monthly' ] }
-					hidePlansFeatureComparison={ true }
-					hidePlanTypeSelector={ true }
-					intent="plans-p2"
-				/>
+				<PlansFeaturesMain />
 			</>
 		);
 	}
