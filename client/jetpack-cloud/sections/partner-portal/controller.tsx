@@ -38,8 +38,10 @@ import Header from './header';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 import type PageJS from 'page';
 
+const isNewNavigationEnabled = isEnabled( 'jetpack/new-navigation' );
+
 const setSidebar = ( context: PageJS.Context ): void => {
-	if ( isEnabled( 'jetpack/new-navigation' ) ) {
+	if ( isNewNavigationEnabled ) {
 		context.secondary = <NewPurchasesSidebar />;
 	} else {
 		context.secondary = <PartnerPortalSidebar path={ context.path } />;
@@ -171,7 +173,7 @@ export function pricesContext( context: PageJS.Context, next: () => void ): void
 }
 
 export function landingPageContext() {
-	page.redirect( '/partner-portal/licenses' );
+	page.redirect( isNewNavigationEnabled ? '/partner-portal/billing' : '/partner-portal/licenses' );
 	return;
 }
 
