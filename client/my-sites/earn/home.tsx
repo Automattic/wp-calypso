@@ -16,6 +16,7 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EmptyContent from 'calypso/components/empty-content';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import PromoSection, {
 	Props as PromoSectionProps,
 	PromoSectionCardProps,
@@ -152,6 +153,11 @@ const Home = () => {
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Learn more' ),
+					component: (
+						<div className="action-panel__cta">
+							<InlineSupportLink supportContext="paypal" showIcon={ false } className="button" />
+						</div>
+					),
 					action: () => {
 						trackCtaButton( 'simple-payments' );
 						window.location.href = localizeUrl(
@@ -197,14 +203,21 @@ const Home = () => {
 	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
 		const cta = {
 			text: translate( 'Learn more' ),
+			...( hasConnectedAccount && {
+				component: (
+					<div className="action-panel__cta">
+						<InlineSupportLink
+							supportContext="payment_button_block"
+							showIcon={ false }
+							className="button"
+						/>
+					</div>
+				),
+			} ),
 			action: () => {
 				trackCtaButton( 'recurring-payments' );
-				const learnMoreLink = ! hasConnectedAccount
-					? 'https://wordpress.com/payments-donations/'
-					: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block';
-
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( learnMoreLink );
+					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
 				}
 			},
 		};
@@ -238,14 +251,17 @@ const Home = () => {
 	const getDonationsCard = (): PromoSectionCardProps => {
 		const cta = {
 			text: translate( 'Learn more' ),
+			...( hasConnectedAccount && {
+				component: (
+					<div className="action-panel__cta">
+						<InlineSupportLink supportContext="donations" showIcon={ false } className="button" />
+					</div>
+				),
+			} ),
 			action: () => {
 				trackCtaButton( 'donations' );
-				const learnMoreLink = ! hasConnectedAccount
-					? 'https://wordpress.com/payments-donations/'
-					: 'https://wordpress.com/support/wordpress-editor/blocks/donations/';
-
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( learnMoreLink );
+					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
 				}
 			},
 		};
@@ -284,6 +300,15 @@ const Home = () => {
 		}
 		const cta = {
 			text: translate( 'Learn more' ),
+			component: (
+				<div className="action-panel__cta">
+					<InlineSupportLink
+						supportContext="premium_content_block"
+						showIcon={ false }
+						className="button"
+					/>
+				</div>
+			),
 			action: () => {
 				trackLearnLink( 'premium-content' );
 				if ( window && window.location ) {
@@ -321,6 +346,15 @@ const Home = () => {
 		}
 		const cta = {
 			text: translate( 'Learn more' ),
+			component: (
+				<div className="action-panel__cta">
+					<InlineSupportLink
+						supportContext="paid-newsletters"
+						showIcon={ false }
+						className="button"
+					/>
+				</div>
+			),
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {
