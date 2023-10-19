@@ -115,7 +115,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		// Only do this for preselected free themes with style variation.
 		if ( !! themeSlug && themeType === FREE_THEME && !! styleVariation ) {
 			preselectedThemeSlug = `pub/${ themeSlug }`;
-			preselectedThemeStyleVariation = styleVariation;
+			preselectedThemeStyleVariation = styleVariation as string;
 		}
 	}
 
