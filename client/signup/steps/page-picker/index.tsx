@@ -24,6 +24,11 @@ import {
 	TEAM_PAGE,
 	SHOP_PAGE,
 	CUSTOM_PAGE,
+	EVENTS_PAGE,
+	CAREERS_PAGE,
+	DONATE_PAGE,
+	NEWSLETTER_PAGE,
+	CASE_STUDIES_PAGE,
 } from 'calypso/signup/difm/constants';
 import {
 	BBE_ONBOARDING_PAGE_PICKER_STEP,
@@ -288,6 +293,36 @@ function PageSelector( {
 			<PageCell
 				context={ context }
 				pageId={ TEAM_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ CAREERS_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ EVENTS_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ DONATE_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ NEWSLETTER_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ CASE_STUDIES_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
