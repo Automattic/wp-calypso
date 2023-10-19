@@ -366,7 +366,7 @@ export const SiteSyncCard = ( {
 		isSyncInProgress,
 		error: checkStatusError,
 		status,
-		siteType,
+		targetSite,
 	} = useCheckSyncStatus( productionSiteId );
 
 	const transformSelectedItems = useCallback( ( items: CheckboxOptionItem[] ) => {
@@ -405,11 +405,11 @@ export const SiteSyncCard = ( {
 		( selectedItems.length === 0 && selectedOption === actionForType ) ||
 		selectedOption === null;
 
-	let targetSiteType: 'production' | 'staging' | null = null;
-	if ( siteType ) {
-		targetSiteType = siteType;
+	let siteToSync: 'production' | 'staging' | null = null;
+	if ( targetSite ) {
+		siteToSync = targetSite;
 	} else {
-		targetSiteType = selectedOption === actionForType ? 'production' : 'staging';
+		siteToSync = selectedOption === actionForType ? 'production' : 'staging';
 	}
 
 	useEffect( () => {
@@ -427,7 +427,7 @@ export const SiteSyncCard = ( {
 	return (
 		<SyncCardContainer
 			currentSiteType={ type }
-			siteToSync={ targetSiteType }
+			siteToSync={ siteToSync }
 			progress={ progress }
 			isSyncInProgress={ isSyncInProgress }
 			error={ syncError }
