@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { CSSProperties } from 'react';
 
-const useZoomOut = () => {
-	const [ zoomOutScale, setZoomOutScale ] = useState( 1 );
+const INITIAL_SCALE = 1;
+
+const useZoomOut = ( onZoomOutScaleChange?: ( value: number ) => void ) => {
+	const [ zoomOutScale, setZoomOutScale ] = useState( INITIAL_SCALE );
 
 	const zoomOutStyles = {
 		display: 'flex',
@@ -13,12 +15,19 @@ const useZoomOut = () => {
 		transformOrigin: 'top',
 	} as CSSProperties;
 
-	const onZoomOutScaleChange = ( value: number ) => setZoomOutScale( value );
+	const handleZoomOutScaleChange = ( value: number ) => {
+		setZoomOutScale( value );
+		onZoomOutScaleChange?.( value );
+	};
+
+	useEffect( () => {
+		onZoomOutScaleChange?.( zoomOutScale );
+	}, [] );
 
 	return {
 		zoomOutScale,
 		zoomOutStyles,
-		onZoomOutScaleChange,
+		handleZoomOutScaleChange,
 	};
 };
 

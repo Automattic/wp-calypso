@@ -23,6 +23,7 @@ interface Props {
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
 	onViewportChange?: ( height?: number ) => void;
+	onZoomOutScaleChange?: ( value: number ) => void;
 }
 
 // Transition animation delay
@@ -41,6 +42,7 @@ const DeviceSwitcher = ( {
 	frameRef,
 	onDeviceChange,
 	onViewportChange,
+	onZoomOutScaleChange,
 }: Props ) => {
 	const [ device, setDevice ] = useState< Device >( defaultDevice );
 	const [ containerResizeListener, { width, height } ] = useResizeObserver();
@@ -48,7 +50,8 @@ const DeviceSwitcher = ( {
 	const viewportElement = frameRef?.current?.parentElement;
 	const viewportWidth = viewportElement?.clientWidth as number;
 	const viewportScale = useViewportScale( device, viewportWidth );
-	const { zoomOutScale, zoomOutStyles, onZoomOutScaleChange } = useZoomOut();
+	const { zoomOutScale, zoomOutStyles, handleZoomOutScaleChange } =
+		useZoomOut( onZoomOutScaleChange );
 
 	const handleDeviceClick = ( nextDevice: Device ) => {
 		setDevice( nextDevice );
@@ -114,7 +117,7 @@ const DeviceSwitcher = ( {
 						showTooltip={ false }
 						__nextHasNoMarginBottom
 						value={ Math.round( zoomOutScale * 100 ) }
-						onChange={ ( value ) => value !== undefined && onZoomOutScaleChange( value / 100 ) }
+						onChange={ ( value ) => value !== undefined && handleZoomOutScaleChange( value / 100 ) }
 						min={ 25 }
 						max={ 100 }
 					/>
