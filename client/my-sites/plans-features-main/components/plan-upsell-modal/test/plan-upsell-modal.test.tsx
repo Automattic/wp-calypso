@@ -16,25 +16,25 @@ import { useModalResolutionCallback } from '../hooks/use-modal-resolution-callba
 function MockPlansFeaturesMain( {
 	flowName,
 	selectedPlan,
-	paidDomain,
+	paidDomainName,
 }: {
 	flowName: string;
 	selectedPlan: string;
-	paidDomain?: string | null;
+	paidDomainName?: string | null;
 } ) {
 	const isCustomDomainAllowedOnFreePlan = useIsFreePlanCustomDomainUpsellEnabled(
 		flowName,
-		paidDomain
+		paidDomainName
 	);
 	const isPlanUpsellEnabledOnFreeDomain = useIsFreeDomainFreePlanUpsellEnabled(
 		flowName,
-		paidDomain
+		paidDomainName
 	);
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
 		isPlanUpsellEnabledOnFreeDomain,
 		flowName,
-		paidDomain,
+		paidDomainName,
 	} );
 	return <div data-testid="modal-render">{ resolveModal( selectedPlan ) }</div>;
 }
@@ -46,7 +46,7 @@ describe( 'PlanUpsellModal tests', () => {
 				<MockPlansFeaturesMain
 					flowName="onboarding-pm"
 					selectedPlan={ PLAN_FREE }
-					paidDomain="yourgroovydomain.com"
+					paidDomainName="yourgroovydomain.com"
 				/>
 			);
 			expect( screen.getByTestId( 'modal-render' ) ).toHaveTextContent(
@@ -75,7 +75,7 @@ describe( 'PlanUpsellModal tests', () => {
 				<MockPlansFeaturesMain
 					flowName="onboarding"
 					selectedPlan={ PLAN_FREE }
-					paidDomain="yourgroovydomain.com"
+					paidDomainName="yourgroovydomain.com"
 				/>
 			);
 			expect( screen.getByTestId( 'modal-render' ) ).toHaveTextContent(
@@ -91,7 +91,7 @@ describe( 'PlanUpsellModal tests', () => {
 				<MockPlansFeaturesMain
 					flowName="onboarding"
 					selectedPlan={ PLAN_PERSONAL }
-					paidDomain="yourgroovydomain.com"
+					paidDomainName="yourgroovydomain.com"
 				/>
 			);
 
@@ -104,7 +104,7 @@ describe( 'PlanUpsellModal tests', () => {
 				<MockPlansFeaturesMain
 					flowName="onboarding-pm"
 					selectedPlan={ PLAN_PERSONAL }
-					paidDomain="yourgroovydomain.com"
+					paidDomainName="yourgroovydomain.com"
 				/>
 			);
 
@@ -137,7 +137,7 @@ describe( 'PlanUpsellModal tests', () => {
 					isCustomDomainAllowedOnFreePlan: { result: false, isLoading: false },
 					isPlanUpsellEnabledOnFreeDomain: { result: false, isLoading: false },
 					flowName: 'Onboarding',
-					paidDomain: null,
+					paidDomainName: null,
 				} )
 			);
 			expect( result.current( PLAN_FREE ) ).toBeNull();
