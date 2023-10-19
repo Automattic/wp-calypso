@@ -71,6 +71,18 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		const clientCart = translateResponseCartToWPCOMCart( serverResponse );
 
+		it( 'has a total property', function () {
+			expect( clientCart.total.amount ).toBeDefined();
+		} );
+		it( 'has the expected total value', function () {
+			expect( clientCart.total.amount.value ).toBe( 14900 );
+		} );
+		it( 'has the expected currency', function () {
+			expect( clientCart.total.amount.currency ).toBe( 'BRL' );
+		} );
+		it( 'has the expected total display value', function () {
+			expect( clientCart.total.amount.displayValue ).toBe( 'R$149' );
+		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
@@ -186,6 +198,18 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		const clientCart = translateResponseCartToWPCOMCart( serverResponse );
 
+		it( 'has a total property', function () {
+			expect( clientCart.total.amount ).toBeDefined();
+		} );
+		it( 'has the expected total value', function () {
+			expect( clientCart.total.amount.value ).toBe( 14900 );
+		} );
+		it( 'has the expected currency', function () {
+			expect( clientCart.total.amount.currency ).toBe( 'BRL' );
+		} );
+		it( 'has the expected total display value', function () {
+			expect( clientCart.total.amount.displayValue ).toBe( 'R$149' );
+		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
@@ -343,6 +367,18 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		const clientCart = translateResponseCartToWPCOMCart( serverResponse );
 
+		it( 'has a total property', function () {
+			expect( clientCart.total.amount ).toBeDefined();
+		} );
+		it( 'has the expected total value', function () {
+			expect( clientCart.total.amount.value ).toBe( 22100 );
+		} );
+		it( 'has the expected currency', function () {
+			expect( clientCart.total.amount.currency ).toBe( 'USD' );
+		} );
+		it( 'has the expected total display value', function () {
+			expect( clientCart.total.amount.displayValue ).toBe( '$221' );
+		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
@@ -427,6 +463,18 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		const clientCart = translateResponseCartToWPCOMCart( serverResponse );
 
+		it( 'has a total property', function () {
+			expect( clientCart.total.amount ).toBeDefined();
+		} );
+		it( 'has the expected total value', function () {
+			expect( clientCart.total.amount.value ).toBe( 13200 );
+		} );
+		it( 'has the expected currency', function () {
+			expect( clientCart.total.amount.currency ).toBe( 'USD' );
+		} );
+		it( 'has the expected total display value', function () {
+			expect( clientCart.total.amount.displayValue ).toBe( '$132' );
+		} );
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );

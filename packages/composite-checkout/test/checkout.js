@@ -21,10 +21,10 @@ import {
 	makeManualResponse,
 	useTogglePaymentMethod,
 } from '../src/public-api';
-import { PaymentProcessorFunction, PaymentProcessorResponseType } from '../src/types';
+import { PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
 
-const myContext = createContext( undefined );
+const myContext = createContext();
 const usePaymentData = () => useContext( myContext );
 
 function TogglePaymentMethodBlock( { mockMethod } ) {
@@ -58,11 +58,13 @@ describe( 'Checkout', () => {
 			beforeEach( () => {
 				MyCheckout = () => (
 					<CheckoutProvider
+						items={ items }
+						total={ total }
 						paymentMethods={ [ mockMethod, mockMethod2 ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						selectFirstAvailablePaymentMethod
 					>
-						<DefaultCheckoutSteps items={ items } />
+						<DefaultCheckoutSteps />
 						<TogglePaymentMethodBlock mockMethod={ mockMethod } />
 					</CheckoutProvider>
 				);
@@ -73,15 +75,15 @@ describe( 'Checkout', () => {
 
 				// Product line items show the correct price
 				getAllByLabelTextInNode( container, items[ 0 ].label ).map( ( element ) =>
-					expect( element ).toHaveTextContent( items[ 0 ].amount )
+					expect( element ).toHaveTextContent( items[ 0 ].amount.displayValue )
 				);
 				getAllByLabelTextInNode( container, items[ 1 ].label ).map( ( element ) =>
-					expect( element ).toHaveTextContent( items[ 1 ].amount )
+					expect( element ).toHaveTextContent( items[ 1 ].amount.displayValue )
 				);
 
 				// All elements labeled 'Total' show the expected price
 				getAllByLabelTextInNode( container, total.label ).map( ( element ) =>
-					expect( element ).toHaveTextContent( total.amount )
+					expect( element ).toHaveTextContent( total.amount.displayValue )
 				);
 			} );
 
@@ -134,9 +136,9 @@ describe( 'Checkout', () => {
 			it( 'renders the review step', () => {
 				const { getAllByText } = render( <MyCheckout /> );
 				expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 2 );
-				expect( getAllByText( items[ 0 ].amount ) ).toHaveLength( 1 );
+				expect( getAllByText( items[ 0 ].amount.displayValue ) ).toHaveLength( 1 );
 				expect( getAllByText( items[ 1 ].label ) ).toHaveLength( 2 );
-				expect( getAllByText( items[ 1 ].amount ) ).toHaveLength( 1 );
+				expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
 			} );
 
 			it( 'renders the payment method submitButton', () => {
@@ -150,14 +152,16 @@ describe( 'Checkout', () => {
 
 			beforeEach( () => {
 				const mockMethod = createMockMethod();
-				const { items } = createMockItems();
+				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
+						items={ items }
+						total={ total }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						selectFirstAvailablePaymentMethod
 					>
-						<DefaultCheckoutSteps items={ items } />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
@@ -194,14 +198,16 @@ describe( 'Checkout', () => {
 
 			beforeEach( async () => {
 				const mockMethod = createMockMethod();
-				const { items } = createMockItems();
+				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
+						items={ items }
+						total={ total }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						selectFirstAvailablePaymentMethod
 					>
-						<DefaultCheckoutSteps items={ items } />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
@@ -232,6 +238,7 @@ describe( 'Checkout', () => {
 	describe( 'with custom steps', function () {
 		let MyCheckout;
 		const mockMethod = createMockMethod();
+		const { items, total } = createMockItems();
 		const steps = createMockStepObjects();
 		let validateForm;
 
@@ -244,6 +251,8 @@ describe( 'Checkout', () => {
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
+							items={ items }
+							total={ total }
 							paymentMethods={ [ mockMethod ] }
 							paymentProcessors={ getMockPaymentProcessors() }
 							selectFirstAvailablePaymentMethod
@@ -650,6 +659,7 @@ describe( 'Checkout', () => {
 		let MyCheckout;
 		const submitButtonComponent = <MockSubmitButtonSimple />;
 		const mockMethod = createMockMethod( { submitButton: submitButtonComponent } );
+		const { items, total } = createMockItems();
 		const steps = createMockStepObjects();
 
 		beforeEach( () => {
@@ -661,6 +671,8 @@ describe( 'Checkout', () => {
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
+							items={ items }
+							total={ total }
 							paymentMethods={ [ mockMethod ] }
 							paymentProcessors={ { mock: props.paymentProcessor } }
 							selectFirstAvailablePaymentMethod
@@ -747,12 +759,12 @@ function createMockMethodFactory() {
 	};
 }
 
-function MockSubmitButton( { disabled, content }: { disabled?: boolean; content: string } ) {
+function MockSubmitButton( { disabled, content } ) {
 	const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
 	const process = usePaymentProcessor( 'mock' );
 	const onClick = () => {
 		setTransactionPending();
-		process( true ).then( ( result ) => setTransactionComplete( result ) );
+		process().then( ( result ) => setTransactionComplete( result ) );
 	};
 	return (
 		<button disabled={ disabled } onClick={ onClick }>
@@ -767,51 +779,39 @@ function MockPaymentForm( { summary } ) {
 		<div data-testid="mock-payment-form">
 			<label>
 				{ summary ? 'Name Summary' : 'Cardholder Name' }
-				<input
-					name="cardholderName"
-					value={ cardholderName }
-					onChange={ ( event ) => changeCardholderName( event.target.value ) }
-				/>
+				<input name="cardholderName" value={ cardholderName } onChange={ changeCardholderName } />
 			</label>
 		</div>
 	);
 }
 
-function MockSubmitButtonSimple( { disabled, onClick }: { disabled?: boolean; onClick: any } ) {
+function MockSubmitButtonSimple( { disabled, onClick } ) {
 	return (
 		<button disabled={ disabled } onClick={ onClick }>
 			Pay Please
 		</button>
 	);
 }
-
-interface LineItem {
-	type: string;
-	id: string;
-	label: string;
-	amount: number;
-}
-
-function createMockItems(): { items: LineItem[]; total: LineItem } {
+function createMockItems() {
 	const items = [
 		{
 			label: 'Illudium Q-36 Explosive Space Modulator',
 			id: 'space-modulator',
 			type: 'widget',
-			amount: 5500,
+			amount: { currency: 'USD', value: 5500, displayValue: '$55' },
 		},
 		{
 			label: 'Air Jordans',
 			id: 'sneakers',
 			type: 'apparel',
-			amount: 12000,
+			amount: { currency: 'USD', value: 12000, displayValue: '$120' },
 		},
 	];
 	const total = {
 		label: 'Total',
 		id: 'total',
 		type: 'total',
-		amount: 17500,
+		amount: { currency: 'USD', value: 17500, displayValue: '$175' },
 	};
 	return { items, total };
 }
@@ -963,8 +963,8 @@ function StepWithEditableField() {
 	);
 }
 
-function getMockPaymentProcessors(): Record< string, PaymentProcessorFunction > {
+function getMockPaymentProcessors() {
 	return {
-		mock: async () => ( { type: PaymentProcessorResponseType.SUCCESS, payload: true } ),
+		mock: async () => ( { success: true, type: PaymentProcessorResponseType.SUCCESS } ),
 	};
 }

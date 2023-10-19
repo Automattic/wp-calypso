@@ -1,12 +1,12 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import {
+	getLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	getTaxLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getSubtotalLineItemFromCart,
 	getCouponLineItemFromCart,
 	getTotalLineItemFromCart,
-	LineItemType,
 } from '../src';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -70,24 +70,61 @@ const usdCart: ResponseCart = {
 	],
 };
 
+describe( 'getLineItemsFromCart', function () {
+	it( 'returns line items for all cart products', () => {
+		const expected = [
+			{
+				id: 'test1',
+				type: 'product',
+				label: 'Test Product 1',
+				amount: {
+					currency: 'JPY',
+					value: 50000,
+					displayValue: '¥50,000',
+				},
+			},
+			{
+				id: 'test2',
+				type: 'product',
+				label: 'Test Product 2',
+				amount: {
+					currency: 'JPY',
+					value: 25000,
+					displayValue: '¥25,000',
+				},
+			},
+		];
+
+		expect( getLineItemsFromCart( cart ) ).toStrictEqual( expected );
+	} );
+} );
+
 describe( 'getTotalLineItemFromCart', function () {
 	it( 'returns line item for total', () => {
-		const expected: LineItemType = {
+		const expected = {
 			id: 'total',
 			type: 'total',
 			label: 'Total',
-			formattedAmount: '¥75,100',
+			amount: {
+				currency: 'JPY',
+				value: 75100,
+				displayValue: '¥75,100',
+			},
 		};
 
 		expect( getTotalLineItemFromCart( cart ) ).toStrictEqual( expected );
 	} );
 
 	it( 'returns line item for total without zeros', () => {
-		const expected: LineItemType = {
+		const expected = {
 			id: 'total',
 			type: 'total',
 			label: 'Total',
-			formattedAmount: '$751',
+			amount: {
+				currency: 'USD',
+				value: 75100,
+				displayValue: '$751',
+			},
 		};
 
 		expect( getTotalLineItemFromCart( usdCart ) ).toStrictEqual( expected );
@@ -106,11 +143,15 @@ describe( 'getCouponLineItemFromCart', function () {
 			coupon_savings_total_integer: 300,
 		};
 
-		const expected: LineItemType = {
+		const expected = {
 			id: 'coupon-line-item',
 			type: 'coupon',
 			label: 'Coupon: ABCD',
-			formattedAmount: '- ¥300',
+			amount: {
+				currency: 'JPY',
+				value: 300,
+				displayValue: '- ¥300',
+			},
 		};
 
 		expect( getCouponLineItemFromCart( cartWithCoupon ) ).toStrictEqual( expected );
@@ -119,11 +160,15 @@ describe( 'getCouponLineItemFromCart', function () {
 
 describe( 'getSubtotalLineItemFromCart', function () {
 	it( 'returns line item for subtotal', () => {
-		const expected: LineItemType = {
+		const expected = {
 			id: 'subtotal',
 			type: 'subtotal',
 			label: 'Subtotal',
-			formattedAmount: '¥75,000',
+			amount: {
+				currency: 'JPY',
+				value: 75000,
+				displayValue: '¥75,000',
+			},
 		};
 
 		expect( getSubtotalLineItemFromCart( cart ) ).toStrictEqual( expected );
@@ -137,11 +182,15 @@ describe( 'getTaxLineItemFromCart', function () {
 
 	it( 'returns line item for taxes if displayed', () => {
 		const cartWithTaxes = { ...cart, tax: { ...cart.tax, display_taxes: true } };
-		const expected: LineItemType = {
+		const expected = {
 			id: 'tax-line-item',
 			type: 'tax',
 			label: 'Tax',
-			formattedAmount: '¥100',
+			amount: {
+				currency: 'JPY',
+				value: 100,
+				displayValue: '¥100',
+			},
 		};
 
 		expect( getTaxLineItemFromCart( cartWithTaxes ) ).toStrictEqual( expected );
@@ -174,18 +223,26 @@ describe( 'getTaxBreakdownLineItemsFromCart', function () {
 				},
 			],
 		};
-		const expected: LineItemType[] = [
+		const expected = [
 			{
 				id: 'tax-line-item-GST',
 				type: 'tax',
 				label: 'GST (5%)',
-				formattedAmount: '¥100',
+				amount: {
+					currency: 'JPY',
+					value: 100,
+					displayValue: '¥100',
+				},
 			},
 			{
 				id: 'tax-line-item-PST',
 				type: 'tax',
 				label: 'PST (10%)',
-				formattedAmount: '¥200',
+				amount: {
+					currency: 'JPY',
+					value: 200,
+					displayValue: '¥200',
+				},
 			},
 		];
 
@@ -198,12 +255,16 @@ describe( 'getTaxBreakdownLineItemsFromCart', function () {
 			tax: { ...cart.tax, display_taxes: true },
 			total_tax_breakdown: [],
 		};
-		const expected: LineItemType[] = [
+		const expected = [
 			{
 				id: 'tax-line-item',
 				type: 'tax',
 				label: 'Tax',
-				formattedAmount: '¥100',
+				amount: {
+					currency: 'JPY',
+					value: 100,
+					displayValue: '¥100',
+				},
 			},
 		];
 
@@ -218,11 +279,15 @@ describe( 'getCreditsLineItemFromCart', function () {
 
 	it( 'returns line item for credits', () => {
 		const cartWithCredits = { ...cart, credits_integer: 400, credits_display: 'JPY 400' };
-		const expected: LineItemType = {
+		const expected = {
 			id: 'credits',
 			type: 'credits',
 			label: 'Credits',
-			formattedAmount: '- ¥400',
+			amount: {
+				currency: 'JPY',
+				value: 400,
+				displayValue: '- ¥400',
+			},
 		};
 
 		expect( getCreditsLineItemFromCart( cartWithCredits ) ).toStrictEqual( expected );
@@ -230,11 +295,15 @@ describe( 'getCreditsLineItemFromCart', function () {
 
 	it( 'returns line item for credits display value clamped to subtotal', () => {
 		const cartWithCredits = { ...cart, credits_integer: 80000, credits_display: 'JPY 80000' };
-		const expected: LineItemType = {
+		const expected = {
 			id: 'credits',
 			type: 'credits',
 			label: 'Credits',
-			formattedAmount: '- ¥75,000',
+			amount: {
+				currency: 'JPY',
+				value: 75000,
+				displayValue: '- ¥75,000',
+			},
 		};
 
 		expect( getCreditsLineItemFromCart( cartWithCredits ) ).toStrictEqual( expected );

@@ -8,6 +8,7 @@ import {
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
+import { useLineItems } from '../src/lib/line-items';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const ButtonPayPalIcon = styled( PaypalLogo )`
@@ -17,7 +18,6 @@ const ButtonPayPalIcon = styled( PaypalLogo )`
 export function createPayPalMethod(): PaymentMethod {
 	return {
 		id: 'paypal',
-		paymentProcessorId: 'paypal',
 		label: <PaypalLabel />,
 		submitButton: <PaypalSubmitButton />,
 		inactiveContent: <PaypalSummary />,
@@ -42,6 +42,7 @@ function PaypalSubmitButton( {
 } ) {
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
+	const [ items ] = useLineItems();
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
@@ -49,7 +50,9 @@ function PaypalSubmitButton( {
 				'Missing onClick prop; PaypalSubmitButton must be used as a payment button in CheckoutSubmitButton'
 			);
 		}
-		onClick( 'paypal' );
+		onClick( 'paypal', {
+			items,
+		} );
 	};
 	return (
 		<Button

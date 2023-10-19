@@ -1,3 +1,4 @@
+import type { LineItem } from '@automattic/composite-checkout';
 import type { DomainContactDetails, RequestCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -234,14 +235,8 @@ export type PayPalExpressEndpointRequestPayload = {
 
 export type PayPalExpressEndpointResponse = unknown;
 
-export interface LineItemType {
-	id: string;
-	type: string;
-	label: string;
-	formattedAmount: string;
-}
-
 export interface WPCOMCart {
+	total: LineItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 }
 
@@ -422,6 +417,7 @@ export type ManagedContactDetailsUpdaters = {
 
 /**
  * Request parameter expected by the domain contact validation endpoint.
+ *
  * @see WPCOM_JSON_API_Signups_Validation_User_Endpoint
  */
 export type SignupValidationResponse = {
@@ -437,6 +433,7 @@ export type SignupValidationResponse = {
 
 /**
  * Request parameter expected by the domain contact validation endpoint.
+ *
  * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
  */
 export type ContactValidationRequestContactInformation = {

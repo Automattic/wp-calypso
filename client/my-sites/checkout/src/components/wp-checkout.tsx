@@ -16,12 +16,12 @@ import {
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
+	useTotal,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 	FormStatus,
 } from '@automattic/composite-checkout';
-import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
@@ -264,6 +264,7 @@ export default function WPCheckout( {
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
+	const total = useTotal();
 	const reduxDispatch = useReduxDispatch();
 	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
 
@@ -436,10 +437,7 @@ export default function WPCheckout( {
 										<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
 									</CheckoutSummaryTitle>
 									<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-										{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
-											isSmallestUnit: true,
-											stripZeros: true,
-										} ) }
+										{ total.amount.displayValue }
 									</CheckoutSummaryTitlePrice>
 								</CheckoutSummaryTitleContent>
 							</CheckoutSummaryTitleLink>

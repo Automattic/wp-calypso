@@ -2,7 +2,7 @@ import {
 	isGoogleWorkspaceExtraLicence,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from '@automattic/calypso-products';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { isValueTruthy, getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
 import cookie from 'cookie';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
@@ -27,9 +27,14 @@ import type {
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
  * the format required by the composite checkout component.
+ *
+ * @param serverCart Cart object returned by the WPCOM cart endpoint
+ * @returns Cart object suitable for passing to the checkout component
  */
 export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
 	const { allowed_payment_methods } = serverCart;
+
+	const totalItem = getTotalLineItemFromCart( serverCart );
 
 	const alwaysEnabledPaymentMethods = [ 'free-purchase' ];
 
@@ -39,6 +44,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 
 	return {
+		total: totalItem,
 		allowedPaymentMethods,
 	};
 }
@@ -131,6 +137,7 @@ function addRegistrationDataToGSuiteCartProduct(
 
 /**
  * This function is used to get the value of the sensitive_pixel_options cookie.
+ *
  * @returns String with the value of the sensitive_pixel_options cookie, or an empty string if the cookie is not present.
  */
 function getConversionValuesFromCookies(): { ad_details: string; sensitive_pixel_options: string } {

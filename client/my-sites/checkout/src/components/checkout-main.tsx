@@ -247,7 +247,7 @@ export default function CheckoutMain( {
 		isInitialCartLoading,
 	} );
 
-	const { allowedPaymentMethods } = useMemo(
+	const { total, allowedPaymentMethods } = useMemo(
 		() => translateResponseCartToWPCOMCart( responseCart ),
 		[ responseCart ]
 	);
@@ -739,6 +739,7 @@ export default function CheckoutMain( {
 				} }
 			/>
 			<CheckoutProvider
+				total={ total }
 				onPaymentComplete={ handlePaymentComplete }
 				onPaymentError={ handlePaymentError }
 				onPaymentRedirect={ handlePaymentRedirect }

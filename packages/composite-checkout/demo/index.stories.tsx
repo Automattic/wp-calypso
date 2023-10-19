@@ -13,22 +13,22 @@ import {
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useState, useEffect, useMemo, useRef } from 'react';
-import CheckoutReviewOrder, { CheckoutReviewOrderTitle } from './checkout-review-order';
+import { getDefaultOrderReviewStep } from '../src/components/default-steps';
 import { createPayPalMethod } from './pay-pal';
-import type { LineItem } from './helpers';
 
-const initialItems: LineItem[] = [
+const initialItems = [
 	{
 		label: 'WordPress.com Personal Plan',
 		id: 'wpcom-personal',
 		type: 'plan',
-		amount: 6000,
+		amount: { currency: 'USD', value: 6000, displayValue: '$60' },
 	},
 	{
 		label: 'Domain registration',
+		sublabel: 'example.com',
 		id: 'wpcom-domain',
 		type: 'domain',
-		amount: 0,
+		amount: { currency: 'USD', value: 0, displayValue: '$0' },
 	},
 ];
 
@@ -42,6 +42,21 @@ async function payPalProcessor( data: unknown ) {
 	await asyncTimeout( 2000 );
 	return makeSuccessResponse( { success: true } );
 }
+
+const getTotal = ( items: typeof initialItems ) => {
+	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
+	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
+	return {
+		id: 'total',
+		type: 'total',
+		label: 'Total',
+		amount: {
+			currency,
+			value: lineItemTotal,
+			displayValue: formatValueForCurrency( currency, lineItemTotal ),
+		},
+	};
+};
 
 const ContactFormTitle = () => {
 	const isActive = useIsStepActive();
@@ -155,6 +170,8 @@ function ContactForm( { preFilledCountry }: { preFilledCountry?: string } ) {
 	);
 }
 
+const reviewOrderStep = getDefaultOrderReviewStep();
+
 function usePrefilledCountry( preFilledCountry?: string ) {
 	const setStepComplete = useSetStepComplete();
 	const didRun = useRef( false );
@@ -182,6 +199,7 @@ function usePrefilledCountry( preFilledCountry?: string ) {
 
 function CheckoutDemo( { preFilledCountry }: { preFilledCountry?: string } ) {
 	const [ items ] = useState( initialItems );
+	const total = useMemo( () => getTotal( items ), [ items ] );
 	const [ isLoading, setIsLoading ] = useState( true );
 
 	useEffect( () => {
@@ -199,24 +217,20 @@ function CheckoutDemo( { preFilledCountry }: { preFilledCountry?: string } ) {
 
 	return (
 		<CheckoutProvider
+			items={ items }
+			total={ total }
 			onPaymentComplete={ onPaymentComplete }
 			isLoading={ isLoading }
 			paymentMethods={ [ payPalMethod ] }
 			paymentProcessors={ { paypal: payPalProcessor } }
 			initiallySelectedPaymentMethodId={ payPalMethod.id }
 		>
-			<MyCheckoutBody items={ items } preFilledCountry={ preFilledCountry } />
+			<MyCheckoutBody preFilledCountry={ preFilledCountry } />
 		</CheckoutProvider>
 	);
 }
 
-function MyCheckoutBody( {
-	preFilledCountry,
-	items,
-}: {
-	preFilledCountry?: string;
-	items: LineItem[];
-} ) {
+function MyCheckoutBody( { preFilledCountry }: { preFilledCountry?: string } ) {
 	const { value } = useCountry();
 
 	return (
@@ -224,8 +238,9 @@ function MyCheckoutBody( {
 			<CheckoutStep
 				stepId="review-order-step"
 				isCompleteCallback={ () => true }
-				activeStepContent={ <CheckoutReviewOrder items={ items } /> }
-				titleContent={ <CheckoutReviewOrderTitle /> }
+				activeStepContent={ reviewOrderStep.activeStepContent }
+				completeStepContent={ reviewOrderStep.completeStepContent }
+				titleContent={ reviewOrderStep.titleContent }
 			/>
 			<CheckoutStep
 				stepId="contact-form"
@@ -251,6 +266,14 @@ function MyCheckoutBody( {
 			<CheckoutFormSubmit />
 		</CheckoutStepGroup>
 	);
+}
+
+function formatValueForCurrency( currency: string, value: number ): string {
+	if ( currency !== 'USD' ) {
+		throw new Error( `Unsupported currency ${ currency }'` );
+	}
+	const floatValue = value / 100;
+	return '$' + floatValue.toString();
 }
 
 // Simulate network request time

@@ -29,6 +29,11 @@ export type IsCompleteCallback = () => boolean | Promise< boolean >;
 
 export type StepCompleteCallback = () => Promise< boolean >;
 
+export interface OrderSummaryData {
+	className: string;
+	summaryContent: React.ReactNode;
+}
+
 export interface PaymentMethodSubmitButtonProps {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
@@ -45,6 +50,29 @@ export interface PaymentMethod {
 }
 
 export type ExternalPaymentMethod = Partial< PaymentMethod >;
+
+export interface LineItem {
+	id: string;
+	type: string;
+	label: string;
+	sublabel?: string;
+	amount: LineItemAmount;
+}
+
+export type ExternalLineItem = Partial< LineItem >;
+
+export interface TotalValidatedLineItem extends ExternalLineItem {
+	label: LineItem[ 'label' ];
+	amount: LineItem[ 'amount' ];
+}
+
+export interface LineItemAmount {
+	currency: string;
+	value: number;
+	displayValue: string;
+}
+
+export type ExternalLineItemAmount = Partial< LineItemAmount >;
 
 export enum FormStatus {
 	LOADING = 'loading',
@@ -98,6 +126,8 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 
 export interface CheckoutProviderProps {
 	theme?: ThemeType;
+	total?: LineItem;
+	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
 	onPaymentComplete?: PaymentEventCallback;
 	onPaymentRedirect?: PaymentEventCallback;
@@ -258,6 +288,17 @@ export type SetTransactionComplete = ( response: PaymentProcessorResponseData ) 
 export type SetTransactionError = ( message: string ) => void;
 
 export type ResetTransaction = () => void;
+
+export interface LineItemsState {
+	items: LineItem[];
+	total: LineItem;
+}
+
+export interface LineItemsProviderProps {
+	items: LineItem[];
+	total: LineItem;
+	children?: React.ReactNode;
+}
 
 export type StepIdMap = Record< string, number >;
 

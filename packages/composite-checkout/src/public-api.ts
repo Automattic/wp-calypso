@@ -16,6 +16,7 @@ import {
 } from './components/checkout-steps';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
+import { useTotal } from './lib/line-items';
 import {
 	usePaymentMethod,
 	usePaymentMethodId,
@@ -67,5 +68,6 @@ export {
 	useProcessPayment,
 	useSetStepComplete,
 	useTogglePaymentMethod,
+	useTotal,
 	useTransactionStatus,
 };
