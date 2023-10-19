@@ -7,7 +7,6 @@ import { LoadingPlaceHolder } from '../../plans-features-main/components/loading
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
-import type { DomainSuggestion } from '@automattic/data-stores';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
 const SubdomainSuggestion = styled.div`
@@ -25,13 +24,11 @@ const SubdomainSuggestion = styled.div`
 
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
+	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
-} > = ( { paidDomainName, wpcomFreeDomainSuggestion, isCustomDomainAllowedOnFreePlan } ) => {
+} > = ( { paidDomainName, generatedWPComSubdomain, isCustomDomainAllowedOnFreePlan } ) => {
 	const translate = useTranslate();
-	const isLoading =
-		wpcomFreeDomainSuggestion.isLoading || isCustomDomainAllowedOnFreePlan.isLoading;
-
+	const isLoading = generatedWPComSubdomain.isLoading || isCustomDomainAllowedOnFreePlan.isLoading;
 	return (
 		<SubdomainSuggestion>
 			{ isLoading && <LoadingPlaceHolder /> }
@@ -46,7 +43,7 @@ const FreePlanCustomDomainFeature: React.FC< {
 				) : (
 					<>
 						<div className="is-domain-name">{ paidDomainName }</div>
-						<div>{ wpcomFreeDomainSuggestion.result?.domain_name }</div>
+						<div>{ generatedWPComSubdomain.result?.domain_name }</div>
 					</>
 				) ) }
 		</SubdomainSuggestion>
@@ -57,7 +54,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planSlug: string;
 	paidDomainName?: string;
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
+	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
@@ -67,7 +64,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	features,
 	planSlug,
 	paidDomainName,
-	wpcomFreeDomainSuggestion,
+	generatedWPComSubdomain,
 	hideUnavailableFeatures,
 	selectedFeature,
 	isCustomDomainAllowedOnFreePlan,
@@ -128,7 +125,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 											<FreePlanCustomDomainFeature
 												key={ key }
 												paidDomainName={ paidDomainName as string }
-												wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+												generatedWPComSubdomain={ generatedWPComSubdomain }
 												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 											/>
 										</Plans2023Tooltip>
