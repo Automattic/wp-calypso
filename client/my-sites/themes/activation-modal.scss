@@ -13,7 +13,7 @@
 		font-size: $font-title-large;
 		line-height: 1.1;
 		width: 100%;
-		margin-bottom: 16px;
+		margin-bottom: 32px;
 	}
 }
 
@@ -31,7 +31,8 @@
 }
 
 .activation-modal__description {
-	margin-bottom: 56px;
+	margin-bottom: 36px;
+	text-wrap: pretty;
 }
 
 .activation-modal__checkbox {
