@@ -11,7 +11,6 @@ type Props = {
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 	isPlanUpsellEnabledOnFreeDomain: DataResponse< boolean >;
 	flowName?: string | null;
-	paidDomainName?: string | null;
 };
 
 /**
@@ -21,7 +20,6 @@ export function useModalResolutionCallback( {
 	isCustomDomainAllowedOnFreePlan,
 	isPlanUpsellEnabledOnFreeDomain,
 	flowName,
-	paidDomainName,
 }: Props ) {
 	return useCallback(
 		( currentSelectedPlan?: string | null ): ModalType | null => {
@@ -34,17 +32,12 @@ export function useModalResolutionCallback( {
 					return FREE_PLAN_PAID_DOMAIN_DIALOG;
 				}
 
-				if ( paidDomainName && ( flowName === 'onboarding' || flowName === 'onboarding-pm' ) ) {
+				if ( flowName === 'onboarding' || flowName === 'onboarding-pm' ) {
 					return PAID_PLAN_IS_REQUIRED_DIALOG;
 				}
 			}
 			return null;
 		},
-		[
-			flowName,
-			isCustomDomainAllowedOnFreePlan.result,
-			isPlanUpsellEnabledOnFreeDomain.result,
-			paidDomainName,
-		]
+		[ flowName, isCustomDomainAllowedOnFreePlan.result, isPlanUpsellEnabledOnFreeDomain.result ]
 	);
 }
