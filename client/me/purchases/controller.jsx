@@ -5,7 +5,6 @@ import page from 'page';
 import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -91,7 +90,8 @@ export function cancelPurchase( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.cancelPurchase }>
 				<Main wideLayout className="purchases__cancel">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+
 					<CancelPurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
