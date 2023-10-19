@@ -1,10 +1,6 @@
-import { Button, FoldableCard } from '../..';
+import { Button, FoldableCard } from '..';
 
 export default { title: 'packages/components/FoldableCard' };
-
-/**
- * START: Components here also used for documentation purposes.
- */
 
 export const Default = () => (
 	<FoldableCard header="This is a foldable card" screenReaderText="More">
@@ -127,7 +123,3 @@ export const WithClickOpenCloseActions = () => (
 		Nothing to see here. Keep walking!
 	</FoldableCard>
 );
-
-/**
- * END: Components here also used for documentation purposes.
- */
