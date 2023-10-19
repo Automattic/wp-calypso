@@ -112,7 +112,7 @@ export class ActivationModal extends Component {
 					</h1>
 					<p className="activation-modal__description">
 						{ translate(
-							'You’re about to change your active theme from {{strong}}%(activeThemeName)s{{/strong}} to {{strong}}%(newThemeName)s{{/strong}}.{{br}}{{/br}}{{br}}{{/br}}This will replace your homepage. Don’t worry, your old content can still be accessed. {{a}}Learn more{{/a}}.',
+							'You’re about to change your active theme from {{strong}}%(activeThemeName)s{{/strong}} to {{strong}}%(newThemeName)s{{/strong}}.{{br}}{{/br}}{{br}}{{/br}}This will replace your homepage. Your old content remains on the site and can be recovered later. {{a}}Learn more{{/a}}.',
 							{
 								args: {
 									activeThemeName: activeTheme.name,
