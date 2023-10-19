@@ -174,27 +174,6 @@ describe( 'Post block', () => {
 
 		expect( unlinkedPost ).toHaveTextContent( text );
 	} );
-
-	test( 'if the post has a published date, shows the published date span', () => {
-		isJetpackCloud.mockImplementation( () => true );
-
-		const content = {
-			siteId: 1,
-			postId: 10,
-			isTrashed: false,
-		};
-
-		const meta = {
-			published: 1695394395000,
-		};
-
-		const text = 'another post';
-		render( <Blocks.Post content={ content } children={ text } meta={ meta } /> );
-
-		const publishSpan = screen.getByText( /Published:/i );
-
-		expect( publishSpan ).toBeTruthy();
-	} );
 } );
 
 describe( 'Comment block', () => {

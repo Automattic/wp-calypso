@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import { startsWith } from 'lodash';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -47,13 +46,7 @@ export const FilePath = ( { children } ) => (
 	</div>
 );
 
-export const Post = ( { content, children, meta } ) => {
-	const moment = useLocalizedMoment();
-	const siteId = useSelector( getSelectedSiteId );
-	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
-	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
-	const translate = useTranslate();
-
+export const Post = ( { content, children } ) => {
 	let titleContent = children;
 
 	// Don't render links to WordPress.com inside Jetpack Cloud
@@ -67,29 +60,7 @@ export const Post = ( { content, children, meta } ) => {
 		}
 	}
 
-	let publishedContent = null;
-	if ( meta.published ) {
-		const formattedPublishedDate = applySiteOffset( moment( meta.published ), {
-			timezone,
-			gmtOffset,
-		} ).format( 'MMM D, YYYY' );
-
-		publishedContent = (
-			<>
-				<br />
-				<span className="note-formatted-block__post-publish-date">
-					{ translate( 'Published:' ) } { formattedPublishedDate }
-				</span>
-			</>
-		);
-	}
-
-	return (
-		<>
-			{ titleContent }
-			{ publishedContent }
-		</>
-	);
+	return titleContent;
 };
 
 export const Comment = ( { content, children } ) => {
