@@ -7,9 +7,9 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ConnectedAppItem from 'calypso/me/connected-application-item';
@@ -114,7 +114,7 @@ class ConnectedApplications extends PureComponent {
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
 
 				<DocumentHead title={ translate( 'Connected Applications' ) } />
 
