@@ -171,7 +171,7 @@ export function pricesContext( context: PageJS.Context, next: () => void ): void
 }
 
 export function landingPageContext() {
-	page.redirect( '/partner-portal/licenses' );
+	page.redirect( '/partner-portal/billing' );
 	return;
 }
 
