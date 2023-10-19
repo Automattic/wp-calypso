@@ -105,7 +105,7 @@ const designFirst: Flow = {
 						} );
 
 						if ( providedDependencies?.hasSetPreselectedTheme ) {
-							return navigate( 'launchpad' );
+							return navigate( `launchpad?siteSlug=${ siteSlug }` );
 						}
 
 						return window.location.assign(
