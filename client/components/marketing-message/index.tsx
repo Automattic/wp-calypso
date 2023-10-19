@@ -15,6 +15,20 @@ type NudgeProps = {
 	withDiscount: string;
 };
 
+type JITMTProps = {
+	id: string;
+	template: string;
+	message?: string;
+	CTA?: Partial< {
+		message: string;
+		hook: string;
+		newWindow: boolean;
+		primary: boolean;
+		link: string;
+		target: string;
+	} >;
+};
+
 const Container = styled.div< Pick< NudgeProps, 'path' > >`
 	display: flex;
 
@@ -84,7 +98,7 @@ const limitedTimeOfferDiscountNudge = () => {
 			require="calypso/blocks/jitm"
 			placeholder={ null }
 			messagePath="calypso:plans:lto_notices"
-			onClick={ ( jitm ) => {
+			onClick={ ( jitm: JITMTProps ) => {
 				jitm.message =
 					'Discount coupon applied! Select your plan below and check your final discounted price at checkout.';
 				jitm.CTA = {};
