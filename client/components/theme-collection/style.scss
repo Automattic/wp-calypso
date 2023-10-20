@@ -88,10 +88,12 @@
 .theme-collection__carousel-controls {
 	display: flex;
 	justify-content: flex-end;
-	/*!rtl:ignore*/
-	direction: ltr;
 	align-self: end;
 	align-items: center;
+
+	.rtl & {
+		flex-direction: row-reverse;
+	}
 
 	.theme-collection__see-all {
 		color: var(--studio-gray-100);
@@ -110,6 +112,11 @@
 			text-decoration: none;
 			align-items: inherit;
 			margin-right: 24px;
+
+			.rtl & {
+				margin-left: 24px;
+				margin-right: 0;
+			}
 
 			&:hover {
 				text-decoration: underline;
