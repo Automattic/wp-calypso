@@ -618,7 +618,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		return [
 			{
 				slug: FEATURE_1GB_STORAGE,
-				isAddOn: false,
 			},
 		];
 	},
@@ -858,7 +857,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		return [
 			{
 				slug: FEATURE_6GB_STORAGE,
-				isAddOn: false,
 			},
 		];
 	},
@@ -1278,7 +1276,6 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 		return [
 			{
 				slug: FEATURE_200GB_STORAGE,
-				isAddOn: false,
 			},
 		];
 	},
@@ -1314,7 +1311,6 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 		return [
 			{
 				slug: FEATURE_50GB_STORAGE,
-				isAddOn: false,
 			},
 		];
 	},
@@ -1489,7 +1485,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		return [
 			{
 				slug: FEATURE_13GB_STORAGE,
-				isAddOn: false,
 			},
 		];
 	},
@@ -3456,7 +3451,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			return [
 				{
 					slug: FEATURE_P2_13GB_STORAGE,
-					isAddOn: false,
 				},
 			];
 		},
@@ -3515,7 +3509,6 @@ PLANS_LIST[ PLAN_P2_FREE ] = {
 		return [
 			{
 				slug: FEATURE_P2_3GB_STORAGE,
-				isAddOn: false,
 			},
 		];
 	},
