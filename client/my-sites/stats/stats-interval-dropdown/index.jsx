@@ -21,7 +21,11 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) =>
 					const intervalLabel = intervals[ intervalKey ];
 
 					return (
-						<li className="stats-interval-dropdown-listing__interval" key={ intervalKey }>
+						<li
+							className="stats-interval-dropdown-listing__interval"
+							key={ intervalKey }
+							role="none"
+						>
 							<Button
 								role="radio"
 								aria-checked={ isSelectedItem( intervalKey ) }
