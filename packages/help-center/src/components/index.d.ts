@@ -111,7 +111,7 @@ declare module 'calypso/state/current-user/selectors' {
 
 declare module 'calypso/components/gravatar' {
 	const Gravatar: FC< {
-		user?: unknown;
+		user?: { display_name: string };
 		size?: number;
 		alt?: string;
 	} >;
@@ -127,6 +127,8 @@ declare module 'calypso/components/textarea-autosize' {
 		onChange: ( event: React.ChangeEvent< HTMLTextAreaElement > ) => void;
 		onKeyPress: ( event: KeyboardEvent< HTMLTextAreaElement > ) => Promise< void >;
 	} >;
+
+	export default TextareaAutosize;
 }
 
 declare module 'calypso/state/selectors/get-admin-help-results' {
