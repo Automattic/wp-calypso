@@ -1225,6 +1225,17 @@ class RegisterDomainStep extends Component {
 			this.props.analyticsSection
 		);
 
+		// This part handles the other end of the condition handled by the line 282:
+		// 1. The query request is sent.
+		// 2. `includeWordPressDotCom` is changed by the loaded result of the experiment. (this is where the line 282 won't handle)
+		// 3. The domain query result is returned and will be set here.
+		// The drawback is that it'd add unnecessary computation if `includeWordPressDotCom ` never changes.
+		if ( ! this.props.includeWordPressDotCom ) {
+			subdomainSuggestions = subdomainSuggestions.filter(
+				( subdomain ) => ! isFreeWordPressComDomain( subdomain )
+			);
+		}
+
 		this.setState(
 			{
 				subdomainSearchResults: subdomainSuggestions,
