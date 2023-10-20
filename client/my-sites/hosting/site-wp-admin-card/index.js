@@ -31,20 +31,12 @@ const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 		},
 		onSuccess() {
 			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_admin_interface_change_success' )
-			);
-			dispatch(
 				successNotice( translate( 'Admin interface style changed.' ), {
 					id: successNoticeId,
 				} )
 			);
 		},
-		onError: ( error ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_admin_interface_change_failure', {
-					code: error.code,
-				} )
-			);
+		onError: () => {
 			dispatch(
 				errorNotice( translate( 'Failed to change admin interface style.' ), {
 					id: failureNoticeId,
@@ -59,6 +51,11 @@ const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 	);
 
 	const handleInputChange = async ( value ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_configuration_admin_interface_change', {
+				interface: value,
+			} )
+		);
 		// Toggle the site interface
 		setSiteInterface( { value } );
 		// Toggle the local state
