@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
+import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
 import { useTagStats } from 'calypso/data/reader/use-tag-stats';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
@@ -29,10 +30,23 @@ const ReaderTagSidebar = ( {
 	const dispatch = useDispatch();
 	const isFollowing = useSelector( ( state ) => getReaderTagBySlug( state, tag )?.isFollowing );
 	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
+	const { data: prompts } = useBloggingPrompts( 1, 10 );
 
 	if ( relatedMetaByTag === undefined ) {
 		return null;
 	}
+
+	const showRecentPrompts = 'dailyprompt' === tag || 'bloganuary' === tag;
+
+	const handleRecentPromptClick = ( prompt ) => {
+		recordAction( 'clicked_reader_sidebar_recent_prompt' );
+		recordGaEvent( 'Clicked Reader Sidebar Recent Blogging Prompt' );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_sidebar_recent_prompt_clicked', {
+				prompt_id: prompt.id,
+			} )
+		);
+	};
 
 	const handleTagSidebarClick = () => {
 		recordAction( 'clicked_reader_sidebar_tag' );
@@ -143,6 +157,25 @@ const ReaderTagSidebar = ( {
 					<Button primary onClick={ trackSignupClick }>
 						{ translate( 'Join the WordPress.com community' ) }
 					</Button>
+				</div>
+			) }
+			{ showRecentPrompts && prompts && (
+				<div className="reader-tag-sidebar__recent-prompts">
+					<h2>{ translate( 'Recent Prompts' ) }</h2>
+					{ prompts.map( ( prompt ) => (
+						<div key={ 'prompt-link-' + prompt.id }>
+							<a
+								className="reader-tag-sidebar__recent-prompt-link"
+								href={ '/tag/dailyprompt-' + encodeURIComponent( prompt.id ) }
+								onClick={ () => {
+									handleRecentPromptClick( prompt );
+								} }
+							>
+								{ ' ' }
+								{ prompt.text }{ ' ' }
+							</a>
+						</div>
+					) ) }
 				</div>
 			) }
 		</>
