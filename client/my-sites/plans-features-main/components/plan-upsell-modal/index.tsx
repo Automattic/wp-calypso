@@ -3,18 +3,24 @@ import { Dialog } from '@automattic/components';
 import { Global, css } from '@emotion/react';
 import { FreePlanFreeDomainDialog } from './free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './free-plan-paid-domain-dialog';
+import MonthlyPlanDontMissOutDialog from './monthly-plan-dont-miss-out-dialog';
+import MonthlyPlanSaveUptoDialog from './monthly-plan-save-upto-dialog';
 import PaidPlanIsRequiredDialog from './paid-plan-is-required-dialog';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
 export const PAID_PLAN_IS_REQUIRED_DIALOG = 'PAID_PLAN_IS_REQUIRED_DIALOG';
 export const FREE_PLAN_PAID_DOMAIN_DIALOG = 'FREE_PLAN_PAID_DOMAIN_DIALOG';
 export const FREE_PLAN_FREE_DOMAIN_DIALOG = 'FREE_PLAN_FREE_DOMAIN_DIALOG';
+export const MONTHLY_PLAN_DONT_MISS_OUT_DIALOG = 'MONTHLY_PLAN_DONT_MISS_OUT_DIALOG';
+export const MONTHLY_PLAN_SAVE_UPTO_DIALOG = 'MONTHLY_PLAN_SAVE_UPTO_DIALOG';
 export const MODAL_LOADER = 'MODAL_LOADER';
 
 export type ModalType =
 	| typeof FREE_PLAN_FREE_DOMAIN_DIALOG
 	| typeof FREE_PLAN_PAID_DOMAIN_DIALOG
 	| typeof PAID_PLAN_IS_REQUIRED_DIALOG
+	| typeof MONTHLY_PLAN_DONT_MISS_OUT_DIALOG
+	| typeof MONTHLY_PLAN_SAVE_UPTO_DIALOG
 	| typeof MODAL_LOADER;
 
 export type DomainPlanDialogProps = {
@@ -80,6 +86,10 @@ function DisplayedModal( {
 					} }
 				/>
 			);
+		case MONTHLY_PLAN_DONT_MISS_OUT_DIALOG:
+			return <MonthlyPlanDontMissOutDialog />;
+		case MONTHLY_PLAN_SAVE_UPTO_DIALOG:
+			return <MonthlyPlanSaveUptoDialog />;
 		default:
 			break;
 	}
