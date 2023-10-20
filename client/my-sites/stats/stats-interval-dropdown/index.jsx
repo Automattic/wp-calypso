@@ -16,13 +16,15 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) =>
 
 	return (
 		<div className="stats-interval-dropdown-listing">
-			<ul className="stats-interval-dropdown-listing__list">
+			<ul className="stats-interval-dropdown-listing__list" role="radiogroup">
 				{ Object.keys( intervals ).map( ( intervalKey ) => {
 					const intervalLabel = intervals[ intervalKey ];
 
 					return (
 						<li className="stats-interval-dropdown-listing__interval" key={ intervalKey }>
 							<Button
+								role="radio"
+								aria-checked={ isSelectedItem( intervalKey ) }
 								onClick={ () => {
 									clickHandler( intervalKey );
 								} }

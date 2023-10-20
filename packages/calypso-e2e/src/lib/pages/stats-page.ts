@@ -96,7 +96,11 @@ export class StatsPage {
 	 * @param {StatsPeriod} period Stats period to show.
 	 */
 	async selectStatsPeriod( period: StatsPeriod ) {
+		const expandDropdownButton = this.anchor.locator( '.stats-interval-dropdown' );
+		await expandDropdownButton.click();
+
 		const target = this.anchor.getByRole( 'radiogroup' ).getByRole( 'radio', { name: period } );
+		await target.waitFor();
 		await target.click();
 
 		if ( ! ( await target.isChecked() ) ) {
