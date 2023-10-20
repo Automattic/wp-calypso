@@ -29,6 +29,7 @@
 }
 
 .theme-collection__headings {
+	align-self: flex-end;
 	flex-basis: 80%;
 
 	@include break-small {
