@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import {
@@ -187,7 +188,10 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 						? {
 								label: translate( 'Site Settings' ),
 								icon: chevronLeft,
-								onClick: () => redirectPage( '/dashboard' ),
+								onClick: () => {
+									recordTracksEvent( 'calypso_jetpack_sidebar_site_settings_back_button_click' );
+									redirectPage( '/dashboard' );
+								},
 						  }
 						: undefined
 				}
