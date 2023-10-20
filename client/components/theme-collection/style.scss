@@ -91,10 +91,6 @@
 	align-self: end;
 	align-items: center;
 
-	.rtl & {
-		flex-direction: row-reverse;
-	}
-
 	.theme-collection__see-all {
 		color: var(--studio-gray-100);
 		font-size: $font-body-small;
@@ -112,11 +108,6 @@
 			text-decoration: none;
 			align-items: inherit;
 			margin-right: 24px;
-
-			.rtl & {
-				margin-left: 24px;
-				margin-right: 0;
-			}
 
 			&:hover {
 				text-decoration: underline;
@@ -147,6 +138,10 @@
 
 		&:hover {
 			background-color: var(--studio-gray-0);
+		}
+
+		.rtl & {
+			transform: scaleX(-1);
 		}
 	}
 }
