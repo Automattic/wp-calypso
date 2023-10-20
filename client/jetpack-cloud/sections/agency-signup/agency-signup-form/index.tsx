@@ -17,9 +17,12 @@ import {
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { translateInvalidPartnerParameterError } from 'calypso/state/partner-portal/partner/utils';
-import type { AgencySignupProps } from 'calypso/jetpack-cloud/sections/agency-signup/types';
 import type { APIError, PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import './style.scss';
+
+export interface AgencySignupProps {
+	referrer: 'manage-lp' | 'agencies-lp';
+}
 
 export default function AgencySignupForm( { referrer }: AgencySignupProps ) {
 	const translate = useTranslate();
