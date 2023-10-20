@@ -11,13 +11,13 @@ import userAgent from 'calypso/lib/user-agent';
 import './style.scss';
 
 interface AppPromoProps {
-	title: string;
-	iconSize: number;
+	title?: string;
+	iconSize?: number;
 	campaign: string;
-	subheader: string;
-	className: string;
-	hasQRCode: boolean;
-	hasGetAppButton: boolean;
+	subheader?: string;
+	className?: string;
+	hasQRCode?: boolean;
+	hasGetAppButton?: boolean;
 }
 
 export const AppPromo = ( {
