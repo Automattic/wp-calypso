@@ -296,7 +296,7 @@ class ThemeShowcase extends Component {
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
 
-		const collectionSection = isCollectionView ? `/collection/` : '';
+		const collectionSection = isCollectionView ? `/collection` : '';
 
 		let url = `/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ collectionSection }${ siteIdSection }`;
 
