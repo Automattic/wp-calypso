@@ -1,15 +1,10 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import {
-	Button,
-	__experimentalHStack as HStack,
-	__experimentalSpacer as Spacer,
-} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Nav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -71,26 +66,17 @@ const SubscriptionsManagerWrapper = ( {
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 			<Main className="site-subscriptions-manager">
 				<DocumentHead title={ translate( 'Manage subscriptions' ) } />
-
-				<HStack className="site-subscriptions-manager__header-h-stack">
-					<FormattedHeader
-						headerText={ headerText }
-						subHeaderText={
-							<>
-								{ subHeaderText }{ ' ' }
-								<Button
-									className="site-subscriptions-manager__manage-notifications-button"
-									variant="link"
-									href="/me/notifications?referrer=management"
-								>
-									{ translate( 'Manage notification settings' ) }
-								</Button>
-							</>
-						}
-						align="left"
-						brandFont
-					/>
-					<Spacer />
+				<NavigationHeader
+					title={ headerText }
+					subtitle={
+						<>
+							{ subHeaderText }{ ' ' }
+							<a href="/me/notifications?referrer=management">
+								{ translate( 'Manage notification settings' ) }
+							</a>
+						</>
+					}
+				>
 					{ actionButton }
 
 					{ ellipsisMenuItems && (
@@ -102,7 +88,7 @@ const SubscriptionsManagerWrapper = ( {
 							{ ellipsisMenuItems }
 						</SubscriptionsEllipsisMenu>
 					) }
-				</HStack>
+				</NavigationHeader>
 
 				<Nav className="site-subscriptions-manager__nav">
 					<NavTabs>
