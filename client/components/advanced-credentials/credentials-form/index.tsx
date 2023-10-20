@@ -103,11 +103,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				setFormInteractions( { ...interactions, kpri: true } );
 				onFormStateChange( { ...formState, kpri: currentTarget.value } );
 				break;
-			case 'save_for_later':
-				setFormInteractions( { ...interactions, save_for_later: true } );
+			case 'save_as_staging':
+				setFormInteractions( { ...interactions, save_as_staging: true } );
 				onFormStateChange( {
 					...formState,
-					save_for_later: ( currentTarget as HTMLInputElement ).checked,
+					save_as_staging: ( currentTarget as HTMLInputElement ).checked,
 				} );
 				break;
 		}
@@ -549,9 +549,9 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				<FormFieldset className="credentials-form__save-for-later">
 					<FormLabel htmlFor="save-for-later">
 						<FormInputCheckbox
-							checked={ formState.save_for_later }
+							checked={ formState.save_as_staging }
 							id="save-for-later"
-							name="save_for_later"
+							name="save_as_staging"
 							onChange={ handleFormChange }
 							value="true"
 						/>
