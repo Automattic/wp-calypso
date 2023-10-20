@@ -30,7 +30,11 @@
 		--zoom-out-primary-color: var(--studio-gray-50, #50575e);
 		--zoom-out-secondary-color: var(--studio-gray-10, #c3c4c7);
 		--wp-components-color-accent: var(--zoom-out-primary-color);
-		width: 156px;
+
+		position: absolute;
+		right: 10px;
+		width: 15%;
+		max-width: 156px;
 		margin-bottom: 13px;
 
 		&:hover {
