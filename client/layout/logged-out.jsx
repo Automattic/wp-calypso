@@ -86,6 +86,12 @@ const LayoutLoggedOut = ( {
 	const isReaderSearchPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
 
+	const urlParams = new URLSearchParams( window.location.search );
+	const isReaderParedDownSearchPage =
+		sectionName === 'reader' &&
+		pathNameWithoutLocale.startsWith( '/read/search' ) &&
+		urlParams.get( 'type' ) === 'basic';
+
 	// It's used to add a class name for the login and magic login of Gravatar powered clients only (not for F2A pages)
 	const isGravPoweredLoginPage =
 		isGravPoweredClient &&
@@ -143,7 +149,12 @@ const LayoutLoggedOut = ( {
 
 			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 		}
-	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
+	} else if (
+		config.isEnabled( 'jetpack-cloud' ) ||
+		isWpMobileApp() ||
+		isJetpackThankYou ||
+		isReaderParedDownSearchPage
+	) {
 		masterbar = null;
 	} else if (
 		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions', 'site-profiler' ].includes(
@@ -220,16 +231,17 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && (
-				<UniversalNavbarFooter
-					onLanguageChange={ ( e ) => {
-						navigate( `/${ e.target.value + pathNameWithoutLocale }` );
-						window.location.reload();
-					} }
-					currentRoute={ currentRoute }
-					isLoggedIn={ isLoggedIn }
-				/>
-			) }
+			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) &&
+				! isReaderParedDownSearchPage && (
+					<UniversalNavbarFooter
+						onLanguageChange={ ( e ) => {
+							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
+							window.location.reload();
+						} }
+						currentRoute={ currentRoute }
+						isLoggedIn={ isLoggedIn }
+					/>
+				) }
 		</div>
 	);
 };
