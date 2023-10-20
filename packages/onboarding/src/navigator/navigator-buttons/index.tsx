@@ -26,10 +26,14 @@ export function NavigatorItem( { icon, checked, active, children, ...props }: Na
 	const content = icon ? (
 		<HStack justify="flex-start">
 			<Icon className="navigator-item__icon" icon={ checked ? check : icon } size={ 24 } />
-			<FlexItem className="navigator-item__text">{ children }</FlexItem>
+			<FlexItem className="navigator-item__text" display="flex" isBlock>
+				{ children }
+			</FlexItem>
 		</HStack>
 	) : (
-		<FlexItem>{ children }</FlexItem>
+		<FlexItem display="flex" isBlock>
+			{ children }
+		</FlexItem>
 	);
 
 	const forwardIcon = isRTL() ? chevronLeft : chevronRight;
