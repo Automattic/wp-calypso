@@ -1,16 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
-import FormattedHeader from 'calypso/components/formatted-header';
 import WpcomUpsellPlaceholder from 'calypso/components/jetpack/wpcom-upsell-placeholder';
+import NavigationHeader from 'calypso/components/navigation-header';
 
 export default function WpcomBackupUpsellPlaceholder() {
 	const translate = useTranslate();
 	return (
 		<>
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Jetpack VaultPress Backup' ) }
-				align="left"
-			/>
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack VaultPress Backup' ) } />
 			<WpcomUpsellPlaceholder />
 		</>
 	);

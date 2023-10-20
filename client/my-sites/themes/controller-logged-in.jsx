@@ -1,12 +1,13 @@
 import page from 'page';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { setBackPath } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getProps } from './controller';
+import { getProps, loggedOut } from './controller';
 import SingleSiteComponent from './single-site';
 import Upload from './theme-upload';
 
-// Renders <SingleSiteComponent, which assumes context.params.site_id always exists
+// Renders the SingleSiteComponent
 export function loggedIn( context, next ) {
 	// Block direct access for P2 sites
 	const state = context.store.getState();
@@ -39,4 +40,13 @@ export function upload( context, next ) {
 
 	context.primary = <Upload noticeType={ noticeType } />;
 	next();
+}
+
+export function renderThemes( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		return loggedIn( context, next );
+	}
+
+	return loggedOut( context, next );
 }

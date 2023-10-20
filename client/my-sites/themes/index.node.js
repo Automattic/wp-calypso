@@ -4,11 +4,11 @@ import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/l
 import {
 	fetchThemeData,
 	fetchThemeFilters,
-	loggedOut,
 	redirectSearchAndType,
 	redirectFilterAndType,
 	redirectToThemeDetails,
 } from './controller';
+import { renderThemes } from './controller-logged-in';
 import { validateFilters, validateVertical } from './validate-filters';
 
 export default function ( router ) {
@@ -36,7 +36,7 @@ export default function ( router ) {
 		fetchThemeData,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,
-		loggedOut,
+		renderThemes,
 		makeLayout
 	);
 	router( [ '/themes/upload', '/themes/upload/*' ], makeLayout );
@@ -62,5 +62,5 @@ export default function ( router ) {
 			redirectToThemeDetails( res.redirect, site, theme, section, next )
 	);
 	// The following route definition is needed so direct hits on `/themes/<mysite>` don't result in a 404.
-	router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
+	router( '/themes/*', fetchThemeData, renderThemes, makeLayout );
 }

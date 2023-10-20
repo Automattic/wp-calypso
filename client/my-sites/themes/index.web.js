@@ -8,12 +8,14 @@ import {
 } from 'calypso/controller';
 import {
 	navigation,
-	selectSiteIfLoggedIn,
+	selectSiteIfLoggedInWithSites,
 	siteSelection,
 	sites,
+	hideNavigationIfLoggedInWithNoSites,
+	addNavigationIfLoggedIn,
 } from 'calypso/my-sites/controller';
-import { fetchThemeData, loggedOut, redirectToThemeDetails } from './controller';
-import { loggedIn, upload } from './controller-logged-in';
+import { fetchThemeData, redirectToThemeDetails } from './controller';
+import { renderThemes, upload } from './controller-logged-in';
 import { fetchAndValidateVerticalsAndFilters } from './validate-filters';
 
 export default function ( router ) {
@@ -58,7 +60,7 @@ export default function ( router ) {
 		redirectLoggedOut,
 		fetchAndValidateVerticalsAndFilters,
 		siteSelection,
-		loggedIn,
+		renderThemes,
 		navigation,
 		makeLayout,
 		clientRender
@@ -68,8 +70,10 @@ export default function ( router ) {
 		routesWithoutSites,
 		redirectWithoutLocaleParamIfLoggedIn,
 		fetchAndValidateVerticalsAndFilters,
-		selectSiteIfLoggedIn, // This has to be after fetchAndValidateVerticalsAndFilters or else the redirect to theme/:theme will not work properly.
-		loggedOut,
+		selectSiteIfLoggedInWithSites,
+		renderThemes,
+		hideNavigationIfLoggedInWithNoSites,
+		addNavigationIfLoggedIn,
 		makeLayout,
 		clientRender
 	);
@@ -86,5 +90,5 @@ export default function ( router ) {
 			redirectToThemeDetails( page.redirect, site_id, theme, section, next )
 	);
 
-	router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
+	router( '/themes/*', fetchThemeData, renderThemes, makeLayout );
 }

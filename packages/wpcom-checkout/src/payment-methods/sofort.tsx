@@ -1,10 +1,9 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -15,7 +14,7 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:sofort-payment-method' );
@@ -71,13 +70,19 @@ export function createSofortPaymentMethodStore(): SofortStore {
 	return store;
 }
 
-export function createSofortMethod( { store }: { store: SofortStore } ): PaymentMethod {
+export function createSofortMethod( {
+	store,
+	submitButtonContent,
+}: {
+	store: SofortStore;
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
 	return {
 		id: 'sofort',
 		paymentProcessorId: 'sofort',
 		label: <SofortLabel />,
 		activeContent: <SofortFields />,
-		submitButton: <SofortPayButton store={ store } />,
+		submitButton: <SofortPayButton store={ store } submitButtonContent={ submitButtonContent } />,
 		inactiveContent: <SofortSummary />,
 		getAriaLabel: () => 'Sofort',
 	};
@@ -141,12 +146,13 @@ function SofortPayButton( {
 	disabled,
 	onClick,
 	store,
+	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: SofortStore;
+	submitButtonContent: ReactNode;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const customerName = useCustomerName();
 
@@ -174,21 +180,9 @@ function SofortPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			{ submitButtonContent }
 		</Button>
 	);
-}
-
-function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
-	const { __ } = useI18n();
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function SofortSummary() {

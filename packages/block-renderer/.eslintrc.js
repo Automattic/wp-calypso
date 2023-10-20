@@ -12,11 +12,7 @@ module.exports = {
 				'wpcalypso/no-unsafe-wp-apis': [
 					'error',
 					{
-						'@wordpress/block-editor': [
-							'__unstableIframe',
-							'__unstableEditorStyles',
-							'__unstablePresetDuotoneFilter',
-						],
+						'@wordpress/block-editor': [ '__unstableIframe', '__unstableEditorStyles' ],
 					},
 				],
 			},

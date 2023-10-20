@@ -62,7 +62,7 @@
 	}
 }
 
-.earn .promo-section__promos  .action-panel__figure .gridicon {
+.earn .promo-section__promos .gridicon {
 	fill: var(--color-primary-10);
 	position: relative;
 	top: -8px;
@@ -80,6 +80,9 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 .earn .promo-card a,
 .earn .formatted-header__subtitle a {
 	text-decoration: underline;
+}
+.earn .promo-card a.button {
+	text-decoration: none;
 }
 
 .earn__notes {

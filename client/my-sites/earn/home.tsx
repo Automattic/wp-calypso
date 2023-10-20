@@ -4,15 +4,14 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { useLaunchpad } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Task } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
 import { useState, useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EmptyContent from 'calypso/components/empty-content';
@@ -34,7 +33,9 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import EarnSupportButton from './components/earn-support-button';
 import StatsSection from './components/stats';
+import { useEarnLaunchpadTasks } from './hooks/use-earn-launchpad-tasks';
 import EarnLaunchpad from './launchpad';
 
 import './style.scss';
@@ -67,16 +68,7 @@ const Home = () => {
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
 
-	const {
-		data: { checklist },
-	} = useLaunchpad( site?.slug ?? null, 'earn' );
-	const numberOfSteps = checklist?.length || 0;
-	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
-	const tasklistCompleted = completedSteps >= numberOfSteps;
-
-	const shouldLoadLaunchpad = () => {
-		return ! tasklistCompleted && numberOfSteps > 0;
-	};
+	const launchpad = useEarnLaunchpadTasks();
 
 	function trackUpgrade( plan: string, feature: string ) {
 		dispatch(
@@ -149,15 +141,15 @@ const Home = () => {
 	 * Return the content to display in the Simple Payments card based on the current plan.
 	 */
 	const getSimplePaymentsCard = (): PromoSectionCardProps => {
-		const supportLink = localizeUrl(
-			'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
-		);
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Learn how to get started' ),
+					text: translate( 'Learn more' ),
+					component: <EarnSupportButton supportContext="paypal" />,
 					action: () => {
 						trackCtaButton( 'simple-payments' );
-						page( supportLink );
+						window.location.href = localizeUrl(
+							'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
+						);
 					},
 			  }
 			: {
@@ -172,9 +164,6 @@ const Home = () => {
 						);
 					},
 			  };
-		const learnMoreLink = hasSimplePayments
-			? null
-			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		const title = translate( 'Collect PayPal payments' );
 		const body = (
 			<>
@@ -191,7 +180,6 @@ const Home = () => {
 			icon: 'credit-card',
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -200,14 +188,16 @@ const Home = () => {
 	 * Return the content to display in the Recurring Payments card based on the current plan.
 	 */
 	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
-		const hasConnectionCtaTitle = translate( 'Manage Payment Button' );
-		const noConnectionCtaTitle = translate( 'Enable Payment Button' );
-		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = {
-			text: ctaTitle,
+			text: translate( 'Learn more' ),
+			...( hasConnectedAccount && {
+				component: <EarnSupportButton supportContext="payment_button_block" />,
+			} ),
 			action: () => {
 				trackCtaButton( 'recurring-payments' );
-				page( `/earn/payments/${ site?.slug }` );
+				if ( window && window.location ) {
+					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
+				}
 			},
 		};
 		const title = translate( 'Collect payments' );
@@ -224,25 +214,12 @@ const Home = () => {
 			</>
 		);
 
-		const learnMoreLink = ! hasConnectedAccount
-			? {
-					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
-					onClick: () => trackLearnLink( 'recurring-payments' ),
-			  }
-			: {
-					url: localizeUrl(
-						'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block'
-					),
-					onClick: () => trackLearnLink( 'recurring-payments' ),
-					label: translate( 'Support documentation' ),
-			  };
 		return {
 			title,
 			body,
 			icon: 'money',
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -251,16 +228,19 @@ const Home = () => {
 	 * Return the content to display in the Donations card based on the current plan.
 	 */
 	const getDonationsCard = (): PromoSectionCardProps => {
-		const hasConnectionCtaTitle = translate( 'Manage Donations Form' );
-		const noConnectionCtaTitle = translate( 'Enable Donations Form' );
-		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = {
-			text: ctaTitle,
+			text: translate( 'Learn more' ),
+			...( hasConnectedAccount && {
+				component: <EarnSupportButton supportContext="donations" />,
+			} ),
 			action: () => {
 				trackCtaButton( 'donations' );
-				page( `/earn/payments/${ site?.slug }` );
+				if ( window && window.location ) {
+					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
+				}
 			},
 		};
+
 		const title = translate( 'Accept donations and tips' );
 
 		const body = (
@@ -276,24 +256,12 @@ const Home = () => {
 			</>
 		);
 
-		const learnMoreLink = ! hasConnectedAccount
-			? {
-					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
-					onClick: () => trackLearnLink( 'donations' ),
-			  }
-			: {
-					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/donations/' ),
-					onClick: () => trackLearnLink( 'donations' ),
-					label: translate( 'Support documentation' ),
-			  };
-
 		return {
 			title,
 			body,
 			icon: 'heart-outline',
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -302,17 +270,19 @@ const Home = () => {
 	 * Return the content to display in the Premium Content Block card based on the current plan.
 	 */
 	const getPremiumContentCard = (): PromoSectionCardProps | undefined => {
-		const hasConnectionCtaTitle = translate( 'Manage Premium Content' );
-		const noConnectionCtaTitle = translate( 'Enable Premium Content' );
-		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
 		const cta = {
-			text: ctaTitle,
+			text: translate( 'Learn more' ),
+			component: <EarnSupportButton supportContext="premium_content_block" />,
 			action: () => {
-				trackCtaButton( 'premium-content' );
-				page( `/earn/payments/${ site?.slug }` );
+				trackLearnLink( 'premium-content' );
+				if ( window && window.location ) {
+					window.location.href = localizeUrl(
+						'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
+					);
+				}
 			},
 		};
 		const title = translate( 'Profit from subscriber-only content' );
@@ -323,13 +293,6 @@ const Home = () => {
 			'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
 		);
 		const body = <>{ hasConnectedAccount ? hasConnectionBodyText : noConnectionBodyText }</>;
-		const learnMoreLink = {
-			url: localizeUrl(
-				'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
-			),
-			onClick: () => trackLearnLink( 'premium-content' ),
-			label: hasConnectedAccount ? translate( 'Support documentation' ) : undefined,
-		};
 
 		return {
 			title,
@@ -337,7 +300,6 @@ const Home = () => {
 			icon: 'bookmark-outline',
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -351,6 +313,7 @@ const Home = () => {
 		}
 		const cta = {
 			text: translate( 'Learn more' ),
+			component: <EarnSupportButton supportContext="paid-newsletters" />,
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {
@@ -369,7 +332,6 @@ const Home = () => {
 			icon: 'mail',
 			actions: {
 				cta,
-				featureIncludedInPlan: true,
 			},
 		};
 	};
@@ -462,6 +424,7 @@ const Home = () => {
 		const learnMoreLink = ! ( hasWordAdsFeature || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
+
 		return {
 			title,
 			body,
@@ -502,6 +465,7 @@ const Home = () => {
 		<>
 			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
+			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] } />
@@ -509,11 +473,7 @@ const Home = () => {
 			) }
 			{ ! isLoading && (
 				<div>
-					{ shouldLoadLaunchpad() ? (
-						<EarnLaunchpad numberOfSteps={ numberOfSteps } completedSteps={ completedSteps } />
-					) : (
-						<StatsSection />
-					) }
+					{ launchpad.shouldLoad ? <EarnLaunchpad launchpad={ launchpad } /> : <StatsSection /> }
 					<PromoSection { ...promos } />
 				</div>
 			) }

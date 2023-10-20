@@ -8,9 +8,6 @@ import {
 	getWooExpressFeaturesGrouped,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
-	PLAN_HOSTING_TRIAL_MONTHLY,
-	PLAN_WOOEXPRESS_PLUS,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
@@ -1004,16 +1001,7 @@ const ComparisonGrid = ( {
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {
-		const hiddenPlans = [
-			PLAN_HOSTING_TRIAL_MONTHLY,
-			PLAN_WOOEXPRESS_PLUS,
-			PLAN_ENTERPRISE_GRID_WPCOM,
-		];
-		const filteredPlans = gridPlans.filter(
-			( { planSlug, isVisible } ) => isVisible && ! hiddenPlans.includes( planSlug )
-		);
-
-		return sortPlans( filteredPlans, currentSitePlanSlug, isMediumBreakpoint );
+		return sortPlans( gridPlans, currentSitePlanSlug, isMediumBreakpoint );
 	}, [ gridPlans, currentSitePlanSlug, isMediumBreakpoint ] );
 
 	useEffect( () => {
@@ -1034,7 +1022,9 @@ const ComparisonGrid = ( {
 	const visibleGridPlans = useMemo(
 		() =>
 			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = displayedGridPlans.find( ( gridPlan ) => gridPlan.planSlug === planSlug );
+				const gridPlan = displayedGridPlans.find(
+					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
+				);
 
 				if ( gridPlan ) {
 					acc.push( gridPlan );

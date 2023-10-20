@@ -182,7 +182,7 @@
 		"site-indicator": true,
 		"site-profiler": true,
 		"ssr/prefetch-timebox": false,
-		"stats/date-control": false,
+		"stats/date-control": true,
 		"stats/new-video-summary": true,
 		"stats/subscribers-chart-section": false,
 		"stats/paid-wpcom-stats": true,
@@ -213,12 +213,14 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"user-management-revamp": true,
+		"videomaker-trial": true,
 		"videopress-tv": true,
 		"videopress-onboarding-user-intent": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/staging-sites-i3": true
+		"yolo/staging-sites-i3": true,
+		"yolo/wp-admin-site-default": true
 	}
 }

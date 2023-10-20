@@ -6,5 +6,5 @@ declare module '@wordpress/block-editor' {
 	export const store: any;
 	export const __unstableIframe: React.ComponentType< Props >;
 	export const __unstableEditorStyles: React.ComponentType< Props >;
-	export const __unstablePresetDuotoneFilter: React.ComponentType< Props >;
+	export const privateApis: Record< string, unknown >;
 }

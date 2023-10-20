@@ -3,7 +3,9 @@ import {
 	SITE_SYNC_STATUS_REQUEST_FAILURE,
 	SITE_SYNC_STATUS_SET,
 	SITE_SYNC_IS_SYNCING_IN_PROGRESS,
-	SITE_SYNC_SITE_TYPE,
+	SITE_SYNC_TARGET_SITE,
+	SITE_SYNC_SOURCE_SITE,
+	SITE_SYNC_RESTORE_ID,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/sync/status';
@@ -24,7 +26,7 @@ export const fetchSyncStatus = ( siteId ) => ( {
  * Sets the status of sync for a particular site.
  * @see state/sync/constants#SiteSyncStatus
  * @param {number} siteId The site id to which the status belongs
- * @param {string | null } status The new status of the automated transfer
+ * @param {string | null } status The new status of the sync
  * @returns {Object} An action object
  */
 export const setSiteSyncStatus = ( siteId, status ) => ( {
@@ -34,15 +36,40 @@ export const setSiteSyncStatus = ( siteId, status ) => ( {
 } );
 
 /**
- * Sets the site that is synced.
+ * Sets the status of sync for a particular site.
+ * @see state/sync/constants#SiteSyncStatus
  * @param {number} siteId The site id to which the status belongs
- * @param { string | null } siteType of the sync
+ * @param {string } restoreId The current restore id of the site sync
  * @returns {Object} An action object
  */
-export const setSyncingSiteType = ( siteId, siteType ) => ( {
-	type: SITE_SYNC_SITE_TYPE,
+export const setSiteSyncRestoreId = ( siteId, restoreId ) => ( {
+	type: SITE_SYNC_RESTORE_ID,
 	siteId,
-	siteType,
+	restoreId,
+} );
+
+/**
+ * Sets the target site of the sync.
+ * @param {number} siteId The site id to which the status belongs
+ * @param { string | null } targetSite of the sync
+ * @returns {Object} An action object
+ */
+export const setSyncingTargetSite = ( siteId, targetSite ) => ( {
+	type: SITE_SYNC_TARGET_SITE,
+	siteId,
+	targetSite,
+} );
+
+/**
+ * Sets the source site of the sync.
+ * @param {number} siteId The site id to which the status belongs
+ * @param { string | null } sourceSite of the sync
+ * @returns {Object} An action object
+ */
+export const setSyncingSourceSite = ( siteId, sourceSite ) => ( {
+	type: SITE_SYNC_SOURCE_SITE,
+	siteId,
+	sourceSite,
 } );
 
 /**

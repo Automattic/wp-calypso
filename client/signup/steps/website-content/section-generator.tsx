@@ -1,12 +1,13 @@
-import { BLOG_PAGE, CONTACT_PAGE, SHOP_PAGE } from 'calypso/signup/difm/constants';
+import { BLOG_PAGE, CONTACT_PAGE, CUSTOM_PAGE, SHOP_PAGE } from 'calypso/signup/difm/constants';
 import {
 	ContactPageDetails,
+	CustomPageDetails,
 	FeedbackSection,
 	SiteInformation,
 } from 'calypso/signup/steps/website-content/section-types';
 import { SITE_INFORMATION_SECTION_ID } from 'calypso/state/signup/steps/website-content/constants';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/types';
-import { CONTENT_SUFFIX, DefaultPageDetails } from './section-types/default-page-details';
+import { DefaultPageDetails } from './section-types/default-page-details';
 import type {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
@@ -71,6 +72,8 @@ const resolveDisplayedComponent = ( pageId: string ) => {
 	switch ( pageId ) {
 		case CONTACT_PAGE:
 			return ContactPageDetails;
+		case CUSTOM_PAGE:
+			return CustomPageDetails;
 		default:
 			return DefaultPageDetails;
 	}
@@ -90,7 +93,12 @@ const generateWebsiteContentSections = (
 
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
 		const fieldNumber = elapsedSections + index + 1;
-		const { title: pageTitle } = page;
+		let pageTitle = page.title;
+
+		if ( ! pageTitle && page.id === CUSTOM_PAGE ) {
+			pageTitle = translate( 'Custom Page' );
+		}
+
 		const DisplayedPageComponent = resolveDisplayedComponent( page.id );
 
 		switch ( page.id ) {
@@ -119,18 +127,15 @@ const generateWebsiteContentSections = (
 			),
 			showSkip: !! OPTIONAL_PAGES[ page.id ],
 			validate: () => {
-				const isValid =
+				const isContentValid =
 					OPTIONAL_PAGES[ page.id ] || Boolean( page.content?.length ) || page.useFillerContent;
+				const isTitleValid = Boolean( page.title?.length );
+
 				return {
-					result: isValid,
+					result: isContentValid && isTitleValid,
 					errors: {
-						[ page.id + CONTENT_SUFFIX ]: isValid
-							? null
-							: translate( `Please enter '%(pageTitle)s' content.`, {
-									args: {
-										pageTitle,
-									},
-							  } ),
+						content: isContentValid ? null : translate( 'Please enter content for this page.' ),
+						title: isTitleValid ? null : translate( 'Please enter a title for this page.' ),
 					},
 				};
 			},

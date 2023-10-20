@@ -33,7 +33,7 @@ import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import './style.scss';
 
@@ -131,7 +131,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		setDomainCartItem( null );
 	};
 
-	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: DomainSuggestion ) => {
+	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: { domain_name: string } ) => {
 		setDomain( freeDomainSuggestion );
 	};
 

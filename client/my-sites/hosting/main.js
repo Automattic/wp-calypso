@@ -16,10 +16,10 @@ import QueryKeyringConnections from 'calypso/components/data/query-keyring-conne
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FeatureExample from 'calypso/components/feature-example';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
@@ -53,6 +53,7 @@ import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
 import SiteBackupCard from './site-backup-card';
+import SiteWpAdminCard from './site-wp-admin-card';
 import StagingSiteCard from './staging-site-card';
 import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
 import SupportCard from './support-card';
@@ -93,6 +94,7 @@ const MainCards = ( {
 	isWpcomStagingSite,
 	isMigrationTrial,
 	siteId,
+	isYoloWpAdminFeatureDevelopment,
 } ) => {
 	const mainCards = [
 		{
@@ -143,6 +145,13 @@ const MainCards = ( {
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
 		},
+		isYoloWpAdminFeatureDevelopment
+			? {
+					feature: 'wp-admin',
+					content: <SiteWpAdminCard />,
+					type: 'basic',
+			  }
+			: null,
 	].filter( ( card ) => card !== null );
 
 	const availableTypes = [
@@ -307,6 +316,8 @@ class Hosting extends Component {
 			const isGithubIntegrationEnabled =
 				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 
+			const isYoloWpAdminFeatureDevelopment = isEnabled( 'yolo/wp-admin-site-default' );
+
 			return (
 				<>
 					{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
@@ -326,6 +337,7 @@ class Hosting extends Component {
 								isWpcomStagingSite={ isWpcomStagingSite }
 								isMigrationTrial={ isMigrationTrial }
 								siteId={ siteId }
+								isYoloWpAdminFeatureDevelopment={ isYoloWpAdminFeatureDevelopment }
 							/>
 						</Column>
 						<Column type="sidebar">
@@ -354,13 +366,10 @@ class Hosting extends Component {
 				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Hosting Configuration' ) }
-					subHeaderText={ translate(
-						'Access your website’s database and more advanced settings.'
-					) }
-					align="left"
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Hosting Configuration' ) }
+					subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 				/>
 				{ ! isMigrationTrial && banner }
 				{ isMigrationTrial && (

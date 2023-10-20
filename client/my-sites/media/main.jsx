@@ -7,9 +7,9 @@ import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMedia from 'calypso/components/data/query-media';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
@@ -224,7 +224,6 @@ class Media extends Component {
 	 * Start the process to delete media items.
 	 * `callback` is an optional parameter which will execute once the confirm dialog is accepted.
 	 * It's used especially when the item is attempting to be removed using the item detail dialog.
-	 *
 	 * @param  {Function} [callback] - callback function
 	 */
 	deleteMedia( callback ) {
@@ -373,11 +372,9 @@ class Media extends Component {
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
 				<DocumentHead title={ translate( 'Media' ) } />
-				<FormattedHeader
-					brandFont
-					className="media__page-heading"
-					headerText={ translate( 'Media' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					title={ translate( 'Media' ) }
+					subtitle={ translate(
 						'Manage all the media on your site, including images, video, and more. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -385,9 +382,10 @@ class Media extends Component {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
-				/>
+				>
+					<ScreenOptionsTab wpAdminPath="upload.php?preferred-view=classic" />
+				</NavigationHeader>
+
 				{ this.props.selectedSite.is_private && this.props.selectedSite.is_wpcom_atomic && (
 					<Notice
 						showDismiss={ false }

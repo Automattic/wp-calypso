@@ -9,7 +9,6 @@ body.is-section-home.theme-default.color-scheme {
 .customer-home__heading {
 	display: block;
 
-	.customer-home__view-site-button,
 	.formatted-header__subtitle {
 		display: none;
 	}
@@ -65,23 +64,6 @@ body.is-section-home.theme-default.color-scheme {
 		margin-bottom: 4px;
 	}
 
-	.formatted-header {
-		margin-right: 12px;
-	}
-
-	.formatted-header__subtitle {
-		margin: 0;
-	}
-
-	.customer-home__view-site-button {
-		margin: auto;
-		margin-right: 0;
-
-		.button {
-			text-align: center;
-			white-space: nowrap;
-		}
-	}
 	@include break-medium {
 		display: flex;
 		flex: 0 0 auto;
@@ -90,7 +72,6 @@ body.is-section-home.theme-default.color-scheme {
 			display: none;
 		}
 
-		.customer-home__view-site-button,
 		.formatted-header__subtitle {
 			display: block;
 		}
@@ -123,10 +104,18 @@ body.is-section-home.theme-default.color-scheme {
 		@include grid-column( 9, 4 );
 	}
 
+	.card.app-promo.customer-home__card {
+		padding-left: 16px;
+
+		@include break-large {
+			padding-left: 0;
+		}
+	}
+
 	@include break-mobile {
 		> .card,
 		> .card.quick-links,
-		> .card.go-mobile {
+		> .card.app-promo {
 			padding: 16px 0;
 
 			.foldable-card__header {

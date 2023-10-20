@@ -158,6 +158,8 @@ export class RenderDomainsStep extends Component {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
 			wpcomSubdomainSelected: false,
+			isRemovingDomain: null,
+			isGoingToNextStep: false,
 		};
 	}
 
@@ -633,9 +635,9 @@ export class RenderDomainsStep extends Component {
 		return productsInCart;
 	}
 
-	removeDomainClickHandler = ( domain ) => {
-		return () =>
-			this.removeDomain( { domain_name: domain.meta, product_slug: domain.product_slug } );
+	removeDomainClickHandler = ( domain ) => () => {
+		this.setState( { isRemovingDomain: domain.meta } );
+		this.removeDomain( { domain_name: domain.meta, product_slug: domain.product_slug } );
 	};
 
 	removeDomain( { domain_name, product_slug } ) {
@@ -652,6 +654,9 @@ export class RenderDomainsStep extends Component {
 				} )
 				.catch( () => {
 					this.setState( { isCartPendingUpdateDomain: null } );
+				} )
+				.finally( () => {
+					this.setState( { isRemovingDomain: null } );
 				} );
 		}
 	}
@@ -673,61 +678,60 @@ export class RenderDomainsStep extends Component {
 	}
 
 	goToNext = () => {
-		return () => {
-			const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
-			const useThemeHeadstartItem = shouldUseThemeAnnotation
-				? { useThemeHeadstart: shouldUseThemeAnnotation }
-				: {};
+		this.setState( { isGoingToNextStep: true } );
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
 
-			const { step } = this.props;
-			const { lastDomainSearched } = step.domainForm ?? {};
+		const { step } = this.props;
+		const { lastDomainSearched } = step.domainForm ?? {};
 
-			const { suggestion } = step;
-			const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
-			const siteUrl =
-				suggestion &&
-				( isPurchasingItem
-					? suggestion.domain_name
-					: suggestion.domain_name.replace( '.wordpress.com', '' ) );
+		const { suggestion } = step;
+		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
+		const siteUrl =
+			suggestion &&
+			( isPurchasingItem
+				? suggestion.domain_name
+				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
 
-			const domainItem = isPurchasingItem
-				? domainRegistration( {
-						domain: suggestion.domain_name,
-						productSlug: suggestion.product_slug,
-				  } )
-				: undefined;
-			const domainCart = getDomainRegistrations( this.props.cart );
+		const domainItem = isPurchasingItem
+			? domainRegistration( {
+					domain: suggestion.domain_name,
+					productSlug: suggestion.product_slug,
+			  } )
+			: undefined;
+		const domainCart = getDomainRegistrations( this.props.cart );
 
-			this.props.submitSignupStep(
-				Object.assign(
-					{
-						stepName: this.props.stepName,
-						domainItem,
-						isPurchasingItem,
-						siteUrl,
-						stepSectionName: this.props.stepSectionName,
-						domainCart,
-					},
-					this.getThemeArgs()
-				),
-				Object.assign(
-					{ domainItem, domainCart },
-					useThemeHeadstartItem,
-					suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
-					lastDomainSearched ? { lastDomainSearched } : {},
-					{ domainCart }
-				)
-			);
+		this.props.submitSignupStep(
+			Object.assign(
+				{
+					stepName: this.props.stepName,
+					domainItem,
+					isPurchasingItem,
+					siteUrl,
+					stepSectionName: this.props.stepSectionName,
+					domainCart,
+				},
+				this.getThemeArgs()
+			),
+			Object.assign(
+				{ domainItem, domainCart },
+				useThemeHeadstartItem,
+				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+				lastDomainSearched ? { lastDomainSearched } : {},
+				{ domainCart }
+			)
+		);
 
-			const productToRemove = this.props.cart.products.find(
-				( product ) => product.product_slug === this.props.multiDomainDefaultPlan.product_slug
-			);
-			const uuidToRemove = productToRemove.uuid;
+		const productToRemove = this.props.cart.products.find(
+			( product ) => product.product_slug === this.props.multiDomainDefaultPlan.product_slug
+		);
+		const uuidToRemove = productToRemove.uuid;
 
-			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).then( () => {
-				this.props.goToNextStep();
-			} );
-		};
+		this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).then( () => {
+			this.props.goToNextStep();
+		} );
 	};
 
 	getSideContent = () => {
@@ -782,7 +786,9 @@ export class RenderDomainsStep extends Component {
 							className="domains__domain-cart-remove"
 							onClick={ this.removeDomainClickHandler( domain ) }
 						>
-							{ this.props.translate( 'Remove' ) }
+							{ domain.meta === this.state.isRemovingDomain
+								? this.props.translate( 'Removing' )
+								: this.props.translate( 'Remove' ) }
 						</Button>
 					</div>
 				</>
@@ -811,7 +817,12 @@ export class RenderDomainsStep extends Component {
 								) }
 							</div>
 						</div>
-						<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+						<Button
+							primary
+							className="domains__domain-cart-continue"
+							onClick={ this.goToNext }
+							busy={ this.state.isGoingToNextStep }
+						>
 							{ this.props.translate( 'Continue' ) }
 						</Button>
 					</div>
@@ -900,7 +911,12 @@ export class RenderDomainsStep extends Component {
 							</strong>
 						</div>
 					</div>
-					<Button primary className="domains__domain-cart-continue" onClick={ this.goToNext() }>
+					<Button
+						primary
+						className="domains__domain-cart-continue"
+						onClick={ this.goToNext }
+						busy={ this.state.isGoingToNextStep }
+					>
 						{ this.props.translate( 'Continue' ) }
 					</Button>
 					{ this.props.flowName !== 'domain' && (
@@ -1181,7 +1197,7 @@ export class RenderDomainsStep extends Component {
 	}
 
 	shouldHideNavButtons() {
-		return isWithThemeFlow( this.props.flowName ) || this.isTailoredFlow();
+		return this.isTailoredFlow();
 	}
 
 	renderContent() {
@@ -1274,7 +1290,15 @@ export class RenderDomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned, userSiteCount } = this.props;
+		const {
+			flowName,
+			stepName,
+			stepSectionName,
+			isAllDomains,
+			translate,
+			isReskinned,
+			userSiteCount,
+		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
@@ -1293,14 +1317,17 @@ export class RenderDomainsStep extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
-		} else if ( ! previousStepBackUrl && 'domain-transfer' === this.props.flowName ) {
+		} else if ( ! previousStepBackUrl && 'domain-transfer' === flowName ) {
 			backUrl = null;
 			backLabelText = null;
-		} else if ( 'with-plugin' === this.props.flowName ) {
+		} else if ( 'with-plugin' === flowName ) {
 			backUrl = '/plugins';
 			backLabelText = translate( 'Back to plugins' );
+		} else if ( isWithThemeFlow( flowName ) ) {
+			backUrl = '/themes';
+			backLabelText = translate( 'Back to themes' );
 		} else {
-			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
+			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
 			if ( 'site' === source && siteUrl ) {
 				backUrl = siteUrl;
@@ -1317,7 +1344,7 @@ export class RenderDomainsStep extends Component {
 				backLabelText = sitesBackLabelText;
 			}
 
-			const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
+			const externalBackUrl = getExternalBackUrl( source, stepSectionName );
 			if ( externalBackUrl ) {
 				backUrl = externalBackUrl;
 				backLabelText = translate( 'Back' );
@@ -1331,8 +1358,8 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
+				flowName={ flowName }
+				stepName={ stepName }
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }

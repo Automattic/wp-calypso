@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
@@ -8,6 +9,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { onboardingUrl } from 'calypso/lib/paths';
+import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import { closeAccount } from 'calypso/state/account/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
@@ -48,8 +50,10 @@ class AccountCloseConfirmDialog extends Component {
 		this.setState( { displayAlternativeOptions: false } );
 	};
 
-	handleConfirm = () => {
+	handleConfirm = async () => {
 		this.props.closeAccount();
+		disablePersistence();
+		await clearStore();
 		page( '/me/account/closed' );
 	};
 
@@ -69,36 +73,37 @@ class AccountCloseConfirmDialog extends Component {
 				englishText: 'Start a new site',
 				text: translate( 'Start a new site' ),
 				href: onboardingUrl() + '?ref=me-account-close',
-				supportLink:
-					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account',
+				supportLink: localizeUrl(
+					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account'
+				),
 				supportPostId: 3991,
 			},
 			{
 				englishText: "Change your site's address",
 				text: translate( "Change your site's address" ),
 				href: '/settings/general',
-				supportLink: 'https://wordpress.com/support/changing-site-address/',
+				supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
 				supportPostId: 11280,
 			},
 			{
 				englishText: 'Change your username',
 				text: translate( 'Change your username' ),
 				href: '/me/account',
-				supportLink: 'https://wordpress.com/support/change-your-username/',
+				supportLink: localizeUrl( 'https://wordpress.com/support/change-your-username/' ),
 				supportPostId: 2116,
 			},
 			{
 				englishText: 'Change your password',
 				text: translate( 'Change your password' ),
 				href: '/me/security',
-				supportLink: 'https://wordpress.com/support/passwords/#change-your-password',
+				supportLink: localizeUrl( 'https://wordpress.com/support/passwords/#change-your-password' ),
 				supportPostId: 89,
 			},
 			{
 				englishText: 'Delete a site',
 				text: translate( 'Delete a site' ),
 				href: '/settings/delete-site',
-				supportLink: 'https://wordpress.com/support/delete-site/',
+				supportLink: localizeUrl( 'https://wordpress.com/support/delete-site/' ),
 				supportPostId: 14411,
 			},
 		];

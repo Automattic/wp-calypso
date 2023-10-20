@@ -1,75 +1,131 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography.scss";
 
-.stats-date-control {
+.date-control-picker-date {
+	margin: 16px;
+
+	// Internal layout
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
-// TODO: Add final colors to shortcuts.
-
 .date-control-picker-shortcuts {
-	margin: 10px 0;
+	padding: 16px;
+	border-left: 1px solid var(--gray-gray-5, #dcdcde);
+	box-sizing: border-box;
 }
 
 .date-control-picker-shortcuts__list {
 	list-style: none;
-	margin: 0 12px;
+	margin: 0;
 }
 
 .date-control-picker-shortcuts__shortcut {
 	border-radius: 4px;
+
+	&.is-selected {
+		background-color: var(--color-accent-5);
+	}
+
+	&:hover {
+		background-color: var(--color-primary-0);
+	}
+
 	.components-button {
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
 	}
-	&.is-selected {
-		background-color: var(--color-accent-5);
-	}
-	&:hover {
-		background-color: var(--color-primary-0);
+}
+
+.stats-date-control-picker-dates__inputs-input-group {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 16px; // spacing between "From" and "To" groups
+
+	label {
+		margin-bottom: 0;
+		text-align: left;
 	}
 }
 
-// Button styling for date control picker dropdown
+.stats-date-control {
+	display: flex;
+	flex-direction: row-reverse;
+}
 
 .stats-date-control-picker {
 
 	> .components-button {
-		border-radius: 4px;
-		border: 1px solid var(--gray-gray-10, #c3c4c7);
+		align-items: center;
 		background: #fff;
+		border: 1px solid var(--gray-gray-10, #c3c4c7);
+		border-radius: 4px;
 		color: var(--studio-black);
+		display: flex;
 		font-family: $font-sf-pro-display;
-		font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
 		font-style: normal;
 		font-weight: 500;
-		line-height: 20px;
-		letter-spacing: 0.32px;
-		display: flex;
-		padding: var(--grid-unit-15, 12px) var(--grid-unit-20, 16px);
-		justify-content: flex-end;
-		align-items: center;
 		gap: 8px;
+		justify-content: flex-end;
+		letter-spacing: 0.32px;
+		line-height: 20px;
+		padding: 6px 8px;
+	}
+}
+
+.stats-date-control-picker-dates__inputs {
+
+	align-items: flex-start; // this prevents flex children from stretching
+	display: flex; // to position "From" and "To" groups side by side
+	gap: 16px; // spacing between the "From" input and the "To" input
+
+	input[type="date"] {
+		font-family: $font-sf-pro-text;
+		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		border: 1px solid var(--gray-gray-10, #c3c4c7);
+		background: var(--black-white-white, #fff);
+		padding: 10px 16px;
+		width: auto;
+		max-width: 120px;
+		box-sizing: content-box; // this ensures padding isn't included in the total width
 	}
 }
 
 .stats-date-control-picker__popover-content {
 	display: flex;
 	min-width: 320px;
-}
 
-.date-control-picker-date {
-	margin: 16px;
-
-	// internal layout
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
 }
 
 .stats-date-control-picker-dates__buttons {
 	display: flex;
 	justify-content: flex-end;
 }
+
+.stats-date-control-picker__popover-content .date-control-picker-date .date-control-picker-date__heading {
+	color: var(--gray-gray-80, #2c3338);
+	font-family: $font-sf-pro-text;
+	font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-style: normal;
+	font-weight: 500;
+	line-height: 24px;
+	letter-spacing: -0.28px;
+	text-align: left;
+	padding: 8px 0;
+
+	span {
+		color: var(--gray-gray-50, #646970);
+		font-size: 12px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		line-height: 18px;
+		letter-spacing: -0.24px;
+	}
+
+}
+

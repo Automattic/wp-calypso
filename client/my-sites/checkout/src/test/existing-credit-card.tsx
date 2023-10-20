@@ -52,7 +52,7 @@ function getExistingCardPaymentMethod( additionalArgs = {} ) {
 		storedDetailsId,
 		paymentMethodToken,
 		paymentPartnerProcessorId,
-		activePayButtonText,
+		submitButtonContent: activePayButtonText,
 		...additionalArgs,
 	} );
 }

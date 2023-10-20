@@ -1,23 +1,25 @@
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
-import StatsPageHeader from 'calypso/my-sites/stats/stats-page-header';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -207,15 +209,18 @@ class GoogleMyBusinessStats extends Component {
 				<QueryKeyringServices />
 
 				<div className="stats">
-					<StatsPageHeader
-						page="googleMyBusiness"
-						subHeaderText={ translate(
+					<NavigationHeader
+						className="stats__section-header modernized-header"
+						title={ translate( 'Jetpack Stats' ) }
+						subtitle={ translate(
 							'Integrate your business with Google and get stats on your locations. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 							{
 								components: {
 									learnMoreLink: (
 										<a
-											href="https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection"
+											href={ localizeUrl(
+												'https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection'
+											) }
 											target="_blank"
 											rel="noreferrer noopener"
 										/>
@@ -223,7 +228,8 @@ class GoogleMyBusinessStats extends Component {
 								},
 							}
 						) }
-					/>
+						screenReader={ navItems.googleMyBusiness?.label }
+					></NavigationHeader>
 
 					<StatsNavigation selectedItem="googleMyBusiness" siteId={ siteId } slug={ siteSlug } />
 

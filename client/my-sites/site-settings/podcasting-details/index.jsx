@@ -9,7 +9,6 @@ import TermTreeSelector from 'calypso/blocks/term-tree-selector';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryTerms from 'calypso/components/data/query-terms';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -18,6 +17,7 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import { decodeEntities } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -184,10 +184,10 @@ class PodcastingDetails extends Component {
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Podcasting' ) } />
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Podcasting' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Podcasting' ) }
+					subtitle={ translate(
 						'Publish a podcast feed to Apple Podcasts and other podcasting services. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -195,7 +195,6 @@ class PodcastingDetails extends Component {
 							},
 						}
 					) }
-					align="left"
 				/>
 
 				<form id="site-settings" onSubmit={ handleSubmitForm }>

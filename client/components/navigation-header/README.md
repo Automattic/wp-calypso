@@ -26,3 +26,6 @@ function render() {
 - `className` (`string`) - A class name for the wrapped component (optional)
 - `children` (`nodes`) – Any children elements which are being rendered to the far right (optional)
 - `compactBreadcrumb` (`boolean`) - Displays only the previous item URL reading "Back" in the breadcrumb (optional)
+- `title` (`string`) - Title of the header (optional)
+- `subtitle` (`string`) - Subtitle of the header (optional)
+- `screenReader` (`string`) - Used for screen readers and it's hidden on the view (optional)

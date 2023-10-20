@@ -459,6 +459,15 @@ function recordOrderInGoogleAds(
 	// MCC-level event.
 	// WPCOM
 	if ( mayWeTrackByTracker( 'googleAds' ) ) {
+		const currentUser = getCurrentUser();
+
+		// SHA256 hash of current user's email address for enhanced conversion matching.
+		const currentUserHashedEmail = currentUser?.hashedPii?.email ?? '';
+
+		window.gtag( 'set', 'user_data', {
+			sha256_email_address: currentUserHashedEmail,
+		} );
+
 		const params = [
 			'event',
 			'conversion',

@@ -33,12 +33,33 @@ import {
 } from './custom-form-fieldsets/constants';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { GSuiteFields } from './g-suite-fields';
-import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
+import type {
+	DomainContactDetails as DomainContactDetailsData,
+	DomainContactDetailsExtra,
+} from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors, ManagedContactDetails } from '@automattic/wpcom-checkout';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
+
+export interface FieldProps {
+	labelClass: string;
+	additionalClasses: string;
+	disabled: boolean;
+	isError: boolean;
+	errorMessage:
+		| React.ReactElement
+		| string
+		| number
+		| DomainContactDetailsErrors[ 'extra' ]
+		| undefined;
+	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	onBlur: () => void;
+	value: string | DomainContactDetailsExtra | undefined;
+	name: string;
+	eventFormName: string | undefined;
+}
 
 export interface ManagedContactDetailsFormFieldsProps {
 	eventFormName?: string;
@@ -161,7 +182,10 @@ export class ManagedContactDetailsFormFields extends Component<
 		this.updateParentState( updatedParentState );
 	};
 
-	getFieldProps = ( name: string, { customErrorMessage = null } ) => {
+	getFieldProps = (
+		name: string,
+		{ customErrorMessage }: { customErrorMessage?: DomainContactDetailsErrors[ 'firstName' ] }
+	) => {
 		const { eventFormName, getIsFieldDisabled } = this.props;
 		const camelName = camelCase( name );
 

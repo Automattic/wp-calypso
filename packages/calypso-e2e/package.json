@@ -34,7 +34,7 @@
 		"@jest/globals": "^29.5.0",
 		"@types/node": "^18.17.3",
 		"@types/node-fetch": "^2.6.1",
-		"@wordpress/i18n": "^4.41.0",
+		"@wordpress/i18n": "^4.44.0",
 		"asana-phrase": "^0.0.8",
 		"node-fetch": "^2.6.7",
 		"typescript": "^5.2.2"

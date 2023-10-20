@@ -34,13 +34,13 @@ const LaunchpadPreLaunch = (): JSX.Element => {
 		}
 	};
 
-	const siteLaunched = () => {
+	const onSiteLaunched = () => {
 		setCelebrateLaunchModalIsOpenWrapper( true );
 	};
 
 	return (
 		<>
-			<CustomerHomeLaunchpad checklistSlug={ checklistSlug } extraActions={ { siteLaunched } } />
+			<CustomerHomeLaunchpad checklistSlug={ checklistSlug } onSiteLaunched={ onSiteLaunched } />
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpenWrapper }

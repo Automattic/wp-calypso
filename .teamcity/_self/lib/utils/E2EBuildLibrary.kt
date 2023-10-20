@@ -51,7 +51,6 @@ fun BuildSteps.collectE2eResults(): ScriptBuildStep {
 fun ParametrizedWithType.defaultE2eParams() {
     param("env.NODE_CONFIG_ENV", "test")
     param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-    param("env.TEAMCITY_VERSION", "2021")
     param("env.HEADLESS", "true")
     param("env.LOCALE", "en")
 	param("env.DEBUG", "")
@@ -96,7 +95,7 @@ fun defaultE2eArtifactRules(): String = """
 fun BuildSteps.runE2eTestsWithRetry(
 	testGroup: String,
 	additionalEnvVars: Map<String, String> = mapOf(),
-	stepName: String = "Run tests" 
+	stepName: String = "Run tests"
 ): ScriptBuildStep {
 	val envVarExport = additionalEnvVars.map { ( key, value ) -> "export $key='$value'" }.joinToString( separator = "\n" )
 
@@ -105,7 +104,7 @@ fun BuildSteps.runE2eTestsWithRetry(
         scriptContent = """
             # Configure bash shell.
             set -x
-            
+
             # Export additional environment variables.
             $envVarExport
 

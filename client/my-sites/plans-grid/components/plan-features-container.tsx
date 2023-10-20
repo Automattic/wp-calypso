@@ -7,12 +7,11 @@ import PlanFeatures2023GridFeatures from './features';
 import PlanDivOrTdContainer from './plan-div-td-container';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
-import type { DomainSuggestion } from '@automattic/data-stores';
 
 const PlanFeaturesContainer: React.FC< {
 	plansWithFeatures: GridPlan[];
 	paidDomainName?: string;
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
+	generatedWPComSubdomain: DataResponse< { domain_name: string } >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	translate: LocalizeProps[ 'translate' ];
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	selectedFeature?: string;
@@ -21,7 +20,7 @@ const PlanFeaturesContainer: React.FC< {
 } > = ( {
 	plansWithFeatures,
 	paidDomainName,
-	wpcomFreeDomainSuggestion,
+	generatedWPComSubdomain,
 	translate,
 	hideUnavailableFeatures,
 	selectedFeature,
@@ -46,7 +45,7 @@ const PlanFeaturesContainer: React.FC< {
 						features={ wpcomFeatures }
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
-						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+						generatedWPComSubdomain={ generatedWPComSubdomain }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
 						selectedFeature={ selectedFeature }
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
@@ -75,7 +74,7 @@ const PlanFeaturesContainer: React.FC< {
 						features={ jetpackFeatures }
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
-						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+						generatedWPComSubdomain={ generatedWPComSubdomain }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						setActiveTooltipId={ setActiveTooltipId }

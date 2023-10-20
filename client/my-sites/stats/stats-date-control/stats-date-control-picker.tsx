@@ -1,27 +1,29 @@
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
-import moment from 'moment';
-import page from 'page';
-import qs from 'qs';
 import React, { useState, useRef } from 'react';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import DateControlPickerDate from './stats-date-control-picker-date';
 import DateControlPickerShortcuts from './stats-date-control-picker-shortcuts';
 import { DateControlPickerProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
 const DateControlPicker = ( {
-	slug,
-	queryParams,
+	buttonLabel,
+	dateRange,
 	shortcutList,
-	handleApply,
+	selectedShortcut,
+	onShortcut,
+	onApply,
 }: DateControlPickerProps ) => {
-	// TODO: remove placeholder values
-	const [ inputStartDate, setInputStartDate ] = useState( new Date().toISOString().slice( 0, 10 ) );
-	const [ inputEndDate, setInputEndDate ] = useState(
-		new Date( new Date().setMonth( new Date().getMonth() - 3 ) ).toISOString().slice( 0, 10 )
+	const moment = useLocalizedMoment();
+	// Pull dates from provided range.
+	const [ inputStartDate, setInputStartDate ] = useState(
+		moment( dateRange.chartStart ).format( 'YYYY-MM-DD' )
 	);
-	const [ currentShortcut, setCurrentShortcut ] = useState( 'today' );
+	const [ inputEndDate, setInputEndDate ] = useState(
+		moment( dateRange.chartEnd ).format( 'YYYY-MM-DD' )
+	);
 	const infoReferenceElement = useRef( null );
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
@@ -35,19 +37,24 @@ const DateControlPicker = ( {
 		setInputEndDate( value );
 	};
 
+	const updateLocalStateFromShortcut = ( shortcut: DateControlPickerShortcut ) => {
+		const endDate =
+			shortcut.offset === 0
+				? moment().format( 'YYYY-MM-DD' )
+				: moment().subtract( shortcut.offset, 'days' ).format( 'YYYY-MM-DD' );
+
+		const startDate =
+			shortcut.range === 0
+				? endDate
+				: moment( endDate ).subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
+
+		setInputStartDate( startDate );
+		setInputEndDate( endDate );
+	};
+
 	const handleOnApply = () => {
-		const nextDay = inputStartDate;
-		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
-			addQueryPrefix: true,
-		} );
-		const period = 'day'; // TODO: make this dynamic
-		const url = `/stats/${ period }/${ slug }`;
-		const href = `${ url }${ nextDayQuery }`;
-
-		// expose the values externally
-		handleApply( inputStartDate, inputEndDate );
-
-		page( href );
+		togglePopoverOpened( false );
+		onApply( inputStartDate, inputEndDate );
 	};
 
 	const handleOnCancel = () => {
@@ -55,38 +62,15 @@ const DateControlPicker = ( {
 	};
 
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
-		// Shared date math.
-		const calcNewDateWithOffset = ( date: Date, offset: number ): Date => {
-			// We do our date math based on 24 hour increments.
-			const millisecondsInOneDay = 1000 * 60 * 60 * 24;
-			const newDateInMilliseconds = date.getTime() - millisecondsInOneDay * offset;
-			return new Date( newDateInMilliseconds );
-		};
-
-		// Shared date formatting.
-		const formattedDate = ( date: Date ) => {
-			return date.toISOString().split( 'T' )[ 0 ];
-		};
-
-		// Calc new start date based on offset value from shortcut.
-		const newStartDate = calcNewDateWithOffset( new Date(), shortcut.offset );
-		setInputStartDate( formattedDate( newStartDate ) );
-
-		// Calc new end date based on start date plus range as specified in shortcut.
-		const newEndDate = calcNewDateWithOffset( newStartDate, shortcut.range );
-		setInputEndDate( formattedDate( newEndDate ) );
-
-		setCurrentShortcut( shortcut.id || '' );
-	};
-
-	const formatDate = ( date: string ) => {
-		return moment( date ).format( 'MMM D, YYYY' );
+		togglePopoverOpened( false );
+		updateLocalStateFromShortcut( shortcut );
+		onShortcut( shortcut );
 	};
 
 	return (
 		<div className="stats-date-control-picker">
 			<Button onClick={ () => togglePopoverOpened( ! popoverOpened ) } ref={ infoReferenceElement }>
-				{ `${ formatDate( inputStartDate ) } - ${ formatDate( inputEndDate ) }` }
+				{ buttonLabel }
 				<Icon className="gridicon" icon={ calendar } />
 			</Button>
 			<Popover
@@ -105,7 +89,7 @@ const DateControlPicker = ( {
 					/>
 					<DateControlPickerShortcuts
 						shortcutList={ shortcutList }
-						currentShortcut={ currentShortcut }
+						currentShortcut={ selectedShortcut }
 						onClick={ handleShortcutSelected }
 					/>
 				</div>

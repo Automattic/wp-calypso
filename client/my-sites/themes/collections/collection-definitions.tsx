@@ -1,6 +1,20 @@
 import { translate } from 'i18n-calypso';
 
 export const THEME_COLLECTIONS = {
+	recommended: {
+		query: {
+			collection: 'recommended',
+			filter: '',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: '',
+		},
+		title: translate( 'Recommended Themes' ),
+		collectionSlug: 'recommended',
+		description: <p>Lorem ipsum dolor sit amet</p>,
+		seeAllLink: '/themes',
+	},
 	premium: {
 		query: {
 			collection: 'recommended',
@@ -15,7 +29,7 @@ export const THEME_COLLECTIONS = {
 		description: <p>Lorem ipsum dolor sit amet</p>,
 		seeAllLink: '/themes/premium',
 	},
-	partner: {
+	marketplace: {
 		query: {
 			collection: 'recommended',
 			filter: '',
@@ -28,5 +42,61 @@ export const THEME_COLLECTIONS = {
 		collectionSlug: 'partner-themes',
 		description: <p>Lorem ipsum dolor sit amet</p>,
 		seeAllLink: '/themes/marketplace',
+	},
+	blog: {
+		query: {
+			collection: 'recommended',
+			filter: 'blog',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: '',
+		},
+		title: translate( 'Blog Themes' ),
+		collectionSlug: 'blog-themes',
+		description: <p>Lorem ipsum dolor sit amet</p>,
+		seeAllLink: '/themes/filter/blog',
+	},
+	portfolio: {
+		query: {
+			collection: 'recommended',
+			filter: 'portfolio',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: '',
+		},
+		title: translate( 'Portfolio Themes' ),
+		collectionSlug: 'portfolio-themes',
+		description: <p>Lorem ipsum dolor sit amet</p>,
+		seeAllLink: '/themes/filter/portfolio',
+	},
+	business: {
+		query: {
+			collection: 'recommended',
+			filter: 'business',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: '',
+		},
+		title: translate( 'Business Themes' ),
+		collectionSlug: 'business-themes',
+		description: <p>Lorem ipsum dolor sit amet</p>,
+		seeAllLink: '/themes/filter/business',
+	},
+	'art-design': {
+		query: {
+			collection: 'recommended',
+			filter: 'art-design',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: '',
+		},
+		title: translate( 'Art and Design Themes' ),
+		collectionSlug: 'art-design-themes',
+		description: <p>Lorem ipsum dolor sit amet</p>,
+		seeAllLink: '/themes/filter/art-design',
 	},
 };

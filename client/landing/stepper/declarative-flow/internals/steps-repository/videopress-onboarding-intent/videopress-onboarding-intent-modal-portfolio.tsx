@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
@@ -21,6 +22,14 @@ const VideoPressOnboardingIntentModalPortfolio: React.FC< IntroModalContentProps
 	);
 
 	let getStartedText: string | ReactElement = translate( 'Get started' );
+	let learnMoreText: string | React.ReactNode = translate(
+		'{{a}}Or learn more about VideoPress{{/a}}',
+		{
+			components: {
+				a: <a href="https://videopress.com/" target="_blank" rel="external noreferrer noopener" />,
+			},
+		}
+	);
 
 	let defaultSupportedPlan = supportedPlans.find( ( plan ) => {
 		return plan.periodAgnosticSlug === 'premium';
@@ -36,11 +45,32 @@ const VideoPressOnboardingIntentModalPortfolio: React.FC< IntroModalContentProps
 
 		if ( planProductObject ) {
 			// eslint-disable-next-line @wordpress/valid-sprintf
-			getStartedText = sprintf(
-				/* translators: Price displayed on VideoPress intro page. %s is monthly price. */
-				translate( 'Get started - from %s/month' ),
-				planProductObject.price
-			);
+			getStartedText = config.isEnabled( 'videomaker-trial' )
+				? translate( 'Start a free trial' )
+				: sprintf(
+						/* translators: Price displayed on VideoPress intro page. %s is monthly price. */
+						translate( 'Get started - from %s/month' ),
+						planProductObject.price
+				  );
+
+			if ( config.isEnabled( 'videomaker-trial' ) ) {
+				learnMoreText = translate(
+					/* translators: Displayed on VideoPress signup flow intro page. %(price)s is monthly price. */
+					'After trial, plans start as low as %(price)s/month. {{a}}Learn more about VideoPress{{/a}}',
+					{
+						args: { price: planProductObject.price },
+						components: {
+							a: (
+								<a
+									href="https://videopress.com/"
+									target="_blank"
+									rel="external noreferrer noopener"
+								/>
+							),
+						},
+					}
+				);
+			}
 		}
 	}
 
@@ -78,6 +108,7 @@ const VideoPressOnboardingIntentModalPortfolio: React.FC< IntroModalContentProps
 				text: getStartedText,
 				onClick: onSubmit,
 			} }
+			learnMoreText={ learnMoreText }
 		/>
 	);
 };

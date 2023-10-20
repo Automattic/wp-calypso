@@ -2,9 +2,9 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
@@ -202,7 +202,7 @@ const ReadingSettings = () => {
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
-			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Reading Settings' ) } />
 			<ReadingSettingsForm />
 		</Main>
 	);

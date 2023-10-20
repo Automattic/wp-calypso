@@ -613,6 +613,7 @@ $image-height: 47px;
 	}
 
 	.login__form {
+		background-color: inherit;
 		padding: 0;
 	}
 
@@ -691,7 +692,8 @@ $image-height: 47px;
 		color: inherit;
 	}
 
-	.login__social {
+	.login__social,
+	.social-buttons__button.button {
 		background-color: inherit;
 	}
 

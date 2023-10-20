@@ -1,0 +1,36 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.themes__showcase {
+	.theme-collection__container {
+		margin-left: -16px;
+		margin-right: -16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-left: -32px;
+			margin-right: -32px;
+		}
+
+		&:last-child {
+			// Ensure the bottom is well padded.
+			// @see https://github.com/Automattic/wp-calypso/blob/af56132740bb9890a99a9caf55fdd4b8b38a4d50/client/layout/style.scss#L124-L132
+			@include breakpoint-deprecated( ">1400px" ) {
+				padding-bottom: 88px;
+			}
+		}
+
+		& + .pattern-assembler-cta-wrapper {
+			margin-top: 48px;
+		}
+	}
+
+	.theme-collection__meta {
+		margin-left: 16px;
+		margin-right: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-left: 32px;
+			margin-right: 32px;
+		}
+	}
+}

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useMemoCompare } from 'calypso/lib/use-memo-compare';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
 import type { StripeLoadingError } from '@automattic/calypso-stripe';
@@ -12,14 +12,14 @@ export default function useCreateExistingCards( {
 	isStripeLoading,
 	stripeLoadingError,
 	storedCards,
-	activePayButtonText = undefined,
+	submitButtonContent,
 	allowEditingTaxInfo,
 	isTaxInfoRequired,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	storedCards: StoredPaymentMethod[];
-	activePayButtonText?: string;
+	submitButtonContent: ReactNode;
 	allowEditingTaxInfo?: boolean;
 	isTaxInfoRequired?: boolean;
 } ): PaymentMethod[] {
@@ -52,13 +52,13 @@ export default function useCreateExistingCards( {
 					storedDetailsId: storedDetails.stored_details_id,
 					paymentMethodToken: storedDetails.mp_ref,
 					paymentPartnerProcessorId: storedDetails.payment_partner,
-					activePayButtonText,
+					submitButtonContent,
 					allowEditingTaxInfo,
 					isTaxInfoRequired,
 				} )
 			) ?? []
 		);
-	}, [ memoizedStoredCards, activePayButtonText, allowEditingTaxInfo, isTaxInfoRequired ] );
+	}, [ memoizedStoredCards, submitButtonContent, allowEditingTaxInfo, isTaxInfoRequired ] );
 
 	return shouldLoad ? existingCardMethods : [];
 }

@@ -806,7 +806,6 @@ object PreReleaseE2ETests : BuildType({
 	params {
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-		param("env.TEAMCITY_VERSION", "2021")
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
 		param("env.VIEWPORT_NAME", "desktop")

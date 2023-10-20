@@ -16,6 +16,7 @@ export const FEATURE_QUICK_START = 'home-feature-quick-start';
 export const FEATURE_STATS = 'home-feature-stats';
 export const FEATURE_SUPPORT = 'home-feature-support';
 export const FEATURE_SITE_PREVIEW = 'home-feature-site-preview';
+export const NOTICE_READER_FIRST_POSTS = 'home-reader-first-posts';
 export const NOTICE_SITE_LAUNCH_SELLER_UPSELL = 'home-site-launch-seller-upsell';
 export const NOTICE_CELEBRATE_SITE_CREATION = 'home-notice-celebrate-site-creation';
 export const NOTICE_CELEBRATE_SITE_LAUNCH = 'home-notice-celebrate-site-launch';

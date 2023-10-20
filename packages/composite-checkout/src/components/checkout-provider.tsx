@@ -3,31 +3,16 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
-import { LineItemsProvider } from '../lib/line-items';
 import defaultTheme from '../lib/theme';
-import {
-	validateArg,
-	validateLineItems,
-	validatePaymentMethods,
-	validateTotal,
-} from '../lib/validation';
-import { LineItem, CheckoutProviderProps } from '../types';
+import { validateArg, validatePaymentMethods } from '../lib/validation';
+import { CheckoutProviderProps } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormAndTransactionProvider } from './form-and-transaction-provider';
 import type { CheckoutContextInterface } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
-const emptyTotal: LineItem = {
-	id: 'total',
-	type: 'total',
-	amount: { value: 0, displayValue: '0', currency: 'USD' },
-	label: 'Total',
-};
-
 export function CheckoutProvider( {
-	total = emptyTotal,
-	items = [],
 	onPaymentComplete,
 	onPaymentRedirect,
 	onPaymentError,
@@ -44,8 +29,6 @@ export function CheckoutProvider( {
 	children,
 }: CheckoutProviderProps ) {
 	const propsToValidate = {
-		total,
-		items,
 		redirectToUrl,
 		theme,
 		paymentMethods,
@@ -117,18 +100,16 @@ export function CheckoutProvider( {
 		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onLoadError }>
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
-				<LineItemsProvider items={ items } total={ total }>
-					<FormAndTransactionProvider
-						onPaymentComplete={ onPaymentComplete }
-						onPaymentRedirect={ onPaymentRedirect }
-						onPaymentError={ onPaymentError }
-						isLoading={ isLoading }
-						isValidating={ isValidating }
-						redirectToUrl={ redirectToUrl }
-					>
-						<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
-					</FormAndTransactionProvider>
-				</LineItemsProvider>
+				<FormAndTransactionProvider
+					onPaymentComplete={ onPaymentComplete }
+					onPaymentRedirect={ onPaymentRedirect }
+					onPaymentError={ onPaymentError }
+					isLoading={ isLoading }
+					isValidating={ isValidating }
+					redirectToUrl={ redirectToUrl }
+				>
+					<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
+				</FormAndTransactionProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
 	);
@@ -144,18 +125,14 @@ function CheckoutProviderPropValidator( {
 }: {
 	propsToValidate: CheckoutProviderProps;
 } ) {
-	const { total, items, paymentMethods, paymentProcessors } = propsToValidate;
+	const { paymentMethods, paymentProcessors } = propsToValidate;
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
 
-		validateArg( total, 'CheckoutProvider missing required prop: total' );
-		validateTotal( total );
-		validateArg( items, 'CheckoutProvider missing required prop: items' );
-		validateLineItems( items );
 		validateArg( paymentProcessors, 'CheckoutProvider missing required prop: paymentProcessors' );
 		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 		validatePaymentMethods( paymentMethods );
-	}, [ items, paymentMethods, paymentProcessors, propsToValidate, total ] );
+	}, [ paymentMethods, paymentProcessors, propsToValidate ] );
 	return null;
 }
 

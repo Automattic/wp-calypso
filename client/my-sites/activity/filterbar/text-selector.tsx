@@ -1,6 +1,6 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { TextControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 import { useDispatch } from 'react-redux';
@@ -20,6 +20,14 @@ const TextSelector: FunctionComponent< Props > = ( { siteId, filter } ) => {
 	const isMobile = useMobileBreakpoint();
 
 	const [ searchQuery, setSearchQuery ] = useState( filter.textSearch || '' );
+
+	useEffect( () => {
+		// If the filter is cleared, clear the search query
+		if ( ! filter.textSearch ) {
+			setSearchQuery( '' );
+		}
+	}, [ filter.textSearch ] );
+
 	const dispatch = useDispatch() as CalypsoDispatch;
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		const { value } = event.currentTarget;

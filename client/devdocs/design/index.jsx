@@ -80,6 +80,7 @@ import ListEnd from 'calypso/components/list-end/docs/example';
 import Main from 'calypso/components/main';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
 import MultipleChoiceQuestionExample from 'calypso/components/multiple-choice-question/docs/example';
+import NavigationHeader from 'calypso/components/navigation-header/docs/example';
 import Notices from 'calypso/components/notice/docs/example';
 import PaginationExample from 'calypso/components/pagination/docs/example';
 import PaymentLogo from 'calypso/components/payment-logo/docs/example';
@@ -245,6 +246,7 @@ export default class DesignAssets extends Component {
 					<ProductLogoExample />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
+					<NavigationHeader readmeFilePath="navigation-header" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />

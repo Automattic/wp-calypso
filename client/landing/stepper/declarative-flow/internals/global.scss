@@ -206,7 +206,8 @@ button {
 
 }
 
-.import-focused .step-container.site-picker {
+.import-focused .step-container.site-picker,
+.import-hosted-site .step-container.site-picker {
 	max-width: 1280px;
 	padding: 1.5rem;
 }

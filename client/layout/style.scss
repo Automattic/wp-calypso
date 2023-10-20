@@ -73,9 +73,13 @@ body.is-focus-sites {
 		margin: 0;
 	}
 
+	.is-section-themes.has-no-sidebar.is-logged-in & {
+		padding: 79px 32px 32px;
+	}
+
 	.is-section-theme & {
 		.sites.main {
-			padding-top: 79px;
+			padding-top: calc(79px - var(--masterbar-height));
 		}
 	}
 
@@ -98,6 +102,10 @@ body.is-focus-sites {
 		.is-section-themes.has-no-sidebar & {
 			padding: 0;
 			margin: 0;
+		}
+
+		.is-section-themes.has-no-sidebar.is-logged-in & {
+			padding: 47px 0 0;
 		}
 
 		.is-section-preview & {

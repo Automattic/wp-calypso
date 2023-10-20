@@ -133,15 +133,10 @@ export interface Design {
 export interface DesignOptions {
 	styleVariation?: StyleVariation;
 	globalStyles?: GlobalStyles;
-	pageTemplate?: string;
-	trimContent?: boolean;
-	posts_source_site_id?: number;
-	keepHomepage?: boolean;
 }
 
 export interface DesignPreviewOptions {
 	language?: string;
-	vertical_id?: string;
 	site_title?: string;
 	site_tagline?: string;
 	viewport_height?: number;

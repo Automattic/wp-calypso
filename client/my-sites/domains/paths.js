@@ -122,15 +122,6 @@ export function domainManagementEdit(
  * @param {string} domainName
  * @param {string?} relativeTo
  */
-export function domainManagementContactsPrivacy( siteName, domainName, relativeTo = null ) {
-	return domainManagementEditBase( siteName, domainName, 'contacts-privacy', relativeTo );
-}
-
-/**
- * @param {string} siteName
- * @param {string} domainName
- * @param {string?} relativeTo
- */
 export function domainManagementEditContactInfo( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
 }

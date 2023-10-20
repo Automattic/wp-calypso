@@ -4,9 +4,9 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import useUserQuery from 'calypso/data/users/use-user-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useProtectForm } from 'calypso/lib/protect-form';
@@ -61,13 +61,10 @@ export const EditTeamMemberForm = ( {
 		<Main className="edit-team-member-form">
 			<PageViewTracker path="people/edit/:site/:user" title="People > View Team Member" />
 			{ isEnabled( 'user-management-revamp' ) && (
-				<FormattedHeader
-					brandFont
-					className="people__page-heading"
-					headerText={ translate( 'Users' ) }
-					subHeaderText={ translate( 'People who have subscribed to your site and team members.' ) }
-					align="left"
-					hasScreenOptions
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Users' ) }
+					subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
 				/>
 			) }
 			<HeaderCake onClick={ goBack } isCompact>

@@ -164,6 +164,7 @@ const StagingToProductionSync = ( {
 	isSyncButtonDisabled,
 	isSyncInProgress,
 	onConfirm,
+	showSyncPanel,
 }: {
 	disabled: boolean;
 	siteSlug: string;
@@ -172,18 +173,23 @@ const StagingToProductionSync = ( {
 	selectedItems: CheckboxOptionItem[];
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
+	showSyncPanel: boolean;
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
 	return (
 		<>
-			<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
-			<SyncOptionsPanel
-				reset={ ! isSyncInProgress }
-				items={ synchronizationOptions }
-				disabled={ disabled }
-				onChange={ onSelectItems }
-			></SyncOptionsPanel>
+			{ showSyncPanel && (
+				<>
+					<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
+					<SyncOptionsPanel
+						reset={ ! isSyncInProgress }
+						items={ synchronizationOptions }
+						disabled={ disabled }
+						onChange={ onSelectItems }
+					></SyncOptionsPanel>
+				</>
+			) }
 			<ConfirmationModalContainer>
 				<ConfirmationModal
 					disabled={ disabled || isSyncButtonDisabled }
@@ -360,7 +366,7 @@ export const SiteSyncCard = ( {
 		isSyncInProgress,
 		error: checkStatusError,
 		status,
-		siteType,
+		targetSite,
 	} = useCheckSyncStatus( productionSiteId );
 
 	const transformSelectedItems = useCallback( ( items: CheckboxOptionItem[] ) => {
@@ -395,36 +401,33 @@ export const SiteSyncCard = ( {
 	}, [ resetSyncStatus, dispatch, type, onPull, transformSelectedItems, selectedItems ] );
 
 	const isSyncButtonDisabled =
-		disabled || ( selectedItems.length === 0 && selectedOption === actionForType );
+		disabled ||
+		( selectedItems.length === 0 && selectedOption === actionForType ) ||
+		selectedOption === null;
 
-	let targetSiteType: 'production' | 'staging' | null = null;
-	if ( siteType ) {
-		targetSiteType = siteType;
+	let siteToSync: 'production' | 'staging' | null = null;
+	if ( targetSite ) {
+		siteToSync = targetSite;
 	} else {
-		targetSiteType = selectedOption === actionForType ? 'production' : 'staging';
+		siteToSync = selectedOption === actionForType ? 'production' : 'staging';
 	}
 
 	useEffect( () => {
-		if ( isSyncInProgress === false ) {
-			setSelectedOption( null );
-			setSelectedItems( [] );
-		}
-	}, [ isSyncInProgress ] );
-
-	useEffect( () => {
-		if ( selectedOption && status === SiteSyncStatus.COMPLETED ) {
+		if ( selectedOption && status === SiteSyncStatus.COMPLETED && ! syncError ) {
 			dispatch(
 				successNotice( translate( 'Site synchronized successfully.' ), {
 					id: stagingSiteSyncSuccess,
 				} )
 			);
+			setSelectedOption( null );
+			setSelectedItems( [] );
 		}
-	}, [ dispatch, selectedOption, status ] );
+	}, [ dispatch, selectedOption, status, syncError ] );
 
 	return (
 		<SyncCardContainer
 			currentSiteType={ type }
-			siteToSync={ targetSiteType }
+			siteToSync={ siteToSync }
 			progress={ progress }
 			isSyncInProgress={ isSyncInProgress }
 			error={ syncError }
@@ -469,8 +472,9 @@ export const SiteSyncCard = ( {
 					/>
 				</FormLabel>
 			</FormRadioContainer>
-			{ selectedOption && selectedOption === actionForType && (
+			{ selectedOption === actionForType && (
 				<StagingToProductionSync
+					showSyncPanel={ selectedOption === actionForType }
 					siteSlug={ siteSlug || '' }
 					isSyncInProgress={ isSyncInProgress }
 					disabled={ disabled }
@@ -480,7 +484,7 @@ export const SiteSyncCard = ( {
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
 				/>
 			) }
-			{ selectedOption && selectedOption !== actionForType && (
+			{ selectedOption !== actionForType && (
 				<ProductionToStagingSync
 					disabled={ disabled }
 					isSyncButtonDisabled={ isSyncButtonDisabled }

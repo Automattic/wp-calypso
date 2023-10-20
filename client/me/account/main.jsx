@@ -11,7 +11,6 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -26,6 +25,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import LanguagePicker from 'calypso/components/language-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import SitesDropdown from 'calypso/components/sites-dropdown';
@@ -61,6 +61,7 @@ import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
 import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
+
 import './style.scss';
 
 export const noticeId = 'me-settings-notice';
@@ -365,7 +366,6 @@ class Account extends Component {
 	/**
 	 * We handle the username (user_login) change manually through an onChange handler
 	 * so that we can also run a debounced validation on the username.
-	 *
 	 * @param {Object} event Event from onChange of user_login input
 	 */
 	handleUsernameChange = ( event ) => {
@@ -870,11 +870,10 @@ class Account extends Component {
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Account settings' ) }
-					align="left"
-					subHeaderText={ translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Account settings' ) }
+					subtitle={ translate(
 						'Adjust your account information and interface settings. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {

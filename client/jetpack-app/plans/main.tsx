@@ -12,7 +12,6 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import type { Plan } from '@automattic/calypso-products';
-import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { AppState } from 'calypso/types';
 
@@ -99,7 +98,7 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, or
 		window.location.href = addQueryArgs( originalUrl, args );
 	};
 
-	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: DomainSuggestion ) => {
+	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: { domain_name: string } ) => {
 		freeDomainSuggestionNameRef.current = freeDomainSuggestion.domain_name;
 	};
 

@@ -1,6 +1,7 @@
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { LaunchpadNavigator } from '@automattic/data-stores';
 import { DefaultWiredLaunchpad } from '@automattic/launchpad';
+import { Button } from '@wordpress/components';
 import { select } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 
@@ -30,7 +31,6 @@ const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavi
 				<h2>{ translate( 'Next steps for your site' ) }</h2>
 				<Button
 					aria-label={ translate( 'Close task list modal' ) }
-					borderless
 					className="launchpad-navigator__floating-navigator-close-button"
 					onClick={ () => setLaunchpadIsVisible( false ) }
 				>
@@ -43,7 +43,9 @@ const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavi
 				launchpadContext={ launchpadContext }
 			/>
 			<div className="launchpad-navigator__floating-navigator-actions">
-				<Button disabled>{ translate( 'Older tasks' ) }</Button>
+				<Button disabled variant="secondary">
+					{ translate( 'Older tasks' ) }
+				</Button>
 			</div>
 		</Card>
 	);
