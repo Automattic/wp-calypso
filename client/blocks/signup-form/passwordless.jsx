@@ -109,7 +109,6 @@ class PasswordlessSignupForm extends Component {
 		} );
 		this.submitTracksEvent( false, { action_message: error.message } );
 
-		// If the account already exists, we bring the user directly to login
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
 			page(
 				addQueryArgs(
