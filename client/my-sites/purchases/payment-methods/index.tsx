@@ -12,6 +12,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -133,14 +134,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 				title={ String( titles.addPaymentMethod ) }
 			/>
 			<DocumentHead title={ titles.addPaymentMethod } />
-			{ ! isJetpackCloud() && (
-				<FormattedHeader
-					brandFont
-					className="payment-methods__page-heading"
-					headerText={ titles.sectionTitle }
-					align="left"
-				/>
-			) }
+			{ ! isJetpackCloud() && <NavigationHeader title={ titles.sectionTitle } /> }
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
