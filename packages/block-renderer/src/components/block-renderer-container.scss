@@ -15,6 +15,7 @@
 		iframe {
 			max-width: initial;
 			border: none;
+			// Overwrites the inlined transition: all 0.3s ease 0s; from Gutenberg
 			transition: opacity 0.15s ease-in-out !important;
 		}
 	}
