@@ -133,18 +133,17 @@ class MagicLogin extends Component {
 
 	renderLinks() {
 		const { isJetpackLogin, locale, showCheckYourEmail, translate } = this.props;
-		const appPromo = (
-			<AppPromo
-				title={ translate( 'Stay logged in' ) }
-				campaign="emailed-login-link"
-				className="magic-link-app-promo"
-				subheader=""
-				iconSize={ 50 }
-				hasQRCode={ true }
-			/>
-		);
+
 		if ( showCheckYourEmail ) {
-			return appPromo;
+			return (
+				<AppPromo
+					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
+					campaign="emailed-login-link"
+					className="magic-link-app-promo"
+					iconSize={ 32 }
+					hasQRCode={ true }
+				/>
+			);
 		}
 		if ( this.props.query?.client_id ) {
 			return null;
@@ -168,7 +167,13 @@ class MagicLogin extends Component {
 						{ translate( 'Enter a password instead' ) }
 					</a>
 				</div>
-				{ appPromo }
+				<AppPromo
+					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
+					campaign="emailed-login-link"
+					className="magic-link-app-promo"
+					iconSize={ 32 }
+					hasQRCode={ true }
+				/>
 			</>
 		);
 	}

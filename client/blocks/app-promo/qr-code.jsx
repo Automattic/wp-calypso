@@ -1,18 +1,27 @@
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { QRCodeSVG } from 'qrcode.react';
+import AsyncLoad from 'calypso/components/async-load';
 
 import './style.scss';
 
-export const QrCode = ( { source = 'calypso-customer-home', size = 150 } ) => {
+export const QrCode = ( { campaign = 'calypso-app-promo', size = 150 } ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	return (
 		<div className="app-promo__qr-code">
-			<QRCodeSVG
-				value={ localizeUrl( `https://apps.wordpress.com/get?campaign=${ source }` ) }
-				size={ size }
-			/>
+			<div className="app-promo__qr-code-canvas">
+				<AsyncLoad
+					require="qrcode.react"
+					placeholder={
+						<div
+							className="app-promo__qr-code-placeholder"
+							style={ { width: `${ size }px`, height: `${ size }px` } }
+						/>
+					}
+					value={ localizeUrl( `https://apps.wordpress.com/get?campaign=${ campaign }-qrcode` ) }
+					size={ size }
+				/>
+			</div>
 			<p className="get-apps__card-text">
 				{ translate(
 					'Visit {{a}}wp.com/app{{/a}} from your mobile device, or scan the code to download the Jetpack mobile app.',
@@ -21,7 +30,11 @@ export const QrCode = ( { source = 'calypso-customer-home', size = 150 } ) => {
 							a: (
 								<a
 									className="get-apps__jetpack-branded-link"
-									href={ localizeUrl( `https://apps.wordpress.com/get?campaign=${ encodeURIComponent ( source ) }` ) }
+									href={ localizeUrl(
+										`https://apps.wordpress.com/get?campaign=${ encodeURIComponent(
+											campaign
+										) }-shortlink`
+									) }
 								/>
 							),
 						},
