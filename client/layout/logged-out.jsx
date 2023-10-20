@@ -24,6 +24,7 @@ import {
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-embed-page';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -79,18 +80,13 @@ const LayoutLoggedOut = ( {
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
 	const isReaderTagPage = sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/tag/' );
+	const isReaderTagEmbed = isReaderTagPage && isReaderTagEmbedPage( window.location );
 
 	const isReaderDiscoverPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
 
 	const isReaderSearchPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
-
-	const urlParams = new URLSearchParams( window.location.search );
-	const isReaderParedDownSearchPage =
-		sectionName === 'reader' &&
-		pathNameWithoutLocale.startsWith( '/read/search' ) &&
-		urlParams.get( 'type' ) === 'basic';
 
 	// It's used to add a class name for the login and magic login of Gravatar powered clients only (not for F2A pages)
 	const isGravPoweredLoginPage =
@@ -153,7 +149,7 @@ const LayoutLoggedOut = ( {
 		config.isEnabled( 'jetpack-cloud' ) ||
 		isWpMobileApp() ||
 		isJetpackThankYou ||
-		isReaderParedDownSearchPage
+		isReaderTagEmbed
 	) {
 		masterbar = null;
 	} else if (
@@ -231,17 +227,16 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) &&
-				! isReaderParedDownSearchPage && (
-					<UniversalNavbarFooter
-						onLanguageChange={ ( e ) => {
-							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
-							window.location.reload();
-						} }
-						currentRoute={ currentRoute }
-						isLoggedIn={ isLoggedIn }
-					/>
-				) }
+			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && ! isReaderTagEmbed && (
+				<UniversalNavbarFooter
+					onLanguageChange={ ( e ) => {
+						navigate( `/${ e.target.value + pathNameWithoutLocale }` );
+						window.location.reload();
+					} }
+					currentRoute={ currentRoute }
+					isLoggedIn={ isLoggedIn }
+				/>
+			) }
 		</div>
 	);
 };
