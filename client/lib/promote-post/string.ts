@@ -78,8 +78,8 @@ const BlazePressStrings = () => {
 	translate( 'Use selected' );
 	translate( 'Load More' );
 	translate(
-		'Showing %(found)s or %(found)s media item',
-		'Showing %(found)s or %(found)s media items',
+		'Showing %(found)s of %(found)s media item',
+		'Showing %(found)s of %(found)s media items',
 		{ count: 1 }
 	);
 	translate( 'Search images' );
