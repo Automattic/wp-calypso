@@ -5,7 +5,7 @@ import {
 } from '@automattic/design-picker';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE } from '../../../../../stores';
 import type { GlobalStyles, OnboardSelect, StarterDesigns } from '@automattic/data-stores';
@@ -66,6 +66,8 @@ const useRecipe = (
 		} ),
 		[]
 	);
+
+	const isInitializedRef = useRef( false );
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
@@ -178,7 +180,7 @@ const useRecipe = (
 
 	// Initialize the preselected design and style variations.
 	useEffect( () => {
-		if ( ! allDesigns || ! preselectedTheme ) {
+		if ( ! allDesigns || ! preselectedTheme || isInitializedRef.current ) {
 			return;
 		}
 
@@ -202,6 +204,7 @@ const useRecipe = (
 
 		setSelectedDesign( requestedDesign );
 		setIsPreviewingDesign( true );
+		isInitializedRef.current = true;
 	}, [
 		preselectedTheme,
 		preselectedStyle,
