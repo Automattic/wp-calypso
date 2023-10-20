@@ -106,7 +106,7 @@ declare module 'calypso/state/current-user/selectors' {
 }
 
 declare module 'calypso/state/current-user/selectors' {
-	export const getCurrentUser: ( state: unknown ) => string;
+	export const getCurrentUser: ( state: unknown ) => { display_name: string };
 }
 
 declare module 'calypso/components/gravatar' {
