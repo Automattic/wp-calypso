@@ -59,7 +59,7 @@ const UpsellLine: FC< UpsellLineProps > = ( {
 	);
 };
 
-const NewCheckoutSidebarPlanUpsell: FC = () => {
+const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 	const { formStatus } = useFormStatus();
 	const isFormLoading = FormStatus.READY !== formStatus;
 	const reduxDispatch = useDispatch();
@@ -203,4 +203,4 @@ const NewCheckoutSidebarPlanUpsell: FC = () => {
 	);
 };
 
-export default NewCheckoutSidebarPlanUpsell;
+export default JetpackAkismetCheckoutSidebarPlanUpsell;

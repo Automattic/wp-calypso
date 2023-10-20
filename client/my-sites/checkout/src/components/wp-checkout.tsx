@@ -75,7 +75,7 @@ import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
-import NewCheckoutSidebarPlanUpsell from './new-checkout-sidebar-plan-upsell';
+import JetpackAkismetCheckoutSidebarPlanUpsell from './new-checkout-sidebar-plan-upsell';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
@@ -452,7 +452,7 @@ export default function WPCheckout( {
 								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
 									<>
 										<CheckoutSidebarPlanUpsell />
-										<NewCheckoutSidebarPlanUpsell />
+										<JetpackAkismetCheckoutSidebarPlanUpsell />
 									</>
 								) }
 								<SecondaryCartPromotions
