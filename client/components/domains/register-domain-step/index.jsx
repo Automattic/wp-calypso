@@ -140,11 +140,11 @@ class RegisterDomainStep extends Component {
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 
 		/**
-		 * Force the loading placeholder to show even if the search request has been completed.
+		 * Force the loading placeholder to show even if the search request has been completed, since there is other unresolved requests.
 		 * Although it is a general functionality, but it's only needed by the hiding free subdomain test for now.
 		 * It will be removed if there is still no need of it once the test concludes.
 		 */
-		forceLoadingPlaceholder: PropTypes.bool,
+		hasPendingRequests: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -163,7 +163,7 @@ class RegisterDomainStep extends Component {
 		showSkipButton: false,
 		useProvidedProductsList: false,
 		otherManagedSubdomains: null,
-		forceLoadingPlaceholder: false,
+		hasPendingRequests: false,
 	};
 
 	constructor( props ) {
@@ -330,7 +330,7 @@ class RegisterDomainStep extends Component {
 		this.props.recordSearchFormView( this.props.analyticsSection );
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps ) {
 		this.checkForBloggerPlan();
 
 		if (
@@ -349,8 +349,9 @@ class RegisterDomainStep extends Component {
 		// temporary specific for the hiding free subdomain test, so it's not practical to implement
 		// the complete version for now.
 		if (
+			prevProps.includeWordPressDotCom &&
 			! this.props.includeWordPressDotCom &&
-			prevState.subdomainSearchResults !== this.state.subdomainSearchResults
+			this.state.subdomainSearchResults
 		) {
 			// this is fine since we've covered the condition to prevent infinite loop
 			// eslint-disable-next-line react/no-did-update-set-state
@@ -1226,6 +1227,17 @@ class RegisterDomainStep extends Component {
 			this.props.analyticsSection
 		);
 
+		// This part handles the other end of the condition handled by the line 282:
+		// 1. The query request is sent.
+		// 2. `includeWordPressDotCom` is changed by the loaded result of the experiment. (this is where the line 282 won't handle)
+		// 3. The domain query result is returned and will be set here.
+		// The drawback is that it'd add unnecessary computation if `includeWordPressDotCom ` never changes.
+		if ( ! this.props.includeWordPressDotCom ) {
+			subdomainSuggestions = subdomainSuggestions.filter(
+				( subdomain ) => ! isFreeWordPressComDomain( subdomain )
+			);
+		}
+
 		this.setState(
 			{
 				subdomainSearchResults: subdomainSuggestions,
@@ -1468,7 +1480,7 @@ class RegisterDomainStep extends Component {
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }
-				isLoadingSuggestions={ this.state.loadingResults || this.props.forceLoadingPlaceholder }
+				isLoadingSuggestions={ this.state.loadingResults || this.props.hasPendingRequests }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerUnavailableOption={ this.props.offerUnavailableOption }

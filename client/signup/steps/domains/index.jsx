@@ -1004,7 +1004,7 @@ export class RenderDomainsStep extends Component {
 								: undefined
 						}
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-						forceLoadingPlaceholder={ isLoadingExperiment }
+						hasPendingRequests={ isLoadingExperiment }
 					/>
 				) }
 			</ProvideExperimentData>
