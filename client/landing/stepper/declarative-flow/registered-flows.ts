@@ -13,6 +13,7 @@ import {
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
+	FEDIVERSE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -122,6 +123,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'domain-user-transfer': () =>
 		import( /* webpackChunkName: "domain-user-transfer-flow" */ './domain-user-transfer' ),
+	[ FEDIVERSE_FLOW ]: () => import( /* webpackChunkName: "fediverse-flow" */ './fediverse' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(

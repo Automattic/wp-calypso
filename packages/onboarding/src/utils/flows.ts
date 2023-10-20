@@ -35,6 +35,7 @@ export const DOMAIN_TRANSFER = 'domain-transfer';
 export const GOOGLE_TRANSFER = 'google-transfer';
 export const ONBOARDING_PM_FLOW = 'onboarding-media';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
+export const FEDIVERSE_FLOW = 'fediverse';
 
 export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && flowName === ONBOARDING_PM_FLOW );
