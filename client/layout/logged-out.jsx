@@ -80,6 +80,7 @@ const LayoutLoggedOut = ( {
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
 	const isReaderTagPage = sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/tag/' );
+	const isReaderTagEmbed = typeof window !== 'undefined' && isReaderTagEmbedPage( window.location );
 
 	const isReaderDiscoverPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
@@ -148,7 +149,7 @@ const LayoutLoggedOut = ( {
 		config.isEnabled( 'jetpack-cloud' ) ||
 		isWpMobileApp() ||
 		isJetpackThankYou ||
-		isReaderTagEmbedPage( window?.location )
+		isReaderTagEmbed
 	) {
 		masterbar = null;
 	} else if (
@@ -226,17 +227,16 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) &&
-				! isReaderTagEmbedPage( window?.location ) && (
-					<UniversalNavbarFooter
-						onLanguageChange={ ( e ) => {
-							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
-							window.location.reload();
-						} }
-						currentRoute={ currentRoute }
-						isLoggedIn={ isLoggedIn }
-					/>
-				) }
+			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && ! isReaderTagEmbed && (
+				<UniversalNavbarFooter
+					onLanguageChange={ ( e ) => {
+						navigate( `/${ e.target.value + pathNameWithoutLocale }` );
+						window.location.reload();
+					} }
+					currentRoute={ currentRoute }
+					isLoggedIn={ isLoggedIn }
+				/>
+			) }
 		</div>
 	);
 };
