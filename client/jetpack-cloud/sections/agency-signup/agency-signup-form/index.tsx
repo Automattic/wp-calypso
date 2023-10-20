@@ -65,11 +65,11 @@ export default function AgencySignupForm( { referrer }: AgencySignupProps ) {
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
-					referrer: referrer,
+					referrer: payload.referrer,
 				} )
 			);
 		},
-		[ notificationId, partner?.id, createPartner.mutate, dispatch, referrer ]
+		[ notificationId, partner?.id, createPartner.mutate, dispatch ]
 	);
 
 	// Redirect the user if they are already a partner or the form was submitted successfully.

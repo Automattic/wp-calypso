@@ -42,7 +42,6 @@ interface Props {
 		country?: string;
 		postalCode?: string;
 		state?: string;
-		referrer?: string;
 	};
 	submitLabel: string;
 }
