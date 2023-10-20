@@ -1,83 +1,93 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Card, Gridicon } from '@automattic/components';
-import styled from '@emotion/styled';
-import { CardBody, ToggleControl } from '@wordpress/components';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 
-const ToggleContainer = styled.div( {
-	fontSize: '14px',
-	label: {
-		fontSize: '14px',
-	},
-} );
-
-const ToggleLabel = styled.p( {
-	marginBottom: '9px',
-	fontWeight: 600,
-	fontSize: '14px',
-} );
-
-export const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
+const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 	const translate = useTranslate();
 
-	const toggleSiteInterfaceMutation = useSiteInterfaceMutation( siteId );
+	const setSiteInterface = useSiteInterfaceMutation( siteId );
 
 	// Initialize the state with the value passed as a prop
-	const [ wpAdminEnabled, setWpAdminEnabled ] = useState( adminInterface === 'wp-admin' );
+	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState(
+		adminInterface ?? 'calypso'
+	);
 
-	// Define a function to toggle the site interface when the ToggleControl is changed
-	const handleToggleChange = async () => {
+	const handleInputChange = async ( value ) => {
 		// Toggle the site interface
-		toggleSiteInterfaceMutation( ! wpAdminEnabled );
-
+		setSiteInterface( value );
 		// Toggle the local state
-		setWpAdminEnabled( ! wpAdminEnabled );
+		setSelectedAdminInterface( value );
 	};
 
 	useEffect( () => {
-		setWpAdminEnabled( adminInterface === 'wp-admin' );
+		if ( adminInterface ) {
+			setSelectedAdminInterface( adminInterface );
+		}
 	}, [ adminInterface ] );
-
-	const calypsoToggleDescription = translate( 'Set the admin interface to wp-admin' );
-	const wpAdminToggleDescription = translate( 'The admin interface to wp-admin' );
 
 	return (
 		<Card className="sitewpadmin-card">
 			<Gridicon icon="my-sites" size={ 32 } />
 			<CardHeading id="sitewpadmin-card" size={ 20 }>
-				{ translate( 'Switch to wp-admin' ) }
+				{ translate( 'Admin interface style' ) }
 			</CardHeading>
-			<CardBody>
-				<p>{ translate( 'Switch your site interface and navigation to wp-admin.' ) }</p>
-				<ToggleContainer>
-					<ToggleLabel>{ translate( 'Default to wp-admin' ) }</ToggleLabel>
-					<ToggleControl
-						label={ wpAdminEnabled ? wpAdminToggleDescription : calypsoToggleDescription }
-						onChange={ handleToggleChange }
-						checked={ wpAdminEnabled }
+			<p>
+				{ translate(
+					'Set the style for the admin interface. {{supportLink}}Learn more{{/supportLink}}.',
+					{
+						components: {
+							supportLink: <InlineSupportLink supportContext="dashboard" showIcon={ false } />,
+						},
+					}
+				) }
+			</p>
+
+			<FormFieldset>
+				<FormLabel>
+					<FormRadio
+						className="staging-site-sync-card__radio"
+						label={ translate( 'Default style' ) }
+						value="calypso"
+						checked={ selectedAdminInterface === 'calypso' }
+						onChange={ ( event ) => handleInputChange( event.target.value ) }
 					/>
-					<div>
-						{ wpAdminEnabled ? (
-							<p>With toggle on, the activated mode is { adminInterface }</p>
-						) : (
-							<p>With toggle off, the activated mode is { adminInterface }.</p>
-						) }
-					</div>
-				</ToggleContainer>
-			</CardBody>
+				</FormLabel>
+				<FormSettingExplanation>
+					{ translate( 'The WordPress.com redesign for a better experience.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel>
+					<FormRadio
+						className="staging-site-sync-card__radio"
+						label={ translate( 'Classic style' ) }
+						value="wp-admin"
+						checked={ selectedAdminInterface === 'wp-admin' }
+						onChange={ ( event ) => handleInputChange( event.target.value ) }
+					/>
+				</FormLabel>
+				<FormSettingExplanation>
+					{ translate( 'The classic WP-Admin WordPress interface.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
 		</Card>
 	);
 };
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' );
+	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) ?? 'calypso';
 
 	return { siteId, adminInterface };
 } )( localize( SiteWpAdminCard ) );
