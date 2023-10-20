@@ -20,6 +20,7 @@ type DefaultWiredLaunchpadProps = {
 	checklistSlug: string;
 	launchpadContext: string;
 	onSiteLaunched?: () => void;
+	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
 };
 
 const DefaultWiredLaunchpad = ( {
@@ -27,6 +28,7 @@ const DefaultWiredLaunchpad = ( {
 	checklistSlug,
 	launchpadContext,
 	onSiteLaunched,
+	onPostFilterTasks,
 }: DefaultWiredLaunchpadProps ) => {
 	const {
 		data: { checklist },
@@ -80,7 +82,7 @@ const DefaultWiredLaunchpad = ( {
 	] );
 
 	const taskFilter = ( tasks: Task[] ) => {
-		return setUpActionsForTasks( {
+		const baseTasks = setUpActionsForTasks( {
 			tasks,
 			siteSlug,
 			tracksData,
@@ -92,6 +94,12 @@ const DefaultWiredLaunchpad = ( {
 				onSiteLaunched,
 			},
 		} );
+
+		if ( onPostFilterTasks ) {
+			return onPostFilterTasks( baseTasks );
+		}
+
+		return baseTasks;
 	};
 
 	const launchpadOptions = {
