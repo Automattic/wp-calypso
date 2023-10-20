@@ -48,5 +48,6 @@
 	background-color: rgba(0, 0, 0, 0.7);
 	// Dialog sets `z-index: z-index("root", ".dialog__backdrop")`,
 	// but this modal is used outside of Calypso, so we need to set it manually.
-	z-index: 9999;
+	// We can refactor to use Modal from `@wordpress/components` instead of Dialog.
+	z-index: 100000;
 }
