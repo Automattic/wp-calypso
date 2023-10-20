@@ -141,7 +141,6 @@ function ReaderListEdit( props ) {
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<Main>
 				<NavigationHeader
-					navigationItems={ [] }
 					title={ translate( 'Manage %(listName)s', {
 						args: { listName: list?.title || decodeURIComponent( props.slug ) },
 					} ) }
