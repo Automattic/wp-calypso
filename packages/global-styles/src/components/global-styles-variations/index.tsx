@@ -146,7 +146,16 @@ const GlobalStylesVariations = ( {
 					} ) }
 				>
 					<div className="global-styles-variations__header">
-						<h2>{ headerText }</h2>
+						<h2>
+							<span>{ headerText }</span>
+							{ ! splitDefaultVariation && (
+								<PremiumBadge
+									shouldHideTooltip
+									shouldCompactWithAnimation
+									labelText={ translate( 'Included in your plan' ) }
+								/>
+							) }
+						</h2>
 						{ ! splitDefaultVariation && (
 							<div>
 								<p>{ translate( 'You can change your style at any time.' ) }</p>
