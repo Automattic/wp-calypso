@@ -32,7 +32,7 @@ interface Props {
 	id?: string;
 	className?: string;
 	children?: ReactNode;
-	navigationItems: TBreadcrumbItem[];
+	navigationItems?: TBreadcrumbItem[];
 	mobileItem?: TBreadcrumbItem;
 	compactBreadcrumb?: boolean;
 	title?: string | ReactNode;
