@@ -16,6 +16,11 @@
 		margin: 0;
 		max-width: none;
 		min-height: 100vh;
+
+		.step-container__skip-wrapper .step-container__navigation-link.has-underline {
+			color: var(--studio-gray-70);
+			text-decoration: none;
+		}
 	}
 
 	.step-container__buttons {
