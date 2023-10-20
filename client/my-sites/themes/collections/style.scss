@@ -60,7 +60,7 @@
 	.theme-collection-view-header__back {
 		color: var(--studio-blue-50);
 		font-size: 1rem;
-		font-family: "SF Pro Text", serif;
+		font-family: "SF Pro Text", $sans;
 		font-style: normal;
 		font-weight: 400;
 		letter-spacing: -0.32px;
@@ -71,7 +71,7 @@
 
 	.theme-collection-view-header__title {
 		color: var(--studio-blue-50);
-		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-family: $brand-serif;
 		font-size: rem(44px);
 		font-style: normal;
 		font-weight: 400;
@@ -81,7 +81,7 @@
 
 	.theme-collection-view-header__description {
 		color: var(--studio-gray-80);
-		font-family: "SF Pro Text", serif;
+		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-large;
 		font-style: normal;
 		font-weight: 400;
