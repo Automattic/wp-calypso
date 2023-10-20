@@ -29,6 +29,20 @@ interface Props {
 	preferenceName: string;
 }
 
+// Helper function to get an element, returning a promise that resolves when the element is rendered.
+const getElementAsync = ( target: string ): Promise< HTMLElement > =>
+	new Promise( ( resolve ) => {
+		const getElement = () => {
+			const element = document.querySelector( target ) as HTMLElement | null;
+			if ( element ) {
+				resolve( element );
+			} else {
+				requestAnimationFrame( getElement );
+			}
+		};
+		getElement();
+	} );
+
 const GuidedTour = ( { tours, preferenceName }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -47,8 +61,7 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 	// Set the target element for the popover
 	useEffect( () => {
 		if ( target ) {
-			const element = document.querySelector( target ) as HTMLElement | null;
-			setTargetElement( element );
+			getElementAsync( target ).then( ( element ) => setTargetElement( element ) );
 		}
 	}, [ target ] );
 

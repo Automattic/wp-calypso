@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
+import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import {
 	settingsPath,
@@ -201,6 +202,26 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 						  }
 						: undefined
 				}
+			/>
+
+			<GuidedTour
+				preferenceName="jetpack-cloud-sidebar-v2-managed-selected-site-tour"
+				tours={ [
+					isAgency
+						? {
+								target: '.components-navigator-back-button svg',
+								popoverPosition: 'bottom left',
+								title: translate( 'Back to Sites Management' ),
+								description: translate(
+									'Click here when you want to return to managing all of your sites.'
+								),
+						  }
+						: {
+								target: '.jetpack-cloud-sidebar__header .site-icon',
+								title: translate( 'Switch Sites Easily' ),
+								description: translate( 'Here you can navigate between your different sites.' ),
+						  },
+				] }
 			/>
 		</>
 	);
