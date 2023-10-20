@@ -28,7 +28,7 @@ export const useSiteInterfaceMutation = (
 	const queryKey = [ SET_SITE_INTERFACE_MUTATION_KEY, siteId ];
 	const mutation = useMutation( {
 		mutationFn: async ( { value }: MutationVariables ) => {
-			wp.req.post(
+			return wp.req.post(
 				{
 					path: `/sites/${ siteId }/hosting/admin-interface`,
 					apiNamespace: 'wpcom/v2',
@@ -41,7 +41,7 @@ export const useSiteInterfaceMutation = (
 		mutationKey: queryKey,
 		onSuccess: options?.onSuccess,
 		onMutate: options?.onMutate,
-		onError( _err: MutationError, _newActive: MutationVariables, prevValue: string ) {
+		onError( _err: MutationError, _newActive: MutationVariables, prevValue: unknown ) {
 			// Revert to previous settings on failure
 			queryClient.setQueryData( queryKey, prevValue );
 			options?.onError?.( _err, _newActive, prevValue );
