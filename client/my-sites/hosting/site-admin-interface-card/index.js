@@ -18,7 +18,7 @@ import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 const successNoticeId = 'admin-interface-change-success';
 const failureNoticeId = 'admin-interface-change-failure';
 
-const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
+const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const removeAllNotices = () => {
@@ -123,4 +123,4 @@ export default connect( ( state ) => {
 	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) ?? 'calypso';
 
 	return { siteId, adminInterface };
-} )( localize( SiteWpAdminCard ) );
+} )( localize( SiteAdminInterfaceCard ) );
