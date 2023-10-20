@@ -16,10 +16,10 @@ import QueryKeyringConnections from 'calypso/components/data/query-keyring-conne
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FeatureExample from 'calypso/components/feature-example';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
@@ -366,13 +366,10 @@ class Hosting extends Component {
 				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Hosting Configuration' ) }
-					subHeaderText={ translate(
-						'Access your website’s database and more advanced settings.'
-					) }
-					align="left"
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Hosting Configuration' ) }
+					subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 				/>
 				{ ! isMigrationTrial && banner }
 				{ isMigrationTrial && (
