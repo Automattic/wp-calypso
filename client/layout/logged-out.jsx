@@ -249,7 +249,6 @@ const LayoutLoggedOut = ( {
 					onClose={ () => clearLastLoggedInAction() }
 					isVisible={ !! loggedInAction }
 					onLoginSuccess={ () => {
-						loggedInAction();
 						window.location.reload();
 					} }
 				/>

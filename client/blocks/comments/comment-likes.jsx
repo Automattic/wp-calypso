@@ -19,10 +19,15 @@ class CommentLikeButtonContainer extends Component {
 	}
 
 	handleLikeToggle( liked ) {
-		const likeAction = () => this.recordLikeToggle( liked );
+		const likeAction = {
+			type: liked ? 'like' : 'unlike',
+			siteId: this.props.siteId,
+			postId: this.props.postId,
+			commentId: this.props.commentId,
+		};
 		this.props.registerLastLoggedInAction( likeAction );
 		if ( this.props.isLoggedIn ) {
-			likeAction();
+			this.recordLikeToggle( liked );
 		}
 		this.props.onLikeToggle( liked );
 	}

@@ -123,13 +123,16 @@ class PostComment extends PureComponent {
 	};
 
 	handleReply = () => {
-		const replyAction = () => {
-			this.props.onReplyClick( this.props.commentId );
-			this.setState( { showReplies: true } ); // show the comments when replying
+		const replyAction = {
+			type: 'reply',
+			siteId: this.props.post.site_ID,
+			postId: this.props.post.ID,
+			commentId: this.props.commentId,
 		};
 		this.props.registerLastLoggedInAction( replyAction );
 		if ( this.props.isLoggedIn ) {
-			replyAction();
+			this.props.onReplyClick( this.props.commentId );
+			this.setState( { showReplies: true } ); // show the comments when replying
 		}
 	};
 

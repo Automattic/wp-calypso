@@ -20,12 +20,12 @@ export const viewStream = ( streamKey, path ) => ( {
 
 /**
  * Dispatched when triggering an action that requires the user to be logged in.
- * @param {Function} callback - name of the action that requires user to be logged in to access
+ * @param {Object} loggedInAction - object that holds the logged in action details
  * @returns {Object} action object for dispatch
  */
-export const registerLastLoggedInAction = ( callback ) => ( {
+export const registerLastLoggedInAction = ( loggedInAction ) => ( {
 	type: READER_REGISTER_LAST_LOGGED_IN_ACTION,
-	callback,
+	loggedInAction,
 } );
 
 /**

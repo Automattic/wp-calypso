@@ -30,13 +30,16 @@ class LikeButtonContainer extends Component {
 	};
 
 	handleLikeToggle = ( liked ) => {
-		const likeAction = () => {
-			const toggler = liked ? this.props.like : this.props.unlike;
-			toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
+		// Create a likeAction object that holds the action type and props siteId and postId
+		const likeAction = {
+			type: liked ? 'like' : 'unlike',
+			siteId: this.props.siteId,
+			postId: this.props.postId,
 		};
 		this.props.registerLastLoggedInAction( likeAction );
 		if ( this.props.isLoggedIn ) {
-			likeAction();
+			const toggler = liked ? this.props.like : this.props.unlike;
+			toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 		}
 		this.props.onLikeToggle( liked );
 	};
