@@ -20,6 +20,10 @@
 		.step-container__skip-wrapper .step-container__navigation-link.has-underline {
 			color: var(--studio-gray-70);
 			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 
