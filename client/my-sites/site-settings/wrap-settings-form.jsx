@@ -151,7 +151,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 
 		// Some Utils
 		handleSubmitForm = ( event ) => {
-			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
+			const { dirtyFields, fields, settings, trackTracksEvent, path } = this.props;
 
 			if ( event && ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
@@ -190,6 +190,22 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							value: fields.wpcom_newsletter_categories_enabled,
 							path,
 						} );
+						break;
+					case 'subscription_options':
+						if ( fields.subscription_options.welcome !== settings.subscription_options.welcome ) {
+							trackTracksEvent( 'calypso_settings_subscription_options_welcome_updated', {
+								path,
+							} );
+						}
+
+						if (
+							fields.subscription_options.comment_follow !==
+							settings.subscription_options.comment_follow
+						) {
+							trackTracksEvent( 'calypso_settings_subscription_options_comment_follow_updated', {
+								path,
+							} );
+						}
 						break;
 				}
 			} );
