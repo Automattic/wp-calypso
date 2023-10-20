@@ -66,7 +66,7 @@ export default function AgencySignupForm( { referrer }: AgencySignupProps ) {
 				} )
 			);
 		},
-		[ notificationId, partner?.id, createPartner.mutate, dispatch ]
+		[ notificationId, partner?.id, createPartner.mutate, dispatch, referrer ]
 	);
 
 	// Redirect the user if they are already a partner or the form was submitted successfully.
