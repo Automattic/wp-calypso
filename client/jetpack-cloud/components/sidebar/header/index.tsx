@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
 import { SidebarV2Header as SidebarHeader } from 'calypso/layout/sidebar-v2';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackLogo from './jetpack-logo.svg';
@@ -29,7 +30,14 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 
 	const onSelectSite = useCallback( () => {
 		dispatch( setLayoutFocus( 'sites' ) );
-	}, [ dispatch ] );
+		dispatch(
+			forceAllSitesView
+				? recordTracksEvent( 'calypso_jetpack_sidebar_switch_site_all_click' )
+				: recordTracksEvent( 'calypso_jetpack_sidebar_switch_site_single_click', {
+						site_id: selectedSiteId,
+				  } )
+		);
+	}, [ dispatch, forceAllSitesView, selectedSiteId ] );
 
 	return (
 		<SidebarHeader className="jetpack-cloud-sidebar__header">
