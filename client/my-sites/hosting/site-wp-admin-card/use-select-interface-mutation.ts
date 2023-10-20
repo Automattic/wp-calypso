@@ -7,7 +7,7 @@ import { requestSite } from 'calypso/state/sites/actions';
 const SET_SITE_INTERFACE_MUTATION_KEY = 'set-site-interface-mutation-key';
 
 interface MutationVariables {
-	name: string;
+	value: string;
 }
 
 interface MutationResponse {
@@ -27,14 +27,14 @@ export const useSiteInterfaceMutation = (
 	const dispatch = useDispatch();
 	const queryKey = [ SET_SITE_INTERFACE_MUTATION_KEY, siteId ];
 	const mutation = useMutation( {
-		mutationFn: async ( selectedInterface: string ) => {
+		mutationFn: async ( { value }: MutationVariables ) => {
 			wp.req.post(
 				{
 					path: `/sites/${ siteId }/hosting/admin-interface`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{
-					interface: selectedInterface,
+					interface: value,
 				}
 			);
 		},

@@ -60,7 +60,7 @@ const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 
 	const handleInputChange = async ( value ) => {
 		// Toggle the site interface
-		setSiteInterface( value );
+		setSiteInterface( { value } );
 		// Toggle the local state
 		setSelectedAdminInterface( value );
 	};
