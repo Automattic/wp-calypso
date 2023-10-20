@@ -66,6 +66,7 @@
 			flex-direction: column;
 			gap: 4px;
 			max-width: calc(100% - 24px);
+			font-size: $font-body-small;
 
 			.home-site-preview__info-title {
 				color: var(--color-neutral-80);

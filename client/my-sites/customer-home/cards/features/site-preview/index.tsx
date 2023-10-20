@@ -95,6 +95,14 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 					<SiteUrl href={ selectedSite.URL } title={ selectedSite.URL }>
 						<Truncated>{ selectedSite.slug }</Truncated>
 					</SiteUrl>
+					<a
+						onClick={ () => {
+							recordTracksEvent( 'calypso_customer_home_site_preview_get_domain_clicked' );
+						} }
+						href={ `/domains/add/${ selectedSite.slug }` }
+					>
+						{ __( 'Add your own domain' ) }
+					</a>
 				</div>
 				<SitePreviewEllipsisMenu />
 			</div>
