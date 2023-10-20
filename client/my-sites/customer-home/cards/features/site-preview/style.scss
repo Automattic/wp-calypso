@@ -30,6 +30,7 @@
 		.home-site-preview__thumbnail {
 			display: block;
 			height: 235px;
+			pointer-events: none;
 			width: 100%;
 			iframe {
 				// The idea is to zoom-out the iframe to get most of the content
