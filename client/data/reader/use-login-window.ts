@@ -17,29 +17,25 @@ export default function useLoginWindow( {
 	const isBrowser: boolean = typeof window !== 'undefined';
 	const environment = config( 'env_id' );
 	let domain = 'wordpress.com';
-	let redirectTo = encodeURIComponent(
-		addQueryArgs(
-			{
-				action: 'verify',
-				service: 'wordpress',
-			},
-			`https://${ domain }/public.api/connect/`
-		)
+	let redirectTo = addQueryArgs(
+		{
+			action: 'verify',
+			service: 'wordpress',
+		},
+		`https://${ domain }/public.api/connect/`
 	);
 
 	// When in development, we need to redirect to a sandboxed domain to allow us to test changes to /public.api/connect/
 	if ( environment === 'development' ) {
 		domain = 'wpcalypso.wordpress.com';
-		redirectTo = encodeURIComponent(
-			addQueryArgs(
-				{
-					action: 'verify',
-					service: 'wordpress',
-					domain: domain,
-					origin: new URL( window.location.href )?.hostname,
-				},
-				`https://${ domain }/public.api/connect/`
-			)
+		redirectTo = addQueryArgs(
+			{
+				action: 'verify',
+				service: 'wordpress',
+				domain: domain,
+				origin: new URL( window.location.href )?.hostname,
+			},
+			`https://${ domain }/public.api/connect/`
 		);
 	}
 
