@@ -1,4 +1,8 @@
-import { PLAN_MIGRATION_TRIAL_MONTHLY, PlanSlug } from '@automattic/calypso-products';
+import {
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PlanSlug,
+} from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -61,6 +65,25 @@ export default function useBannerSubtitle(
 					subtitle = translate(
 						'Your free trial will end in %(daysLeft)d day. Upgrade to a plan by %(expirationdate)s to unlock new features and launch your migrated website.',
 						'Your free trial will end in %(daysLeft)d days. Upgrade to a plan by %(expirationdate)s to unlock new features and launch your migrated website.',
+						{
+							count: trialDaysLeftToDisplay,
+							args: {
+								daysLeft: trialDaysLeftToDisplay,
+								expirationdate: readableExpirationDate as string,
+							},
+						}
+					);
+				}
+				break;
+			case PLAN_HOSTING_TRIAL_MONTHLY:
+				if ( trialExpired ) {
+					subtitle = translate(
+						'Your free trial has expired. Upgrade to a plan to continue using advanced features.'
+					);
+				} else {
+					subtitle = translate(
+						'Your free trial will end in %(daysLeft)d day. Upgrade to a plan by %(expirationdate)s to continue using advanced features.',
+						'Your free trial will end in %(daysLeft)d days. Upgrade to a plan by %(expirationdate)s to continue using advanced features.',
 						{
 							count: trialDaysLeftToDisplay,
 							args: {
