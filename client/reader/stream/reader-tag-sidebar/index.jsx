@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch, useSelector } from 'react-redux';
+import AppPromo from 'calypso/blocks/app-promo';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
@@ -132,6 +133,7 @@ const ReaderTagSidebar = ( {
 			>
 				{ translate( 'See all tags' ) }
 			</a>
+			<AppPromo />
 			{ relatedSitesLinks && (
 				<div className="reader-tag-sidebar-related-sites">
 					<h2>{ translate( 'Related Sites' ) }</h2>
