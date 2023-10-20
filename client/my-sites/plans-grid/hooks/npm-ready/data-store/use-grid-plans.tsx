@@ -23,7 +23,9 @@ import {
 	isBusinessPlan,
 	isEcommercePlan,
 	TYPE_HOSTING_TRIAL,
+	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
+import { isSamePlan } from '../../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
 import type { AddOnMeta, PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
@@ -90,7 +92,7 @@ export type GridPlan = {
 		storageOptions: StorageOption[];
 		conditionalFeatures?: FeatureObject[];
 	};
-	tagline: string;
+	tagline: TranslateResult;
 	availableForPurchase: boolean;
 	productNameShort?: string | null;
 	planTitle: TranslateResult;
@@ -117,6 +119,7 @@ export type PlansIntent =
 	| 'plans-import'
 	| 'plans-woocommerce'
 	| 'plans-paid-media'
+	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
 	| 'default';
@@ -185,6 +188,7 @@ const usePlanTypesWithIntent = ( {
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 		TYPE_WOOEXPRESS_SMALL,
 		TYPE_WOOEXPRESS_MEDIUM,
+		TYPE_P2_PLUS,
 	];
 
 	let planTypes;
@@ -223,6 +227,9 @@ const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-paid-media':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
+		case 'plans-p2':
+			planTypes = [ TYPE_FREE, TYPE_P2_PLUS ];
 			break;
 		case 'plans-default-wpcom':
 			planTypes = [
@@ -280,6 +287,7 @@ const useGridPlans = ( {
 			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
+		intent,
 	} );
 	const planSlugsForIntent = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -291,6 +299,7 @@ const useGridPlans = ( {
 			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
+		intent,
 	} );
 	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs: availablePlanSlugs } );
 
@@ -320,8 +329,9 @@ const useGridPlans = ( {
 		const planObject = pricedAPIPlans[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
 		const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
+		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
-		let tagline = '';
+		let tagline: TranslateResult = '';
 		if ( 'plans-newsletter' === intent ) {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
 		} else if ( 'plans-link-in-bio' === intent ) {
@@ -356,7 +366,7 @@ const useGridPlans = ( {
 			productNameShort,
 			planTitle: planConstantObj.getTitle?.() ?? '',
 			billingTimeframe: planConstantObj.getBillingTimeFrame?.(),
-			current: sitePlanSlug === planSlug,
+			current: isCurrentPlan,
 			isMonthlyPlan,
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
