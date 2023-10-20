@@ -70,11 +70,7 @@ function Types( {
 			<ScreenOptionsTab wpAdminPath={ `edit.php?post_type=${ query.type }` } />
 			<DocumentHead title={ get( postType, 'label', '' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ get( postType, 'label', '' ) }
-				subtitle={ subHeaderText }
-			/>
+			<NavigationHeader title={ get( postType, 'label', '' ) } subtitle={ subHeaderText } />
 			{ userCanEdit &&
 				postTypeSupported && [
 					<PostTypeFilter

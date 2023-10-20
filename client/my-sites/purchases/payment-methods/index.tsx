@@ -63,7 +63,6 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
 			{ ! isJetpackCloud() && (
 				<NavigationHeader
-					navigationItems={ [] }
 					title={ titles.sectionTitle }
 					subtitle={ translate(
 						'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
