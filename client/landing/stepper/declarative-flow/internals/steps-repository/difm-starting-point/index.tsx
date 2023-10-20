@@ -39,7 +39,7 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 				skipLabelText={ translate( 'No Thanks, I’ll Build It' ) }
 				stepContent={
 					<DIFMLanding
-						onSubmit={ onSubmit }
+						onPrimarySubmit={ onSubmit }
 						onSkip={ onSkip }
 						isInOnboarding={ true }
 						siteId={ siteId }
