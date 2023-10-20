@@ -102,7 +102,7 @@ class PasswordlessSignupForm extends Component {
 	};
 
 	createAccountError = ( error ) => {
-		this.submitTracksEvent( false, { action_message: error.message } );
+		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
 			page(
