@@ -191,6 +191,12 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
+					case 'sm_enabled':
+						trackTracksEvent( 'calypso_settings_subscription_modal_updated', {
+							value: fields.sm_enabled,
+							path,
+						} );
+						break;
 					case 'subscription_options':
 						if ( fields.subscription_options.welcome !== settings.subscription_options.welcome ) {
 							trackTracksEvent( 'calypso_settings_subscription_options_welcome_updated', {

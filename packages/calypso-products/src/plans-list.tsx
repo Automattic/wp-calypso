@@ -442,6 +442,7 @@ import {
 	FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 	TYPE_HOSTING_TRIAL,
+	GROUP_P2,
 } from './constants';
 import type {
 	BillingTerm,
@@ -3432,15 +3433,33 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	},
 
 	[ PLAN_P2_PLUS ]: {
-		group: GROUP_WPCOM,
+		...getDotcomPlanDetails(),
+		group: GROUP_P2,
 		type: TYPE_P2_PLUS,
 		getTitle: () => i18n.translate( 'P2+' ),
-		getDescription: () =>
+		getDescription: () => '',
+		getPlanTagline: () =>
 			i18n.translate(
 				'{{strong}}Best for professionals:{{/strong}} Enhance your P2 with more space for audio and video, advanced search, an activity overview panel, and priority customer support.',
 				plansDescriptionHeadingComponent
 			),
 		getShortDescription: () => i18n.translate( 'Some short description' ),
+		get2023PricingGridSignupWpcomFeatures: () => [
+			FEATURE_P2_13GB_STORAGE,
+			FEATURE_P2_ADVANCED_SEARCH,
+			FEATURE_P2_VIDEO_SHARING,
+			FEATURE_P2_MORE_FILE_TYPES,
+			FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
+			FEATURE_P2_ACTIVITY_OVERVIEW,
+		],
+		get2023PricingGridSignupStorageOptions: () => {
+			return [
+				{
+					slug: FEATURE_P2_13GB_STORAGE,
+					isAddOn: false,
+				},
+			];
+		},
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_P2_13GB_STORAGE,
@@ -3478,12 +3497,28 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 PLANS_LIST[ PLAN_P2_FREE ] = {
 	...PLANS_LIST[ PLAN_FREE ],
-	getDescription: () =>
+	group: GROUP_P2,
+	getPlanTagline: () =>
 		i18n.translate(
 			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
 			plansDescriptionHeadingComponent
 		),
 	getTitle: () => i18n.translate( 'P2 Free' ),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_P2_3GB_STORAGE,
+		FEATURE_P2_UNLIMITED_USERS,
+		FEATURE_P2_UNLIMITED_POSTS_PAGES,
+		FEATURE_P2_SIMPLE_SEARCH,
+		FEATURE_P2_CUSTOMIZATION_OPTIONS,
+	],
+	get2023PricingGridSignupStorageOptions: () => {
+		return [
+			{
+				slug: FEATURE_P2_3GB_STORAGE,
+				isAddOn: false,
+			},
+		];
+	},
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_P2_3GB_STORAGE,
