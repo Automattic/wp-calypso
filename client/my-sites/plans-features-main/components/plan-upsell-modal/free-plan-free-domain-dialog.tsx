@@ -1,7 +1,5 @@
 import { domainProductSlugs, getPlan } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import styled from '@emotion/styled';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -10,71 +8,16 @@ import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { LoadingPlaceHolder } from '../loading-placeholder';
 import { DialogContainer, Heading, StyledButton } from './components';
+import {
+	ButtonRow,
+	CrossIcon,
+	LazyDisplayText,
+	List,
+	ListItem,
+	TextBox,
+} from './components/upsell-components';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
-import type { TranslateResult } from 'i18n-calypso';
-
-const List = styled.ul`
-	list-style: none;
-	margin: 20px 0 20px;
-	font-weight: 600;
-	font-size: 14px;
-`;
-const ListItem = styled.li`
-	display: flex;
-	& div:first-of-type {
-		margin: 0 8px 0 8px;
-	}
-`;
-const ButtonRow = styled.div`
-	display: flex;
-	justify-content: flex-start;
-	margin: 16px 0;
-	flex-direction: column;
-	@media ( min-width: 780px ) {
-		flex-direction: row;
-	}
-`;
-
-type TextBoxProps = {
-	fontSize?: number;
-	bold?: boolean;
-	color?: 'gray';
-	noBottomGap?: boolean;
-};
-const TextBox = styled.div< TextBoxProps >`
-	font-size: ${ ( { fontSize } ) => fontSize || 14 }px;
-	font-weight: ${ ( { bold } ) => ( bold ? 600 : 400 ) };
-	line-height: 20px;
-	color: ${ ( { color } ) => {
-		if ( color === 'gray' ) {
-			return 'var(--studio-gray-50)';
-		}
-		return 'var(--color-text)';
-	} };
-	margin-bottom: ${ ( { noBottomGap } ) => ( noBottomGap ? 0 : '8px' ) };
-`;
-
-const CrossIcon = styled( Gridicon )`
-	color: #e53e3e;
-`;
-
-const LoadingPlaceHolderText = styled( LoadingPlaceHolder )`
-	width: 80px;
-	display: inline-block;
-	border-radius: 0;
-`;
-
-function LazyDisplayText( {
-	displayText = '',
-	isLoading,
-}: {
-	displayText?: TranslateResult;
-	isLoading: boolean;
-} ) {
-	return isLoading || ! displayText ? <LoadingPlaceHolderText /> : <>{ displayText }</>;
-}
 
 /**
  * Adds a dialog to the free plan selection flow that explains the benefits of the paid plan

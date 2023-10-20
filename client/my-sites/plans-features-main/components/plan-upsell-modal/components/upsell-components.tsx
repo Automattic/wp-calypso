@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { LoadingPlaceHolder } from '../loading-placeholder';
+import { LoadingPlaceHolder } from '../../loading-placeholder';
 import type { TranslateResult } from 'i18n-calypso';
 
 export const List = styled.ul`

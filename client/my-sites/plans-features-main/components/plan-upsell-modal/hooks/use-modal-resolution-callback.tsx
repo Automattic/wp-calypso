@@ -30,7 +30,7 @@ export function useModalResolutionCallback( {
 }: Props ) {
 	return useCallback(
 		function ( currentSelectedPlan?: string | null ): ModalType | null {
-			if ( currentSelectedPlan && isFreePlan( currentSelectedPlan ) ) {
+			if ( currentSelectedPlan ) {
 				if ( isFreePlan( currentSelectedPlan ) ) {
 					if ( isPlanUpsellEnabledOnFreeDomain.result ) {
 						return FREE_PLAN_FREE_DOMAIN_DIALOG;
