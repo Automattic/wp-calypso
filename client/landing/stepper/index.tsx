@@ -7,6 +7,7 @@ import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding'
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch, useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
+import { useEffect } from 'react';
 import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
@@ -58,26 +59,22 @@ function determineFlow() {
 /**
  * TODO: this is no longer a switch and should be removed
  */
-const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
-	user,
-	flow,
-} ) => {
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
+const FlowSwitch: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
+	const recurType = useQuery().get( 'recur' ) ?? '';
 
-	const recurType = useQuery().get( 'recur' );
+	useEffect( () => {
+		if ( flow.name !== ECOMMERCE_FLOW ) {
+			return;
+		}
 
-	if ( flow.name === ECOMMERCE_FLOW ) {
-		const isValidRecurType =
-			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );
+		const isValidRecurType = Object.values( ecommerceFlowRecurTypes ).includes( recurType );
 		if ( isValidRecurType ) {
 			setEcommerceFlowRecurType( recurType );
 		} else {
 			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
 		}
-	}
-
-	user && receiveCurrentUser( user as UserStore.CurrentUser );
+	}, [ flow.name, recurType ] );
 
 	return <FlowRenderer flow={ flow } />;
 };
@@ -125,7 +122,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } />
+						<FlowSwitch flow={ flow } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
