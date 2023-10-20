@@ -311,7 +311,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				</Button>
 			) }
 			<Button primary onClick={ handleUpdateCredentials } disabled={ disableForm || formHasErrors }>
-				{ isAlternate
+				{ isAlternate && ! formState.save_as_staging
 					? translate( 'Confirm credentials' )
 					: translate( 'Test and save credentials' ) }
 			</Button>
