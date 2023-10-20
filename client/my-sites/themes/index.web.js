@@ -26,12 +26,12 @@ export default function ( router ) {
 
 	const langParam = getLanguageRouteParam();
 	const routesWithoutSites = [
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?`,
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:collection?`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:collection?`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:collection?`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:collection?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:collection?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:collection?`,
 	];
 	const routesWithSites = [
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,
