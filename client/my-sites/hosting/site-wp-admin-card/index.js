@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -9,6 +9,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import MaterialIcon from 'calypso/components/material-icon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -70,7 +71,7 @@ const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 
 	return (
 		<Card className="sitewpadmin-card">
-			<Gridicon icon="my-sites" size={ 32 } />
+			<MaterialIcon icon="display_settings" style="filled" size={ 32 } />
 			<CardHeading id="sitewpadmin-card" size={ 20 }>
 				{ translate( 'Admin interface style' ) }
 			</CardHeading>
