@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { chevronLeft, formatListBulletsRTL, payment, receipt, store, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
@@ -60,7 +61,10 @@ const PurchasesSidebar = () => {
 			backButtonProps={ {
 				label: translate( 'Purchases' ),
 				icon: chevronLeft,
-				onClick: () => redirectPage( JETPACK_MANAGE_DASHBOARD_LINK ),
+				onClick: () => {
+					recordTracksEvent( 'calypso_jetpack_sidebar_new_purchases_back_button_click' );
+					redirectPage( JETPACK_MANAGE_DASHBOARD_LINK );
+				},
 			} }
 		/>
 	);
