@@ -37,11 +37,6 @@ export function getProps( context ) {
 
 export function loggedOut( context, next ) {
 	performanceMark( context, 'themesLoggedOut' );
-	if ( context.isServerSide && Object.keys( context.query ).length > 0 ) {
-		// Don't server-render URLs with query params
-		return next();
-	}
-
 	const props = getProps( context );
 
 	context.primary = <LoggedOutComponent { ...props } />;
