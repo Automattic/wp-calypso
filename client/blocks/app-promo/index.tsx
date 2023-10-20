@@ -8,9 +8,17 @@ import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import CardHeading from 'calypso/components/card-heading';
 import { preventWidows } from 'calypso/lib/formatting';
 import userAgent from 'calypso/lib/user-agent';
-import { useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import './style.scss';
+
+interface AppPromoProps {
+	title: string;
+	iconSize: number;
+	campaign: string;
+	subheader: string;
+	className: string;
+	hasQRCode: boolean;
+	hasGetAppButton: boolean;
+}
 
 export const AppPromo = ( {
 	title = '',
@@ -19,10 +27,10 @@ export const AppPromo = ( {
 	subheader = '',
 	className = '',
 	hasQRCode = false,
-} ) => {
+	hasGetAppButton = true,
+}: AppPromoProps ) => {
 	const isRtl = useRtl();
 	const translate = useTranslate();
-	const isLoggedIn = useSelector( isUserLoggedIn );
 	const iconWidth = Math.ceil( ( 49 / 29 ) * iconSize );
 
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
@@ -60,7 +68,8 @@ export const AppPromo = ( {
 					></AppsBadge>
 				</div>
 			) }
-			{ isLoggedIn && ! showBadge && (
+			{ hasQRCode && ! showBadge && <QrCode campaign={ campaign } size={ 100 } /> }
+			{ hasGetAppButton && ! showBadge && (
 				<Button
 					className="app-promo__link-button is-link"
 					href={ `/me/get-apps/?campaign=${ encodeURIComponent( campaign ) }` }
@@ -68,7 +77,6 @@ export const AppPromo = ( {
 					{ translate( 'Get the Jetpack app' ) }
 				</Button>
 			) }
-			{ hasQRCode && ! showBadge && <QrCode campaign={ campaign } size={ 100 } /> }
 		</Card>
 	);
 };

@@ -4,7 +4,12 @@ import AsyncLoad from 'calypso/components/async-load';
 
 import './style.scss';
 
-export const QrCode = ( { campaign = 'calypso-app-promo', size = 150 } ) => {
+interface QrCodeProps {
+	campaign: string;
+	size: number;
+}
+
+export const QrCode = ( { campaign = 'calypso-app-promo', size = 150 }: QrCodeProps ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	return (

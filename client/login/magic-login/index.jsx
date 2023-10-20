@@ -138,10 +138,11 @@ class MagicLogin extends Component {
 			return (
 				<AppPromo
 					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
-					campaign="emailed-login-link"
+					campaign="emailed-login-link-check-email"
 					className="magic-link-app-promo"
 					iconSize={ 32 }
 					hasQRCode={ true }
+					hasGetAppButton={ false }
 				/>
 			);
 		}
@@ -173,6 +174,7 @@ class MagicLogin extends Component {
 					className="magic-link-app-promo"
 					iconSize={ 32 }
 					hasQRCode={ true }
+					hasGetAppButton={ false }
 				/>
 			</>
 		);
