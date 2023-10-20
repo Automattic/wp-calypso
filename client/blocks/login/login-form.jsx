@@ -319,7 +319,7 @@ export class LoginForm extends Component {
 
 	renderLoginFromSignupNotice() {
 		return (
-			<Notice status="is-info" showDismiss={ false }>
+			<Notice status="is-transparent-info" showDismiss={ false }>
 				{ this.props.translate( 'An account with this email address already exists.' ) }
 				&nbsp;
 				{ this.props.translate( 'Log in to your account' ) }

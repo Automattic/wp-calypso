@@ -102,11 +102,6 @@ class PasswordlessSignupForm extends Component {
 	};
 
 	createAccountError = ( error ) => {
-		const errorMessage = this.getErrorMessage( error );
-		this.setState( {
-			errorMessages: [ errorMessage ],
-			isSubmitting: false,
-		} );
 		this.submitTracksEvent( false, { action_message: error.message } );
 
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
@@ -119,7 +114,18 @@ class PasswordlessSignupForm extends Component {
 					this.props.logInUrl
 				)
 			);
+
+			return;
 		}
+
+		this.setState( {
+			errorMessages: [
+				this.props.translate(
+					'Sorry, something went wrong when trying to create your account. Please try again.'
+				),
+			],
+			isSubmitting: false,
+		} );
 
 		return;
 	};
@@ -172,33 +178,6 @@ class PasswordlessSignupForm extends Component {
 			)
 		);
 	};
-
-	getErrorMessage( errorObj = { error: null, message: null } ) {
-		const { translate } = this.props;
-
-		switch ( errorObj.error ) {
-			case 'already_taken':
-			case 'already_active':
-			case 'email_exists':
-				return (
-					<>
-						{ translate( 'An account with this email address already exists.' ) }
-						&nbsp;
-						{ translate( '{{button}}Log in now{{/button}} to finish signing up.', {
-							components: {
-								button: (
-									<Button borderless={ true } className="button-plain" onClick={ this.goToLogin } />
-								),
-							},
-						} ) }
-					</>
-				);
-			default:
-				return translate(
-					'Sorry, something went wrong when trying to create your account. Please try again.'
-				);
-		}
-	}
 
 	submitStep = ( data ) => {
 		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
