@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
@@ -63,11 +62,10 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
 			{ ! isJetpackCloud() && (
-				<FormattedHeader
-					brandFont
-					className="payment-methods__page-heading"
-					headerText={ titles.sectionTitle }
-					subHeaderText={ translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ titles.sectionTitle }
+					subtitle={ translate(
 						'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -77,7 +75,6 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 							},
 						}
 					) }
-					align="left"
 				/>
 			) }
 			<PurchasesNavigation section="paymentMethods" siteSlug={ siteSlug } />
