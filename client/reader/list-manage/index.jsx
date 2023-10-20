@@ -6,7 +6,6 @@ import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/con
 import QueryReaderList from 'calypso/components/data/query-reader-list';
 import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
@@ -141,8 +140,9 @@ function ReaderListEdit( props ) {
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<Main>
-				<FormattedHeader
-					headerText={ translate( 'Manage %(listName)s', {
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Manage %(listName)s', {
 						args: { listName: list?.title || decodeURIComponent( props.slug ) },
 					} ) }
 				/>
