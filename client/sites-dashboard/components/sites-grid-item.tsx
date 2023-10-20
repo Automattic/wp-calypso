@@ -10,7 +10,7 @@ import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-m
 import { useSelector } from 'calypso/state';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
-import { displaySiteUrl, getDashboardUrl, isStagingSite } from '../utils';
+import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, isStagingSite } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
 import { SitesGridTile } from './sites-grid-tile';
@@ -113,6 +113,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isWpAdminDefaultSite = useSelector( ( state ) =>
 		getSiteOption( state, site.ID, 'wpcom_admin_interface' )
 	);
+	const hasHostingFeatures = ! isNotAtomicJetpack( site ) && ! isP2Site;
 
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ) || '';
 
@@ -122,7 +123,10 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 
 	const siteDashboardUrlProps = showThumbnailLink
 		? {
-				href: isWpAdminDefaultSite === 'wp-admin' ? adminUrl : getDashboardUrl( site.slug ),
+				href:
+					hasHostingFeatures && isWpAdminDefaultSite === 'wp-admin'
+						? adminUrl
+						: getDashboardUrl( site.slug ),
 				title: __( 'Visit Dashboard' ),
 		  }
 		: {};
