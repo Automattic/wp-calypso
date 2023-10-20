@@ -80,7 +80,6 @@ const LayoutLoggedOut = ( {
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
 	const isReaderTagPage = sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/tag/' );
-	const isReaderTagEmbed = isReaderTagPage && isReaderTagEmbedPage( window.location );
 
 	const isReaderDiscoverPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
@@ -149,7 +148,7 @@ const LayoutLoggedOut = ( {
 		config.isEnabled( 'jetpack-cloud' ) ||
 		isWpMobileApp() ||
 		isJetpackThankYou ||
-		isReaderTagEmbed
+		isReaderTagEmbedPage
 	) {
 		masterbar = null;
 	} else if (
@@ -227,7 +226,7 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && ! isReaderTagEmbed && (
+			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && ! isReaderTagEmbedPage && (
 				<UniversalNavbarFooter
 					onLanguageChange={ ( e ) => {
 						navigate( `/${ e.target.value + pathNameWithoutLocale }` );
