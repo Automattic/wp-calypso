@@ -57,9 +57,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 				interface: value,
 			} )
 		);
-		// Toggle the site interface
 		setSiteInterface( { value } );
-		// Toggle the local state
 		setSelectedAdminInterface( value );
 	};
 
@@ -89,7 +87,6 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 			<FormFieldset>
 				<FormLabel>
 					<FormRadio
-						className="staging-site-sync-card__radio"
 						label={ translate( 'Default style' ) }
 						value="calypso"
 						checked={ selectedAdminInterface === 'calypso' }
@@ -103,7 +100,6 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 			<FormFieldset>
 				<FormLabel>
 					<FormRadio
-						className="staging-site-sync-card__radio"
 						label={ translate( 'Classic style' ) }
 						value="wp-admin"
 						checked={ selectedAdminInterface === 'wp-admin' }
