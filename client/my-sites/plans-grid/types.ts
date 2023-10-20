@@ -13,6 +13,9 @@ export interface PlanActionOverrides {
 		text?: TranslateResult;
 		status?: 'blocked' | 'enabled';
 	};
+	loggedInMonthlyPaidPlan?: {
+		status?: 'blocked' | 'enabled';
+	};
 }
 
 // A generic type representing the response of an async request.

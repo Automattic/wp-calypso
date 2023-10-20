@@ -47,7 +47,6 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import useIsFreePlanCustomDomainUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
 import { FeaturesGrid, ComparisonGrid } from 'calypso/my-sites/plans-grid';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
@@ -65,11 +64,13 @@ import ComparisonGridToggle from './components/comparison-grid-toggle';
 import { LoadingPlaceHolder } from './components/loading-placeholder';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
+import useYearlyPlanUpsellModalExperiment from './components/plan-upsell-modal/hooks/use-yearly-plan-upsell-modal-experiment';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsFreeDomainFreePlanUpsellEnabled from './hooks/use-is-free-domain-free-plan-upsell-enabled';
+import useIsFreePlanCustomDomainUpsellEnabled from './hooks/use-is-free-plan-custom-domain-upsell-enabled';
 import useObservableForOdie from './hooks/use-observable-for-odie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -273,9 +274,12 @@ const PlansFeaturesMain = ( {
 		flowName,
 		paidDomainName
 	);
+	const yearlyPlanUpsellModalDisplayDecider = useYearlyPlanUpsellModalExperiment( flowName );
+
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
 		isPlanUpsellEnabledOnFreeDomain,
+		yearlyPlanUpsellModalDisplayDecider,
 		flowName,
 		paidDomainName,
 	} );
@@ -506,6 +510,9 @@ const PlansFeaturesMain = ( {
 						isPlanUpsellEnabledOnFreeDomain.isLoading || resolvedSubdomainName.isLoading
 							? 'blocked'
 							: 'enabled',
+				},
+				loggedInMonthlyPaidPlan: {
+					status: yearlyPlanUpsellModalDisplayDecider.isLoading ? 'blocked' : 'enabled',
 				},
 			};
 		}
