@@ -39,7 +39,7 @@ export default function useLoginWindow( {
 		);
 	}
 
-	const loginURL = addQueryArgs( { redirect_to: redirectTo }, `https://wordpress.com/log-in` );
+	const loginURL = addQueryArgs( { redirect_to: redirectTo }, 'https://wordpress.com/log-in' );
 	const createAccountURL = `https://wordpress.com${ createAccountUrl( {
 		redirectTo: redirectTo,
 		ref: 'reader-lw',
