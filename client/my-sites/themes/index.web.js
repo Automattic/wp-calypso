@@ -26,20 +26,20 @@ export default function ( router ) {
 
 	const langParam = getLanguageRouteParam();
 	const routesWithoutSites = [
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:collection?`,
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:collection?`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:collection?`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:collection?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:collection?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:collection?`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
 	];
 	const routesWithSites = [
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:collection?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:collection?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:collection?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:collection?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:collection?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:collection?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
 	];
 
 	// Upload routes are valid only when logged in. In logged-out sessions they redirect to login page.

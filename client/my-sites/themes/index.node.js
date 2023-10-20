@@ -20,12 +20,12 @@ export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
 	const showcaseRoutes = [
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:collection?`,
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter?/:collection?`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/:collection?`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/filter/:filter/:collection?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:collection?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:collection?`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
 	];
 
 	router(

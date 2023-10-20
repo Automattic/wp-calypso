@@ -503,6 +503,7 @@ class ThemeShowcase extends Component {
 			isCollectionView: true,
 			filter,
 			tier,
+			search: '',
 		} );
 
 		page( url );
