@@ -1,4 +1,4 @@
-import { PLAN_PERSONAL } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
@@ -40,6 +40,7 @@ import {
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { loadExperimentAssignment, ProvideExperimentData } from 'calypso/lib/explat';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import wpcom from 'calypso/lib/wp';
@@ -956,7 +957,20 @@ export class RenderDomainsStep extends Component {
 						key="domainForm"
 						path={ this.props.path }
 						initialState={ initialState }
-						onAddDomain={ this.handleAddDomain }
+						onAddDomain={ ( suggestion, position ) => {
+							if (
+								experimentAssignment?.variationName === 'treatment' &&
+								isFreeWordPressComDomain( suggestion )
+							) {
+								logToLogstash( {
+									feature: 'calypso_client',
+									message:
+										'hide free subdomain test: treatment group has falsely picked a free dotcom subdomain',
+									severity: 'error',
+								} );
+							}
+							this.handleAddDomain( suggestion, position );
+						} }
 						isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 						isCartPendingUpdateDomain={ this.state.isCartPendingUpdateDomain }
 						products={ this.props.productsList }
