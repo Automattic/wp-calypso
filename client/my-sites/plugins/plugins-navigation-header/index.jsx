@@ -169,19 +169,15 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 			navigationItems={ breadcrumbs }
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }
-			title={ breadcrumbs.length < 2 ? translate( 'Plugins' ) : '' }
-			subtitle={
-				breadcrumbs.length < 2
-					? translate(
-							'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-								},
-							}
-					  )
-					: ''
-			}
+			title={ translate( 'Plugins' ) }
+			subtitle={ translate(
+				'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
+					},
+				}
+			) }
 		>
 			<ManageButton
 				shouldShowManageButton={ shouldShowManageButton }

@@ -189,7 +189,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 
 	return (
 		<div className="landing-page">
-			<NavigationHeader navigationItems={ [] } title="WooCommerce" ref={ headerRef }>
+			<NavigationHeader navigationItems={ [] } title={ __( 'WooCommerce' ) } ref={ headerRef }>
 				{ isAboveElement && (
 					<Button onClick={ finalCTAHandler } primary disabled={ isTransferringBlocked }>
 						{ displayData.action }

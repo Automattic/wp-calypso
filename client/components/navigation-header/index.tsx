@@ -45,7 +45,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		id,
 		className,
 		children,
-		navigationItems,
+		navigationItems = [],
 		mobileItem,
 		compactBreadcrumb,
 		title,
@@ -62,12 +62,14 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 						compact={ compactBreadcrumb }
 						hideWhenOnlyOneLevel
 					/>
-					<FormattedHeader
-						align="left"
-						headerText={ title }
-						subHeaderText={ subtitle }
-						screenReader={ screenReader }
-					/>
+					{ navigationItems.length < 2 && (
+						<FormattedHeader
+							align="left"
+							headerText={ title }
+							subHeaderText={ subtitle }
+							screenReader={ screenReader }
+						/>
+					) }
 					<ActionsContainer>{ children }</ActionsContainer>
 				</div>
 			</Container>
