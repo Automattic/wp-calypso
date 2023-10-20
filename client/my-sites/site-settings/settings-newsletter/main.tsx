@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
@@ -201,7 +201,7 @@ const NewsletterSettings = () => {
 	return (
 		<Main>
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
-			<FormattedHeader brandFont headerText={ translate( 'Newsletter Settings' ) } align="left" />
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Newsletter Settings' ) } />
 			<SubscriptionsModuleBanner />
 			<NewsletterSettingsForm />
 		</Main>
