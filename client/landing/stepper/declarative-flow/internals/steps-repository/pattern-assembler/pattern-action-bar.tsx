@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { chevronUp, chevronDown, edit, shuffle, trash } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -19,6 +20,7 @@ type PatternActionBarProps = {
 	patternType: string;
 	category?: Category;
 	source: 'list' | 'large_preview';
+	isOverflow?: boolean;
 };
 
 const PatternActionBar = ( {
@@ -33,6 +35,7 @@ const PatternActionBar = ( {
 	patternType,
 	category,
 	source,
+	isOverflow,
 }: PatternActionBarProps ) => {
 	const translate = useTranslate();
 	const eventProps = {
@@ -44,7 +47,9 @@ const PatternActionBar = ( {
 	return (
 		// eslint-disable-next-line jsx-a11y/interactive-supports-focus
 		<div
-			className="pattern-assembler__pattern-action-bar"
+			className={ classnames( 'pattern-assembler__pattern-action-bar', {
+				'pattern-assembler__pattern-action-bar--overflow': isOverflow,
+			} ) }
 			role="menubar"
 			aria-label={ translate( 'Pattern actions' ) }
 			onMouseLeave={ onMouseLeave }

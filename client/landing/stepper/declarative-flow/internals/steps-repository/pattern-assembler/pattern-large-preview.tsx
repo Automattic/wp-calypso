@@ -4,7 +4,7 @@ import { useGlobalStyle } from '@automattic/global-styles';
 import { Popover } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef, useEffect, useState, useMemo, CSSProperties } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
@@ -51,12 +51,15 @@ const PatternLargePreview = ( {
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 	const [ device, setDevice ] = useState< string >( 'computer' );
-	const [ blockGap ] = useGlobalStyle( 'spacing.blockGap' );
+	const [ zoomOutScale, setZoomOutScale ] = useState( 1 );
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
-	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
-		'--pattern-large-preview-zoom-out-scale': 1,
-		'--pattern-large-preview-background': backgroundColor,
-	} as CSSProperties );
+	const patternLargePreviewStyle = useMemo(
+		() => ( {
+			'--pattern-large-preview-zoom-out-scale': zoomOutScale,
+			'--pattern-large-preview-background': backgroundColor,
+		} ),
+		[ zoomOutScale, backgroundColor ]
+	);
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
 
@@ -140,6 +143,7 @@ const PatternLargePreview = ( {
 							patternType={ type }
 							category={ pattern.category }
 							source="large_preview"
+							isOverflow={ zoomOutScale < 0.75 }
 							disableMoveUp={ position === 0 }
 							disableMoveDown={ sections?.length === position + 1 }
 							onMoveUp={ isSection ? () => onMoveUpSection( position ) : undefined }
@@ -190,15 +194,6 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePosition, header, sections, footer ] );
 
-	// Delay updating the styles to make the transition smooth
-	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
-	useEffect( () => {
-		setPatternLargePreviewStyle( ( current ) => ( {
-			...current,
-			'--pattern-large-preview-background': backgroundColor,
-		} ) );
-	}, [ blockGap, backgroundColor ] );
-
 	// Unset the hovered element when the mouse is leaving the large preview
 	useEffect( () => {
 		const handleMouseLeave = ( event: MouseEvent ) => {
@@ -228,12 +223,7 @@ const PatternLargePreview = ( {
 				setDevice( device );
 			} }
 			onViewportChange={ updateViewportHeight }
-			onZoomOutScaleChange={ ( value ) =>
-				setPatternLargePreviewStyle( ( current ) => ( {
-					...current,
-					'--pattern-large-preview-zoom-out-scale': value,
-				} ) )
-			}
+			onZoomOutScaleChange={ setZoomOutScale }
 		>
 			{ hasSelectedPattern ? (
 				<ul
