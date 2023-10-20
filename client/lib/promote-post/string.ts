@@ -71,8 +71,25 @@ const BlazePressStrings = () => {
 	translate( 'Reset' );
 	translate( 'Upload' );
 	translate( 'Crop' );
+	translate( 'Your search did not match any images. Please try a different term.' );
+	translate( 'Upload new image' );
+	translate( 'Select or drop image to upload' );
+	translate( 'Drop images to upload' );
+	translate( 'Use selected' );
+	translate( 'Load More' );
+	translate(
+		'Showing %(found)s or %(found)s media item',
+		'Showing %(found)s or %(found)s media items',
+		{ count: 1 }
+	);
+	translate( 'Search images' );
+	translate( 'Search' );
+	translate( 'Select' );
+	translate( 'Media Library' );
+	translate( 'Openverse' );
 	translate( 'Drop an image here to upload.' );
 	translate( 'Click or drag an image here to upload.' );
+	translate( 'Upload an image file, or pick one from your media library.' );
 	translate( 'Audience' );
 	translate(
 		'Not enough reach to create a campaign with the current audience configuration. Please, expand your reach by changing or removing some of the audience settings'
@@ -149,8 +166,6 @@ const BlazePressStrings = () => {
 	translate( 'Creating campaign' );
 	translate( 'Submit campaign' );
 	translate( 'Make changes' );
-	translate( 'Page Title' );
-	translate( 'Article Snippet' );
 	translate( 'Ad preview' );
 	translate( 'Mobile' );
 	translate( 'Tablet' );
