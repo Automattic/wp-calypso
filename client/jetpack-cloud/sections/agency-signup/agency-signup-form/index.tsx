@@ -20,7 +20,7 @@ import { translateInvalidPartnerParameterError } from 'calypso/state/partner-por
 import type { APIError, PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
-export interface AgencySignupProps {
+interface AgencySignupProps {
 	referrer: 'manage-lp' | 'agencies-lp';
 }
 
