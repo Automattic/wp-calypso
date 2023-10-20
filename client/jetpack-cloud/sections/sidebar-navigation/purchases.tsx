@@ -18,6 +18,7 @@ const createItem = ( props: Omit< MenuItemProps, 'path' > ) => ( {
 	...props,
 	path: JETPACK_MANAGE_PARTNER_PORTAL_LINK,
 	onClickMenuItem: redirectPage,
+	trackEventName: 'calypso_jetpack_sidebar_menu_click',
 	isSelected: isMenuItemSelected( props.link ),
 } );
 
@@ -29,26 +30,41 @@ const PurchasesSidebar = () => {
 			icon: store,
 			link: JETPACK_MANAGE_BILLING_LINK,
 			title: translate( 'Billing' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal / Billing',
+			},
 		} ),
 		createItem( {
 			icon: payment,
 			link: JETPACK_MANAGE_PAYMENT_METHODS_LINK,
 			title: translate( 'Payment Methods' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal / Payment Methods',
+			},
 		} ),
 		createItem( {
 			icon: receipt,
 			link: JETPACK_MANAGE_INVOICES_LINK,
 			title: translate( 'Invoices' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal / Invoices',
+			},
 		} ),
 		createItem( {
 			icon: tag,
 			link: JETPACK_MANAGE_PRICES_LINK,
 			title: translate( 'Prices' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal / Prices',
+			},
 		} ),
 		createItem( {
 			icon: formatListBulletsRTL,
 			link: JETPACK_MANAGE_COMPANY_DETAILS_LINK,
 			title: translate( 'Company Details' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal / Company Details',
+			},
 		} ),
 	];
 
