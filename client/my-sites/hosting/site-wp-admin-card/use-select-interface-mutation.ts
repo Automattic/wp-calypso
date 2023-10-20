@@ -11,11 +11,16 @@ export const useSiteInterfaceMutation = ( siteId: number ) => {
 	const dispatch = useDispatch();
 	const queryKey = [ SET_SITE_INTERFACE_MUTATION_KEY, siteId ];
 	const mutation = useMutation( {
-		mutationFn: async ( selectedInterface: boolean ) => {
-			return wp.req.post( {
-				path: `/sites/${ siteId }/hosting/admin-interface?interface=${ selectedInterface }`,
-				apiNamespace: 'wpcom/v2',
-			} );
+		mutationFn: async ( selectedInterface: string ) => {
+			wp.req.post(
+				{
+					path: `/sites/${ siteId }/hosting/admin-interface`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{
+					interface: selectedInterface,
+				}
+			);
 		},
 		mutationKey: queryKey,
 		onError( _err, _newActive, prevValue ) {
