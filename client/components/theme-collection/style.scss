@@ -98,16 +98,13 @@
 		font-size: $font-body-small;
 		font-style: normal;
 		font-weight: 400;
+		height: auto;
 		line-height: 1.4;
 		letter-spacing: -0.15px;
 		padding: 0;
 		margin-right: 0;
 		align-items: flex-end;
 		text-decoration: underline;
-
-		&:focus {
-			box-shadow: none;
-		}
 
 		@include break-small {
 			text-decoration: none;
