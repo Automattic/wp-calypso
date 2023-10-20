@@ -2,21 +2,56 @@
 import { Card, Gridicon } from '@automattic/components';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
+const successNoticeId = 'admin-interface-change-success';
+const failureNoticeId = 'admin-interface-change-failure';
 
 const SiteWpAdminCard = ( { siteId, adminInterface } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const removeAllNotices = () => {
+		dispatch( removeNotice( successNoticeId ) );
+		dispatch( removeNotice( failureNoticeId ) );
+	};
 
-	const setSiteInterface = useSiteInterfaceMutation( siteId );
+	const setSiteInterface = useSiteInterfaceMutation( siteId, {
+		onMutate: () => {
+			removeAllNotices();
+		},
+		onSuccess() {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_admin_interface_change_success' )
+			);
+			dispatch(
+				successNotice( translate( 'Admin interface style changed.' ), {
+					id: successNoticeId,
+				} )
+			);
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_admin_interface_change_failure', {
+					code: error.code,
+				} )
+			);
+			dispatch(
+				errorNotice( translate( 'Failed to change admin interface style.' ), {
+					id: failureNoticeId,
+				} )
+			);
+		},
+	} );
 
 	// Initialize the state with the value passed as a prop
 	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState(
