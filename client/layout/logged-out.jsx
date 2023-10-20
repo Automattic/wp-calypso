@@ -148,7 +148,7 @@ const LayoutLoggedOut = ( {
 		config.isEnabled( 'jetpack-cloud' ) ||
 		isWpMobileApp() ||
 		isJetpackThankYou ||
-		isReaderTagEmbedPage
+		isReaderTagEmbedPage( window.location )
 	) {
 		masterbar = null;
 	} else if (
