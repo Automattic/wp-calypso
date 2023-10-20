@@ -7,7 +7,6 @@ import { createElement, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-embed-page';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import LikeIcons from './icons';
 import './style.scss';
@@ -51,13 +50,6 @@ class LikeButton extends PureComponent {
 	toggleLiked( event ) {
 		if ( ! this.props.isLoggedIn ) {
 			const { pathname } = getUrlParts( window.location.href );
-			if ( isReaderTagEmbedPage( window.location ) ) {
-				return window.open(
-					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
-					'_blank'
-				);
-			}
-
 			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
 		if ( event ) {
