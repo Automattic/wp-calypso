@@ -226,16 +226,17 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && ! isReaderTagEmbedPage && (
-				<UniversalNavbarFooter
-					onLanguageChange={ ( e ) => {
-						navigate( `/${ e.target.value + pathNameWithoutLocale }` );
-						window.location.reload();
-					} }
-					currentRoute={ currentRoute }
-					isLoggedIn={ isLoggedIn }
-				/>
-			) }
+			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) &&
+				! isReaderTagEmbedPage( window.location ) && (
+					<UniversalNavbarFooter
+						onLanguageChange={ ( e ) => {
+							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
+							window.location.reload();
+						} }
+						currentRoute={ currentRoute }
+						isLoggedIn={ isLoggedIn }
+					/>
+				) }
 		</div>
 	);
 };
