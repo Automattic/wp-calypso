@@ -118,6 +118,7 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, or
 						hidePlanTypeSelector
 						hidePlansFeatureComparison
 						setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
+						flowName="onboarding-jetpack-app"
 					/>
 				</>
 			) : (
