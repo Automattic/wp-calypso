@@ -105,6 +105,29 @@ export class StatsPage {
 	}
 
 	/**
+	 * For new Interval Dropdown
+	 * Selects the period to show for the stats, including the graph.
+	 *
+	 * @param {StatsPeriod} period Stats period to show.
+	 */
+	async selectStatsPeriodFromDropdown( period: StatsPeriod ) {
+		const expandDropdownButton = this.anchor
+			.locator( '.stats-interval-dropdown' )
+			.getByRole( 'button' )
+			.first();
+		await expandDropdownButton.click();
+
+		const target = this.page
+			.locator( '.components-popover' )
+			.getByRole( 'radio', { name: period } );
+		await target.click();
+
+		if ( ! ( await target.isChecked() ) ) {
+			throw new Error( `Failed to select the Stats Period ${ period }` );
+		}
+	}
+
+	/**
 	 * Changes the stats view to specific activities.
 	 *
 	 * @param {ActivityTypes} activityType Type of activity to show.

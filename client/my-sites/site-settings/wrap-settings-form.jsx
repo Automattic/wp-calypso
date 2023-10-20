@@ -191,6 +191,12 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
+					case 'sm_enabled':
+						trackTracksEvent( 'calypso_settings_subscription_modal_updated', {
+							value: fields.sm_enabled,
+							path,
+						} );
+						break;
 				}
 			} );
 			if ( path === '/settings/reading/:site' ) {

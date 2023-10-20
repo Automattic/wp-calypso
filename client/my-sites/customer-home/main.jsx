@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -144,8 +143,8 @@ const Home = ( {
 				compactBreadcrumb={ false }
 				navigationItems={ [] }
 				mobileItem={ null }
-				title="My Home"
-				subtitle="Your hub for posting, editing, and growing your site."
+				title={ translate( 'My Home' ) }
+				subtitle={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 			>
 				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 					{ translate( 'Visit site' ) }
@@ -210,20 +209,6 @@ const Home = ( {
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</Main>
 	);
-};
-
-Home.propTypes = {
-	canUserUseCustomerHome: PropTypes.bool.isRequired,
-	hasWooCommerceInstalled: PropTypes.bool.isRequired,
-	isStaticHomePage: PropTypes.bool.isRequired,
-	isRequestingSitePlugins: PropTypes.bool.isRequired,
-	isSiteLaunching: PropTypes.bool.isRequired,
-	site: PropTypes.object.isRequired,
-	siteId: PropTypes.number.isRequired,
-	trackViewSiteAction: PropTypes.func.isRequired,
-	isSiteWooExpressEcommerceTrial: PropTypes.bool.isRequired,
-	ssoModuleActive: PropTypes.bool.isRequired,
-	fetchingJetpackModules: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state ) => {

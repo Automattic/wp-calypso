@@ -7,9 +7,9 @@ import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -132,17 +132,15 @@ export const Sharing = ( {
 		<Main wideLayout className="sharing">
 			<DocumentHead title={ titleHeader } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			<FormattedHeader
-				brandFont
-				className="marketing__page-heading"
-				headerText={ titleHeader }
-				subHeaderText={
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ titleHeader }
+				subtitle={
 					selected?.description ??
 					translate(
 						'Explore tools to build your audience, market your site, and engage your visitors.'
 					)
 				}
-				align="left"
 			/>
 			{ filters.length > 0 && (
 				<SectionNav selectedText={ selected?.title ?? '' }>

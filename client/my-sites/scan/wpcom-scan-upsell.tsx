@@ -4,10 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
@@ -139,12 +139,7 @@ export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ) {
 			<DocumentHead title="Scanner" />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
-			<FormattedHeader
-				headerText={ translate( 'Jetpack Scan' ) }
-				id="scan-header"
-				align="left"
-				brandFont
-			/>
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
 
 			{ body }
 		</Main>
