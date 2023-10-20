@@ -38,16 +38,13 @@ export const useSiteInterfaceMutation = (
 				}
 			);
 		},
-		...options,
 		mutationKey: queryKey,
-		onSuccess: async (
-			...args: [ MutationResponse, MutationVariables, ( context: unknown ) => void ]
-		) => {
-			options.onSuccess?.( ...args );
-		},
+		onSuccess: options?.onSuccess,
+		onMutate: options?.onMutate,
 		onError( _err: MutationError, _newActive: MutationVariables, prevValue: string ) {
 			// Revert to previous settings on failure
 			queryClient.setQueryData( queryKey, prevValue );
+			options?.onError?.( _err, _newActive, prevValue );
 		},
 		onSettled: () => {
 			dispatch( requestSite( siteId ) );
