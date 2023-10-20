@@ -6,10 +6,6 @@ import { requestSite } from 'calypso/state/sites/actions';
 
 const SET_SITE_INTERFACE_MUTATION_KEY = 'set-site-interface-mutation-key';
 
-interface MutationVariables {
-	value: string;
-}
-
 interface MutationResponse {
 	message: string;
 }
@@ -21,13 +17,13 @@ interface MutationError {
 
 export const useSiteInterfaceMutation = (
 	siteId: number,
-	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
+	options: UseMutationOptions< MutationResponse, MutationError, string > = {}
 ) => {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const queryKey = [ SET_SITE_INTERFACE_MUTATION_KEY, siteId ];
 	const mutation = useMutation( {
-		mutationFn: async ( { value }: MutationVariables ) => {
+		mutationFn: async ( value: string ) => {
 			return wp.req.post(
 				{
 					path: `/sites/${ siteId }/hosting/admin-interface`,
@@ -41,7 +37,7 @@ export const useSiteInterfaceMutation = (
 		mutationKey: queryKey,
 		onSuccess: options?.onSuccess,
 		onMutate: options?.onMutate,
-		onError( _err: MutationError, _newActive: MutationVariables, prevValue: unknown ) {
+		onError( _err: MutationError, _newActive: string, prevValue: unknown ) {
 			// Revert to previous settings on failure
 			queryClient.setQueryData( queryKey, prevValue );
 			options?.onError?.( _err, _newActive, prevValue );
@@ -53,7 +49,7 @@ export const useSiteInterfaceMutation = (
 
 	const { mutate } = mutation;
 
-	const setSiteInterface = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
+	const setSiteInterface = useCallback( mutate, [ mutate ] );
 
 	return setSiteInterface;
 };

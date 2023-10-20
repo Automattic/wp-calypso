@@ -57,7 +57,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 				interface: value,
 			} )
 		);
-		setSiteInterface( { value } );
+		setSiteInterface( value );
 		setSelectedAdminInterface( value );
 	};
 
