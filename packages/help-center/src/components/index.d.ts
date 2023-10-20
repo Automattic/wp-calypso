@@ -105,6 +105,30 @@ declare module 'calypso/state/current-user/selectors' {
 	export const getCurrentUserId: ( state: unknown ) => string;
 }
 
+declare module 'calypso/state/current-user/selectors' {
+	export const getCurrentUser: ( state: unknown ) => string;
+}
+
+declare module 'calypso/components/gravatar' {
+	const Gravatar: FC< {
+		user?: unknown;
+		size?: number;
+		alt?: string;
+	} >;
+	export default Gravatar;
+}
+
+declare module 'calypso/components/textarea-autosize' {
+	const TextareaAutosize: FC< {
+		placeholder: string;
+		className: string;
+		rows: number;
+		value: string;
+		onChange: ( event: React.ChangeEvent< HTMLTextAreaElement > ) => void;
+		onKeyPress: ( event: KeyboardEvent< HTMLTextAreaElement > ) => Promise< void >;
+	} >;
+}
+
 declare module 'calypso/state/selectors/get-admin-help-results' {
 	const getAdminHelpResults: (
 		state: unknown,
