@@ -10,7 +10,6 @@ import Gravatar from 'calypso/components/gravatar';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-embed-page';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -65,12 +64,6 @@ class PostCommentForm extends Component {
 	handleTextChange = ( event ) => {
 		if ( ! this.props.isLoggedIn ) {
 			const { pathname } = getUrlParts( window.location.href );
-			if ( isReaderTagEmbedPage( window.location ) ) {
-				return window.open(
-					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
-					'_blank'
-				);
-			}
 			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
 		// Update the comment text in the container's state

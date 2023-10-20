@@ -10,7 +10,6 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-embed-page';
 import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { tagListing } from './controller';
 
@@ -35,19 +34,6 @@ export default function () {
 	page( '/tag/*', redirectHashtaggedTags );
 
 	page( `/${ anyLangParam }/tag/:tag`, redirectInvalidLanguage );
-
-	if ( isReaderTagEmbedPage( window.location ) ) {
-		page(
-			[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
-			setLocaleMiddleware(),
-			redirectToSignup,
-			updateLastRoute,
-			tagListing,
-			makeLayout,
-			clientRender
-		);
-		return;
-	}
 
 	page(
 		[ '/tag/:tag', `/${ langParam }/tag/:tag` ],

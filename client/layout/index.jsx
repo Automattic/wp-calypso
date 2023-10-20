@@ -27,7 +27,6 @@ import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { OdieAssistantProvider } from 'calypso/odie/context';
@@ -364,10 +363,7 @@ export default withCurrentRoute(
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
 		const noMasterbarForRoute =
-			isJetpackLogin ||
-			currentRoute === '/me/account/closed' ||
-			isDomainAndPlanPackageFlow ||
-			isReaderTagEmbedPage( window.location );
+			isJetpackLogin || currentRoute === '/me/account/closed' || isDomainAndPlanPackageFlow;
 		const noMasterbarForSection =
 			! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const masterbarIsHidden =
