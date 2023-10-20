@@ -1,18 +1,24 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, KeyboardEvent, FormEvent } from 'react';
+import React, { useState, KeyboardEvent, FormEvent, useRef } from 'react';
 import ArrowUp from 'calypso/assets/images/odie/arrow-up.svg';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
+import { JumpToRecent } from '../message/jump-to-recent';
 import { useOdieSendMessage } from '../query';
 import { Message } from '../types';
 
 import './style.scss';
 
-export const OdieSendMessageButton = () => {
+export const OdieSendMessageButton = ( {
+	bottomRef,
+}: {
+	bottomRef: React.MutableRefObject< HTMLDivElement | null >;
+} ) => {
 	const [ messageString, setMessageString ] = useState< string >( '' );
+	const divContainerRef = useRef< HTMLDivElement >( null );
 	const { addMessage, setIsLoading, botNameSlug } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const dispatch = useDispatch();
@@ -96,35 +102,42 @@ export const OdieSendMessageButton = () => {
 		setMessageString( '' );
 	};
 
+	const divContainerHeight = divContainerRef?.current?.clientHeight;
+
 	return (
-		<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
-			<TextareaAutosize
-				placeholder={ translate( 'Ask your question', {
-					context: 'Placeholder text for the message input field (chat)',
-					textOnly: true,
-				} ) }
-				className="odie-send-message-input"
-				rows={ 1 }
-				value={ messageString }
-				onChange={ ( event: React.ChangeEvent< HTMLTextAreaElement > ) =>
-					setMessageString( event.currentTarget.value )
-				}
-				onKeyPress={ handleKeyPress }
-			/>
-			<button
-				type="submit"
-				className="odie-send-message-inner-button"
-				onClick={ handleButtonClick }
-				disabled={ messageString.trim() === '' }
-			>
-				<img
-					src={ ArrowUp }
-					alt={ translate( 'Arrow icon', {
-						context: 'html alt tag',
-						textOnly: true,
-					} ) }
-				/>
-			</button>
-		</form>
+		<>
+			<JumpToRecent lastMessageRef={ bottomRef } bottomOffset={ divContainerHeight ?? 0 } />
+			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
+				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
+					<TextareaAutosize
+						placeholder={ translate( 'Ask your question', {
+							context: 'Placeholder text for the message input field (chat)',
+							textOnly: true,
+						} ) }
+						className="odie-send-message-input"
+						rows={ 1 }
+						value={ messageString }
+						onChange={ ( event: React.ChangeEvent< HTMLTextAreaElement > ) =>
+							setMessageString( event.currentTarget.value )
+						}
+						onKeyPress={ handleKeyPress }
+					/>
+					<button
+						type="submit"
+						className="odie-send-message-inner-button"
+						onClick={ handleButtonClick }
+						disabled={ messageString.trim() === '' }
+					>
+						<img
+							src={ ArrowUp }
+							alt={ translate( 'Arrow icon', {
+								context: 'html alt tag',
+								textOnly: true,
+							} ) }
+						/>
+					</button>
+				</form>
+			</div>
+		</>
 	);
 };

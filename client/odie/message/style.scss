@@ -36,89 +36,6 @@
 	background-color: var(--studio-white);
 }
 
-
-.odie-chatbox-message-actions {
-	display: flex;
-	gap: 8px;
-	align-self: flex-end;
-	border: none;
-	background: transparent;
-	padding: 0;
-	margin: 0;
-	opacity: 1;
-	transform: scale(1);
-	visibility: visible;
-	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-}
-
-.odie-chatbox-message-action:focus {
-	outline: none;
-}
-
-.odie-chatbox-message-action {
-	cursor: pointer;
-	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-}
-
-.odie-chatbox-message-action:hover {
-	color: #0073aa;
-}
-
-.odie-chatbox-message-action.odie-chatbox-message-active-like {
-	animation: odie-chatbox-message-like-animation 0.3s ease-in-out forwards;
-	color: #0073aa;
-}
-
-.odie-chatbox-message-action.odie-chatbox-message-active-dislike {
-	animation: odie-chatbox-message-dislike-animation 0.3s ease-in-out forwards;
-	color: #0073aa;
-}
-
-.odie-chatbox-message-action.odie-chatbox-message-hide {
-	opacity: 0;
-	visibility: hidden;
-	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out 0.3s;
-}
-
-@keyframes odie-chatbox-message-like-animation {
-	0% {
-		transform: scale(1);
-	}
-	100% {
-		transform: scale(1.35) translateX(20px) rotate(-20deg);
-	}
-}
-
-@keyframes odie-chatbox-message-dislike-animation {
-	0% {
-		transform: scale(1);
-	}
-	100% {
-		transform: scale(1.35) rotate(-20deg);
-	}
-}
-
-.odie-chatbox-message-action-button {
-	display: inline;
-	padding: 0;
-}
-
-.odie-chatbox-help-link {
-	display: flex;
-	align-items: center;
-	width: 100%;
-	cursor: pointer;
-}
-
-.odie-chatbox-help-link:hover {
-	color: var(--theme-highlight-color);
-}
-
-.odie-chatbox-message-help-icon {
-	fill: var(--studio-blue-50);
-	margin: 4px;
-}
-
 .odie-introduction-message-content {
 	display: flex;
 	align-items: center;
@@ -268,26 +185,28 @@ $custom-border-corner-size: 16px;
 	position: absolute;
 	left: 0;
 	right: 0;
-	bottom: 0;
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 100%);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 50%);
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	height: 96px;
 	justify-content: center;
-	transition: height 0.3s ease, opacity 0.3s ease;
+	transition: ease, opacity 0.3s ease, bottom 0.3s ease;
 	z-index: 5;
 
 	&.is-hidden {
-		height: 0;
 		opacity: 0;
+		bottom: -18px !important;
 	}
 
 	&.is-visible {
 		opacity: 1;
-		height: 48px;
+		bottom: 24px;
 	}
 
 	.odie-jump-to-recent-message-button {
+		position: relative;
+		bottom: 24px;
 		font-family: $a8c-font-family-sans;
 		border-style: solid;
 		border-width: 1px;

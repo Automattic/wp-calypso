@@ -5,6 +5,7 @@
 	width: 100%;
 	align-items: flex-end;
 	gap: 8px;
+	z-index: 10;
 }
 
 .odie-send-message-input {
@@ -16,6 +17,7 @@
 	box-sizing: border-box;
 	min-height: 40px;
 	height: 40px;
+	max-height: 210px;
 }
 
 .odie-send-message-input-container .odie-send-message-inner-button {
