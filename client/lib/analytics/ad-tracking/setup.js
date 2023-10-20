@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -254,4 +255,10 @@ function setupClarityGlobal() {
 		function () {
 			( window.clarity.q = window.clarity.q || [] ).push( arguments );
 		};
+
+	setTimeout( () => {
+		// Identify the user with a custom-id email
+		// https://learn.microsoft.com/en-us/clarity/setup-and-installation/identify-api
+		window.clarity( 'identify', getCurrentUser()?.email );
+	}, 10 );
 }
