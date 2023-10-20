@@ -17,10 +17,6 @@ import SidebarHeader from './header';
 
 import './style.scss';
 
-// This is meant to be the "base" sidebar component. All context-specific sidebars
-// (Sites Management, Plugin Management, Purchases, non-Manage functionality)
-// would use it to construct the right experience for that context.
-
 type Props = {
 	className?: string;
 	isJetpackManage?: boolean;
@@ -35,6 +31,7 @@ type Props = {
 		isExternalLink?: boolean;
 		isSelected: boolean;
 		trackEventName?: string;
+		trackEventProps?: { [ key: string ]: string };
 	}[];
 	description?: string;
 	backButtonProps?: {
@@ -76,7 +73,7 @@ const JetpackCloudSidebar = ( {
 								{ ...item }
 								onClickMenuItem={ ( path ) => {
 									if ( item.trackEventName ) {
-										recordTracksEvent( item.trackEventName );
+										recordTracksEvent( item.trackEventName, item.trackEventProps );
 									}
 									item.onClickMenuItem( path );
 								} }
