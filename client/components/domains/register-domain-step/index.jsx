@@ -271,25 +271,6 @@ class RegisterDomainStep extends Component {
 			this.setState( this.getState( nextProps ) );
 			nextProps.suggestion && this.onSearch( nextProps.suggestion );
 		}
-
-		// Filter out the free wp.com subdomains to avoid doing another API request.
-		// Please note that it's intentional to be incomplete -- the complete version of this
-		// should be able to handle flag transition the other way around, i.e.
-		// when `includeWordPressDotCom` is first `false` and then transit to `true`. The
-		// same should also be ported to the dotblog subdomain flag. However, this code is likely
-		// temporary specific for the hiding free subdomain test, so it's not practical to implement
-		// the complete version for now.
-		if (
-			! nextProps.includeWordPressDotCom &&
-			this.props.includeWordPressDotCom &&
-			this.state.subdomainSearchResults
-		) {
-			this.setState( {
-				subdomainSearchResults: this.state.subdomainSearchResults.filter(
-					( subdomain ) => ! isFreeWordPressComDomain( subdomain )
-				),
-			} );
-		}
 	}
 
 	checkForBloggerPlan() {
@@ -349,7 +330,7 @@ class RegisterDomainStep extends Component {
 		this.props.recordSearchFormView( this.props.analyticsSection );
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps, prevState ) {
 		this.checkForBloggerPlan();
 
 		if (
@@ -358,6 +339,26 @@ class RegisterDomainStep extends Component {
 			this.props.selectedSite.domain !== prevProps.selectedSite.domain
 		) {
 			this.focusSearchCard();
+		}
+
+		// Filter out the free wp.com subdomains to avoid doing another API request.
+		// Please note that it's intentional to be incomplete -- the complete version of this
+		// should be able to handle flag transition the other way around, i.e.
+		// when `includeWordPressDotCom` is first `false` and then transit to `true`. The
+		// same should also be ported to the dotblog subdomain flag. However, this code is likely
+		// temporary specific for the hiding free subdomain test, so it's not practical to implement
+		// the complete version for now.
+		if (
+			! this.props.includeWordPressDotCom &&
+			prevState.subdomainSearchResults !== this.state.subdomainSearchResults
+		) {
+			// this is fine since we've covered the condition to prevent infinite loop
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( {
+				subdomainSearchResults: this.state.subdomainSearchResults.filter(
+					( subdomain ) => ! isFreeWordPressComDomain( subdomain )
+				),
+			} );
 		}
 	}
 
@@ -1224,17 +1225,6 @@ class RegisterDomainStep extends Component {
 			subdomainSuggestions.length,
 			this.props.analyticsSection
 		);
-
-		// This part handles the other end of the condition handled by the line 282:
-		// 1. The query request is sent.
-		// 2. `includeWordPressDotCom` is changed by the loaded result of the experiment. (this is where the line 282 won't handle)
-		// 3. The domain query result is returned and will be set here.
-		// The drawback is that it'd add unnecessary computation if `includeWordPressDotCom ` never changes.
-		if ( ! this.props.includeWordPressDotCom ) {
-			subdomainSuggestions = subdomainSuggestions.filter(
-				( subdomain ) => ! isFreeWordPressComDomain( subdomain )
-			);
-		}
 
 		this.setState(
 			{
