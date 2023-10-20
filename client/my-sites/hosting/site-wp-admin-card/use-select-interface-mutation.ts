@@ -40,7 +40,9 @@ export const useSiteInterfaceMutation = (
 		},
 		...options,
 		mutationKey: queryKey,
-		onSuccess: async ( ...args ) => {
+		onSuccess: async (
+			...args: [ MutationResponse, MutationVariables, ( context: unknown ) => void ]
+		) => {
 			options.onSuccess?.( ...args );
 		},
 		onError( _err: MutationError, _newActive: MutationVariables, prevValue: string ) {
