@@ -10,9 +10,18 @@ import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selec
 import './style.scss';
 
 export interface Tour {
-	targetId: string;
+	target: string;
 	title: string;
 	description: string;
+	popoverPosition?:
+		| 'top'
+		| 'top right'
+		| 'right'
+		| 'bottom right'
+		| 'bottom'
+		| 'bottom left'
+		| 'left'
+		| 'top left';
 }
 
 interface Props {
@@ -33,15 +42,15 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 
 	const isDismissed = preference?.dismiss;
 
-	const { title, description, targetId } = tours[ currentStep ];
+	const { title, description, target, popoverPosition } = tours[ currentStep ];
 
 	// Set the target element for the popover
 	useEffect( () => {
-		if ( targetId ) {
-			const element = document.querySelector( `#${ targetId }` ) as HTMLElement | null;
+		if ( target ) {
+			const element = document.querySelector( target ) as HTMLElement | null;
 			setTargetElement( element );
 		}
-	}, [ targetId ] );
+	}, [ target ] );
 
 	// Show the popover after a short delay to allow the popover to be positioned correctly
 	useEffect( () => {
@@ -81,7 +90,12 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 	const lastTourLabel = tours.length === 1 ? translate( 'Got it' ) : translate( 'Done' );
 
 	return (
-		<Popover isVisible={ isVisible } context={ targetElement } className="guided-tour__popover">
+		<Popover
+			isVisible={ isVisible }
+			context={ targetElement }
+			className="guided-tour__popover"
+			position={ popoverPosition }
+		>
 			<h2 className="guided-tour__popover-heading">{ title }</h2>
 			<p className="guided-tour__popover-description">{ description }</p>
 			<div className="guided-tour__popover-footer">
