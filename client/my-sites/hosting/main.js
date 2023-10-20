@@ -42,6 +42,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	isSiteOnECommerceTrial,
+	isSiteOnHostingTrial,
 	isSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
@@ -219,6 +220,7 @@ class Hosting extends Component {
 			isBasicHostingDisabled,
 			isECommerceTrial,
 			isMigrationTrial,
+			isHostingTrial,
 			isSiteAtomic,
 			isTransferring,
 			isWpcomStagingSite,
@@ -361,6 +363,8 @@ class Hosting extends Component {
 				! isWpcomStagingSite );
 		const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
+		const isBusinessTrial = isMigrationTrial || isHostingTrial;
+
 		return (
 			<Main wideLayout className="hosting">
 				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
@@ -374,8 +378,8 @@ class Hosting extends Component {
 					) }
 					align="left"
 				/>
-				{ ! isMigrationTrial && banner }
-				{ isMigrationTrial && (
+				{ ! isBusinessTrial && banner }
+				{ isBusinessTrial && (
 					<TrialBanner
 						callToAction={
 							<Button primary href={ `/plans/${ siteSlug }` }>
@@ -407,6 +411,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
+			isHostingTrial: isSiteOnHostingTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAtomic,
