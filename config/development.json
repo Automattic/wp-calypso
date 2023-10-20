@@ -182,7 +182,7 @@
 		"site-indicator": true,
 		"site-profiler": true,
 		"ssr/prefetch-timebox": false,
-		"stats/date-control": false,
+		"stats/date-control": true,
 		"stats/new-video-summary": true,
 		"stats/subscribers-chart-section": false,
 		"stats/paid-wpcom-stats": true,
