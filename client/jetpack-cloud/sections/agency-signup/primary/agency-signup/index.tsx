@@ -4,7 +4,11 @@ import Main from 'calypso/components/main';
 import AgencySignupForm from 'calypso/jetpack-cloud/sections/agency-signup/agency-signup-form';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 
-export default function AgencySignup() {
+interface AgencySignupProps {
+	referrer: 'manage-lp' | 'agencies-lp';
+}
+
+export default function AgencySignup( { referrer }: AgencySignupProps ) {
 	const translate = useTranslate();
 
 	return (
@@ -12,7 +16,7 @@ export default function AgencySignup() {
 			<DocumentHead title={ translate( 'Sign up as an Agency' ) } />
 			<SidebarNavigation />
 
-			<AgencySignupForm />
+			<AgencySignupForm referrer={ referrer } />
 		</Main>
 	);
 }

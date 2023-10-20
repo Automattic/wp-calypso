@@ -20,7 +20,11 @@ import { translateInvalidPartnerParameterError } from 'calypso/state/partner-por
 import type { APIError, PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
-export default function AgencySignupForm() {
+interface AgencySignupProps {
+	referrer: 'manage-lp' | 'agencies-lp';
+}
+
+export default function AgencySignupForm( { referrer }: AgencySignupProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
@@ -61,6 +65,7 @@ export default function AgencySignupForm() {
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
+					referrer: referrer,
 				} )
 			);
 		},
@@ -112,6 +117,7 @@ export default function AgencySignupForm() {
 					isLoading={ createPartner.isLoading }
 					onSubmit={ onSubmit }
 					submitLabel={ translate( 'Continue' ) }
+					referrer={ referrer }
 				/>
 			) }
 		</Card>

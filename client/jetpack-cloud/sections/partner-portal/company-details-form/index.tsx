@@ -41,6 +41,7 @@ interface Props {
 		country?: string;
 		postalCode?: string;
 		state?: string;
+		referrer?: string;
 	};
 	submitLabel: string;
 }
@@ -66,6 +67,7 @@ export default function CompanyDetailsForm( {
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
+	const referrer = initialValues.referrer ?? '';
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
@@ -86,6 +88,7 @@ export default function CompanyDetailsForm( {
 			line2,
 			country,
 			postalCode,
+			referrer,
 			state: addressState,
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
@@ -99,6 +102,7 @@ export default function CompanyDetailsForm( {
 			line2,
 			country,
 			postalCode,
+			referrer,
 			addressState,
 			includeTermsOfService,
 		]
