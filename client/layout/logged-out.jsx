@@ -24,6 +24,7 @@ import {
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-embed-page';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -143,7 +144,12 @@ const LayoutLoggedOut = ( {
 
 			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 		}
-	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
+	} else if (
+		config.isEnabled( 'jetpack-cloud' ) ||
+		isWpMobileApp() ||
+		isJetpackThankYou ||
+		isReaderTagEmbedPage
+	) {
 		masterbar = null;
 	} else if (
 		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions', 'site-profiler' ].includes(
@@ -220,7 +226,7 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && (
+			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && ! isReaderTagEmbedPage && (
 				<UniversalNavbarFooter
 					onLanguageChange={ ( e ) => {
 						navigate( `/${ e.target.value + pathNameWithoutLocale }` );

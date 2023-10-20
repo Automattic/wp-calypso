@@ -12,6 +12,7 @@ import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-embed-page';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
@@ -108,6 +109,12 @@ class PostComment extends PureComponent {
 	handleReply = () => {
 		if ( ! this.props.isLoggedIn ) {
 			const { pathname } = getUrlParts( window.location.href );
+			if ( isReaderTagEmbedPage( window.location ) ) {
+				return window.open(
+					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
+					'_blank'
+				);
+			}
 			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
 		this.props.onReplyClick( this.props.commentId );
