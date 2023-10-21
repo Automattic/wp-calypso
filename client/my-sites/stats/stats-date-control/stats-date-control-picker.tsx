@@ -77,6 +77,7 @@ const DateControlPicker = ( {
 				position="bottom"
 				context={ infoReferenceElement?.current }
 				isVisible={ popoverOpened }
+				className="stats-date-control-picker__popover-wrapper"
 			>
 				<div className="stats-date-control-picker__popover-content">
 					<DateControlPickerDate
