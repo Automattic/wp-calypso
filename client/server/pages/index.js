@@ -24,7 +24,6 @@ import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
@@ -98,7 +97,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, response, entrypoint = 'entry-main', sectionName ) {
+function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	performanceMark( request.context, 'getDefaultContext' );
 
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
@@ -147,12 +146,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main', sectio
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
-	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
-	const isWCComConnect =
-		( 'login' === sectionName || 'signup' === sectionName ) &&
-		request.query[ 'wccom-from' ] &&
-		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
-
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
@@ -177,7 +170,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main', sectio
 		env: calypsoEnv,
 		sanitize: sanitize,
 		requestFrom: request.query.from,
-		isWCComConnect,
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
