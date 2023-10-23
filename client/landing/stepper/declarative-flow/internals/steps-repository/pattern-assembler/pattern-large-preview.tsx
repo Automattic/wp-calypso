@@ -4,7 +4,7 @@ import { useGlobalStyle } from '@automattic/global-styles';
 import { Popover } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useMemo, CSSProperties } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
@@ -54,10 +54,11 @@ const PatternLargePreview = ( {
 	const [ zoomOutScale, setZoomOutScale ] = useState( 1 );
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const patternLargePreviewStyle = useMemo(
-		() => ( {
-			'--pattern-large-preview-zoom-out-scale': zoomOutScale,
-			'--pattern-large-preview-background': backgroundColor,
-		} ),
+		() =>
+			( {
+				'--pattern-large-preview-zoom-out-scale': zoomOutScale,
+				'--pattern-large-preview-background': backgroundColor,
+			} ) as CSSProperties,
 		[ zoomOutScale, backgroundColor ]
 	);
 
