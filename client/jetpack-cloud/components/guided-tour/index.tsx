@@ -1,4 +1,5 @@
 import { Popover, Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -25,6 +26,7 @@ export interface Tour {
 }
 
 interface Props {
+	className?: string;
 	tours: Tour[];
 	preferenceName: string;
 }
@@ -55,7 +57,7 @@ const useAsyncElement = ( target: string, maxDuration: number ): HTMLElement | n
 	return asyncElement;
 };
 
-const GuidedTour = ( { tours, preferenceName }: Props ) => {
+const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -108,8 +110,8 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 	return (
 		<Popover
 			isVisible={ isVisible }
+			className={ classNames( className, 'guided-tour__popover' ) }
 			context={ targetElement }
-			className="guided-tour__popover"
 			position={ popoverPosition }
 		>
 			<h2 className="guided-tour__popover-heading">{ title }</h2>
