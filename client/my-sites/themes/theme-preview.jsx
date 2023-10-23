@@ -81,7 +81,7 @@ class ThemePreview extends Component {
 		};
 	};
 
-	appendStyleVariationOptionToUrl = ( url ) => {
+	appendStyleVariationOptionToUrl = ( url, key = 'slug' ) => {
 		const styleVariationOption = this.getStyleVariationOption();
 		if ( ! styleVariationOption ) {
 			return url;
@@ -89,7 +89,7 @@ class ThemePreview extends Component {
 
 		const [ base, query ] = url.split( '?' );
 		const params = new URLSearchParams( query );
-		params.set( 'style_variation', styleVariationOption.title );
+		params.set( 'style_variation', styleVariationOption[ key ] );
 
 		return `${ base }?${ params.toString() }`;
 	};
@@ -182,7 +182,10 @@ class ThemePreview extends Component {
 			return;
 		}
 
-		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.themeId ) : null;
+		const { themeId } = this.props;
+		const buttonHref = primaryOption.getUrl
+			? this.appendStyleVariationOptionToUrl( primaryOption.getUrl( themeId ) )
+			: null;
 
 		return (
 			<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref }>
@@ -197,7 +200,10 @@ class ThemePreview extends Component {
 			return;
 		}
 
-		const buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.themeId ) : null;
+		const { themeId } = this.props;
+		const buttonHref = secondaryButton.getUrl
+			? this.appendStyleVariationOptionToUrl( secondaryButton.getUrl( themeId ) )
+			: null;
 
 		return (
 			<Button onClick={ this.onSecondaryButtonClick } href={ buttonHref }>
@@ -238,7 +244,8 @@ class ThemePreview extends Component {
 						showSEO={ false }
 						onClose={ this.props.hideThemePreview }
 						previewUrl={ this.appendStyleVariationOptionToUrl(
-							demoUrl + '?demo=true&iframe=true&theme_preview=true'
+							demoUrl + '?demo=true&iframe=true&theme_preview=true',
+							'title'
 						) }
 						externalUrl={ demoUrl }
 						belowToolbar={ this.props.belowToolbar }

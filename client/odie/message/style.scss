@@ -1,21 +1,18 @@
 @import "@automattic/typography/styles/variables";
-
-$custom-border-corner-size: 20px;
+@import "@automattic/components/src/styles/typography.scss";
 
 .odie-chatbox-message {
 	display: flex;
 	justify-content: space-between;
-	align-items: self-start;
-	margin-top: 8px;
-	max-width: 70%;
 	word-wrap: break-word;
-	padding: 12px;
-	border-radius: $custom-border-corner-size;
-	font-size: $font-body-small;
+	font-size: $font-body;
 	line-height: 1.4;
 	color: #000;
 	flex-direction: column;
-
+	padding: 16px;
+	gap: 8px;
+	max-width: 378px;
+	width: 378px;
 	ol,
 	ul {
 		margin: 0 0 1.5em 1.5em;
@@ -23,17 +20,12 @@ $custom-border-corner-size: 20px;
 	}
 }
 
-.odie-simulate-typing {
-	min-width: 70%;
-}
-
-.odie-introduction-message {
-	max-width: 100%;
+.odie-chatbox-message p:last-of-type {
+	margin-bottom: 0;
 }
 
 .odie-chatbox-message.odie-chatbox-message-user {
-	align-self: flex-end;
-	background-color: #dcf8c6;
+	background-color: var(--studio-gray-0);
 }
 
 .odie-chatbox-message.odie-chatbox-message-user > :last-child {
@@ -41,96 +33,7 @@ $custom-border-corner-size: 20px;
 }
 
 .odie-chatbox-message.odie-chatbox-message-wapuu {
-	align-self: flex-start;
-	background-color: #f1f0f0;
-}
-
-
-.odie-chatbox-message-actions {
-	display: flex;
-	gap: 8px;
-	align-self: flex-end;
-	border: none;
-	background: transparent;
-	padding: 0;
-	margin: 0;
-	opacity: 1;
-	transform: scale(1);
-	visibility: visible;
-	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-}
-
-.odie-chatbox-message-action:focus {
-	outline: none;
-}
-
-.odie-chatbox-message-action {
-	cursor: pointer;
-	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-}
-
-.odie-chatbox-message-action:hover {
-	color: #0073aa;
-}
-
-.odie-chatbox-message-action.odie-chatbox-message-active-like {
-	animation: odie-chatbox-message-like-animation 0.3s ease-in-out forwards;
-	color: #0073aa;
-}
-
-.odie-chatbox-message-action.odie-chatbox-message-active-dislike {
-	animation: odie-chatbox-message-dislike-animation 0.3s ease-in-out forwards;
-	color: #0073aa;
-}
-
-.odie-chatbox-message-action.odie-chatbox-message-hide {
-	opacity: 0;
-	visibility: hidden;
-	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out 0.3s;
-}
-
-@keyframes odie-chatbox-message-like-animation {
-	0% {
-		transform: scale(1);
-	}
-	100% {
-		transform: scale(1.35) translateX(20px) rotate(-20deg);
-	}
-}
-
-@keyframes odie-chatbox-message-dislike-animation {
-	0% {
-		transform: scale(1);
-	}
-	100% {
-		transform: scale(1.35) rotate(-20deg);
-	}
-}
-
-.odie-chatbox-message-action-button {
-	display: inline;
-	padding: 0;
-}
-
-.odie-chatbox-help-link {
-	display: flex;
-	align-items: center;
-	width: 100%;
-	cursor: pointer;
-}
-
-.odie-chatbox-help-link:hover {
-	color: var(--theme-highlight-color);
-}
-
-.odie-chatbox-help-link__content,
-.odie-full-width-message {
-	width: 100%;
-}
-
-.odie-chatbox-message-help-icon {
-	fill: var(--studio-blue-50);
-	margin: 4px;
+	background-color: var(--studio-white);
 }
 
 .odie-introduction-message-content {
@@ -140,18 +43,25 @@ $custom-border-corner-size: 20px;
 }
 
 .odie-chatbox-message-avatar {
-	transform: translateX(-24px);
-	width: 92px;
-	height: auto;
-	margin: 8px -16px 8px 8px;
+	width: 32px;
+	height: 32px;
+	justify-content: center;
+	align-items: center;
 }
 
 .message-header {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
-	padding-bottom: 8px;
 	width: 100%;
+	gap: 8px;
+
+	.user {
+		justify-content: flex-start;
+	}
+
+	.bot {
+		justify-content: space-between;
+	}
 }
 
 .message-header-name {
@@ -189,14 +99,142 @@ $custom-border-corner-size: 20px;
 	}
 }
 
-.odie-chatbox-message-wapuu-tail {
-	position: relative;
-	top: -17px;
-	left: -8px;
+.odie-sources {
+	display: flex;
+	padding: 4px 8px;
+	align-items: center;
+	gap: 4px;
+	align-self: stretch;
+	border-radius: 4px;
+	background-color: var(--studio-gray-0);
+	width: fit-content;
+	margin: 4px 0;
 }
 
-.odie-chatbox-message-customer-tail {
-	position: relative;
-	left: 357px;
-	top: -17px;
+.odie-sources-inline {
+	display: inline-flex;
+	padding: 0 8px;
+	margin: 0;
+}
+
+.odie-sources-link {
+	color: var(--studio-blue-40);
+	font-style: normal;
+	font-weight: 600;
+}
+
+
+.odie-feedback-component-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	.odie-feedback-component-question {
+		font-weight: 600;
+		font-size: 1rem;
+		color: var(--studio-black);
+	}
+
+	.odie-feedback-component-button-container {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		.odie-feedback-component-button {
+			font-family: $a8c-font-family-sans;
+			background: transparent;
+			border-style: solid;
+			border-width: 1px;
+			cursor: pointer;
+			margin: 0;
+			outline: 0;
+			overflow: hidden;
+			text-align: center;
+			text-overflow: ellipsis;
+			text-decoration: none;
+			vertical-align: top;
+			box-sizing: border-box;
+			border-radius: 2px;
+			font-size: $font-body-extra-small;
+			line-height: 1;
+			appearance: none;
+			background-color: var(--color-surface);
+			color: var(--color-neutral-70);
+			border-color: var(--color-neutral-10);
+			display: flex;
+			height: 28px;
+			padding: 7px;
+			justify-content: center;
+			align-items: center;
+
+			&:hover {
+				border-color: var(--color-neutral-20);
+				color: var(--color-neutral-70);
+			}
+
+			&.is-active {
+				border-width: 1px;
+			}
+		}
+	}
+}
+
+$custom-border-corner-size: 16px;
+
+.odie-gradient-to-white {
+	position: absolute;
+	left: 0;
+	right: 0;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 50%);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	height: 96px;
+	justify-content: center;
+	transition: ease, opacity 0.3s ease, bottom 0.3s ease;
+	z-index: 5;
+
+	&.is-hidden {
+		opacity: 0;
+		bottom: -18px !important;
+	}
+
+	&.is-visible {
+		opacity: 1;
+		bottom: 24px;
+	}
+
+	.odie-jump-to-recent-message-button {
+		position: relative;
+		bottom: 24px;
+		font-family: $a8c-font-family-sans;
+		border-style: solid;
+		border-width: 1px;
+		cursor: pointer;
+		margin: 0;
+		outline: 0;
+		overflow: hidden;
+		text-align: center;
+		text-overflow: ellipsis;
+		text-decoration: none;
+		vertical-align: top;
+		box-sizing: border-box;
+		font-size: $font-body;
+		line-height: 1;
+		appearance: none;
+		background-color: var(--color-primary);
+		color: var(--studio-white);
+		border: none;
+		display: flex;
+		height: 28px;
+		padding: 12px 16px;
+		padding-right: 8px;
+		justify-content: center;
+		align-items: center;
+		border-radius: $custom-border-corner-size;
+
+		&.is-active {
+			border-width: 1px;
+		}
+	}
 }

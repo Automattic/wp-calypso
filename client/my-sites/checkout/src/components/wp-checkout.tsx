@@ -16,12 +16,12 @@ import {
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
-	useTotal,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 	FormStatus,
 } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
@@ -75,7 +75,7 @@ import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
-import JetpackCheckoutSidebarPlanUpsell from './jetpack-checkout-sidebar-plan-upsell';
+import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
@@ -264,7 +264,6 @@ export default function WPCheckout( {
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
-	const total = useTotal();
 	const reduxDispatch = useReduxDispatch();
 	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
 
@@ -437,7 +436,10 @@ export default function WPCheckout( {
 										<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
 									</CheckoutSummaryTitle>
 									<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-										{ total.amount.displayValue }
+										{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+											isSmallestUnit: true,
+											stripZeros: true,
+										} ) }
 									</CheckoutSummaryTitlePrice>
 								</CheckoutSummaryTitleContent>
 							</CheckoutSummaryTitleLink>
@@ -450,7 +452,7 @@ export default function WPCheckout( {
 								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
 									<>
 										<CheckoutSidebarPlanUpsell />
-										<JetpackCheckoutSidebarPlanUpsell />
+										<JetpackAkismetCheckoutSidebarPlanUpsell />
 									</>
 								) }
 								<SecondaryCartPromotions

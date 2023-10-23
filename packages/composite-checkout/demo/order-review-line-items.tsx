@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
-import joinClasses from '../lib/join-classes';
-import type { LineItem } from '../types';
+import type { LineItem } from './helpers';
 import type { PropsWithChildren } from 'react';
+
+function joinClasses( classes: string[] ): string {
+	return classes.join( ' ' );
+}
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
@@ -27,7 +30,7 @@ function OrderReviewLineItemUnstyled( { item, className }: LineItemProps ) {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<span id={ itemSpanId }>{ item.label }</span>
-			<span aria-labelledby={ itemSpanId }>{ item.amount.displayValue }</span>
+			<span aria-labelledby={ itemSpanId }>{ item.amount }</span>
 		</div>
 	);
 }

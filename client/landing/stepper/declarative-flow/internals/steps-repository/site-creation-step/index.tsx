@@ -1,5 +1,6 @@
 import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Site } from '@automattic/data-stores';
+import { FREE_THEME } from '@automattic/design-picker';
 import {
 	ECOMMERCE_FLOW,
 	StepContainer,
@@ -8,6 +9,7 @@ import {
 	addProductsToCart,
 	createSiteWithCart,
 	isCopySiteFlow,
+	isDesignFirstFlow,
 	isFreeFlow,
 	isLinkInBioFlow,
 	isMigrationFlow,
@@ -17,9 +19,11 @@ import {
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
 	isOnboardingPMFlow,
+	setThemeOnSite,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
@@ -97,6 +101,24 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
+
+	let preselectedThemeSlug = '';
+	let preselectedThemeStyleVariation = '';
+
+	// Maybe set the theme for the user instead of taking them to the update-design flow.
+	// See: https://github.com/Automattic/wp-calypso/issues/83077
+	if ( isDesignFirstFlow( flow ) ) {
+		const themeSlug = getQueryArg( window.location.href, 'theme' );
+		const themeType = getQueryArg( window.location.href, 'theme_type' );
+		const styleVariation = getQueryArg( window.location.href, 'style_variation' );
+
+		// Only do this for preselected free themes with style variation.
+		if ( !! themeSlug && themeType === FREE_THEME && !! styleVariation ) {
+			preselectedThemeSlug = `pub/${ themeSlug }`;
+			preselectedThemeStyleVariation = styleVariation as string;
+		}
+	}
+
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
 	const progress = useSelect(
@@ -163,6 +185,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			sourceSlug
 		);
 
+		if ( preselectedThemeSlug && site?.siteSlug ) {
+			await setThemeOnSite( site.siteSlug, preselectedThemeSlug, preselectedThemeStyleVariation );
+		}
+
 		if ( planCartItem?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY && site ) {
 			await addHostingTrial( { siteId: site.siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
 
@@ -190,6 +216,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
 			goToCheckout: Boolean( planCartItem ),
+			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 		};
 	}
 

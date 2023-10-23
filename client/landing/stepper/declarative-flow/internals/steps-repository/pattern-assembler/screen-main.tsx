@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from './constants';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
+import PatternCount from './pattern-count';
 import Survey from './survey';
 import { PatternType } from './types';
 
@@ -16,7 +17,7 @@ interface Props {
 	onMainItemSelect: ( name: string ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
-	hasSections: boolean;
+	sectionsCount: number;
 	hasHeader: boolean;
 	hasFooter: boolean;
 	onContinueClick: () => void;
@@ -26,7 +27,7 @@ const ScreenMain = ( {
 	onMainItemSelect,
 	surveyDismissed,
 	setSurveyDismissed,
-	hasSections,
+	sectionsCount,
 	hasHeader,
 	hasFooter,
 	onContinueClick,
@@ -35,7 +36,8 @@ const ScreenMain = ( {
 	const { title, description, continueLabel } = useScreen( 'main' );
 	const { location, params, goTo } = useNavigator();
 	const selectedCategory = params.categorySlug as string;
-	const isButtonDisabled = ! hasSections && ! hasHeader && ! hasFooter;
+	const totalPatternCount = Number( hasHeader ) + sectionsCount + Number( hasFooter );
+	const isButtonDisabled = totalPatternCount === 0;
 
 	const handleNavigatorItemSelect = ( type: PatternType, path: string, category: string ) => {
 		const nextPath = category !== selectedCategory ? `${ path }/${ category }` : path;
@@ -62,17 +64,23 @@ const ScreenMain = ( {
 							}
 							active={ location.path === NAVIGATOR_PATHS.MAIN_HEADER }
 						>
-							{ translate( 'Header' ) }
+							<>
+								{ translate( 'Header' ) }
+								<PatternCount count={ Number( hasHeader ) } />
+							</>
 						</NavigatorItem>
 						<NavigatorItem
-							checked={ hasSections }
+							checked={ !! sectionsCount }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
 							onClick={ () =>
 								handleNavigatorItemSelect( 'section', NAVIGATOR_PATHS.SECTIONS, INITIAL_CATEGORY )
 							}
 						>
-							{ translate( 'Sections' ) }
+							<>
+								{ translate( 'Sections' ) }
+								<PatternCount count={ sectionsCount } />
+							</>
 						</NavigatorItem>
 
 						<NavigatorItem
@@ -84,13 +92,27 @@ const ScreenMain = ( {
 							}
 							active={ location.path === NAVIGATOR_PATHS.MAIN_FOOTER }
 						>
-							{ translate( 'Footer' ) }
+							<>
+								{ translate( 'Footer' ) }
+								<PatternCount count={ Number( hasFooter ) } />
+							</>
 						</NavigatorItem>
 					</NavigatorItemGroup>
 				</VStack>
 				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
 			</div>
 			<div className="screen-container__footer">
+				<span className="screen-container__footer-description">
+					{ totalPatternCount > 0 &&
+						translate( 'You’ve added {{strong}}%(count)s{{/strong}} patterns.', {
+							args: {
+								count: totalPatternCount,
+							},
+							components: {
+								strong: <strong />,
+							},
+						} ) }
+				</span>
 				<Button
 					className="pattern-assembler__button"
 					disabled={ isButtonDisabled }

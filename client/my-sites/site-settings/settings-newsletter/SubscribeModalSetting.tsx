@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
@@ -35,6 +36,10 @@ export const SubscribeModalSetting = ( {
 		  } )
 		: false;
 
+	const onEditClick = () => {
+		recordTracksEvent( 'calypso_settings_subscriber_modal_edit_click' );
+	};
+
 	return (
 		<>
 			<ToggleControl
@@ -50,7 +55,7 @@ export const SubscribeModalSetting = ( {
 				{ subscribeModalEditorUrl && (
 					<>
 						{ ' ' }
-						<ExternalLink href={ subscribeModalEditorUrl }>
+						<ExternalLink href={ subscribeModalEditorUrl } onClick={ onEditClick }>
 							{ translate( 'Preview and edit the popup' ) }
 						</ExternalLink>
 					</>
