@@ -16,8 +16,6 @@ import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 interface Props {
 	translate: typeof translate;
 	onInputEnter: OnInputEnter;
