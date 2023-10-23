@@ -25,6 +25,7 @@ import {
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
+import useAddOnCheckoutLink from 'calypso/my-sites/add-ons/hooks/use-add-on-checkout-link';
 import { isSamePlan } from '../../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
@@ -323,6 +324,7 @@ const useGridPlans = ( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
 	} );
+	const checkoutLink = useAddOnCheckoutLink();
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
 	if ( ! pricingMeta || ! pricedAPIPlans ) {
@@ -360,8 +362,20 @@ const useGridPlans = ( {
 						product_slug: planSlug,
 				  };
 
-		const storageAddOnsForPlan =
-			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
+		let storageAddOnsForPlan = null;
+
+		if ( isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ) {
+			storageAddOnsForPlan =
+				storageAddOns &&
+				storageAddOns?.map( ( addOn ) => {
+					return (
+						addOn && {
+							...addOn,
+							checkoutUrl: checkoutLink( addOn.productSlug, addOn.quantity ),
+						}
+					);
+				} );
+		}
 
 		return {
 			planSlug,
