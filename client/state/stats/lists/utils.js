@@ -92,7 +92,7 @@ export function buildExportArray( data, parent = null ) {
 	if ( ! data || ! data.label || ! data.value ) {
 		return [];
 	}
-	const label = parent ? parent + ' > ' + data.label : data.label;
+	const label = parent ? parent + ' > ' + String( data.label ) : String( data.label );
 	// eslint-disable-next-line
 	const escapedLabel = label.replace( /\"/, '""' );
 	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
