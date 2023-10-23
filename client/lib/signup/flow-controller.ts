@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import debugModule from 'debug';
+import { translate } from 'i18n-calypso';
 import {
 	defer,
 	difference,
@@ -298,7 +299,13 @@ export default class SignupFlowController {
 					},
 				} );
 
-				if ( config( 'env_id' ) !== 'production' ) {
+				if ( config( 'env_id' ) === 'production' ) {
+					throw new Error(
+						translate(
+							'We’re sorry, something went wrong. Please try again in a few minutes or contact our support channel'
+						)
+					);
+				} else {
 					throw new Error( errorMessage );
 				}
 			}
