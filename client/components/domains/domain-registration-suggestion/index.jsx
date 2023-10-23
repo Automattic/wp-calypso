@@ -31,6 +31,7 @@ import { HTTPS_SSL } from 'calypso/lib/url/support';
 import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import PremiumBadge from './premium-badge';
@@ -138,6 +139,7 @@ class DomainRegistrationSuggestion extends Component {
 			premiumDomain,
 			isCartPendingUpdateDomain,
 			flowName,
+			currentUser,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = suggestionSelected || hasDomainInCart( cart, domain );
@@ -152,7 +154,7 @@ class DomainRegistrationSuggestion extends Component {
 
 			buttonStyles = { ...buttonStyles, primary: false };
 
-			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+			if ( shouldUseMultipleDomainsInCart( flowName, currentUser ) ) {
 				buttonStyles = { ...buttonStyles, borderless: true };
 
 				buttonContent = translate( '{{checkmark/}} Selected', {
@@ -478,6 +480,7 @@ const mapStateToProps = ( state, props ) => {
 		productCost,
 		productSaleCost,
 		flowName,
+		currentUser: getCurrentUser( state ),
 	};
 };
 
