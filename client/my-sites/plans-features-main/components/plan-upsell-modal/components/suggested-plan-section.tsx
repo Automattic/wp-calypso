@@ -2,9 +2,10 @@ import { PlanSlug, getPlan } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getPlanPrices } from 'calypso/state/plans/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { DomainName, StyledButton } from '.';
 
 const FreeDomainText = styled.div`
@@ -27,7 +28,15 @@ export default function SuggestedPlanSection( {
 	isBusy: boolean;
 } ) {
 	const translate = useTranslate();
-	const planPrices = usePlanPrices( { planSlug: suggestedPlanSlug, returnMonthly: true } );
+	const planPrice = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state ) ?? null;
+		const rawPlanPrices = getPlanPrices( state, {
+			planSlug: suggestedPlanSlug,
+			siteId,
+			returnMonthly: true,
+		} );
+		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
+	} );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
 
@@ -43,11 +52,7 @@ export default function SuggestedPlanSection( {
 						comment: 'Eg: Get Personal - $4/month',
 						args: {
 							planTitle: planTitle as string,
-							planPrice: formatCurrency(
-								( planPrices.discountedRawPrice || planPrices.rawPrice ) ?? 0,
-								currencyCode,
-								{ stripZeros: true }
-							),
+							planPrice: formatCurrency( planPrice, currencyCode, { stripZeros: true } ),
 						},
 					} ) }
 			</StyledButton>

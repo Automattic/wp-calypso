@@ -6,10 +6,11 @@ import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getPlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { LoadingPlaceHolder } from '../loading-placeholder';
 import { DialogContainer, Heading, StyledButton } from './components';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
@@ -95,19 +96,24 @@ export function FreePlanFreeDomainDialog( {
 	);
 	const domainProductCost = domainRegistrationProduct?.cost;
 	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
-	const monthlyPlanPriceObject = usePlanPrices( {
-		planSlug: suggestedPlanSlug,
-		returnMonthly: true,
-	} );
-	const annualPlanPriceObject = usePlanPrices( {
-		planSlug: suggestedPlanSlug,
-		returnMonthly: false,
-	} );
+	const planPrices = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state ) ?? null;
+		const rawPlanPricesMonthly = getPlanPrices( state, {
+			planSlug: suggestedPlanSlug,
+			siteId,
+			returnMonthly: true,
+		} );
+		const rawPlanPricesFull = getPlanPrices( state, {
+			planSlug: suggestedPlanSlug,
+			siteId,
+			returnMonthly: false,
+		} );
 
-	const monthlyPlanPrice =
-		( monthlyPlanPriceObject.discountedRawPrice || monthlyPlanPriceObject.rawPrice ) ?? 0;
-	const annualPlanPrice =
-		( annualPlanPriceObject.discountedRawPrice || annualPlanPriceObject.rawPrice ) ?? 0;
+		return {
+			monthly: ( rawPlanPricesMonthly.discountedRawPrice || rawPlanPricesMonthly.rawPrice ) ?? 0,
+			full: ( rawPlanPricesFull.discountedRawPrice || rawPlanPricesFull.rawPrice ) ?? 0,
+		};
+	} );
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
@@ -191,7 +197,7 @@ export function FreePlanFreeDomainDialog( {
 						{
 							args: {
 								planTitle,
-								planPrice: formatCurrency( monthlyPlanPrice, currencyCode, {
+								planPrice: formatCurrency( planPrices.monthly, currencyCode, {
 									stripZeros: true,
 								} ),
 							},
@@ -255,10 +261,10 @@ export function FreePlanFreeDomainDialog( {
 						{
 							args: {
 								planTitle,
-								monthlyPlanPrice: formatCurrency( monthlyPlanPrice, currencyCode, {
+								monthlyPlanPrice: formatCurrency( planPrices.monthly, currencyCode, {
 									stripZeros: true,
 								} ),
-								annualPlanPrice: formatCurrency( annualPlanPrice, currencyCode, {
+								annualPlanPrice: formatCurrency( planPrices.full, currencyCode, {
 									stripZeros: true,
 								} ),
 							},
