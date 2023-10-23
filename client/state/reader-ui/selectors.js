@@ -13,5 +13,5 @@ export function getLastPath( state ) {
  * @returns string|null {loggedInAction} logged in action clicked in the reader
  */
 export function getLastLoggedInAction( state ) {
-	return state.readerUi.lastLoggedInAction;
+	return state.readerUi?.lastLoggedInAction;
 }
