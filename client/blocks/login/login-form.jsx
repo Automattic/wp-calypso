@@ -836,10 +836,6 @@ export default connect(
 				props.userEmail ||
 				getInitialQueryArguments( state )?.email_address ||
 				getCurrentQueryArguments( state )?.email_address,
-			isSignupExistingAccount: !! (
-				getInitialQueryArguments( state )?.is_signup_existing_account ||
-				getCurrentQueryArguments( state )?.is_signup_existing_account
-			),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 			currentQuery: getCurrentQueryArguments( state ),
 		};
