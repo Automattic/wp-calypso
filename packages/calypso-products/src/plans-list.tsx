@@ -443,6 +443,8 @@ import {
 	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 	TYPE_HOSTING_TRIAL,
 	GROUP_P2,
+	FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
+	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
 } from './constants';
 import type {
 	BillingTerm,
@@ -2238,6 +2240,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 		FEATURE_ANTISPAM_V2,
 		FEATURE_WAF,
+		FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
 	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T1_BI_YEARLY,
@@ -2276,6 +2279,13 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 const getPlanJetpackSecurityT2Details = (): IncompleteJetpackPlan => ( {
 	...getPlanJetpackSecurityT1Details(),
 	type: TYPE_SECURITY_T2,
+	getPlanCardFeatures: () => [
+		FEATURE_PLAN_SECURITY_DAILY,
+		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_WAF,
+		FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
+	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T2_YEARLY,
 		FEATURE_JETPACK_BACKUP_T2_MONTHLY,
@@ -2333,6 +2343,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
 		FEATURE_PRODUCT_SEARCH_V2,
 		FEATURE_CRM_V2,
+		FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
 	],
 	getIncludedFeatures: () =>
 		compact( [

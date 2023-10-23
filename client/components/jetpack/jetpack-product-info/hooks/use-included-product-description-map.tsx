@@ -28,7 +28,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 	return useMemo( (): Record< string, ProductDescription > => {
 		const backupDescription = translate(
-			'Real-time backups as you edit. {{span}}30-day{{/span}} activity log archive. Unlimited one-click restores.',
+			'Real-time backups as you edit. {{span}}30-day{{/span}} activity log archive *. Unlimited one-click restores.',
 			{
 				components: {
 					span: <span />,
@@ -36,7 +36,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			}
 		);
 		const backupT2Description = translate(
-			'Real-time backups as you edit. {{span}}1-year{{/span}} activity log archive. Unlimited one-click restores.',
+			'Real-time backups as you edit. {{span}}1-year{{/span}} activity log archive *. Unlimited one-click restores.',
 			{
 				components: {
 					span: <span />,

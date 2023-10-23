@@ -104,21 +104,8 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 }
 
 function getDisclaimerLink() {
-	const backupStorageFaqId = 'backup-storage-limits-faq';
-
-	const urlParams = new URLSearchParams( window.location.search );
-	const calypsoEnv = urlParams.get( 'calypso_env' );
-	// Check to see if FAQ is on the current page
-	// This is so we can anchor link to it instead of opening a new window if it is on the page already
-	const backupStorageFaq = document.getElementById( backupStorageFaqId );
-
-	if ( backupStorageFaq ) {
-		return `#${ backupStorageFaqId }`;
-	}
-
-	return calypsoEnv === 'development'
-		? `http://jetpack.cloud.localhost:3000/pricing#${ backupStorageFaqId }`
-		: `https://cloud.jetpack.com/pricing#${ backupStorageFaqId }`;
+	const backupStorageFaqId = 'backup-storage-limits-lightbox-faq';
+	return `#${ backupStorageFaqId }`;
 }
 
 function getFeaturedProductDescription( item: Product ) {
