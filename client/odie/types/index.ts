@@ -1,4 +1,4 @@
-import type { OdieUserTracking } from '../track-location/useOdieUserTracking';
+import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
 
 export type Context = {
 	nudge_id?: string | undefined;
