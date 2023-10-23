@@ -120,7 +120,7 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 
 		it( 'Go to Import page', async () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
-			await startImportFlow.validateImportReadyPage();
+			await startImportFlow.validateUpgradePlanPage();
 		} );
 
 		// Back one page

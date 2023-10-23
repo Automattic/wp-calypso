@@ -97,8 +97,8 @@ export class StartImportFlow {
 	/**
 	 * Validates that we've landed on the import (migration) ready page.
 	 */
-	async validateImportReadyPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.startBuildingHeader( 'You are ready to migrate' ) );
+	async validateUpgradePlanPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.startBuildingHeader( 'Upgrade your plan' ) );
 	}
 
 	/**
