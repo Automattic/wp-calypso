@@ -78,6 +78,10 @@ export const siteDefaultInterface = ( site: SiteExcerptNetworkData ) => {
 	return site?.options?.wpcom_admin_interface;
 };
 
+export const getSiteWpAdminUrl = ( site: SiteExcerptNetworkData ) => {
+	return site?.options?.admin_url;
+};
+
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';
 
 export const MEDIA_QUERIES = {

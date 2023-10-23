@@ -9,13 +9,13 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import {
 	displaySiteUrl,
 	getDashboardUrl,
 	isNotAtomicJetpack,
 	isStagingSite,
 	siteDefaultInterface,
+	getSiteWpAdminUrl,
 } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
@@ -119,8 +119,6 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 
 	const hasHostingFeatures = ! isNotAtomicJetpack( site ) && ! isP2Site;
 
-	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ) || '';
-
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const ThumbnailWrapper = showThumbnailLink ? ThumbnailLink : 'div';
@@ -129,7 +127,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 		? {
 				href:
 					hasHostingFeatures && siteDefaultInterface( site ) === 'wp-admin'
-						? adminUrl
+						? getSiteWpAdminUrl( site )
 						: getDashboardUrl( site.slug ),
 				title: __( 'Visit Dashboard' ),
 		  }

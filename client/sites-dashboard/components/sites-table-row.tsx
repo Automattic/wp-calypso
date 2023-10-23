@@ -12,7 +12,6 @@ import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-m
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
 import {
 	displaySiteUrl,
@@ -21,6 +20,7 @@ import {
 	isStagingSite,
 	MEDIA_QUERIES,
 	siteDefaultInterface,
+	getSiteWpAdminUrl,
 } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
@@ -154,8 +154,6 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
 	const hasHostingFeatures = ! isNotAtomicJetpack( site ) && ! isP2Site;
 
-	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ) || '';
-
 	const hasStatsLoadingError = useSelector( ( state ) => {
 		const siteId = site.ID;
 		const query = {};
@@ -179,7 +177,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						<ListTileLeading
 							href={
 								hasHostingFeatures && siteDefaultInterface( site ) === 'wp-admin'
-									? adminUrl
+									? getSiteWpAdminUrl( site )
 									: getDashboardUrl( site.slug )
 							}
 							title={ __( 'Visit Dashboard' ) }
@@ -192,7 +190,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<SiteName
 								href={
 									hasHostingFeatures && siteDefaultInterface( site ) === 'wp-admin'
-										? adminUrl
+										? getSiteWpAdminUrl( site )
 										: getDashboardUrl( site.slug )
 								}
 								title={ __( 'Visit Dashboard' ) }
