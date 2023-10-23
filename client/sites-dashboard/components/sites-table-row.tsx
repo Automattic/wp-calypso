@@ -190,7 +190,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<SiteName
 								href={
 									hasHostingFeatures && siteDefaultInterface( site ) === 'wp-admin'
-										? getSiteWpAdminUrl( site )
+										? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
 										: getDashboardUrl( site.slug )
 								}
 								title={ __( 'Visit Dashboard' ) }
