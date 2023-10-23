@@ -1,6 +1,7 @@
+import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { SendMessageButton } from './send-message-button';
 
 import './style.scss';
 
@@ -10,32 +11,42 @@ import './style.scss';
 // - choice:// to send a message to the bot based on the user's choice
 // - confirm:// to send a message to the bot based on the user's confirmation
 // - etc.
-const CustomALink = ( { href, children }: { href: string; children: React.ReactNode } ) => {
-	const isPrompt = href.startsWith( 'prompt://' );
+const CustomALink = ( {
+	href,
+	children,
+	inline = true,
+}: {
+	href: string;
+	children: React.ReactNode;
+	inline?: boolean;
+} ) => {
 	const dispatch = useDispatch();
 
-	const unencodedHref = decodeURIComponent( href.replace( 'prompt://', '' ) );
+	const classNames = classnames( 'odie-sources', {
+		'odie-sources-inline': inline,
+	} );
 
-	if ( isPrompt ) {
-		return <SendMessageButton unencodedHref={ unencodedHref }>{ children }</SendMessageButton>;
-	}
 	return (
-		<a
-			href={ href }
-			target="_blank"
-			rel="noopener noreferrer"
-			onClick={ () => {
-				dispatch(
-					recordTracksEvent( 'calypso_odie_chat_message_action_click', {
-						bot_name_slug: 'wapuu',
-						action: 'link',
-						href: href,
-					} )
-				);
-			} }
-		>
-			{ children }
-		</a>
+		<span className={ classNames }>
+			<a
+				className="odie-sources-link"
+				href={ href }
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ () => {
+					dispatch(
+						recordTracksEvent( 'calypso_odie_chat_message_action_click', {
+							bot_name_slug: 'wapuu',
+							action: 'link',
+							href: href,
+						} )
+					);
+				} }
+			>
+				{ children }
+			</a>
+			<Gridicon icon="external" size={ 18 } />
+		</span>
 	);
 };
 
