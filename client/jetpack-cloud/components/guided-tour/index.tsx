@@ -71,17 +71,14 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 
 	const targetElement = useAsyncElement( target, 3000 );
 
-	// Show the popover after a short delay to allow the popover to be positioned correctly
 	useEffect( () => {
 		if ( targetElement && ! isDismissed && hasFetched ) {
-			setTimeout( () => {
-				setIsVisible( true );
-				dispatch(
-					recordTracksEvent( 'calypso_jetpack_cloud_start_tour', {
-						tour: preferenceName,
-					} )
-				);
-			}, 100 );
+			setIsVisible( true );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_cloud_start_tour', {
+					tour: preferenceName,
+				} )
+			);
 		}
 	}, [ dispatch, isDismissed, preferenceName, targetElement, hasFetched ] );
 
