@@ -13,6 +13,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import { preventWidows } from 'calypso/lib/formatting';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -546,7 +547,7 @@ class Login extends Component {
 		} else if ( isSignupExistingAccount ) {
 			headerText =
 				hasTranslation( 'Log in to your existing account' ) || englishLocales.includes( locale )
-					? translate( 'Log in to your existing account' )
+					? preventWidows( translate( 'Log in to your existing account' ) )
 					: translate( 'Log in to your account' );
 		}
 
