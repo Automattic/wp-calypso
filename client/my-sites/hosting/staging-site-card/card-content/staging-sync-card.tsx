@@ -7,6 +7,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -327,7 +328,12 @@ const SyncCardContainer = ( {
 							text={ translate(
 								'We couldn’t connect to the %(siteType)s site: {{br/}} %(siteUrl)s',
 								{
-									args: { siteType: siteToSync, siteUrl: siteUrls[ siteToSync ] ?? '' },
+									args: {
+										siteType: siteToSync,
+										siteUrl: siteUrls[ siteToSync ]
+											? urlToSlug( siteUrls[ siteToSync ] as string )
+											: '',
+									},
 									components: {
 										br: <br />,
 									},
