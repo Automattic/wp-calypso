@@ -11,12 +11,12 @@ import TimeSince from 'calypso/components/time-since';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
 import {
 	displaySiteUrl,
 	getDashboardUrl,
-	isNotAtomicJetpack,
 	isStagingSite,
 	MEDIA_QUERIES,
 	siteDefaultInterface,
@@ -152,7 +152,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
-	const hasHostingFeatures = ! isNotAtomicJetpack( site ) && ! isP2Site;
+	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site.ID ) );
 
 	const hasStatsLoadingError = useSelector( ( state ) => {
 		const siteId = site.ID;
@@ -176,7 +176,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					leading={
 						<ListTileLeading
 							href={
-								hasHostingFeatures && siteDefaultInterface( site ) === 'wp-admin'
+								isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
 									? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
 									: getDashboardUrl( site.slug )
 							}
@@ -189,7 +189,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						<ListTileTitle>
 							<SiteName
 								href={
-									hasHostingFeatures && siteDefaultInterface( site ) === 'wp-admin'
+									isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
 										? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
 										: getDashboardUrl( site.slug )
 								}
