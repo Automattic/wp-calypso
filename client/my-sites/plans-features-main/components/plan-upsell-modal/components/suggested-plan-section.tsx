@@ -28,7 +28,7 @@ export default function SuggestedPlanSection( {
 	isBusy: boolean;
 } ) {
 	const translate = useTranslate();
-	const planPrice = useSelector( ( state ) => {
+	const planPriceMonthly = useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state ) ?? null;
 		const rawPlanPrices = getPlanPrices( state, {
 			planSlug: suggestedPlanSlug,
@@ -52,7 +52,7 @@ export default function SuggestedPlanSection( {
 						comment: 'Eg: Get Personal - $4/month',
 						args: {
 							planTitle: planTitle as string,
-							planPrice: formatCurrency( planPrice, currencyCode, { stripZeros: true } ),
+							planPrice: formatCurrency( planPriceMonthly, currencyCode, { stripZeros: true } ),
 						},
 					} ) }
 			</StyledButton>

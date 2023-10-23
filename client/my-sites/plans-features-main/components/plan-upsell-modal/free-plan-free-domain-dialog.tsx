@@ -96,23 +96,23 @@ export function FreePlanFreeDomainDialog( {
 	);
 	const domainProductCost = domainRegistrationProduct?.cost;
 	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
-	const planPrices = useSelector( ( state ) => {
+	const planPriceMonthly = useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPricesMonthly = getPlanPrices( state, {
+		const rawPlanPrices = getPlanPrices( state, {
 			planSlug: suggestedPlanSlug,
 			siteId,
 			returnMonthly: true,
 		} );
-		const rawPlanPricesFull = getPlanPrices( state, {
+		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
+	} );
+	const planPriceFull = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state ) ?? null;
+		const rawPlanPrices = getPlanPrices( state, {
 			planSlug: suggestedPlanSlug,
 			siteId,
 			returnMonthly: false,
 		} );
-
-		return {
-			monthly: ( rawPlanPricesMonthly.discountedRawPrice || rawPlanPricesMonthly.rawPrice ) ?? 0,
-			full: ( rawPlanPricesFull.discountedRawPrice || rawPlanPricesFull.rawPrice ) ?? 0,
-		};
+		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
 	} );
 
 	useEffect( () => {
@@ -197,7 +197,7 @@ export function FreePlanFreeDomainDialog( {
 						{
 							args: {
 								planTitle,
-								planPrice: formatCurrency( planPrices.monthly, currencyCode, {
+								planPrice: formatCurrency( planPriceMonthly, currencyCode, {
 									stripZeros: true,
 								} ),
 							},
@@ -261,10 +261,10 @@ export function FreePlanFreeDomainDialog( {
 						{
 							args: {
 								planTitle,
-								monthlyPlanPrice: formatCurrency( planPrices.monthly, currencyCode, {
+								monthlyPlanPrice: formatCurrency( planPriceMonthly, currencyCode, {
 									stripZeros: true,
 								} ),
-								annualPlanPrice: formatCurrency( planPrices.full, currencyCode, {
+								annualPlanPrice: formatCurrency( planPriceFull, currencyCode, {
 									stripZeros: true,
 								} ),
 							},
