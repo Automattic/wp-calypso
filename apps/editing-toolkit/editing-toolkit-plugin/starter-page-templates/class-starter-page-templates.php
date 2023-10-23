@@ -85,10 +85,9 @@ class Starter_Page_Templates {
 			plugins_url( 'dist/starter-page-templates.min.js', __FILE__ ),
 			array( 'wp-plugins', 'wp-edit-post', 'wp-element' ),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.min.js' ),
-			array(
-				'strategy' => 'defer',
-			)
+			true
 		);
+		wp_script_add_data( 'starter-page-templates', 'strategy', 'defer' );
 	}
 
 	/**
@@ -166,10 +165,9 @@ class Starter_Page_Templates {
 			null,
 			array(),
 			'1.O',
-			array(
-				'strategy' => 'defer',
-			)
+			true
 		);
+		wp_script_add_data( 'starter-page-templates-error', 'strategy', 'defer' );
 		wp_add_inline_script(
 			'starter-page-templates-error',
 			sprintf(
