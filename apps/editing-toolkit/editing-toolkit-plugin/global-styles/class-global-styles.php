@@ -298,7 +298,9 @@ class Global_Styles {
 			$src,
 			$deps,
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/customizer-fonts.min.js' ),
-			true
+			array(
+				'strategy' => 'defer',
+			)
 		);
 
 		$current_user       = wp_get_current_user();
@@ -418,7 +420,9 @@ class Global_Styles {
 			plugins_url( 'dist/global-styles.min.js', __FILE__ ),
 			$dependencies,
 			$version,
-			true
+			array(
+				'strategy' => 'defer',
+			)
 		);
 		wp_set_script_translations( 'jetpack-global-styles-editor-script', 'full-site-editing' );
 		wp_localize_script(
