@@ -6,9 +6,9 @@ import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getDiscountedRawPrice, getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { LoadingPlaceHolder } from '../loading-placeholder';
 import { DialogContainer, Heading, StyledButton } from './components';
@@ -94,20 +94,23 @@ export function FreePlanFreeDomainDialog( {
 		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
 	);
 	const domainProductCost = domainRegistrationProduct?.cost;
-	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
-	const monthlyPlanPriceObject = usePlanPrices( {
-		planSlug: suggestedPlanSlug,
-		returnMonthly: true,
+	const plan = getPlan( suggestedPlanSlug );
+	const planTitle = plan?.getTitle();
+	const productId = plan?.getProductId();
+	const monthlyPlanPrice = useSelector( ( state ) => {
+		const discountedRawPrice = productId
+			? getDiscountedRawPrice( state, productId, true, true )
+			: null;
+		const rawPrice = productId ? getPlanRawPrice( state, productId, true, true ) : null;
+		return ( discountedRawPrice || rawPrice ) ?? 0;
 	} );
-	const annualPlanPriceObject = usePlanPrices( {
-		planSlug: suggestedPlanSlug,
-		returnMonthly: false,
+	const annualPlanPrice = useSelector( ( state ) => {
+		const discountedRawPrice = productId
+			? getDiscountedRawPrice( state, productId, false, true )
+			: null;
+		const rawPrice = productId ? getPlanRawPrice( state, productId, false, true ) : null;
+		return ( discountedRawPrice || rawPrice ) ?? 0;
 	} );
-
-	const monthlyPlanPrice =
-		( monthlyPlanPriceObject.discountedRawPrice || monthlyPlanPriceObject.rawPrice ) ?? 0;
-	const annualPlanPrice =
-		( annualPlanPriceObject.discountedRawPrice || annualPlanPriceObject.rawPrice ) ?? 0;
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
