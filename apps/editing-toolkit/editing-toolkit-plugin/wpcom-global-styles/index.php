@@ -158,7 +158,9 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		plugins_url( 'dist/wpcom-global-styles.min.js', __FILE__ ),
 		$dependencies,
 		$version,
-		true
+		array(
+			'strategy' => 'defer',
+		)
 	);
 	wp_set_script_translations( 'wpcom-global-styles-editor', 'full-site-editing' );
 
@@ -211,7 +213,9 @@ function wpcom_global_styles_enqueue_assets() {
 		plugins_url( 'dist/wpcom-global-styles-view.min.js', __FILE__ ),
 		$dependencies,
 		$version,
-		true
+		array(
+			'strategy' => 'defer',
+		)
 	);
 	wp_enqueue_style(
 		'wpcom-global-styles',
