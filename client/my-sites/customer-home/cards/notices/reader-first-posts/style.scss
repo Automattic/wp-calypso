@@ -1,5 +1,6 @@
+$custom-radius-border: 3px;
 .reader-first-posts__nudge {
-	border-radius: 3px; /* stylelint-disable-line scales/radii */
+	border-radius: $custom-radius-border;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
