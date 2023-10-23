@@ -127,7 +127,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 		? {
 				href:
 					hasHostingFeatures && siteDefaultInterface( site ) === 'wp-admin'
-						? getSiteWpAdminUrl( site )
+						? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
 						: getDashboardUrl( site.slug ),
 				title: __( 'Visit Dashboard' ),
 		  }
