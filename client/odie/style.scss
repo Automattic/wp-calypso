@@ -9,6 +9,76 @@
 	align-items: flex-end;
 }
 
+.chatbox-floating {
+	position: fixed;
+	bottom: 0;
+	border-radius: 4px;
+	border: 1px solid #e0e0e0;
+	margin-bottom: 20px;
+	right: 20px;
+	width: 300px;
+	height: calc(100vh - 120px);
+	transform: translateX(0);
+	transition: transform 0.5s ease-in-out;
+	z-index: 998;
+}
+
+.has-top-border {
+	border-top: 1px solid var(--color-neutral-5);
+}
+
+.chatbox-help-center-btn {
+	margin-right: 8px;
+	display: flex;
+}
+.chatbox-help-center-container {
+	height: 100%;
+	width: 100%;
+	overflow-y: scroll;
+}
+
+.chatbox-big {
+	width: 450px;
+}
+
+.chatbox-header {
+	width: 100%;
+	background-color: var(--color-sidebar-background);
+	color: var(--theme-text-color);
+	border-radius: 4px;
+	text-indent: 16px;
+	line-height: 62px;
+	font-size: large;
+
+	.back-button {
+		position: fixed;
+		top: 8px;
+		left: -16px;
+
+		button {
+			color: var(--color-sidebar-text-alternative);
+		}
+
+		button:hover {
+			color: var(--color-sidebar-menu-hover-text);
+		}
+	}
+}
+
+.chatbox-header-with-help {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.chatbox-show {
+	transform: translateX(0);
+}
+
+.chatbox-hide {
+	transform: translateX(calc(100% + 20px));
+}
+
 .chatbox-toggle {
 	padding: 0;
 	background-color: transparent;
@@ -26,18 +96,42 @@
 .chatbox-messages {
 	overflow-y: auto;
 	word-wrap: break-word;
+	padding: 12px 20px;
+	border-radius: 4px;
 	font-size: medium;
 	max-width: 100%;
 	line-height: 1.4;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	padding-bottom: 4px;
 	height: 100%;
+}
 
-	.odie-chatbox-bottom-edge {
-		min-height: 10px;
-		width: 100%;
-	}
+.chatbox-input-area {
+	display: flex;
+	justify-content: space-between;
+	align-items: top;
+}
+
+.chatbox-input {
+	padding-left: 8px;
+	width: 80%;
+}
+
+.chatbox-send-btn {
+	justify-content: center;
+	width: 18%;
+	height: 30px;
+	border: none;
+	background-color: #007bff;
+	color: #fff;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.chatbox-send-btn:hover {
+	background-color: #0056b3;
 }
 
 .wapuu-image {
@@ -118,6 +212,40 @@
 	height: calc(100vh - 120px - 86px);
 }
 
+/* When chatbox is hidden */
+.chatbox-hide-vertical {
+	transform: translateY(calc(100% + 97px));
+}
+
+/* When chatbox is visible */
+.chatbox-show-vertical {
+	transform: translateY(0);
+}
+
+@keyframes fadeToColor {
+	0%,
+	10%,
+	30%,
+	50%,
+	70% {
+		color: #ece6f6;
+	}
+	20%,
+	40%,
+	60% {
+		color: #007cba;
+	}
+	80%,
+	90%,
+	100% {
+		color: #ece6f6;
+	}
+}
+
+.chatbox-attention {
+	animation: fadeToColor 4s linear infinite;
+}
+
 .chatbox-header-button {
 	color: #ece6f6;
 	border: none;
@@ -129,15 +257,4 @@
 	font-weight: normal;
 	text-align: left;
 	width: 100%;
-}
-
-.odie-chat-message-input-container {
-	z-index: 10;
-	max-width: 410px;
-	flex-shrink: 0;
-	border-radius: 4px;
-	padding: 12px;
-	border: 1px solid var(--gray-gray-5, #dcdcde);
-	background: var(--black-white-white, #fff);
-	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 7px 7px 0 rgba(0, 0, 0, 0.04), 0 15px 9px 0 rgba(0, 0, 0, 0.02), 0 26px 11px 0 rgba(0, 0, 0, 0.01), 0 41px 12px 0 rgba(0, 0, 0, 0);
 }
