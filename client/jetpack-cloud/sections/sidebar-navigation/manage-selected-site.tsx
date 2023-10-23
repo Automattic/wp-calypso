@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import {
@@ -26,6 +25,8 @@ import {
 } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -49,6 +50,7 @@ const useMenuItems = ( {
 	isAgency: boolean;
 } ) => {
 	const translate = useTranslate();
+
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
@@ -172,6 +174,8 @@ const useMenuItems = ( {
 
 const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const siteId = useSelector( getSelectedSiteId );
 	const isAgency = useSelector( isAgencyUser );
 	const menuItems = useMenuItems( { siteId, isAgency, path } );
@@ -189,7 +193,9 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 								label: translate( 'Site Settings' ),
 								icon: chevronLeft,
 								onClick: () => {
-									recordTracksEvent( 'calypso_jetpack_sidebar_site_settings_back_button_click' );
+									dispatch(
+										recordTracksEvent( 'calypso_jetpack_sidebar_site_settings_back_button_click' )
+									);
 									redirectPage( '/dashboard' );
 								},
 						  }

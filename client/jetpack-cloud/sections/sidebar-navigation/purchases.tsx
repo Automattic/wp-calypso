@@ -1,7 +1,8 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { chevronLeft, formatListBulletsRTL, payment, receipt, store, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_MANAGE_BILLING_LINK,
 	JETPACK_MANAGE_COMPANY_DETAILS_LINK,
@@ -24,6 +25,7 @@ const createItem = ( props: Omit< MenuItemProps, 'path' > ) => ( {
 
 const PurchasesSidebar = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const menuItems = [
 		createItem( {
@@ -78,7 +80,9 @@ const PurchasesSidebar = () => {
 				label: translate( 'Purchases' ),
 				icon: chevronLeft,
 				onClick: () => {
-					recordTracksEvent( 'calypso_jetpack_sidebar_new_purchases_back_button_click' );
+					dispatch(
+						recordTracksEvent( 'calypso_jetpack_sidebar_new_purchases_back_button_click' )
+					);
 					redirectPage( JETPACK_MANAGE_DASHBOARD_LINK );
 				},
 			} }
