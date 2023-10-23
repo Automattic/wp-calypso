@@ -283,12 +283,16 @@ const LoggedInPlansFeatureActionButton = ( {
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
-		let buttonText = translate( 'View plan' );
-
 		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) {
-			buttonText = translate( 'Upgrade' );
-		} else if ( canUserManageCurrentPlan ) {
-			buttonText = translate( 'Manage plan' );
+			return (
+				<Button
+					className={ classNames( classes, 'is-storage-upgradeable' ) }
+					href={ currentPlanManageHref }
+					disabled={ ! currentPlanManageHref }
+				>
+					{ translate( 'Upgrade' ) }
+				</Button>
+			);
 		}
 
 		return (
@@ -297,7 +301,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				href={ currentPlanManageHref }
 				disabled={ ! currentPlanManageHref }
 			>
-				{ buttonText }
+				{ canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
 	}
