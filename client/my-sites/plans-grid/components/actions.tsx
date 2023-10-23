@@ -51,7 +51,7 @@ type PlanFeaturesActionsButtonProps = {
 	siteId?: number | null;
 	isStuck: boolean;
 	isLargeCurrency?: boolean;
-	storageOptions: StorageOption[];
+	storageOptions?: StorageOption[];
 };
 
 const DummyDisabledButton = styled.div`
@@ -231,13 +231,13 @@ const LoggedInPlansFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
-	planSlug: string;
+	planSlug: PlanSlug;
 	currentPlanManageHref?: string;
 	canUserManageCurrentPlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
 	planActionOverrides?: PlanActionOverrides;
-	storageOptions: StorageOption[];
+	storageOptions?: StorageOption[];
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
@@ -247,10 +247,17 @@ const LoggedInPlansFeatureActionButton = ( {
 		[ planSlug ]
 	);
 	const { current, storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
-	const defaultStorageOption = useDefaultStorageOption( { storageOptions, storageAddOnsForPlan } );
+	const defaultStorageOption = useDefaultStorageOption( {
+		storageOptions,
+		storageAddOnsForPlan,
+	} );
 	const canPurchaseStorageAddOns = storageAddOnsForPlan?.some(
-		( storageAddOn ) => ! storageAddOn?.purchased
+		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
 	);
+	const storageAddOnCheckoutHref = storageAddOnsForPlan?.find(
+		( addOn ) =>
+			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
+	)?.checkoutLink;
 	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
 	const currentPlanBillPeriod = useSelector( ( state ) => {
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
@@ -287,8 +294,7 @@ const LoggedInPlansFeatureActionButton = ( {
 			return (
 				<Button
 					className={ classNames( classes, 'is-storage-upgradeable' ) }
-					href={ currentPlanManageHref }
-					disabled={ ! currentPlanManageHref }
+					href={ storageAddOnCheckoutHref }
 				>
 					{ translate( 'Upgrade' ) }
 				</Button>

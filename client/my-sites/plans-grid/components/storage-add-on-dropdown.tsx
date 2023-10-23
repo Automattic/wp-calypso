@@ -29,13 +29,9 @@ const getStorageOptionPrice = (
 	storageAddOnsForPlan: ( AddOnMeta | null )[] | null,
 	storageOptionSlug: string
 ) => {
-	const matchedStorageAddOn = storageAddOnsForPlan?.find(
+	return storageAddOnsForPlan?.find(
 		( addOn ) => addOn?.featureSlugs?.includes( storageOptionSlug )
-	);
-
-	return matchedStorageAddOn?.purchased
-		? undefined
-		: matchedStorageAddOn?.prices?.formattedMonthlyPrice;
+	)?.prices?.formattedMonthlyPrice;
 };
 
 const StorageAddOnOption = ( {
@@ -96,10 +92,14 @@ export const StorageAddOnDropdown = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug ),
 		[ planSlug ]
 	);
-	const defaultStorageOption = useDefaultStorageOption( { storageOptions, storageAddOnsForPlan } );
+	const defaultStorageOption = useDefaultStorageOption( {
+		storageOptions,
+		storageAddOnsForPlan,
+	} );
 
 	useEffect( () => {
-		setSelectedStorageOptionForPlan( { addOnSlug: defaultStorageOption, planSlug } );
+		defaultStorageOption &&
+			setSelectedStorageOptionForPlan( { addOnSlug: defaultStorageOption, planSlug } );
 	}, [] );
 
 	const selectControlOptions = storageOptions.map( ( storageOption ) => {

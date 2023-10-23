@@ -339,7 +339,6 @@ const PlansFeaturesMain = ( {
 			const cartItemForStorageAddOn = cartItems?.find(
 				( items ) => items.product_slug === PRODUCT_1GB_SPACE
 			);
-
 			if ( cartItemForStorageAddOn?.extra ) {
 				recordTracksEvent( 'calypso_signup_storage_add_on_upgrade_click', {
 					add_on_slug: cartItemForStorageAddOn.extra.feature_slug,

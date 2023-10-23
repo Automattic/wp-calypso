@@ -520,10 +520,10 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 
 			const shouldRenderStorageTitle =
 				storageOptions.length > 0 &&
-				( storageOptions.length === 1 || intervalType !== 'yearly' || ! showUpgradeableStorage );
-			// TODO: Revisit what conditions are necessary to continue hiding in stepper flows
-			// ! isInSignup ||
-			// ! ( flowName === 'onboarding' ) );
+				( storageOptions.length === 1 ||
+					intervalType !== 'yearly' ||
+					! showUpgradeableStorage ||
+					( isInSignup && ! ( flowName === 'onboarding' ) ) );
 
 			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
 				flowName: flowName ?? '',

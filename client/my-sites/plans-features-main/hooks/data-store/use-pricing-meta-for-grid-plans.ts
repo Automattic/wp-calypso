@@ -83,9 +83,10 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
 					return selectedStorageOption && addOn?.featureSlugs?.includes( selectedStorageOption );
 				} );
-				const storageAddOnPrices = selectedStorageAddOn?.purchased
-					? null
-					: selectedStorageAddOn?.prices;
+				const storageAddOnPrices =
+					selectedStorageAddOn?.purchased || selectedStorageAddOn?.exceedsSiteStorageLimits
+						? null
+						: selectedStorageAddOn?.prices;
 				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
 				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
 
