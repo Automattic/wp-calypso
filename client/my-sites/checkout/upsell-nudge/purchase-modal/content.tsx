@@ -5,6 +5,7 @@ import {
 	getCreditsLineItemFromCart,
 	getItemIntroductoryOfferDisplay,
 	LineItemSublabelAndPrice,
+	LineItemType,
 } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
@@ -15,7 +16,6 @@ import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-ter
 import { CheckIcon } from '../../src/components/check-icon';
 import { BEFORE_SUBMIT } from './constants';
 import { formatDate } from './util';
-import type { LineItem } from '@automattic/composite-checkout';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import type { MouseEventHandler, ReactNode } from 'react';
@@ -138,7 +138,7 @@ function OrderReview( {
 	tax,
 	total,
 }: {
-	creditsLineItem?: LineItem | null;
+	creditsLineItem?: LineItemType | null;
 	shouldDisplayTax: boolean;
 	tax: string;
 	total: string;
@@ -149,7 +149,7 @@ function OrderReview( {
 		<dl className="purchase-modal__review">
 			{ creditsLineItem && <dt className="purchase-modal__credits">{ creditsLineItem.label }</dt> }
 			{ creditsLineItem && (
-				<dd className="purchase-modal__credits">{ creditsLineItem.amount.displayValue }</dd>
+				<dd className="purchase-modal__credits">{ creditsLineItem.formattedAmount }</dd>
 			) }
 
 			{ shouldDisplayTax && <dt className="purchase-modal__tax">{ translate( 'Taxes' ) }</dt> }

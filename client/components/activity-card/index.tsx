@@ -1,11 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import * as React from 'react';
 import ActivityActor from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { useSelector } from 'calypso/state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
@@ -64,6 +66,25 @@ const ActivityCard: React.FC< OwnProps > = ( {
 
 	const showStreamsContent = showContent && activity.streams;
 
+	const moment = useLocalizedMoment();
+	const translate = useTranslate();
+
+	const renderPublishedDate = () => {
+		const published = activity?.activityDescription?.[ 0 ]?.published;
+
+		if ( published ) {
+			const publishedFormattedDate = moment( published ).format( 'll' );
+			return (
+				<span className="activity-card__activity-post-published-date">
+					{ ' · ' }
+					{ translate( 'Published:' ) } { publishedFormattedDate }
+				</span>
+			);
+		}
+
+		return null;
+	};
+
 	return (
 		<div
 			className={ classnames( className, 'activity-card', {
@@ -97,7 +118,10 @@ const ActivityCard: React.FC< OwnProps > = ( {
 					<MediaPreview activity={ activity } />
 					<ActivityDescription activity={ activity } />
 				</div>
-				<div className="activity-card__activity-title">{ activity.activityTitle }</div>
+				<div className="activity-card__activity-title">
+					{ activity.activityTitle }
+					{ renderPublishedDate() }
+				</div>
 
 				{ ! summarize && (
 					<Toolbar

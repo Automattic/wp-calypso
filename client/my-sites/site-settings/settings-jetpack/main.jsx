@@ -9,8 +9,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import HasRetentionCapabilitiesSwitch from 'calypso/jetpack-cloud/sections/settings/has-retention-capabilities-switch';
 import AdvancedCredentialsLoadingPlaceholder from 'calypso/jetpack-cloud/sections/settings/loading';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
@@ -57,12 +57,8 @@ const SiteSettingsJetpack = ( {
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<DocumentHead title={ translate( 'Jetpack Settings' ) } />
 			<JetpackDevModeNotice />
-			<FormattedHeader
-				brandFont
-				className="settings-jetpack__page-heading"
-				headerText={ translate( 'Jetpack Settings' ) }
-				align="left"
-			/>
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Settings' ) } />
+
 			<SiteSettingsNavigation site={ site } section="jetpack" />
 			{ config.isEnabled( 'jetpack/backup-retention-settings' ) ? (
 				// @TODO: Maybe we should move HasRetentionCapabilitiesSwitch to BackupRetentionManagement

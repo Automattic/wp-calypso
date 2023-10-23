@@ -18,6 +18,11 @@ export const PRICING_PAGE = 'PRICING_PAGE';
 export const TEAM_PAGE = 'TEAM_PAGE';
 export const SHOP_PAGE = 'SHOP_PAGE';
 export const CUSTOM_PAGE = 'CUSTOM_PAGE';
+export const CAREERS_PAGE = 'CAREERS_PAGE';
+export const EVENTS_PAGE = 'EVENTS_PAGE';
+export const DONATE_PAGE = 'DONATE_PAGE';
+export const NEWSLETTER_PAGE = 'NEWSLETTER_PAGE';
+export const CASE_STUDIES_PAGE = 'CASE_STUDIES_PAGE';
 
 export type PageId =
 	| typeof HOME_PAGE
@@ -33,7 +38,12 @@ export type PageId =
 	| typeof PRICING_PAGE
 	| typeof TEAM_PAGE
 	| typeof SHOP_PAGE
-	| typeof CUSTOM_PAGE;
+	| typeof CUSTOM_PAGE
+	| typeof CAREERS_PAGE
+	| typeof EVENTS_PAGE
+	| typeof DONATE_PAGE
+	| typeof NEWSLETTER_PAGE
+	| typeof CASE_STUDIES_PAGE;
 
 export type DeprecatedPageIds =
 	| typeof SERVICE_SHOWCASE_PAGE

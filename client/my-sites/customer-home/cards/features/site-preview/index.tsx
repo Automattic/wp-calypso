@@ -70,7 +70,7 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 		canvas: 'edit',
 	} );
 
-	const iframeSrcKeepHomepage = `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true`;
+	const iframeSrcKeepHomepage = `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true&preview=true`;
 
 	return (
 		<div className="home-site-preview">

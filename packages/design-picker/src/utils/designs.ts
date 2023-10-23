@@ -27,12 +27,10 @@ export const getDesignPreviewUrl = (
 		footer_pattern_ids: recipe?.footer_pattern_ids
 			? recipe?.footer_pattern_ids.join( ',' )
 			: undefined,
-		vertical_id: options.vertical_id,
 		language: options.language,
 		viewport_height: ! options.disable_viewport_height
 			? options.viewport_height || DEFAULT_VIEWPORT_HEIGHT
 			: undefined,
-		source_site: 'patternboilerplates.wordpress.com',
 		...( options.use_screenshot_overrides && {
 			use_screenshot_overrides: options.use_screenshot_overrides,
 		} ),

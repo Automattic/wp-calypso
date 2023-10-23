@@ -59,7 +59,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	const [ renderState, setRenderState ] = useState< PreMigrationState >( 'loading' );
 	const [ showCredentials, setShowCredentials ] = useState( false );
-	const [ hasLoaded, setHasLoaded ] = useState( false );
 	const [ continueImport, setContinueImport ] = useState( false );
 
 	const {
@@ -97,6 +96,42 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isRequestingSitePlans( state, targetSite.ID )
 	);
 
+	const { isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+		onSuccess: () => {
+			setQueryTargetSitePlanStatus( 'fetching' );
+		},
+	} );
+
+	const { hasCredentials, isRequesting: isFetchingCredentials } =
+		useSiteCredentialsInfo( sourceSiteId );
+
+	const onUpgradeAndMigrateClick = () => {
+		setContinueImport( true );
+		fetchMigrationEnabledStatus();
+	};
+
+	/**
+	 * Initiate the migration immediately without the user having to click on the start button
+	 * This is used when the query param is set
+	 */
+	useEffect( () => {
+		initImportRun && startImport( { type: 'without-credentials', ...migrationTrackingProps } );
+	}, [] );
+
+	/**
+	 * Fetch the credentials if the site is eligible for migration
+	 */
+	useEffect( () => {
+		if ( ! sourceSiteId || ! isTargetSitePlanCompatible ) {
+			return;
+		}
+		dispatch( getCredentials( sourceSiteId ) );
+	}, [ isTargetSitePlanCompatible, sourceSiteId, dispatch ] );
+
+	/**
+	 * Recognize when the plan upgrade is done
+	 * and fetch the migration enabled status
+	 */
 	useEffect( () => {
 		if ( queryTargetSitePlanStatus === 'fetching' && ! isRequestingTargetSitePlans ) {
 			setQueryTargetSitePlanStatus( 'fetched' );
@@ -105,64 +140,42 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
 
-	const { isLoading: isAddingTrial } = useAddHostingTrialMutation( {
-		onSuccess: () => {
-			setQueryTargetSitePlanStatus( 'fetching' );
-		},
-	} );
-
-	const { hasCredentials, isRequesting: isRequestingCredentials } =
-		useSiteCredentialsInfo( sourceSiteId );
-
-	const onUpgradeAndMigrateClick = () => {
-		setContinueImport( true );
-		fetchMigrationEnabledStatus();
-	};
-
-	// Initiate the migration if initImportRun is set
-	useEffect( () => {
-		initImportRun && startImport( { type: 'without-credentials', ...migrationTrackingProps } );
-	}, [] );
-
-	useEffect( () => {
-		if ( isTargetSitePlanCompatible && sourceSiteId ) {
-			dispatch( getCredentials( sourceSiteId ) );
-			setHasLoaded( true );
-		}
-	}, [ isTargetSitePlanCompatible, sourceSiteId, dispatch ] );
-
+	/**
+	 * Start (continue) the import after:
+	 * - the plugin update
+	 * - or the plan upgrade
+	 */
 	useEffect( () => {
 		// If we are blocked by plugin upgrade check or has continueImport set to false, we do not start the migration
 		if ( requiresPluginUpdate || ! continueImport ) {
 			return;
 		}
-		if ( sourceSiteId ) {
-			startImport( migrationTrackingProps );
-		}
+		sourceSiteId && startImport( migrationTrackingProps );
 	}, [ continueImport, sourceSiteId, startImport, requiresPluginUpdate ] );
 
-	// Set the render state based on the current component state
+	/**
+	 * Decide the render state based on the current component state
+	 */
 	useEffect( () => {
 		if ( requiresPluginUpdate ) {
 			setRenderState( 'update-plugin' );
-		} else if ( showCredentials ) {
-			setRenderState( 'credentials' );
 		} else if ( ! isTargetSitePlanCompatible ) {
 			setRenderState( 'upgrade-plan' );
-		} else if ( ! hasLoaded || isRequestingCredentials ) {
+		} else if ( showCredentials ) {
+			setRenderState( 'credentials' );
+		} else if ( isFetchingCredentials || isFetchingMigrationData ) {
 			setRenderState( 'loading' );
-		} else if ( ! sourceSite || ( sourceSite && sourceSite.ID !== sourceSiteId ) ) {
+		} else if ( ! sourceSiteId ) {
 			setRenderState( 'not-authorized' );
 		} else {
 			setRenderState( 'ready' );
 		}
 	}, [
-		hasLoaded,
-		isRequestingCredentials,
-		sourceSite,
 		sourceSiteId,
-		requiresPluginUpdate,
 		showCredentials,
+		requiresPluginUpdate,
+		isFetchingCredentials,
+		isFetchingMigrationData,
 		isTargetSitePlanCompatible,
 	] );
 
@@ -224,6 +237,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				<MigrationReady
 					sourceSiteSlug={ sourceSiteSlug }
 					sourceSiteHasCredentials={ hasCredentials }
+					targetSiteId={ targetSite.ID }
 					targetSiteSlug={ targetSite.slug }
 					migrationTrackingProps={ migrationTrackingProps }
 					startImport={ startImport }

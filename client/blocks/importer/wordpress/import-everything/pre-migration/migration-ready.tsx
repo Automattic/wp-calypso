@@ -1,17 +1,19 @@
 import { NextButton, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { StartImportTrackingProps } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/types';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isNewSite } from 'calypso/state/sites/selectors';
 import ConfirmModal from './confirm-modal';
 import { CredentialsCta } from './credentials-cta';
-import type { SiteSlug } from 'calypso/types';
+import type { SiteId, SiteSlug } from 'calypso/types';
 
 interface Props {
 	sourceSiteSlug: SiteSlug;
 	sourceSiteHasCredentials: boolean;
+	targetSiteId: SiteId;
 	targetSiteSlug: SiteSlug;
 	migrationTrackingProps?: Record< string, unknown >;
 	startImport: ( props?: StartImportTrackingProps ) => void;
@@ -25,11 +27,14 @@ export function MigrationReady( props: Props ) {
 	const {
 		sourceSiteSlug,
 		sourceSiteHasCredentials,
+		targetSiteId,
 		targetSiteSlug,
 		migrationTrackingProps = {},
 		startImport,
 		onProvideCredentialsClick,
 	} = props;
+
+	const isNewlyCreatedSite = useSelector( ( state: object ) => isNewSite( state, targetSiteId ) );
 
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ migrationConfirmed, setMigrationConfirmed ] = useMigrationConfirmation();
@@ -41,6 +46,13 @@ export function MigrationReady( props: Props ) {
 
 		dispatch( recordTracksEvent( 'calypso_site_migration_ready_screen', _migrationTrackingProps ) );
 	}, [ migrationTrackingProps, dispatch ] );
+
+	// If it's a newly created site, we don't need to show the confirm modal
+	useEffect( () => {
+		if ( isNewlyCreatedSite ) {
+			setMigrationConfirmed( true );
+		}
+	}, [ isNewlyCreatedSite, setMigrationConfirmed ] );
 
 	function displayConfirmModal() {
 		dispatch(

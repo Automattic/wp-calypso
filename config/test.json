@@ -105,7 +105,7 @@
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
 		"stats/paid-wpcom-stats": true,
-		"stats/date-control": false,
+		"stats/date-control": true,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
@@ -118,6 +118,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/staging-sites-i3": true
+		"yolo/staging-sites-i3": true,
+		"yolo/wp-admin-site-default": true
 	}
 }

@@ -14,8 +14,8 @@ import ActionPanelFigureListItem from 'calypso/components/action-panel/figure-li
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
 import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
@@ -78,7 +78,7 @@ class AccountSettingsClose extends Component {
 		return (
 			<div className={ containerClasses } role="main">
 				<QueryUserPurchases />
-				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Account Settings' ) } />
 
 				<HeaderCake onClick={ this.goBack }>
 					<h1>{ translate( 'Close account' ) }</h1>

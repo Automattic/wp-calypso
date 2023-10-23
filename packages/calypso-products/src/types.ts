@@ -2,6 +2,7 @@ import { PriceTierEntry } from './get-price-tier-for-units';
 import type {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
+	GROUP_P2,
 	WPCOM_PRODUCTS,
 	WPCOM_PLANS,
 	WPCOM_STORAGE_ADD_ONS,
@@ -64,10 +65,10 @@ export interface WPComPlan extends Plan {
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
-	getPlanTagline?: () => string;
-	getNewsletterTagLine?: () => string;
-	getLinkInBioTagLine?: () => string;
-	getBlogOnboardingTagLine?: () => string;
+	getPlanTagline?: () => TranslateResult;
+	getNewsletterTagLine?: () => TranslateResult;
+	getLinkInBioTagLine?: () => TranslateResult;
+	getBlogOnboardingTagLine?: () => TranslateResult;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -223,7 +224,7 @@ export type StorageOption = {
 };
 
 export type Plan = BillingTerm & {
-	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
+	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2;
 	type: string;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];

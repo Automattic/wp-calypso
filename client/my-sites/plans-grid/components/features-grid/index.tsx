@@ -508,7 +508,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			translate,
 			hideUnavailableFeatures,
 			selectedFeature,
-			wpcomFreeDomainSuggestion,
+			generatedWPComSubdomain,
 			isCustomDomainAllowedOnFreePlan,
 		} = this.props;
 		const plansWithFeatures = renderedGridPlans.filter(
@@ -521,7 +521,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			<PlanFeaturesContainer
 				plansWithFeatures={ plansWithFeatures }
 				paidDomainName={ paidDomainName }
-				wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+				generatedWPComSubdomain={ generatedWPComSubdomain }
 				translate={ translate }
 				hideUnavailableFeatures={ hideUnavailableFeatures }
 				selectedFeature={ selectedFeature }

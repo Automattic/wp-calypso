@@ -2,10 +2,15 @@ import styled from '@emotion/styled';
 import {
 	ABOUT_PAGE,
 	BLOG_PAGE,
+	CAREERS_PAGE,
+	CASE_STUDIES_PAGE,
 	CONTACT_PAGE,
 	CUSTOM_PAGE,
+	DONATE_PAGE,
+	EVENTS_PAGE,
 	FAQ_PAGE,
 	HOME_PAGE,
+	NEWSLETTER_PAGE,
 	PHOTO_GALLERY_PAGE,
 	PRICING_PAGE,
 	type PageId,
@@ -15,9 +20,13 @@ import {
 } from 'calypso/signup/difm/constants';
 import aboutPage from 'calypso/signup/difm/images/page-descriptions/about-page.svg';
 import blogPage from 'calypso/signup/difm/images/page-descriptions/blog-page.svg';
+import caseStudies from 'calypso/signup/difm/images/page-descriptions/case-studies.svg';
 import contactPage from 'calypso/signup/difm/images/page-descriptions/contact-page.svg';
+import donate from 'calypso/signup/difm/images/page-descriptions/donate.svg';
+import eventsPage from 'calypso/signup/difm/images/page-descriptions/events.svg';
 import faqPage from 'calypso/signup/difm/images/page-descriptions/faq-page.svg';
 import homePage from 'calypso/signup/difm/images/page-descriptions/home-page.svg';
+import newsletter from 'calypso/signup/difm/images/page-descriptions/newsletter.svg';
 import photoGallery from 'calypso/signup/difm/images/page-descriptions/photo-gallery.svg';
 import pricingPage from 'calypso/signup/difm/images/page-descriptions/pricing-page.svg';
 import teamPage from 'calypso/signup/difm/images/page-descriptions/team-page.svg';
@@ -133,9 +142,18 @@ const getPageImage = ( pageId: PageId ) => {
 		case PRICING_PAGE:
 			return pricingPage;
 		case FAQ_PAGE:
+		case CAREERS_PAGE:
 			return faqPage;
 		case TEAM_PAGE:
 			return teamPage;
+		case EVENTS_PAGE:
+			return eventsPage;
+		case CASE_STUDIES_PAGE:
+			return caseStudies;
+		case DONATE_PAGE:
+			return donate;
+		case NEWSLETTER_PAGE:
+			return newsletter;
 		case CUSTOM_PAGE:
 			return null;
 		default:

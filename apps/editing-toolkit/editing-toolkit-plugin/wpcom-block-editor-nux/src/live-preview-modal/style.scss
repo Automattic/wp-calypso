@@ -5,16 +5,21 @@
 
 .dialog__content.live-preview-modal {
 	position: relative;
-	padding: 48px 48px 28px;
 	max-width: 720px;
 	box-sizing: border-box;
 	text-wrap: pretty;
+	padding: 48px 48px 28px;
+
+	@media ( max-width: $break-mobile ) {
+		padding: 48px 32px 28px;
+	}
 
 	h1 {
 		@extend .wp-brand-font;
 		font-size: $font-title-large;
 		margin-top: 0;
 		margin-bottom: 32px;
+		line-height: 1.2;
 	}
 
 	p {
@@ -45,4 +50,8 @@
 
 .dialog__backdrop.live-preview-modal__overlay {
 	background-color: rgba(0, 0, 0, 0.7);
+	// Dialog sets `z-index: z-index("root", ".dialog__backdrop")`,
+	// but this modal is used outside of Calypso, so we need to set it manually.
+	// We can refactor to use Modal from `@wordpress/components` instead of Dialog.
+	z-index: 100000;
 }

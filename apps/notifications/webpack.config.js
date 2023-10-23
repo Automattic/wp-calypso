@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 /**
  * Return a webpack config object
@@ -108,6 +109,7 @@ function getWebpackConfig(
 				} ),
 			new ExtensiveLodashReplacementPlugin(),
 		].filter( Boolean ),
+		devtool: isDevelopment ? 'inline-cheap-source-map' : 'source-map',
 	};
 }
 

@@ -44,7 +44,7 @@ const ToggleWithLabelFontSize = styled( ToggleControl )( {
 	},
 } );
 
-const ItemSubtitle = styled.div( {
+const ItemSubtitle = styled.span( {
 	fontSize: '12px',
 	color: 'var(--color-text-subtle) (#646970)',
 	fontStyle: 'italic',

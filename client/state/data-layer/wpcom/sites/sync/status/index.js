@@ -6,7 +6,9 @@ import { requestSite } from 'calypso/state/sites/actions';
 import {
 	setSiteSyncStatus,
 	siteSyncStatusFetchingFailure,
-	setSyncingSiteType,
+	setSyncingTargetSite,
+	setSyncingSourceSite,
+	setSiteSyncLastRestoreId,
 } from 'calypso/state/sync/actions';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
 
@@ -24,19 +26,21 @@ export const requestStatus = ( action ) => {
 	);
 };
 export const receiveStatus =
-	( { siteId }, { status, direction } ) =>
+	( { siteId }, { status, last_restore_id, direction } ) =>
 	( dispatch ) => {
 		dispatch( setSiteSyncStatus( siteId, status ) );
+		dispatch( setSiteSyncLastRestoreId( siteId, last_restore_id ) );
+		if ( direction === 'pull' ) {
+			dispatch( setSyncingTargetSite( siteId, 'production' ) );
+			dispatch( setSyncingSourceSite( siteId, 'staging' ) );
+		}
+		if ( direction === 'push' ) {
+			dispatch( setSyncingTargetSite( siteId, 'staging' ) );
+			dispatch( setSyncingSourceSite( siteId, 'production' ) );
+		}
 		if ( status === SiteSyncStatus.COMPLETED ) {
 			// Update the site object to reflect the new status
 			dispatch( requestSite( siteId ) );
-		} else {
-			if ( direction === 'pull' ) {
-				dispatch( setSyncingSiteType( siteId, 'production' ) );
-			}
-			if ( direction === 'push' ) {
-				dispatch( setSyncingSiteType( siteId, 'staging' ) );
-			}
 		}
 	};
 

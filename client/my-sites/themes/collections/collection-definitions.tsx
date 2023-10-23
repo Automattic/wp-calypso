@@ -1,4 +1,6 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
+import ExternalLink from 'calypso/components/external-link';
 
 export const THEME_COLLECTIONS = {
 	recommended: {
@@ -10,9 +12,12 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Recommended Themes' ),
+		title: translate( 'Featured' ),
+		fullTitle: translate( 'Featured Themes' ),
 		collectionSlug: 'recommended',
-		description: <p>Lorem ipsum dolor sit amet</p>,
+		description: (
+			<p>{ translate( 'An expert-curated list of themes to get the most out of your site.' ) }</p>
+		),
 		seeAllLink: '/themes',
 	},
 	premium: {
@@ -24,9 +29,16 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: 'premium',
 		},
-		title: translate( 'Premium Themes' ),
+		title: translate( 'Premium' ),
+		fullTitle: translate( 'Premium Themes' ),
 		collectionSlug: 'premium-themes',
-		description: <p>Lorem ipsum dolor sit amet</p>,
+		description: (
+			<p>
+				{ translate(
+					'Get Premium and unlock a bundle of exclusive themes to take your website even further.'
+				) }
+			</p>
+		),
 		seeAllLink: '/themes/premium',
 	},
 	marketplace: {
@@ -38,9 +50,26 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: 'marketplace',
 		},
-		title: translate( 'Partner Themes' ),
+		title: translate( 'Partner' ),
+		fullTitle: translate( 'Partner Themes' ),
 		collectionSlug: 'partner-themes',
-		description: <p>Lorem ipsum dolor sit amet</p>,
+		description: (
+			<p>
+				{ translate(
+					'Professional themes designed and developed by our partners. {{link}}Learn more{{/link}}.',
+					{
+						components: {
+							link: (
+								<ExternalLink
+									href={ localizeUrl( 'https://wordpress.com/support/partner-themes/' ) }
+									target="_blank"
+								/>
+							),
+						},
+					}
+				) }
+			</p>
+		),
 		seeAllLink: '/themes/marketplace',
 	},
 	blog: {
@@ -52,9 +81,10 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Blog Themes' ),
+		title: translate( 'Writers and Bloggers' ),
+		fullTitle: translate( 'Writers and Bloggers Themes' ),
 		collectionSlug: 'blog-themes',
-		description: <p>Lorem ipsum dolor sit amet</p>,
+		description: null,
 		seeAllLink: '/themes/filter/blog',
 	},
 	portfolio: {
@@ -66,9 +96,10 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Portfolio Themes' ),
+		title: translate( 'Portfolio' ),
+		fullTitle: translate( 'Portfolio Themes' ),
 		collectionSlug: 'portfolio-themes',
-		description: <p>Lorem ipsum dolor sit amet</p>,
+		description: null,
 		seeAllLink: '/themes/filter/portfolio',
 	},
 	business: {
@@ -80,9 +111,16 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Business Themes' ),
+		title: translate( 'Business' ),
+		fullTitle: translate( 'Business Themes' ),
 		collectionSlug: 'business-themes',
-		description: <p>Lorem ipsum dolor sit amet</p>,
+		description: (
+			<p>
+				{ translate(
+					'Professionally designed to take your business to the next level — no matter its size or kind.'
+				) }
+			</p>
+		),
 		seeAllLink: '/themes/filter/business',
 	},
 	'art-design': {
@@ -94,9 +132,10 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: '',
 		},
-		title: translate( 'Art and Design Themes' ),
+		title: translate( 'Art and Design' ),
+		fullTitle: translate( 'Art and Design Themes' ),
 		collectionSlug: 'art-design-themes',
-		description: <p>Lorem ipsum dolor sit amet</p>,
+		description: null,
 		seeAllLink: '/themes/filter/art-design',
 	},
 };

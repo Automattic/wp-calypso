@@ -15,6 +15,11 @@ import {
 	TEAM_PAGE,
 	SHOP_PAGE,
 	CUSTOM_PAGE,
+	CAREERS_PAGE,
+	CASE_STUDIES_PAGE,
+	DONATE_PAGE,
+	EVENTS_PAGE,
+	NEWSLETTER_PAGE,
 } from 'calypso/signup/difm/constants';
 import type { PageId } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
@@ -41,6 +46,11 @@ export function useTranslatedPageTitles() {
 			[ TEAM_PAGE ]: translate( 'Team' ),
 			[ SHOP_PAGE ]: translate( 'Shop' ),
 			[ CUSTOM_PAGE ]: translate( 'Custom Page' ),
+			[ CAREERS_PAGE ]: translate( 'Careers' ),
+			[ EVENTS_PAGE ]: translate( 'Events' ),
+			[ DONATE_PAGE ]: translate( 'Donate' ),
+			[ NEWSLETTER_PAGE ]: translate( 'Newsletter' ),
+			[ CASE_STUDIES_PAGE ]: translate( 'Case Studies' ),
 		};
 		return pages;
 	}, [ translate ] );
@@ -106,6 +116,21 @@ export function useTranslatedPageDescriptions(
 		[ CUSTOM_PAGE ]: translate(
 			"Craft a page that's perfect for anything you have in mind. You decide the title and content, and we'll create a custom layout."
 		),
+		[ CAREERS_PAGE ]: translate(
+			"Attract top talent with a page dedicated to job opportunities. Showcase your team's culture."
+		),
+		[ EVENTS_PAGE ]: translate(
+			"Show your upcoming events or gatherings. Keep visitors updated on what's happening."
+		),
+		[ DONATE_PAGE ]: translate(
+			'Simplify the donation process for supporters. Help them easily contribute to your mission.'
+		),
+		[ NEWSLETTER_PAGE ]: translate(
+			'Connect with your community through regular updates. Let visitors subscribe to stay in touch with news and events.'
+		),
+		[ CASE_STUDIES_PAGE ]: translate(
+			'Demonstrate your expertise with real-world examples. Show your methods and results.'
+		),
 	};
 
 	const contextualDescriptions: Record< BBETranslationContext, typeof defaultDescriptions > = {
@@ -125,6 +150,12 @@ export function useTranslatedPageDescriptions(
 			),
 			[ CUSTOM_PAGE ]: translate(
 				"Provide the title and content for this page, and we'll create a custom layout."
+			),
+			[ DONATE_PAGE ]: translate(
+				"This page includes a Donations Form block, which you can connect to your bank account later using the editor. Provide details about your cause, which we'll include on the page."
+			),
+			[ NEWSLETTER_PAGE ]: translate(
+				'This page includes a Newsletter Subscription block, enabling visitors to subscribe via email. Provide details about the kind of updates they can expect to receive by subscribing.'
 			),
 		},
 		[ BBE_STORE_ONBOARDING_PAGE_PICKER_STEP ]: {

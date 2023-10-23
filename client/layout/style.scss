@@ -79,7 +79,7 @@ body.is-focus-sites {
 
 	.is-section-theme & {
 		.sites.main {
-			padding-top: 79px;
+			padding-top: calc(79px - var(--masterbar-height));
 		}
 	}
 

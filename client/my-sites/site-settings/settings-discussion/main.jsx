@@ -1,9 +1,9 @@
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { FediverseSettingsSection } from 'calypso/my-sites/site-settings/fediverse-settings';
 import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
@@ -16,11 +16,10 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 		<ScreenOptionsTab wpAdminPath="options-discussion.php" />
 		<DocumentHead title={ translate( 'Discussion Settings' ) } />
 		<JetpackDevModeNotice />
-		<FormattedHeader
-			brandFont
-			className="settings-discussion__page-heading"
-			headerText={ translate( 'Discussion Settings' ) }
-			subHeaderText={ translate(
+		<NavigationHeader
+			navigationItems={ [] }
+			title={ translate( 'Discussion Settings' ) }
+			subtitle={ translate(
 				'Control how people interact with your site through comments. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 				{
 					components: {
@@ -28,9 +27,8 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 					},
 				}
 			) }
-			align="left"
-			hasScreenOptions
 		/>
+
 		<SiteSettingsNavigation site={ site } section="discussion" />
 		<FediverseSettingsSection />
 		<DiscussionForm />

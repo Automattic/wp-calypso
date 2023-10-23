@@ -4,11 +4,11 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
@@ -61,7 +61,8 @@ function AddNewPaymentMethod() {
 			<PageViewTracker path="/me/purchases/add-payment-method" title={ title } />
 			<DocumentHead title={ title } />
 
-			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+
 			<HeaderCake onClick={ goToPaymentMethods }>{ addPaymentMethodTitle }</HeaderCake>
 
 			<Layout>
