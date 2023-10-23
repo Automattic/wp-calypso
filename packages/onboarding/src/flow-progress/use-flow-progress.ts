@@ -19,7 +19,6 @@ interface FlowProgress {
 
 const flows: Record< string, { [ step: string ]: number } > = {
 	newsletter: {
-		intro: 0,
 		user: 0,
 		newsletterSetup: 0,
 		newsletterGoals: 1,

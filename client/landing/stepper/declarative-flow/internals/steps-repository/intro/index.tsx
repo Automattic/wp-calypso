@@ -2,7 +2,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import {
 	ECOMMERCE_FLOW,
 	FREE_FLOW,
-	NEWSLETTER_FLOW,
 	SENSEI_FLOW,
 	VIDEOPRESS_FLOW,
 	isLinkInBioFlow,
@@ -85,16 +84,6 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			};
 		}
 
-		if ( flowName === NEWSLETTER_FLOW ) {
-			return {
-				title: __( 'Write. Grow. Earn. This is Newsletter.' ),
-				text: __(
-					'Unlimited subscribers. Everything you need to grow your audience. And the permanence of WordPress.com.'
-				),
-				buttonText: __( 'Launch my newsletter' ),
-			};
-		}
-
 		if ( flowName === SENSEI_FLOW ) {
 			return {
 				title: createInterpolateElement(
@@ -153,9 +142,10 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			};
 		}
 
+		// Fallback that potentially nobody sees
 		return {
 			title: createInterpolateElement(
-				__( 'You’re 3 minutes away from<br />a launch-ready newsletter. ' ),
+				__( 'You’re 3 minutes away from<br />a launch-ready website. ' ),
 				{ br: <br /> }
 			),
 			buttonText: __( 'Get started' ),
@@ -180,7 +170,6 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered={ flow === NEWSLETTER_FLOW }
 			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
 			showSenseiPowered={ flow === SENSEI_FLOW }
 			showVideoPressPowered={ isVideoPressFlow }
