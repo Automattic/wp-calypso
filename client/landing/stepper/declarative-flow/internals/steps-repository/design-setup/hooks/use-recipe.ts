@@ -5,7 +5,7 @@ import {
 } from '@automattic/design-picker';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE } from '../../../../../stores';
 import type { GlobalStyles, OnboardSelect, StarterDesigns } from '@automattic/data-stores';
@@ -53,21 +53,29 @@ const useRecipe = (
 	 * Get the preselect data only when mounting and ignore any changes later.
 	 */
 	const {
-		preselectedTheme,
-		preselectedStyle,
+		preselectedThemeSlug,
+		preselectedStyleSlug,
 		preselectedColorVariationTitle,
 		preselectedFontVariationTitle,
 	} = useMemo(
 		() => ( {
-			preselectedTheme: searchParams.get( 'theme' ),
-			preselectedStyle: searchParams.get( 'style_variation' ),
+			preselectedThemeSlug: searchParams.get( 'theme' ),
+			preselectedStyleSlug: searchParams.get( 'style_variation' ),
 			preselectedColorVariationTitle: searchParams.get( 'color_variation_title' ),
 			preselectedFontVariationTitle: searchParams.get( 'font_variation_title' ),
 		} ),
 		[]
 	);
 
-	const isInitializedRef = useRef( false );
+	const preselectedDesign = useMemo(
+		() =>
+			allDesigns?.designs.find( ( design ) =>
+				design.is_virtual
+					? design.recipe?.slug === preselectedThemeSlug
+					: design.slug === preselectedThemeSlug
+			),
+		[ allDesigns ]
+	);
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
@@ -173,46 +181,37 @@ const useRecipe = (
 
 	// Unset the selected design, thus restarting the design picking experience.
 	useEffect( () => {
-		if ( ! preselectedTheme ) {
+		if ( ! preselectedThemeSlug ) {
 			resetPreview();
 		}
-	}, [ preselectedTheme ] );
+	}, [ preselectedThemeSlug ] );
 
 	// Initialize the preselected design and style variations.
 	useEffect( () => {
-		if ( ! allDesigns || ! preselectedTheme || isInitializedRef.current ) {
+		if ( ! preselectedDesign ) {
 			return;
 		}
 
-		const requestedDesign = allDesigns.designs.find( ( design ) =>
-			design.is_virtual
-				? design.recipe?.slug === preselectedTheme
-				: design.slug === preselectedTheme
-		);
-		if ( ! requestedDesign ) {
-			pickUnlistedDesign( preselectedTheme );
-			return;
-		}
-
-		if ( preselectedStyle ) {
-			const requestedStyleVariation = requestedDesign.style_variations?.find(
-				( styleVariation ) => styleVariation.slug === preselectedStyle
+		setSelectedDesign( preselectedDesign );
+		setIsPreviewingDesign( true );
+		if ( preselectedStyleSlug ) {
+			const preselectedStyleVariation = preselectedDesign.style_variations?.find(
+				( styleVariation ) => styleVariation.slug === preselectedStyleSlug
 			);
 
-			setSelectedStyleVariation( requestedStyleVariation );
+			setSelectedStyleVariation( preselectedStyleVariation );
+		}
+	}, [ preselectedDesign, preselectedStyleSlug, setSelectedDesign, setSelectedStyleVariation ] );
+
+	useEffect( () => {
+		if ( ! allDesigns ) {
+			return;
 		}
 
-		setSelectedDesign( requestedDesign );
-		setIsPreviewingDesign( true );
-		isInitializedRef.current = true;
-	}, [
-		preselectedTheme,
-		preselectedStyle,
-		allDesigns,
-		pickUnlistedDesign,
-		setSelectedDesign,
-		setSelectedStyleVariation,
-	] );
+		if ( preselectedThemeSlug && ! preselectedDesign ) {
+			pickUnlistedDesign( preselectedThemeSlug );
+		}
+	}, [ allDesigns, preselectedThemeSlug, preselectedDesign, pickUnlistedDesign ] );
 
 	/**
 	 * Initialize the preselected colors
