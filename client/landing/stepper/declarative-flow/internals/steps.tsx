@@ -124,6 +124,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-creation-step' ),
 	},
 
+	SITE_PROMPT: {
+		slug: 'site-prompt',
+		asyncComponent: () => import( './steps-repository/ai-site-prompt' ),
+	},
+
 	STORE_ADDRESS: {
 		slug: 'storeAddress',
 		asyncComponent: () => import( './steps-repository/store-address' ),
