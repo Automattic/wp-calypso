@@ -8,6 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	hasPaymentMethod,
@@ -152,6 +153,19 @@ function PurchaseMetaExpiration( {
 					} ) }
 				>
 					{ subsBillingText }
+					<InfoPopover position="bottom right">
+						{ translate(
+							'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date.',
+							{
+								args: {
+									expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+								},
+								components: {
+									dateSpan,
+								},
+							}
+						) }
+					</InfoPopover>
 				</span>
 				{ ! isAutorenewalEnabled &&
 					! hideAutoRenew &&
