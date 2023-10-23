@@ -24,6 +24,7 @@ import {
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -79,6 +80,7 @@ const LayoutLoggedOut = ( {
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
 	const isReaderTagPage = sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/tag/' );
+	const isReaderTagEmbed = typeof window !== 'undefined' && isReaderTagEmbedPage( window.location );
 
 	const isReaderDiscoverPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
@@ -143,7 +145,12 @@ const LayoutLoggedOut = ( {
 
 			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 		}
-	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
+	} else if (
+		config.isEnabled( 'jetpack-cloud' ) ||
+		isWpMobileApp() ||
+		isJetpackThankYou ||
+		isReaderTagEmbed
+	) {
 		masterbar = null;
 	} else if (
 		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions', 'site-profiler' ].includes(
@@ -220,7 +227,7 @@ const LayoutLoggedOut = ( {
 				</>
 			) }
 
-			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && (
+			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && ! isReaderTagEmbed && (
 				<UniversalNavbarFooter
 					onLanguageChange={ ( e ) => {
 						navigate( `/${ e.target.value + pathNameWithoutLocale }` );

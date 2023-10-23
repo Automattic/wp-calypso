@@ -42,6 +42,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/comments/',
 		post_id: 113,
 	},
+	dashboard: {
+		link: 'https://wordpress.com/support/dashboard/',
+		post_id: 137,
+	},
 	discussion: {
 		link: 'https://wordpress.com/support/settings/discussion-settings/',
 		post_id: 1504,

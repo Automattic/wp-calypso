@@ -2,13 +2,14 @@ import { Button } from '@wordpress/components';
 import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, ReactElement, useEffect, useRef, useState } from 'react';
-import './style.scss';
 import { Swiper as SwiperType } from 'swiper/types';
+import { preventWidows } from 'calypso/lib/formatting';
+import './style.scss';
 
 interface ThemeCollectionProps {
 	collectionSlug: string;
 	title: string;
-	description: ReactElement;
+	description: ReactElement | null;
 	onSeeAll: () => void;
 }
 
@@ -77,7 +78,7 @@ export default function ThemeCollection( {
 							// break-xlarge in Gutenberg breakpoints
 							'1080': {
 								slidesPerView: 3,
-								spaceBetween: -16,
+								spaceBetween: -48,
 							},
 						},
 						modules: [ Navigation, Keyboard, Mousewheel ],
@@ -97,7 +98,7 @@ export default function ThemeCollection( {
 			<div className="theme-collection__meta">
 				<div className="theme-collection__headings">
 					<h2 className="theme-collection__title">{ title }</h2>
-					<div className="theme-collection__description">{ description }</div>
+					<div className="theme-collection__description">{ preventWidows( description ) }</div>
 				</div>
 				<div className="theme-collection__carousel-controls">
 					<Button className="theme-collection__see-all" onClick={ onSeeAll }>
