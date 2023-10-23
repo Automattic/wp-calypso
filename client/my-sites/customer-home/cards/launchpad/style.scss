@@ -9,7 +9,7 @@
 	margin-bottom: 16px;
 
 	@include break-mobile {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
+		border-radius: 3px;
 	}
 
 	.customer-home-launchpad__header {
