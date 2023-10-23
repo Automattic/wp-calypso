@@ -42,6 +42,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/comments/',
 		post_id: 113,
 	},
+	dashboard: {
+		link: 'https://wordpress.com/support/dashboard/',
+		post_id: 137,
+	},
 	discussion: {
 		link: 'https://wordpress.com/support/settings/discussion-settings/',
 		post_id: 1504,
@@ -67,7 +71,7 @@ const contextLinks = {
 		post_id: 2087,
 	},
 	'export-media-library': {
-		link: 'https://wordpress.com/support/export/#exporting-the-media-library',
+		link: 'https://wordpress.com/support/export-your-media-library/',
 		post_id: 2087,
 	},
 	followers: {

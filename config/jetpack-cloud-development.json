@@ -81,6 +81,7 @@
 		"jetpack-cloud-auth": true,
 		"jetpack-cloud-features-comparison": true,
 		"jetpack-cloud-partner-portal": true,
+		"jetpack-cloud-partner-program-signup": true,
 		"jetpack-cloud-plugin-management": true,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,

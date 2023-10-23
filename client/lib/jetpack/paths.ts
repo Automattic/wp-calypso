@@ -39,6 +39,7 @@ export const socialPath = ( siteSlug?: string ): string =>
 export const partnerPortalBasePath = ( path = '' ) => `/partner-portal${ path }`;
 
 export const agencySignupBasePath = () => '/agency/signup';
+export const partnerProgramSignupBasePath = () => '/partner-program/signup';
 
 const pluginsBasePath = '/plugins/manage';
 
