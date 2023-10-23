@@ -34,12 +34,7 @@ export function useModalResolutionCallback( {
 					return FREE_PLAN_PAID_DOMAIN_DIALOG;
 				}
 
-				if (
-					paidDomainName &&
-					( flowName === 'onboarding' ||
-						flowName === 'onboarding-pm' ||
-						flowName === 'onboarding-jetpack-app' )
-				) {
+				if ( paidDomainName && ( flowName === 'onboarding' || flowName === 'onboarding-pm' ) ) {
 					return PAID_PLAN_IS_REQUIRED_DIALOG;
 				}
 			}
