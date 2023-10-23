@@ -1,4 +1,5 @@
 .reader-first-posts__nudge {
+	border-radius: 3px; /* stylelint-disable-line scales/radii */
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -11,7 +12,7 @@
 	}
 	.reader-first-posts__title {
 		font-size: $font-title-small;
-		font-weight: bold;
+		font-weight: 500;
 		margin-bottom: 5px;
 	}
 	.reader-first-posts__actions {
