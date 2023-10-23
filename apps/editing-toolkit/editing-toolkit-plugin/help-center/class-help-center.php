@@ -90,10 +90,9 @@ class Help_Center {
 			plugins_url( 'dist/help-center.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$this->version,
-			array(
-				'strategy' => 'defer',
-			)
+			true
 		);
+		wp_script_add_data( 'help-center-script', 'strategy', 'defer' );
 
 		wp_enqueue_style(
 			'help-center-style',
