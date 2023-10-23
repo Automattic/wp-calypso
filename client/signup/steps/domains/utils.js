@@ -1,5 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import validUrl from 'valid-url';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 
 // Only override the back button from an external URL source on the below step(s) which is typically where we'd send them to as the 'entry'.
 // We don't want to send them "back" to the source URL if they click back on "domains-launch/mapping" for example. Just send them back to the previous step.
@@ -33,14 +33,17 @@ export function getExternalBackUrl( source, sectionName = null ) {
 /**
  * Check if we should use multiple domains in domain flows.
  */
-export function shouldUseMultipleDomainsInCart( flowName ) {
+export async function shouldUseMultipleDomainsInCart( flowName ) {
 	const enabledFlows = [ 'domain' ];
 	const enabledFlowsUnderFlag = [ 'onboarding' ];
+	const experimentAssignment = await loadExperimentAssignment(
+		'calypso_onboarding_domain_test_please_ignore'
+	);
+	const variationName = experimentAssignment?.variationName;
 
 	const status =
 		enabledFlows.includes( flowName ) ||
-		( isEnabled( 'domains/add-multiple-domains-to-cart' ) &&
-			enabledFlowsUnderFlag.includes( flowName ) );
+		( variationName === 'treatment' && enabledFlowsUnderFlag.includes( flowName ) );
 
 	return status;
 }
