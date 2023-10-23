@@ -1,19 +1,17 @@
-import { useSelect } from '@wordpress/data';
 import { localize, translate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
 import { GoToStep, UrlData } from '../types';
 import CaptureInput from './capture-input';
 import type { OnInputEnter, OnInputChange } from './types';
-import type { UserSelect } from '@automattic/data-stores';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -76,6 +74,7 @@ const trackEventParams = {
 };
 
 const CaptureStep: React.FunctionComponent< StepProps > = ( {
+	currentUser,
 	goToStep,
 	analyzeUrl,
 	resetError,
@@ -84,10 +83,6 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	recordTracksEvent,
 	disableImportListStep,
 } ) => {
-	const currentUser = useSelect(
-		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
-		[]
-	);
 	const isStartingPointEventTriggeredRef = useRef( false );
 	const runProcess = ( url: string ): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
@@ -173,6 +168,7 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 
 const connector = connect(
 	( state ) => ( {
+		currentUser: getCurrentUser( state || {} ),
 		isAnalyzing: isAnalyzing( state ),
 		analyzerError: getAnalyzerError( state ),
 	} ),
