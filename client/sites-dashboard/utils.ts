@@ -74,6 +74,10 @@ export const isTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return isMigrationTrialSite( site ) || isHostingTrialSite( site ) || isECommerceTrialSite( site );
 };
 
+export const siteDefaultInterface = ( site: SiteExcerptNetworkData ) => {
+	return site?.options?.wpcom_admin_interface;
+};
+
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';
 
 export const MEDIA_QUERIES = {
