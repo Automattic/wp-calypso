@@ -3,9 +3,6 @@ import { localize, translate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, PureComponent } from 'react';
-import { navigate } from 'calypso/lib/navigate';
-import { createAccountUrl } from 'calypso/lib/paths';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import LikeIcons from './icons';
 import './style.scss';
 
@@ -46,19 +43,6 @@ class LikeButton extends PureComponent {
 	}
 
 	toggleLiked( event ) {
-		if ( ! this.props.isLoggedIn ) {
-			if ( this.props.onLoggedOut ) {
-				return this.props.onLoggedOut();
-			}
-			const { pathname } = getUrlParts( window.location.href );
-			if ( isReaderTagEmbedPage( window.location ) ) {
-				return window.open(
-					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
-					'_blank'
-				);
-			}
-			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
-		}
 		if ( event ) {
 			event.preventDefault();
 		}

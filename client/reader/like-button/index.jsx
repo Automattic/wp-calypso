@@ -7,6 +7,7 @@ import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -38,6 +39,12 @@ class ReaderLikeButton extends Component {
 		if ( ! config.isEnabled( 'reader/login-window' ) ) {
 			// Redirect to create account page
 			const { pathname } = getUrlParts( window.location.href );
+			if ( isReaderTagEmbedPage( window.location ) ) {
+				return window.open(
+					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
+					'_blank'
+				);
+			}
 			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
 	};
