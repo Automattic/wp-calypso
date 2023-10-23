@@ -1,6 +1,8 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
@@ -33,6 +35,7 @@ const MarketplaceThankYou = ( {
 	isOnboardingFlow: boolean;
 } ) => {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const isRequestingPlugins = useSelector( ( state ) =>
 		siteId ? isRequesting( state, siteId ) : false
@@ -123,6 +126,7 @@ const MarketplaceThankYou = ( {
 
 	return (
 		<ThemeProvider theme={ theme }>
+			<DocumentHead title={ translate( 'Next steps' ) } />
 			<PageViewTracker path="/marketplace/thank-you/:site" title="Marketplace > Thank you" />
 			{ /* Using Global to override Global masterbar height */ }
 			<Global

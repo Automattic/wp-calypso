@@ -5,9 +5,9 @@ import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
@@ -35,16 +35,14 @@ const SiteSettingsComponent = ( {
 			<QuerySitePurchases siteId={ siteId } />
 			<JetpackDevModeNotice />
 			<JetpackBackupCredsBanner event="settings-backup-credentials" />
-			<FormattedHeader
-				brandFont
-				className="site-settings__page-heading"
-				headerText={ translate( 'General Settings' ) }
-				subHeaderText={ translate(
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'General Settings' ) }
+				subtitle={ translate(
 					'Manage your site settings, including language, time zone, site visibility, and more.'
 				) }
-				align="left"
-				hasScreenOptions
 			/>
+
 			<SiteSettingsNavigation section="general" />
 			<GeneralSettings />
 		</Main>

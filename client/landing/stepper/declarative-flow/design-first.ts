@@ -104,6 +104,14 @@ const designFirst: Flow = {
 							launchpad_screen: 'full',
 						} );
 
+						if ( providedDependencies?.hasSetPreselectedTheme ) {
+							updateLaunchpadSettings( siteSlug as string, {
+								checklist_statuses: { design_completed: true },
+							} );
+
+							return navigate( `launchpad?siteSlug=${ siteSlug }` );
+						}
+
 						return window.location.assign(
 							addQueryArgs( `/setup/update-design/designSetup`, {
 								siteSlug: siteSlug,

@@ -6,8 +6,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import FormSecurity from 'calypso/my-sites/site-settings/form-security';
 import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
@@ -56,12 +56,10 @@ export const SiteSettingsSecurity = ( {
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<DocumentHead title={ translate( 'Security Settings' ) } />
 			<JetpackDevModeNotice />
-			<FormattedHeader
-				brandFont
-				className="settings-security__page-heading"
-				headerText={ translate( 'Security Settings' ) }
-				subHeaderText={ translate( "Manage your site's security settings." ) }
-				align="left"
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Security Settings' ) }
+				subtitle={ translate( "Manage your site's security settings." ) }
 			/>
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }

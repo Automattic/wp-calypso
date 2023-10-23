@@ -12,6 +12,7 @@ export {
 	addPlanToCart,
 	addProductsToCart,
 	replaceProductsInCart,
+	setThemeOnSite,
 } from './cart';
 export { setupSiteAfterCreation, base64ImageToBlob } from './setup-tailored-site-after-creation';
 export { uploadAndSetSiteLogo } from './upload-and-set-site-logo';
