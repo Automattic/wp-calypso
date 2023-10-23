@@ -153,19 +153,21 @@ function PurchaseMetaExpiration( {
 					} ) }
 				>
 					{ subsBillingText }
-					<InfoPopover position="bottom right">
-						{ translate(
-							'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date.',
-							{
-								args: {
-									expireDate: moment( purchase.expiryDate ).format( 'LL' ),
-								},
-								components: {
-									dateSpan,
-								},
-							}
-						) }
-					</InfoPopover>
+					{ purchase.renewDate.length !== 0 && (
+						<InfoPopover position="bottom right">
+							{ translate(
+								'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date.',
+								{
+									args: {
+										expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+									},
+									components: {
+										dateSpan,
+									},
+								}
+							) }
+						</InfoPopover>
+					) }
 				</span>
 				{ ! isAutorenewalEnabled &&
 					! hideAutoRenew &&
