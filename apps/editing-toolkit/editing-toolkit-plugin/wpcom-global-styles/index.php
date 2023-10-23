@@ -158,10 +158,9 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		plugins_url( 'dist/wpcom-global-styles.min.js', __FILE__ ),
 		$dependencies,
 		$version,
-		array(
-			'strategy' => 'defer',
-		)
+		true
 	);
+	wp_script_add_data( 'wpcom-global-styles-editor', 'strategy', 'defer' );
 	wp_set_script_translations( 'wpcom-global-styles-editor', 'full-site-editing' );
 
 	$reset_global_styles_support_url = 'https://wordpress.com/support/using-styles/#reset-all-styles';
@@ -213,10 +212,9 @@ function wpcom_global_styles_enqueue_assets() {
 		plugins_url( 'dist/wpcom-global-styles-view.min.js', __FILE__ ),
 		$dependencies,
 		$version,
-		array(
-			'strategy' => 'defer',
-		)
+		true
 	);
+	wp_script_add_data( 'wpcom-global-styles', 'strategy', 'defer' );
 	wp_enqueue_style(
 		'wpcom-global-styles',
 		plugins_url( 'dist/wpcom-global-styles-view.css', __FILE__ ),
