@@ -95,6 +95,13 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that we've landed on the import (migration) ready page.
+	 */
+	async validateImportReadyPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.startBuildingHeader( 'You are ready to migrate' ) );
+	}
+
+	/**
 	 * Validates that we've landed on the building page.
 	 *
 	 * @param {string} reason The reason shown in main header.
