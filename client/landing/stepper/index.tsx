@@ -1,11 +1,12 @@
 import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
+import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
-import { User as UserStore, UserActions } from '@automattic/data-stores';
+import { User as UserStore } from '@automattic/data-stores';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { dispatch, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import { useEffect } from 'react';
 import ReactDom from 'react-dom';
@@ -38,15 +39,7 @@ import type { Flow } from './declarative-flow/internals/types';
 declare const window: AppWindow;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function setupUser( reduxStore: any, user: UserStore.CurrentUser | false ) {
-	if ( ! user ) {
-		return;
-	}
-
-	// initialize Stepper User store
-	( dispatch( USER_STORE ) as UserActions ).receiveCurrentUser( user );
-
-	// initialize Calypso User Store
+function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	reduxStore.dispatch( setCurrentUser( user ) );
 }
 
@@ -99,8 +92,8 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const user = ( await initializeCurrentUser() ) as UserStore.CurrentUser | false;
-	const userId = user ? user.ID : undefined;
+	const user = ( await initializeCurrentUser() ) as unknown;
+	const userId = ( user as CurrentUser ).ID;
 
 	const queryClient = await createQueryClient( userId );
 
@@ -108,7 +101,8 @@ window.AppBoot = async () => {
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
 	setupLocale( user, reduxStore );
-	setupUser( reduxStore, user );
+
+	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
