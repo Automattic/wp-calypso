@@ -84,10 +84,6 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	recordTracksEvent,
 	disableImportListStep,
 } ) => {
-	/**
-	 ↓ Methods
-	 */
-
 	const currentUser = useSelect(
 		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
 		[]
@@ -96,11 +92,22 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	const runProcess = ( url: string ): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
 		analyzeUrl( url ).then( ( response: UrlData ) => {
-			let stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
+			let stepSectionName;
 
-			if ( response.platform === 'wordpress' && response.platform_data?.is_wpcom ) {
-				stepSectionName = 'wpcom';
+			switch ( response.platform ) {
+				case 'unknown':
+					stepSectionName = 'not';
+					break;
+
+				case 'wordpress':
+					stepSectionName = response.platform_data?.is_wpcom ? 'wpcom' : 'preview';
+					break;
+
+				default:
+					stepSectionName = 'preview';
+					break;
 			}
+
 			goToStep( 'ready', stepSectionName );
 		} );
 	};
