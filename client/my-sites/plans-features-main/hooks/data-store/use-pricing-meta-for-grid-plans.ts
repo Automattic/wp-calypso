@@ -80,9 +80,12 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 						? isPlanAvailableForPurchase( state, selectedSiteId, planSlug )
 						: false );
 				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-				const storageAddOnPrices = storageAddOns?.find( ( addOn ) => {
-					return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
-				} )?.prices;
+				const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
+					return selectedStorageOption && addOn?.featureSlugs?.includes( selectedStorageOption );
+				} );
+				const storageAddOnPrices = selectedStorageAddOn?.purchased
+					? null
+					: selectedStorageAddOn?.prices;
 				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
 				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
 
