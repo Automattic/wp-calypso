@@ -3,6 +3,7 @@ import { useState } from 'react';
 import {
 	CheckoutProvider,
 	FormStatus,
+	PaymentMethod,
 	TransactionStatus,
 	useFormStatus,
 	useTransactionStatus,
@@ -91,7 +92,7 @@ const CustomFormWithTransactionStatus = () => {
 			</button>
 			<button
 				disabled={ formStatus !== FormStatus.READY }
-				onClick={ () => setTransactionComplete() }
+				onClick={ () => setTransactionComplete( true ) }
 			>
 				Complete
 			</button>
@@ -102,14 +103,11 @@ const CustomFormWithTransactionStatus = () => {
 describe( 'CheckoutProvider', () => {
 	let MyCheckout;
 	const mockMethod = createMockMethod();
-	const { items, total } = createMockItems();
 
 	describe( 'with formStatus directly', () => {
 		beforeEach( () => {
 			MyCheckout = ( { onPaymentComplete, isLoading, onPaymentError, onPaymentRedirect } ) => (
 				<CheckoutProvider
-					items={ items }
-					total={ total }
 					isLoading={ isLoading || null }
 					onPaymentComplete={ onPaymentComplete }
 					onPaymentError={ onPaymentError }
@@ -189,8 +187,6 @@ describe( 'CheckoutProvider', () => {
 		beforeEach( () => {
 			MyCheckout = ( { onPaymentComplete, isLoading, onPaymentError, onPaymentRedirect } ) => (
 				<CheckoutProvider
-					items={ items }
-					total={ total }
 					isLoading={ isLoading || null }
 					onPaymentComplete={ onPaymentComplete }
 					onPaymentError={ onPaymentError }
@@ -323,9 +319,10 @@ describe( 'CheckoutProvider', () => {
 	} );
 } );
 
-function createMockMethod() {
+function createMockMethod(): PaymentMethod {
 	return {
 		id: 'mock',
+		paymentProcessorId: 'mock',
 		label: <span data-testid="mock-label">Mock Label</span>,
 		activeContent: <MockPaymentForm />,
 		submitButton: <button>Pay Please</button>,
@@ -334,38 +331,18 @@ function createMockMethod() {
 	};
 }
 
-function MockPaymentForm( { summary } ) {
+function MockPaymentForm( { summary }: { summary?: boolean } ) {
 	const [ cardholderName, changeCardholderName ] = useState( '' );
 	return (
 		<div data-testid="mock-payment-form">
 			<label>
 				{ summary ? 'Name Summary' : 'Cardholder Name' }
-				<input name="cardholderName" value={ cardholderName } onChange={ changeCardholderName } />
+				<input
+					name="cardholderName"
+					value={ cardholderName }
+					onChange={ ( newValue ) => changeCardholderName( newValue.target.value ) }
+				/>
 			</label>
 		</div>
 	);
-}
-
-function createMockItems() {
-	const items = [
-		{
-			label: 'Illudium Q-36 Explosive Space Modulator',
-			id: 'space-modulator',
-			type: 'widget',
-			amount: { currency: 'USD', value: 5500, displayValue: '$55' },
-		},
-		{
-			label: 'Air Jordans',
-			id: 'sneakers',
-			type: 'apparel',
-			amount: { currency: 'USD', value: 12000, displayValue: '$120' },
-		},
-	];
-	const total = {
-		label: 'Total',
-		id: 'total',
-		type: 'total',
-		amount: { currency: 'USD', value: 17500, displayValue: '$175' },
-	};
-	return { items, total };
 }

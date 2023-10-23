@@ -5,7 +5,6 @@ import {
 	usePatternAssemblerCtaData,
 	isAssemblerSupported,
 } from '@automattic/design-picker';
-import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
@@ -23,6 +22,7 @@ import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import getSiteAssemblerUrl from './get-site-assembler-url';
 
 import './style.scss';
 
@@ -41,27 +41,6 @@ const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
 	// in a division by zero. In that case, we just assume that there's only one column.
 	const columnsPerRow = Math.floor( availableWidth / ( minColumnWidth + margin ) ) || 1;
 	return columnsPerRow;
-};
-
-const getSiteAssemblerUrl = ( {
-	isLoggedIn,
-	selectedSite,
-	shouldGoToAssemblerStep,
-	siteEditorUrl,
-} ) => {
-	if ( isLoggedIn && selectedSite && ! shouldGoToAssemblerStep ) {
-		return siteEditorUrl;
-	}
-
-	// Redirect people to create a site first if they don't log in or they have no sites.
-	const basePathname = isLoggedIn && selectedSite ? '/setup' : '/start';
-	const params = new URLSearchParams( { ref: 'calypshowcase' } );
-
-	if ( selectedSite?.slug ) {
-		params.set( 'siteSlug', selectedSite.slug );
-	}
-
-	return `${ basePathname }/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }`;
 };
 
 export const ThemesList = ( { tabFilter, ...props } ) => {

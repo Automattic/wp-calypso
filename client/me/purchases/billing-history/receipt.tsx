@@ -8,11 +8,11 @@ import { Component, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormLabel from 'calypso/components/forms/form-label';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
@@ -94,7 +94,8 @@ class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConn
 					title="Me > Billing History > Receipt"
 				/>
 
-				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+
 				<QueryBillingTransaction transactionId={ transactionId } />
 
 				<ReceiptTitle backHref={ billingHistory } />

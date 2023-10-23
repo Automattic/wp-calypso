@@ -277,6 +277,7 @@ const PlansFeaturesMain = ( {
 		isCustomDomainAllowedOnFreePlan,
 		isPlanUpsellEnabledOnFreeDomain,
 		flowName,
+		paidDomainName,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {

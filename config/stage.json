@@ -147,7 +147,7 @@
 		"stats/subscribers-chart-section": false,
 		"stats/paid-wpcom-stats": true,
 		"stats/type-detection": true,
-		"stats/date-control": false,
+		"stats/date-control": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
@@ -180,7 +180,8 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/staging-sites-i3": true
+		"yolo/staging-sites-i3": true,
+		"yolo/wp-admin-site-default": false
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

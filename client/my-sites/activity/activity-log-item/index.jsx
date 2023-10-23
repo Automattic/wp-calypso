@@ -139,6 +139,7 @@ class ActivityLogItem extends Component {
 		const {
 			activity: {
 				activityTitle,
+				activityDescription,
 				actorAvatarUrl,
 				actorName,
 				actorRole,
@@ -146,9 +147,27 @@ class ActivityLogItem extends Component {
 				activityMedia,
 				isBreakpointActive: isDesktop,
 			},
+			moment,
+			translate,
 		} = this.props;
 
 		const rewindAction = this.renderRewindAction();
+
+		const renderPublishedDate = () => {
+			const published = activityDescription?.[ 0 ]?.published;
+
+			if ( published ) {
+				const publishedFormattedDate = moment( published ).format( 'll' );
+				return (
+					<span className="activity-card__activity-post-published-date">
+						{ ' · ' }
+						{ translate( 'Published:' ) } { publishedFormattedDate }
+					</span>
+				);
+			}
+
+			return null;
+		};
 
 		return (
 			<div className="activity-log-item__card-header">
@@ -174,7 +193,10 @@ class ActivityLogItem extends Component {
 								rewindIsActive={ this.props.rewindIsActive }
 							/>
 						</div>
-						<div className="activity-log-item__description-summary">{ activityTitle }</div>
+						<div className="activity-log-item__description-summary">
+							{ activityTitle }
+							{ renderPublishedDate() }
+						</div>
 					</div>
 					{ rewindAction && (
 						<div className="activity-log-item__description-actions">{ rewindAction }</div>

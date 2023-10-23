@@ -282,7 +282,11 @@ export async function addProductsToCart(
 	}
 }
 
-export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: string ) {
+export async function setThemeOnSite(
+	siteSlug: string,
+	themeSlugWithRepo: string,
+	themeStyleVariation?: string
+) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		return;
 	}
@@ -296,6 +300,7 @@ export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: strin
 			apiVersion: '1.1',
 			body: {
 				theme,
+				...( themeStyleVariation && { style_variation_slug: themeStyleVariation } ),
 			},
 		} );
 	} catch ( error ) {

@@ -523,7 +523,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						onMainItemSelect={ onMainItemSelect }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
-						hasSections={ sections.length > 0 }
+						sectionsCount={ sections.length }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
 						onContinueClick={ onContinue }
@@ -534,6 +534,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					<ScreenSections
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
+						sections={ sections }
 						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
 					/>

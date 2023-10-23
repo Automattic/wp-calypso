@@ -2,9 +2,9 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useProtectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
@@ -72,7 +72,7 @@ const SecurityAccountEmail = ( { path }: { path: string } ) => {
 
 			<DocumentHead title={ translate( 'Account Email' ) } />
 
-			<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
 
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
 				{ translate( 'Account Email' ) }

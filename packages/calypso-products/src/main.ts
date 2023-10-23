@@ -177,6 +177,10 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-free-hosting-trial';
 	}
 
+	if ( isP2PlusPlan( planKey ) ) {
+		return 'is-p2-plus-plan';
+	}
+
 	return '';
 }
 
