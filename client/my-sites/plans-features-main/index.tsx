@@ -278,6 +278,7 @@ const PlansFeaturesMain = ( {
 		isPlanUpsellEnabledOnFreeDomain,
 		flowName,
 		paidDomainName,
+		intent: intentFromProps,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
