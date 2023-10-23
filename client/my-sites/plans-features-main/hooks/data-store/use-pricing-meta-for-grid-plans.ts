@@ -3,18 +3,16 @@ import {
 	type PlanSlug,
 	getTermFromDuration,
 	calculateMonthlyPrice,
-	getPlan,
 } from '@automattic/calypso-products';
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
-import { getDiscountedRawPrice, getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { getPlanPrices } from 'calypso/state/plans/selectors';
 import { PlanPrices } from 'calypso/state/plans/types';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import {
 	getCurrentPlan,
-	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 	isPlanAvailableForPurchase,
 } from 'calypso/state/sites/plans/selectors';
@@ -63,42 +61,17 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		getCurrentPlan( state, selectedSiteId )
 	);
 	const currentSitePlanSlug = currentPlan?.productSlug;
+
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
 	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
 	const selectedStorageOptions = useSelect( ( select ) => {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
+
 	const purchasedPlan = useSelector(
 		( state: IAppState ) => currentPlan && getByPurchaseId( state, currentPlan.id || 0 )
 	);
 	const planPrices = useSelector( ( state: IAppState ) => {
-		const getRawPlanPrices = ( {
-			returnMonthly,
-			selectedSiteId,
-			planSlug,
-		}: {
-			returnMonthly: boolean;
-			selectedSiteId?: number | null;
-			planSlug: PlanSlug;
-		} ) => {
-			const plan = getPlan( planSlug );
-			const productId = plan?.getProductId();
-
-			return {
-				rawPrice: productId ? getPlanRawPrice( state, productId, returnMonthly, true ) : null,
-				discountedRawPrice: productId
-					? getDiscountedRawPrice( state, productId, returnMonthly, true )
-					: null,
-				planDiscountedRawPrice:
-					selectedSiteId && planSlug
-						? getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, {
-								returnMonthly,
-								returnSmallestUnit: true,
-						  } )
-						: null,
-			};
-		};
-
 		return planSlugs.reduce(
 			( acc, planSlug ) => {
 				const availableForPurchase =
@@ -116,15 +89,18 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 						: selectedStorageAddOn?.prices;
 				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
 				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
-				const planPricesMonthly = getRawPlanPrices( {
+
+				const planPricesMonthly = getPlanPrices( state, {
+					planSlug,
+					siteId: selectedSiteId || null,
 					returnMonthly: true,
-					selectedSiteId,
-					planSlug,
+					returnSmallestUnit: true,
 				} );
-				const planPricesFull = getRawPlanPrices( {
-					returnMonthly: false,
-					selectedSiteId,
+				const planPricesFull = getPlanPrices( state, {
 					planSlug,
+					siteId: selectedSiteId || null,
+					returnMonthly: false,
+					returnSmallestUnit: true,
 				} );
 				const totalPricesMonthly = getTotalPrices( planPricesMonthly, storageAddOnPriceMonthly );
 				const totalPricesFull = getTotalPrices( planPricesFull, storageAddOnPriceYearly );
