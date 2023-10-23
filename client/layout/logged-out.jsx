@@ -248,6 +248,7 @@ const LayoutLoggedOut = ( {
 				<ReaderJoinConversationDialog
 					onClose={ () => clearLastLoggedInAction() }
 					isVisible={ !! loggedInAction }
+					loggedInAction={ loggedInAction }
 					onLoginSuccess={ () => {
 						window.location.reload();
 					} }

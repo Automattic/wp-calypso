@@ -1,24 +1,36 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import useLoginWindow from 'calypso/data/reader/use-login-window';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 import './style.scss';
 
-const ReaderJoinConversationDialog = ( { onClose, isVisible, onLoginSuccess } ) => {
+const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onLoginSuccess } ) => {
 	const translate = useTranslate();
 
 	const { login, createAccount } = useLoginWindow( { onLoginSuccess: onLoginSuccess } );
 
+	const trackEvent = ( eventName ) => {
+		let eventProps = {};
+		if ( loggedInAction ) {
+			eventProps = {
+				type: loggedInAction?.type,
+				siteId: loggedInAction?.siteId,
+				postId: loggedInAction?.postId,
+			};
+		}
+		recordTracksEvent( eventName, eventProps );
+	};
+
 	const onLoginClick = () => {
-		recordTracksEvent( 'calypso_reader_dialog_login_clicked' );
+		trackEvent( 'calypso_reader_dialog_login_clicked' );
 		login();
 	};
 
 	const onCreateAccountClick = () => {
-		recordTracksEvent( 'calypso_reader_dialog_create_account_clicked' );
+		trackEvent( 'calypso_reader_dialog_create_account_clicked' );
 		createAccount();
 	};
 
