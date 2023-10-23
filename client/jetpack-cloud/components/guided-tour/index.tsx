@@ -29,26 +29,37 @@ interface Props {
 	preferenceName: string;
 }
 
-// Helper function to get an element, returning a promise that resolves when the element is rendered.
-const getElementAsync = ( target: string ): Promise< HTMLElement > =>
-	new Promise( ( resolve ) => {
-		const getElement = () => {
+// This hook will return the async element matching the target selector.
+// After timeout has passed, it will return null.
+const useAsyncElement = ( target: string, maxDuration: number ): HTMLElement | null => {
+	const [ asyncElement, setAsyncElement ] = useState< HTMLElement | null >( null );
+
+	useEffect( () => {
+		// Set timeout to ensure we don't wait too long for the element
+		const endTime = Date.now() + maxDuration;
+
+		const getAsyncElement = ( endTime: number ) => {
 			const element = document.querySelector( target ) as HTMLElement | null;
 			if ( element ) {
-				resolve( element );
+				setAsyncElement( element );
+			} else if ( Date.now() < endTime ) {
+				requestAnimationFrame( () => getAsyncElement( endTime ) );
 			} else {
-				requestAnimationFrame( getElement );
+				setAsyncElement( null );
 			}
 		};
-		getElement();
-	} );
+
+		getAsyncElement( endTime );
+	}, [ target, maxDuration ] );
+
+	return asyncElement;
+};
 
 const GuidedTour = ( { tours, preferenceName }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
-	const [ targetElement, setTargetElement ] = useState< HTMLElement | null >( null );
 	const [ isVisible, setIsVisible ] = useState( false );
 
 	const preference = useSelector( ( state ) => getPreference( state, preferenceName ) );
@@ -58,12 +69,7 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 
 	const { title, description, target, popoverPosition } = tours[ currentStep ];
 
-	// Set the target element for the popover
-	useEffect( () => {
-		if ( target ) {
-			getElementAsync( target ).then( ( element ) => setTargetElement( element ) );
-		}
-	}, [ target ] );
+	const targetElement = useAsyncElement( target, 3000 );
 
 	// Show the popover after a short delay to allow the popover to be positioned correctly
 	useEffect( () => {
