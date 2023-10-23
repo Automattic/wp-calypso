@@ -387,7 +387,7 @@
 		"@wordpress/widgets": "3.21.0",
 		"@wordpress/wordcount": "3.44.0"
 	},
-	"packageManager": "yarn@3.2.3",
+	"packageManager": "yarn@4.0.0",
 	"dependenciesMeta": {
 		"@react-spring/core@9.3.0": {
 			"built": false
