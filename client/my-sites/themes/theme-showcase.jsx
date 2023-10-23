@@ -305,11 +305,9 @@ class ThemeShowcase extends Component {
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
 
-		let url = `/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		const collectionSection = isCollectionView ? `/collection` : '';
 
-		if ( isCollectionView ) {
-			url += '?v=collection';
-		}
+		let url = `/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ collectionSection }${ siteIdSection }`;
 
 		url = localizeThemesPath( url, locale, ! isLoggedIn );
 
