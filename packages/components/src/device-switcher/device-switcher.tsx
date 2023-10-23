@@ -69,7 +69,10 @@ const DeviceSwitcher = ( {
 		// Trigger animation end after the duration
 		timerRef.current = setTimeout( () => {
 			timerRef.current = null;
-			onViewportChange?.( frameRef?.current?.clientHeight );
+			const frameHeight = frameRef?.current?.getBoundingClientRect()?.height;
+			if ( frameHeight ) {
+				onViewportChange?.( frameHeight );
+			}
 		}, ANIMATION_DURATION );
 
 		return clearAnimationEndTimer;
