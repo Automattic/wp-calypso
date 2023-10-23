@@ -101,15 +101,21 @@ class PasswordlessSignupForm extends Component {
 		}
 	};
 
-	createAccountError = ( error ) => {
+	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+			const email = typeof this.state.email === 'string' ? this.state.email.trim() : '';
+			const response = await wpcom.req.get(
+				`/users/${ encodeURIComponent( email ) }/auth-options`
+			);
+
 			page(
 				addQueryArgs(
 					{
 						email_address: this.state.email,
 						is_signup_existing_account: true,
+						is_passwordless: response?.passwordless,
 					},
 					this.props.logInUrl
 				)

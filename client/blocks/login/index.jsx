@@ -133,6 +133,12 @@ class Login extends Component {
 			window.scrollTo( 0, 0 );
 		}
 
+		if ( this.props.hasPasswordlessParam ) {
+			this.props.sendEmailLogin();
+			this.handleTwoFactorRequested( 'link' );
+			return;
+		}
+
 		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
 			this.props.sendEmailLogin();
 			this.handleTwoFactorRequested( 'link' );
@@ -781,6 +787,9 @@ class Login extends Component {
 
 export default connect(
 	( state ) => ( {
+		hasPasswordlessParam:
+			getInitialQueryArguments( state )?.is_passwordless ||
+			getCurrentQueryArguments( state )?.is_passwordless,
 		accountType: getAuthAccountType( state ),
 		redirectTo: getRedirectToOriginal( state ),
 		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
