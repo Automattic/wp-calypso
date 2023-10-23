@@ -618,6 +618,7 @@ class Login extends Component {
 			isWooCoreProfilerFlow,
 			currentQuery,
 			isGravPoweredLoginPage,
+			isSignupExistingAccount,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -745,6 +746,7 @@ class Login extends Component {
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
 				hideSignupLink={ isGravPoweredLoginPage }
+				isSignupExistingAccount={ isSignupExistingAccount }
 			/>
 		);
 	}
