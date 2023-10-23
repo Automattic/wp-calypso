@@ -12,13 +12,60 @@ import {
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { withEnhancers } from 'calypso/state/utils';
 
+const EmailType = {
+	ManageSubscription: 'manage-subscription',
+	ConfirmSubscription: 'confirm-subscription',
+};
+
+const getEmailType = ( redirectTo ) => {
+	if ( redirectTo && redirectTo.includes( '/read/subscriptions' ) ) {
+		return EmailType.ManageSubscription;
+	}
+
+	if ( redirectTo && redirectTo.includes( 'redirect_to_blog_post_id' ) ) {
+		return EmailType.ConfirmSubscription;
+	}
+
+	return false;
+};
+
 class EmailedLoginLinkExpired extends Component {
 	static propTypes = {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		isGravPoweredClient: PropTypes.bool.isRequired,
+		redirectTo: PropTypes.string,
+		transition: PropTypes.bool,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = { showEmailSentAgain: false };
+		this.redirectTo = props.redirectTo;
+		this.isTransitingToWPComAccount = props.transition;
+		this.emailType = getEmailType( this.redirectTo );
+		const { translate } = this.props;
+
+		// Set values to shown to the user
+		if ( this.isTransitingToWPComAccount ) {
+			if ( this.emailType === EmailType.ConfirmSubscription ) {
+				this.title = translate( 'Your Subscription Confirmation link is expired or invalid' );
+			} else {
+				this.title = translate( 'Your Subscription Management link is expired or invalid' );
+			}
+			this.actionUrl = null;
+			this.secondaryAction = null;
+			this.secondaryActionURL = null;
+			this.line = translate( 'Click on this button and we will send you a new link' );
+		} else {
+			this.title = translate( 'Login link is expired or invalid' );
+			this.actionUrl = login( { twoFactorAuthType: 'link' } );
+			this.secondaryAction = translate( 'Reset my password' );
+			this.secondaryActionURL = lostPassword();
+			this.line = translate( 'Maybe try resetting your password instead' );
+		}
+	}
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
@@ -31,7 +78,11 @@ class EmailedLoginLinkExpired extends Component {
 	}
 
 	onClickTryAgainLink = () => {
-		this.props.hideMagicLoginRequestForm();
+		if ( this.isTransitingToWPComAccount ) {
+			this.setState( { showAlternateContent: true } );
+		} else {
+			this.props.hideMagicLoginRequestForm();
+		}
 	};
 
 	render() {
@@ -48,13 +99,13 @@ class EmailedLoginLinkExpired extends Component {
 				<EmptyContent
 					action={ translate( 'Try again' ) }
 					actionCallback={ this.onClickTryAgainLink }
-					actionURL={ login( { twoFactorAuthType: 'link' } ) }
+					actionURL={ this.actionUrl }
 					className="magic-login__link-expired"
 					illustration=""
-					line={ translate( 'Maybe try resetting your password instead' ) }
-					secondaryAction={ translate( 'Reset my password' ) }
-					secondaryActionURL={ lostPassword() }
-					title={ translate( 'Login link is expired or invalid' ) }
+					line={ this.line }
+					secondaryAction={ this.secondaryAction }
+					secondaryActionURL={ this.secondaryActionURL }
+					title={ this.title }
 				/>
 			</div>
 		);

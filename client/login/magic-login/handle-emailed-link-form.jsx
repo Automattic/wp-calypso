@@ -42,6 +42,8 @@ class HandleEmailedLinkForm extends Component {
 		clientId: PropTypes.string,
 		emailAddress: PropTypes.string.isRequired,
 		token: PropTypes.string.isRequired,
+		redirectTo: PropTypes.string,
+		transition: PropTypes.bool,
 
 		// Connected props
 		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
@@ -154,7 +156,13 @@ class HandleEmailedLinkForm extends Component {
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 
 		if ( isExpired ) {
-			return <EmailedLoginLinkExpired isGravPoweredClient={ isGravPoweredClient } />;
+			return (
+				<EmailedLoginLinkExpired
+					isGravPoweredClient={ isGravPoweredClient }
+					redirectTo={ this.props.redirectTo }
+					transition={ this.props.transition }
+				/>
+			);
 		}
 
 		let buttonLabel;
