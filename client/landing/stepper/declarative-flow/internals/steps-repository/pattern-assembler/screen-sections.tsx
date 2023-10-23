@@ -4,16 +4,18 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import { useScreen } from './hooks';
+import { useScreen, usePatternCountMapByCategory } from './hooks';
 import NavigatorTitle from './navigator-title';
 import PatternCategoryList from './pattern-category-list';
 import { Pattern, Category } from './types';
 
 interface Props {
 	categories: Category[];
-	patternsMapByCategory: { [ key: string ]: Pattern[] };
+	patternsMapByCategory: Record< string, Pattern[] >;
+	sections: Pattern[];
 	onContinueClick: () => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
@@ -21,12 +23,15 @@ interface Props {
 const ScreenSections = ( {
 	categories,
 	patternsMapByCategory,
+	sections,
 	onContinueClick,
 	recordTracksEvent,
 }: Props ) => {
+	const translate = useTranslate();
 	const { title, description, continueLabel } = useScreen( 'sections' );
 	const { params, goTo } = useNavigator();
 	const selectedCategory = params.categorySlug as string;
+	const patternCountMapByCategory = usePatternCountMapByCategory( sections );
 
 	const onSelectSectionCategory = ( category: string ) => {
 		const nextPath =
@@ -52,12 +57,24 @@ const ScreenSections = ( {
 					<PatternCategoryList
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
+						patternCountMapByCategory={ patternCountMapByCategory }
 						selectedCategory={ selectedCategory }
 						onSelectCategory={ onSelectSectionCategory }
 					/>
 				</VStack>
 			</div>
 			<div className="screen-container__footer">
+				<span className="screen-container__footer-description">
+					{ sections.length > 0 &&
+						translate( 'You’ve added {{strong}}%(count)s{{/strong}} sections.', {
+							args: {
+								count: sections.length,
+							},
+							components: {
+								strong: <strong />,
+							},
+						} ) }
+				</span>
 				<Button className="pattern-assembler__button" variant="primary" onClick={ onContinueClick }>
 					{ continueLabel }
 				</Button>

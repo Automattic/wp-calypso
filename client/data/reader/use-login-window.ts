@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { createAccountUrl } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 
 interface UseLoginWindowProps {
 	onLoginSuccess: () => void;
@@ -16,19 +17,29 @@ export default function useLoginWindow( {
 	const isBrowser: boolean = typeof window !== 'undefined';
 	const environment = config( 'env_id' );
 	let domain = 'wordpress.com';
-	let redirectTo = encodeURIComponent(
-		`https://${ domain }/public.api/connect/?action=verify&service=wordpress`
+	let redirectTo = addQueryArgs(
+		{
+			action: 'verify',
+			service: 'wordpress',
+		},
+		`https://${ domain }/public.api/connect/`
 	);
+
+	// When in development, we need to redirect to a sandboxed domain to allow us to test changes to /public.api/connect/
 	if ( environment === 'development' ) {
 		domain = 'wpcalypso.wordpress.com';
-		redirectTo = encodeURIComponent(
-			`https://${ domain }/public.api/connect/?action=verify&service=wordpress&domain=${ domain }&origin=${ new URL(
-				window.location.href
-			)?.hostname }`
+		redirectTo = addQueryArgs(
+			{
+				action: 'verify',
+				service: 'wordpress',
+				domain: domain,
+				origin: new URL( window.location.href )?.hostname,
+			},
+			`https://${ domain }/public.api/connect/`
 		);
 	}
 
-	const loginURL = `https://wordpress.com/log-in?redirect_to=${ redirectTo }`;
+	const loginURL = addQueryArgs( { redirect_to: redirectTo }, 'https://wordpress.com/log-in' );
 	const createAccountURL = `https://wordpress.com${ createAccountUrl( {
 		redirectTo: redirectTo,
 		ref: 'reader-lw',

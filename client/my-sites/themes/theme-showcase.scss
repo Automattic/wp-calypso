@@ -35,6 +35,10 @@
 		@include breakpoint-deprecated( ">660px" ) {
 			padding: 64px 32px 16px;
 		}
+		@include break-xlarge {
+			padding-left: 48px;
+			padding-right: 48px;
+		}
 
 		h1 {
 			color: var(--studio-blue-50);
@@ -66,6 +70,9 @@
 
 			@include breakpoint-deprecated( ">660px" ) {
 				padding: 0 32px;
+			}
+			@include break-xlarge {
+				padding: 0 48px;
 			}
 		}
 	}
@@ -263,40 +270,6 @@
 
 	.themes__showcase {
 		margin-top: 32px;
-
-		.collection-header__back {
-			padding-left: 0;
-			font-size: 1rem;
-			font-family: "SF Pro Text", serif;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 24px;
-			letter-spacing: -0.32px;
-
-			&.components-button {
-				&:focus {
-					box-shadow: none;
-				}
-			}
-		}
-
-		.collection-header__title {
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-			font-size: rem(44px);
-			font-style: normal;
-			font-weight: 400;
-			line-height: 52px;
-			letter-spacing: 0.2px;
-		}
-
-		.collection-header__description {
-			font-family: "SF Pro Text", serif;
-			font-size: $font-body;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 24px;
-			letter-spacing: -0.32px;
-		}
 	}
 
 	.themes__selection .themes-list {

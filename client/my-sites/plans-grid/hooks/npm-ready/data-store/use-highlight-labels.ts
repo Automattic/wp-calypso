@@ -6,6 +6,7 @@ import {
 	type PlanSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { isSamePlan } from '../../../lib/is-same-plan';
 import { isPopularPlan } from './is-popular-plan';
 import type { PlansIntent } from './use-grid-plans';
 import type { TranslateResult } from 'i18n-calypso';
@@ -32,7 +33,9 @@ const useHighlightLabels = ( {
 
 	return planSlugs.reduce(
 		( acc, planSlug ) => {
-			const isCurrentPlan = currentSitePlanSlug === planSlug;
+			const isCurrentPlan = currentSitePlanSlug
+				? isSamePlan( currentSitePlanSlug, planSlug )
+				: false;
 			const isPlanAvailableForUpgrade = planUpgradeability?.[ planSlug ];
 			const isSuggestedPlan =
 				selectedPlan && planLevelsMatch( planSlug, selectedPlan ) && isPlanAvailableForUpgrade;

@@ -76,12 +76,7 @@ const HostingTrialAcknowledgeInternal = ( { onStartTrialClick }: CallToActionPro
 				{ planName: plan?.getTitle() }
 			) }
 			callToAction={ <CallToAction onStartTrialClick={ onStartTrialClick } /> }
-			trialLimitations={ [
-				__( 'Limited email sending capabilities' ),
-				__( '3GB of storage' ),
-				__( 'no domain mapping' ),
-				__( '3 support requests' ),
-			] }
+			trialLimitations={ [ __( 'Lower priority email sending' ), __( '3GB of storage' ) ] }
 		/>
 	);
 };

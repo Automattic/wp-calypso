@@ -13,14 +13,9 @@ import type { MenuItemProps } from './types';
 const JetpackManageSidebar = () => {
 	const translate = useTranslate();
 
-	const onClickMenuItem = ( path: string ) => {
-		// TODO: Track event when user clicks on a menu item
-		redirectPage( path );
-	};
-
 	const createItem = ( props: MenuItemProps ) => ( {
 		...props,
-		onClickMenuItem,
+		onClickMenuItem: redirectPage,
 		isSelected: isMenuItemSelected( props.link ),
 	} );
 

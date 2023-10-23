@@ -7,12 +7,14 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCategoriesOrder } from './hooks';
+import PatternCount from './pattern-count';
 import type { Pattern, Category } from './types';
 import './pattern-category-list.scss';
 
 interface Props {
 	categories: Category[];
-	patternsMapByCategory: { [ key: string ]: Pattern[] };
+	patternsMapByCategory: Record< string, Pattern[] >;
+	patternCountMapByCategory: Record< string, number >;
 	selectedCategory: string;
 	onSelectCategory: ( selectedCategory: string ) => void;
 }
@@ -20,6 +22,7 @@ interface Props {
 const PatternCategoryList = ( {
 	categories,
 	patternsMapByCategory,
+	patternCountMapByCategory,
 	selectedCategory,
 	onSelectCategory,
 }: Props ) => {
@@ -56,7 +59,12 @@ const PatternCategoryList = ( {
 							aria-current={ isActive }
 							onClick={ () => onSelectCategory( name ) }
 						>
-							<NavigatorItem active={ isActive }>{ label }</NavigatorItem>
+							<NavigatorItem active={ isActive }>
+								<>
+									{ label }
+									<PatternCount count={ patternCountMapByCategory[ name ] } />
+								</>
+							</NavigatorItem>
 						</CompositeItem>
 					);
 				} ) }

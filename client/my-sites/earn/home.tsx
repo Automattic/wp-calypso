@@ -33,6 +33,7 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import EarnSupportButton from './components/earn-support-button';
 import StatsSection from './components/stats';
 import { useEarnLaunchpadTasks } from './hooks/use-earn-launchpad-tasks';
 import EarnLaunchpad from './launchpad';
@@ -143,6 +144,7 @@ const Home = () => {
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Learn more' ),
+					component: <EarnSupportButton supportContext="paypal" />,
 					action: () => {
 						trackCtaButton( 'simple-payments' );
 						window.location.href = localizeUrl(
@@ -188,14 +190,13 @@ const Home = () => {
 	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
 		const cta = {
 			text: translate( 'Learn more' ),
+			...( hasConnectedAccount && {
+				component: <EarnSupportButton supportContext="payment_button_block" />,
+			} ),
 			action: () => {
 				trackCtaButton( 'recurring-payments' );
-				const learnMoreLink = ! hasConnectedAccount
-					? 'https://wordpress.com/payments-donations/'
-					: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block';
-
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( learnMoreLink );
+					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
 				}
 			},
 		};
@@ -229,14 +230,13 @@ const Home = () => {
 	const getDonationsCard = (): PromoSectionCardProps => {
 		const cta = {
 			text: translate( 'Learn more' ),
+			...( hasConnectedAccount && {
+				component: <EarnSupportButton supportContext="donations" />,
+			} ),
 			action: () => {
 				trackCtaButton( 'donations' );
-				const learnMoreLink = ! hasConnectedAccount
-					? 'https://wordpress.com/payments-donations/'
-					: 'https://wordpress.com/support/wordpress-editor/blocks/donations/';
-
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( learnMoreLink );
+					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
 				}
 			},
 		};
@@ -275,6 +275,7 @@ const Home = () => {
 		}
 		const cta = {
 			text: translate( 'Learn more' ),
+			component: <EarnSupportButton supportContext="premium_content_block" />,
 			action: () => {
 				trackLearnLink( 'premium-content' );
 				if ( window && window.location ) {
@@ -312,6 +313,7 @@ const Home = () => {
 		}
 		const cta = {
 			text: translate( 'Learn more' ),
+			component: <EarnSupportButton supportContext="paid-newsletters" />,
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {

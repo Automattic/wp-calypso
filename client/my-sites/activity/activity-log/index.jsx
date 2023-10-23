@@ -19,10 +19,10 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Pagination from 'calypso/components/pagination';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
@@ -208,7 +208,6 @@ class ActivityLog extends Component {
 
 	/**
 	 * Close Restore, Backup, or Transfer confirmation dialog.
-	 *
 	 * @param {string} type Type of dialog to close.
 	 */
 	handleCloseDialog = ( type ) => {
@@ -226,7 +225,6 @@ class ActivityLog extends Component {
 	/**
 	 * Adjust a moment by the site timezone or gmt offset. Use the resulting function wherever log
 	 * times need to be formatted for display to ensure all times are displayed as site times.
-	 *
 	 * @param   {Object} date Moment to adjust.
 	 * @returns {Object}      Moment adjusted for site timezone or gmtOffset.
 	 */
@@ -243,7 +241,6 @@ class ActivityLog extends Component {
 
 	/**
 	 * Render a card showing the progress of a restore.
-	 *
 	 * @returns {Object} Component showing progress.
 	 */
 	renderActionProgress() {
@@ -281,7 +278,6 @@ class ActivityLog extends Component {
 
 	/**
 	 * Display the status of the operation currently being performed.
-	 *
 	 * @param   {number} siteId         Id of the site where the operation is performed.
 	 * @param   {Object}  actionProgress Current status of operation performed.
 	 * @param   {string}  action         Action type. Allows to set the right text without waiting for data.
@@ -308,7 +304,6 @@ class ActivityLog extends Component {
 
 	/**
 	 * Display a success or error card based on the last status of operation.
-	 *
 	 * @param   {number} siteId   Id of the site where the operation was performed.
 	 * @param   {Object}  progress Last status of operation.
 	 * @returns {Object}           Card showing success or error.
@@ -490,15 +485,12 @@ class ActivityLog extends Component {
 
 				{ isJetpackCloud() && <SidebarNavigation /> }
 
-				<FormattedHeader
-					brandFont
-					className="activity-log__page-heading"
-					headerText={ translate( 'Activity' ) }
-					subHeaderText={ translate(
-						"Keep tabs on all your site's activity — plugin and theme updates, user logins, " +
-							'setting modifications, and more.'
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Activity' ) }
+					subtitle={ translate(
+						"Keep tabs on all your site's activity — plugin and theme updates, user logins, setting modifications, and more."
 					) }
-					align="left"
 				/>
 
 				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }

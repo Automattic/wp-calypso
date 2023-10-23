@@ -123,7 +123,7 @@
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
 		"stats/paid-wpcom-stats": true,
-		"stats/date-control": false,
+		"stats/date-control": true,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
