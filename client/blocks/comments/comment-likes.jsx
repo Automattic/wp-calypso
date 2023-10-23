@@ -20,7 +20,7 @@ class CommentLikeButtonContainer extends Component {
 
 	handleLikeToggle( liked ) {
 		const likeAction = {
-			type: liked ? 'like' : 'unlike',
+			type: liked ? 'comment-like' : 'comment-unlike',
 			siteId: this.props.siteId,
 			postId: this.props.postId,
 			commentId: this.props.commentId,

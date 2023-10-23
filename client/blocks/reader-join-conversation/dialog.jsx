@@ -17,8 +17,8 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 		if ( loggedInAction ) {
 			eventProps = {
 				type: loggedInAction?.type,
-				siteId: loggedInAction?.siteId,
-				postId: loggedInAction?.postId,
+				blog_id: loggedInAction?.siteId,
+				post_id: loggedInAction?.postId,
 			};
 		}
 		recordTracksEvent( eventName, eventProps );
