@@ -12,7 +12,7 @@ import {
 interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
 	collectionSlug: string;
 	title: string;
-	description: ReactElement;
+	description: ReactElement | null;
 	query: ThemesQuery;
 	onSeeAll: () => void;
 }

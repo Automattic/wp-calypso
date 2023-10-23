@@ -22,6 +22,8 @@ export interface ThemeCollectionsLayoutProps {
 	onSeeAll: ( object: OnSeeAll ) => void;
 }
 
+const collections = Object.values( THEME_COLLECTIONS ).sort( () => Math.random() - 0.5 );
+
 function ThemeCollectionsPatternAssemblerCta() {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSite = useSelector( getSelectedSite );
@@ -52,8 +54,6 @@ function ThemeCollectionsPatternAssemblerCta() {
 
 function ThemeCollectionsLayout( props: ThemeCollectionsLayoutProps ) {
 	const { onSeeAll } = props;
-
-	const collections = Object.values( THEME_COLLECTIONS ).sort( () => Math.random() - 0.5 );
 
 	const showcaseThemeCollections = collections.map( ( collection ) => {
 		const { filter, tier } = collection.query;

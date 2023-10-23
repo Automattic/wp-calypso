@@ -6,12 +6,10 @@ import useLoginWindow from 'calypso/data/reader/use-login-window';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import './style.scss';
 
-const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
+const ReaderJoinConversationDialog = ( { onClose, isVisible, onLoginSuccess } ) => {
 	const translate = useTranslate();
 
-	const { login, createAccount } = useLoginWindow( {
-		onLoginSuccess: () => window.location.reload(),
-	} );
+	const { login, createAccount } = useLoginWindow( { onLoginSuccess: onLoginSuccess } );
 
 	const onLoginClick = () => {
 		recordTracksEvent( 'calypso_reader_dialog_login_clicked' );
@@ -26,7 +24,6 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 	return (
 		<Dialog
 			additionalClassNames="reader-join-conversation-dialog"
-			isBackdropVisible={ true }
 			isVisible={ isVisible }
 			onClose={ onClose }
 			showCloseIcon={ true }
@@ -44,7 +41,6 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible } ) => {
 				>
 					{ translate( 'Create a new account' ) }
 				</Button>
-				<br />
 				<Button isLink onClick={ onLoginClick } className="reader-join-conversation-dialog__login">
 					{ translate( 'Log in' ) }
 				</Button>

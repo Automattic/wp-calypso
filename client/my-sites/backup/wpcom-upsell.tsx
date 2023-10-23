@@ -3,9 +3,9 @@ import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -50,12 +50,7 @@ export default function WPCOMUpsellPage() {
 			<DocumentHead title="Jetpack VaultPress Backup" />
 			<PageViewTracker path="/backup/:site" title="VaultPress Backup" />
 
-			<FormattedHeader
-				headerText={ translate( 'Jetpack VaultPress Backup' ) }
-				id="backup-header"
-				align="left"
-				brandFont
-			/>
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack VaultPress Backup' ) } />
 
 			<PromoCard
 				title={ preventWidows(

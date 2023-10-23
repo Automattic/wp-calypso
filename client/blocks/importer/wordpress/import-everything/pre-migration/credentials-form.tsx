@@ -17,6 +17,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import { isNewSite } from 'calypso/state/sites/selectors';
 import ConfirmModal from './confirm-modal';
 import type { CredentialsProtocol, CredentialsStatus, StartImportTrackingProps } from './types';
 
@@ -45,6 +46,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 	const formSubmissionStatus: CredentialsStatus = useSelector( ( state ) =>
 		getJetpackCredentialsUpdateStatus( state, sourceSite.ID )
 	);
+	const isNewlyCreatedSite = useSelector( ( state: object ) => isNewSite( state, targetSite.ID ) );
 
 	const isFormSubmissionPending = formSubmissionStatus === 'pending';
 	const formHasErrors = formErrors && Object.keys( formErrors ).length > 0;
@@ -156,6 +158,13 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 		updateError &&
 			dispatch( recordTracksEvent( 'calypso_site_migration_credentials_update_error' ) );
 	}, [ updateError ] );
+
+	// If it's a newly created site, we don't need to show the confirm modal
+	useEffect( () => {
+		if ( isNewlyCreatedSite ) {
+			setMigrationConfirmed( true );
+		}
+	}, [ isNewlyCreatedSite, setMigrationConfirmed ] );
 
 	return (
 		<>

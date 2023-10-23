@@ -237,6 +237,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				<MigrationReady
 					sourceSiteSlug={ sourceSiteSlug }
 					sourceSiteHasCredentials={ hasCredentials }
+					targetSiteId={ targetSite.ID }
 					targetSiteSlug={ targetSite.slug }
 					migrationTrackingProps={ migrationTrackingProps }
 					startImport={ startImport }
