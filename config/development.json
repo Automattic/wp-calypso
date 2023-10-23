@@ -51,7 +51,6 @@
 		"devdocs": true,
 		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"domains/add-multiple-domains-to-cart": false,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/dashes-filter": false,
 		"domains/kracken-ui/exact-match-filter": true,
