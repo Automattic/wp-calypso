@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { createAccountUrl } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 
 interface UseLoginWindowProps {
@@ -40,10 +39,13 @@ export default function useLoginWindow( {
 	}
 
 	const loginURL = addQueryArgs( { redirect_to: redirectTo }, 'https://wordpress.com/log-in' );
-	const createAccountURL = `https://wordpress.com${ createAccountUrl( {
-		redirectTo: redirectTo,
-		ref: 'reader-lw',
-	} ) }`;
+	const createAccountURL = addQueryArgs(
+		{
+			redirect_to: redirectTo,
+			ref: 'reader-lw',
+		},
+		'https://wordpress.com/start/account'
+	);
 	const windowFeatures =
 		'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500';
 	const windowName = 'CalypsoLogin';
