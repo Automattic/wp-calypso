@@ -34,8 +34,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 	const siteSlug = getSiteSlug( site );
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
-
-	const clipboardTextEl = useRef< HTMLParagraphElement >( null );
+	const clipboardTextEl = useRef( null );
 
 	const copyHandler = async () => {
 		navigator.clipboard.writeText( `https://${ siteSlug }` );

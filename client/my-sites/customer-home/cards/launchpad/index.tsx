@@ -48,11 +48,9 @@ const CustomerHomeLaunchpad = ( {
 
 	const currentNavigatorChecklistSlug =
 		select( LaunchpadNavigator.store ).getActiveChecklistSlug() || null;
-
 	const {
 		data: { current_checklist },
 	} = useLaunchpadNavigator( siteSlug, currentNavigatorChecklistSlug );
-
 	useEffect( () => {
 		receiveActiveChecklistSlug( current_checklist );
 	}, [ current_checklist ] );
