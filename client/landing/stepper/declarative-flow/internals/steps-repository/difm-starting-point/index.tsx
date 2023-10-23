@@ -8,21 +8,12 @@ import type { Step } from '../../types';
 
 import './style.scss';
 const STEP_NAME = 'difmStartingPoint';
-const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
+const DIFMStartingPoint: Step = function ( { navigation } ) {
 	const { goNext, goBack, submit } = navigation;
 	const translate = useTranslate();
 
 	const onSubmit = () => {
 		submit?.();
-	};
-
-	const onSkip = () => {
-		recordTracksEvent( 'calypso_signup_skip_step', {
-			flow,
-			step: STEP_NAME,
-		} );
-
-		goNext?.();
 	};
 
 	const siteId = useSite()?.ID;
@@ -40,8 +31,7 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 				stepContent={
 					<DIFMLanding
 						onPrimarySubmit={ onSubmit }
-						onSkip={ onSkip }
-						isInOnboarding={ true }
+						showNewOrExistingSiteChoice={ false }
 						siteId={ siteId }
 					/>
 				}

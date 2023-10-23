@@ -239,15 +239,14 @@ const Step = ( {
 };
 
 export default function DIFMLanding( {
-	isInOnboarding,
+	showNewOrExistingSiteChoice,
 	onPrimarySubmit,
 	onSecondarySubmit,
 	siteId,
 }: {
 	onPrimarySubmit: () => void;
 	onSecondarySubmit?: () => void;
-	onSkip?: () => void;
-	isInOnboarding: boolean;
+	showNewOrExistingSiteChoice: boolean;
 	siteId?: number | null;
 } ) {
 	const translate = useTranslate();
@@ -389,7 +388,7 @@ export default function DIFMLanding( {
 							}
 						) }
 					</p>
-					{ isInOnboarding ? (
+					{ showNewOrExistingSiteChoice ? (
 						<CTASectionWrapper>
 							<NextButton onClick={ onPrimarySubmit }>
 								{ translate( 'Use an existing site' ) }
