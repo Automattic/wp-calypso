@@ -10,42 +10,36 @@
 	}
 
 	&.facebook {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-facebook);
 		}
 	}
 
 	&.twitter {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-twitter);
 		}
 	}
 
 	&.google_plus {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-google-plus);
 		}
 	}
 
 	&.linkedin {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-linkedin);
 		}
 	}
 
 	&.tumblr {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-tumblr);
 		}
 	}
 
 	&.instagram-basic-display {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-instagram);
 		}
@@ -58,9 +52,18 @@
 	}
 
 	&.mastodon {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-mastodon);
+		}
+	}
+	&.nextdoor {
+		.sharing-service__logo {
+			color: var(--color-nextdoor);
+			// This is to fix the logo being too big
+			// Other icons seems to have 8px of padding
+			// so, we'll decrease the width (40px) by 2 and add 6px of padding
+			width: 38px;
+			padding-inline: 6px;
 		}
 	}
 
@@ -292,10 +295,6 @@
 @mixin sharing-service( $name, $color ) {
 	.sharing-service.#{ $name } .sharing-service__icon {
 		background: $color;
-	}
-
-	.sharing-service.#{ $name } .sharing-service__name {
-		color: $color;
 	}
 
 	.sharing-connection__account-avatar.is-fallback.#{ $name } {
