@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EmailDeliveryFrequency } from '../constants';
 import { callApi, applyCallbackToPages, buildQueryKey } from '../helpers';
+import { alterSiteSubscriptionDetails } from '../helpers/optimistic-update';
 import { useIsLoggedIn } from '../hooks';
 import type {
 	PagedQueryResult,
@@ -64,22 +65,8 @@ const useSiteDeliveryFrequencyMutation = () => {
 				isLoggedIn,
 				id
 			);
-			const siteSubscriptionDetailsByBlogIdCacheKey = buildQueryKey(
-				[ 'read', 'site-subscription-details', String( blog_id ) ],
-				isLoggedIn,
-				id
-			);
-			const siteSubscriptionDetailsCacheKey = [
-				'read',
-				'subscriptions',
-				subscriptionId,
-				isLoggedIn,
-				id,
-			];
 
 			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
-			await queryClient.cancelQueries( siteSubscriptionDetailsByBlogIdCacheKey );
-			await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData<
@@ -108,64 +95,51 @@ const useSiteDeliveryFrequencyMutation = () => {
 			} ) );
 			queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 
-			const previousSiteSubscriptionDetailsByBlogId =
-				queryClient.getQueryData< SiteSubscriptionDetails >(
-					siteSubscriptionDetailsByBlogIdCacheKey
-				);
-			if ( previousSiteSubscriptionDetailsByBlogId ) {
-				queryClient.setQueryData( siteSubscriptionDetailsByBlogIdCacheKey, {
-					...previousSiteSubscriptionDetailsByBlogId,
-					delivery_methods: {
-						...previousSiteSubscriptionDetailsByBlogId.delivery_methods,
-						email: {
-							...previousSiteSubscriptionDetailsByBlogId.delivery_methods?.email,
-							post_delivery_frequency: delivery_frequency,
+			const previousSiteSubscriptionDetails = await alterSiteSubscriptionDetails(
+				queryClient,
+				{ blogId: String( blog_id ), subscriptionId: String( subscriptionId ), isLoggedIn, id },
+				( previousData ) => {
+					return {
+						...previousData,
+						delivery_methods: {
+							...previousData.delivery_methods,
+							email: {
+								...( previousData.delivery_methods?.email ?? { send_posts: false } ),
+								post_delivery_frequency: delivery_frequency,
+							},
 						},
-					},
-				} );
-			}
-
-			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
-				siteSubscriptionDetailsCacheKey
+					} as SiteSubscriptionDetails;
+				}
 			);
-			if ( previousSiteSubscriptionDetails ) {
-				queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
-					...previousSiteSubscriptionDetails,
-					delivery_methods: {
-						...previousSiteSubscriptionDetails.delivery_methods,
-						email: {
-							...previousSiteSubscriptionDetails.delivery_methods?.email,
-							post_delivery_frequency: delivery_frequency,
-						},
-					},
-				} );
-			}
 
 			return {
 				previousSiteSubscriptions,
-				previousSiteSubscriptionDetailsByBlogId,
 				previousSiteSubscriptionDetails,
 			};
 		},
-		onError: ( err, { blog_id, subscriptionId }, context ) => {
+		onError: ( err, _, context ) => {
 			queryClient.setQueryData(
 				buildQueryKey( [ 'read', 'site-subscriptions' ], isLoggedIn, id ),
 				context?.previousSiteSubscriptions
 			);
-			queryClient.setQueryData(
-				buildQueryKey( [ 'read', 'site-subscription-details', String( blog_id ) ], isLoggedIn, id ),
-				context?.previousSiteSubscriptionDetailsByBlogId
-			);
-			queryClient.setQueryData(
-				[ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ],
-				context?.previousSiteSubscriptionDetails
-			);
+			if ( context?.previousSiteSubscriptionDetails ) {
+				for ( const { key, data } of context.previousSiteSubscriptionDetails ) {
+					queryClient.setQueryData( key, data );
+				}
+			}
 		},
 		onSettled: ( _data, _err, { blog_id, subscriptionId } ) => {
 			// pass in a more minimal key, everything to the right will be invalidated
 			queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
 			queryClient.invalidateQueries(
 				buildQueryKey( [ 'read', 'site-subscription-details', String( blog_id ) ], isLoggedIn, id )
+			);
+			queryClient.invalidateQueries(
+				buildQueryKey(
+					[ 'read', 'site-subscription-details', '', String( subscriptionId ) ],
+					isLoggedIn,
+					id
+				)
 			);
 			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
 		},
