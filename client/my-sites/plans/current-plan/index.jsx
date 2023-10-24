@@ -22,7 +22,6 @@ import {
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -47,7 +46,6 @@ import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checkl
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -214,7 +212,6 @@ class CurrentPlan extends Component {
 			shouldShowDomainWarnings,
 			showThankYou,
 			translate,
-			eligibleForProPlan,
 			isJetpackNotAtomic,
 		} = this.props;
 
@@ -233,13 +230,6 @@ class CurrentPlan extends Component {
 		if ( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
 			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
-		}
-
-		// Ensures the Plan tab is shown in case the plan changes after the controller redirect.
-		if ( eligibleForProPlan && isFreePlanProduct( selectedSite.plan ) ) {
-			page.redirect( `/plans/${ selectedSite.slug }` );
-
-			return null;
 		}
 
 		return (
@@ -327,7 +317,6 @@ export default connect( ( state, { requestThankYou } ) => {
 	const isJetpackNotAtomic = false === isAutomatedTransfer && isJetpack;
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
-	const eligibleForProPlan = isEligibleForProPlan( state, selectedSiteId );
 
 	return {
 		currentPlan,
@@ -342,7 +331,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 		scheduleId: getConciergeScheduleId( state ),
-		eligibleForProPlan,
 		isJetpackNotAtomic,
 	};
 } )( localize( CurrentPlan ) );
