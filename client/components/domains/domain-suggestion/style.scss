@@ -327,7 +327,6 @@ body.is-section-signup.is-white-signup {
 		}
 
 		@include break-wide {
-			margin-left: 12px;
 			margin-bottom: 0;
 			flex: 1;
 		}
@@ -382,6 +381,7 @@ body.is-section-signup.is-white-signup {
 
 		.domain-registration-suggestion__title {
 			font-size: 0.875rem;
+			margin-right: 12px;
 
 			@include break-mobile {
 				font-size: 1rem;
