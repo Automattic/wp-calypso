@@ -5,6 +5,7 @@ import { Popover } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useEffect, useState, useMemo, CSSProperties } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
@@ -61,6 +62,12 @@ const PatternLargePreview = ( {
 			} ) as CSSProperties,
 		[ zoomOutScale, backgroundColor ]
 	);
+
+	const [ debouncedRecordZoomOutScaleChange ] = useDebouncedCallback( ( value: number ) => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
+			zoom_out_scale: value,
+		} );
+	}, 1000 );
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
 
@@ -167,9 +174,7 @@ const PatternLargePreview = ( {
 	const handleZoomOutScale = ( value: number ) => {
 		setZoomOutScale( value );
 		if ( zoomOutScale !== value ) {
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
-				zoom_out_scale: value,
-			} );
+			debouncedRecordZoomOutScaleChange( value );
 		}
 	};
 
