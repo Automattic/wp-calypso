@@ -173,6 +173,7 @@
 	display: flex;
 	flex-direction: column-reverse;
 	flex-wrap: nowrap;
+	align-items: flex-start;
 
 	@include break-mobile {
 		flex-direction: row;
@@ -196,11 +197,6 @@
 		width: auto;
 		max-width: 100%;
 		padding-right: 0.2em;
-		display: flex;
-	}
-
-	.badge {
-		align-self: center;
 	}
 
 	.domain-registration-suggestion__hsts-tooltip {
@@ -309,7 +305,6 @@
 
 	@include break-mobile {
 		margin: 0 0 0 4px;
-		align-self: center;
 	}
 }
 
@@ -321,7 +316,7 @@ body.is-section-signup.is-white-signup {
 
 	.domain-registration-suggestion__badges {
 		margin-left: 0;
-		margin-top: 0;
+		margin-top: 2px;
 		margin-bottom: 10px;
 
 		.badge {
@@ -332,8 +327,6 @@ body.is-section-signup.is-white-signup {
 		}
 
 		@include break-wide {
-			align-self: baseline;
-			margin-left: 12px;
 			margin-bottom: 0;
 			flex: 1;
 		}
@@ -388,6 +381,7 @@ body.is-section-signup.is-white-signup {
 
 		.domain-registration-suggestion__title {
 			font-size: 0.875rem;
+			margin-right: 12px;
 
 			@include break-mobile {
 				font-size: 1rem;
