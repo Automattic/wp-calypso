@@ -53,7 +53,7 @@
 		]
 	},
 	"engines": {
-		"node": "^v18.17.0",
+		"node": "^v20.8.1",
 		"yarn": "^3.1.1"
 	},
 	"scripts": {
@@ -159,7 +159,7 @@
 		"@types/fast-json-stable-stringify": "^2.0.0",
 		"@types/jest": "^29.5.5",
 		"@types/lodash": "^4.14.199",
-		"@types/node": "^18.17.3",
+		"@types/node": "^20.8.6",
 		"@types/page": "^1.11.5",
 		"@types/qs": "^6.9.7",
 		"@types/react": "^18.2.6",
