@@ -8,6 +8,7 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/stat
 import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 import './verification-code-form.scss';
+import './security-key-form.scss';
 
 class SecurityKeyForm extends Component {
 	static propTypes = {
