@@ -49,6 +49,19 @@
 	.my-sites__navigation {
 		height: 100%;
 	}
+
+	.site-selector {
+		top: 80px;
+
+		.site {
+			margin: 4px 4px 4px 0;
+
+			&:hover {
+				--color-sidebar-menu-hover-background: #e3f0e4;
+				border-radius: 4px;
+			}
+		}
+	}
 }
 
 .button {
