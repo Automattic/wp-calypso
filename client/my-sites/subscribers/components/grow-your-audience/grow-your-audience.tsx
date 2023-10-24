@@ -1,4 +1,4 @@
-import { Card, CardBody, Icon } from '@wordpress/components';
+import { Card, CardBody, Icon, ExternalLink } from '@wordpress/components';
 import { chartBar, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { SectionContainer } from 'calypso/components/section';
@@ -10,6 +10,7 @@ import './style.scss';
 
 type GrowYourAudienceCardProps = {
 	ctaLabel: string;
+	externalUrl?: boolean;
 	icon: JSX.Element;
 	text: string;
 	title: string;
@@ -19,6 +20,7 @@ type GrowYourAudienceCardProps = {
 
 const GrowYourAudienceCard = ( {
 	ctaLabel,
+	externalUrl,
 	icon,
 	text,
 	title,
@@ -31,9 +33,15 @@ const GrowYourAudienceCard = ( {
 				{ title }
 			</h3>
 			<p className="grow-your-audience__card-text">{ text }</p>
-			<a className="grow-your-audience__card-link" href={ url } target="_blank" rel="noreferrer">
-				{ ctaLabel }
-			</a>
+			{ externalUrl ? (
+				<ExternalLink className="grow-your-audience__card-link" href={ url }>
+					{ ctaLabel }
+				</ExternalLink>
+			) : (
+				<a className="grow-your-audience__card-link" href={ url }>
+					{ ctaLabel }
+				</a>
+			) }
 		</CardBody>
 	</Card>
 );
@@ -64,6 +72,7 @@ const GrowYourAudience = () => {
 					) }
 					title={ translate( 'Keep your readers engaged' ) }
 					ctaLabel={ translate( 'Learn more' ) }
+					externalUrl
 					url="https://wordpress.com/go/content-blogging/how-to-start-a-successful-blog-that-earns-links-traffic-and-revenue/#creating-a-blog-content-strategy" // eslint-disable-line wpcalypso/i18n-unlocalized-url
 				/>
 
