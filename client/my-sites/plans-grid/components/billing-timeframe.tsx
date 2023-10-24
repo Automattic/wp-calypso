@@ -12,7 +12,6 @@ import {
 	isFreePlan,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
-import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
@@ -291,15 +290,15 @@ const DiscountPromotion = styled.div`
 `;
 
 interface RefundNoticeProps {
-	flowName?: string;
+	showRefundPeriod?: boolean;
 	planSlug: string;
 	billingPeriod: GridPlan[ 'pricing' ][ 'billingPeriod' ];
 }
 
-const RefundNotice = ( { planSlug, flowName, billingPeriod }: RefundNoticeProps ) => {
+const RefundNotice = ( { planSlug, showRefundPeriod, billingPeriod }: RefundNoticeProps ) => {
 	const translate = useTranslate();
 
-	if ( ! isAnyHostingFlow( flowName ) || isFreePlan( planSlug ) ) {
+	if ( ! showRefundPeriod || isFreePlan( planSlug ) ) {
 		return null;
 	}
 
@@ -317,10 +316,10 @@ const RefundNotice = ( { planSlug, flowName, billingPeriod }: RefundNoticeProps 
 
 interface Props {
 	planSlug: PlanSlug;
-	flowName?: string;
+	showRefundPeriod?: boolean;
 }
 
-const PlanFeatures2023GridBillingTimeframe = ( { flowName, planSlug }: Props ) => {
+const PlanFeatures2023GridBillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
@@ -361,7 +360,11 @@ const PlanFeatures2023GridBillingTimeframe = ( { flowName, planSlug }: Props ) =
 	return (
 		<div>
 			{ description }
-			<RefundNotice flowName={ flowName } planSlug={ planSlug } billingPeriod={ billingPeriod } />
+			<RefundNotice
+				showRefundPeriod={ showRefundPeriod }
+				planSlug={ planSlug }
+				billingPeriod={ billingPeriod }
+			/>
 		</div>
 	);
 };

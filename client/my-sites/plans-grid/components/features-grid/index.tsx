@@ -290,7 +290,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 				>
 					<PlanFeatures2023GridBillingTimeframe
 						planSlug={ planSlug }
-						flowName={ this.props.flowName ?? undefined }
+						showRefundPeriod={ this.props.showRefundPeriod }
 					/>
 				</PlanDivOrTdContainer>
 			);

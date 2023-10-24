@@ -17,6 +17,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -763,6 +764,7 @@ const PlansFeaturesMain = ( {
 								onStorageAddOnClick={ handleStorageAddOnClick }
 								currentPlanManageHref={ currentPlanManageHref }
 								canUserManageCurrentPlan={ canUserManageCurrentPlan }
+								showRefundPeriod={ isAnyHostingFlow( flowName ) }
 							/>
 							{ ! hidePlansFeatureComparison && (
 								<>
@@ -809,6 +811,7 @@ const PlansFeaturesMain = ( {
 											onStorageAddOnClick={ handleStorageAddOnClick }
 											currentPlanManageHref={ currentPlanManageHref }
 											canUserManageCurrentPlan={ canUserManageCurrentPlan }
+											showRefundPeriod={ isAnyHostingFlow( flowName ) }
 										/>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }
