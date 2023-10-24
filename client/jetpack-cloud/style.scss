@@ -53,11 +53,27 @@
 	.site-selector {
 		top: 80px;
 
+		&__sites {
+			border-top: initial;
+		}
+
+		.all-sites {
+			border-bottom: initial;
+
+			// Remove the long-content fade if All Sites is selected
+			.all-sites__title::after {
+				display: none;
+			}
+		}
+
+		.all-sites,
 		.site {
-			margin: 4px 4px 4px 0;
+			--color-sidebar-menu-hover-background: #e3f0e4;
+			--color-sidebar-menu-selected-background: #e3f0e4;
+
+			margin: 4px 4px 0 4px;
 
 			&:hover {
-				--color-sidebar-menu-hover-background: #e3f0e4;
 				border-radius: 4px;
 			}
 		}

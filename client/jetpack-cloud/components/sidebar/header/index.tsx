@@ -61,7 +61,7 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const toggleSiteSelector2 = useToggleSiteSelector( { forceAllSitesView, selectedSiteId } );
+	const toggleSiteSelector = useToggleSiteSelector( { forceAllSitesView, selectedSiteId } );
 
 	return (
 		<SidebarHeader className="jetpack-cloud-sidebar__header">
@@ -71,13 +71,13 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 					showCount={ false }
 					icon={ <AllSitesIcon /> }
 					title={ translate( 'All Sites' ) }
-					onSelect={ toggleSiteSelector2 }
+					onSelect={ toggleSiteSelector }
 				/>
 			) : (
 				<Site
 					className="jetpack-cloud-sidebar__selected-site"
 					siteId={ selectedSiteId }
-					onSelect={ toggleSiteSelector2 }
+					onSelect={ toggleSiteSelector }
 				/>
 			) }
 			<ProfileDropdown />
