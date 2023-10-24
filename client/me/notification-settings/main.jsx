@@ -1,8 +1,5 @@
-import { Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
@@ -18,6 +15,7 @@ import {
 import BlogsSettings from './blogs-settings';
 import Navigation from './navigation';
 import PushNotificationSettings from './push-notification-settings';
+import SubscriptionManagementBackButton from './subscription-management-back-button';
 
 class NotificationSettings extends Component {
 	componentDidMount() {
@@ -57,15 +55,7 @@ class NotificationSettings extends Component {
 				<PageViewTracker path="/me/notifications" title="Me > Notifications" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				{ page.current.includes( 'referrer=management' ) && (
-					<Button
-						className="notification-settings__back-button"
-						onClick={ () => page( '/read/subscriptions' ) }
-						icon={ <Gridicon icon="chevron-left" size={ 12 } /> }
-					>
-						{ this.props.translate( 'Manage all subscriptions' ) }
-					</Button>
-				) }
+				<SubscriptionManagementBackButton />
 				<NavigationHeader
 					navigationItems={ [] }
 					title={ this.props.translate( 'Notification Settings' ) }
