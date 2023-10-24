@@ -540,7 +540,11 @@ export class PluginsMain extends Component {
 						</div>
 					</div>
 				</div>
-				<div className="plugins__main-content">
+				<div
+					className={ classNames( 'plugins__main-content', {
+						'plugins__main-content-jc': isJetpackCloud,
+					} ) }
+				>
 					<div className="plugins__content-wrapper">
 						{
 							// Hide the search box only when the request to fetch plugins fail, and there are no sites.

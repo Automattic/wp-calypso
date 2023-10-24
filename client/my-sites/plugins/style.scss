@@ -464,8 +464,6 @@ body.is-section-plugins #primary {
 	}
 }
 .plugins__main-content {
-	// We need these negative margin values because we want to make the container full-width,
-	// but our element is inside a limited-width parent.
 	margin: 0;
 	padding: 0 16px;
 	flex: 1 1 100%;
@@ -475,6 +473,19 @@ body.is-section-plugins #primary {
 		margin-bottom: -32px;
 	}
 }
+
+.plugins__main-content-jc {
+	// We need these negative margin values because we want to make the container full-width,
+	// but our element is inside a limited-width parent.
+	margin: 0 -32px;
+	padding: 0 48px;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding: 16px 48px;
+		margin-bottom: -32px;
+	}
+}
+
 .plugins__search {
 	height: 52px;
 	box-shadow: 0 0 0 1px var(--color-neutral-5);
