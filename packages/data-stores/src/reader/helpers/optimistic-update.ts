@@ -27,6 +27,10 @@ const alterSiteSubscriptionDetails = async (
 	const previousData: PreviousData[] = [];
 
 	keys.push(
+		buildQueryKey( [ 'read', 'site-subscription-details', String( blogId ), '' ], isLoggedIn, id )
+	);
+
+	keys.push(
 		buildQueryKey(
 			[ 'read', 'site-subscription-details', String( blogId ), String( subscriptionId ) ],
 			isLoggedIn,
@@ -58,4 +62,20 @@ const alterSiteSubscriptionDetails = async (
 	return previousData;
 };
 
-export { alterSiteSubscriptionDetails };
+const invalidateSiteSubscriptionDetails = (
+	queryClient: QueryClient,
+	{ blogId, subscriptionId, isLoggedIn, id }: SiteSubScriptionDetailsParameters
+) => {
+	queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
+	queryClient.invalidateQueries(
+		buildQueryKey( [ 'read', 'site-subscription-details', blogId ], isLoggedIn, id )
+	);
+	queryClient.invalidateQueries(
+		buildQueryKey( [ 'read', 'site-subscription-details', blogId, '' ], isLoggedIn, id )
+	);
+	queryClient.invalidateQueries(
+		buildQueryKey( [ 'read', 'site-subscription-details', '', subscriptionId ], isLoggedIn, id )
+	);
+};
+
+export { alterSiteSubscriptionDetails, invalidateSiteSubscriptionDetails };

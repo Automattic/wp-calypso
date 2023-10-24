@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EmailDeliveryFrequency } from '../constants';
 import { callApi, applyCallbackToPages, buildQueryKey } from '../helpers';
-import { alterSiteSubscriptionDetails } from '../helpers/optimistic-update';
+import {
+	alterSiteSubscriptionDetails,
+	invalidateSiteSubscriptionDetails,
+} from '../helpers/optimistic-update';
 import { useIsLoggedIn } from '../hooks';
 import type {
 	PagedQueryResult,
@@ -129,18 +132,12 @@ const useSiteDeliveryFrequencyMutation = () => {
 			}
 		},
 		onSettled: ( _data, _err, { blog_id, subscriptionId } ) => {
-			// pass in a more minimal key, everything to the right will be invalidated
-			queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
-			queryClient.invalidateQueries(
-				buildQueryKey( [ 'read', 'site-subscription-details', String( blog_id ) ], isLoggedIn, id )
-			);
-			queryClient.invalidateQueries(
-				buildQueryKey(
-					[ 'read', 'site-subscription-details', '', String( subscriptionId ) ],
-					isLoggedIn,
-					id
-				)
-			);
+			invalidateSiteSubscriptionDetails( queryClient, {
+				blogId: String( blog_id ),
+				subscriptionId: String( subscriptionId ),
+				isLoggedIn,
+				id,
+			} );
 			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
 		},
 	} );

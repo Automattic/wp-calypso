@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { buildQueryKey, callApi } from '../helpers';
-import { alterSiteSubscriptionDetails } from '../helpers/optimistic-update';
+import {
+	alterSiteSubscriptionDetails,
+	invalidateSiteSubscriptionDetails,
+} from '../helpers/optimistic-update';
 import { useIsLoggedIn } from '../hooks';
 import type { SiteSubscriptionsPages, SiteSubscriptionDetails } from '../types';
 
@@ -120,18 +123,13 @@ const useSiteEmailMeNewCommentsMutation = () => {
 				}
 			}
 		},
-		onSettled: ( _data, _err, { subscriptionId } ) => {
-			queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
-			queryClient.invalidateQueries(
-				buildQueryKey( [ 'read', 'site-subscription-details' ], isLoggedIn, id )
-			);
-			queryClient.invalidateQueries(
-				buildQueryKey(
-					[ 'read', 'site-subscription-details', '', String( subscriptionId ) ],
-					isLoggedIn,
-					id
-				)
-			);
+		onSettled: ( _data, _err, { blog_id, subscriptionId } ) => {
+			invalidateSiteSubscriptionDetails( queryClient, {
+				blogId: String( blog_id ),
+				subscriptionId: String( subscriptionId ),
+				isLoggedIn,
+				id,
+			} );
 			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
 		},
 	} );
