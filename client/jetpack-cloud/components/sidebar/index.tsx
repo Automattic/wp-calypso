@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import SiteSelector from 'calypso/components/site-selector';
 import Sidebar, {
@@ -11,6 +12,7 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasActivePartnerKey } from 'calypso/state/partner-portal/partner/selectors';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SidebarHeader from './header';
@@ -53,6 +55,9 @@ const JetpackCloudSidebar = ( {
 	const jetpackAdminUrl = useSelector( ( state ) =>
 		siteId ? getJetpackAdminUrl( state, siteId ) : null
 	);
+
+	useQueryJetpackPartnerPortalPartner();
+	const canAccessJetpackManage = useSelector( hasActivePartnerKey );
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -103,7 +108,7 @@ const JetpackCloudSidebar = ( {
 
 			<SiteSelector
 				showAddNewSite
-				showAllSites={ isJetpackManage }
+				showAllSites={ canAccessJetpackManage }
 				isJetpackAgencyDashboard={ isJetpackManage }
 				className="jetpack-cloud-sidebar__site-selector"
 				allSitesPath="/dashboard"
