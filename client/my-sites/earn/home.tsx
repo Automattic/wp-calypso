@@ -154,6 +154,7 @@ const Home = () => {
 			  }
 			: {
 					text: translate( 'Unlock this feature' ),
+					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
 						page(
@@ -398,6 +399,7 @@ const Home = () => {
 				  }
 				: {
 						text: translate( 'Unlock this feature' ),
+						isPrimary: true,
 						action: () => {
 							trackUpgrade( 'plans', 'ads' );
 							page(
