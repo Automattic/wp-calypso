@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
@@ -10,16 +9,13 @@ import Sidebar, {
 	SidebarNavigatorMenu,
 	SidebarNavigatorMenuItem,
 } from 'calypso/layout/sidebar-v2';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SidebarHeader from './header';
 
 import './style.scss';
-
-// This is meant to be the "base" sidebar component. All context-specific sidebars
-// (Sites Management, Plugin Management, Purchases, non-Manage functionality)
-// would use it to construct the right experience for that context.
 
 type Props = {
 	className?: string;
@@ -35,6 +31,7 @@ type Props = {
 		isExternalLink?: boolean;
 		isSelected: boolean;
 		trackEventName?: string;
+		trackEventProps?: { [ key: string ]: string };
 	}[];
 	description?: string;
 	backButtonProps?: {
@@ -58,6 +55,7 @@ const JetpackCloudSidebar = ( {
 	);
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	return (
 		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
@@ -76,7 +74,7 @@ const JetpackCloudSidebar = ( {
 								{ ...item }
 								onClickMenuItem={ ( path ) => {
 									if ( item.trackEventName ) {
-										recordTracksEvent( item.trackEventName );
+										dispatch( recordTracksEvent( item.trackEventName, item.trackEventProps ) );
 									}
 									item.onClickMenuItem( path );
 								} }
@@ -94,7 +92,7 @@ const JetpackCloudSidebar = ( {
 						path={ jetpackAdminUrl }
 						icon={ <JetpackIcons icon="wordpress" /> }
 						onClickMenuItem={ ( link ) => {
-							recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' );
+							dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' ) );
 							window.open( link, '_blank' );
 						} }
 						isExternalLink
