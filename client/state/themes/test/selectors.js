@@ -1511,7 +1511,7 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( signupUrl ).toEqual(
-				'/start/with-theme?ref=calypshowcase&theme=twentysixteen&theme_type=free'
+				'/start/with-theme?ref=calypshowcase&theme=twentysixteen&theme_type=free&intervalType=yearly'
 			);
 		} );
 
@@ -1537,6 +1537,7 @@ describe( 'themes selectors', () => {
 				theme: 'mood',
 				premium: 'true',
 				theme_type: 'premium',
+				intervalType: 'yearly',
 			} );
 		} );
 	} );
