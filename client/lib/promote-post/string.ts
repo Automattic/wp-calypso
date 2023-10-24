@@ -75,6 +75,7 @@ const BlazePressStrings = () => {
 	translate( 'Something went wrong. Please try again later.' );
 	translate( 'Upload new image' );
 	translate( 'Select or drop image to upload' );
+	translate( 'Select a free photo from Openverse' );
 	translate( 'Drop images to upload' );
 	translate( 'Use selected' );
 	translate( 'Load More' );
@@ -167,7 +168,6 @@ const BlazePressStrings = () => {
 	translate( 'Creating campaign' );
 	translate( 'Submit campaign' );
 	translate( 'Make changes' );
-	translate( 'Ad preview' );
 	translate( 'Mobile' );
 	translate( 'Tablet' );
 	translate( 'Desktop' );
