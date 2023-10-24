@@ -163,10 +163,16 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		if ( true === isNavigating ) {
 			const selectedSite = stagingSites.find( ( site ) => site.siteurl === newValue );
 			if ( selectedSite ) {
-				setCloneDestination( selectedSite.blog_id.toString() );
-				setUserHasSetDestination( true );
-				setIsCloneToStaging( true );
-				dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_staging_site' ) );
+				if ( selectedSite.role?.startsWith( 'staging-' ) ) {
+					setCloneDestination( selectedSite.role );
+					setUserHasSetDestination( true );
+					setIsCloneToStaging( false );
+				} else {
+					setCloneDestination( selectedSite.blog_id.toString() );
+					setUserHasSetDestination( true );
+					setIsCloneToStaging( true );
+					dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_staging_site' ) );
+				}
 			}
 		}
 	}
@@ -180,7 +186,10 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		}
 
 		return dispatch(
-			rewindClone( siteId, backupPeriod, { types: rewindConfig, roleName: CredSettings.role } )
+			rewindClone( siteId, backupPeriod, {
+				types: rewindConfig,
+				roleName: cloneDestination || CredSettings.role,
+			} )
 		);
 	}, [
 		isCloneToStaging,
