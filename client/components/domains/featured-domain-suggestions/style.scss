@@ -266,7 +266,7 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	margin: 0;
 	border-top: 1px solid rgba(220, 220, 222, 0.64);
 
-	@include break-mobile {
+	@include break-small {
 		margin: 0 20px;
 		border-top: none;
 	}

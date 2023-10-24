@@ -218,7 +218,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				<>
 					{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
 					<PreMigrationUpgradePlan
-						sourceSiteSlug={ sourceSiteSlug }
 						sourceSiteUrl={ sourceSiteUrl }
 						targetSite={ targetSite }
 						startImport={ onUpgradeAndMigrateClick }

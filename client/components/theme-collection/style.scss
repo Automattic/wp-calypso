@@ -88,8 +88,6 @@
 .theme-collection__carousel-controls {
 	display: flex;
 	justify-content: flex-end;
-	/*!rtl:ignore*/
-	direction: ltr;
 	align-self: end;
 	align-items: center;
 
@@ -140,6 +138,10 @@
 
 		&:hover {
 			background-color: var(--studio-gray-0);
+		}
+
+		.rtl & {
+			transform: scaleX(-1);
 		}
 	}
 }

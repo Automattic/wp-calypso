@@ -71,7 +71,7 @@ const SubscriptionsManagerWrapper = ( {
 					subtitle={
 						<>
 							{ subHeaderText }{ ' ' }
-							<a href="/me/notifications?referrer=management">
+							<a href="/me/notifications/subscriptions?referrer=management">
 								{ translate( 'Manage notification settings' ) }
 							</a>
 						</>

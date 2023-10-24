@@ -10,7 +10,6 @@ import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everyth
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -35,7 +34,6 @@ interface Props {
 	targetSite: SiteDetails;
 	targetSiteId: number | null;
 	targetSiteSlug: string;
-	targetSiteEligibleForProPlan: boolean;
 	stepNavigator?: StepNavigator;
 	showConfirmDialog: boolean;
 	sourceUrlAnalyzedData?: UrlData | null;
@@ -373,7 +371,6 @@ export const connector = connect(
 				ownProps.targetSiteId as number,
 				'import.php'
 			),
-			targetSiteEligibleForProPlan: isEligibleForProPlan( state, ownProps.targetSiteId as number ),
 		};
 	},
 	{

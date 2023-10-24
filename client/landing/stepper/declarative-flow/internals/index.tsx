@@ -6,7 +6,7 @@ import {
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -29,7 +29,7 @@ import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
-import { AssertConditionState, Flow, StepperStep } from './types';
+import { AssertConditionState, Flow, StepperStep, StepProps } from './types';
 import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
 
@@ -49,6 +49,19 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
+	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
+		() =>
+			flowSteps.reduce(
+				( acc, flowStep ) => ( {
+					...acc,
+					[ flowStep.slug ]:
+						'asyncComponent' in flowStep ? lazy( flowStep.asyncComponent ) : flowStep.component,
+				} ),
+				{}
+			),
+		[]
+	);
+
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
 	const { __ } = useI18n();
@@ -188,7 +201,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <></>;
 		}
 
-		const StepComponent = 'asyncComponent' in step ? lazy( step.asyncComponent ) : step.component;
+		const StepComponent = stepComponents[ step.slug ];
 
 		return (
 			<StepComponent

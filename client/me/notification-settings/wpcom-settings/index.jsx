@@ -21,6 +21,7 @@ import {
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import Navigation from '../navigation';
 import ActionButtons from '../settings-form/actions';
+import SubscriptionManagementBackButton from '../subscription-management-back-button';
 import EmailCategory from './email-category';
 
 import './style.scss';
@@ -197,6 +198,9 @@ class WPCOMNotifications extends Component {
 					title="Me > Notifications > Updates from WordPress.com"
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+
+				<SubscriptionManagementBackButton />
+
 				<NavigationHeader
 					navigationItems={ [] }
 					title={ this.props.translate( 'Notification Settings' ) }

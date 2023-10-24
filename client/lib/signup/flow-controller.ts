@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import debugModule from 'debug';
+import { translate } from 'i18n-calypso';
 import {
 	defer,
 	difference,
@@ -16,6 +18,7 @@ import {
 import page from 'page';
 import { Store, Unsubscribe as ReduxUnsubscribe } from 'redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import untypedSteps from 'calypso/signup/config/steps';
@@ -276,15 +279,35 @@ export default class SignupFlowController {
 			);
 
 			if ( dependenciesNotProvided.length > 0 ) {
-				throw new Error(
+				const errorMessage =
 					'The dependencies [' +
-						dependenciesNotProvided +
-						'] were listed as provided by the ' +
-						step.stepName +
-						' step but were not provided by it [ current flow: ' +
-						this._flowName +
-						' ].'
-				);
+					dependenciesNotProvided +
+					'] were listed as provided by the ' +
+					step.stepName +
+					' step but were not provided by it [ current flow: ' +
+					this._flowName +
+					' ].';
+
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: errorMessage,
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					blog_id: this._flow.providesDependenciesInQuery?.includes( 'siteId' ),
+					properties: {
+						env: config( 'env_id' ),
+						type: 'calypso_dependency_check_error',
+					},
+				} );
+
+				if ( config( 'env_id' ) === 'production' ) {
+					throw new Error(
+						translate(
+							'We’re sorry, something went wrong. Please try again in a few minutes or contact our support channel'
+						)
+					);
+				} else {
+					throw new Error( errorMessage );
+				}
 			}
 		} );
 	}
@@ -296,7 +319,6 @@ export default class SignupFlowController {
 	/**
 	 * Returns a list of non-excluded steps in the flow which enable the branch steps. Otherwise, return a list
 	 * of all steps
-	 *
 	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowSteps() {
@@ -314,7 +336,6 @@ export default class SignupFlowController {
 
 	/**
 	 * Returns a list of the dependencies provided in the flow configuration.
-	 *
 	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies() {
