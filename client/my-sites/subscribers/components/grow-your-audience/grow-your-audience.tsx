@@ -5,7 +5,6 @@ import { SectionContainer } from 'calypso/components/section';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getEarnPageUrl } from '../../helpers';
 import './style.scss';
 
 type GrowYourAudienceCardProps = {
@@ -66,6 +65,16 @@ const GrowYourAudience = () => {
 				/>
 
 				<GrowYourAudienceCard
+					icon={ trendingUp }
+					text={ translate(
+						'Allow your readers to support your work with paid subscriptions, gated content, or tips.'
+					) }
+					title={ translate( 'Start earning' ) }
+					ctaLabel={ translate( 'Learn more' ) }
+					url={ `/earn/${ selectedSiteSlug ?? '' }` }
+				/>
+
+				<GrowYourAudienceCard
 					icon={ people }
 					text={ translate(
 						'Create fresh content, publish regularly, and understand your audience with site stats.'
@@ -74,16 +83,6 @@ const GrowYourAudience = () => {
 					ctaLabel={ translate( 'Learn more' ) }
 					externalUrl
 					url="https://wordpress.com/go/content-blogging/how-to-start-a-successful-blog-that-earns-links-traffic-and-revenue/#creating-a-blog-content-strategy" // eslint-disable-line wpcalypso/i18n-unlocalized-url
-				/>
-
-				<GrowYourAudienceCard
-					icon={ trendingUp }
-					text={ translate(
-						'Allow your readers to support your work with paid subscriptions, gated content, or tips.'
-					) }
-					title={ translate( 'Start earning' ) }
-					ctaLabel={ translate( 'Learn more' ) }
-					url={ getEarnPageUrl( selectedSiteSlug ) }
 				/>
 			</div>
 		</SectionContainer>
