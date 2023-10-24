@@ -216,6 +216,20 @@
 	font-weight: 400;
 	letter-spacing: -0.4px;
 
+	.app-promo__title {
+		margin: 16px 0;
+	}
+
+	.app-promo__icon {
+		width: auto;
+	}
+	@include break-mobile {
+		.app-promo__icon {
+			height: 40px;
+			width: auto;
+		}
+	}
+
 	.card-heading {
 		font-family: $brand-serif;
 	}
