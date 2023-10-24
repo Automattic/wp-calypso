@@ -436,19 +436,23 @@ body.is-section-plugins #primary {
 	}
 }
 .plugins__top-container {
-	@include breakpoint-deprecated( ">660px" ) {
-		border-bottom: 1px solid var(--color-primary-5);
-	}
-	@include break-large() {
-		padding: 6px 32px 0;
+	padding: 0 16px;
+
+	@media (min-width: $break-small) {
+		padding: 0;
 	}
 }
 
-.plugins__top-container-wp {
-	padding: 0 16px;
-	border-bottom: none;
-	@media (min-width: $break-small) {
-		padding: 0;
+.plugins__top-container-jc {
+	margin: 0 -32px;
+	padding: 4px 48px 0;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		border-bottom: 1px solid var(--color-primary-5);
+	}
+
+	@include break-large() {
+		padding: 6px 48px 0;
 	}
 }
 

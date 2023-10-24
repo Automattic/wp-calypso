@@ -505,10 +505,26 @@ export class PluginsMain extends Component {
 				) }
 				<div
 					className={ classNames( 'plugins__top-container', {
-						'plugins__top-container-wp': ! isJetpackCloud,
+						'plugins__top-container-jc': isJetpackCloud,
 					} ) }
 				>
 					<div className="plugins__content-wrapper">
+						{ isJetpackCloud && (
+							<div className="plugins__page-title-container">
+								<div className="plugins__header-left-content">
+									<h2 className="plugins__page-title">{ pageTitle }</h2>
+									<div className="plugins__page-subtitle">
+										{ this.props.selectedSite
+											? this.props.translate( 'Manage all plugins installed on %(selectedSite)s', {
+													args: {
+														selectedSite: this.props.selectedSite.domain,
+													},
+											  } )
+											: this.props.translate( 'Manage plugins installed on all sites' ) }
+									</div>
+								</div>
+							</div>
+						) }
 						<div className="plugins__main plugins__main-updated">
 							<div className="plugins__main-header">
 								<SectionNav
