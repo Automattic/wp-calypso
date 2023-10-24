@@ -55,6 +55,14 @@
 		padding-top: 32px;
 		padding-left: 1px;
 	}
+	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
+	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
+		@media (max-width: 600px) {
+			position: absolute;
+			width: 100%;
+			left: 0;
+		}
+	}
 	& .is-section-stats .has-fixed-nav {
 		padding-top: 64px;
 	}
