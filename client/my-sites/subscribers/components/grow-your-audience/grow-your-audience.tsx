@@ -1,4 +1,6 @@
+import { englishLocales, useLocale, localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon, ExternalLink } from '@wordpress/components';
+import { hasTranslation } from '@wordpress/i18n';
 import { chartBar, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { SectionContainer } from 'calypso/components/section';
@@ -46,23 +48,47 @@ const GrowYourAudienceCard = ( {
 );
 
 const GrowYourAudience = () => {
+	const locale = useLocale();
 	const translate = useTranslate();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+
+	const statsCardTranslated =
+		englishLocales.includes( locale ) ||
+		( hasTranslation( 'Explore your stats' ) &&
+			hasTranslation(
+				'Take a look at your stats and refine your content strategy for better engagement.'
+			) &&
+			hasTranslation( 'Check stats' ) );
 
 	return (
 		<SectionContainer className="grow-your-audience">
 			<h2 className="grow-your-audience__title">{ translate( 'Grow your audience' ) }</h2>
 
 			<div className="grow-your-audience__cards">
-				<GrowYourAudienceCard
-					icon={ chartBar }
-					text={ translate(
-						'Take a look at your stats and refine your content strategy for better engagement.'
-					) }
-					title={ translate( 'Explore your stats' ) }
-					ctaLabel={ translate( 'Check stats' ) }
-					url={ `/stats/subscribers/${ selectedSiteSlug }` }
-				/>
+				{ statsCardTranslated ? (
+					<GrowYourAudienceCard
+						icon={ chartBar }
+						text={ translate(
+							'Take a look at your stats and refine your content strategy for better engagement.'
+						) }
+						title={ translate( 'Explore your stats' ) }
+						ctaLabel={ translate( 'Check stats' ) }
+						url={ `/stats/subscribers/${ selectedSiteSlug }` }
+					/>
+				) : (
+					<GrowYourAudienceCard
+						icon={ chartBar }
+						text={ translate(
+							'Using a subscriber block is the first step to growing your audience.'
+						) }
+						title={ translate( 'Every visitor is a potential subscriber' ) }
+						ctaLabel={ translate( 'Learn more' ) }
+						externalUrl
+						url={ localizeUrl(
+							'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/'
+						) }
+					/>
+				) }
 
 				<GrowYourAudienceCard
 					icon={ trendingUp }
