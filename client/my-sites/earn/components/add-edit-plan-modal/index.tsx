@@ -135,7 +135,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 
 	const [ editedPostIsTier, setEditedPostIsTier ] = useState(
-		product?.type === TIER_TYPE ?? false
+		( product?.type === TIER_TYPE || product?.subscribe_as_site_subscriber ) ?? false
 	);
 
 	const [ editedSchedule, setEditedSchedule ] = useState(
