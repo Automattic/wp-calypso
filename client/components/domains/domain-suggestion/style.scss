@@ -347,7 +347,9 @@ body.is-section-signup.is-white-signup {
 		flex-direction: column;
 		box-shadow: none;
 
-		@include break-mobile {
+		margin: 0;
+
+		@include break-small {
 			margin: 0 20px;
 			flex-direction: row;
 		}
