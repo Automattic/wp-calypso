@@ -13,7 +13,6 @@ import UpgradePlanDetails from './upgrade-plan-details';
 import type { URL } from 'calypso/types';
 
 interface Props {
-	sourceSiteSlug: string;
 	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
 	startImport: () => void;
@@ -28,7 +27,6 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
-		sourceSiteSlug,
 		sourceSiteUrl,
 		targetSite,
 		startImport,
@@ -76,7 +74,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 					}
 				) }
 			</p>
-			<UpgradePlanDetails sourceSiteSlug={ sourceSiteSlug } targetSite={ targetSite } />
+			<UpgradePlanDetails />
 			<div className="import__footer-button-container">
 				<NextButton isBusy={ isBusy } onClick={ () => startImport() }>
 					{ translate( 'Upgrade and migrate' ) }
