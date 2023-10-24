@@ -6,7 +6,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -35,17 +34,13 @@ const mobileBreakpoint = 660;
 
 const ContainerMain = styled.div`
 	.add-ons__main {
-		.navigation-header {
-			margin-bottom: 0;
-		}
-
 		.add-ons__formatted-header {
 			text-align: center;
-			margin-top: 24px;
+			margin-top: 100px;
 			margin-bottom: 40px;
 
 			@media screen and ( min-width: ${ mobileBreakpoint }px ) {
-				margin-top: 36px;
+				margin-top: 80px;
 				margin-bottom: 60px;
 			}
 
@@ -69,16 +64,12 @@ const ContentWithHeader = ( props: { children: ReactElement } ) => {
 	return (
 		<ContainerMain>
 			<Main className="add-ons__main" wideLayout>
-				<NavigationHeader navigationItems={ [] } title={ translate( 'Add-Ons' ) } />
 				<DocumentHead title={ translate( 'Add-Ons' ) } />
-				<FormattedHeader
-					className="add-ons__formatted-header"
-					brandFont
-					headerText={ translate( 'Boost your plan with add-ons' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					title={ translate( 'Boost your plan with add-ons' ) }
+					subtitle={ translate(
 						'Expand the functionality of your WordPress.com site by enabling any of the following features.'
 					) }
-					align="left"
 				/>
 				<div className="add-ons__main-content">{ props.children }</div>
 			</Main>
