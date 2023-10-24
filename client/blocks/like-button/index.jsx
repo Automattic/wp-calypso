@@ -7,7 +7,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { like, unlike } from 'calypso/state/posts/likes/actions';
 import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import { registerLastLoggedInAction } from 'calypso/state/reader-ui/actions';
+import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import LikeButton from './button';
 
 const noop = () => {};
@@ -30,14 +30,13 @@ class LikeButtonContainer extends Component {
 	};
 
 	handleLikeToggle = ( liked ) => {
-		// Create a likeAction object that holds the action type and props siteId and postId
-		const likeAction = {
-			type: liked ? 'like' : 'unlike',
-			siteId: this.props.siteId,
-			postId: this.props.postId,
-		};
-		this.props.registerLastLoggedInAction( likeAction );
-		if ( this.props.isLoggedIn ) {
+		if ( ! this.props.isLoggedIn ) {
+			this.props.registerLastActionRequiresLogin( {
+				type: liked ? 'like' : 'unlike',
+				siteId: this.props.siteId,
+				postId: this.props.postId,
+			} );
+		} else {
 			const toggler = liked ? this.props.like : this.props.unlike;
 			toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 		}
@@ -77,7 +76,7 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 		};
 	},
-	{ like, unlike, registerLastLoggedInAction },
+	{ like, unlike, registerLastActionRequiresLogin },
 	null,
 	{ forwardRef: true }
 )( LikeButtonContainer );

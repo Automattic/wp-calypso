@@ -21,7 +21,7 @@ import { expandComments } from 'calypso/state/comments/actions';
 import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { registerLastLoggedInAction } from 'calypso/state/reader-ui/actions';
+import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
@@ -123,14 +123,14 @@ class PostComment extends PureComponent {
 	};
 
 	handleReply = () => {
-		const replyAction = {
-			type: 'reply',
-			siteId: this.props.post.site_ID,
-			postId: this.props.post.ID,
-			commentId: this.props.commentId,
-		};
-		this.props.registerLastLoggedInAction( replyAction );
-		if ( this.props.isLoggedIn ) {
+		if ( ! this.props.isLoggedIn ) {
+			this.props.registerLastActionRequiresLogin( {
+				type: 'reply',
+				siteId: this.props.post.site_ID,
+				postId: this.props.post.ID,
+				commentId: this.props.commentId,
+			} );
+		} else {
 			this.props.onReplyClick( this.props.commentId );
 			this.setState( { showReplies: true } ); // show the comments when replying
 		}
@@ -510,7 +510,7 @@ const ConnectedPostComment = connect(
 		currentUser: getCurrentUser( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ expandComments, recordReaderTracksEvent, registerLastLoggedInAction }
+	{ expandComments, recordReaderTracksEvent, registerLastActionRequiresLogin }
 )( withDimensions( PostComment ) );
 
 export default ConnectedPostComment;

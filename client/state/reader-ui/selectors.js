@@ -12,6 +12,6 @@ export function getLastPath( state ) {
  * @param state redux state
  * @returns string|null {loggedInAction} logged in action clicked in the reader
  */
-export function getLastLoggedInAction( state ) {
-	return state.readerUi?.lastLoggedInAction;
+export function getLastActionRequiresLogin( state ) {
+	return state.readerUi?.lastActionRequiresLogin;
 }
