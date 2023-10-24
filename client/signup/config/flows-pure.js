@@ -167,24 +167,12 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ userSocialStep, 'domains', 'plans-pm' ],
+			steps: [ 'user', 'domains', 'plans-pm' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
 			lastModified: '2023-07-18',
 			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'onboarding-media',
-			steps: [ userSocialStep ],
-			destination: getRedirectDestination,
-			description:
-				'The intermittent user step for the GF foundation version of the paid media flow.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
 		},
 		{

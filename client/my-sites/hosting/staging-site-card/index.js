@@ -221,7 +221,7 @@ export const StagingSiteCard = ( {
 					code: error.code,
 				} )
 			);
-			setSyncError( error.message );
+			setSyncError( error.code );
 		},
 	} );
 
@@ -236,6 +236,7 @@ export const StagingSiteCard = ( {
 					code: error.code,
 				} )
 			);
+			setSyncError( error.code );
 		},
 	} );
 
