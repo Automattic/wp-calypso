@@ -64,7 +64,7 @@ export const AppPromo = ( {
 					<AppsBadge
 						storeName={ showIosBadge ? 'ios' : 'android' }
 						utm_campaign={ campaign }
-						utm_source="app-badge"
+						utm_source="calypso"
 					></AppsBadge>
 				</div>
 			) }

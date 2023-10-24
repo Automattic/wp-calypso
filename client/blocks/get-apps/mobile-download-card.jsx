@@ -176,7 +176,8 @@ class MobileDownloadCard extends Component {
 				</p>
 				<AppsBadge
 					storeName={ isIos ? 'ios' : 'android' }
-					utm_source={ isIos ? 'calypso-get-apps-button' : 'calypso-get-apps' }
+					utm_source="calypso"
+					utm_campaign={ isIos ? 'calypso-get-apps-button' : 'calypso-get-apps' }
 				/>
 			</div>
 		);

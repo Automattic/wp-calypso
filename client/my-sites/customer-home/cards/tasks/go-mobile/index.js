@@ -12,9 +12,17 @@ const GoMobile = ( { isIos } ) => {
 	const translate = useTranslate();
 
 	const actionButton = isIos ? (
-		<AppsBadge storeName="ios" utm_source="calypso-customer-home"></AppsBadge>
+		<AppsBadge
+			storeName="ios"
+			utm_source="calypso"
+			utm_campaign="calypso-customer-home"
+		></AppsBadge>
 	) : (
-		<AppsBadge storeName="android" utm_source="calypso-customer-home"></AppsBadge>
+		<AppsBadge
+			storeName="android"
+			utm_source="calypso"
+			utm_campaign="calypso-customer-home"
+		></AppsBadge>
 	);
 
 	return (

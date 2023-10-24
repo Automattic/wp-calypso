@@ -17,8 +17,8 @@ const APP_STORE_BADGE_URLS = {
 		defaultSrc: '/calypso/images/me/get-apps-ios-store.svg',
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
 		tracksEvent: 'calypso_app_download_ios_click',
-		getStoreLink: ( utm_source ) => {
-			return `https://apps.apple.com/app/apple-store/id1565481562?pt=299112&ct=${ utm_source }&mt=8`;
+		getStoreLink: ( utm_campaign ) => {
+			return `https://apps.apple.com/app/apple-store/id1565481562?pt=299112&ct=${ utm_campaign }&mt=8`;
 		},
 		getTitleText: () => translate( 'Download the Jetpack iOS mobile app.' ),
 		getAltText: () => translate( 'Apple App Store download badge' ),
@@ -32,11 +32,7 @@ const APP_STORE_BADGE_URLS = {
 		defaultSrc: '/calypso/images/me/get-apps-google-play.png',
 		src: 'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
 		tracksEvent: 'calypso_app_download_android_click',
-		getStoreLink: (
-			utm_source,
-			utm_medium = 'web',
-			utm_campaign = 'mobile-download-promo-pages'
-		) => {
+		getStoreLink: ( utm_campaign, utm_source = 'calypso', utm_medium = 'web' ) => {
 			return `https://play.google.com/store/apps/details?id=com.jetpack.android&referrer=utm_source%3D%${ utm_source }%26utm_medium%3D${ utm_medium }%26utm_campaign%3D${ utm_campaign }`;
 		},
 		getTitleText: () => translate( 'Download the Jetpack Android mobile app.' ),
@@ -124,7 +120,7 @@ export class AppsBadge extends PureComponent {
 			<figure className={ figureClassNames }>
 				<a
 					href={
-						storeLink ? storeLink : badge.getStoreLink( utm_source, utm_medium, utm_campaign )
+						storeLink ? storeLink : badge.getStoreLink( utm_campaign, utm_source, utm_medium )
 					}
 					onClick={ this.onLinkClick }
 					target="_blank"
