@@ -24,6 +24,7 @@ const defaultNewsletterCategoryIds: number[] = [];
 export type SubscriptionOptions = {
 	invitation: string;
 	comment_follow: string;
+	welcome: string;
 };
 
 type Fields = {

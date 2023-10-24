@@ -37,45 +37,6 @@
 	$pattern-large-preview-outer-border-radius: calc(var(--device-switcher-border-radius) - var(--device-switcher-border-width));
 	position: relative;
 
-	.pattern-action-bar {
-		box-sizing: border-box;
-		position: absolute;
-		top: 16px;
-		left: 16px;
-		right: unset;
-		padding: 0;
-		border: 1px solid #1e1e1e;
-		border-radius: 2px;
-		gap: 0;
-		background-color: #fff;
-		opacity: 0;
-		z-index: 1;
-		// Scale up the action bar in fixed viewport
-		transform: scale(calc(1 / var(--viewport-scale)));
-		transform-origin: top left;
-
-		> .pattern-action-bar__action {
-			position: relative;
-			min-height: 40px;
-			min-width: 40px;
-			padding: 2px;
-
-			&:first-child::after {
-				content: none;
-			}
-
-			&::after {
-				background-color: #1e1e1e;
-				bottom: 0;
-				content: "";
-				left: 0;
-				position: absolute;
-				top: 0;
-				width: 1px;
-			}
-		}
-	}
-
 	&::after {
 		content: "";
 		position: absolute;
@@ -96,16 +57,13 @@
 		border-bottom-right-radius: $pattern-large-preview-outer-border-radius;
 	}
 
+	&--active,
 	&:hover,
 	&:focus,
 	&:focus-within {
-		.pattern-action-bar {
-			opacity: 1;
-		}
-
 		&::after {
-			// Scale up the border of a hovered pattern in fixed viewport
-			border: calc(2px * (1 / var(--viewport-scale))) solid var(--color-primary-light);
+			// Scale up the border of a active pattern
+			border: calc(2px * (1 / var(--viewport-scale) / var(--pattern-large-preview-zoom-out-scale))) solid var(--color-primary-light);
 		}
 	}
 }
