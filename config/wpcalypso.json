@@ -190,7 +190,6 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/staging-sites-i3": true,
 		"yolo/wp-admin-site-default": true
 	},
 	"siftscience_key": "e00e878351",
