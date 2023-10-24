@@ -37,16 +37,26 @@
 	box-sizing: border-box;
 	min-height: 50px;
 
+	@media ( max-width: 660px ) {
+		min-height: 60px;
+	}
+
 	> .formatted-header {
 		flex: 1;
+
+		> div:first-child {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
 	}
 
 	.formatted-header__title {
 		font-family: "SF Pro Display", $sans;
 		font-size: $font-title-small;
 		font-weight: 500;
-		margin-bottom: 4px;
 		line-height: 26px;
+		margin-bottom: 0;
 	}
 	.formatted-header__subtitle {
 		color: var(--color-neutral-60);
