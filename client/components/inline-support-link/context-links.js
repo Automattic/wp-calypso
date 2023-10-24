@@ -71,8 +71,8 @@ const contextLinks = {
 		post_id: 2087,
 	},
 	'export-media-library': {
-		link: 'https://wordpress.com/support/export-your-media-library/',
-		post_id: 2087,
+		link: 'https://wordpress.com/support/export-your-media-library',
+		post_id: 278472,
 	},
 	followers: {
 		link: 'https://wordpress.com/support/followers/',

@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import OdieAssistant from '..';
-import useOdieUserTracking from '../trackLocation/useOdieUserTracking';
+import useOdieUserTracking from '../track-location/useOdieUserTracking';
 import { getOdieInitialMessages } from './initial-messages';
 import { getOdieInitialPrompt } from './initial-prompts';
-import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
+import type { OdieUserTracking } from '../track-location/useOdieUserTracking';
 import type { Chat, Context, Message, Nudge, OdieAllowedSectionNames } from '../types';
 import type { ReactNode } from 'react';
 
@@ -38,6 +38,7 @@ interface OdieAssistantContextInterface {
 	isVisible: boolean;
 	lastNudge: Nudge | null;
 	lastUserLocations: OdieUserTracking[];
+	onChatLoaded?: () => void;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
@@ -46,6 +47,7 @@ interface OdieAssistantContextInterface {
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
+	setOnChatLoaded: ( onChatLoaded: () => void ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 }
 
@@ -61,6 +63,7 @@ const defaultContextInterfaceValues = {
 	isVisible: false,
 	lastNudge: null,
 	lastUserLocations: [],
+	onChatLoaded: noop,
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
@@ -69,6 +72,7 @@ const defaultContextInterfaceValues = {
 	setIsNudging: noop,
 	setIsVisible: noop,
 	setIsLoading: noop,
+	setOnChatLoaded: noop,
 	trackEvent: noop,
 };
 
@@ -103,6 +107,7 @@ const OdieAssistantProvider = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
+	const [ onChatLoaded, setOnChatLoaded ] = useState< () => void >( noop );
 	const [ messages, setMessages ] = useState< Message[] >( [
 		{
 			content: getOdieInitialPrompt( sectionName ),
@@ -144,7 +149,10 @@ const OdieAssistantProvider = ( {
 				...getOdieInitialMessages( botSetting ),
 			],
 		} );
-	}, [ sectionName, siteId, botSetting ] );
+		if ( onChatLoaded ) {
+			onChatLoaded();
+		}
+	}, [ sectionName, siteId, botSetting, onChatLoaded ] );
 
 	const trackEvent = ( event: string, properties?: Record< string, unknown > ) => {
 		dispatch( recordTracksEvent( event, properties ) );
@@ -176,6 +184,7 @@ const OdieAssistantProvider = ( {
 				addMessage,
 				botName,
 				botNameSlug,
+				botSetting,
 				chat,
 				clearChat,
 				isLoadingChat: false,
@@ -184,6 +193,7 @@ const OdieAssistantProvider = ( {
 				isVisible,
 				lastNudge,
 				lastUserLocations,
+				onChatLoaded: noop,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,
@@ -192,20 +202,13 @@ const OdieAssistantProvider = ( {
 				setIsLoading,
 				setIsNudging,
 				setIsVisible,
+				setOnChatLoaded,
 				trackEvent,
-				botSetting,
 			} }
 		>
 			{ children }
 
-			{ odieIsEnabled && (
-				<OdieAssistant
-					botNameSlug={ botNameSlug }
-					isFloatingChatbox={ botSetting !== 'supportDocs' }
-					isSimpleChatbox={ botSetting === 'supportDocs' }
-					isHeaderVisible={ botSetting !== 'supportDocs' }
-				/>
-			) }
+			{ odieIsEnabled && <OdieAssistant botNameSlug={ botNameSlug } /> }
 		</OdieAssistantContext.Provider>
 	);
 };

@@ -12,7 +12,7 @@
 		cursor: pointer;
 		transition: all 200ms ease-in-out;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
+		border-radius: 3px;
 
 		&:hover,
 		&:focus {

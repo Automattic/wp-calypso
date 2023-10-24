@@ -13,7 +13,7 @@
 
 		@include breakpoint-deprecated( ">660px" ) {
 			border-bottom: none;
-			border-radius: 3px; /* stylelint-disable-line scales/radii */
+			border-radius: 3px;
 		}
 
 		@include breakpoint-deprecated( "<960px" ) {

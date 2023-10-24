@@ -4,6 +4,12 @@
 button {
 	&.options-domain-button {
 		padding: 8px;
+		align-items: center;
+
+		.gridicon {
+			top: 0;
+			margin-top: 0;
+		}
 
 		&__popover {
 			margin-top: 5px;
@@ -13,15 +19,6 @@ button {
 			padding: 7px 15px;
 			font-size: $font-body-small;
 			line-height: 1;
-
-			.gridicon {
-				top: 5px;
-				margin-top: -8px;
-			}
-
-			& > .gridicon {
-				margin-left: 5px;
-			}
 		}
 	}
 

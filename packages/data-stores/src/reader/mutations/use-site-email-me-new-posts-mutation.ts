@@ -1,5 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { buildQueryKey, callApi } from '../helpers';
+import {
+	alterSiteSubscriptionDetails,
+	invalidateSiteSubscriptionDetails,
+} from '../helpers/optimistic-update';
 import { useIsLoggedIn } from '../hooks';
 import type { SiteSubscriptionsPages, SiteSubscriptionDetails } from '../types';
 
@@ -51,22 +55,8 @@ const useSiteEmailMeNewPostsMutation = () => {
 				isLoggedIn,
 				id
 			);
-			const siteSubscriptionDetailsByBlogIdQueryKey = buildQueryKey(
-				[ 'read', 'site-subscription-details', String( blog_id ) ],
-				isLoggedIn,
-				id
-			);
-			const siteSubscriptionDetailsCacheKey = [
-				'read',
-				'subscriptions',
-				subscriptionId,
-				isLoggedIn,
-				id,
-			];
 
 			await queryClient.cancelQueries( siteSubscriptionsQueryKey );
-			await queryClient.cancelQueries( siteSubscriptionDetailsByBlogIdQueryKey );
-			await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );
@@ -96,46 +86,34 @@ const useSiteEmailMeNewPostsMutation = () => {
 				} );
 			}
 
-			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
-				siteSubscriptionDetailsCacheKey
+			const previousSiteSubscriptionDetails = await alterSiteSubscriptionDetails(
+				queryClient,
+				{
+					blogId: String( blog_id ),
+					subscriptionId: String( subscriptionId ),
+					isLoggedIn,
+					id,
+				},
+				( siteSubscriptionDetails ) => {
+					return {
+						...siteSubscriptionDetails,
+						delivery_methods: {
+							...siteSubscriptionDetails.delivery_methods,
+							email: {
+								...siteSubscriptionDetails.delivery_methods?.email,
+								send_posts: send_posts,
+							},
+						},
+					} as SiteSubscriptionDetails;
+				}
 			);
-			if ( previousSiteSubscriptionDetails ) {
-				queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
-					...previousSiteSubscriptionDetails,
-					delivery_methods: {
-						...previousSiteSubscriptionDetails.delivery_methods,
-						email: {
-							...previousSiteSubscriptionDetails.delivery_methods?.email,
-							send_posts: send_posts,
-						},
-					},
-				} );
-			}
-
-			const previousSiteSubscriptionDetailsByBlogId =
-				queryClient.getQueryData< SiteSubscriptionDetails >(
-					siteSubscriptionDetailsByBlogIdQueryKey
-				);
-			if ( previousSiteSubscriptionDetailsByBlogId ) {
-				queryClient.setQueryData( siteSubscriptionDetailsByBlogIdQueryKey, {
-					...previousSiteSubscriptionDetailsByBlogId,
-					delivery_methods: {
-						...previousSiteSubscriptionDetailsByBlogId.delivery_methods,
-						email: {
-							...previousSiteSubscriptionDetailsByBlogId.delivery_methods?.email,
-							send_posts: send_posts,
-						},
-					},
-				} );
-			}
 
 			return {
 				previousSiteSubscriptions,
 				previousSiteSubscriptionDetails,
-				previousSiteSubscriptionDetailsByBlogId,
 			};
 		},
-		onError: ( _err, { blog_id, subscriptionId }, context ) => {
+		onError: ( _err, _, context ) => {
 			if ( context?.previousSiteSubscriptions ) {
 				queryClient.setQueryData(
 					buildQueryKey( [ 'read', 'site-subscriptions' ], isLoggedIn, id ),
@@ -143,27 +121,18 @@ const useSiteEmailMeNewPostsMutation = () => {
 				);
 			}
 			if ( context?.previousSiteSubscriptionDetails ) {
-				queryClient.setQueryData(
-					[ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ],
-					context.previousSiteSubscriptionDetails
-				);
-			}
-			if ( context?.previousSiteSubscriptionDetailsByBlogId ) {
-				queryClient.setQueryData(
-					buildQueryKey(
-						[ 'read', 'site-subscription-details', String( blog_id ) ],
-						isLoggedIn,
-						id
-					),
-					context.previousSiteSubscriptionDetails
-				);
+				for ( const { key, data } of context.previousSiteSubscriptionDetails ) {
+					queryClient.setQueryData( key, data );
+				}
 			}
 		},
 		onSettled: ( _data, _err, { blog_id, subscriptionId } ) => {
-			queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
-			queryClient.invalidateQueries(
-				buildQueryKey( [ 'read', 'site-subscription-details', String( blog_id ) ], isLoggedIn, id )
-			);
+			invalidateSiteSubscriptionDetails( queryClient, {
+				blogId: String( blog_id ),
+				subscriptionId: String( subscriptionId ),
+				isLoggedIn,
+				id,
+			} );
 			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
 		},
 	} );

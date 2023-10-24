@@ -171,7 +171,7 @@ body.is-section-home.theme-default.color-scheme {
 	box-shadow: none;
 
 	@include breakpoint-deprecated( ">660px" ) {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
+		border-radius: 3px;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		border-bottom: none;
 		padding: 16px 24px;
@@ -239,7 +239,7 @@ body.is-section-home.theme-default.color-scheme {
 		margin: 0;
 	}
 
-	border-radius: 3px; /* stylelint-disable-line scales/radii */
+	border-radius: 3px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
