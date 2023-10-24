@@ -33,12 +33,17 @@ interface Props {
 
 // This hook will return the async element matching the target selector.
 // After timeout has passed, it will return null.
-const useAsyncElement = ( target: string, maxDuration: number ): HTMLElement | null => {
+//
+// @param target - The selector to match the element against
+// @param timeoutDuration - The maximum duration (in milliseconds) to wait for the element
+//
+// @returns The element matching the target selector, or null if the timeout has passed
+const useAsyncElement = ( target: string, timeoutDuration: number ): HTMLElement | null => {
 	const [ asyncElement, setAsyncElement ] = useState< HTMLElement | null >( null );
 
 	useEffect( () => {
 		// Set timeout to ensure we don't wait too long for the element
-		const endTime = Date.now() + maxDuration;
+		const endTime = Date.now() + timeoutDuration;
 
 		const getAsyncElement = ( endTime: number ) => {
 			const element = document.querySelector( target ) as HTMLElement | null;
@@ -52,7 +57,7 @@ const useAsyncElement = ( target: string, maxDuration: number ): HTMLElement | n
 		};
 
 		getAsyncElement( endTime );
-	}, [ target, maxDuration ] );
+	}, [ target, timeoutDuration ] );
 
 	return asyncElement;
 };

@@ -67,11 +67,9 @@
 }
 
 .jetpack-cloud-sidebar__guided-tour {
-	&--is-large-screen {
-		display: none;
+	display: none;
 
-		@include break-medium {
-			display: block;
-		}
+	@include break-medium {
+		display: block;
 	}
 }

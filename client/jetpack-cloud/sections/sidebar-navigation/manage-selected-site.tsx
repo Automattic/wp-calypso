@@ -205,7 +205,7 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 			/>
 
 			<GuidedTour
-				className="jetpack-cloud-sidebar__guided-tour--is-large-screen"
+				className="jetpack-cloud-sidebar__guided-tour"
 				preferenceName="jetpack-cloud-sidebar-v2-managed-selected-site-tour"
 				tours={ [
 					isAgency

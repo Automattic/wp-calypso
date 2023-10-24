@@ -69,7 +69,7 @@ const JetpackManageSidebar = () => {
 			<NewSidebar isJetpackManage path="/" menuItems={ menuItems } />
 
 			<GuidedTour
-				className="jetpack-cloud-sidebar__guided-tour--is-large-screen"
+				className="jetpack-cloud-sidebar__guided-tour"
 				preferenceName="jetpack-manage-sidebar-v2-dashboard-tour"
 				tours={ [
 					{
