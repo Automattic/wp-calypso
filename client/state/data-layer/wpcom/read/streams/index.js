@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
-import { getTagsFromStreamKey } from 'calypso/reader/discover/helper';
+import { buildDiscoverStreamKey, getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -447,7 +447,11 @@ export function handlePage( action, data ) {
 				receiveRecommendedSites( { seed: 'discover-new-sites', sites: streamNewSites } )
 			);
 		}
-		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
+		let newStreamKey = streamKey;
+		if ( streamKey === 'discover:recommended' && data.user_interests ) {
+			newStreamKey = buildDiscoverStreamKey( 'recommended', data.user_interests );
+		}
+		actions.push( receivePage( { streamKey: newStreamKey, query, streamItems, pageHandle, gap } ) );
 	}
 
 	return actions;
