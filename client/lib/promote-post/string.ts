@@ -72,6 +72,7 @@ const BlazePressStrings = () => {
 	translate( 'Upload' );
 	translate( 'Crop' );
 	translate( 'Your search did not match any images. Please try a different term.' );
+	translate( 'Something went wrong. Please try again later.' );
 	translate( 'Upload new image' );
 	translate( 'Select or drop image to upload' );
 	translate( 'Drop images to upload' );
