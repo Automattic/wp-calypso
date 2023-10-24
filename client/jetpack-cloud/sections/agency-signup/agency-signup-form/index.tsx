@@ -55,12 +55,14 @@ export default function AgencySignupForm() {
 					contact_person: payload.contactPerson,
 					company_website: payload.companyWebsite,
 					company_type: payload.companyType,
+					managed_sites: payload.managedSites,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
+					states: payload.states,
 				} )
 			);
 		},
