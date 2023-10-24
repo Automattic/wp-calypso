@@ -18,6 +18,7 @@ import {
 	PLAN_YEARLY_FREQUENCY,
 	PLAN_MONTHLY_FREQUENCY,
 	PLAN_ONE_TIME_FREQUENCY,
+	TIER_TYPE,
 } from 'calypso/my-sites/earn/memberships/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -132,6 +133,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedPostPaidNewsletter, setEditedPostPaidNewsletter ] = useState(
 		product?.subscribe_as_site_subscriber ?? false
 	);
+
+	const [ editedPostIsTier, setEditedPostIsTier ] = useState(
+		product?.type === TIER_TYPE ?? false
+	);
+
 	const [ editedSchedule, setEditedSchedule ] = useState(
 		product?.renewal_schedule ?? PLAN_MONTHLY_FREQUENCY
 	);
@@ -244,11 +250,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
 			const productDetails: Product = getCurrentProductDetails();
 
-			if ( editedPostPaidNewsletter ) {
+			if ( editedPostPaidNewsletter || editedPostIsTier ) {
 				const annualProductDetails = {
 					...productDetails,
 					interval: PLAN_YEARLY_FREQUENCY,
 					price: currentAnnualPrice,
+					type: TIER_TYPE,
 				};
 				dispatch(
 					requestAddTier(
@@ -274,7 +281,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			const productDetails = getCurrentProductDetails();
 			productDetails.ID = product.ID;
 
-			if ( ! editedPostPaidNewsletter ) {
+			if ( ! ( editedPostPaidNewsletter || editedPostIsTier ) ) {
 				dispatch(
 					requestUpdateProduct(
 						siteId ?? selectedSiteId,
@@ -350,7 +357,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-type">
 					<ToggleControl
-						onChange={ ( newValue ) => setEditedPostPaidNewsletter( newValue ) }
+						onChange={ ( newValue ) => {
+							setEditedPostPaidNewsletter( newValue );
+							setEditedPostIsTier( newValue );
+						} }
 						checked={ editedPostPaidNewsletter }
 						disabled={ !! product.ID }
 						label={ translate( 'Paid newsletter tier' ) }
