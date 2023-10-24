@@ -50,17 +50,28 @@ $mobile-card-max-width: 440px;
 				}
 			}
 
-			&.is-free-hosting-trial {
-				background-color: var(--color-primary);
-				color: var(--studio-purple-0);
-			}
-
 			&.is-business-plan {
 				background-color: #7f54b3;
 				color: var(--studio-purple-0);
 
 				&:focus {
 					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+				}
+
+				+ .button {
+					font-size: $font-body-small;
+					color: #7f54b3;
+					text-decoration: none;
+
+					&:focus {
+						box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+					}
+
+					.gridicon {
+						width: 18px;
+						height: 18px;
+						top: 4px;
+					}
 				}
 			}
 
@@ -377,20 +388,15 @@ $mobile-card-max-width: 440px;
 	border: none;
 	background-color: var(--color-surface);
 	position: relative;
-	vertical-align: baseline;
+	vertical-align: top;
 
 	.is-bold {
 		font-weight: 600;
 	}
 
-	&.is-bottom-aligned {
-		vertical-align: bottom;
-	}
-
 
 	&.is-top-buttons {
 		padding: 0 20px;
-		vertical-align: bottom;
 		@include plans-2023-break-small {
 			padding-top: 16px;
 			padding-bottom: 16px;
@@ -495,7 +501,14 @@ $mobile-card-max-width: 440px;
 	}
 }
 
+.plan-features-2023-grid__multiple-actions-container {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
 .plan-features-2023-grid__actions-button {
+	flex: 1;
 	width: 100%;
 
 	&.disabled,
@@ -809,8 +822,12 @@ body.is-section-signup.is-white-signup,
 
 
 .plan-comparison-grid {
-	.plan-features-2023-gridrison__actions-buttons {
-		min-height: 40px;
+	.plan-features-2023-gridrison__actions {
+		margin-bottom: auto;
+
+		&-buttons {
+			min-height: 40px;
+		}
 	}
 	.plan-comparison-grid__header-cell {
 		display: flex;
@@ -1105,27 +1122,4 @@ body.is-section-signup.is-white-signup,
 	max-width: 768px;
 	margin-left: auto !important;
 	margin-right: auto !important;
-}
-
-.plan-features-2023-grid__refund-notice {
-	text-align: center;
-	padding-top: 8px;
-	font-size: $font-body-extra-small;
-	line-height: 16px;
-
-	&.is-personal-plan {
-		color: var(--studio-blue-60);
-	}
-
-	&.is-premium-plan {
-		color: #004687;
-	}
-
-	&.is-business-plan {
-		color: #7f54b3;
-	}
-
-	&.is-ecommerce-plan {
-		color: #55347d;
-	}
 }

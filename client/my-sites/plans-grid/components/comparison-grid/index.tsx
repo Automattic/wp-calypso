@@ -317,6 +317,7 @@ type ComparisonGridProps = {
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	showRefundPeriod?: boolean;
 };
 
 type ComparisonGridHeaderProps = {
@@ -334,6 +335,7 @@ type ComparisonGridHeaderProps = {
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
+	showRefundPeriod?: boolean;
 };
 
 type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
@@ -368,6 +370,7 @@ const ComparisonGridHeaderCell = ( {
 	planActionOverrides,
 	isPlanUpgradeCreditEligible,
 	siteId,
+	showRefundPeriod,
 }: ComparisonGridHeaderCellProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
@@ -439,7 +442,10 @@ const ComparisonGridHeaderCell = ( {
 				siteId={ siteId }
 			/>
 			<div className="plan-comparison-grid__billing-info">
-				<PlanFeatures2023GridBillingTimeframe planSlug={ planSlug } />
+				<PlanFeatures2023GridBillingTimeframe
+					planSlug={ planSlug }
+					showRefundPeriod={ showRefundPeriod }
+				/>
 			</div>
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }
@@ -453,7 +459,7 @@ const ComparisonGridHeaderCell = ( {
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
 				flowName={ flowName }
-				onUpgradeClick={ () => onUpgradeClick( planSlug ) }
+				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
 				isStuck={ false }
@@ -477,6 +483,7 @@ const ComparisonGridHeader = ( {
 	siteId,
 	planActionOverrides,
 	selectedPlan,
+	showRefundPeriod,
 }: ComparisonGridHeaderProps ) => {
 	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
@@ -519,6 +526,7 @@ const ComparisonGridHeader = ( {
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					siteId={ siteId }
+					showRefundPeriod={ showRefundPeriod }
 				/>
 			) ) }
 		</PlanRow>
@@ -951,6 +959,7 @@ const ComparisonGrid = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
+	showRefundPeriod,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1088,6 +1097,7 @@ const ComparisonGrid = ( {
 					onUpgradeClick={ onUpgradeClick }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
+					showRefundPeriod={ showRefundPeriod }
 				/>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
 					<FeatureGroup
@@ -1121,6 +1131,7 @@ const ComparisonGrid = ( {
 					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
+					showRefundPeriod={ showRefundPeriod }
 				/>
 			</Grid>
 

@@ -5,7 +5,6 @@ import {
 	TYPE_WOO_EXPRESS_PLUS,
 	findPlansKeys,
 	TERMS_LIST,
-	TYPE_HOSTING_TRIAL,
 	TYPE_P2_PLUS,
 	GROUP_P2,
 } from '@automattic/calypso-products';
@@ -26,7 +25,6 @@ const usePlansFromTypes = ( { planTypes, term, intent }: Props ): PlanSlug[] => 
 			TYPE_FREE,
 			TYPE_ENTERPRISE_GRID_WPCOM,
 			TYPE_WOO_EXPRESS_PLUS,
-			TYPE_HOSTING_TRIAL,
 			TYPE_P2_PLUS,
 		].includes( type )
 			? { type }
