@@ -329,7 +329,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
-    "@types/node": ^18.17.3
+    "@types/node": ^20.8.6
     cookie: ^0.4.1
     tslib: ^2.3.0
     typescript: ^5.2.2
@@ -358,7 +358,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@jest/globals": ^29.5.0
     "@jest/types": ^29.5.0
-    "@types/node": ^18.17.3
+    "@types/node": ^20.8.6
     "@types/node-fetch": ^2.6.1
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.44.0
@@ -1003,7 +1003,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/allure-js-commons": ^0.0.1
-    "@types/node": ^18.17.3
+    "@types/node": ^20.8.6
     allure-js-commons: 2.0.0-beta.9
     typescript: ^5.2.2
   languageName: unknown
@@ -1905,7 +1905,7 @@ __metadata:
     "@tanstack/react-query": ^4.29.1
     "@testing-library/jest-dom": ^6.1.4
     "@testing-library/react": ^14.0.0
-    "@types/node": ^18.17.3
+    "@types/node": ^20.8.6
     "@wordpress/a11y": ^3.44.0
     "@wordpress/api-fetch": ^6.41.0
     "@wordpress/base-styles": ^4.35.0
@@ -7988,10 +7988,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.11.18, @types/node@npm:^18.17.3":
-  version: 18.17.5
-  resolution: "@types/node@npm:18.17.5"
-  checksum: 763c753351d3ceaedb5888a03b10f0925c5be6e80b3fa5755f47f4c6ba401999becaf7317105554a07dbba43467f2890285cfb7252c34e1b1afed3ef56acdf55
+"@types/node@npm:*, @types/node@npm:^20.8.6":
+  version: 20.8.7
+  resolution: "@types/node@npm:20.8.7"
+  dependencies:
+    undici-types: ~5.25.1
+  checksum: e82b87e7f3f4c12acc5803db21f9144d5e87c20841db9ae98746958e038064700ab04294d08a3714a3df8bd710a974998e2e423443a5d031840cbba17fa126a7
   languageName: node
   linkType: hard
 
@@ -8006,6 +8008,13 @@ __metadata:
   version: 16.18.31
   resolution: "@types/node@npm:16.18.31"
   checksum: 76ca4a2372165cedc88c09cde1bf82f0a9286bf8e6236f15f04a8bf31656129329e95f6d8ce0e84a4e39c3b38ae31eacc950323c9a8d864d8c446842910ec634
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^18.11.18":
+  version: 18.17.5
+  resolution: "@types/node@npm:18.17.5"
+  checksum: 763c753351d3ceaedb5888a03b10f0925c5be6e80b3fa5755f47f4c6ba401999becaf7317105554a07dbba43467f2890285cfb7252c34e1b1afed3ef56acdf55
   languageName: node
   linkType: hard
 
@@ -30978,6 +30987,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"undici-types@npm:~5.25.1":
+  version: 5.25.3
+  resolution: "undici-types@npm:5.25.3"
+  checksum: 60a47c6db451c00d27186d86a41fbd9677fa1f6d1a5350bff342c3985bd79fc3f5a638ebf56bbce21df46c701a687db43b3fbd588e1726e58047cea14d182fef
+  languageName: node
+  linkType: hard
+
 "unherit@npm:^1.0.4":
   version: 1.1.3
   resolution: "unherit@npm:1.1.3"
@@ -32411,7 +32427,7 @@ __metadata:
     "@types/highlight-words-core": ^1.2.1
     "@types/jest": ^29.5.5
     "@types/lodash": ^4.14.199
-    "@types/node": ^18.17.3
+    "@types/node": ^20.8.6
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^18.2.6
