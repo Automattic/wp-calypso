@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { chartBar, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -10,6 +9,7 @@ import { getEarnPageUrl } from '../../helpers';
 import './style.scss';
 
 type GrowYourAudienceCardProps = {
+	ctaLabel: string;
 	icon: JSX.Element;
 	text: string;
 	title: string;
@@ -18,40 +18,25 @@ type GrowYourAudienceCardProps = {
 };
 
 const GrowYourAudienceCard = ( {
+	ctaLabel,
 	icon,
 	text,
 	title,
-	tracksEventCta,
 	url,
-}: GrowYourAudienceCardProps ) => {
-	const translate = useTranslate();
-
-	const onClick = () =>
-		recordTracksEvent( 'calypso_subscriber_management_growth_cta_click', {
-			cta: tracksEventCta,
-		} );
-
-	return (
-		<Card className="grow-your-audience__card" size="small">
-			<CardBody className="grow-your-audience__card-body">
-				<h3 className="grow-your-audience__card-title">
-					<Icon className="grow-your-audience__card-icon" icon={ icon } size={ 20 } />
-					{ title }
-				</h3>
-				<p className="grow-your-audience__card-text">{ text }</p>
-				<a
-					className="grow-your-audience__card-link"
-					href={ url }
-					onClick={ onClick }
-					target="_blank"
-					rel="noreferrer"
-				>
-					{ translate( 'Learn more' ) }
-				</a>
-			</CardBody>
-		</Card>
-	);
-};
+}: GrowYourAudienceCardProps ) => (
+	<Card className="grow-your-audience__card" size="small">
+		<CardBody className="grow-your-audience__card-body">
+			<h3 className="grow-your-audience__card-title">
+				<Icon className="grow-your-audience__card-icon" icon={ icon } size={ 20 } />
+				{ title }
+			</h3>
+			<p className="grow-your-audience__card-text">{ text }</p>
+			<a className="grow-your-audience__card-link" href={ url } target="_blank" rel="noreferrer">
+				{ ctaLabel }
+			</a>
+		</CardBody>
+	</Card>
+);
 
 const GrowYourAudience = () => {
 	const translate = useTranslate();
@@ -65,13 +50,11 @@ const GrowYourAudience = () => {
 				<GrowYourAudienceCard
 					icon={ chartBar }
 					text={ translate(
-						'Using a subscriber block is the first step to growing your audience.'
+						'Take a look at your stats and refine your content strategy for better engagement.'
 					) }
-					title={ translate( 'Every visitor is a potential subscriber' ) }
-					tracksEventCta="subscribe-block"
-					url={ localizeUrl(
-						'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/'
-					) }
+					title={ translate( 'Explore your stats' ) }
+					ctaLabel={ translate( 'Check stats' ) }
+					url={ `/stats/subscribers/${ selectedSiteSlug }` }
 				/>
 
 				<GrowYourAudienceCard
@@ -80,7 +63,7 @@ const GrowYourAudience = () => {
 						'Create fresh content, publish regularly, and understand your audience with site stats.'
 					) }
 					title={ translate( 'Keep your readers engaged' ) }
-					tracksEventCta="go-content-strategy"
+					ctaLabel={ translate( 'Learn more' ) }
 					url="https://wordpress.com/go/content-blogging/how-to-start-a-successful-blog-that-earns-links-traffic-and-revenue/#creating-a-blog-content-strategy" // eslint-disable-line wpcalypso/i18n-unlocalized-url
 				/>
 
@@ -90,7 +73,7 @@ const GrowYourAudience = () => {
 						'Allow your readers to support your work with paid subscriptions, gated content, or tips.'
 					) }
 					title={ translate( 'Start earning' ) }
-					tracksEventCta="earn"
+					ctaLabel={ translate( 'Learn more' ) }
 					url={ getEarnPageUrl( selectedSiteSlug ) }
 				/>
 			</div>
