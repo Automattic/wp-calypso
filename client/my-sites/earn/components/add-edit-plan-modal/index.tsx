@@ -241,6 +241,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		interval: editedSchedule,
 		buyer_can_change_amount: editedPayWhatYouWant,
 		multiple_per_user: editedMultiplePerUser,
+		type: editedPostIsTier ? TIER_TYPE : null,
 		welcome_email_content: editedCustomConfirmationMessage,
 		subscribe_as_site_subscriber: editedPostPaidNewsletter,
 		is_editable: true,
