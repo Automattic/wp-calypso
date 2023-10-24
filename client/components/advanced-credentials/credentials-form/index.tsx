@@ -555,7 +555,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 							onChange={ handleFormChange }
 							value="true"
 						/>
-						<span>{ translate( 'Save for later' ) }</span>
+						<span>{ translate( 'Remember credentials' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 			) }
