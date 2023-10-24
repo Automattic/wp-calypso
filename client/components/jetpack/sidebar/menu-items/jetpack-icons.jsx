@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 export default function JetpackIcons( props ) {
-	const { className, icon } = props;
+	const { className, icon, size = 28 } = props;
 
 	const classes = classnames( 'sidebar__menu-icon', className );
 
@@ -38,8 +38,8 @@ export default function JetpackIcons( props ) {
 		<svg
 			className={ classes }
 			viewBox="0 0 24 24"
-			width="28"
-			height="28"
+			width={ size }
+			height={ size }
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 		>
@@ -51,4 +51,5 @@ export default function JetpackIcons( props ) {
 JetpackIcons.propTypes = {
 	className: PropTypes.string,
 	icon: PropTypes.string,
+	size: PropTypes.number,
 };

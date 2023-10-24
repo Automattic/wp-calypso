@@ -4,10 +4,10 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -70,11 +70,10 @@ export class CommentsManagement extends Component {
 				) }
 				<DocumentHead title={ translate( 'Comments' ) } />
 				{ ! showPermissionError && (
-					<FormattedHeader
-						brandFont
-						className="comments__page-heading"
-						headerText={ translate( 'Comments' ) }
-						subHeaderText={ translate(
+					<NavigationHeader
+						navigationItems={ [] }
+						title={ translate( 'Comments' ) }
+						subtitle={ translate(
 							'View, reply to, and manage all the comments across your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 							{
 								components: {
@@ -82,8 +81,6 @@ export class CommentsManagement extends Component {
 								},
 							}
 						) }
-						align="left"
-						hasScreenOptions
 					/>
 				) }
 				{ showPermissionError && (

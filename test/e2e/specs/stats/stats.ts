@@ -67,7 +67,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		} );
 
 		it( 'Select "Months" stats period', async function () {
-			await statsPage.selectStatsPeriod( 'Months' );
+			await statsPage.selectStatsPeriodFromDropdown( 'Months' );
 		} );
 
 		it( 'Filter traffic activity to Likes', async function () {

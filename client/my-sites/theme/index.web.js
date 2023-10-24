@@ -3,8 +3,6 @@ import { translate } from 'i18n-calypso';
 import { makeLayout, redirectWithoutLocaleParamIfLoggedIn } from 'calypso/controller';
 import {
 	selectSiteIfLoggedInWithSites,
-	hideNavigationIfLoggedInWithNoSites,
-	addNavigationIfLoggedIn,
 	redirectToLoginIfSiteRequested,
 } from 'calypso/my-sites/controller';
 import { getTheme } from 'calypso/state/themes/selectors';
@@ -32,8 +30,6 @@ export default function ( router ) {
 		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
 		redirectWithoutLocaleParamIfLoggedIn,
 		redirectToLoginIfSiteRequested,
-		hideNavigationIfLoggedInWithNoSites,
-		addNavigationIfLoggedIn,
 		setTitleIfThemeExisted,
 		selectSiteIfLoggedInWithSites,
 		fetchThemeDetailsData,

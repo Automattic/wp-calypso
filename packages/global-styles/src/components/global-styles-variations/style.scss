@@ -79,7 +79,7 @@
 	&:focus-visible,
 	&.is-active {
 		&::after {
-			border-radius: 3px; /* stylelint-disable-line scales/radii */
+			border-radius: 3px;
 			bottom: 0;
 			content: "";
 			display: block;

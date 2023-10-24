@@ -90,11 +90,6 @@ function DisplayedModal( {
 export default function ModalContainer( props: ModalContainerProps ) {
 	const { isModalOpen, modalType } = props;
 
-	/** Explore using the isVisible flag on Dialog instead. */
-	if ( ! isModalOpen || ! modalType ) {
-		return;
-	}
-
 	const modalWidth = () => {
 		switch ( modalType ) {
 			case FREE_PLAN_PAID_DOMAIN_DIALOG:
@@ -108,7 +103,7 @@ export default function ModalContainer( props: ModalContainerProps ) {
 	return (
 		<Dialog
 			isBackdropVisible={ true }
-			isVisible={ true }
+			isVisible={ isModalOpen && !! modalType }
 			onClose={ props.onClose }
 			showCloseIcon={ true }
 			labelledby="plan-upsell-modal-title"

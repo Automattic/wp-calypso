@@ -6,6 +6,8 @@ import {
 	FEATURE_200GB_STORAGE,
 	FEATURE_50GB_STORAGE_ADD_ON,
 	FEATURE_100GB_STORAGE_ADD_ON,
+	FEATURE_P2_3GB_STORAGE,
+	FEATURE_P2_13GB_STORAGE,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -20,6 +22,10 @@ export const getStorageStringFromFeature = ( storageFeature: string ) => {
 			return translate( '13 GB' );
 		case FEATURE_50GB_STORAGE:
 			return translate( '50 GB' );
+		case FEATURE_P2_3GB_STORAGE:
+			return translate( '3 GB' );
+		case FEATURE_P2_13GB_STORAGE:
+			return translate( '13 GB' );
 		// TODO: Remove when upgradeable storage is released in plans 2023
 		case FEATURE_200GB_STORAGE:
 			return translate( '200 GB' );
