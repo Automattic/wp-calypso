@@ -1,6 +1,5 @@
-import { Button } from '@automattic/components';
 import { NavigatorScreens, useNavigatorButtons } from '@automattic/onboarding';
-import { useMemo, useState } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
 import type { Category } from '@automattic/design-picker/src/types';
@@ -52,8 +51,6 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	onNavigatorPathChange,
 } ) => {
 	const translate = useTranslate();
-	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
-	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
 	const navigatorButtons = useNavigatorButtons( screens );
 
 	const decodedDescription = useMemo(
@@ -93,23 +90,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 						) }
 						{ ( decodedDescription || decodedShortDescription ) && (
 							<div className="design-preview__sidebar-description">
-								<p>
-									{ isShowDescriptionToggle ? (
-										<>
-											{ isShowFullDescription ? decodedDescription : decodedShortDescription }
-											<Button
-												borderless
-												onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
-											>
-												{ isShowFullDescription
-													? translate( 'Read less' )
-													: translate( 'Read more' ) }
-											</Button>
-										</>
-									) : (
-										decodedDescription ?? decodedShortDescription
-									) }
-								</p>
+								<p>{ screens.length !== 1 ? decodedDescription : decodedShortDescription }</p>
 							</div>
 						) }
 					</div>
