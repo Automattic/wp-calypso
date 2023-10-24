@@ -47,6 +47,8 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 		},
 	} );
 
+	//setSiteInterface.isInitialLoading = true;
+
 	const { isInitialLoading } = setSiteInterface;
 
 	// Initialize the state with the value passed as a prop
