@@ -1,5 +1,6 @@
-import { plugins, key, currencyDollar, category } from '@wordpress/icons';
+import { plugins, currencyDollar, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import {
 	JETPACK_MANAGE_DASHBOARD_LINK,
@@ -40,7 +41,7 @@ const JetpackManageSidebar = () => {
 			},
 		} ),
 		createItem( {
-			icon: key,
+			icon: <JetpackIcons icon="licenses_line" size={ 24 } />,
 			path: '/',
 			link: JETPACK_MANAGE_LICENCES_LINK,
 			title: translate( 'Licenses' ),
