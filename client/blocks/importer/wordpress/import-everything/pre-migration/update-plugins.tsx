@@ -83,7 +83,7 @@ export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props
 		return isMigrateFromWp ? onMigrationPluginUpdate() : installJetpack();
 	}
 
-	function onIntallJetpackManuallyClick() {
+	function onInstallJetpackManuallyClick() {
 		recordTracksEvent( 'calypso_site_importer_install_jetpack_manually' );
 		window.open( `https://jetpack.com/support/getting-started-with-jetpack/` );
 	}
@@ -106,7 +106,7 @@ export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props
 					<Button
 						borderless={ true }
 						className="action-buttons__install-jetpack-manually"
-						onClick={ onIntallJetpackManuallyClick }
+						onClick={ onInstallJetpackManuallyClick }
 					>
 						{ translate( 'Install Jetpack manually' ) }
 					</Button>

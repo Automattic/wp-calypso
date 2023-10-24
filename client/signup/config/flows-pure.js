@@ -4,6 +4,9 @@ import { translate } from 'i18n-calypso';
 
 const noop = () => {};
 
+const getUserSocialStepOrFallback = () =>
+	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
+
 export function generateFlows( {
 	getSiteDestination = noop,
 	getRedirectDestination = noop,
@@ -19,6 +22,8 @@ export function generateFlows( {
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
 } = {} ) {
+	const userSocialStep = getUserSocialStepOrFallback();
+
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
@@ -30,124 +35,135 @@ export function generateFlows( {
 		},
 		{
 			name: 'account',
-			steps: [ 'user' ],
+			steps: [ userSocialStep ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
-			lastModified: '2023-06-16',
+			lastModified: '2023-10-11',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'toStepper' ],
 			optionalDependenciesInQuery: [ 'toStepper' ],
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'business',
-			steps: [ 'user', 'domains', 'plans-business' ],
+			steps: [ userSocialStep, 'domains', 'plans-business' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2020-08-11',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'premium',
-			steps: [ 'user', 'domains', 'plans-premium' ],
+			steps: [ userSocialStep, 'domains', 'plans-premium' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
-			lastModified: '2020-08-11',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
 		{
 			name: 'personal',
-			steps: [ 'user', 'domains', 'plans-personal' ],
+			steps: [ userSocialStep, 'domains', 'plans-personal' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2020-08-11',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'pro',
-			steps: [ 'user', 'domains', 'plans-pro' ],
+			steps: [ userSocialStep, 'domains', 'plans-pro' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the pro plan to the users cart.',
-			lastModified: '2022-03-08',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'starter',
-			steps: [ 'user', 'domains', 'plans-starter' ],
+			steps: [ userSocialStep, 'domains', 'plans-starter' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the starter plan to the users cart.',
-			lastModified: '2022-05-05',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'free',
-			steps: [ 'user', 'domains' ],
+			steps: [ userSocialStep, 'domains' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
-			lastModified: '2020-08-11',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'with-theme',
-			steps: [ 'user', 'domains-theme-preselected', 'plans-theme-preselected' ],
+			steps: [ userSocialStep, 'domains-theme-preselected', 'plans-theme-preselected' ],
 			destination: getWithThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2023-04-27',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'theme' ],
 			optionalDependenciesInQuery: [ 'theme_type', 'style_variation' ],
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'with-theme-assembler',
-			steps: [ 'user', 'domains-theme-preselected', 'plans' ],
+			steps: [ userSocialStep, 'domains-theme-preselected', 'plans' ],
 			destination: getChecklistThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source with the assembler.',
-			lastModified: '2023-02-06',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'with-plugin',
-			steps: [ 'user', 'domains', 'plans-business-with-plugin' ],
+			steps: [ userSocialStep, 'domains', 'plans-business-with-plugin' ],
 			destination: getWithPluginDestination,
 			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
-			lastModified: '2023-07-19',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'plugin', 'billing_period' ],
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
-				? [ 'user', 'domains', 'emails', 'plans' ]
-				: [ 'user', 'domains', 'plans' ],
+				? [ userSocialStep, 'domains', 'emails', 'plans' ]
+				: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-12-10',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
 			steps: isEnabled( 'signup/professional-email-step' )
-				? [ 'user', 'domains', 'emails', 'plans' ]
-				: [ 'user', 'domains', 'plans' ],
+				? [ userSocialStep, 'domains', 'emails', 'plans' ]
+				: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-12-10',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'domain-transfer',
 			steps: isEnabled( 'signup/professional-email-step' )
-				? [ 'user', 'domains', 'emails', 'plans' ]
-				: [ 'user', 'domains', 'plans' ],
+				? [ userSocialStep, 'domains', 'emails', 'plans' ]
+				: [ userSocialStep, 'domains', 'plans' ],
 			destination: ( dependencies ) => `/domains/manage/${ dependencies.siteSlug }`,
 			description:
 				'Onboarding flow specifically for domain transfers. Read more in https://wp.me/pdhack-Hk.',
-			lastModified: '2023-06-19',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'onboarding-pm',
@@ -160,47 +176,39 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'onboarding-media',
-			steps: [ 'user' ],
-			destination: getRedirectDestination,
-			description:
-				'The intermittent user step for the GF foundation version of the paid media flow.',
-			lastModified: '2023-06/17',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
-		},
-		{
 			name: 'import',
-			steps: [ 'user', 'domains', 'plans-import' ],
+			steps: [ userSocialStep, 'domains', 'plans-import' ],
 			destination: ( dependencies ) =>
 				`/setup/import-focused/import?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to import content',
-			lastModified: '2022-10-03',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Import' );
 			},
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'with-add-ons',
 			steps: isEnabled( 'signup/professional-email-step' )
-				? [ 'user', 'domains', 'emails', 'plans', 'add-ons' ]
-				: [ 'user', 'domains', 'plans', 'add-ons' ],
+				? [ userSocialStep, 'domains', 'emails', 'plans', 'add-ons' ]
+				: [ userSocialStep, 'domains', 'plans', 'add-ons' ],
 			destination: getSignupDestination,
 			description:
 				'Copy of the onboarding flow that includes an add-ons step; the flow is used for AB testing (ExPlat) add-ons in signup',
-			lastModified: '2022-07-07',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'onboarding-with-email',
-			steps: [ 'user', 'mailbox-domain', 'mailbox', 'mailbox-plan' ],
+			steps: [ userSocialStep, 'mailbox-domain', 'mailbox', 'mailbox-plan' ],
 			destination: getEmailSignupFlowDestination,
 			description:
 				'Copy of the onboarding flow that includes non-skippable domain and email steps; the flow is used by the Professional Email landing page',
-			lastModified: '2022-09-07',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'onboarding-registrationless',
@@ -271,19 +279,21 @@ export function generateFlows( {
 		},
 		{
 			name: 'ecommerce',
-			steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
+			steps: [ userSocialStep, 'domains', 'plans-ecommerce-fulfilled' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2020-08-11',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'ecommerce-monthly',
-			steps: [ 'user', 'domains', 'plans-ecommerce-monthly' ],
+			steps: [ userSocialStep, 'domains', 'plans-ecommerce-monthly' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2021-02-02',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'wpcc',
@@ -324,11 +334,17 @@ export function generateFlows( {
 		},
 		{
 			name: 'domain',
-			steps: [ 'domain-only', 'site-or-domain', 'site-picker', 'plans-site-selected', 'user' ],
+			steps: [
+				'domain-only',
+				'site-or-domain',
+				'site-picker',
+				'plans-site-selected',
+				userSocialStep,
+			],
 			destination: getDomainSignupFlowDestination,
 			description: 'An experimental approach for WordPress.com/domains',
 			disallowResume: true,
-			lastModified: '2022-02-15',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
@@ -353,11 +369,12 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ 'reader-landing', 'user' ],
+			steps: [ 'reader-landing', userSocialStep ],
 			destination: '/',
 			description: 'Signup for an account and migrate email subs to the Reader.',
-			lastModified: '2020-08-11',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'crowdsignal',
@@ -390,30 +407,33 @@ export function generateFlows( {
 		},
 		{
 			name: 'business-monthly',
-			steps: [ 'user', 'domains', 'plans-business-monthly' ],
+			steps: [ userSocialStep, 'domains', 'plans-business-monthly' ],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the business monthly plan to the users cart.',
-			lastModified: '2021-02-02',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'premium-monthly',
-			steps: [ 'user', 'domains', 'plans-premium-monthly' ],
+			steps: [ userSocialStep, 'domains', 'plans-premium-monthly' ],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the premium monthly plan to the users cart.',
-			lastModified: '2021-02-02',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'personal-monthly',
-			steps: [ 'user', 'domains', 'plans-personal-monthly' ],
+			steps: [ userSocialStep, 'domains', 'plans-personal-monthly' ],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the personal monthly plan to the users cart.',
-			lastModified: '2021-02-02',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'setup-site',
@@ -441,7 +461,7 @@ export function generateFlows( {
 		{
 			name: 'do-it-for-me',
 			steps: [
-				'user',
+				userSocialStep,
 				'new-or-existing-site',
 				'difm-site-picker',
 				'difm-options',
@@ -452,13 +472,14 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2022-03-10',
+			lastModified: '2023-10-11',
 			enableBranchSteps: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'do-it-for-me-store',
 			steps: [
-				'user',
+				userSocialStep,
 				'new-or-existing-site',
 				'difm-site-picker',
 				'difm-store-options',
@@ -469,8 +490,9 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'The BBE store flow',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2023-03-01',
+			lastModified: '2023-10-11',
 			enableBranchSteps: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'website-design-services',
@@ -484,12 +506,13 @@ export function generateFlows( {
 
 		{
 			name: 'site-content-collection',
-			steps: [ 'user', 'website-content' ],
+			steps: [ userSocialStep, 'website-content' ],
 			destination: getDIFMSiteContentCollectionDestination,
 			description: 'A flow to collect DIFM lite site content',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2022-01-21',
+			lastModified: '2023-10-11',
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'woocommerce-install',
@@ -507,40 +530,44 @@ export function generateFlows( {
 
 		{
 			name: 'ecommerce-2y',
-			steps: [ 'user', 'domains', 'plans-ecommerce-2y' ],
+			steps: [ userSocialStep, 'domains', 'plans-ecommerce-2y' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2023-03-15',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 
 		{
 			name: 'business-2y',
-			steps: [ 'user', 'domains', 'plans-business-2y' ],
+			steps: [ userSocialStep, 'domains', 'plans-business-2y' ],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the business 2y plan to the users cart.',
-			lastModified: '2023-03-15',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 
 		{
 			name: 'premium-2y',
-			steps: [ 'user', 'domains', 'plans-premium-2y' ],
+			steps: [ userSocialStep, 'domains', 'plans-premium-2y' ],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the premium 2y plan to the users cart.',
-			lastModified: '2023-03-15',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'personal-2y',
-			steps: [ 'user', 'domains', 'plans-personal-2y' ],
+			steps: [ userSocialStep, 'domains', 'plans-personal-2y' ],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the personal 2y plan to the users cart.',
-			lastModified: '2023-03-15',
+			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 	];
 

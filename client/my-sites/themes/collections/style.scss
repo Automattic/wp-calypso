@@ -1,0 +1,92 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.themes__showcase {
+	.theme-collection__container {
+		margin-left: -16px;
+		margin-right: -16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-left: -32px;
+			margin-right: -32px;
+		}
+		@include break-xlarge {
+			margin-left: -48px;
+			margin-right: -48px;
+		}
+
+		&:last-child {
+			// Ensure the bottom is well padded.
+			// @see https://github.com/Automattic/wp-calypso/blob/af56132740bb9890a99a9caf55fdd4b8b38a4d50/client/layout/style.scss#L124-L132
+			@include breakpoint-deprecated( ">1400px" ) {
+				padding-bottom: 88px;
+			}
+		}
+
+		& + .pattern-assembler-cta-wrapper {
+			margin-top: 48px;
+		}
+	}
+
+	.theme-collection__meta {
+		margin-left: 16px;
+		margin-right: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-left: 32px;
+			margin-right: 32px;
+		}
+		@include break-xlarge {
+			margin-left: 48px;
+			margin-right: 48px;
+		}
+	}
+}
+
+.theme-showcase.is-collection-view {
+	.theme-collection-view-header {
+		background-color: #e5f4ff;
+		padding: 32px 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding: 48px 32px;
+		}
+		@include break-xlarge {
+			margin-bottom: 48px;
+			padding: 48px;
+		}
+	}
+
+	.theme-collection-view-header__back {
+		color: var(--studio-blue-50);
+		font-size: 1rem;
+		font-family: "SF Pro Text", $sans;
+		font-style: normal;
+		font-weight: 400;
+		letter-spacing: -0.32px;
+		line-height: 1.5;
+		padding-left: 0;
+		text-decoration: none;
+	}
+
+	.theme-collection-view-header__title {
+		color: var(--studio-blue-50);
+		font-family: $brand-serif;
+		font-size: rem(44px);
+		font-style: normal;
+		font-weight: 400;
+		line-height: 1.15;
+		margin-bottom: 16px;
+	}
+
+	.theme-collection-view-header__description {
+		color: var(--studio-gray-80);
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body-large;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 1.6;
+		margin-bottom: 0;
+		max-width: 680px;
+	}
+}

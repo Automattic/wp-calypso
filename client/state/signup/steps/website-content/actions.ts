@@ -1,18 +1,9 @@
-import { TranslateResult } from 'i18n-calypso';
 import {
-	HOME_PAGE,
-	BLOG_PAGE,
-	CONTACT_PAGE,
-	ABOUT_PAGE,
 	PHOTO_GALLERY_PAGE,
 	VIDEO_GALLERY_PAGE,
 	PORTFOLIO_PAGE,
-	FAQ_PAGE,
-	SERVICES_PAGE,
-	TESTIMONIALS_PAGE,
-	PRICING_PAGE,
-	TEAM_PAGE,
 	PageId,
+	CUSTOM_PAGE,
 } from 'calypso/signup/difm/constants';
 import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
@@ -30,7 +21,8 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_CHANGES_SAVED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_SEARCH_TERMS_CHANGED,
 } from 'calypso/state/action-types';
-import { Media, MediaUploadType, WebsiteContentServerState } from './types';
+import type { Media, MediaUploadType, WebsiteContentServerState } from './types';
+import type { TranslateResult } from 'i18n-calypso';
 import 'calypso/state/signup/init';
 
 export type MediaUploadedData = {
@@ -134,15 +126,8 @@ function getMediaPlaceholders( pageId: PageId ): Array< Media > {
 		case PORTFOLIO_PAGE:
 		case PHOTO_GALLERY_PAGE:
 			return Array( 8 ).fill( getSingleMediaPlaceholder( 'IMAGE' ) );
-		case HOME_PAGE:
-		case BLOG_PAGE:
-		case CONTACT_PAGE:
-		case ABOUT_PAGE:
-		case FAQ_PAGE:
-		case SERVICES_PAGE:
-		case TESTIMONIALS_PAGE:
-		case PRICING_PAGE:
-		case TEAM_PAGE:
+		case CUSTOM_PAGE:
+			return Array( 8 ).fill( getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ) );
 		default:
 			return Array( 4 ).fill( getSingleMediaPlaceholder( 'IMAGE' ) );
 	}
@@ -174,6 +159,30 @@ function getInitialMediaState( pageId: PageId, savedMedia: Media[] | null | unde
 }
 
 /**
+ * Return the page title to be shown on the website content form.
+ * Return the title of the saved page if it exists.
+ * If the page is not a custom page, return the translated page title.
+ * Else, return an empty string.
+ */
+function getInitialTitle( {
+	pageId,
+	savedTitle,
+	translatedPageTitle,
+}: {
+	pageId: PageId;
+	savedTitle?: string;
+	translatedPageTitle: TranslateResult;
+} ) {
+	if ( savedTitle ) {
+		return savedTitle;
+	}
+	if ( pageId !== CUSTOM_PAGE ) {
+		return translatedPageTitle;
+	}
+	return '';
+}
+
+/**
  * This action essentially maps server state to local state.
  * Page titles are currently picked from client app translations, but
  * they will be a part of local & server state in the future.
@@ -190,7 +199,11 @@ export function initializeWebsiteContentForm(
 
 		return {
 			id: pageId,
-			title: translatedPageTitles[ pageId ],
+			title: getInitialTitle( {
+				pageId,
+				savedTitle: savedContent?.title,
+				translatedPageTitle: translatedPageTitles[ pageId ],
+			} ),
 			content: savedContent?.content ?? '',
 			displayEmail: savedContent?.displayEmail || undefined,
 			displayPhone: savedContent?.displayPhone || undefined,

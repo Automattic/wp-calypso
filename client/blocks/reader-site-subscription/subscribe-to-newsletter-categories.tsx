@@ -21,7 +21,7 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 	const subscribedCategoryIds = useMemo(
 		() =>
 			subscribedNewsletterCategoriesData?.newsletterCategories
-				.filter( ( category ) => !! category.subscribed )
+				?.filter( ( category ) => !! category.subscribed )
 				.map( ( category ) => category.id ) || [],
 		[ subscribedNewsletterCategoriesData ]
 	);

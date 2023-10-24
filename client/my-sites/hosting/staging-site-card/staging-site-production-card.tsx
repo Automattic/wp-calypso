@@ -19,6 +19,7 @@ import {
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
 import { SiteSyncCard } from './card-content/staging-sync-card';
@@ -40,7 +41,10 @@ const ProductionCardHeading = styled( CardHeading )( {
 
 const ActionButtons = styled.div( {
 	display: 'flex',
-	gap: '1em',
+	'@media ( max-width: 768px )': {
+		flexDirection: 'column',
+		alignItems: 'stretch',
+	},
 } );
 
 const SyncActionsContainer = styled( ActionButtons )( {
@@ -57,8 +61,10 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ loadingError, setLoadingError ] = useState( null );
-	const [ syncError, setSyncError ] = useState( null );
+	const [ syncError, setSyncError ] = useState< string | null >( null );
 	const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
+	const stagingSiteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
+
 	const { data: productionSite, isLoading } = useProductionSiteDetail( siteId, {
 		enabled: ! disabled,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,6 +83,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 
 	const { pushToStaging } = usePushToStagingMutation( productionSite?.id as number, siteId, {
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
 			setSyncError( null );
 		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,12 +93,13 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setSyncError( error.message );
+			setSyncError( error.code );
 		},
 	} );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSite?.id as number, siteId, {
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
 			setSyncError( null );
 		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,7 +109,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setSyncError( error.message );
+			setSyncError( error.code );
 		},
 	} );
 
@@ -140,6 +148,10 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						<SiteSyncCard
 							type="staging"
 							productionSiteId={ productionSite.id }
+							siteUrls={ {
+								production: productionSite.url,
+								staging: stagingSiteUrl,
+							} }
 							onPush={ pullFromStaging }
 							onPull={ pushToStaging }
 							error={ syncError }

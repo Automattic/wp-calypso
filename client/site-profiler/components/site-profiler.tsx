@@ -10,6 +10,7 @@ import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
 import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
+import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
@@ -57,6 +58,7 @@ export default function SiteProfiler( props: Props ) {
 		isDomainValid,
 		conversionAction,
 		hostingProviderData?.hosting_provider,
+		normalizeWhoisField( siteProfilerData?.whois?.registrar ),
 		urlData
 	);
 

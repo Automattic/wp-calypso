@@ -20,15 +20,10 @@ import {
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DesignSetup from './internals/steps-repository/design-setup';
-import ErrorStep from './internals/steps-repository/error-step';
-import FreeSetup from './internals/steps-repository/free-setup';
-import LaunchPad from './internals/steps-repository/launchpad';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import Processing from './internals/steps-repository/processing-step';
+import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -49,13 +44,13 @@ const free: Flow = {
 		}, [] );
 
 		return [
-			{ slug: 'freeSetup', component: FreeSetup },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: Processing },
-			{ slug: 'launchpad', component: LaunchPad },
-			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'error', component: ErrorStep },
+			STEPS.FREE_SETUP,
+			STEPS.PROCESSING,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.LAUNCHPAD,
+			STEPS.DESIGN_SETUP,
+			STEPS.PATTERN_ASSEMBLER,
+			STEPS.ERROR,
 		];
 	},
 
@@ -234,12 +229,13 @@ const free: Flow = {
 				window?.location?.pathname +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 
-			const url =
-				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
-					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+			const logInUrl = getLoginUrl( {
+				variationName: flowName,
+				redirectTo: redirectTarget,
+				locale,
+			} );
 
-			return url + ( flags ? `&flags=${ flags }` : '' );
+			return logInUrl + ( flags ? `&flags=${ flags }` : '' );
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the

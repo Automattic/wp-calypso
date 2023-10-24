@@ -6,6 +6,7 @@ import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/recor
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
@@ -96,12 +97,12 @@ const wooexpress: Flow = {
 				queryString = `${ queryString }&${ queryParams.toString() }`;
 			}
 
-			// Early return approach
-			if ( locale || locale === 'en' ) {
-				return `/start/account/user/${ locale }?variationName=${ flowName }&${ queryString }`;
-			}
+			const logInUrl = getLoginUrl( {
+				variationName: flowName,
+				locale,
+			} );
 
-			return `/start/account/user?variationName=${ flowName }&${ queryString }`;
+			return `${ logInUrl }&${ queryString }`;
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the

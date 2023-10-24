@@ -136,12 +136,24 @@
 		}
 	}
 }
-body.is-section-signup {
 
-	.signup__step.is-user {
+body.is-section-signup,
+body.is-section-accept-invite {
+	.signup__step.is-user-social {
 		.signup-form-social-first {
 			width: 327px;
 			margin: 0 auto;
+
+			.signup-form__notice {
+				width: 327px;
+				margin-left: 0;
+				margin-right: 0;
+
+				.notice__icon-wrapper {
+					align-items: flex-start;
+					padding-top: 13px;
+				}
+			}
 
 			.signup-form__social {
 				padding: 0 !important;

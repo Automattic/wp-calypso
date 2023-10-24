@@ -101,7 +101,7 @@ const GlobalStylesVariations = ( {
 }: GlobalStylesVariationsProps ) => {
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
 	const premiumStylesDescription = translate(
-		'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
+		'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
 	);
 
 	const baseGlobalStyles = useMemo(
@@ -146,7 +146,16 @@ const GlobalStylesVariations = ( {
 					} ) }
 				>
 					<div className="global-styles-variations__header">
-						<h2>{ headerText }</h2>
+						<h2>
+							<span>{ headerText }</span>
+							{ ! splitDefaultVariation && (
+								<PremiumBadge
+									shouldHideTooltip
+									shouldCompactWithAnimation
+									labelText={ translate( 'Included in your plan' ) }
+								/>
+							) }
+						</h2>
 						{ ! splitDefaultVariation && (
 							<div>
 								<p>{ translate( 'You can change your style at any time.' ) }</p>
@@ -172,7 +181,7 @@ const GlobalStylesVariations = ( {
 						<div className="global-styles-variations__header">
 							<h2>
 								<span>
-									{ translate( 'Custom Style', 'Custom Styles', {
+									{ translate( 'Premium Style', 'Premium Styles', {
 										count: nonDefaultStyles.length,
 									} ) }
 								</span>

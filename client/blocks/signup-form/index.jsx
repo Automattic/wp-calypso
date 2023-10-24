@@ -49,7 +49,7 @@ import {
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
-import { isP2Flow, isVideoPressFlow } from 'calypso/signup/utils';
+import { isP2Flow } from 'calypso/signup/utils';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -60,6 +60,7 @@ import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerc
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
+import PasswordlessSignupForm from './passwordless';
 import SignupFormSocialFirst from './signup-form-social-first';
 import SocialSignupForm from './social';
 
@@ -97,6 +98,7 @@ class SignupForm extends Component {
 		handleSocialResponse: PropTypes.func,
 		isPasswordless: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
+		isSocialFirst: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		save: PropTypes.func,
@@ -120,6 +122,7 @@ class SignupForm extends Component {
 		flowName: '',
 		isPasswordless: false,
 		isSocialSignupEnabled: false,
+		isSocialFirst: false,
 		horizontal: false,
 		shouldDisplayUserExistsError: false,
 	};
@@ -870,14 +873,13 @@ class SignupForm extends Component {
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
 
-	getNotice() {
+	getNotice( isSocialFirst = false ) {
 		const userExistsError = this.getUserExistsError( this.props );
 
 		if ( userExistsError ) {
 			const loginLink = this.getLoginLink( { emailAddress: userExistsError.email } );
 			return this.globalNotice(
 				{
-					info: true,
 					message: this.props.translate(
 						'We found a WordPress.com account with the email address "%(email)s". ' +
 							'{{a}}Log in to this account{{/a}} to connect it to your profile, ' +
@@ -908,7 +910,7 @@ class SignupForm extends Component {
 						}
 					),
 				},
-				'is-info'
+				isSocialFirst ? 'is-transparent-info' : 'is-info'
 			);
 		}
 
@@ -1160,16 +1162,9 @@ class SignupForm extends Component {
 			);
 		}
 
-		const isGravatar = this.props.isGravatar;
-		const showSeparator =
-			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
-
 		const logInUrl = this.getLoginLink();
 
-		if (
-			( ! isVideoPressFlow( this.props.flowName ) && 'wpcc' !== this.props.flowName ) ||
-			isGravatar
-		) {
+		if ( this.props.isSocialFirst ) {
 			return (
 				<SignupFormSocialFirst
 					step={ this.props.step }
@@ -1183,8 +1178,67 @@ class SignupForm extends Component {
 					isReskinned={ this.props.isReskinned }
 					redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 					queryArgs={ this.props.queryArgs }
-					notice={ this.getNotice() }
+					notice={ this.getNotice( true ) }
 				/>
+			);
+		}
+
+		const isGravatar = this.props.isGravatar;
+		const showSeparator =
+			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
+
+		if ( ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) || isGravatar ) {
+			const gravatarProps = isGravatar
+				? {
+						inputPlaceholder: this.props.translate( 'Enter your email address' ),
+						submitButtonLabel: this.props.translate( 'Continue' ),
+						submitButtonLoadingLabel: this.props.translate( 'Continue' ),
+				  }
+				: {};
+
+			return (
+				<div
+					className={ classNames( 'signup-form', this.props.className, {
+						'is-horizontal': this.isHorizontal(),
+					} ) }
+				>
+					{ this.getNotice() }
+					<PasswordlessSignupForm
+						step={ this.props.step }
+						stepName={ this.props.stepName }
+						flowName={ this.props.flowName }
+						goToNextStep={ this.props.goToNextStep }
+						renderTerms={ this.termsOfServiceLink }
+						logInUrl={ logInUrl }
+						disabled={ this.props.disabled }
+						disableSubmitButton={ this.props.disableSubmitButton }
+						queryArgs={ this.props.queryArgs }
+						{ ...gravatarProps }
+					/>
+
+					{ ! isGravatar && (
+						<>
+							{ showSeparator && (
+								<div className="signup-form__separator">
+									<div className="signup-form__separator-text">
+										{ this.props.translate( 'or' ) }
+									</div>
+								</div>
+							) }
+
+							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+								<SocialSignupForm
+									handleResponse={ this.props.handleSocialResponse }
+									socialService={ this.props.socialService }
+									socialServiceResponse={ this.props.socialServiceResponse }
+									isReskinned={ this.props.isReskinned }
+									redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+								/>
+							) }
+							{ this.props.footerLink || this.footerLink() }
+						</>
+					) }
+				</div>
 			);
 		}
 

@@ -1,4 +1,4 @@
-import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
+import type { OdieUserTracking } from '../track-location/useOdieUserTracking';
 
 export type Context = {
 	nudge_id?: string | undefined;
@@ -31,6 +31,8 @@ export type Message = {
 	meta?: Record< string, string >;
 	role: MessageRole;
 	type: MessageType;
+	simulateTyping?: boolean;
+	sources?: string[];
 };
 
 export type Chat = {

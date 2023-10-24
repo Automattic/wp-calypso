@@ -8,6 +8,7 @@ export { default as mastodon } from './mastodon';
 export { default as mailchimp } from './mailchimp';
 export { default as p2_slack } from './p2-slack';
 export { default as p2_github } from './p2-github';
+export { default as nextdoor } from './nextdoor';
 
 const services = new Set( [
 	'p2_github',
@@ -20,5 +21,6 @@ const services = new Set( [
 	'google_drive',
 	'google_my_business',
 	'mailchimp',
+	'nextdoor',
 ] );
 export const hasOwnProperty = ( name ) => services.has( name );

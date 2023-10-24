@@ -57,42 +57,8 @@ open class WPComPluginBuild(
 			executionTimeoutMin = 6
 		}
 
-		triggers {
-			vcs {
-				branchFilter = """
-					+:*
-					-:pull*
-				""".trimIndent()
-				triggerRules = """
-					-:test/e2e/**
-					-:docs/**.md
-					-:comment=stress test:**
-					-:packages/calypso-e2e/**
-				""".trimIndent()
-			}
-		}
-
 		features {
 			perfmon {
-			}
-			pullRequests {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				provider = github {
-					authType = token {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-				}
-			}
-
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
 			}
 		}
 

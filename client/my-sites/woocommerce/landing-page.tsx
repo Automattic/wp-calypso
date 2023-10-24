@@ -6,9 +6,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
 import EmptyContent from 'calypso/components/empty-content';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
@@ -39,7 +39,6 @@ interface DisplayData {
 
 const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
-	const navigationItems = [ { label: 'WooCommerce' } ];
 	const currentIntent = useSelector( ( state ) => getSiteOption( state, siteId, 'site_intent' ) );
 
 	const dispatch = useDispatch();
@@ -190,13 +189,13 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 
 	return (
 		<div className="landing-page">
-			<FixedNavigationHeader navigationItems={ navigationItems } ref={ headerRef }>
+			<NavigationHeader navigationItems={ [] } title={ __( 'WooCommerce' ) } ref={ headerRef }>
 				{ isAboveElement && (
 					<Button onClick={ finalCTAHandler } primary disabled={ isTransferringBlocked }>
 						{ displayData.action }
 					</Button>
 				) }
-			</FixedNavigationHeader>
+			</NavigationHeader>
 			{ renderWarningNotice() }
 			<EmptyContent
 				title={ displayData.title }

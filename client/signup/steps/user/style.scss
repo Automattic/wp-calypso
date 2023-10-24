@@ -24,7 +24,9 @@ body.is-section-signup.is-white-signup .signup {
 		}
 	}
 
-	.step-wrapper__navigation.action-buttons {
-		height: 60px;
+	.signup__step.is-user-social {
+		.step-wrapper__navigation.action-buttons {
+			height: 60px;
+		}
 	}
 }

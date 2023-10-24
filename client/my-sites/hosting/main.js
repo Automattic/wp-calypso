@@ -16,10 +16,10 @@ import QueryKeyringConnections from 'calypso/components/data/query-keyring-conne
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FeatureExample from 'calypso/components/feature-example';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
@@ -42,6 +42,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	isSiteOnECommerceTrial,
+	isSiteOnHostingTrial,
 	isSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
@@ -52,6 +53,7 @@ import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
+import SiteAdminInterfaceCard from './site-admin-interface-card';
 import SiteBackupCard from './site-backup-card';
 import StagingSiteCard from './staging-site-card';
 import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
@@ -93,6 +95,7 @@ const MainCards = ( {
 	isWpcomStagingSite,
 	isMigrationTrial,
 	siteId,
+	isYoloWpAdminFeatureDevelopment,
 } ) => {
 	const mainCards = [
 		{
@@ -143,6 +146,13 @@ const MainCards = ( {
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
 		},
+		isYoloWpAdminFeatureDevelopment
+			? {
+					feature: 'wp-admin',
+					content: <SiteAdminInterfaceCard />,
+					type: 'basic',
+			  }
+			: null,
 	].filter( ( card ) => card !== null );
 
 	const availableTypes = [
@@ -210,6 +220,7 @@ class Hosting extends Component {
 			isBasicHostingDisabled,
 			isECommerceTrial,
 			isMigrationTrial,
+			isHostingTrial,
 			isSiteAtomic,
 			isTransferring,
 			isWpcomStagingSite,
@@ -307,6 +318,8 @@ class Hosting extends Component {
 			const isGithubIntegrationEnabled =
 				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 
+			const isYoloWpAdminFeatureDevelopment = isEnabled( 'yolo/wp-admin-site-default' );
+
 			return (
 				<>
 					{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
@@ -326,6 +339,7 @@ class Hosting extends Component {
 								isWpcomStagingSite={ isWpcomStagingSite }
 								isMigrationTrial={ isMigrationTrial }
 								siteId={ siteId }
+								isYoloWpAdminFeatureDevelopment={ isYoloWpAdminFeatureDevelopment }
 							/>
 						</Column>
 						<Column type="sidebar">
@@ -349,21 +363,20 @@ class Hosting extends Component {
 				! isWpcomStagingSite );
 		const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
+		const isBusinessTrial = isMigrationTrial || isHostingTrial;
+
 		return (
 			<Main wideLayout className="hosting">
 				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Hosting Configuration' ) }
-					subHeaderText={ translate(
-						'Access your website’s database and more advanced settings.'
-					) }
-					align="left"
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Hosting Configuration' ) }
+					subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 				/>
-				{ ! isMigrationTrial && banner }
-				{ isMigrationTrial && (
+				{ ! isBusinessTrial && banner }
+				{ isBusinessTrial && (
 					<TrialBanner
 						callToAction={
 							<Button primary href={ `/plans/${ siteSlug }` }>
@@ -395,6 +408,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
+			isHostingTrial: isSiteOnHostingTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAtomic,

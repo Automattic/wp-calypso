@@ -21,6 +21,7 @@ import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
+import { useLoginUrl } from '../utils/path';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
@@ -102,6 +103,14 @@ const designFirst: Flow = {
 						saveSiteSettings( siteId, {
 							launchpad_screen: 'full',
 						} );
+
+						if ( providedDependencies?.hasSetPreselectedTheme ) {
+							updateLaunchpadSettings( siteSlug as string, {
+								checklist_statuses: { design_completed: true },
+							} );
+
+							return navigate( `launchpad?siteSlug=${ siteSlug }` );
+						}
 
 						return window.location.assign(
 							addQueryArgs( `/setup/update-design/designSetup`, {
@@ -233,16 +242,13 @@ const designFirst: Flow = {
 		const queryLocaleSlug = getLocaleFromQueryParam();
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-		const logInParams = new URLSearchParams( {
-			variationName: flowName,
-			pageTitle: 'Pick a design',
-			redirect_to: window.location.href.replace( window.location.origin, '' ),
-		} ).toString();
 
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?${ logInParams }`
-				: `/start/account/user?${ logInParams }`;
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: window.location.href.replace( window.location.origin, '' ),
+			pageTitle: 'Pick a design',
+			locale,
+		} );
 
 		// Despite sending a CHECKING state, this function gets called again with the
 		// /setup/design-first/site-creation-step route which has no locale in the path so we need to

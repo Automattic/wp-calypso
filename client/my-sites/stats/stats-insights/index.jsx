@@ -6,9 +6,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -18,7 +20,6 @@ import AnnualHighlightsSection from '../annual-highlights-section';
 import PostingActivity from '../post-trends';
 import Comments from '../stats-comments';
 import StatsModule from '../stats-module';
-import StatsPageHeader from '../stats-page-header';
 import PageViewTracker from '../stats-page-view-tracker';
 import StatShares from '../stats-shares';
 import statsStrings from '../stats-strings';
@@ -47,10 +48,13 @@ const StatsInsights = ( props ) => {
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className="stats">
-				<StatsPageHeader
-					page="insights"
-					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
-				/>
+				<NavigationHeader
+					className="stats__section-header modernized-header"
+					title={ translate( 'Jetpack Stats' ) }
+					subtitle={ translate( "View your site's performance and learn from trends." ) }
+					screenReader={ navItems.insights?.label }
+					navigationItems={ [] }
+				></NavigationHeader>
 				{ siteId && (
 					<div>
 						<DomainTip

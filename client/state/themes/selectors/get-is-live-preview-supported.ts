@@ -95,6 +95,11 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 		return false;
 	}
 
+	// The "Live" Preview does NOT make sense for no selected site.
+	if ( ! siteId ) {
+		return false;
+	}
+
 	// A user doesn't want to preview the active theme.
 	if ( isThemeActive( state, themeId, siteId ) ) {
 		return false;

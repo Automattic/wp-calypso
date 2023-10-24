@@ -54,7 +54,6 @@ import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
-	isTrialSite,
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
@@ -1024,7 +1023,7 @@ export class SiteSettingsFormGeneral extends Component {
 						<Gridicon icon="info-outline" />
 						<span>
 							{ translate(
-								'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
+								'Your site contains premium styles that will only be visible once you upgrade to a Premium plan.'
 							) }
 						</span>
 					</div>
@@ -1078,7 +1077,8 @@ const connectComponent = connect( ( state ) => {
 		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
 		isSiteOnECommerceTrial: getIsSiteOnECommerceTrial( state, siteId ),
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
-		isLaunchable: ! isTrialSite( state, siteId ),
+		isLaunchable:
+			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
 	};
 }, mapDispatchToProps );
 

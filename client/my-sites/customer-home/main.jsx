@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -11,9 +10,9 @@ import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
@@ -140,13 +139,17 @@ const Home = ( {
 
 	const header = (
 		<div className="customer-home__heading">
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'My Home' ) }
-				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
-				align="left"
-				hasScreenOptions
-			/>
+			<NavigationHeader
+				compactBreadcrumb={ false }
+				navigationItems={ [] }
+				mobileItem={ null }
+				title={ translate( 'My Home' ) }
+				subtitle={ translate( 'Your hub for posting, editing, and growing your site.' ) }
+			>
+				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+					{ translate( 'Visit site' ) }
+				</Button>
+			</NavigationHeader>
 
 			<div className="customer-home__site-content">
 				<SiteIcon site={ site } size={ 58 } />
@@ -160,12 +163,6 @@ const Home = ( {
 						<span className="customer-home__site-domain-text">{ site.domain }</span>
 					</ExternalLink>
 				</div>
-			</div>
-
-			<div className="customer-home__view-site-button">
-				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-					{ translate( 'Visit site' ) }
-				</Button>
 			</div>
 		</div>
 	);
@@ -212,20 +209,6 @@ const Home = ( {
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</Main>
 	);
-};
-
-Home.propTypes = {
-	canUserUseCustomerHome: PropTypes.bool.isRequired,
-	hasWooCommerceInstalled: PropTypes.bool.isRequired,
-	isStaticHomePage: PropTypes.bool.isRequired,
-	isRequestingSitePlugins: PropTypes.bool.isRequired,
-	isSiteLaunching: PropTypes.bool.isRequired,
-	site: PropTypes.object.isRequired,
-	siteId: PropTypes.number.isRequired,
-	trackViewSiteAction: PropTypes.func.isRequired,
-	isSiteWooExpressEcommerceTrial: PropTypes.bool.isRequired,
-	ssoModuleActive: PropTypes.bool.isRequired,
-	fetchingJetpackModules: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state ) => {

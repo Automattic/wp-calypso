@@ -61,7 +61,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 				{ ! isLoading && (
 					<>
 						<div className="upgrade-modal__col">
-							<h1 className="upgrade-modal__heading">{ translate( 'Unlock custom styles' ) }</h1>
+							<h1 className="upgrade-modal__heading">{ translate( 'Unlock premium styles' ) }</h1>
 							{ description ?? (
 								<>
 									<p>{ translations.description }</p>

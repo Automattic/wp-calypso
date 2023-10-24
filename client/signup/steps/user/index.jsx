@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isNewsletterFlow } from '@automattic/onboarding';
+import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -204,7 +205,7 @@ export class UserStep extends Component {
 						  );
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					'All Woo Express stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+					'All Woo stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
 						components: {
 							a: <a href={ loginUrl } />,
@@ -259,7 +260,23 @@ export class UserStep extends Component {
 		}
 
 		if ( isReskinned && 0 === positionInFlow ) {
-			subHeaderText = '';
+			if ( this.props.isSocialFirst ) {
+				subHeaderText = '';
+			} else {
+				const { queryObject } = this.props;
+				if ( queryObject?.variationName && isNewsletterFlow( queryObject.variationName ) ) {
+					subHeaderText = translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
+						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+					} );
+				} else {
+					subHeaderText = translate(
+						'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+						{
+							components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+						}
+					);
+				}
+			}
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -410,7 +427,7 @@ export class UserStep extends Component {
 	}
 
 	getHeaderText() {
-		const { flowName, oauth2Client, translate, headerText, wccomFrom } = this.props;
+		const { flowName, oauth2Client, translate, headerText, wccomFrom, isSocialFirst } = this.props;
 
 		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 			return translate( 'Sign up for Crowdsignal' );
@@ -450,7 +467,7 @@ export class UserStep extends Component {
 			return translate( 'Let’s get you signed up.' );
 		}
 
-		if ( ! headerText ) {
+		if ( isSocialFirst ) {
 			return translate( 'Create your account' );
 		}
 
@@ -485,6 +502,10 @@ export class UserStep extends Component {
 
 	renderSignupForm() {
 		const { oauth2Client, isReskinned } = this.props;
+		const isPasswordless =
+			isMobile() ||
+			this.props.isPasswordless ||
+			isNewsletterFlow( this.props?.queryObject?.variationName );
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -515,14 +536,16 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
+					isPasswordless={ isPasswordless }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					horizontal={ false }
+					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
+					isSocialFirst={ this.props.isSocialFirst }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -594,6 +617,26 @@ export class UserStep extends Component {
 		);
 	}
 
+	getCustomizedActionButtons() {
+		if ( this.props.isSocialFirst ) {
+			return (
+				<Button
+					className="step-wrapper__navigation-link forward"
+					href={ this.getLoginUrl() }
+					variant="link"
+				>
+					<span>{ this.props.translate( 'Log in' ) }</span>
+				</Button>
+			);
+		}
+	}
+
+	getIsSticky() {
+		if ( this.props.isSocialFirst ) {
+			return false;
+		}
+	}
+
 	render() {
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
@@ -611,8 +654,6 @@ export class UserStep extends Component {
 			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
-		const loginUrl = this.getLoginUrl();
-
 		// TODO: decouple hideBack flag from the flow name.
 		return (
 			<StepWrapper
@@ -623,16 +664,8 @@ export class UserStep extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
-				isSticky={ false }
-				customizedActionButtons={
-					<Button
-						className="step-wrapper__navigation-link forward"
-						href={ loginUrl }
-						variant="link"
-					>
-						<span>{ this.props.translate( 'Log in' ) }</span>
-					</Button>
-				}
+				customizedActionButtons={ this.getCustomizedActionButtons() }
+				isSticky={ this.getIsSticky() }
 			/>
 		);
 	}

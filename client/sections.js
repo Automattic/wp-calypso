@@ -240,6 +240,7 @@ const sections = [
 		paths: [ '/themes', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/themes`, '/design' ],
 		module: 'calypso/my-sites/themes',
 		enableLoggedOut: true,
+		enableNoSites: true,
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes',
@@ -249,6 +250,7 @@ const sections = [
 		paths: [ '/theme', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/theme` ],
 		module: 'calypso/my-sites/theme',
 		enableLoggedOut: true,
+		enableNoSites: true,
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes',
@@ -599,6 +601,12 @@ const sections = [
 		name: 'jetpack-cloud-agency-signup',
 		paths: [ '/agency/signup' ],
 		module: 'calypso/jetpack-cloud/sections/agency-signup',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'jetpack-cloud-partner-program-signup',
+		paths: [ '/partner-program/signup' ],
+		module: 'calypso/jetpack-cloud/sections/partner-program-signup',
 		group: 'jetpack-cloud',
 	},
 	{

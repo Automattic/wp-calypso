@@ -14,6 +14,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useDomainParams } from '../hooks/use-domain-params';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
 import {
@@ -57,13 +58,12 @@ const connectDomain: Flow = {
 			};
 		}
 
-		const redirectTo = encodeURIComponent(
-			`/setup/${ flowName }/plans?domain=${ domain }&provider=${ provider }}`
-		);
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Connect%20your%20Domain&redirect_to=${ redirectTo }`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Connect%20your%20Domain&redirect_to=${ redirectTo }`;
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: `/setup/${ flowName }/plans?domain=${ domain }&provider=${ provider }}`,
+			pageTitle: 'Connect your Domain',
+			locale,
+		} );
 
 		// Despite sending a CHECKING state, this function gets called again with the
 		// /setup/blog/blogger-intent route which has no locale in the path so we need to

@@ -5,6 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useEffect } from 'react';
 import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -39,6 +40,7 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	const { data: migrationTrialEligibility, isLoading: isCheckingEligibility } =
 		useCheckEligibilityMigrationTrialPlan( site?.ID );
 	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
+	const eligibilityErrorCode = migrationTrialEligibility?.error_code;
 
 	const plan = getPlan( PLAN_BUSINESS );
 	const checkoutUrl = useCheckoutUrl( site.ID, siteSlug );
@@ -73,6 +75,14 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
 		}
 	}
+
+	useEffect( () => {
+		switch ( eligibilityErrorCode ) {
+			case 'email-unverified':
+				navigateToVerifyEmailStep();
+				break;
+		}
+	}, [ eligibilityErrorCode ] );
 
 	if ( isAddingTrial || isCheckingEligibility ) {
 		return <LoadingEllipsis />;

@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isBlogger } from '@automattic/calypso-products';
+import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -138,6 +138,13 @@ class RegisterDomainStep extends Component {
 		otherManagedSubdomainsCountOverride: PropTypes.number,
 		handleClickUseYourDomain: PropTypes.func,
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+
+		/**
+		 * Force the loading placeholder to show even if the search request has been completed, since there is other unresolved requests.
+		 * Although it is a general functionality, but it's only needed by the hiding free subdomain test for now.
+		 * It will be removed if there is still no need of it once the test concludes.
+		 */
+		hasPendingRequests: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -156,6 +163,7 @@ class RegisterDomainStep extends Component {
 		showSkipButton: false,
 		useProvidedProductsList: false,
 		otherManagedSubdomains: null,
+		hasPendingRequests: false,
 	};
 
 	constructor( props ) {
@@ -331,6 +339,27 @@ class RegisterDomainStep extends Component {
 			this.props.selectedSite.domain !== prevProps.selectedSite.domain
 		) {
 			this.focusSearchCard();
+		}
+
+		// Filter out the free wp.com subdomains to avoid doing another API request.
+		// Please note that it's intentional to be incomplete -- the complete version of this
+		// should be able to handle flag transition the other way around, i.e.
+		// when `includeWordPressDotCom` is first `false` and then transit to `true`. The
+		// same should also be ported to the dotblog subdomain flag. However, this code is likely
+		// temporary specific for the hiding free subdomain test, so it's not practical to implement
+		// the complete version for now.
+		if (
+			prevProps.includeWordPressDotCom &&
+			! this.props.includeWordPressDotCom &&
+			this.state.subdomainSearchResults
+		) {
+			// this is fine since we've covered the condition to prevent infinite loop
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( {
+				subdomainSearchResults: this.state.subdomainSearchResults.filter(
+					( subdomain ) => ! isFreeWordPressComDomain( subdomain )
+				),
+			} );
 		}
 	}
 
@@ -1198,6 +1227,17 @@ class RegisterDomainStep extends Component {
 			this.props.analyticsSection
 		);
 
+		// This part handles the other end of the condition handled by the line 282:
+		// 1. The query request is sent.
+		// 2. `includeWordPressDotCom` is changed by the loaded result of the experiment. (this is where the line 282 won't handle)
+		// 3. The domain query result is returned and will be set here.
+		// The drawback is that it'd add unnecessary computation if `includeWordPressDotCom ` never changes.
+		if ( ! this.props.includeWordPressDotCom ) {
+			subdomainSuggestions = subdomainSuggestions.filter(
+				( subdomain ) => ! isFreeWordPressComDomain( subdomain )
+			);
+		}
+
 		this.setState(
 			{
 				subdomainSearchResults: subdomainSuggestions,
@@ -1440,7 +1480,7 @@ class RegisterDomainStep extends Component {
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }
-				isLoadingSuggestions={ this.state.loadingResults }
+				isLoadingSuggestions={ this.state.loadingResults || this.props.hasPendingRequests }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerUnavailableOption={ this.props.offerUnavailableOption }

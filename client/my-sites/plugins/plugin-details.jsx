@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
@@ -12,9 +12,8 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
@@ -230,14 +229,6 @@ function PluginDetails( props ) {
 					label: translate( 'Plugins' ),
 					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
-					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-							},
-						}
-					),
 				} )
 			);
 		}
@@ -339,7 +330,7 @@ function PluginDetails( props ) {
 	} );
 
 	return (
-		<MainComponent wideLayout>
+		<MainComponent className="is-plugin-details" wideLayout isLoggedOut={ ! isLoggedIn }>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker
 				path={ analyticsPath }
@@ -351,7 +342,7 @@ function PluginDetails( props ) {
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
-			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
+			<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginNotices
 				pluginId={ fullPlugin.id }
 				sites={ sitesWithPlugins }
@@ -439,17 +430,22 @@ function PluginDetails( props ) {
 						</div>
 
 						{ ! showPlaceholder && ! requestingPluginsForSites && isWporgPluginFetched && (
-							<Card className="plugin-details-download-card">
-								<Gridicon icon="cloud-download" size={ 48 } />
-								<p>{ downloadText }</p>
-								<Button
-									href={ `https://downloads.wordpress.org/plugin/${ fullPlugin?.slug || '' }.zip` }
-									rel="nofollow"
-								>
-									{ translate( 'Download' ) }
-								</Button>
+							<div className="plugin-details__plugin-download">
+								<div className="plugin-details__plugin-download-text">
+									<span>{ downloadText }</span>
+								</div>
+								<div className="plugin-details__plugin-download-cta">
+									<Button
+										href={ `https://downloads.wordpress.org/plugin/${
+											fullPlugin?.slug || ''
+										}.zip` }
+										rel="nofollow"
+									>
+										{ translate( 'Download' ) }
+									</Button>
+								</div>
 								<script type="application/ld+json">{ structuredData }</script>
-							</Card>
+							</div>
 						) }
 					</div>
 				</div>

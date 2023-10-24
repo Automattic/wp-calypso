@@ -3,9 +3,9 @@ import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import ExporterContainer from 'calypso/my-sites/exporter/container';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -42,11 +42,10 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 	} else {
 		sectionContent = (
 			<Fragment>
-				<FormattedHeader
-					brandFont
-					className="exporter__section-header"
-					headerText={ translate( 'Export Content' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Export Content' ) }
+					subtitle={ translate(
 						'Back up or move your content to another site or platform. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -54,8 +53,6 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
 				<ExporterContainer />
 			</Fragment>

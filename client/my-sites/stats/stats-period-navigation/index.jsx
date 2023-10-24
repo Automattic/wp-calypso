@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import page from 'page';
@@ -5,7 +6,10 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import Legend from 'calypso/components/chart/legend';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import StatsDateControl from 'calypso/components/stats-date-control';
+import IntervalDropdown from 'calypso/components/stats-interval-dropdown';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import NavigationArrows from '../navigation-arrows';
 
@@ -21,6 +25,7 @@ class StatsPeriodNavigation extends PureComponent {
 		queryParams: PropTypes.object,
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
+		isWithNewDateControl: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -31,6 +36,7 @@ class StatsPeriodNavigation extends PureComponent {
 		queryParams: {},
 		startDate: false,
 		endDate: false,
+		isWithNewDateControl: false,
 	};
 
 	handleArrowEvent = ( arrow, href ) => {
@@ -82,22 +88,93 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleArrowEvent( 'previous', href );
 	};
 
+	// Copied from`client/my-sites/stats/stats-chart-tabs/index.jsx`
+	onLegendClick = ( chartItem ) => {
+		const activeLegend = this.props.activeLegend.slice();
+		const chartIndex = activeLegend.indexOf( chartItem );
+		let gaEventAction;
+		if ( -1 === chartIndex ) {
+			activeLegend.push( chartItem );
+			gaEventAction = ' on';
+		} else {
+			activeLegend.splice( chartIndex );
+			gaEventAction = ' off';
+		}
+		this.props.recordGoogleEvent(
+			'Stats',
+			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
+		);
+		this.props.onChangeLegend( activeLegend );
+	};
+
 	render() {
-		const { children, date, moment, period, showArrows, disablePreviousArrow, disableNextArrow } =
-			this.props;
+		const {
+			children,
+			date,
+			moment,
+			period,
+			showArrows,
+			disablePreviousArrow,
+			disableNextArrow,
+			queryParams,
+			slug,
+			pathTemplate,
+			onChangeChartQuantity,
+			isWithNewDateControl,
+			dateRange,
+		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
 
 		return (
-			<div className="stats-period-navigation">
+			<div
+				className={ classNames( 'stats-period-navigation', {
+					'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
+				} ) }
+			>
 				<div className="stats-period-navigation__children">{ children }</div>
-				{ showArrows && (
-					<NavigationArrows
-						disableNextArrow={ disableNextArrow || isToday }
-						disablePreviousArrow={ disablePreviousArrow }
-						onClickNext={ this.handleArrowNext }
-						onClickPrevious={ this.handleArrowPrevious }
-					/>
+				{ isWithNewDateControl ? (
+					<div className="stats-period-navigation__date-control">
+						<StatsDateControl
+							slug={ slug }
+							queryParams={ queryParams }
+							period={ period }
+							pathTemplate={ pathTemplate }
+							onChangeChartQuantity={ onChangeChartQuantity }
+							dateRange={ dateRange }
+						/>
+						<div className="stats-period-navigation__period-control">
+							{ this.props.activeTab && (
+								<Legend
+									activeCharts={ this.props.activeLegend }
+									activeTab={ this.props.activeTab }
+									availableCharts={ this.props.availableLegend }
+									clickHandler={ this.onLegendClick }
+									tabs={ this.props.charts }
+								/>
+							) }
+							{ showArrows && (
+								<NavigationArrows
+									disableNextArrow={ disableNextArrow || isToday }
+									disablePreviousArrow={ disablePreviousArrow }
+									onClickNext={ this.handleArrowNext }
+									onClickPrevious={ this.handleArrowPrevious }
+								/>
+							) }
+							<IntervalDropdown slug={ slug } period={ period } queryParams={ queryParams } />
+						</div>
+					</div>
+				) : (
+					<>
+						{ showArrows && (
+							<NavigationArrows
+								disableNextArrow={ disableNextArrow || isToday }
+								disablePreviousArrow={ disablePreviousArrow }
+								onClickNext={ this.handleArrowNext }
+								onClickPrevious={ this.handleArrowPrevious }
+							/>
+						) }
+					</>
 				) }
 			</div>
 		);

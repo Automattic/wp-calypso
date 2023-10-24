@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
@@ -25,7 +26,15 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
-			...( [ 'domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
+			...( [ 'domain' ].includes( flowName ) && {
+				isDomainOnly: 1,
+				checkoutBackUrl:
+					config( 'env' ) === 'production'
+						? `https://${ config( 'hostname' ) }/start/domain/domain-only`
+						: `${ config( 'protocol' ) ? config( 'protocol' ) : 'https' }://${ config(
+								'hostname'
+						  ) }${ config( 'port' ) ? ':' + config( 'port' ) : '' }/start/domain/domain-only`,
+			} ),
 		},
 		checkoutURL
 	);
@@ -160,10 +169,10 @@ function getWithThemeDestination( {
 	themeParameter,
 	styleVariation,
 	themeType,
-	cartItem,
+	cartItems,
 } ) {
 	if (
-		! cartItem &&
+		! cartItems &&
 		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, WOOCOMMERCE_THEME ].includes( themeType )
 	) {
 		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
@@ -171,6 +180,10 @@ function getWithThemeDestination( {
 
 	if ( DOT_ORG_THEME === themeType ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
+	}
+
+	if ( MARKETPLACE_THEME === themeType ) {
+		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }`;
 	}
 
 	const style = styleVariation ? `&style=${ styleVariation }` : '';

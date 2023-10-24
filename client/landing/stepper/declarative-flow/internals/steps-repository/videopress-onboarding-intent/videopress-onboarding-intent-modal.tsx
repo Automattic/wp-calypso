@@ -18,6 +18,7 @@ export interface VideoPressOnboardingIntentModalContentProps extends IntroModalC
 		href?: string;
 		onClick?: () => void;
 	};
+	learnMoreText?: string | React.ReactNode;
 	isComingSoon?: boolean;
 	intent?: string;
 	surveyTitle?: string;
@@ -32,6 +33,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	intent,
 	featuresList,
 	actionButton,
+	learnMoreText,
 	isComingSoon,
 	surveyTitle,
 	surveyUrl,
@@ -143,19 +145,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 							>
 								{ actionButton.text }
 							</Button>
-							<div className="learn-more">
-								{ translate( '{{a}}Or learn more about VideoPress.{{/a}}', {
-									components: {
-										a: (
-											<a
-												href="https://videopress.com/"
-												target="_blank"
-												rel="external noreferrer noopener"
-											/>
-										),
-									},
-								} ) }
-							</div>
+							<div className="learn-more">{ learnMoreText }</div>
 						</>
 					) }
 					{ isComingSoon && (

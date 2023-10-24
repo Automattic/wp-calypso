@@ -14,8 +14,8 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -26,6 +26,7 @@ import FeatureExample from 'calypso/components/feature-example';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -68,7 +69,6 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import ThemesHeader from '../themes-header';
 
 import './style.scss';
 
@@ -287,7 +287,12 @@ class Upload extends Component {
 			<WrapperComponent>
 				<Card>
 					{ ! inProgress && ! complete && (
-						<UploadDropZone doUpload={ uploadAction } disabled={ isDisabled } />
+						<AsyncLoad
+							require="calypso/blocks/upload-drop-zone"
+							placeholder={ null }
+							doUpload={ uploadAction }
+							disabled={ isDisabled }
+						/>
 					) }
 					{ inProgress && this.renderProgressBar() }
 					{ complete && ! failed && uploadedTheme && this.renderTheme() }
@@ -342,8 +347,9 @@ class Upload extends Component {
 				<ThanksModal source="upload" />
 				<ActivationModal source="upload" />
 
-				<ThemesHeader
-					description={ translate(
+				<NavigationHeader
+					title={ translate( 'Themes' ) }
+					subtitle={ translate(
 						'If you have a theme in .zip format, you may install or update it by uploading it here. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -353,7 +359,8 @@ class Upload extends Component {
 							},
 						}
 					) }
-				/>
+				></NavigationHeader>
+
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
 
 				{ showUpgradeBanner && this.renderUpgradeBanner() }

@@ -21,6 +21,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from '..';
 import {
 	useChatStatus,
+	useIsWapuuEnabled,
 	useShouldRenderChatOption,
 	useShouldRenderEmailOption,
 	useStillNeedHelpURL,
@@ -39,8 +40,7 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 export const HelpCenterContactPage: FC = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
-	const isWapuuEnabled = config.isEnabled( 'wapuu' );
-
+	const isWapuuEnabled = useIsWapuuEnabled();
 	const renderEmail = useShouldRenderEmailOption();
 	const {
 		hasActiveChats,

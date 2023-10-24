@@ -258,6 +258,7 @@ export default function getThankYouPageUrl( {
 					receiptId: receiptIdOrPlaceholder,
 					siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 					fromSiteSlug,
+					productSlug,
 				},
 				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`
 			);

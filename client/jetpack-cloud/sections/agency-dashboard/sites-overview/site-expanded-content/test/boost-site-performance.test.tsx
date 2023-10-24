@@ -67,7 +67,7 @@ describe( 'BoostSitePerformance', () => {
 		);
 
 		fireEvent.click( settingsButton );
-		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_settings_click' );
+		expect( trackEventMock ).toHaveBeenCalledWith( 'boost_expandable_block_settings_click' );
 	} );
 
 	test( 'renders the Boost settings button when there is a high score and has boost', () => {
@@ -90,7 +90,7 @@ describe( 'BoostSitePerformance', () => {
 		);
 
 		fireEvent.click( button );
-		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_settings_click' );
+		expect( trackEventMock ).toHaveBeenCalledWith( 'boost_expandable_block_boost_settings_click' );
 	} );
 
 	test( 'renders the Boost settings button when there is a low score and has boost', () => {
@@ -113,6 +113,8 @@ describe( 'BoostSitePerformance', () => {
 		);
 
 		fireEvent.click( button );
-		expect( trackEventMock ).toHaveBeenCalledWith( 'expandable_block_optimize_performance_click' );
+		expect( trackEventMock ).toHaveBeenCalledWith(
+			'boost_expandable_block_optimize_performance_click'
+		);
 	} );
 } );

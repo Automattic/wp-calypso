@@ -114,78 +114,177 @@ exports[`JetpackSignup should render 1`] = `
         </div>
       </div>
       <div
-        class="signup-form signup-form-social-first"
+        class="signup-form"
       >
+        <div
+          class="card logged-out-form"
+        >
+          <form
+            novalidate=""
+          >
+            <div>
+              <label
+                class="form-label"
+                for="email"
+              >
+                Your email address
+              </label>
+              <input
+                autocapitalize="off"
+                autocorrect="off"
+                class="form-text-input signup-form__input"
+                id="email"
+                name="email"
+                type="email"
+                value="email@an.example.site"
+              />
+              <label
+                class="form-label"
+                for="username"
+              >
+                Choose a username
+              </label>
+              <input
+                autocapitalize="off"
+                autocorrect="off"
+                class="form-text-input signup-form__input"
+                id="username"
+                name="username"
+                type="text"
+                value=""
+              />
+              <label
+                class="form-label"
+                for="password"
+              >
+                Choose a password
+              </label>
+              <div
+                class="form-password-input"
+              >
+                <input
+                  autocomplete="off"
+                  class="form-text-input signup-form__input"
+                  id="password"
+                  name="password"
+                  type="password"
+                  value=""
+                />
+                <span
+                  class="form-password-input__toggle form-password-input__toggle-visibility"
+                >
+                  <svg
+                    class="gridicon gridicons-not-visible"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <use
+                      xlink:href="gridicons.svg#gridicons-not-visible"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </div>
+            <div
+              class="card logged-out-form__footer is-blended"
+            >
+              <p
+                class="signup-form__terms-of-service-link"
+              >
+                By creating an account you agree to our 
+                <a
+                  href="https://wordpress.com/tos/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Terms of Service
+                </a>
+                 and have read our 
+                <a
+                  href="https://automattic.com/privacy/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Privacy Policy
+                </a>
+                .
+              </p>
+              <button
+                class="button signup-form__submit form-button is-primary"
+                locale="en"
+                type="submit"
+              >
+                Create your account
+              </button>
+            </div>
+          </form>
+        </div>
         <div
           class="signup-form__social"
         >
+          <p>
+            Or create an account using:
+          </p>
           <div
             class="signup-form__social-buttons"
           >
             GoogleSocialButton
             AppleLoginButton
-            <button
-              class="components-button social-buttons__button button"
-              type="button"
+            <p
+              class="signup-form__social-buttons-tos"
             >
-              <svg
-                class="social-icons social-icons__google social-icons--enabled"
-                fill="none"
-                height="20"
-                viewBox="0 0 18 14"
-                width="20"
-                xmlns="http://www.w3.org/2000/svg"
+              If you continue with Google or Apple, you agree to our 
+              <a
+                href="https://wordpress.com/tos/"
+                rel="noopener noreferrer"
+                target="_blank"
               >
-                <g>
-                  <rect
-                    fill="none"
-                    height="12.5"
-                    id="Rectangle 710"
-                    rx="1.25"
-                    stroke="#1D2327"
-                    stroke-width="1.5"
-                    width="16.5"
-                    x="0.75"
-                    y="0.75"
-                  />
-                  <path
-                    d="M1 3.5L9 9.5L17 3.5"
-                    fill="none"
-                    id="Vector 107"
-                    stroke="#1D2327"
-                    stroke-width="1.5"
-                  />
-                </g>
-              </svg>
-              <span
-                class="social-buttons__service-name"
+                Terms of Service
+              </a>
+              , and have read our 
+              <a
+                href="https://automattic.com/privacy/"
+                rel="noopener noreferrer"
+                target="_blank"
               >
-                Continue with Email
-              </span>
-            </button>
+                Privacy Policy
+              </a>
+              .
+            </p>
           </div>
         </div>
-        <p
-          class="signup-form-social-first__tos-link"
+        <div
+          class="logged-out-form__links"
         >
-          If you continue with Google or Apple, you agree to our 
           <a
-            href="https://wordpress.com/tos/"
+            class="logged-out-form__link-item"
+            href="/log-in/jetpack?site=http%3A%2F%2Fan.example.site&redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site&from=banner-44-slide-1-dashboard"
+          >
+            Already have an account? Sign in
+          </a>
+          <a
+            class="logged-out-form__link-item jetpack-connect__help-button"
+            href="https://jetpack.com/contact-support?hpi=1"
             rel="noopener noreferrer"
             target="_blank"
           >
-            Terms of Service
+            <svg
+              class="gridicon gridicons-help-outline needs-offset"
+              height="18"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use
+                xlink:href="gridicons.svg#gridicons-help-outline"
+              />
+            </svg>
+             
+            Get help setting up Jetpack
           </a>
-           and have read our 
-          <a
-            href="https://automattic.com/privacy/"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Privacy Policy
-          </a>
-          .
-        </p>
+        </div>
       </div>
     </div>
   </main>
@@ -306,78 +405,177 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
         </div>
       </div>
       <div
-        class="signup-form signup-form-social-first"
+        class="signup-form"
       >
+        <div
+          class="card logged-out-form"
+        >
+          <form
+            novalidate=""
+          >
+            <div>
+              <label
+                class="form-label"
+                for="email"
+              >
+                Your email address
+              </label>
+              <input
+                autocapitalize="off"
+                autocorrect="off"
+                class="form-text-input signup-form__input"
+                id="email"
+                name="email"
+                type="email"
+                value="email@an.example.site"
+              />
+              <label
+                class="form-label"
+                for="username"
+              >
+                Choose a username
+              </label>
+              <input
+                autocapitalize="off"
+                autocorrect="off"
+                class="form-text-input signup-form__input"
+                id="username"
+                name="username"
+                type="text"
+                value=""
+              />
+              <label
+                class="form-label"
+                for="password"
+              >
+                Choose a password
+              </label>
+              <div
+                class="form-password-input"
+              >
+                <input
+                  autocomplete="off"
+                  class="form-text-input signup-form__input"
+                  id="password"
+                  name="password"
+                  type="password"
+                  value=""
+                />
+                <span
+                  class="form-password-input__toggle form-password-input__toggle-visibility"
+                >
+                  <svg
+                    class="gridicon gridicons-not-visible"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <use
+                      xlink:href="gridicons.svg#gridicons-not-visible"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </div>
+            <div
+              class="card logged-out-form__footer is-blended"
+            >
+              <p
+                class="signup-form__terms-of-service-link"
+              >
+                By creating an account you agree to our 
+                <a
+                  href="https://wordpress.com/tos/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Terms of Service
+                </a>
+                 and have read our 
+                <a
+                  href="https://automattic.com/privacy/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Privacy Policy
+                </a>
+                .
+              </p>
+              <button
+                class="button signup-form__submit form-button is-primary"
+                locale="en"
+                type="submit"
+              >
+                Create your account
+              </button>
+            </div>
+          </form>
+        </div>
         <div
           class="signup-form__social"
         >
+          <p>
+            Or create an account using:
+          </p>
           <div
             class="signup-form__social-buttons"
           >
             GoogleSocialButton
             AppleLoginButton
-            <button
-              class="components-button social-buttons__button button"
-              type="button"
+            <p
+              class="signup-form__social-buttons-tos"
             >
-              <svg
-                class="social-icons social-icons__google social-icons--enabled"
-                fill="none"
-                height="20"
-                viewBox="0 0 18 14"
-                width="20"
-                xmlns="http://www.w3.org/2000/svg"
+              If you continue with Google or Apple, you agree to our 
+              <a
+                href="https://wordpress.com/tos/"
+                rel="noopener noreferrer"
+                target="_blank"
               >
-                <g>
-                  <rect
-                    fill="none"
-                    height="12.5"
-                    id="Rectangle 710"
-                    rx="1.25"
-                    stroke="#1D2327"
-                    stroke-width="1.5"
-                    width="16.5"
-                    x="0.75"
-                    y="0.75"
-                  />
-                  <path
-                    d="M1 3.5L9 9.5L17 3.5"
-                    fill="none"
-                    id="Vector 107"
-                    stroke="#1D2327"
-                    stroke-width="1.5"
-                  />
-                </g>
-              </svg>
-              <span
-                class="social-buttons__service-name"
+                Terms of Service
+              </a>
+              , and have read our 
+              <a
+                href="https://automattic.com/privacy/"
+                rel="noopener noreferrer"
+                target="_blank"
               >
-                Continue with Email
-              </span>
-            </button>
+                Privacy Policy
+              </a>
+              .
+            </p>
           </div>
         </div>
-        <p
-          class="signup-form-social-first__tos-link"
+        <div
+          class="logged-out-form__links"
         >
-          If you continue with Google or Apple, you agree to our 
           <a
-            href="https://wordpress.com/tos/"
+            class="logged-out-form__link-item"
+            href="/log-in/jetpack/es?site=http%3A%2F%2Fan.example.site&redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site&from=banner-44-slide-1-dashboard"
+          >
+            Already have an account? Sign in
+          </a>
+          <a
+            class="logged-out-form__link-item jetpack-connect__help-button"
+            href="https://jetpack.com/contact-support?hpi=1"
             rel="noopener noreferrer"
             target="_blank"
           >
-            Terms of Service
+            <svg
+              class="gridicon gridicons-help-outline needs-offset"
+              height="18"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use
+                xlink:href="gridicons.svg#gridicons-help-outline"
+              />
+            </svg>
+             
+            Get help setting up Jetpack
           </a>
-           and have read our 
-          <a
-            href="https://automattic.com/privacy/"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Privacy Policy
-          </a>
-          .
-        </p>
+        </div>
       </div>
     </div>
   </main>

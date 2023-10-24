@@ -1,18 +1,16 @@
 import { JetpackLogo } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import i18n, { LocalizeProps } from 'i18n-calypso';
+import { LocalizeProps } from 'i18n-calypso';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import { DataResponse } from '../types';
 import PlanFeatures2023GridFeatures from './features';
 import PlanDivOrTdContainer from './plan-div-td-container';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
-import type { DomainSuggestion } from '@automattic/data-stores';
 
 const PlanFeaturesContainer: React.FC< {
 	plansWithFeatures: GridPlan[];
 	paidDomainName?: string;
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
+	generatedWPComSubdomain: DataResponse< { domain_name: string } >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	translate: LocalizeProps[ 'translate' ];
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	selectedFeature?: string;
@@ -21,7 +19,7 @@ const PlanFeaturesContainer: React.FC< {
 } > = ( {
 	plansWithFeatures,
 	paidDomainName,
-	wpcomFreeDomainSuggestion,
+	generatedWPComSubdomain,
 	translate,
 	hideUnavailableFeatures,
 	selectedFeature,
@@ -29,10 +27,6 @@ const PlanFeaturesContainer: React.FC< {
 	isTableCell,
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
-	const isEnglishLocale = useIsEnglishLocale();
-	const shouldShowNewJPTooltipCopy =
-		isEnglishLocale ||
-		i18n.hasTranslation( 'Security, performance, and growth tools—powered by Jetpack.' );
 
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
@@ -46,7 +40,7 @@ const PlanFeaturesContainer: React.FC< {
 						features={ wpcomFeatures }
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
-						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+						generatedWPComSubdomain={ generatedWPComSubdomain }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
 						selectedFeature={ selectedFeature }
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
@@ -56,13 +50,7 @@ const PlanFeaturesContainer: React.FC< {
 					{ jetpackFeatures.length !== 0 && (
 						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
 							<Plans2023Tooltip
-								text={
-									shouldShowNewJPTooltipCopy
-										? translate( 'Security, performance, and growth tools—powered by Jetpack.' )
-										: translate(
-												'Security, performance and growth tools made by the WordPress experts.'
-										  )
-								}
+								text={ translate( 'Security, performance, and growth tools—powered by Jetpack.' ) }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 								id={ `${ planSlug }-jp-logo-${ mapIndex }` }
@@ -75,7 +63,7 @@ const PlanFeaturesContainer: React.FC< {
 						features={ jetpackFeatures }
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
-						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+						generatedWPComSubdomain={ generatedWPComSubdomain }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						setActiveTooltipId={ setActiveTooltipId }

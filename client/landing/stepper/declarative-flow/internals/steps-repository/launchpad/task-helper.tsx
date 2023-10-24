@@ -59,7 +59,7 @@ export function getEnhancedTasks(
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
 	stripeConnectUrl?: string,
-	setShowConfirmModal: () => void = () => {},
+	setShowConfirmModal: () => void = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	isDomainEmailUnverified = false
 ) {
 	if ( ! tasks ) {
@@ -202,7 +202,7 @@ export function getEnhancedTasks(
 					let subtitle = task.subtitle;
 
 					if ( displayGlobalStylesWarning ) {
-						const removeCustomStyles = translate( 'Or, {{a}}remove your custom styles{{/a}}.', {
+						const removeCustomStyles = translate( 'Or, {{a}}remove your premium styles{{/a}}.', {
 							components: {
 								a: (
 									<ExternalLink

@@ -20,6 +20,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
+import { useLoginUrl } from '../utils/path';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
@@ -219,11 +220,12 @@ const startWriting: Flow = {
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Start%20writing&redirect_to=/setup/${ flowName }`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Start%20writing&redirect_to=/setup/${ flowName }`;
-
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: `/setup/${ flowName }`,
+			pageTitle: 'Start writing',
+			locale,
+		} );
 		// Despite sending a CHECKING state, this function gets called again with the
 		// /setup/start-writing/site-creation-step route which has no locale in the path so we need to
 		// redirect off of the first render.

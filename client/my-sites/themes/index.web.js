@@ -8,12 +8,14 @@ import {
 } from 'calypso/controller';
 import {
 	navigation,
-	selectSiteIfLoggedIn,
+	selectSiteIfLoggedInWithSites,
 	siteSelection,
 	sites,
+	hideNavigationIfLoggedInWithNoSites,
+	addNavigationIfLoggedIn,
 } from 'calypso/my-sites/controller';
-import { fetchThemeData, loggedOut, redirectToThemeDetails } from './controller';
-import { loggedIn, upload } from './controller-logged-in';
+import { fetchThemeData, redirectToThemeDetails } from './controller';
+import { renderThemes, upload } from './controller-logged-in';
 import { fetchAndValidateVerticalsAndFilters } from './validate-filters';
 
 export default function ( router ) {
@@ -24,20 +26,20 @@ export default function ( router ) {
 
 	const langParam = getLanguageRouteParam();
 	const routesWithoutSites = [
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?`,
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
 	];
 	const routesWithSites = [
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
 	];
 
 	// Upload routes are valid only when logged in. In logged-out sessions they redirect to login page.
@@ -58,7 +60,7 @@ export default function ( router ) {
 		redirectLoggedOut,
 		fetchAndValidateVerticalsAndFilters,
 		siteSelection,
-		loggedIn,
+		renderThemes,
 		navigation,
 		makeLayout,
 		clientRender
@@ -68,8 +70,10 @@ export default function ( router ) {
 		routesWithoutSites,
 		redirectWithoutLocaleParamIfLoggedIn,
 		fetchAndValidateVerticalsAndFilters,
-		selectSiteIfLoggedIn, // This has to be after fetchAndValidateVerticalsAndFilters or else the redirect to theme/:theme will not work properly.
-		loggedOut,
+		selectSiteIfLoggedInWithSites,
+		renderThemes,
+		hideNavigationIfLoggedInWithNoSites,
+		addNavigationIfLoggedIn,
 		makeLayout,
 		clientRender
 	);
@@ -86,5 +90,5 @@ export default function ( router ) {
 			redirectToThemeDetails( page.redirect, site_id, theme, section, next )
 	);
 
-	router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
+	router( '/themes/*', fetchThemeData, renderThemes, makeLayout );
 }

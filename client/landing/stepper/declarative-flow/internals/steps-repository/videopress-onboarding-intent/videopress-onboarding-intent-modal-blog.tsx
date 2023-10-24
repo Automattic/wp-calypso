@@ -27,7 +27,7 @@ const VideoPressOnboardingIntentModalBlog: React.FC< IntroModalContentProps > = 
 			actionButton={ {
 				type: 'link',
 				text: translate( 'Get started with premium' ),
-				href: 'https://wordpress.com/start/premium/?ref=videopress',
+				href: '/start/premium/?ref=videopress',
 			} }
 		/>
 	);

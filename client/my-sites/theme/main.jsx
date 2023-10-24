@@ -846,6 +846,7 @@ class ThemeSheet extends Component {
 
 	getDefaultOptionLabel = () => {
 		const {
+			siteId,
 			defaultOption,
 			isActive,
 			isLoggedIn,
@@ -866,7 +867,7 @@ class ThemeSheet extends Component {
 					{ translate( 'Customize site' ) }
 				</span>
 			);
-		} else if ( isLoggedIn ) {
+		} else if ( isLoggedIn && siteId ) {
 			if ( isPremium && ! isThemePurchased && ! isExternallyManagedTheme ) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
@@ -948,13 +949,15 @@ class ThemeSheet extends Component {
 			tabFilter,
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
+			siteId,
 		} = this.props;
 
 		return (
 			<Button
 				className="theme__sheet-primary-button"
 				href={
-					getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
+					getUrl &&
+					( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn || ! siteId )
 						? getUrl( this.props.themeId, { tabFilter, styleVariationSlug } )
 						: null
 				}
@@ -1154,8 +1157,7 @@ class ThemeSheet extends Component {
 			section ? ' > ' + titlecase( section ) : ''
 		}${ siteId ? ' > Site' : '' }`;
 
-		let plansUrl = '/plans';
-
+		let plansUrl = '';
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
@@ -1165,9 +1167,10 @@ class ThemeSheet extends Component {
 			const feature =
 				PLAN_PREMIUM === plan ? FEATURE_PREMIUM_THEMES_V2 : FEATURE_UPLOAD_THEMES_PLUGINS;
 
+			plansUrl = `/plans/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
+		} else {
 			plansUrl =
-				plansUrl +
-				`/${ siteSlug }/?plan=${ plan }&feature=${ feature }&redirect_to=${ redirectTo }`;
+				isExternallyManagedTheme || isBundledSoftwareSet ? '/start/business' : '/start/premium';
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
@@ -1221,7 +1224,7 @@ class ThemeSheet extends Component {
 
 		let onClick = null;
 
-		if ( isExternallyManagedTheme && isLoggedIn ) {
+		if ( isExternallyManagedTheme && isLoggedIn && siteId ) {
 			onClick = this.onButtonClick;
 		} else if ( ! isLoggedIn ) {
 			onClick = launchPricing;
@@ -1420,7 +1423,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		secondaryOption = null;
 	}
 
-	if ( ! isLoggedIn ) {
+	if ( ! isLoggedIn || ! siteId ) {
 		defaultOption = 'signup';
 		secondaryOption = null;
 	} else if ( isActive ) {

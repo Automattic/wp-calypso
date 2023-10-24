@@ -19,10 +19,12 @@ export const setUpActionsForTasks = ( {
 	tasks,
 	tracksData,
 	extraActions,
+	eventHandlers,
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions;
+	const { setShareSiteModalIsOpen, setActiveChecklist } = extraActions;
+	const { onSiteLaunched } = eventHandlers || {};
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -125,7 +127,7 @@ export const setUpActionsForTasks = ( {
 							apiVersion: '1.1',
 							method: 'post',
 						} );
-						siteLaunched?.();
+						onSiteLaunched?.();
 					};
 					useCalypsoPath = false;
 					break;

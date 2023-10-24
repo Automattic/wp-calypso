@@ -48,7 +48,7 @@
 	--videopress-font-size-form-xxl: 32px;
 }
 
-.videopress-step-wrapper {
+body.is-section-signup .videopress-step-wrapper {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
@@ -164,18 +164,25 @@
 	}
 
 	.signup-form__social-buttons button {
-		background: none;
-		border: none;
+		background: none !important;
+		border: none !important;
 		border-radius: 0;
-		color: var(--videopress-color-text);
 		box-shadow: none;
 		margin: 0;
 		transition: 0.3s;
 
+		span {
+			color: var(--videopress-color-text);
+			margin-left: 8px;
+		}
+
 		&:focus {
 			outline: none;
 			border: none;
-			color: var(--videopress-color-link);
+
+			span {
+				color: var(--videopress-color-link);
+			}
 
 			.social-icons {
 				border-color: var(--videopress-color-link);
@@ -183,7 +190,9 @@
 		}
 
 		&:hover {
-			color: var(--videopress-color-link);
+			span {
+				color: var(--videopress-color-link);
+			}
 
 			.social-icons {
 				border-color: var(--videopress-color-link);
@@ -191,7 +200,7 @@
 		}
 
 		.social-icons {
-			padding: 12px;
+			padding: 12px !important;
 			border: 1px solid var(--videopress-color-separator-light);
 			// We deserve circles
 			// stylelint-disable-next-line scales/radii

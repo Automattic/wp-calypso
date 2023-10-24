@@ -20,7 +20,7 @@ export function formatSlugToURL( inputUrl: string ) {
 		return inputUrl;
 	}
 	let url = inputUrl.trim().toLowerCase();
-	if ( url && url.substr( 0, 4 ) !== 'http' ) {
+	if ( url && ! url.startsWith( 'http' ) ) {
 		url = 'http://' + url;
 	}
 	url = url.replace( /wp-admin\/?$/, '' );

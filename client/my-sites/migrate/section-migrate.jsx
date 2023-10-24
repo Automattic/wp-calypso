@@ -13,6 +13,7 @@ import { Interval, EVERY_TEN_SECONDS, EVERY_FIVE_SECONDS } from 'calypso/lib/int
 import { urlToSlug } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -50,6 +51,9 @@ export class SectionMigrate extends Component {
 	};
 
 	componentDidMount() {
+		const { targetSite, targetSiteId, targetSiteSlug, sourceSite, sourceSiteId } = this.props;
+		const sourceSiteUrl = get( sourceSite, 'URL', sourceSiteId );
+
 		if ( this.isNonAtomicJetpack() ) {
 			return page( `/import/${ this.props.targetSiteSlug }` );
 		}
@@ -62,7 +66,16 @@ export class SectionMigrate extends Component {
 			this._startedMigrationFromCart = true;
 			this._timeStartedMigrationFromCart = new Date().getTime();
 			this.setMigrationState( { migrationStatus: 'backing-up' } );
-			this.startMigration();
+			const trackEventProps = {
+				source_site_id: sourceSiteId,
+				source_site_url: sourceSiteUrl,
+				target_site_id: targetSiteId,
+				target_site_slug: targetSiteSlug,
+				is_migrate_from_wp: false,
+				is_trial: isMigrationTrialSite( targetSite ),
+				type: 'in-product-from-cart',
+			};
+			this.startMigration( trackEventProps );
 		}
 
 		this.fetchSourceSitePluginsAndThemes();

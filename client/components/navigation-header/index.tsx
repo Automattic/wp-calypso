@@ -25,6 +25,7 @@ const Container = styled.div`
 const ActionsContainer = styled.div`
 	display: flex;
 	align-items: center;
+	gap: 16px;
 `;
 
 interface Props {
@@ -36,6 +37,7 @@ interface Props {
 	compactBreadcrumb?: boolean;
 	title?: string | ReactNode;
 	subtitle?: string | ReactNode;
+	screenReader?: string | ReactNode;
 }
 
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
@@ -43,23 +45,31 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		id,
 		className,
 		children,
-		navigationItems,
+		navigationItems = [],
 		mobileItem,
 		compactBreadcrumb,
 		title,
 		subtitle,
+		screenReader,
 	} = props;
 	return (
 		<header id={ id } className={ 'navigation-header ' + className } ref={ ref }>
 			<Container>
-				<Breadcrumb
-					items={ navigationItems }
-					mobileItem={ mobileItem }
-					compact={ compactBreadcrumb }
-					hideWhenOnlyOneLevel
-				/>
 				<div className="navigation-header__main">
-					<FormattedHeader align="left" headerText={ title } subHeaderText={ subtitle } />
+					<Breadcrumb
+						items={ navigationItems }
+						mobileItem={ mobileItem }
+						compact={ compactBreadcrumb }
+						hideWhenOnlyOneLevel
+					/>
+					{ navigationItems.length < 2 && (
+						<FormattedHeader
+							align="left"
+							headerText={ title }
+							subHeaderText={ subtitle }
+							screenReader={ screenReader }
+						/>
+					) }
 					<ActionsContainer>{ children }</ActionsContainer>
 				</div>
 			</Container>

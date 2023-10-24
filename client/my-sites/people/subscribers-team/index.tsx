@@ -1,9 +1,9 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SectionNav from 'calypso/components/section-nav';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
@@ -59,11 +59,10 @@ function SubscribersTeam( props: Props ) {
 			{ isJetpack && isPossibleJetpackConnectionProblem && site?.ID && (
 				<JetpackConnectionHealthBanner siteId={ site.ID } />
 			) }
-			<FormattedHeader
-				brandFont
-				className="people__page-heading"
-				headerText={ translate( 'Users' ) }
-				subHeaderText={ translate(
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Users' ) }
+				subtitle={ translate(
 					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
 					{
 						components: {
@@ -76,8 +75,6 @@ function SubscribersTeam( props: Props ) {
 						},
 					}
 				) }
-				align="left"
-				hasScreenOptions
 			/>
 			<div>
 				<SectionNav>

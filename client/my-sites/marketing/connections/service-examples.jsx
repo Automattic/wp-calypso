@@ -6,6 +6,7 @@ import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import nextdoorExample from 'calypso/assets/images/connections/connections-nextdoor.png';
 import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -24,7 +25,6 @@ import './service-examples.scss';
  *
  * When adding examples for more services, please update the list in addition to adding
  * a method with the example's content.
- *
  * @type {string[]}
  */
 const SERVICES_WITH_EXAMPLES = [
@@ -36,6 +36,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'instagram-basic-display',
 	'linkedin',
 	'tumblr',
+	'nextdoor',
 	'twitter',
 	'google_photos',
 	'google-drive',
@@ -320,6 +321,24 @@ class SharingServiceExamples extends Component {
 						image,
 					},
 			  ];
+	}
+
+	nextdoor() {
+		const label = this.props.translate( 'Automatically share posts to Nextdoor.' );
+		const image = {
+			src: nextdoorExample,
+			alt: this.props.translate( 'Share posts to Nextdoor', {
+				textOnly: true,
+			} ),
+		};
+		return [
+			{
+				label,
+			},
+			{
+				image,
+			},
+		];
 	}
 
 	tumblr() {

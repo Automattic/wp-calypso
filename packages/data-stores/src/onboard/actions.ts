@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
@@ -55,6 +56,8 @@ export function* createVideoPressSite( {
 	const defaultTheme = selectedDesign?.theme || 'premium/videomaker';
 	const siteVertical = 'premium/videomaker' === defaultTheme ? 'videomaker' : 'videomaker-white';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
+	const isVideomakerTrial = config.isEnabled( 'videomaker-trial' );
+	const themeSlug = isVideomakerTrial ? 'pub/videomaker' : 'pub/twentytwentytwo'; // NOTE: keep this a consistent, free theme so post ids during headstart re-run after premium theme switch remain consistent
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
@@ -67,7 +70,7 @@ export function* createVideoPressSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'videopress',
 			enable_fse: true,
-			theme: 'pub/twentytwentytwo', // NOTE: keep this a consistent, free theme so post ids during headstart re-run after premium theme switch remain consistent,
+			theme: themeSlug,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {
@@ -79,7 +82,7 @@ export function* createVideoPressSite( {
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
-			is_videopress_initial_purchase: true,
+			is_videopress_initial_purchase: ! isVideomakerTrial,
 		},
 	};
 

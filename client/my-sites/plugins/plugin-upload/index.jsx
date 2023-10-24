@@ -10,6 +10,7 @@ import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
 import {
@@ -100,6 +101,7 @@ class PluginUpload extends Component {
 			<Main>
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
 				<QueryEligibility siteId={ siteId } />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Plugins' ) } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
 				{ showEligibility && (

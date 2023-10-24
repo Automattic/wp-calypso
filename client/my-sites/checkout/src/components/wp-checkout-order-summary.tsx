@@ -134,19 +134,19 @@ function CheckoutSummaryPriceList() {
 			{ couponLineItem && (
 				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
 					<span>{ couponLineItem.label }</span>
-					<span>{ couponLineItem.amount.displayValue }</span>
+					<span>{ couponLineItem.formattedAmount }</span>
 				</CheckoutSummaryLineItem>
 			) }
 			{ taxLineItems.map( ( taxLineItem ) => (
 				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
 					<span>{ taxLineItem.label }</span>
-					<span>{ taxLineItem.amount.displayValue }</span>
+					<span>{ taxLineItem.formattedAmount }</span>
 				</CheckoutSummaryLineItem>
 			) ) }
 			<CheckoutSummaryTotal>
 				<span>{ translate( 'Total' ) }</span>
 				<span className="wp-checkout-order-summary__total-price">
-					{ totalLineItem.amount.displayValue }
+					{ totalLineItem.formattedAmount }
 				</span>
 			</CheckoutSummaryTotal>
 		</CheckoutSummaryAmountWrapper>

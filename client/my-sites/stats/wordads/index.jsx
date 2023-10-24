@@ -18,6 +18,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { canAccessWordAds } from 'calypso/state/sites/selectors';
@@ -28,7 +29,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import PromoCards from '../promo-cards';
 import DatePicker from '../stats-date-picker';
-import StatsPageHeader from '../stats-page-header';
 import PageViewTracker from '../stats-page-view-tracker';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
@@ -172,10 +172,12 @@ class WordAds extends Component {
 				/>
 
 				<div className="stats">
-					<StatsPageHeader
-						page="wordads"
-						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
-					/>
+					<NavigationHeader
+						className="stats__section-header modernized-header"
+						title={ translate( 'Jetpack Stats' ) }
+						subtitle={ translate( 'See how ads are performing on your site.' ) }
+						screenReader={ navItems.wordads?.label }
+					></NavigationHeader>
 
 					{ ! canAccessAds && (
 						<EmptyContent

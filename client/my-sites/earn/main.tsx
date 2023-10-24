@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -222,11 +222,10 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			<DocumentHead
 				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Earn' ) }
 			/>
-			<FormattedHeader
-				brandFont
-				className="earn__page-header"
-				headerText={ translate( 'Earn' ) }
-				subHeaderText={ translate(
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Earn' ) }
+				subtitle={ translate(
 					'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
@@ -234,7 +233,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 						},
 					}
 				) }
-				align="left"
 			/>
 			{ getEarnSectionNav() }
 			{ isAdSection( section ) && getAdsHeader() }

@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect } from 'react';
 import { SPECIAL_DOMAIN_CATEGORY } from 'calypso/site-profiler/utils/get-domain-category';
 import type { UrlData } from 'calypso/blocks/import/types';
-import type { HostingProvider } from 'calypso/data/site-profiler/types';
+import type { HostingProvider, WhoIs } from 'calypso/data/site-profiler/types';
 import type { CONVERSION_ACTION } from 'calypso/site-profiler/hooks/use-define-conversion-action';
 
 /**
@@ -15,6 +15,7 @@ export default function useSiteProfilerRecordAnalytics(
 	isDomainValid?: boolean,
 	conversionAction?: CONVERSION_ACTION,
 	hostingProvider?: HostingProvider,
+	registrar?: WhoIs[ 'registrar' ],
 	urlData?: UrlData
 ) {
 	useEffect( () => {
@@ -31,8 +32,9 @@ export default function useSiteProfilerRecordAnalytics(
 				domain_category: domainCategory,
 				is_domain_valid: isDomainValid,
 				conversion_action: conversionAction,
+				registrar,
 			} );
-	}, [ domain, isDomainValid, conversionAction ] );
+	}, [ domain, isDomainValid, conversionAction, domainCategory, registrar ] );
 
 	useEffect( () => {
 		hostingProvider &&
@@ -42,7 +44,7 @@ export default function useSiteProfilerRecordAnalytics(
 				provider_slug: hostingProvider?.slug,
 				provider_name: hostingProvider?.name,
 			} );
-	}, [ hostingProvider ] );
+	}, [ domain, hostingProvider ] );
 
 	useEffect( () => {
 		urlData &&
@@ -54,5 +56,5 @@ export default function useSiteProfilerRecordAnalytics(
 				platform_is_wpengine: urlData?.platform_data?.is_wpengine,
 				platform_is_pressable: urlData?.platform_data?.is_pressable,
 			} );
-	}, [ urlData ] );
+	}, [ domain, urlData ] );
 }

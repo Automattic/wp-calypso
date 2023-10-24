@@ -20,6 +20,7 @@ import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
+import { PaymentMethodSelectorSubmitButtonContent } from 'calypso/me/purchases/manage-purchase/payment-method-selector/payment-method-selector-submit-button-content';
 import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
 import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
@@ -103,7 +104,9 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 		stripeLoadingError,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		activePayButtonText: String( translate( 'Save card' ) ),
+		submitButtonContent: (
+			<PaymentMethodSelectorSubmitButtonContent text={ translate( 'Save card' ) } />
+		),
 		allowUseForAllSubscriptions: true,
 		initialUseForAllSubscriptions: true,
 	} );

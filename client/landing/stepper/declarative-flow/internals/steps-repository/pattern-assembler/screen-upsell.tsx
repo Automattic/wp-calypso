@@ -26,7 +26,7 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 			/>
 			<div className="screen-container__body">
 				<strong className="screen-upsell__heading">
-					{ translate( 'Custom styles' ) }
+					{ translate( 'Premium styles' ) }
 					<PremiumBadge
 						shouldHideTooltip
 						shouldCompactWithAnimation

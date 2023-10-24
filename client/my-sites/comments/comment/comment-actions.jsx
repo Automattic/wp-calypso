@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import scrollTo from 'calypso/lib/scroll-to';
 import { getMinimumComment } from 'calypso/my-sites/comments/comment/utils';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -81,6 +82,9 @@ export class CommentActions extends Component {
 		}
 
 		this.showNotice( status );
+
+		// Refresh the admin menu on update of status to ensure count shown is not stale.
+		this.props.refreshAdminMenu();
 	};
 
 	setTrash = () => this.setStatus( 'trash' );
@@ -324,6 +328,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsList
 				unlikeComment( siteId, postId, commentId )
 			)
 		),
+	refreshAdminMenu: () => dispatch( requestAdminMenu( siteId ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentActions ) );

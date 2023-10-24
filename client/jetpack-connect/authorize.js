@@ -2,7 +2,10 @@ import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
+	getProductFromSlug,
+	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
+import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import debugModule from 'debug';
@@ -11,6 +14,7 @@ import { flowRight, get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
@@ -295,22 +299,22 @@ export class JetpackAuthorize extends Component {
 				this.isSso()
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
+		} else if ( this.isFromMyJetpackConnectAfterCheckout() ) {
+			debug( `Redirecting to Calypso product license activation page: ${ redirectAfterAuth }` );
+			navigate(
+				// The /jetpack/connect/authorize controller requires `redirectAfterAuth` to be a
+				// valid well-formed uri (via validUrl.isWebUri()), so here we are removing the url
+				// host so that it becomes a relative url.
+				redirectAfterAuth.replace(
+					/^(https?:\/\/wordpress\.com|http:\/\/calypso\.localhost:3000)/,
+					''
+				)
+			);
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else if ( this.isFromMigrationPlugin() ) {
 			navigate( `/setup/import-focused/migrationHandler?from=${ urlToSlug( homeUrl ) }` );
-		} else if ( this.isFromMyJetpackConnectAfterCheckout() ) {
-			debug( `Redirecting to Calypso product license activation page: ${ redirectAfterAuth }` );
-			navigate(
-				// The /jetpack/connect/authorize controller requires `redirectAfterAuth` to be a
-				// valid well-formed uri (via validUrl.isWebUri()), so here we are removing the url host so that it is a
-				// relative url.
-				redirectAfterAuth.replace(
-					/^(https:\/\/wordpress\.com|http:\/\/calypso\.localhost:3000)/,
-					''
-				)
-			);
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -813,6 +817,46 @@ export class JetpackAuthorize extends Component {
 		return text;
 	}
 
+	getProductActivationText() {
+		if ( ! this.isFromMyJetpackConnectAfterCheckout() ) {
+			return;
+		}
+		const { translate, isAlreadyOnSitesList } = this.props;
+		const { authorizeSuccess } = this.props.authorizationData;
+		const { redirectAfterAuth } = this.props.authQuery;
+
+		const { searchParams } = getUrlParts( redirectAfterAuth );
+		const productSlug = searchParams.get( 'productSlug' );
+		const siteSlug = searchParams.get( 'fromSiteSlug' );
+		const product = getProductFromSlug( productSlug );
+		const productName = getJetpackProductDisplayName( product );
+		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
+
+		if ( authorizeSuccess || isAlreadyOnSitesList ) {
+			return translate(
+				'You purchased {{strong}}%(productName)s{{/strong}}. Now you can activate it on website {{strong}}%(siteName)s{{/strong}}',
+				{
+					args: { productName, siteName },
+					components: {
+						br: <br />,
+						strong: <strong />,
+					},
+				}
+			);
+		}
+
+		return translate(
+			'You purchased {{strong}}%(productName)s{{/strong}}. Once connected, you can activate it on website {{strong}}%(siteName)s{{/strong}}',
+			{
+				args: { productName, siteName },
+				components: {
+					br: <br />,
+					strong: <strong />,
+				},
+			}
+		);
+	}
+
 	isWaitingForConfirmation() {
 		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.authorizationData;
 		return ! ( isAuthorizing || authorizeSuccess || siteReceived );
@@ -949,6 +993,11 @@ export class JetpackAuthorize extends Component {
 			<Card className="jetpack-connect__logged-in-card">
 				<Gravatar user={ user } size={ gravatarSize } />
 				<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
+				{ this.isFromMyJetpackConnectAfterCheckout() && (
+					<p className="jetpack-connect__activate-product-text">
+						{ this.getProductActivationText() }
+					</p>
+				) }
 				{ this.renderNotices() }
 				{ this.renderStateAction() }
 			</Card>

@@ -539,31 +539,20 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.signup__step.is-user {
-		margin-top: 25vh;
-
-		.step-wrapper__header {
-			margin-bottom: 24px !important;
-		}
-
+	.signup__step.is-user,
+	.signup__step.is-user-social {
 		.formatted-header {
 			.formatted-header__title {
 				text-align: center;
-				font-size: rem(30px);
-				line-height: 2.5;
 
 				@include break-small {
 					max-width: inherit;
-					font-size: 2rem;
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					line-height: 3.25rem;
 				}
 			}
 
 			.formatted-header__subtitle {
 				text-align: center;
 				color: #646970;
-
 				a {
 					color: var(--studio-gray-90);
 					text-decoration: underline;
@@ -572,32 +561,10 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 
 				@include break-small {
 					max-width: inherit;
-					font-size: rem(18px);
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 1.625rem;
 					letter-spacing: 0.24px;
 				}
-			}
-		}
-
-		a.step-wrapper__navigation-link {
-			color: #1d2327;
-			font-family: "SF Pro Text", sans-serif;
-			font-size: 0.875rem;
-			font-style: normal;
-			font-weight: 500;
-			line-height: 20px;
-			text-underline-offset: 5px;
-
-			&:hover {
-				color: var(--studio-blue-50, #0675c4);
-			}
-
-			&:focus {
-				outline: 1px dashed var(--studio-blue-50, #0675c4);
-				outline-offset: 3px;
-				box-shadow: none;
-				border-radius: 0;
 			}
 		}
 
@@ -628,36 +595,14 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			flex-direction: column;
 			height: 100%;
 			justify-content: center;
-			gap: 16px;
 		}
 
 		.social-buttons__button {
-			display: flex;
-			height: 48px;
-			padding: 4px 16px !important;
-			justify-content: center;
-			align-items: center;
-			align-self: stretch;
-			border-radius: 4px;
-			border: 1px solid var(--studio-gray-50, #646970) !important;
-			background: var(--black-white-white, #fff);
-			margin-bottom: 0;
-
 			text-align: start;
 			padding-left: 0;
 			padding-bottom: 0;
 			box-shadow: none;
 			background-color: transparent;
-
-			&:hover {
-				background: var(--studio-gray-0, #f6f7f7);
-			}
-
-			&:focus {
-				background: var(--studio-gray-0, #f6f7f7);
-				outline: 2px solid var(--studio-gray-90, #1d2327);
-				outline-offset: 1px;
-			}
 
 			@include break-small {
 				text-align: center;
@@ -665,23 +610,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 
 			@include break-medium {
 				text-align: start;
-			}
-
-			>svg {
-				margin-right: auto;
-			}
-
-			span {
-				color: var(--studio-gray-80, #2c3338);
-				font-feature-settings: "clig" off, "liga" off;
-				font-family: "SF Pro Text", sans-serif;
-				font-size: 0.875rem;
-				font-style: normal;
-				font-weight: 500;
-				line-height: normal;
-				letter-spacing: 0.32px;
-				margin-right: auto;
-				margin-left: -20px;
 			}
 		}
 
@@ -862,6 +790,124 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
+	.signup__step.is-user-social {
+		margin-top: 25vh;
+
+		.step-wrapper__header {
+			margin-bottom: 24px !important;
+		}
+
+		.formatted-header {
+			.formatted-header__title {
+				font-size: rem(30px);
+				line-height: 40px;
+
+				@include break-small {
+					font-size: 2rem;
+					line-height: 3.25;
+				}
+			}
+
+			.formatted-header__subtitle {
+				@include break-small {
+					font-size: rem(18px);
+				}
+			}
+		}
+
+		a.step-wrapper__navigation-link {
+			color: #1d2327;
+			font-family: "SF Pro Text", sans-serif;
+			font-size: 0.875rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 20px;
+			text-underline-offset: 5px;
+
+			&:hover {
+				color: var(--studio-blue-50, #0675c4);
+			}
+
+			&:focus {
+				outline: 1px dashed var(--studio-blue-50, #0675c4);
+				outline-offset: 3px;
+				box-shadow: none;
+				border-radius: 0;
+			}
+		}
+
+		.signup-form__social-buttons {
+			gap: 16px;
+		}
+
+		.social-buttons__button {
+			display: flex;
+			height: 48px;
+			padding: 4px 16px !important;
+			justify-content: center;
+			align-items: center;
+			align-self: stretch;
+			border-radius: 4px;
+			border: 1px solid var(--studio-gray-50, #646970) !important;
+			background: var(--black-white-white, #fff);
+			margin-bottom: 0;
+
+			&:hover {
+				background: var(--studio-gray-0, #f6f7f7);
+			}
+
+			&:focus {
+				background: var(--studio-gray-0, #f6f7f7);
+				outline: 2px solid var(--studio-gray-90, #1d2327);
+				outline-offset: 1px;
+			}
+
+			>svg {
+				margin-right: auto;
+			}
+
+			span {
+				color: var(--studio-gray-80, #2c3338);
+				font-feature-settings: "clig" off, "liga" off;
+				font-family: "SF Pro Text", sans-serif;
+				font-size: 0.875rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: normal;
+				letter-spacing: 0.32px;
+				margin-right: auto;
+				margin-left: -20px;
+			}
+		}
+	}
+
+	.signup__step.is-user {
+		.formatted-header {
+			.formatted-header__title {
+				@include break-small {
+					font-size: 3.25rem; /* stylelint-disable-line scales/font-sizes */
+					line-height: 56px;
+				}
+			}
+
+			.formatted-header__subtitle {
+				@include break-small {
+					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+				}
+			}
+		}
+
+		.social-buttons__button {
+			border: 0;
+
+			> svg {
+				border: 1px solid var(--studio-gray-10);
+				padding: 12px;
+				border-radius: 24px; /* stylelint-disable-line scales/radii */
+			}
+		}
+	}
+
 	/* TODO: Remove the following when the 2023 pricig grid is live to all users */
 	.signup:not(.is-onboarding-2023-pricing-grid) .signup__step .plans.plans-step {
 		.formatted-header {
@@ -906,14 +952,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	.signup__step.is-emails,
 	.signup__step.is-mailbox,
 	.is-domain-only {
-		@include break-large {
-			margin: 0 0 0 20px;
-		}
-
-		@include break-wide {
-			padding-inline-start: 20px;
-		}
-
 		.is-wide-layout {
 			max-width: 1280px;
 		}

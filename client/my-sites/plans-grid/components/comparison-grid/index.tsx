@@ -4,21 +4,17 @@ import {
 	isFreePlan,
 	isWooExpressPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
-	PLAN_WOOEXPRESS_PLUS,
 	getPlanFeaturesGrouped,
 	getWooExpressFeaturesGrouped,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
-	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
@@ -48,6 +44,7 @@ import type {
 	FeatureGroup,
 	PlanSlug,
 	WPComStorageAddOnSlug,
+	FeatureGroupMap,
 } from '@automattic/calypso-products';
 
 function DropdownIcon() {
@@ -375,7 +372,7 @@ const ComparisonGridHeaderCell = ( {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
-		renderedPlans: visibleGridPlans.map( ( { planSlug } ) => planSlug ),
+		renderedGridPlans: visibleGridPlans,
 	} );
 
 	if ( ! gridPlan ) {
@@ -558,7 +555,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
-		renderedPlans: visibleGridPlans.map( ( { planSlug } ) => planSlug ),
+		renderedGridPlans: visibleGridPlans,
 	} );
 
 	if ( ! gridPlan ) {
@@ -737,10 +734,6 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
-	const isEnglishLocale = useIsEnglishLocale();
-	const shouldShowNewJPTooltipCopy =
-		isEnglishLocale ||
-		i18n.hasTranslation( 'Security, performance, and growth tools—powered by Jetpack.' );
 
 	return (
 		<Row
@@ -778,13 +771,9 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 								{ allJetpackFeatures.has( feature.getSlug() ) ? (
 									<JetpackIconContainer>
 										<Plans2023Tooltip
-											text={
-												shouldShowNewJPTooltipCopy
-													? translate(
-															'Security, performance, and growth tools—powered by Jetpack.'
-													  )
-													: ''
-											}
+											text={ translate(
+												'Security, performance, and growth tools—powered by Jetpack.'
+											) }
 											setActiveTooltipId={ setActiveTooltipId }
 											activeTooltipId={ activeTooltipId }
 											id={ `jp-${ tooltipId }` }
@@ -819,6 +808,134 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	);
 };
 
+const FeatureGroup = ( {
+	featureGroup,
+	selectedFeature,
+	isInSignup,
+	flowName,
+	intervalType,
+	activeTooltipId,
+	setActiveTooltipId,
+	showUpgradeableStorage,
+	onStorageAddOnClick,
+	featureGroupMap,
+	visibleGridPlans,
+	planFeatureFootnotes,
+}: {
+	featureGroup: FeatureGroup;
+	selectedFeature?: string;
+	isInSignup: boolean;
+	flowName?: string | null;
+	intervalType: string;
+	activeTooltipId: string;
+	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	showUpgradeableStorage: boolean;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	featureGroupMap: Partial< FeatureGroupMap >;
+	visibleGridPlans: GridPlan[];
+	planFeatureFootnotes: {
+		footnoteList: string[];
+		footnotesByFeature: Record< string, number >;
+	};
+} ) => {
+	const { allFeaturesList } = usePlansGridContext();
+	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
+	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
+		firstSetOfFeatures,
+	] );
+	const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
+	const featureObjects = getPlanFeaturesObject( allFeaturesList, features );
+	const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
+
+	const allJetpackFeatures = useMemo( () => {
+		const allPlans = getPlans();
+		const jetpackFeatures = new Set(
+			Object.values( allPlans )
+				.map(
+					( {
+						get2023PricingGridSignupJetpackFeatures,
+						get2023PlanComparisonJetpackFeatureOverride,
+					} ) => {
+						const jetpackFeatures = get2023PricingGridSignupJetpackFeatures?.();
+						const additionalJetpackFeatures = get2023PlanComparisonJetpackFeatureOverride?.();
+
+						return [
+							...( jetpackFeatures ? jetpackFeatures : [] ),
+							...( additionalJetpackFeatures ? additionalJetpackFeatures : [] ),
+						];
+					}
+				)
+				.flat()
+		);
+
+		return jetpackFeatures;
+	}, [] );
+
+	const handleFeatureGroupToggle = useCallback( () => {
+		const index = visibleFeatureGroups.indexOf( featureGroup.slug );
+		const newVisibleFeatureGroups = [ ...visibleFeatureGroups ];
+
+		if ( index === -1 ) {
+			newVisibleFeatureGroups.push( featureGroup.slug );
+		} else {
+			newVisibleFeatureGroups.splice( index, 1 );
+		}
+
+		setVisibleFeatureGroups( newVisibleFeatureGroups );
+	}, [ featureGroup, setVisibleFeatureGroups, visibleFeatureGroups ] );
+
+	return (
+		<div key={ featureGroup.slug } className="plan-comparison-grid__feature-group">
+			<TitleRow
+				className="plan-comparison-grid__feature-group-title-row"
+				onClick={ handleFeatureGroupToggle }
+			>
+				<Title isHiddenInMobile={ isHiddenInMobile }>
+					<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
+					{ featureGroup.getTitle() }
+				</Title>
+			</TitleRow>
+			{ featureObjects.map( ( feature ) => (
+				<ComparisonGridFeatureGroupRow
+					key={ feature.getSlug() }
+					feature={ feature }
+					isHiddenInMobile={ isHiddenInMobile }
+					allJetpackFeatures={ allJetpackFeatures }
+					visibleGridPlans={ visibleGridPlans }
+					planFeatureFootnotes={ planFeatureFootnotes }
+					isInSignup={ isInSignup }
+					isStorageFeature={ false }
+					flowName={ flowName }
+					isHighlighted={ feature.getSlug() === selectedFeature }
+					intervalType={ intervalType }
+					activeTooltipId={ activeTooltipId }
+					setActiveTooltipId={ setActiveTooltipId }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					onStorageAddOnClick={ onStorageAddOnClick }
+				/>
+			) ) }
+			{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
+				<ComparisonGridFeatureGroupRow
+					key="feature-storage"
+					isHiddenInMobile={ isHiddenInMobile }
+					allJetpackFeatures={ allJetpackFeatures }
+					visibleGridPlans={ visibleGridPlans }
+					planFeatureFootnotes={ planFeatureFootnotes }
+					isInSignup={ isInSignup }
+					isStorageFeature={ true }
+					flowName={ flowName }
+					isHighlighted={ false }
+					intervalType={ intervalType }
+					activeTooltipId={ activeTooltipId }
+					setActiveTooltipId={ setActiveTooltipId }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					onStorageAddOnClick={ onStorageAddOnClick }
+				/>
+			) : null }
+		</div>
+	);
+};
+
 const ComparisonGrid = ( {
 	intervalType,
 	isInSignup,
@@ -835,7 +952,7 @@ const ComparisonGrid = ( {
 	showUpgradeableStorage,
 	onStorageAddOnClick,
 }: ComparisonGridProps ) => {
-	const { gridPlans, allFeaturesList } = usePlansGridContext();
+	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -873,22 +990,9 @@ const ComparisonGrid = ( {
 	const isSmallBreakpoint = usePricingBreakpoint( smallBreakpoint );
 
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
-	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
-	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
-		firstSetOfFeatures,
-	] );
 
 	const displayedGridPlans = useMemo( () => {
-		const hiddenPlans = [
-			PLAN_HOSTING_TRIAL_MONTHLY,
-			PLAN_WOOEXPRESS_PLUS,
-			PLAN_ENTERPRISE_GRID_WPCOM,
-		];
-		const filteredPlans = gridPlans.filter(
-			( { planSlug, isVisible } ) => isVisible && ! hiddenPlans.includes( planSlug )
-		);
-
-		return sortPlans( filteredPlans, currentSitePlanSlug, isMediumBreakpoint );
+		return sortPlans( gridPlans, currentSitePlanSlug, isMediumBreakpoint );
 	}, [ gridPlans, currentSitePlanSlug, isMediumBreakpoint ] );
 
 	useEffect( () => {
@@ -905,6 +1009,34 @@ const ComparisonGrid = ( {
 
 		setVisiblePlans( newVisiblePlans );
 	}, [ isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, displayedGridPlans, isInSignup ] );
+
+	const visibleGridPlans = useMemo(
+		() =>
+			visiblePlans.reduce( ( acc, planSlug ) => {
+				const gridPlan = displayedGridPlans.find(
+					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
+				);
+
+				if ( gridPlan ) {
+					acc.push( gridPlan );
+				}
+
+				return acc;
+			}, [] as GridPlan[] ),
+		[ visiblePlans, displayedGridPlans ]
+	);
+
+	const onPlanChange = useCallback(
+		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
+			const newPlan = event.currentTarget.value;
+			const newVisiblePlans = visiblePlans.map( ( plan ) =>
+				plan === currentPlan ? ( newPlan as PlanSlug ) : plan
+			);
+
+			setVisiblePlans( newVisiblePlans );
+		},
+		[ visiblePlans ]
+	);
 
 	const planFeatureFootnotes = useMemo( () => {
 		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.
@@ -939,65 +1071,6 @@ const ComparisonGrid = ( {
 		};
 	}, [ featureGroupMap ] );
 
-	const allJetpackFeatures = useMemo( () => {
-		const allPlans = getPlans();
-		const jetpackFeatures = new Set(
-			Object.values( allPlans )
-				.map(
-					( {
-						get2023PricingGridSignupJetpackFeatures,
-						get2023PlanComparisonJetpackFeatureOverride,
-					} ) => {
-						const jetpackFeatures = get2023PricingGridSignupJetpackFeatures?.();
-						const additionalJetpackFeatures = get2023PlanComparisonJetpackFeatureOverride?.();
-
-						return [
-							...( jetpackFeatures ? jetpackFeatures : [] ),
-							...( additionalJetpackFeatures ? additionalJetpackFeatures : [] ),
-						];
-					}
-				)
-				.flat()
-		);
-
-		return jetpackFeatures;
-	}, [] );
-
-	const onPlanChange = useCallback(
-		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
-			const newPlan = event.currentTarget.value;
-			const newVisiblePlans = visiblePlans.map( ( plan ) =>
-				plan === currentPlan ? ( newPlan as PlanSlug ) : plan
-			);
-
-			setVisiblePlans( newVisiblePlans );
-		},
-		[ visiblePlans ]
-	);
-
-	const toggleFeatureGroup = ( featureGroupSlug: string ) => {
-		const index = visibleFeatureGroups.indexOf( featureGroupSlug );
-		const newVisibleFeatureGroups = [ ...visibleFeatureGroups ];
-
-		if ( index === -1 ) {
-			newVisibleFeatureGroups.push( featureGroupSlug );
-		} else {
-			newVisibleFeatureGroups.splice( index, 1 );
-		}
-
-		setVisibleFeatureGroups( newVisibleFeatureGroups );
-	};
-
-	const visibleGridPlans = visiblePlans.reduce( ( acc, planSlug ) => {
-		const gridPlan = displayedGridPlans.find( ( gridPlan ) => gridPlan.planSlug === planSlug );
-
-		if ( gridPlan ) {
-			acc.push( gridPlan );
-		}
-
-		return acc;
-	}, [] as GridPlan[] );
-
 	return (
 		<div className="plan-comparison-grid">
 			<Grid isInSignup={ isInSignup }>
@@ -1016,62 +1089,23 @@ const ComparisonGrid = ( {
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 				/>
-				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
-					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
-					const featureObjects = getPlanFeaturesObject( allFeaturesList, features );
-					const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
-
-					return (
-						<div key={ featureGroup.slug } className="plan-comparison-grid__feature-group">
-							<TitleRow
-								className="plan-comparison-grid__feature-group-title-row"
-								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
-							>
-								<Title isHiddenInMobile={ isHiddenInMobile }>
-									<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
-									{ featureGroup.getTitle() }
-								</Title>
-							</TitleRow>
-							{ featureObjects.map( ( feature ) => (
-								<ComparisonGridFeatureGroupRow
-									key={ feature.getSlug() }
-									feature={ feature }
-									isHiddenInMobile={ isHiddenInMobile }
-									allJetpackFeatures={ allJetpackFeatures }
-									visibleGridPlans={ visibleGridPlans }
-									planFeatureFootnotes={ planFeatureFootnotes }
-									isInSignup={ isInSignup }
-									isStorageFeature={ false }
-									flowName={ flowName }
-									isHighlighted={ feature.getSlug() === selectedFeature }
-									intervalType={ intervalType }
-									activeTooltipId={ activeTooltipId }
-									setActiveTooltipId={ setActiveTooltipId }
-									showUpgradeableStorage={ showUpgradeableStorage }
-									onStorageAddOnClick={ onStorageAddOnClick }
-								/>
-							) ) }
-							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
-								<ComparisonGridFeatureGroupRow
-									key="feature-storage"
-									isHiddenInMobile={ isHiddenInMobile }
-									allJetpackFeatures={ allJetpackFeatures }
-									visibleGridPlans={ visibleGridPlans }
-									planFeatureFootnotes={ planFeatureFootnotes }
-									isInSignup={ isInSignup }
-									isStorageFeature={ true }
-									flowName={ flowName }
-									isHighlighted={ false }
-									intervalType={ intervalType }
-									activeTooltipId={ activeTooltipId }
-									setActiveTooltipId={ setActiveTooltipId }
-									showUpgradeableStorage={ showUpgradeableStorage }
-									onStorageAddOnClick={ onStorageAddOnClick }
-								/>
-							) : null }
-						</div>
-					);
-				} ) }
+				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
+					<FeatureGroup
+						key={ featureGroup.slug }
+						featureGroup={ featureGroup }
+						visibleGridPlans={ visibleGridPlans }
+						featureGroupMap={ featureGroupMap }
+						selectedFeature={ selectedFeature }
+						isInSignup={ isInSignup }
+						flowName={ flowName }
+						intervalType={ intervalType }
+						activeTooltipId={ activeTooltipId }
+						setActiveTooltipId={ setActiveTooltipId }
+						showUpgradeableStorage={ showUpgradeableStorage }
+						onStorageAddOnClick={ onStorageAddOnClick }
+						planFeatureFootnotes={ planFeatureFootnotes }
+					/>
+				) ) }
 				<ComparisonGridHeader
 					displayedGridPlans={ displayedGridPlans }
 					visibleGridPlans={ visibleGridPlans }

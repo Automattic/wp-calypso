@@ -2,24 +2,19 @@
 // sidebar will implement by default.
 
 .jetpack-cloud-sidebar {
-	// Make the sidebar full-height, minus top and bottom padding
-	padding: 16px;
-	height: calc(100% - 16px * 2);
-
-	display: flex;
-	flex-direction: column;
-
-	border-radius: 4px;
-
-	// TODO: Existing variables, overridden with values directly from designs;
-	// confirm these colors are correct and refactor as necessary
-	--color-sidebar-menu-hover-background: var(--studio-gray-0);
-	--color-sidebar-background: #fcfcfc;
-
-	background-color: var(--color-sidebar-background);
-
 	.jetpack-cloud-sidebar__site-selector {
 		background-color: var(--color-sidebar-background);
+	}
+
+	.sidebar-v2__menu-item {
+		&.is-active {
+			background: var(--studio-green-0);
+			color: var(--studio-green-50);
+		}
+	}
+
+	.sidebar__menu-icon {
+		margin: 0;
 	}
 }
 
@@ -58,9 +53,4 @@
 		// confirm this weight is correct and refactor as necessary
 		font-weight: 500;
 	}
-}
-
-.jetpack-cloud-sidebar__main {
-	padding: 16px 0;
-	flex-grow: 1;
 }

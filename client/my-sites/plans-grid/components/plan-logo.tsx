@@ -33,7 +33,7 @@ const PlanLogo: React.FunctionComponent< {
 	const { gridPlansIndex } = usePlansGridContext();
 	const { current } = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
-		renderedPlans: renderedGridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
+		renderedGridPlans,
 	} );
 	const headerClasses = classNames(
 		'plan-features-2023-grid__header-logo',

@@ -6,7 +6,7 @@ import {
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,7 +19,9 @@ import {
 	getSignupCompleteFlowNameAndClear,
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
-import { useSite } from '../../hooks/use-site';
+import { useSelector } from 'calypso/state';
+import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
@@ -27,7 +29,7 @@ import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
-import { AssertConditionState, Flow, StepperStep } from './types';
+import { AssertConditionState, Flow, StepperStep, StepProps } from './types';
 import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
 
@@ -47,6 +49,19 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
+	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
+		() =>
+			flowSteps.reduce(
+				( acc, flowStep ) => ( {
+					...acc,
+					[ flowStep.slug ]:
+						'asyncComponent' in flowStep ? lazy( flowStep.asyncComponent ) : flowStep.component,
+				} ),
+				{}
+			),
+		[]
+	);
+
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
 	const { __ } = useI18n();
@@ -62,9 +77,21 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 
 	const urlQueryParams = useQuery();
-
-	const site = useSite();
 	const ref = urlQueryParams.get( 'ref' ) || '';
+
+	const { site, siteSlugOrId } = useSiteData();
+
+	// Ensure that the selected site is fetched, if available. This is used for event tracking purposes.
+	// See https://github.com/Automattic/wp-calypso/pull/82981.
+	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
+	const isRequestingSelectedSite = useSelector(
+		( state ) => site && isRequestingSite( state, siteSlugOrId )
+	);
+
+	// Short-circuit this if the site slug or ID is not available.
+	const hasRequestedSelectedSite = siteSlugOrId
+		? !! selectedSite && ! isRequestingSelectedSite
+		: true;
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
@@ -134,7 +161,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( ! currentStepRoute ) {
+		if ( ! currentStepRoute || ! hasRequestedSelectedSite ) {
 			return;
 		}
 
@@ -158,7 +185,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow.name, currentStepRoute ] );
+	}, [ flow.name, currentStepRoute, hasRequestedSelectedSite ] );
 
 	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
 		state: AssertConditionState.SUCCESS,
@@ -174,7 +201,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <></>;
 		}
 
-		const StepComponent = 'asyncComponent' in step ? lazy( step.asyncComponent ) : step.component;
+		const StepComponent = stepComponents[ step.slug ];
 
 		return (
 			<StepComponent

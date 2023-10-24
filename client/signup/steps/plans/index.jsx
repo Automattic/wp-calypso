@@ -154,12 +154,16 @@ export class PlansStep extends Component {
 		const { signupDependencies } = this.props;
 		const { siteUrl, domainItem, siteTitle, username } = signupDependencies;
 		const paidDomainName = domainItem?.meta;
+		let freeWPComSubdomain;
+		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
+			freeWPComSubdomain = siteUrl;
+		}
 		return (
 			<div>
 				{ errorDisplay }
 				<PlansFeaturesMain
 					paidDomainName={ paidDomainName }
-					freeSubdomain={ ! domainItem ? siteUrl : undefined }
+					freeSubdomain={ freeWPComSubdomain }
 					siteTitle={ siteTitle }
 					signupFlowUserName={ username }
 					siteId={ selectedSite?.ID }
@@ -343,7 +347,6 @@ PlansStep.propTypes = {
 /**
  * Checks if the domainItem picked in the domain step is a top level .blog domain -
  * we only want to make Blogger plan available if it is.
- *
  * @param {Object} domainItem domainItem object stored in the "choose domain" step
  * @returns {boolean} is .blog domain registration
  */

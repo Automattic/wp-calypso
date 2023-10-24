@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import HeaderCake from 'calypso/components/header-cake';
 import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
+import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrateButton from './migrate-button.jsx';
 
@@ -27,9 +28,11 @@ class StepConfirmMigration extends Component {
 	}
 
 	handleClick = () => {
-		const { sourceSite, startMigration, targetSiteSlug } = this.props;
+		const { sourceSite, startMigration, targetSiteSlug, targetSite } = this.props;
 		const sourceSiteId = get( sourceSite, 'ID' );
+		const targetSiteId = get( targetSite, 'ID' );
 		const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
+		const sourceSiteUrl = get( sourceSite, 'URL', sourceSiteId );
 
 		const hasCompatiblePlan = this.isTargetSitePlanCompatible();
 
@@ -38,7 +41,16 @@ class StepConfirmMigration extends Component {
 		} );
 
 		if ( hasCompatiblePlan ) {
-			return startMigration();
+			const trackEventProps = {
+				source_site_id: sourceSiteId,
+				source_site_url: sourceSiteUrl,
+				target_site_id: targetSiteId,
+				target_site_slug: targetSiteSlug,
+				is_migrate_from_wp: false,
+				is_trial: isMigrationTrialSite( targetSite ),
+				type: 'in-product',
+			};
+			return startMigration( trackEventProps );
 		}
 
 		page( `/migrate/upgrade/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );

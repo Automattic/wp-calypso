@@ -25,7 +25,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
 		props;
 
-	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
+	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip && siteId;
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;
 	if ( displayUpsellBanner ) {
@@ -76,8 +76,10 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<QueryActiveTheme siteId={ siteId } />
-			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
+			{ siteId && <QueryActiveTheme siteId={ siteId } /> }
+			{ siteId && currentThemeId && (
+				<QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } />
+			) }
 
 			<ThemeShowcase
 				{ ...props }

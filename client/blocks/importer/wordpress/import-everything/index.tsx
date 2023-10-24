@@ -181,14 +181,14 @@ export class ImportEverything extends SectionMigrate {
 
 		return (
 			<PreMigrationScreen
-				startImport={ this.startMigration }
-				initImportRun={ this.props.initImportRun }
-				isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-				targetSite={ targetSite }
-				isMigrateFromWp={ isMigrateFromWp }
-				isTrial={ isMigrationTrialSite( this.props.targetSite ) }
-				onContentOnlyClick={ onContentOnlySelection }
 				sourceSite={ sourceSite }
+				targetSite={ targetSite }
+				initImportRun={ this.props.initImportRun }
+				isTrial={ isMigrationTrialSite( this.props.targetSite ) }
+				isMigrateFromWp={ isMigrateFromWp }
+				isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+				startImport={ this.startMigration }
+				onContentOnlyClick={ onContentOnlySelection }
 				onFreeTrialClick={ () => {
 					stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
 				} }

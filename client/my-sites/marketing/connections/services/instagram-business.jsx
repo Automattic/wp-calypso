@@ -8,11 +8,6 @@ export class InstagramBusiness extends SharingService {
 		...SharingService.propTypes,
 	};
 
-	static defaultProps = {
-		...SharingService.defaultProps,
-		isNew: true,
-	};
-
 	renderLogo = () => (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<SocialLogo icon="instagram" size={ 48 } className="sharing-service__logo" />
