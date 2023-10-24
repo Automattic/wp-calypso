@@ -87,9 +87,27 @@ function DisplayedModal( {
 				/>
 			);
 		case MONTHLY_PLAN_DONT_MISS_OUT_DIALOG:
-			return <MonthlyPlanDontMissOutDialog />;
+			return (
+				<MonthlyPlanDontMissOutDialog
+					suggestedPlanSlug={ PLAN_PERSONAL }
+					generatedWPComSubdomain={ generatedWPComSubdomain }
+					onFreePlanSelected={ onFreePlanSelected }
+					onPlanSelected={ () => {
+						onPlanSelected( PLAN_PERSONAL );
+					} }
+				/>
+			);
 		case MONTHLY_PLAN_SAVE_UPTO_DIALOG:
-			return <MonthlyPlanSaveUptoDialog />;
+			return (
+				<MonthlyPlanSaveUptoDialog
+					suggestedPlanSlug={ PLAN_PERSONAL }
+					generatedWPComSubdomain={ generatedWPComSubdomain }
+					onFreePlanSelected={ onFreePlanSelected }
+					onPlanSelected={ () => {
+						onPlanSelected( PLAN_PERSONAL );
+					} }
+				/>
+			);
 		default:
 			break;
 	}

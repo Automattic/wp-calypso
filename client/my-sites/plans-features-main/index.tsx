@@ -347,7 +347,8 @@ const PlansFeaturesMain = ( {
 			}
 
 			if ( onUpgradeClick ) {
-				onUpgradeClick( cartItems );
+				// TODO: Uncomment this before merging
+				// onUpgradeClick( cartItems );
 				return;
 			}
 

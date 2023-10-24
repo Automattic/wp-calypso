@@ -15,7 +15,8 @@ const useYearlyPlanUpsellModalExperiment = (
 
 	return {
 		isLoading,
-		result: experimentAssignment?.variationName as YearlyPlanUpsellModalVariations,
+		// result: experimentAssignment?.variationName as YearlyPlanUpsellModalVariations,
+		result: 'save_money',
 	};
 };
 export default useYearlyPlanUpsellModalExperiment;
