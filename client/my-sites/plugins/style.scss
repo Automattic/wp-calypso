@@ -454,6 +454,10 @@ body.is-section-plugins #primary {
 	@include break-large() {
 		padding: 6px 48px 0;
 	}
+
+	&.is-new-navigation {
+		border-bottom: none;
+	}
 }
 
 .plugins__content-wrapper {
