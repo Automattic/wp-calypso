@@ -75,6 +75,7 @@ export const OdieSendMessageButton = ( {
 	};
 
 	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+		bottomRef?.current?.scrollIntoView( { behavior: 'smooth' } );
 		if ( event.key === 'Enter' && ! event.shiftKey ) {
 			event.preventDefault();
 			if ( messageString.trim() === '' ) {

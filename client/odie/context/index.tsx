@@ -43,6 +43,7 @@ interface OdieAssistantContextInterface {
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessages: ( messages: Message[] ) => void;
+	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setContext: ( context: Context ) => void;
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
@@ -68,6 +69,7 @@ const defaultContextInterfaceValues = {
 	setChat: noop,
 	setIsLoadingChat: noop,
 	setMessages: noop,
+	setMessageLikedStatus: noop,
 	setContext: noop,
 	setIsNudging: noop,
 	setIsVisible: noop,
@@ -158,6 +160,21 @@ const OdieAssistantProvider = ( {
 		dispatch( recordTracksEvent( event, properties ) );
 	};
 
+	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
+		setChat( ( prevChat ) => {
+			const messageIndex = prevChat.messages.findIndex( ( m ) => m === message );
+			const updatedMessage = { ...message, liked };
+			return {
+				...prevChat,
+				messages: [
+					...prevChat.messages.slice( 0, messageIndex ),
+					updatedMessage,
+					...prevChat.messages.slice( messageIndex + 1 ),
+				],
+			};
+		} );
+	};
+
 	const addMessage = ( message: Message ) => {
 		setMessages( ( prevMessages ) => {
 			const lastMessage = prevMessages[ prevMessages.length - 1 ];
@@ -198,6 +215,7 @@ const OdieAssistantProvider = ( {
 				setChat,
 				setIsLoadingChat: noop,
 				setMessages,
+				setMessageLikedStatus,
 				setContext: noop,
 				setIsLoading,
 				setIsNudging,

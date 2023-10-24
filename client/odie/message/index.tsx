@@ -63,6 +63,10 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		return;
 	}
 
+	const wapuuAvatarClasses = classnames( 'odie-chatbox-message-avatar', {
+		'odie-chatbox-message-avatar-wapuu-liked': message.liked,
+	} );
+
 	const messageAvatarHeader = isUser ? (
 		<>
 			<Gravatar
@@ -84,7 +88,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 					textOnly: true,
 					args: { botName },
 				} ) }
-				className="odie-chatbox-message-avatar"
+				className={ wapuuAvatarClasses }
 			/>
 			{ message.type === 'placeholder' ? (
 				<img
@@ -160,7 +164,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 						</div>
 					) }
 
-					{ ! isUser && <WasThisHelpfulButtons /> }
+					{ ! isUser && <WasThisHelpfulButtons message={ message } /> }
 				</>
 			) }
 			{ message.type === 'introduction' && (

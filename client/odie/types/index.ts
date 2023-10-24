@@ -31,8 +31,10 @@ export type Message = {
 	meta?: Record< string, string >;
 	role: MessageRole;
 	type: MessageType;
+	liked?: boolean | null;
 	simulateTyping?: boolean;
 	sources?: string[];
+	id?: string;
 };
 
 export type Chat = {
