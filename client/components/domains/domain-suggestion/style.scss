@@ -332,7 +332,9 @@ body.is-section-signup.is-white-signup {
 		}
 
 		@include break-wide {
-			margin: auto 0 auto 12px;
+			align-self: baseline;
+			margin-left: 12px;
+			margin-bottom: 0;
 			flex: 1;
 		}
 	}

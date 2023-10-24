@@ -270,8 +270,8 @@ class DomainRegistrationSuggestion extends Component {
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">
 					{ title } { ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
-					{ this.renderBadges() }
 				</h3>
+				{ this.renderBadges() }
 			</div>
 		);
 	}
