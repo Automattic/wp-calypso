@@ -447,6 +447,12 @@ export function handlePage( action, data ) {
 				receiveRecommendedSites( { seed: 'discover-new-sites', sites: streamNewSites } )
 			);
 		}
+
+		// The first request when going to wordpress.com/discover does not include tags in the streamKey
+		// because it is still waiting for the user's interests to be fetched.
+		// Given that the user interests will be retrieved in the response from /read/streams/discover we
+		// use that values to generate a correct streamKey and prevent doing a new request when the user
+		// interests are finally fetched. More context here: paYKcK-3zo-p2#comment-2528.
 		let newStreamKey = streamKey;
 		if ( streamKey === 'discover:recommended' && data.user_interests ) {
 			newStreamKey = buildDiscoverStreamKey( 'recommended', data.user_interests );
