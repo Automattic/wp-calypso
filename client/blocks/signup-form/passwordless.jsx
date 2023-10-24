@@ -101,21 +101,27 @@ class PasswordlessSignupForm extends Component {
 		}
 	};
 
-	createAccountError = ( error ) => {
+	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-			page(
-				addQueryArgs(
-					{
-						email_address: this.state.email,
-						is_signup_existing_account: true,
-					},
-					this.props.logInUrl
-				)
+			const email = typeof this.state.email === 'string' ? this.state.email.trim() : '';
+			const response = await wpcom.req.get(
+				`/users/${ encodeURIComponent( email ) }/auth-options`
 			);
-
-			return;
+			// Just for https://github.com/Automattic/wp-calypso/pull/83249. Passwordless accounts will be changed to facilitate emailing the login link.
+			if ( ! response?.passwordless ) {
+				page(
+					addQueryArgs(
+						{
+							email_address: this.state.email,
+							is_signup_existing_account: true,
+						},
+						this.props.logInUrl
+					)
+				);
+				return;
+			}
 		}
 
 		this.setState( {
