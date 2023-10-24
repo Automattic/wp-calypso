@@ -1,13 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { requestDSPHandleErrors } from 'calypso/lib/promote-post';
+import { AudienceList } from './types';
 
 export type CampaignResponse = {
-	audience_list: {
-		devices: string;
-		countries: string;
-		topics: string;
-		languages: string;
-	};
+	audience_list: AudienceList;
 	content_config: {
 		clickUrl: string;
 		title: string;
