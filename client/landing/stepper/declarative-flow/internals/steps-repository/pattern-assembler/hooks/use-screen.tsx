@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from '../constants';
@@ -21,6 +22,7 @@ export type Screen = {
 };
 
 const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Screen => {
+	const isAddPagesEnabled = isEnabled( 'pattern-assembler/add-pages' );
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const screens: Record< ScreenName, Screen > = {
@@ -71,6 +73,16 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			backLabel: hasEnTranslation( 'styles' ) ? translate( 'styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.STYLES_COLORS,
 		},
+		pages: {
+			name: 'pages',
+			title: translate( 'Add more pages' ),
+			description: translate(
+				"We've included common pages in your website, but feel free to add more or change the current ones."
+			),
+			continueLabel: translate( 'Save and continue' ),
+			backLabel: translate( 'pages' ),
+			initialPath: NAVIGATOR_PATHS.PAGES,
+		},
 		upsell: {
 			name: 'upsell',
 			title: translate( 'Premium styles' ),
@@ -99,15 +111,39 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		main: null,
 		sections: screens.main,
 		styles: screens.main,
-		upsell: screens.styles,
-		activation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
-		confirmation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
+		pages: screens.styles,
+		upsell: isAddPagesEnabled ? screens.pages : screens.styles,
+		activation: ( () => {
+			if ( options.shouldUnlockGlobalStyles ) {
+				return screens.upsell;
+			}
+
+			return isAddPagesEnabled ? screens.pages : screens.styles;
+		} )(),
+		confirmation: ( () => {
+			if ( options.shouldUnlockGlobalStyles ) {
+				return screens.upsell;
+			}
+
+			return isAddPagesEnabled ? screens.pages : screens.styles;
+		} )(),
 	};
 
 	const nextScreens = {
 		main: screens.styles,
 		sections: screens.main,
 		styles: ( () => {
+			if ( isAddPagesEnabled ) {
+				return screens.pages;
+			}
+
+			if ( options.shouldUnlockGlobalStyles ) {
+				return screens.upsell;
+			}
+
+			return options.isNewSite ? screens.confirmation : screens.activation;
+		} )(),
+		pages: ( () => {
 			if ( options.shouldUnlockGlobalStyles ) {
 				return screens.upsell;
 			}
