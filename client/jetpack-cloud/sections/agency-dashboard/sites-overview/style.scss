@@ -41,6 +41,10 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		border-bottom: 1px solid var(--color-primary-5);
 	}
+
+	&.is-new-navigation {
+		border-bottom: none;
+	}
 }
 
 .sites-overview__add-site-issue-license-buttons {

@@ -254,7 +254,11 @@ export default function SitesOverview() {
 			<DocumentHead title={ pageTitle } />
 			<SidebarNavigation sectionTitle={ pageTitle } />
 			<div className="sites-overview__container">
-				<div className="sites-overview__tabs">
+				<div
+					className={ classNames( 'sites-overview__tabs', {
+						'is-new-navigation': isNewNavigation,
+					} ) }
+				>
 					<div className="sites-overview__content-wrapper">
 						<DashboardBanners />
 
