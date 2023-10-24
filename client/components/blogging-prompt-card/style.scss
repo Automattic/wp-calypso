@@ -91,6 +91,15 @@
 				text-decoration-line: none;
 			}
 		}
+		.blogging-prompt__bloganuary-link {
+			color: var(--studio-gray-80);
+			font-size: $font-body-small;
+			text-decoration-line: underline;
+			margin-right: 8px;
+			&:hover {
+				text-decoration-line: none;
+			}
+		}
 		.blogging-prompt__prompt-no-response {
 			align-items: center;
 			display: flex;

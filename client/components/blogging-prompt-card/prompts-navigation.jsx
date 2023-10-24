@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
@@ -16,6 +17,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';
+	const isBloganuary = isEnabled( 'bloganuary' );
 
 	const initialIndex = index ? index % prompts.length : 0;
 	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
@@ -83,6 +85,15 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 	const trackClickViewAllResponses = () => {
 		dispatch(
 			recordTracksEvent( tracksPrefix + 'view_all_responses', {
+				site_id: siteId,
+				prompt_id: getPrompt()?.id,
+			} )
+		);
+	};
+
+	const trackBloganuaryMoreInfoClick = () => {
+		dispatch(
+			recordTracksEvent( tracksPrefix + 'bloganuary_more_info_click', {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
 			} )
@@ -159,6 +170,17 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		return (
 			<div className="blogging-prompt__prompt-answers">
 				{ renderResponses() }
+				{ isBloganuary && (
+					<a
+						href="https://wordpress.com/bloganuary"
+						className="blogging-prompt__bloganuary-link"
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ trackBloganuaryMoreInfoClick }
+					>
+						{ translate( 'Learn more' ) }
+					</a>
+				) }
 				<Button href={ getNewPostLink() } onClick={ handleBloggingPromptClick }>
 					{ translate( 'Post Answer', {
 						comment:

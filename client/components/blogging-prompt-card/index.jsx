@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -23,6 +24,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const maxNumberOfPrompts = 10;
 	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
+	const isBloganuary = isEnabled( 'bloganuary' );
 
 	if ( ! prompts ) {
 		return null;
@@ -74,7 +76,9 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 					<LightbulbIcon />
 					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
 					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
-						{ translate( 'Daily writing prompt' ) }
+						{ isBloganuary
+							? translate( 'Bloganuary writing prompt' )
+							: translate( 'Daily writing prompt' ) }
 					</span>
 					{ showMenu && renderMenu() }
 				</CardHeading>
