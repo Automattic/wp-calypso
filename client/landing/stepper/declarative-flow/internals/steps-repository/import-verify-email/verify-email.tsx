@@ -1,12 +1,11 @@
-import { getPlan, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { warningNotice } from 'calypso/state/notices/actions';
 import type { UserData } from 'calypso/lib/user/user';
 
@@ -17,12 +16,10 @@ interface Props {
 const VerifyEmail = function VerifyEmail( props: Props ) {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
-	const { user, site } = props;
+	const { user } = props;
 	const sendEmail = useSendEmailVerification();
-	const targetSiteEligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, site?.ID )
-	);
-	const planType = targetSiteEligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
+
+	const planType = PLAN_BUSINESS;
 	const plan = getPlan( planType );
 
 	const defaultButtonState = {

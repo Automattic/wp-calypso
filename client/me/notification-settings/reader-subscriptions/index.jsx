@@ -21,6 +21,7 @@ import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
 class NotificationSubscriptions extends Component {
 	handleClickEvent( action ) {
@@ -62,6 +63,8 @@ class NotificationSubscriptions extends Component {
 					title="Me > Notifications > Subscriptions Delivery"
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+
+				<SubscriptionManagementBackButton />
 
 				<NavigationHeader
 					navigationItems={ [] }

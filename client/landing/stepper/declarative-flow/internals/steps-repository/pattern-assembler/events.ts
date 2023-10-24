@@ -64,6 +64,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	/**
 	 * Large Preview
 	 */
-	LARGE_PREVIEW_ADD_HEADER_BUTTON_CLICK:
-		'calypso_signup_pattern_assembler_large_preview_add_header_button_click',
+	LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE:
+		'calypso_signup_pattern_assembler_large_preview_zoom_out_scale_change',
 } as const;

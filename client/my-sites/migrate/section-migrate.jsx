@@ -12,7 +12,6 @@ import Main from 'calypso/components/main';
 import { Interval, EVERY_TEN_SECONDS, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { urlToSlug } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -290,9 +289,9 @@ export class SectionMigrate extends Component {
 	};
 
 	goToCart = () => {
-		const { sourceSite, targetSiteSlug, targetSiteEligibleForProPlan } = this.props;
+		const { sourceSite, targetSiteSlug } = this.props;
 		const sourceSiteSlug = get( sourceSite, 'slug' );
-		const plan = targetSiteEligibleForProPlan ? 'pro' : 'business';
+		const plan = 'business';
 
 		page(
 			`/checkout/${ targetSiteSlug }/${ plan }?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
@@ -739,7 +738,6 @@ export const connector = connect(
 			targetSiteId,
 			targetSiteImportAdminUrl: getSiteAdminUrl( state, targetSiteId, 'import.php' ),
 			targetSiteSlug: getSelectedSiteSlug( state ),
-			targetSiteEligibleForProPlan: isEligibleForProPlan( state, targetSiteId ),
 		};
 	},
 	{

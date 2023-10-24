@@ -628,7 +628,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	return (
 		<StepContainer
-			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
 			stepSectionName={ currentScreen.name }
 			backLabelText={

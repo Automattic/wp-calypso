@@ -5,4 +5,5 @@ export type MenuItemProps = {
 	title: string;
 	withChevron?: boolean;
 	isExternalLink?: boolean;
+	trackEventProps?: { [ key: string ]: string };
 };

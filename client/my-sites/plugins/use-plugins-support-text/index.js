@@ -1,8 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { hasOrIntendsToBuyLiveSupport } from 'calypso/state/marketplace/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /*
  * Gets text used to describe the support level a user will receive
@@ -29,14 +27,10 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  */
 export default function usePluginsSupportText() {
 	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
 	const isLiveSupport = useSelector( hasOrIntendsToBuyLiveSupport );
 	const supportTextNonPro = isLiveSupport
 		? translate( 'Live chat support' )
 		: translate( 'Unlimited email support' );
-	const supportText = eligibleForProPlan ? translate( 'Premium support' ) : supportTextNonPro;
+	const supportText = supportTextNonPro;
 	return supportText;
 }

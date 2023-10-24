@@ -16,6 +16,7 @@ const JetpackManageSidebar = () => {
 	const createItem = ( props: MenuItemProps ) => ( {
 		...props,
 		onClickMenuItem: redirectPage,
+		trackEventName: 'calypso_jetpack_sidebar_menu_click',
 		isSelected: isMenuItemSelected( props.link ),
 	} );
 
@@ -25,24 +26,36 @@ const JetpackManageSidebar = () => {
 			path: '/',
 			link: JETPACK_MANAGE_DASHBOARD_LINK,
 			title: translate( 'Sites Management' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Dashboard',
+			},
 		} ),
 		createItem( {
 			icon: plugins,
 			path: '/',
 			link: JETPACK_MANAGE_PLUGINS_LINK,
 			title: translate( 'Plugin Management' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Plugins',
+			},
 		} ),
 		createItem( {
 			icon: key,
 			path: '/',
 			link: JETPACK_MANAGE_LICENCES_LINK,
 			title: translate( 'Licenses' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal / Licenses',
+			},
 		} ),
 		createItem( {
 			icon: currencyDollar,
 			path: '/partner-portal/',
 			link: JETPACK_MANAGE_BILLING_LINK,
 			title: translate( 'Purchases' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal',
+			},
 			withChevron: true,
 		} ),
 	];

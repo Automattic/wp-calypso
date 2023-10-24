@@ -40,7 +40,7 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	WOO_EXPRESS_PLANS,
 	TERM_CENTENNIALLY,
-	TYPE_HOSTING_TRIAL,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
@@ -338,7 +338,7 @@ export function isFreePlan( planSlug: string ): boolean {
 }
 
 export function isFreeHostingTrial( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_HOSTING_TRIAL } );
+	return planSlug === PLAN_HOSTING_TRIAL_MONTHLY;
 }
 
 export function is100YearPlan( planSlug: string ): boolean {
