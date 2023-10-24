@@ -17,10 +17,12 @@ function MockPlansFeaturesMain( {
 	flowName,
 	selectedPlan,
 	paidDomainName,
+	intent,
 }: {
 	flowName: string;
 	selectedPlan: string;
 	paidDomainName?: string | null;
+	intent?: string | null;
 } ) {
 	const isCustomDomainAllowedOnFreePlan = useIsFreePlanCustomDomainUpsellEnabled(
 		flowName,
@@ -35,6 +37,7 @@ function MockPlansFeaturesMain( {
 		isPlanUpsellEnabledOnFreeDomain,
 		flowName,
 		paidDomainName,
+		intent,
 	} );
 	return <div data-testid="modal-render">{ resolveModal( selectedPlan ) }</div>;
 }
@@ -128,6 +131,29 @@ describe( 'PlanUpsellModal tests', () => {
 
 			expect( queryByText4( /DIALOG/i ) ).toBeNull();
 		} );
+
+		test( 'A paid domain with Jetpack App intent should show the PAID_PLAN_IS_REQUIRED_DIALOG', () => {
+			renderWithProvider(
+				<MockPlansFeaturesMain
+					selectedPlan={ PLAN_FREE }
+					paidDomainName="yourgroovydomain.com"
+					intent="plans-jetpack-app-site-creation"
+				/>
+			);
+			expect( screen.getByTestId( 'modal-render' ) ).toHaveTextContent(
+				PAID_PLAN_IS_REQUIRED_DIALOG
+			);
+		} );
+
+		test( 'A free domain with Jetpack App intent should NOT show any Dialog', () => {
+			renderWithProvider(
+				<MockPlansFeaturesMain
+					selectedPlan={ PLAN_FREE }
+					intent="plans-jetpack-app-site-creation"
+				/>
+			);
+			expect( screen.queryByText( /DIALOG/i ) ).toBeNull();
+		} );
 	} );
 
 	describe( 'useModalResolutionCallback hook related tests', () => {
@@ -138,6 +164,7 @@ describe( 'PlanUpsellModal tests', () => {
 					isPlanUpsellEnabledOnFreeDomain: { result: false, isLoading: false },
 					flowName: 'Onboarding',
 					paidDomainName: null,
+					intent: null,
 				} )
 			);
 			expect( result.current( PLAN_FREE ) ).toBeNull();

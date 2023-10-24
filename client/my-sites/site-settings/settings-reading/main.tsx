@@ -21,6 +21,7 @@ import wrapSettingsForm from '../wrap-settings-form';
 export type SubscriptionOptions = {
 	invitation: string;
 	comment_follow: string;
+	welcome: string;
 };
 
 type Fields = {

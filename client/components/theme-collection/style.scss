@@ -29,32 +29,38 @@
 }
 
 .theme-collection__headings {
+	align-self: flex-end;
 	flex-basis: 80%;
 
 	@include break-small {
-		flex-basis: 45%;
+		flex-basis: 60%;
 	}
 }
 
 .theme-collection__title {
-	line-height: 1;
-	font-size: $font-body;
-	font-weight: 600;
-	color: var(--gray-gray-100, #101517);
+	color: var(--studio-gray-100);
+	font-size: $font-body-large;
+	font-weight: 400;
+	line-height: 1.4;
 
 	@include break-small {
-		font-size: rem(24px);
-		font-weight: 400;
+		font-size: rem(28px);
+		line-height: 1.2;
 	}
 }
 
-.theme-collection__description * {
-	color: var(--gray-gray-70, #3c434a);
+.theme-collection__description {
+	color: var(--studio-gray-60);
 	font-size: $font-body-small;
-	margin-bottom: 0;
+	line-height: 1.4;
+
+	& > * {
+		margin-bottom: 0;
+	}
 
 	@include break-small {
 		font-size: $font-body;
+		line-height: 1.5;
 	}
 }
 
@@ -68,35 +74,35 @@
 			padding-left: 32px;
 			padding-right: 32px;
 		}
+		@include break-xlarge {
+			padding-left: 48px;
+			padding-right: 48px;
+		}
 	}
 }
 
 .theme-collection__list-wrapper {
-	margin-top: 1em;
+	margin-top: 24px;
 }
 
 .theme-collection__carousel-controls {
 	display: flex;
 	justify-content: flex-end;
-	/*!rtl:ignore*/
-	direction: ltr;
 	align-self: end;
 	align-items: center;
 
 	.theme-collection__see-all {
+		color: var(--studio-gray-100);
 		font-size: $font-body-small;
 		font-style: normal;
 		font-weight: 400;
-		line-height: 20px;
+		height: auto;
+		line-height: 1.4;
 		letter-spacing: -0.15px;
 		padding: 0;
 		margin-right: 0;
 		align-items: flex-end;
 		text-decoration: underline;
-
-		&:focus {
-			box-shadow: none;
-		}
 
 		@include break-small {
 			text-decoration: none;
@@ -116,12 +122,13 @@
 			padding: 0;
 			width: 32px;
 			height: 32px;
-			background: #eee;
+			background-color: var(--studio-white);
+			border: 1px solid var(--studio-gray-5);
 			border-radius: 50%;
 			display: flex;
 			justify-content: center;
 			margin: 0 8px;
-			transition: filter 0.1s linear;
+			transition: background-color 0.1s linear;
 			pointer-events: all;
 		}
 
@@ -130,7 +137,11 @@
 		}
 
 		&:hover {
-			filter: brightness(0.9);
+			background-color: var(--studio-gray-0);
+		}
+
+		.rtl & {
+			transform: scaleX(-1);
 		}
 	}
 }

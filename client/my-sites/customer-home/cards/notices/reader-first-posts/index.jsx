@@ -1,6 +1,5 @@
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { NOTICE_READER_FIRST_POSTS } from 'calypso/my-sites/customer-home/cards/constants';
@@ -14,8 +13,6 @@ const ReaderFirstPosts = () => {
 		recordTracksEvent( 'calypso_my_home_reader_first_posts_nudge_click', {
 			id: NOTICE_READER_FIRST_POSTS,
 		} );
-
-		page.redirect( '/discover?selectedTab=firstposts' );
 	};
 
 	return (
@@ -33,7 +30,12 @@ const ReaderFirstPosts = () => {
 				</p>
 			</div>
 			<div className="reader-first-posts__actions">
-				<Button primary onClick={ () => clickButton() } className="reader-first-posts__button">
+				<Button
+					primary
+					onClick={ () => clickButton() }
+					className="reader-first-posts__button"
+					href="/discover?selectedTab=firstposts"
+				>
 					{ translate( 'Take a look' ) }
 				</Button>
 			</div>

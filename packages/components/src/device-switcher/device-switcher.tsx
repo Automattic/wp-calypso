@@ -1,9 +1,12 @@
+import { RangeControl } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
+import { search } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
 import FixedViewport, { useViewportScale } from './fixed-viewport';
 import DeviceSwitcherToolbar from './toolbar';
+import useZoomOut from './use-zoom-out';
 import type { Device } from './types';
 import './device-switcher.scss';
 
@@ -16,9 +19,11 @@ interface Props {
 	isShowFrameShadow?: boolean;
 	isFixedViewport?: boolean;
 	isFullscreen?: boolean;
+	isZoomable?: boolean;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
 	onViewportChange?: ( height?: number ) => void;
+	onZoomOutScaleChange?: ( value: number ) => void;
 }
 
 // Transition animation delay
@@ -33,9 +38,11 @@ const DeviceSwitcher = ( {
 	isShowFrameShadow = true,
 	isFixedViewport,
 	isFullscreen,
+	isZoomable,
 	frameRef,
 	onDeviceChange,
 	onViewportChange,
+	onZoomOutScaleChange,
 }: Props ) => {
 	const [ device, setDevice ] = useState< Device >( defaultDevice );
 	const [ containerResizeListener, { width, height } ] = useResizeObserver();
@@ -43,6 +50,8 @@ const DeviceSwitcher = ( {
 	const viewportElement = frameRef?.current?.parentElement;
 	const viewportWidth = viewportElement?.clientWidth as number;
 	const viewportScale = useViewportScale( device, viewportWidth );
+	const { zoomOutScale, zoomOutStyles, handleZoomOutScaleChange } =
+		useZoomOut( onZoomOutScaleChange );
 
 	const handleDeviceClick = ( nextDevice: Device ) => {
 		setDevice( nextDevice );
@@ -60,17 +69,32 @@ const DeviceSwitcher = ( {
 		// Trigger animation end after the duration
 		timerRef.current = setTimeout( () => {
 			timerRef.current = null;
-			onViewportChange?.( frameRef?.current?.clientHeight );
+			const frameHeight = frameRef?.current?.getBoundingClientRect()?.height;
+			if ( frameHeight ) {
+				onViewportChange?.( frameHeight );
+			}
 		}, ANIMATION_DURATION );
 
 		return clearAnimationEndTimer;
 	}, [ width, height, viewportScale, isFixedViewport ] );
 
-	const frame = (
+	let frame = (
 		<div className="device-switcher__frame" ref={ frameRef }>
 			{ children }
 		</div>
 	);
+
+	if ( isZoomable ) {
+		frame = <div style={ zoomOutStyles }>{ frame }</div>;
+	}
+
+	if ( isFixedViewport ) {
+		frame = (
+			<FixedViewport device={ device } frameRef={ frameRef }>
+				{ frame }
+			</FixedViewport>
+		);
+	}
 
 	return (
 		<div
@@ -84,16 +108,25 @@ const DeviceSwitcher = ( {
 				'device-switcher__container--is-fullscreen': isFullscreen,
 			} ) }
 		>
-			{ isShowDeviceSwitcherToolbar && (
-				<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
-			) }
-			{ isFixedViewport ? (
-				<FixedViewport device={ device } frameRef={ frameRef }>
-					{ frame }
-				</FixedViewport>
-			) : (
-				frame
-			) }
+			<div className="device-switcher__header">
+				{ isShowDeviceSwitcherToolbar && (
+					<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
+				) }
+				{ isZoomable && (
+					<RangeControl
+						className="device-switcher__zoom-out"
+						beforeIcon={ search }
+						withInputField={ false }
+						showTooltip={ false }
+						__nextHasNoMarginBottom
+						value={ Math.round( zoomOutScale * 100 ) }
+						onChange={ ( value ) => value !== undefined && handleZoomOutScaleChange( value / 100 ) }
+						min={ 25 }
+						max={ 100 }
+					/>
+				) }
+			</div>
+			{ frame }
 			{ containerResizeListener }
 		</div>
 	);

@@ -228,7 +228,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
-		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
+		enabled: isPreviewingDesign,
 		select: ( design: Design ) => {
 			if ( disableCheckoutImmediately && design?.style_variations ) {
 				design.style_variations = [];
@@ -827,7 +827,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					}
 					title={ headerDesignTitle }
 					selectedDesignTitle={ designTitle }
-					description={ selectedDesign.description }
+					shortDescription={ selectedDesign.description }
+					description={ selectedDesignDetails?.description }
 					variations={
 						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
 					}

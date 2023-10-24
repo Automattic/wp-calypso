@@ -97,7 +97,7 @@ export default function AgencySignupForm() {
 			</svg>
 
 			<CardHeading className="agency-signup-form__heading">
-				{ translate( 'Sign up as an Agency' ) }
+				{ translate( 'Sign up for Jetpack Manage' ) }
 			</CardHeading>
 
 			<h2 className="agency-signup-form__subheading">

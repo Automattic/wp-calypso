@@ -1,7 +1,6 @@
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
-	DOMAIN_UPSELL_FLOW,
 	START_WRITING_FLOW,
 	isLinkInBioFlow,
 	isNewsletterFlow,
@@ -12,7 +11,6 @@ import {
 	isDomainUpsellFlow,
 	DESIGN_FIRST_FLOW,
 	isBlogOnboardingFlow,
-	isOnboardingPMFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -87,7 +85,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
-	const isInSignup = flowName === DOMAIN_UPSELL_FLOW ? false : true;
+	const isInSignup = isDomainUpsellFlow( flowName ) ? false : true;
 	const plansIntent = getPlansIntent( flowName );
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
@@ -145,7 +143,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
-					showBiennialToggle={ isOnboardingPMFlow( flowName ) }
+					showBiennialToggle={ false }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
@@ -171,7 +169,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return __( 'The right plan for the right project' );
 		}
 
-		if ( flowName === DOMAIN_UPSELL_FLOW || isOnboardingPMFlow( flowName ) ) {
+		if ( isDomainUpsellFlow( flowName ) ) {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
@@ -199,8 +197,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			isBlogOnboardingFlow( flowName ) ||
 			isNewsletterFlow( flowName ) ||
 			isLinkInBioFlow( flowName ) ||
-			isDomainUpsellFlow( flowName ) ||
-			isOnboardingPMFlow( flowName )
+			isDomainUpsellFlow( flowName )
 		) {
 			return;
 		}

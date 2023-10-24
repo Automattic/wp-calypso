@@ -8,6 +8,7 @@ import QueryReaderFollowedTags from 'calypso/components/data/query-reader-follow
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import HeaderBack from 'calypso/reader/header-back';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -147,6 +148,12 @@ class TagStream extends Component {
 				/>
 			</>
 		);
+		const sidebarProps = ! isReaderTagEmbedPage( window.location ) && {
+			streamSidebar: () => (
+				<ReaderTagSidebar tag={ this.props.decodedTagSlug } showFollow={ false } />
+			),
+			sidebarTabTitle: this.props.translate( 'Related' ),
+		};
 
 		return (
 			<Stream
@@ -159,10 +166,7 @@ class TagStream extends Component {
 				streamHeader={ tagHeader }
 				showSiteNameOnCards={ false }
 				useCompactCards={ true }
-				streamSidebar={ () => (
-					<ReaderTagSidebar tag={ this.props.decodedTagSlug } showFollow={ false } />
-				) }
-				sidebarTabTitle={ this.props.translate( 'Related' ) }
+				{ ...sidebarProps }
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
