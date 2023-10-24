@@ -46,7 +46,7 @@ export default function AgencySignupForm() {
 		( payload: PartnerDetailsPayload ) => {
 			dispatch( removeNotice( notificationId ) );
 
-			createPartner.mutate( payload );
+			//createPartner.mutate( payload );
 
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_create_partner_submit', {
@@ -62,7 +62,6 @@ export default function AgencySignupForm() {
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
-					states: payload.states,
 				} )
 			);
 		},
