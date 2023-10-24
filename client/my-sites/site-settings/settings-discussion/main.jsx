@@ -4,7 +4,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { FediverseSettingsSection } from 'calypso/my-sites/site-settings/fediverse-settings';
 import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
@@ -13,10 +12,10 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const SiteSettingsDiscussion = ( { site, translate } ) => (
 	<Main className="settings-discussion site-settings">
-		<ScreenOptionsTab wpAdminPath="options-discussion.php" />
 		<DocumentHead title={ translate( 'Discussion Settings' ) } />
 		<JetpackDevModeNotice />
 		<NavigationHeader
+			screenOptionsTab="options-discussion.php"
 			navigationItems={ [] }
 			title={ translate( 'Discussion Settings' ) }
 			subtitle={ translate(
