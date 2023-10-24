@@ -80,6 +80,11 @@ const DateControlPicker = ( {
 				className="stats-date-control-picker__popover-wrapper"
 			>
 				<div className="stats-date-control-picker__popover-content">
+					<DateControlPickerShortcuts
+						shortcutList={ shortcutList }
+						currentShortcut={ selectedShortcut }
+						onClick={ handleShortcutSelected }
+					/>
 					<DateControlPickerDate
 						startDate={ inputStartDate }
 						endDate={ inputEndDate }
@@ -87,11 +92,6 @@ const DateControlPicker = ( {
 						onEndChange={ changeEndDate }
 						onApply={ handleOnApply }
 						onCancel={ handleOnCancel }
-					/>
-					<DateControlPickerShortcuts
-						shortcutList={ shortcutList }
-						currentShortcut={ selectedShortcut }
-						onClick={ handleShortcutSelected }
 					/>
 				</div>
 			</Popover>

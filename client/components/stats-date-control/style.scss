@@ -105,7 +105,7 @@ $date-control-shortcut-min-width: 140px;
 .stats-date-control-picker__popover-content {
 	display: flex;
 	min-width: 320px;
-
+	flex-direction: row-reverse;
 }
 
 .stats-date-control-picker__popover-wrapper {
