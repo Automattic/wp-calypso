@@ -7,9 +7,16 @@
 	}
 
 	.sidebar-v2__menu-item {
+		svg {
+			color: #6f6f6f;
+		}
 		&.is-active {
 			background: var(--studio-green-0);
 			color: var(--studio-green-50);
+
+			svg {
+				color: var(--studio-green-50);
+			}
 		}
 	}
 
