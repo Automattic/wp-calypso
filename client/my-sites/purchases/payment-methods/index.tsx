@@ -6,12 +6,12 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -62,11 +62,9 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
 			{ ! isJetpackCloud() && (
-				<FormattedHeader
-					brandFont
-					className="payment-methods__page-heading"
-					headerText={ titles.sectionTitle }
-					subHeaderText={ translate(
+				<NavigationHeader
+					title={ titles.sectionTitle }
+					subtitle={ translate(
 						'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -76,7 +74,6 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 							},
 						}
 					) }
-					align="left"
 				/>
 			) }
 			<PurchasesNavigation section="paymentMethods" siteSlug={ siteSlug } />
@@ -133,14 +130,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 				title={ String( titles.addPaymentMethod ) }
 			/>
 			<DocumentHead title={ titles.addPaymentMethod } />
-			{ ! isJetpackCloud() && (
-				<FormattedHeader
-					brandFont
-					className="payment-methods__page-heading"
-					headerText={ titles.sectionTitle }
-					align="left"
-				/>
-			) }
+			{ ! isJetpackCloud() && <NavigationHeader title={ titles.sectionTitle } /> }
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
