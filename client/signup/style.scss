@@ -952,14 +952,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	.signup__step.is-emails,
 	.signup__step.is-mailbox,
 	.is-domain-only {
-		@include break-large {
-			margin: 0 0 0 20px;
-		}
-
-		@include break-wide {
-			padding-inline-start: 20px;
-		}
-
 		.is-wide-layout {
 			max-width: 1280px;
 		}
