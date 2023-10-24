@@ -156,7 +156,6 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": false,
-		"reader/discover-stream": true,
 		"reader/first-posts-stream": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
