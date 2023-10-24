@@ -4,20 +4,41 @@ import { DefaultWiredLaunchpad } from '@automattic/launchpad';
 import { Button } from '@wordpress/components';
 import { select } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 
 import './style.scss';
 
 type ToggleLaunchpadIsVisible = ( shouldBeVisible: boolean ) => void;
 
 export type FloatingNavigatorProps = {
+	pageExitCallback?: (
+		path: string,
+		handler: ( context: object, next: () => void ) => void
+	) => void;
 	siteSlug: string | null;
 	toggleLaunchpadIsVisible?: ToggleLaunchpadIsVisible;
 };
 
-const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavigatorProps ) => {
+let _is_page_exit_registered = false;
+
+const FloatingNavigator = ( {
+	pageExitCallback,
+	siteSlug,
+	toggleLaunchpadIsVisible,
+}: FloatingNavigatorProps ) => {
 	const launchpadContext = 'launchpad-navigator';
 	const translate = useTranslate();
 	const checklistSlug = select( LaunchpadNavigator.store ).getActiveChecklistSlug() || null;
+
+	useEffect( () => {
+		if ( pageExitCallback && ! _is_page_exit_registered && toggleLaunchpadIsVisible ) {
+			pageExitCallback( '*', ( context, next ) => {
+				toggleLaunchpadIsVisible( false );
+				next();
+			} );
+			_is_page_exit_registered = true;
+		}
+	}, [ pageExitCallback, toggleLaunchpadIsVisible ] );
 
 	if ( ! checklistSlug ) {
 		return null;

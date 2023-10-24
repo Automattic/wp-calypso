@@ -1,6 +1,7 @@
 import { FloatingNavigator, LaunchpadNavigatorIcon } from '@automattic/launchpad-navigator';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -29,6 +30,7 @@ const MasterbarLaunchpadNavigator = () => {
 			{ launchpadIsVisible && (
 				<div className="masterbar__launchpad-navigator">
 					<FloatingNavigator
+						pageExitCallback={ page.exit }
 						siteSlug={ siteSlug }
 						toggleLaunchpadIsVisible={ setLaunchpadIsVisible }
 					/>
