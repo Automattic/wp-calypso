@@ -150,6 +150,7 @@ export interface CompanyDetailsPayload {
 	contactPerson: string;
 	companyWebsite: string;
 	companyType: string;
+	managedSites: string;
 	city: string;
 	line1: string;
 	line2: string;
@@ -189,6 +190,7 @@ export interface Partner {
 	contact_person: string;
 	company_website: string;
 	company_type: string;
+	managed_sites: string;
 	name: string;
 	address: PartnerAddress;
 	keys: PartnerKey[];
