@@ -28,10 +28,7 @@ export class SignupPickPlanPage {
 	 * @returns {Promise<SiteDetails>} Details of the newly created site.
 	 */
 	async selectPlan( name: Plans ): Promise< NewSiteResponse > {
-		await Promise.all( [
-			this.page.waitForURL( /.*start\/plans.*/ ),
-			this.page.waitForLoadState(),
-		] );
+		await Promise.all( [ this.page.waitForLoadState() ] );
 
 		let url: RegExp;
 		if ( name !== 'Free' ) {

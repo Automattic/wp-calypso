@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 import { PreviewComponent } from '../components';
 
 const selectors = {
@@ -12,6 +13,9 @@ const selectors = {
 	// Activate modal
 	activateModal: '.themes__activation-modal',
 	activateModalButton: '.dialog__action-buttons button:has-text("Activate")',
+
+	// Pick this design
+	pickDesignButton: 'a:text("Pick this design")',
 
 	// Thanks modal
 	thanksMessage: ':text("Thanks for choosing")',
@@ -59,6 +63,34 @@ export class ThemesDetailPage {
 		if ( ! keepModal ) {
 			await this.page.keyboard.press( 'Escape' );
 		}
+	}
+
+	/**
+	 * Click on the Pick this design button displayed in Logged out theme details.
+	 */
+	async pickThisDesign(): Promise< void > {
+		await this.page.click( selectors.pickDesignButton );
+	}
+
+	/**
+	 * Visit the theme details page.
+	 *
+	 * @param themeSlug
+	 * @param siteSlug
+	 */
+	async visitTheme( themeSlug: string, siteSlug: string | null = null ) {
+		const targetUrl = `theme/${ themeSlug }/${ siteSlug ?? '' }`;
+
+		// We are getting a pending status for https://wordpress.com/cspreport intermittently
+		// which causes the login to hang on networkidle when running the tests locally.
+		// This fulfill's the route request with status 200.
+		// See https://github.com/Automattic/wp-calypso/issues/69294
+		await this.page.route( '**/cspreport', ( route ) => {
+			route.fulfill( {
+				status: 200,
+			} );
+		} );
+		return await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 
 	/**
