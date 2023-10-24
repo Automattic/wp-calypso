@@ -3,6 +3,7 @@ import { Card, CardBody, Icon } from '@wordpress/components';
 import { chartBar, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { SectionContainer } from 'calypso/components/section';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getEarnPageUrl } from '../../helpers';
@@ -12,11 +13,23 @@ type GrowYourAudienceCardProps = {
 	icon: JSX.Element;
 	text: string;
 	title: string;
+	tracksEventCta: string;
 	url: string;
 };
 
-const GrowYourAudienceCard = ( { icon, text, title, url }: GrowYourAudienceCardProps ) => {
+const GrowYourAudienceCard = ( {
+	icon,
+	text,
+	title,
+	tracksEventCta,
+	url,
+}: GrowYourAudienceCardProps ) => {
 	const translate = useTranslate();
+
+	const onClick = () =>
+		recordTracksEvent( 'calypso_subscriber_management_growth_cta_click', {
+			cta: tracksEventCta,
+		} );
 
 	return (
 		<Card className="grow-your-audience__card" size="small">
@@ -26,7 +39,13 @@ const GrowYourAudienceCard = ( { icon, text, title, url }: GrowYourAudienceCardP
 					{ title }
 				</h3>
 				<p className="grow-your-audience__card-text">{ text }</p>
-				<a className="grow-your-audience__card-link" href={ url } target="_blank" rel="noreferrer">
+				<a
+					className="grow-your-audience__card-link"
+					href={ url }
+					onClick={ onClick }
+					target="_blank"
+					rel="noreferrer"
+				>
 					{ translate( 'Learn more' ) }
 				</a>
 			</CardBody>
@@ -49,6 +68,7 @@ const GrowYourAudience = () => {
 						'Using a subscriber block is the first step to growing your audience.'
 					) }
 					title={ translate( 'Every visitor is a potential subscriber' ) }
+					tracksEventCta="subscribe-block"
 					url={ localizeUrl(
 						'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/'
 					) }
@@ -60,6 +80,7 @@ const GrowYourAudience = () => {
 						'Create fresh content, publish regularly, and understand your audience with site stats.'
 					) }
 					title={ translate( 'Keep your readers engaged' ) }
+					tracksEventCta="go-content-strategy"
 					url="https://wordpress.com/go/content-blogging/how-to-start-a-successful-blog-that-earns-links-traffic-and-revenue/#creating-a-blog-content-strategy" // eslint-disable-line wpcalypso/i18n-unlocalized-url
 				/>
 
@@ -69,6 +90,7 @@ const GrowYourAudience = () => {
 						'Allow your readers to support your work with paid subscriptions, gated content, or tips.'
 					) }
 					title={ translate( 'Start earning' ) }
+					tracksEventCta="earn"
 					url={ getEarnPageUrl( selectedSiteSlug ) }
 				/>
 			</div>
