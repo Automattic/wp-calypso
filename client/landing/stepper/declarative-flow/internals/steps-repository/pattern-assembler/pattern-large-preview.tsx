@@ -164,6 +164,15 @@ const PatternLargePreview = ( {
 		setViewportHeight( height );
 	};
 
+	const handleZoomOutScale = ( value: number ) => {
+		setZoomOutScale( value );
+		if ( zoomOutScale !== value ) {
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
+				zoom_out_scale: value,
+			} );
+		}
+	};
+
 	// Scroll to newly added patterns
 	useEffect( () => {
 		let timerId: number;
@@ -224,7 +233,7 @@ const PatternLargePreview = ( {
 				setDevice( device );
 			} }
 			onViewportChange={ updateViewportHeight }
-			onZoomOutScaleChange={ setZoomOutScale }
+			onZoomOutScaleChange={ handleZoomOutScale }
 		>
 			{ hasSelectedPattern ? (
 				<ul
