@@ -84,6 +84,14 @@ export default function CompanyDetailsForm( {
 		);
 		setShowPartnerProgramOptIn( isEligibleForPartnerProgram );
 	};
+
+	useEffect( () => {
+		// reset opt-in setting if ineligible company is selected
+		if ( ! companyTypesEligibleForPartnerProgram.includes( companyType ) ) {
+			setPartnerProgramOptIn( false );
+		}
+	}, [ companyType ] );
+
 	useEffect( () => {
 		// Reset the value of state since our options have changed.
 		setAddressState( stateOptions?.length ? stateOptions[ 0 ].value : '' );
