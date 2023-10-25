@@ -376,7 +376,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						} }
 						checked={ editedPostPaidNewsletter }
 						disabled={ !! product.ID || editedPostIsTier }
-						label={ translate( 'customers will get subscribed to newsletters' ) }
+						label={ translate( 'Customers will get subscribed to newsletters' ) }
 					/>
 				</FormFieldset>
 				{ editing && editedPrice && (
