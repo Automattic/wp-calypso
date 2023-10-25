@@ -3,15 +3,29 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .subscribers.main {
-	padding: 0 32px;
-
 	.subscribers__section {
 		margin-bottom: 64px;
 	}
 
 	.add-subscribers-button {
-		display: flex;
-		gap: 10px;
+		.gridicon {
+			margin-right: 0;
+		}
+
+		.add-subscribers-button-text {
+			margin-left: 4px;
+			display: none;
+		}
+
+		@media ( min-width: $break-small ) {
+			.add-subscribers-button-text {
+				display: inline;
+			}
+		}
+	}
+
+	@media ( min-width: $break-mobile ) {
+		padding: 0 32px;
 	}
 }
 
