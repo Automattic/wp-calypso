@@ -329,7 +329,7 @@ export class RenderDomainsStep extends Component {
 			this.addDomain( suggestion );
 			this.props.setDesignType( this.getDesignType() );
 			// Start the username suggestion process.
-			siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
+			// siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 		}
 	};
 
@@ -426,7 +426,7 @@ export class RenderDomainsStep extends Component {
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
-		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
+		// siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
 	handleAddMapping = ( { sectionName, domain, state } ) => {
@@ -596,16 +596,16 @@ export class RenderDomainsStep extends Component {
 			? [ registration, this.props.multiDomainDefaultPlan ]
 			: [ registration ];
 
-		await this.props.shoppingCartManager.addProductsToCart( productsToAdd ).then( () => {
-			this.setState( { isCartPendingUpdateDomain: null } );
-		} );
-
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName, this.props.currentUser ) ) {
 			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
 			const sortedProducts = await this.sortProductsByPriceDescending();
 
 			// Replace the products in the cart with the freshly sorted products.
 			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts ).then( () => {
+				this.setState( { isCartPendingUpdateDomain: null } );
+			} );
+		} else {
+			await this.props.shoppingCartManager.addProductsToCart( productsToAdd ).then( () => {
 				this.setState( { isCartPendingUpdateDomain: null } );
 			} );
 		}
