@@ -82,7 +82,7 @@ function isValidData( data, type ) {
 		case 'MX':
 			return isValidDomain( data );
 		case 'TXT':
-			return data.length > 0 && data.length < 256;
+			return data.length > 0;
 	}
 }
 
