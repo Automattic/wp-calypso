@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
-import { successNotice } from 'calypso/state/notices/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 import { Path, useSiteSubscription } from './context';
 import SiteSubscriptionDetails from './details';
 import './styles.scss';
@@ -35,10 +35,9 @@ const useHandleSubscriptionNotFoundError = ( transition?: boolean ) => {
 
 		if ( transition ) {
 			dispatch(
-				successNotice(
-					translate( "We're updating your subscriptions. It should be ready shortly." ),
-					{ duration: 5000 }
-				)
+				infoNotice( translate( "We're updating your subscriptions. It should be ready shortly." ), {
+					duration: 5000,
+				} )
 			);
 
 			page.show( '/read/subscriptions/' );
