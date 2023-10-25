@@ -135,7 +135,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 
 	const [ editedPostIsTier, setEditedPostIsTier ] = useState(
-		( product?.type === TIER_TYPE || product?.subscribe_as_site_subscriber ) ?? false
+		product?.type === TIER_TYPE ?? false
 	);
 
 	const [ editedSchedule, setEditedSchedule ] = useState(
@@ -230,7 +230,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		...productDetails,
 		price: currentAnnualPrice,
 		interval: PLAN_YEARLY_FREQUENCY,
-		ID: annualProduct?.ID,
 		title: productDetails.title + __( '(yearly)', 'jetpack' ),
 	} );
 
@@ -255,16 +254,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 
 	const onClose = ( reason: string | undefined ) => {
-		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
-			const productDetails: Product = getCurrentProductDetails();
+		const productDetails = getCurrentProductDetails();
 
-			if ( editedPostPaidNewsletter || editedPostIsTier ) {
-				const annualProductDetails = {
-					...productDetails,
-					interval: PLAN_YEARLY_FREQUENCY,
-					price: currentAnnualPrice,
-					type: TIER_TYPE,
-				};
+		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
+			if ( editedPostIsTier ) {
+				const annualProductDetails = getAnnualProductDetailsFromProduct( productDetails );
 				dispatch(
 					requestAddTier(
 						siteId ?? selectedSiteId,
@@ -286,26 +280,24 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				recordTracksEvent( 'calypso_earn_page_payment_added', productDetails );
 			}
 		} else if ( reason === 'submit' && product && product.ID ) {
-			const productDetails = getCurrentProductDetails();
 			productDetails.ID = product.ID;
 
-			if ( ! ( editedPostPaidNewsletter || editedPostIsTier ) ) {
-				dispatch(
-					requestUpdateProduct(
-						siteId ?? selectedSiteId,
-						productDetails,
-						translate( 'Updated "%s" payment plan.', { args: editedProductName } )
-					)
-				);
-			} else {
+			if ( editedPostIsTier ) {
 				const annualProductDetails = getAnnualProductDetailsFromProduct( productDetails );
-
 				dispatch(
 					requestUpdateTier(
 						siteId ?? selectedSiteId,
 						productDetails,
 						annualProductDetails,
 						translate( 'Updated "%s" tier payment plan.', { args: editedProductName } )
+					)
+				);
+			} else {
+				dispatch(
+					requestUpdateProduct(
+						siteId ?? selectedSiteId,
+						productDetails,
+						translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 					)
 				);
 			}
@@ -366,12 +358,25 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				<FormFieldset className="memberships__dialog-sections-type">
 					<ToggleControl
 						onChange={ ( newValue ) => {
-							setEditedPostPaidNewsletter( newValue );
 							setEditedPostIsTier( newValue );
+							if ( newValue ) {
+								// tiers plans subscribe to newsletter by default
+								setEditedPostPaidNewsletter( true );
+							}
 						} }
-						checked={ editedPostPaidNewsletter }
+						checked={ editedPostIsTier }
 						disabled={ !! product.ID }
 						label={ translate( 'Paid newsletter tier' ) }
+					/>
+				</FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-type">
+					<ToggleControl
+						onChange={ ( newValue ) => {
+							setEditedPostPaidNewsletter( newValue );
+						} }
+						checked={ editedPostPaidNewsletter }
+						disabled={ !! product.ID || editedPostIsTier }
+						label={ translate( 'customers will get subscribed to newsletters' ) }
 					/>
 				</FormFieldset>
 				{ editing && editedPrice && (
@@ -504,7 +509,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						placeholder={ translate( 'Thank you for subscribing!' ) }
 					/>
 					<FormSettingExplanation>
-						{ translate( 'The welcome message sent when your subscriber completes their order.' ) }
+						{ translate( 'The welcome message sent when your customer completes their order.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FoldableCard
