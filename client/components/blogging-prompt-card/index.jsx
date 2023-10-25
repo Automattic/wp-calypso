@@ -1,10 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
@@ -24,7 +24,6 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const maxNumberOfPrompts = 10;
 	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
-	const isBloganuary = isEnabled( 'bloganuary' );
 
 	if ( ! prompts ) {
 		return null;
@@ -76,7 +75,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 					<LightbulbIcon />
 					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
 					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
-						{ isBloganuary
+						{ isBloganuary()
 							? translate( 'Bloganuary writing prompt' )
 							: translate( 'Daily writing prompt' ) }
 					</span>

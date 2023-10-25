@@ -1,10 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -17,7 +17,6 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';
-	const isBloganuary = isEnabled( 'bloganuary' );
 
 	const initialIndex = index ? index % prompts.length : 0;
 	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
@@ -170,7 +169,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		return (
 			<div className="blogging-prompt__prompt-answers">
 				{ renderResponses() }
-				{ isBloganuary && (
+				{ isBloganuary() && (
 					<a
 						href="https://wordpress.com/bloganuary"
 						className="blogging-prompt__bloganuary-link"
