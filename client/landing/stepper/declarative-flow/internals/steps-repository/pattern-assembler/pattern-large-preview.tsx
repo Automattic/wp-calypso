@@ -101,7 +101,10 @@ const PatternLargePreview = ( {
 		};
 
 		const handleMouseLeave = ( event: React.MouseEvent< HTMLElement > ) => {
-			if ( ! frameRef.current?.contains( event.relatedTarget as Node ) ) {
+			const hasNextActiveElement =
+				event.relatedTarget instanceof Node &&
+				! frameRef.current?.contains( event.relatedTarget as Node );
+			if ( ! hasNextActiveElement ) {
 				setActiveElement( null );
 			}
 		};
@@ -213,7 +216,7 @@ const PatternLargePreview = ( {
 	useEffect( () => {
 		const handleMouseLeave = ( event: MouseEvent ) => {
 			const relatedTarget = event.relatedTarget as HTMLElement | null;
-			if ( ! relatedTarget?.closest( '.pattern-assembler__pattern-action-bar' ) ) {
+			if ( ! relatedTarget?.closest?.( '.pattern-assembler__pattern-action-bar' ) ) {
 				setActiveElement( null );
 			}
 		};
