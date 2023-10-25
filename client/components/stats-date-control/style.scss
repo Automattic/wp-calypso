@@ -1,6 +1,8 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography.scss";
 
+$date-control-shortcut-min-width: 140px;
+
 .date-control-picker-date {
 	margin: 16px;
 
@@ -23,13 +25,18 @@
 
 .date-control-picker-shortcuts__shortcut {
 	border-radius: 4px;
-
-	&.is-selected {
-		background-color: var(--color-accent-5);
-	}
+	min-width: $date-control-shortcut-min-width;
 
 	&:hover {
 		background-color: var(--color-primary-0);
+	}
+
+	& + & {
+		margin-top: 2px; // space for an outline for the current item and hover for the next
+	}
+
+	&.is-selected {
+		background-color: var(--color-accent-5);
 	}
 
 	.components-button {
@@ -56,7 +63,6 @@
 }
 
 .stats-date-control-picker {
-
 	> .components-button {
 		align-items: center;
 		background: #fff;
@@ -70,14 +76,12 @@
 		font-weight: 500;
 		gap: 8px;
 		justify-content: flex-end;
-		letter-spacing: 0.32px;
 		line-height: 20px;
 		padding: 6px 8px;
 	}
 }
 
 .stats-date-control-picker-dates__inputs {
-
 	align-items: flex-start; // this prevents flex children from stretching
 	display: flex; // to position "From" and "To" groups side by side
 	gap: 16px; // spacing between the "From" input and the "To" input
@@ -101,12 +105,22 @@
 .stats-date-control-picker__popover-content {
 	display: flex;
 	min-width: 320px;
+	flex-direction: row-reverse;
+}
 
+.stats-date-control-picker__popover-wrapper {
+	.popover__inner {
+		border-radius: 4px;
+	}
 }
 
 .stats-date-control-picker-dates__buttons {
 	display: flex;
 	justify-content: flex-end;
+
+	.components-button + .components-button {
+		margin-left: 12px;
+	}
 }
 
 .stats-date-control-picker__popover-content .date-control-picker-date .date-control-picker-date__heading {
