@@ -74,10 +74,10 @@
 		line-height: 20px;
 		letter-spacing: -0.15px;
 
-		display: inline-block;
 		// Hide subtitle text on small screens
-		@media ( max-width: $break-small ) {
-			display: none;
+		display: none;
+		@media ( min-width: $break-small ) {
+			display: inline-block;
 		}
 	}
 
