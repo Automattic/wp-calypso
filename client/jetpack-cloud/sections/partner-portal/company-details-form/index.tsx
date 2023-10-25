@@ -38,6 +38,7 @@ interface Props {
 		contactPerson?: string;
 		companyWebsite?: string;
 		companyType?: string;
+		partnerProgramOptIn?: boolean;
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -103,6 +104,7 @@ export default function CompanyDetailsForm( {
 			contactPerson,
 			companyWebsite,
 			companyType,
+			partnerProgramOptIn,
 			city,
 			line1,
 			line2,
@@ -116,6 +118,7 @@ export default function CompanyDetailsForm( {
 			contactPerson,
 			companyWebsite,
 			companyType,
+			partnerProgramOptIn,
 			city,
 			line1,
 			line2,
