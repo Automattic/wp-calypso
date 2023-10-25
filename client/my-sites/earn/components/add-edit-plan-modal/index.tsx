@@ -234,18 +234,25 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		title: productDetails.title + __( '(yearly)', 'jetpack' ),
 	} );
 
-	const getCurrentProductDetails = (): Product => ( {
-		currency: currentCurrency,
-		price: currentPrice,
-		title: editedProductName,
-		interval: editedSchedule,
-		buyer_can_change_amount: editedPayWhatYouWant,
-		multiple_per_user: editedMultiplePerUser,
-		type: editedPostIsTier ? TIER_TYPE : null,
-		welcome_email_content: editedCustomConfirmationMessage,
-		subscribe_as_site_subscriber: editedPostPaidNewsletter,
-		is_editable: true,
-	} );
+	const getCurrentProductDetails = (): Product => {
+		const product: Product = {
+			currency: currentCurrency,
+			price: currentPrice,
+			title: editedProductName,
+			interval: editedSchedule,
+			buyer_can_change_amount: editedPayWhatYouWant,
+			multiple_per_user: editedMultiplePerUser,
+			welcome_email_content: editedCustomConfirmationMessage,
+			subscribe_as_site_subscriber: editedPostPaidNewsletter,
+			is_editable: true,
+		};
+
+		if ( editedPostIsTier ) {
+			product.type = TIER_TYPE;
+		}
+
+		return product;
+	};
 
 	const onClose = ( reason: string | undefined ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
