@@ -21,6 +21,7 @@ type DefaultWiredLaunchpadProps = {
 	launchpadContext: string;
 	onSiteLaunched?: () => void;
 	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
+	shouldActivateChecklist?: boolean;
 };
 
 const DefaultWiredLaunchpad = ( {
@@ -29,6 +30,7 @@ const DefaultWiredLaunchpad = ( {
 	launchpadContext,
 	onSiteLaunched,
 	onPostFilterTasks,
+	shouldActivateChecklist,
 }: DefaultWiredLaunchpadProps ) => {
 	const {
 		data: { checklist },
@@ -87,7 +89,7 @@ const DefaultWiredLaunchpad = ( {
 			siteSlug,
 			tracksData,
 			extraActions: {
-				setActiveChecklist,
+				...( shouldActivateChecklist ? { setActiveChecklist } : {} ),
 				setShareSiteModalIsOpen,
 			},
 			eventHandlers: {
