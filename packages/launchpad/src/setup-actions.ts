@@ -12,6 +12,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'manage_subscribers',
 	'connect_social_media',
 	'drive_traffic',
+	'site_monitoring_page',
 ];
 
 export const setUpActionsForTasks = ( {

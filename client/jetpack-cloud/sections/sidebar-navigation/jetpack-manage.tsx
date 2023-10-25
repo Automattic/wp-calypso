@@ -1,5 +1,7 @@
-import { plugins, key, currencyDollar, category } from '@wordpress/icons';
+import { plugins, currencyDollar, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
+import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import {
 	JETPACK_MANAGE_DASHBOARD_LINK,
@@ -10,12 +12,15 @@ import {
 import { redirectPage, isMenuItemSelected } from './lib/sidebar';
 import type { MenuItemProps } from './types';
 
+const BILLING_MENU_ITEM_ID = 'partner-portal-billing-menu-item';
+
 const JetpackManageSidebar = () => {
 	const translate = useTranslate();
 
 	const createItem = ( props: MenuItemProps ) => ( {
 		...props,
 		onClickMenuItem: redirectPage,
+		trackEventName: 'calypso_jetpack_sidebar_menu_click',
 		isSelected: isMenuItemSelected( props.link ),
 	} );
 
@@ -25,28 +30,74 @@ const JetpackManageSidebar = () => {
 			path: '/',
 			link: JETPACK_MANAGE_DASHBOARD_LINK,
 			title: translate( 'Sites Management' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Dashboard',
+			},
 		} ),
 		createItem( {
 			icon: plugins,
 			path: '/',
 			link: JETPACK_MANAGE_PLUGINS_LINK,
 			title: translate( 'Plugin Management' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Plugins',
+			},
 		} ),
 		createItem( {
-			icon: key,
+			icon: <JetpackIcons icon="licenses_line" size={ 24 } />,
 			path: '/',
 			link: JETPACK_MANAGE_LICENCES_LINK,
 			title: translate( 'Licenses' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal / Licenses',
+			},
 		} ),
 		createItem( {
+			id: BILLING_MENU_ITEM_ID,
 			icon: currencyDollar,
 			path: '/partner-portal/',
 			link: JETPACK_MANAGE_BILLING_LINK,
 			title: translate( 'Purchases' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal',
+			},
 			withChevron: true,
 		} ),
 	];
-	return <NewSidebar isJetpackManage path="/" menuItems={ menuItems } />;
+	return (
+		<>
+			<NewSidebar isJetpackManage path="/" menuItems={ menuItems } />
+
+			<GuidedTour
+				className="jetpack-cloud-sidebar__guided-tour"
+				preferenceName="jetpack-manage-sidebar-v2-dashboard-tour"
+				tours={ [
+					{
+						target: '.jetpack-cloud-sidebar__all-sites-icon',
+						title: translate( 'Switch Sites Easily' ),
+						description: translate(
+							'You can navigate through your individual site views from here.'
+						),
+					},
+					{
+						target: '.jetpack-cloud-sidebar__profile-dropdown-button-icon',
+						title: translate( 'Access Profile & Help Docs' ),
+						description: translate(
+							'Here you can logout from your account or view our help documentation.'
+						),
+					},
+					{
+						target: `#${ BILLING_MENU_ITEM_ID } svg`,
+						popoverPosition: 'bottom left',
+						title: translate( 'Manage Purchases' ),
+						description: translate(
+							'Here you can view your billing info, payment methods, invoices and more.'
+						),
+					},
+				] }
+			/>
+		</>
+	);
 };
 
 export default JetpackManageSidebar;

@@ -3,8 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { addMailPoetUpgrade } from 'calypso/data/marketplace/mailpoet-add-upgrade';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
@@ -43,12 +43,9 @@ export const MailPoetUpgradePage = ( { siteId }: { siteId: number } ) => {
 	return (
 		<Main wideLayout className="mailpoet-upgrade mailpoet-upgrade-header">
 			<DocumentHead title={ translate( 'MailPoet Business' ) } />
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'MailPoet Business' ) }
-				subHeaderText={ translate( 'Get a complimentary MailPoet Business Subscription' ) }
-				align="left"
-				hasScreenOptions
+			<NavigationHeader
+				title={ translate( 'MailPoet Business' ) }
+				subtitle={ translate( 'Get a complimentary MailPoet Business Subscription' ) }
 			/>
 			<Card>
 				<p>

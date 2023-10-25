@@ -8,7 +8,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -26,7 +25,6 @@ const SiteSettingsComponent = ( {
 } ) => {
 	return (
 		<Main className="site-settings">
-			<ScreenOptionsTab wpAdminPath="options-general.php" />
 			{ isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
@@ -36,6 +34,7 @@ const SiteSettingsComponent = ( {
 			<JetpackDevModeNotice />
 			<JetpackBackupCredsBanner event="settings-backup-credentials" />
 			<NavigationHeader
+				screenOptionsTab="options-general.php"
 				navigationItems={ [] }
 				title={ translate( 'General Settings' ) }
 				subtitle={ translate(

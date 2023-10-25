@@ -6,6 +6,11 @@
 		font-weight: 600;
 		margin-block-end: 8px;
 	}
+
+	.plugins-overview__container {
+		// The -64px is to undo the padding of layout.has-no-masterbar (32px) & .layout__content (32px)
+		min-height: calc(100vh - 64px);
+	}
 }
 
 .plugins-overview__container {

@@ -21,7 +21,6 @@ import PromoSection, {
 } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -58,7 +57,6 @@ const Home = () => {
 	const hasSimplePayments = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_SIMPLE_PAYMENTS )
 	);
-	const eligibleForProPlan = useSelector( ( state ) => isEligibleForProPlan( state, site?.ID ) );
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
@@ -129,9 +127,9 @@ const Home = () => {
 	};
 
 	const getPremiumPlanNames = () => {
-		const nonAtomicJetpackText = eligibleForProPlan
-			? translate( 'Available only with a Pro plan.' )
-			: translate( 'Available only with a Premium, Business, or Commerce plan.' );
+		const nonAtomicJetpackText = translate(
+			'Available only with a Premium, Business, or Commerce plan.'
+		);
 
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
@@ -154,6 +152,7 @@ const Home = () => {
 			  }
 			: {
 					text: translate( 'Unlock this feature' ),
+					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
 						page(
@@ -398,6 +397,7 @@ const Home = () => {
 				  }
 				: {
 						text: translate( 'Unlock this feature' ),
+						isPrimary: true,
 						action: () => {
 							trackUpgrade( 'plans', 'ads' );
 							page(
