@@ -26,6 +26,8 @@ function getCountry( country: string, options: CountryOption[] ): string {
 	return options[ 0 ].value;
 }
 
+const companyTypesEligibleForPartnerProgram = [ 'agency', 'freelancer' ];
+
 interface Props {
 	includeTermsOfService?: boolean;
 	isLoading: boolean;
