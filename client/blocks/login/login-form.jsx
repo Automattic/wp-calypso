@@ -630,7 +630,7 @@ export class LoginForm extends Component {
 		const magicLoginPageLinkWithEmail = addQueryArgs( { email_address: emailAddress }, loginLink );
 
 		return this.props.translate(
-			' Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
+			'Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
 			{
 				components: {
 					magicLoginLink: (
