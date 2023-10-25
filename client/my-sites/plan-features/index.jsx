@@ -46,7 +46,7 @@ import {
 	getHighlightedFeatures,
 	getPlanDescriptionForMobile,
 	getPlanFeatureAccessor,
-} from 'calypso/my-sites/plan-features-comparison/util';
+} from 'calypso/my-sites/plan-features/util';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -895,8 +895,8 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 		planMatches( plan, { type: TYPE_P2_PLUS, group: GROUP_WPCOM } ) );
 
 /**
- * @deprecated Use the {@link useCalculateMaxPlanUpgradeCredit} hook instead, to be cleaned up with Plan
- * @module calypso/my-sites/plan-features-2023-grid/hooks/useCalculateMaxPlanUpgradeCredit
+ * @deprecated Use the useCalculateMaxPlanUpgradeCredit hook instead, to be cleaned up with Plan
+ * @module calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit
  */
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties

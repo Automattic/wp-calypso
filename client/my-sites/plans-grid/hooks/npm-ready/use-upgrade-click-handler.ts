@@ -1,4 +1,4 @@
-import { isFreePlan, type PlanSlug } from '@automattic/calypso-products';
+import { isFreeHostingTrial, isFreePlan, type PlanSlug } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -37,6 +37,12 @@ const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick }: Props ) => {
 					cartItemForPlan,
 					...( storageAddOnCartItem ? [ storageAddOnCartItem ] : [] ),
 				] );
+				return;
+			}
+
+			if ( isFreeHostingTrial( planSlug ) ) {
+				const cartItemForPlan = { product_slug: planSlug };
+				onUpgradeClick?.( [ cartItemForPlan ] );
 				return;
 			}
 

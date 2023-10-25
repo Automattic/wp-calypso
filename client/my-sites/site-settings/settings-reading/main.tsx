@@ -5,7 +5,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
@@ -198,12 +197,15 @@ const ReadingSettings = () => {
 
 	return (
 		<Main className="site-settings site-settings__reading-settings">
-			<ScreenOptionsTab wpAdminPath="options-reading.php" />
 			{ isJetpack && isPossibleJetpackConnectionProblem && siteId && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Reading Settings' ) } />
+			<NavigationHeader
+				screenOptionsTab="options-reading.php"
+				navigationItems={ [] }
+				title={ translate( 'Reading Settings' ) }
+			/>
 			<ReadingSettingsForm />
 		</Main>
 	);

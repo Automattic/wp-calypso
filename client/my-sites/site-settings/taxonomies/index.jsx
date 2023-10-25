@@ -7,7 +7,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -18,11 +17,11 @@ const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
 
 	return (
 		<Main wideLayout className={ classnames( 'taxonomies', taxonomy ) }>
-			<ScreenOptionsTab wpAdminPath={ `edit-tags.php?taxonomy=${ taxonomy }` } />
 			<DocumentHead
 				title={ translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) }
 			/>
 			<NavigationHeader
+				screenOptionsTab={ `edit-tags.php?taxonomy=${ taxonomy }` }
 				navigationItems={ [] }
 				title={ labels.name }
 				subtitle={ translate(

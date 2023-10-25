@@ -12,6 +12,7 @@ import './style.scss';
 const ICON_SIZE = 24;
 
 interface Props {
+	id?: string;
 	icon: JSX.Element;
 	path: string;
 	link: string;
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export const SidebarNavigatorMenuItem = ( {
+	id,
 	icon,
 	path,
 	link,
@@ -39,6 +41,7 @@ export const SidebarNavigatorMenuItem = ( {
 					'is-active': isSelected,
 				} ) }
 				onClick={ () => onClickMenuItem( link ) }
+				id={ id }
 			>
 				<HStack justify="flex-start">
 					{ icon && <Icon style={ { fill: 'currentcolor' } } icon={ icon } size={ ICON_SIZE } /> }

@@ -30,6 +30,7 @@
 
 	.pattern-action-bar__action {
 		height: 40px;
+		white-space: nowrap;
 
 		&.has-icon {
 			min-width: 40px;

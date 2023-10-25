@@ -9,7 +9,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mapPostStatus } from 'calypso/lib/route';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
@@ -96,10 +95,10 @@ class PostsMain extends Component {
 						messagePath="wp:edit-post:admin_notices"
 					/>
 				) }
-				<ScreenOptionsTab wpAdminPath="edit.php" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Posts' ) } />
 				<NavigationHeader
+					screenOptionsTab="edit.php"
 					navigationItems={ [] }
 					title={ translate( 'Posts' ) }
 					subtitle={ translate(

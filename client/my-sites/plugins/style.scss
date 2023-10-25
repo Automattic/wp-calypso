@@ -3,6 +3,12 @@
 @import "./grid-mixins.scss";
 @import "./woocommerce-box.scss";
 
+.is-jetpack-new-navigation {
+	.plugins__top-container-jc {
+		border-block-end: none;
+	}
+}
+
 .is-section-plugins .main {
 
 	&.is-logged-out:not(.is-plugin-details) {

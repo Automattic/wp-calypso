@@ -3,7 +3,6 @@ import {
 	PLAN_PERSONAL,
 	isDomainRegistration,
 	isDomainTransfer,
-	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -18,7 +17,6 @@ import {
 	hasPlan,
 	planItem,
 } from 'calypso/lib/cart-values/cart-items';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isRequestingPlans } from 'calypso/state/plans/selectors';
@@ -50,7 +48,6 @@ interface CartFreeUserPlanUpsellHocProps {
 	planPrice: number | false | null | undefined;
 	showPlanUpsell?: boolean;
 	translate: ReturnType< typeof useTranslate >;
-	eligibleForProPlan?: boolean;
 	clickUpsellAddToCart: () => void;
 }
 
@@ -69,84 +66,48 @@ class CartFreeUserPlanUpsell extends Component<
 	};
 
 	getUpgradeText() {
-		const { cart, planPrice, translate, eligibleForProPlan } = this.props;
+		const { cart, planPrice, translate } = this.props;
 		const firstDomain = cart.products.find( this.isRegistrationOrTransfer );
 
 		if ( planPrice && firstDomain && planPrice > firstDomain.cost ) {
 			const extraToPay = planPrice - firstDomain.cost;
-			return eligibleForProPlan
-				? translate(
-						'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our Pro plan, and get access to all its ' +
-							'features, plus the first year of your domain for free.',
-						{
-							args: {
-								extraToPay: formatCurrency( extraToPay, firstDomain.currency ),
-							},
-							components: {
-								strong: <strong />,
-							},
-						}
-				  )
-				: translate(
-						'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our Personal plan, and get access to all its ' +
-							'features, plus the first year of your domain for free.',
-						{
-							args: {
-								extraToPay: formatCurrency( extraToPay, firstDomain.currency ),
-							},
-							components: {
-								strong: <strong />,
-							},
-						}
-				  );
+			return translate(
+				'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our Personal plan, and get access to all its ' +
+					'features, plus the first year of your domain for free.',
+				{
+					args: {
+						extraToPay: formatCurrency( extraToPay, firstDomain.currency ),
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
 		} else if ( planPrice && firstDomain && planPrice < firstDomain.cost ) {
 			const savings = firstDomain.cost - planPrice;
-			return eligibleForProPlan
-				? translate(
-						'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com Pro plan ' +
-							'instead — your domain comes free for a year.',
-						{
-							args: {
-								savings: formatCurrency( savings, firstDomain.currency ),
-							},
-							components: {
-								strong: <strong />,
-							},
-						}
-				  )
-				: translate(
-						'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com Personal plan ' +
-							'instead — your domain comes free for a year.',
-						{
-							args: {
-								savings: formatCurrency( savings, firstDomain.currency ),
-							},
-							components: {
-								strong: <strong />,
-							},
-						}
-				  );
+			return translate(
+				'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com Personal plan ' +
+					'instead — your domain comes free for a year.',
+				{
+					args: {
+						savings: formatCurrency( savings, firstDomain.currency ),
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
 		}
 
-		return eligibleForProPlan
-			? translate(
-					'Purchase our Pro plan at {{strong}}no extra cost{{/strong}}, and get access to all its ' +
-						'features, plus the first year of your domain for free.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-			  )
-			: translate(
-					'Purchase our Personal plan at {{strong}}no extra cost{{/strong}}, and get access to all its ' +
-						'features, plus the first year of your domain for free.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-			  );
+		return translate(
+			'Purchase our Personal plan at {{strong}}no extra cost{{/strong}}, and get access to all its ' +
+				'features, plus the first year of your domain for free.',
+			{
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
 	}
 
 	shouldRender() {
@@ -172,10 +133,7 @@ class CartFreeUserPlanUpsell extends Component<
 	}
 
 	addPlanToCart = () => {
-		const { eligibleForProPlan } = this.props;
-		const planCartItem = eligibleForProPlan
-			? planItem( PLAN_WPCOM_PRO )
-			: planItem( PLAN_PERSONAL );
+		const planCartItem = planItem( PLAN_PERSONAL );
 
 		if ( planCartItem ) {
 			this.props.addItemToCart( planCartItem );
@@ -210,8 +168,7 @@ const mapStateToProps = ( state: AppState, { cart }: CartFreeUserPlanUpsellProps
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = selectedSite ? selectedSite.ID : null;
 	const isPlansListFetching = isRequestingPlans( state );
-	const eligibleForProPlan = isEligibleForProPlan( state, selectedSiteId );
-	const upsellPlan = eligibleForProPlan ? getPlan( PLAN_WPCOM_PRO ) : getPlan( PLAN_PERSONAL );
+	const upsellPlan = getPlan( PLAN_PERSONAL );
 
 	return {
 		hasPaidPlan: siteHasPaidPlan( selectedSite ),
@@ -226,7 +183,6 @@ const mapStateToProps = ( state: AppState, { cart }: CartFreeUserPlanUpsellProps
 			getPlanPrice( state, selectedSiteId, upsellPlan, false ),
 		selectedSite,
 		showPlanUpsell: !! selectedSiteId,
-		eligibleForProPlan,
 	};
 };
 

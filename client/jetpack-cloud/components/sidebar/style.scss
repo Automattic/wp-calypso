@@ -1,3 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
 // This file is meant to house style rules that all implementations of the base
 // sidebar will implement by default.
 
@@ -7,9 +11,16 @@
 	}
 
 	.sidebar-v2__menu-item {
+		svg {
+			color: #6f6f6f;
+		}
 		&.is-active {
 			background: var(--studio-green-0);
 			color: var(--studio-green-50);
+
+			svg {
+				color: var(--studio-green-50);
+			}
 		}
 	}
 
@@ -52,5 +63,13 @@
 		// TODO: Value taken directly from designs;
 		// confirm this weight is correct and refactor as necessary
 		font-weight: 500;
+	}
+}
+
+.jetpack-cloud-sidebar__guided-tour {
+	display: none;
+
+	@include break-medium {
+		display: block;
 	}
 }

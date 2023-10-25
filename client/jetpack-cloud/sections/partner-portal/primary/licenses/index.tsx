@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -82,8 +83,15 @@ export default function Licenses( {
 
 	const showEmptyStateContent = hasFetched && allLicensesCount === 0;
 
+	const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
+
 	return (
-		<Layout className="licenses" title={ translate( 'Licenses' ) } wide withBorder>
+		<Layout
+			className="licenses"
+			title={ translate( 'Licenses' ) }
+			wide
+			withBorder={ ! isNewNavigation }
+		>
 			<PageViewTracker
 				title="Partner Portal > Licenses"
 				path="/partner-portal/licenses/:filter"
