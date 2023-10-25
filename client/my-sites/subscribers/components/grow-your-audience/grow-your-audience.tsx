@@ -25,27 +25,35 @@ const GrowYourAudienceCard = ( {
 	icon,
 	text,
 	title,
+	tracksEventCta,
 	url,
-}: GrowYourAudienceCardProps ) => (
-	<Card className="grow-your-audience__card" size="small">
-		<CardBody className="grow-your-audience__card-body">
-			<h3 className="grow-your-audience__card-title">
-				<Icon className="grow-your-audience__card-icon" icon={ icon } size={ 20 } />
-				{ title }
-			</h3>
-			<p className="grow-your-audience__card-text">{ text }</p>
-			{ externalUrl ? (
-				<ExternalLink className="grow-your-audience__card-link" href={ url }>
-					{ ctaLabel }
-				</ExternalLink>
-			) : (
-				<a className="grow-your-audience__card-link" href={ url }>
-					{ ctaLabel }
-				</a>
-			) }
-		</CardBody>
-	</Card>
-);
+}: GrowYourAudienceCardProps ) => {
+	const onClick = () =>
+		recordTracksEvent( 'calypso_subscriber_management_growth_cta_click', {
+			cta: tracksEventCta,
+		} );
+
+	return (
+		<Card className="grow-your-audience__card" size="small">
+			<CardBody className="grow-your-audience__card-body">
+				<h3 className="grow-your-audience__card-title">
+					<Icon className="grow-your-audience__card-icon" icon={ icon } size={ 20 } />
+					{ title }
+				</h3>
+				<p className="grow-your-audience__card-text">{ text }</p>
+				{ externalUrl ? (
+					<ExternalLink className="grow-your-audience__card-link" href={ url } onClick={ onClick }>
+						{ ctaLabel }
+					</ExternalLink>
+				) : (
+					<a className="grow-your-audience__card-link" href={ url } onClick={ onClick }>
+						{ ctaLabel }
+					</a>
+				) }
+			</CardBody>
+		</Card>
+	);
+};
 
 const GrowYourAudience = () => {
 	const locale = useLocale();
@@ -72,6 +80,7 @@ const GrowYourAudience = () => {
 							'Take a look at your stats and refine your content strategy for better engagement.'
 						) }
 						title={ translate( 'Explore your stats' ) }
+						tracksEventCta="stats"
 						ctaLabel={ translate( 'Check stats' ) }
 						url={ `/stats/subscribers/${ selectedSiteSlug }` }
 					/>
@@ -82,6 +91,7 @@ const GrowYourAudience = () => {
 							'Using a subscriber block is the first step to growing your audience.'
 						) }
 						title={ translate( 'Every visitor is a potential subscriber' ) }
+						tracksEventCta="subscribe-block"
 						ctaLabel={ translate( 'Learn more' ) }
 						externalUrl
 						url={ localizeUrl(
@@ -96,6 +106,7 @@ const GrowYourAudience = () => {
 						'Allow your readers to support your work with paid subscriptions, gated content, or tips.'
 					) }
 					title={ translate( 'Start earning' ) }
+					tracksEventCta="earn"
 					ctaLabel={ translate( 'Learn more' ) }
 					url={ `/earn/${ selectedSiteSlug ?? '' }` }
 				/>
@@ -106,6 +117,7 @@ const GrowYourAudience = () => {
 						'Create fresh content, publish regularly, and understand your audience with site stats.'
 					) }
 					title={ translate( 'Keep your readers engaged' ) }
+					tracksEventCta="go-content-strategy"
 					ctaLabel={ translate( 'Learn more' ) }
 					externalUrl
 					url="https://wordpress.com/go/content-blogging/how-to-start-a-successful-blog-that-earns-links-traffic-and-revenue/#creating-a-blog-content-strategy" // eslint-disable-line wpcalypso/i18n-unlocalized-url
