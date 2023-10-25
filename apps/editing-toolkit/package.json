@@ -121,7 +121,7 @@
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@floating-ui/utils": "^0.1.1",
+		"@floating-ui/utils": "^0.1.6",
 		"@tanstack/eslint-plugin-query": "^4.29.8",
 		"@testing-library/jest-dom": "^6.1.4",
 		"@testing-library/react": "^14.0.0",
