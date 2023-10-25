@@ -54,7 +54,7 @@
 	},
 	"engines": {
 		"node": "^v20.8.1",
-		"yarn": "^3.1.1"
+		"yarn": "^4.0.0"
 	},
 	"scripts": {
 		"analyze-bundles": "yarn run build-client-stats && webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
