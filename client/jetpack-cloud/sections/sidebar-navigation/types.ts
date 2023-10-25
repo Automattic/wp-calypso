@@ -1,4 +1,5 @@
 export type MenuItemProps = {
+	id?: string;
 	icon: JSX.Element;
 	link: string;
 	path: string;
