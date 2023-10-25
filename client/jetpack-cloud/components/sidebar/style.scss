@@ -12,12 +12,13 @@
 
 
 	.split-button {
+		display: flex;
+
 		a {
-			width: 70%;
+			flex-grow: 1;
 		}
 
 		button.split-button__toggle {
-			width: 30%;
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
 		}
