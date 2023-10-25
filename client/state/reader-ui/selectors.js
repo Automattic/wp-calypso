@@ -13,5 +13,9 @@ export function getLastPath( state ) {
  * @returns string|null {loggedInAction} logged in action clicked in the reader
  */
 export function getLastActionRequiresLogin( state ) {
+	// Check if lastActionRequiresLogin is defined, if not return null
+	if ( ! state.readerUi?.lastActionRequiresLogin ) {
+		return null;
+	}
 	return state.readerUi?.lastActionRequiresLogin;
 }
