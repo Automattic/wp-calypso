@@ -78,6 +78,7 @@ function isValidData( data, type ) {
 			return data.match( /^(\d{1,3}\.){3}\d{1,3}$/ );
 		case 'AAAA':
 			return data.match( /^[a-f0-9:]+$/i );
+		case 'ALIAS':
 		case 'CNAME':
 		case 'MX':
 			return isValidDomain( data );
@@ -123,7 +124,7 @@ function isRootDomain( name, domainName ) {
 }
 
 function canBeRootDomain( type ) {
-	return [ 'A', 'AAAA', 'MX', 'SRV', 'TXT' ].includes( type );
+	return [ 'A', 'AAAA', 'ALIAS', 'MX', 'SRV', 'TXT' ].includes( type );
 }
 
 function getFieldWithDot( field ) {
