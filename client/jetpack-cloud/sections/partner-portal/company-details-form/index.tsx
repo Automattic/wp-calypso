@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -68,12 +69,20 @@ export default function CompanyDetailsForm( {
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
+	const [ partnerProgramOptIn, setPartnerProgramOptIn ] = useState( false );
+
+	const [ showPartnerProgramOptIn, setShowPartnerProgramOptIn ] = useState( false );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
 
 	const handleCompanyTypeChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		setCompanyType( event.target.value );
+
+		const isEligibleForPartnerProgram = companyTypesEligibleForPartnerProgram.includes(
+			event.target.value
+		);
+		setShowPartnerProgramOptIn( isEligibleForPartnerProgram );
 	};
 	useEffect( () => {
 		// Reset the value of state since our options have changed.
@@ -190,6 +199,23 @@ export default function CompanyDetailsForm( {
 						className={ undefined }
 					/>
 				</FormFieldset>
+				{ showPartnerProgramOptIn && (
+					<FormFieldset>
+						<FormLabel htmlFor="partnerProgramOptIn">
+							{ translate( 'Jetpack Agency & Pro Partner program' ) }
+						</FormLabel>
+						<FormInputCheckbox
+							id="partnerProgramOptIn"
+							name="partnerProgramOptIn"
+							checked={ partnerProgramOptIn }
+							disabled={ isLoading }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setPartnerProgramOptIn( event.target.checked )
+							}
+						/>
+						<span>{ translate( 'Sign up for the Jetpack Agency & Pro Partner program' ) }</span>
+					</FormFieldset>
+				) }
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
