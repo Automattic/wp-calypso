@@ -1,7 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import moment from 'moment';
+import { addQueryArgs } from 'calypso/lib/url';
 import wp from 'calypso/lib/wp';
+import isBloganuary from './is-bloganuary';
 
 export interface BloggingPrompt {
 	id: string;
@@ -28,12 +29,19 @@ export const useBloggingPrompts = (
 	page: number
 ): UseQueryResult< BloggingPrompt[] | null > => {
 	const today = moment().format( 'YYYY-MM-DD' );
-	const isBloganuary = isEnabled( 'bloganuary' );
+	const path = addQueryArgs(
+		{
+			number: page,
+			from: today,
+			...( isBloganuary() && { is_bloganuary: true } ),
+		},
+		`/sites/${ siteId }/blogging-prompts`
+	);
 	return useQuery( {
-		queryKey: [ 'blogging-prompts', today + '-' + page, isBloganuary ],
+		queryKey: [ 'blogging-prompts', today + '-' + page, isBloganuary() ? 'bloganuary' : '' ],
 		queryFn: () =>
 			wp.req.get( {
-				path: `/sites/${ siteId }/blogging-prompts?number=${ page }&from=${ today }&is_bloganuary=${ isBloganuary }`,
+				path: path,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! siteId,
