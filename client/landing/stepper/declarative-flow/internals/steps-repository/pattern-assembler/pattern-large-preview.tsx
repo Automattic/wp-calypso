@@ -218,11 +218,18 @@ const PatternLargePreview = ( {
 			}
 		};
 
+		// When the value of the `hasSelectedPattern` changes, it will append/remove the
+		// frame to the DOM. Hence, we need to check the value to bind the event again
+		// after the frame is removed and then appended to the DOM.
+		if ( ! hasSelectedPattern ) {
+			return;
+		}
+
 		frameRef.current?.addEventListener( 'mouseleave', handleMouseLeave );
 		return () => {
 			frameRef.current?.removeEventListener( 'mouseleave', handleMouseLeave );
 		};
-	}, [ frameRef, setActiveElement ] );
+	}, [ frameRef, hasSelectedPattern, setActiveElement ] );
 
 	return (
 		<DeviceSwitcher
