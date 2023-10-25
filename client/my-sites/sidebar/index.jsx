@@ -30,6 +30,8 @@ import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
+export const INNER_LOADING_MENU_TYPE = 'inner-loading-menu-type';
+
 export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
@@ -64,6 +66,10 @@ export const MySitesSidebarUnified = ( { path } ) => {
 
 					if ( 'separator' === item?.type ) {
 						return <SidebarSeparator key={ i } />;
+					}
+
+					if ( INNER_LOADING_MENU_TYPE === item?.type ) {
+						return <Spinner />;
 					}
 
 					if ( item?.children?.length ) {
