@@ -157,7 +157,9 @@ export default function CompanyDetailsForm( {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Which answer below best describes your company:' ) }</FormLabel>
+					<FormLabel>
+						{ translate( 'Choose which of the below options best describes your company:' ) }
+					</FormLabel>
 					<FormRadio
 						label={ translate( 'Agency' ) }
 						value="agency"
