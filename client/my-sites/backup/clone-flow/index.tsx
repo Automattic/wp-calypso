@@ -171,6 +171,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					setCloneDestination( selectedSite.role );
 					setUserHasSetDestination( true );
 					setIsCloneToStaging( false );
+					dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_staging_site_with_role' ) );
 				} else {
 					setCloneDestination( selectedSite.blog_id.toString() );
 					setUserHasSetDestination( true );
