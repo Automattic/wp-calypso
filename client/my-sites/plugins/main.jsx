@@ -506,7 +506,6 @@ export class PluginsMain extends Component {
 				<div
 					className={ classNames( 'plugins__top-container', {
 						'plugins__top-container-jc': isJetpackCloud,
-						'is-new-navigation': isNewNavigation,
 					} ) }
 				>
 					<div className="plugins__content-wrapper">

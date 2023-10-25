@@ -3,6 +3,12 @@
 @import "./grid-mixins.scss";
 @import "./woocommerce-box.scss";
 
+.is-jetpack-new-navigation {
+	.plugins__top-container-jc {
+		border-block-end: none;
+	}
+}
+
 .is-section-plugins .main {
 
 	&.is-logged-out:not(.is-plugin-details) {
@@ -453,10 +459,6 @@ body.is-section-plugins #primary {
 
 	@include break-large() {
 		padding: 6px 48px 0;
-	}
-
-	&.is-new-navigation {
-		border-bottom: none;
 	}
 }
 
