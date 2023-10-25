@@ -5,14 +5,16 @@ import {
 	PLAN_BUSINESS,
 	getPlan,
 } from '@automattic/calypso-products';
-import { NextButton, SubTitle } from '@automattic/onboarding';
+import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { Button, Spinner } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
+import { useSelector } from 'calypso/state';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { TrialPlan } from './trial-plan';
 import { useVerifyEmail } from './use-verify-email';
-import type { Step } from '../../types';
 
 const FEATURES_NOT_INCLUDED_IN_FREE_TRIAL = [
 	FEATURE_CUSTOM_DOMAIN,
@@ -20,11 +22,12 @@ const FEATURES_NOT_INCLUDED_IN_FREE_TRIAL = [
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 ];
 
-interface CallToActionProps {
+interface Props {
+	goBack?: () => void;
 	onStartTrialClick(): void;
 }
 
-const CallToAction = ( { onStartTrialClick }: CallToActionProps ) => {
+const CallToAction = ( { onStartTrialClick }: Props ) => {
 	const { __ } = useI18n();
 	const { isVerified, hasUser, isSending, email, resendEmail } = useVerifyEmail();
 	const startTrial = () => {
@@ -46,12 +49,29 @@ const CallToAction = ( { onStartTrialClick }: CallToActionProps ) => {
 	);
 };
 
-const HostingTrialAcknowledgeInternal = ( { onStartTrialClick }: CallToActionProps ) => {
+const HostingTrialAcknowledgeInternal = ( { onStartTrialClick, goBack }: Props ) => {
 	const { __ } = useI18n();
 	const plan = getPlan( PLAN_BUSINESS );
-
+	const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 	const planFeatures =
 		plan && 'getPlanCompareFeatures' in plan ? plan.getPlanCompareFeatures?.() ?? [] : [];
+
+	if ( ! isEligible ) {
+		return (
+			<div className="trial-plan--container">
+				<Title>{ __( 'You already enrolled in a trial' ) }</Title>
+				<SubTitle>
+					{ createInterpolateElement(
+						__(
+							"You've already enrolled in a free trial and is not eligible for a new one.<br />Upgrade now to continue enjoying the benefits of a Business plan."
+						),
+						{ br: <br /> }
+					) }
+				</SubTitle>
+				<NextButton onClick={ goBack }>{ __( 'Upgrade now' ) }</NextButton>
+			</div>
+		);
+	}
 
 	return (
 		<TrialPlan
@@ -122,5 +142,10 @@ function EmailVerification( {
 }
 
 export const HostingTrialAcknowledge: Step = ( { navigation } ) => {
-	return <HostingTrialAcknowledgeInternal onStartTrialClick={ () => navigation.submit?.() } />;
+	return (
+		<HostingTrialAcknowledgeInternal
+			onStartTrialClick={ () => navigation.submit?.() }
+			goBack={ navigation.goBack }
+		/>
+	);
 };
