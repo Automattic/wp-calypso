@@ -6,7 +6,7 @@
 	box-sizing: border-box;
 	width: 100%;
 	padding: 16px;
-	margin-bottom: 32px;
+	margin-bottom: 0;
 	@include break-small {
 		padding: 0 0 24px 0;
 		margin-bottom: 16px;
