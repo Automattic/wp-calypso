@@ -706,8 +706,8 @@ export class RenderDomainsStep extends Component {
 		if ( isPurchasingItem ) {
 			const selectedDomain = domainCart?.length > 0 ? domainCart[ 0 ] : suggestion;
 			domainItem = domainRegistration( {
-				domain: selectedDomain.domain_name || selectedDomain.meta,
-				productSlug: selectedDomain.product_slug,
+				domain: selectedDomain?.domain_name || selectedDomain?.meta,
+				productSlug: selectedDomain?.product_slug,
 			} );
 		}
 
