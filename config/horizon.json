@@ -81,6 +81,7 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"p2/p2-plus": true,
+		"pattern-assembler/add-pages": false,
 		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

@@ -136,6 +136,7 @@
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"pattern-assembler/add-pages": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

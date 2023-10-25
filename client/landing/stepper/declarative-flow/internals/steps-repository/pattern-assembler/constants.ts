@@ -15,6 +15,7 @@ export const NAVIGATOR_PATHS = {
 	ACTIVATION: '/activation',
 	CONFIRMATION: '/confirmation',
 	UPSELL: '/upsell',
+	PAGES: '/pages',
 };
 
 export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
