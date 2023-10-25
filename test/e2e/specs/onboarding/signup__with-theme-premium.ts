@@ -22,7 +22,7 @@ import {
 	ThemesDetailPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount } from '../../shared';
+import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
