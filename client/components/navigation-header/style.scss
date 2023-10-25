@@ -88,8 +88,18 @@
 			display: none;
 		}
 	}
+
+	.navigation-header__actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		@media ( min-width: $break-small ) {
+			gap: 16px;
+		}
+	}
 }
 
 #primary header.navigation-header header.formatted-header {
 	margin: 0;
 }
+

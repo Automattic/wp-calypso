@@ -20,12 +20,6 @@ const Container = styled.div`
 	}
 `;
 
-const ActionsContainer = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 16px;
-`;
-
 interface Props {
 	id?: string;
 	className?: string;
@@ -80,7 +74,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 							screenReader={ screenReader }
 						/>
 					) }
-					<ActionsContainer>{ children }</ActionsContainer>
+					<div className="navigation-header__actions">{ children }</div>
 				</div>
 			</Container>
 		</header>
