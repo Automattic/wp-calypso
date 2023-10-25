@@ -25,12 +25,10 @@ import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useDomainsViewStatus from './use-domains-view-status';
 import useSiteMenuItems from './use-site-menu-items';
-import { itemLinkMatches } from './utils';
+import { INNER_LOADING_MENU_TYPE, itemLinkMatches } from './utils';
 import 'calypso/state/admin-menu/init';
 
 import './style.scss';
-
-export const INNER_LOADING_MENU_TYPE = 'inner-loading-menu-type';
 
 export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();

@@ -1,5 +1,7 @@
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
+export const INNER_LOADING_MENU_TYPE = 'inner-loading-menu-type';
+
 const pathIncludes = ( currentPath, term, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ]?.includes( term );
 
