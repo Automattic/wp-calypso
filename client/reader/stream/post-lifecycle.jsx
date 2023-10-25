@@ -1,6 +1,7 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { omit, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component, Fragment, useCallback, useRef } from 'react';
 import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
@@ -16,6 +17,101 @@ import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
 import RecommendedPosts from './recommended-posts';
 import CrossPost from './x-post';
+
+const RenderTrackedPost = ( {
+	postKey,
+	isSelected,
+	showPost,
+	suppressSiteNameLink,
+	showFollowInHeader,
+	isDiscoverStream,
+	showSiteNameOnCards,
+	followSource,
+	blockedSites,
+	streamKey,
+	recsStreamKey,
+	index,
+	useCompactCards,
+	primarySiteId,
+	showFollowButton,
+	fixedHeaderHeight,
+	...props
+} ) => {
+	/**
+	 * Hook to return a [callback ref](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs)
+	 * that MUST be used as the `ref` prop on a `div` element.
+	 * The hook ensures that we generate theme display Tracks events when the user views
+	 * the underlying `div` element.
+	 * @param key The post being shown.
+	 * @returns A callback ref that MUST be used on a div element for tracking.
+	 */
+	const useTrackPostView = ( key, postId ) => {
+		const observerRef = useRef();
+
+		// Use a callback as the ref so we get called for both mount and unmount events
+		// We don't get both if we use useRef() and useEffect() together.
+		return useCallback(
+			( wrapperDiv ) => {
+				// If we don't have a wrapper div, we aren't mounted and should remove the observer
+				if ( ! wrapperDiv ) {
+					observerRef.current?.disconnect?.();
+					return;
+				}
+
+				const intersectionHandler = ( entries ) => {
+					// Only fire once per category
+					if ( ! wrapperDiv ) {
+						return;
+					}
+
+					const [ entry ] = entries;
+					if ( ! entry.isIntersecting ) {
+						return;
+					}
+
+					recordTracksEvent( 'calypso_reader_post_display', {
+						post_id: postId,
+					} );
+				};
+
+				observerRef.current = new IntersectionObserver( intersectionHandler, {
+					// Only fire the event when 60% of the element becomes visible
+					threshold: [ 0.6 ],
+				} );
+
+				observerRef.current.observe( wrapperDiv );
+			},
+			[ key, postId, observerRef ]
+		);
+	};
+
+	const trackingDivRef = useTrackPostView( postKey, props.post?.ID );
+
+	return (
+		<div ref={ trackingDivRef }>
+			<Post
+				isSelected={ isSelected }
+				handleClick={ showPost }
+				postKey={ postKey }
+				suppressSiteNameLink={ suppressSiteNameLink }
+				showFollowInHeader={ showFollowInHeader }
+				isDiscoverStream={ isDiscoverStream }
+				showSiteName={ showSiteNameOnCards }
+				selectedPostKey={ undefined }
+				followSource={ followSource }
+				blockedSites={ blockedSites }
+				streamKey={ streamKey }
+				recsStreamKey={ recsStreamKey }
+				index={ index }
+				compact={ useCompactCards }
+				siteId={ primarySiteId }
+				showFollowButton={ showFollowButton }
+				fixedHeaderHeight={ fixedHeaderHeight }
+				{ ...props }
+			/>
+		</div>
+	);
+};
 
 class PostLifecycle extends Component {
 	static propTypes = {
@@ -53,7 +149,7 @@ class PostLifecycle extends Component {
 					/>
 				</div>
 			);
-		} else if ( ! isDiscoverStream && streamKey.indexOf( 'rec' ) > -1 ) {
+		} else if ( ! isDiscoverStream && streamKey?.indexOf( 'rec' ) > -1 ) {
 			return (
 				<EmptySearchRecommendedPost
 					post={ post }
@@ -97,7 +193,7 @@ class PostLifecycle extends Component {
 			);
 		}
 
-		return <Post { ...this.props } />;
+		return <RenderTrackedPost { ...this.props } />;
 	}
 }
 
