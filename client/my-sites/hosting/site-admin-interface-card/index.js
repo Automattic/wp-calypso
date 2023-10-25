@@ -10,7 +10,6 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
-import { setInnerLoadingAdminMenu } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -30,7 +29,6 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 	const setSiteInterface = useSiteInterfaceMutation( siteId, {
 		onMutate: () => {
 			removeAllNotices();
-			dispatch( setInnerLoadingAdminMenu( siteId ) );
 		},
 		onSuccess() {
 			dispatch(

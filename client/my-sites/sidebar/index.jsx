@@ -25,7 +25,7 @@ import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useDomainsViewStatus from './use-domains-view-status';
 import useSiteMenuItems from './use-site-menu-items';
-import { INNER_LOADING_MENU_TYPE, itemLinkMatches } from './utils';
+import { itemLinkMatches } from './utils';
 import 'calypso/state/admin-menu/init';
 
 import './style.scss';
@@ -64,10 +64,6 @@ export const MySitesSidebarUnified = ( { path } ) => {
 
 					if ( 'separator' === item?.type ) {
 						return <SidebarSeparator key={ i } />;
-					}
-
-					if ( INNER_LOADING_MENU_TYPE === item?.type ) {
-						return <Spinner />;
 					}
 
 					if ( item?.children?.length ) {
