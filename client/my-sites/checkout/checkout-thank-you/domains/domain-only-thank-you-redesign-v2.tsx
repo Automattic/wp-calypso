@@ -19,7 +19,11 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 			<DefaultThankYouHeader>{ translate( 'Your own corner of the web' ) }</DefaultThankYouHeader>
 			<DefaultSubHeader>
 				{ translate(
-					'All set! We’re just setting up your new domain so you can start spreading the word.'
+					'All set! We’re just setting up your new domain so you can start spreading the word.',
+					'All set! We’re just setting up your new domains so you can start spreading the word.',
+					{
+						count: domains.length,
+					}
 				) }
 			</DefaultSubHeader>
 			{ domains.map( ( domain ) => (
