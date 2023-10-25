@@ -30,17 +30,6 @@
 		}
 	}
 
-	.launchpad-navigator__floating-navigator-actions {
-		display: flex;
-		margin-top: 1em;
-		.components-button {
-			padding: 8px 14px;
-			font-size: $font-body-small;
-			line-height: 24px;
-			height: auto;
-		}
-	}
-
 	.launchpad-navigator__floating-navigator-close-button {
 		padding: 4px 0;
 		&:focus {
