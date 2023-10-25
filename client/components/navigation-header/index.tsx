@@ -7,10 +7,6 @@ import FormattedHeader from '../formatted-header';
 import './style.scss';
 
 const Container = styled.div`
-	@media ( max-width: 660px ) {
-		min-height: 60px;
-	}
-
 	.main.is-wide-layout & {
 		max-width: 1040px;
 		margin: auto;
