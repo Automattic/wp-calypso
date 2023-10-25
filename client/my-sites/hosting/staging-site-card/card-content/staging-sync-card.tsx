@@ -63,8 +63,8 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 	},
 	{
 		name: 'contents',
-		label: translate( 'Additional wp-content files and directories' ),
-		subTitle: translate( 'Anything other than themes, plugins, and uploads.' ),
+		label: translate( 'wp-content files and directories' ),
+		subTitle: translate( 'Apart from themes, plugins, and uploads.' ),
 		checked: false,
 		isDangerous: false,
 	},
