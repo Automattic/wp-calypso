@@ -14,7 +14,7 @@ export const useAddOnCheckoutLink = (): ( (
 	quantity?: number
 ) => string ) => {
 	const checkoutLinkCallback = useCallback(
-		( siteDetails: SiteDetails, addOnSlug: string, quantity?: number ): string => {
+		( siteDetails: SiteDetails | null, addOnSlug: string, quantity?: number ): string => {
 			// If no site is provided, return the checkout link with the add-on (will render site-selector).
 			if ( ! siteDetails ) {
 				return `/checkout/${ addOnSlug }`;
