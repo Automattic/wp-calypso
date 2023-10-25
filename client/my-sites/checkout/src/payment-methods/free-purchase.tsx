@@ -80,6 +80,8 @@ function WordPressFreePurchaseLabel() {
 	const isCartAllOneTimePurchases = responseCart.products.every(
 		( product ) => product.is_one_time_purchase
 	);
+	// Don't show additional free payment methods if all products in the cart prevent them.
+	// Currently only Akismet Free explicitly prevents them.
 	const isCartAllProductsThatPreventAdditionalFreeMethods = responseCart.products.every(
 		( product ) => product.product_slug === PRODUCT_AKISMET_FREE
 	);
