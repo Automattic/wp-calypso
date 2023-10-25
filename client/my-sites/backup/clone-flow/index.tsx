@@ -144,9 +144,13 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const isLoadingStagingSites = isRequestingStagingList && ! hasFetchedStagingList;
 
 	const getDestinationUrl = () => {
-		if ( isCloneToStaging ) {
+		if ( isCloneToStaging || cloneDestination.startsWith( 'staging-' ) ) {
 			return (
-				stagingSites.find( ( site ) => site.blog_id.toString() === cloneDestination )?.siteurl || ''
+				stagingSites.find(
+					( site ) =>
+						site.blog_id.toString() === cloneDestination ||
+						site.role?.toString() === cloneDestination
+				)?.siteurl || ''
 			);
 		}
 
