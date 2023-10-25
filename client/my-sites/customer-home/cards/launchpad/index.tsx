@@ -110,6 +110,7 @@ const CustomerHomeLaunchpad = ( {
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
 				onSiteLaunched={ onSiteLaunched }
+				shouldActivateChecklist={ true }
 			/>
 		</div>
 	);
