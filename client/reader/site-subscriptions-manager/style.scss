@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 @import "client/landing/subscriptions/styles/search-component";
@@ -5,10 +6,17 @@
 
 .site-subscriptions-manager {
 	&.main {
-		max-width: 1168px;
+		max-width: none;
 		min-height: 100vh;
-		margin: 0 auto;
-		padding: 0 32px;
+		margin: 0;
+		padding: 0;
+		@media (max-width: $break-small) {
+			padding: 0 16px;
+
+			.navigation-header {
+				padding: 16px 0;
+			}
+		}
 
 		@extend %search-component-subscriptions-style;
 	}

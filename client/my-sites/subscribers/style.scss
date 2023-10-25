@@ -23,10 +23,17 @@
 			}
 		}
 	}
+	padding: 0 32px;
 
-	@media ( min-width: $break-mobile ) {
-		padding: 0 32px;
+	@media ( max-width: $break-small ) {
+		padding: 0 16px;
 	}
+	.navigation-header {
+		@media ( max-width: $break-small ) {
+			padding: 16px 0;
+		}
+	}
+
 }
 
 .subscribers__header {
@@ -34,6 +41,7 @@
 	margin-bottom: 30px;
 	font-size: $font-title-small;
 	line-height: 26px;
+
 
 	.subscribers__title {
 		font-weight: 500;
