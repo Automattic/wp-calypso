@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import classnames from 'classnames';
 import React, { ReactNode } from 'react';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
@@ -52,9 +53,18 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		screenOptionsTab,
 	} = props;
 	return (
-		<header id={ id } className={ 'navigation-header ' + className } ref={ ref }>
+		<header
+			id={ id }
+			className={ classnames(
+				className,
+				'navigation-header',
+				screenOptionsTab && children ? 'navigation-header__screen-options-tab' : ''
+			) }
+			ref={ ref }
+		>
 			<Container>
 				<div className="navigation-header__main">
+					{ screenOptionsTab && <ScreenOptionsTab wpAdminPath={ screenOptionsTab } /> }
 					<Breadcrumb
 						items={ navigationItems }
 						mobileItem={ mobileItem }
@@ -71,7 +81,6 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 						/>
 					) }
 					<ActionsContainer>{ children }</ActionsContainer>
-					{ screenOptionsTab && <ScreenOptionsTab wpAdminPath={ screenOptionsTab } /> }
 				</div>
 			</Container>
 		</header>

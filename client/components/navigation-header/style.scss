@@ -27,6 +27,17 @@
 			}
 		}
 	}
+
+	// Add extra space when there is a classic/non classic option tab at the top on mobile that collides with cta's
+	&.navigation-header__screen-options-tab {
+		padding-top: 38px; // 30 for screen options tab + 8 gap
+	}
+	@include break-small {
+		&.navigation-header__screen-options-tab {
+			// There are existing workarounds for desktop layouts, revert back to 16 here
+			padding-top: 16px;
+		}
+	}
 }
 
 .navigation-header__main {
