@@ -35,14 +35,23 @@ $sidebar-appearance-break-point: 783px;
 		padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 
 		@media ( max-width: $custom-mobile-breakpoint ) {
-			padding-left: 0;
-			padding-right: 0;
+			padding-left: 0 !important;
+			padding-right: 0 !important;
 		}
 	}
 
 	> .stats-banner-wrapper .jetpack-backup-creds-banner {
 		// .jetpack-backup-creds-banner has a bottom margin of 16px. This overrides it since we want it to be 32px
 		margin-bottom: 32px;
+	}
+
+	&.has-fixed-nav {
+		padding-top: 44px;
+	}
+
+	.navigation-header {
+		padding-left: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+		padding-right: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 	}
 }
 
