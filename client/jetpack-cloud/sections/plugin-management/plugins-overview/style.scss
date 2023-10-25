@@ -6,6 +6,11 @@
 		font-weight: 600;
 		margin-block-end: 8px;
 	}
+
+	.plugins-overview__container {
+		// The -32px is to undo the padding of .layout__content (32px)
+		min-height: calc(100vh - 32px);
+	}
 }
 
 .plugins-overview__container {
