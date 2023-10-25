@@ -12,8 +12,8 @@
 	}
 
 	.sites-overview__container {
-		// The -44px is to undo the padding of .layout__content (32px) and .sites-overview_container (6px + 6px)
-		min-height: calc(100vh - 44px);
+		// The -76px is to undo the padding of layout.has-no-masterbar (32px), .layout__content (32px) and .sites-overview_container (6px + 6px)
+		min-height: calc(100vh - 76px);
 	}
 }
 
