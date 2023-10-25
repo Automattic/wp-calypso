@@ -141,6 +141,19 @@
 	margin-top: 2px;
 }
 
+.site__title-with-chevron-icon {
+	display: flex;
+
+	.site__title {
+		position: relative;
+		flex: 1;
+	}
+	.site__title-chevron-icon {
+		color: var(--color-text);
+		margin-inline-start: 12px;
+	}
+}
+
 .site__title,
 .site__domain {
 	overflow: hidden;

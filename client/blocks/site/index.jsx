@@ -49,6 +49,7 @@ class Site extends Component {
 		homeLink: false,
 		// if homeLink is enabled
 		showHomeIcon: true,
+		showChevronIcon: false,
 		compact: false,
 
 		isP2Hub: false,
@@ -72,6 +73,7 @@ class Site extends Component {
 		siteId: PropTypes.number,
 		homeLink: PropTypes.bool,
 		showHomeIcon: PropTypes.bool,
+		showChevronIcon: PropTypes.bool,
 		compact: PropTypes.bool,
 		isP2Hub: PropTypes.bool,
 		isSiteP2: PropTypes.bool,
@@ -194,7 +196,16 @@ class Site extends Component {
 						size={ this.props.compact ? 24 : this.props.isReskinned ? 50 : 32 }
 					/>
 					<div className="site__info">
-						<div className="site__title">{ site.title }</div>
+						{ ! this.props.showChevronIcon ? (
+							<div className="site__title">{ site.title }</div>
+						) : (
+							<div className="site__title-with-chevron-icon">
+								<span className="site__title">{ site.title }</span>
+								<span className="site__title-chevron-icon">
+									<Gridicon icon="chevron-right" size={ 18 } />
+								</span>
+							</div>
+						) }
 						{ ! this.props.isReskinned && this.renderSiteDomain() }
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.isSiteP2 && ! this.props.isP2Hub && (

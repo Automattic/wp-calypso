@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Count } from '@automattic/components';
+import { Count, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -38,6 +38,7 @@ class AllSites extends Component {
 		isHighlighted: false,
 		showCount: true,
 		showIcon: false,
+		showChevronIcon: false,
 		domain: '',
 	};
 
@@ -48,6 +49,7 @@ class AllSites extends Component {
 		isHighlighted: PropTypes.bool,
 		showCount: PropTypes.bool,
 		showIcon: PropTypes.bool,
+		showChevronIcon: PropTypes.bool,
 		count: PropTypes.number,
 		icon: PropTypes.node,
 		title: PropTypes.string,
@@ -72,8 +74,17 @@ class AllSites extends Component {
 	}
 
 	render() {
-		const { title, href, domain, translate, isHighlighted, isSelected, showCount, showIcon } =
-			this.props;
+		const {
+			title,
+			href,
+			domain,
+			translate,
+			isHighlighted,
+			isSelected,
+			showCount,
+			showIcon,
+			showChevronIcon,
+		} = this.props;
 
 		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
 		const allSitesClass = classNames( {
@@ -96,6 +107,13 @@ class AllSites extends Component {
 					<div className="all-sites__info site__info">
 						<span className="all-sites__title site__title">
 							{ title || translate( 'All My Sites' ) }
+							{ showChevronIcon && (
+								<Gridicon
+									className="all-sites__title-chevron-icon"
+									icon="chevron-down"
+									size={ 18 }
+								/>
+							) }
 						</span>
 						{ domain && <span className="all-sites__domain site__domain">{ domain }</span> }
 					</div>
