@@ -34,17 +34,16 @@ class ReaderLikeButton extends Component {
 		if ( this.props.isLoggedIn ) {
 			return this.recordLikeToggle( liked );
 		}
-
-		// If not logged in and the login window component is disabled, redirect to create account page
+		// Redirect to create account page
+		const { pathname } = getUrlParts( window.location.href );
+		if ( isReaderTagEmbedPage( window.location ) ) {
+			return window.open(
+				createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
+				'_blank'
+			);
+		}
+		// Do not redirect to create account page when not logged in and the login window component is enabled
 		if ( ! config.isEnabled( 'reader/login-window' ) ) {
-			// Redirect to create account page
-			const { pathname } = getUrlParts( window.location.href );
-			if ( isReaderTagEmbedPage( window.location ) ) {
-				return window.open(
-					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
-					'_blank'
-				);
-			}
 			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
 	};

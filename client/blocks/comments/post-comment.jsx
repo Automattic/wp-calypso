@@ -109,7 +109,7 @@ class PostComment extends PureComponent {
 	};
 
 	onLikeToggle = () => {
-		if ( ! config.isEnabled( 'reader/login-window' ) && ! this.props.isLoggedIn ) {
+		if ( ! this.props.isLoggedIn ) {
 			// Redirect to create account page when not logged in and the login window component is not enabled
 			const { pathname } = getUrlParts( window.location.href );
 			if ( isReaderTagEmbedPage( window.location ) ) {
@@ -118,7 +118,10 @@ class PostComment extends PureComponent {
 					'_blank'
 				);
 			}
-			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+			// Do not redirect to create account page when not logged in and the login window component is enabled
+			if ( ! config.isEnabled( 'reader/login-window' ) ) {
+				return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+			}
 		}
 	};
 
