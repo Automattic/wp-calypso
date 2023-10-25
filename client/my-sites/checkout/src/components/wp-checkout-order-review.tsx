@@ -11,6 +11,7 @@ import { useState, useEffect, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -121,10 +122,15 @@ export default function WPCheckoutOrderReview( {
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 
+	// A/B testing for checkout version 2
+	const urlParams = new URLSearchParams( window.location.search );
+	const checkoutVersion = urlParams.get( 'checkoutVersion' );
+
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
 		>
+			{ checkoutVersion === '2' && <SitePreview /> }
 			{ domainUrl && <SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary> }
 			{ planIsP2Plus && selectedSiteData?.name && (
 				<SiteSummary>
