@@ -8,6 +8,8 @@ import {
 	ThemesQuery,
 	useThemeCollection,
 } from 'calypso/my-sites/themes/collections/use-theme-collection';
+import { getThemeShowcaseEventRecorder } from 'calypso/my-sites/themes/events/theme-showcase-tracks';
+import { trackClick } from 'calypso/my-sites/themes/helpers';
 
 interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
 	collectionSlug: string;
@@ -15,6 +17,7 @@ interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
 	description: ReactElement | null;
 	query: ThemesQuery;
 	onSeeAll: () => void;
+	collectionIndex: number;
 }
 
 export default function ShowcaseThemeCollection( {
@@ -26,8 +29,36 @@ export default function ShowcaseThemeCollection( {
 	query,
 	title,
 	onSeeAll,
+	collectionIndex,
 }: ShowcaseThemeCollectionProps ): ReactElement {
-	const { getPrice, themes, isActive, isInstalling, siteId } = useThemeCollection( query );
+	const { getPrice, themes, isActive, isInstalling, siteId, getThemeType } =
+		useThemeCollection( query );
+
+	const { recordThemeClick, recordThemeStyleVariationClick, recordThemesStyleVariationMoreClick } =
+		getThemeShowcaseEventRecorder(
+			query,
+			themes,
+			getThemeType,
+			isActive,
+			collectionSlug,
+			collectionIndex
+		);
+
+	const onScreenshotClick = ( themeId: string, resultsRank: number ) => {
+		trackClick( 'theme', 'screenshot' );
+		recordThemeClick( themeId, resultsRank, 'screenshot_info' );
+	};
+
+	const onStyleVariationClick = (
+		themeId: string,
+		resultsRank: number,
+		variation: { slug: string }
+	) => {
+		recordThemeClick( themeId, resultsRank, 'style_variation', variation?.slug );
+		variation
+			? recordThemeStyleVariationClick( themeId, resultsRank, '', variation.slug )
+			: recordThemesStyleVariationMoreClick( themeId, resultsRank );
+	};
 
 	return (
 		<>
@@ -37,6 +68,7 @@ export default function ShowcaseThemeCollection( {
 				title={ title }
 				description={ description }
 				onSeeAll={ onSeeAll }
+				collectionIndex={ collectionIndex }
 			>
 				{ themes &&
 					themes.map( ( theme, index ) => (
@@ -51,6 +83,10 @@ export default function ShowcaseThemeCollection( {
 								isInstalling={ isInstalling }
 								siteId={ siteId }
 								theme={ theme }
+								onMoreButtonClick={ recordThemeClick }
+								onMoreButtonItemClick={ recordThemeClick }
+								onScreenshotClick={ onScreenshotClick }
+								onStyleVariationClick={ onStyleVariationClick }
 							/>
 						</ThemeCollectionItem>
 					) ) }

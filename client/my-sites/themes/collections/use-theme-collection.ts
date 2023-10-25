@@ -2,6 +2,7 @@ import { useSelector } from 'calypso/state';
 import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
+	getThemeType as getThemeTypeSelector,
 	isInstallingTheme,
 	isThemeActive,
 } from 'calypso/state/themes/selectors';
@@ -17,7 +18,8 @@ export interface ThemesQuery {
 }
 
 export function useThemeCollection( query: ThemesQuery ) {
-	const themes = useSelector( ( state ) => getThemesForQueryIgnoringPage( state, 'wpcom', query ) );
+	const themes =
+		useSelector( ( state ) => getThemesForQueryIgnoringPage( state, 'wpcom', query ) ) || [];
 
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -28,9 +30,14 @@ export function useThemeCollection( query: ThemesQuery ) {
 	const getPrice = useSelector(
 		( state ) => ( themeId: string ) => getPremiumThemePrice( state, themeId, siteId as number )
 	);
+
 	const isActive = useSelector(
 		( state ) => ( themeId: string ) => isThemeActive( state, themeId, siteId as number )
 	);
 
-	return { getPrice, themes, isActive, isInstalling, siteId };
+	const getThemeType = useSelector(
+		( state ) => ( themeId: string ) => getThemeTypeSelector( state, themeId )
+	);
+
+	return { getPrice, themes, isActive, isInstalling, siteId, getThemeType };
 }

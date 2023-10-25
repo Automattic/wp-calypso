@@ -3,6 +3,8 @@ import { property, snakeCase } from 'lodash';
 
 type ThemeSearchQuery = {
 	search: string;
+	tier: string;
+	filter: string;
 	page: number;
 	number: number;
 };
@@ -19,10 +21,11 @@ enum ThemeShowcaseEventType {
 
 const getThemeShowcaseEventRecorder = (
 	query: ThemeSearchQuery,
-	filterString: string,
 	themes: Array< Theme >,
 	getThemeType: ( themeId: string ) => string,
-	isActiveTheme: ( themeId: string ) => boolean
+	isActiveTheme: ( themeId: string ) => boolean,
+	defaultCollectionId: string | null = null,
+	defaultCollectionIndex: number | null = null
 ) => {
 	const getEventRecorder =
 		( event: ThemeShowcaseEventType ) =>
@@ -31,13 +34,16 @@ const getThemeShowcaseEventRecorder = (
 			themePosition: number,
 			action: string = '',
 			styleVariation: string = '@theme',
-			isCollection: boolean = false
+			collectionId: string | null = null,
+			collectionIndex: number | null = null
 		) => {
 			const adjustedPosition = themePosition + 1;
+			const isCollection = null !== defaultCollectionId || null !== collectionIndex;
 
 			recordTracksEvent( event, {
-				search_term: filterString + query?.search || null,
-				search_taxonomies: filterString,
+				search: query?.search,
+				tier: query?.tier,
+				filter: query?.filter,
 				theme: themeId,
 				is_active_theme: isActiveTheme( themeId ),
 				style_variation: styleVariation,
@@ -48,6 +54,12 @@ const getThemeShowcaseEventRecorder = (
 				action: snakeCase( action ),
 				theme_type: getThemeType( themeId ),
 				is_collection: isCollection,
+				...( isCollection
+					? {
+							collection_index: ( defaultCollectionIndex || collectionIndex || 0 ) + 1,
+							collection: defaultCollectionId || collectionId,
+					  }
+					: {} ),
 			} );
 		};
 

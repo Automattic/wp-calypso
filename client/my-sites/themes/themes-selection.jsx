@@ -347,7 +347,6 @@ export const ConnectedThemesSelection = connect(
 		const filterString = prependThemeFilterKeys( state, query.filter );
 		const themeShowcaseEventRecorder = getThemeShowcaseEventRecorder(
 			query,
-			filterString,
 			themes,
 			boundGetThemeType,
 			boundIsThemeActive
