@@ -48,8 +48,12 @@ const WasThisHelpfulButtons = ( { message }: { message: Message } ) => {
 		'odie-feedback-component-button-disliked-disabled': rated && liked,
 	} );
 
+	const containerClasses = classnames( 'odie-feedback-component-container', {
+		'odie-question-collapse': rated,
+	} );
+
 	return (
-		<div className="odie-feedback-component-container">
+		<div className={ containerClasses }>
 			<div className="odie-feedback-message">
 				<span className={ questionClasses }>
 					{ translate( 'Was this helpful?', {

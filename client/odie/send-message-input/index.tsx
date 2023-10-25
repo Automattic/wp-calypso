@@ -31,7 +31,6 @@ export const OdieSendMessageButton = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_odie_chat_message_action_send', {
 					bot_name_slug: botNameSlug,
-					content: { message: messageString },
 				} )
 			);
 
@@ -53,7 +52,6 @@ export const OdieSendMessageButton = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_odie_chat_message_action_receive', {
 					bot_name_slug: botNameSlug,
-					content: { message: receivedMessage.messages[ 0 ].content },
 				} )
 			);
 
@@ -74,24 +72,26 @@ export const OdieSendMessageButton = ( {
 		}
 	};
 
-	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+	const sendMessageIfNotEmpty = async () => {
+		if ( messageString.trim() === '' ) {
+			return;
+		}
 		bottomRef?.current?.scrollIntoView( { behavior: 'smooth' } );
+		await sendMessage();
+		setMessageString( '' );
+		bottomRef?.current?.scrollIntoView( { behavior: 'smooth' } );
+	};
+
+	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+		bottomRef?.current?.scrollIntoView( { behavior: 'instant' } );
 		if ( event.key === 'Enter' && ! event.shiftKey ) {
 			event.preventDefault();
-			if ( messageString.trim() === '' ) {
-				return;
-			}
-			await sendMessage();
-			setMessageString( '' );
+			await sendMessageIfNotEmpty();
 		}
 	};
 
 	const handleButtonClick = async () => {
-		if ( messageString.trim() === '' ) {
-			return;
-		}
-		await sendMessage();
-		setMessageString( '' );
+		await sendMessageIfNotEmpty();
 	};
 
 	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
