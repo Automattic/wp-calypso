@@ -2,6 +2,7 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 
 const SET_SITE_INTERFACE_MUTATION_KEY = 'set-site-interface-mutation-key';
@@ -44,6 +45,7 @@ export const useSiteInterfaceMutation = (
 		},
 		onSettled: () => {
 			dispatch( requestSite( siteId ) );
+			dispatch( requestAdminMenu( siteId ) );
 		},
 	} );
 

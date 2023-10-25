@@ -117,7 +117,6 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/staging-sites-i3": true,
 		"yolo/wp-admin-site-default": true
 	}
 }
