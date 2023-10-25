@@ -11,9 +11,17 @@ import TimeSince from 'calypso/components/time-since';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
-import { displaySiteUrl, getDashboardUrl, isStagingSite, MEDIA_QUERIES } from '../utils';
+import {
+	displaySiteUrl,
+	getDashboardUrl,
+	isStagingSite,
+	MEDIA_QUERIES,
+	siteDefaultInterface,
+	getSiteWpAdminUrl,
+} from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
@@ -144,6 +152,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
+	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site.ID ) );
 
 	const hasStatsLoadingError = useSelector( ( state ) => {
 		const siteId = site.ID;
@@ -166,7 +175,11 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					` }
 					leading={
 						<ListTileLeading
-							href={ getDashboardUrl( site.slug ) }
+							href={
+								isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
+									? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
+									: getDashboardUrl( site.slug )
+							}
 							title={ __( 'Visit Dashboard' ) }
 						>
 							<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
@@ -174,7 +187,14 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					title={
 						<ListTileTitle>
-							<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
+							<SiteName
+								href={
+									isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
+										? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
+										: getDashboardUrl( site.slug )
+								}
+								title={ __( 'Visit Dashboard' ) }
+							>
 								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
