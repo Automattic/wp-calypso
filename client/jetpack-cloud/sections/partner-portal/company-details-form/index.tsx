@@ -70,6 +70,9 @@ export default function CompanyDetailsForm( {
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
 
+	const handleCompanyTypeChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		setCompanyType( event.target.value );
+	};
 	useEffect( () => {
 		// Reset the value of state since our options have changed.
 		setAddressState( stateOptions?.length ? stateOptions[ 0 ].value : '' );
@@ -164,9 +167,7 @@ export default function CompanyDetailsForm( {
 						label={ translate( 'Agency' ) }
 						value="agency"
 						checked={ companyType === 'agency' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setCompanyType( event.target.value )
-						}
+						onChange={ handleCompanyTypeChange }
 						disabled={ isLoading }
 						className={ undefined }
 					/>
@@ -174,9 +175,7 @@ export default function CompanyDetailsForm( {
 						label={ translate( 'Freelancer/Pro' ) }
 						value="freelancer"
 						checked={ companyType === 'freelancer' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setCompanyType( event.target.value )
-						}
+						onChange={ handleCompanyTypeChange }
 						disabled={ isLoading }
 						className={ undefined }
 					/>
@@ -184,9 +183,7 @@ export default function CompanyDetailsForm( {
 						label={ translate( 'A business with multiple sites' ) }
 						value="business"
 						checked={ companyType === 'business' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setCompanyType( event.target.value )
-						}
+						onChange={ handleCompanyTypeChange }
 						disabled={ isLoading }
 						className={ undefined }
 					/>
