@@ -10,6 +10,7 @@
 	cursor: default;
 	transition: max-height 0.5s;
 	min-width: 25em;
+	padding-top: 16px;
 
 	.launchpad-navigator__floating-navigator-header {
 		display: flex;
@@ -20,7 +21,6 @@
 			font-family: $font-sf-pro-display;
 			font-size: $font-title-small;
 			font-weight: 500;
-			line-height: 50px;
 		}
 
 		.button.is-borderless .gridicon {
