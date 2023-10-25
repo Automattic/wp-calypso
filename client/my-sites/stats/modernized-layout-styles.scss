@@ -23,7 +23,6 @@ $sidebar-appearance-break-point: 783px;
 	> .highlight-cards,
 	> .stats__all-time-highlights-section,
 	> .stats__all-time-views-section,
-	> .stats__post-detail-highlights-section,
 	> .stats__post-detail-table-section,
 	> .stats__gmb-location-wrapper,
 	> .subscribers-page {
@@ -44,10 +43,6 @@ $sidebar-appearance-break-point: 783px;
 	> .stats-banner-wrapper .jetpack-backup-creds-banner {
 		// .jetpack-backup-creds-banner has a bottom margin of 16px. This overrides it since we want it to be 32px
 		margin-bottom: 32px;
-	}
-
-	&.has-fixed-nav {
-		padding-top: 44px;
 	}
 }
 
