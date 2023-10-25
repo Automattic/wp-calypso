@@ -18,11 +18,11 @@ import {
 	isWpComFreePlan,
 	type FeatureList,
 	type PlanSlug,
+	type PlanType,
 	type FeatureObject,
 	type StorageOption,
 	isBusinessPlan,
 	isEcommercePlan,
-	TYPE_HOSTING_TRIAL,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
 import { isSamePlan } from '../../../lib/is-same-plan';
@@ -82,9 +82,20 @@ export type UsePricingMetaForGridPlans = ( {
 	storageAddOns: ( AddOnMeta | null )[] | null;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
+export type UseFreeTrialPlanSlugs = ( {
+	intent,
+	eligibleForFreeHostingTrial,
+}: {
+	intent: PlansIntent;
+	eligibleForFreeHostingTrial: boolean;
+} ) => {
+	[ Type in PlanType ]?: PlanSlug;
+};
+
 // TODO clk: move to types. will consume plan properties
 export type GridPlan = {
 	planSlug: PlanSlug;
+	freeTrialPlanSlug?: PlanSlug;
 	isVisible: boolean;
 	features: {
 		wpcomFeatures: TransformedFeatureObject[];
@@ -130,6 +141,8 @@ interface Props {
 	// API plans will be ported to data store and be queried from there
 	usePricedAPIPlans: UsePricedAPIPlans;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs;
+	eligibleForFreeHostingTrial: boolean;
 	selectedFeature?: string | null;
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
 	intent?: PlansIntent;
@@ -148,7 +161,6 @@ interface Props {
 	 */
 	isSubdomainNotGenerated?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
-	shouldDisplayFreeHostingTrial?: boolean;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -157,15 +169,9 @@ const usePlanTypesWithIntent = ( {
 	sitePlanSlug,
 	hideEnterprisePlan,
 	isSubdomainNotGenerated = false,
-	shouldDisplayFreeHostingTrial,
 }: Pick<
 	Props,
-	| 'intent'
-	| 'selectedPlan'
-	| 'sitePlanSlug'
-	| 'hideEnterprisePlan'
-	| 'isSubdomainNotGenerated'
-	| 'shouldDisplayFreeHostingTrial'
+	'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' | 'isSubdomainNotGenerated'
 > ): string[] => {
 	const isEnterpriseAvailable = ! hideEnterprisePlan;
 	const isBloggerAvailable =
@@ -182,7 +188,6 @@ const usePlanTypesWithIntent = ( {
 		...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
 		TYPE_PERSONAL,
 		TYPE_PREMIUM,
-		...( shouldDisplayFreeHostingTrial ? [ TYPE_HOSTING_TRIAL ] : [] ),
 		TYPE_BUSINESS,
 		TYPE_ECOMMERCE,
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
@@ -205,9 +210,6 @@ const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-new-hosted-site':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
-			if ( shouldDisplayFreeHostingTrial ) {
-				planTypes.unshift( TYPE_HOSTING_TRIAL );
-			}
 			break;
 		case 'plans-import':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
@@ -266,6 +268,7 @@ const usePlanTypesWithIntent = ( {
 const useGridPlans = ( {
 	usePricedAPIPlans,
 	usePricingMetaForGridPlans,
+	useFreeTrialPlanSlugs,
 	term = TERM_MONTHLY,
 	intent,
 	selectedPlan,
@@ -273,10 +276,14 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
+	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
 	storageAddOns,
-	shouldDisplayFreeHostingTrial,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
+	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
+		intent: intent ?? 'default',
+		eligibleForFreeHostingTrial,
+	} );
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
 			intent: 'default',
@@ -284,7 +291,6 @@ const useGridPlans = ( {
 			sitePlanSlug,
 			hideEnterprisePlan,
 			isSubdomainNotGenerated,
-			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
 		intent,
@@ -296,7 +302,6 @@ const useGridPlans = ( {
 			sitePlanSlug,
 			hideEnterprisePlan,
 			isSubdomainNotGenerated,
-			shouldDisplayFreeHostingTrial,
 		} ),
 		term,
 		intent,
@@ -360,6 +365,7 @@ const useGridPlans = ( {
 
 		return {
 			planSlug,
+			freeTrialPlanSlug: freeTrialPlanSlugs?.[ planConstantObj.type ],
 			isVisible: planSlugsForIntent.includes( planSlug ),
 			tagline,
 			availableForPurchase,

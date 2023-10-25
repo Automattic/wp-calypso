@@ -9,10 +9,11 @@ import {
 	TERM_ANNUALLY,
 	type PlanSlug,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
+import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
@@ -29,13 +30,12 @@ type PlanFeaturesActionsButtonProps = {
 	canUserManageCurrentPlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
-	trialPlan?: boolean;
 	freePlan: boolean;
 	currentPlanManageHref?: string;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
-	onUpgradeClick: () => void;
+	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
 	planSlug: PlanSlug;
 	flowName?: string | null;
 	buttonText?: string;
@@ -61,32 +61,30 @@ const DummyDisabledButton = styled.div`
 `;
 
 const SignupFlowPlanFeatureActionButton = ( {
-	trialPlan,
 	freePlan,
 	planTitle,
 	classes,
 	priceString,
 	isStuck,
 	isLargeCurrency,
+	hasFreeTrialPlan,
 	handleUpgradeButtonClick,
 	busy,
 }: {
-	trialPlan: boolean;
 	freePlan: boolean;
 	planTitle: TranslateResult;
 	classes: string;
 	priceString: string | null;
 	isStuck: boolean;
 	isLargeCurrency: boolean;
-	handleUpgradeButtonClick: () => void;
+	hasFreeTrialPlan: boolean;
+	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void;
 	busy?: boolean;
 } ) => {
 	const translate = useTranslate();
 	let btnText;
 
-	if ( trialPlan ) {
-		btnText = translate( 'Start trial' );
-	} else if ( freePlan ) {
+	if ( freePlan ) {
 		btnText = translate( 'Start with Free' );
 	} else if ( isStuck && ! isLargeCurrency ) {
 		btnText = translate( 'Get %(plan)s – %(priceString)s', {
@@ -117,8 +115,27 @@ const SignupFlowPlanFeatureActionButton = ( {
 		} );
 	}
 
+	if ( hasFreeTrialPlan ) {
+		return (
+			<div className="plan-features-2023-grid__multiple-actions-container">
+				<Button
+					className={ classes }
+					onClick={ () => handleUpgradeButtonClick( true ) }
+					busy={ busy }
+				>
+					{ translate( 'Try for free' ) }
+				</Button>
+				{ ! isStuck && (
+					<Button borderless onClick={ () => handleUpgradeButtonClick( false ) }>
+						{ btnText } <Gridicon icon="arrow-right" />
+					</Button>
+				) }
+			</div>
+		);
+	}
+
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick } busy={ busy }>
+		<Button className={ classes } onClick={ () => handleUpgradeButtonClick( false ) } busy={ busy }>
 			{ btnText }
 		</Button>
 	);
@@ -367,7 +384,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	className,
 	currentSitePlanSlug,
 	freePlan = false,
-	trialPlan = false,
 	currentPlanManageHref,
 	isInSignup,
 	isLaunchPage,
@@ -387,6 +403,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		planTitle,
 		current,
 		pricing: { currencyCode, originalPrice, discountedPrice },
+		freeTrialPlanSlug,
 	} = gridPlansIndex[ planSlug ];
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
@@ -395,16 +412,21 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		'is-large-currency': isLargeCurrency,
 	} );
 
-	const handleUpgradeButtonClick = () => {
-		if ( ! freePlan ) {
-			recordTracksEvent( 'calypso_plan_features_upgrade_click', {
-				current_plan: currentSitePlanSlug,
-				upgrading_to: planSlug,
-			} );
-		}
+	const handleUpgradeButtonClick = useCallback(
+		( isFreeTrialPlan?: boolean ) => {
+			const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
 
-		onUpgradeClick && onUpgradeClick();
-	};
+			if ( ! freePlan ) {
+				recordTracksEvent( 'calypso_plan_features_upgrade_click', {
+					current_plan: currentSitePlanSlug,
+					upgrading_to: upgradePlan,
+				} );
+			}
+
+			onUpgradeClick?.( upgradePlan );
+		},
+		[ currentSitePlanSlug, freePlan, freeTrialPlanSlug, onUpgradeClick, planSlug ]
+	);
 
 	if ( isWpcomEnterpriseGridPlan ) {
 		const vipLandingPageUrlWithoutUtmCampaign =
@@ -462,12 +484,12 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<SignupFlowPlanFeatureActionButton
 				freePlan={ freePlan }
-				trialPlan={ trialPlan }
 				planTitle={ planTitle }
 				classes={ classes }
 				priceString={ priceString }
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
+				hasFreeTrialPlan={ !! freeTrialPlanSlug }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 				busy={ freePlan && planActionOverrides?.loggedInFreePlan?.status === 'blocked' }
 			/>

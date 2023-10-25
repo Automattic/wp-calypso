@@ -15,6 +15,7 @@ import {
 	hasUnsavedNotificationSettingsChanges,
 } from 'calypso/state/notification-settings/selectors';
 import Navigation from '../navigation';
+import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
 import './style.scss';
 
@@ -50,6 +51,8 @@ class NotificationCommentsSettings extends Component {
 					title="Me > Notifications > Comments on other sites"
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+
+				<SubscriptionManagementBackButton />
 
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Notification Settings' ) } />
 

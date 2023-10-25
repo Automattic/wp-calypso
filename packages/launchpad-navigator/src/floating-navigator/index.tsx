@@ -42,11 +42,6 @@ const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavi
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
 			/>
-			<div className="launchpad-navigator__floating-navigator-actions">
-				<Button disabled variant="secondary">
-					{ translate( 'Older tasks' ) }
-				</Button>
-			</div>
 		</Card>
 	);
 };

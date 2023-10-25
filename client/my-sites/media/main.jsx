@@ -11,7 +11,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
@@ -365,7 +364,6 @@ class Media extends Component {
 
 		return (
 			<div ref={ this.containerRef } className="main main-column media" role="main">
-				<ScreenOptionsTab wpAdminPath="upload.php" />
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				{ isJetpack && isPossibleJetpackConnectionProblem && (
@@ -373,6 +371,7 @@ class Media extends Component {
 				) }
 				<DocumentHead title={ translate( 'Media' ) } />
 				<NavigationHeader
+					screenOptionsTab="upload.php?preferred-view=classic"
 					title={ translate( 'Media' ) }
 					subtitle={ translate(
 						'Manage all the media on your site, including images, video, and more. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
@@ -382,9 +381,7 @@ class Media extends Component {
 							},
 						}
 					) }
-				>
-					<ScreenOptionsTab wpAdminPath="upload.php?preferred-view=classic" />
-				</NavigationHeader>
+				/>
 
 				{ this.props.selectedSite.is_private && this.props.selectedSite.is_wpcom_atomic && (
 					<Notice

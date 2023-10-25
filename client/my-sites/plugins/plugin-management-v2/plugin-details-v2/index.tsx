@@ -5,7 +5,7 @@ import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginAvailableOnSitesList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
@@ -84,11 +84,7 @@ export default function PluginDetailsV2( {
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QueryJetpackSitesFeatures />
 			<QueryProductsList persist />
-			<FixedNavigationHeader
-				className="plugin-details-v2__header"
-				compactBreadcrumb={ false }
-				navigationItems={ breadcrumbs }
-			/>
+			<NavigationHeader className="plugin-details-v2__header" navigationItems={ breadcrumbs } />
 			<div className="plugin-details-v2__top-container">
 				<div className="plugin-details__page legacy">
 					<div>

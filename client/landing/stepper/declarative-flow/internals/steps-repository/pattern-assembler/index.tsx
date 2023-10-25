@@ -44,6 +44,7 @@ import ScreenColorPalettes from './screen-color-palettes';
 import ScreenConfirmation from './screen-confirmation';
 import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
+import ScreenPages from './screen-pages';
 import ScreenPatternListPanel from './screen-pattern-list-panel';
 import ScreenSections from './screen-sections';
 import ScreenStyles from './screen-styles';
@@ -550,6 +551,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					/>
 				</NavigatorScreen>
 
+				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
+					<ScreenPages onContinueClick={ onContinue } recordTracksEvent={ recordTracksEvent } />
+				</NavigatorScreen>
+
 				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
 					<ScreenActivation onActivate={ onActivate } />
 				</NavigatorScreen>
@@ -628,7 +633,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	return (
 		<StepContainer
-			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
 			stepSectionName={ currentScreen.name }
 			backLabelText={

@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMedia from 'calypso/components/data/query-media';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -327,7 +327,6 @@ class StatsSummary extends Component {
 
 		const { module } = this.props.context.params;
 
-		// Set up for FixedNavigationHeader.
 		const domain = this.props.siteSlug;
 		if ( domain?.length > 0 ) {
 			backLink += domain;
@@ -340,7 +339,7 @@ class StatsSummary extends Component {
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<FixedNavigationHeader navigationItems={ navigationItems } />
+				<NavigationHeader navigationItems={ navigationItems } />
 
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					{ summaryViews }

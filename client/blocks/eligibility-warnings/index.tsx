@@ -5,7 +5,6 @@ import {
 	FEATURE_SFTP,
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
-	PLAN_WPCOM_PRO,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	PLAN_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
@@ -20,7 +19,6 @@ import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -88,10 +86,6 @@ export const EligibilityWarnings = ( {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
 
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, siteId || undefined )
-	);
-
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
@@ -119,7 +113,7 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
+			const planSlug = PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;

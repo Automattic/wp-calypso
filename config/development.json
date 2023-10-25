@@ -51,7 +51,6 @@
 		"devdocs": true,
 		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"domains/add-multiple-domains-to-cart": false,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/dashes-filter": false,
 		"domains/kracken-ui/exact-match-filter": true,
@@ -137,6 +136,7 @@
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"pattern-assembler/add-pages": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
@@ -157,7 +157,6 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": false,
-		"reader/discover-stream": true,
 		"reader/first-posts-stream": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
@@ -220,7 +219,6 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/staging-sites-i3": true,
 		"yolo/wp-admin-site-default": true
 	}
 }

@@ -6,7 +6,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
@@ -167,12 +166,12 @@ class People extends Component {
 
 		return (
 			<Main>
-				<ScreenOptionsTab wpAdminPath="users.php" />
 				<PageViewTracker
 					path={ `/people/${ filter }/:site` }
 					title={ `People > ${ titlecase( filter ) }` }
 				/>
 				<NavigationHeader
+					screenOptionsTab="users.php"
 					navigationItems={ [] }
 					title={ this.renderHeaderText() }
 					subtitle={ this.renderSubheaderText() }

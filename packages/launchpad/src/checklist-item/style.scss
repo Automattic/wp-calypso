@@ -3,7 +3,7 @@
 @import "@automattic/typography/styles/variables";
 
 .checklist-item__task-content {
-	align-items: flex-start;
+	align-items: center;
 	background-color: transparent;
 	border-bottom: 1px solid var(--studio-gray-5);
 	border-left: none;
@@ -15,9 +15,42 @@
 	width: 100%;
 	margin: 0;
 	color: var(--color-neutral-100);
+	height: auto;
+	cursor: pointer;
+	font-family: $sans;
+	font-size: $font-body-small;
+	line-height: 22px;
+	outline: 0;
+	overflow: hidden;
+	text-decoration: none;
+
+	&:visited {
+		color: var(--color-neutral-100);
+	}
+
+	&:disabled {
+		opacity: 1;
+		color: var(--color-neutral-20);
+	}
 
 	&.is-placeholder {
 		padding: 16px 0 16px 0;
+	}
+
+	&.components-button:focus {
+		box-shadow: none;
+		outline: none;
+	}
+
+	.badge {
+		margin-left: auto;
+		background-color: var(--studio-blue-5);
+		color: var(--studio-blue-80);
+		font-size: $font-body-extra-small;
+	}
+
+	.checklist-item__chevron {
+		width: auto;
 	}
 }
 
@@ -38,18 +71,11 @@
 	}
 }
 
-.button.checklist-item__task-content:hover:not([disabled]),
-.button.checklist-item__task-content:focus:not([disabled]) {
+.components-button.checklist-item__task-content:hover:not([disabled]),
+.components-button.checklist-item__task-content:focus:not([disabled]) {
 	fill: var(--studio-blue-50);
 	color: var(--studio-blue-50);
 	border-bottom: 1px solid var(--studio-gray-5);
-}
-
-.checklist-item__task-content .badge {
-	margin-left: auto;
-	background-color: var(--studio-blue-5);
-	color: var(--studio-blue-80);
-	font-size: $font-body-extra-small;
 }
 
 .checklist-item__task-content[disabled],
@@ -68,11 +94,13 @@
 }
 
 .checklist-item__checkmark-container {
-	margin-right: 8px;
+	margin-right: 7px;
 	width: 20px;
+	display: flex;
+	margin-left: 1px;
+	margin-bottom: -2px;
 
 	.checklist-item__checkmark {
-		top: 2px;
 		vertical-align: text-bottom;
 	}
 }
@@ -199,6 +227,11 @@
 	background-color: var(--color-primary);
 	border-color: var(--color-primary);
 	color: var(--color-text-inverted);
+	justify-content: center;
+	font-size: $font-body-small;
+	height: auto;
+	line-height: 22px;
+	border: 1px solid var(--color-neutral-10);
 
 	&:hover:not([disabled]) {
 		background-color: var(--color-primary-60);
@@ -210,5 +243,12 @@
 		background-color: var(--color-primary-10);
 		border-color: var(--color-primary-10);
 		color: var(--color-text-inverted);
+	}
+
+	&.components-button:disabled {
+		opacity: 1;
+		&:hover {
+			color: var(--color-text-inverted);
+		}
 	}
 }

@@ -19,6 +19,7 @@ const removePasswordFromState = ( x ) => x;
 const store = createStore( ( state ) => state, {
 	ui: { selectedSiteId: 1 },
 	currentUser: { id: 1 },
+	sites: { items: {} },
 } );
 
 const props = {
