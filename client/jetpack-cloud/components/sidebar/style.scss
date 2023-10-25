@@ -10,6 +10,20 @@
 		background-color: var(--color-sidebar-background);
 	}
 
+
+	.split-button {
+		a {
+			width: 70%;
+		}
+
+		button.split-button__toggle {
+			width: 30%;
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+	}
+
+
 	.sidebar-v2__menu-item {
 		svg {
 			color: #6f6f6f;
