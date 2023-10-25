@@ -124,13 +124,13 @@ export default function ThemeCollection( {
 						{ translate( 'See all' ) }
 					</Button>
 					<Button
-						onClick={ () => trackNavigationClick( 'left' ) }
+						onClick={ () => trackNavigationClick( 'previous' ) }
 						className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous"
 					>
 						<Icon icon={ chevronLeft } />
 					</Button>
 					<Button
-						onClick={ () => trackNavigationClick( 'right' ) }
+						onClick={ () => trackNavigationClick( 'next' ) }
 						className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--next"
 					>
 						<Icon icon={ chevronRight } />
