@@ -237,25 +237,16 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	renderPlanPrice( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const {
-			isReskinned,
-			isLargeCurrency,
-			translate,
-			isPlanUpgradeCreditEligible,
-			currentSitePlanSlug,
-			siteId,
-		} = this.props;
+		const { isLargeCurrency, translate, isPlanUpgradeCreditEligible, currentSitePlanSlug, siteId } =
+			this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
 			const isWooExpressPlus = isWooExpressPlusPlan( planSlug );
-			const classes = classNames( 'plan-features-2023-grid__table-item', {
-				'has-border-top': ! isReskinned,
-			} );
 
 			return (
 				<PlanDivOrTdContainer
 					scope="col"
 					key={ planSlug }
-					className={ classes }
+					className="plan-features-2023-grid__table-item plan-price"
 					isTableCell={ options?.isTableCell }
 				>
 					<PlanFeatures2023GridHeaderPrice
