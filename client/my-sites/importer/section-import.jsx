@@ -12,7 +12,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SectionHeader from 'calypso/components/section-header';
 import { getImporterByKey, getImporters } from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
@@ -337,9 +336,9 @@ class SectionImport extends Component {
 
 		return (
 			<Main>
-				<ScreenOptionsTab wpAdminPath="import.php" />
 				<DocumentHead title={ translate( 'Import Content' ) } />
 				<NavigationHeader
+					screenOptionsTab="import.php"
 					navigationItems={ [] }
 					title={ translate( 'Import Content' ) }
 					subtitle={ translate(

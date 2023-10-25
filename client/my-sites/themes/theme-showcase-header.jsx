@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -76,6 +75,7 @@ export default function ThemeShowcaseHeader( {
 			<DocumentHead title={ documentHeadTitle } meta={ metas } />
 			{ isLoggedIn ? (
 				<NavigationHeader
+					screenOptionsTab="themes.php"
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
 					mobileItem={ null }
@@ -92,7 +92,6 @@ export default function ThemeShowcaseHeader( {
 					{ selectedSiteId && (
 						<>
 							<InstallThemeButton />
-							<ScreenOptionsTab wpAdminPath="themes.php" />
 						</>
 					) }
 				</NavigationHeader>

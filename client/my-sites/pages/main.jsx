@@ -10,7 +10,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { Experiment } from 'calypso/lib/explat';
 import { mapPostStatus } from 'calypso/lib/route';
@@ -95,7 +94,6 @@ class PagesMain extends Component {
 
 		return (
 			<Main wideLayout classname="pages">
-				<ScreenOptionsTab wpAdminPath="edit.php?post_type=page" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				{ isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
@@ -103,6 +101,7 @@ class PagesMain extends Component {
 				<DocumentHead title={ translate( 'Pages' ) } />
 				<SitePreview />
 				<NavigationHeader
+					screenOptionsTab="edit.php?post_type=page"
 					navigationItems={ [] }
 					title={ translate( 'Pages' ) }
 					subtitle={ translate(
