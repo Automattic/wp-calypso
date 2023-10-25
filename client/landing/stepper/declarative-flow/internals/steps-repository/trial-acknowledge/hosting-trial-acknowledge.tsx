@@ -63,7 +63,7 @@ const HostingTrialAcknowledgeInternal = ( { onStartTrialClick, goBack }: Props )
 				<SubTitle>
 					{ createInterpolateElement(
 						__(
-							"You've already enrolled in a free trial and is not eligible for a new one.<br />Upgrade now to continue enjoying the benefits of a Business plan."
+							"You've already enjoyed a free trial and are not eligible for another.<br />Upgrade now to keep enjoying the benefits of a Business plan."
 						),
 						{ br: <br /> }
 					) }
