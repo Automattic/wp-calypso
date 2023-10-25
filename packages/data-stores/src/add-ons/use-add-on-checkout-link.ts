@@ -1,5 +1,5 @@
 import { useCallback } from '@wordpress/element';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { SiteDetails } from '../site/types';
 
 /**
  * Returns a function that will return a formatted checkout link for the given add-on and quantity.
