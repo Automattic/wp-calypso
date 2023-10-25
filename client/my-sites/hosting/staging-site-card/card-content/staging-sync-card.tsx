@@ -33,7 +33,7 @@ function useIsPermanentSyncError( error: string | null | undefined ) {
 const synchronizationOptions: CheckboxOptionItem[] = [
 	{
 		name: 'sqls',
-		label: 'Site Database (SQL)',
+		label: 'Site database (SQL)',
 		subTitle: translate(
 			'Overwrite the database, including any posts, pages, products, or orders.'
 		),
@@ -42,42 +42,35 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 	},
 	{
 		name: 'themes',
-		label: translate( 'Themes' ),
-		subTitle: translate( 'All files and directories in the themes directory.' ),
+		label: translate( 'Theme files and directories' ),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'plugins',
-		label: translate( 'Plugins' ),
-		subTitle: translate( 'All files and directories in the plugins directory.' ),
+		label: translate( 'Plugin files and directories' ),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'uploads',
-		label: translate( 'Media Uploads' ),
+		label: translate( 'Media uploads' ),
 		subTitle: translate(
-			'All files and directories in the uploads directory. You must also select ‘Site database‘ if it is necessary for the files to appear as media uploads in WordPress.'
+			'You must also select ‘Site database’ for the files to appear in the Media Library.'
 		),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'contents',
-		label: translate( 'wp-content Directory' ),
-		subTitle: translate(
-			'All files and directories in the wp-content directory other than themes, plugins, and uploads.'
-		),
+		label: translate( 'Additional wp-content files and directories' ),
+		subTitle: translate( 'Anything other than themes, plugins, and uploads.' ),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'roots',
-		label: translate( 'Web Root' ),
-		subTitle: translate(
-			'All files and directories in the WordPress root other than wp-content, including any non WordPress files.'
-		),
+		label: translate( 'Additional web root files and directories' ),
 		checked: false,
 		isDangerous: false,
 	},
@@ -196,7 +189,7 @@ const StagingToProductionSync = ( {
 		<>
 			{ showSyncPanel && (
 				<>
-					<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
+					<OptionsTreeTitle>{ translate( 'Synchronize this data:' ) }</OptionsTreeTitle>
 					<SyncOptionsPanel
 						reset={ ! isSyncInProgress }
 						items={ synchronizationOptions }
