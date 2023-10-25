@@ -18,99 +18,66 @@ import PostUnavailable from './post-unavailable';
 import RecommendedPosts from './recommended-posts';
 import CrossPost from './x-post';
 
-const RenderTrackedPost = ( {
-	postKey,
-	isSelected,
-	showPost,
-	suppressSiteNameLink,
-	showFollowInHeader,
-	isDiscoverStream,
-	showSiteNameOnCards,
-	followSource,
-	blockedSites,
-	streamKey,
-	recsStreamKey,
-	index,
-	useCompactCards,
-	primarySiteId,
-	showFollowButton,
-	fixedHeaderHeight,
-	...props
-} ) => {
-	/**
-	 * Hook to return a [callback ref](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs)
-	 * that MUST be used as the `ref` prop on a `div` element.
-	 * The hook ensures that we generate theme display Tracks events when the user views
-	 * the underlying `div` element.
-	 * @param key The post being shown.
-	 * @returns A callback ref that MUST be used on a div element for tracking.
-	 */
-	const useTrackPostView = ( key, postId ) => {
-		const observerRef = useRef();
+/**
+ * Hook to return a [callback ref](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs)
+ * that MUST be used as the `ref` prop on a `div` element.
+ * The hook ensures that we generate post display Tracks events when the user views
+ * the underlying `div` element.
+ * @param postObj Object The post data.
+ * @returns A callback ref that MUST be used on a div element for tracking.
+ */
+const useTrackPostView = ( postObj ) => {
+	const observerRef = useRef();
 
-		// Use a callback as the ref so we get called for both mount and unmount events
-		// We don't get both if we use useRef() and useEffect() together.
-		return useCallback(
-			( wrapperDiv ) => {
-				// If we don't have a wrapper div, we aren't mounted and should remove the observer
+	// Use a callback as the ref so we get called for both mount and unmount events
+	// We don't get both if we use useRef() and useEffect() together.
+	return useCallback(
+		( wrapperDiv ) => {
+			// If we don't have a wrapper div, we aren't mounted and should remove the observer
+			if ( ! wrapperDiv ) {
+				observerRef.current?.disconnect?.();
+				return;
+			}
+
+			const intersectionHandler = ( entries ) => {
+				// Only fire once per category
 				if ( ! wrapperDiv ) {
-					observerRef.current?.disconnect?.();
 					return;
 				}
 
-				const intersectionHandler = ( entries ) => {
-					// Only fire once per category
-					if ( ! wrapperDiv ) {
-						return;
-					}
+				const [ entry ] = entries;
+				if ( ! entry.isIntersecting ) {
+					return;
+				}
 
-					const [ entry ] = entries;
-					if ( ! entry.isIntersecting ) {
-						return;
-					}
-
-					recordTracksEvent( 'calypso_reader_post_display', {
-						post_id: postId,
-					} );
-				};
-
-				observerRef.current = new IntersectionObserver( intersectionHandler, {
-					// Only fire the event when 60% of the element becomes visible
-					threshold: [ 0.6 ],
+				recordTracksEvent( 'calypso_reader_post_display', {
+					feed_id: postObj?.feed_ID,
+					site_id: postObj?.blogId,
+					post_id: postObj?.postId,
 				} );
+			};
 
-				observerRef.current.observe( wrapperDiv );
-			},
-			[ key, postId, observerRef ]
-		);
-	};
+			observerRef.current = new IntersectionObserver( intersectionHandler, {
+				// Only fire the event when 60% of the element becomes visible
+				threshold: [ 0.6 ],
+			} );
 
-	const trackingDivRef = useTrackPostView( postKey, props.post?.ID );
-
-	return (
-		<div ref={ trackingDivRef }>
-			<Post
-				isSelected={ isSelected }
-				handleClick={ showPost }
-				postKey={ postKey }
-				suppressSiteNameLink={ suppressSiteNameLink }
-				showFollowInHeader={ showFollowInHeader }
-				isDiscoverStream={ isDiscoverStream }
-				showSiteName={ showSiteNameOnCards }
-				selectedPostKey={ undefined }
-				followSource={ followSource }
-				blockedSites={ blockedSites }
-				streamKey={ streamKey }
-				recsStreamKey={ recsStreamKey }
-				index={ index }
-				compact={ useCompactCards }
-				siteId={ primarySiteId }
-				showFollowButton={ showFollowButton }
-				fixedHeaderHeight={ fixedHeaderHeight }
-				{ ...props }
-			/>
-		</div>
+			observerRef.current.observe( wrapperDiv );
+		},
+		[ postObj, observerRef ]
 	);
+};
+
+/**
+ * We wrap the class component Post in a function component to make use of
+ * the useTrackPostView hook.
+ * @param {...Object} props The Post props.
+ * @returns A React component that renders a post and tracks when the post is displayed.
+ */
+const TrackedPost = ( { ...props } ) => {
+	const trackingDivRef = useTrackPostView( props.postKey );
+
+	return <Post postRef={ trackingDivRef } { ...props } />;
 };
 
 class PostLifecycle extends Component {
@@ -193,7 +160,7 @@ class PostLifecycle extends Component {
 			);
 		}
 
-		return <RenderTrackedPost { ...this.props } />;
+		return <TrackedPost { ...this.props } />;
 	}
 }
 
