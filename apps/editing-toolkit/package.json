@@ -102,7 +102,7 @@
 		"@wordpress/url": "^3.45.0",
 		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
-		"eslint": "^8.50.0",
+		"eslint": "^8.51.0",
 		"jest": "^29.7.0",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
