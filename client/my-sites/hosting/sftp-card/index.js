@@ -1,5 +1,6 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Card, Button, Spinner } from '@automattic/components';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -35,6 +36,7 @@ import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-a
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
 import SshKeys from './ssh-keys';
@@ -91,6 +93,7 @@ export const SftpCard = ( {
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
 	const [ isSshAccessLoading, setSshAccessLoading ] = useState( false );
 	const hasSftpFeatureAndIsLoading = siteHasSftpFeature && isLoadingSftpData;
+	const siteIntent = useSiteOption( 'site_intent' );
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
 
@@ -108,6 +111,11 @@ export const SftpCard = ( {
 	const createUser = () => {
 		setIsLoading( true );
 		createSftpUser( siteId, currentUserId );
+		if ( 'host-site' === siteIntent ) {
+			updateLaunchpadSettings( siteId, {
+				checklist_statuses: { setup_ssh: true },
+			} );
+		}
 	};
 
 	const toggleSshAccess = () => {

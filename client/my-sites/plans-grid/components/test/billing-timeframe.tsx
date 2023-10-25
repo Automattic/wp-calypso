@@ -20,6 +20,8 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
 	PLAN_BUSINESS_MONTHLY,
+	PLAN_FREE,
+	PLAN_MONTHLY_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
@@ -263,5 +265,91 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		expect( container ).toHaveTextContent(
 			`per month, ${ originalPrice } billed every three years, Excl. Taxes`
 		);
+	} );
+
+	test( 'show refund period period for annual plan', () => {
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 120, monthly: 10 },
+			discountedPrice: { full: null, monthly: null },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
+		};
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_BUSINESS ]: {
+					isMonthlyPlan: false,
+					pricing,
+				},
+			},
+		} ) );
+
+		const { getByText } = render(
+			<PlanFeatures2023GridBillingTimeframe
+				{ ...defaultProps }
+				planSlug={ PLAN_BUSINESS }
+				showRefundPeriod
+			/>
+		);
+
+		expect( getByText( /Refundable within 14 days. No questions asked./ ) ).toBeInTheDocument();
+	} );
+
+	test( 'show refund period period for monthly plan', () => {
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 120, monthly: 10 },
+			discountedPrice: { full: null, monthly: null },
+			billingPeriod: PLAN_MONTHLY_PERIOD,
+		};
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_BUSINESS_MONTHLY ]: {
+					isMonthlyPlan: true,
+					pricing,
+				},
+			},
+		} ) );
+
+		const { getByText } = render(
+			<PlanFeatures2023GridBillingTimeframe
+				{ ...defaultProps }
+				planSlug={ PLAN_BUSINESS_MONTHLY }
+				showRefundPeriod
+			/>
+		);
+
+		expect( getByText( /Refundable within 7 days. No questions asked./ ) ).toBeInTheDocument();
+	} );
+
+	test( `refund period can't be shown for free plan`, () => {
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 0, monthly: 0 },
+			discountedPrice: { full: null, monthly: null },
+			billingPeriod: PLAN_MONTHLY_PERIOD,
+		};
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_FREE ]: {
+					isMonthlyPlan: true,
+					pricing,
+				},
+			},
+		} ) );
+
+		const { queryByText } = render(
+			<PlanFeatures2023GridBillingTimeframe
+				{ ...defaultProps }
+				planSlug={ PLAN_FREE }
+				showRefundPeriod // refund period won't be shown even though we set the prop to true
+			/>
+		);
+
+		expect(
+			queryByText( /Refundable within 7 days. No questions asked./ )
+		).not.toBeInTheDocument();
 	} );
 } );

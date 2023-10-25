@@ -52,7 +52,6 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
-import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import {
@@ -563,9 +562,6 @@ export class CheckoutThankYou extends Component<
 					( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
 				);
 			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
-		} else if ( isStarterPlanEnabled() ) {
-			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
-			showHappinessSupport = false;
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout

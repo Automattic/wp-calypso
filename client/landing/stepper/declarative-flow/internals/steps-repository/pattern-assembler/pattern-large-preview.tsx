@@ -101,7 +101,10 @@ const PatternLargePreview = ( {
 		};
 
 		const handleMouseLeave = ( event: React.MouseEvent< HTMLElement > ) => {
-			if ( ! frameRef.current?.contains( event.relatedTarget as Node ) ) {
+			const hasNextActiveElement =
+				event.relatedTarget instanceof Node &&
+				! frameRef.current?.contains( event.relatedTarget as Node );
+			if ( ! hasNextActiveElement ) {
 				setActiveElement( null );
 			}
 		};
@@ -213,16 +216,23 @@ const PatternLargePreview = ( {
 	useEffect( () => {
 		const handleMouseLeave = ( event: MouseEvent ) => {
 			const relatedTarget = event.relatedTarget as HTMLElement | null;
-			if ( ! relatedTarget?.closest( '.pattern-assembler__pattern-action-bar' ) ) {
+			if ( ! relatedTarget?.closest?.( '.pattern-assembler__pattern-action-bar' ) ) {
 				setActiveElement( null );
 			}
 		};
+
+		// When the value of the `hasSelectedPattern` changes, it will append/remove the
+		// frame to the DOM. Hence, we need to check the value to bind the event again
+		// after the frame is removed and then appended to the DOM.
+		if ( ! hasSelectedPattern ) {
+			return;
+		}
 
 		frameRef.current?.addEventListener( 'mouseleave', handleMouseLeave );
 		return () => {
 			frameRef.current?.removeEventListener( 'mouseleave', handleMouseLeave );
 		};
-	}, [ frameRef, setActiveElement ] );
+	}, [ frameRef, hasSelectedPattern, setActiveElement ] );
 
 	return (
 		<DeviceSwitcher

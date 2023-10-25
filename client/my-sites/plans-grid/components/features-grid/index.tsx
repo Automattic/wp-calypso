@@ -7,7 +7,6 @@ import {
 	isWooExpressSmallPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
-	isFreeHostingTrial,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -19,7 +18,6 @@ import {
 	SlackLogo,
 	TimeLogo,
 } from '@automattic/components';
-import { isAnyHostingFlow } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
@@ -87,9 +85,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
 						}
 					</StickyContainer>
-					<tr>
-						{ this.maybeRenderRefundNotice( gridPlansWithoutSpotlight, { isTableCell: true } ) }
-					</tr>
 					<tr>
 						{ this.renderPreviousFeaturesIncludedTitle( gridPlansWithoutSpotlight, {
 							isTableCell: true,
@@ -196,7 +191,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						{ this.renderMobileFreeDomain( gridPlan.planSlug, gridPlan.isMonthlyPlan ) }
 						{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						{ this.renderTopButtons( [ gridPlan ] ) }
-						{ this.maybeRenderRefundNotice( [ gridPlan ] ) }
 						<CardContainer
 							header={ translate( 'Show all features' ) }
 							planSlug={ gridPlan.planSlug }
@@ -253,7 +247,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		} = this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
 			const isWooExpressPlus = isWooExpressPlusPlan( planSlug );
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
 
@@ -294,7 +288,10 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					isTableCell={ options?.isTableCell }
 					key={ planSlug }
 				>
-					<PlanFeatures2023GridBillingTimeframe planSlug={ planSlug } />
+					<PlanFeatures2023GridBillingTimeframe
+						planSlug={ planSlug }
+						showRefundPeriod={ this.props.showRefundPeriod }
+					/>
 				</PlanDivOrTdContainer>
 			);
 		} );
@@ -368,11 +365,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		} = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, availableForPurchase } ) => {
-			const classes = classNames(
-				'plan-features-2023-grid__table-item',
-				'is-top-buttons',
-				'is-bottom-aligned'
-			);
+			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			// Leaving it `undefined` makes it use the default label
 			let buttonText;
@@ -400,13 +393,14 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						canUserManageCurrentPlan={ canUserManageCurrentPlan }
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planSlug ) }
-						trialPlan={ isFreeHostingTrial( planSlug ) }
 						freePlan={ isFreePlan( planSlug ) }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
-						onUpgradeClick={ () => handleUpgradeClick( planSlug ) }
+						onUpgradeClick={ ( overridePlanSlug ) =>
+							handleUpgradeClick( overridePlanSlug ?? planSlug )
+						}
 						planSlug={ planSlug }
 						flowName={ flowName }
 						currentSitePlanSlug={ currentSitePlanSlug }
@@ -420,32 +414,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 				</PlanDivOrTdContainer>
 			);
 		} );
-	}
-
-	maybeRenderRefundNotice( gridPlan: GridPlan[], options?: PlanRowOptions ) {
-		const { translate, flowName } = this.props;
-
-		if ( ! isAnyHostingFlow( flowName ) ) {
-			return false;
-		}
-
-		return gridPlan.map( ( { planSlug, pricing: { billingPeriod } } ) => (
-			<PlanDivOrTdContainer
-				key={ planSlug }
-				className="plan-features-2023-grid__table-item"
-				isTableCell={ options?.isTableCell }
-			>
-				{ ! isFreePlan( planSlug ) && ! isFreeHostingTrial( planSlug ) && (
-					<div className={ `plan-features-2023-grid__refund-notice ${ getPlanClass( planSlug ) }` }>
-						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
-							args: {
-								dayCount: billingPeriod === 365 ? 14 : 7,
-							},
-						} ) }
-					</div>
-				) }
-			</PlanDivOrTdContainer>
-		) );
 	}
 
 	renderEnterpriseClientLogos() {

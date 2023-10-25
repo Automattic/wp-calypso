@@ -6,6 +6,15 @@
 		margin-block-end: 8px;
 		font-weight: 600;
 	}
+
+	.sites-overview__tabs {
+		border-block-end: none;
+	}
+
+	.sites-overview__container {
+		// The -44px is to undo the padding of .layout__content (32px) and .sites-overview_container (6px + 6px)
+		min-height: calc(100vh - 44px);
+	}
 }
 
 .sites-overview__large-screen {
@@ -19,6 +28,7 @@
 		padding: 0 16px;
 	}
 }
+
 .sites-overview__container {
 	display: flex;
 	flex-direction: column;
@@ -26,6 +36,7 @@
 	min-height: calc(100vh - 123px);
 	padding: 6px 0;
 }
+
 .sites-overview__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
