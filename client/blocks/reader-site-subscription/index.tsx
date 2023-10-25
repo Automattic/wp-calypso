@@ -1,17 +1,60 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
+import { successNotice } from 'calypso/state/notices/actions';
 import { Path, useSiteSubscription } from './context';
 import SiteSubscriptionDetails from './details';
 import './styles.scss';
 
-const ReaderSiteSubscription = () => {
+const useHandleSubscriptionNotFoundError = ( transition?: boolean ) => {
+	const [ tracked, setTracked ] = useState( false );
+	const { data, error, isLoading, blogId, subscriptionId } = useSiteSubscription();
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	if ( tracked || isLoading ) {
+		return;
+	}
+
+	if ( error || ! data || Reader.isErrorResponse( data ) ) {
+		recordTracksEvent( 'calypso_reader_subscription_not_found', {
+			blog_id: blogId,
+			subscription_id: subscriptionId,
+			transition: transition ? 'true' : 'false',
+		} );
+
+		setTracked( true );
+
+		if ( transition ) {
+			dispatch(
+				successNotice(
+					translate( "We're updating your subscriptions. It should be ready shortly." ),
+					{ duration: 5000 }
+				)
+			);
+
+			page.show( '/read/subscriptions/' );
+		}
+	}
+};
+
+type ReaderSiteSubscriptionProps = {
+	transition?: boolean;
+};
+
+const ReaderSiteSubscription = ( { transition }: ReaderSiteSubscriptionProps ) => {
 	const translate = useTranslate();
 	const { data, isLoading, error, navigate } = useSiteSubscription();
+
+	useHandleSubscriptionNotFoundError( transition );
 
 	if ( isLoading ) {
 		return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;

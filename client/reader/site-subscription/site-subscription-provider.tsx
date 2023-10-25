@@ -41,8 +41,10 @@ const SiteSubscriptionProvider: React.FC< SiteSubscriptionProviderProps > = ( {
 			data: subscriptionData,
 			isLoading,
 			error: error || subscriptionError,
+			blogId,
+			subscriptionId,
 		} ),
-		[ error, isLoading, subscriptionData, subscriptionError ]
+		[ blogId, error, isLoading, subscriptionData, subscriptionError, subscriptionId ]
 	);
 
 	return (
