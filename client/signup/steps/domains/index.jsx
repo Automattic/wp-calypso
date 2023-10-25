@@ -704,7 +704,7 @@ export class RenderDomainsStep extends Component {
 		let domainItem;
 
 		if ( isPurchasingItem ) {
-			const selectedDomain = domainCart.length > 0 ? domainCart[ 0 ] : suggestion;
+			const selectedDomain = domainCart?.length > 0 ? domainCart[ 0 ] : suggestion;
 			domainItem = domainRegistration( {
 				domain: selectedDomain.domain_name || selectedDomain.meta,
 				productSlug: selectedDomain.product_slug,
