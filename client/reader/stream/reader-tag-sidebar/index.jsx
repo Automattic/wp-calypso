@@ -19,18 +19,23 @@ import { getReaderTagBySlug } from 'calypso/state/reader/tags/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import '../style.scss';
 
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+
+import '../style.scss';
+
 const ReaderTagSidebar = ( {
 	tag,
 	showFollow,
 	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
 } ) => {
+	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
 	const translate = useTranslate();
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
 	const tagStats = useTagStats( tag );
 	const dispatch = useDispatch();
 	const isFollowing = useSelector( ( state ) => getReaderTagBySlug( state, tag )?.isFollowing );
 	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
-	const { data: prompts } = useBloggingPrompts( 1, 10 );
+	const { data: prompts } = useBloggingPrompts( primarySiteId, 10 );
 
 	if ( relatedMetaByTag === undefined ) {
 		return null;
