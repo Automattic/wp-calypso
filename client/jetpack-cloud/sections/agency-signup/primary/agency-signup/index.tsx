@@ -12,7 +12,7 @@ export default function AgencySignup() {
 			<DocumentHead title={ translate( 'Sign up as an Agency' ) } />
 			<SidebarNavigation />
 
-			<AgencySignupForm referrer="manage-lp" />
+			<AgencySignupForm />
 		</Main>
 	);
 }
