@@ -66,6 +66,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 							align="left"
 							headerText={ title }
 							subHeaderText={ subtitle }
+							tooltipText={ subtitle }
 							screenReader={ screenReader }
 						/>
 					) }

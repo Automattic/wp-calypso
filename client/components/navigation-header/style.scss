@@ -56,16 +56,26 @@
 		line-height: 26px;
 		margin-bottom: 0;
 	}
+
 	.formatted-header__subtitle {
 		color: var(--color-neutral-60);
 		margin: 0;
 		line-height: 20px;
 		letter-spacing: -0.15px;
+
+		// Hide subtitle text on small screens
+		display: none;
+		@media ( min-width: $break-small ) {
+			display: inline-block;
+		}
 	}
 
-	.button {
-		line-height: 20px;
-		display: flex;
+	.info-popover {
+		// Show subtitle text on small screens under help icon
+		display: inline-block;
+		@media ( min-width: $break-small ) {
+			display: none;
+		}
 	}
 }
 
