@@ -4,37 +4,7 @@
 	position: fixed;
 	top: calc(var(--masterbar-height) + 2px);
 	right: 0.5em;
-	background-color: #fff;
-	color: #000;
-	z-index: 9999;
 	cursor: default;
 	transition: max-height 0.5s;
 	min-width: 25em;
-	padding-top: 16px;
-
-	.launchpad-navigator__floating-navigator-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-
-		h2 {
-			font-family: $font-sf-pro-display;
-			font-size: $font-title-small;
-			font-weight: 500;
-		}
-
-		.button.is-borderless .gridicon {
-			height: 18px;
-			top: 4px;
-			width: 18px;
-		}
-	}
-
-	.launchpad-navigator__floating-navigator-close-button {
-		padding: 4px 0;
-		&:focus {
-			outline: none;
-			box-shadow: none;
-		}
-	}
 }
