@@ -53,6 +53,7 @@ const PatternLargePreview = ( {
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 	const [ device, setDevice ] = useState< string >( 'computer' );
 	const [ zoomOutScale, setZoomOutScale ] = useState( 1 );
+	const zoomOutScaleRef = useRef( zoomOutScale );
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const patternLargePreviewStyle = useMemo(
 		() =>
@@ -65,9 +66,11 @@ const PatternLargePreview = ( {
 
 	const [ debouncedRecordZoomOutScaleChange ] = useDebouncedCallback( ( value: number ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
-			zoom_out_scale: value,
+			from_scale: zoomOutScaleRef.current,
+			to_scale: value,
 		} );
-	}, 1000 );
+		zoomOutScaleRef.current = value;
+	}, 300 );
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
 

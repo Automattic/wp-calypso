@@ -57,6 +57,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	return (
 		<LicenseInfoModal
+			className="site-boost-column__upgrade-modal"
 			currentLicenseInfo="boost"
 			label={
 				upgradeOnly

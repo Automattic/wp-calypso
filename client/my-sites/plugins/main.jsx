@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
@@ -449,12 +448,9 @@ export class PluginsMain extends Component {
 
 		const { isJetpackCloud, selectedSite } = this.props;
 
-		const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
 		let pageTitle;
 		if ( isJetpackCloud ) {
-			pageTitle = isNewNavigation
-				? this.props.translate( 'Plugin Management', { textOnly: true } )
-				: this.props.translate( 'Plugins', { textOnly: true } );
+			pageTitle = this.props.translate( 'Plugins', { textOnly: true } );
 		} else {
 			pageTitle = this.props.translate( 'Installed Plugins', { textOnly: true } );
 		}

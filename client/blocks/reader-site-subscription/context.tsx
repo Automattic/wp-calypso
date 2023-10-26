@@ -16,6 +16,8 @@ export type SiteSubscriptionContextProps = {
 	data?: Reader.SiteSubscriptionDetails< string >;
 	isLoading: boolean;
 	error?: Reader.ErrorResponse | unknown;
+	blogId?: string;
+	subscriptionId?: string;
 };
 
 export const SiteSubscriptionContext = createContext< SiteSubscriptionContextProps | undefined >(

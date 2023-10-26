@@ -1075,18 +1075,46 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Supports 38 languages' ),
 		translate( 'Quick and accurate spelling correction' ),
 	];
+
+	const boostPremiumFeatureComponents = {
+		div: <div className="premium-feature" />,
+		strong: <span className="premium-feature-title" />,
+		badge: <span style={ { display: 'none' } } className="premium-feature-badge" />,
+	};
+
 	const boostIncludesInfo = [
-		translate( '{{strong}}Automated critical CSS (Premium){{/strong}}', {
-			components: {
-				strong: <strong />,
-			},
+		translate(
+			'{{div}}{{strong}}Automated critical CSS generation{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Reduce image sizes with Image Guide{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Historical site performance chart{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Additional image quality control options{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate( '{{div}}{{strong}}Priority support{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}', {
+			components: boostPremiumFeatureComponents,
 		} ),
 		translate( 'Site performance scores' ),
 		translate( 'One-click optimization' ),
 		translate( 'Defer non-essential JavaScript' ),
 		translate( 'Optimize CSS loading' ),
 		translate( 'Lazy image loading' ),
-		translate( 'Image Guide to discover and fix large images on your site' ),
 	];
 	const socialBasicIncludesInfo = [
 		translate( 'Automatically share your posts and products on social media' ),

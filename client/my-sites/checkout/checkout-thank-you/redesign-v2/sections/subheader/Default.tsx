@@ -3,7 +3,7 @@ import preventWidows from 'calypso/lib/post-normalizer/rule-prevent-widows';
 import './style.scss';
 
 interface DefaultSubHeaderContainerProps {
-	children: string;
+	children: string | React.ReactNode;
 }
 
 const DefaultSubHeader: React.FC< DefaultSubHeaderContainerProps > = ( { children } ) => {

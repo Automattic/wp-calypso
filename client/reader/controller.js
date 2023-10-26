@@ -343,6 +343,7 @@ export async function siteSubscription( context, next ) {
 			require="calypso/reader/site-subscription"
 			subscriptionId={ context.params.subscription_id }
 			blogId={ context.params.blog_id }
+			transition={ context.query.transition === 'true' }
 		/>
 	);
 	return next();

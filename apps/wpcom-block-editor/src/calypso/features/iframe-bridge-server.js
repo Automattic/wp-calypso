@@ -146,39 +146,40 @@ function handlePostLocked( calypsoPort ) {
 	const unsubscribe = subscribe( () => {
 		const isLocked = select( 'core/editor' ).isPostLocked();
 		const isLockTakeover = select( 'core/editor' ).isPostLockTakeover();
-		const lockedDialogButtons = document.querySelectorAll(
-			'div.editor-post-locked-modal__buttons > a'
-		);
 
-		const isPostTakeoverDialog = isLocked && ! isLockTakeover && lockedDialogButtons.length === 3;
-
-		if ( isPostTakeoverDialog ) {
-			//signal the parent frame to navigate to All Posts
-			lockedDialogButtons[ 0 ].addEventListener(
-				'click',
-				( event ) => {
-					event.preventDefault();
-					calypsoPort.postMessage( { action: 'goToAllPosts' } );
-				},
-				false
+		if ( isLocked && ! isLockTakeover ) {
+			const lockedDialogButtons = document.querySelectorAll(
+				'div.editor-post-locked-modal__buttons > a'
 			);
 
-			//overrides the all posts link just in case the user treats the link... as a link.
-			if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
-				lockedDialogButtons[ 0 ].setAttribute( 'target', '_parent' );
-				lockedDialogButtons[ 0 ].setAttribute( 'href', calypsoifyGutenberg.closeUrl );
+			if ( lockedDialogButtons.length === 3 ) {
+				//signal the parent frame to navigate to All Posts
+				lockedDialogButtons[ 0 ].addEventListener(
+					'click',
+					( event ) => {
+						event.preventDefault();
+						calypsoPort.postMessage( { action: 'goToAllPosts' } );
+					},
+					false
+				);
+
+				//overrides the all posts link just in case the user treats the link... as a link.
+				if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
+					lockedDialogButtons[ 0 ].setAttribute( 'target', '_parent' );
+					lockedDialogButtons[ 0 ].setAttribute( 'href', calypsoifyGutenberg.closeUrl );
+				}
+
+				//changes the Take Over link url to add the frame-nonce
+				lockedDialogButtons[ 2 ].setAttribute(
+					'href',
+					addQueryArgs( lockedDialogButtons[ 2 ].getAttribute( 'href' ), {
+						calypsoify: 1,
+						'frame-nonce': getQueryArg( window.location.href, 'frame-nonce' ),
+					} )
+				);
+
+				unsubscribe();
 			}
-
-			//changes the Take Over link url to add the frame-nonce
-			lockedDialogButtons[ 2 ].setAttribute(
-				'href',
-				addQueryArgs( lockedDialogButtons[ 2 ].getAttribute( 'href' ), {
-					calypsoify: 1,
-					'frame-nonce': getQueryArg( window.location.href, 'frame-nonce' ),
-				} )
-			);
-
-			unsubscribe();
 		}
 	} );
 }
@@ -192,28 +193,29 @@ function handlePostLockTakeover( calypsoPort ) {
 	const unsubscribe = subscribe( () => {
 		const isLocked = select( 'core/editor' ).isPostLocked();
 		const isLockTakeover = select( 'core/editor' ).isPostLockTakeover();
-		const allPostsButton = document.querySelector( 'div.editor-post-locked-modal__buttons > a' );
 
-		const isPostTakeoverDialog = isLocked && isLockTakeover && allPostsButton;
+		if ( isLocked && isLockTakeover ) {
+			const allPostsButton = document.querySelector( 'div.editor-post-locked-modal__buttons > a' );
 
-		if ( isPostTakeoverDialog ) {
-			//handle All Posts button click event
-			allPostsButton.addEventListener(
-				'click',
-				( event ) => {
-					event.preventDefault();
-					calypsoPort.postMessage( { action: 'goToAllPosts' } );
-				},
-				false
-			);
+			if ( allPostsButton ) {
+				//handle All Posts button click event
+				allPostsButton.addEventListener(
+					'click',
+					( event ) => {
+						event.preventDefault();
+						calypsoPort.postMessage( { action: 'goToAllPosts' } );
+					},
+					false
+				);
 
-			//overrides the all posts link just in case the user treats the link... as a link.
-			if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
-				allPostsButton.setAttribute( 'target', '_parent' );
-				allPostsButton.setAttribute( 'href', calypsoifyGutenberg.closeUrl );
+				//overrides the all posts link just in case the user treats the link... as a link.
+				if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
+					allPostsButton.setAttribute( 'target', '_parent' );
+					allPostsButton.setAttribute( 'href', calypsoifyGutenberg.closeUrl );
+				}
+
+				unsubscribe();
 			}
-
-			unsubscribe();
 		}
 	} );
 }
