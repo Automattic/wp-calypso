@@ -10,7 +10,7 @@ const ReaderJoinConversationDialogExample = () => {
 	return (
 		<div className="docs__design-assets-group">
 			<Button onClick={ () => setIsVisible( true ) }>
-				{ translate( "Show the Reader's 'Join Conversation' dialog" ) }
+				{ translate( 'Show Reader Join Conversation Dialog' ) }
 			</Button>
 			<ReaderJoinConversationDialog
 				onClose={ () => setIsVisible( false ) }
