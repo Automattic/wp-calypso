@@ -81,7 +81,8 @@ export default function CompanyDetailsForm( {
 		const selectedType = event.target.value;
 		setCompanyType( selectedType );
 
-		const isEligibleForPartnerProgram = companyTypesEligibleForPartnerProgram.includes( selectedType );
+		const isEligibleForPartnerProgram =
+			companyTypesEligibleForPartnerProgram.includes( selectedType );
 		setShowPartnerProgramOptIn( isEligibleForPartnerProgram );
 	};
 
