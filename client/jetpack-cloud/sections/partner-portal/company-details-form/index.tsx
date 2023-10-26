@@ -78,11 +78,10 @@ export default function CompanyDetailsForm( {
 	const stateOptions = stateOptionsMap[ country ];
 
 	const handleCompanyTypeChange = ( event: ChangeEvent< HTMLInputElement > ) => {
-		setCompanyType( event.target.value );
+		const selectedType = event.target.value;
+		setCompanyType( selectedType );
 
-		const isEligibleForPartnerProgram = companyTypesEligibleForPartnerProgram.includes(
-			event.target.value
-		);
+		const isEligibleForPartnerProgram = companyTypesEligibleForPartnerProgram.includes( selectedType );
 		setShowPartnerProgramOptIn( isEligibleForPartnerProgram );
 	};
 
