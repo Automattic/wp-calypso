@@ -44,6 +44,10 @@ import type {
 	TitanProductUser,
 } from '@automattic/shopping-cart';
 
+// A/B testing for checkout version 2
+const urlParams = new URLSearchParams( window.location.search );
+const checkoutVersion = urlParams.get( 'checkoutVersion' );
+
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
 	total?: boolean;
@@ -159,27 +163,33 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	display: flex;
 	gap: 0.5em;
 	font-weight: ${ ( { theme } ) => theme.weights.bold };
+	font-size: ${ checkoutVersion === '2' ? '14px' : 'inherit' };
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-
+	font-size: ${ checkoutVersion === '2' ? '14px' : 'inherit' };
 	.rtl & {
 		margin-right: 12px;
 		margin-left: 0;
 	}
 `;
-
+const BillingLine = styled.div`
+	width: 100%;
+	display: ${ checkoutVersion === '2' ? 'flex' : 'inherit' };
+	justify-content: ${ checkoutVersion === '2' ? 'space-between' : 'inherit' };
+	align-items: ${ checkoutVersion === '2' ? 'center' : 'inherit' };
+`;
 const DeleteButtonWrapper = styled.div`
 	width: 100%;
+	display: ${ checkoutVersion === '2' ? 'flex' : 'inherit' };
+	justify-content: ${ checkoutVersion === '2' ? 'flex-end' : 'inherit' };
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
-	display: inline-block;
 	width: auto;
-	font-size: 0.75rem;
+	font-size: ${ checkoutVersion === '2' ? '14px' : 'inherit' };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	margin-top: 4px;
 `;
 
 function LineItemPrice( {
@@ -1137,67 +1147,69 @@ function CheckoutLineItem( {
 			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+			<BillingLine>
+				{ children }
+				{ hasDeleteButton && removeProductFromCart && (
+					<>
+						<DeleteButtonWrapper>
+							<DeleteButton
+								className="checkout-line-item__remove-product"
+								buttonType="text-button"
+								aria-label={ String(
+									translate( 'Remove %s from cart', {
+										args: label,
+									} )
+								) }
+								disabled={ isDisabled }
+								onClick={ () => {
+									setIsModalVisible( true );
+									onRemoveProductClick?.( label );
+								} }
+							>
+								{ checkoutVersion === '2'
+									? translate( 'Remove' )
+									: translate( 'Remove from cart' ) }
+							</DeleteButton>
+						</DeleteButtonWrapper>
 
-			{ children }
-
-			{ hasDeleteButton && removeProductFromCart && (
-				<>
-					<DeleteButtonWrapper>
-						<DeleteButton
-							className="checkout-line-item__remove-product"
-							buttonType="text-button"
-							aria-label={ String(
-								translate( 'Remove %s from cart', {
-									args: label,
-								} )
-							) }
-							disabled={ isDisabled }
-							onClick={ () => {
-								setIsModalVisible( true );
-								onRemoveProductClick?.( label );
+						<CheckoutModal
+							isVisible={ isModalVisible }
+							closeModal={ () => {
+								setIsModalVisible( false );
 							} }
-						>
-							{ translate( 'Remove from cart' ) }
-						</DeleteButton>
-					</DeleteButtonWrapper>
+							primaryAction={ () => {
+								let product_uuids_to_remove = [ product.uuid ];
 
-					<CheckoutModal
-						isVisible={ isModalVisible }
-						closeModal={ () => {
-							setIsModalVisible( false );
-						} }
-						primaryAction={ () => {
-							let product_uuids_to_remove = [ product.uuid ];
+								// Gifts need to be all or nothing, to prevent leaving
+								// the site in a state where it requires other purchases
+								// in order to actually work correctly for the period of
+								// the gift (for example, gifting a plan renewal without
+								// a domain renewal would likely lead the site's domain
+								// to expire soon afterwards).
+								if ( product.is_gift_purchase ) {
+									product_uuids_to_remove = responseCart.products
+										.filter( ( cart_product ) => cart_product.is_gift_purchase )
+										.map( ( cart_product ) => cart_product.uuid );
+								}
 
-							// Gifts need to be all or nothing, to prevent leaving
-							// the site in a state where it requires other purchases
-							// in order to actually work correctly for the period of
-							// the gift (for example, gifting a plan renewal without
-							// a domain renewal would likely lead the site's domain
-							// to expire soon afterwards).
-							if ( product.is_gift_purchase ) {
-								product_uuids_to_remove = responseCart.products
-									.filter( ( cart_product ) => cart_product.is_gift_purchase )
-									.map( ( cart_product ) => cart_product.uuid );
-							}
-
-							Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
-								// Nothing needs to be done here. CartMessages will display the error to the user.
-							} );
-							onRemoveProduct?.( label );
-						} }
-						cancelAction={ () => {
-							onRemoveProductCancel?.( label );
-						} }
-						secondaryAction={ () => {
-							onRemoveProductCancel?.( label );
-						} }
-						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
-						title={ modalCopy.title }
-						copy={ modalCopy.description }
-					/>
-				</>
-			) }
+								Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+									// Nothing needs to be done here. CartMessages will display the error to the user.
+								} );
+								onRemoveProduct?.( label );
+							} }
+							cancelAction={ () => {
+								onRemoveProductCancel?.( label );
+							} }
+							secondaryAction={ () => {
+								onRemoveProductCancel?.( label );
+							} }
+							secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
+							title={ modalCopy.title }
+							copy={ modalCopy.description }
+						/>
+					</>
+				) }{ ' ' }
+			</BillingLine>
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
