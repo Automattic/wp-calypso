@@ -11,6 +11,9 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 interface CurrentOptionProps {
 	open: boolean;
 }
+// A/B testing for checkout version 2
+const urlParams = new URLSearchParams( window.location.search );
+const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 const CurrentOption = styled.button< CurrentOptionProps >`
 	align-items: center;
@@ -20,7 +23,7 @@ const CurrentOption = styled.button< CurrentOptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	padding: 14px 16px;
+	padding: ${ checkoutVersion === '2' ? '4px 16px' : '14px 16px' };
 	width: 100%;
 	cursor: pointer;
 

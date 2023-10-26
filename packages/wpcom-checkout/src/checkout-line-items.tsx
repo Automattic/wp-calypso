@@ -277,7 +277,7 @@ function WPNonProductLineItem( {
 								setIsModalVisible( true );
 							} }
 						>
-							{ translate( 'Remove from cart' ) }
+							{ checkoutVersion === '2' ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 
