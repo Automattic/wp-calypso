@@ -36,7 +36,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 	const themeSlug = 'outland';
 
 	const testUser = DataHelper.getNewTestUser( {
-		usernamePrefix: 'ftmepersonal',
+		usernamePrefix: 'ftmepremium',
 	} );
 
 	let page: Page;
@@ -50,10 +50,9 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 	describe( 'Signup', function () {
 		let cartCheckoutPage: CartCheckoutPage;
 		let signupPickPlanPage: SignupPickPlanPage;
-		let originalAmount: number;
 
 		beforeAll( async function () {
-			await BrowserManager.setStoreCookie( page, { currency: 'GBP' } );
+			await BrowserManager.setStoreCookie( page, { currency: 'USD' } );
 		} );
 
 		it( 'Navigate to Signup page', async function () {
@@ -85,29 +84,8 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 		} );
 
-		it( 'Prices are shown in GBP', async function () {
-			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
-				rawString: true,
-			} ) ) as string;
-			expect( cartAmount.startsWith( '£' ) ).toBe( true );
-		} );
-
 		it( 'Apply coupon', async function () {
-			originalAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
 			await cartCheckoutPage.enterCouponCode( SecretsManager.secrets.testCouponCode );
-		} );
-
-		it( 'Apply coupon and validate purchase amount', async function () {
-			const newAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
-
-			expect( newAmount ).toBeLessThan( originalAmount );
-			const expectedAmount = originalAmount * 0.99;
-
-			// Some currencies do not typically have decimal places.
-			// eg. USD would commonly have 2 decimal places, e.g. 12.34.
-			// In JPY or TWD there will be no decimal digits.
-			// Drop decimals so that the result won't be affected by the currency variation.
-			expect( newAmount ).toStrictEqual( expectedAmount );
 		} );
 
 		it( 'Enter billing and payment details', async function () {

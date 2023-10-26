@@ -14,9 +14,6 @@ const selectors = {
 	activateModal: '.themes__activation-modal',
 	activateModalButton: '.dialog__action-buttons button:has-text("Activate")',
 
-	// Pick this design
-	pickDesignButton: 'a:text("Pick this design")',
-
 	// Thanks modal
 	thanksMessage: ':text("Thanks for choosing")',
 };
@@ -69,7 +66,7 @@ export class ThemesDetailPage {
 	 * Click on the Pick this design button displayed in Logged out theme details.
 	 */
 	async pickThisDesign(): Promise< void > {
-		await this.page.click( selectors.pickDesignButton );
+		await this.page.getByRole( 'link', { name: 'Pick this design' } ).click();
 	}
 
 	/**
