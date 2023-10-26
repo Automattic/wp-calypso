@@ -598,19 +598,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTIONS_PATTERNS }>
-					<ScreenPatternListPanel
-						categories={ categories }
-						selectedHeader={ header }
-						selectedSections={ sections }
-						selectedFooter={ footer }
-						patternsMapByCategory={ patternsMapByCategory }
-						onSelect={ onSelect }
-						recordTracksEvent={ recordTracksEvent }
-						isNewSite={ isNewSite }
-					/>
-				</NavigatorScreen>
-
 				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES_COLORS }>
 					<ScreenColorPalettes
 						siteId={ site?.ID }
