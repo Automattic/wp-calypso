@@ -146,9 +146,7 @@ class ThemeShowcase extends Component {
 		( ! this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lots' ) );
 
 	getDefaultStaticFilter = () =>
-		config.isEnabled( 'themes/discovery-lots' )
-			? staticFilters.DISCOVER
-			: staticFilters.RECOMMENDED;
+		this.isThemeDiscoveryEnabled() ? staticFilters.DISCOVER : staticFilters.RECOMMENDED;
 
 	isStaticFilter = ( tabFilter ) => {
 		return Object.values( staticFilters ).some(
@@ -173,9 +171,7 @@ class ThemeShowcase extends Component {
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
 		return {
-			...( config.isEnabled( 'themes/discovery-lots' )
-				? { DISCOVER: staticFilters.DISCOVER }
-				: {} ),
+			...( this.isThemeDiscoveryEnabled() ? { DISCOVER: staticFilters.DISCOVER } : {} ),
 			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
 			RECOMMENDED: staticFilters.RECOMMENDED,
 			ALL: staticFilters.ALL,
