@@ -63,11 +63,15 @@ const PatternLargePreview = ( {
 		[ zoomOutScale, backgroundColor ]
 	);
 
-	const [ debouncedRecordZoomOutScaleChange ] = useDebouncedCallback( ( value: number ) => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
-			zoom_out_scale: value,
-		} );
-	}, 1000 );
+	const [ debouncedRecordZoomOutScaleChange ] = useDebouncedCallback(
+		( from: number, to: number ) => {
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
+				from_scale: from,
+				to_scale: to,
+			} );
+		},
+		1000
+	);
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
 
@@ -177,7 +181,7 @@ const PatternLargePreview = ( {
 	const handleZoomOutScale = ( value: number ) => {
 		setZoomOutScale( value );
 		if ( zoomOutScale !== value ) {
-			debouncedRecordZoomOutScaleChange( value );
+			debouncedRecordZoomOutScaleChange( zoomOutScale, value );
 		}
 	};
 
