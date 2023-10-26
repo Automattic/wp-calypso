@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from 'page';
 import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import DashboardOverview from './dashboard-overview';
 import Header from './header';
 import DashboardSidebar from './sidebar';
@@ -40,5 +41,9 @@ export function agencyDashboardContext( context: PageJS.Context, next: VoidFunct
 			sort={ sort }
 		/>
 	);
+
+	// By definition, Sites Management does not select any one specific site
+	context.store.dispatch( setAllSitesSelected() );
+
 	next();
 }
