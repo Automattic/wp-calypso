@@ -144,7 +144,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		[ colorVariation, fontVariation ]
 	);
 
-	const [ pages, setPages ] = useState( [] );
+	const [ pages, setPages ] = useState< string[] >( [] );
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 

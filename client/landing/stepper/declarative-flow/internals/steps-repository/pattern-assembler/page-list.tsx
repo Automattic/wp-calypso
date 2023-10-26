@@ -14,8 +14,8 @@ import './page-list.scss';
 
 interface PageListItemProps {
 	label: string;
-	isSelected: boolean;
-	isDisabled: boolean;
+	isSelected?: boolean;
+	isDisabled?: boolean;
 }
 
 const PageListItem = ( { label, isSelected, isDisabled }: PageListItemProps ) => {
