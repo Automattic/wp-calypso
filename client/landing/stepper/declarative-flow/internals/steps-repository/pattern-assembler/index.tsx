@@ -98,7 +98,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		() => dotcomPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ dotcomPatterns ]
 	);
-	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns, categories );
+	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns );
 	const {
 		header,
 		footer,
