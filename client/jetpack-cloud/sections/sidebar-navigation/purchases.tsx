@@ -77,7 +77,7 @@ const PurchasesSidebar = () => {
 			menuItems={ menuItems }
 			description={ translate( 'Manage all your billing related settings from one place.' ) }
 			backButtonProps={ {
-				label: translate( 'Site Management' ),
+				label: translate( 'Sites Management' ),
 				icon: chevronLeft,
 				onClick: () => {
 					dispatch(
