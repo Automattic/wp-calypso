@@ -62,7 +62,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 				{ noSearch: true }
 			);
 			const paragraphBlock = new ParagraphBlock( blockHandle );
-			await paragraphBlock.enterParagraph( quote );
+			await paragraphBlock.enterParagraph( quote, { type: true } );
 		} );
 	} );
 
@@ -215,7 +215,9 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Post content is found in published post', async function () {
 			publishedPostPage = new PublishedPostPage( newPage );
 			await publishedPostPage.validateTitle( title );
-			await publishedPostPage.validateTextInPost( quote );
+			for ( const part in quote.split( '\n' ) ) {
+				await publishedPostPage.validateTextInPost( part );
+			}
 		} );
 
 		it( 'Post metadata is found in published post', async function () {
