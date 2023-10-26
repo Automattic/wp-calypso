@@ -536,8 +536,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
-						surveyDismissed={ surveyDismissed }
-						setSurveyDismissed={ setSurveyDismissed }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
 						sections={ sections }
@@ -574,7 +572,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
-					<ScreenConfirmation onConfirm={ onConfirm } />
+					<ScreenConfirmation
+						onConfirm={ onConfirm }
+						surveyDismissed={ surveyDismissed }
+						setSurveyDismissed={ setSurveyDismissed }
+					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">

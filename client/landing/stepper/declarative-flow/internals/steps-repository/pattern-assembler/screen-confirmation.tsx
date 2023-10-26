@@ -8,13 +8,16 @@ import { Icon, image, verse, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
+import Survey from './survey';
 import './screen-confirmation.scss';
 
 interface Props {
 	onConfirm: () => void;
+	surveyDismissed: boolean;
+	setSurveyDismissed: ( dismissed: boolean ) => void;
 }
 
-const ScreenConfirmation = ( { onConfirm }: Props ) => {
+const ScreenConfirmation = ( { onConfirm, surveyDismissed, setSurveyDismissed }: Props ) => {
 	const translate = useTranslate();
 	const { title, description, continueLabel } = useScreen( 'confirmation' );
 
@@ -57,6 +60,13 @@ const ScreenConfirmation = ( { onConfirm }: Props ) => {
 						</HStack>
 					) ) }
 				</VStack>
+				{ ! surveyDismissed && (
+					<Survey
+						eventName="assembler-october-2023"
+						eventUrl="https://wordpressdotcom.survey.fm/wordpress-com-design-your-own"
+						setSurveyDismissed={ setSurveyDismissed }
+					/>
+				) }
 			</div>
 			<div className="screen-container__footer">
 				<Button className="pattern-assembler__button" primary onClick={ onConfirm }>

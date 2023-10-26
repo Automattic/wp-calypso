@@ -12,13 +12,10 @@ import { useScreen, usePatternCountMapByCategory } from './hooks';
 import NavigatorTitle from './navigator-title';
 import PatternCategoryList from './pattern-category-list';
 import PatternCount from './pattern-count';
-import Survey from './survey';
 import { Category, Pattern, PatternType } from './types';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
-	surveyDismissed: boolean;
-	setSurveyDismissed: ( dismissed: boolean ) => void;
 	hasHeader: boolean;
 	hasFooter: boolean;
 	sections: Pattern[];
@@ -30,8 +27,6 @@ interface Props {
 
 const ScreenMain = ( {
 	onMainItemSelect,
-	surveyDismissed,
-	setSurveyDismissed,
 	hasHeader,
 	hasFooter,
 	sections,
@@ -112,7 +107,6 @@ const ScreenMain = ( {
 						</NavigatorItem>
 					</NavigatorItemGroup>
 				</VStack>
-				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
 			</div>
 			<div className="screen-container__footer">
 				<span className="screen-container__footer-description">
