@@ -124,6 +124,10 @@ function showProgressIndicator( flowName ) {
 	const flow = flows.getFlow( flowName );
 	return ! flow.hideProgressIndicator;
 }
+function hideBack( flowName ) {
+	const flow = flows.getFlow( flowName );
+	return flow.hideBack;
+}
 
 class Signup extends Component {
 	static propTypes = {
@@ -819,6 +823,7 @@ class Signup extends Component {
 						this.renderProcessingScreen( isReskinned )
 					) : (
 						<CurrentComponent
+							hideBack={ hideBack( this.props.flowName ) }
 							path={ this.props.path }
 							step={ currentStepProgress }
 							initialContext={ this.props.initialContext }

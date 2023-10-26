@@ -347,6 +347,7 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			hideBack: true,
 		},
 		{
 			name: 'site-selected',

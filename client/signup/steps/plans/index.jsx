@@ -249,6 +249,7 @@ export class PlansStep extends Component {
 		return (
 			<>
 				<StepWrapper
+					hideBack={ this.props.hideBack }
 					flowName={ flowName }
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }

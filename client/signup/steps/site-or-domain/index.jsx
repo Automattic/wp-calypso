@@ -323,6 +323,7 @@ class SiteOrDomain extends Component {
 
 		return (
 			<StepWrapper
+				hideBack={ this.props.hideBack }
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }

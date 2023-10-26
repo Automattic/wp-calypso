@@ -1398,6 +1398,7 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<StepWrapper
+				hideBack={ this.props.hideBack }
 				flowName={ flowName }
 				stepName={ stepName }
 				backUrl={ backUrl }
