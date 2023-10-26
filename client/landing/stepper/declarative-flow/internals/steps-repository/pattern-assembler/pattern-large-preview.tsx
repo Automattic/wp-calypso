@@ -53,6 +53,7 @@ const PatternLargePreview = ( {
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 	const [ device, setDevice ] = useState< string >( 'computer' );
 	const [ zoomOutScale, setZoomOutScale ] = useState( 1 );
+	const zoomOutScaleRef = useRef( zoomOutScale );
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const patternLargePreviewStyle = useMemo(
 		() =>
@@ -63,15 +64,13 @@ const PatternLargePreview = ( {
 		[ zoomOutScale, backgroundColor ]
 	);
 
-	const [ debouncedRecordZoomOutScaleChange ] = useDebouncedCallback(
-		( from: number, to: number ) => {
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
-				from_scale: from,
-				to_scale: to,
-			} );
-		},
-		1000
-	);
+	const [ debouncedRecordZoomOutScaleChange ] = useDebouncedCallback( ( value: number ) => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
+			from_scale: zoomOutScaleRef.current,
+			to_scale: value,
+		} );
+		zoomOutScaleRef.current = value;
+	}, 300 );
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
 
@@ -181,7 +180,7 @@ const PatternLargePreview = ( {
 	const handleZoomOutScale = ( value: number ) => {
 		setZoomOutScale( value );
 		if ( zoomOutScale !== value ) {
-			debouncedRecordZoomOutScaleChange( zoomOutScale, value );
+			debouncedRecordZoomOutScaleChange( value );
 		}
 	};
 
