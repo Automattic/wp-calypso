@@ -81,6 +81,11 @@
 		}
 	}
 
+	.button {
+		display: flex;
+		line-height: 20px;
+	}
+
 	.info-popover {
 		// Show subtitle text on small screens under help icon
 		display: inline-block;
