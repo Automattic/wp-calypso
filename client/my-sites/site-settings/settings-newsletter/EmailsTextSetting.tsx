@@ -4,7 +4,15 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import { useSelector } from 'calypso/state';
+import {
+	isJetpackMinimumVersion,
+	isJetpackSite as isJetpackSiteSelector,
+	isSimpleSite as isSimpleSiteSelector,
+} from 'calypso/state/sites/selectors';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { SubscriptionOptions } from '../settings-reading/main';
+import type { AppState } from 'calypso/types';
 
 type EmailsTextSettingProps = {
 	value?: SubscriptionOptions;
@@ -18,6 +26,16 @@ type SubscriptionOption = {
 
 export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsTextSettingProps ) => {
 	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID;
+	const isSimpleSite = useSelector( isSimpleSiteSelector );
+	const isJetpackSite = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
+
+	const isJetpackVersionSupported = useSelector( ( state: AppState ) => {
+		return siteId && isJetpackSite && isJetpackMinimumVersion( state, siteId, '12.8' );
+	} );
+
+	const hasWelcomeEmailFeature = isSimpleSite || isJetpackVersionSupported;
 
 	const updateSubscriptionOptions =
 		( option: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -41,21 +59,24 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 				<FormLegend>
 					{ translate( 'These settings change the emails sent from your site to your readers' ) }
 				</FormLegend>
-
-				<FormLabel htmlFor="welcome_email_message">
-					{ translate( 'Welcome email message' ) }
-				</FormLabel>
-				<FormTextarea
-					name="welcome_email_message"
-					id="welcome_email_message"
-					value={ value?.welcome }
-					onChange={ updateSubscriptionOptions( 'welcome' ) }
-					disabled={ disabled }
-					autoCapitalize="none"
-				/>
-				<FormSettingExplanation>
-					{ translate( 'The email sent out when someone confirms their subscription.' ) }
-				</FormSettingExplanation>
+				{ hasWelcomeEmailFeature && (
+					<>
+						<FormLabel htmlFor="welcome_email_message">
+							{ translate( 'Welcome email message' ) }
+						</FormLabel>
+						<FormTextarea
+							name="welcome_email_message"
+							id="welcome_email_message"
+							value={ value?.welcome }
+							onChange={ updateSubscriptionOptions( 'welcome' ) }
+							disabled={ disabled }
+							autoCapitalize="none"
+						/>
+						<FormSettingExplanation>
+							{ translate( 'The email sent out when someone confirms their subscription.' ) }
+						</FormSettingExplanation>
+					</>
+				) }
 
 				<FormLabel htmlFor="comment_follow_email_message">
 					{ translate( 'Comment follow email message' ) }
