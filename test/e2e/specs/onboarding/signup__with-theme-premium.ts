@@ -31,7 +31,7 @@ declare const browser: Browser;
  *
  * Keywords: Onboarding, Store Checkout, Coupon, Signup, Plan, Subscription, Cancel
  */
-describe( 'With theme - Premium theme: Signup, onboard, launch and cancel subscription', function () {
+describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Premium';
 	const themeSlug = 'outland';
 
