@@ -90,18 +90,24 @@ export default function WPCheckoutOrderSummary( {
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
-			<CheckoutSummaryFeatures>
-				<CheckoutSummaryFeaturesTitle>
-					{ responseCart.is_gift_purchase
-						? translate( 'WordPress.com Gift Subscription' )
-						: translate( 'Included with your purchase' ) }
-				</CheckoutSummaryFeaturesTitle>
-				{ isCartUpdating ? (
-					<LoadingCheckoutSummaryFeaturesList />
-				) : (
-					<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
-				) }
-			</CheckoutSummaryFeatures>
+			{ checkoutVersion !== '2' && (
+				<CheckoutSummaryFeatures>
+					<CheckoutSummaryFeaturesTitle>
+						{ responseCart.is_gift_purchase
+							? translate( 'WordPress.com Gift Subscription' )
+							: translate( 'Included with your purchase' ) }
+					</CheckoutSummaryFeaturesTitle>
+					{ isCartUpdating ? (
+						<LoadingCheckoutSummaryFeaturesList />
+					) : (
+						<CheckoutSummaryFeaturesWrapper
+							siteId={ siteId }
+							nextDomainIsFree={ nextDomainIsFree }
+						/>
+					) }
+				</CheckoutSummaryFeatures>
+			) }
+
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
 			) }
