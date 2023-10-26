@@ -1,4 +1,5 @@
 import { Button, Gravatar } from '@automattic/components';
+import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -28,6 +29,7 @@ const DropdownMenu = ( { isExpanded }: DropdownMenuProps ) => {
 		<ul className="jetpack-cloud-sidebar__profile-dropdown-menu" hidden={ ! isExpanded }>
 			<li className="jetpack-cloud-sidebar__profile-dropdown-menu-item">
 				<Button
+					className="jetpack-cloud-sidebar__external-link"
 					borderless
 					href="https://jetpack.com/support"
 					rel="noreferrer"
@@ -35,6 +37,7 @@ const DropdownMenu = ( { isExpanded }: DropdownMenuProps ) => {
 					onClick={ onGetHelp }
 				>
 					{ translate( 'Get help' ) }
+					<Icon icon={ external } size={ 24 } />
 				</Button>
 			</li>
 			<li className="jetpack-cloud-sidebar__profile-dropdown-menu-item">
