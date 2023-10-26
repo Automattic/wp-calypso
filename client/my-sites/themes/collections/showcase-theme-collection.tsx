@@ -47,10 +47,11 @@ export default function ShowcaseThemeCollection( {
 	onSeeAll,
 }: ShowcaseThemeCollectionProps ): ReactElement {
 	const { getPrice, themes, isActive, isInstalling, siteId } = useThemeCollection( query );
-	const themeList = getCachedThemes( collectionSlug );
+	let themeList = getCachedThemes( collectionSlug );
 
 	if ( ! themeList.length && themes ) {
 		cacheThemes( collectionSlug, themes );
+		themeList = getCachedThemes( collectionSlug );
 	}
 
 	return (
