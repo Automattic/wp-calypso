@@ -44,7 +44,7 @@ const signupFlowDefaultFeatures = (
 		: plan.getSignupCompareAvailableFeatures;
 };
 
-export const getPlanFeatureAccessor = ( {
+const getPlanFeatureAccessor = ( {
 	flowName = '',
 	isInVerticalScrollingPlansExperiment = false,
 	plan,
@@ -80,7 +80,7 @@ const blogOnboardingHighlightedFeatures = ( flowName: string, plan: IncompleteWP
 	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingHighlightedFeatures;
 };
 
-export const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
+const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	const accessor = [
 		newsletterHighlightedFeatures( flowName, plan ),
 		linkInBioHighlightedFeatures( flowName, plan ),
