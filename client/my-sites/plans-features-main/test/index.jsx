@@ -46,6 +46,12 @@ jest.mock( 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api
 );
 jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
 jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-free-hosting-trial-assignment', () => ( {
+	useFreeHostingTrialAssignment: jest.fn( () => ( {
+		isLoadingHostingTrialExperiment: false,
+		isAssignedToHostingTrialExperiment: false,
+	} ) ),
+} ) );
 
 import {
 	PLAN_FREE,
