@@ -50,22 +50,21 @@ class EmailedLoginLinkExpired extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.state = { showEmailSentAgain: false };
-		this.redirectTo = props.redirectTo;
-		this.isTransitingToWPComAccount = props.transition;
-		this.emailType = getEmailType( this.redirectTo );
-		this.emailAddress = props.emailAddress;
-		this.postId = props.postId;
-		this.token = props.token;
-		this.activate = props.activate;
-		this.dispatch = props.dispatch;
-
-		// Set values to shown to the user
-		if ( this.isTransitingToWPComAccount ) {
-			this.setTransitingText( this.emailType );
-		} else {
-			this.setLoggingExpiredText();
-		}
+		this.state = {
+			showEmailSentAgain: false,
+			title: '',
+			actionUrl: '',
+			secondaryAction: '',
+			secondaryActionURL: '',
+			line: '',
+			action: '',
+			emailType: getEmailType( props.redirectTo ),
+			isTransitingToWPComAccount: props.transition,
+			emailAddress: props.emailAddress,
+			postId: props.postId,
+			token: props.token,
+			activate: props.activate,
+		};
 	}
 
 	componentDidMount() {
@@ -76,12 +75,18 @@ class EmailedLoginLinkExpired extends Component {
 				.querySelector( '.is-grav-powered-login-page' )
 				?.classList.remove( 'is-grav-powered-login-page' );
 		}
+
+		// Set initial text
+		if ( this.state.isTransitingToWPComAccount ) {
+			this.setTransitingText();
+		} else {
+			this.setLoggingExpiredText();
+		}
 	}
 
 	onClickTryAgainLink = () => {
-		if ( this.isTransitingToWPComAccount ) {
-			// Call the endpoint to resend the email
-			this.resendEmail( this.emailType );
+		if ( this.state.isTransitingToWPComAccount ) {
+			this.resendEmail( this.state.emailType );
 		} else {
 			this.props.hideMagicLoginRequestForm();
 		}
@@ -92,9 +97,13 @@ class EmailedLoginLinkExpired extends Component {
 		const errorMessages = getResendEmailErrorMessages( translate );
 
 		if ( emailType === EmailType.ConfirmSubscription ) {
-			resendSubscriptionConfirmationEmail( this.emailAddress, this.postId, this.activate )
+			resendSubscriptionConfirmationEmail(
+				this.state.emailAddress,
+				this.state.postId,
+				this.state.activate
+			)
 				.then( () => {
-					this.props.successNotice( 'Tu acción ha sido completada exitosamente!' );
+					this.setCheckEmailText();
 				} )
 				.catch( ( error ) => {
 					this.props.errorNotice( errorMessages[ error.code ] );
@@ -107,30 +116,51 @@ class EmailedLoginLinkExpired extends Component {
 
 	setLoggingExpiredText = () => {
 		const { translate } = this.props;
+		this.setState( {
+			title: translate( 'Login link is expired or invalid' ),
+			actionUrl: login( { twoFactorAuthType: 'link' } ),
+			secondaryAction: translate( 'Reset my password' ),
+			secondaryActionURL: lostPassword(),
+			line: translate( 'Maybe try resetting your password instead' ),
+			action: translate( 'Try again' ),
+		} );
+	};
 
-		this.title = translate( 'Login link is expired or invalid' );
-		this.actionUrl = login( { twoFactorAuthType: 'link' } );
-		this.secondaryAction = translate( 'Reset my password' );
-		this.secondaryActionURL = lostPassword();
-		this.line = translate( 'Maybe try resetting your password instead' );
+	setCheckEmailText = () => {
+		const { translate } = this.props;
+		this.setState( {
+			title: translate( 'Check your email!' ),
+			actionUrl: null,
+			secondaryAction: null,
+			secondaryActionURL: null,
+			line: translate(
+				"We've sent an email with a verification link to {{strong}}%(emailAddress)s{{/strong}}",
+				{
+					components: { strong: <strong /> },
+					args: { emailAddress: this.state.emailAddress },
+				}
+			),
+			action: '',
+		} );
 	};
 
 	setTransitingText = () => {
 		const { translate } = this.props;
-
-		if ( this.emailType === EmailType.ConfirmSubscription ) {
-			this.title = translate( 'Your Subscription Confirmation link is expired or invalid' );
-		} else {
-			this.title = translate( 'Your Subscription Management link is expired or invalid' );
-		}
-		this.actionUrl = null;
-		this.secondaryAction = null;
-		this.secondaryActionURL = null;
-		this.line = translate( 'Click on this button and we will send you a new link' );
+		this.setState( {
+			title:
+				this.state.emailType === EmailType.ConfirmSubscription
+					? translate( 'Your Subscription Confirmation link is expired or invalid' )
+					: translate( 'Your Subscription Management link is expired or invalid' ),
+			actionUrl: null,
+			secondaryAction: null,
+			secondaryActionURL: null,
+			line: translate( 'Click on this button and we will send you a new link' ),
+			action: translate( 'Try again' ),
+		} );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { title, line, action, actionUrl, secondaryAction, secondaryActionURL } = this.state;
 
 		return (
 			<div>
@@ -141,15 +171,15 @@ class EmailedLoginLinkExpired extends Component {
 				/>
 
 				<EmptyContent
-					action={ translate( 'Try again' ) }
+					action={ action }
 					actionCallback={ this.onClickTryAgainLink }
-					actionURL={ this.actionUrl }
+					actionURL={ actionUrl }
 					className="magic-login__link-expired"
 					illustration=""
-					line={ this.line }
-					secondaryAction={ this.secondaryAction }
-					secondaryActionURL={ this.secondaryActionURL }
-					title={ this.title }
+					line={ line }
+					secondaryAction={ secondaryAction }
+					secondaryActionURL={ secondaryActionURL }
+					title={ title }
 				/>
 			</div>
 		);
