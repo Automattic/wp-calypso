@@ -1345,6 +1345,7 @@ export class RenderDomainsStep extends Component {
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl = false;
+		let shouldUseHistoryBack = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
 		const [ sitesBackLabelText, defaultBackUrl ] =
@@ -1390,6 +1391,11 @@ export class RenderDomainsStep extends Component {
 				backLabelText = translate( 'Back' );
 				// Solves route conflicts between LP and calypso (ex. /domains).
 				isExternalBackUrl = true;
+			} else if ( window.history.length > 1 ) {
+				// use user's browser history if they have one
+				backLabelText = translate( 'Back' );
+				backUrl = null;
+				shouldUseHistoryBack = true;
 			}
 		}
 
@@ -1414,12 +1420,13 @@ export class RenderDomainsStep extends Component {
 						{ this.renderContent() }
 					</div>
 				}
-				allowBackFirstStep={ !! backUrl }
+				allowBackFirstStep={ !! backUrl || shouldUseHistoryBack }
 				backLabelText={ backLabelText }
 				hideSkip={ true }
 				goToNextStep={ this.handleSkip }
 				align="center"
 				isWideLayout={ isReskinned }
+				goToPreviousStep={ () => window.history.back() }
 			/>
 		);
 	}

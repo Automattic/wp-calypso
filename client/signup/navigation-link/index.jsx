@@ -85,6 +85,10 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
+		if ( this.props.goToPreviousStep ) {
+			return;
+		}
+
 		const { flowName, signupProgress, stepName, userLoggedIn, queryParams } = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
