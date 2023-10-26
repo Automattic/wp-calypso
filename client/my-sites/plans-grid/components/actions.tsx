@@ -9,8 +9,8 @@ import {
 	TERM_ANNUALLY,
 	type PlanSlug,
 	PLAN_HOSTING_TRIAL_MONTHLY,
+	type StorageOption,
 } from '@automattic/calypso-products';
-import { StorageOption } from '@automattic/calypso-products/src';
 import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
