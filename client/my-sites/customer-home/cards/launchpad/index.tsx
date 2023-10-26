@@ -5,7 +5,7 @@ import {
 	sortLaunchpadTasksByCompletionStatus,
 	LaunchpadNavigator,
 } from '@automattic/data-stores';
-import { DefaultWiredLaunchpad, Task } from '@automattic/launchpad';
+import { DefaultWiredLaunchpad, type Task } from '@automattic/launchpad';
 import { select, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
