@@ -85,19 +85,21 @@ const JetpackCloudSidebar = ( {
 			</SidebarMain>
 
 			{ ! isJetpackManage && jetpackAdminUrl && (
-				<SidebarFooter>
-					<SidebarNavigatorMenuItem
-						title={ translate( 'WP Admin' ) }
-						link={ jetpackAdminUrl }
-						path={ jetpackAdminUrl }
-						icon={ <JetpackIcons icon="wordpress" /> }
-						onClickMenuItem={ ( link ) => {
-							dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' ) );
-							window.open( link, '_blank' );
-						} }
-						isExternalLink
-						isSelected={ false }
-					/>
+				<SidebarFooter className="jetpack-cloud-sidebar__footer">
+					<ul>
+						<SidebarNavigatorMenuItem
+							title={ translate( 'WP Admin' ) }
+							link={ jetpackAdminUrl }
+							path={ jetpackAdminUrl }
+							icon={ <JetpackIcons icon="wordpress" /> }
+							onClickMenuItem={ ( link ) => {
+								dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' ) );
+								window.open( link, '_blank' );
+							} }
+							isExternalLink
+							isSelected={ false }
+						/>
+					</ul>
 				</SidebarFooter>
 			) }
 
