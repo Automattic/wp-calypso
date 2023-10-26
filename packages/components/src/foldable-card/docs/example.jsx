@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { PureComponent } from 'react';
 import { Button, FoldableCard } from '../..';
 

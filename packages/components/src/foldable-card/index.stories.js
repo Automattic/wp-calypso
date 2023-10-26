@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Button, FoldableCard } from '..';
 
 export default { title: 'packages/components/FoldableCard' };
