@@ -5,6 +5,7 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
+import { file } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ORDERED_PATTERN_CATEGORIES } from './constants';
 import { useCategoriesOrder } from './hooks';
@@ -60,7 +61,7 @@ const PatternCategoryList = ( {
 							aria-current={ isActive }
 							onClick={ () => onSelectCategory( name ) }
 						>
-							<NavigatorItem active={ isActive }>
+							<NavigatorItem icon={ file } active={ isActive }>
 								<>
 									{ label }
 									<PatternCount count={ patternCountMapByCategory[ name ] } />

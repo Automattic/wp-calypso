@@ -48,7 +48,6 @@ import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
 import ScreenPages from './screen-pages';
 import ScreenPatternListPanel from './screen-pattern-list-panel';
-import ScreenSections from './screen-sections';
 import ScreenStyles from './screen-styles';
 import ScreenUpsell from './screen-upsell';
 import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
@@ -539,18 +538,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						onMainItemSelect={ onMainItemSelect }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
-						sectionsCount={ sections.length }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
-						onContinueClick={ onContinue }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTIONS } partialMatch>
-					<ScreenSections
+						sections={ sections }
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
-						sections={ sections }
 						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
 					/>
