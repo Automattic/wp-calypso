@@ -46,10 +46,11 @@ $sidebar-appearance-break-point: 783px;
 		margin-bottom: 32px;
 	}
 
-	&.has-fixed-nav {
-		padding-top: 44px;
-	}
 	.navigation-header {
+		margin-bottom: 0;
+		padding-bottom: 24px;
+		background-color: var(--studio-white);
+
 		@media ( max-width: $break-small ) {
 			margin-bottom: 0;
 		}
