@@ -139,7 +139,7 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 				<div>
 					{ createInterpolateElement(
 						__(
-							'You’ll need to first <a>add an SSH key to your account</a>. Once you’ve done so, you can attach it to this site.'
+							'First, <a>add an SSH key to your account</a>. Once you’ve done so, you can attach it to this site.'
 						),
 						{
 							a: (
