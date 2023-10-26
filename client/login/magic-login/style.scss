@@ -1,6 +1,8 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/calypso-color-schemes";
+@import "@automattic/typography/styles/variables";
 
 @media ( max-height: 450px ) {
 	.magic-login__handle-link,
@@ -20,6 +22,12 @@
 			margin-bottom: 20px;
 		}
 	}
+}
+
+.layout.is-white-login {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .is-white-login .magic-login__handle-link,
@@ -53,7 +61,7 @@
 }
 
 .magic-login__request-link {
-	max-width: 400px;
+	max-width: 340px;
 }
 
 .magic-login__form {
@@ -150,9 +158,24 @@
 .magic-login.is-white-login {
 	.magic-login__form-header {
 		@include onboarding-heading-text-mobile;
+		margin-bottom: 0;
 
 		@include break-mobile {
 			@include onboarding-heading-text;
+			font-size: $font-title-large;
+		}
+	}
+
+	.logged-out-form {
+		padding-top: 0;
+		.magic-login__form-sub-header {
+			color: var(--studio-gray-70);
+			text-align: center;
+		}
+
+		.form-label {
+			color: var(--studio-gray-60);
+			font-weight: 400;
 		}
 	}
 
@@ -161,11 +184,14 @@
 		box-shadow: none;
 	}
 
-	.magic-login__form-action .button.is-primary:not([disabled]) {
-		// Match primary button color in Gutenboarding and
-		// change border color to remove 3D effect
-		background-color: #007cba;
-		border-color: #007cba;
+	.magic-login__form-action .button.is-primary {
+		background-color: var(--studio-blue);
+		border-color: var(--studio-blue);
+		color: var(--studio-white);
+	}
+
+	.magic-login__footer {
+		display: none;
 	}
 }
 
