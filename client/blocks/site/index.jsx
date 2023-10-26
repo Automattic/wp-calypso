@@ -254,7 +254,7 @@ class Site extends Component {
 }
 
 function mapStateToProps( state, ownProps ) {
-	const siteId = ownProps.siteId || ownProps.site.ID;
+	const siteId = ownProps.siteId || ownProps.site?.ID;
 	const site = siteId ? getSite( state, siteId ) : ownProps.site;
 
 	return {
