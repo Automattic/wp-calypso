@@ -10,8 +10,6 @@ import './style.scss';
 const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onLoginSuccess } ) => {
 	const translate = useTranslate();
 
-	const { login, createAccount } = useLoginWindow( { onLoginSuccess: onLoginSuccess } );
-
 	const trackEvent = ( eventName ) => {
 		let eventProps = {};
 		if ( loggedInAction ) {
@@ -30,6 +28,17 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 		recordTracksEvent( eventName, eventProps );
 	};
 
+	const handleLoginSuccess = () => {
+		trackEvent( 'calypso_reader_dialog_login_success' );
+		onLoginSuccess();
+	};
+
+	if ( isVisible ) {
+		trackEvent( 'calypso_reader_action_clicked_requires_login' );
+	}
+
+	const { login, createAccount } = useLoginWindow( { onLoginSuccess: handleLoginSuccess } );
+
 	const onLoginClick = () => {
 		trackEvent( 'calypso_reader_dialog_login_clicked' );
 		login();
@@ -40,20 +49,11 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 		createAccount();
 	};
 
-	const onCloseDialog = () => {
-		trackEvent( 'calypso_reader_dialog_closed' );
-		onClose();
-	};
-
-	if ( isVisible ) {
-		trackEvent( 'calypso_reader_action_clicked_requires_login' );
-	}
-
 	return (
 		<Dialog
 			additionalClassNames="reader-join-conversation-dialog"
 			isVisible={ isVisible }
-			onClose={ onCloseDialog }
+			onClose={ onClose }
 			showCloseIcon={ true }
 			label={ translate( 'Join the conversation' ) }
 			shouldCloseOnEsc={ true }
