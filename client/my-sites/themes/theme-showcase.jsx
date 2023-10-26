@@ -145,6 +145,11 @@ class ThemeShowcase extends Component {
 		( this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lits' ) ) ||
 		( ! this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lots' ) );
 
+	getDefaultStaticFilter = () =>
+		config.isEnabled( 'themes/discovery-lots' )
+			? staticFilters.DISCOVER
+			: staticFilters.RECOMMENDED;
+
 	isStaticFilter = ( tabFilter ) => {
 		return Object.values( staticFilters ).some(
 			( staticFilter ) => tabFilter.key === staticFilter.key
@@ -168,7 +173,9 @@ class ThemeShowcase extends Component {
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
 		return {
-			DISCOVER: staticFilters.DISCOVER,
+			...( config.isEnabled( 'themes/discovery-lots' )
+				? { DISCOVER: staticFilters.DISCOVER }
+				: {} ),
 			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
 			RECOMMENDED: staticFilters.RECOMMENDED,
 			ALL: staticFilters.ALL,
@@ -199,7 +206,7 @@ class ThemeShowcase extends Component {
 
 	findTabFilter = ( tabFilters, filterKey ) =>
 		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
-		staticFilters.DISCOVER;
+		this.getDefaultStaticFilter();
 
 	getSelectedTabFilter = () => {
 		const filter = this.props.filter ?? '';
@@ -295,7 +302,7 @@ class ThemeShowcase extends Component {
 		};
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const categorySection =
-			category && category !== staticFilters.DISCOVER.key ? `/${ category }` : '';
+			category && category !== this.getDefaultStaticFilter().key ? `/${ category }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
 
@@ -315,7 +322,8 @@ class ThemeShowcase extends Component {
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
 
-		const category = ! this.props.category ? staticFilters.RECOMMENDED.key : this.props.category;
+		const category =
+			tier !== 'all' && ! this.props.category ? staticFilters.RECOMMENDED.key : this.props.category;
 
 		const url = this.constructUrl( {
 			tier,
@@ -623,7 +631,7 @@ class ThemeShowcase extends Component {
 								isCollectionView: false,
 								tier: '',
 								filter: '',
-								category: staticFilters.DISCOVER.key,
+								category: this.getDefaultStaticFilter().key,
 							} ) }
 							filter={ this.props.filter }
 							tier={ this.props.tier }
