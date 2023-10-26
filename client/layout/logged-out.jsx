@@ -130,11 +130,9 @@ const LayoutLoggedOut = ( {
 	let masterbar = null;
 
 	// Open new window to create account page when a logged in action was triggered on the Reader tag embed page and the user is not logged in
-	if ( ! isLoggedIn && loggedInAction ) {
-		if ( isReaderTagEmbed ) {
-			const { pathname } = getUrlParts( window.location.href );
-			window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
-		}
+	if ( ! isLoggedIn && loggedInAction && isReaderTagEmbed ) {
+		const { pathname } = getUrlParts( window.location.href );
+		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined

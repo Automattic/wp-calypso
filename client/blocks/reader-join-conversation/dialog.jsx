@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import useLoginWindow from 'calypso/data/reader/use-login-window';
 
@@ -13,17 +14,12 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 	const trackEvent = ( eventName ) => {
 		let eventProps = {};
 		if ( loggedInAction ) {
-			eventProps = { type: loggedInAction?.type };
-			// create eventProps from loggedInAction properties if they exist
-			if ( loggedInAction?.siteId ) {
-				eventProps.blog_id = loggedInAction?.siteId;
-			}
-			if ( loggedInAction?.postId ) {
-				eventProps.post_id = loggedInAction?.postId;
-			}
-			if ( loggedInAction?.tag ) {
-				eventProps.tag = loggedInAction?.tag;
-			}
+			eventProps = {
+				type: loggedInAction?.type,
+				blog_id: loggedInAction?.siteId,
+				post_id: loggedInAction?.postId,
+				tag: loggedInAction?.tag,
+			};
 		}
 		recordTracksEvent( eventName, eventProps );
 	};
@@ -33,9 +29,12 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 		onLoginSuccess();
 	};
 
-	if ( isVisible ) {
-		trackEvent( 'calypso_reader_action_clicked_requires_login' );
-	}
+	// Use useEffect to only track the event once when the dialog is first shown
+	useEffect( () => {
+		if ( isVisible ) {
+			trackEvent( 'calypso_reader_dialog_shown' );
+		}
+	}, [ isVisible ] );
 
 	const { login, createAccount } = useLoginWindow( { onLoginSuccess: handleLoginSuccess } );
 
