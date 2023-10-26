@@ -92,10 +92,7 @@
 	.navigation-header__actions {
 		display: flex;
 		align-items: center;
-		gap: 8px;
-		@media ( min-width: $break-small ) {
-			gap: 16px;
-		}
+		gap: 16px;
 	}
 }
 
