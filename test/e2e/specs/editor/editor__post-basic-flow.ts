@@ -8,6 +8,7 @@ import {
 	EditorPage,
 	PublishedPostPage,
 	TestAccount,
+	ParagraphBlock,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
@@ -54,8 +55,14 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			await editorPage.enterTitle( title );
 		} );
 
-		it( 'Enter post text', async function () {
-			await editorPage.enterText( quote );
+		it( 'Enter post content', async function () {
+			const blockHandle = await editorPage.addBlockFromSidebar(
+				ParagraphBlock.blockName,
+				ParagraphBlock.blockEditorSelector,
+				{ noSearch: true }
+			);
+			const paragraphBlock = new ParagraphBlock( blockHandle );
+			await paragraphBlock.enterParagraph( quote );
 		} );
 	} );
 
@@ -89,6 +96,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	describe( 'Jetpack features', function () {
 		it( 'Open Jetpack settings', async function () {
 			// @TODO https://github.com/Automattic/wp-calypso/pull/82301
+			// Works around the scenario where the Jetpack icon isn't pinned on the
+			// editor toolbar.
 			await editorPage.openEditorOptionsMenu();
 			const page = await editorPage.getEditorParent();
 
