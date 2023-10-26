@@ -124,4 +124,42 @@ describe( 'useSubscribedNewsletterCategories', () => {
 			`/sites/123/newsletter-categories/subscriptions`
 		);
 	} );
+
+	it( 'should include the subscriptionId when being called with one', async () => {
+		(
+			requestWithSubkeyFallback as jest.MockedFunction< typeof requestWithSubkeyFallback >
+		 ).mockResolvedValue( {
+			success: true,
+		} );
+
+		renderHook( () => useSubscribedNewsletterCategories( { siteId: 123, subscriptionId: 456 } ), {
+			wrapper,
+		} );
+
+		await waitFor( () => expect( requestWithSubkeyFallback ).toHaveBeenCalled() );
+
+		expect( requestWithSubkeyFallback ).toHaveBeenCalledWith(
+			false,
+			`/sites/123/newsletter-categories/subscriptions/456`
+		);
+	} );
+
+	it( 'should call with ?type=wpcom when being passed a user id', async () => {
+		(
+			requestWithSubkeyFallback as jest.MockedFunction< typeof requestWithSubkeyFallback >
+		 ).mockResolvedValue( {
+			success: true,
+		} );
+
+		renderHook( () => useSubscribedNewsletterCategories( { siteId: 123, userId: 456 } ), {
+			wrapper,
+		} );
+
+		await waitFor( () => expect( requestWithSubkeyFallback ).toHaveBeenCalled() );
+
+		expect( requestWithSubkeyFallback ).toHaveBeenCalledWith(
+			false,
+			`/sites/123/newsletter-categories/subscriptions/456?type=wpcom`
+		);
+	} );
 } );

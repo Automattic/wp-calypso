@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -9,9 +10,9 @@ import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.sv
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
@@ -178,15 +179,13 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
 				<div className="stats has-fixed-nav">
-					<FixedNavigationHeader
-						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-					>
+					<NavigationHeader navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }>
 						{ showViewLink && (
 							<Button onClick={ this.openPreview }>
 								<span>{ actionLabel }</span>
 							</Button>
 						) }
-					</FixedNavigationHeader>
+					</NavigationHeader>
 
 					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
 
@@ -197,7 +196,9 @@ class StatsPostDetail extends Component {
 							title={ noViewsLabel }
 							line={ translate( 'Learn some tips to attract more visitors' ) }
 							action={ translate( 'Get more traffic!' ) }
-							actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
+							actionURL={ localizeUrl(
+								'https://wordpress.com/support/getting-more-views-and-traffic/'
+							) }
 							actionTarget="blank"
 							illustration={ IllustrationStats }
 							illustrationWidth={ 150 }

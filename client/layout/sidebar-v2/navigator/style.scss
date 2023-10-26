@@ -8,6 +8,7 @@
 	padding: 0;
 
 	.components-navigator-back-button {
+		padding-block-start: 0;
 		margin-block-end: 8px;
 		color: var(--studio-gray-90);
 		font-size: rem(16px);

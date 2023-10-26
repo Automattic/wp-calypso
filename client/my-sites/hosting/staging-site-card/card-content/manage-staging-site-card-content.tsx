@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -103,7 +102,6 @@ export const ManageStagingSiteCardContent = ( {
 }: CardContentProps ) => {
 	{
 		const translate = useTranslate();
-		const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
 		const productionSiteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 
 		const ConfirmationDeleteButton = () => {
@@ -172,24 +170,20 @@ export const ManageStagingSiteCardContent = ( {
 						<ConfirmationDeleteButton />
 					</ActionButtons>
 				</BorderedContainer>
-				{ isStagingSitesI3Enabled ? (
-					<>
-						<SyncActionsContainer>
-							<SiteSyncCard
-								type="production"
-								onPush={ onPushClick }
-								onPull={ onPullClick }
-								disabled={ isButtonDisabled }
-								productionSiteId={ siteId }
-								siteUrls={ {
-									production: productionSiteUrl,
-									staging: stagingSite.url,
-								} }
-								error={ error }
-							/>
-						</SyncActionsContainer>
-					</>
-				) : null }
+				<SyncActionsContainer>
+					<SiteSyncCard
+						type="production"
+						onPush={ onPushClick }
+						onPull={ onPullClick }
+						disabled={ isButtonDisabled }
+						productionSiteId={ siteId }
+						siteUrls={ {
+							production: productionSiteUrl,
+							staging: stagingSite.url,
+						} }
+						error={ error }
+					/>
+				</SyncActionsContainer>
 			</>
 		);
 	}

@@ -83,7 +83,7 @@ const JetpackManageSidebar = () => {
 						target: '.jetpack-cloud-sidebar__profile-dropdown-button-icon',
 						title: translate( 'Access Profile & Help Docs' ),
 						description: translate(
-							'Here you can logout from your account or view our help documentation.'
+							'Here you can log out from your account or view our help documentation.'
 						),
 					},
 					{

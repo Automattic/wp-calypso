@@ -1,6 +1,7 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { receiveSite, requestSite } from 'calypso/state/sites/actions';
 
@@ -47,11 +48,13 @@ export const useSiteInterfaceMutation = (
 			};
 			// Apply the new interface option to the site on redux store
 			dispatch( receiveSite( { ...site, options: newOptions } ) );
+			dispatch( requestAdminMenu( siteId ) );
 		},
 		onMutate: options?.onMutate,
 		onError( _err: MutationError, _newActive: string, prevValue: unknown ) {
 			// Request site info on failure
 			dispatch( requestSite( siteId ) );
+			dispatch( requestAdminMenu( siteId ) );
 			options?.onError?.( _err, _newActive, prevValue );
 		},
 	} );

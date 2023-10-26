@@ -1,3 +1,4 @@
+import { PRODUCT_AKISMET_FREE } from '@automattic/calypso-products';
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -79,8 +80,17 @@ function WordPressFreePurchaseLabel() {
 	const isCartAllOneTimePurchases = responseCart.products.every(
 		( product ) => product.is_one_time_purchase
 	);
+	// Don't show additional free payment methods if all products in the cart prevent them.
+	// Currently only Akismet Free explicitly prevents them.
+	const isCartAllProductsThatPreventAdditionalFreeMethods = responseCart.products.every(
+		( product ) => product.product_slug === PRODUCT_AKISMET_FREE
+	);
 
-	if ( ! isCartAllOneTimePurchases && ! doesCartHaveRenewalWithPaymentMethod ) {
+	if (
+		! isCartAllOneTimePurchases &&
+		! doesCartHaveRenewalWithPaymentMethod &&
+		! isCartAllProductsThatPreventAdditionalFreeMethods
+	) {
 		return (
 			<>
 				<div>{ __( 'Assign a payment method later' ) }</div>

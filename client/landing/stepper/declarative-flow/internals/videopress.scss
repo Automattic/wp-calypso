@@ -303,6 +303,7 @@ body.is-videopress-tv-purchase-stepper {
 		.checklist-item__task.completed.enabled:hover .checklist-item__text,
 		.checklist-item__task.completed.enabled:hover .checklist-item__checkmark,
 		.button.checklist-item__task-content:hover:not([disabled]),
+		.components-button.checklist-item__task-content:focus:not([disabled]),
 		.button.checklist-item__task-content:focus:not([disabled]) {
 			color: $videopress-theme-yellow;
 			fill: $videopress-theme-yellow;

@@ -9,14 +9,15 @@ import SiteSubscriptionProvider from './site-subscription-provider';
 export type SiteSubscriptionProps = {
 	blogId?: string;
 	subscriptionId?: string;
+	transition?: boolean;
 };
 
-const SiteSubscription = ( { blogId, subscriptionId }: SiteSubscriptionProps ) => {
+const SiteSubscription = ( { blogId, subscriptionId, transition }: SiteSubscriptionProps ) => {
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 			<SiteSubscriptionProvider blogId={ blogId } subscriptionId={ subscriptionId }>
 				<Main className="site-subscriptions-manager">
-					<ReaderSiteSubscription />
+					<ReaderSiteSubscription transition={ transition } />
 				</Main>
 			</SiteSubscriptionProvider>
 		</SubscriptionManagerContextProvider>

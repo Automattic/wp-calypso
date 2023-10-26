@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -62,7 +61,6 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const dispatch = useDispatch();
 	const [ loadingError, setLoadingError ] = useState( null );
 	const [ syncError, setSyncError ] = useState< string | null >( null );
-	const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
 	const stagingSiteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 
 	const { data: productionSite, isLoading } = useProductionSiteDetail( siteId, {
@@ -143,22 +141,20 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
 				</ActionButtons>
-				{ isStagingSitesI3Enabled && (
-					<SyncActionsContainer>
-						<SiteSyncCard
-							type="staging"
-							productionSiteId={ productionSite.id }
-							siteUrls={ {
-								production: productionSite.url,
-								staging: stagingSiteUrl,
-							} }
-							onPush={ pullFromStaging }
-							onPull={ pushToStaging }
-							error={ syncError }
-							disabled={ disabled || isSyncInProgress }
-						/>
-					</SyncActionsContainer>
-				) }
+				<SyncActionsContainer>
+					<SiteSyncCard
+						type="staging"
+						productionSiteId={ productionSite.id }
+						siteUrls={ {
+							production: productionSite.url,
+							staging: stagingSiteUrl,
+						} }
+						onPush={ pullFromStaging }
+						onPull={ pushToStaging }
+						error={ syncError }
+						disabled={ disabled || isSyncInProgress }
+					/>
+				</SyncActionsContainer>
 			</>
 		);
 	};
