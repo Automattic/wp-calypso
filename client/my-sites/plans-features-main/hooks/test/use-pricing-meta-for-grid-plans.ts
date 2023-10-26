@@ -49,7 +49,8 @@ describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		Plans.useSitePlans.mockImplementation( () => ( {
-			data: {},
+			isFetching: false,
+			data: null,
 		} ) );
 		getByPurchaseId.mockImplementation( () => undefined );
 		usePricedAPIPlans.mockImplementation( () => ( {
