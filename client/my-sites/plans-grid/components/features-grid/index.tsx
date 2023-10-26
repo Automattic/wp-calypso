@@ -48,6 +48,9 @@ interface FeaturesGridType extends PlansGridProps {
 	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
+	gridPlansIndex: {
+		[ key: string ]: GridPlan;
+	};
 }
 
 class FeaturesGrid extends Component< FeaturesGridType > {
@@ -512,6 +515,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			flowName,
 			onStorageAddOnClick,
 			showUpgradeableStorage,
+			gridPlansIndex,
 		} = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
@@ -539,6 +543,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					planSlug={ planSlug }
 					onStorageAddOnClick={ onStorageAddOnClick }
 					storageOptions={ storageOptions }
+					gridPlansIndex={ gridPlansIndex }
 				/>
 			) : (
 				storageOptions.map( ( storageOption ) => {

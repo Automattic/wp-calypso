@@ -3,8 +3,8 @@ import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/npm-ready/data-store/use-default-storage-option';
+import { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
 import { getStorageStringFromFeature } from '../util';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
@@ -16,6 +16,9 @@ type StorageAddOnDropdownProps = {
 	storageOptions: StorageOption[];
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	priceOnSeparateLine?: boolean;
+	gridPlansIndex: {
+		[ key: string ]: GridPlan;
+	};
 };
 
 type StorageAddOnOptionProps = {
@@ -71,9 +74,9 @@ export const StorageAddOnDropdown = ( {
 	storageOptions,
 	onStorageAddOnClick,
 	priceOnSeparateLine = false,
+	gridPlansIndex,
 }: StorageAddOnDropdownProps ) => {
 	const translate = useTranslate();
-	const { gridPlansIndex } = usePlansGridContext();
 	const {
 		pricing: { currencyCode },
 		storageAddOnsForPlan,
