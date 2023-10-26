@@ -7,7 +7,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:20.8.1
+      - image: cimg/node:18.17.1
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -143,7 +143,7 @@ commands:
 jobs:
   wp-desktop-assets:
     docker:
-      - image: cimg/node:20.8.1-browsers
+      - image: cimg/node:18.17.1-browsers
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
@@ -247,7 +247,7 @@ jobs:
     docker:
     # Important: the build fails on 18.13.0, so we pin it to a slightly older
     # version to keep this one working for now.
-      - image: cimg/node:20.8.1-browsers
+      - image: cimg/node:18.17.1-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
