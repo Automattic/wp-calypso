@@ -1,7 +1,7 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import {
 	updateLaunchpadSettings,
-	useLaunchpad,
+	useSortedLaunchpadTasks,
 	sortLaunchpadTasksByCompletionStatus,
 	LaunchpadNavigator,
 } from '@automattic/data-stores';
@@ -38,7 +38,7 @@ const CustomerHomeLaunchpad = ( {
 	const useLaunchpadOptions = { onSuccess: sortLaunchpadTasksByCompletionStatus };
 	const {
 		data: { checklist, is_dismissed: initialIsChecklistDismissed },
-	} = useLaunchpad( siteSlug, checklistSlug, useLaunchpadOptions );
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug );
 
 	useEffect( () => {
 		setIsDismissed( initialIsChecklistDismissed );
