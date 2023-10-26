@@ -30,6 +30,7 @@ import {
 	useDotcomPatterns,
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
+	usePages,
 	usePatternCategories,
 	usePatternsMapByCategory,
 	useRecipe,
@@ -144,7 +145,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		[ colorVariation, fontVariation ]
 	);
 
-	const [ pages, setPages ] = useState< string[] >( [] );
+	const { pages, setPages } = usePages();
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
