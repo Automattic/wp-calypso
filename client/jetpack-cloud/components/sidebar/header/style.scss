@@ -83,3 +83,17 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 		text-align: start;
 	}
 }
+
+a.jetpack-cloud-sidebar__external-link {
+	display: inline-flex;
+
+	&:hover,
+	&:focus {
+		display: inline-flex;
+	}
+
+	svg {
+		position: absolute;
+		right: 16px;
+	}
+}
