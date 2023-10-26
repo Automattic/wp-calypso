@@ -56,8 +56,10 @@ export const SidebarNavigatorMenuItem = ( {
 	};
 
 	return (
-		<NavigatorButton as={ SidebarItem } path={ path }>
-			{ title }
-		</NavigatorButton>
+		<li>
+			<NavigatorButton as={ SidebarItem } path={ path }>
+				{ title }
+			</NavigatorButton>
+		</li>
 	);
 };
