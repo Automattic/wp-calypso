@@ -1,6 +1,6 @@
 @import "@automattic/typography/styles/variables.scss";
 
-.plan-pill {
+.plans-grid__plan-pill {
 	position: absolute;
 	bottom: -10px;
 	left: 14px;
@@ -19,7 +19,7 @@
 	white-space: nowrap;
 }
 
-.plan-pill.is-in-signup {
+.plans-grid__plan-pill.is-in-signup {
 	top: 10px;
 	bottom: unset;
 	right: 14px;
