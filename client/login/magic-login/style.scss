@@ -28,6 +28,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
 	.magic-login .magic-login__form-header {
 		margin-bottom: 0;
 
@@ -45,6 +46,10 @@
 		.form-label {
 			font-weight: 400;
 		}
+	}
+
+	.magic-login__request-link {
+		max-width: 340px;
 	}
 
 	.magic-login__form-action {
@@ -83,7 +88,7 @@
 }
 
 .magic-login__request-link {
-	max-width: 340px;
+	max-width: 400px;
 }
 
 .magic-login__form {
