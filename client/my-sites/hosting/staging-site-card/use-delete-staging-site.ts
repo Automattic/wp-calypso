@@ -94,5 +94,9 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 		}
 	}, [ isLoading ] );
 
-	return { deleteStagingSite: mutate, isReverting: isStatusReverting || isDeletingInitiated };
+	return {
+		deleteStagingSite: mutate,
+		isLoading,
+		isReverting: isStatusReverting || isDeletingInitiated,
+	};
 };
