@@ -43,7 +43,7 @@
 .navigation-header__main {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	box-sizing: border-box;
 
 	@media ( max-width: 660px ) {
