@@ -11,4 +11,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page( agencySignupLegacyPath(), agencySignupBasePath() );
 }
