@@ -40,11 +40,6 @@ const useTrackPostView = ( postObj ) => {
 			}
 
 			const intersectionHandler = ( entries ) => {
-				// Only fire once per category
-				if ( ! wrapperDiv ) {
-					return;
-				}
-
 				const [ entry ] = entries;
 				if ( ! entry.isIntersecting ) {
 					return;
