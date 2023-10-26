@@ -15,11 +15,17 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 	const trackEvent = ( eventName ) => {
 		let eventProps = {};
 		if ( loggedInAction ) {
-			eventProps = {
-				type: loggedInAction?.type,
-				blog_id: loggedInAction?.siteId,
-				post_id: loggedInAction?.postId,
-			};
+			eventProps = { type: loggedInAction?.type };
+			// create eventProps from loggedInAction properties if they exist
+			if ( loggedInAction?.siteId ) {
+				eventProps.blog_id = loggedInAction?.siteId;
+			}
+			if ( loggedInAction?.postId ) {
+				eventProps.post_id = loggedInAction?.postId;
+			}
+			if ( loggedInAction?.tag ) {
+				eventProps.tag = loggedInAction?.tag;
+			}
 		}
 		recordTracksEvent( eventName, eventProps );
 	};
@@ -34,11 +40,20 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 		createAccount();
 	};
 
+	const onCloseDialog = () => {
+		trackEvent( 'calypso_reader_dialog_closed' );
+		onClose();
+	};
+
+	if ( isVisible ) {
+		trackEvent( 'calypso_reader_action_clicked_requires_login' );
+	}
+
 	return (
 		<Dialog
 			additionalClassNames="reader-join-conversation-dialog"
 			isVisible={ isVisible }
-			onClose={ onClose }
+			onClose={ onCloseDialog }
 			showCloseIcon={ true }
 			label={ translate( 'Join the conversation' ) }
 			shouldCloseOnEsc={ true }
