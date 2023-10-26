@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import SiteSelector from 'calypso/components/site-selector';
 import Sidebar, {
@@ -12,7 +11,7 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { hasActivePartnerKey } from 'calypso/state/partner-portal/partner/selectors';
+import { hasJetpackPartnerAccess } from 'calypso/state/partner-portal/partner/selectors';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SidebarHeader from './header';
@@ -56,8 +55,7 @@ const JetpackCloudSidebar = ( {
 		siteId ? getJetpackAdminUrl( state, siteId ) : null
 	);
 
-	useQueryJetpackPartnerPortalPartner();
-	const canAccessJetpackManage = useSelector( hasActivePartnerKey );
+	const canAccessJetpackManage = useSelector( hasJetpackPartnerAccess );
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
