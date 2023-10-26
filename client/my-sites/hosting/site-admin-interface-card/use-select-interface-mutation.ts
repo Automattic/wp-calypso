@@ -1,5 +1,4 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -49,7 +48,8 @@ export const useSiteInterfaceMutation = (
 
 	const { mutate } = mutation;
 
-	const setSiteInterface = useCallback( mutate, [ mutate ] );
-
-	return setSiteInterface;
+	return {
+		setSiteInterface: mutate,
+		...mutation,
+	};
 };
