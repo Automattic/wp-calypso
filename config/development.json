@@ -160,7 +160,6 @@
 		"reader/first-posts-stream": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
-		"reader/login-window": true,
 		"reader/public-tag-pages": true,
 		"recommend-plugins": true,
 		"redirect-fallback-browsers": false,
