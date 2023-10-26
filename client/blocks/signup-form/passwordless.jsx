@@ -105,6 +105,13 @@ class PasswordlessSignupForm extends Component {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+			if ( error.error === 'email_exists' ) {
+				this.props.saveSignupStep( {
+					stepName: this.props.stepName,
+					formError: error.error,
+				} );
+			}
+
 			const email = typeof this.state.email === 'string' ? this.state.email.trim() : '';
 			const response = await wpcom.req.get(
 				`/users/${ encodeURIComponent( email ) }/auth-options`
@@ -198,18 +205,6 @@ class PasswordlessSignupForm extends Component {
 		} );
 	};
 
-	goToLogin = () => {
-		page(
-			addQueryArgs(
-				{
-					email_address: this.state.email,
-					use_email_from_url: true,
-				},
-				this.props.logInUrl
-			)
-		);
-	};
-
 	submitStep = ( data ) => {
 		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
 		submitCreateAccountStep(
@@ -227,11 +222,20 @@ class PasswordlessSignupForm extends Component {
 		goToNextStep();
 	};
 
-	onInputChange = ( { target: { value } } ) =>
+	onInputChange = ( { target: { value } } ) => {
+		// Clear the form error if the user changes their email address.
+		if ( this.props.step?.formError === 'email_exists' ) {
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				formError: null,
+			} );
+		}
+
 		this.setState( {
 			email: value,
 			errorMessages: null,
 		} );
+	};
 
 	renderNotice() {
 		return (
