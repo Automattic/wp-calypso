@@ -14,7 +14,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { AdminInterfaceLoadingPlaceholder } from './admin-interface-loading-placeholder';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 const successNoticeId = 'admin-interface-change-success';
 const failureNoticeId = 'admin-interface-change-failure';
@@ -47,10 +46,6 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 		},
 	} );
 
-	//setSiteInterface.isInitialLoading = true;
-
-	const { isInitialLoading } = setSiteInterface;
-
 	// Initialize the state with the value passed as a prop
 	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState(
 		adminInterface ?? 'calypso'
@@ -78,49 +73,43 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 			<CardHeading id="sitewpadmin-card" size={ 20 }>
 				{ translate( 'Admin interface style' ) }
 			</CardHeading>
-			{ isInitialLoading ? (
-				<AdminInterfaceLoadingPlaceholder />
-			) : (
-				<>
-					<p>
-						{ translate(
-							'Set the style for the admin interface. {{supportLink}}Learn more{{/supportLink}}.',
-							{
-								components: {
-									supportLink: <InlineSupportLink supportContext="dashboard" showIcon={ false } />,
-								},
-							}
-						) }
-					</p>
+			<p>
+				{ translate(
+					'Set the style for the admin interface. {{supportLink}}Learn more{{/supportLink}}.',
+					{
+						components: {
+							supportLink: <InlineSupportLink supportContext="dashboard" showIcon={ false } />,
+						},
+					}
+				) }
+			</p>
 
-					<FormFieldset>
-						<FormLabel>
-							<FormRadio
-								label={ translate( 'Default style' ) }
-								value="calypso"
-								checked={ selectedAdminInterface === 'calypso' }
-								onChange={ ( event ) => handleInputChange( event.target.value ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation>
-							{ translate( 'The WordPress.com redesign for a better experience.' ) }
-						</FormSettingExplanation>
-					</FormFieldset>
-					<FormFieldset>
-						<FormLabel>
-							<FormRadio
-								label={ translate( 'Classic style' ) }
-								value="wp-admin"
-								checked={ selectedAdminInterface === 'wp-admin' }
-								onChange={ ( event ) => handleInputChange( event.target.value ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation>
-							{ translate( 'The classic WP-Admin WordPress interface.' ) }
-						</FormSettingExplanation>
-					</FormFieldset>
-				</>
-			) }
+			<FormFieldset>
+				<FormLabel>
+					<FormRadio
+						label={ translate( 'Default style' ) }
+						value="calypso"
+						checked={ selectedAdminInterface === 'calypso' }
+						onChange={ ( event ) => handleInputChange( event.target.value ) }
+					/>
+				</FormLabel>
+				<FormSettingExplanation>
+					{ translate( 'The WordPress.com redesign for a better experience.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel>
+					<FormRadio
+						label={ translate( 'Classic style' ) }
+						value="wp-admin"
+						checked={ selectedAdminInterface === 'wp-admin' }
+						onChange={ ( event ) => handleInputChange( event.target.value ) }
+					/>
+				</FormLabel>
+				<FormSettingExplanation>
+					{ translate( 'The classic WP-Admin WordPress interface.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
 		</Card>
 	);
 };
