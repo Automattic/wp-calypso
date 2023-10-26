@@ -10,6 +10,21 @@
 		background-color: var(--color-sidebar-background);
 	}
 
+
+	.split-button {
+		display: flex;
+
+		a {
+			flex-grow: 1;
+		}
+
+		button.split-button__toggle {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+	}
+
+
 	.sidebar-v2__menu-item {
 		svg {
 			color: #6f6f6f;

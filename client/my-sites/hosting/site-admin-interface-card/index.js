@@ -127,7 +127,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) ?? 'calypso';
+	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso';
 
 	return { siteId, adminInterface };
 } )( localize( SiteAdminInterfaceCard ) );

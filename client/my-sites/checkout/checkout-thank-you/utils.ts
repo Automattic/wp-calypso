@@ -6,6 +6,8 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	isDomainTransfer,
+	isDomainMapping,
+	isDomainRegistration,
 } from '@automattic/calypso-products';
 import JetpackBackupPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-backup.svg';
 import JetpackBoostPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-boost.svg';
@@ -92,4 +94,13 @@ export function getDomainManagementUrl(
 
 export function isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
 	return purchases?.length > 0 && purchases?.every( isDomainTransfer );
+}
+
+export function isDomainOnly( purchases: ReceiptPurchase[] ): boolean {
+	return (
+		purchases?.length > 0 &&
+		purchases?.every(
+			( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
+		)
+	);
 }
