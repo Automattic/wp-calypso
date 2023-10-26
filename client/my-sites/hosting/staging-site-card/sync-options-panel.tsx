@@ -23,7 +23,7 @@ const DangerousItemsTitle = styled.p( {
 
 const ToggleControlWithHelpMargin = styled( ToggleControl )( {
 	'.components-base-control__help': {
-		marginLeft: '4em',
+		marginLeft: '44px',
 		marginTop: 0,
 	},
 	label: {
@@ -45,7 +45,7 @@ const ToggleWithLabelFontSize = styled( ToggleControl )( {
 } );
 
 const ItemSubtitle = styled.span( {
-	fontSize: '12px',
+	fontSize: '14px',
 	color: 'var(--color-text-subtle) (#646970)',
 	fontStyle: 'italic',
 } );
