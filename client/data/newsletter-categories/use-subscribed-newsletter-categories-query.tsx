@@ -5,6 +5,7 @@ import { NewsletterCategories, NewsletterCategory } from './types';
 type NewsletterCategoryQueryProps = {
 	siteId: number;
 	subscriptionId?: number;
+	userId?: number;
 };
 
 type NewsletterCategoryResponse = {
@@ -14,8 +15,9 @@ type NewsletterCategoryResponse = {
 
 export const getSubscribedNewsletterCategoriesKey = (
 	siteId?: string | number,
-	subscriptionId?: number
-) => [ 'subscribed-newsletter-categories', siteId, subscriptionId ];
+	subscriptionId?: number,
+	userId?: number
+) => [ 'subscribed-newsletter-categories', siteId, subscriptionId, userId ];
 
 const convertNewsletterCategoryResponse = (
 	response: NewsletterCategoryResponse
@@ -27,19 +29,24 @@ const convertNewsletterCategoryResponse = (
 const useSubscribedNewsletterCategories = ( {
 	siteId,
 	subscriptionId,
+	userId,
 }: NewsletterCategoryQueryProps ): UseQueryResult< NewsletterCategories > => {
 	const { isLoggedIn } = useIsLoggedIn();
 
+	let path = `/sites/${ siteId }/newsletter-categories/subscriptions`;
+	if ( userId ) {
+		path += `/${ userId }?type=wpcom`;
+	} else if ( subscriptionId ) {
+		path += `/${ subscriptionId }`;
+	}
+
 	return useQuery( {
-		queryKey: getSubscribedNewsletterCategoriesKey( siteId, subscriptionId ),
+		queryKey: getSubscribedNewsletterCategoriesKey( siteId, subscriptionId, userId ),
 		queryFn: () => {
 			try {
-				return requestWithSubkeyFallback< NewsletterCategoryResponse >(
-					isLoggedIn,
-					`/sites/${ siteId }/newsletter-categories/subscriptions${
-						subscriptionId ? `/${ subscriptionId }` : ''
-					}`
-				).then( convertNewsletterCategoryResponse );
+				return requestWithSubkeyFallback< NewsletterCategoryResponse >( isLoggedIn, path ).then(
+					convertNewsletterCategoryResponse
+				);
 			} catch ( e ) {}
 		},
 		enabled: !! siteId,
