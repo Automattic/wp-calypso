@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
@@ -25,6 +26,7 @@ import {
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
@@ -126,6 +128,14 @@ const LayoutLoggedOut = ( {
 	};
 
 	let masterbar = null;
+
+	// Open new window to create account page when a logged in action was triggered on the Reader tag embed page and the user is not logged in
+	if ( ! isLoggedIn && loggedInAction ) {
+		if ( isReaderTagEmbed ) {
+			const { pathname } = getUrlParts( window.location.href );
+			window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
+		}
+	}
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
@@ -244,7 +254,7 @@ const LayoutLoggedOut = ( {
 				/>
 			) }
 
-			{ ! isLoggedIn && config.isEnabled( 'reader/login-window' ) && (
+			{ ! isLoggedIn && ! isReaderTagEmbed && (
 				<ReaderJoinConversationDialog
 					onClose={ () => clearLastActionRequiresLogin() }
 					isVisible={ !! loggedInAction }
