@@ -88,10 +88,17 @@ export function DefaultLineItemSublabel( { product }: { product: ResponseCartPro
 
 	return null;
 }
+// A/B testing for checkout version 2
+const urlParams = new URLSearchParams( window.location.search );
+const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 export function getLabel( product: ResponseCartProduct ): string {
 	if ( product.meta && ( isDomainProduct( product ) || isDomainTransfer( product ) ) ) {
 		return product.meta;
+	}
+
+	if ( checkoutVersion === '2' && isPlan( product ) ) {
+		return product.product_name.replace( 'WordPress.com ', '' ).concat( ' plan' );
 	}
 	return product.product_name || '';
 }
