@@ -6,7 +6,6 @@ const blockLinks: { [ key: string ]: string } = {
 	 */
 	'core/template-part':
 		'https://wordpress.com/support/full-site-editing/theme-blocks/template-part-block/',
-
 	'core/site-title':
 		'https://wordpress.com/support/full-site-editing/theme-blocks/site-title-block/',
 
@@ -132,8 +131,6 @@ const blockLinks: { [ key: string ]: string } = {
 	/**
 	 * Jetpack Blocks
 	 */
-	'jetpack/blogroll': 'https://wordpress.com/support/wordpress-editor/blocks/blogroll-block/',
-
 	'jetpack/timeline': 'https://wordpress.com/support/wordpress-editor/blocks/timeline-block/',
 
 	'jetpack/story': 'https://wordpress.com/support/wordpress-editor/blocks/story-block/',
