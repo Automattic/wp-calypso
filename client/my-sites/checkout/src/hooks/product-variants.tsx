@@ -150,41 +150,72 @@ function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVaria
 	}
 	return 0;
 }
+// A/B testing for checkout version 2
+const urlParams = new URLSearchParams( window.location.search );
+const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
 	switch ( term ) {
 		case TERM_DECENNIALLY:
-			return String( translate( 'Ten years' ) );
+			return String(
+				checkoutVersion !== '2' ? translate( 'Ten years' ) : translate( 'Billed every ten years' )
+			);
 
 		case TERM_NOVENNIALLY:
-			return String( translate( 'Nine years' ) );
+			return String(
+				checkoutVersion !== '2' ? translate( 'Nine years' ) : translate( 'Billed every nine years' )
+			);
 
 		case TERM_OCTENNIALLY:
-			return String( translate( 'Eight years' ) );
+			return String(
+				checkoutVersion !== '2'
+					? translate( 'Eight years' )
+					: translate( 'Billed every eight years' )
+			);
 
 		case TERM_SEPTENNIALLY:
-			return String( translate( 'Seven years' ) );
+			return String(
+				checkoutVersion !== '2'
+					? translate( 'Seven years' )
+					: translate( 'Billed every seven years' )
+			);
 
 		case TERM_SEXENNIALLY:
-			return String( translate( 'Six years' ) );
+			return String(
+				checkoutVersion !== '2' ? translate( 'Six years' ) : translate( 'Billed every six years' )
+			);
 
 		case TERM_QUINQUENNIALLY:
-			return String( translate( 'Five years' ) );
+			return String(
+				checkoutVersion !== '2' ? translate( 'Five years' ) : translate( 'Billed every five years' )
+			);
 
 		case TERM_QUADRENNIALLY:
-			return String( translate( 'Four years' ) );
+			return String(
+				checkoutVersion !== '2' ? translate( 'Four years' ) : translate( 'Billed every four years' )
+			);
 
 		case TERM_TRIENNIALLY:
-			return String( translate( 'Three years' ) );
+			return String(
+				checkoutVersion !== '2'
+					? translate( 'Three years' )
+					: translate( 'Billed every three years' )
+			);
 
 		case TERM_BIENNIALLY:
-			return String( translate( 'Two years' ) );
+			return String(
+				checkoutVersion !== '2' ? translate( 'Two years' ) : translate( 'Billed every two years' )
+			);
 
 		case TERM_ANNUALLY:
-			return String( translate( 'One year' ) );
+			return String(
+				checkoutVersion !== '2' ? translate( 'One year' ) : translate( 'Billed every one year' )
+			);
 
 		case TERM_MONTHLY:
-			return String( translate( 'One month' ) );
+			return String(
+				checkoutVersion !== '2' ? translate( 'One month' ) : translate( 'Billed every month' )
+			);
 
 		default:
 			return '';
