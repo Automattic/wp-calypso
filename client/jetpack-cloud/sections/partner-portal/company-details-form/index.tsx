@@ -43,6 +43,7 @@ interface Props {
 		state?: string;
 	};
 	submitLabel: string;
+	showSignupFields?: boolean;
 }
 
 export default function CompanyDetailsForm( {
@@ -51,6 +52,7 @@ export default function CompanyDetailsForm( {
 	initialValues = {},
 	onSubmit,
 	submitLabel,
+	showSignupFields = false,
 }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
@@ -156,39 +158,43 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-				<FormFieldset>
-					<FormLabel>{ translate( 'Which answer below best describes your company:' ) }</FormLabel>
-					<FormRadio
-						label={ translate( 'Agency' ) }
-						value="agency"
-						checked={ companyType === 'agency' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setCompanyType( event.target.value )
-						}
-						disabled={ isLoading }
-						className={ undefined }
-					/>
-					<FormRadio
-						label={ translate( 'Freelancer/Pro' ) }
-						value="freelancer"
-						checked={ companyType === 'freelancer' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setCompanyType( event.target.value )
-						}
-						disabled={ isLoading }
-						className={ undefined }
-					/>
-					<FormRadio
-						label={ translate( 'A business with multiple sites' ) }
-						value="business"
-						checked={ companyType === 'business' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setCompanyType( event.target.value )
-						}
-						disabled={ isLoading }
-						className={ undefined }
-					/>
-				</FormFieldset>
+				{ showSignupFields && (
+					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Which answer below best describes your company:' ) }
+						</FormLabel>
+						<FormRadio
+							label={ translate( 'Agency' ) }
+							value="agency"
+							checked={ companyType === 'agency' }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setCompanyType( event.target.value )
+							}
+							disabled={ isLoading }
+							className={ undefined }
+						/>
+						<FormRadio
+							label={ translate( 'Freelancer/Pro' ) }
+							value="freelancer"
+							checked={ companyType === 'freelancer' }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setCompanyType( event.target.value )
+							}
+							disabled={ isLoading }
+							className={ undefined }
+						/>
+						<FormRadio
+							label={ translate( 'A business with multiple sites' ) }
+							value="business"
+							checked={ companyType === 'business' }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setCompanyType( event.target.value )
+							}
+							disabled={ isLoading }
+							className={ undefined }
+						/>
+					</FormFieldset>
+				) }
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
