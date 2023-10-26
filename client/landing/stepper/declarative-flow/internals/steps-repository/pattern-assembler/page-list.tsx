@@ -54,19 +54,28 @@ const PageList = ( { selectedPages, onSelectPage }: PageListProps ) => {
 			aria-label={ translate( 'Pages' ) }
 		>
 			<VStack spacing={ 0 }>
-				<CompositeItem { ...composite } role="option" as="button" disabled>
+				<CompositeItem
+					{ ...composite }
+					role="checkbox"
+					as="button"
+					disabled={ true }
+					focusable={ true }
+					aria-checked="true"
+				>
 					<PageListItem label={ translate( 'Homepage' ) } isDisabled />
 				</CompositeItem>
 				{ ORDERED_PAGES.map( ( page ) => {
+					const isSelected = selectedPages.includes( page );
 					return (
 						<CompositeItem
-							key={ page }
-							role="option"
-							as="button"
 							{ ...composite }
+							key={ page }
+							role="checkbox"
+							as="button"
+							aria-checked={ isSelected }
 							onClick={ () => onSelectPage( page ) }
 						>
-							<PageListItem label={ page } isSelected={ selectedPages.includes( page ) } />
+							<PageListItem label={ page } isSelected={ isSelected } />
 						</CompositeItem>
 					);
 				} ) }
