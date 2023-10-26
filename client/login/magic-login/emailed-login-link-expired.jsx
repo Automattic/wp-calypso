@@ -28,7 +28,7 @@ const getEmailType = ( redirectTo ) => {
 		return EmailType.ManageSubscription;
 	}
 
-	if ( redirectTo && redirectTo.includes( 'redirect_to_blog_post_id' ) ) {
+	if ( redirectTo && redirectTo.includes( 'activate=' ) ) {
 		return EmailType.ConfirmSubscription;
 	}
 
@@ -93,26 +93,34 @@ class EmailedLoginLinkExpired extends Component {
 	};
 
 	resendEmail = ( emailType ) => {
+		if ( emailType === EmailType.ConfirmSubscription ) {
+			this.handleResponse(
+				resendSubscriptionConfirmationEmail(
+					this.state.emailAddress,
+					this.state.postId,
+					this.state.activate
+				)
+			);
+		}
+		if ( emailType === EmailType.ManageSubscription ) {
+			this.handleResponse(
+				resendSubscriptionManagementEmail( this.state.emailAddress, this.state.token )
+			);
+		}
+	};
+
+	handleResponse( promise ) {
 		const { translate } = this.props;
 		const errorMessages = getResendEmailErrorMessages( translate );
 
-		if ( emailType === EmailType.ConfirmSubscription ) {
-			resendSubscriptionConfirmationEmail(
-				this.state.emailAddress,
-				this.state.postId,
-				this.state.activate
-			)
-				.then( () => {
-					this.setCheckEmailText();
-				} )
-				.catch( ( error ) => {
-					this.props.errorNotice( errorMessages[ error.code ] );
-				} );
-		}
-		if ( emailType === EmailType.ManageSubscription ) {
-			resendSubscriptionManagementEmail();
-		}
-	};
+		promise
+			.then( () => {
+				this.setCheckEmailText();
+			} )
+			.catch( ( error ) => {
+				this.props.errorNotice( errorMessages[ error.code ] );
+			} );
+	}
 
 	setLoggingExpiredText = () => {
 		const { translate } = this.props;
