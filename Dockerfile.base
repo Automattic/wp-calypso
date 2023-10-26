@@ -2,7 +2,7 @@
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
 #### Note that yarn v3 cache lives in `/calypso/.yarn`
-FROM node:20.8.1-bullseye-slim as cache
+FROM node:18.17.1-bullseye-slim as cache
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG node_memory=8192
@@ -27,7 +27,7 @@ ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to test and build calypso.
-FROM node:20.8.1-bullseye-slim as base
+FROM node:18.17.1-bullseye-slim as base
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG node_memory=8192
