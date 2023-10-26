@@ -691,21 +691,25 @@ export class RenderDomainsStep extends Component {
 		const { step } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
+		const domainCart = getDomainRegistrations( this.props.cart );
 		const { suggestion } = step;
-		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
+		const isPurchasingItem =
+			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;
 		const siteUrl =
 			suggestion &&
 			( isPurchasingItem
 				? suggestion.domain_name
 				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
 
-		const domainItem = isPurchasingItem
-			? domainRegistration( {
-					domain: suggestion.domain_name,
-					productSlug: suggestion.product_slug,
-			  } )
-			: undefined;
-		const domainCart = getDomainRegistrations( this.props.cart );
+		let domainItem;
+
+		if ( isPurchasingItem ) {
+			const selectedDomain = domainCart?.length > 0 ? domainCart[ 0 ] : suggestion;
+			domainItem = domainRegistration( {
+				domain: selectedDomain?.domain_name || selectedDomain?.meta,
+				productSlug: selectedDomain?.product_slug,
+			} );
+		}
 
 		this.props.submitSignupStep(
 			Object.assign(
