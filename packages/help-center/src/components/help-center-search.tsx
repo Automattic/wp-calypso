@@ -16,6 +16,7 @@ import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
+import { Survey } from './help-center-survey/help-center-survey';
 import type { SiteSelect } from '@automattic/data-stores';
 
 export const HelpCenterSearch = () => {
@@ -104,6 +105,7 @@ export const HelpCenterSearch = () => {
 				isVisible
 				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
 			/>
+			{ ! HelpCenterLaunchpad() && <Survey /> }
 			<HelpCenterSearchResults
 				onSelect={ redirectToArticle }
 				searchQuery={ searchQuery || '' }
