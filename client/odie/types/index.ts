@@ -38,7 +38,7 @@ export type Message = {
 };
 
 export type Chat = {
-	chat_id?: string | null;
+	chat_id?: number | null;
 	messages: Message[];
 	context: Context;
 };
