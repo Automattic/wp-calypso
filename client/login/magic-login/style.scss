@@ -184,14 +184,14 @@
 		box-shadow: none;
 	}
 
-	.magic-login__form-action .button.is-primary {
-		background-color: var(--studio-blue);
-		border-color: var(--studio-blue);
+	.magic-login__form-action .button.is-primary:not([disabled]) {
+		background-color: #3858e9;
+		border-color: #3858e9;
 		color: var(--studio-white);
 	}
 
-	.magic-login__footer {
-		display: none;
+	.magic-login__form-action {
+		margin-top: 16px;
 	}
 }
 
