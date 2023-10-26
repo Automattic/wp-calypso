@@ -21,7 +21,7 @@
 		"lib/"
 	],
 	"engines": {
-		"node": ">=v14.21.3"
+		"node": ">=v20.8.1"
 	},
 	"peerDependencies": {
 		"@babel/core": ">=7.22.20",
