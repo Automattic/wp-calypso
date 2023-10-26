@@ -1,8 +1,10 @@
+@import "@automattic/typography/styles/variables.scss";
+
 .plan-pill {
 	position: absolute;
 	bottom: -10px;
 	left: 14px;
-	z-index: z-index("root", ".plan-pill");
+	z-index: 1;
 
 	padding: 4px;
 	border-radius: 2px;
