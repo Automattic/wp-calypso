@@ -148,11 +148,7 @@ body.is-section-accept-invite {
 				width: 327px;
 				margin-left: 0;
 				margin-right: 0;
-
-				.notice__icon-wrapper {
-					align-items: flex-start;
-					padding-top: 13px;
-				}
+				color: var(--studio-gray-80, #2c3338);
 			}
 
 			.signup-form__social {

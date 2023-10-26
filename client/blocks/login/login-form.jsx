@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, englishLocales } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
@@ -318,6 +319,38 @@ export class LoginForm extends Component {
 	}
 
 	renderLoginFromSignupNotice() {
+		const signupUrl = this.getSignupUrl();
+
+		if (
+			hasTranslation(
+				'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.'
+			) ||
+			englishLocales.includes( this.props.locale )
+		) {
+			return (
+				<Notice status="is-transparent-info" showDismiss={ false }>
+					{ this.props.translate(
+						'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
+						{
+							components: {
+								returnToSignup: (
+									<a
+										href={ addQueryArgs(
+											{
+												user_email: this.state.usernameOrEmail,
+											},
+											signupUrl
+										) }
+										onClick={ this.recordSignUpLinkClick }
+									/>
+								),
+							},
+						}
+					) }
+				</Notice>
+			);
+		}
+
 		return (
 			<Notice status="is-transparent-info" showDismiss={ false }>
 				{ this.props.translate( 'An account with this email address already exists.' ) }
@@ -561,6 +594,18 @@ export class LoginForm extends Component {
 		);
 	}
 
+	recordSignUpLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-form' } );
+	};
+
+	getSignupUrl() {
+		const { oauth2Client, currentQuery, currentRoute, pathname, locale } = this.props;
+
+		return this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
+	}
+
 	render() {
 		const {
 			accountType,
@@ -571,10 +616,7 @@ export class LoginForm extends Component {
 			isP2Login,
 			isJetpackWooDnaFlow,
 			wccomFrom,
-			currentRoute,
 			currentQuery,
-			pathname,
-			locale,
 			showSocialLoginFormOnly,
 			isWoo,
 			isPartnerSignup,
@@ -591,9 +633,7 @@ export class LoginForm extends Component {
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
 
-		const signupUrl = this.props.signupUrl
-			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
+		const signupUrl = this.getSignupUrl();
 
 		const socialToS = this.props.translate(
 			// To make any changes to this copy please speak to the legal team
