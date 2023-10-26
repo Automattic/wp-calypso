@@ -24,10 +24,32 @@
 	}
 }
 
-.layout.is-white-login {
+.layout.is-wpcom-magic-login {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	.magic-login__form-header {
+		margin-bottom: 0;
+
+		@include break-mobile {
+			font-size: $font-title-large;
+		}
+	}
+
+	.logged-out-form {
+		padding-top: 0;
+		.magic-login__form-sub-header {
+			text-align: center;
+		}
+
+		.form-label {
+			font-weight: 400;
+		}
+	}
+
+	.magic-login__form-action {
+		margin-top: 16px;
+	}
 }
 
 .is-white-login .magic-login__handle-link,
@@ -158,24 +180,19 @@
 .magic-login.is-white-login {
 	.magic-login__form-header {
 		@include onboarding-heading-text-mobile;
-		margin-bottom: 0;
 
 		@include break-mobile {
 			@include onboarding-heading-text;
-			font-size: $font-title-large;
 		}
 	}
 
 	.logged-out-form {
-		padding-top: 0;
 		.magic-login__form-sub-header {
 			color: var(--studio-gray-70);
-			text-align: center;
 		}
 
 		.form-label {
 			color: var(--studio-gray-60);
-			font-weight: 400;
 		}
 	}
 
@@ -188,10 +205,6 @@
 		background-color: #3858e9;
 		border-color: #3858e9;
 		color: var(--studio-white);
-	}
-
-	.magic-login__form-action {
-		margin-top: 16px;
 	}
 }
 
