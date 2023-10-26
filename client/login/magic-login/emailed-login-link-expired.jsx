@@ -10,7 +10,13 @@ import {
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { withEnhancers } from 'calypso/state/utils';
+import {
+	getResendEmailErrorMessages,
+	resendSubscriptionConfirmationEmail,
+	resendSubscriptionManagementEmail,
+} from './resend-email';
 
 const EmailType = {
 	ManageSubscription: 'manage-subscription',
@@ -37,6 +43,9 @@ class EmailedLoginLinkExpired extends Component {
 		isGravPoweredClient: PropTypes.bool.isRequired,
 		redirectTo: PropTypes.string,
 		transition: PropTypes.bool,
+		token: PropTypes.string,
+		emailAddress: PropTypes.string,
+		activate: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -45,25 +54,17 @@ class EmailedLoginLinkExpired extends Component {
 		this.redirectTo = props.redirectTo;
 		this.isTransitingToWPComAccount = props.transition;
 		this.emailType = getEmailType( this.redirectTo );
-		const { translate } = this.props;
+		this.emailAddress = props.emailAddress;
+		this.postId = props.postId;
+		this.token = props.token;
+		this.activate = props.activate;
+		this.dispatch = props.dispatch;
 
 		// Set values to shown to the user
 		if ( this.isTransitingToWPComAccount ) {
-			if ( this.emailType === EmailType.ConfirmSubscription ) {
-				this.title = translate( 'Your Subscription Confirmation link is expired or invalid' );
-			} else {
-				this.title = translate( 'Your Subscription Management link is expired or invalid' );
-			}
-			this.actionUrl = null;
-			this.secondaryAction = null;
-			this.secondaryActionURL = null;
-			this.line = translate( 'Click on this button and we will send you a new link' );
+			this.setTransitingText( this.emailType );
 		} else {
-			this.title = translate( 'Login link is expired or invalid' );
-			this.actionUrl = login( { twoFactorAuthType: 'link' } );
-			this.secondaryAction = translate( 'Reset my password' );
-			this.secondaryActionURL = lostPassword();
-			this.line = translate( 'Maybe try resetting your password instead' );
+			this.setLoggingExpiredText();
 		}
 	}
 
@@ -79,10 +80,53 @@ class EmailedLoginLinkExpired extends Component {
 
 	onClickTryAgainLink = () => {
 		if ( this.isTransitingToWPComAccount ) {
-			this.setState( { showAlternateContent: true } );
+			// Call the endpoint to resend the email
+			this.resendEmail( this.emailType );
 		} else {
 			this.props.hideMagicLoginRequestForm();
 		}
+	};
+
+	resendEmail = ( emailType ) => {
+		const { translate } = this.props;
+		const errorMessages = getResendEmailErrorMessages( translate );
+
+		if ( emailType === EmailType.ConfirmSubscription ) {
+			resendSubscriptionConfirmationEmail( this.emailAddress, this.postId, this.activate )
+				.then( () => {
+					this.props.successNotice( 'Tu acción ha sido completada exitosamente!' );
+				} )
+				.catch( ( error ) => {
+					this.props.errorNotice( errorMessages[ error.code ] );
+				} );
+		}
+		if ( emailType === EmailType.ManageSubscription ) {
+			resendSubscriptionManagementEmail();
+		}
+	};
+
+	setLoggingExpiredText = () => {
+		const { translate } = this.props;
+
+		this.title = translate( 'Login link is expired or invalid' );
+		this.actionUrl = login( { twoFactorAuthType: 'link' } );
+		this.secondaryAction = translate( 'Reset my password' );
+		this.secondaryActionURL = lostPassword();
+		this.line = translate( 'Maybe try resetting your password instead' );
+	};
+
+	setTransitingText = () => {
+		const { translate } = this.props;
+
+		if ( this.emailType === EmailType.ConfirmSubscription ) {
+			this.title = translate( 'Your Subscription Confirmation link is expired or invalid' );
+		} else {
+			this.title = translate( 'Your Subscription Management link is expired or invalid' );
+		}
+		this.actionUrl = null;
+		this.secondaryAction = null;
+		this.secondaryActionURL = null;
+		this.line = translate( 'Click on this button and we will send you a new link' );
 	};
 
 	render() {
@@ -115,6 +159,8 @@ class EmailedLoginLinkExpired extends Component {
 const mapDispatchToProps = {
 	hideMagicLoginRequestForm,
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+	successNotice,
+	errorNotice,
 };
 
 export default connect( null, mapDispatchToProps )( localize( EmailedLoginLinkExpired ) );
