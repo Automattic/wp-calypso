@@ -105,6 +105,8 @@ const LayoutLoggedOut = ( {
 		! currentRoute.startsWith( '/log-in/webauthn' ) &&
 		! currentRoute.startsWith( '/log-in/backup' );
 
+	const isMagicLogin = currentRoute && currentRoute.startsWith( '/log-in/link' );
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -125,6 +127,8 @@ const LayoutLoggedOut = ( {
 		'is-grav-powered-client': isGravPoweredClient,
 		'is-grav-powered-login-page': isGravPoweredLoginPage,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
+		'is-magic-login': isMagicLogin,
+		'is-wpcom-magic-login': isMagicLogin && ! isJetpackLogin && ! isGravPoweredLoginPage,
 	};
 
 	let masterbar = null;
