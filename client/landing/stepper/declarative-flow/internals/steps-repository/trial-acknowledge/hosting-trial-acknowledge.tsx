@@ -5,9 +5,8 @@ import {
 	PLAN_BUSINESS,
 	getPlan,
 } from '@automattic/calypso-products';
-import { NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { NextButton, SubTitle } from '@automattic/onboarding';
 import { Button, Spinner } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
@@ -22,12 +21,11 @@ const FEATURES_NOT_INCLUDED_IN_FREE_TRIAL = [
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 ];
 
-interface Props {
-	goBack?: () => void;
+interface CallToActionProps {
 	onStartTrialClick(): void;
 }
 
-const CallToAction = ( { onStartTrialClick }: Props ) => {
+const CallToAction = ( { onStartTrialClick }: CallToActionProps ) => {
 	const { __ } = useI18n();
 	const { isVerified, hasUser, isSending, email, resendEmail } = useVerifyEmail();
 	const startTrial = () => {
@@ -49,7 +47,7 @@ const CallToAction = ( { onStartTrialClick }: Props ) => {
 	);
 };
 
-const HostingTrialAcknowledgeInternal = ( { onStartTrialClick, goBack }: Props ) => {
+const HostingTrialAcknowledgeInternal = ( { onStartTrialClick }: CallToActionProps ) => {
 	const { __ } = useI18n();
 	const plan = getPlan( PLAN_BUSINESS );
 	const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
@@ -57,20 +55,7 @@ const HostingTrialAcknowledgeInternal = ( { onStartTrialClick, goBack }: Props )
 		plan && 'getPlanCompareFeatures' in plan ? plan.getPlanCompareFeatures?.() ?? [] : [];
 
 	if ( ! isEligible ) {
-		return (
-			<div className="trial-plan--container">
-				<Title>{ __( 'You already enrolled in a trial' ) }</Title>
-				<SubTitle>
-					{ createInterpolateElement(
-						__(
-							"You've already enjoyed a free trial and are not eligible for another.<br />Upgrade now to keep enjoying the benefits of a Business plan."
-						),
-						{ br: <br /> }
-					) }
-				</SubTitle>
-				<NextButton onClick={ goBack }>{ __( 'Upgrade now' ) }</NextButton>
-			</div>
-		);
+		return window.location.assign( '/setup/new-hosted-site' );
 	}
 
 	return (
@@ -142,10 +127,5 @@ function EmailVerification( {
 }
 
 export const HostingTrialAcknowledge: Step = ( { navigation } ) => {
-	return (
-		<HostingTrialAcknowledgeInternal
-			onStartTrialClick={ () => navigation.submit?.() }
-			goBack={ navigation.goBack }
-		/>
-	);
+	return <HostingTrialAcknowledgeInternal onStartTrialClick={ () => navigation.submit?.() } />;
 };
