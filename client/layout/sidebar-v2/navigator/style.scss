@@ -36,7 +36,8 @@
 .sidebar-v2__menu-item.components-item {
 	font-size: rem(13px);
 
-	&.is-active {
+	&.is-active,
+	&:hover {
 		border-radius: 4px;
 	}
 
