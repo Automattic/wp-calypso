@@ -38,6 +38,7 @@
 	}
 
 	.logged-out-form {
+		max-width: 340px;
 		padding-top: 0;
 		.magic-login__form-sub-header {
 			text-align: center;
@@ -46,10 +47,6 @@
 		.form-label {
 			font-weight: 400;
 		}
-	}
-
-	.magic-login__request-link {
-		max-width: 340px;
 	}
 
 	.magic-login__form-action {
