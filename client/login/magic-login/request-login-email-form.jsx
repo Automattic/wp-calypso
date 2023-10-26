@@ -165,7 +165,7 @@ class RequestLoginEmailForm extends Component {
 					<p className="magic-login__form-sub-header">
 						{ ! hideSubHeaderText &&
 							translate(
-								'Get a link sent to the email address associated with your account to log in instantly without your password.'
+								'We’ll send you an email with a login link that will log you in right away.'
 							) }
 					</p>
 					<FormLabel htmlFor="usernameOrEmail">
@@ -185,7 +185,7 @@ class RequestLoginEmailForm extends Component {
 						{ tosComponent }
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
-								{ submitButtonLabel || translate( 'Get Link' ) }
+								{ submitButtonLabel || translate( 'Send Link' ) }
 							</FormButton>
 						</div>
 					</FormFieldset>
