@@ -360,6 +360,7 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 			blocks_replaced,
 			insert_method,
 			search_term,
+			is_user_created: patternName?.startsWith( 'core/block/' ),
 			...context,
 		} );
 
