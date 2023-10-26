@@ -15,7 +15,15 @@ import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
+import {
+	useState,
+	useCallback,
+	useEffect,
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+	memo,
+} from 'react';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
@@ -45,6 +53,7 @@ import type {
 	PlanSlug,
 	WPComStorageAddOnSlug,
 	FeatureGroupMap,
+	FeatureList,
 } from '@automattic/calypso-products';
 
 function DropdownIcon() {
@@ -336,6 +345,9 @@ type ComparisonGridHeaderProps = {
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
+	gridPlansIndex: {
+		[ key: string ]: GridPlan;
+	};
 };
 
 type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
@@ -344,6 +356,9 @@ type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
 	isLargeCurrency: boolean;
 	isPlanUpgradeCreditEligible: boolean;
 	planSlug: PlanSlug;
+	gridPlansIndex: {
+		[ key: string ]: GridPlan;
+	};
 };
 
 type PlanFeatureFootnotes = {
@@ -371,8 +386,8 @@ const ComparisonGridHeaderCell = ( {
 	isPlanUpgradeCreditEligible,
 	siteId,
 	showRefundPeriod,
+	gridPlansIndex,
 }: ComparisonGridHeaderCellProps ) => {
-	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedGridPlans: visibleGridPlans,
@@ -484,6 +499,7 @@ const ComparisonGridHeader = ( {
 	planActionOverrides,
 	selectedPlan,
 	showRefundPeriod,
+	gridPlansIndex,
 }: ComparisonGridHeaderProps ) => {
 	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
@@ -527,6 +543,7 @@ const ComparisonGridHeader = ( {
 					selectedPlan={ selectedPlan }
 					siteId={ siteId }
 					showRefundPeriod={ showRefundPeriod }
+					gridPlansIndex={ gridPlansIndex }
 				/>
 			) ) }
 		</PlanRow>
@@ -546,6 +563,9 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	gridPlansIndex: {
+		[ key: string ]: GridPlan;
+	};
 } > = ( {
 	feature,
 	visibleGridPlans,
@@ -558,8 +578,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	showUpgradeableStorage,
 	setActiveTooltipId,
 	onStorageAddOnClick,
+	gridPlansIndex,
 } ) => {
-	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
@@ -626,6 +646,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							storageOptions={ gridPlan.features.storageOptions }
 							onStorageAddOnClick={ onStorageAddOnClick }
 							priceOnSeparateLine
+							gridPlansIndex={ gridPlansIndex }
 						/>
 					) : (
 						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
@@ -719,6 +740,9 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	gridPlansIndex: {
+		[ key: string ]: GridPlan;
+	};
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -734,6 +758,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	setActiveTooltipId,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
+	gridPlansIndex,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -810,26 +835,14 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					setActiveTooltipId={ setActiveTooltipId }
 					showUpgradeableStorage={ showUpgradeableStorage }
 					onStorageAddOnClick={ onStorageAddOnClick }
+					gridPlansIndex={ gridPlansIndex }
 				/>
 			) ) }
 		</Row>
 	);
 };
 
-const FeatureGroup = ( {
-	featureGroup,
-	selectedFeature,
-	isInSignup,
-	flowName,
-	intervalType,
-	activeTooltipId,
-	setActiveTooltipId,
-	showUpgradeableStorage,
-	onStorageAddOnClick,
-	featureGroupMap,
-	visibleGridPlans,
-	planFeatureFootnotes,
-}: {
+type FeatureGroupProps = {
 	featureGroup: FeatureGroup;
 	selectedFeature?: string;
 	isInSignup: boolean;
@@ -845,8 +858,28 @@ const FeatureGroup = ( {
 		footnoteList: string[];
 		footnotesByFeature: Record< string, number >;
 	};
-} ) => {
-	const { allFeaturesList } = usePlansGridContext();
+	gridPlansIndex: {
+		[ key: string ]: GridPlan;
+	};
+	allFeaturesList: FeatureList;
+};
+
+const FeatureGroup = ( {
+	featureGroup,
+	selectedFeature,
+	isInSignup,
+	flowName,
+	intervalType,
+	activeTooltipId,
+	setActiveTooltipId,
+	showUpgradeableStorage,
+	onStorageAddOnClick,
+	featureGroupMap,
+	visibleGridPlans,
+	planFeatureFootnotes,
+	allFeaturesList,
+	gridPlansIndex,
+}: FeatureGroupProps ) => {
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
@@ -920,6 +953,7 @@ const FeatureGroup = ( {
 					setActiveTooltipId={ setActiveTooltipId }
 					showUpgradeableStorage={ showUpgradeableStorage }
 					onStorageAddOnClick={ onStorageAddOnClick }
+					gridPlansIndex={ gridPlansIndex }
 				/>
 			) ) }
 			{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -938,11 +972,45 @@ const FeatureGroup = ( {
 					setActiveTooltipId={ setActiveTooltipId }
 					showUpgradeableStorage={ showUpgradeableStorage }
 					onStorageAddOnClick={ onStorageAddOnClick }
+					gridPlansIndex={ gridPlansIndex }
 				/>
 			) : null }
 		</div>
 	);
 };
+
+const FeatureGroupsContainer = memo(
+	function FeatureGroupContainer( props: Omit< FeatureGroupProps, 'featureGroup' > ) {
+		return (
+			<>
+				{ Object.values( props.featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
+					<FeatureGroup key={ featureGroup.slug } { ...props } featureGroup={ featureGroup } />
+				) ) }
+			</>
+		);
+	},
+	( prev: any, next: any ) => {
+		const isDifferent: any = {};
+		let isDifferenceRendered = false;
+		Object.keys( prev ).forEach( ( key: string ) => {
+			isDifferent[ key ] = { verdict: false };
+			if ( prev[ key ] !== next[ key ] ) {
+				const isDeepDiff: boolean = JSON.stringify( prev[ key ] ) !== JSON.stringify( next[ key ] );
+
+				isDifferent[ key ] = {
+					verdict: true,
+					prev,
+					next,
+					isDeepDiff,
+				};
+				isDifferenceRendered = isDeepDiff;
+			}
+		} );
+		// eslint-disable-next-line no-console
+		console.info( { isDifferent, isDifferenceRendered } );
+		return isDifferenceRendered;
+	}
+);
 
 const ComparisonGrid = ( {
 	intervalType,
@@ -961,7 +1029,7 @@ const ComparisonGrid = ( {
 	onStorageAddOnClick,
 	showRefundPeriod,
 }: ComparisonGridProps ) => {
-	const { gridPlans } = usePlansGridContext();
+	const { gridPlans, gridPlansIndex, allFeaturesList } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -1098,24 +1166,23 @@ const ComparisonGrid = ( {
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }
+					gridPlansIndex={ gridPlansIndex }
 				/>
-				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
-					<FeatureGroup
-						key={ featureGroup.slug }
-						featureGroup={ featureGroup }
-						visibleGridPlans={ visibleGridPlans }
-						featureGroupMap={ featureGroupMap }
-						selectedFeature={ selectedFeature }
-						isInSignup={ isInSignup }
-						flowName={ flowName }
-						intervalType={ intervalType }
-						activeTooltipId={ activeTooltipId }
-						setActiveTooltipId={ setActiveTooltipId }
-						showUpgradeableStorage={ showUpgradeableStorage }
-						onStorageAddOnClick={ onStorageAddOnClick }
-						planFeatureFootnotes={ planFeatureFootnotes }
-					/>
-				) ) }
+				<FeatureGroupsContainer
+					featureGroupMap={ featureGroupMap }
+					visibleGridPlans={ visibleGridPlans }
+					selectedFeature={ selectedFeature }
+					isInSignup={ isInSignup }
+					flowName={ flowName }
+					intervalType={ intervalType }
+					activeTooltipId={ activeTooltipId }
+					setActiveTooltipId={ setActiveTooltipId }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					planFeatureFootnotes={ planFeatureFootnotes }
+					gridPlansIndex={ gridPlansIndex }
+					allFeaturesList={ allFeaturesList }
+				/>
 				<ComparisonGridHeader
 					displayedGridPlans={ displayedGridPlans }
 					visibleGridPlans={ visibleGridPlans }
@@ -1132,6 +1199,7 @@ const ComparisonGrid = ( {
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }
+					gridPlansIndex={ gridPlansIndex }
 				/>
 			</Grid>
 
