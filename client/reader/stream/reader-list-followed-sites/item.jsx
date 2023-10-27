@@ -42,7 +42,6 @@ const ReaderListFollowingItem = ( props ) => {
 		);
 		if ( ! isLoggedIn ) {
 			event.preventDefault();
-			//get host name from current window
 			return props.registerLastActionRequiresLogin( {
 				type: 'sidebar-link',
 				redirectTo: streamLink,

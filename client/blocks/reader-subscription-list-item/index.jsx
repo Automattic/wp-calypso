@@ -20,8 +20,10 @@ import {
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
+import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 
 import './style.scss';
 
@@ -40,6 +42,9 @@ function ReaderSubscriptionListItem( {
 	showFollowedOnDate,
 	isFollowing,
 	railcar,
+	isLoggedIn,
+	/* eslint-disable no-shadow */
+	registerLastActionRequiresLogin,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -84,6 +89,17 @@ function ReaderSubscriptionListItem( {
 	const recordSiteUrlClick = () => recordEvent( 'calypso_reader_site_url_clicked' );
 	const recordAvatarClick = () => recordEvent( 'calypso_reader_avatar_clicked' );
 
+	const streamClicked = ( event, streamLink ) => {
+		recordTitleClick();
+		if ( ! isLoggedIn ) {
+			event.preventDefault();
+			registerLastActionRequiresLogin( {
+				type: 'sidebar-link',
+				redirectTo: streamLink,
+			} );
+		}
+	};
+
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
 			<div className="reader-subscription-list-item__avatar">
@@ -104,7 +120,7 @@ function ReaderSubscriptionListItem( {
 					<a
 						href={ streamUrl }
 						className="reader-subscription-list-item__link"
-						onClick={ recordTitleClick }
+						onClick={ ( event ) => streamClicked( event, streamUrl ) }
 					>
 						{ siteTitle }
 					</a>
@@ -196,32 +212,36 @@ function ReaderSubscriptionListItem( {
 }
 
 export default compose(
-	connect( ( state, ownProps ) => {
-		const feed = getFeed( state, ownProps.feedId );
+	connect(
+		( state, ownProps ) => {
+			const feed = getFeed( state, ownProps.feedId );
 
-		if ( feed ) {
-			const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
+			if ( feed ) {
+				const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
 
-			if ( follow ) {
-				// Add site icon to feed object so have icon for external feeds when not set
-				if ( feed.site_icon === undefined ) {
-					feed.site_icon = follow.site_icon;
-				}
-				// Add date_subscribed timestamp to feed object when not set
-				if ( feed.date_subscribed === undefined || isNaN( feed.date_subscribed ) ) {
-					feed.date_subscribed = follow.date_subscribed;
-				}
-				// Add last_update timestamp to feed object when not set
-				if ( feed.last_update === undefined || isNaN( feed.last_update ) ) {
-					feed.last_update = follow.last_updated;
+				if ( follow ) {
+					// Add site icon to feed object so have icon for external feeds when not set
+					if ( feed.site_icon === undefined ) {
+						feed.site_icon = follow.site_icon;
+					}
+					// Add date_subscribed timestamp to feed object when not set
+					if ( feed.date_subscribed === undefined || isNaN( feed.date_subscribed ) ) {
+						feed.date_subscribed = follow.date_subscribed;
+					}
+					// Add last_update timestamp to feed object when not set
+					if ( feed.last_update === undefined || isNaN( feed.last_update ) ) {
+						feed.last_update = follow.last_updated;
+					}
 				}
 			}
-		}
 
-		return {
-			feed,
-		};
-	} ),
+			return {
+				feed,
+				isLoggedIn: isUserLoggedIn( state ),
+			};
+		},
+		{ registerLastActionRequiresLogin }
+	),
 	localize,
 	withLocalizedMoment
 )( ReaderSubscriptionListItem );
