@@ -159,6 +159,7 @@ export interface CompanyDetailsPayload {
 }
 
 export interface PartnerDetailsPayload extends CompanyDetailsPayload {
+	partnerProgramOptIn: boolean;
 	companyType: string;
 	tos?: 'consented';
 }

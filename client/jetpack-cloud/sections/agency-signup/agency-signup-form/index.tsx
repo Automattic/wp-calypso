@@ -55,6 +55,7 @@ export default function AgencySignupForm() {
 					contact_person: payload.contactPerson,
 					company_website: payload.companyWebsite,
 					company_type: payload.companyType,
+					partner_program_opt_in: payload.partnerProgramOptIn,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
