@@ -100,6 +100,17 @@ function ReaderSubscriptionListItem( {
 		}
 	};
 
+	const avatarClicked = ( event, streamLink ) => {
+		recordAvatarClick();
+		if ( ! isLoggedIn ) {
+			event.preventDefault();
+			registerLastActionRequiresLogin( {
+				type: 'sidebar-link',
+				redirectTo: streamLink,
+			} );
+		}
+	};
+
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
 			<div className="reader-subscription-list-item__avatar">
@@ -111,7 +122,7 @@ function ReaderSubscriptionListItem( {
 					preferGravatar={ preferGravatar }
 					siteUrl={ streamUrl }
 					isCompact={ true }
-					onClick={ recordAvatarClick }
+					onClick={ ( event ) => avatarClicked( event, streamUrl ) }
 					iconSize={ 32 }
 				/>
 			</div>
