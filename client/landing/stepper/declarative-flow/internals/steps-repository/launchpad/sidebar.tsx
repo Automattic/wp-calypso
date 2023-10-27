@@ -8,6 +8,7 @@ import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { copy, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
@@ -15,6 +16,7 @@ import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-emai
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { useSelector } from 'calypso/state';
@@ -45,6 +47,18 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
+function recordUnverifiedDomainDialogShownTracksEvent( site_id?: string ) {
+	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_continue_anyway', {
+		site_id,
+	} );
+}
+
+function recordUnverifiedDomainContinueAnywayClickedTracksEvent( site_id?: string ) {
+	recordTracksEvent( 'calypso_launchpad_unverified_continue_anyway_clicked', {
+		site_id,
+	} );
+}
+
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
@@ -58,6 +72,12 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const queryClient = useQueryClient();
+
+	useEffect( () => {
+		if ( showConfirmModal ) {
+			recordUnverifiedDomainDialogShownTracksEvent( site?.ID );
+		}
+	}, [ site, showConfirmModal ] );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
@@ -271,6 +291,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 						label: translate( 'Continue anyway' ),
 						isPrimary: true,
 						onClick: () => {
+							recordUnverifiedDomainContinueAnywayClickedTracksEvent( site?.ID );
 							enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch?.( true );
 							setShowConfirmModal( false );
 						},
