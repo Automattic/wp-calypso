@@ -152,8 +152,12 @@ class RequestLoginEmailForm extends Component {
 
 		const buttonLabel =
 			englishLocales.includes( locale ) || hasTranslation( 'Send Link' )
-				? translate( 'Send Link' )
+				? translate( 'Send link' )
 				: translate( 'Get Link' );
+
+		const formLabel = hasTranslation( 'Email address or username' )
+			? this.props.translate( 'Email address or username' )
+			: this.props.translate( 'Email Address or Username' );
 
 		return (
 			<div className="magic-login__form">
@@ -181,9 +185,7 @@ class RequestLoginEmailForm extends Component {
 				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
 					<p className="magic-login__form-sub-header">{ ! hideSubHeaderText && subHeaderText }</p>
-					<FormLabel htmlFor="usernameOrEmail">
-						{ this.props.translate( 'Email Address or Username' ) }
-					</FormLabel>
+					<FormLabel htmlFor="usernameOrEmail">{ formLabel }</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
 							autoCapitalize="off"
