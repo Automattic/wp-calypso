@@ -311,7 +311,7 @@ const getAddOnsTransformed = createSelector(
 					const currentMaxStorage = mediaStorage?.max_storage_bytes / Math.pow( 1024, 3 );
 					const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
 
-					// if the current storage add on option is greater than the available upgrade, remove it
+					// if the current storage add on option is greater than the available upgrade
 					if ( ( addOn.quantity ?? 0 ) > availableStorageUpgrade ) {
 						return {
 							...addOn,
