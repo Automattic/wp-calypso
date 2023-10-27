@@ -6,6 +6,7 @@ import {
 } from '@wordpress/components';
 import { Icon, chevronRightSmall, external } from '@wordpress/icons';
 import classnames from 'classnames';
+import { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 import { TranslateResult } from 'i18n-calypso';
