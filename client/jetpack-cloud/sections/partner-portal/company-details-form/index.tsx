@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -218,6 +219,10 @@ export default function CompanyDetailsForm( {
 					<FormFieldset>
 						<FormLabel htmlFor="partnerProgramOptIn">
 							{ translate( 'Jetpack Agency & Pro Partner program' ) }
+							<Icon
+								size={ 16 }
+								icon={ info }
+							/>
 						</FormLabel>
 						<FormInputCheckbox
 							id="partnerProgramOptIn"
