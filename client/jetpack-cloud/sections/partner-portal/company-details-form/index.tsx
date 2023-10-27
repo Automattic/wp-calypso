@@ -220,6 +220,7 @@ export default function CompanyDetailsForm( {
 						<FormLabel htmlFor="partnerProgramOptIn">
 							{ translate( 'Jetpack Agency & Pro Partner program' ) }
 							<Icon
+								className="company-details-form__info"
 								size={ 16 }
 								icon={ info }
 							/>

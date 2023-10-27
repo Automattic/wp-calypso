@@ -26,3 +26,9 @@
 	line-height: 24px;
 	color: var(--studio-black);
 }
+
+.company-details-form {
+	&__info {
+		vertical-align: text-top;
+	}
+}
