@@ -32,6 +32,7 @@ import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adj
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
+import { arePropsEqual } from '../../lib/perf-utils';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
 import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
@@ -979,38 +980,17 @@ const FeatureGroup = ( {
 	);
 };
 
-const FeatureGroupsContainer = memo(
-	function FeatureGroupContainer( props: Omit< FeatureGroupProps, 'featureGroup' > ) {
-		return (
-			<>
-				{ Object.values( props.featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
-					<FeatureGroup key={ featureGroup.slug } { ...props } featureGroup={ featureGroup } />
-				) ) }
-			</>
-		);
-	},
-	( prev: any, next: any ) => {
-		const isDifferent: any = {};
-		let isDeepDiffFound = false;
-		Object.keys( prev ).forEach( ( key: string ) => {
-			isDifferent[ key ] = { verdict: false };
-			if ( prev[ key ] !== next[ key ] ) {
-				const isDeepDiff: boolean = JSON.stringify( prev[ key ] ) !== JSON.stringify( next[ key ] );
-
-				isDifferent[ key ] = {
-					verdict: true,
-					prev,
-					next,
-					isDeepDiff,
-				};
-				isDeepDiffFound = isDeepDiff;
-			}
-		} );
-		// eslint-disable-next-line no-console
-		console.info( { isDifferent, isDeepDiffFound } );
-		return ! isDeepDiffFound;
-	}
-);
+const FeatureGroupsContainer = memo( function FeatureGroupContainer(
+	props: Omit< FeatureGroupProps, 'featureGroup' >
+) {
+	return (
+		<>
+			{ Object.values( props.featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
+				<FeatureGroup key={ featureGroup.slug } { ...props } featureGroup={ featureGroup } />
+			) ) }
+		</>
+	);
+}, arePropsEqual );
 
 const ComparisonGrid = ( {
 	intervalType,
