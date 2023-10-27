@@ -8,6 +8,7 @@ import { Icon, chevronRightSmall, external } from '@wordpress/icons';
 import classnames from 'classnames';
 
 import './style.scss';
+import { TranslateResult } from 'i18n-calypso';
 
 const ICON_SIZE = 24;
 
@@ -16,7 +17,7 @@ interface Props {
 	icon: JSX.Element;
 	path: string;
 	link: string;
-	title: string;
+	title: TranslateResult;
 	onClickMenuItem: ( path: string ) => void;
 	withChevron?: boolean;
 	isExternalLink?: boolean;
