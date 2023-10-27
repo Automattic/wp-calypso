@@ -258,7 +258,11 @@ const LayoutLoggedOut = ( {
 					isVisible={ !! loggedInAction }
 					loggedInAction={ loggedInAction }
 					onLoginSuccess={ () => {
-						window.location.reload();
+						if ( loggedInAction?.redirectTo ) {
+							window.location = loggedInAction.redirectTo;
+						} else {
+							window.location.reload();
+						}
 					} }
 				/>
 			) }
