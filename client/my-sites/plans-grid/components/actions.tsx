@@ -8,6 +8,7 @@ import {
 	planMatches,
 	TERM_ANNUALLY,
 	type PlanSlug,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
@@ -276,7 +277,8 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	const isTrialPlan =
 		currentSitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+		currentSitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
 
 	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
 	if (
