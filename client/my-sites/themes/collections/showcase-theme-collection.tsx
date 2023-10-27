@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { default as pageRouter } from 'page';
 import { ReactElement } from 'react';
 import QueryThemes from 'calypso/components/data/query-themes';
 import ThemeCollection from 'calypso/components/theme-collection';
@@ -50,8 +51,16 @@ export default function ShowcaseThemeCollection( {
 	onSeeAll,
 	collectionIndex,
 }: ShowcaseThemeCollectionProps ): ReactElement {
-	const { getPrice, themes, isActive, isInstalling, siteId, getThemeType, filterString } =
-		useThemeCollection( query );
+	const {
+		getPrice,
+		themes,
+		isActive,
+		isInstalling,
+		siteId,
+		getThemeType,
+		filterString,
+		getThemeDetailsUrl,
+	} = useThemeCollection( query );
 	let themeList = getCachedThemes( collectionSlug );
 
 	if ( ! themeList.length && themes ) {
@@ -81,9 +90,14 @@ export default function ShowcaseThemeCollection( {
 		variation: { slug: string }
 	) => {
 		recordThemeClick( themeId, resultsRank, 'style_variation', variation?.slug );
-		variation
-			? recordThemeStyleVariationClick( themeId, resultsRank, '', variation.slug )
-			: recordThemesStyleVariationMoreClick( themeId, resultsRank );
+
+		if ( variation ) {
+			recordThemeStyleVariationClick( themeId, resultsRank, '', variation.slug );
+		} else {
+			recordThemesStyleVariationMoreClick( themeId, resultsRank );
+			const themeDetailsUrl = getThemeDetailsUrl( themeId );
+			themeDetailsUrl && pageRouter( themeDetailsUrl );
+		}
 	};
 
 	return (
