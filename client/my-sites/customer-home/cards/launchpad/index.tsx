@@ -2,7 +2,6 @@ import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import {
 	updateLaunchpadSettings,
 	useSortedLaunchpadTasks,
-	sortLaunchpadTasksByCompletionStatus,
 	LaunchpadNavigator,
 } from '@automattic/data-stores';
 import { DefaultWiredLaunchpad, type Task } from '@automattic/launchpad';
@@ -33,7 +32,6 @@ const CustomerHomeLaunchpad = ( {
 
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
-	const useLaunchpadOptions = { onSuccess: sortLaunchpadTasksByCompletionStatus };
 	const {
 		data: { checklist, is_dismissed: initialIsChecklistDismissed },
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug );
@@ -61,7 +59,13 @@ const CustomerHomeLaunchpad = ( {
 		if ( siteSlug && checklistSlug ) {
 			setActiveChecklist( siteSlug, checklistSlug );
 		}
-	}, [ checklistSlug, currentNavigatorChecklist, receiveActiveChecklistSlug, setActiveChecklist, siteSlug ] );
+	}, [
+		checklistSlug,
+		currentNavigatorChecklist,
+		receiveActiveChecklistSlug,
+		setActiveChecklist,
+		siteSlug,
+	] );
 
 	// return nothing if the launchpad is dismissed
 	if ( isDismissed ) {
