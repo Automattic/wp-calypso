@@ -61,7 +61,7 @@ export default function LivePreviewModal() {
 
 	const onClose = ( closedBy = 'close_icon' ) => {
 		setIsModalOpen( false );
-		recordTracksEvent( 'calypso_block_theme_live_preview_modal_close_click', {
+		recordTracksEvent( 'calypso_block_theme_live_preview_modal_close', {
 			theme: themeSlug,
 			closed_by: closedBy,
 		} );
