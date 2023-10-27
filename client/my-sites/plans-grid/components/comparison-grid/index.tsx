@@ -991,7 +991,7 @@ const FeatureGroupsContainer = memo(
 	},
 	( prev: any, next: any ) => {
 		const isDifferent: any = {};
-		let isDifferenceRendered = false;
+		let isDeepDiffFound = false;
 		Object.keys( prev ).forEach( ( key: string ) => {
 			isDifferent[ key ] = { verdict: false };
 			if ( prev[ key ] !== next[ key ] ) {
@@ -1003,12 +1003,12 @@ const FeatureGroupsContainer = memo(
 					next,
 					isDeepDiff,
 				};
-				isDifferenceRendered = isDeepDiff;
+				isDeepDiffFound = isDeepDiff;
 			}
 		} );
 		// eslint-disable-next-line no-console
-		console.info( { isDifferent, isDifferenceRendered } );
-		return isDifferenceRendered;
+		console.info( { isDifferent, isDeepDiffFound } );
+		return ! isDeepDiffFound;
 	}
 );
 
