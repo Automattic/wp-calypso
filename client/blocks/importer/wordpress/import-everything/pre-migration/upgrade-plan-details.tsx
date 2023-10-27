@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
@@ -24,7 +23,6 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const { __ } = useI18n();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
-	const plan = getPlan( PLAN_BUSINESS );
 	const { children } = props;
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
