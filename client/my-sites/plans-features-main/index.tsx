@@ -785,6 +785,7 @@ const PlansFeaturesMain = ( {
 											<PlanTypeSelector { ...planTypeSelectorProps } />
 										) }
 										<ComparisonGrid
+											isVisible={ showPlansComparisonGrid }
 											gridPlans={ gridPlansForComparisonGrid }
 											gridPlanForSpotlight={ gridPlanForSpotlight }
 											paidDomainName={ paidDomainName }

@@ -980,17 +980,25 @@ const FeatureGroup = ( {
 	);
 };
 
-const FeatureGroupsContainer = memo( function FeatureGroupContainer(
-	props: Omit< FeatureGroupProps, 'featureGroup' >
-) {
-	return (
-		<>
-			{ Object.values( props.featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
-				<FeatureGroup key={ featureGroup.slug } { ...props } featureGroup={ featureGroup } />
-			) ) }
-		</>
-	);
-}, arePropsEqual );
+const FeatureGroupsContainer = memo(
+	function FeatureGroupContainer( props: Omit< FeatureGroupProps, 'featureGroup' > ) {
+		return (
+			<>
+				{ Object.values( props.featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
+					<FeatureGroup key={ featureGroup.slug } { ...props } featureGroup={ featureGroup } />
+				) ) }
+			</>
+		);
+	},
+// isEqual --> No Render
+// Visible && !Equal --> Render (!isEqual)
+// Visible && Equal --> No Render (isEqual)
+// !Visible && Equal --> No Render (isEqual)
+// !Visible && !Equal --> No Render (isEqual)
+	( prev, next ) => ! next.isVisible || arePropsEqual( prev, next, true )
+);
+
+sible && !Equal --> No Render (EQ)
 
 const ComparisonGrid = ( {
 	intervalType,
@@ -1008,6 +1016,7 @@ const ComparisonGrid = ( {
 	showUpgradeableStorage,
 	onStorageAddOnClick,
 	showRefundPeriod,
+	isVisible,
 }: ComparisonGridProps ) => {
 	const { gridPlans, gridPlansIndex, allFeaturesList } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1149,6 +1158,7 @@ const ComparisonGrid = ( {
 					gridPlansIndex={ gridPlansIndex }
 				/>
 				<FeatureGroupsContainer
+					isVisible={ isVisible }
 					featureGroupMap={ featureGroupMap }
 					visibleGridPlans={ visibleGridPlans }
 					selectedFeature={ selectedFeature }
