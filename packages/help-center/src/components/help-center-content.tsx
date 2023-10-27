@@ -8,6 +8,7 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { OdieAssistantProvider } from 'calypso/odie/context';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -65,7 +66,18 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 				<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 				<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
 				<Route path="/success" element={ <SuccessScreen /> } />
-				<Route path="/odie" element={ <HelpCenterOdie /> } />
+				<Route
+					path="/odie"
+					element={
+						<OdieAssistantProvider
+							sectionName="help-center"
+							botSetting="supportDocs"
+							botName="Wapuu"
+						>
+							<HelpCenterOdie />
+						</OdieAssistantProvider>
+					}
+				/>
 			</Routes>
 		</CardBody>
 	);
