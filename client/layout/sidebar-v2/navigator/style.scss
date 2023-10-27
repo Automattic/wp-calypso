@@ -30,6 +30,8 @@
 }
 
 .sidebar-v2__menu-item.components-item {
+	color: inherit;
+
 	font-size: rem(13px);
 
 	&:hover:not(.is-active) {

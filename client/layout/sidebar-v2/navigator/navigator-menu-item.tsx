@@ -41,7 +41,9 @@ export const SidebarNavigatorMenuItem = ( {
 					'is-active': isSelected,
 				} ) }
 				onClick={ () => onClickMenuItem( link ) }
+				href={ link }
 				id={ id }
+				as="a"
 			>
 				<HStack justify="flex-start">
 					{ icon && <Icon style={ { fill: 'currentcolor' } } icon={ icon } size={ ICON_SIZE } /> }
