@@ -47,7 +47,8 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 				<>
 					{ wpcomFeatures?.map( ( feature, i ) => (
 						<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
-							<span>{ feature }</span>
+							{ ! i && <strong>{ feature }</strong> }
+							{ !! i && <span>{ feature }</span> }
 						</li>
 					) ) }
 
