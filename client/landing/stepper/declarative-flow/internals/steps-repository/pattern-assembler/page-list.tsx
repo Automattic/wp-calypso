@@ -9,7 +9,8 @@ import {
 } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ORDERED_PAGES } from './constants';
+import { usePagesOrder } from './hooks';
+import type { Pattern } from './types';
 import './page-list.scss';
 
 interface PageListItemProps {
@@ -38,12 +39,20 @@ const PageListItem = ( { label, isSelected, isDisabled }: PageListItemProps ) =>
 };
 
 interface PageListProps {
+	categories: Category[];
+	pagesMapByCategory: Record< string, Pattern[] >;
 	selectedPages: string[];
 	onSelectPage: ( selectedPage: string ) => void;
 }
 
-const PageList = ( { selectedPages, onSelectPage }: PageListProps ) => {
+const PageList = ( {
+	categories,
+	pagesMapByCategory,
+	selectedPages,
+	onSelectPage,
+}: PageListProps ) => {
 	const translate = useTranslate();
+	const categoriesInOrder = usePagesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
 
 	return (
@@ -64,18 +73,24 @@ const PageList = ( { selectedPages, onSelectPage }: PageListProps ) => {
 				>
 					<PageListItem label={ translate( 'Homepage' ) } isDisabled />
 				</CompositeItem>
-				{ ORDERED_PAGES.map( ( page ) => {
-					const isSelected = selectedPages.includes( page );
+				{ categoriesInOrder.map( ( { name, label } ) => {
+					const isSelected = selectedPages.includes( name );
+					const hasPages = name && pagesMapByCategory[ name ]?.length;
+
+					if ( ! hasPages ) {
+						return null;
+					}
+
 					return (
 						<CompositeItem
 							{ ...composite }
-							key={ page }
+							key={ name }
 							role="checkbox"
 							as="button"
 							aria-checked={ isSelected }
-							onClick={ () => onSelectPage( page ) }
+							onClick={ () => onSelectPage( name ) }
 						>
-							<PageListItem label={ page } isSelected={ isSelected } />
+							<PageListItem label={ label } isSelected={ isSelected } />
 						</CompositeItem>
 					);
 				} ) }
