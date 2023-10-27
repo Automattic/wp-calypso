@@ -148,7 +148,11 @@ body.is-section-accept-invite {
 				width: 327px;
 				margin-left: 0;
 				margin-right: 0;
-				color: var(--studio-gray-80, #2c3338);
+
+				.notice__icon-wrapper {
+					align-items: flex-start;
+					padding-top: 13px;
+				}
 			}
 
 			.signup-form__social {
@@ -178,19 +182,10 @@ body.is-section-accept-invite {
 				padding-left: 0;
 				padding-right: 0;
 
-				button:not(.is-borderless) {
+				button {
 					display: block;
 					max-width: 327px;
 					margin: 0 auto;
-				}
-
-				button.is-borderless {
-					color: var(--color-link);
-					padding: 0;
-
-					&:hover {
-						color: var(--color-link-dark);
-					}
 				}
 			}
 
@@ -231,7 +226,7 @@ body.is-section-accept-invite {
 				}
 			}
 
-			button.button:not(.is-borderless) {
+			button.button {
 				border-radius: 4px;
 
 				&:focus {
