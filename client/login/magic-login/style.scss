@@ -38,7 +38,6 @@
 	}
 
 	.logged-out-form {
-		max-width: 340px;
 		padding-top: 0;
 		.magic-login__form-sub-header {
 			text-align: center;
@@ -51,6 +50,23 @@
 
 	.magic-login__form-action {
 		margin-top: 16px;
+	}
+
+	.magic-login__confirmation {
+		p {
+			text-align: center;
+		}
+		.magic-login__confirmation-email {
+			font-weight: 600;
+		}
+		a:last-of-type {
+			border-bottom: none;
+			color: var(--studio-gray-90);
+			text-decoration: underline;
+			&:hover {
+				color: var(--color-primary);
+			}
+		}
 	}
 }
 
