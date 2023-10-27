@@ -350,7 +350,7 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ translate( 'We couldn’t synchronize to the %(siteType)s site.', {
+							text={ translate( 'We couldn’t synchronize changes to the %(siteType)s site.', {
 								args: {
 									siteType: siteToSync,
 								},
