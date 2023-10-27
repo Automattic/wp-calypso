@@ -22,6 +22,7 @@ import classNames from 'classnames';
 import { LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
+import { usePlansGridContext } from '../../grid-context';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
@@ -594,4 +595,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 }
 
-export default FeaturesGrid;
+export default function FeaturesGridWrapper( props: any ) {
+	const { gridPlansIndex } = usePlansGridContext();
+	return <FeaturesGrid { ...props } gridPlansIndex={ gridPlansIndex } />;
+}
