@@ -40,6 +40,7 @@ type PlanFeaturesActionsButtonProps = {
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
+	isMonthlyPlan?: boolean;
 	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
 	planSlug: PlanSlug;
 	flowName?: string | null;
@@ -213,6 +214,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	priceString,
 	isStuck,
 	isLargeCurrency,
+	isMonthlyPlan,
 	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
@@ -229,6 +231,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	priceString: string | null;
 	isStuck: boolean;
 	isLargeCurrency: boolean;
+	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: PlanSlug;
@@ -290,7 +293,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
-		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) {
+		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
 			return (
 				<Button
 					className={ classNames( classes, 'is-storage-upgradeable' ) }
@@ -441,6 +444,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	planActionOverrides,
 	isStuck,
 	isLargeCurrency,
+	isMonthlyPlan,
 	storageOptions,
 } ) => {
 	const translate = useTranslate();
@@ -557,6 +561,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			priceString={ priceString }
 			isStuck={ isStuck }
 			isLargeCurrency={ !! isLargeCurrency }
+			isMonthlyPlan={ isMonthlyPlan }
 			planTitle={ planTitle }
 			storageOptions={ storageOptions }
 		/>

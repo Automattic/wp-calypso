@@ -366,7 +366,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		} = this.props;
 
 		return renderedGridPlans.map(
-			( { planSlug, availableForPurchase, features: { storageOptions } } ) => {
+			( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
 				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 				// Leaving it `undefined` makes it use the default label
@@ -400,6 +400,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 							isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
+							isMonthlyPlan={ isMonthlyPlan }
 							onUpgradeClick={ ( overridePlanSlug ) =>
 								handleUpgradeClick( overridePlanSlug ?? planSlug )
 							}
