@@ -21,7 +21,6 @@ type Dependant< TState, TProps extends any[], TDependency > = (
  * Default behavior for determining whether current state differs from previous
  * state, which is the basis upon which memoize cache is cleared. Should return
  * a value or array of values to be shallowly compared for strict equality.
- *
  * @param state Current state object
  * @returns Value(s) to be shallow compared
  */
@@ -55,7 +54,6 @@ const DEFAULT_GET_CACHE_KEY = ( () => {
 /**
  * Given an array of getDependants functions, returns a single function which,
  * when called, returns an array of mapped results from those functions.
- *
  * @param dependants Array of getDependants
  * @returns Function mapping getDependants results
  */
@@ -66,7 +64,6 @@ const makeSelectorFromArray =
 
 /**
  * Returns a memoized state selector for use with the global application state.
- *
  * @param selector      Function calculating cached result
  * @param getDependants Function(s) describing dependent
  *                                             state, or an array of dependent

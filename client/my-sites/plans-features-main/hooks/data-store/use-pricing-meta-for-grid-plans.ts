@@ -12,13 +12,16 @@ import { useSelector } from 'react-redux';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
 import { PlanPrices } from 'calypso/state/plans/types';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getByPurchaseId, getPurchases } from 'calypso/state/purchases/selectors';
 import {
 	getCurrentPlan,
+	getPlansBySiteId,
+	getSitePlan,
 	getSitePlanRawPrice,
 	isPlanAvailableForPurchase,
 } from 'calypso/state/sites/plans/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { AppState } from 'calypso/types';
 import type { AddOnMeta, SelectedStorageOptionForPlans } from '@automattic/data-stores';
 import type {
 	UsePricingMetaForGridPlans,
@@ -47,9 +50,9 @@ function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
 	return totalPrices;
 }
 
-const getGridPlanPrices = createSelector(
+const getRawPrices = createSelector(
 	(
-		state: IAppState,
+		state: AppState,
 		planSlugs: PlanSlug[],
 		selectedStorageOptions: SelectedStorageOptionForPlans | undefined,
 		storageAddOns: ( AddOnMeta | null )[] | null | undefined,
@@ -180,7 +183,7 @@ const getGridPlanPrices = createSelector(
 		);
 	},
 	(
-		state: IAppState,
+		state: AppState,
 		planSlugs: PlanSlug[],
 		selectedStorageOptions: SelectedStorageOptionForPlans | undefined,
 		storageAddOns: ( AddOnMeta | null )[] | null | undefined,
@@ -188,11 +191,14 @@ const getGridPlanPrices = createSelector(
 	) => [
 		getSelectedSiteId( state ),
 		getCurrentPlan( state, getSelectedSiteId( state ) ),
-		getByPurchaseId( state, getCurrentPlan( state, getSelectedSiteId( state ) )?.id || 0 ),
-		planSlugs,
-		selectedStorageOptions,
-		storageAddOns,
-		withoutProRatedCredits,
+		getSitePlan( state, getSelectedSiteId( state ) ),
+		getPlansBySiteId( state, getSelectedSiteId( state ) ?? undefined ), // consumed by getPlanPrices
+		state.plans?.items, // consumed by getPlanPrices
+		getPurchases( state ),
+		// planSlugs,
+		// selectedStorageOptions,
+		// storageAddOns,
+		// withoutProRatedCredits,
 	]
 );
 
@@ -201,6 +207,8 @@ const getGridPlanPrices = createSelector(
  * - see PricingMetaForGridPlan type for details
  * - will migrate to data-store once dependencies are resolved (when site & plans data-stores more complete)
  */
+let foo;
+let bar = [];
 const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
@@ -213,15 +221,26 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
 
+	// const planPrices = useRawPrices( planSlugs, storageAddOns, withoutProRatedCredits );
+
 	const planPrices = useSelector( ( state: IAppState ) =>
-		getGridPlanPrices(
-			state,
-			planSlugs,
-			selectedStorageOptions,
-			storageAddOns,
-			withoutProRatedCredits
-		)
+		getRawPrices( state, planSlugs, selectedStorageOptions, storageAddOns, withoutProRatedCredits )
 	);
+
+	if ( planSlugs.length > 1 ) {
+		console.log(
+			foo === planPrices,
+			planSlugs
+			// bar[ 0 ] === planSlugs // ok
+			// selectedStorageOptions
+			// bar[ 1 ] === selectedStorageOptions // ok
+			// storageAddOns
+			// bar[ 2 ] === selectedStorageOptions // ok
+		);
+
+		foo = planPrices;
+		bar = [ planSlugs, selectedStorageOptions, storageAddOns, withoutProRatedCredits ];
+	}
 
 	const pricingMeta = useMemo( () => {
 		/*

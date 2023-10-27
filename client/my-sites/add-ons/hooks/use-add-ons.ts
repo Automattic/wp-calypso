@@ -342,7 +342,7 @@ const getAddOnsTransformed = createSelector(
 	) => [
 		getFeaturesBySiteId( state, siteId ),
 		getSiteOption( state, siteId, 'is_commercial' ),
-		state.productsList,
+		state.productsList?.items,
 		activeAddOns,
 		spaceUpgradesPurchased,
 		siteId,
