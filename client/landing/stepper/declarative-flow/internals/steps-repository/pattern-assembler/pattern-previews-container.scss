@@ -1,0 +1,62 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+
+$font-family: "SF Pro Text", $sans;
+$row-height: 400;
+$viewport-desktop-width: 1080;
+
+.pattern-assembler__previews {
+	display: grid;
+	flex: 1;
+
+	&--grid {
+		grid-auto-rows: minmax(0, $row-height * 1px);
+		grid-template-columns: repeat(3, 1fr);
+		gap: 36px 48px;
+		padding: 100px 12px;
+
+		.pattern-large-preview {
+			height: 100%;
+			margin-inline-end: 0;
+			margin-inline-start: 0;
+			padding: 0;
+			transition: none;
+
+			.device-switcher__header {
+				display: none;
+			}
+
+			.device-switcher__viewport {
+				> div {
+					height: 100% !important;
+					transform: none !important;
+				}
+			}
+
+			.device-switcher__frame {
+				$scale: calc(var(--viewport-container-width) / $viewport-desktop-width);
+
+				height: calc($row-height * 1px / $scale);
+				max-height: none;
+				max-width: none;
+				transform: scale($scale) !important;
+				width: $viewport-desktop-width * 1px;
+			}
+
+			.pattern-large-preview__pattern {
+				pointer-events: none;
+			}
+		}
+	}
+
+	.pattern-assembler__preview-title {
+		color: var(--studio-gray-100);
+		font-family: $font-family;
+		font-size: $font-body-large;
+		line-height: 26px;
+		margin-inline-end: 10px;
+		margin-inline-start: 10px;
+		margin-top: 16px;
+	}
+}
