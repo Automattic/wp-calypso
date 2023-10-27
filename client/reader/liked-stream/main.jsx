@@ -1,8 +1,7 @@
-import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Stream from 'calypso/reader/stream';
 import EmptyContent from './empty';
 import './style.scss';
@@ -19,13 +18,11 @@ class LikedStream extends Component {
 	render() {
 		return (
 			<>
-				<FormattedHeader
-					brandFont
-					headerText={ __( 'Likes' ) }
-					subHeaderText={ __( 'Rediscover content that you liked.' ) }
-					align="left"
-					hasScreenOptions
-					className="liked-stream-header"
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Likes' ) }
+					subtitle={ translate( 'Rediscover content that you liked.' ) }
+					className="following-stream-header"
 				/>
 				<Stream
 					{ ...this.props }
