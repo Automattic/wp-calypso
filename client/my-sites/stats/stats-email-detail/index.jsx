@@ -1,4 +1,5 @@
 import { Spinner } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize, translate } from 'i18n-calypso';
 import { find, flowRight } from 'lodash';
 import moment from 'moment';
@@ -12,8 +13,8 @@ import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEmailStats from 'calypso/components/data/query-email-stats';
 import EmptyContent from 'calypso/components/empty-content';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
@@ -192,7 +193,7 @@ class StatsEmailDetail extends Component {
 		const pathTemplate = `${ traffic.path }/{{ interval }}/${ postId }${ slugPath }`;
 		return (
 			<>
-				<Main className="has-fixed-nav stats__email-detail">
+				<Main className="has-fixed-nav stats__email-detail stats">
 					<QueryEmailStats
 						siteId={ siteId }
 						postId={ postId }
@@ -210,17 +211,18 @@ class StatsEmailDetail extends Component {
 						path="/stats/email/:statType/:site/:period/:email_id"
 						title="Stats > Single Email"
 					/>
-
-					<FixedNavigationHeader
+					<NavigationHeader
 						navigationItems={ this.getNavigationItemsWithTitle( this.getNavigationTitle() ) }
-					></FixedNavigationHeader>
+					/>
 
 					{ ! isRequestingStats && ! countViews && post && (
 						<EmptyContent
 							title={ noViewsLabel }
 							line={ translate( 'Learn some tips to attract more visitors' ) }
 							action={ translate( 'Get more traffic!' ) }
-							actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
+							actionURL={ localizeUrl(
+								'https://wordpress.com/support/getting-more-views-and-traffic/'
+							) }
 							actionTarget="blank"
 							illustration="/calypso/images/stats/illustration-stats.svg"
 							illustrationWidth={ 150 }

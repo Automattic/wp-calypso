@@ -350,11 +350,11 @@ body.is-section-signup.is-white-signup {
 			}
 
 			@include break-large {
-				margin: 0 20px 0 40px;
+				margin: 0 0 0 40px;
 				padding: 40px 0;
 			}
 
-			@include break-wide {
+			@include break-huge {
 				margin: 0 0 0 60px;
 			}
 

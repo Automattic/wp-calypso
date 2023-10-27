@@ -12,16 +12,16 @@ const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
 		const product = getProductBySlug( state, productSlug );
 
 		if ( product?.product_term === 'month' ) {
+			/* Translators: %(formattedCost)s: monthly price formatted with currency */
 			return translate( '%(formattedCost)s/month, billed monthly', {
-				/* Translators: $formattedCost: monthly price formatted with currency */
 				args: {
 					formattedCost,
 				},
 			} );
 		}
 
+		/* Translators: %(monthlyCost)s: monthly price formatted with currency */
 		return translate( '%(monthlyCost)s/month, billed yearly', {
-			/* Translators: $montlyCost: monthly price formatted with currency */
 			args: {
 				monthlyCost: formattedCost,
 			},

@@ -103,7 +103,7 @@
 		"site-profiler": true,
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
-		"stats/subscribers-chart-section": false,
+		"stats/subscribers-chart-section": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/date-control": true,
 		"stats/type-detection": true,
@@ -118,7 +118,6 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/staging-sites-i3": true,
 		"yolo/wp-admin-site-default": true
 	}
 }

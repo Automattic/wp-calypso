@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -19,6 +18,7 @@ import {
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
 import { SiteSyncCard } from './card-content/staging-sync-card';
@@ -60,8 +60,9 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ loadingError, setLoadingError ] = useState( null );
-	const [ syncError, setSyncError ] = useState( null );
-	const isStagingSitesI3Enabled = isEnabled( 'yolo/staging-sites-i3' );
+	const [ syncError, setSyncError ] = useState< string | null >( null );
+	const stagingSiteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
+
 	const { data: productionSite, isLoading } = useProductionSiteDetail( siteId, {
 		enabled: ! disabled,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,7 +91,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setSyncError( error.message );
+			setSyncError( error.code );
 		},
 	} );
 
@@ -106,7 +107,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setSyncError( error.message );
+			setSyncError( error.code );
 		},
 	} );
 
@@ -140,18 +141,20 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
 				</ActionButtons>
-				{ isStagingSitesI3Enabled && (
-					<SyncActionsContainer>
-						<SiteSyncCard
-							type="staging"
-							productionSiteId={ productionSite.id }
-							onPush={ pullFromStaging }
-							onPull={ pushToStaging }
-							error={ syncError }
-							disabled={ disabled || isSyncInProgress }
-						/>
-					</SyncActionsContainer>
-				) }
+				<SyncActionsContainer>
+					<SiteSyncCard
+						type="staging"
+						productionSiteId={ productionSite.id }
+						siteUrls={ {
+							production: productionSite.url,
+							staging: stagingSiteUrl,
+						} }
+						onPush={ pullFromStaging }
+						onPull={ pushToStaging }
+						error={ syncError }
+						disabled={ disabled || isSyncInProgress }
+					/>
+				</SyncActionsContainer>
 			</>
 		);
 	};

@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import { PATTERN_CATEGORIES } from '../constants';
-import { isPriorityPattern } from '../utils';
-import type { Pattern, Category } from '../types';
+import { isPriorityPattern, isPagePattern } from '../utils';
+import type { Pattern } from '../types';
 
-const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] ) => {
+const usePatternsMapByCategory = ( patterns: Pattern[] ) => {
 	return useMemo( () => {
 		const categoriesMap: Record< string, Pattern[] > = {};
 
 		patterns.reverse().forEach( ( pattern ) => {
 			Object.keys( pattern.categories ).forEach( ( category ) => {
-				if ( ! PATTERN_CATEGORIES.includes( category ) ) {
-					// Only show allowed categories
+				if ( ! PATTERN_CATEGORIES.includes( category ) || isPagePattern( pattern ) ) {
+					// Only show patterns (not pages) in allowed categories
 					return;
 				}
 				if ( ! categoriesMap[ category ] ) {
@@ -24,7 +24,7 @@ const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] )
 			} );
 		} );
 		return categoriesMap;
-	}, [ patterns, categories ] );
+	}, [ patterns ] );
 };
 
 export default usePatternsMapByCategory;

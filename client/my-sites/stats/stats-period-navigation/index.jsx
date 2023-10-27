@@ -8,10 +8,10 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Legend from 'calypso/components/chart/legend';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import StatsDateControl from 'calypso/components/stats-date-control';
+import IntervalDropdown from 'calypso/components/stats-interval-dropdown';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import NavigationArrows from '../navigation-arrows';
-import StatsDateControl from '../stats-date-control';
-import IntervalDropdown from '../stats-interval-dropdown';
 
 import './style.scss';
 

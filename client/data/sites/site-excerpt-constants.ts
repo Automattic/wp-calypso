@@ -33,4 +33,5 @@ export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'updated_at',
 	'wpcom_production_blog_id',
 	'wpcom_staging_blog_ids',
+	'wpcom_admin_interface',
 ] as const;

@@ -4,6 +4,8 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import { useSelector } from 'calypso/state';
+import { isSimpleSite as isSimpleSiteSelector } from 'calypso/state/sites/selectors';
 import { SubscriptionOptions } from '../settings-reading/main';
 
 type EmailsTextSettingProps = {
@@ -18,6 +20,7 @@ type SubscriptionOption = {
 
 export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsTextSettingProps ) => {
 	const translate = useTranslate();
+	const isSimpleSite = useSelector( isSimpleSiteSelector );
 
 	const updateSubscriptionOptions =
 		( option: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -57,6 +60,26 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 						'The ability to customize the confirmation email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
 					) }
 				</FormSettingExplanation>
+
+				{ isSimpleSite && (
+					<>
+						<FormLabel htmlFor="welcome_email_message">
+							{ translate( 'Welcome email message' ) }
+						</FormLabel>
+						<FormTextarea
+							name="welcome_email_message"
+							id="welcome_email_message"
+							value={ value?.welcome }
+							onChange={ updateSubscriptionOptions( 'welcome' ) }
+							disabled={ disabled }
+							autoCapitalize="none"
+						/>
+						<FormSettingExplanation>
+							{ translate( 'The email sent out when someone confirms their subscription.' ) }
+						</FormSettingExplanation>
+					</>
+				) }
+
 				<FormLabel htmlFor="comment_follow_email_message">
 					{ translate( 'Comment follow email message' ) }
 				</FormLabel>

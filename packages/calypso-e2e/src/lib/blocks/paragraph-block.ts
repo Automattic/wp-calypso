@@ -23,8 +23,12 @@ export class ParagraphBlock {
 	 *
 	 * @param {string} text Text to be entered into the paragraph.
 	 */
-	async enterParagraph( text: string ): Promise< void > {
-		await this.block.fill( text );
+	async enterParagraph( text: string, { type }: { type?: boolean } = {} ): Promise< void > {
+		if ( type ) {
+			await this.block.type( text );
+		} else {
+			await this.block.fill( text );
+		}
 	}
 
 	/**

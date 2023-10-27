@@ -39,8 +39,6 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 
 		it( 'Start a WordPress import', async () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
-			await startImportFlow.validateImportPage();
-			await startImportFlow.clickButton( 'Import your content' );
 			await Promise.any( [
 				startImportFlow.clickPremigrationOptionButton(),
 				Promise.all( [
@@ -122,7 +120,7 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 
 		it( 'Go to Import page', async () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
-			await startImportFlow.validateImportPage();
+			await startImportFlow.validateUpgradePlanPage();
 		} );
 
 		// Back one page

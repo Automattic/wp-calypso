@@ -17,6 +17,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -52,6 +53,7 @@ import { FeaturesGrid, ComparisonGrid } from 'calypso/my-sites/plans-grid';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
+import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-grid/hooks/npm-ready/use-free-trial-plan-slugs';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -241,7 +243,6 @@ const PlansFeaturesMain = ( {
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
 	const storageAddOns = useStorageAddOns( { siteId, isInSignup } );
-	const shouldDisplayFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -278,6 +279,7 @@ const PlansFeaturesMain = ( {
 		isPlanUpsellEnabledOnFreeDomain,
 		flowName,
 		paidDomainName,
+		intent: intentFromProps,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
@@ -374,10 +376,13 @@ const PlansFeaturesMain = ( {
 		? 'plans-default-wpcom'
 		: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom';
 
+	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
+
 	const gridPlans = useGridPlans( {
 		allFeaturesList: FEATURES_LIST,
 		usePricedAPIPlans,
 		usePricingMetaForGridPlans,
+		useFreeTrialPlanSlugs,
 		selectedFeature,
 		term,
 		intent,
@@ -385,10 +390,10 @@ const PlansFeaturesMain = ( {
 		sitePlanSlug,
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
+		eligibleForFreeHostingTrial,
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
-		shouldDisplayFreeHostingTrial,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
@@ -759,6 +764,7 @@ const PlansFeaturesMain = ( {
 								onStorageAddOnClick={ handleStorageAddOnClick }
 								currentPlanManageHref={ currentPlanManageHref }
 								canUserManageCurrentPlan={ canUserManageCurrentPlan }
+								showRefundPeriod={ isAnyHostingFlow( flowName ) }
 							/>
 							{ ! hidePlansFeatureComparison && (
 								<>
@@ -805,6 +811,7 @@ const PlansFeaturesMain = ( {
 											onStorageAddOnClick={ handleStorageAddOnClick }
 											currentPlanManageHref={ currentPlanManageHref }
 											canUserManageCurrentPlan={ canUserManageCurrentPlan }
+											showRefundPeriod={ isAnyHostingFlow( flowName ) }
 										/>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }

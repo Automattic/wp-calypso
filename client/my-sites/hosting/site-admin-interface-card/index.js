@@ -26,7 +26,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 		dispatch( removeNotice( failureNoticeId ) );
 	};
 
-	const setSiteInterface = useSiteInterfaceMutation( siteId, {
+	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
 		onMutate: () => {
 			removeAllNotices();
 		},
@@ -91,6 +91,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 						value="calypso"
 						checked={ selectedAdminInterface === 'calypso' }
 						onChange={ ( event ) => handleInputChange( event.target.value ) }
+						disabled={ isUpdating }
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
@@ -104,6 +105,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 						value="wp-admin"
 						checked={ selectedAdminInterface === 'wp-admin' }
 						onChange={ ( event ) => handleInputChange( event.target.value ) }
+						disabled={ isUpdating }
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
@@ -116,7 +118,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) ?? 'calypso';
+	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso';
 
 	return { siteId, adminInterface };
 } )( localize( SiteAdminInterfaceCard ) );

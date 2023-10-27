@@ -44,4 +44,5 @@ export type OptionalUserData = {
 	jetpack_visible_site_count?: number;
 	is_google_domain_owner: boolean;
 	had_hosting_trial: boolean;
+	calypso_multi_domains_experiment?: string;
 };

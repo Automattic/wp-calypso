@@ -1,4 +1,5 @@
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -34,8 +35,15 @@ class NotificationSettingsNavigation extends Component {
 	};
 
 	navItem = ( path ) => {
+		const pathWithOptionalReferrer =
+			path + ( page.current.includes( 'referrer=management' ) ? '?referrer=management' : '' );
+
 		return (
-			<NavItem path={ path } key={ path } selected={ this.props.path === path }>
+			<NavItem
+				path={ pathWithOptionalReferrer }
+				key={ path }
+				selected={ this.props.path === pathWithOptionalReferrer }
+			>
 				{ this.itemLabels()[ path ] }
 			</NavItem>
 		);

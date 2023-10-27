@@ -49,7 +49,6 @@ import FAQ from 'calypso/components/faq/docs/example';
 import FeatureGate from 'calypso/components/feature-example/docs/example';
 import FeatureItem from 'calypso/components/feature-item/docs/example';
 import FilePickers from 'calypso/components/file-picker/docs/example';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header/docs/example';
 import FocusableExample from 'calypso/components/focusable/docs/example';
 import FoldableCard from 'calypso/components/foldable-card/docs/example';
 import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
@@ -211,10 +210,6 @@ export default class DesignAssets extends Component {
 					<FeatureGate readmeFilePath="feature-example" />
 					<FeatureItem readmeFilePath="feature-item" />
 					<FilePickers readmeFilePath="file-picker" />
-					<FixedNavigationHeader
-						searchKeywords="breadcrumbs"
-						readmeFilePath="fixed-navigation-header"
-					/>
 					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" searchKeywords="accordion" />
 					<FoldableFAQ readmeFilePath="foldable-faq" />

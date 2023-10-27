@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
@@ -449,12 +448,9 @@ export class PluginsMain extends Component {
 
 		const { isJetpackCloud, selectedSite } = this.props;
 
-		const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
 		let pageTitle;
 		if ( isJetpackCloud ) {
-			pageTitle = isNewNavigation
-				? this.props.translate( 'Plugin Management', { textOnly: true } )
-				: this.props.translate( 'Plugins', { textOnly: true } );
+			pageTitle = this.props.translate( 'Plugins', { textOnly: true } );
 		} else {
 			pageTitle = this.props.translate( 'Installed Plugins', { textOnly: true } );
 		}
@@ -505,10 +501,26 @@ export class PluginsMain extends Component {
 				) }
 				<div
 					className={ classNames( 'plugins__top-container', {
-						'plugins__top-container-wp': ! isJetpackCloud,
+						'plugins__top-container-jc': isJetpackCloud,
 					} ) }
 				>
 					<div className="plugins__content-wrapper">
+						{ isJetpackCloud && (
+							<div className="plugins__page-title-container">
+								<div className="plugins__header-left-content">
+									<h2 className="plugins__page-title">{ pageTitle }</h2>
+									<div className="plugins__page-subtitle">
+										{ this.props.selectedSite
+											? this.props.translate( 'Manage all plugins installed on %(selectedSite)s', {
+													args: {
+														selectedSite: this.props.selectedSite.domain,
+													},
+											  } )
+											: this.props.translate( 'Manage plugins installed on all sites' ) }
+									</div>
+								</div>
+							</div>
+						) }
 						<div className="plugins__main plugins__main-updated">
 							<div className="plugins__main-header">
 								<SectionNav
@@ -524,7 +536,11 @@ export class PluginsMain extends Component {
 						</div>
 					</div>
 				</div>
-				<div className="plugins__main-content">
+				<div
+					className={ classNames( 'plugins__main-content', {
+						'plugins__main-content-jc': isJetpackCloud,
+					} ) }
+				>
 					<div className="plugins__content-wrapper">
 						{
 							// Hide the search box only when the request to fetch plugins fail, and there are no sites.

@@ -1,5 +1,5 @@
 import { CircularProgressBar } from '@automattic/components';
-import { Launchpad, Task } from '@automattic/launchpad';
+import { DefaultWiredLaunchpad, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -7,7 +7,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 type EarnLaunchpadProps = {
 	launchpad: {
 		checklistSlug: string;
-		taskFilter: ( tasks: Task[] | null | undefined ) => Task[];
+		taskFilter: ( tasks: Task[] ) => Task[];
 		numberOfSteps: number;
 		completedSteps: number;
 		shouldLoad: boolean;
@@ -37,10 +37,11 @@ const EarnLaunchpad = ( { launchpad }: EarnLaunchpadProps ) => {
 					{ translate( 'Let your fans support your art, writing, or project directly.' ) }
 				</p>
 			</div>
-			<Launchpad
+			<DefaultWiredLaunchpad
 				siteSlug={ site?.slug ?? null }
 				checklistSlug={ checklistSlug }
-				taskFilter={ taskFilter }
+				onPostFilterTasks={ taskFilter }
+				launchpadContext="earn"
 			/>
 		</div>
 	);

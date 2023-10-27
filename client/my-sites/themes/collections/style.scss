@@ -67,6 +67,12 @@
 		line-height: 1.5;
 		padding-left: 0;
 		text-decoration: none;
+
+		svg {
+			.rtl & {
+				transform: scaleX(-1);
+			}
+		}
 	}
 
 	.theme-collection-view-header__title {

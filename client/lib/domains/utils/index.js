@@ -6,4 +6,3 @@ export { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils/is-domai
 export { parseDomainAgainstTldList } from 'calypso/lib/domains/utils/parse-domain-against-tld-list';
 export { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 export { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
-export { isFreeUrlDomainName } from 'calypso/lib/domains/utils/is-free-url-domain-name';
