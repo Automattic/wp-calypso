@@ -1,15 +1,12 @@
-import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
 import { useTagStats } from 'calypso/data/reader/use-tag-stats';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
-import { navigate } from 'calypso/lib/navigate';
-import { createAccountUrl } from 'calypso/lib/paths';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -18,19 +15,19 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderTagBySlug } from 'calypso/state/reader/tags/selectors';
+import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import '../style.scss';
 
-const ReaderTagSidebar = ( { tag, showFollow } ) => {
+const ReaderTagSidebar = ( {
+	tag,
+	showFollow,
+	/* eslint-disable no-shadow */
+	registerLastActionRequiresLogin,
+} ) => {
 	const translate = useTranslate();
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
 	const tagStats = useTagStats( tag );
 	const dispatch = useDispatch();
-	const showCreateAccountButton = useSelector( ( state ) => ! isUserLoggedIn( state ) );
-	const { pathname } = getUrlParts( window.location.href );
-	const signupUrl = createAccountUrl( {
-		redirectTo: pathname,
-		ref: 'reader-tag-sidebar',
-	} );
 	const isFollowing = useSelector( ( state ) => getReaderTagBySlug( state, tag )?.isFollowing );
 	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 
@@ -54,8 +51,14 @@ const ReaderTagSidebar = ( { tag, showFollow } ) => {
 	};
 
 	const trackSignupClick = () => {
-		recordAction( 'clicked_reader_sidebar_signup' );
-		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_signup_clicked' ) );
+		if ( ! isLoggedIn ) {
+			recordAction( 'clicked_reader_sidebar_signup' );
+			dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_signup_clicked' ) );
+			registerLastActionRequiresLogin( {
+				type: 'sidebar-signup',
+				tag: tag,
+			} );
+		}
 	};
 
 	const tagLinks = relatedMetaByTag.data?.related_tags?.map( ( relatedTag ) => (
@@ -69,7 +72,10 @@ const ReaderTagSidebar = ( { tag, showFollow } ) => {
 	const toggleFollowing = () => {
 		const toggleAction = isFollowing ? requestUnfollowTag : requestFollowTag;
 		if ( ! isLoggedIn ) {
-			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+			return registerLastActionRequiresLogin( {
+				type: 'follow-tag',
+				tag: tag,
+			} );
 		}
 
 		dispatch( toggleAction( tag ) );
@@ -133,9 +139,9 @@ const ReaderTagSidebar = ( { tag, showFollow } ) => {
 					{ relatedSitesLinks }
 				</div>
 			) }
-			{ showCreateAccountButton && (
+			{ ! isLoggedIn && (
 				<div>
-					<Button primary onClick={ trackSignupClick } href={ signupUrl }>
+					<Button primary onClick={ trackSignupClick }>
 						{ translate( 'Join the WordPress.com community' ) }
 					</Button>
 				</div>
@@ -144,4 +150,4 @@ const ReaderTagSidebar = ( { tag, showFollow } ) => {
 	);
 };
 
-export default ReaderTagSidebar;
+export default connect( null, { registerLastActionRequiresLogin } )( ReaderTagSidebar );
