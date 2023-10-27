@@ -1,5 +1,5 @@
 import { Dialog, FormInputValidation, Gridicon } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -391,19 +391,25 @@ export class SiteAddressChanger extends Component {
 				</FormSectionHeading>
 				<div className="site-address-changer__info">
 					<p>
-						{ translate(
-							'Once you change your site address, %(currentDomainName)s will no longer be available. ',
-							{
-								args: { currentDomainName },
-							}
-						) }
-						{ ! hasNonWpcomDomains &&
-							// ask when user has no custom domains
-							translate( '{{a}}Did you want to add a custom domain instead?{{/a}}', {
-								components: {
-									a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
-								},
-							} ) }
+						{ hasNonWpcomDomains &&
+						i18n.hasTranslation(
+							'Once you change your site address, %(currentDomainName)s will no longer be available.'
+						)
+							? translate(
+									'Once you change your site address, %(currentDomainName)s will no longer be available.',
+									{
+										args: { currentDomainName },
+									}
+							  )
+							: translate(
+									'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
+									{
+										components: {
+											args: { currentDomainName },
+											a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
+										},
+									}
+							  ) }
 					</p>
 				</div>
 				<div className="site-address-changer__details">
