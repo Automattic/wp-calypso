@@ -15,6 +15,7 @@ import { useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { TrialPlan } from './trial-plan';
 import { useVerifyEmail } from './use-verify-email';
+import type { Step } from '../../types';
 
 const FEATURES_NOT_INCLUDED_IN_FREE_TRIAL = [
 	FEATURE_CUSTOM_DOMAIN,
