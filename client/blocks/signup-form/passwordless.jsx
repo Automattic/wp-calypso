@@ -122,6 +122,31 @@ class PasswordlessSignupForm extends Component {
 				);
 				return;
 			}
+
+			const errorMessage = (
+				<>
+					{ this.props.translate( 'An account with this email address already exists.' ) }
+					&nbsp;
+					{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+						components: {
+							a: (
+								<a
+									href={ `${ this.props.logInUrl }&email_address=${ encodeURIComponent(
+										this.state.email
+									) }` }
+								/>
+							),
+						},
+					} ) }
+				</>
+			);
+
+			this.setState( {
+				errorMessages: [ errorMessage ],
+				isSubmitting: false,
+			} );
+
+			return;
 		}
 
 		this.setState( {
