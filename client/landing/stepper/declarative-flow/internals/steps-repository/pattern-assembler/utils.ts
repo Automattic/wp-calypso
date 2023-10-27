@@ -30,3 +30,5 @@ export const injectCategoryToPattern = (
 
 export const isPriorityPattern = ( { tags: { assembler_priority } }: Pattern ) =>
 	!! assembler_priority;
+
+export const isPagePattern = ( { tags: { assembler_page } }: Pattern ) => !! assembler_page;

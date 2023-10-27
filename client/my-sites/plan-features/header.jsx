@@ -9,8 +9,6 @@ import {
 	GROUP_WPCOM,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
-	PLAN_P2_FREE,
-	PLAN_P2_PLUS,
 } from '@automattic/calypso-products';
 import { ProductIcon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -36,12 +34,7 @@ const PLANS_LIST = getPlans();
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const { isInSignup, plansWithScroll, planType, isInVerticalScrollingPlansExperiment } =
-			this.props;
-
-		if ( planType === PLAN_P2_FREE ) {
-			return this.renderPlansHeaderP2Free();
-		}
+		const { isInSignup, plansWithScroll, isInVerticalScrollingPlansExperiment } = this.props;
 
 		// Do not use the signup-specific header, unify plans for the plansWithScroll test
 		if ( plansWithScroll ) {
@@ -76,18 +69,14 @@ export class PlanFeaturesHeader extends Component {
 			translate,
 		} = this.props;
 
-		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ), {
-			'is-p2-plus': planType === PLAN_P2_PLUS,
-		} );
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 		const isCurrent = this.isPlanCurrent();
 
 		return (
 			<header className={ headerClasses }>
-				{ planType !== PLAN_P2_PLUS && (
-					<div className="plan-features__header-figure">
-						<ProductIcon slug={ planType } />
-					</div>
-				) }
+				<div className="plan-features__header-figure">
+					<ProductIcon slug={ planType } />
+				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
@@ -152,25 +141,6 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getIntervalDiscount() }
 				</div>
 			</span>
-		);
-	}
-
-	renderPlansHeaderP2Free() {
-		const { planType, isInSignup, translate } = this.props;
-
-		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ), {
-			'is-p2-free': true,
-		} );
-		const isCurrent = this.isPlanCurrent();
-
-		return (
-			<header className={ headerClasses }>
-				<div className="plan-features__header-text">
-					<h4 className="plan-features__header-title">P2</h4>
-					<h4 className="plan-features__header-title-free">{ translate( 'Free' ) }</h4>
-				</div>
-				{ ! isInSignup && isCurrent && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
-			</header>
 		);
 	}
 

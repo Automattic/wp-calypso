@@ -127,27 +127,15 @@ class PostComment extends PureComponent {
 
 	handleReply = () => {
 		if ( ! this.props.isLoggedIn ) {
-			const { pathname } = getUrlParts( window.location.href );
-			if ( isReaderTagEmbedPage( window.location ) ) {
-				return window.open(
-					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
-					'_blank'
-				);
-			}
-			// Do not redirect to create account page when not logged in and the login window component is enabled
-			if ( ! config.isEnabled( 'reader/login-window' ) ) {
-				return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
-			}
-			this.props.registerLastActionRequiresLogin( {
+			return this.props.registerLastActionRequiresLogin( {
 				type: 'reply',
 				siteId: this.props.post.site_ID,
 				postId: this.props.post.ID,
 				commentId: this.props.commentId,
 			} );
-		} else {
-			this.props.onReplyClick( this.props.commentId );
-			this.setState( { showReplies: true } ); // show the comments when replying
 		}
+		this.props.onReplyClick( this.props.commentId );
+		this.setState( { showReplies: true } ); // show the comments when replying
 	};
 
 	handleAuthorClick = ( event ) => {

@@ -49,7 +49,7 @@ export const PATTERN_CATEGORIES = [
 	//'media', -- Not exist
 	'newsletter',
 	//'podcast', -- Hidden
-	//'portfolio', -- Hidden
+	'portfolio', // For page patterns only
 	//'quotes', -- Not exist
 	'services',
 	'store',
@@ -71,3 +71,5 @@ export const ORDERED_PATTERN_CATEGORIES = [
 ];
 
 export const INITIAL_CATEGORY = ORDERED_PATTERN_CATEGORIES[ 0 ];
+
+export const ORDERED_PAGES = [ 'about', 'contact', 'portfolio', 'services', 'blog' ];

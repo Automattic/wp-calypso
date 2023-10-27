@@ -37,18 +37,6 @@
 	margin-left: 4px;
 }
 
-// Compensate for the fixed header.
-.is-section-stats .has-fixed-nav {
-
-	@media ( max-width: 782px ) {
-		padding-top: 65px;
-	}
-
-	@media ( max-width: 660px ) {
-		padding-top: 60px;
-	}
-}
-
 .stats-navigation__control {
 	margin-right: 16px;
 

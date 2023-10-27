@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 
-.checklist-item__task-content {
+.checklist-item__task-content.components-button {
 	align-items: center;
 	background-color: transparent;
 	border-bottom: 1px solid var(--studio-gray-5);
@@ -37,7 +37,7 @@
 		padding: 16px 0 16px 0;
 	}
 
-	&.components-button:focus {
+	&:focus {
 		box-shadow: none;
 		outline: none;
 	}
@@ -71,20 +71,20 @@
 	}
 }
 
-.components-button.checklist-item__task-content:hover:not([disabled]),
-.components-button.checklist-item__task-content:focus:not([disabled]) {
+.checklist-item__task-content.components-button:hover:not([disabled]),
+.checklist-item__task-content.components-button:focus:not([disabled]) {
 	fill: var(--studio-blue-50);
 	color: var(--studio-blue-50);
 	border-bottom: 1px solid var(--studio-gray-5);
 }
 
-.checklist-item__task-content[disabled],
-.checklist-item__task-content[disabled]:focus {
+.checklist-item__task-content.components-button[disabled],
+.checklist-item__task-content.components-button[disabled]:focus {
 	background-color: transparent;
 	pointer-events: none;
 }
 
-.checklist-item__task-content[data-task="verify_email"] {
+.checklist-item__task-content.components-button[data-task="verify_email"] {
 	color: var(--color-text);
 }
 
@@ -131,7 +131,7 @@
 	}
 }
 
-.checklist-item__task-content:hover .checklist-item__subtext {
+.checklist-item__task-content.components-button:hover .checklist-item__subtext {
 	color: var(--color-neutral-100);
 }
 
@@ -219,7 +219,7 @@
 	font-weight: 600;
 }
 
-.checklist-item__checklist-primary-button {
+.checklist-item__checklist-primary-button.components-button {
 	width: 100%;
 	font-weight: 500;
 	padding: 11px;
@@ -245,7 +245,7 @@
 		color: var(--color-text-inverted);
 	}
 
-	&.components-button:disabled {
+	&:disabled {
 		opacity: 1;
 		&:hover {
 			color: var(--color-text-inverted);
