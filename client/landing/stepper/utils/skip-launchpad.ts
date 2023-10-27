@@ -2,7 +2,7 @@ import { updateLaunchpadSettings } from '@automattic/data-stores';
 
 type SkipLaunchpadProps = {
 	checklistSlug?: string | null;
-	setActiveChecklist: ( siteSlug: string, checklistSlug: string ) => Promise< void >;
+	setActiveChecklist: ( siteSlug: string, checklistSlug: string ) => Promise< unknown >;
 	siteId: string | null;
 	siteSlug: string | null;
 };
