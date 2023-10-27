@@ -1,10 +1,10 @@
+import { Button, Popover } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import JetpackLightbox, { JetpackLightboxMain } from 'calypso/components/jetpack/jetpack-lightbox';
 
 import './style.scss';
 
@@ -21,16 +21,21 @@ export default function PartnerProgramOptInFieldset( {
 
 	const [ showPartnerProgramDetails, setShowPartnerProgramDetails ] = useState( false );
 
+	const detailsRef = useRef< HTMLElement | null >( null );
+
 	return (
 		<FormFieldset className="partner-program-opt-in-field">
 			<FormLabel>
 				{ translate( 'Jetpack Agency & Pro Partner program' ) }
-				<Icon
-					className="partner-program-opt-in-field__info"
-					size={ 16 }
-					icon={ info }
-					onClick={ () => setShowPartnerProgramDetails( true ) }
-				/>
+				<span></span>
+				<span ref={ detailsRef }>
+					<Icon
+						className="partner-program-opt-in-field__details-icon"
+						size={ 16 }
+						icon={ info }
+						onClick={ () => setShowPartnerProgramDetails( true ) }
+					/>
+				</span>
 			</FormLabel>
 			<FormInputCheckbox
 				id="partnerProgramOptIn"
@@ -41,11 +46,31 @@ export default function PartnerProgramOptInFieldset( {
 				}
 			/>
 			<span>{ translate( 'Sign up for the Jetpack Agency & Pro Partner program' ) }</span>
-			{ showPartnerProgramDetails && (
-				<JetpackLightbox isOpen={ true } onClose={ () => setShowPartnerProgramDetails( false ) }>
-					<JetpackLightboxMain>Placeholder</JetpackLightboxMain>
-				</JetpackLightbox>
-			) }
+			<Popover
+				className="partner-program-opt-in-field__details-popover"
+				context={ detailsRef.current }
+				isVisible={ showPartnerProgramDetails }
+				position="bottom"
+				showDelay={ 300 }
+			>
+				<h2>{ translate( 'Agency & Pro program benefits' ) }</h2>
+
+				<p>
+					{ translate(
+						"Our program is more than tooling. We'll provide resources to help you sell Jetpack, onboarding & training, marketing opportunities, access to our vibrant community, and more!"
+					) }
+				</p>
+
+				<p>
+					<a href="https://jetpack.com/agencies-pros/" target="_blank" rel="noreferrer">
+						{ translate( 'Learn more about this program.' ) }
+					</a>
+				</p>
+
+				<Button className="button" onClick={ () => setShowPartnerProgramDetails( false ) }>
+					{ translate( 'Got it' ) }
+				</Button>
+			</Popover>
 		</FormFieldset>
 	);
 }

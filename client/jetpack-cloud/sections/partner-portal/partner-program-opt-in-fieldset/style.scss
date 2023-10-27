@@ -1,6 +1,36 @@
 .partner-program-opt-in-field {
 	// gives SVG icon better vertical alignment with text
-	&__info {
+	&__details-icon {
 		vertical-align: text-top;
 	}
+
+	&__details-popover {
+		.popover__inner {
+			display: flex;
+			gap: 16px;
+			padding: 16px;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		h2 {
+			font-size: rem(14px);
+			line-height: 1.5;
+		}
+
+		p {
+			color: var(--studio-gray-80);
+			font-size: rem(12px);
+			line-height: 1.5;
+			max-width: 220px;
+			text-align: left;
+			margin-block-end: 0;
+		}
+
+		.button {
+			padding: 4px 8px;
+			font-size: rem(12px);
+		}
+	}
+
 }
