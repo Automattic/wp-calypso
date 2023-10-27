@@ -365,9 +365,9 @@ object RunAllUnitTests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				export NODE_ENV="test"
-				node --version
-				yarn --version
-				npm --version
+				echo -n "Node version: " && node --version
+				echo -n "Yarn version: " && yarn --version
+				echo -n "NPM version: " && npm --version
 
 				# Install modules
 				${_self.yarn_install_cmd}
