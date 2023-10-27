@@ -160,7 +160,7 @@ class HandleEmailedLinkForm extends Component {
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 
-		if ( isExpired ) {
+		if ( isExpired && ! isFetching ) {
 			const postId = new URLSearchParams( redirectTo ).get( 'redirect_to_blog_post_id' );
 
 			return (
@@ -255,16 +255,18 @@ class HandleEmailedLinkForm extends Component {
 		}
 
 		return (
-			<EmptyContent
-				action={ action }
-				className={ classNames( 'magic-login__handle-link', {
-					'magic-login__is-fetching-auth': isFetching,
-				} ) }
-				illustration={ illustration }
-				illustrationWidth={ 500 }
-				line={ line }
-				title={ title }
-			/>
+			! isFetching && (
+				<EmptyContent
+					action={ action }
+					className={ classNames( 'magic-login__handle-link', {
+						'magic-login__is-fetching-auth': isFetching,
+					} ) }
+					illustration={ illustration }
+					illustrationWidth={ 500 }
+					line={ line }
+					title={ title }
+				/>
+			)
 		);
 	}
 }
