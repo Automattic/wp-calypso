@@ -150,3 +150,27 @@
 		opacity: 1;
 	}
 }
+
+.comments-tips__action-panel {
+	position: relative;
+	.action-panel__figure {
+		margin-bottom: 0;
+		width: auto;
+	}
+	ul {
+		color: var(--color-neutral-70);
+		line-height: 24px;
+	}
+	.comments-tips__dismiss-button {
+		position: absolute;
+		top: 0;
+		right: 0;
+		padding: 8px;
+		margin: 8px 12px 8px 8px;
+
+		.gridicon {
+			height: 24px;
+			width: 24px;
+		}
+	}
+}

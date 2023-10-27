@@ -45,11 +45,11 @@ const SubscriberDetailsPage = ( {
 		subscriptionId,
 		userId
 	);
-
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
 			siteId: selectedSiteId as number,
-			subscriptionId: subscriptionId || subscriber?.subscription_id,
+			subscriptionId: subscriber?.subscription_id,
+			userId,
 		} );
 
 	const isLoading = isLoadingDetails || isLoadingNewsletterCategories;

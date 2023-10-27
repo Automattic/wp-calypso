@@ -29,7 +29,7 @@ const JetpackManageSidebar = () => {
 			icon: category,
 			path: '/',
 			link: JETPACK_MANAGE_DASHBOARD_LINK,
-			title: translate( 'Sites Management' ),
+			title: translate( 'Sites' ),
 			trackEventProps: {
 				menu_item: 'Jetpack Cloud / Dashboard',
 			},
@@ -38,7 +38,7 @@ const JetpackManageSidebar = () => {
 			icon: plugins,
 			path: '/',
 			link: JETPACK_MANAGE_PLUGINS_LINK,
-			title: translate( 'Plugin Management' ),
+			title: translate( 'Plugins' ),
 			trackEventProps: {
 				menu_item: 'Jetpack Cloud / Plugins',
 			},

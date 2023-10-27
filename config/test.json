@@ -86,6 +86,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
+		"reader/discover-stream": true,
 		"reader/first-posts-stream": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
