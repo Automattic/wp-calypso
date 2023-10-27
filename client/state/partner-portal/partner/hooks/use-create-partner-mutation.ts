@@ -19,6 +19,7 @@ function createPartner( details: PartnerDetailsPayload ): Promise< APIPartner > 
 			postal_code: details.postalCode,
 			state: details.state,
 			tos: details.tos,
+			referrer: details.referrer,
 		},
 	} );
 }

@@ -33,6 +33,7 @@ interface Props {
 	includeTermsOfService?: boolean;
 	isLoading: boolean;
 	onSubmit: ( payload: PartnerDetailsPayload ) => void;
+	referrer?: string;
 	initialValues?: {
 		name?: string;
 		contactPerson?: string;
@@ -55,6 +56,7 @@ export default function CompanyDetailsForm( {
 	initialValues = {},
 	onSubmit,
 	submitLabel,
+	referrer,
 }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
@@ -110,6 +112,7 @@ export default function CompanyDetailsForm( {
 			line2,
 			country,
 			postalCode,
+			referrer,
 			state: addressState,
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
@@ -124,6 +127,7 @@ export default function CompanyDetailsForm( {
 			line2,
 			country,
 			postalCode,
+			referrer,
 			addressState,
 			includeTermsOfService,
 		]

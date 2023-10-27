@@ -162,6 +162,7 @@ export interface PartnerDetailsPayload extends CompanyDetailsPayload {
 	partnerProgramOptIn: boolean;
 	companyType: string;
 	tos?: 'consented';
+	referrer?: string;
 }
 
 /**

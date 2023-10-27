@@ -26,6 +26,10 @@ export default function AgencySignupForm() {
 	const partner = useSelector( getCurrentPartner );
 	const hasFetched = useSelector( hasFetchedPartner );
 	const notificationId = 'partner-portal-agency-signup-form';
+	const queryParams = new URLSearchParams( window.location.search );
+	const refQueryParam = queryParams.get( 'ref' );
+
+	const referrer = refQueryParam === 'agencies-lp' ? 'agencies-lp' : 'manage-lp';
 
 	const createPartner = useCreatePartnerMutation( {
 		onSuccess: ( partner ) => {
@@ -62,6 +66,7 @@ export default function AgencySignupForm() {
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
+					referrer: payload.referrer,
 				} )
 			);
 		},
@@ -76,7 +81,11 @@ export default function AgencySignupForm() {
 	} );
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_agency_signup_start' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_agency_signup_start', {
+				form_referrer_source: referrer,
+			} )
+		);
 	}, [] );
 
 	return (
@@ -113,6 +122,7 @@ export default function AgencySignupForm() {
 					isLoading={ createPartner.isLoading }
 					onSubmit={ onSubmit }
 					submitLabel={ translate( 'Continue' ) }
+					referrer={ referrer }
 				/>
 			) }
 		</Card>
