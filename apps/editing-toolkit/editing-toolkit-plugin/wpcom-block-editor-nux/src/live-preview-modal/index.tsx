@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -60,6 +61,9 @@ export default function LivePreviewModal() {
 
 	const onClose = () => {
 		setIsModalOpen( false );
+		recordTracksEvent( 'calypso_block_theme_live_preview_modal_close_click', {
+			theme: themeSlug,
+		} );
 	};
 
 	const onContinue = () => {
@@ -67,6 +71,10 @@ export default function LivePreviewModal() {
 			suppressModal();
 		}
 		onClose();
+		recordTracksEvent( 'calypso_block_theme_live_preview_modal_continue_click', {
+			do_not_show_again: shouldSuppressModal,
+			theme: themeSlug,
+		} );
 	};
 
 	return (
