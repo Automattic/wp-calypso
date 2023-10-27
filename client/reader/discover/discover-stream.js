@@ -49,6 +49,12 @@ const DiscoverStream = ( props ) => {
 		},
 	} );
 
+	// Add dailyprompt to the front of interestTags if not present.
+	const hasDailyPrompt = interestTags.filter( ( tag ) => tag.slug === 'dailyprompt' ).length;
+	if ( ! hasDailyPrompt ) {
+		interestTags.unshift( { title: translate( 'Daily Prompt' ), slug: 'dailyprompt' } );
+	}
+
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
 	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
