@@ -9,6 +9,7 @@ import { NextButton, SubTitle } from '@automattic/onboarding';
 import { Button, Spinner } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect } from 'react';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -54,8 +55,14 @@ const HostingTrialAcknowledgeInternal = ( { onStartTrialClick }: CallToActionPro
 	const planFeatures =
 		plan && 'getPlanCompareFeatures' in plan ? plan.getPlanCompareFeatures?.() ?? [] : [];
 
+	useEffect( () => {
+		if ( ! isEligible ) {
+			window.location.assign( '/setup/new-hosted-site' );
+		}
+	}, [ isEligible ] );
+
 	if ( ! isEligible ) {
-		return window.location.assign( '/setup/new-hosted-site' );
+		return null;
 	}
 
 	return (
