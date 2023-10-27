@@ -74,7 +74,7 @@ const PageList = ( {
 					<PageListItem label={ translate( 'Homepage' ) } isDisabled />
 				</CompositeItem>
 				{ categoriesInOrder.map( ( { name, label } ) => {
-					const isSelected = name && selectedPages.includes( name );
+					const isSelected = name ? selectedPages.includes( name ) : false;
 					const hasPages = name && pagesMapByCategory[ name ]?.length;
 
 					if ( ! hasPages ) {
