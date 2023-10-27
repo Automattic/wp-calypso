@@ -139,7 +139,6 @@ export async function showDSP(
 	setShowCancelButton?: ( show: boolean ) => void,
 	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string,
-	isV2?: boolean,
 	jetpackVersion?: string,
 	dispatch?: Dispatch
 ) {
@@ -190,7 +189,6 @@ export async function showDSP(
 					  }
 					: undefined,
 				jetpackVersion,
-				isV2,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
 				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch ) : undefined,
 				options: getWidgetOptions(),

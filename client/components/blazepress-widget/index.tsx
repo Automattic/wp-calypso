@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
@@ -9,7 +8,6 @@ import page from 'page';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
-import BlazeLogo from 'calypso/components/blaze-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
@@ -106,7 +104,6 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						handleShowCancel,
 						handleShowTopBar,
 						localeSlug,
-						config.isEnabled( 'promote-post/widget-i2' ),
 						jetpackVersion,
 						dispatch
 					);
@@ -139,51 +136,30 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 		return <></>;
 	}
 
-	const isPromotePostI2 = config.isEnabled( 'promote-post/widget-i2' );
-
 	return (
 		<>
 			{ isVisible && (
 				<BlankCanvas
-					className={ classNames( 'blazepress-widget', {
+					className={ classNames( 'blazepress-widget', 'blazepress-i2', {
 						'hidden-header': hiddenHeader,
-						'blazepress-i2': isPromotePostI2,
 					} ) }
 				>
-					{ isPromotePostI2 ? (
-						<BlankCanvas.Header
-							className={ classNames( 'blazepress-widget__header-bar', {
-								'no-back-button': ! showCancelButton,
-							} ) }
-							onBackClick={ () => {
-								if ( error ) {
-									// Close without dialog if we are displaying the error page (no need to confirmation there)
-									setShowCancelDialog( false );
-									onClose();
-								} else {
-									setShowCancelDialog( true );
-								}
-							} }
-						>
-							<h2>{ translate( 'Blaze - Powered by Jetpack' ) }</h2>
-						</BlankCanvas.Header>
-					) : (
-						<div className="blazepress-widget__header-bar">
-							<BlazeLogo />
-							<h2>{ translate( 'Blaze' ) }</h2>
-							{ showCancelButton && (
-								<span
-									role="button"
-									className="blazepress-widget__cancel"
-									onKeyDown={ () => setShowCancelDialog( true ) }
-									tabIndex={ 0 }
-									onClick={ () => setShowCancelDialog( true ) }
-								>
-									{ translate( 'Cancel' ) }
-								</span>
-							) }
-						</div>
-					) }
+					<BlankCanvas.Header
+						className={ classNames( 'blazepress-widget__header-bar', {
+							'no-back-button': ! showCancelButton,
+						} ) }
+						onBackClick={ () => {
+							if ( error ) {
+								// Close without dialog if we are displaying the error page (no need to confirmation there)
+								setShowCancelDialog( false );
+								onClose();
+							} else {
+								setShowCancelDialog( true );
+							}
+						} }
+					>
+						<h2>{ translate( 'Blaze - Powered by Jetpack' ) }</h2>
+					</BlankCanvas.Header>
 
 					<div className={ classNames( 'blazepress-widget__content', { loading: isLoading } ) }>
 						<Dialog
