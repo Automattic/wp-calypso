@@ -67,6 +67,7 @@ import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { withAsyncToast } from 'calypso/components/with-async-toast';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { resolveDomainStatus } from 'calypso/lib/domains';
@@ -160,7 +161,6 @@ import type {
 } from 'calypso/lib/purchases/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import type { Theme } from 'calypso/types';
-
 import './style.scss';
 
 export interface ManagePurchaseProps {
@@ -1577,7 +1577,9 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		siteId,
 		theme: isPurchaseTheme && siteId && getCanonicalTheme( state, siteId, purchase.meta ?? null ),
 	};
-}, mapDispatchToProps )( localize( ManagePurchase ) );
+}, mapDispatchToProps )(
+	localize( withAsyncToast( { toastKeys: [ 'test-toast' ] } )( ManagePurchase ) )
+);
 
 function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 	return {
