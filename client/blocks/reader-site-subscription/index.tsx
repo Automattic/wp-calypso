@@ -35,7 +35,7 @@ const useHandleSubscriptionNotFoundError = ( transition?: boolean ) => {
 
 		if ( transition ) {
 			dispatch(
-				infoNotice( translate( "We're updating your subscriptions. It should be ready shortly." ), {
+				infoNotice( translate( "We're updating your subscription. It should be ready shortly." ), {
 					displayOnNextPage: true,
 					isPersistent: true,
 				} )
