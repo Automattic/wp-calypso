@@ -9,6 +9,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 	is100Year,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
@@ -143,7 +144,6 @@ class PurchaseNotice extends Component<
 
 	/**
 	 * Returns appropriate warning text for a purchase that is expiring but where the expiration is not imminent.
-	 *
 	 * @param  {Object} purchase  The purchase object
 	 * @param  {Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
 	 * @returns  {string}  Translated text for the warning message.
@@ -307,7 +307,11 @@ class PurchaseNotice extends Component<
 	};
 
 	renderPurchaseExpiringNotice() {
-		const EXCLUDED_PRODUCTS = [ PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ];
+		const EXCLUDED_PRODUCTS = [
+			PLAN_ECOMMERCE_TRIAL_MONTHLY,
+			PLAN_MIGRATION_TRIAL_MONTHLY,
+			PLAN_HOSTING_TRIAL_MONTHLY,
+		];
 		const {
 			moment,
 			purchase,
@@ -1115,7 +1119,8 @@ class PurchaseNotice extends Component<
 
 		if (
 			purchase.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-			purchase.productSlug === PLAN_MIGRATION_TRIAL_MONTHLY
+			purchase.productSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+			purchase.productSlug === PLAN_HOSTING_TRIAL_MONTHLY
 		) {
 			return this.renderTrialNotice( purchase.productSlug );
 		}
