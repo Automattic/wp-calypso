@@ -172,6 +172,8 @@
 		"themes/block-theme-previews": true,
 		"themes/discovery-lits": false,
 		"themes/discovery-lots": false,
+		"themes/discovery-randomize-collections": true,
+		"themes/discovery-randomize-collection-themes": true,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
