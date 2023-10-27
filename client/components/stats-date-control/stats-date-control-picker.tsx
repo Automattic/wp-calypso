@@ -74,7 +74,7 @@ const DateControlPicker = ( {
 	const togglePopoverVisibility = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 
-		if ( popoverOpened ) {
+		if ( ! popoverOpened ) {
 			// record an event for opening the date picker
 			recordTracksEvent( `${ event_from }_stats_date_picker_opened` );
 		}
