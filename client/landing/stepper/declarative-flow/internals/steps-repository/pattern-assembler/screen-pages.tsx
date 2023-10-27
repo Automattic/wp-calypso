@@ -5,7 +5,7 @@ import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 import PageList from './page-list';
-import type { Category, Pattern } from '../types';
+import type { Category, Pattern } from './types';
 
 interface Props {
 	categories: Category[];

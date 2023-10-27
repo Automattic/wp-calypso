@@ -10,11 +10,11 @@ import {
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { usePagesOrder } from './hooks';
-import type { Pattern } from './types';
+import type { Category, Pattern } from './types';
 import './page-list.scss';
 
 interface PageListItemProps {
-	label: string;
+	label?: string;
 	isSelected?: boolean;
 	isDisabled?: boolean;
 }
@@ -74,7 +74,7 @@ const PageList = ( {
 					<PageListItem label={ translate( 'Homepage' ) } isDisabled />
 				</CompositeItem>
 				{ categoriesInOrder.map( ( { name, label } ) => {
-					const isSelected = selectedPages.includes( name );
+					const isSelected = name && selectedPages.includes( name );
 					const hasPages = name && pagesMapByCategory[ name ]?.length;
 
 					if ( ! hasPages ) {
