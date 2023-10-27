@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PatternLargePreview from './pattern-large-preview';
+import type { Pattern } from './types';
 import './pattern-previews-container.scss';
 
 type PatternPreviewsContainerProps = {
