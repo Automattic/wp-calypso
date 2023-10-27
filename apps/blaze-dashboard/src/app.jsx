@@ -16,7 +16,7 @@ import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { setSelectedSiteId, setJetpackVersion } from 'calypso/state/ui/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import fixPath from './lib/fix-path';
 import setLocale from './lib/set-locale';
@@ -54,6 +54,9 @@ async function AppBoot() {
 	// Set selected site ID & current user
 	store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
 	store.dispatch( setCurrentUser( user ) );
+	if ( config.isEnabled( 'jetpack_version' ) ) {
+		store.dispatch( setJetpackVersion( config( 'jetpack_version' ) ) );
+	}
 
 	// Initialize analytics (we use the connected user only if Jetpack returns the user email)
 	const superPropsFn = getSuperProps( store );

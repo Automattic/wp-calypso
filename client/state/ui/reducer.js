@@ -3,6 +3,7 @@ import {
 	SELECTED_SITE_SET,
 	SECTION_LOADING_SET,
 	NOTIFICATIONS_PANEL_TOGGLE,
+	JETPACK_VERSION_SET,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
@@ -69,6 +70,25 @@ export function isNotificationsOpen( state = false, { type } ) {
 	return state;
 }
 
+/**
+ * Store the current version of Jetpack.
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
+ */
+export const jetpackVersion = withSchemaValidation(
+	{ type: [ 'string', 'null' ] },
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case JETPACK_VERSION_SET: {
+				return action.version || null;
+			}
+		}
+
+		return state;
+	}
+);
+
 const reducer = combineReducers( {
 	actionLog,
 	appBannerVisibility,
@@ -85,6 +105,7 @@ const reducer = combineReducers( {
 	section,
 	selectedSiteId,
 	siteSelectionInitialized,
+	jetpackVersion,
 } );
 
 export { reducer };

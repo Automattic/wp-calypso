@@ -62,6 +62,7 @@ declare global {
 					apiRoot: string;
 					headerNonce: string;
 				};
+				jetpackVersion?: string;
 				isV2?: boolean;
 				hotjarSiteSettings?: object;
 				recordDSPEvent?: ( name: string, props?: any ) => void;
@@ -139,6 +140,7 @@ export async function showDSP(
 	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string,
 	isV2?: boolean,
+	jetpackVersion?: string,
 	dispatch?: Dispatch
 ) {
 	await loadDSPWidgetJS();
@@ -187,6 +189,7 @@ export async function showDSP(
 							headerNonce: config( 'nonce' ),
 					  }
 					: undefined,
+				jetpackVersion,
 				isV2,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
 				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch ) : undefined,
