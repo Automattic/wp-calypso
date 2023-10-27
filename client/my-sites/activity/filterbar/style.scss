@@ -112,14 +112,8 @@
 		flex-grow: 1;
 		margin: 0 8px 0 16px;
 
-		.components-text-control__input {
-			border-color: var(--color-neutral-20);
-			font-size: 0.75rem;
-			width: 100%;
-
-			@include break-xlarge {
-				width: 60%;
-			}
+		.search {
+			margin-bottom: 0;
 		}
 	}
 }
