@@ -1,6 +1,6 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { agencySignupBasePath } from 'calypso/lib/jetpack/paths';
+import { agencySignupBasePath, agencySignupLegacyPath } from 'calypso/lib/jetpack/paths';
 import * as controller from './controller';
 
 export default function () {
@@ -11,4 +11,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page( agencySignupLegacyPath(), agencySignupBasePath() );
 }
