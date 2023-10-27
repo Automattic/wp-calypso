@@ -21,8 +21,7 @@ import '../style.scss';
 const ReaderTagSidebar = ( {
 	tag,
 	showFollow,
-	/* eslint-disable no-shadow */
-	registerLastActionRequiresLogin,
+	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
 } ) => {
 	const translate = useTranslate();
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
@@ -54,7 +53,7 @@ const ReaderTagSidebar = ( {
 		if ( ! isLoggedIn ) {
 			recordAction( 'clicked_reader_sidebar_signup' );
 			dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_signup_clicked' ) );
-			registerLastActionRequiresLogin( {
+			registerLastActionRequiresLoginProp( {
 				type: 'sidebar-signup',
 				tag: tag,
 			} );
@@ -72,7 +71,7 @@ const ReaderTagSidebar = ( {
 	const toggleFollowing = () => {
 		const toggleAction = isFollowing ? requestUnfollowTag : requestFollowTag;
 		if ( ! isLoggedIn ) {
-			return registerLastActionRequiresLogin( {
+			return registerLastActionRequiresLoginProp( {
 				type: 'follow-tag',
 				tag: tag,
 			} );

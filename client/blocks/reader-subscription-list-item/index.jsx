@@ -43,8 +43,7 @@ function ReaderSubscriptionListItem( {
 	isFollowing,
 	railcar,
 	isLoggedIn,
-	/* eslint-disable no-shadow */
-	registerLastActionRequiresLogin,
+	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -93,7 +92,7 @@ function ReaderSubscriptionListItem( {
 		recordTitleClick();
 		if ( ! isLoggedIn ) {
 			event.preventDefault();
-			registerLastActionRequiresLogin( {
+			registerLastActionRequiresLoginProp( {
 				type: 'sidebar-link',
 				redirectTo: streamLink,
 			} );
@@ -104,7 +103,7 @@ function ReaderSubscriptionListItem( {
 		recordAvatarClick();
 		if ( ! isLoggedIn ) {
 			event.preventDefault();
-			registerLastActionRequiresLogin( {
+			registerLastActionRequiresLoginProp( {
 				type: 'sidebar-link',
 				redirectTo: streamLink,
 			} );
