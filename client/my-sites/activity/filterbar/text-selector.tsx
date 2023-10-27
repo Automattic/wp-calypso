@@ -31,6 +31,7 @@ const TextSelector: FunctionComponent< Props > = ( { siteId, filter } ) => {
 
 	return (
 		<Search
+			compact
 			delaySearch={ true }
 			hideFocus
 			initialValue={ filter.textSearch || null }
