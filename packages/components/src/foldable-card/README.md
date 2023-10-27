@@ -7,7 +7,7 @@ The component's header contains two adjacent content areas that are set by the `
 ## Usage
 
 ```js
-import FoldableCard from 'calypso/components/foldable-card';
+import { FoldableCard } from '@automattic/components';
 
 function render() {
 	return (

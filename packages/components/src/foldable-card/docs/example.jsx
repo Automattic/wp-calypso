@@ -1,6 +1,6 @@
-import { Button } from '@automattic/components';
+/* eslint-disable no-console */
 import { PureComponent } from 'react';
-import FoldableCard from 'calypso/components/foldable-card';
+import { Button, FoldableCard } from '../..';
 
 export default class FoldableCardExample extends PureComponent {
 	static displayName = 'FoldableCardExample';
@@ -13,13 +13,12 @@ export default class FoldableCardExample extends PureComponent {
 						These are its contents
 					</FoldableCard>
 				</div>
-
 				<div>
 					<FoldableCard
 						header="This is a foldable card with smooth animation"
 						screenReaderText="More"
 						smooth
-						contentExpandedStyle={ { 'max-height': '112px' } }
+						contentExpandedStyle={ { maxHeight: '112px' } }
 					>
 						<div style={ { padding: '16px 16px 0' } }>
 							<p>These are its contents</p>
@@ -27,7 +26,6 @@ export default class FoldableCardExample extends PureComponent {
 						</div>
 					</FoldableCard>
 				</div>
-
 				<div>
 					<FoldableCard
 						header="This is a foldable card with a really long header content area that might wrap depending on the page width of the browser being used to view this page when the summary area is not hidden."
@@ -36,7 +34,6 @@ export default class FoldableCardExample extends PureComponent {
 						These are the card's contents.
 					</FoldableCard>
 				</div>
-
 				<div>
 					<FoldableCard
 						header="This is a foldable card with a really long header content area that might wrap depending on the page width of the browser being used to view this page when the summary area is hidden."
@@ -46,16 +43,17 @@ export default class FoldableCardExample extends PureComponent {
 						These are the card's contents.
 					</FoldableCard>
 				</div>
-
 				<div>
 					<FoldableCard header="This is a compact card" compact screenReaderText="More">
 						I'm tiny! :D
 					</FoldableCard>
 				</div>
 				<div>
-					<FoldableCard header="This is a disabled card" disabled screenReaderText="More">
-						You can't see me!
-					</FoldableCard>
+					<div>
+						<FoldableCard header="This is a disabled card" disabled screenReaderText="More">
+							You can't see me!
+						</FoldableCard>
+					</div>
 				</div>
 				<div>
 					<FoldableCard
@@ -83,25 +81,6 @@ export default class FoldableCardExample extends PureComponent {
 						screenReaderText="More"
 					>
 						This is the main content of the card.
-					</FoldableCard>
-				</div>
-				<div>
-					<FoldableCard
-						header={
-							<div>
-								<div>This is a multiline foldable card</div>
-								<div>
-									<small> with a summary component & a expanded summary component</small>
-								</div>
-							</div>
-						}
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						summary={ <button className="button">Update</button> }
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						expandedSummary={ <button className="button">Update</button> }
-						screenReaderText="More"
-					>
-						Nothing to see here. Keep walking!
 					</FoldableCard>
 				</div>
 				<div>

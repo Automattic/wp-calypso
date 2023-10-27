@@ -49,7 +49,6 @@ const CallToAction = ( { onStartTrialClick }: CallToActionProps ) => {
 const HostingTrialAcknowledgeInternal = ( { onStartTrialClick }: CallToActionProps ) => {
 	const { __ } = useI18n();
 	const plan = getPlan( PLAN_BUSINESS );
-
 	const planFeatures =
 		plan && 'getPlanCompareFeatures' in plan ? plan.getPlanCompareFeatures?.() ?? [] : [];
 

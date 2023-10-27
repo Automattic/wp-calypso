@@ -1,6 +1,5 @@
 import {
 	isMonthly,
-	PLAN_P2_FREE,
 	getPlanClass,
 	planLevelsMatch,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -64,7 +63,7 @@ const PlanFeaturesActionsButton = ( {
 		onUpgradeClick();
 	};
 
-	if ( current && ! isInSignup && planType !== PLAN_P2_FREE ) {
+	if ( current && ! isInSignup ) {
 		return (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				{ canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' ) }

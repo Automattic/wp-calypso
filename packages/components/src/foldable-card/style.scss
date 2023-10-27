@@ -1,10 +1,10 @@
-@import "../../assets/stylesheets/shared/mixins/breakpoints";
-@import "../../assets/stylesheets/shared/mixins/clear-fix";
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
+@import "../styles/clear-fix";
 
 // Multisite
 .foldable-card.card {
-	@include clear-fix;
+	@include a8c-clear-fix;
 	position: relative;
 	transition: margin 0.15s linear;
 	padding: 0;
@@ -89,7 +89,7 @@ button.foldable-card__action {
 	flex: 2 1;
 	margin-right: 5px;
 
-	@include breakpoint-deprecated( "<480px" ) {
+	@media ( max-width: #{ ($break-mobile) } ) {
 		flex: 1 1;
 	}
 }
@@ -100,7 +100,7 @@ button.foldable-card__action {
 	flex: 1 1;
 	justify-content: flex-end;
 
-	@include breakpoint-deprecated( "<480px" ) {
+	@media ( max-width: #{ ($break-mobile) } ) {
 		flex: 0 1;
 	}
 }
@@ -168,7 +168,7 @@ button.foldable-card__action {
 	transition: opacity 0.2s linear;
 	display: inline-block;
 
-	@include breakpoint-deprecated( "<480px" ) {
+	@media ( max-width: #{ ($break-mobile) } ) {
 		display: none;
 	}
 }

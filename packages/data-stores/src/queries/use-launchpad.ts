@@ -119,6 +119,16 @@ export const useLaunchpad = (
 	} );
 };
 
+export const useSortedLaunchpadTasks = (
+	siteSlug: string | null,
+	checklist_slug?: string | 0 | null | undefined
+) => {
+	const launchpadOptions = {
+		onSuccess: sortLaunchpadTasksByCompletionStatus,
+	};
+	return useLaunchpad( siteSlug, checklist_slug, launchpadOptions );
+};
+
 export const updateLaunchpadSettings = (
 	siteSlug: string | number,
 	settings: LaunchpadUpdateSettings = {}

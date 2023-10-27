@@ -2,6 +2,22 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
 
+export type ThemeCollectionDefinition = {
+	query: {
+		collection: string;
+		filter: string;
+		number: number;
+		page: number;
+		search: string;
+		tier: string;
+	};
+	title: string;
+	fullTitle: string;
+	collectionSlug: string;
+	description: JSX.Element | null;
+	seeAllLink: string;
+};
+
 export const THEME_COLLECTIONS = {
 	recommended: {
 		query: {

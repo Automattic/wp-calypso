@@ -26,7 +26,7 @@ export { default as FAQ } from 'calypso/components/faq/docs/example';
 export { default as FeatureGate } from 'calypso/components/feature-example/docs/example';
 export { default as FilePickers } from 'calypso/components/file-picker/docs/example';
 export { default as FocusableExample } from 'calypso/components/focusable/docs/example';
-export { default as FoldableCard } from 'calypso/components/foldable-card/docs/example';
+export { default as FoldableCard } from '@automattic/components/src/foldable-card/docs/example';
 export { default as FormattedDate } from 'calypso/components/formatted-date/docs/example';
 export { default as FormattedHeader } from 'calypso/components/formatted-header/docs/example';
 export { default as FormFields } from 'calypso/components/forms/docs/example';
