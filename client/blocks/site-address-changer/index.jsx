@@ -37,6 +37,7 @@ export class SiteAddressChanger extends Component {
 		currentDomain: PropTypes.object.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		onSiteAddressChanged: PropTypes.func,
+		hasNonWpcomDomains: PropTypes.bool,
 
 		// `connect`ed
 		isSiteAddressChangeRequesting: PropTypes.bool,
@@ -335,8 +336,15 @@ export class SiteAddressChanger extends Component {
 	};
 
 	renderNewAddressForm = () => {
-		const { currentDomain, isAvailable, siteId, selectedSiteSlug, translate, isAtomicSite } =
-			this.props;
+		const {
+			currentDomain,
+			isAvailable,
+			siteId,
+			selectedSiteSlug,
+			translate,
+			isAtomicSite,
+			hasNonWpcomDomains,
+		} = this.props;
 
 		if ( isAtomicSite ) {
 			return (
@@ -384,14 +392,18 @@ export class SiteAddressChanger extends Component {
 				<div className="site-address-changer__info">
 					<p>
 						{ translate(
-							'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
+							'Once you change your site address, %(currentDomainName)s will no longer be available. ',
 							{
 								args: { currentDomainName },
+							}
+						) }
+						{ ! hasNonWpcomDomains &&
+							// ask when user has no custom domains
+							translate( '{{a}}Did you want to add a custom domain instead?{{/a}}', {
 								components: {
 									a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
 								},
-							}
-						) }
+							} ) }
 					</p>
 				</div>
 				<div className="site-address-changer__details">
