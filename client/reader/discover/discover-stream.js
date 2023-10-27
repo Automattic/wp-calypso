@@ -52,7 +52,7 @@ const DiscoverStream = ( props ) => {
 	// Add dailyprompt to the front of interestTags if not present.
 	const hasDailyPrompt = interestTags.filter( ( tag ) => tag.slug === 'dailyprompt' ).length;
 	if ( ! hasDailyPrompt ) {
-		interestTags.unshift( { title: translate( 'Daily Prompt' ), slug: 'dailyprompt' } );
+		interestTags.unshift( { title: translate( 'Daily prompts' ), slug: 'dailyprompt' } );
 	}
 
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
