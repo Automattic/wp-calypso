@@ -271,6 +271,12 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 			credentials.host = host;
 		}
 
+		if ( formState.save_as_staging ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_save_staging' )
+			);
+		}
+
 		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
 		dispatch( updateCredentials( siteId, credentials, true, false ) );
 	}, [ formHasErrors, dispatch, siteId, formState, formMode ] );
@@ -305,7 +311,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				</Button>
 			) }
 			<Button primary onClick={ handleUpdateCredentials } disabled={ disableForm || formHasErrors }>
-				{ isAlternate
+				{ isAlternate && ! formState.save_as_staging
 					? translate( 'Confirm credentials' )
 					: translate( 'Test and save credentials' ) }
 			</Button>

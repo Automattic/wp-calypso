@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -26,15 +27,19 @@ function getCountry( country: string, options: CountryOption[] ): string {
 	return options[ 0 ].value;
 }
 
+const companyTypesEligibleForPartnerProgram = [ 'agency', 'freelancer' ];
+
 interface Props {
 	includeTermsOfService?: boolean;
 	isLoading: boolean;
 	onSubmit: ( payload: PartnerDetailsPayload ) => void;
+	referrer?: string;
 	initialValues?: {
 		name?: string;
 		contactPerson?: string;
 		companyWebsite?: string;
 		companyType?: string;
+		partnerProgramOptIn?: boolean;
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -51,6 +56,7 @@ export default function CompanyDetailsForm( {
 	initialValues = {},
 	onSubmit,
 	submitLabel,
+	referrer,
 }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
@@ -66,9 +72,28 @@ export default function CompanyDetailsForm( {
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
+	const [ partnerProgramOptIn, setPartnerProgramOptIn ] = useState( false );
+
+	const [ showPartnerProgramOptIn, setShowPartnerProgramOptIn ] = useState( false );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
+
+	const handleCompanyTypeChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		const selectedType = event.target.value;
+		setCompanyType( selectedType );
+
+		const isEligibleForPartnerProgram =
+			companyTypesEligibleForPartnerProgram.includes( selectedType );
+		setShowPartnerProgramOptIn( isEligibleForPartnerProgram );
+	};
+
+	useEffect( () => {
+		// reset opt-in setting if ineligible company is selected
+		if ( ! companyTypesEligibleForPartnerProgram.includes( companyType ) ) {
+			setPartnerProgramOptIn( false );
+		}
+	}, [ companyType ] );
 
 	useEffect( () => {
 		// Reset the value of state since our options have changed.
@@ -81,11 +106,13 @@ export default function CompanyDetailsForm( {
 			contactPerson,
 			companyWebsite,
 			companyType,
+			partnerProgramOptIn,
 			city,
 			line1,
 			line2,
 			country,
 			postalCode,
+			referrer,
 			state: addressState,
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
@@ -94,11 +121,13 @@ export default function CompanyDetailsForm( {
 			contactPerson,
 			companyWebsite,
 			companyType,
+			partnerProgramOptIn,
 			city,
 			line1,
 			line2,
 			country,
 			postalCode,
+			referrer,
 			addressState,
 			includeTermsOfService,
 		]
@@ -157,14 +186,14 @@ export default function CompanyDetailsForm( {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Which answer below best describes your company:' ) }</FormLabel>
+					<FormLabel>
+						{ translate( 'Choose which of the below options best describes your company:' ) }
+					</FormLabel>
 					<FormRadio
 						label={ translate( 'Agency' ) }
 						value="agency"
 						checked={ companyType === 'agency' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setCompanyType( event.target.value )
-						}
+						onChange={ handleCompanyTypeChange }
 						disabled={ isLoading }
 						className={ undefined }
 					/>
@@ -172,9 +201,7 @@ export default function CompanyDetailsForm( {
 						label={ translate( 'Freelancer/Pro' ) }
 						value="freelancer"
 						checked={ companyType === 'freelancer' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setCompanyType( event.target.value )
-						}
+						onChange={ handleCompanyTypeChange }
 						disabled={ isLoading }
 						className={ undefined }
 					/>
@@ -182,13 +209,28 @@ export default function CompanyDetailsForm( {
 						label={ translate( 'A business with multiple sites' ) }
 						value="business"
 						checked={ companyType === 'business' }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setCompanyType( event.target.value )
-						}
+						onChange={ handleCompanyTypeChange }
 						disabled={ isLoading }
 						className={ undefined }
 					/>
 				</FormFieldset>
+				{ showPartnerProgramOptIn && (
+					<FormFieldset>
+						<FormLabel htmlFor="partnerProgramOptIn">
+							{ translate( 'Jetpack Agency & Pro Partner program' ) }
+						</FormLabel>
+						<FormInputCheckbox
+							id="partnerProgramOptIn"
+							name="partnerProgramOptIn"
+							checked={ partnerProgramOptIn }
+							disabled={ isLoading }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setPartnerProgramOptIn( event.target.checked )
+							}
+						/>
+						<span>{ translate( 'Sign up for the Jetpack Agency & Pro Partner program' ) }</span>
+					</FormFieldset>
+				) }
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (

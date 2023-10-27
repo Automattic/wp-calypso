@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -228,7 +227,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
-		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
+		enabled: isPreviewingDesign,
 		select: ( design: Design ) => {
 			if ( disableCheckoutImmediately && design?.style_variations ) {
 				design.style_variations = [];
@@ -398,11 +397,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
-	const isEligibleForProPlan = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isEligibleForProPlan( site.ID ),
-		[ site ]
-	);
-
 	const eligibility = useSelector( ( state ) => site && getEligibility( state, site.ID ) );
 
 	const hasEligibilityMessages =
@@ -455,13 +449,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
 		} else {
-			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+			plan = 'premium';
 		}
 
 		// When the user is done with checkout, send them back to the current url
 		// If the theme is externally managed, send them to the marketplace thank you page
 		const destination = selectedDesign?.is_externally_managed
-			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug }?onboarding`, {
+			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug ?? siteSlug }?onboarding`, {
 					themes: selectedDesign?.slug,
 			  } )
 			: window.location.href.replace( window.location.origin, '' );
@@ -827,7 +821,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					}
 					title={ headerDesignTitle }
 					selectedDesignTitle={ designTitle }
-					description={ selectedDesign.description }
+					shortDescription={ selectedDesign.description }
+					description={ selectedDesignDetails?.description }
 					variations={
 						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
 					}

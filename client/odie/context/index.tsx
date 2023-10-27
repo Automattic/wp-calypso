@@ -3,11 +3,10 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import OdieAssistant from '..';
-import useOdieUserTracking from '../trackLocation/useOdieUserTracking';
+import useOdieUserTracking from '../track-location/useOdieUserTracking';
 import { getOdieInitialMessages } from './initial-messages';
 import { getOdieInitialPrompt } from './initial-prompts';
-import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
+import type { OdieUserTracking } from '../track-location/useOdieUserTracking';
 import type { Chat, Context, Message, Nudge, OdieAllowedSectionNames } from '../types';
 import type { ReactNode } from 'react';
 
@@ -38,14 +37,17 @@ interface OdieAssistantContextInterface {
 	isVisible: boolean;
 	lastNudge: Nudge | null;
 	lastUserLocations: OdieUserTracking[];
+	onChatLoaded?: () => void;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessages: ( messages: Message[] ) => void;
+	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setContext: ( context: Context ) => void;
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
+	setOnChatLoaded: ( onChatLoaded: () => void ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 }
 
@@ -61,14 +63,17 @@ const defaultContextInterfaceValues = {
 	isVisible: false,
 	lastNudge: null,
 	lastUserLocations: [],
+	onChatLoaded: noop,
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
 	setMessages: noop,
+	setMessageLikedStatus: noop,
 	setContext: noop,
 	setIsNudging: noop,
 	setIsVisible: noop,
 	setIsLoading: noop,
+	setOnChatLoaded: noop,
 	trackEvent: noop,
 };
 
@@ -103,6 +108,7 @@ const OdieAssistantProvider = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
+	const [ onChatLoaded, setOnChatLoaded ] = useState< () => void >( noop );
 	const [ messages, setMessages ] = useState< Message[] >( [
 		{
 			content: getOdieInitialPrompt( sectionName ),
@@ -144,10 +150,28 @@ const OdieAssistantProvider = ( {
 				...getOdieInitialMessages( botSetting ),
 			],
 		} );
-	}, [ sectionName, siteId, botSetting ] );
+		if ( onChatLoaded ) {
+			onChatLoaded();
+		}
+	}, [ sectionName, siteId, botSetting, onChatLoaded ] );
 
 	const trackEvent = ( event: string, properties?: Record< string, unknown > ) => {
 		dispatch( recordTracksEvent( event, properties ) );
+	};
+
+	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
+		setChat( ( prevChat ) => {
+			const messageIndex = prevChat.messages.findIndex( ( m ) => m === message );
+			const updatedMessage = { ...message, liked };
+			return {
+				...prevChat,
+				messages: [
+					...prevChat.messages.slice( 0, messageIndex ),
+					updatedMessage,
+					...prevChat.messages.slice( messageIndex + 1 ),
+				],
+			};
+		} );
 	};
 
 	const addMessage = ( message: Message ) => {
@@ -170,12 +194,17 @@ const OdieAssistantProvider = ( {
 		} ) );
 	};
 
+	if ( ! odieIsEnabled ) {
+		return <>{ children }</>;
+	}
+
 	return (
 		<OdieAssistantContext.Provider
 			value={ {
 				addMessage,
 				botName,
 				botNameSlug,
+				botSetting,
 				chat,
 				clearChat,
 				isLoadingChat: false,
@@ -184,28 +213,21 @@ const OdieAssistantProvider = ( {
 				isVisible,
 				lastNudge,
 				lastUserLocations,
+				onChatLoaded: noop,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,
 				setMessages,
+				setMessageLikedStatus,
 				setContext: noop,
 				setIsLoading,
 				setIsNudging,
 				setIsVisible,
+				setOnChatLoaded,
 				trackEvent,
-				botSetting,
 			} }
 		>
 			{ children }
-
-			{ odieIsEnabled && (
-				<OdieAssistant
-					botNameSlug={ botNameSlug }
-					isFloatingChatbox={ botSetting !== 'supportDocs' }
-					isSimpleChatbox={ botSetting === 'supportDocs' }
-					isHeaderVisible={ botSetting !== 'supportDocs' }
-				/>
-			) }
 		</OdieAssistantContext.Provider>
 	);
 };

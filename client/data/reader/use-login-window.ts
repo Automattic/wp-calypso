@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { createAccountUrl } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 
 interface UseLoginWindowProps {
 	onLoginSuccess: () => void;
@@ -15,30 +15,28 @@ export default function useLoginWindow( {
 }: UseLoginWindowProps ): UseLoginWindowReturn {
 	const isBrowser: boolean = typeof window !== 'undefined';
 	const environment = config( 'env_id' );
-	let domain = 'wordpress.com';
-	let redirectTo = encodeURIComponent(
-		`https://${ domain }/public.api/connect/?action=verify&service=wordpress`
-	);
-	if ( environment === 'development' ) {
-		domain = 'wpcalypso.wordpress.com';
-		redirectTo = encodeURIComponent(
-			`https://${ domain }/public.api/connect/?action=verify&service=wordpress&domain=${ domain }&origin=${ new URL(
-				window.location.href
-			)?.hostname }`
-		);
-	}
+	const args = {
+		action: 'verify',
+		service: 'wordpress',
+		// When in development, we need to pass an origin to allow the postMessage to know where to send the message.
+		origin: environment === 'development' ? new URL( window.location.href )?.hostname : undefined,
+	};
 
-	const loginURL = `https://wordpress.com/log-in?redirect_to=${ redirectTo }`;
-	const createAccountURL = `https://wordpress.com${ createAccountUrl( {
-		redirectTo: redirectTo,
-		ref: 'reader-lw',
-	} ) }`;
+	const redirectTo = addQueryArgs( args, 'https://wordpress.com/public.api/connect/' );
+	const loginURL = addQueryArgs( { redirect_to: redirectTo }, 'https://wordpress.com/log-in' );
+	const createAccountURL = addQueryArgs(
+		{
+			redirect_to: redirectTo,
+			ref: 'reader-lp',
+		},
+		'https://wordpress.com/start/account'
+	);
 	const windowFeatures =
 		'status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=1,scrollbars=0,height=980,width=500';
 	const windowName = 'CalypsoLogin';
 
 	const waitForLogin = ( event: MessageEvent ) => {
-		if ( event.origin !== `https://${ domain }` ) {
+		if ( 'https://wordpress.com' !== event?.origin ) {
 			return;
 		}
 

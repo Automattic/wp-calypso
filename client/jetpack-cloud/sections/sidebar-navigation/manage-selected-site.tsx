@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
+import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import {
 	settingsPath,
@@ -25,6 +26,8 @@ import {
 } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -48,6 +51,7 @@ const useMenuItems = ( {
 	isAgency: boolean;
 } ) => {
 	const translate = useTranslate();
+
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
@@ -171,6 +175,8 @@ const useMenuItems = ( {
 
 const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const siteId = useSelector( getSelectedSiteId );
 	const isAgency = useSelector( isAgencyUser );
 	const menuItems = useMenuItems( { siteId, isAgency, path } );
@@ -187,10 +193,36 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 						? {
 								label: translate( 'Site Settings' ),
 								icon: chevronLeft,
-								onClick: () => redirectPage( '/dashboard' ),
+								onClick: () => {
+									dispatch(
+										recordTracksEvent( 'calypso_jetpack_sidebar_site_settings_back_button_click' )
+									);
+									redirectPage( '/dashboard' );
+								},
 						  }
 						: undefined
 				}
+			/>
+
+			<GuidedTour
+				className="jetpack-cloud-sidebar__guided-tour"
+				preferenceName="jetpack-cloud-sidebar-v2-managed-selected-site-tour"
+				tours={ [
+					isAgency
+						? {
+								target: '.components-navigator-back-button svg',
+								popoverPosition: 'bottom left',
+								title: translate( 'Back to Sites' ),
+								description: translate(
+									'Click here when you want to return to managing all of your sites.'
+								),
+						  }
+						: {
+								target: '.jetpack-cloud-sidebar__header .site-icon',
+								title: translate( 'Switch Sites Easily' ),
+								description: translate( 'Here you can navigate between your different sites.' ),
+						  },
+				] }
 			/>
 		</>
 	);

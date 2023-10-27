@@ -106,7 +106,7 @@ export class LoginLinks extends Component {
 	};
 
 	recordSignUpLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click' );
+		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-links' } );
 	};
 
 	getLoginLinkPageUrl = () => {

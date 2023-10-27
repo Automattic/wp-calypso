@@ -2,6 +2,7 @@
 
 @use "sass:math";
 @import "@automattic/components/src/highlight-cards/variables.scss";
+@import "@wordpress/base-styles/breakpoints";
 
 $stats-background-color: #fdfdfd;
 $stats-sections-max-width: 1224px;
@@ -23,7 +24,6 @@ $sidebar-appearance-break-point: 783px;
 	> .highlight-cards,
 	> .stats__all-time-highlights-section,
 	> .stats__all-time-views-section,
-	> .stats__post-detail-highlights-section,
 	> .stats__post-detail-table-section,
 	> .stats__gmb-location-wrapper,
 	> .subscribers-page {
@@ -35,7 +35,7 @@ $sidebar-appearance-break-point: 783px;
 	> * {
 		padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 
-		@media ( max-width: $custom-mobile-breakpoint ) {
+		@media ( max-width: $break-small ) {
 			padding-left: 0;
 			padding-right: 0;
 		}
@@ -46,8 +46,24 @@ $sidebar-appearance-break-point: 783px;
 		margin-bottom: 32px;
 	}
 
-	&.has-fixed-nav {
-		padding-top: 44px;
+	.navigation-header {
+		margin-bottom: 0;
+		padding-bottom: 24px;
+		background-color: var(--studio-white);
+
+		@media ( max-width: $break-small ) {
+			margin-bottom: 0;
+		}
+		@media ( min-width: $break-small ) {
+			padding-left: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+			padding-right: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+		}
+	}
+	.navigation-header__main {
+		@media ( min-width: $break-small ) and ( max-width: $custom-mobile-breakpoint ) {
+			padding-left: 0.825em;
+			padding-right: 0.825em;
+		}
 	}
 }
 

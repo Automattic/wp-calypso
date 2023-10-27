@@ -5,15 +5,14 @@ export enum CampaignStatus {
 	'finished',
 }
 
-export const AudienceListKeys = {
-	topics: 'topics',
-	countries: 'countries',
-	devices: 'devices',
-	OSs: 'OSs',
-};
-
 export type AudienceList = {
-	[ key in keyof typeof AudienceListKeys ]: string;
+	devices: string;
+	cities: string;
+	states: string;
+	regions: string;
+	countries: string;
+	topics: string;
+	languages: string;
 };
 
 export type Campaign = {

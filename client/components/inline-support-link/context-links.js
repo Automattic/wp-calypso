@@ -42,6 +42,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/comments/',
 		post_id: 113,
 	},
+	dashboard: {
+		link: 'https://wordpress.com/support/dashboard/',
+		post_id: 137,
+	},
 	discussion: {
 		link: 'https://wordpress.com/support/settings/discussion-settings/',
 		post_id: 1504,
@@ -67,8 +71,8 @@ const contextLinks = {
 		post_id: 2087,
 	},
 	'export-media-library': {
-		link: 'https://wordpress.com/support/export/#exporting-the-media-library',
-		post_id: 2087,
+		link: 'https://wordpress.com/support/export-your-media-library',
+		post_id: 278472,
 	},
 	followers: {
 		link: 'https://wordpress.com/support/followers/',
@@ -289,6 +293,14 @@ const contextLinks = {
 	'site-monitoring': {
 		link: 'https://wordpress.com/support/site-monitoring/',
 		post_id: 259521,
+	},
+	'subscriptions-and-newsletters': {
+		link: 'https://wordpress.com/support/subscriptions-and-newsletters/',
+		post_id: 67810,
+	},
+	'featured-images': {
+		link: 'https://wordpress.com/support/featured-images/',
+		post_id: 5259,
 	},
 };
 

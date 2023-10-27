@@ -58,6 +58,7 @@ export interface PlansGridProps {
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	currentPlanManageHref?: string;
 	canUserManageCurrentPlan?: boolean | null;
+	showRefundPeriod?: boolean;
 }
 
 const WrappedComparisonGrid = ( {
@@ -79,6 +80,7 @@ const WrappedComparisonGrid = ( {
 	onStorageAddOnClick,
 	currentPlanManageHref,
 	canUserManageCurrentPlan,
+	...otherProps
 }: PlansGridProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
@@ -108,6 +110,7 @@ const WrappedComparisonGrid = ( {
 					showLegacyStorageFeature={ showLegacyStorageFeature }
 					showUpgradeableStorage={ showUpgradeableStorage }
 					onStorageAddOnClick={ onStorageAddOnClick }
+					{ ...otherProps }
 				/>
 			</PlansGridContextProvider>
 		);
@@ -136,6 +139,7 @@ const WrappedComparisonGrid = ( {
 					showLegacyStorageFeature={ showLegacyStorageFeature }
 					showUpgradeableStorage={ showUpgradeableStorage }
 					onStorageAddOnClick={ onStorageAddOnClick }
+					{ ...otherProps }
 				/>
 			</CalypsoShoppingCartProvider>
 		</PlansGridContextProvider>

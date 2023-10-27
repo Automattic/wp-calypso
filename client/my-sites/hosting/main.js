@@ -53,8 +53,8 @@ import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
+import SiteAdminInterfaceCard from './site-admin-interface-card';
 import SiteBackupCard from './site-backup-card';
-import SiteWpAdminCard from './site-wp-admin-card';
 import StagingSiteCard from './staging-site-card';
 import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
 import SupportCard from './support-card';
@@ -149,7 +149,7 @@ const MainCards = ( {
 		isYoloWpAdminFeatureDevelopment
 			? {
 					feature: 'wp-admin',
-					content: <SiteWpAdminCard />,
+					content: <SiteAdminInterfaceCard />,
 					type: 'basic',
 			  }
 			: null,

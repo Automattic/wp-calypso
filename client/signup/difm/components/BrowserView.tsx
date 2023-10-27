@@ -12,11 +12,14 @@ import {
 	HOME_PAGE,
 	NEWSLETTER_PAGE,
 	PHOTO_GALLERY_PAGE,
+	PORTFOLIO_PAGE,
 	PRICING_PAGE,
 	type PageId,
+	SERVICES_PAGE,
 	SHOP_PAGE,
 	TEAM_PAGE,
 	TESTIMONIALS_PAGE,
+	VIDEO_GALLERY_PAGE,
 } from 'calypso/signup/difm/constants';
 import aboutPage from 'calypso/signup/difm/images/page-descriptions/about-page.svg';
 import blogPage from 'calypso/signup/difm/images/page-descriptions/blog-page.svg';
@@ -28,9 +31,12 @@ import faqPage from 'calypso/signup/difm/images/page-descriptions/faq-page.svg';
 import homePage from 'calypso/signup/difm/images/page-descriptions/home-page.svg';
 import newsletter from 'calypso/signup/difm/images/page-descriptions/newsletter.svg';
 import photoGallery from 'calypso/signup/difm/images/page-descriptions/photo-gallery.svg';
+import portfolio from 'calypso/signup/difm/images/page-descriptions/portfolio.svg';
 import pricingPage from 'calypso/signup/difm/images/page-descriptions/pricing-page.svg';
+import services from 'calypso/signup/difm/images/page-descriptions/service-showcase.svg';
 import teamPage from 'calypso/signup/difm/images/page-descriptions/team-page.svg';
 import testimonials from 'calypso/signup/difm/images/page-descriptions/testimonials.svg';
+import videoGallery from 'calypso/signup/difm/images/page-descriptions/video-gallery.svg';
 import threeDots from 'calypso/signup/difm/images/three-dots.svg';
 
 const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
@@ -124,41 +130,26 @@ const SelectedCount = styled.div`
 	bottom: 5px;
 `;
 
-const getPageImage = ( pageId: PageId ) => {
-	switch ( pageId ) {
-		case ABOUT_PAGE:
-			return aboutPage;
-		case BLOG_PAGE:
-			return blogPage;
-		case CONTACT_PAGE:
-			return contactPage;
-		case HOME_PAGE:
-			return homePage;
-		case PHOTO_GALLERY_PAGE:
-		case SHOP_PAGE:
-			return photoGallery;
-		case TESTIMONIALS_PAGE:
-			return testimonials;
-		case PRICING_PAGE:
-			return pricingPage;
-		case FAQ_PAGE:
-		case CAREERS_PAGE:
-			return faqPage;
-		case TEAM_PAGE:
-			return teamPage;
-		case EVENTS_PAGE:
-			return eventsPage;
-		case CASE_STUDIES_PAGE:
-			return caseStudies;
-		case DONATE_PAGE:
-			return donate;
-		case NEWSLETTER_PAGE:
-			return newsletter;
-		case CUSTOM_PAGE:
-			return null;
-		default:
-			return homePage;
-	}
+const pageIdToThumbnailImageMap: Record< PageId, string | null > = {
+	[ ABOUT_PAGE ]: aboutPage,
+	[ BLOG_PAGE ]: blogPage,
+	[ CONTACT_PAGE ]: contactPage,
+	[ HOME_PAGE ]: homePage,
+	[ PHOTO_GALLERY_PAGE ]: photoGallery,
+	[ SHOP_PAGE ]: photoGallery,
+	[ TESTIMONIALS_PAGE ]: testimonials,
+	[ PRICING_PAGE ]: pricingPage,
+	[ FAQ_PAGE ]: faqPage,
+	[ TEAM_PAGE ]: teamPage,
+	[ VIDEO_GALLERY_PAGE ]: videoGallery,
+	[ PORTFOLIO_PAGE ]: portfolio,
+	[ SERVICES_PAGE ]: services,
+	[ CUSTOM_PAGE ]: null,
+	[ CAREERS_PAGE ]: faqPage,
+	[ EVENTS_PAGE ]: eventsPage,
+	[ DONATE_PAGE ]: donate,
+	[ NEWSLETTER_PAGE ]: newsletter,
+	[ CASE_STUDIES_PAGE ]: caseStudies,
 };
 
 export function BrowserView( {
@@ -175,7 +166,7 @@ export function BrowserView( {
 	onClick: () => void;
 } ) {
 	const selectionProps = { isSelected, isClickDisabled };
-	const imageSrc = getPageImage( pageId );
+	const imageSrc = pageIdToThumbnailImageMap[ pageId ];
 	return (
 		<Container { ...selectionProps } onClick={ onClick }>
 			{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }

@@ -33,12 +33,8 @@ export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 export const DOMAIN_TRANSFER = 'domain-transfer';
 export const GOOGLE_TRANSFER = 'google-transfer';
-export const ONBOARDING_PM_FLOW = 'onboarding-media';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 
-export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {
-	return Boolean( flowName && flowName === ONBOARDING_PM_FLOW );
-};
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
 		flowName &&

@@ -582,9 +582,7 @@ export const getJetpackProductDisclaimers = (
 
 	/* Checks if any slugs of featues on the current Product match a set of slugs provided to this function. This determines whether or not to show the disclaimer based on whether the features the disclaimer is for is present */
 	const doesProductHaveCompatibleSlug = ( slugsToCheckFor: string[] ) => {
-		const combinedFeatureSlugs = featureSlugs.concat( slugsToCheckFor );
-
-		return new Set( combinedFeatureSlugs ).size !== combinedFeatureSlugs.length;
+		return slugsToCheckFor.some( ( slug ) => featureSlugs.includes( slug ) );
 	};
 
 	const getLink = () => {
@@ -620,6 +618,9 @@ export const getJetpackProductDisclaimers = (
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_COMPLETE ]: backupDisclaimer,
+		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorDisclaimer,
 		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorDisclaimer,
 	};
@@ -1006,8 +1007,8 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		}
 	);
 
-	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
-	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive', {
+	const backupIncludesInfoT1Log = translate( '30-day activity log archive *' );
+	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive *', {
 		components: {
 			strong: <strong />,
 		},
@@ -1074,18 +1075,46 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Supports 38 languages' ),
 		translate( 'Quick and accurate spelling correction' ),
 	];
+
+	const boostPremiumFeatureComponents = {
+		div: <div className="premium-feature" />,
+		strong: <span className="premium-feature-title" />,
+		badge: <span style={ { display: 'none' } } className="premium-feature-badge" />,
+	};
+
 	const boostIncludesInfo = [
-		translate( '{{strong}}Automated critical CSS (Premium){{/strong}}', {
-			components: {
-				strong: <strong />,
-			},
+		translate(
+			'{{div}}{{strong}}Automated critical CSS generation{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Reduce image sizes with Image Guide{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Historical site performance chart{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Additional image quality control options{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate( '{{div}}{{strong}}Priority support{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}', {
+			components: boostPremiumFeatureComponents,
 		} ),
 		translate( 'Site performance scores' ),
 		translate( 'One-click optimization' ),
 		translate( 'Defer non-essential JavaScript' ),
 		translate( 'Optimize CSS loading' ),
 		translate( 'Lazy image loading' ),
-		translate( 'Image Guide to discover and fix large images on your site' ),
 	];
 	const socialBasicIncludesInfo = [
 		translate( 'Automatically share your posts and products on social media' ),
@@ -1520,7 +1549,7 @@ export const getJetpackProductsFAQs = (
 
 	const backupFAQs: Array< FAQ > = [
 		{
-			id: 'backup-storage-limits',
+			id: 'backup-storage-limits-lightbox',
 			question: translate( 'How do backup storage limits work?' ),
 			answer: translate(
 				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to %(monthlyDays)d days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.',

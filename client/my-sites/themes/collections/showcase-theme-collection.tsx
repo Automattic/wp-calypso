@@ -1,7 +1,10 @@
+import config from '@automattic/calypso-config';
 import { ReactElement } from 'react';
-import QueryThemes from 'calypso/components/data/query-themes';
+import { useQueryThemes } from 'calypso/components/data/query-themes';
+import Theme from 'calypso/components/theme';
 import ThemeCollection from 'calypso/components/theme-collection';
 import ThemeCollectionItem from 'calypso/components/theme-collection/theme-collection-item';
+import ThemeCollectionPlaceholder from 'calypso/components/theme-collection/theme-collection-placeholder';
 import { ThemeBlock } from 'calypso/components/themes-list';
 import { ThemeCollectionsLayoutProps } from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import {
@@ -12,10 +15,28 @@ import {
 interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
 	collectionSlug: string;
 	title: string;
-	description: ReactElement;
+	description: ReactElement | null;
 	query: ThemesQuery;
 	onSeeAll: () => void;
 }
+
+type Theme = {
+	id: string;
+};
+
+const sortedThemes: Map< string, Array< Theme > > = new Map();
+
+const cacheThemes = ( collectionSlug: string, themes: Array< Theme > ) => {
+	sortedThemes.set(
+		collectionSlug,
+		config.isEnabled( 'themes/discovery-randomize-collection-themes' )
+			? themes.sort( () => Math.random() - 0.5 )
+			: themes
+	);
+};
+
+const getCachedThemes = ( collectionSlug: string ): Array< Theme > =>
+	sortedThemes.get( collectionSlug ) ?? [];
 
 export default function ShowcaseThemeCollection( {
 	collectionSlug,
@@ -27,19 +48,26 @@ export default function ShowcaseThemeCollection( {
 	title,
 	onSeeAll,
 }: ShowcaseThemeCollectionProps ): ReactElement {
+	useQueryThemes( 'wpcom', query );
 	const { getPrice, themes, isActive, isInstalling, siteId } = useThemeCollection( query );
+	let themeList = getCachedThemes( collectionSlug );
+
+	if ( ! themeList.length && themes ) {
+		// We slice the array to the expected length to avoid some caching issues.
+		cacheThemes( collectionSlug, themes.slice( 0, query.number ) );
+		themeList = getCachedThemes( collectionSlug );
+	}
 
 	return (
 		<>
-			<QueryThemes query={ query } siteId="wpcom" />
 			<ThemeCollection
 				collectionSlug={ collectionSlug }
 				title={ title }
 				description={ description }
 				onSeeAll={ onSeeAll }
 			>
-				{ themes &&
-					themes.map( ( theme, index ) => (
+				{ themeList.length > 0 ? (
+					themeList.map( ( theme: Theme, index: number ) => (
 						<ThemeCollectionItem key={ theme.id }>
 							<ThemeBlock
 								getActionLabel={ getActionLabel }
@@ -53,7 +81,10 @@ export default function ShowcaseThemeCollection( {
 								theme={ theme }
 							/>
 						</ThemeCollectionItem>
-					) ) }
+					) )
+				) : (
+					<ThemeCollectionPlaceholder items={ 3 } />
+				) }
 			</ThemeCollection>
 		</>
 	);

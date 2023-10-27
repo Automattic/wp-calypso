@@ -1,9 +1,9 @@
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
@@ -29,7 +29,6 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	const module = 'emails';
 	const title = translate( 'Emails' );
 
-	// Set up for FixedNavigationHeader.
 	const domain = siteSlug;
 	if ( domain?.length > 0 ) {
 		backLink += domain;
@@ -42,7 +41,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 				path={ `/stats/${ module }/:site` }
 				title={ `Stats > ${ titlecase( module ) }` }
 			/>
-			<FixedNavigationHeader navigationItems={ navigationItems } />
+			<NavigationHeader navigationItems={ navigationItems } />
 
 			<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 				<div className="stats-summary-nav__header">

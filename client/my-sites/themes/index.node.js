@@ -20,13 +20,14 @@ export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
 	const showcaseRoutes = [
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?`,
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/filter/:filter`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|recommended)?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|recommended)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
 	];
+
 	router(
 		showcaseRoutes,
 		ssrSetupLocale,

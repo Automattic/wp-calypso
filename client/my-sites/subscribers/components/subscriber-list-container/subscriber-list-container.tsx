@@ -25,21 +25,26 @@ const SubscriberListContainer = ( {
 
 	return (
 		<section className="subscriber-list-container">
-			<div className="subscriber-list-container__header">
-				<span className="subscriber-list-container__title">
-					{ translate( 'Total', {
-						context: 'Total number of subscribers',
-					} ) }
-				</span>{ ' ' }
-				<span
-					className={ `subscriber-list-container__subscriber-count ${
-						isLoading ? 'loading-placeholder' : ''
-					}` }
-				>
-					{ numberFormat( total, 0 ) }
-				</span>
-			</div>
-			<SubscriberListActionsBar />
+			{ ! isLoading && Boolean( grandTotal ) && (
+				<>
+					<div className="subscriber-list-container__header">
+						<span className="subscriber-list-container__title">
+							{ translate( 'Total', {
+								context: 'Total number of subscribers',
+							} ) }
+						</span>{ ' ' }
+						<span
+							className={ `subscriber-list-container__subscriber-count ${
+								isLoading ? 'loading-placeholder' : ''
+							}` }
+						>
+							{ numberFormat( total, 0 ) }
+						</span>
+					</div>
+
+					<SubscriberListActionsBar />
+				</>
+			) }
 			{ isLoading &&
 				new Array( 10 ).fill( null ).map( ( _, index ) => (
 					<div key={ index } data-ignored={ _ }>

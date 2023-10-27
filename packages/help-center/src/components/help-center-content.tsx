@@ -13,11 +13,11 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { BackButton } from '..';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
 import { HelpCenterEmbedResult } from './help-center-embed-result';
+import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -69,14 +69,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 				<Route
 					path="/odie"
 					element={
-						<div className="help-center__container-content-odie">
-							<BackButton className="help-center__container-odie-back-button" />
-							<OdieAssistantProvider
-								sectionName="help-center"
-								botSetting="supportDocs"
-								botName="Wapuu"
-							/>
-						</div>
+						<OdieAssistantProvider
+							sectionName="help-center"
+							botSetting="supportDocs"
+							botName="Wapuu"
+						>
+							<HelpCenterOdie />
+						</OdieAssistantProvider>
 					}
 				/>
 			</Routes>

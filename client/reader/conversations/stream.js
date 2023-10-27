@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import ConversationsEmptyContent from 'calypso/blocks/conversations/empty';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Stream from 'calypso/reader/stream';
 import ConversationsIntro from './intro';
 import './stream.scss';
@@ -28,13 +28,10 @@ export default function ( props ) {
 
 	return (
 		<>
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Conversations' ) }
-				subHeaderText={ translate( 'Monitor all of your ongoing discussions.' ) }
-				align="left"
-				hasScreenOptions
-				className="conversations-stream-header"
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Conversations' ) }
+				subtitle={ translate( 'Monitor all of your ongoing discussions.' ) }
 			/>
 			<Stream
 				key="conversations"

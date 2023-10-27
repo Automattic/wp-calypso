@@ -104,6 +104,7 @@ const getSubscriptionMutationParams = (
 			body: {
 				source: 'calypso',
 				...( isSubscriptionIdValid ? { sub_id: subscriptionId } : { url } ),
+				...( emailId ? { email_id: emailId } : {} ),
 			},
 		};
 	}

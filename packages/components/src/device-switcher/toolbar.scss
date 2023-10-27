@@ -3,13 +3,13 @@
 
 .device-switcher__toolbar {
 	display: none;
+	flex: 1;
 
 	.device-switcher__toolbar-devices {
 		align-items: center;
 		display: flex;
 		height: 58px;
 		gap: 18px;
-		margin-bottom: 13px;
 		justify-content: center;
 
 		> button {

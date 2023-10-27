@@ -1,15 +1,13 @@
 import styled from '@emotion/styled';
+import classnames from 'classnames';
 import React, { ReactNode } from 'react';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import FormattedHeader from '../formatted-header';
 
 import './style.scss';
 
 const Container = styled.div`
-	@media ( max-width: 660px ) {
-		min-height: 60px;
-	}
-
 	.main.is-wide-layout & {
 		max-width: 1040px;
 		margin: auto;
@@ -22,22 +20,17 @@ const Container = styled.div`
 	}
 `;
 
-const ActionsContainer = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 16px;
-`;
-
 interface Props {
 	id?: string;
 	className?: string;
 	children?: ReactNode;
-	navigationItems: TBreadcrumbItem[];
+	navigationItems?: TBreadcrumbItem[];
 	mobileItem?: TBreadcrumbItem;
 	compactBreadcrumb?: boolean;
 	title?: string | ReactNode;
 	subtitle?: string | ReactNode;
 	screenReader?: string | ReactNode;
+	screenOptionsTab?: string;
 }
 
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
@@ -51,11 +44,21 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		title,
 		subtitle,
 		screenReader,
+		screenOptionsTab,
 	} = props;
 	return (
-		<header id={ id } className={ 'navigation-header ' + className } ref={ ref }>
+		<header
+			id={ id }
+			className={ classnames(
+				className,
+				'navigation-header',
+				screenOptionsTab && children ? 'navigation-header__screen-options-tab' : ''
+			) }
+			ref={ ref }
+		>
 			<Container>
 				<div className="navigation-header__main">
+					{ screenOptionsTab && <ScreenOptionsTab wpAdminPath={ screenOptionsTab } /> }
 					<Breadcrumb
 						items={ navigationItems }
 						mobileItem={ mobileItem }
@@ -67,10 +70,11 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 							align="left"
 							headerText={ title }
 							subHeaderText={ subtitle }
+							tooltipText={ subtitle }
 							screenReader={ screenReader }
 						/>
 					) }
-					<ActionsContainer>{ children }</ActionsContainer>
+					<div className="navigation-header__actions">{ children }</div>
 				</div>
 			</Container>
 		</header>

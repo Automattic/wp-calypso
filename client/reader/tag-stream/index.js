@@ -10,7 +10,7 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-embed-page';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { tagListing } from './controller';
 

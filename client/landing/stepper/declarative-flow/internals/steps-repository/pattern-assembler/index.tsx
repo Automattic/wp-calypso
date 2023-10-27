@@ -30,6 +30,7 @@ import {
 	useDotcomPatterns,
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
+	usePages,
 	usePatternCategories,
 	usePatternsMapByCategory,
 	useRecipe,
@@ -44,6 +45,7 @@ import ScreenColorPalettes from './screen-color-palettes';
 import ScreenConfirmation from './screen-confirmation';
 import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
+import ScreenPages from './screen-pages';
 import ScreenPatternListPanel from './screen-pattern-list-panel';
 import ScreenSections from './screen-sections';
 import ScreenStyles from './screen-styles';
@@ -96,7 +98,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		() => dotcomPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ dotcomPatterns ]
 	);
-	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns, categories );
+	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns );
 	const {
 		header,
 		footer,
@@ -142,6 +144,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
 		[ colorVariation, fontVariation ]
 	);
+
+	const { pages, setPages } = usePages();
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
@@ -510,6 +514,16 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		} );
 	};
 
+	const onScreenPagesSelect = ( page: string ) => {
+		if ( pages.includes( page ) ) {
+			setPages( pages.filter( ( item ) => item !== page ) );
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_REMOVE_PAGE, { page } );
+		} else {
+			setPages( [ ...pages, page ] );
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_ADD_PAGE, { page } );
+		}
+	};
+
 	if ( ! site?.ID || ! selectedDesign ) {
 		return null;
 	}
@@ -547,6 +561,15 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						recordTracksEvent={ recordTracksEvent }
 						hasColor={ !! colorVariation }
 						hasFont={ !! fontVariation }
+					/>
+				</NavigatorScreen>
+
+				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
+					<ScreenPages
+						selectedPages={ pages }
+						onSelect={ onScreenPagesSelect }
+						onContinueClick={ onContinue }
+						recordTracksEvent={ recordTracksEvent }
 					/>
 				</NavigatorScreen>
 
@@ -628,7 +651,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	return (
 		<StepContainer
-			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
 			stepSectionName={ currentScreen.name }
 			backLabelText={
