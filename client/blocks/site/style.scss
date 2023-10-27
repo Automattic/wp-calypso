@@ -143,11 +143,12 @@
 
 .site__title-with-chevron-icon {
 	display: flex;
+	align-items: center;
 
 	.site__title {
 		position: relative;
-		flex: 1;
 	}
+
 	.site__title-chevron-icon {
 		color: var(--color-text);
 		margin-inline-start: 12px;

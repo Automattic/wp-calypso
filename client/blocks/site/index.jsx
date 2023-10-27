@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
-import { layout } from '@wordpress/icons';
+import { Icon, chevronDown, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -49,7 +49,7 @@ class Site extends Component {
 		homeLink: false,
 		// if homeLink is enabled
 		showHomeIcon: true,
-		showChevronIcon: false,
+		showChevronDownIcon: false,
 		compact: false,
 
 		isP2Hub: false,
@@ -73,7 +73,7 @@ class Site extends Component {
 		siteId: PropTypes.number,
 		homeLink: PropTypes.bool,
 		showHomeIcon: PropTypes.bool,
-		showChevronIcon: PropTypes.bool,
+		showChevronDownIcon: PropTypes.bool,
 		compact: PropTypes.bool,
 		isP2Hub: PropTypes.bool,
 		isSiteP2: PropTypes.bool,
@@ -196,13 +196,13 @@ class Site extends Component {
 						size={ this.props.compact ? 24 : this.props.isReskinned ? 50 : 32 }
 					/>
 					<div className="site__info">
-						{ ! this.props.showChevronIcon ? (
+						{ ! this.props.showChevronDownIcon ? (
 							<div className="site__title">{ site.title }</div>
 						) : (
 							<div className="site__title-with-chevron-icon">
 								<span className="site__title">{ site.title }</span>
 								<span className="site__title-chevron-icon">
-									<Gridicon icon="chevron-right" size={ 18 } />
+									<Icon icon={ chevronDown } size={ 24 } />
 								</span>
 							</div>
 						) }

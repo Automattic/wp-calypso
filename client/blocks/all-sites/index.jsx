@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
-import { Count, Gridicon } from '@automattic/components';
+import { Count } from '@automattic/components';
 import styled from '@emotion/styled';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -38,7 +39,7 @@ class AllSites extends Component {
 		isHighlighted: false,
 		showCount: true,
 		showIcon: false,
-		showChevronIcon: false,
+		showChevronDownIcon: false,
 		domain: '',
 	};
 
@@ -49,7 +50,7 @@ class AllSites extends Component {
 		isHighlighted: PropTypes.bool,
 		showCount: PropTypes.bool,
 		showIcon: PropTypes.bool,
-		showChevronIcon: PropTypes.bool,
+		showChevronDownIcon: PropTypes.bool,
 		count: PropTypes.number,
 		icon: PropTypes.node,
 		title: PropTypes.string,
@@ -83,7 +84,7 @@ class AllSites extends Component {
 			isSelected,
 			showCount,
 			showIcon,
-			showChevronIcon,
+			showChevronDownIcon,
 		} = this.props;
 
 		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
@@ -107,12 +108,8 @@ class AllSites extends Component {
 					<div className="all-sites__info site__info">
 						<span className="all-sites__title site__title">
 							{ title || translate( 'All My Sites' ) }
-							{ showChevronIcon && (
-								<Gridicon
-									className="all-sites__title-chevron-icon"
-									icon="chevron-down"
-									size={ 18 }
-								/>
+							{ showChevronDownIcon && (
+								<Icon icon={ chevronDown } className="all-sites__title-chevron-icon" size={ 24 } />
 							) }
 						</span>
 						{ domain && <span className="all-sites__domain site__domain">{ domain }</span> }
