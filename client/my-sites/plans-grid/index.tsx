@@ -80,6 +80,7 @@ const WrappedComparisonGrid = ( {
 	onStorageAddOnClick,
 	currentPlanManageHref,
 	canUserManageCurrentPlan,
+	isVisible,
 	...otherProps
 }: PlansGridProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
@@ -96,6 +97,7 @@ const WrappedComparisonGrid = ( {
 				allFeaturesList={ allFeaturesList }
 			>
 				<ComparisonGrid
+					isVisible={ isVisible }
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
