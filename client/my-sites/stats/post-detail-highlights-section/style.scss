@@ -1,9 +1,13 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/highlight-cards/variables.scss";
+@import "@wordpress/base-styles/mixins";
 
 .stats__post-detail-highlights-section {
-	padding-top: $vertical-margin;
+	@include break-small {
+		padding-top: $vertical-margin;
+	}
+
 	padding-bottom: $vertical-margin;
 
 	.stats > & {

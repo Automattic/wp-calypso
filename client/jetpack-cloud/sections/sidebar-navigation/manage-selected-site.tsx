@@ -212,7 +212,7 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 						? {
 								target: '.components-navigator-back-button svg',
 								popoverPosition: 'bottom left',
-								title: translate( 'Back to Sites Management' ),
+								title: translate( 'Back to Sites' ),
 								description: translate(
 									'Click here when you want to return to managing all of your sites.'
 								),

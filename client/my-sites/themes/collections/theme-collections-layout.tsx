@@ -1,9 +1,13 @@
+import config from '@automattic/calypso-config';
 import { PatternAssemblerCta, isAssemblerSupported } from '@automattic/design-picker';
 import { memo } from 'react';
 import { useSelector } from 'react-redux';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
+import {
+	THEME_COLLECTIONS,
+	ThemeCollectionDefinition,
+} from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -22,7 +26,13 @@ export interface ThemeCollectionsLayoutProps {
 	onSeeAll: ( object: OnSeeAll ) => void;
 }
 
-const collections = Object.values( THEME_COLLECTIONS ).sort( () => Math.random() - 0.5 );
+const { recommended, ...randomizableThemeCollections } = THEME_COLLECTIONS;
+const collections: Array< ThemeCollectionDefinition > = [
+	recommended,
+	...( config.isEnabled( 'themes/discovery-randomize-collections' )
+		? Object.values( randomizableThemeCollections ).sort( () => Math.random() - 0.5 )
+		: Object.values( randomizableThemeCollections ) ),
+];
 
 function ThemeCollectionsPatternAssemblerCta() {
 	const selectedSiteId = useSelector( getSelectedSiteId );

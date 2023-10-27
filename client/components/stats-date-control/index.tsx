@@ -1,8 +1,10 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
 import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControlPicker from './stats-date-control-picker';
 import { StatsDateControlProps, DateControlPickerShortcut } from './types';
 import './style.scss';
@@ -16,6 +18,7 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const shortcutList = [
 		{
@@ -89,8 +92,12 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 		// Determine period based on date range.
 		const rangeInDays = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
 		const period = bestPeriodForDays( rangeInDays );
+
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_date_picker_apply_button_clicked` );
+
 		// Update chart via routing.
-		page( generateNewLink( period, startDate, endDate ) );
+		setTimeout( () => page( generateNewLink( period, startDate, endDate ) ), 250 );
 	};
 
 	// Handler for shortcut selection.
@@ -99,8 +106,12 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 		const anchor = moment().subtract( shortcut.offset, 'days' );
 		const endDate = anchor.format( 'YYYY-MM-DD' );
 		const startDate = anchor.subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
+
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_clicked` );
+
 		// Update chart via routing.
-		page( generateNewLink( shortcut.period, startDate, endDate ) );
+		setTimeout( () => page( generateNewLink( shortcut.period, startDate, endDate ) ), 250 );
 	};
 
 	const getShortcutForRange = () => {

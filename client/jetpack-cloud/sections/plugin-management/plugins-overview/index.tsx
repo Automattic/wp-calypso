@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
@@ -49,13 +48,9 @@ export default function PluginsOverview( { filter, search, site, pluginSlug, pat
 	}
 
 	if ( hasFetched ) {
-		const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
-		const sectionTitle = isNewNavigation
-			? translate( 'Plugin Management' )
-			: translate( 'Plugins' );
 		return (
 			<div className="plugins-overview__container">
-				<SidebarNavigation sectionTitle={ sectionTitle } />
+				<SidebarNavigation sectionTitle={ translate( 'Plugins' ) } />
 				{ pluginSlug ? (
 					<PluginDetails isJetpackCloud siteUrl={ site } pluginSlug={ pluginSlug } path={ path } />
 				) : (

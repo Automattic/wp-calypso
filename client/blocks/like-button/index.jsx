@@ -31,15 +31,15 @@ class LikeButtonContainer extends Component {
 
 	handleLikeToggle = ( liked ) => {
 		if ( ! this.props.isLoggedIn ) {
-			this.props.registerLastActionRequiresLogin( {
+			return this.props.registerLastActionRequiresLogin( {
 				type: liked ? 'like' : 'unlike',
 				siteId: this.props.siteId,
 				postId: this.props.postId,
 			} );
-		} else {
-			const toggler = liked ? this.props.like : this.props.unlike;
-			toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 		}
+
+		const toggler = liked ? this.props.like : this.props.unlike;
+		toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 		this.props.onLikeToggle( liked );
 	};
 

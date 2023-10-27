@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { ComponentType } from 'react';
 import { canSetAsPrimary } from '../utils/can-set-as-primary';
 import { type as domainTypes, transferStatus, useMyDomainInputMode } from '../utils/constants';
+import { isFreeUrlDomainName } from '../utils/is-free-url-domain-name';
 import { isDomainInGracePeriod } from '../utils/is-in-grace-period';
 import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainUpdateable } from '../utils/is-updateable';
@@ -70,8 +71,8 @@ export const DomainsTableRowActions = ( {
 		domain.pointsToWpcom;
 	const canTransferToWPCOM =
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
-	const canChangeSiteAddress = ! isAllSitesView && isSimpleSite;
-
+	const canChangeSiteAddress =
+		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
 	const getActions = ( onClose?: () => void ) => {
 		return [
 			canViewDetails && (
