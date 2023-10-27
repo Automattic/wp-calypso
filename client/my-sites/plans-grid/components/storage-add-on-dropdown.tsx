@@ -98,8 +98,9 @@ export const StorageAddOnDropdown = ( {
 	} );
 
 	useEffect( () => {
-		defaultStorageOption &&
+		if ( storageAddOnsForPlan && defaultStorageOption && ! selectedStorageOptionForPlan ) {
 			setSelectedStorageOptionForPlan( { addOnSlug: defaultStorageOption, planSlug } );
+		}
 	}, [] );
 
 	const selectControlOptions = storageOptions.map( ( storageOption ) => {
