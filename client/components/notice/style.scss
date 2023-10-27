@@ -73,16 +73,9 @@
 	// General notice, but without background
 	&.is-transparent-info {
 		background: unset;
-		color: var(--color-error-40);
-
-		.notice__text a {
-			color: var(--color-link);
-		}
-
+		color: var(--studio-gray-80, #2c3338);
 		.notice__icon-wrapper {
 			background: transparent;
-			align-items: flex-start;
-			padding-top: 13px;
 		}
 		.notice__icon-wrapper-drop {
 			background: var(--color-error);
@@ -91,6 +84,10 @@
 			height: 24px;
 			top: unset;
 			left: unset;
+		}
+
+		.notice__text a {
+			color: var(--studio-gray-80, #2c3338);
 		}
 	}
 
@@ -164,14 +161,6 @@
 			&:hover {
 				color: var(--color-text-inverted);
 				text-decoration: none;
-			}
-
-			.is-transparent-info & {
-				color: var(--color-link);
-
-				&:hover {
-					color: var(--color-link-dark);
-				}
 			}
 		}
 

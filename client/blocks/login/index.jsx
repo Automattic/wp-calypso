@@ -1,6 +1,4 @@
 import config from '@automattic/calypso-config';
-import { englishLocales } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
@@ -13,7 +11,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
-import { preventWidows } from 'calypso/lib/formatting';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -102,7 +99,6 @@ class Login extends Component {
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
 		isGravPoweredLoginPage: PropTypes.bool,
-		isSignupExistingAccount: PropTypes.bool,
 	};
 
 	state = {
@@ -299,8 +295,6 @@ class Login extends Component {
 			isGravPoweredClient,
 			isGravPoweredLoginPage,
 			isWooCoreProfilerFlow,
-			isSignupExistingAccount,
-			locale,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -544,11 +538,6 @@ class Login extends Component {
 					{ translate( 'Enter your details to log in to your account.' ) }
 				</p>
 			);
-		} else if ( isSignupExistingAccount ) {
-			headerText =
-				hasTranslation( 'Log in to your existing account' ) || englishLocales.includes( locale )
-					? preventWidows( translate( 'Log in to your existing account' ) )
-					: translate( 'Log in to your account' );
 		}
 
 		if ( isWhiteLogin ) {
@@ -619,7 +608,6 @@ class Login extends Component {
 			isWooCoreProfilerFlow,
 			currentQuery,
 			isGravPoweredLoginPage,
-			isSignupExistingAccount,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -747,7 +735,6 @@ class Login extends Component {
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
 				hideSignupLink={ isGravPoweredLoginPage }
-				isSignupExistingAccount={ isSignupExistingAccount }
 			/>
 		);
 	}
@@ -811,10 +798,6 @@ export default connect(
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
-		isSignupExistingAccount: !! (
-			getInitialQueryArguments( state )?.is_signup_existing_account ||
-			getCurrentQueryArguments( state )?.is_signup_existing_account
-		),
 	} ),
 	{
 		rebootAfterLogin,

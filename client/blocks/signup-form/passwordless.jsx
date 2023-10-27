@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +13,6 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -95,48 +93,23 @@ class PasswordlessSignupForm extends Component {
 				} ),
 				anon_id: getTracksAnonymousUserId(),
 			} );
-			this.createAccountCallback( response );
+			this.createAccountCallback( null, response );
 		} catch ( err ) {
-			this.createAccountError( err );
+			this.createAccountCallback( err );
 		}
 	};
 
-	createAccountError = async ( error ) => {
-		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
-
-		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-			const email = typeof this.state.email === 'string' ? this.state.email.trim() : '';
-			const response = await wpcom.req.get(
-				`/users/${ encodeURIComponent( email ) }/auth-options`
-			);
-			// Just for https://github.com/Automattic/wp-calypso/pull/83249. Passwordless accounts will be changed to facilitate emailing the login link.
-			if ( ! response?.passwordless ) {
-				page(
-					addQueryArgs(
-						{
-							email_address: this.state.email,
-							is_signup_existing_account: true,
-						},
-						this.props.logInUrl
-					)
-				);
-				return;
-			}
+	createAccountCallback = ( error, response ) => {
+		if ( error ) {
+			const errorMessage = this.getErrorMessage( error );
+			this.setState( {
+				errorMessages: [ errorMessage ],
+				isSubmitting: false,
+			} );
+			this.submitTracksEvent( false, { action_message: error.message } );
+			return;
 		}
 
-		this.setState( {
-			errorMessages: [
-				this.props.translate(
-					'Sorry, something went wrong when trying to create your account. Please try again.'
-				),
-			],
-			isSubmitting: false,
-		} );
-
-		return;
-	};
-
-	createAccountCallback = ( response ) => {
 		this.setState( {
 			errorMessages: null,
 		} );
@@ -173,17 +146,36 @@ class PasswordlessSignupForm extends Component {
 		} );
 	};
 
-	goToLogin = () => {
-		page(
-			addQueryArgs(
-				{
-					email_address: this.state.email,
-					use_email_from_url: true,
-				},
-				this.props.logInUrl
-			)
-		);
-	};
+	getErrorMessage( errorObj = { error: null, message: null } ) {
+		const { translate } = this.props;
+
+		switch ( errorObj.error ) {
+			case 'already_taken':
+			case 'already_active':
+			case 'email_exists':
+				return (
+					<>
+						{ translate( 'An account with this email address already exists.' ) }
+						&nbsp;
+						{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+							components: {
+								a: (
+									<a
+										href={ `${ this.props.logInUrl }&email_address=${ encodeURIComponent(
+											this.state.email
+										) }` }
+									/>
+								),
+							},
+						} ) }
+					</>
+				);
+			default:
+				return translate(
+					'Sorry, something went wrong when trying to create your account. Please try again.'
+				);
+		}
+	}
 
 	submitStep = ( data ) => {
 		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
