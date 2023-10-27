@@ -31,13 +31,14 @@ export default function ShowcaseThemeCollection( {
 	onSeeAll,
 	collectionIndex,
 }: ShowcaseThemeCollectionProps ): ReactElement {
-	const { getPrice, themes, isActive, isInstalling, siteId, getThemeType } =
+	const { getPrice, themes, isActive, isInstalling, siteId, getThemeType, filterString } =
 		useThemeCollection( query );
 
 	const { recordThemeClick, recordThemeStyleVariationClick, recordThemesStyleVariationMoreClick } =
 		getThemeShowcaseEventRecorder(
 			query,
 			themes,
+			filterString,
 			getThemeType,
 			isActive,
 			collectionSlug,

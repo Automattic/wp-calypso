@@ -22,6 +22,7 @@ enum ThemeShowcaseEventType {
 const getThemeShowcaseEventRecorder = (
 	query: ThemeSearchQuery,
 	themes: Array< Theme >,
+	filterString: string,
 	getThemeType: ( themeId: string ) => string,
 	isActiveTheme: ( themeId: string ) => boolean,
 	defaultCollectionId: string | null = null,
@@ -44,6 +45,8 @@ const getThemeShowcaseEventRecorder = (
 				search: query?.search,
 				tier: query?.tier,
 				filter: query?.filter,
+				search_taxonomies: filterString,
+				search_term: filterString + ( query?.search || '' ),
 				theme: themeId,
 				is_active_theme: isActiveTheme( themeId ),
 				style_variation: styleVariation,

@@ -5,6 +5,7 @@ import {
 	getThemeType as getThemeTypeSelector,
 	isInstallingTheme,
 	isThemeActive,
+	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -39,5 +40,7 @@ export function useThemeCollection( query: ThemesQuery ) {
 		( state ) => ( themeId: string ) => getThemeTypeSelector( state, themeId )
 	);
 
-	return { getPrice, themes, isActive, isInstalling, siteId, getThemeType };
+	const filterString = useSelector( ( state ) => prependThemeFilterKeys( state, query.filter ) );
+
+	return { getPrice, themes, isActive, isInstalling, siteId, getThemeType, filterString };
 }

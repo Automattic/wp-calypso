@@ -348,6 +348,7 @@ export const ConnectedThemesSelection = connect(
 		const themeShowcaseEventRecorder = getThemeShowcaseEventRecorder(
 			query,
 			themes,
+			filterString,
 			boundGetThemeType,
 			boundIsThemeActive
 		);
