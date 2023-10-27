@@ -3,6 +3,22 @@ import { useTranslate } from 'i18n-calypso';
 import PatternLargePreview from './pattern-large-preview';
 import './pattern-previews-container.scss';
 
+type PatternPreviewsContainerProps = {
+	header: Pattern | null;
+	sections: Pattern[];
+	footer: Pattern | null;
+	activePosition: number;
+	onDeleteSection: ( position: number ) => void;
+	onMoveUpSection: ( position: number ) => void;
+	onMoveDownSection: ( position: number ) => void;
+	onDeleteHeader: () => void;
+	onDeleteFooter: () => void;
+	onShuffle: ( type: string, pattern: Pattern, position?: number ) => void;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
+	isGridLayout: boolean;
+	isNewSite: boolean;
+};
+
 const PatternPreviewsContainer = ( {
 	header,
 	sections,
@@ -15,9 +31,9 @@ const PatternPreviewsContainer = ( {
 	onDeleteFooter,
 	onShuffle,
 	recordTracksEvent,
-	isNewSite,
 	isGridLayout,
-} ) => {
+	isNewSite,
+}: PatternPreviewsContainerProps ) => {
 	const translate = useTranslate();
 
 	return (

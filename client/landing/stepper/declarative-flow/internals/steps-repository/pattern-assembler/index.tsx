@@ -644,8 +644,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				onDeleteFooter={ onDeleteFooter }
 				onShuffle={ onShuffle }
 				recordTracksEvent={ recordTracksEvent }
-				isNewSite={ isNewSite }
 				isGridLayout={ navigator.location.path === NAVIGATOR_PATHS.PAGES }
+				isNewSite={ isNewSite }
 			/>
 		</div>
 	);
