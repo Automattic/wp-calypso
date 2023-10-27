@@ -7,4 +7,10 @@
 	cursor: default;
 	transition: max-height 0.5s;
 	min-width: 25em;
+
+	.components-modal__header .components-modal__header-heading {
+		font-family: $font-sf-pro-display;
+		font-size: $font-title-small;
+		font-weight: 500;
+	}
 }
