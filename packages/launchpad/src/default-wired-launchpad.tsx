@@ -4,7 +4,7 @@ import {
 	Site,
 	type SiteSelect,
 	sortLaunchpadTasksByCompletionStatus,
-	useLaunchpad,
+	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
@@ -32,7 +32,7 @@ const DefaultWiredLaunchpad = ( {
 }: DefaultWiredLaunchpadProps ) => {
 	const {
 		data: { checklist },
-	} = useLaunchpad( siteSlug, checklistSlug );
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug );
 
 	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 

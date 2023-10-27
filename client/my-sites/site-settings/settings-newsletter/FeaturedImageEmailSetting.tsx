@@ -1,7 +1,7 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 export const FEATURED_IMAGE_IN_EMAIL_OPTION = 'wpcom_featured_image_in_email';
 
@@ -31,13 +31,7 @@ export const FeaturedImageEmailSetting = ( {
 					"Includes your post's featured image in the email sent out to your readers. {{link}}Learn more about the featured image{{/link}}.",
 					{
 						components: {
-							link: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/support/featured-images/' ) }
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
+							link: <InlineSupportLink showIcon={ false } supportContext="featured-images" />,
 						},
 					}
 				) }

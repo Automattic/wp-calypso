@@ -44,6 +44,8 @@ window.configData = {
 	},
 	signup_url: '/',
 	wapuu: false,
+	wpcom_signup_id: '39911',
+	wpcom_signup_key: 'cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8',
 };
 window.process = {
 	env: {

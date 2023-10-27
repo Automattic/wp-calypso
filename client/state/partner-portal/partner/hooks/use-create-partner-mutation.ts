@@ -11,6 +11,7 @@ function createPartner( details: PartnerDetailsPayload ): Promise< APIPartner > 
 			contact_person: details.contactPerson,
 			company_website: details.companyWebsite,
 			company_type: details.companyType,
+			partner_program_opt_in: details.partnerProgramOptIn,
 			city: details.city,
 			line1: details.line1,
 			line2: details.line2,

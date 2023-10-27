@@ -6,7 +6,7 @@ import { useOdieAssistantContext } from '../context';
 import type { Chat, Message, Context } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
-const buildSupportChatRequest = ( message: Message, context: Context, chat_id?: string | null ) => {
+const buildSupportChatRequest = ( message: Message, context: Context, chat_id?: number | null ) => {
 	return canAccessWpcomApis()
 		? odieSendSupportMessage( message, context, chat_id )
 		: apiFetch( {
@@ -16,7 +16,7 @@ const buildSupportChatRequest = ( message: Message, context: Context, chat_id?: 
 		  } );
 };
 
-function odieSendMessage( messages: Message[], context: Context, chat_id?: string | null ) {
+function odieSendMessage( messages: Message[], context: Context, chat_id?: number | null ) {
 	const path = `/odie/send_message`;
 	return wpcom.req.post( {
 		path,
@@ -25,8 +25,8 @@ function odieSendMessage( messages: Message[], context: Context, chat_id?: strin
 	} );
 }
 
-function odieSendSupportMessage( message: Message, context: Context, chat_id?: string | null ) {
-	const path = `/odie/support/chat/respond`;
+function odieSendSupportMessage( message: Message, context: Context, chat_id?: number | null ) {
+	const path = `/odie/send_support_message`;
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
@@ -55,7 +55,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 			return fetchFunction();
 		},
 		onSuccess: ( data ) => {
-			setChat( { ...chat, chat_id: data.chat_id } );
+			setChat( { ...chat, chat_id: parseInt( data.chat_id ) } );
 		},
 	} );
 };
