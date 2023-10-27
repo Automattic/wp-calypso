@@ -236,7 +236,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
  * The reason is that Dotcom curate the pattern list based on their look.
  */
 function reorder_curated_core_patterns() {
-	$pattern_names = [ 'core/social-links-shared-background-color2' ];
+	$pattern_names = [ 'core/social-links-shared-background-color' ];
 	foreach ( $pattern_names as $pattern_name ) {
 		$pattern = \WP_Block_Patterns_Registry::get_instance()->get_registered( $pattern_name );
 		if ( $pattern ) {
