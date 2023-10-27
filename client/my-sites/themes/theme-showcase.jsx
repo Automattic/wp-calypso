@@ -260,10 +260,10 @@ class ThemeShowcase extends Component {
 			filter: filterString,
 			// Strip filters and excess whitespace
 			search,
-			...( this.isThemeDiscoveryEnabled() &&
-				! this.props.category && {
+			...( ( this.isThemeDiscoveryEnabled() && ! this.props.category && search ) ||
+				( filterString && {
 					category: staticFilters.ALL.key,
-				} ),
+				} ) ),
 			// If a category isn't selected we search in the all category.
 			...( search &&
 				! subjectStringFilter && {
