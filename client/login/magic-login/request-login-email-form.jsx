@@ -1,3 +1,5 @@
+import { englishLocales } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -17,6 +19,7 @@ import {
 	getRedirectToOriginal,
 	getLastCheckedUsernameOrEmail,
 } from 'calypso/state/login/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
@@ -38,6 +41,7 @@ class RequestLoginEmailForm extends Component {
 		showCheckYourEmail: PropTypes.bool,
 		userEmail: PropTypes.string,
 		flow: PropTypes.string,
+		locale: PropTypes.string,
 
 		// mapped to dispatch
 		sendEmailLogin: PropTypes.func.isRequired,
@@ -115,6 +119,7 @@ class RequestLoginEmailForm extends Component {
 			hideSubHeaderText,
 			inputPlaceholder,
 			submitButtonLabel,
+			locale,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -136,6 +141,19 @@ class RequestLoginEmailForm extends Component {
 			typeof requestError === 'string' && requestError.length
 				? requestError
 				: translate( 'Unable to complete request' );
+
+		const subHeaderText =
+			englishLocales.includes( locale ) ||
+			hasTranslation( 'We’ll send you an email with a login link that will log you in right away.' )
+				? translate( 'We’ll send you an email with a login link that will log you in right away.' )
+				: translate(
+						'Get a link sent to the email address associated with your account to log in instantly without your password.'
+				  );
+
+		const buttonLabel =
+			englishLocales.includes( locale ) || hasTranslation( 'Send Link' )
+				? translate( 'Send Link' )
+				: translate( 'Get Link' );
 
 		return (
 			<div className="magic-login__form">
@@ -162,12 +180,7 @@ class RequestLoginEmailForm extends Component {
 					</p>
 				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
-					<p className="magic-login__form-sub-header">
-						{ ! hideSubHeaderText &&
-							translate(
-								'We’ll send you an email with a login link that will log you in right away.'
-							) }
-					</p>
+					<p className="magic-login__form-sub-header">{ ! hideSubHeaderText && subHeaderText }</p>
 					<FormLabel htmlFor="usernameOrEmail">
 						{ this.props.translate( 'Email Address or Username' ) }
 					</FormLabel>
@@ -185,7 +198,7 @@ class RequestLoginEmailForm extends Component {
 						{ tosComponent }
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
-								{ submitButtonLabel || translate( 'Send Link' ) }
+								{ submitButtonLabel || buttonLabel }
 							</FormButton>
 						</div>
 					</FormFieldset>
@@ -197,6 +210,7 @@ class RequestLoginEmailForm extends Component {
 
 const mapState = ( state ) => {
 	return {
+		locale: getCurrentLocaleSlug( state ),
 		currentUser: getCurrentUser( state ),
 		isFetching: isFetchingMagicLoginEmail( state ),
 		redirectTo: getRedirectToOriginal( state ),
