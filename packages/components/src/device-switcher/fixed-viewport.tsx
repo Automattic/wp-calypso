@@ -43,6 +43,7 @@ const FixedViewport = ( { children, frameRef, device }: Props ) => {
 			className="device-switcher__viewport"
 			style={
 				{
+					'--viewport-container-width': viewportWidth,
 					'--viewport-width': deviceWidthById[ device ],
 					'--viewport-scale': viewportScale,
 				} as CSSProperties

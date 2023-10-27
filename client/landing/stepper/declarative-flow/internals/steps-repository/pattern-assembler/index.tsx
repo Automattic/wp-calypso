@@ -39,7 +39,7 @@ import {
 } from './hooks';
 import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
-import PatternLargePreview from './pattern-large-preview';
+import PatternPreviewsContainer from './pattern-previews-container';
 import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenConfirmation from './screen-confirmation';
@@ -632,7 +632,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					/>
 				</NavigatorScreen>
 			</div>
-			<PatternLargePreview
+			<PatternPreviewsContainer
 				header={ header }
 				sections={ sections }
 				footer={ footer }
@@ -645,6 +645,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				onShuffle={ onShuffle }
 				recordTracksEvent={ recordTracksEvent }
 				isNewSite={ isNewSite }
+				isGridLayout={ navigator.location.path === NAVIGATOR_PATHS.PAGES }
 			/>
 		</div>
 	);

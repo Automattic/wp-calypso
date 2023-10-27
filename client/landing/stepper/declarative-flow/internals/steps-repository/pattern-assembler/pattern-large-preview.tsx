@@ -24,6 +24,7 @@ interface Props {
 	onDeleteFooter: () => void;
 	onShuffle: ( type: string, pattern: Pattern, position?: number ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
+	isDisableActionBar: boolean;
 	isNewSite: boolean;
 }
 
@@ -44,6 +45,7 @@ const PatternLargePreview = ( {
 	onDeleteFooter,
 	onShuffle,
 	recordTracksEvent,
+	isDisableActionBar,
 	isNewSite,
 }: Props ) => {
 	const translate = useTranslate();
@@ -143,7 +145,7 @@ const PatternLargePreview = ( {
 						shouldShufflePosts={ isNewSite }
 					/>
 				) }
-				{ isActive && (
+				{ ! isDisableActionBar && isActive && (
 					<Popover
 						animate={ false }
 						focusOnMount={ false }
