@@ -1,9 +1,10 @@
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import JetpackLightbox, { JetpackLightboxMain } from 'calypso/components/jetpack/jetpack-lightbox';
 
 import './style.scss';
 
@@ -18,6 +19,7 @@ export default function PartnerProgramOptInFieldset( {
 }: Props ) {
 	const translate = useTranslate();
 
+	const [ showPartnerProgramDetails, setShowPartnerProgramDetails ] = useState( false );
 
 	return (
 		<FormFieldset className="partner-program-opt-in-field">
@@ -27,6 +29,7 @@ export default function PartnerProgramOptInFieldset( {
 					className="partner-program-opt-in-field__info"
 					size={ 16 }
 					icon={ info }
+					onClick={ () => setShowPartnerProgramDetails( true ) }
 				/>
 			</FormLabel>
 			<FormInputCheckbox
@@ -38,6 +41,11 @@ export default function PartnerProgramOptInFieldset( {
 				}
 			/>
 			<span>{ translate( 'Sign up for the Jetpack Agency & Pro Partner program' ) }</span>
+			{ showPartnerProgramDetails && (
+				<JetpackLightbox isOpen={ true } onClose={ () => setShowPartnerProgramDetails( false ) }>
+					<JetpackLightboxMain>Placeholder</JetpackLightboxMain>
+				</JetpackLightbox>
+			) }
 		</FormFieldset>
 	);
 }
