@@ -157,6 +157,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": false,
+		"reader/discover-stream": true,
 		"reader/first-posts-stream": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
@@ -200,6 +201,8 @@
 		"themes/block-theme-previews": true,
 		"themes/discovery-lits": false,
 		"themes/discovery-lots": true,
+		"themes/discovery-randomize-collections": true,
+		"themes/discovery-randomize-collection-themes": true,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
@@ -219,7 +222,6 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/staging-sites-i3": true,
 		"yolo/wp-admin-site-default": true
 	}
 }

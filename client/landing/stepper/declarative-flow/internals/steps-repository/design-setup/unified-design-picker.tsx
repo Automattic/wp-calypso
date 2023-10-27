@@ -455,7 +455,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		// When the user is done with checkout, send them back to the current url
 		// If the theme is externally managed, send them to the marketplace thank you page
 		const destination = selectedDesign?.is_externally_managed
-			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug }?onboarding`, {
+			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug ?? siteSlug }?onboarding`, {
 					themes: selectedDesign?.slug,
 			  } )
 			: window.location.href.replace( window.location.origin, '' );

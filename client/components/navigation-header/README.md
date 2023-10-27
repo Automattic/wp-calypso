@@ -1,6 +1,5 @@
 # NavigationHeader (TSX)
 
-Note: This will eventually replace FixedNavigationHeader.
 This component displays a header with a breadcrumb.
 It can also include children items which will be positioned to the far right.
 

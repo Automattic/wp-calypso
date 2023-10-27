@@ -17,8 +17,7 @@ describe( 'isRedesignV2', () => {
 		expect( isRedesignV2( props ) ).toBe( false );
 	} );
 
-	// NOTE: we will eventually support multiple purchases, but for now we only support one
-	it( 'should return false if there are multiple purchases', () => {
+	it( 'should return false if there are multiple purchases that are not yet supported', () => {
 		const props = {
 			receipt: {
 				data: {
@@ -28,6 +27,21 @@ describe( 'isRedesignV2', () => {
 			},
 		};
 		expect( isRedesignV2( props ) ).toBe( false );
+	} );
+
+	it( 'should return true if there are multiple purchases that only contains domains', () => {
+		const props = {
+			receipt: {
+				data: {
+					purchases: [
+						{ productSlug: 'domain_map' },
+						{ productSlug: 'dotblog_domain', isDomainRegistration: true },
+					],
+					failedPurchases: [],
+				},
+			},
+		};
+		expect( isRedesignV2( props ) ).toBe( true );
 	} );
 
 	it( 'should return false if the purchase is not supported', () => {

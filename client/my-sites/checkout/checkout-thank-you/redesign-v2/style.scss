@@ -10,6 +10,8 @@
 	&.main {
 		max-width: 750px;
 		padding: 0 24px 0;
+		display: flex;
+		flex-direction: column;
 
 		> .card {
 			border: none;
@@ -106,6 +108,8 @@
 	}
 
 	.checkout-thank-you__header-details {
+		align-self: center;
+		width: 100%;
 		max-width: 650px;
 		margin: 40px auto 0;
 		display: flex;

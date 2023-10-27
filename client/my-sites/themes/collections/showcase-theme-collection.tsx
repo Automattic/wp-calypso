@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { ReactElement } from 'react';
 import QueryThemes from 'calypso/components/data/query-themes';
 import ThemeCollection from 'calypso/components/theme-collection';
@@ -20,6 +21,24 @@ interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
 	collectionIndex: number;
 }
 
+type Theme = {
+	id: string;
+};
+
+const sortedThemes: Map< string, Array< Theme > > = new Map();
+
+const cacheThemes = ( collectionSlug: string, themes: Array< Theme > ) => {
+	sortedThemes.set(
+		collectionSlug,
+		config.isEnabled( 'themes/discovery-randomize-collection-themes' )
+			? themes.sort( () => Math.random() - 0.5 )
+			: themes
+	);
+};
+
+const getCachedThemes = ( collectionSlug: string ): Array< Theme > =>
+	sortedThemes.get( collectionSlug ) ?? [];
+
 export default function ShowcaseThemeCollection( {
 	collectionSlug,
 	description,
@@ -33,6 +52,12 @@ export default function ShowcaseThemeCollection( {
 }: ShowcaseThemeCollectionProps ): ReactElement {
 	const { getPrice, themes, isActive, isInstalling, siteId, getThemeType, filterString } =
 		useThemeCollection( query );
+	let themeList = getCachedThemes( collectionSlug );
+
+	if ( ! themeList.length && themes ) {
+		cacheThemes( collectionSlug, themes );
+		themeList = getCachedThemes( collectionSlug );
+	}
 
 	const { recordThemeClick, recordThemeStyleVariationClick, recordThemesStyleVariationMoreClick } =
 		getThemeShowcaseEventRecorder(
@@ -71,26 +96,25 @@ export default function ShowcaseThemeCollection( {
 				onSeeAll={ onSeeAll }
 				collectionIndex={ collectionIndex }
 			>
-				{ themes &&
-					themes.map( ( theme, index ) => (
-						<ThemeCollectionItem key={ theme.id }>
-							<ThemeBlock
-								getActionLabel={ getActionLabel }
-								getButtonOptions={ getOptions }
-								getPrice={ getPrice }
-								getScreenshotUrl={ getScreenshotUrl }
-								index={ index }
-								isActive={ isActive }
-								isInstalling={ isInstalling }
-								siteId={ siteId }
-								theme={ theme }
-								onMoreButtonClick={ recordThemeClick }
-								onMoreButtonItemClick={ recordThemeClick }
-								onScreenshotClick={ onScreenshotClick }
-								onStyleVariationClick={ onStyleVariationClick }
-							/>
-						</ThemeCollectionItem>
-					) ) }
+				{ themeList.map( ( theme: Theme, index: number ) => (
+					<ThemeCollectionItem key={ theme.id }>
+						<ThemeBlock
+							getActionLabel={ getActionLabel }
+							getButtonOptions={ getOptions }
+							getPrice={ getPrice }
+							getScreenshotUrl={ getScreenshotUrl }
+							index={ index }
+							isActive={ isActive }
+							isInstalling={ isInstalling }
+							siteId={ siteId }
+							theme={ theme }
+							onMoreButtonClick={ recordThemeClick }
+							onMoreButtonItemClick={ recordThemeClick }
+							onScreenshotClick={ onScreenshotClick }
+							onStyleVariationClick={ onStyleVariationClick }
+						/>
+					</ThemeCollectionItem>
+				) ) }
 			</ThemeCollection>
 		</>
 	);

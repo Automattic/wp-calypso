@@ -9,10 +9,6 @@ $break-large-stats-countries: 1280px;
 		max-width: $stats-sections-max-width;
 	}
 
-	.main-container {
-		padding: 32px 0;
-	}
-
 	.no-data {
 		text-align: center;
 	}
@@ -30,6 +26,11 @@ $break-large-stats-countries: 1280px;
 		// stylelint-disable-next-line
 		font-family: Recoleta, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 		margin-bottom: 16px;
+
+		@media ( max-width: $break-medium ) {
+			margin-left: 0.875rem;
+			margin-right: 0.875rem;
+		}
 	}
 
 	.stats__module-list {
