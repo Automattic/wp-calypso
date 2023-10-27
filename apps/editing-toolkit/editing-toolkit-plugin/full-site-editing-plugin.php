@@ -240,7 +240,7 @@ function reorder_curated_core_patterns() {
 	foreach ( $pattern_names as $pattern_name ) {
 		$pattern = \WP_Block_Patterns_Registry::get_instance()->get_registered( $pattern_name );
 		if ( $pattern ) {
-			unregister_block_pattern( $pattern_name );	
+			unregister_block_pattern( $pattern_name );
 			register_block_pattern(
 				$pattern_name,
 				$pattern
