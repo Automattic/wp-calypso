@@ -50,7 +50,8 @@ export default function ShowcaseThemeCollection( {
 	let themeList = getCachedThemes( collectionSlug );
 
 	if ( ! themeList.length && themes ) {
-		cacheThemes( collectionSlug, themes );
+		// We slice the array to the expected length to avoid some caching issues.
+		cacheThemes( collectionSlug, themes.slice( 0, query.number ) );
 		themeList = getCachedThemes( collectionSlug );
 	}
 
