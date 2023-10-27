@@ -232,6 +232,24 @@ function load_wpcom_block_editor_nux() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
+ * Re-register some core patterns to push them down in the inserter list.
+ * The reason is that Dotcom curate the pattern list based on their look.
+ */
+function reorder_curated_core_patterns() {
+	$pattern_names = [ 'core/social-links-shared-background-color' ];
+	foreach ( $pattern_names as $pattern_name ) {
+		$pattern = \WP_Block_Patterns_Registry::get_instance()->get_registered( $pattern_name );
+		if ( $pattern ) {
+			unregister_block_pattern( $pattern_name );	
+			register_block_pattern(
+				$pattern_name,
+				$pattern
+			);
+		}
+	}
+}
+
+/**
  * Return a function that loads and register block patterns from the API. This
  * function can be registered to the `rest_dispatch_request` filter.
  *
@@ -259,6 +277,8 @@ function register_patterns_on_api_request( $register_patterns_func ) {
 		};
 
 		$register_patterns_func();
+
+		reorder_curated_core_patterns();
 
 		return $response;
 	};
