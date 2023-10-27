@@ -41,6 +41,21 @@ export const THEME_COLLECTIONS = {
 		),
 		seeAllLink: '/themes/premium',
 	},
+	free: {
+		query: {
+			collection: 'recommended',
+			filter: '',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: 'free',
+		},
+		title: translate( 'Free' ),
+		fullTitle: translate( 'Free Themes' ),
+		collectionSlug: 'free-themes',
+		description: null,
+		seeAllLink: '/themes/free',
+	},
 	marketplace: {
 		query: {
 			collection: 'recommended',

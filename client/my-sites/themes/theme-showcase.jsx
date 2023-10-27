@@ -171,9 +171,10 @@ class ThemeShowcase extends Component {
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
 		return {
-			...( this.isThemeDiscoveryEnabled() ? { DISCOVER: staticFilters.DISCOVER } : {} ),
 			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
-			RECOMMENDED: staticFilters.RECOMMENDED,
+			...( this.isThemeDiscoveryEnabled()
+				? { DISCOVER: staticFilters.DISCOVER }
+				: { RECOMMENDED: staticFilters.RECOMMENDED } ),
 			ALL: staticFilters.ALL,
 			...this.subjectFilters,
 		};
@@ -259,6 +260,10 @@ class ThemeShowcase extends Component {
 			filter: filterString,
 			// Strip filters and excess whitespace
 			search,
+			...( this.isThemeDiscoveryEnabled() &&
+				! this.props.category && {
+					category: staticFilters.ALL.key,
+				} ),
 			// If a category isn't selected we search in the all category.
 			...( search &&
 				! subjectStringFilter && {
@@ -318,12 +323,15 @@ class ThemeShowcase extends Component {
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
 
-		const category =
-			tier !== 'all' && ! this.props.category ? staticFilters.RECOMMENDED.key : this.props.category;
+		const category = tier !== 'all' && ! this.props.category ? '' : this.props.category;
+		const showCollection =
+			this.isThemeDiscoveryEnabled() && ! this.props.filterString && ! category && tier !== 'all';
 
 		const url = this.constructUrl( {
 			tier,
 			category,
+			search: showCollection ? '' : this.props.search,
+			isCollectionView: showCollection,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
 				this.props.category === staticFilters.MYTHEMES.key && {
