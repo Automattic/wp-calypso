@@ -3,48 +3,7 @@ import type { Message } from '../types';
 
 export const getOdieInitialMessages = ( botConfig: string | undefined ): Message[] => {
 	if ( ! botConfig || botConfig === 'supportDocs' ) {
-		return [
-			{
-				id: '1',
-				type: 'message',
-				content: 'Hey Wapuu! I need help with my site.',
-				role: 'user',
-			},
-			{
-				id: '2',
-				type: 'placeholder',
-				role: 'bot',
-				content: '',
-			},
-			{
-				id: '3',
-				type: 'message',
-				content: 'Cool thinking animation!',
-				role: 'user',
-			},
-			{
-				id: '4',
-				type: 'message',
-				content: `Hey, sure! Here you have a useful link to get started that will be useful [here](https://www.wordpress.com/) (a link in the middle of the message so we can test the link markdown processor)`,
-				role: 'bot',
-			},
-			{
-				id: '5',
-				type: 'message',
-				content: 'Thanks!',
-				role: 'user',
-			},
-			{
-				id: '6',
-				type: 'message',
-				content: 'Here some sources to learn more about WordPress',
-				role: 'bot',
-				sources: [
-					'[WordPress.com Support](https://en.support.wordpress.com/)',
-					'[WordPress.org Support Forums](https://wordpress.org/support/)',
-				],
-			},
-		];
+		return [];
 	}
 
 	return [

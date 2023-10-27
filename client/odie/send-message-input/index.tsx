@@ -60,6 +60,7 @@ export const OdieSendMessageButton = ( {
 				role: 'bot',
 				simulateTyping: receivedMessage.messages[ 0 ].simulateTyping,
 				type: 'message',
+				context: receivedMessage.messages[ 0 ].context,
 			} );
 		} catch ( e ) {
 			addMessage( {
@@ -76,9 +77,9 @@ export const OdieSendMessageButton = ( {
 		if ( messageString.trim() === '' ) {
 			return;
 		}
+		setMessageString( '' );
 		bottomRef?.current?.scrollIntoView( { behavior: 'smooth' } );
 		await sendMessage();
-		setMessageString( '' );
 		bottomRef?.current?.scrollIntoView( { behavior: 'smooth' } );
 	};
 
@@ -90,17 +91,9 @@ export const OdieSendMessageButton = ( {
 		}
 	};
 
-	const handleButtonClick = async () => {
-		await sendMessageIfNotEmpty();
-	};
-
 	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		if ( messageString.trim() === '' ) {
-			return;
-		}
-		await sendMessage();
-		setMessageString( '' );
+		await sendMessageIfNotEmpty();
 	};
 
 	const divContainerHeight = divContainerRef?.current?.clientHeight;
@@ -126,7 +119,6 @@ export const OdieSendMessageButton = ( {
 					<button
 						type="submit"
 						className="odie-send-message-inner-button"
-						onClick={ handleButtonClick }
 						disabled={ messageString.trim() === '' }
 					>
 						<img

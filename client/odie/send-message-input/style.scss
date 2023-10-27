@@ -6,18 +6,18 @@
 	align-items: flex-end;
 	gap: 8px;
 	z-index: 10;
-}
 
-.odie-send-message-input {
-	resize: none;
-	width: 100%;
-	display: flex;
-	padding: 6px 16px;
-	flex: 1 0 0;
-	box-sizing: border-box;
-	min-height: 40px;
-	height: 40px;
-	max-height: 210px;
+	.odie-send-message-input {
+		resize: none;
+		width: 100%;
+		display: flex;
+		padding: 6px 16px;
+		flex: 1 0 0;
+		box-sizing: border-box;
+		min-height: 40px !important;
+		height: 40px;
+		max-height: 210px;
+	}
 }
 
 .odie-send-message-input-container .odie-send-message-inner-button {

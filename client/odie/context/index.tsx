@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import OdieAssistant from '..';
 import useOdieUserTracking from '../track-location/useOdieUserTracking';
 import { getOdieInitialMessages } from './initial-messages';
 import { getOdieInitialPrompt } from './initial-prompts';
@@ -195,6 +194,10 @@ const OdieAssistantProvider = ( {
 		} ) );
 	};
 
+	if ( ! odieIsEnabled ) {
+		return <>{ children }</>;
+	}
+
 	return (
 		<OdieAssistantContext.Provider
 			value={ {
@@ -225,8 +228,6 @@ const OdieAssistantProvider = ( {
 			} }
 		>
 			{ children }
-
-			{ odieIsEnabled && <OdieAssistant botNameSlug={ botNameSlug } /> }
 		</OdieAssistantContext.Provider>
 	);
 };
