@@ -42,6 +42,14 @@ export const receiveStatus =
 			// Update the site object to reflect the new status
 			dispatch( requestSite( siteId ) );
 		}
+		if ( status === SiteSyncStatus.FAILED ) {
+			dispatch(
+				siteSyncStatusFetchingFailure( {
+					siteId: siteId,
+					error: 'staging_site_sync_failed',
+				} )
+			);
+		}
 	};
 
 export const requestingStatusFailure = ( response ) => {
