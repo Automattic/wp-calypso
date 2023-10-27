@@ -16,11 +16,7 @@ import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/ut
 import { useSelector } from 'calypso/state';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import {
-	getJetpackVersion,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export type BlazePressPromotionProps = {
 	isVisible: boolean;
@@ -49,9 +45,9 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	const previousRoute = useSelector( getPreviousRoute );
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const jetpackVersion = useSelector( getJetpackVersion ) ?? undefined;
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
+	const selectedSite = useSelector( getSelectedSite );
+	const jetpackVersion = selectedSite?.options?.jetpack_version;
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSite?.ID ) );
 	const { closeModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const queryClient = useQueryClient();
 	const localeSlug = useLocale();

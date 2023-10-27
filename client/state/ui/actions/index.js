@@ -7,4 +7,3 @@ export { disableAppBanner, enableAppBanner } from '../app-banner-visibility/acti
 export { dismissAppBanner } from '../app-banner-dismissed/actions';
 export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
 export { toggleNotificationsPanel } from './notifications';
-export { setJetpackVersion } from './set-jetpack-version';
