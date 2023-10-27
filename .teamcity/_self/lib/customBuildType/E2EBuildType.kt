@@ -150,10 +150,30 @@ open class E2EBuildType(
 					set -o errexit
 
 					# Retry failed tests only.
-					RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup --onlyFailures
+					RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup --onlyFailures --json --outputFile=test.json
 				"""
 				dockerImage = "%docker_image_e2e%"
 				dockerRunParameters = "-u %env.UID% --shm-size=4g"
+			}
+
+			bashNodeScript {
+				name = "Send TeamCity Message"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					set -x
+
+					cd test/e2e
+
+					export slack_oauth_token="%TEAMCITY_SLACK_RICH_NOTIFICATION_APP_OAUTH_TOKEN%"
+					export tc_build_conf_name="%system.teamcity.buildConfName%"
+					export tc_project_name="%system.teamcity.projectName%"
+					export tc_build_number=%build.number%
+
+					echo slack_oauth_token
+
+					node ./bin/teamcity-e2e-slack-notify.mjs --file test.json
+				"""
+				dockerImage = "%docker_image_e2e%"
 			}
 
 			bashNodeScript {
@@ -173,6 +193,7 @@ open class E2EBuildType(
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
+
 			buildSteps()
 		}
 
