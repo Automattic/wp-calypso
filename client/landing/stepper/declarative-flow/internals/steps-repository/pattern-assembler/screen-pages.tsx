@@ -1,16 +1,19 @@
 import { NavigatorHeader } from '@automattic/onboarding';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useEffect, useState } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
+import PageList from './page-list';
 
 interface Props {
+	selectedPages: string[];
+	onSelect: ( page: string ) => void;
 	onContinueClick: () => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
-const ScreenPages = ( { onContinueClick, recordTracksEvent }: Props ) => {
+const ScreenPages = ( { selectedPages, onSelect, onContinueClick, recordTracksEvent }: Props ) => {
 	const [ disabled, setDisabled ] = useState( true );
 	const { title, description, continueLabel } = useScreen( 'pages' );
 
@@ -43,7 +46,11 @@ const ScreenPages = ( { onContinueClick, recordTracksEvent }: Props ) => {
 				description={ description }
 				hideBack
 			/>
-			<div className="screen-container__body"></div>
+			<div className="screen-container__body">
+				<VStack spacing="4">
+					<PageList selectedPages={ selectedPages } onSelectPage={ onSelect } />
+				</VStack>
+			</div>
 			<div className="screen-container__footer">
 				<Button
 					className="pattern-assembler__button"

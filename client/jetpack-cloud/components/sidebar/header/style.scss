@@ -58,7 +58,7 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 }
 
 .jetpack-cloud-sidebar__profile-dropdown-menu-item {
-	padding: 1px 8px;
+	padding: 1px 0;
 	border-radius: 4px;
 
 	&:hover,
@@ -81,5 +81,27 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 		width: 100%;
 		height: 100%;
 		text-align: start;
+	}
+
+	a,
+	.button {
+		&.is-borderless {
+			display: block;
+			padding-inline: 8px;
+		}
+	}
+}
+
+a.jetpack-cloud-sidebar__external-link {
+	display: inline-flex;
+
+	&:hover,
+	&:focus {
+		display: inline-flex;
+	}
+
+	svg {
+		position: absolute;
+		right: 16px;
 	}
 }

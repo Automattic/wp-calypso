@@ -15,34 +15,19 @@ export default function useLoginWindow( {
 }: UseLoginWindowProps ): UseLoginWindowReturn {
 	const isBrowser: boolean = typeof window !== 'undefined';
 	const environment = config( 'env_id' );
-	let domain = 'wordpress.com';
-	let redirectTo = addQueryArgs(
-		{
-			action: 'verify',
-			service: 'wordpress',
-		},
-		`https://${ domain }/public.api/connect/`
-	);
+	const args = {
+		action: 'verify',
+		service: 'wordpress',
+		// When in development, we need to pass an origin to allow the postMessage to know where to send the message.
+		origin: environment === 'development' ? new URL( window.location.href )?.hostname : undefined,
+	};
 
-	// When in development, we need to redirect to a sandboxed domain to allow us to test changes to /public.api/connect/
-	if ( environment === 'development' ) {
-		domain = 'wpcalypso.wordpress.com';
-		redirectTo = addQueryArgs(
-			{
-				action: 'verify',
-				service: 'wordpress',
-				domain: domain,
-				origin: new URL( window.location.href )?.hostname,
-			},
-			`https://${ domain }/public.api/connect/`
-		);
-	}
-
+	const redirectTo = addQueryArgs( args, 'https://wordpress.com/public.api/connect/' );
 	const loginURL = addQueryArgs( { redirect_to: redirectTo }, 'https://wordpress.com/log-in' );
 	const createAccountURL = addQueryArgs(
 		{
 			redirect_to: redirectTo,
-			ref: 'reader-lw',
+			ref: 'reader-lp',
 		},
 		'https://wordpress.com/start/account'
 	);
@@ -51,7 +36,7 @@ export default function useLoginWindow( {
 	const windowName = 'CalypsoLogin';
 
 	const waitForLogin = ( event: MessageEvent ) => {
-		if ( event.origin !== `https://${ domain }` ) {
+		if ( 'https://wordpress.com' !== event?.origin ) {
 			return;
 		}
 

@@ -65,7 +65,7 @@ export default function AgencySignupForm() {
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
-					referrer: referrer,
+					referrer: payload.referrer,
 				} )
 			);
 		},

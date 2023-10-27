@@ -22,6 +22,7 @@ export interface APIRewindStagingSiteInfo {
 	domain: string;
 	siteurl: string;
 	staging: boolean;
+	role: string;
 }
 
 /**

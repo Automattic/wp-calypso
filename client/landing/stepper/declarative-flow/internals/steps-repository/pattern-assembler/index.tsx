@@ -30,6 +30,7 @@ import {
 	useDotcomPatterns,
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
+	usePages,
 	usePatternCategories,
 	usePatternsMapByCategory,
 	useRecipe,
@@ -97,7 +98,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		() => dotcomPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ dotcomPatterns ]
 	);
-	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns, categories );
+	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns );
 	const {
 		header,
 		footer,
@@ -143,6 +144,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
 		[ colorVariation, fontVariation ]
 	);
+
+	const { pages, setPages } = usePages();
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
@@ -511,6 +514,16 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		} );
 	};
 
+	const onScreenPagesSelect = ( page: string ) => {
+		if ( pages.includes( page ) ) {
+			setPages( pages.filter( ( item ) => item !== page ) );
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_REMOVE_PAGE, { page } );
+		} else {
+			setPages( [ ...pages, page ] );
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_ADD_PAGE, { page } );
+		}
+	};
+
 	if ( ! site?.ID || ! selectedDesign ) {
 		return null;
 	}
@@ -552,7 +565,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
-					<ScreenPages onContinueClick={ onContinue } recordTracksEvent={ recordTracksEvent } />
+					<ScreenPages
+						selectedPages={ pages }
+						onSelect={ onScreenPagesSelect }
+						onContinueClick={ onContinue }
+						recordTracksEvent={ recordTracksEvent }
+					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">

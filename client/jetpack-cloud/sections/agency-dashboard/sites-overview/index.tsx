@@ -129,7 +129,7 @@ export default function SitesOverview() {
 	}, [ refetch, jetpackSiteDisconnected ] );
 
 	const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
-	const pageTitle = isNewNavigation ? translate( 'Sites Management' ) : translate( 'Dashboard' );
+	const pageTitle = isNewNavigation ? translate( 'Sites' ) : translate( 'Dashboard' );
 
 	const basePath = '/dashboard';
 
