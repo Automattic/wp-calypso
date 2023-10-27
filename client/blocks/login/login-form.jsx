@@ -333,17 +333,7 @@ export class LoginForm extends Component {
 						'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
 						{
 							components: {
-								returnToSignup: (
-									<a
-										href={ addQueryArgs(
-											{
-												user_email: this.state.usernameOrEmail,
-											},
-											signupUrl
-										) }
-										onClick={ this.recordSignUpLinkClick }
-									/>
-								),
+								returnToSignup: <a href={ signupUrl } onClick={ this.recordSignUpLinkClick } />,
 							},
 						}
 					) }
