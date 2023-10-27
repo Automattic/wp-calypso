@@ -6,7 +6,7 @@ $break-large-stats-countries: 1280px;
 // Countries
 .stats__email-detail {
 	&.main {
-		max-width: $stats-sections-max-width;
+		max-width: none;
 	}
 
 	.no-data {
@@ -31,6 +31,10 @@ $break-large-stats-countries: 1280px;
 			margin-left: 0.875rem;
 			margin-right: 0.875rem;
 		}
+	}
+	.stats__email-wrapper {
+		padding-top: 32px;
+		padding-bottom: 32px;
 	}
 
 	.stats__module-list {
