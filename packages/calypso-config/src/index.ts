@@ -109,3 +109,4 @@ export const isEnabled = configApi.isEnabled;
 export const enabledFeatures = configApi.enabledFeatures;
 export const enable = configApi.enable;
 export const disable = configApi.disable;
+export const hasKey = configApi.hasKey;

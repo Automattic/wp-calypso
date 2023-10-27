@@ -112,12 +112,18 @@ const disable = ( data: ConfigData ) => ( feature: string ) => {
 	}
 };
 
+const hasKey =
+	( data: ConfigData ) =>
+	( key: string ): boolean =>
+		typeof data[ key ] !== 'undefined';
+
 export interface ConfigApi {
 	< T >( key: string ): T;
 	isEnabled: ( feature: string ) => boolean;
 	enabledFeatures: () => string[];
 	enable: ( feature: string ) => void;
 	disable: ( feature: string ) => void;
+	hasKey: ( key: string ) => boolean;
 }
 
 export default ( data: ConfigData ): ConfigApi => {
@@ -126,6 +132,7 @@ export default ( data: ConfigData ): ConfigApi => {
 	configApi.enabledFeatures = enabledFeatures( data );
 	configApi.enable = enable( data );
 	configApi.disable = disable( data );
+	configApi.hasKey = hasKey( data );
 
 	return configApi;
 };

@@ -54,7 +54,7 @@ async function AppBoot() {
 	// Set selected site ID & current user
 	store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
 	store.dispatch( setCurrentUser( user ) );
-	if ( config.isEnabled( 'jetpack_version' ) ) {
+	if ( config.hasKey( 'jetpack_version' ) ) {
 		store.dispatch( setJetpackVersion( config( 'jetpack_version' ) ) );
 	}
 
