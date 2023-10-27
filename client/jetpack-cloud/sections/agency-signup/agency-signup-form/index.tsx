@@ -82,7 +82,7 @@ export default function AgencySignupForm() {
 	useEffect( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_agency_signup_start', {
-				formreferrer: referrer,
+				form_referrer_source: referrer,
 			} )
 		);
 	}, [] );
