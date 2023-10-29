@@ -26,3 +26,13 @@ export function formatSlugToURL( inputUrl: string ) {
 	url = url.replace( /wp-admin\/?$/, '' );
 	return untrailingslashit( url );
 }
+
+export function buildCheckoutUrl(
+	siteSlug: string | undefined | null,
+	plan: 'business' | 'business-monthly' = 'business'
+) {
+	if ( ! siteSlug ) {
+		return `/checkout/${ plan }`;
+	}
+	return `/checkout/${ siteSlug }/${ plan }`;
+}
