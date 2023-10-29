@@ -23,7 +23,7 @@ export const useSelectedPlanUpgradeMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation( {
-		mutationFn: ( plan: string ) => {
+		mutationFn: async ( plan: string ) => {
 			queryClient.setQueryData( [ SELECTED_PLAN_QUERY_KEY ], plan );
 		},
 	} );
