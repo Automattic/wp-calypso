@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import QueryPlans from 'calypso/components/data/query-plans';
+import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { Plans2023Tooltip } from 'calypso/my-sites/plans-grid/components/plans-2023-tooltip';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
@@ -26,16 +27,22 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const { children } = props;
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
-	>( PLAN_BUSINESS_MONTHLY );
+	>( PLAN_BUSINESS );
 	const plan = getPlan( selectedPlan );
 	const planId = plan?.getProductId();
 
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );
 
+	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
+
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_migration_plan_display' );
 	}, [] );
+
+	useEffect( () => {
+		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
+	}, [ plan ] );
 
 	return (
 		<div className={ classnames( 'import__upgrade-plan' ) }>

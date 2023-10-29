@@ -1,6 +1,7 @@
 import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
-import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
+import { buildCheckoutUrl } from 'calypso/blocks/importer/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
+import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { addQueryArgs } from 'calypso/lib/route';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
 import { removeLeadingSlash } from '../../import/util';
@@ -14,7 +15,7 @@ export function useStepNavigator(
 	siteSlug: string | undefined | null,
 	fromSite: string | undefined | null
 ): StepNavigator {
-	const checkoutUrl = useCheckoutUrl( siteId, siteSlug );
+	const { data: selectedPlan } = useSelectedPlanUpgradeQuery();
 
 	function navigator( path: string ) {
 		const stepPath = removeLeadingSlash( path.replace( `${ BASE_STEPPER_ROUTE }/${ flow }`, '' ) );
@@ -80,7 +81,8 @@ export function useStepNavigator(
 	}
 
 	function getCheckoutUrl( extraArgs = {} ) {
-		const path = checkoutUrl;
+		const path = buildCheckoutUrl( siteSlug, selectedPlan );
+
 		const queryParams = {
 			redirect_to: getWordpressImportEverythingUrl( extraArgs ),
 			cancel_to: getWordpressImportEverythingUrl(),
