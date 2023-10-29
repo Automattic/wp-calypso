@@ -62,8 +62,8 @@ const ScreenConfirmation = ( { onConfirm, surveyDismissed, setSurveyDismissed }:
 				</VStack>
 				{ ! surveyDismissed && (
 					<Survey
-						eventName="assembler-october-2023"
-						eventUrl="https://wordpressdotcom.survey.fm/wordpress-com-design-your-own"
+						eventName="assembler-november-2023"
+						eventUrl="https://automattic.survey.fm/assembler-survey-2"
 						setSurveyDismissed={ setSurveyDismissed }
 					/>
 				) }
