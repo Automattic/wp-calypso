@@ -18,10 +18,11 @@ export const clearOdieStorage = ( key: OdieStorageKey ) => {
 };
 
 export const useOdieStorage = ( key: OdieStorageKey ) => {
+	const storageKey = buildOdieStorageKey( key );
 	const [ value, setValue ] = useState( getOdieStorage( key ) );
 	useEffect( () => {
 		const storageListener = ( e: StorageEvent ) => {
-			if ( e.key === buildOdieStorageKey( key ) ) {
+			if ( e.key === storageKey ) {
 				setValue( e.newValue );
 			}
 		};
@@ -29,6 +30,6 @@ export const useOdieStorage = ( key: OdieStorageKey ) => {
 		return () => {
 			window.removeEventListener( 'storage', storageListener );
 		};
-	}, [ key ] );
+	}, [ key, storageKey ] );
 	return value;
 };
