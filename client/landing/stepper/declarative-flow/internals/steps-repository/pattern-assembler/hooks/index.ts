@@ -5,6 +5,8 @@ export { default as useDotcomPatterns } from './use-dotcom-patterns';
 export { default as useGlobalStylesUpgradeProps } from './use-global-styles-upgrade-props';
 export { default as useInitialPath } from './use-initial-path';
 export { default as usePages } from './use-pages';
+export { default as usePagesMapByCategory } from './use-pages-map-by-category';
+export { default as usePagesOrder } from './use-pages-order';
 export { default as usePatternCategories } from './use-pattern-categories';
 export { default as usePatternCountMapByCategory } from './use-pattern-count-map-by-category';
 export { default as usePatternsMapByCategory } from './use-patterns-map-by-category';

@@ -31,6 +31,7 @@ import {
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
 	usePages,
+	usePagesMapByCategory,
 	usePatternCategories,
 	usePatternsMapByCategory,
 	useRecipe,
@@ -99,6 +100,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		[ dotcomPatterns ]
 	);
 	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns );
+	const pagesMapByCategory = usePagesMapByCategory( dotcomPatterns );
 	const {
 		header,
 		footer,
@@ -566,6 +568,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
 					<ScreenPages
+						categories={ categories }
+						pagesMapByCategory={ pagesMapByCategory }
 						selectedPages={ pages }
 						onSelect={ onScreenPagesSelect }
 						onContinueClick={ onContinue }
