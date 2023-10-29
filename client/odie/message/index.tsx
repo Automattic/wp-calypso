@@ -133,7 +133,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 	const messageContent = (
 		<div ref={ isLast ? messageEndRef : null } className={ messageClasses }>
 			{ messageHeader }
-			{ message.type === 'message' && (
+			{ ( message.type === 'message' || ! message.type ) && (
 				<>
 					<AsyncLoad
 						require="react-markdown"
