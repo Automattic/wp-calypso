@@ -1,5 +1,6 @@
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -34,6 +35,7 @@ interface Props {
 
 const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 	const urlQueryParams = useQuery();
 	const { user, site, siteSlug, flowName, stepName, submit } = props;
 
@@ -107,7 +109,9 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 		<TrialPlan
 			planFeatures={ [
 				__( 'Beautiful themes' ),
-				__( 'Advanced Design Tools' ),
+				hasEnTranslation( 'Advanced design tools' )
+					? __( 'Advanced design tools' )
+					: __( 'Advanced Design Tools' ),
 				__( 'Newsletters' ),
 				__( 'Jetpack backups and restores' ),
 				__( 'Spam protection with Akismet' ),
