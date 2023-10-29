@@ -27,10 +27,7 @@ export function formatSlugToURL( inputUrl: string ) {
 	return untrailingslashit( url );
 }
 
-export function buildCheckoutUrl(
-	siteSlug: string | undefined | null,
-	plan: 'business' | 'business-monthly' = 'business'
-) {
+export function buildCheckoutUrl( siteSlug: string | undefined | null, plan = 'business' ) {
 	if ( ! siteSlug ) {
 		return `/checkout/${ plan }`;
 	}
