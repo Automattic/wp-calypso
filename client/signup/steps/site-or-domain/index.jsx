@@ -61,9 +61,12 @@ class SiteOrDomain extends Component {
 		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
 
 		const domainName = this.getDomainName();
-		let buyADomainTitle = translate( 'Just buy a domain', 'Just buy domains', {
-			count: this.getDomainCart().length,
-		} );
+		let buyADomainTitle =
+			i18n.getLocaleSlug() === 'en' || i18n.hasTranslation( 'Just buy domains' )
+				? translate( 'Just buy a domain', 'Just buy domains', {
+						count: this.getDomainCart().length,
+				  } )
+				: translate( 'Just buy a domain' );
 
 		if ( this.isLeanDomainSearch() && domainName ) {
 			// translators: %s is a domain name
