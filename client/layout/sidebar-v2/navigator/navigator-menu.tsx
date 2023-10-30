@@ -9,17 +9,24 @@ import {
 import './style.scss';
 
 interface Props {
+	title?: string;
 	description?: string;
 	backButtonProps?: {
 		icon: JSX.Element;
-		label: string;
+		label?: string;
 		onClick: () => void;
 	};
 	path: string;
 	children: React.ReactNode;
 }
 
-export const SidebarNavigatorMenu = ( { description, backButtonProps, path, children }: Props ) => {
+export const SidebarNavigatorMenu = ( {
+	title,
+	description,
+	backButtonProps,
+	path,
+	children,
+}: Props ) => {
 	return (
 		<NavigatorScreen path={ path }>
 			<Card>
@@ -27,12 +34,14 @@ export const SidebarNavigatorMenu = ( { description, backButtonProps, path, chil
 					<VStack spacing={ 0 } justify="flex-start">
 						<ul>
 							{ backButtonProps && (
-								<li>
+								<li className="sidebar-v2__navigator-sub-menu-header">
 									<NavigatorToParentButton
 										icon={ backButtonProps.icon }
 										onClick={ backButtonProps.onClick }
-										text={ backButtonProps.label }
+										label={ backButtonProps.label }
+										showTooltip
 									/>
+									<span>{ title }</span>
 								</li>
 							) }
 							<div>
