@@ -29,6 +29,10 @@
 	align-items: center;
 	justify-content: center;
 
+	.layout__primary {
+		margin-top: 0 !important;
+	}
+
 	.magic-login .magic-login__form-header {
 		margin-bottom: 0;
 
@@ -51,6 +55,23 @@
 
 	.magic-login__form-action {
 		margin-top: 16px;
+	}
+
+	.magic-login__confirmation {
+		p {
+			text-align: center;
+		}
+		.magic-login__confirmation-email {
+			font-weight: 600;
+		}
+		.magic-login__footer a {
+			border-bottom: none;
+			color: var(--studio-gray-90);
+			text-decoration: underline;
+			&:hover {
+				color: var(--color-primary);
+			}
+		}
 	}
 }
 
