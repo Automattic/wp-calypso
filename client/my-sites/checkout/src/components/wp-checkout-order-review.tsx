@@ -56,6 +56,14 @@ const CouponEnableButton = styled.button`
 	}
 `;
 
+const SitePreviewWrapper = styled.div`
+	& .home-site-preview {
+		padding-bottom: 1.5em;
+	}
+	& .home-site-preview .home-site-preview__remove-pointer {
+		aspect-ratio: 16 / 9;
+	}
+`;
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
@@ -127,47 +135,59 @@ export default function WPCheckoutOrderReview( {
 	const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 	return (
-		<div
-			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
-		>
-			{ checkoutVersion === '2' && <SitePreview /> }
-			{ domainUrl && <SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary> }
-			{ planIsP2Plus && selectedSiteData?.name && (
-				<SiteSummary>
-					{ translate( 'Upgrade: {{strong}}%s{{/strong}}', {
-						args: selectedSiteData.name,
-						components: {
-							strong: <strong />,
-						},
-					} ) }
-				</SiteSummary>
+		<>
+			{ checkoutVersion === '2' && (
+				<div className="checkout-site-preview">
+					<SitePreviewWrapper>
+						<SitePreview showEditSite={ false } showSiteDetails={ false } />
+					</SitePreviewWrapper>
+				</div>
 			) }
+			<div
+				className={ joinClasses( [
+					className,
+					'checkout-review-order',
+					isSummary && 'is-summary',
+				] ) }
+			>
+				{ domainUrl && <SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary> }
+				{ planIsP2Plus && selectedSiteData?.name && (
+					<SiteSummary>
+						{ translate( 'Upgrade: {{strong}}%s{{/strong}}', {
+							args: selectedSiteData.name,
+							components: {
+								strong: <strong />,
+							},
+						} ) }
+					</SiteSummary>
+				) }
 
-			<WPOrderReviewSection>
-				<WPOrderReviewLineItems
-					removeProductFromCart={ removeProductFromCart }
-					removeCoupon={ removeCouponAndClearField }
-					onChangeSelection={ onChangeSelection }
-					isSummary={ isSummary }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					responseCart={ responseCart }
-					isPwpoUser={ isPwpoUser ?? false }
-					onRemoveProduct={ onRemoveProduct }
-					onRemoveProductClick={ onRemoveProductClick }
-					onRemoveProductCancel={ onRemoveProductCancel }
-				/>
-			</WPOrderReviewSection>
+				<WPOrderReviewSection>
+					<WPOrderReviewLineItems
+						removeProductFromCart={ removeProductFromCart }
+						removeCoupon={ removeCouponAndClearField }
+						onChangeSelection={ onChangeSelection }
+						isSummary={ isSummary }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						responseCart={ responseCart }
+						isPwpoUser={ isPwpoUser ?? false }
+						onRemoveProduct={ onRemoveProduct }
+						onRemoveProductClick={ onRemoveProductClick }
+						onRemoveProductCancel={ onRemoveProductCancel }
+					/>
+				</WPOrderReviewSection>
 
-			{ ! isAkismetCheckout() && (
-				<CouponFieldArea
-					isCouponFieldVisible={ isCouponFieldVisible }
-					setCouponFieldVisible={ setCouponFieldVisible }
-					isPurchaseFree={ isPurchaseFree }
-					couponStatus={ couponStatus }
-					couponFieldStateProps={ couponFieldStateProps }
-				/>
-			) }
-		</div>
+				{ ! isAkismetCheckout() && (
+					<CouponFieldArea
+						isCouponFieldVisible={ isCouponFieldVisible }
+						setCouponFieldVisible={ setCouponFieldVisible }
+						isPurchaseFree={ isPurchaseFree }
+						couponStatus={ couponStatus }
+						couponFieldStateProps={ couponFieldStateProps }
+					/>
+				) }
+			</div>
+		</>
 	);
 }
 
