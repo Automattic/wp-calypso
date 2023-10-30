@@ -1,7 +1,8 @@
 .partner-program-opt-in-field {
 	// gives SVG icon better vertical alignment with text
-	&__details-icon {
-		vertical-align: text-top;
+	&__details-icon-button {
+		vertical-align: sub;
+		padding: 0;
 	}
 
 	&__details-popover {
