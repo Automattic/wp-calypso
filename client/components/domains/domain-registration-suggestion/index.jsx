@@ -362,7 +362,9 @@ class DomainRegistrationSuggestion extends Component {
 			badges.push(
 				<Badge key="hsts-notice">
 					{ translate( 'SSL Required' ) }
-					<InfoPopover iconSize={ 16 }>{ this.getHstsMessage() }</InfoPopover>
+					<InfoPopover iconSize={ 16 } showOnHover>
+						{ this.getHstsMessage() }
+					</InfoPopover>
 				</Badge>
 			);
 		}
@@ -371,7 +373,9 @@ class DomainRegistrationSuggestion extends Component {
 			badges.push(
 				<Badge key="lgbtq">
 					{ translate( 'LGBTQ' ) }
-					<InfoPopover iconSize={ 16 }>{ this.getDotGayMessage() }</InfoPopover>
+					<InfoPopover iconSize={ 16 } showOnHover>
+						{ this.getDotGayMessage() }
+					</InfoPopover>
 				</Badge>
 			);
 		}
