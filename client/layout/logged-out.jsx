@@ -324,7 +324,11 @@ export default withCurrentRoute(
 			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 			const wccomFrom = currentQuery?.[ 'wccom-from' ];
 			const masterbarIsHidden =
-				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
+				! ( currentSection || currentRoute ) ||
+				! masterbarIsVisible( state ) ||
+				noMasterbarForSection ||
+				noMasterbarForRoute;
+
 			return {
 				isJetpackLogin,
 				isWhiteLogin,
