@@ -34,7 +34,14 @@ export type PanelObject = {
 	selectedPatterns?: Pattern[];
 };
 
-export type ScreenName = 'main' | 'styles' | 'confirmation' | 'activation' | 'upsell' | 'pages';
+export type ScreenName =
+	| 'main'
+	| 'sections'
+	| 'styles'
+	| 'confirmation'
+	| 'activation'
+	| 'upsell'
+	| 'pages';
 
 export type Tag = {
 	slug: string;
