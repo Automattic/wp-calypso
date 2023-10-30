@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
@@ -24,6 +24,7 @@ import {
 
 const DiscoverStream = ( props ) => {
 	const locale = useLocale();
+	const translate = useTranslate();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedTab = props.selectedTab;
