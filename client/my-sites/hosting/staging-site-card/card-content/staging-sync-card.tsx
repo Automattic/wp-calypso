@@ -29,13 +29,13 @@ function useIsJetpackConnectionSyncError( error: string | null | undefined ) {
 	if ( ! error ) {
 		return false;
 	}
-	return Object.values( STAGING_SYNC_JETPACK_ERROR_CODES ).includes( error );
+	return STAGING_SYNC_JETPACK_ERROR_CODES.includes( error );
 }
 function useIsFailedSyncError( error: string | null | undefined ) {
 	if ( ! error ) {
 		return false;
 	}
-	return Object.values( STAGING_SYNC_FAILED_ERROR_CODES ).includes( error );
+	return STAGING_SYNC_FAILED_ERROR_CODES.includes( error );
 }
 
 const synchronizationOptions: CheckboxOptionItem[] = [
