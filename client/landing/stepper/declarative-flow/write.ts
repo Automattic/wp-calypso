@@ -1,4 +1,4 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { LaunchpadNavigator } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, WRITE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -6,6 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -41,6 +42,7 @@ const write: Flow = {
 		setStepProgress( flowProgress );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
+		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -78,10 +80,13 @@ const write: Flow = {
 		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'write',
+						setActiveChecklist,
+						siteId,
+						siteSlug,
+					} );
+					return;
 
 				default:
 					return navigate( 'freeSetup' );
