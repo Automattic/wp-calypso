@@ -90,6 +90,19 @@ const JetpackCloudSidebar = ( {
 
 			<SidebarFooter>
 				<ul>
+					{ ! isJetpackManage && jetpackAdminUrl && (
+						<SidebarNavigatorMenuItem
+							isExternalLink
+							isSelected={ false }
+							title={ translate( 'WP Admin' ) }
+							link={ jetpackAdminUrl }
+							path={ jetpackAdminUrl }
+							icon={ <JetpackIcons icon="wordpress" /> }
+							onClickMenuItem={ () => {
+								dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' ) );
+							} }
+						/>
+					) }
 					<SidebarNavigatorMenuItem
 						isSelected={ false }
 						title={ translate( 'Get help', {
@@ -108,19 +121,6 @@ const JetpackCloudSidebar = ( {
 							window.open( link, '_blank' );
 						} }
 					/>
-					{ ! isJetpackManage && jetpackAdminUrl && (
-						<SidebarNavigatorMenuItem
-							isExternalLink
-							isSelected={ false }
-							title={ translate( 'WP Admin' ) }
-							link={ jetpackAdminUrl }
-							path={ jetpackAdminUrl }
-							icon={ <JetpackIcons icon="wordpress" /> }
-							onClickMenuItem={ () => {
-								dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' ) );
-							} }
-						/>
-					) }
 				</ul>
 			</SidebarFooter>
 
