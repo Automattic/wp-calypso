@@ -86,7 +86,7 @@ export const LineItem = styled( CheckoutLineItem )< {
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
 	font-size: 1.1em;
-	padding: 20px 0;
+	padding: ${ checkoutVersion === '2' ? '10px' : '20px' } 0;
 	position: relative;
 
 	.checkout-line-item__price {
@@ -1123,7 +1123,7 @@ function CheckoutLineItem( {
 				/>
 			</span>
 
-			{ product && ! containsPartnerCoupon && (
+			{ checkoutVersion !== '2' && product && ! containsPartnerCoupon && (
 				<>
 					<UpgradeCreditInformationLineItem>
 						<UpgradeCreditInformation product={ product } />

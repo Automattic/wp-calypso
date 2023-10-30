@@ -29,6 +29,10 @@ import type {
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren } from 'react';
 
+// A/B testing for checkout version 2
+const urlParams = new URLSearchParams( window.location.search );
+const checkoutVersion = urlParams.get( 'checkoutVersion' );
+
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	box-sizing: border-box;
 	margin: 20px 0;
@@ -125,7 +129,7 @@ export function WPOrderReviewLineItems( {
 					/>
 				</WPOrderReviewListItem>
 			) }
-			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+			{ checkoutVersion !== '2' && creditsLineItem && responseCart.sub_total_integer > 0 && (
 				<NonProductLineItem
 					subtotal
 					lineItem={ creditsLineItem }
