@@ -2,11 +2,10 @@ import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import {
 	updateLaunchpadSettings,
 	useSortedLaunchpadTasks,
-	sortLaunchpadTasksByCompletionStatus,
 	LaunchpadNavigator,
 } from '@automattic/data-stores';
 import { DefaultWiredLaunchpad, type Task } from '@automattic/launchpad';
-import { select, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useLaunchpadNavigator } from 'calypso/data/launchpad-navigator/use-launchpad-navigator';
@@ -33,7 +32,6 @@ const CustomerHomeLaunchpad = ( {
 
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
-	const useLaunchpadOptions = { onSuccess: sortLaunchpadTasksByCompletionStatus };
 	const {
 		data: { checklist, is_dismissed: initialIsChecklistDismissed },
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug );
@@ -44,16 +42,30 @@ const CustomerHomeLaunchpad = ( {
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
-	const { receiveActiveChecklistSlug } = useDispatch( LaunchpadNavigator.store );
 
-	const currentNavigatorChecklistSlug =
-		select( LaunchpadNavigator.store ).getActiveChecklistSlug() || null;
+	const { setActiveChecklist, receiveActiveChecklistSlug } = useDispatch(
+		LaunchpadNavigator.store
+	);
+
 	const {
-		data: { current_checklist },
-	} = useLaunchpadNavigator( siteSlug, currentNavigatorChecklistSlug );
+		data: { current_checklist: currentNavigatorChecklist },
+	} = useLaunchpadNavigator( siteSlug, null );
+
+	// Ensure that if we updated the checklist on the server, we update the navigator.
+	// One case where this can happen is when we launch a site and switch to a post-launch checklist.
 	useEffect( () => {
-		receiveActiveChecklistSlug( current_checklist );
-	}, [ current_checklist ] );
+		receiveActiveChecklistSlug( currentNavigatorChecklist );
+
+		if ( siteSlug && checklistSlug ) {
+			setActiveChecklist( siteSlug, checklistSlug );
+		}
+	}, [
+		checklistSlug,
+		currentNavigatorChecklist,
+		receiveActiveChecklistSlug,
+		setActiveChecklist,
+		siteSlug,
+	] );
 
 	// return nothing if the launchpad is dismissed
 	if ( isDismissed ) {
