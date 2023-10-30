@@ -9,7 +9,6 @@ import classnames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
-import { TranslateResult } from 'i18n-calypso';
 
 const ICON_SIZE = 24;
 
