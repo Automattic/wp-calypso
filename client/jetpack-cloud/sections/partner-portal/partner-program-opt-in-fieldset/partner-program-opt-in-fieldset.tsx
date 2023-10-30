@@ -21,7 +21,7 @@ export default function PartnerProgramOptInFieldset( {
 
 	const [ showPartnerProgramDetails, setShowPartnerProgramDetails ] = useState( false );
 
-	const detailsRef = useRef< HTMLElement | null >( null );
+	const detailsRef = useRef< HTMLButtonElement | null >( null );
 
 	return (
 		<FormFieldset className="partner-program-opt-in-field">
