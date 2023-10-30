@@ -1,4 +1,3 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PatternListPanel from './pattern-list-panel';
@@ -26,7 +25,6 @@ const ScreenPatternListPanel = ( {
 	onSelect,
 	...props
 }: Props ) => {
-	const hasEnTranslation = useHasEnTranslation();
 	const translate = useTranslate();
 	const navigator = useNavigator();
 	const selectedCategory = navigator.params.categorySlug as string;
@@ -34,30 +32,18 @@ const ScreenPatternListPanel = ( {
 		header: {
 			type: 'header',
 			label: translate( 'Header' ),
-			description: hasEnTranslation(
-				'The header pattern sits at the top of your site and typically shows your site logo, title, and navigation.'
-			)
-				? translate(
-						'The header pattern sits at the top of your site and typically shows your site logo, title, and navigation.'
-				  )
-				: translate(
-						'Pick the header that appears at the top of every page and shows your site logo, title and navigation.'
-				  ),
+			description: translate(
+				'Pick the header that appears at the top of every page and shows your site logo, title and navigation.'
+			),
 			category: 'header',
 			selectedPattern: selectedHeader,
 		},
 		footer: {
 			type: 'footer',
 			label: translate( 'Footer' ),
-			description: hasEnTranslation(
-				'The footer pattern sits at the bottom of your site and typically shows useful links and contact information.'
-			)
-				? translate(
-						'The footer pattern sits at the bottom of your site and typically shows useful links and contact information.'
-				  )
-				: translate(
-						'Pick the footer that appears at the bottom of every page and shows useful links and contact information.'
-				  ),
+			description: translate(
+				'Pick the footer that appears at the bottom of every page and shows useful links and contact information.'
+			),
 			category: 'footer',
 			selectedPattern: selectedFooter,
 		},

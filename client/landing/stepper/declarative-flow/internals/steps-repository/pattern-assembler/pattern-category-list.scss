@@ -1,12 +1,11 @@
 .pattern-category-list {
-	margin: 16px 0;
-
 	button {
-		margin: 0 -5px 0 -8px;
+		margin: 0 -11px;
 		border-radius: 2px;
 
 		.navigator-item {
 			margin: 0;
+			padding: 0 5px 0 11px;
 			width: auto;
 
 			&.navigator-item--active {
