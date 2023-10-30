@@ -677,13 +677,12 @@ export function generateSteps( {
 			stepName: 'site-or-domain',
 			props: {
 				getHeaderText( domainCart ) {
-					return i18n.translate(
-						'Choose how to use your domain',
-						'Choose how to use your domains',
-						{
-							count: domainCart.length,
-						}
-					);
+					return i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation( 'Choose how to use your domains' )
+						? i18n.translate( 'Choose how to use your domain', 'Choose how to use your domains', {
+								count: domainCart.length,
+						  } )
+						: i18n.translate( 'Choose how to use your domain' );
 				},
 				get subHeaderText() {
 					return i18n.getLocaleSlug() === 'en' ||
