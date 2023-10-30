@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
@@ -23,13 +23,24 @@ const AllSitesIcon = () => (
 	/>
 );
 
-const Header = ( { forceAllSitesView = false }: Props ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const selectedSiteId = useSelector( getSelectedSiteId );
+// NOTE: This hook is a little hacky, to get around the "outside click"
+// close behavior that happens inside `<SiteSelector />`. Instead of
+// using the `getCurrentLayoutFocus` selector, we use internal state to
+// derive whether or not the site selector should be visible.
+const useToggleSiteSelector = ( {
+	forceAllSitesView,
+	selectedSiteId,
+}: {
+	forceAllSitesView: boolean;
+	selectedSiteId: number | null;
+} ) => {
+	const SITES_FOCUS = 'sites';
+	const SIDEBAR_FOCUS = 'sidebar';
 
-	const onSelectSite = useCallback( () => {
-		dispatch( setLayoutFocus( 'sites' ) );
+	const [ isVisible, setVisible ] = useState( false );
+	const dispatch = useDispatch();
+
+	return useCallback( () => {
 		dispatch(
 			forceAllSitesView
 				? recordTracksEvent( 'calypso_jetpack_sidebar_switch_site_all_click' )
@@ -37,7 +48,20 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 						site_id: selectedSiteId,
 				  } )
 		);
-	}, [ dispatch, forceAllSitesView, selectedSiteId ] );
+
+		// If the site selector is currently visible, make it not visible,
+		// and vice versa
+		const nextFocus = isVisible ? SIDEBAR_FOCUS : SITES_FOCUS;
+		setVisible( ( val ) => ! val );
+		dispatch( setLayoutFocus( nextFocus ) );
+	}, [ dispatch, forceAllSitesView, isVisible, selectedSiteId ] );
+};
+
+const Header = ( { forceAllSitesView = false }: Props ) => {
+	const translate = useTranslate();
+	const selectedSiteId = useSelector( getSelectedSiteId );
+
+	const toggleSiteSelector = useToggleSiteSelector( { forceAllSitesView, selectedSiteId } );
 
 	return (
 		<SidebarHeader className="jetpack-cloud-sidebar__header">
@@ -48,14 +72,14 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 					showCount={ false }
 					icon={ <AllSitesIcon /> }
 					title={ translate( 'All Sites' ) }
-					onSelect={ onSelectSite }
+					onSelect={ toggleSiteSelector }
 				/>
 			) : (
 				<Site
 					showChevronDownIcon
 					className="jetpack-cloud-sidebar__selected-site"
 					siteId={ selectedSiteId }
-					onSelect={ onSelectSite }
+					onSelect={ toggleSiteSelector }
 				/>
 			) }
 			<ProfileDropdown />
