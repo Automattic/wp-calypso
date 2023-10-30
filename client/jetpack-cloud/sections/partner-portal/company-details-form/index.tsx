@@ -1,13 +1,13 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
+import PartnerProgramOptInFieldSet from '../partner-program-opt-in-fieldset/partner-program-opt-in-fieldset';
 import SearchableDropdown from '../searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 
@@ -214,22 +214,11 @@ export default function CompanyDetailsForm( {
 						className={ undefined }
 					/>
 				</FormFieldset>
-				{ showPartnerProgramOptIn && (
-					<FormFieldset>
-						<FormLabel htmlFor="partnerProgramOptIn">
-							{ translate( 'Jetpack Agency & Pro Partner program' ) }
-						</FormLabel>
-						<FormInputCheckbox
-							id="partnerProgramOptIn"
-							name="partnerProgramOptIn"
-							checked={ partnerProgramOptIn }
-							disabled={ isLoading }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-								setPartnerProgramOptIn( event.target.checked )
-							}
-						/>
-						<span>{ translate( 'Sign up for the Jetpack Agency & Pro Partner program' ) }</span>
-					</FormFieldset>
+				{ showPartnerProgramOptIn && ! isLoading && (
+					<PartnerProgramOptInFieldSet
+						setPartnerProgramOptIn={ setPartnerProgramOptIn }
+						isChecked={ partnerProgramOptIn }
+					/>
 				) }
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
