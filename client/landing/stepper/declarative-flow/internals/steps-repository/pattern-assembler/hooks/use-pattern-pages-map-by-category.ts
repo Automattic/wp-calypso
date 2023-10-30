@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
-import { PAGES_CATEGORIES } from '../constants';
+import { PATTERN_PAGES_CATEGORIES } from '../constants';
 import { isPriorityPattern, isPagePattern } from '../utils';
 import type { Pattern } from '../types';
 
-const usePagesMapByCategory = ( patterns: Pattern[] ) => {
+const usePatternPagesMapByCategory = ( patterns: Pattern[] ) => {
 	return useMemo( () => {
 		const categoriesMap: Record< string, Pattern[] > = {};
 
 		patterns.reverse().forEach( ( pattern ) => {
 			Object.keys( pattern.categories ).forEach( ( category ) => {
-				if ( ! PAGES_CATEGORIES.includes( category ) || ! isPagePattern( pattern ) ) {
+				if ( ! PATTERN_PAGES_CATEGORIES.includes( category ) || ! isPagePattern( pattern ) ) {
 					return;
 				}
 				if ( ! categoriesMap[ category ] ) {
@@ -26,4 +26,4 @@ const usePagesMapByCategory = ( patterns: Pattern[] ) => {
 	}, [ patterns ] );
 };
 
-export default usePagesMapByCategory;
+export default usePatternPagesMapByCategory;
