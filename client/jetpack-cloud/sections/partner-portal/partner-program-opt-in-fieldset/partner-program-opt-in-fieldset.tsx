@@ -27,14 +27,14 @@ export default function PartnerProgramOptInFieldset( {
 		<FormFieldset className="partner-program-opt-in-field">
 			<FormLabel>
 				{ translate( 'Jetpack Agency & Pro Partner program' ) }
-				<span ref={ detailsRef }>
-					<Icon
-						className="partner-program-opt-in-field__details-icon"
-						size={ 16 }
-						icon={ info }
-						onClick={ () => setShowPartnerProgramDetails( true ) }
-					/>
-				</span>
+				<Button
+					ref={ detailsRef }
+					className="partner-program-opt-in-field__details-icon-button"
+					borderless
+					onClick={ () => setShowPartnerProgramDetails( true ) }
+				>
+					<Icon size={ 16 } icon={ info } />
+				</Button>
 			</FormLabel>
 			<FormInputCheckbox
 				id="partnerProgramOptIn"
