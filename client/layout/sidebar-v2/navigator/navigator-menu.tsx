@@ -25,19 +25,23 @@ export const SidebarNavigatorMenu = ( { description, backButtonProps, path, chil
 			<Card>
 				<CardBody className="sidebar-v2__navigator-sub-menu">
 					<VStack spacing={ 0 } justify="flex-start">
-						{ backButtonProps && (
-							<NavigatorToParentButton
-								icon={ backButtonProps.icon }
-								onClick={ backButtonProps.onClick }
-								text={ backButtonProps.label }
-							/>
-						) }
-						<div>
-							{ description && (
-								<div className="sidebar-v2__navigator-group-description">{ description }</div>
+						<ul>
+							{ backButtonProps && (
+								<li>
+									<NavigatorToParentButton
+										icon={ backButtonProps.icon }
+										onClick={ backButtonProps.onClick }
+										text={ backButtonProps.label }
+									/>
+								</li>
 							) }
-							{ children }
-						</div>
+							<div>
+								{ description && (
+									<div className="sidebar-v2__navigator-group-description">{ description }</div>
+								) }
+								{ children }
+							</div>
+						</ul>
 					</VStack>
 				</CardBody>
 			</Card>

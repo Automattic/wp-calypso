@@ -5,13 +5,14 @@
 
 .stats__post-detail-highlights-section {
 	@include break-small {
-		padding-top: $vertical-margin;
+		// padding-bottom: $vertical-margin;
 	}
+	padding-top: $vertical-margin;
 
 	padding-bottom: $vertical-margin;
 
 	.stats > & {
-		@media ( max-width: $break-medium ) {
+		@media ( max-width: $break-small ) {
 			padding-left: 0;
 			padding-right: 0;
 		}
@@ -22,12 +23,6 @@
 		box-shadow: none;
 	}
 
-	.highlight-cards-heading {
-		@media ( max-width: $break-medium ) {
-			margin-left: 0.875rem;
-			margin-right: 0.875rem;
-		}
-	}
 
 	.section-nav {
 		box-shadow: inset 0 -1px 0 #0000000d;

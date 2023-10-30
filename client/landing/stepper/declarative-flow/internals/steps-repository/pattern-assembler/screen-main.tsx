@@ -4,45 +4,65 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
-import { header, footer, layout } from '@wordpress/icons';
+import { header, footer } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from './constants';
-import { useScreen } from './hooks';
+import { NAVIGATOR_PATHS } from './constants';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { useScreen, usePatternCountMapByCategory } from './hooks';
 import NavigatorTitle from './navigator-title';
+import PatternCategoryList from './pattern-category-list';
 import PatternCount from './pattern-count';
 import Survey from './survey';
-import { PatternType } from './types';
+import { Category, Pattern, PatternType } from './types';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
-	sectionsCount: number;
 	hasHeader: boolean;
 	hasFooter: boolean;
+	sections: Pattern[];
+	categories: Category[];
+	patternsMapByCategory: Record< string, Pattern[] >;
 	onContinueClick: () => void;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
 const ScreenMain = ( {
 	onMainItemSelect,
 	surveyDismissed,
 	setSurveyDismissed,
-	sectionsCount,
 	hasHeader,
 	hasFooter,
+	sections,
+	categories,
+	patternsMapByCategory,
 	onContinueClick,
+	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
 	const { title, description, continueLabel } = useScreen( 'main' );
 	const { location, params, goTo } = useNavigator();
+	const patternCountMapByCategory = usePatternCountMapByCategory( sections );
 	const selectedCategory = params.categorySlug as string;
-	const totalPatternCount = Number( hasHeader ) + sectionsCount + Number( hasFooter );
+	const totalPatternCount = Number( hasHeader ) + sections.length + Number( hasFooter );
 	const isButtonDisabled = totalPatternCount === 0;
 
-	const handleNavigatorItemSelect = ( type: PatternType, path: string, category: string ) => {
-		const nextPath = category !== selectedCategory ? `${ path }/${ category }` : path;
+	const handleSelectCategory = ( category: string, type: PatternType = 'section' ) => {
+		const basePath = NAVIGATOR_PATHS.MAIN;
+		const isBack = category === selectedCategory;
+		const nextPath = ! isBack ? `${ basePath }/${ category }` : basePath;
 		goTo( nextPath, { replace: true } );
-		onMainItemSelect( type );
+
+		if ( ! isBack ) {
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CATEGORY_LIST_CATEGORY_CLICK, {
+				pattern_category: category,
+			} );
+
+			if ( type !== 'section' ) {
+				onMainItemSelect( type );
+			}
+		}
 	};
 
 	return (
@@ -59,9 +79,7 @@ const ScreenMain = ( {
 							checked={ hasHeader }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
-							onClick={ () =>
-								handleNavigatorItemSelect( 'header', NAVIGATOR_PATHS.MAIN, 'header' )
-							}
+							onClick={ () => handleSelectCategory( 'header', 'header' ) }
 							active={ location.path === NAVIGATOR_PATHS.MAIN_HEADER }
 						>
 							<>
@@ -69,27 +87,22 @@ const ScreenMain = ( {
 								<PatternCount count={ Number( hasHeader ) } />
 							</>
 						</NavigatorItem>
-						<NavigatorItem
-							checked={ !! sectionsCount }
-							icon={ layout }
-							aria-label={ translate( 'Sections' ) }
-							onClick={ () =>
-								handleNavigatorItemSelect( 'section', NAVIGATOR_PATHS.SECTIONS, INITIAL_CATEGORY )
-							}
-						>
-							<>
-								{ translate( 'Sections' ) }
-								<PatternCount count={ sectionsCount } />
-							</>
-						</NavigatorItem>
+
+						<VStack spacing="4">
+							<PatternCategoryList
+								categories={ categories }
+								patternsMapByCategory={ patternsMapByCategory }
+								patternCountMapByCategory={ patternCountMapByCategory }
+								selectedCategory={ selectedCategory }
+								onSelectCategory={ handleSelectCategory }
+							/>
+						</VStack>
 
 						<NavigatorItem
 							checked={ hasFooter }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
-							onClick={ () =>
-								handleNavigatorItemSelect( 'footer', NAVIGATOR_PATHS.MAIN, 'footer' )
-							}
+							onClick={ () => handleSelectCategory( 'footer', 'footer' ) }
 							active={ location.path === NAVIGATOR_PATHS.MAIN_FOOTER }
 						>
 							<>
@@ -104,14 +117,19 @@ const ScreenMain = ( {
 			<div className="screen-container__footer">
 				<span className="screen-container__footer-description">
 					{ totalPatternCount > 0 &&
-						translate( 'You’ve added {{strong}}%(count)s{{/strong}} patterns.', {
-							args: {
+						translate(
+							'You’ve selected {{strong}}%(count)s{{/strong}} pattern.',
+							'You’ve selected {{strong}}%(count)s{{/strong}} patterns.',
+							{
 								count: totalPatternCount,
-							},
-							components: {
-								strong: <strong />,
-							},
-						} ) }
+								args: {
+									count: totalPatternCount,
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
 				</span>
 				<Button
 					className="pattern-assembler__button"
@@ -119,7 +137,9 @@ const ScreenMain = ( {
 					showTooltip={ isButtonDisabled }
 					onClick={ onContinueClick }
 					label={
-						isButtonDisabled ? translate( 'Add your first pattern to get started.' ) : continueLabel
+						isButtonDisabled
+							? translate( 'Select your first pattern to get started.' )
+							: continueLabel
 					}
 					variant="primary"
 					text={ continueLabel }

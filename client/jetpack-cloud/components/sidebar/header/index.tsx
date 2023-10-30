@@ -44,6 +44,7 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 			{ forceAllSitesView ? (
 				<AllSites
 					showIcon
+					showChevronDownIcon
 					showCount={ false }
 					icon={ <AllSitesIcon /> }
 					title={ translate( 'All Sites' ) }
@@ -51,6 +52,7 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 				/>
 			) : (
 				<Site
+					showChevronDownIcon
 					className="jetpack-cloud-sidebar__selected-site"
 					siteId={ selectedSiteId }
 					onSelect={ onSelectSite }

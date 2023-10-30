@@ -71,8 +71,27 @@ const BlazePressStrings = () => {
 	translate( 'Reset' );
 	translate( 'Upload' );
 	translate( 'Crop' );
+	translate( 'Something went wrong. Please try again later.' );
+	translate( 'Your search did not match any images. Please try a different term.' );
+	translate( 'Upload new image' );
+	translate( 'Select a free photo from Openverse' );
+	translate( 'Select or drop image to upload' );
+	translate( 'Drop images to upload' );
+	translate( 'Use selected' );
+	translate( 'Load More' );
+	translate(
+		'Showing %(found)s of %(found)s media item',
+		'Showing %(found)s of %(found)s media items',
+		{ count: 1 }
+	);
+	translate( 'Search images' );
+	translate( 'Search' );
+	translate( 'Select' );
+	translate( 'Media Library' );
+	translate( 'Openverse' );
 	translate( 'Drop an image here to upload.' );
 	translate( 'Click or drag an image here to upload.' );
+	translate( 'Upload an image file, or pick one from your media library.' );
 	translate( 'Audience' );
 	translate(
 		'Not enough reach to create a campaign with the current audience configuration. Please, expand your reach by changing or removing some of the audience settings'
@@ -149,15 +168,12 @@ const BlazePressStrings = () => {
 	translate( 'Creating campaign' );
 	translate( 'Submit campaign' );
 	translate( 'Make changes' );
-	translate( 'Page Title' );
-	translate( 'Article Snippet' );
-	translate( 'Ad preview' );
+	translate( 'Ad Preview' );
 	translate( 'Mobile' );
 	translate( 'Tablet' );
 	translate( 'Desktop' );
 	translate( 'Everywhere' );
 	translate( 'Summary' );
-	translate( 'Ad Preview' );
 	translate( 'Preview' );
 	translate( 'Depending on the platform, the ad may look different from the preview.' );
 	translate( 'Estimated Impressions' );
@@ -167,8 +183,12 @@ const BlazePressStrings = () => {
 	translate( 'Destination' );
 	translate( 'Suggested using AI' );
 	translate( 'Suggested by AI' );
+	translate( 'Oops, something went wrong' );
 	translate( 'Loading site…' );
 	translate( 'Fetching subscriptions…' );
+	translate(
+		'There was a problem getting the necessary information to create your campaign. Please try again soon or {{a}}contact our support team{{/a}} for help.'
+	);
 	translate( 'Preparing the wizard…' );
 	translate( 'Fetching the AI suggestions…' );
 	translate( 'Drop image here' );

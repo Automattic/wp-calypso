@@ -36,6 +36,7 @@ import {
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 } from '../../utils';
+import TargetLocations from './target-locations';
 
 interface Props {
 	isLoading?: boolean;
@@ -126,10 +127,11 @@ export default function CampaignItemDetails( props: Props ) {
 	} );
 
 	// Target block
-	const devicesList = audience_list ? audience_list[ 'devices' ] : '';
-	const countriesList = audience_list ? audience_list[ 'countries' ] : '';
-	const topicsList = audience_list ? audience_list[ 'topics' ] : '';
-	const languagesList = audience_list ? audience_list[ 'languages' ] : '';
+	const {
+		devices: devicesList,
+		topics: topicsList,
+		languages: languagesList,
+	} = audience_list || {};
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
@@ -141,7 +143,6 @@ export default function CampaignItemDetails( props: Props ) {
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
-	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'Everywhere' );
 	const languagesListFormatted = languagesList
 		? `${ languagesList }`
 		: translate( 'All languages' );
@@ -519,8 +520,12 @@ export default function CampaignItemDetails( props: Props ) {
 										<span className="campaign-item-details__label">
 											{ translate( 'Location' ) }
 										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? countriesListFormatted : <FlexibleSkeleton /> }
+										<span className="campaign-item-details__details campaign-item-details__locations">
+											{ ! isLoading ? (
+												<TargetLocations audienceList={ audience_list } />
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</span>
 										<span className="campaign-item-details__label">
 											{ translate( 'Languages' ) }

@@ -5,8 +5,14 @@ import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useSelector } from 'calypso/state';
-import { isSimpleSite as isSimpleSiteSelector } from 'calypso/state/sites/selectors';
+import {
+	isJetpackMinimumVersion,
+	isJetpackSite as isJetpackSiteSelector,
+	isSimpleSite as isSimpleSiteSelector,
+} from 'calypso/state/sites/selectors';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { SubscriptionOptions } from '../settings-reading/main';
+import type { AppState } from 'calypso/types';
 
 type EmailsTextSettingProps = {
 	value?: SubscriptionOptions;
@@ -20,7 +26,16 @@ type SubscriptionOption = {
 
 export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsTextSettingProps ) => {
 	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID;
 	const isSimpleSite = useSelector( isSimpleSiteSelector );
+	const isJetpackSite = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
+
+	const isJetpackVersionSupported = useSelector( ( state: AppState ) => {
+		return siteId && isJetpackSite && isJetpackMinimumVersion( state, siteId, '12.8' );
+	} );
+
+	const hasWelcomeEmailFeature = isSimpleSite || isJetpackVersionSupported;
 
 	const updateSubscriptionOptions =
 		( option: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -44,24 +59,7 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 				<FormLegend>
 					{ translate( 'These settings change the emails sent from your site to your readers' ) }
 				</FormLegend>
-				<FormLabel htmlFor="confirmation_email_message">
-					{ translate( 'Confirmation email message' ) }
-				</FormLabel>
-				<FormTextarea
-					name="confirmation_email_message"
-					id="confirmation_email_message"
-					value={ value?.invitation }
-					onChange={ updateSubscriptionOptions( 'invitation' ) }
-					autoCapitalize="none"
-					disabled
-				/>
-				<FormSettingExplanation>
-					{ translate(
-						'The ability to customize the confirmation email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
-					) }
-				</FormSettingExplanation>
-
-				{ isSimpleSite && (
+				{ hasWelcomeEmailFeature && (
 					<>
 						<FormLabel htmlFor="welcome_email_message">
 							{ translate( 'Welcome email message' ) }
@@ -93,6 +91,23 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 				/>
 				<FormSettingExplanation>
 					{ translate( 'The email sent out when someone follows one of your posts.' ) }
+				</FormSettingExplanation>
+
+				<FormLabel htmlFor="confirmation_email_message">
+					{ translate( 'Confirmation email message' ) }
+				</FormLabel>
+				<FormTextarea
+					name="confirmation_email_message"
+					id="confirmation_email_message"
+					value={ value?.invitation }
+					onChange={ updateSubscriptionOptions( 'invitation' ) }
+					autoCapitalize="none"
+					disabled
+				/>
+				<FormSettingExplanation>
+					{ translate(
+						'The ability to customize the confirmation email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
+					) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		</div>

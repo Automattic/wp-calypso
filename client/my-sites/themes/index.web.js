@@ -28,16 +28,16 @@ export default function ( router ) {
 	const routesWithoutSites = [
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?`,
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:view(collection)?`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|my-themes|recommended)?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|my-themes|recommended)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
 	];
 	const routesWithSites = [
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes|recommended)?/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes|recommended)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?/:site_id(${ siteId })`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
 	];

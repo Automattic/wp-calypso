@@ -98,6 +98,8 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const addOns = useAddOns( selectedSite?.ID );
+	const filteredAddOns = addOns.filter( ( addOn ) => ! addOn?.exceedsSiteStorageLimits );
+
 	const checkoutLink = useAddOnCheckoutLink();
 
 	const canManageSite = useSelector( ( state ) => {
@@ -131,7 +133,7 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 					actionPrimary={ { text: translate( 'Buy add-on' ), handler: handleActionPrimary } }
 					actionSecondary={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
 					useAddOnAvailabilityStatus={ useAddOnPurchaseStatus }
-					addOns={ addOns }
+					addOns={ filteredAddOns }
 					highlightFeatured={ true }
 				/>
 			</ContentWithHeader>
