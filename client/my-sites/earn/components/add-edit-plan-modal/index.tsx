@@ -162,7 +162,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			return false;
 		}
 		if (
-			( field === 'prices' || ( editedPostPaidNewsletter && ! field ) ) &&
+			( field === 'prices' || ( editedPostIsTier && ! field ) ) &&
 			currentPrice >= currentAnnualPrice
 		) {
 			return false;
@@ -219,12 +219,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
 			return;
 		}
-		const name = editedPostPaidNewsletter
-			? defaultNameTier
-			: defaultNames[ `${ editedSchedule }` ] ?? '';
+		const name = editedPostIsTier ? defaultNameTier : defaultNames[ `${ editedSchedule }` ] ?? '';
 
 		setEditedProductName( name );
-	}, [ editedSchedule, editedPostPaidNewsletter ] );
+	}, [ editedSchedule, editedPostIsTier ] );
 
 	const getAnnualProductDetailsFromProduct = ( productDetails: Product ): Product => ( {
 		...productDetails,
@@ -305,11 +303,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		closeDialog();
 	};
 
-	const addPlan = editedPostPaidNewsletter
+	const addPlan = editedPostIsTier
 		? translate( 'Set up newsletter tier options' )
 		: translate( 'Set up plan options' );
 
-	const editPlan = editedPostPaidNewsletter
+	const editPlan = editedPostIsTier
 		? translate( 'Edit newsletter tier options' )
 		: translate( 'Edit plan options' );
 
@@ -338,7 +336,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			<div className="memberships__dialog-sections">
 				<FormFieldset>
 					<FormLabel htmlFor="title">
-						{ editedPostPaidNewsletter
+						{ editedPostIsTier
 							? translate( 'Describe the tier name' )
 							: translate( 'Describe the plan' ) }
 					</FormLabel>
@@ -388,7 +386,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					/>
 				) }
 				{ /* Price settings for a tier plan */ }
-				{ editedPostPaidNewsletter && (
+				{ editedPostIsTier && (
 					<>
 						<FormFieldset className="memberships__dialog-sections-price">
 							<div className="memberships__dialog-sections-price-field-container">
@@ -428,7 +426,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				) }
 
 				{ /* Price settings for a regular plan */ }
-				{ ! editedPostPaidNewsletter && (
+				{ ! editedPostIsTier && (
 					<FormFieldset className="memberships__dialog-sections-price">
 						<div className="memberships__dialog-sections-price-field-container">
 							<FormLabel htmlFor="renewal_schedule">{ translate( 'Renewal frequency' ) }</FormLabel>
@@ -479,7 +477,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						} ) }
 					/>
 				) }
-				{ editedPostPaidNewsletter && ! isFormValid( 'prices' ) && (
+				{ editedPostIsTier && ! isFormValid( 'prices' ) && (
 					<FormInputValidation
 						isError
 						text={ translate( 'Please enter a annual price higher than the monthly price', {
