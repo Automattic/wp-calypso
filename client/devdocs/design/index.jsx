@@ -19,6 +19,7 @@ import ScreenReaderTextExample from '@automattic/components/src/screen-reader-te
 import SelectDropdown from '@automattic/components/src/select-dropdown/docs/example';
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
+import Tooltip from '@automattic/components/src/tooltip/docs/example';
 import classnames from 'classnames';
 import { trim } from 'lodash';
 import page from 'page';
@@ -115,7 +116,6 @@ import TimeSince from 'calypso/components/time-since/docs/example';
 import Timeline from 'calypso/components/timeline/docs/example';
 import Timezone from 'calypso/components/timezone/docs/example';
 import TokenFields from 'calypso/components/token-field/docs/example';
-import Tooltip from 'calypso/components/tooltip/docs/example';
 import UserItem from 'calypso/components/user/docs/example';
 import VerticalMenu from 'calypso/components/vertical-menu/docs/example';
 import VerticalNav from 'calypso/components/vertical-nav/docs/example';

@@ -78,7 +78,7 @@ export { default as Timeline } from 'calypso/components/timeline/docs/example';
 export { default as TimeSince } from 'calypso/components/time-since/docs/example';
 export { default as Timezone } from 'calypso/components/timezone/docs/example';
 export { default as TokenFields } from 'calypso/components/token-field/docs/example';
-export { default as Tooltip } from 'calypso/components/tooltip/docs/example';
+export { default as Tooltip } from '@automattic/components/src/tooltip/docs/example';
 export { default as UserItem } from 'calypso/components/user/docs/example';
 export { default as VerticalMenu } from 'calypso/components/vertical-menu/docs/example';
 export { default as VerticalNav } from 'calypso/components/vertical-nav/docs/example';
