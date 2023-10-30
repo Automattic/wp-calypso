@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { omit, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment, useCallback, useRef } from 'react';
@@ -10,6 +9,7 @@ import compareProps from 'calypso/lib/compare-props';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
 import ListGap from 'calypso/reader/list-gap';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
 import Post from './post';
@@ -26,7 +26,7 @@ import CrossPost from './x-post';
  * @param postObj Object The post data.
  * @returns A callback ref that MUST be used on a div element for tracking.
  */
-const useTrackPostView = ( postObj, stream ) => {
+const useTrackPostView = ( postObj, recordTracksEvent ) => {
 	const observerRef = useRef();
 
 	// Use a callback as the ref so we get called for both mount and unmount events
@@ -45,12 +45,7 @@ const useTrackPostView = ( postObj, stream ) => {
 					return;
 				}
 
-				recordTracksEvent( 'calypso_reader_post_display', {
-					feed_id: postObj?.feed_ID,
-					site_id: postObj?.blogId,
-					post_id: postObj?.postId,
-					ui_algo: stream,
-				} );
+				recordTracksEvent( 'calypso_reader_post_display', null, { post: postObj } );
 			};
 
 			observerRef.current = new IntersectionObserver( intersectionHandler, {
@@ -71,7 +66,7 @@ const useTrackPostView = ( postObj, stream ) => {
  * @returns A React component that renders a post and tracks when the post is displayed.
  */
 const TrackedPost = ( { ...props } ) => {
-	const trackingDivRef = useTrackPostView( props.postKey, props.streamKey );
+	const trackingDivRef = useTrackPostView( props.post, props.recordReaderTracksEvent );
 
 	return <Post postRef={ trackingDivRef } { ...props } />;
 };
@@ -164,7 +159,9 @@ export default connect(
 	( state, ownProps ) => ( {
 		post: getPostByKey( state, ownProps.postKey ),
 	} ),
-	null,
+	{
+		recordReaderTracksEvent,
+	},
 	null,
 	{
 		forwardRef: true,
