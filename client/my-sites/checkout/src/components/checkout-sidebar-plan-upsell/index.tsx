@@ -2,10 +2,12 @@ import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import styled from '@emotion/styled';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -19,6 +21,9 @@ import {
 import './style.scss';
 
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
+// A/B testing for checkout version 2
+const urlParams = new URLSearchParams( window.location.search );
+const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
@@ -32,6 +37,33 @@ export function CheckoutSidebarPlanUpsell() {
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
 	const variants = useGetProductVariants( plan );
+	const translate = useTranslate();
+
+	const PromoCardV2 = styled.div`
+		position: relative;
+		background-color: #bbe0fa;
+		border-radius: 4px;
+		font-size: 12px;
+		font-weight: 500;
+
+		p {
+			margin: 0;
+			padding: 8px 16px;
+		}
+
+		&:before {
+			background-color: #bbe0fa;
+			display: block;
+			top: -5px;
+			content: '';
+			height: 8px;
+			right: 8%;
+			margin-left: -4px;
+			position: absolute;
+			transform: rotate( 225deg );
+			width: 8px;
+		}
+	`;
 
 	function isBusy() {
 		// If the FormStatus is SUBMITTING and the user has not clicked this button, we want to return false for isBusy
@@ -131,56 +163,70 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 
 	return (
-		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
-			<div className="checkout-sidebar-plan-upsell__plan-grid">
-				{ isComparisonWithIntroOffer && (
-					<>
-						<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
+		<>
+			{ plan && checkoutVersion === '2' ? (
+				<PromoCardV2>
+					<div className="checkout-sidebar-plan-upsell__v2-wrapper">
+						<p>
+							{ translate(
+								'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
+							) }
+						</p>
+					</div>
+				</PromoCardV2>
+			) : (
+				<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
+					<div className="checkout-sidebar-plan-upsell__plan-grid">
+						{ isComparisonWithIntroOffer && (
+							<>
+								<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
+								<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+									<strong>{ __( 'Two-year cost' ) }</strong>
+								</div>
+							</>
+						) }
 						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-							<strong>{ __( 'Two-year cost' ) }</strong>
+							{ currentVariant.variantLabel }
 						</div>
-					</>
-				) }
-				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ currentVariant.variantLabel }
-				</div>
-				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ formatCurrency(
-						currentVariant.priceInteger +
-							( isComparisonWithIntroOffer ? currentVariant.priceBeforeDiscounts : 0 ),
-						currentVariant.currency,
-						{
-							stripZeros: true,
-							isSmallestUnit: true,
-						}
-					) }
-				</div>
-				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ biennialVariant.variantLabel }
-				</div>
-				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ compareToPriceForVariantTerm && (
-						<del className="checkout-sidebar-plan-upsell__do-not-pay">
-							{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
+						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+							{ formatCurrency(
+								currentVariant.priceInteger +
+									( isComparisonWithIntroOffer ? currentVariant.priceBeforeDiscounts : 0 ),
+								currentVariant.currency,
+								{
+									stripZeros: true,
+									isSmallestUnit: true,
+								}
+							) }
+						</div>
+						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+							{ biennialVariant.variantLabel }
+						</div>
+						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+							{ compareToPriceForVariantTerm && (
+								<del className="checkout-sidebar-plan-upsell__do-not-pay">
+									{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
+										stripZeros: true,
+										isSmallestUnit: true,
+									} ) }
+								</del>
+							) }
+							{ formatCurrency( biennialVariant.priceInteger, biennialVariant.currency, {
 								stripZeros: true,
 								isSmallestUnit: true,
 							} ) }
-						</del>
-					) }
-					{ formatCurrency( biennialVariant.priceInteger, biennialVariant.currency, {
-						stripZeros: true,
-						isSmallestUnit: true,
-					} ) }
-				</div>
-			</div>
-			<PromoCardCTA
-				cta={ {
-					disabled: isFormLoading,
-					busy: isBusy(),
-					text: __( 'Switch to a two-year plan' ),
-					action: onUpgradeClick,
-				} }
-			/>
-		</PromoCard>
+						</div>
+					</div>
+					<PromoCardCTA
+						cta={ {
+							disabled: isFormLoading,
+							busy: isBusy(),
+							text: __( 'Switch to a two-year plan' ),
+							action: onUpgradeClick,
+						} }
+					/>
+				</PromoCard>
+			) }
+		</>
 	);
 }

@@ -1147,69 +1147,135 @@ function CheckoutLineItem( {
 			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
-			<BillingLine>
-				{ children }
-				{ hasDeleteButton && removeProductFromCart && (
-					<>
-						<DeleteButtonWrapper>
-							<DeleteButton
-								className="checkout-line-item__remove-product"
-								buttonType="text-button"
-								aria-label={ String(
-									translate( 'Remove %s from cart', {
-										args: label,
-									} )
-								) }
-								disabled={ isDisabled }
-								onClick={ () => {
-									setIsModalVisible( true );
-									onRemoveProductClick?.( label );
+			{ checkoutVersion !== '2' && (
+				<>
+					{ children }
+
+					{ hasDeleteButton && removeProductFromCart && (
+						<>
+							<DeleteButtonWrapper>
+								<DeleteButton
+									className="checkout-line-item__remove-product"
+									buttonType="text-button"
+									aria-label={ String(
+										translate( 'Remove %s from cart', {
+											args: label,
+										} )
+									) }
+									disabled={ isDisabled }
+									onClick={ () => {
+										setIsModalVisible( true );
+										onRemoveProductClick?.( label );
+									} }
+								>
+									{ translate( 'Remove from cart' ) }
+								</DeleteButton>
+							</DeleteButtonWrapper>
+
+							<CheckoutModal
+								isVisible={ isModalVisible }
+								closeModal={ () => {
+									setIsModalVisible( false );
 								} }
-							>
-								{ checkoutVersion === '2'
-									? translate( 'Remove' )
-									: translate( 'Remove from cart' ) }
-							</DeleteButton>
-						</DeleteButtonWrapper>
+								primaryAction={ () => {
+									let product_uuids_to_remove = [ product.uuid ];
 
-						<CheckoutModal
-							isVisible={ isModalVisible }
-							closeModal={ () => {
-								setIsModalVisible( false );
-							} }
-							primaryAction={ () => {
-								let product_uuids_to_remove = [ product.uuid ];
+									// Gifts need to be all or nothing, to prevent leaving
+									// the site in a state where it requires other purchases
+									// in order to actually work correctly for the period of
+									// the gift (for example, gifting a plan renewal without
+									// a domain renewal would likely lead the site's domain
+									// to expire soon afterwards).
+									if ( product.is_gift_purchase ) {
+										product_uuids_to_remove = responseCart.products
+											.filter( ( cart_product ) => cart_product.is_gift_purchase )
+											.map( ( cart_product ) => cart_product.uuid );
+									}
 
-								// Gifts need to be all or nothing, to prevent leaving
-								// the site in a state where it requires other purchases
-								// in order to actually work correctly for the period of
-								// the gift (for example, gifting a plan renewal without
-								// a domain renewal would likely lead the site's domain
-								// to expire soon afterwards).
-								if ( product.is_gift_purchase ) {
-									product_uuids_to_remove = responseCart.products
-										.filter( ( cart_product ) => cart_product.is_gift_purchase )
-										.map( ( cart_product ) => cart_product.uuid );
-								}
+									Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+										// Nothing needs to be done here. CartMessages will display the error to the user.
+									} );
+									onRemoveProduct?.( label );
+								} }
+								cancelAction={ () => {
+									onRemoveProductCancel?.( label );
+								} }
+								secondaryAction={ () => {
+									onRemoveProductCancel?.( label );
+								} }
+								secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
+								title={ modalCopy.title }
+								copy={ modalCopy.description }
+							/>
+						</>
+					) }
+				</>
+			) }
+			{ checkoutVersion === '2' && (
+				<BillingLine>
+					{ children }
+					{ hasDeleteButton && removeProductFromCart && (
+						<>
+							<DeleteButtonWrapper>
+								<DeleteButton
+									className="checkout-line-item__remove-product"
+									buttonType="text-button"
+									aria-label={ String(
+										translate( 'Remove %s from cart', {
+											args: label,
+										} )
+									) }
+									disabled={ isDisabled }
+									onClick={ () => {
+										setIsModalVisible( true );
+										onRemoveProductClick?.( label );
+									} }
+								>
+									{ checkoutVersion === '2'
+										? translate( 'Remove' )
+										: translate( 'Remove from cart' ) }
+								</DeleteButton>
+							</DeleteButtonWrapper>
 
-								Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
-									// Nothing needs to be done here. CartMessages will display the error to the user.
-								} );
-								onRemoveProduct?.( label );
-							} }
-							cancelAction={ () => {
-								onRemoveProductCancel?.( label );
-							} }
-							secondaryAction={ () => {
-								onRemoveProductCancel?.( label );
-							} }
-							secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
-							title={ modalCopy.title }
-							copy={ modalCopy.description }
-						/>
-					</>
-				) }{ ' ' }
-			</BillingLine>
+							<CheckoutModal
+								isVisible={ isModalVisible }
+								closeModal={ () => {
+									setIsModalVisible( false );
+								} }
+								primaryAction={ () => {
+									let product_uuids_to_remove = [ product.uuid ];
+
+									// Gifts need to be all or nothing, to prevent leaving
+									// the site in a state where it requires other purchases
+									// in order to actually work correctly for the period of
+									// the gift (for example, gifting a plan renewal without
+									// a domain renewal would likely lead the site's domain
+									// to expire soon afterwards).
+									if ( product.is_gift_purchase ) {
+										product_uuids_to_remove = responseCart.products
+											.filter( ( cart_product ) => cart_product.is_gift_purchase )
+											.map( ( cart_product ) => cart_product.uuid );
+									}
+
+									Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+										// Nothing needs to be done here. CartMessages will display the error to the user.
+									} );
+									onRemoveProduct?.( label );
+								} }
+								cancelAction={ () => {
+									onRemoveProductCancel?.( label );
+								} }
+								secondaryAction={ () => {
+									onRemoveProductCancel?.( label );
+								} }
+								secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
+								title={ modalCopy.title }
+								copy={ modalCopy.description }
+							/>
+						</>
+					) }
+				</BillingLine>
+			) }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
