@@ -1,10 +1,15 @@
-import { updateLaunchpadSettings, UserSelect } from '@automattic/data-stores';
+import {
+	LaunchpadNavigator,
+	updateLaunchpadSettings,
+	type UserSelect,
+} from '@automattic/data-stores';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -96,6 +101,8 @@ const newsletter: Flow = {
 			pageTitle: 'Newsletter',
 		} );
 
+		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
+
 		const completeSubscribersTask = async () => {
 			if ( siteSlug ) {
 				await updateLaunchpadSettings( siteSlug, {
@@ -186,10 +193,14 @@ const newsletter: Flow = {
 		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'newsletter',
+						setActiveChecklist,
+						siteId,
+						siteSlug,
+					} );
+					return;
+
 				default:
 					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
 			}
