@@ -28,7 +28,7 @@ export function agencyDashboardContext( context: PageJS.Context, next: VoidFunct
 	context.header = <Header />;
 
 	if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar />;
+		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
 	} else {
 		context.secondary = <DashboardSidebar path={ context.path } />;
 	}
