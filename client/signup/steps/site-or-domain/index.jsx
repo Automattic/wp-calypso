@@ -306,7 +306,7 @@ class SiteOrDomain extends Component {
 		}
 
 		const additionalProps = {};
-		let headerText = this.props.headerText;
+		let headerText = this.props.getHeaderText( this.getDomainCart() );
 
 		if ( isReskinned ) {
 			additionalProps.isHorizontalLayout = false;
