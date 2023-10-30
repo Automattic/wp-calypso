@@ -367,16 +367,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						label={ translate( 'Paid newsletter tier' ) }
 					/>
 				</FormFieldset>
-				<FormFieldset className="memberships__dialog-sections-type">
-					<ToggleControl
-						onChange={ ( newValue ) => {
-							setEditedPostPaidNewsletter( newValue );
-						} }
-						checked={ editedPostPaidNewsletter }
-						disabled={ !! product.ID || editedPostIsTier }
-						label={ translate( 'Customers will get subscribed to newsletters' ) }
-					/>
-				</FormFieldset>
 				{ editing && editedPrice && (
 					<Notice
 						text={ translate(
@@ -515,6 +505,18 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					hideSummary
 					className="memberships__dialog-advanced-options"
 				>
+					{ ! editedPostIsTier && (
+						<FormFieldset className="memberships__dialog-sections-type">
+							<ToggleControl
+								onChange={ ( newValue ) => {
+									setEditedPostPaidNewsletter( newValue );
+								} }
+								checked={ editedPostPaidNewsletter }
+								disabled={ !! product.ID || editedPostIsTier }
+								label={ translate( 'Add customers to newsletter mailing list' ) }
+							/>
+						</FormFieldset>
+					) }
 					<FormFieldset>
 						<ToggleControl
 							onChange={ handlePayWhatYouWant }
