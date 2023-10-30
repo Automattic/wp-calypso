@@ -85,7 +85,7 @@ export default function ThemeCollection( {
 							prevEl: '.theme-collection__carousel-nav-button--previous',
 						},
 						slideToClickedSlide: false,
-						rewind: true,
+						loop: true,
 						slidesPerView: 1.2,
 						spaceBetween: -16,
 						breakpoints: {

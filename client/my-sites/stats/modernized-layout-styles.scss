@@ -59,12 +59,6 @@ $sidebar-appearance-break-point: 783px;
 			padding-right: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		}
 	}
-	.navigation-header__main {
-		@media ( min-width: $break-small ) and ( max-width: $custom-mobile-breakpoint ) {
-			padding-left: 0.825em;
-			padding-right: 0.825em;
-		}
-	}
 }
 
 .is-section-stats,

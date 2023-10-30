@@ -1,28 +1,29 @@
-.card.company-details-form {
+.company-details-form {
+
 	// We have to add some "invisible" spacing below the form so
 	// our country and state dropdown have enough space to fold out
 	// and be visible (using position: relative/absolute).
 	margin-bottom: 100px;
-}
 
-.company-details-form__controls {
-	margin-top: 2rem;
-}
+	&__controls {
+		margin-top: 2rem;
+	}
 
-.company-details-form__business-address {
-	input {
-		margin-bottom: 10px !important;
+	&__business-address {
+		input {
+			margin-bottom: 10px !important;
 
-		&:last-child {
-			margin-bottom: 0 !important;
+			&:last-child {
+				margin-bottom: 0 !important;
+			}
 		}
 	}
-}
 
-.company-details-form__tos p {
-	margin: 45px 0 24px;
-	font-weight: 400;
-	font-size: 1rem;
-	line-height: 24px;
-	color: var(--studio-black);
+	&__tos p {
+		margin: 45px 0 24px;
+		font-weight: 400;
+		font-size: 1rem;
+		line-height: 24px;
+		color: var(--studio-black);
+	}
 }
