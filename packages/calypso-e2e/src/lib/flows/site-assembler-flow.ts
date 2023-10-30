@@ -31,7 +31,16 @@ export class SiteAssemblerFlow {
 	 * @param {LayoutType} type Type of the layout component.
 	 */
 	async clickLayoutComponentType( type: LayoutType ): Promise< void > {
-		await this.page.getByRole( 'button', { name: type } ).click();
+		// Select any button under the block pattern categories.
+		if ( type === 'Sections' ) {
+			await this.page
+				.getByRole( 'listbox', { name: 'Block pattern categories' } )
+				.getByRole( 'option' )
+				.nth( 0 )
+				.click();
+		} else {
+			await this.page.getByRole( 'button', { name: type } ).click();
+		}
 	}
 
 	/**

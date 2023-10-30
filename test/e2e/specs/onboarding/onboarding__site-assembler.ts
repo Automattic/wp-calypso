@@ -100,7 +100,6 @@ describe( 'Onboarding: Site Assembler', () => {
 		it( 'Select "Sections"', async function () {
 			await siteAssemblerFlow.clickLayoutComponentType( 'Sections' );
 			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
-			await siteAssemblerFlow.clickButton( 'Save sections' );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
 		} );

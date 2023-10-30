@@ -1,9 +1,11 @@
 import config from '@automattic/calypso-config';
 import { default as pageRouter } from 'page';
 import { ReactElement } from 'react';
-import QueryThemes from 'calypso/components/data/query-themes';
+import { useQueryThemes } from 'calypso/components/data/query-themes';
+import Theme from 'calypso/components/theme';
 import ThemeCollection from 'calypso/components/theme-collection';
 import ThemeCollectionItem from 'calypso/components/theme-collection/theme-collection-item';
+import ThemeCollectionPlaceholder from 'calypso/components/theme-collection/theme-collection-placeholder';
 import { ThemeBlock } from 'calypso/components/themes-list';
 import { ThemeCollectionsLayoutProps } from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import {
@@ -61,10 +63,12 @@ export default function ShowcaseThemeCollection( {
 		filterString,
 		getThemeDetailsUrl,
 	} = useThemeCollection( query );
+	useQueryThemes( 'wpcom', query );
 	let themeList = getCachedThemes( collectionSlug );
 
 	if ( ! themeList.length && themes ) {
-		cacheThemes( collectionSlug, themes );
+		// We slice the array to the expected length to avoid some caching issues.
+		cacheThemes( collectionSlug, themes.slice( 0, query.number ) );
 		themeList = getCachedThemes( collectionSlug );
 	}
 
@@ -102,7 +106,6 @@ export default function ShowcaseThemeCollection( {
 
 	return (
 		<>
-			<QueryThemes query={ query } siteId="wpcom" />
 			<ThemeCollection
 				collectionSlug={ collectionSlug }
 				title={ title }
@@ -110,25 +113,29 @@ export default function ShowcaseThemeCollection( {
 				onSeeAll={ onSeeAll }
 				collectionIndex={ collectionIndex }
 			>
-				{ themeList.map( ( theme: Theme, index: number ) => (
-					<ThemeCollectionItem key={ theme.id }>
-						<ThemeBlock
-							getActionLabel={ getActionLabel }
-							getButtonOptions={ getOptions }
-							getPrice={ getPrice }
-							getScreenshotUrl={ getScreenshotUrl }
-							index={ index }
-							isActive={ isActive }
-							isInstalling={ isInstalling }
-							siteId={ siteId }
-							theme={ theme }
-							onMoreButtonClick={ recordThemeClick }
-							onMoreButtonItemClick={ recordThemeClick }
-							onScreenshotClick={ onScreenshotClick }
-							onStyleVariationClick={ onStyleVariationClick }
-						/>
-					</ThemeCollectionItem>
-				) ) }
+				{ themeList.length > 0 ? (
+					themeList.map( ( theme: Theme, index: number ) => (
+						<ThemeCollectionItem key={ theme.id }>
+							<ThemeBlock
+								getActionLabel={ getActionLabel }
+								getButtonOptions={ getOptions }
+								getPrice={ getPrice }
+								getScreenshotUrl={ getScreenshotUrl }
+								index={ index }
+								isActive={ isActive }
+								isInstalling={ isInstalling }
+								siteId={ siteId }
+								theme={ theme }
+								onMoreButtonClick={ recordThemeClick }
+								onMoreButtonItemClick={ recordThemeClick }
+								onScreenshotClick={ onScreenshotClick }
+								onStyleVariationClick={ onStyleVariationClick }
+							/>
+						</ThemeCollectionItem>
+					) )
+				) : (
+					<ThemeCollectionPlaceholder items={ 3 } />
+				) }
 			</ThemeCollection>
 		</>
 	);

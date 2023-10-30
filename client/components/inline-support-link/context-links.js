@@ -294,6 +294,14 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/site-monitoring/',
 		post_id: 259521,
 	},
+	'subscriptions-and-newsletters': {
+		link: 'https://wordpress.com/support/subscriptions-and-newsletters/',
+		post_id: 67810,
+	},
+	'featured-images': {
+		link: 'https://wordpress.com/support/featured-images/',
+		post_id: 5259,
+	},
 };
 
 export default contextLinks;

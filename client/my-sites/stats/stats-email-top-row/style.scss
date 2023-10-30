@@ -14,7 +14,7 @@ $vertical-margin: 32px;
 .stats__email-detail {
 	@include break-small {
 		.main-container {
-			padding-top: $vertical-margin;
+			padding: 0;
 		}
 	}
 }

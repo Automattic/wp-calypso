@@ -230,15 +230,16 @@ class StatsEmailDetail extends Component {
 					) }
 					{ post ? (
 						<>
-							<div className="main-container">
-								<h1>{ this.getTitle( statType ) }</h1>
-
+							<div className="stats-navigation stats-navigation--modernized">
 								<StatsDetailsNavigation
 									postId={ postId }
 									period={ period }
 									statType={ statType }
 									givenSiteId={ givenSiteId }
 								/>
+							</div>
+							<div class="stats__email-wrapper">
+								<h3 className="highlight-cards-heading">{ this.getTitle( statType ) }</h3>
 
 								<StatsEmailTopRow siteId={ siteId } postId={ postId } statType={ statType } />
 
@@ -288,44 +289,44 @@ class StatsEmailDetail extends Component {
 								/>
 
 								{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
-							</div>
-							<div className="stats__module-list">
-								<StatsEmailModule
-									path="countries"
-									statType={ statType }
-									postId={ postId }
-									siteId={ siteId }
-									period={ PERIOD_ALL_TIME }
-									date={ queryDate }
-								/>
-
-								<StatsEmailModule
-									path="devices"
-									statType={ statType }
-									postId={ postId }
-									siteId={ siteId }
-									period={ PERIOD_ALL_TIME }
-									date={ queryDate }
-								/>
-
-								<StatsEmailModule
-									path="clients"
-									statType={ statType }
-									postId={ postId }
-									siteId={ siteId }
-									period={ PERIOD_ALL_TIME }
-									date={ queryDate }
-								/>
-								{ statType === 'clicks' && (
+								<div className="stats__module-list">
 									<StatsEmailModule
-										path="links"
+										path="countries"
 										statType={ statType }
 										postId={ postId }
 										siteId={ siteId }
 										period={ PERIOD_ALL_TIME }
 										date={ queryDate }
 									/>
-								) }
+
+									<StatsEmailModule
+										path="devices"
+										statType={ statType }
+										postId={ postId }
+										siteId={ siteId }
+										period={ PERIOD_ALL_TIME }
+										date={ queryDate }
+									/>
+
+									<StatsEmailModule
+										path="clients"
+										statType={ statType }
+										postId={ postId }
+										siteId={ siteId }
+										period={ PERIOD_ALL_TIME }
+										date={ queryDate }
+									/>
+									{ statType === 'clicks' && (
+										<StatsEmailModule
+											path="links"
+											statType={ statType }
+											postId={ postId }
+											siteId={ siteId }
+											period={ PERIOD_ALL_TIME }
+											date={ queryDate }
+										/>
+									) }
+								</div>
 							</div>
 						</>
 					) : (

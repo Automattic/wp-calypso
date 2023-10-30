@@ -27,6 +27,7 @@ jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => j
 jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn(),
+	getSelectedSite: jest.fn(),
 } ) );
 jest.mock(
 	'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans',
@@ -44,6 +45,7 @@ jest.mock( 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api
 	jest.fn()
 );
 jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
+jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
 
 import {
 	PLAN_FREE,
