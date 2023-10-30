@@ -1,6 +1,7 @@
 import { useSelector } from 'calypso/state';
 import {
 	getPremiumThemePrice,
+	getThemeDetailsUrl as getThemeDetailsUrlSelector,
 	getThemesForQueryIgnoringPage,
 	getThemeType as getThemeTypeSelector,
 	isInstallingTheme,
@@ -40,7 +41,21 @@ export function useThemeCollection( query: ThemesQuery ) {
 		( state ) => ( themeId: string ) => getThemeTypeSelector( state, themeId )
 	);
 
+	const getThemeDetailsUrl = useSelector(
+		( state ) => ( themeId: string ) =>
+			getThemeDetailsUrlSelector( state, themeId, siteId as number )
+	);
+
 	const filterString = useSelector( ( state ) => prependThemeFilterKeys( state, query.filter ) );
 
-	return { getPrice, themes, isActive, isInstalling, siteId, getThemeType, filterString };
+	return {
+		getPrice,
+		themes,
+		isActive,
+		isInstalling,
+		siteId,
+		getThemeType,
+		filterString,
+		getThemeDetailsUrl,
+	};
 }
