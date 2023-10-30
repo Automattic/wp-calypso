@@ -63,7 +63,6 @@ declare global {
 					headerNonce: string;
 				};
 				jetpackVersion?: string;
-				isV2?: boolean;
 				hotjarSiteSettings?: object;
 				recordDSPEvent?: ( name: string, props?: any ) => void;
 				options?: object;
