@@ -53,6 +53,7 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 	const translate = useTranslate();
 	const monthlyLabel = translate( 'Monthly' );
 	const annualLabel = translate( 'Annually' );
+	const saveLabel = translate( 'Save' );
 
 	const searchParams = new URLSearchParams( document.location.search );
 	const billingIntervalParam = searchParams.get( 'interval' );
@@ -92,7 +93,7 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 								{ ( annualSaving: { saving: string | null } ) =>
 									annualSaving.saving && (
 										<PluginAnnualSavingLabelMobile isSelected={ false }>
-											&nbsp;(-{ annualSaving.saving })
+											&nbsp;({ saveLabel } { annualSaving.saving })
 										</PluginAnnualSavingLabelMobile>
 									)
 								}
