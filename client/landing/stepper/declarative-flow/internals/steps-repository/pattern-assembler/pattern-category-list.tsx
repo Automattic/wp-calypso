@@ -61,7 +61,11 @@ const PatternCategoryList = ( {
 							aria-current={ isActive }
 							onClick={ () => onSelectCategory( name ) }
 						>
-							<NavigatorItem icon={ file } active={ isActive }>
+							<NavigatorItem
+								icon={ file }
+								active={ isActive }
+								checked={ patternCountMapByCategory[ name ] > 0 }
+							>
 								<>
 									{ label }
 									<PatternCount count={ patternCountMapByCategory[ name ] } />
