@@ -25,7 +25,7 @@ const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavi
 	const setLaunchpadIsVisible = toggleLaunchpadIsVisible || ( () => {} );
 
 	const onTaskClick: EventHandlers[ 'onTaskClick' ] = ( task: Task ) => {
-		if ( task.calypso_path !== undefined ) {
+		if ( task.useCalypsoPath && task.calypso_path !== undefined ) {
 			setLaunchpadIsVisible( false );
 		}
 	};
