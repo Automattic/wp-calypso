@@ -91,10 +91,7 @@ const PatternPageList = ( {
 							aria-checked={ isSelected }
 							onClick={ () => onSelectPage( name ) }
 						>
-							<PatternPageListItem
-								label={ label }
-								isSelected={ isSelected }
-							/>
+							<PatternPageListItem label={ label } isSelected={ isSelected } />
 						</CompositeItem>
 					);
 				} ) }
