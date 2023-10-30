@@ -14,10 +14,8 @@ import { StagingSiteLoadingErrorCardContent } from 'calypso/my-sites/hosting/sta
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
-import {
-	useHasValidQuotaQuery,
-	useGetLockQuery,
-} from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
+import { useGetLockQuery } from 'calypso/my-sites/hosting/staging-site-card/use-get-lock-query';
+import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -125,7 +123,7 @@ export const StagingSiteCard = ( {
 
 	const hasSiteAccess =
 		! hasCompletedInitialLoading ||
-		!! stagingSite.id ||
+		! stagingSite.id ||
 		( Boolean( stagingSite.user_has_permission ) && ! lock );
 
 	const showAddStagingSiteCard = useMemo( () => {

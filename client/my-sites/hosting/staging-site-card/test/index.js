@@ -4,31 +4,28 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
+import { useGetLockQuery } from 'calypso/my-sites/hosting/staging-site-card/use-get-lock-query';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+const middlewares = [ thunk ];
 import { StagingSiteCard } from '..';
-
 const addStagingSiteBtnName = 'Add staging site';
 const manageStagingBtnName = 'Manage staging site';
 const INITIAL_STATE = {
 	sites: {
 		items: {},
+		requesting: {},
 	},
 	ui: {
 		selectedSiteId: 1,
 	},
 };
-const mockStore = configureStore();
+const mockStore = configureStore( middlewares );
 const store = mockStore( INITIAL_STATE );
-
-const mockUseDispatch = jest.fn();
-jest.mock( 'react-redux', () => ( {
-	__esModule: true,
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: () => mockUseDispatch,
-} ) );
 
 jest.mock( '@tanstack/react-query', () => ( {
 	__esModule: true,
@@ -102,10 +99,20 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-site', () => 
 	useStagingSite: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-get-lock-query', () => ( {
+	__esModule: true,
+	useGetLockQuery: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
 const defaultProps = {
 	disabled: false,
 	siteId: 1,
 	translate: ( text ) => text,
+	dispatch: store.dispatch,
 };
 
 describe( 'StagingSiteCard component', () => {
@@ -128,6 +135,10 @@ describe( 'StagingSiteCard component', () => {
 	} );
 	it( 'shows a loading state when we still loading.', () => {
 		useStagingSite.mockReturnValue( { data: null, isLoading: true } );
+		useGetLockQuery.mockReturnValue( {
+			data: null,
+			isLoading: false,
+		} );
 
 		render(
 			<Provider store={ store }>
@@ -143,6 +154,10 @@ describe( 'StagingSiteCard component', () => {
 
 	it( 'shows the add staging buttons, if we dont have any staging sites', () => {
 		useStagingSite.mockReturnValue( { data: [], isLoading: false } );
+		useGetLockQuery.mockReturnValue( {
+			data: null,
+			isLoading: false,
+		} );
 
 		render(
 			<Provider store={ store }>
@@ -156,6 +171,10 @@ describe( 'StagingSiteCard component', () => {
 	it( 'shows the manage staging site button, in case we have one available', () => {
 		useStagingSite.mockReturnValue( {
 			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: true } ],
+			isLoading: false,
+		} );
+		useGetLockQuery.mockReturnValue( {
+			data: null,
 			isLoading: false,
 		} );
 		useCheckStagingSiteStatus.mockReturnValue( 'complete' );
@@ -172,6 +191,10 @@ describe( 'StagingSiteCard component', () => {
 	it( 'shows transferring message when we creating a staging site', async () => {
 		useStagingSite.mockReturnValue( {
 			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: true } ],
+			isLoading: false,
+		} );
+		useGetLockQuery.mockReturnValue( {
+			data: null,
 			isLoading: false,
 		} );
 
@@ -198,6 +221,10 @@ describe( 'StagingSiteCard component', () => {
 	//
 	it( 'shows quota exceeded error message', async () => {
 		useStagingSite.mockReturnValue( { data: [], isLoading: false } );
+		useGetLockQuery.mockReturnValue( {
+			data: null,
+			isLoading: false,
+		} );
 
 		const { rerender } = render(
 			<Provider store={ store }>
@@ -223,6 +250,13 @@ describe( 'StagingSiteCard component', () => {
 			addStagingSite: jest.fn(),
 			isLoading: false,
 		} );
+		useGetLockQuery.mockReturnValue( {
+			data: null,
+			isLoading: false,
+		} );
+		recordTracksEvent.mockReturnValue( {
+			type: 'RECORD_TRACKS_EVENT',
+		} );
 
 		render(
 			<Provider store={ store }>
@@ -233,12 +267,31 @@ describe( 'StagingSiteCard component', () => {
 		fireEvent.click( screen.getByText( addStagingSiteBtnName ) );
 		expect( useAddStagingSiteMutation().addStagingSite ).toHaveBeenCalled();
 
-		expect( mockUseDispatch ).toHaveBeenCalled();
+		const actions = store.getActions();
+
+		const expectedActions = [
+			{
+				siteId: 1,
+				status: 'initiate transferring',
+				type: 'SITE_STAGING_STATUS_SET',
+			},
+			{
+				type: 'RECORD_TRACKS_EVENT',
+			},
+		];
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_hosting_configuration_staging_site_add_click'
+		);
+		expect( actions.slice( -2 ) ).toEqual( expectedActions );
 	} );
 
 	it( 'show access site error', () => {
 		useStagingSite.mockReturnValue( {
 			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: false } ],
+			isLoading: false,
+		} );
+		useGetLockQuery.mockReturnValue( {
+			data: null,
 			isLoading: false,
 		} );
 
