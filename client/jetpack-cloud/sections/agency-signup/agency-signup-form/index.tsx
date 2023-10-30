@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
 import formatApiPartner from 'calypso/jetpack-cloud/sections/partner-portal/lib/format-api-partner';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -90,6 +91,7 @@ export default function AgencySignupForm() {
 
 	return (
 		<Card className="agency-signup-form">
+			<QueryJetpackPartnerPortalPartner />
 			<svg
 				className="agency-signup-form__logo"
 				width="32"
