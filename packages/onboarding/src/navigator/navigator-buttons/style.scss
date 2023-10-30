@@ -40,24 +40,6 @@
 		padding-left: 1px;
 	}
 
-	&--checked {
-		&:focus {
-			color: var(--studio-gray-100);
-		}
-
-		.navigator-item__icon {
-			fill: var(--studio-gray-100);
-		}
-
-		&:hover,
-		&:focus-visible {
-			color: var(--studio-blue-50);
-			.navigator-item__icon {
-				fill: var(--studio-blue-50);
-			}
-		}
-	}
-
 	&--active {
 		background-color: var(--studio-blue-0);
 		color: var(--studio-blue-50);
