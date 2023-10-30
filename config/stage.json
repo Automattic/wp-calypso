@@ -48,6 +48,7 @@
 		"help/gpt-response": true,
 		"i18n/empathy-mode": true,
 		"importer/unified": true,
+		"importer/site-backups": false,
 		"importers/substack": true,
 		"individual-subscriber-stats": true,
 		"jetpack/agency-dashboard": true,
