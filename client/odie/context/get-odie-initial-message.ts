@@ -5,7 +5,7 @@ const getOdieInitialPrompt = ( botNameSlug: OdieAllowedBots = 'wpcom-support-cha
 	switch ( botNameSlug ) {
 		case 'wpcom-support-chat':
 			return preventWidows(
-				'Hello, I am Wapuu! How can I assist you with questions related to your WordPress.com site today? Feel free to ask!'
+				'Hi there 👋 I’m Wapuu, WordPress.com’s AI assistant! Having an issue with your site or account? Tell me all about it and I’ll be happy to help.'
 			);
 		default:
 			return 'Hello, I am your personal assistant.';
