@@ -88,7 +88,7 @@ const JetpackCloudSidebar = ( {
 				</SidebarNavigator>
 			</SidebarMain>
 
-			<SidebarFooter>
+			<SidebarFooter className="jetpack-cloud-sidebar__footer">
 				<ul>
 					{ ! isJetpackManage && jetpackAdminUrl && (
 						<SidebarNavigatorMenuItem
