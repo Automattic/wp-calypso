@@ -30,9 +30,9 @@ import {
 	useDotcomPatterns,
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
-	usePages,
-	usePagesMapByCategory,
 	usePatternCategories,
+	usePatternPages,
+	usePatternPagesMapByCategory,
 	usePatternsMapByCategory,
 	useRecipe,
 	useSyncNavigatorScreen,
@@ -100,7 +100,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		[ dotcomPatterns ]
 	);
 	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns );
-	const pagesMapByCategory = usePagesMapByCategory( dotcomPatterns );
+	const pagesMapByCategory = usePatternPagesMapByCategory( dotcomPatterns );
 	const {
 		header,
 		footer,
@@ -147,7 +147,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		[ colorVariation, fontVariation ]
 	);
 
-	const { pages, setPages } = usePages();
+	const { pages, setPages } = usePatternPages();
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 

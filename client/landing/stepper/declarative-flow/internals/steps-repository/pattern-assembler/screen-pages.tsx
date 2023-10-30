@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
-import PageList from './page-list';
+import PatternPageList from './pattern-page-list';
 import type { Category, Pattern } from './types';
 
 interface Props {
@@ -58,7 +58,7 @@ const ScreenPages = ( {
 			/>
 			<div className="screen-container__body">
 				<VStack spacing="4">
-					<PageList
+					<PatternPageList
 						categories={ categories }
 						pagesMapByCategory={ pagesMapByCategory }
 						selectedPages={ selectedPages }

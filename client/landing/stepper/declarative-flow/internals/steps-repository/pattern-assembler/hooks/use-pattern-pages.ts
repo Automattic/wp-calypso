@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 
-const usePages = () => {
+const usePatternPages = () => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const page_slugs = ( searchParams.get( 'page_slugs' ) || '' ).split( ',' ).filter( Boolean );
 
@@ -24,4 +24,4 @@ const usePages = () => {
 	return { pages, setPages };
 };
 
-export default usePages;
+export default usePatternPages;
