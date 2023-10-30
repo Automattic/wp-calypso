@@ -38,6 +38,10 @@ class EmptyContent extends Component {
 	};
 
 	primaryAction() {
+		if ( ! this.props.action ) {
+			return null;
+		}
+
 		if ( typeof this.props.action !== 'string' ) {
 			return this.props.action;
 		}

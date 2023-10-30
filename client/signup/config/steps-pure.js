@@ -676,8 +676,14 @@ export function generateSteps( {
 		'site-or-domain': {
 			stepName: 'site-or-domain',
 			props: {
-				get headerText() {
-					return i18n.translate( 'Choose how to use your domain' );
+				getHeaderText( domainCart ) {
+					return i18n.translate(
+						'Choose how to use your domain',
+						'Choose how to use your domains',
+						{
+							count: domainCart.length,
+						}
+					);
 				},
 				get subHeaderText() {
 					return i18n.getLocaleSlug() === 'en' ||

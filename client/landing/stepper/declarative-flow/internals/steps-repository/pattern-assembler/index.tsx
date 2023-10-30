@@ -30,8 +30,9 @@ import {
 	useDotcomPatterns,
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
-	usePages,
 	usePatternCategories,
+	usePatternPages,
+	usePatternPagesMapByCategory,
 	usePatternsMapByCategory,
 	useRecipe,
 	useSyncNavigatorScreen,
@@ -47,7 +48,6 @@ import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
 import ScreenPages from './screen-pages';
 import ScreenPatternListPanel from './screen-pattern-list-panel';
-import ScreenSections from './screen-sections';
 import ScreenStyles from './screen-styles';
 import ScreenUpsell from './screen-upsell';
 import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
@@ -99,6 +99,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		[ dotcomPatterns ]
 	);
 	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns );
+	const pagesMapByCategory = usePatternPagesMapByCategory( dotcomPatterns );
 	const {
 		header,
 		footer,
@@ -145,7 +146,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		[ colorVariation, fontVariation ]
 	);
 
-	const { pages, setPages } = usePages();
+	const { pages, setPages } = usePatternPages();
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
@@ -537,18 +538,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						onMainItemSelect={ onMainItemSelect }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
-						sectionsCount={ sections.length }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
-						onContinueClick={ onContinue }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTIONS } partialMatch>
-					<ScreenSections
+						sections={ sections }
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
-						sections={ sections }
 						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
 					/>
@@ -566,6 +560,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
 					<ScreenPages
+						categories={ categories }
+						pagesMapByCategory={ pagesMapByCategory }
 						selectedPages={ pages }
 						onSelect={ onScreenPagesSelect }
 						onContinueClick={ onContinue }
@@ -590,19 +586,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			</div>
 			<div className="pattern-assembler__sidebar-panel">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN_PATTERNS }>
-					<ScreenPatternListPanel
-						categories={ categories }
-						selectedHeader={ header }
-						selectedSections={ sections }
-						selectedFooter={ footer }
-						patternsMapByCategory={ patternsMapByCategory }
-						onSelect={ onSelect }
-						recordTracksEvent={ recordTracksEvent }
-						isNewSite={ isNewSite }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTIONS_PATTERNS }>
 					<ScreenPatternListPanel
 						categories={ categories }
 						selectedHeader={ header }

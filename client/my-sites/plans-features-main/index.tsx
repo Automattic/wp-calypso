@@ -34,6 +34,7 @@ import page from 'page';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -352,9 +353,14 @@ const PlansFeaturesMain = ( {
 			const planPath = cartItemForPlan?.product_slug
 				? getPlanPath( cartItemForPlan.product_slug )
 				: '';
+
+			const checkoutUrl = cartItemForStorageAddOn
+				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
+				: `/checkout/${ siteSlug }/${ planPath }`;
+
 			const checkoutUrlWithArgs = addQueryArgs(
 				{ ...( withDiscount && { coupon: withDiscount } ) },
-				`/checkout/${ siteSlug }/${ planPath }`
+				checkoutUrl
 			);
 
 			page( checkoutUrlWithArgs );
@@ -651,6 +657,7 @@ const PlansFeaturesMain = ( {
 			<QuerySites siteId={ siteId } />
 			<QuerySitePlans siteId={ siteId } />
 			<QueryActivePromotions />
+			<QueryProductsList />
 			<PlanUpsellModal
 				isModalOpen={ isModalOpen }
 				paidDomainName={ paidDomainName }

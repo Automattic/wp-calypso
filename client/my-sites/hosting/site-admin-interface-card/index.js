@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Card } from '@automattic/components';
+import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -17,6 +18,13 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 const successNoticeId = 'admin-interface-change-success';
 const failureNoticeId = 'admin-interface-change-failure';
+
+const FormRadioStyled = styled( FormRadio )( {
+	'&.form-radio:disabled:checked::before': {
+		backgroundColor: 'var(--color-primary)',
+		opacity: 0.6,
+	},
+} );
 
 const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 	const translate = useTranslate();
@@ -86,7 +94,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 
 			<FormFieldset>
 				<FormLabel>
-					<FormRadio
+					<FormRadioStyled
 						label={ translate( 'Default style' ) }
 						value="calypso"
 						checked={ selectedAdminInterface === 'calypso' }
@@ -100,7 +108,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 			</FormFieldset>
 			<FormFieldset>
 				<FormLabel>
-					<FormRadio
+					<FormRadioStyled
 						label={ translate( 'Classic style' ) }
 						value="wp-admin"
 						checked={ selectedAdminInterface === 'wp-admin' }

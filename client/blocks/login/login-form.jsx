@@ -22,6 +22,8 @@ import {
 	getSignupUrl,
 	pathWithLeadingSlash,
 	isReactLostPasswordScreenEnabled,
+	canDoMagicLogin,
+	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
@@ -35,6 +37,7 @@ import {
 	loginUser,
 	resetAuthAccountType,
 } from 'calypso/state/login/actions';
+import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
 	getRedirectToOriginal,
@@ -333,17 +336,7 @@ export class LoginForm extends Component {
 						'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
 						{
 							components: {
-								returnToSignup: (
-									<a
-										href={ addQueryArgs(
-											{
-												user_email: this.state.usernameOrEmail,
-											},
-											signupUrl
-										) }
-										onClick={ this.recordSignUpLinkClick }
-									/>
-								),
+								returnToSignup: <a href={ signupUrl } onClick={ this.recordSignUpLinkClick } />,
 							},
 						}
 					) }
@@ -606,6 +599,66 @@ export class LoginForm extends Component {
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 	}
 
+	handleMagicLoginClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click', {
+			origin: 'login-form',
+		} );
+		this.props.resetMagicLoginRequestForm();
+	};
+
+	renderMagicLoginLink() {
+		if (
+			! canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.wccomFrom,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return null;
+		}
+
+		const loginLink = getLoginLinkPageUrl(
+			this.props.locale,
+			this.props.currentRoute,
+			this.props.currentQuery?.signup_url,
+			this.props.oauth2Client?.id
+		);
+		const { query, usernameOrEmail } = this.props;
+		const emailAddress = usernameOrEmail || query?.email_address || this.state.usernameOrEmail;
+
+		const magicLoginPageLinkWithEmail = addQueryArgs( { email_address: emailAddress }, loginLink );
+
+		if (
+			hasTranslation(
+				'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?'
+			) ||
+			englishLocales.includes( this.props.locale )
+		) {
+			return this.props.translate(
+				'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
+				{
+					components: {
+						magicLoginLink: (
+							<a href={ magicLoginPageLinkWithEmail } onClick={ this.handleMagicLoginClick } />
+						),
+					},
+				}
+			);
+		}
+
+		return this.props.translate(
+			'Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
+			{
+				components: {
+					magicLoginLink: (
+						<a href={ magicLoginPageLinkWithEmail } onClick={ this.handleMagicLoginClick } />
+					),
+				},
+			}
+		);
+	}
+
 	render() {
 		const {
 			accountType,
@@ -793,7 +846,7 @@ export class LoginForm extends Component {
 							/>
 
 							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ requestError.message } />
+								<FormInputValidation isError text={ this.renderMagicLoginLink() } />
 							) }
 						</div>
 					</div>
@@ -887,5 +940,6 @@ export default connect(
 		loginUser,
 		recordTracksEvent,
 		resetAuthAccountType,
+		resetMagicLoginRequestForm,
 	}
 )( localize( LoginForm ) );

@@ -22,8 +22,8 @@ export default function ( router ) {
 	const showcaseRoutes = [
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?`,
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter?/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|recommended)?/:tier(free|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|recommended)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
 	];
