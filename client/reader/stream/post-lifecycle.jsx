@@ -24,6 +24,7 @@ import CrossPost from './x-post';
  * The hook ensures that we generate post display Tracks events when the user views
  * the underlying `div` element.
  * @param postObj Object The post data.
+ * @param recordTracksEvent Function The function to call to record a Tracks event with standardized Reader props.
  * @returns A callback ref that MUST be used on a div element for tracking.
  */
 const useTrackPostView = ( postObj, recordTracksEvent ) => {
