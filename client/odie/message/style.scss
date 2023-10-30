@@ -109,18 +109,23 @@
 	background-color: var(--studio-gray-0);
 	width: fit-content;
 	margin: 4px 0;
+
+	.odie-sources-link {
+		overflow-wrap: anywhere;
+		color: var(--studio-blue-40);
+		font-style: normal;
+		font-weight: 600;
+	}
+
+	svg.gridicons-external {
+		min-width: 18px;
+	}
 }
 
 .odie-sources-inline {
 	display: inline-flex;
 	padding: 0 8px;
 	margin: 0;
-}
-
-.odie-sources-link {
-	color: var(--studio-blue-40);
-	font-style: normal;
-	font-weight: 600;
 }
 
 $feedback-button-size: 28px;
