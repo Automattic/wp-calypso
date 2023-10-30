@@ -6,6 +6,7 @@ import {
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { ORDERED_PATTERN_CATEGORIES } from './constants';
 import { useCategoriesOrder } from './hooks';
 import PatternCount from './pattern-count';
 import type { Pattern, Category } from './types';
@@ -27,7 +28,7 @@ const PatternCategoryList = ( {
 	onSelectCategory,
 }: Props ) => {
 	const translate = useTranslate();
-	const categoriesInOrder = useCategoriesOrder( categories );
+	const categoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_CATEGORIES );
 	const composite = useCompositeState( { orientation: 'vertical' } );
 
 	return (
