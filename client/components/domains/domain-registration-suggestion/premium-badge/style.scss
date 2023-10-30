@@ -3,15 +3,6 @@
 		background-color: var(--color-premium-domain);
 		padding-right: 6px;
 		color: var(--color-warning-80);
-		.info-popover {
-			height: 16px;
-			vertical-align: middle;
-			margin-bottom: 1px;
-			margin-left: 5px;
-			.gridicon {
-				color: var(--color-warning-80);
-			}
-		}
 
 		&.restricted-premium {
 			background-color: var(--color-warning-30);
