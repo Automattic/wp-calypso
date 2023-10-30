@@ -58,6 +58,7 @@
 		"home/layout-dev": true,
 		"hosting/datacenter-picker": true,
 		"i18n/translation-scanner": true,
+		"importer/site-backups": false,
 		"importers/substack": true,
 		"importer/unified": true,
 		"individual-subscriber-stats": true,
