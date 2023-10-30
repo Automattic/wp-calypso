@@ -1,4 +1,8 @@
-import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
+import {
+	LaunchpadNavigator,
+	OnboardSelect,
+	updateLaunchpadSettings,
+} from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
@@ -7,14 +11,15 @@ import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/loc
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
-	AssertConditionResult,
+	type AssertConditionResult,
 	AssertConditionState,
-	Flow,
-	ProvidedDependencies,
+	type Flow,
+	type ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -74,6 +79,7 @@ const startWriting: Flow = {
 			[]
 		).getState();
 		const site = useSite();
+		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -189,10 +195,13 @@ const startWriting: Flow = {
 		const goNext = async () => {
 			switch ( currentStep ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'start-writing',
+						setActiveChecklist,
+						siteId,
+						siteSlug,
+					} );
+					return;
 			}
 		};
 

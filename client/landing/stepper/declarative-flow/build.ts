@@ -1,8 +1,9 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { LaunchpadNavigator } from '@automattic/data-stores';
 import { useFlowProgress, BUILD_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -29,7 +30,9 @@ const build: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
+		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
+
 		setStepProgress( flowProgress );
 
 		// trigger guides on step movement, we don't care about failures or response
@@ -69,10 +72,13 @@ const build: Flow = {
 		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'build',
+						setActiveChecklist,
+						siteId,
+						siteSlug,
+					} );
+					return;
 				default:
 					return navigate( 'freeSetup' );
 			}
