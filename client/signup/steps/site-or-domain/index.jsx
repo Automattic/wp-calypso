@@ -61,7 +61,9 @@ class SiteOrDomain extends Component {
 		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
 
 		const domainName = this.getDomainName();
-		let buyADomainTitle = translate( 'Just buy a domain' );
+		let buyADomainTitle = translate( 'Just buy a domain', 'Just buy domains', {
+			count: this.getDomainCart().length,
+		} );
 
 		if ( this.isLeanDomainSearch() && domainName ) {
 			// translators: %s is a domain name
@@ -306,7 +308,7 @@ class SiteOrDomain extends Component {
 		}
 
 		const additionalProps = {};
-		let headerText = this.props.headerText;
+		let headerText = this.props.getHeaderText( this.getDomainCart() );
 
 		if ( isReskinned ) {
 			additionalProps.isHorizontalLayout = false;
