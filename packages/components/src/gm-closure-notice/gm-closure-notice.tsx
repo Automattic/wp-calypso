@@ -45,7 +45,7 @@ export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Pr
 		during: sprintf(
 			/* translators:  reopens_at is a date */
 			__(
-				'Live chat support is closed until %(reopens_at)s. In the meantime you can still reach us by email.',
+				'Once a year, Happiness Engineers get together to work on improving our services, building new features, and learning how to better serve you. During this time, we will continue to provide support over email. If you need to get in touch with us, please submit a support request from this page, and we will get to it as fast as we can. Chat will re-open at %(reopens_at)s. Thank you for your understanding!',
 				__i18n_text_domain__
 			),
 			{
@@ -64,7 +64,7 @@ export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Pr
 
 	const heading = sprintf(
 		/* translators: closes and reopens are dates */
-		__( 'Limited Support %(closes)s – %(reopens)s', __i18n_text_domain__ ),
+		__( 'Live chat will be closed from %(closes)s – %(reopens)s', __i18n_text_domain__ ),
 		{
 			closes: format( DATE_FORMAT_SHORT, closesAtDate ),
 			reopens: format( isSameMonth ? 'd' : DATE_FORMAT_SHORT, reopensAtDate ),
