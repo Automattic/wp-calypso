@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -39,6 +40,7 @@ interface Props {
 		contactPerson?: string;
 		companyWebsite?: string;
 		companyType?: string;
+		managedSites?: string;
 		partnerProgramOptIn?: boolean;
 		city?: string;
 		line1?: string;
@@ -72,6 +74,7 @@ export default function CompanyDetailsForm( {
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
+	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '' );
 	const [ partnerProgramOptIn, setPartnerProgramOptIn ] = useState( false );
 
 	const [ showPartnerProgramOptIn, setShowPartnerProgramOptIn ] = useState( false );
@@ -106,6 +109,7 @@ export default function CompanyDetailsForm( {
 			contactPerson,
 			companyWebsite,
 			companyType,
+			managedSites,
 			partnerProgramOptIn,
 			city,
 			line1,
@@ -121,6 +125,7 @@ export default function CompanyDetailsForm( {
 			contactPerson,
 			companyWebsite,
 			companyType,
+			managedSites,
 			partnerProgramOptIn,
 			city,
 			line1,
@@ -220,6 +225,23 @@ export default function CompanyDetailsForm( {
 						isChecked={ partnerProgramOptIn }
 					/>
 				) }
+				<FormFieldset>
+					<FormLabel>{ translate( 'How many sites do you manage?' ) }</FormLabel>
+					<SelectControl
+						id="managed_sites"
+						name="managed_sites"
+						value={ managedSites }
+						options={ [
+							{ value: '1-5', label: translate( '1-5' ) },
+							{ value: '6-20', label: translate( '6-20' ) },
+							{ value: '21-50', label: translate( '21-50' ) },
+							{ value: '51-100', label: translate( '51-100' ) },
+							{ value: '101-500', label: translate( '101-500' ) },
+							{ value: '500+', label: translate( '500+' ) },
+						] }
+						onChange={ setManagedSites }
+					/>
+				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
