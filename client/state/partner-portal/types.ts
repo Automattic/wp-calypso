@@ -75,6 +75,7 @@ export interface APIPartner {
 	contact_person: string;
 	company_website: string;
 	company_type: string;
+	managed_sites: string;
 	address: APIPartnerAddress;
 	keys: APIPartnerKey[];
 	tos: string;
