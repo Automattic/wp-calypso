@@ -488,9 +488,13 @@ class ManagePurchase extends Component<
 			// For the first Iteration of Calypso Akismet checkout we are only suggesting
 			// for immediate upgrades to the next plan. We will change this in the future
 			// with appropriate page.
-			return AKISMET_UPGRADES_PRODUCTS_MAP[
-				purchase.productSlug as keyof typeof AKISMET_UPGRADES_PRODUCTS_MAP
-			];
+			if ( AKISMET_UPGRADES_PRODUCTS_MAP.hasOwnProperty( purchase.productSlug ) ) {
+				return AKISMET_UPGRADES_PRODUCTS_MAP[
+					purchase.productSlug as keyof typeof AKISMET_UPGRADES_PRODUCTS_MAP
+				];
+			}
+
+			return null;
 		}
 
 		if ( isJetpackStarterPlan( purchase.productSlug ) ) {
