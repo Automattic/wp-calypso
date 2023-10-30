@@ -26,7 +26,7 @@ import CrossPost from './x-post';
  * @param postObj Object The post data.
  * @returns A callback ref that MUST be used on a div element for tracking.
  */
-const useTrackPostView = ( postObj ) => {
+const useTrackPostView = ( postObj, stream ) => {
 	const observerRef = useRef();
 
 	// Use a callback as the ref so we get called for both mount and unmount events
@@ -49,6 +49,7 @@ const useTrackPostView = ( postObj ) => {
 					feed_id: postObj?.feed_ID,
 					site_id: postObj?.blogId,
 					post_id: postObj?.postId,
+					ui_algo: stream,
 				} );
 			};
 
@@ -70,7 +71,7 @@ const useTrackPostView = ( postObj ) => {
  * @returns A React component that renders a post and tracks when the post is displayed.
  */
 const TrackedPost = ( { ...props } ) => {
-	const trackingDivRef = useTrackPostView( props.postKey );
+	const trackingDivRef = useTrackPostView( props.postKey, props.streamKey );
 
 	return <Post postRef={ trackingDivRef } { ...props } />;
 };
