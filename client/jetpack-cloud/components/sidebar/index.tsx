@@ -104,6 +104,7 @@ const JetpackCloudSidebar = ( {
 						/>
 					) }
 					<SidebarNavigatorMenuItem
+						isExternalLink
 						isSelected={ false }
 						title={ translate( 'Get help', {
 							comment: 'Jetpack Cloud sidebar navigation item',
