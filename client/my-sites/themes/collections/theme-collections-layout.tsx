@@ -65,7 +65,7 @@ function ThemeCollectionsPatternAssemblerCta() {
 function ThemeCollectionsLayout( props: ThemeCollectionsLayoutProps ) {
 	const { onSeeAll } = props;
 
-	const showcaseThemeCollections = collections.map( ( collection ) => {
+	const showcaseThemeCollections = collections.map( ( collection, index ) => {
 		const { filter, tier } = collection.query;
 		return (
 			<ShowcaseThemeCollection
@@ -73,6 +73,7 @@ function ThemeCollectionsLayout( props: ThemeCollectionsLayoutProps ) {
 				{ ...collection }
 				{ ...props }
 				onSeeAll={ () => onSeeAll( { tier, filter } ) }
+				collectionIndex={ index }
 			/>
 		);
 	} );
