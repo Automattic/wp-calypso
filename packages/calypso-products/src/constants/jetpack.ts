@@ -409,6 +409,9 @@ export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
 export const PLAN_JETPACK_STARTER_YEARLY = 'jetpack_starter_yearly';
 export const PLAN_JETPACK_STARTER_MONTHLY = 'jetpack_starter_monthly';
 export const PLAN_JETPACK_GOLDEN_TOKEN = 'jetpack_golden_token_lifetime';
+export const PLAN_JETPACK_CREATOR_BI_YEARLY = 'jetpack_creator_bi_yearly';
+export const PLAN_JETPACK_CREATOR_YEARLY = 'jetpack_creator_yearly';
+export const PLAN_JETPACK_CREATOR_MONTHLY = 'jetpack_creator_monthly';
 
 // Legacy Security Plans
 export const PLAN_JETPACK_SECURITY_DAILY = 'jetpack_security_daily';
@@ -463,6 +466,13 @@ export const JETPACK_STARTER_PLANS = < const >[
 	PLAN_JETPACK_STARTER_MONTHLY,
 ];
 
+// Creator
+export const JETPACK_CREATOR_PLANS = < const >[
+	PLAN_JETPACK_CREATOR_BI_YEARLY,
+	PLAN_JETPACK_CREATOR_YEARLY,
+	PLAN_JETPACK_CREATOR_MONTHLY,
+];
+
 export const JETPACK_MONTHLY_PLANS = < const >[
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -474,6 +484,7 @@ export const JETPACK_MONTHLY_PLANS = < const >[
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
 export const JETPACK_RESET_PLANS = < const >[
+	...JETPACK_CREATOR_PLANS,
 	...JETPACK_STARTER_PLANS,
 	...JETPACK_SECURITY_PLANS,
 	...JETPACK_COMPLETE_PLANS,
@@ -505,6 +516,11 @@ export const JETPACK_RESET_PLANS_BY_TERM = < const >[
 	{
 		yearly: PLAN_JETPACK_STARTER_YEARLY,
 		monthly: PLAN_JETPACK_STARTER_MONTHLY,
+	},
+	{
+		biYearly: PLAN_JETPACK_CREATOR_BI_YEARLY,
+		yearly: PLAN_JETPACK_CREATOR_YEARLY,
+		monthly: PLAN_JETPACK_CREATOR_MONTHLY,
 	},
 ];
 export const JETPACK_PLANS = < const >[
