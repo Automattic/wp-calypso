@@ -223,6 +223,7 @@ import {
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
 	TYPE_JETPACK_STARTER,
+	TYPE_JETPACK_CREATOR,
 	TYPE_FLEXIBLE,
 	TYPE_100_YEAR,
 	TYPE_PRO,
@@ -444,6 +445,9 @@ import {
 	GROUP_P2,
 	FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
 	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
+	PLAN_JETPACK_CREATOR_BI_YEARLY,
+	PLAN_JETPACK_CREATOR_MONTHLY,
+	PLAN_JETPACK_CREATOR_YEARLY,
 } from './constants';
 import type {
 	BillingTerm,
@@ -2461,6 +2465,24 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
+const getPlanJetpackCreatorDetails = (): IncompleteJetpackPlan => ( {
+	...getJetpackCommonPlanDetails(),
+	group: GROUP_JETPACK,
+	type: TYPE_JETPACK_CREATOR,
+	getTitle: () => translate( 'Creator', { context: 'Jetpack product name' } ),
+	getDescription: () => translate( 'Test Description' ),
+	getIncludedFeatures: () => [
+		FEATURE_EARN_AD,
+		FEATURE_UNLIMITED_SUBSCRIBERS,
+		FEATURE_SIMPLE_PAYMENTS,
+	],
+	getBenefits: () => [
+		translate( 'Earn Ad' ),
+		translate( 'Unlimited Subscribers' ),
+		translate( 'Simple Payments' ),
+	],
+} );
+
 const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_GOLDEN_TOKEN,
@@ -3431,6 +3453,35 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'Unlimited one-click restores from the last 30 days' ),
 			translate( 'Akismet: Comment and form spam protection (1k API calls/mo)' ),
 		],
+	},
+
+	[ PLAN_JETPACK_CREATOR_BI_YEARLY ]: {
+		...getPlanJetpackCreatorDetails(),
+		...getBiAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_CREATOR_BI_YEARLY,
+		getPathSlug: () => 'creator-bi-yearly',
+		getProductId: () => 2612,
+		getWhatIsIncluded: () => [ 'Test Included' ],
+	},
+
+	[ PLAN_JETPACK_CREATOR_YEARLY ]: {
+		...getPlanJetpackCreatorDetails(),
+		...getAnnualTimeframe(),
+		getMonthlySlug: () => PLAN_JETPACK_CREATOR_MONTHLY,
+		getStoreSlug: () => PLAN_JETPACK_CREATOR_YEARLY,
+		getPathSlug: () => 'creator-yearly',
+		getProductId: () => 2611,
+		getWhatIsIncluded: () => [ 'Test Included' ],
+	},
+
+	[ PLAN_JETPACK_CREATOR_MONTHLY ]: {
+		...getPlanJetpackCreatorDetails(),
+		...getMonthlyTimeframe(),
+		getAnnualSlug: () => PLAN_JETPACK_CREATOR_YEARLY,
+		getStoreSlug: () => PLAN_JETPACK_CREATOR_MONTHLY,
+		getPathSlug: () => 'creator-monthly',
+		getProductId: () => 2610,
+		getWhatIsIncluded: () => [ 'Test Included' ],
 	},
 
 	[ PLAN_JETPACK_GOLDEN_TOKEN ]: {
