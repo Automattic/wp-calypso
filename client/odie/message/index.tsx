@@ -126,9 +126,11 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	const sources = message?.context?.sources ?? [];
+	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
+	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
+
 	const messageFullyTyped =
-		( message.type === 'message' && ! message.simulateTyping ) ||
-		( message.type === 'message' && message.simulateTyping && message.content === realTimeMessage );
+		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
 
 	const messageContent = (
 		<div ref={ isLast ? messageEndRef : null } className={ messageClasses }>
