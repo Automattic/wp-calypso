@@ -31,19 +31,18 @@
 
 .sidebar-v2__menu-item.components-item {
 	font-size: rem(13px);
+
+	&:hover:not(.is-active) {
+		background: var(--studio-gray-0);
+		color: initial;
+	}
 }
 
 .sidebar-v2__navigator-sub-menu .components-navigator-back-button,
 .sidebar-v2__menu-item.components-item {
 	border-radius: 4px;
-
 	&:focus {
 		box-shadow: 0 0 0 1px var(--studio-gray-10);
-	}
-
-	&:hover:not(.is-active) {
-		background: var(--studio-gray-0);
-		color: initial;
 	}
 }
 
