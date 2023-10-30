@@ -23,6 +23,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
+	isJetpackCloudOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
@@ -105,6 +106,15 @@ const LayoutLoggedOut = ( {
 		! currentRoute.startsWith( '/log-in/webauthn' ) &&
 		! currentRoute.startsWith( '/log-in/backup' );
 
+	const isMagicLogin = currentRoute && currentRoute.startsWith( '/log-in/link' );
+
+	const isWpcomMagicLogin =
+		isMagicLogin &&
+		! isJetpackLogin &&
+		! isGravPoweredLoginPage &&
+		! isJetpackCloudOAuth2Client( oauth2Client ) &&
+		! isWooOAuth2Client( oauth2Client );
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -125,6 +135,8 @@ const LayoutLoggedOut = ( {
 		'is-grav-powered-client': isGravPoweredClient,
 		'is-grav-powered-login-page': isGravPoweredLoginPage,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
+		'is-magic-login': isMagicLogin,
+		'is-wpcom-magic-login': isWpcomMagicLogin,
 	};
 
 	let masterbar = null;
