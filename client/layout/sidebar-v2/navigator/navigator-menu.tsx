@@ -33,23 +33,26 @@ export const SidebarNavigatorMenu = ( {
 				<CardBody className="sidebar-v2__navigator-sub-menu">
 					<VStack spacing={ 0 } justify="flex-start">
 						<ul>
-							{ backButtonProps && (
+							{ ( backButtonProps || title ) && (
 								<li className="sidebar-v2__navigator-sub-menu-header">
-									<NavigatorToParentButton
-										icon={ backButtonProps.icon }
-										onClick={ backButtonProps.onClick }
-										label={ backButtonProps.label }
-										showTooltip
-									/>
+									{ backButtonProps && (
+										<NavigatorToParentButton
+											icon={ backButtonProps.icon }
+											onClick={ backButtonProps.onClick }
+											label={ backButtonProps.label }
+											showTooltip
+										/>
+									) }
 									<span>{ title }</span>
 								</li>
 							) }
-							<div>
+
+							<li>
 								{ description && (
 									<div className="sidebar-v2__navigator-group-description">{ description }</div>
 								) }
 								{ children }
-							</div>
+							</li>
 						</ul>
 					</VStack>
 				</CardBody>
