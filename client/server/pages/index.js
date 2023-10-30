@@ -828,7 +828,7 @@ function wpcomPages( app ) {
 			// If user enters /site/*,
 			// redirect to /read/site/subscription/*.
 			const siteFragment = req.path.match( /site\/(.*)/i );
-			if ( siteFragment[ 1 ] ) {
+			if ( siteFragment && siteFragment[ 1 ] ) {
 				return res.redirect( 'https://wordpress.com/read/site/subscription/' + siteFragment[ 1 ] );
 			}
 
