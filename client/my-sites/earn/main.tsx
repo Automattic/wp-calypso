@@ -220,11 +220,11 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
 			/>
 			<DocumentHead
-				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Earn' ) }
+				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Monetize' ) }
 			/>
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Earn' ) }
+				title={ translate( 'Monetize' ) }
 				subtitle={ translate(
 					'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
