@@ -41,6 +41,7 @@ import {
 import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
+import PatternPagePreviewList from './pattern-page-preview-list';
 import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenConfirmation from './screen-confirmation';
@@ -615,20 +616,31 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					/>
 				</NavigatorScreen>
 			</div>
-			<PatternLargePreview
-				header={ header }
-				sections={ sections }
-				footer={ footer }
-				activePosition={ activePosition }
-				onDeleteSection={ onDeleteSection }
-				onMoveUpSection={ onMoveUpSection }
-				onMoveDownSection={ onMoveDownSection }
-				onDeleteHeader={ onDeleteHeader }
-				onDeleteFooter={ onDeleteFooter }
-				onShuffle={ onShuffle }
-				recordTracksEvent={ recordTracksEvent }
-				isNewSite={ isNewSite }
-			/>
+			{ currentScreen.name === 'pages' ? (
+				<PatternPagePreviewList
+					selectedHeader={ header }
+					selectedSections={ sections }
+					selectedFooter={ footer }
+					selectedPages={ pages }
+					pagesMapByCategory={ pagesMapByCategory }
+					isNewSite={ isNewSite }
+				/>
+			) : (
+				<PatternLargePreview
+					header={ header }
+					sections={ sections }
+					footer={ footer }
+					activePosition={ activePosition }
+					onDeleteSection={ onDeleteSection }
+					onMoveUpSection={ onMoveUpSection }
+					onMoveDownSection={ onMoveDownSection }
+					onDeleteHeader={ onDeleteHeader }
+					onDeleteFooter={ onDeleteFooter }
+					onShuffle={ onShuffle }
+					recordTracksEvent={ recordTracksEvent }
+					isNewSite={ isNewSite }
+				/>
+			) }
 		</div>
 	);
 
