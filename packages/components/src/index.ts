@@ -59,7 +59,7 @@ export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-pop
 export { default as JetpackUpsellCard } from './jetpack-upsell-card';
 export { UpsellMenuGroup } from './upsell-menu-group';
 export { default as PricingSlider } from './pricing-slider';
-export { default as Tootlip } from './tooltip';
+export { default as Tooltip } from './tooltip';
 export * from './theme-type-badge';
 
 // Types
