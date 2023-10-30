@@ -186,7 +186,7 @@ const LayoutLoggedOut = ( {
 		classes[ 'has-no-masterbar' ] = false;
 		masterbar = <WooCoreProfilerMasterbar />;
 	} else {
-		masterbar = (
+		masterbar = ! masterbarIsHidden && (
 			<MasterbarLoggedOut
 				title={ sectionTitle }
 				sectionName={ sectionName }
