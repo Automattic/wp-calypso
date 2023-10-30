@@ -1,5 +1,5 @@
 import { Button, Popover } from '@automattic/components';
-import { Icon, info } from '@wordpress/icons';
+import { Icon, info, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useRef, useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -62,7 +62,8 @@ export default function PartnerProgramOptInFieldset( {
 
 				<p>
 					<a href="https://jetpack.com/agencies-pros/" target="_blank" rel="noreferrer">
-						{ translate( 'Learn more about this program.' ) }
+						{ translate( 'More about the program' ) }
+						<Icon icon={ external } size={ 16 } />
 					</a>
 				</p>
 
