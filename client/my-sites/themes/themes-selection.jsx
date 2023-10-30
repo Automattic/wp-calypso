@@ -376,6 +376,7 @@ export const ConnectedThemesSelection = connect(
 			getThemeDetailsUrl: bindGetThemeDetailsUrl( state, siteId ),
 			getThemeType: boundGetThemeType,
 			filterString: filterString,
+			shouldFetchWpOrgThemes,
 			themeShowcaseEventRecorder,
 			wpOrgQuery,
 			wpOrgThemes,
