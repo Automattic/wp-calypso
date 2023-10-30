@@ -191,7 +191,7 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 				backButtonProps={
 					isAgency
 						? {
-								label: translate( 'Site Settings' ),
+								label: translate( 'Sites' ),
 								icon: chevronLeft,
 								onClick: () => {
 									dispatch(
