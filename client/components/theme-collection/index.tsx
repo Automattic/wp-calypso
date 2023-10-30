@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -11,6 +12,7 @@ interface ThemeCollectionProps {
 	title: string;
 	description: ReactElement | null;
 	onSeeAll: () => void;
+	collectionIndex: number;
 }
 
 export default function ThemeCollection( {
@@ -19,9 +21,26 @@ export default function ThemeCollection( {
 	description,
 	children,
 	onSeeAll,
+	collectionIndex,
 }: PropsWithChildren< ThemeCollectionProps > ): ReactElement {
 	const swiperInstance = useRef< SwiperType | null >( null );
 	const swiperContainerId = `swiper-container-${ collectionSlug }`;
+
+	const onSeeAllAction = () => {
+		recordTracksEvent( 'calypso_themeshowcase_collection_see_all_click', {
+			collection: collectionSlug,
+			collection_index: collectionIndex + 1,
+		} );
+		onSeeAll();
+	};
+
+	const trackNavigationClick = ( direction: string ) => {
+		recordTracksEvent( 'calypso_themeshowcase_collection_navigation_click', {
+			direction,
+			collection: collectionSlug,
+			collection_index: collectionIndex + 1,
+		} );
+	};
 
 	const translate = useTranslate();
 
@@ -101,13 +120,19 @@ export default function ThemeCollection( {
 					<div className="theme-collection__description">{ preventWidows( description ) }</div>
 				</div>
 				<div className="theme-collection__carousel-controls">
-					<Button className="theme-collection__see-all" onClick={ onSeeAll }>
+					<Button className="theme-collection__see-all" onClick={ onSeeAllAction }>
 						{ translate( 'See all' ) }
 					</Button>
-					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous">
+					<Button
+						onClick={ () => trackNavigationClick( 'previous' ) }
+						className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous"
+					>
 						<Icon icon={ chevronLeft } />
 					</Button>
-					<Button className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--next">
+					<Button
+						onClick={ () => trackNavigationClick( 'next' ) }
+						className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--next"
+					>
 						<Icon icon={ chevronRight } />
 					</Button>
 				</div>
