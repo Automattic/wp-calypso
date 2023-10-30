@@ -1,5 +1,5 @@
 import { LaunchpadNavigator } from '@automattic/data-stores';
-import { DefaultWiredLaunchpad } from '@automattic/launchpad';
+import { DefaultWiredLaunchpad, type EventHandlers, type Task } from '@automattic/launchpad';
 import { Modal } from '@wordpress/components';
 import { select } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -24,6 +24,12 @@ const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavi
 
 	const setLaunchpadIsVisible = toggleLaunchpadIsVisible || ( () => {} );
 
+	const onTaskClick: EventHandlers[ 'onTaskClick' ] = ( task: Task ) => {
+		if ( task.calypso_path !== undefined ) {
+			setLaunchpadIsVisible( false );
+		}
+	};
+
 	return (
 		<Modal
 			title={ translate( 'Next steps for your site' ) }
@@ -34,6 +40,7 @@ const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavi
 				siteSlug={ siteSlug }
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
+				onTaskClick={ onTaskClick }
 			/>
 		</Modal>
 	);
