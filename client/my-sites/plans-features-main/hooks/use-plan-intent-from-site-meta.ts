@@ -26,6 +26,13 @@ const usePlanIntentFromSiteMeta = (): IntentFromSiteMeta => {
 		};
 	}
 
+	if ( 'videopress' === ( siteIntent.data?.site_intent as string ) ) {
+		return {
+			processing: false,
+			intent: 'plans-videopress',
+		};
+	}
+
 	return {
 		processing: false,
 		intent: null, // null -> we've observed metadata but nothing we care about
