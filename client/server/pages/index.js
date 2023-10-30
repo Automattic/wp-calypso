@@ -816,8 +816,8 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res ) {
-		// For users on subkey, redirect to the email login link page.
-		if ( req.cookies.subkey ) {
+		// For users on subkey or not logged in, redirect to the email login link page.
+		if ( req.cookies.subkey || ! req.context.isLoggedIn ) {
 			return res.redirect( 'https://wordpress.com/email-subscriptions' );
 		}
 
