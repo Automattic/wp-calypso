@@ -8,6 +8,10 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { getItemVariantDiscountPercentage, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
 
+// A/B testing for checkout version 2
+const urlParams = new URLSearchParams( window.location.search );
+const checkoutVersion = urlParams.get( 'checkoutVersion' );
+
 const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
 	margin-right: 8px;
@@ -68,6 +72,7 @@ const Variant = styled.div`
 const Label = styled.span`
 	display: flex;
 	white-space: nowrap;
+	font-size: ${ checkoutVersion === '2' ? '12px' : 'inherit' };
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
 		flex-direction: column;
@@ -88,6 +93,7 @@ const IntroPricingText = styled.span`
 
 const PriceTextContainer = styled.span`
 	text-align: right;
+	font-size: ${ checkoutVersion === '2' ? '12px' : 'inherit' };
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -251,10 +257,12 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ hasDiscount && ! isIntroductoryOffer && ! isJetpack && (
+				{ checkoutVersion !== '2' && hasDiscount && ! isIntroductoryOffer && ! isJetpack && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
-				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
+				{ checkoutVersion !== '2' && (
+					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
+				) }
 				<IntroPricing>
 					<IntroPricingText>
 						{ isIntroductoryOffer && translatedIntroOfferDetails() }
