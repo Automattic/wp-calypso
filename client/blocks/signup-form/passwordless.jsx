@@ -215,12 +215,11 @@ class PasswordlessSignupForm extends Component {
 		goToNextStep();
 	};
 
-	onInputChange = ( { target: { value } } ) => {
+	onInputChange = ( { target: { value } } ) =>
 		this.setState( {
 			email: value,
 			errorMessages: null,
 		} );
-	};
 
 	renderNotice() {
 		return (
