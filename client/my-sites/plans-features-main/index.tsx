@@ -830,7 +830,7 @@ const PlansFeaturesMain = ( {
 												currentPlanManageHref={ currentPlanManageHref }
 												canUserManageCurrentPlan={ canUserManageCurrentPlan }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
-												isVisible={ showPlansComparisonGrid }
+												isComparisonGridVisible={ showPlansComparisonGrid }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }
