@@ -29,12 +29,6 @@
 		}
 	}
 
-	.is-section-signup &:not(.domain-product-price__domain-step-signup-flow) {
-		@include breakpoint-deprecated( ">660px" ) {
-			padding-right: 1em;
-		}
-	}
-
 	.is-section-domains & {
 		@include breakpoint-deprecated( ">800px" ) {
 			padding-left: 1em;
