@@ -30,27 +30,19 @@ const blogOnboardingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) =
 	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingSignupFeatures;
 };
 
-const signupFlowDefaultFeatures = (
-	flowName: string,
-	plan: IncompleteWPcomPlan,
-	isInVerticalScrollingPlansExperiment: boolean
-) => {
+const signupFlowDefaultFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	if ( ! flowName || isNewsletterOrLinkInBioFlow( flowName ) ) {
 		return;
 	}
 
-	return isInVerticalScrollingPlansExperiment
-		? plan.getSignupFeatures
-		: plan.getSignupCompareAvailableFeatures;
+	return plan.getSignupCompareAvailableFeatures;
 };
 
 const getPlanFeatureAccessor = ( {
 	flowName = '',
-	isInVerticalScrollingPlansExperiment = false,
 	plan,
 }: {
 	flowName?: string;
-	isInVerticalScrollingPlansExperiment?: boolean;
 	plan: IncompleteWPcomPlan;
 } ) => {
 	return [
@@ -58,7 +50,7 @@ const getPlanFeatureAccessor = ( {
 		linkInBioFeatures( flowName, plan ),
 		hostingFeatures( flowName, plan ),
 		blogOnboardingFeatures( flowName, plan ),
-		signupFlowDefaultFeatures( flowName, plan, isInVerticalScrollingPlansExperiment ),
+		signupFlowDefaultFeatures( flowName, plan ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
 	} );
@@ -121,7 +113,6 @@ export default function getFlowPlanFeatures(
 	const featureAccessor = getPlanFeatureAccessor( {
 		flowName,
 		plan: planConstantObj,
-		isInVerticalScrollingPlansExperiment: false,
 	} );
 
 	if ( ! featureAccessor ) {
