@@ -93,28 +93,6 @@ const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) =
 	return ( accessor && accessor() ) || [];
 };
 
-export const getPlanDescriptionForMobile = ( {
-	flowName,
-	isInVerticalScrollingPlansExperiment,
-	plan,
-}: {
-	flowName: string;
-	isInVerticalScrollingPlansExperiment: boolean;
-	plan: IncompleteWPcomPlan;
-} ) => {
-	if ( flowName === NEWSLETTER_FLOW && plan.getNewsletterDescription ) {
-		return plan.getNewsletterDescription();
-	}
-
-	if ( isLinkInBioFlow( flowName ) && plan.getLinkInBioDescription ) {
-		return plan.getLinkInBioDescription();
-	}
-
-	return plan.getShortDescription && isInVerticalScrollingPlansExperiment
-		? plan.getShortDescription()
-		: plan.getDescription();
-};
-
 export default function getFlowPlanFeatures(
 	flowName: string,
 	product: ResponseCartProduct | undefined,
