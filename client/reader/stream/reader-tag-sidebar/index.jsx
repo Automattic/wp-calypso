@@ -17,10 +17,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderTagBySlug } from 'calypso/state/reader/tags/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
-import '../style.scss';
-
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-
 import '../style.scss';
 
 const ReaderTagSidebar = ( {
