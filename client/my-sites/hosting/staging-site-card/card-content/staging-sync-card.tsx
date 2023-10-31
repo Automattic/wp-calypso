@@ -19,15 +19,23 @@ import { useCheckSyncStatus } from '../use-site-sync-status';
 import { StagingSiteSyncLoadingBarCardContent } from './staging-site-sync-loading-bar-card-content';
 const stagingSiteSyncSuccess = 'staging-site-sync-success';
 
-const STAGING_SYNC_ERROR_CODES = [
+const STAGING_SYNC_JETPACK_ERROR_CODES = [
 	'staging_site_cannot_sync_staging',
 	'staging_site_cannot_sync_production',
 ];
-function useIsPermanentSyncError( error: string | null | undefined ) {
+const STAGING_SYNC_FAILED_ERROR_CODES = [ 'staging_site_sync_failed' ];
+
+function useIsJetpackConnectionSyncError( error: string | null | undefined ) {
 	if ( ! error ) {
 		return false;
 	}
-	return Object.values( STAGING_SYNC_ERROR_CODES ).includes( error );
+	return STAGING_SYNC_JETPACK_ERROR_CODES.includes( error );
+}
+function useIsFailedSyncError( error: string | null | undefined ) {
+	if ( ! error ) {
+		return false;
+	}
+	return STAGING_SYNC_FAILED_ERROR_CODES.includes( error );
 }
 
 const synchronizationOptions: CheckboxOptionItem[] = [
@@ -296,7 +304,8 @@ const SyncCardContainer = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const isStagingSyncError = useIsPermanentSyncError( error ) && siteToSync;
+	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error ) && siteToSync;
+	const isFailedSyncError = useIsFailedSyncError( error ) && siteToSync;
 
 	return (
 		<StagingSyncCardBody>
@@ -313,7 +322,7 @@ const SyncCardContainer = ( {
 									'Refresh your staging site with the latest from production, or push changes in your staging site to production.'
 							  ) }
 					</SyncContainerContent>
-					{ error && isStagingSyncError && (
+					{ error && isJetpackConnectionError && (
 						<Notice
 							status="is-error"
 							icon="mention"
@@ -336,7 +345,21 @@ const SyncCardContainer = ( {
 							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
 						</Notice>
 					) }
-					{ error && ! isStagingSyncError && (
+					{ error && isFailedSyncError && (
+						<Notice
+							status="is-error"
+							icon="mention"
+							showDismiss={ false }
+							text={ translate( 'We couldn’t synchronize changes to the %(siteType)s site.', {
+								args: {
+									siteType: siteToSync,
+								},
+							} ) }
+						>
+							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
+						</Notice>
+					) }
+					{ error && ! isJetpackConnectionError && ! isFailedSyncError && (
 						<Notice
 							status="is-error"
 							icon="mention"
