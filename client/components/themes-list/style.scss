@@ -6,17 +6,10 @@
 	$theme-item-horizontal-margin: 32px; // Keep using margin as there might be an empty row
 
 	display: grid;
-	grid-template-columns: repeat(1, 1fr);
+	grid-template-columns: repeat(auto-fill, minmax($theme-item-min-width + $theme-item-horizontal-margin, 1fr));
 	list-style: none;
 	padding: 0;
 	margin: 0 -10px; // items flush against list edge
-
-	@include breakpoint-deprecated( ">660px" ) {
-		grid-template-columns: repeat(2, 1fr);
-	}
-	@include break-xlarge {
-		grid-template-columns: repeat(3, 1fr);
-	}
 
 	.feature-example & {
 		max-width: 1000px;
@@ -195,6 +188,19 @@
 			@include break-small {
 				padding-bottom: 20px;
 			}
+		}
+	}
+}
+
+.theme-showcase.theme-discovery {
+	.themes-list {
+		grid-template-columns: repeat(1, 1fr);
+
+		@include breakpoint-deprecated( ">660px" ) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		@include break-xlarge {
+			grid-template-columns: repeat(3, 1fr);
 		}
 	}
 }
