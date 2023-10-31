@@ -1124,7 +1124,6 @@ const ComparisonGrid = ( {
 					disabled={ isBottomHeaderInView }
 					stickyClass="is-sticky-header-row"
 					stickyOffset={ stickyRowOffset }
-					topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader

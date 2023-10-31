@@ -7,16 +7,15 @@ type Props = {
 	stickyClass?: string; // class to apply when the element is "stuck"
 	element?: ElementType; // which element to render, defaults to div
 	stickyOffset?: number; // offset from the top of the scrolling container to control when the element should start sticking, default 0
-	topOffset?: number; // offset from the top of the scrolling container to control the position of the sticky element, default 0
 	disabled?: boolean; // force disabled sticky behaviour if set to true
 };
 
-const styles = ( { disabled, topOffset }: { disabled: boolean; topOffset: number } ) =>
+const styles = ( { disabled, stickyOffset }: { disabled: boolean; stickyOffset: number } ) =>
 	disabled
 		? ''
 		: css`
 				position: sticky;
-				top: ${ topOffset + 'px' };
+				top: ${ stickyOffset + 'px' };
 				z-index: 1;
 		  `;
 
@@ -25,14 +24,7 @@ const Container = styled.div`
 `;
 
 export function StickyContainer( props: Props ) {
-	const {
-		stickyOffset = 0,
-		topOffset = 0,
-		stickyClass = '',
-		element = 'div',
-		disabled = false,
-		children,
-	} = props;
+	const { stickyOffset = 0, stickyClass = '', element = 'div', disabled = false, children } = props;
 
 	const stickyRef = useRef( null );
 	const [ isStuck, setIsStuck ] = useState( false );
@@ -85,6 +77,7 @@ export function StickyContainer( props: Props ) {
 				 */
 					.layout__content {
 						overflow: unset;
+						min-height: unset;
 					}
 				` }
 			/>
@@ -92,7 +85,7 @@ export function StickyContainer( props: Props ) {
 				{ ...props }
 				as={ element }
 				ref={ stickyRef }
-				topOffset={ topOffset }
+				stickyOffset={ stickyOffset }
 				disabled={ disabled }
 				className={ isStuck ? stickyClass : '' }
 			>
