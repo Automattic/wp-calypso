@@ -37,3 +37,29 @@
 		}
 	}
 }
+
+.start-writing.new-or-existing-site {
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			inset-block-start: 20px;
+			inset-inline-start: 24px;
+			fill: var(--color-text);
+			transform-origin: 0 0;
+		}
+	}
+	.step-container {
+		display: flex;
+		flex-direction: column;
+		-webkit-box-align: center;
+		align-items: center;
+		-webkit-box-pack: center;
+		justify-content: center;
+		width: 100%;
+		min-height: calc(100vh - 100px);
+
+		.step-container__content {
+			min-height: auto;
+		}
+	}
+}

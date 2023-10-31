@@ -5,6 +5,7 @@ import {
 	IntentScreen,
 	HUNDRED_YEAR_PLAN_FLOW,
 	StepContainer,
+	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -55,7 +56,24 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 			},
 		];
 	}
-	return [];
+	return [
+		{
+			key: 'existing-site',
+			title: translate( 'Existing WordPress.com site' ),
+			description: <p>{ translate( 'Using an existing site' ) }</p>,
+			icon: <WordPressLogo size={ 24 } />,
+			value: 'existing-site',
+			actionText: translate( 'Select a site' ),
+		},
+		{
+			key: 'new-site',
+			title: translate( 'New site' ),
+			description: <p>{ translate( 'Creating a new site' ) }</p>,
+			icon: <NewSiteIcon />,
+			value: 'new-site',
+			actionText: translate( 'Start a new site' ),
+		},
+	];
 };
 
 const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation, flow } ) {
@@ -69,6 +87,9 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 	};
 
 	const getHeaderText = () => {
+		if ( isBlogOnboardingFlow( flow ) ) {
+			return translate( 'New or existing site' );
+		}
 		switch ( flow ) {
 			case HUNDRED_YEAR_PLAN_FLOW:
 				return translate( 'Start your legacy' );
@@ -96,6 +117,7 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 			stepName="new-or-existing-site"
 			flowName={ flow }
 			recordTracksEvent={ recordTracksEvent }
+			hideBack={ isBlogOnboardingFlow( flow ) }
 		/>
 	);
 };

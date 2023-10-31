@@ -2,6 +2,7 @@ import {
 	LaunchpadNavigator,
 	OnboardSelect,
 	updateLaunchpadSettings,
+	UserSelect,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
@@ -18,11 +19,11 @@ import {
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE, ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useLoginUrl } from '../utils/path';
@@ -31,6 +32,57 @@ const startWriting: Flow = {
 	name: START_WRITING_FLOW,
 	title: 'Blog',
 	useSteps() {
+		const currentUser = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+			[]
+		);
+
+		if ( currentUser?.site_count ) {
+			return [
+				{
+					slug: 'new-or-existing-site',
+					asyncComponent: () => import( './internals/steps-repository/new-or-existing-site' ),
+				},
+				{
+					slug: 'site-picker',
+					asyncComponent: () => import( './internals/steps-repository/site-picker-list' ),
+				},
+				{
+					slug: 'site-creation-step',
+					asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				},
+				{
+					slug: 'processing',
+					asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+				},
+				{
+					slug: 'domains',
+					asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
+				},
+				{
+					slug: 'use-my-domain',
+					asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
+				},
+				{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
+				{
+					slug: 'setup-blog',
+					asyncComponent: () => import( './internals/steps-repository/setup-blog' ),
+				},
+				{
+					slug: 'launchpad',
+					asyncComponent: () => import( './internals/steps-repository/launchpad' ),
+				},
+				{
+					slug: 'site-launch',
+					asyncComponent: () => import( './internals/steps-repository/site-launch' ),
+				},
+				{
+					slug: 'celebration-step',
+					asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
+				},
+			];
+		}
+
 		return [
 			{
 				slug: 'site-creation-step',
@@ -95,8 +147,20 @@ const startWriting: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 
 			switch ( currentStep ) {
+				case 'new-or-existing-site':
+					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
+						return navigate( 'site-creation-step' );
+					}
+					return navigate( 'site-picker' );
 				case 'site-creation-step':
 					return navigate( 'processing' );
+				case 'site-picker': {
+					const siteOrigin = window.location.origin;
+
+					return redirect(
+						`https://${ providedDependencies.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
+					);
+				}
 				case 'processing': {
 					// If we just created a new site.
 					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
@@ -211,13 +275,11 @@ const startWriting: Flow = {
 	useAssertConditions(): AssertConditionResult {
 		const flowName = this.name;
 		const isLoggedIn = useSelector( isUserLoggedIn );
-		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
-		const currentPath = window.location.pathname;
-		const isSiteCreationStep =
-			currentPath.endsWith( 'setup/start-writing' ) ||
-			currentPath.endsWith( 'setup/start-writing/' ) ||
-			currentPath.includes( 'setup/start-writing/site-creation-step' );
-		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
+		// const currentPath = window.location.pathname;
+		const isSiteCreationStep = false;
+		// currentPath.endsWith( 'setup/start-writing' ) ||
+		// currentPath.endsWith( 'setup/start-writing/' ) ||
+		// currentPath.includes( 'setup/start-writing/site-creation-step' );
 
 		// There is a race condition where useLocale is reporting english,
 		// despite there being a locale in the URL so we need to look it up manually.
@@ -243,7 +305,7 @@ const startWriting: Flow = {
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
 				redirect( logInUrl );
-			} else if ( userAlreadyHasSites && isSiteCreationStep ) {
+			} else if ( isSiteCreationStep ) {
 				// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
 				// This prevents a bunch of sites being created accidentally.
 				redirect( `/post?${ START_WRITING_FLOW }=true` );
@@ -257,7 +319,7 @@ const startWriting: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( userAlreadyHasSites && isSiteCreationStep ) {
+		} else if ( isSiteCreationStep ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires no preexisting sites`,
