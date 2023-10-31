@@ -10,6 +10,7 @@ import {
 	type PlanSlug,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	type StorageOption,
+	isP2FreePlan,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -477,6 +478,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		},
 		[ currentSitePlanSlug, freePlan, freeTrialPlanSlug, onUpgradeClick, planSlug ]
 	);
+
+	if ( isP2FreePlan( planSlug ) ) {
+		return null;
+	}
 
 	if ( isWpcomEnterpriseGridPlan ) {
 		const vipLandingPageUrlWithUtmCampaign = addQueryArgs(
