@@ -9,18 +9,22 @@ import type { SiteDetails } from '../site/types';
  */
 
 export const useAddOnCheckoutLink = (): ( (
-	siteDetails: SiteDetails | null,
+	selectedSiteSlug: SiteDetails[ 'slug' ] | null,
 	addOnSlug: string,
 	quantity?: number
 ) => string ) => {
 	const checkoutLinkCallback = useCallback(
-		( siteDetails: SiteDetails | null, addOnSlug: string, quantity?: number ): string => {
+		(
+			selectedSiteSlug: SiteDetails[ 'slug' ] | null,
+			addOnSlug: string,
+			quantity?: number
+		): string => {
 			// If no site is provided, return the checkout link with the add-on (will render site-selector).
-			if ( ! siteDetails ) {
+			if ( ! selectedSiteSlug ) {
 				return `/checkout/${ addOnSlug }`;
 			}
 
-			const checkoutLinkFormat = `/checkout/${ siteDetails?.slug }/${ addOnSlug }`;
+			const checkoutLinkFormat = `/checkout/${ selectedSiteSlug }/${ addOnSlug }`;
 
 			if ( quantity ) {
 				return checkoutLinkFormat + `:-q-${ quantity }`;

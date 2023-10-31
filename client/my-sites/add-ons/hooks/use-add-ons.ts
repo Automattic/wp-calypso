@@ -70,7 +70,7 @@ const useSpaceUpgradesPurchased = ( {
 	}, [ billingTransactions, filter, isInSignup, siteId, isLoading ] );
 };
 
-const useActiveAddOnsDefs = ( selectedSite: SiteDetails ) => {
+const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
 
@@ -145,7 +145,7 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails ) => {
 				),
 				featured: false,
 				purchased: false,
-				checkoutLink: checkoutLink( selectedSite, PRODUCT_1GB_SPACE, 50 ),
+				checkoutLink: checkoutLink( selectedSite?.slug ?? null, PRODUCT_1GB_SPACE, 50 ),
 			},
 			{
 				productSlug: PRODUCT_1GB_SPACE,
@@ -160,7 +160,7 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails ) => {
 				),
 				featured: false,
 				purchased: false,
-				checkoutLink: checkoutLink( selectedSite, PRODUCT_1GB_SPACE, 100 ),
+				checkoutLink: checkoutLink( selectedSite?.slug ?? null, PRODUCT_1GB_SPACE, 100 ),
 			},
 			{
 				productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
@@ -360,7 +360,7 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
 	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( { isInSignup, siteId } );
-	const selectedSite = useSelector( getSelectedSite );
+	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const activeAddOns = useActiveAddOnsDefs( selectedSite );
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
