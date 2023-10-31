@@ -31,7 +31,13 @@ export class SiteAssemblerFlow {
 	 * @param {LayoutType} type Type of the layout component.
 	 */
 	async clickLayoutComponentType( type: LayoutType ): Promise< void > {
-		await this.page.getByRole( 'button', { name: type } ).click();
+		await this.page
+			.getByRole( 'button', { name: type } )
+			// Add `or` because the categories for the Section type is now
+			// shown at the top level.
+			// See: https://github.com/Automattic/wp-calypso/pull/83625
+			.or( this.page.getByRole( 'option', { name: type } ) )
+			.click();
 	}
 
 	/**
