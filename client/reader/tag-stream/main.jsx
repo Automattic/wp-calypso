@@ -102,7 +102,9 @@ class TagStream extends Component {
 		const emptyContent = () => <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
 		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
-		const titleText = title.replace( /-/g, ' ' );
+		const titleText = title.replace( /-/g, ' ' ).replace( /\b[a-z]/g, function ( first ) {
+			return first.toUpperCase();
+		} );
 
 		let imageSearchString = this.props.encodedTagSlug;
 
@@ -133,7 +135,7 @@ class TagStream extends Component {
 
 		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
 		const tagHeader = () => (
-			<>
+			<div>
 				<TagStreamHeader
 					title={ titleText }
 					description={ this.props.description }
@@ -146,7 +148,7 @@ class TagStream extends Component {
 					sort={ this.props.sort }
 					recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 				/>
-			</>
+			</div>
 		);
 		const sidebarProps = ! isReaderTagEmbedPage( window.location ) && {
 			streamSidebar: () => (
