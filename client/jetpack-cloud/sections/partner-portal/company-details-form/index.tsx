@@ -229,23 +229,25 @@ export default function CompanyDetailsForm( {
 						isChecked={ partnerProgramOptIn }
 					/>
 				) }
-				<FormFieldset>
-					<FormLabel>{ translate( 'How many sites do you manage?' ) }</FormLabel>
-					<SelectControl
-						id="managed_sites"
-						name="managed_sites"
-						value={ managedSites }
-						options={ [
-							{ value: '1-5', label: translate( '1-5' ) },
-							{ value: '6-20', label: translate( '6-20' ) },
-							{ value: '21-50', label: translate( '21-50' ) },
-							{ value: '51-100', label: translate( '51-100' ) },
-							{ value: '101-500', label: translate( '101-500' ) },
-							{ value: '500+', label: translate( '500+' ) },
-						] }
-						onChange={ setManagedSites }
-					/>
-				</FormFieldset>
+				{ showSignupFields && (
+					<FormFieldset>
+						<FormLabel>{ translate( 'How many sites do you manage?' ) }</FormLabel>
+						<SelectControl
+							id="managed_sites"
+							name="managed_sites"
+							value={ managedSites }
+							options={ [
+								{ value: '1-5', label: translate( '1-5' ) },
+								{ value: '6-20', label: translate( '6-20' ) },
+								{ value: '21-50', label: translate( '21-50' ) },
+								{ value: '51-100', label: translate( '51-100' ) },
+								{ value: '101-500', label: translate( '101-500' ) },
+								{ value: '500+', label: translate( '500+' ) },
+							] }
+							onChange={ setManagedSites }
+						/>
+					</FormFieldset>
+				) }
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
