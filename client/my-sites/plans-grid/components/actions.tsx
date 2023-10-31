@@ -286,6 +286,10 @@ const LoggedInPlansFeatureActionButton = ( {
 			);
 		}
 
+		if ( isP2FreePlan( planSlug ) && current ) {
+			return null;
+		}
+
 		return (
 			<Button className={ classes } disabled={ true }>
 				{ translate( 'Contact support', { context: 'verb' } ) }
@@ -478,10 +482,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		},
 		[ currentSitePlanSlug, freePlan, freeTrialPlanSlug, onUpgradeClick, planSlug ]
 	);
-
-	if ( isP2FreePlan( planSlug ) ) {
-		return null;
-	}
 
 	if ( isWpcomEnterpriseGridPlan ) {
 		const vipLandingPageUrlWithUtmCampaign = addQueryArgs(

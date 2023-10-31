@@ -548,7 +548,7 @@ const PlansFeaturesMain = ( {
 			};
 		}
 
-		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
+		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) && intent !== 'plans-p2' ) {
 			actionOverrides = {
 				loggedInFreePlan: {
 					status:
@@ -561,6 +561,7 @@ const PlansFeaturesMain = ( {
 					text: translate( 'Manage add-ons', { context: 'verb' } ),
 				},
 			};
+
 			if ( domainFromHomeUpsellFlow ) {
 				actionOverrides.loggedInFreePlan = {
 					...actionOverrides.loggedInFreePlan,
