@@ -94,10 +94,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const categories = usePatternCategories( site?.ID );
 	// Fetching curated patterns and categories from PTK api
 	const dotcomPatterns = useDotcomPatterns( locale );
-	const patternIds = useMemo(
-		() => dotcomPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
-		[ dotcomPatterns ]
-	);
 	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns );
 	const pagesMapByCategory = usePatternPagesMapByCategory( dotcomPatterns );
 	const {
@@ -650,7 +646,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<PatternAssemblerContainer
 					siteId={ site?.ID }
 					stylesheet={ stylesheet }
-					patternIds={ patternIds }
+					patternsMapByCategory={ patternsMapByCategory }
 					siteInfo={ siteInfo }
 					isNewSite={ isNewSite }
 				>
