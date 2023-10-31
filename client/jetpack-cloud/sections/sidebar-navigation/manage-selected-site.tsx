@@ -180,7 +180,7 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 			<NewSidebar
 				path="/"
 				menuItems={ menuItems }
-				title={ translate( 'Site Settings' ) }
+				title={ translate( 'Manage' ) }
 				backButtonProps={
 					isAgency
 						? {
