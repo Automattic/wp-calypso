@@ -20,6 +20,10 @@
 	flex-grow: 1;
 	overflow-y: auto;
 	height: 0;  // To support scrollable in the main content area, we set height to 0.
+
+	// Navigator container has some issue displaying edges without adding 1px padding.
+	// This is to offset the 1px padding and achieved the sidebar 16px padding.
+	margin: -1px;
 }
 
 .sidebar-v2__footer {

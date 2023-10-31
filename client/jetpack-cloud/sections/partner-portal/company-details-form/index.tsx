@@ -1,13 +1,14 @@
 import { Button, Gridicon } from '@automattic/components';
+import { SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
+import PartnerProgramOptInFieldSet from '../partner-program-opt-in-fieldset/partner-program-opt-in-fieldset';
 import SearchableDropdown from '../searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 
@@ -39,6 +40,7 @@ interface Props {
 		contactPerson?: string;
 		companyWebsite?: string;
 		companyType?: string;
+		managedSites?: string;
 		partnerProgramOptIn?: boolean;
 		city?: string;
 		line1?: string;
@@ -72,6 +74,7 @@ export default function CompanyDetailsForm( {
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
+	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-5' );
 	const [ partnerProgramOptIn, setPartnerProgramOptIn ] = useState( false );
 
 	const [ showPartnerProgramOptIn, setShowPartnerProgramOptIn ] = useState( false );
@@ -106,6 +109,7 @@ export default function CompanyDetailsForm( {
 			contactPerson,
 			companyWebsite,
 			companyType,
+			managedSites,
 			partnerProgramOptIn,
 			city,
 			line1,
@@ -121,6 +125,7 @@ export default function CompanyDetailsForm( {
 			contactPerson,
 			companyWebsite,
 			companyType,
+			managedSites,
 			partnerProgramOptIn,
 			city,
 			line1,
@@ -214,23 +219,29 @@ export default function CompanyDetailsForm( {
 						className={ undefined }
 					/>
 				</FormFieldset>
-				{ showPartnerProgramOptIn && (
-					<FormFieldset>
-						<FormLabel htmlFor="partnerProgramOptIn">
-							{ translate( 'Jetpack Agency & Pro Partner program' ) }
-						</FormLabel>
-						<FormInputCheckbox
-							id="partnerProgramOptIn"
-							name="partnerProgramOptIn"
-							checked={ partnerProgramOptIn }
-							disabled={ isLoading }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-								setPartnerProgramOptIn( event.target.checked )
-							}
-						/>
-						<span>{ translate( 'Sign up for the Jetpack Agency & Pro Partner program' ) }</span>
-					</FormFieldset>
+				{ showPartnerProgramOptIn && ! isLoading && (
+					<PartnerProgramOptInFieldSet
+						setPartnerProgramOptIn={ setPartnerProgramOptIn }
+						isChecked={ partnerProgramOptIn }
+					/>
 				) }
+				<FormFieldset>
+					<FormLabel>{ translate( 'How many sites do you manage?' ) }</FormLabel>
+					<SelectControl
+						id="managed_sites"
+						name="managed_sites"
+						value={ managedSites }
+						options={ [
+							{ value: '1-5', label: translate( '1-5' ) },
+							{ value: '6-20', label: translate( '6-20' ) },
+							{ value: '21-50', label: translate( '21-50' ) },
+							{ value: '51-100', label: translate( '51-100' ) },
+							{ value: '101-500', label: translate( '101-500' ) },
+							{ value: '500+', label: translate( '500+' ) },
+						] }
+						onChange={ setManagedSites }
+					/>
+				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (

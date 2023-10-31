@@ -1,0 +1,13 @@
+.domain-registration-suggestion__badges {
+	div.badge {
+		.info-popover {
+			height: 16px;
+			vertical-align: middle;
+			margin-bottom: 1px;
+			margin-left: 5px;
+			.gridicon {
+				color: var(--color-warning-80);
+			}
+		}
+	}
+}

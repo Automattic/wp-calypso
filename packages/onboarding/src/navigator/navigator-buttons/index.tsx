@@ -42,7 +42,6 @@ export function NavigatorItem( { icon, checked, active, children, ...props }: Na
 		<Item
 			{ ...props }
 			className={ classnames( 'navigator-item', {
-				'navigator-item--checked': checked,
 				'navigator-item--active': active,
 			} ) }
 		>

@@ -5,19 +5,15 @@
 }
 
 .sidebar-v2__navigator-sub-menu.components-card-body {
-	padding: 0;
+	// Container cuts off content if we do not add 1px padding.
+	padding: 1px;
 
 	.components-navigator-back-button {
-		padding-block-start: 0;
 		margin-block-end: 8px;
 		color: var(--studio-gray-90);
 		font-size: rem(16px);
 		font-weight: 600;
 		justify-content: start;
-
-		&:focus {
-			box-shadow: none;
-		}
 	}
 }
 
@@ -28,16 +24,25 @@
 	padding: 0 12px;
 }
 
+.sidebar-v2__navigator-sub-menu ul {
+	list-style: none;
+	margin: 0;
+}
+
 .sidebar-v2__menu-item.components-item {
 	font-size: rem(13px);
-
-	&.is-active {
-		border-radius: 4px;
-	}
 
 	&:hover:not(.is-active) {
 		background: var(--studio-gray-0);
 		color: initial;
+	}
+}
+
+.sidebar-v2__navigator-sub-menu .components-navigator-back-button,
+.sidebar-v2__menu-item.components-item {
+	border-radius: 4px;
+	&:focus {
+		box-shadow: 0 0 0 1px var(--studio-gray-10);
 	}
 }
 

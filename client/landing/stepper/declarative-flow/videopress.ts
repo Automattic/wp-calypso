@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { PlansSelect, SiteSelect, updateLaunchpadSettings } from '@automattic/data-stores';
+import { LaunchpadNavigator, PlansSelect, SiteSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -7,6 +7,7 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
@@ -104,6 +105,7 @@ const videopress: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 			[]
 		);
+		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		const [ isSiteCreationPending, setIsSiteCreationPending ] = useState( false );
 
@@ -302,10 +304,13 @@ const videopress: Flow = {
 		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					await skipLaunchpad( {
+						checklistSlug: 'videopress',
+						setActiveChecklist,
+						siteId,
+						siteSlug,
+					} );
+					return;
 
 				default:
 					return navigate( 'intro' );

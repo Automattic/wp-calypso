@@ -1,3 +1,4 @@
+@import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/woo-commerce";
 @import "@wordpress/base-styles/breakpoints";
 
@@ -21,6 +22,7 @@ body.is-section-plans.is-expired-business-trial-plan {
 		}
 
 		.business-trial-expired__title {
+			@include onboarding-font-recoleta;
 			font-size: $woo-font-title-medium;
 
 			@media ( min-width: $break-medium ) {
@@ -29,10 +31,17 @@ body.is-section-plans.is-expired-business-trial-plan {
 		}
 
 		.business-trial-expired__subtitle {
-			margin: 1rem auto 0;
+			margin: 0 auto 0;
+			color: var(--color-neutral-50);
 
 			@media ( min-width: $break-medium ) {
 				max-width: 580px;
+			}
+
+			a {
+				color: var(--studio-gray-90);
+				font-weight: 500;
+				text-decoration: underline;
 			}
 		}
 

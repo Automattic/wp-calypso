@@ -198,18 +198,6 @@ class PasswordlessSignupForm extends Component {
 		} );
 	};
 
-	goToLogin = () => {
-		page(
-			addQueryArgs(
-				{
-					email_address: this.state.email,
-					use_email_from_url: true,
-				},
-				this.props.logInUrl
-			)
-		);
-	};
-
 	submitStep = ( data ) => {
 		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
 		submitCreateAccountStep(
