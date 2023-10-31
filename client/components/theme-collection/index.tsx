@@ -76,9 +76,6 @@ export default function ThemeCollection( {
 					swiperInstance.current = new Swiper( el, {
 						cssMode: true,
 						mousewheel: true,
-						keyboard: {
-							enabled: false,
-						},
 						navigation: {
 							nextEl: '.theme-collection__carousel-nav-button--next',
 							prevEl: '.theme-collection__carousel-nav-button--previous',
