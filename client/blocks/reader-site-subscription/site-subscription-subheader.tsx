@@ -1,9 +1,10 @@
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import { FeedIcon } from 'calypso/landing/subscriptions/components/settings/icons';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
+import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { getFeedUrl } from 'calypso/reader/route';
 
 type SiteSubscriptionSubheaderProps = {
@@ -47,8 +48,8 @@ const SiteSubscriptionSubheader = ( {
 			<div key={ `subscriber-count-${ subscriberCount }` }>
 				{ translate( '%s subscriber', '%s subscribers', {
 					count: subscriberCount,
-					args: [ numberFormat( subscriberCount, 0 ) ],
-					comment: '%s is the number of subscribers. For example: "12,000,000"',
+					args: [ formatNumberCompact( subscriberCount ) ],
+					comment: '%s is the number of subscribers. For example: "120" or "1.2M"',
 				} ) }
 			</div>
 		);

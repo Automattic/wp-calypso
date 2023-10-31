@@ -1,10 +1,11 @@
 import classnames from 'classnames';
-import { numberFormat, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
+import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
@@ -83,11 +84,10 @@ class AuthorCompactProfile extends Component {
 				<div className="author-compact-profile__follow">
 					{ followCount ? (
 						<div className="author-compact-profile__follow-count">
-							{ this.props.translate( '%(followCount)s follower', '%(followCount)s followers', {
+							{ this.props.translate( '%s subscriber', '%s subscribers', {
 								count: followCount,
-								args: {
-									followCount: numberFormat( followCount ),
-								},
+								args: [ formatNumberCompact( followCount ) ],
+								comment: '%s is the number of subscribers. For example: "120" or "1.2M"',
 							} ) }
 						</div>
 					) : null }

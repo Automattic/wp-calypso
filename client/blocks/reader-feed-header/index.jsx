@@ -8,6 +8,7 @@ import { Component } from 'react';
 import BlogStickers from 'calypso/blocks/blog-stickers';
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import formatNumberCompact from 'calypso/lib/format-number-compact';
 import withDimensions from 'calypso/lib/with-dimensions';
 import {
 	getFollowerCount,
@@ -104,10 +105,10 @@ class FeedHeader extends Component {
 						{ ! wideDisplay && followerCount && (
 							<div className="reader-feed-header__follow-count">
 								{ ' ' }
-								{ translate( '%s follower', '%s followers', {
+								{ translate( '%s subscriber', '%s subscribers', {
 									count: followerCount,
-									args: [ this.props.numberFormat( followerCount ) ],
-									comment: '%s is the number of followers. For example: "12,000,000"',
+									args: [ formatNumberCompact( followerCount ) ],
+									comment: '%s is the number of subscribers. For example: "120" or "1.2M"',
 								} ) }
 							</div>
 						) }

@@ -1,4 +1,4 @@
-import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import ReaderFeedHeaderFollow from 'calypso/blocks/reader-feed-header/follow';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
@@ -56,10 +56,10 @@ const FeedStreamSidebar = ( {
 					{ followerCount && (
 						<div className="reader-tag-sidebar-stats__item">
 							<span className="reader-tag-sidebar-stats__count">
-								{ followerCount.toLocaleString( getLocaleSlug() ) }
+								{ formatNumberCompact( followerCount ) }
 							</span>
 							<span className="reader-tag-sidebar-stats__title">
-								{ translate( 'Follower', 'Followers', { count: followerCount } ) }
+								{ translate( 'Subscriber', 'Subscribers', { count: followerCount } ) }
 							</span>
 						</div>
 					) }
