@@ -1,5 +1,5 @@
 import { LaunchpadNavigator } from '@automattic/data-stores';
-import { DefaultWiredLaunchpad, type EventHandlers, type Task } from '@automattic/launchpad';
+import { Launchpad, type EventHandlers, type Task } from '@automattic/launchpad';
 import { Modal } from '@wordpress/components';
 import { select } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -36,7 +36,7 @@ const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavi
 			className="launchpad-navigator__floating-navigator"
 			onRequestClose={ () => setLaunchpadIsVisible( false ) }
 		>
-			<DefaultWiredLaunchpad
+			<Launchpad
 				siteSlug={ siteSlug }
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }

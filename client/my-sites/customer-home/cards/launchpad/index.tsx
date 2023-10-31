@@ -1,10 +1,13 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import {
 	updateLaunchpadSettings,
-	useSortedLaunchpadTasks,
 	LaunchpadNavigator,
+	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
-import { DefaultWiredLaunchpad, type Task } from '@automattic/launchpad';
+import {
+	Launchpad,
+	type Task,
+} from '@automattic/launchpad';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -14,6 +17,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
+import React from 'react';
 
 import './style.scss';
 
@@ -117,7 +121,7 @@ const CustomerHomeLaunchpad = ( {
 					</div>
 				) }
 			</div>
-			<DefaultWiredLaunchpad
+			<Launchpad
 				siteSlug={ siteSlug }
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
