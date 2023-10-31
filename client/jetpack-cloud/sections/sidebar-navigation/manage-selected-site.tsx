@@ -180,10 +180,11 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 			<NewSidebar
 				path="/"
 				menuItems={ menuItems }
+				title={ isAgency ? translate( 'Manage' ) : undefined }
 				backButtonProps={
 					isAgency
 						? {
-								label: translate( 'Sites' ),
+								label: translate( 'Back to Sites' ),
 								icon: chevronLeft,
 								onClick: () => {
 									dispatch(

@@ -75,9 +75,10 @@ const PurchasesSidebar = ( { path }: { path: string } ) => {
 			isJetpackManage
 			path={ JETPACK_MANAGE_PARTNER_PORTAL_LINK }
 			menuItems={ menuItems }
+			title={ translate( 'Purchases' ) }
 			description={ translate( 'Manage all your billing related settings from one place.' ) }
 			backButtonProps={ {
-				label: translate( 'Sites' ),
+				label: translate( 'Back to Sites' ),
 				icon: chevronLeft,
 				onClick: () => {
 					dispatch(

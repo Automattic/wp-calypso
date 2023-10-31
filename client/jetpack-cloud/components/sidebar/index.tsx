@@ -34,6 +34,7 @@ type Props = {
 		trackEventName?: string;
 		trackEventProps?: { [ key: string ]: string };
 	}[];
+	title?: string;
 	description?: string;
 	backButtonProps?: {
 		icon: JSX.Element;
@@ -47,6 +48,7 @@ const JetpackCloudSidebar = ( {
 	isJetpackManage,
 	path,
 	menuItems,
+	title,
 	description,
 	backButtonProps,
 }: Props ) => {
@@ -68,6 +70,7 @@ const JetpackCloudSidebar = ( {
 				<SidebarNavigator initialPath={ path }>
 					<SidebarNavigatorMenu
 						path={ path }
+						title={ title }
 						description={ description }
 						backButtonProps={ backButtonProps }
 					>
