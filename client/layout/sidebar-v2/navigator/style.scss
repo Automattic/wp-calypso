@@ -47,6 +47,10 @@
 		color: initial;
 	}
 
+	&:focus {
+		box-shadow: none;
+	}
+
 	&:focus-visible {
 		box-shadow: 0 0 0 1px var(--studio-gray-10);
 	}
