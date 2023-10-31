@@ -94,6 +94,7 @@ export function useThemesThankYouData(
 	const isAtomicNeeded = hasDotOrgThemes || hasExternallyManagedThemes;
 
 	return [
+		themesList,
 		themesSection,
 		allThemesFetched,
 		goBackSection,

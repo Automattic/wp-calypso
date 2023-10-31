@@ -24,7 +24,7 @@ export function renderThemesInstallPage( context, next ) {
 }
 
 export function renderMarketplaceThankYou( context, next ) {
-	const { plugins, themes, onboarding } = context.query;
+	const { plugins, themes, onboarding, styleVariation } = context.query;
 	const pluginSlugs = plugins ? plugins.split( ',' ) : [];
 	const themeSlugs = themes ? themes.split( ',' ) : [];
 
@@ -33,6 +33,7 @@ export function renderMarketplaceThankYou( context, next ) {
 			pluginSlugs={ pluginSlugs }
 			themeSlugs={ themeSlugs }
 			isOnboardingFlow={ onboarding !== undefined }
+			styleVariationSlug={ styleVariation }
 		/>
 	);
 	next();

@@ -55,6 +55,7 @@ export type ThankYouProps = {
 };
 
 export type ThankYouData = [
+	any[],
 	ThankYouSectionProps,
 	boolean,
 	JSX.Element,

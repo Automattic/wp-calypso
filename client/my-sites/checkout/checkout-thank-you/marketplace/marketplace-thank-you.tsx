@@ -14,6 +14,7 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
 import { useAtomicTransfer } from './use-atomic-transfer';
@@ -22,17 +23,18 @@ import usePluginsThankYouData from './use-plugins-thank-you-data';
 import { useThankYouFoooter } from './use-thank-you-footer';
 import { useThankYouSteps } from './use-thank-you-steps';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
-
 import './style.scss';
 
 const MarketplaceThankYou = ( {
 	pluginSlugs,
 	themeSlugs,
 	isOnboardingFlow,
+	styleVariationSlug,
 }: {
 	pluginSlugs: Array< string >;
 	themeSlugs: Array< string >;
 	isOnboardingFlow: boolean;
+	styleVariationSlug: string | null;
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -54,6 +56,7 @@ const MarketplaceThankYou = ( {
 		thankYouHeaderAction,
 	] = usePluginsThankYouData( pluginSlugs );
 	const [
+		themesList,
 		themesSection,
 		allThemesFetched,
 		themesGoBackSection,
@@ -62,6 +65,20 @@ const MarketplaceThankYou = ( {
 		themesProgressbarSteps,
 		isAtomicNeededForThemes,
 	] = useThemesThankYouData( themeSlugs, isOnboardingFlow );
+
+	const firstTheme = themesList[ 0 ];
+	useEffect( () => {
+		if ( firstTheme && styleVariationSlug ) {
+			const styleVariation = firstTheme.style_variations.filter(
+				( variation: { slug: string } ) => variation.slug === styleVariationSlug
+			);
+			dispatch(
+				setThemePreviewOptions( firstTheme.id, null, null, {
+					styleVariation: styleVariation[ 0 ],
+				} )
+			);
+		}
+	}, [ dispatch, firstTheme, styleVariationSlug ] );
 
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0

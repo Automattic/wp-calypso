@@ -178,15 +178,19 @@ function getWithThemeDestination( {
 		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
 	}
 
-	if ( DOT_ORG_THEME === themeType ) {
+	if ( DOT_ORG_THEME === themeType || themeType === WOOCOMMERCE_THEME ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
-	if ( MARKETPLACE_THEME === themeType ) {
-		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }`;
+	const style = styleVariation ? `&styleVariation=${ styleVariation }` : '';
+
+	if ( MARKETPLACE_THEME === themeType || PREMIUM_THEME === themeType ) {
+		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }${ style }`;
 	}
 
-	const style = styleVariation ? `&style=${ styleVariation }` : '';
+	if ( themeType === WOOCOMMERCE_THEME ) {
+		return `/setup/plugin-bundle/?siteSlug=${ siteSlug }&showLaunchpad=true`;
+	}
 
 	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
