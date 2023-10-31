@@ -2498,30 +2498,34 @@ const getPlanJetpackCreatorDetails = (): IncompleteJetpackPlan => ( {
 	],
 	getTagline: () =>
 		translate(
-			'Tagline: Enhanced creator network, lower fees, display ads, and extra payment options.'
+			'Craft stunning content, boost your subscriber base, and monetize your online presence.'
 		),
 	getDescription: () =>
 		translate( 'Enhanced creator network, lower fees, display ads, and extra payment options.' ),
 	getLightboxDescription: () =>
-		translate( 'Enhanced creator network, lower fees, display ads, and extra payment options.' ),
+		translate(
+			'Craft stunning content, boost your subscriber base, and monetize your online presence.'
+		),
 	getIncludedFeatures: () => [
 		FEATURE_EARN_AD,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
 		FEATURE_SIMPLE_PAYMENTS,
 	],
 	getWhatIsIncluded: () => [
-		translate( 'Everything in Jetpack Free' ),
-		translate( 'Enhanced creator network' ),
-		translate( 'Pay with PayPal' ),
+		translate( '40+ Jetpack blocks' ),
 		translate( 'Display ads with WordAds' ),
-		translate( 'Import unlimited subscribers' ),
+		translate( 'Pay with PayPal' ),
+		translate( 'Paid content gating' ),
+		translate( 'Paywall access' ),
+		translate( 'Newsletter' ),
 		translate( 'Priority support' ),
-		translate( '2% transaction fees' ),
 	],
 	getBenefits: () => [
-		translate( 'Create content that stands out' ),
-		translate( 'Blaze your content across our network' ),
-		translate( 'Monetize your online presence and earn from your website' ),
+		translate( 'Quickly create content that stands out' ),
+		translate( 'Grow your subscribers with simple subscribe forms' ),
+		translate( 'Create content for paid subscribers' ),
+		translate( 'Sell access to premium content' ),
+		translate( 'Easily accept tips and donations' ),
 	],
 } );
 
