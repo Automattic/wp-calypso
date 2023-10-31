@@ -268,12 +268,12 @@ const PatternLargePreview = ( {
 				<div className="pattern-large-preview__placeholder">
 					<h2>{ translate( 'Welcome to your homepage.' ) }</h2>
 					<ul>
-						<li>{ translate( 'Select patterns for your homepage' ) }</li>
-						<li>{ translate( 'Choose your colors and fonts' ) } </li>
+						<li>{ translate( 'Select patterns for your homepage.' ) }</li>
+						<li>{ translate( 'Choose your colors and fonts.' ) } </li>
 						{ isEnabled( 'pattern-assembler/add-pages' ) && (
-							<li>{ translate( 'Pick additional site pages' ) } </li>
+							<li>{ translate( 'Pick additional site pages.' ) } </li>
 						) }
-						<li>{ translate( 'Add your own content in the Editor' ) } </li>
+						<li>{ translate( 'Add your own content in the Editor.' ) } </li>
 					</ul>
 				</div>
 			) }
