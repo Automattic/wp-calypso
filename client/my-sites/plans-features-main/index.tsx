@@ -72,6 +72,7 @@ import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
+import { useFreeHostingTrialAssignment } from './hooks/use-free-hosting-trial-assignment';
 import useIsFreeDomainFreePlanUpsellEnabled from './hooks/use-is-free-domain-free-plan-upsell-enabled';
 import useObservableForOdie from './hooks/use-observable-for-odie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -383,6 +384,8 @@ const PlansFeaturesMain = ( {
 		? 'plans-default-wpcom'
 		: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom';
 
+	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
+		useFreeHostingTrialAssignment();
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const gridPlans = useGridPlans( {
@@ -397,7 +400,7 @@ const PlansFeaturesMain = ( {
 		sitePlanSlug,
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
-		eligibleForFreeHostingTrial,
+		eligibleForFreeHostingTrial: isAssignedToHostingTrialExperiment && eligibleForFreeHostingTrial,
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
@@ -729,109 +732,116 @@ const PlansFeaturesMain = ( {
 					</FreePlanSubHeader>
 				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
-			{ ( isLoadingGridPlans || resolvedSubdomainName.isLoading ) && <Spinner size={ 30 } /> }
-			{ ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading && (
-				<>
-					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
-					<div
-						className={ classNames(
-							'plans-features-main__group',
-							'is-wpcom',
-							'is-2023-pricing-grid',
-							{
-								'is-scrollable': plansWithScroll,
-							}
-						) }
-						data-e2e-plans="wpcom"
-					>
-						<div className="plans-wrapper">
-							<FeaturesGrid
-								gridPlans={ gridPlansForFeaturesGrid }
-								gridPlanForSpotlight={ gridPlanForSpotlight }
-								paidDomainName={ paidDomainName }
-								generatedWPComSubdomain={ resolvedSubdomainName }
-								isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-								isInSignup={ isInSignup }
-								isLaunchPage={ isLaunchPage }
-								onUpgradeClick={ handleUpgradeClick }
-								flowName={ flowName }
-								selectedFeature={ selectedFeature }
-								selectedPlan={ selectedPlan }
-								siteId={ siteId }
-								isReskinned={ isReskinned }
-								intervalType={ intervalType }
-								hideUnavailableFeatures={ hideUnavailableFeatures }
-								currentSitePlanSlug={ sitePlanSlug }
-								planActionOverrides={ planActionOverrides }
-								intent={ intent }
-								showLegacyStorageFeature={ showLegacyStorageFeature }
-								showUpgradeableStorage={ showUpgradeableStorage }
-								stickyRowOffset={ masterbarHeight }
-								usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-								allFeaturesList={ FEATURES_LIST }
-								onStorageAddOnClick={ handleStorageAddOnClick }
-								currentPlanManageHref={ currentPlanManageHref }
-								canUserManageCurrentPlan={ canUserManageCurrentPlan }
-								showRefundPeriod={ isAnyHostingFlow( flowName ) }
-							/>
-							{ ! hidePlansFeatureComparison && (
-								<>
-									<ComparisonGridToggle
-										onClick={ toggleShowPlansComparisonGrid }
-										label={
-											showPlansComparisonGrid
-												? translate( 'Hide comparison' )
-												: translate( 'Compare plans' )
-										}
-										ref={ observableForOdieRef }
-									/>
-									<div ref={ plansComparisonGridRef } className={ comparisonGridContainerClasses }>
-										<PlanComparisonHeader className="wp-brand-font">
-											{ translate( 'Compare our plans and find yours' ) }
-										</PlanComparisonHeader>
-										{ ! hidePlanSelector && showPlansComparisonGrid && (
-											<PlanTypeSelector { ...planTypeSelectorProps } />
-										) }
-										<ComparisonGrid
-											gridPlans={ gridPlansForComparisonGrid }
-											gridPlanForSpotlight={ gridPlanForSpotlight }
-											paidDomainName={ paidDomainName }
-											generatedWPComSubdomain={ resolvedSubdomainName }
-											isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-											isInSignup={ isInSignup }
-											isLaunchPage={ isLaunchPage }
-											onUpgradeClick={ handleUpgradeClick }
-											flowName={ flowName }
-											selectedFeature={ selectedFeature }
-											selectedPlan={ selectedPlan }
-											siteId={ siteId }
-											isReskinned={ isReskinned }
-											intervalType={ intervalType }
-											hideUnavailableFeatures={ hideUnavailableFeatures }
-											currentSitePlanSlug={ sitePlanSlug }
-											planActionOverrides={ planActionOverrides }
-											intent={ intent }
-											showLegacyStorageFeature={ showLegacyStorageFeature }
-											showUpgradeableStorage={ showUpgradeableStorage }
-											stickyRowOffset={ masterbarHeight }
-											usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-											allFeaturesList={ FEATURES_LIST }
-											onStorageAddOnClick={ handleStorageAddOnClick }
-											currentPlanManageHref={ currentPlanManageHref }
-											canUserManageCurrentPlan={ canUserManageCurrentPlan }
-											showRefundPeriod={ isAnyHostingFlow( flowName ) }
-										/>
+			{ ( isLoadingGridPlans ||
+				resolvedSubdomainName.isLoading ||
+				isLoadingHostingTrialExperiment ) && <Spinner size={ 30 } /> }
+			{ ! isLoadingGridPlans &&
+				! resolvedSubdomainName.isLoading &&
+				! isLoadingHostingTrialExperiment && (
+					<>
+						{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
+						<div
+							className={ classNames(
+								'plans-features-main__group',
+								'is-wpcom',
+								'is-2023-pricing-grid',
+								{
+									'is-scrollable': plansWithScroll,
+								}
+							) }
+							data-e2e-plans="wpcom"
+						>
+							<div className="plans-wrapper">
+								<FeaturesGrid
+									gridPlans={ gridPlansForFeaturesGrid }
+									gridPlanForSpotlight={ gridPlanForSpotlight }
+									paidDomainName={ paidDomainName }
+									generatedWPComSubdomain={ resolvedSubdomainName }
+									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+									isInSignup={ isInSignup }
+									isLaunchPage={ isLaunchPage }
+									onUpgradeClick={ handleUpgradeClick }
+									flowName={ flowName }
+									selectedFeature={ selectedFeature }
+									selectedPlan={ selectedPlan }
+									siteId={ siteId }
+									isReskinned={ isReskinned }
+									intervalType={ intervalType }
+									hideUnavailableFeatures={ hideUnavailableFeatures }
+									currentSitePlanSlug={ sitePlanSlug }
+									planActionOverrides={ planActionOverrides }
+									intent={ intent }
+									showLegacyStorageFeature={ showLegacyStorageFeature }
+									showUpgradeableStorage={ showUpgradeableStorage }
+									stickyRowOffset={ masterbarHeight }
+									usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+									allFeaturesList={ FEATURES_LIST }
+									onStorageAddOnClick={ handleStorageAddOnClick }
+									currentPlanManageHref={ currentPlanManageHref }
+									canUserManageCurrentPlan={ canUserManageCurrentPlan }
+									showRefundPeriod={ isAnyHostingFlow( flowName ) }
+								/>
+								{ ! hidePlansFeatureComparison && (
+									<>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }
-											label={ translate( 'Hide comparison' ) }
+											label={
+												showPlansComparisonGrid
+													? translate( 'Hide comparison' )
+													: translate( 'Compare plans' )
+											}
+											ref={ observableForOdieRef }
 										/>
-									</div>
-								</>
-							) }
+										<div
+											ref={ plansComparisonGridRef }
+											className={ comparisonGridContainerClasses }
+										>
+											<PlanComparisonHeader className="wp-brand-font">
+												{ translate( 'Compare our plans and find yours' ) }
+											</PlanComparisonHeader>
+											{ ! hidePlanSelector && showPlansComparisonGrid && (
+												<PlanTypeSelector { ...planTypeSelectorProps } />
+											) }
+											<ComparisonGrid
+												gridPlans={ gridPlansForComparisonGrid }
+												gridPlanForSpotlight={ gridPlanForSpotlight }
+												paidDomainName={ paidDomainName }
+												generatedWPComSubdomain={ resolvedSubdomainName }
+												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+												isInSignup={ isInSignup }
+												isLaunchPage={ isLaunchPage }
+												onUpgradeClick={ handleUpgradeClick }
+												flowName={ flowName }
+												selectedFeature={ selectedFeature }
+												selectedPlan={ selectedPlan }
+												siteId={ siteId }
+												isReskinned={ isReskinned }
+												intervalType={ intervalType }
+												hideUnavailableFeatures={ hideUnavailableFeatures }
+												currentSitePlanSlug={ sitePlanSlug }
+												planActionOverrides={ planActionOverrides }
+												intent={ intent }
+												showLegacyStorageFeature={ showLegacyStorageFeature }
+												showUpgradeableStorage={ showUpgradeableStorage }
+												stickyRowOffset={ masterbarHeight }
+												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+												allFeaturesList={ FEATURES_LIST }
+												onStorageAddOnClick={ handleStorageAddOnClick }
+												currentPlanManageHref={ currentPlanManageHref }
+												canUserManageCurrentPlan={ canUserManageCurrentPlan }
+												showRefundPeriod={ isAnyHostingFlow( flowName ) }
+											/>
+											<ComparisonGridToggle
+												onClick={ toggleShowPlansComparisonGrid }
+												label={ translate( 'Hide comparison' ) }
+											/>
+										</div>
+									</>
+								) }
+							</div>
 						</div>
-					</div>
-				</>
-			) }
+					</>
+				) }
 		</div>
 	);
 };
