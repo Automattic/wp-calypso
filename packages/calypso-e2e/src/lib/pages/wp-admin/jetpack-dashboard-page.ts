@@ -63,6 +63,8 @@ export class JetpackDashboardPage {
 			.getByRole( 'menuitem', { name: param.tab, exact: true } )
 			.click();
 
+		// Filter the nav tabs to elements that have `.is-selected` (should be only one),
+		// and verify the resulting element is the tab that was clicked on earlier.
 		await this.page
 			.getByRole( 'main' )
 			.filter( { has: this.page.locator( '.is-selected' ) } )
