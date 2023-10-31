@@ -161,8 +161,15 @@ export function magicLoginUse( context, next ) {
 	const previousQuery = context.state || {};
 
 	const { client_id, email, redirect_to, token, transition: isTransition } = previousQuery;
-	const params = new URLSearchParams( new URL( redirect_to ).search );
-	const activate = params.get( 'activate' );
+
+	let params = {};
+	let activate = '';
+	try {
+		params = new URLSearchParams( new URL( redirect_to ).search );
+		activate = params.get( 'activate' );
+	} catch ( e ) {
+		// redirect_to isn't always given, the URL constructor will throw in this case
+	}
 	const transition = isTransition === 'true';
 
 	const flow = redirect_to?.includes( 'jetpack/connect' ) ? 'jetpack' : null;
