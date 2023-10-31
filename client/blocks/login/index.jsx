@@ -31,6 +31,7 @@ import {
 	getRedirectToOriginal,
 	getLastCheckedUsernameOrEmail,
 	getRequestNotice,
+	getRequestError,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 	isTwoFactorAuthTypeSupported,
@@ -139,6 +140,20 @@ class Login extends Component {
 			! this.props.isSignupExistingAccount
 		) {
 			this.sendMagicLoginLink();
+		}
+
+		if (
+			this.props.requestError?.field === 'usernameOrEmail' &&
+			this.props.requestError?.code === 'email_login_not_allowed'
+		) {
+			const magicLoginUrl = login( {
+				locale: this.props.locale,
+				twoFactorAuthType: 'link',
+				oauth2ClientId: this.props.currentQuery?.client_id,
+				redirectTo: this.props.currentQuery?.redirect_to,
+			} );
+
+			page( magicLoginUrl );
 		}
 	}
 
@@ -825,6 +840,7 @@ export default connect(
 			getInitialQueryArguments( state )?.is_signup_existing_account ||
 			getCurrentQueryArguments( state )?.is_signup_existing_account
 		),
+		requestError: getRequestError( state ),
 	} ),
 	{
 		rebootAfterLogin,
