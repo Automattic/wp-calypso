@@ -180,6 +180,7 @@ export interface PlansFeaturesMainProps {
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
+	showEscapeHatch?: boolean;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -380,9 +381,29 @@ const PlansFeaturesMain = ( {
 	// - at which point, we'll inject the upsell plan to the tailored plans mix instead
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
-	const intent = planFromUpsells
-		? 'plans-default-wpcom'
-		: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom';
+	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
+
+	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
+	useEffect( () => {
+		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
+			setIntent( 'plans-default-wpcom' );
+		} else if ( ! intent ) {
+			setIntent(
+				planFromUpsells
+					? 'plans-default-wpcom'
+					: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom'
+			);
+		}
+	}, [ intent, intentFromProps, intentFromSiteMeta.intent, planFromUpsells, forceDefaultPlans ] );
+
+	const [ showEscapeHatch, setShowEscapeHatch ] = useState( false );
+	useEffect( () => {
+		if ( intentFromSiteMeta.intent && ! isInSignup && intent !== 'plans-default-wpcom' ) {
+			setShowEscapeHatch( true );
+		} else if ( showEscapeHatch ) {
+			setShowEscapeHatch( false );
+		}
+	}, [ intent, intentFromSiteMeta.intent, isInSignup, showEscapeHatch ] );
 
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
 		useFreeHostingTrialAssignment();
@@ -781,6 +802,12 @@ const PlansFeaturesMain = ( {
 									canUserManageCurrentPlan={ canUserManageCurrentPlan }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 								/>
+								{ showEscapeHatch && (
+									<ComparisonGridToggle
+										onClick={ () => setForceDefaultPlans( true ) }
+										label={ translate( 'Show all plans' ) }
+									/>
+								) }
 								{ ! hidePlansFeatureComparison && (
 									<>
 										<ComparisonGridToggle
