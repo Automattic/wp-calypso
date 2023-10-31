@@ -14,7 +14,6 @@ import {
 	isFreeJetpackPlan,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	isFreePlan,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	JETPACK_COMPLETE_PLANS,
@@ -34,8 +33,8 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -234,9 +233,7 @@ class CurrentPlan extends Component {
 
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && (
-					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
-				) }
+				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
 					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
@@ -247,14 +244,13 @@ class CurrentPlan extends Component {
 				<QuerySiteProducts siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<div>
-					<FormattedHeader
-						brandFont
-						className="current-plan__section-header modernized-header"
-						headerText={ translate( 'Plans' ) }
-						subHeaderText={ translate(
+					<NavigationHeader
+						className="plans__section-header"
+						navigationItems={ [] }
+						title={ translate( 'Plans' ) }
+						subtitle={ translate(
 							'Learn about the features included in your WordPress.com plan.'
 						) }
-						align="left"
 					/>
 					<div className="current-plan current-plan__content">
 						{ showThankYou && ! this.state.hideThankYouModal && (
