@@ -3,7 +3,6 @@ import { reloadAndRetry } from '../../element-helper';
 
 const selectors = {
 	searchInput: `.search-component__input`,
-	resultItem: ( keyword: string ) => `.domain-suggestion__content:has-text("${ keyword }")`,
 	firstResultItem: `.domain-suggestion:first-child .domain-suggestion__content`,
 };
 
@@ -74,13 +73,19 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
-		const targetItem = await this.page.waitForSelector( selectors.resultItem( keyword ) );
-		// Heading element inside a given result contains the full domain name string.
-		const selectedDomain = await targetItem
-			.waitForSelector( 'h3' )
-			.then( ( el ) => el.innerText() );
+		const target = this.page.getByRole( 'button' ).filter( { hasText: keyword } );
+		await target.waitFor();
 
-		await Promise.all( [ this.page.waitForNavigation(), targetItem.click() ] );
+		const selectedDomain = await target.innerText();
+		await target.click();
+
+		// If multiple domain selections are enabled, the Continue button appears
+		// on the right hand sidebar.
+		// See: 21483-explat-experiment
+		const continueButton = this.page.getByRole( 'button', { name: 'Continue' } );
+		if ( await continueButton.count() ) {
+			await this.clickButton( 'Continue' );
+		}
 
 		return selectedDomain;
 	}

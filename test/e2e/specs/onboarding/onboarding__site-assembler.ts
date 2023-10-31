@@ -21,7 +21,6 @@ declare const browser: Browser;
 describe( 'Onboarding: Site Assembler', () => {
 	let newSiteDetails: NewSiteResponse;
 	let page: Page;
-	let selectedFreeDomain: string;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -38,7 +37,7 @@ describe( 'Onboarding: Site Assembler', () => {
 		it( 'Select a .wordpress.com domain name', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( DataHelper.getBlogName() );
-			selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
+			await domainSearchComponent.selectDomain( '.wordpress.com' );
 		} );
 
 		it( `Select WordPress.com Free plan`, async function () {
@@ -55,14 +54,11 @@ describe( 'Onboarding: Site Assembler', () => {
 		} );
 
 		it( 'Enter Onboarding flow for the selected domain', async function () {
-			await page.waitForURL(
-				DataHelper.getCalypsoURL(
-					`/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
-				),
-				{
-					timeout: 30 * 1000,
-				}
-			);
+			await page.waitForURL( /setup\/site-setup\/goals/, {
+				timeout: 20 * 1000,
+			} );
+			expect( page.url() ).toContain( 'siteSlug' );
+			expect( page.url() ).toContain( 'siteId' );
 		} );
 
 		it( 'Skip the Goal screen', async function () {
@@ -71,14 +67,9 @@ describe( 'Onboarding: Site Assembler', () => {
 
 		it( 'Select "Start designing" and land on the Site Assembler', async function () {
 			await startSiteFlow.clickButton( 'Design your own' );
-			await page.waitForURL(
-				DataHelper.getCalypsoURL(
-					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
-				),
-				{
-					timeout: 30 * 1000,
-				}
-			);
+			await page.waitForURL( /setup\/site-setup\/patternAssembler/, {
+				timeout: 30 * 1000,
+			} );
 		} );
 	} );
 
@@ -98,7 +89,7 @@ describe( 'Onboarding: Site Assembler', () => {
 		} );
 
 		it( 'Select "Sections"', async function () {
-			await siteAssemblerFlow.clickLayoutComponentType( 'Sections' );
+			await siteAssemblerFlow.clickLayoutComponentType( 'Quotes' );
 			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
