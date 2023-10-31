@@ -131,7 +131,7 @@ export const HelpCenterContactPage: FC = () => {
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
 				{ /* Easter */ }
 				<GMClosureNotice
-					displayAt="2023-10-30 00:00Z"
+					displayAt="2023-11-06 00:00Z"
 					closesAt="2023-11-11 00:00Z"
 					reopensAt="2023-11-21 07:00Z"
 					enabled={ renderChat.render }
