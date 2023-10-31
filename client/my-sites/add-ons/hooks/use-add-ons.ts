@@ -10,23 +10,17 @@ import {
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
 import { useAddOnCheckoutLink } from '@automattic/data-stores';
-import { createSelector } from '@automattic/state-utils';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
 import { useSelector } from 'calypso/state';
-import {
-	getProductBySlug,
-	getProductDescription,
-	getProductName,
-} from 'calypso/state/products-list/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { AppState } from 'calypso/types';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
@@ -209,152 +203,6 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 	);
 };
 
-const getAddOnsTransformed = createSelector(
-	(
-		state: AppState,
-		activeAddOns,
-		spaceUpgradesPurchased,
-		siteId,
-		isLoadingBillingTransactions,
-		mediaStorage
-	) => {
-		const siteFeatures = getFeaturesBySiteId( state, siteId );
-		const isSiteMarkedCommercial = getSiteOption( state, siteId, 'is_commercial' );
-
-		return activeAddOns
-			.filter( ( addOn: any ) => {
-				// remove the Jetpack AI add-on if the site already supports the feature
-				if (
-					addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
-					siteFeatures?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
-				) {
-					return false;
-				}
-
-				// TODO: Remove this check once paid WPCOM stats is live.
-				// gate the Jetpack Stats add-on on a feature flag
-				if (
-					[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
-						addOn.productSlug
-					) &&
-					! config.isEnabled( 'stats/paid-wpcom-stats' )
-				) {
-					return false;
-				}
-
-				// Hide Stats Personal add-on if the site is marked as commercial.
-				if (
-					isSiteMarkedCommercial === true &&
-					PRODUCT_JETPACK_STATS_PWYW_YEARLY === addOn.productSlug
-				) {
-					return false;
-				}
-
-				// Hide Stats Commercial add-on if the site is not marked as commercial.
-				if (
-					isSiteMarkedCommercial === false &&
-					PRODUCT_JETPACK_STATS_YEARLY === addOn.productSlug
-				) {
-					return false;
-				}
-
-				// TODO: Show the Stats Commercial add-on for a commercial site that has purchased the Personal plan.
-
-				// remove Jetpack Stats add-on if the site already has a paid stats feature through a paid plan.
-				if (
-					[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
-						addOn.productSlug
-					) &&
-					siteFeatures?.active?.includes( FEATURE_STATS_PAID )
-				) {
-					return false;
-				}
-
-				return true;
-			} )
-			.map( ( addOn: any ) => {
-				const product = getProductBySlug( state, addOn.productSlug );
-				const name = addOn.name ? addOn.name : getProductName( state, addOn.productSlug );
-				const description = addOn.description ?? getProductDescription( state, addOn.productSlug );
-
-				// if it's a storage add on
-				if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
-					// if storage add ons are not enabled in the config, remove them
-					if ( ! isStorageAddonEnabled() ) {
-						return null;
-					}
-
-					// if storage add on hasn't loaded yet
-					if ( isLoadingBillingTransactions || ! product ) {
-						return {
-							...addOn,
-							name,
-							description,
-							isLoading: isLoadingBillingTransactions,
-						};
-					}
-
-					// if storage add on is already purchased
-					if (
-						spaceUpgradesPurchased.findIndex(
-							( spaceUpgrade: any ) => spaceUpgrade === addOn.quantity
-						) >= 0 &&
-						product
-					) {
-						return {
-							...addOn,
-							name,
-							description,
-							purchased: true,
-						};
-					}
-
-					const currentMaxStorage = mediaStorage?.max_storage_bytes / Math.pow( 1024, 3 );
-					const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
-
-					// if the current storage add on option is greater than the available upgrade
-					if ( ( addOn.quantity ?? 0 ) > availableStorageUpgrade ) {
-						return {
-							...addOn,
-							name,
-							description,
-							exceedsSiteStorageLimits: true,
-						};
-					}
-				}
-
-				if ( ! product ) {
-					// will not render anything if product not fetched from API
-					// probably need some sort of placeholder in the add-ons page instead
-					return null;
-				}
-
-				return {
-					...addOn,
-					name,
-					description,
-				};
-			} );
-	},
-	(
-		state,
-		activeAddOns,
-		spaceUpgradesPurchased,
-		siteId,
-		isLoadingBillingTransactions,
-		mediaStorage
-	) => [
-		getFeaturesBySiteId( state, siteId ),
-		getSiteOption( state, siteId, 'is_commercial' ),
-		state.productsList,
-		activeAddOns,
-		spaceUpgradesPurchased,
-		siteId,
-		isLoadingBillingTransactions,
-		mediaStorage,
-	]
-);
-
 const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[] => {
 	// if upgrade is bought - show as manage
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
@@ -362,17 +210,138 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( { isInSignup, siteId } );
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const activeAddOns = useActiveAddOnsDefs( selectedSite );
+	const productsList = useSelector( getProductsList );
+	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
+	const isSiteMarkedCommercial = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'is_commercial' )
+	);
 
-	return useSelector( ( state ): ( AddOnMeta | null )[] => {
-		return getAddOnsTransformed(
-			state,
+	return useMemo(
+		() =>
+			activeAddOns
+				.filter( ( addOn ) => {
+					// remove the Jetpack AI add-on if the site already supports the feature
+					if (
+						addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
+						siteFeatures?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
+					) {
+						return false;
+					}
+
+					// TODO: Remove this check once paid WPCOM stats is live.
+					// gate the Jetpack Stats add-on on a feature flag
+					if (
+						[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
+							addOn.productSlug
+						) &&
+						! config.isEnabled( 'stats/paid-wpcom-stats' )
+					) {
+						return false;
+					}
+
+					// Hide Stats Personal add-on if the site is marked as commercial.
+					if (
+						isSiteMarkedCommercial === true &&
+						PRODUCT_JETPACK_STATS_PWYW_YEARLY === addOn.productSlug
+					) {
+						return false;
+					}
+
+					// Hide Stats Commercial add-on if the site is not marked as commercial.
+					if (
+						isSiteMarkedCommercial === false &&
+						PRODUCT_JETPACK_STATS_YEARLY === addOn.productSlug
+					) {
+						return false;
+					}
+
+					// TODO: Show the Stats Commercial add-on for a commercial site that has purchased the Personal plan.
+
+					// remove Jetpack Stats add-on if the site already has a paid stats feature through a paid plan.
+					if (
+						[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
+							addOn.productSlug
+						) &&
+						siteFeatures?.active?.includes( FEATURE_STATS_PAID )
+					) {
+						return false;
+					}
+
+					return true;
+				} )
+				.map( ( addOn ) => {
+					const product = productsList[ addOn.productSlug ];
+					const name = addOn.name ? addOn.name : product.product_name;
+					const description = addOn.description ?? product.description;
+
+					// if it's a storage add on
+					if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
+						// if storage add ons are not enabled in the config, remove them
+						if ( ! isStorageAddonEnabled() ) {
+							return null;
+						}
+
+						// if storage add on hasn't loaded yet
+						if ( isLoading || ! product ) {
+							return {
+								...addOn,
+								name,
+								description,
+								isLoading,
+							};
+						}
+
+						// if storage add on is already purchased
+						if (
+							spaceUpgradesPurchased.findIndex(
+								( spaceUpgrade ) => spaceUpgrade === addOn.quantity
+							) >= 0 &&
+							product
+						) {
+							return {
+								...addOn,
+								name,
+								description,
+								purchased: true,
+							};
+						}
+
+						const currentMaxStorage = mediaStorage?.max_storage_bytes / Math.pow( 1024, 3 );
+						const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
+
+						// if the current storage add on option is greater than the available upgrade
+						if ( ( addOn.quantity ?? 0 ) > availableStorageUpgrade ) {
+							return {
+								...addOn,
+								name,
+								description,
+								exceedsSiteStorageLimits: true,
+							};
+						}
+					}
+
+					if ( ! product ) {
+						// will not render anything if product not fetched from API
+						// probably need some sort of placeholder in the add-ons page instead
+						return null;
+					}
+
+					return {
+						...addOn,
+						name,
+						description,
+					};
+				} ),
+		[
 			activeAddOns,
-			spaceUpgradesPurchased,
-			siteId,
 			isLoading,
-			mediaStorage
-		);
-	} );
+			mediaStorage,
+			productsList,
+			siteFeatures,
+			spaceUpgradesPurchased,
+			isSiteMarkedCommercial,
+		]
+	);
 };
 
 export default useAddOns;
