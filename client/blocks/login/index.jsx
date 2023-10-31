@@ -162,6 +162,7 @@ class Login extends Component {
 		this.handleTwoFactorRequested( 'link' );
 	};
 
+
 	showContinueAsUser = () => {
 		const {
 			isJetpack,
