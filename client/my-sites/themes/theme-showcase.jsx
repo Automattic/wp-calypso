@@ -635,6 +635,7 @@ class ThemeShowcase extends Component {
 								isCollectionView: false,
 								tier: '',
 								filter: '',
+								search: '',
 								category: this.getDefaultStaticFilter().key,
 							} ) }
 							filter={ this.props.filter }

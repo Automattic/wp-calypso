@@ -219,9 +219,9 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 const RowTitleCell = styled.div`
 	display: none;
 	font-size: 14px;
+	padding-right: 10px;
 	${ plansBreakSmall( css`
-		display: flex;
-		align-items: center;
+		display: block;
 		flex: 1;
 		min-width: 290px;
 	` ) }

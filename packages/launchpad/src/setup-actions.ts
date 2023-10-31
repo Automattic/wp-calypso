@@ -25,7 +25,7 @@ export const setUpActionsForTasks = ( {
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
 	const { setShareSiteModalIsOpen, setActiveChecklist } = extraActions;
-	const { onSiteLaunched } = eventHandlers || {};
+	const { onSiteLaunched, onTaskClick } = eventHandlers || {};
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -154,6 +154,7 @@ export const setUpActionsForTasks = ( {
 			if ( siteSlug && setActiveChecklist ) {
 				setActiveChecklist( siteSlug, checklistSlug );
 			}
+			onTaskClick?.( task );
 			action?.();
 		};
 

@@ -283,7 +283,8 @@ export class SiteSelector extends Component {
 			( site === ALL_SITES && selectedSite === null ) ||
 			selectedSite === site.ID ||
 			selectedSite === site.domain ||
-			selectedSite === site.slug
+			selectedSite === site.slug ||
+			selectedSite?.ID === site.ID
 		);
 	};
 

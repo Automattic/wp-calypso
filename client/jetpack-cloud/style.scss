@@ -49,6 +49,35 @@
 	.my-sites__navigation {
 		height: 100%;
 	}
+
+	.site-selector {
+		top: 80px;
+
+		.site-selector__sites {
+			border-top: initial;
+		}
+
+		.all-sites {
+			border-bottom: initial;
+
+			// Remove the long-content fade if All Sites is selected
+			.all-sites__title::after {
+				display: none;
+			}
+		}
+
+		.all-sites,
+		.site {
+			--color-sidebar-menu-selected-background: #e3f0e4;
+
+			margin: 4px 4px 0 4px;
+
+			&.is-selected,
+			&:hover {
+				border-radius: 4px;
+			}
+		}
+	}
 }
 
 .button {

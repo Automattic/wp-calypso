@@ -9,38 +9,50 @@ import {
 import './style.scss';
 
 interface Props {
+	title?: string;
 	description?: string;
 	backButtonProps?: {
 		icon: JSX.Element;
-		label: string;
+		label?: string;
 		onClick: () => void;
 	};
 	path: string;
 	children: React.ReactNode;
 }
 
-export const SidebarNavigatorMenu = ( { description, backButtonProps, path, children }: Props ) => {
+export const SidebarNavigatorMenu = ( {
+	title,
+	description,
+	backButtonProps,
+	path,
+	children,
+}: Props ) => {
 	return (
 		<NavigatorScreen path={ path }>
 			<Card>
 				<CardBody className="sidebar-v2__navigator-sub-menu">
 					<VStack spacing={ 0 } justify="flex-start">
 						<ul>
-							{ backButtonProps && (
-								<li>
-									<NavigatorToParentButton
-										icon={ backButtonProps.icon }
-										onClick={ backButtonProps.onClick }
-										text={ backButtonProps.label }
-									/>
+							{ ( backButtonProps || title ) && (
+								<li className="sidebar-v2__navigator-sub-menu-header">
+									{ backButtonProps && (
+										<NavigatorToParentButton
+											icon={ backButtonProps.icon }
+											onClick={ backButtonProps.onClick }
+											label={ backButtonProps.label }
+											showTooltip
+										/>
+									) }
+									<span>{ title }</span>
 								</li>
 							) }
-							<div>
+
+							<li>
 								{ description && (
 									<div className="sidebar-v2__navigator-group-description">{ description }</div>
 								) }
 								{ children }
-							</div>
+							</li>
 						</ul>
 					</VStack>
 				</CardBody>

@@ -84,10 +84,10 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC !== true )(
 			skipItIf( envVariables.ATOMIC_VARIATION === 'private' )(
 				'Click on Earn tab in the Settings view',
 				async function () {
-					await jetpackDashboardPage.clickTab( { view: 'Settings', tab: 'Earn' } );
+					await jetpackDashboardPage.clickTab( { view: 'Settings', tab: 'Monetize' } );
 
 					await page
-						.getByRole( 'heading', { name: 'Earn', level: 1 } )
+						.getByRole( 'heading', { name: 'Monetize', level: 1 } )
 						.waitFor( { state: 'attached' } );
 				}
 			);
