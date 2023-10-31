@@ -33,7 +33,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 
 /**
  * usePlanFeaturesForGridPlans:
- * - these plan features are mainly relevannt to FeaturesGrid and Spotlight components
+ * - these plan features are mainly relevant to FeaturesGrid and Spotlight components
  * - this hook can migrate to data store once features definitions migrate to calypso-products
  */
 const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {

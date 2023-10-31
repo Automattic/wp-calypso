@@ -59,6 +59,11 @@ export interface PlansGridProps {
 	currentPlanManageHref?: string;
 	canUserManageCurrentPlan?: boolean | null;
 	showRefundPeriod?: boolean;
+	/**
+	 * A flag which carries a signal as to whether the comparison grid is visible or not
+	 * When false parts of the comparison grid may not render
+	 */
+	isComparisonGridVisible?: boolean;
 }
 
 const WrappedComparisonGrid = ( {
@@ -80,7 +85,7 @@ const WrappedComparisonGrid = ( {
 	onStorageAddOnClick,
 	currentPlanManageHref,
 	canUserManageCurrentPlan,
-	isVisible,
+	isComparisonGridVisible,
 	...otherProps
 }: PlansGridProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
@@ -97,7 +102,7 @@ const WrappedComparisonGrid = ( {
 				allFeaturesList={ allFeaturesList }
 			>
 				<ComparisonGrid
-					isVisible={ isVisible }
+					isComparisonGridVisible={ isComparisonGridVisible }
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }

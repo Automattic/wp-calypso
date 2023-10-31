@@ -328,6 +328,11 @@ type ComparisonGridProps = {
 	showUpgradeableStorage: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showRefundPeriod?: boolean;
+	/**
+	 * A flag which carries a signal as to whether the comparison grid is visible or not
+	 * When false parts of the comparison grid may not render
+	 */
+	isComparisonGridVisible?: boolean;
 };
 
 type ComparisonGridHeaderProps = {
@@ -981,7 +986,15 @@ const FeatureGroup = ( {
 };
 
 const FeatureGroupsContainer = memo(
-	function FeatureGroupContainer( props: Omit< FeatureGroupProps, 'featureGroup' > ) {
+	function FeatureGroupContainer(
+		props: Omit< FeatureGroupProps, 'featureGroup' > & {
+			/**
+			 * A flag which carries a signal as to whether the comparison grid is visible or not
+			 * When false parts of the comparison grid may not render
+			 */
+			isComparisonGridVisible?: boolean;
+		}
+	) {
 		return (
 			<>
 				{ Object.values( props.featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
@@ -990,15 +1003,9 @@ const FeatureGroupsContainer = memo(
 			</>
 		);
 	},
-// isEqual --> No Render
-// Visible && !Equal --> Render (!isEqual)
-// Visible && Equal --> No Render (isEqual)
-// !Visible && Equal --> No Render (isEqual)
-// !Visible && !Equal --> No Render (isEqual)
-	( prev, next ) => ! next.isVisible || arePropsEqual( prev, next, true )
-);
 
-sible && !Equal --> No Render (EQ)
+	( prev, next ) => ! next.isComparisonGridVisible || arePropsEqual( prev, next, true )
+);
 
 const ComparisonGrid = ( {
 	intervalType,
@@ -1016,7 +1023,7 @@ const ComparisonGrid = ( {
 	showUpgradeableStorage,
 	onStorageAddOnClick,
 	showRefundPeriod,
-	isVisible,
+	isComparisonGridVisible,
 }: ComparisonGridProps ) => {
 	const { gridPlans, gridPlansIndex, allFeaturesList } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1158,7 +1165,7 @@ const ComparisonGrid = ( {
 					gridPlansIndex={ gridPlansIndex }
 				/>
 				<FeatureGroupsContainer
-					isVisible={ isVisible }
+					isComparisonGridVisible={ isComparisonGridVisible }
 					featureGroupMap={ featureGroupMap }
 					visibleGridPlans={ visibleGridPlans }
 					selectedFeature={ selectedFeature }
