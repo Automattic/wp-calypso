@@ -137,6 +137,11 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 			}
 		}
 	}
+	&:not( .is-expanded ) .foldable-faq__question:focus {
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus )
+			var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+		outline: 3px solid transparent;
+	}
 	.foldable-faq__answer {
 		padding: 0 16px 0 24px;
 		border: 0;
@@ -154,6 +159,12 @@ const CTASectionWrapper = styled.div`
 		font-size: 0.875rem;
 		font-weight: 500;
 		justify-content: center;
+		&:focus {
+			border: none;
+			box-shadow: none;
+			outline: solid 2px var( --color-accent-60 );
+			outline-offset: 2px;
+		}
 	}
 	.components-button.is-secondary {
 		box-shadow: inset 0 0 0 1px var( --studio-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
@@ -162,6 +173,12 @@ const CTASectionWrapper = styled.div`
 		color: var( --studio-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
 		background: transparent;
 		border: none;
+		&:focus {
+			border: none;
+			box-shadow: none;
+			outline: solid 2px var( --color-accent-60 );
+			outline-offset: 2px;
+		}
 	}
 `;
 
