@@ -1,13 +1,17 @@
 import {
 	isAkismetBusiness,
+	isAkismetBusiness5k,
 	isAkismetPersonal,
 	isAkismetPro,
+	isAkismetPro5h,
 	isAkismetFree,
 	isAkismetEnterprise,
 	isAkismetPlus10k,
 	isAkismetPlus20k,
 	isAkismetPlus30k,
 	isAkismetPlus40k,
+	isAkismetEnterprise15k,
+	isAkismetEnterprise25k,
 	isAkismetEnterprise350k,
 	isAkismetEnterprise2m,
 } from '@automattic/calypso-products';
@@ -17,11 +21,15 @@ import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
 type productString =
 	| 'free'
 	| 'personal'
+	| 'pro_5h'
 	| 'pro_10k'
 	| 'pro_20k'
 	| 'pro_30k'
 	| 'pro_40k'
 	| 'business'
+	| 'business_5k'
+	| 'enterprise_15k'
+	| 'enterprise_25k'
 	| 'enterprise_350k'
 	| 'enterprise_2m';
 
@@ -42,6 +50,8 @@ function getFeatureStrings(
 			return [ ...baseFeatures ];
 		case 'personal':
 			return [ ...baseFeatures ];
+		case 'pro_5h':
+			return [ ...baseFeatures, translate( '500 API calls per month' ), ...baseProFeatures ];
 		case 'pro_10k':
 			return [ ...baseFeatures, translate( '10K API calls per month' ), ...baseProFeatures ];
 		case 'pro_20k':
@@ -52,6 +62,12 @@ function getFeatureStrings(
 			return [ ...baseFeatures, translate( '40K API calls per month' ), ...baseProFeatures ];
 		case 'business':
 			return [ ...baseFeatures, translate( '60K API calls per month' ), ...baseEnterpriseFeatures ];
+		case 'business_5k':
+			return [ ...baseFeatures, translate( '5K API calls per month' ), ...baseEnterpriseFeatures ];
+		case 'enterprise_15k':
+			return [ ...baseFeatures, translate( '15K API calls per month' ), ...baseEnterpriseFeatures ];
+		case 'enterprise_25k':
+			return [ ...baseFeatures, translate( '25K API calls per month' ), ...baseEnterpriseFeatures ];
 		case 'enterprise_350k':
 			return [
 				...baseFeatures,
@@ -90,13 +106,28 @@ export default function getAkismetProductFeatures(
 		if ( isAkismetPlus40k( product ) ) {
 			return getFeatureStrings( 'pro_40k', translate );
 		}
+		if ( isAkismetPro5h( product ) ) {
+			return getFeatureStrings( 'pro_5h', translate );
+		}
 	}
 
 	if ( isAkismetBusiness( product ) ) {
+		if ( isAkismetBusiness5k( product ) ) {
+			return getFeatureStrings( 'business_5k', translate );
+		}
+
 		return getFeatureStrings( 'business', translate );
 	}
 
 	if ( isAkismetEnterprise( product ) ) {
+		if ( isAkismetEnterprise15k( product ) ) {
+			return getFeatureStrings( 'enterprise_15k', translate );
+		}
+
+		if ( isAkismetEnterprise25k( product ) ) {
+			return getFeatureStrings( 'enterprise_25k', translate );
+		}
+
 		if ( isAkismetEnterprise350k( product ) ) {
 			return getFeatureStrings( 'enterprise_350k', translate );
 		}
