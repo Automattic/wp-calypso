@@ -4,10 +4,7 @@ import {
 	LaunchpadNavigator,
 	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
-import {
-	Launchpad,
-	type Task,
-} from '@automattic/launchpad';
+import { Launchpad, type Task } from '@automattic/launchpad';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -17,7 +14,6 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
-import React from 'react';
 
 import './style.scss';
 
