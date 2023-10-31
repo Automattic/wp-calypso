@@ -44,7 +44,7 @@ const isNewNavigationEnabled = isEnabled( 'jetpack/new-navigation' );
 
 const setSidebar = ( context: PageJS.Context ): void => {
 	if ( isNewNavigationEnabled ) {
-		context.secondary = <NewPurchasesSidebar />;
+		context.secondary = <NewPurchasesSidebar path={ context.path } />;
 	} else {
 		context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	}
@@ -94,7 +94,7 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 
 	context.header = <Header />;
 	if ( isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar />;
+		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
 	} else {
 		context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	}

@@ -20,7 +20,7 @@ interface Props {
 	onClickMenuItem: ( path: string ) => void;
 	withChevron?: boolean;
 	isExternalLink?: boolean;
-	isSelected: boolean;
+	isSelected?: boolean;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -30,9 +30,9 @@ export const SidebarNavigatorMenuItem = ( {
 	link,
 	title,
 	onClickMenuItem,
-	withChevron,
-	isExternalLink,
-	isSelected,
+	withChevron = false,
+	isExternalLink = false,
+	isSelected = false,
 }: Props ) => {
 	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
 		return (
@@ -41,7 +41,9 @@ export const SidebarNavigatorMenuItem = ( {
 					'is-active': isSelected,
 				} ) }
 				onClick={ () => onClickMenuItem( link ) }
+				href={ link }
 				id={ id }
+				as="a"
 			>
 				<HStack justify="flex-start">
 					{ icon && <Icon style={ { fill: 'currentcolor' } } icon={ icon } size={ ICON_SIZE } /> }

@@ -27,10 +27,10 @@ type Props = {
 		path: string;
 		link: string;
 		title: string;
-		onClickMenuItem: ( path: string ) => void;
+		onClickMenuItem?: ( path: string ) => void;
 		withChevron?: boolean;
 		isExternalLink?: boolean;
-		isSelected: boolean;
+		isSelected?: boolean;
 		trackEventName?: string;
 		trackEventProps?: { [ key: string ]: string };
 	}[];
@@ -79,7 +79,8 @@ const JetpackCloudSidebar = ( {
 									if ( item.trackEventName ) {
 										dispatch( recordTracksEvent( item.trackEventName, item.trackEventProps ) );
 									}
-									item.onClickMenuItem( path );
+
+									item.onClickMenuItem?.( path );
 								} }
 							/>
 						) ) }
@@ -91,16 +92,14 @@ const JetpackCloudSidebar = ( {
 				<SidebarFooter className="jetpack-cloud-sidebar__footer">
 					<ul>
 						<SidebarNavigatorMenuItem
+							isExternalLink
 							title={ translate( 'WP Admin' ) }
 							link={ jetpackAdminUrl }
 							path={ jetpackAdminUrl }
 							icon={ <JetpackIcons icon="wordpress" /> }
-							onClickMenuItem={ ( link ) => {
+							onClickMenuItem={ () => {
 								dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' ) );
-								window.open( link, '_blank' );
 							} }
-							isExternalLink
-							isSelected={ false }
 						/>
 					</ul>
 				</SidebarFooter>
