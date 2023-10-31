@@ -8,7 +8,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
-import '../stats-email-summary/style.scss';
+import '../summary/style.scss';
 
 const StatsStrings = statsStringsFactory();
 
