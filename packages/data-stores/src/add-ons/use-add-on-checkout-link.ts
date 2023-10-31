@@ -1,6 +1,5 @@
 import { useCallback } from '@wordpress/element';
-import { useSelector } from 'react-redux';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { SiteDetails } from '../site/types';
 
 /**
  * Returns a function that will return a formatted checkout link for the given add-on and quantity.
@@ -9,25 +8,30 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * @returns {Function} A function returnig a formatted checkout link for the given add-on and quantity
  */
 
-const useAddOnCheckoutLink = (): ( ( addOnSlug: string, quantity?: number ) => string ) => {
-	const selectedSite = useSelector( getSelectedSite );
+export const useAddOnCheckoutLink = (): ( (
+	selectedSiteSlug: SiteDetails[ 'slug' ] | null,
+	addOnSlug: string,
+	quantity?: number
+) => string ) => {
 	const checkoutLinkCallback = useCallback(
-		( addOnSlug: string, quantity?: number ): string => {
+		(
+			selectedSiteSlug: SiteDetails[ 'slug' ] | null,
+			addOnSlug: string,
+			quantity?: number
+		): string => {
 			// If no site is provided, return the checkout link with the add-on (will render site-selector).
-			if ( ! selectedSite ) {
+			if ( ! selectedSiteSlug ) {
 				return `/checkout/${ addOnSlug }`;
 			}
 
-			const checkoutLinkFormat = `/checkout/${ selectedSite?.slug }/${ addOnSlug }`;
+			const checkoutLinkFormat = `/checkout/${ selectedSiteSlug }/${ addOnSlug }`;
 
 			if ( quantity ) {
 				return checkoutLinkFormat + `:-q-${ quantity }`;
 			}
 			return checkoutLinkFormat;
 		},
-		[ selectedSite ]
+		[]
 	);
 	return checkoutLinkCallback;
 };
-
-export default useAddOnCheckoutLink;

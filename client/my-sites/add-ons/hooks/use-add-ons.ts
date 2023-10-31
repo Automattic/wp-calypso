@@ -9,6 +9,7 @@ import {
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
+import { useAddOnCheckoutLink } from '@automattic/data-stores';
 import { createSelector } from '@automattic/state-utils';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -24,6 +25,7 @@ import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-tr
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
@@ -32,11 +34,10 @@ import jetpackStatsIcon from '../icons/jetpack-stats';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
-import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 import useAddOnPrices from './use-add-on-prices';
-import type { AddOnMeta } from '@automattic/data-stores';
+import type { AddOnMeta, SiteDetails } from '@automattic/data-stores';
 
 const useSpaceUpgradesPurchased = ( {
 	isInSignup,
@@ -69,7 +70,7 @@ const useSpaceUpgradesPurchased = ( {
 	}, [ billingTransactions, filter, isInSignup, siteId, isLoading ] );
 };
 
-const useActiveAddOnsDefs = () => {
+const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
 
@@ -144,7 +145,7 @@ const useActiveAddOnsDefs = () => {
 				),
 				featured: false,
 				purchased: false,
-				checkoutLink: checkoutLink( PRODUCT_1GB_SPACE, 50 ),
+				checkoutLink: checkoutLink( selectedSite?.slug ?? null, PRODUCT_1GB_SPACE, 50 ),
 			},
 			{
 				productSlug: PRODUCT_1GB_SPACE,
@@ -159,7 +160,7 @@ const useActiveAddOnsDefs = () => {
 				),
 				featured: false,
 				purchased: false,
-				checkoutLink: checkoutLink( PRODUCT_1GB_SPACE, 100 ),
+				checkoutLink: checkoutLink( selectedSite?.slug ?? null, PRODUCT_1GB_SPACE, 100 ),
 			},
 			{
 				productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
@@ -359,7 +360,8 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
 	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( { isInSignup, siteId } );
-	const activeAddOns = useActiveAddOnsDefs();
+	const selectedSite = useSelector( getSelectedSite ) ?? null;
+	const activeAddOns = useActiveAddOnsDefs( selectedSite );
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		return getAddOnsTransformed(
