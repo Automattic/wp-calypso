@@ -23,8 +23,7 @@
 		"./__mocks__/lib/json-schema-draft-04.json",
 		"./package.json",
 		"./state/data-layer/wpcom/sites/jitm/schema.json",
-		"./declarations.d.ts",
-		"../packages/wpcom-checkout/src/checkout-version-checker.ts"
+		"./declarations.d.ts"
 	],
 	"exclude": [
 		"./**/node_modules/**/*",
