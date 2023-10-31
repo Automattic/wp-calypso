@@ -1,10 +1,8 @@
 import { Url } from 'url';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import moment from 'moment';
 import { addQueryArgs } from 'calypso/lib/url';
 import wp from 'calypso/lib/wp';
 import { SiteId } from 'calypso/types';
-import isBloganuary from './is-bloganuary';
 
 export interface BloggingPrompt {
 	id: number;
@@ -25,21 +23,19 @@ interface AnsweredUsersSample {
 
 export const useBloggingPrompts = (
 	siteId: SiteId,
+	start_date: string,
 	per_page: number
 ): UseQueryResult< BloggingPrompt[] | null > => {
-	const today = moment().format( '--MM-DD' );
-	const januaryDate = '--01-' + moment().format( 'DD' );
-
 	const path = addQueryArgs(
 		{
 			per_page: per_page,
-			after: isBloganuary() ? januaryDate : today,
+			after: start_date,
 			order: 'desc',
 		},
 		`/sites/${ siteId }/blogging-prompts`
 	);
 	return useQuery( {
-		queryKey: [ 'blogging-prompts', siteId, today, per_page, isBloganuary ],
+		queryKey: [ 'blogging-prompts', siteId, start_date, per_page ],
 		queryFn: () =>
 			wp.req.get( {
 				path: path,
