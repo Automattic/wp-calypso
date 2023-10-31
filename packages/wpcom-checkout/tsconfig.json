@@ -5,7 +5,7 @@
 		"outDir": "dist/esm",
 		"rootDir": "src"
 	},
-	"include": [ "src" ],
+	"include": [ "src", "src/checkout-version-checker.ts" ],
 	"exclude": [ "**/test/*" ],
 	"references": [ { "path": "../calypso-products" }, { "path": "../shopping-cart" } ]
 }

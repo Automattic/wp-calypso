@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout/';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -23,7 +23,6 @@ import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseCart, RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
-
 const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
@@ -131,13 +130,9 @@ export default function WPCheckoutOrderReview( {
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 
-	// A/B testing for checkout version 2
-	const urlParams = new URLSearchParams( window.location.search );
-	const checkoutVersion = urlParams.get( 'checkoutVersion' );
-
 	return (
 		<>
-			{ checkoutVersion === '2' && (
+			{ hasCheckoutVersion( '2' ) && (
 				<div className="checkout-site-preview">
 					<SitePreviewWrapper>
 						<SitePreview showEditSite={ false } showSiteDetails={ false } />

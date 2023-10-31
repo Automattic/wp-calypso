@@ -30,6 +30,7 @@ import {
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
 	getSubtotalLineItemFromCart,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -49,12 +50,8 @@ import { CheckIcon } from './check-icon';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
-
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
-
-const urlParams = new URLSearchParams( window.location.search );
-const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 export default function WPCheckoutOrderSummary( {
 	siteId,
@@ -90,7 +87,7 @@ export default function WPCheckoutOrderSummary( {
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
-			{ checkoutVersion !== '2' && (
+			{ ! hasCheckoutVersion( '2' ) && (
 				<CheckoutSummaryFeatures>
 					<CheckoutSummaryFeaturesTitle>
 						{ responseCart.is_gift_purchase
@@ -129,7 +126,7 @@ function CheckoutSummaryPriceList() {
 	return (
 		<>
 			<CheckoutSummaryAmountWrapper>
-				{ checkoutVersion === '2' && (
+				{ hasCheckoutVersion( '2' ) && (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + subtotalLineItem.id }>
 						<span>{ subtotalLineItem.label }</span>
 						<span>{ subtotalLineItem.formattedAmount }</span>
@@ -148,7 +145,7 @@ function CheckoutSummaryPriceList() {
 					</CheckoutSummaryLineItem>
 				) ) }
 
-				{ checkoutVersion === '2' && creditsLineItem && responseCart.sub_total_integer > 0 && (
+				{ hasCheckoutVersion( '2' ) && creditsLineItem && responseCart.sub_total_integer > 0 && (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
 						<span>{ creditsLineItem?.label }</span>
 						<span>{ creditsLineItem.formattedAmount }</span>

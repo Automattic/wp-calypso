@@ -1,5 +1,6 @@
 import { isMultiYearDomainProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -7,13 +8,9 @@ import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { ItemVariantDropDownPrice } from './variant-dropdown-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-
 interface CurrentOptionProps {
 	open: boolean;
 }
-// A/B testing for checkout version 2
-const urlParams = new URLSearchParams( window.location.search );
-const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 const CurrentOption = styled.button< CurrentOptionProps >`
 	align-items: center;
@@ -23,7 +20,7 @@ const CurrentOption = styled.button< CurrentOptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	padding: ${ checkoutVersion === '2' ? '4px 16px' : '14px 16px' };
+	padding: ${ hasCheckoutVersion( '2' ) ? '4px 16px' : '14px 16px' };
 	width: 100%;
 	cursor: pointer;
 

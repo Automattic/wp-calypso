@@ -15,9 +15,9 @@ import {
 	isTriennially,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
+import { hasCheckoutVersion } from './checkout-version-checker';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-
 export function DefaultLineItemSublabel( { product }: { product: ResponseCartProduct } ) {
 	const isRenewalItem = isRenewal( product );
 	const { meta, product_name: productName, product_slug: productSlug } = product;
@@ -88,16 +88,13 @@ export function DefaultLineItemSublabel( { product }: { product: ResponseCartPro
 
 	return null;
 }
-// A/B testing for checkout version 2
-const urlParams = new URLSearchParams( window.location.search );
-const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 export function getLabel( product: ResponseCartProduct ): string {
 	if ( product.meta && ( isDomainProduct( product ) || isDomainTransfer( product ) ) ) {
 		return product.meta;
 	}
 
-	if ( checkoutVersion === '2' && isPlan( product ) ) {
+	if ( hasCheckoutVersion( '2' ) && isPlan( product ) ) {
 		return product.product_name.replace( 'WordPress.com ', '' ).concat( ' plan' );
 	}
 	return product.product_name || '';

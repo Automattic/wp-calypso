@@ -5,13 +5,13 @@ import {
 	getCreditsLineItemFromCart,
 	getSubtotalLineItemFromCart,
 	NonProductLineItem,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
-const urlParams = new URLSearchParams( window.location.search );
-const checkoutVersion = urlParams.get( 'checkoutVersion' );
+
 const CheckoutTermsWrapper = styled.div`
 	& > * {
 		margin: 16px 0;
@@ -64,7 +64,7 @@ export default function PaymentMethodStep() {
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
-			{ checkoutVersion !== '2' && (
+			{ ! hasCheckoutVersion( '2' ) && (
 				<WPOrderReviewSection>
 					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />

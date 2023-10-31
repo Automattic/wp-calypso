@@ -24,7 +24,7 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -90,7 +90,6 @@ import type {
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, ReactNode } from 'react';
-
 const debug = debugFactory( 'calypso:wp-checkout' );
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
@@ -412,9 +411,6 @@ export default function WPCheckout( {
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 
-	const urlParams = new URLSearchParams( window.location.search );
-	const checkoutVersion = urlParams.get( 'checkoutVersion' );
-
 	const nextStepButtonText =
 		locale.startsWith( 'en' ) || i18n.hasTranslation( 'Continue to payment' )
 			? translate( 'Continue to payment', { textOnly: true } )
@@ -447,7 +443,7 @@ export default function WPCheckout( {
 								</CheckoutSummaryTitleContent>
 							</CheckoutSummaryTitleLink>
 							<CheckoutSummaryBody className="checkout__summary-body">
-								{ checkoutVersion === '2' && (
+								{ hasCheckoutVersion( '2' ) && (
 									<WPCheckoutOrderReview
 										removeProductFromCart={ removeProductFromCart }
 										couponFieldStateProps={ couponFieldStateProps }
@@ -486,7 +482,7 @@ export default function WPCheckout( {
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
-					{ checkoutVersion !== '2' && (
+					{ ! hasCheckoutVersion( '2' ) && (
 						<CheckoutStepBody
 							onError={ onReviewError }
 							className="wp-checkout__review-order-step"

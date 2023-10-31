@@ -30,6 +30,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
+import { hasCheckoutVersion } from './checkout-version-checker';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
@@ -43,10 +44,6 @@ import type {
 	ResponseCartProduct,
 	TitanProductUser,
 } from '@automattic/shopping-cart';
-
-// A/B testing for checkout version 2
-const urlParams = new URLSearchParams( window.location.search );
-const checkoutVersion = urlParams.get( 'checkoutVersion' );
 
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
@@ -86,7 +83,7 @@ export const LineItem = styled( CheckoutLineItem )< {
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
 	font-size: 1.1em;
-	padding: ${ checkoutVersion === '2' ? '10px' : '20px' } 0;
+	padding: ${ hasCheckoutVersion( '2' ) ? '10px' : '20px' } 0;
 	position: relative;
 
 	.checkout-line-item__price {
@@ -163,12 +160,12 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	display: flex;
 	gap: 0.5em;
 	font-weight: ${ ( { theme } ) => theme.weights.bold };
-	font-size: ${ checkoutVersion === '2' ? '14px' : 'inherit' };
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-	font-size: ${ checkoutVersion === '2' ? '14px' : 'inherit' };
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 	.rtl & {
 		margin-right: 12px;
 		margin-left: 0;
@@ -176,19 +173,19 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 `;
 const BillingLine = styled.div`
 	width: 100%;
-	display: ${ checkoutVersion === '2' ? 'flex' : 'inherit' };
-	justify-content: ${ checkoutVersion === '2' ? 'space-between' : 'inherit' };
-	align-items: ${ checkoutVersion === '2' ? 'center' : 'inherit' };
+	display: ${ hasCheckoutVersion( '2' ) ? 'flex' : 'inherit' };
+	justify-content: ${ hasCheckoutVersion( '2' ) ? 'space-between' : 'inherit' };
+	align-items: ${ hasCheckoutVersion( '2' ) ? 'center' : 'inherit' };
 `;
 const DeleteButtonWrapper = styled.div`
 	width: 100%;
-	display: ${ checkoutVersion === '2' ? 'flex' : 'inherit' };
-	justify-content: ${ checkoutVersion === '2' ? 'flex-end' : 'inherit' };
+	display: ${ hasCheckoutVersion( '2' ) ? 'flex' : 'inherit' };
+	justify-content: ${ hasCheckoutVersion( '2' ) ? 'flex-end' : 'inherit' };
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
-	font-size: ${ checkoutVersion === '2' ? '14px' : 'inherit' };
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
@@ -277,7 +274,9 @@ function WPNonProductLineItem( {
 								setIsModalVisible( true );
 							} }
 						>
-							{ checkoutVersion === '2' ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
+							{ hasCheckoutVersion( '2' )
+								? translate( 'Remove' )
+								: translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 
@@ -1123,7 +1122,7 @@ function CheckoutLineItem( {
 				/>
 			</span>
 
-			{ checkoutVersion !== '2' && product && ! containsPartnerCoupon && (
+			{ ! hasCheckoutVersion( '2' ) && product && ! containsPartnerCoupon && (
 				<>
 					<UpgradeCreditInformationLineItem>
 						<UpgradeCreditInformation product={ product } />
@@ -1147,7 +1146,7 @@ function CheckoutLineItem( {
 			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
-			{ checkoutVersion !== '2' && (
+			{ ! hasCheckoutVersion( '2' ) && (
 				<>
 					{ children }
 
@@ -1211,7 +1210,7 @@ function CheckoutLineItem( {
 					) }
 				</>
 			) }
-			{ checkoutVersion === '2' && (
+			{ hasCheckoutVersion( '2' ) && (
 				<BillingLine>
 					{ children }
 					{ hasDeleteButton && removeProductFromCart && (
@@ -1231,7 +1230,7 @@ function CheckoutLineItem( {
 										onRemoveProductClick?.( label );
 									} }
 								>
-									{ checkoutVersion === '2'
+									{ hasCheckoutVersion( '2' )
 										? translate( 'Remove' )
 										: translate( 'Remove from cart' ) }
 								</DeleteButton>
