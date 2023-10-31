@@ -450,6 +450,9 @@ import {
 	PLAN_JETPACK_CREATOR_YEARLY,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+	JETPACK_TAG_FOR_VIDEOGRAPHERS,
+	JETPACK_TAG_FOR_BLOGGERS,
+	JETPACK_TAG_FOR_EDUCATORS,
 } from './constants';
 import type {
 	BillingTerm,
@@ -2487,16 +2490,38 @@ const getPlanJetpackCreatorDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_JETPACK_CREATOR,
 	getTitle: () => translate( 'Creator', { context: 'Jetpack product name' } ),
-	getDescription: () => translate( 'Test Description' ),
+	getRecommendedFor: () => [
+		{ tag: JETPACK_TAG_FOR_EDUCATORS, label: translate( 'Educators' ) },
+		{ tag: JETPACK_TAG_FOR_BLOGGERS, label: translate( 'Bloggers' ) },
+		{ tag: JETPACK_TAG_FOR_VIDEOGRAPHERS, label: translate( 'Videographers' ) },
+		{ tag: JETPACK_TAG_FOR_MEMBERSHIP_SITES, label: translate( 'Membership sites' ) },
+	],
+	getTagline: () =>
+		translate(
+			'Tagline: Enhanced creator network, lower fees, display ads, and extra payment options.'
+		),
+	getDescription: () =>
+		translate( 'Enhanced creator network, lower fees, display ads, and extra payment options.' ),
+	getLightboxDescription: () =>
+		translate( 'Enhanced creator network, lower fees, display ads, and extra payment options.' ),
 	getIncludedFeatures: () => [
 		FEATURE_EARN_AD,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
 		FEATURE_SIMPLE_PAYMENTS,
 	],
+	getWhatIsIncluded: () => [
+		translate( 'Everything in Jetpack Free' ),
+		translate( 'Enhanced creator network' ),
+		translate( 'Pay with PayPal' ),
+		translate( 'Display ads with WordAds' ),
+		translate( 'Import unlimited subscribers' ),
+		translate( 'Priority support' ),
+		translate( '2% transaction fees' ),
+	],
 	getBenefits: () => [
-		translate( 'Earn Ad' ),
-		translate( 'Unlimited Subscribers' ),
-		translate( 'Simple Payments' ),
+		translate( 'Create content that stands out' ),
+		translate( 'Blaze your content across our network' ),
+		translate( 'Monetize your online presence and earn from your website' ),
 	],
 } );
 
@@ -3478,7 +3503,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_CREATOR_BI_YEARLY,
 		getPathSlug: () => 'creator-bi-yearly',
 		getProductId: () => 2612,
-		getWhatIsIncluded: () => [ 'Test Included' ],
 	},
 
 	[ PLAN_JETPACK_CREATOR_YEARLY ]: {
@@ -3488,7 +3512,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_CREATOR_YEARLY,
 		getPathSlug: () => 'creator-yearly',
 		getProductId: () => 2611,
-		getWhatIsIncluded: () => [ 'Test Included' ],
 	},
 
 	[ PLAN_JETPACK_CREATOR_MONTHLY ]: {
@@ -3498,7 +3521,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_CREATOR_MONTHLY,
 		getPathSlug: () => 'creator-monthly',
 		getProductId: () => 2610,
-		getWhatIsIncluded: () => [ 'Test Included' ],
 	},
 
 	[ PLAN_JETPACK_GOLDEN_TOKEN ]: {
