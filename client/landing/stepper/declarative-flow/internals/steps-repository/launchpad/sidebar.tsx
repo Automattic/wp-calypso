@@ -8,7 +8,6 @@ import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { copy, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
@@ -73,12 +72,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const queryClient = useQueryClient();
 
-	useEffect( () => {
-		if ( showConfirmModal ) {
-			recordUnverifiedDomainDialogShownTracksEvent( site?.ID );
-		}
-	}, [ site, showConfirmModal ] );
-
 	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
 	const {
@@ -134,7 +127,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			getPlanCartItem(),
 			getDomainCartItem(),
 			stripeConnectUrl,
-			() => setShowConfirmModal( true ),
+			() => {
+				recordUnverifiedDomainDialogShownTracksEvent( site?.ID );
+				setShowConfirmModal( true );
+			},
 			isDomainEmailUnverified
 		);
 
