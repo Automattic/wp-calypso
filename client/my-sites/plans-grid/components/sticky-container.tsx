@@ -77,7 +77,6 @@ export function StickyContainer( props: Props ) {
 				 */
 					.layout__content {
 						overflow: unset;
-						min-height: unset;
 					}
 				` }
 			/>
