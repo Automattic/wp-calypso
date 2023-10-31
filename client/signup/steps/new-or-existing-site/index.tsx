@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -52,28 +51,25 @@ export default function NewOrExistingSiteStep( props: Props ) {
 	const showNewOrExistingSiteChoice = existingSiteCount > 0;
 
 	return (
-		<>
-			<QueryProductsList persist />
-			<StepWrapper
-				stepContent={
-					<DIFMLanding
-						onPrimarySubmit={ () =>
-							showNewOrExistingSiteChoice
-								? newOrExistingSiteSelected( 'existing-site' )
-								: newOrExistingSiteSelected( 'new-site' )
-						}
-						onSecondarySubmit={ () => newOrExistingSiteSelected( 'new-site' ) }
-						showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
-					/>
-				}
-				hideFormattedHeader={ true }
-				align="left"
-				hideSkip
-				isHorizontalLayout={ false }
-				isWideLayout={ true }
-				headerImageUrl={ difmImage }
-				{ ...props }
-			/>
-		</>
+		<StepWrapper
+			stepContent={
+				<DIFMLanding
+					onPrimarySubmit={ () =>
+						showNewOrExistingSiteChoice
+							? newOrExistingSiteSelected( 'existing-site' )
+							: newOrExistingSiteSelected( 'new-site' )
+					}
+					onSecondarySubmit={ () => newOrExistingSiteSelected( 'new-site' ) }
+					showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
+				/>
+			}
+			hideFormattedHeader={ true }
+			align="left"
+			hideSkip
+			isHorizontalLayout={ false }
+			isWideLayout={ true }
+			headerImageUrl={ difmImage }
+			{ ...props }
+		/>
 	);
 }
