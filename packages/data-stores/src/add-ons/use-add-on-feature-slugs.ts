@@ -15,7 +15,7 @@ import { useMemo } from '@wordpress/element';
  * Returns any relevant feature slugs for a given add-on.
  * Add-ons are currently uniquely identified by their product slugs.
  */
-const useAddOnFeatureSlugs = ( addOnProductSlug: string, quantity?: number ) => {
+export const useAddOnFeatureSlugs = ( addOnProductSlug: string, quantity?: number ) => {
 	return useMemo( () => {
 		switch ( addOnProductSlug ) {
 			case PRODUCT_WPCOM_UNLIMITED_THEMES:
@@ -35,5 +35,3 @@ const useAddOnFeatureSlugs = ( addOnProductSlug: string, quantity?: number ) => 
 		}
 	}, [ addOnProductSlug, quantity ] ); // add dependencies
 };
-
-export default useAddOnFeatureSlugs;
