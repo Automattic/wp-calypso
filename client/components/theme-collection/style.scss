@@ -19,7 +19,8 @@
 
 	.theme-card__image-container {
 		border-radius: 4px;
-		box-shadow: none;
+		box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.15);
+		border-color: var(--studio-gray-5);
 	}
 }
 
@@ -68,6 +69,7 @@
 	box-sizing: border-box;
 	padding: 0 16px;
 	transition: margin-right 0.1s linear;
+	margin-top: 24px;
 
 	.card.theme-card {
 		margin-left: 0;
@@ -87,7 +89,6 @@
 
 .theme-collection__list-wrapper {
 	display: flex;
-	margin-top: 24px;
 }
 
 .theme-collection__carousel-controls {
