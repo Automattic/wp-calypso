@@ -6,6 +6,7 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { receiveSite, requestSite } from 'calypso/state/sites/actions';
 
 const SET_SITE_INTERFACE_MUTATION_KEY = 'set-site-interface-mutation-key';
+const PERSISTENT_DATA_DELAY = 1200;
 
 interface MutationResponse {
 	interface: 'wp-admin' | 'calypso';
@@ -14,6 +15,14 @@ interface MutationResponse {
 interface MutationError {
 	code: string;
 	message: string;
+}
+
+function waitMs( ms: number ) {
+	return new Promise( ( resolve ) => {
+		setTimeout( () => {
+			resolve( null );
+		}, ms );
+	} );
 }
 
 export const useSiteInterfaceMutation = (
@@ -25,7 +34,7 @@ export const useSiteInterfaceMutation = (
 	const queryKey = [ SET_SITE_INTERFACE_MUTATION_KEY, siteId ];
 	const mutation = useMutation< MutationResponse, MutationError, string >( {
 		mutationFn: async ( value: string ) => {
-			return wp.req.post(
+			const response = await wp.req.post(
 				{
 					path: `/sites/${ siteId }/hosting/admin-interface`,
 					apiNamespace: 'wpcom/v2',
@@ -34,6 +43,9 @@ export const useSiteInterfaceMutation = (
 					interface: value,
 				}
 			);
+			// Wait for persistent data to be updated on the atomic server
+			await waitMs( PERSISTENT_DATA_DELAY );
+			return response;
 		},
 		mutationKey: queryKey,
 		onSuccess: ( ...params ) => {
