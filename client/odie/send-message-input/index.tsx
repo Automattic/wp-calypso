@@ -31,7 +31,6 @@ export const OdieSendMessageButton = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_odie_chat_message_action_send', {
 					bot_name_slug: botNameSlug,
-					content: { message: messageString },
 				} )
 			);
 
@@ -53,7 +52,6 @@ export const OdieSendMessageButton = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_odie_chat_message_action_receive', {
 					bot_name_slug: botNameSlug,
-					content: { message: receivedMessage.messages[ 0 ].content },
 				} )
 			);
 
@@ -62,6 +60,7 @@ export const OdieSendMessageButton = ( {
 				role: 'bot',
 				simulateTyping: receivedMessage.messages[ 0 ].simulateTyping,
 				type: 'message',
+				context: receivedMessage.messages[ 0 ].context,
 			} );
 		} catch ( e ) {
 			addMessage( {
@@ -74,32 +73,27 @@ export const OdieSendMessageButton = ( {
 		}
 	};
 
-	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
-		if ( event.key === 'Enter' && ! event.shiftKey ) {
-			event.preventDefault();
-			if ( messageString.trim() === '' ) {
-				return;
-			}
-			await sendMessage();
-			setMessageString( '' );
-		}
-	};
-
-	const handleButtonClick = async () => {
+	const sendMessageIfNotEmpty = async () => {
 		if ( messageString.trim() === '' ) {
 			return;
 		}
-		await sendMessage();
 		setMessageString( '' );
+		bottomRef?.current?.scrollIntoView( { behavior: 'smooth' } );
+		await sendMessage();
+		bottomRef?.current?.scrollIntoView( { behavior: 'smooth' } );
+	};
+
+	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+		bottomRef?.current?.scrollIntoView( { behavior: 'instant' } );
+		if ( event.key === 'Enter' && ! event.shiftKey ) {
+			event.preventDefault();
+			await sendMessageIfNotEmpty();
+		}
 	};
 
 	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		if ( messageString.trim() === '' ) {
-			return;
-		}
-		await sendMessage();
-		setMessageString( '' );
+		await sendMessageIfNotEmpty();
 	};
 
 	const divContainerHeight = divContainerRef?.current?.clientHeight;
@@ -125,7 +119,6 @@ export const OdieSendMessageButton = ( {
 					<button
 						type="submit"
 						className="odie-send-message-inner-button"
-						onClick={ handleButtonClick }
 						disabled={ messageString.trim() === '' }
 					>
 						<img

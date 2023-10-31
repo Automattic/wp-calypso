@@ -1,9 +1,10 @@
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useMemo } from '@wordpress/element';
+import { useCallback, useEffect, useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
+import useDefaultStorageOption from '../hooks/npm-ready/data-store/use-default-storage-option';
 import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
 import { getStorageStringFromFeature } from '../util';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
@@ -28,9 +29,9 @@ const getStorageOptionPrice = (
 	storageAddOnsForPlan: ( AddOnMeta | null )[] | null,
 	storageOptionSlug: string
 ) => {
-	return storageAddOnsForPlan?.find( ( addOn ) => {
-		return addOn?.featureSlugs?.includes( storageOptionSlug );
-	} )?.prices?.formattedMonthlyPrice;
+	return storageAddOnsForPlan?.find(
+		( addOn ) => addOn?.featureSlugs?.includes( storageOptionSlug )
+	)?.prices?.formattedMonthlyPrice;
 };
 
 const StorageAddOnOption = ( {
@@ -91,6 +92,17 @@ export const StorageAddOnDropdown = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug ),
 		[ planSlug ]
 	);
+	const defaultStorageOption = useDefaultStorageOption( {
+		storageOptions,
+		storageAddOnsForPlan,
+	} );
+
+	useEffect( () => {
+		if ( storageAddOnsForPlan && defaultStorageOption && ! selectedStorageOptionForPlan ) {
+			setSelectedStorageOptionForPlan( { addOnSlug: defaultStorageOption, planSlug } );
+		}
+	}, [] );
+
 	const selectControlOptions = storageOptions.map( ( storageOption ) => {
 		const title = getStorageStringFromFeature( storageOption.slug ) || '';
 		const price = getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug );
@@ -102,7 +114,7 @@ export const StorageAddOnDropdown = ( {
 
 	const selectedOptionKey = selectedStorageOptionForPlan
 		? selectedStorageOptionForPlan
-		: storageOptions.find( ( storageOption ) => ! storageOption.isAddOn )?.slug;
+		: defaultStorageOption;
 	const selectedOptionPrice =
 		selectedOptionKey && getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey );
 	const selectedOptionTitle =

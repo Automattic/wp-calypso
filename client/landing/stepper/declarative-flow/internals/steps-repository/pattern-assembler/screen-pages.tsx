@@ -4,16 +4,26 @@ import { useEffect, useState } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
-import PageList from './page-list';
+import PatternPageList from './pattern-page-list';
+import type { Category, Pattern } from './types';
 
 interface Props {
+	categories: Category[];
+	pagesMapByCategory: Record< string, Pattern[] >;
 	selectedPages: string[];
 	onSelect: ( page: string ) => void;
 	onContinueClick: () => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
-const ScreenPages = ( { selectedPages, onSelect, onContinueClick, recordTracksEvent }: Props ) => {
+const ScreenPages = ( {
+	categories,
+	pagesMapByCategory,
+	selectedPages,
+	onSelect,
+	onContinueClick,
+	recordTracksEvent,
+}: Props ) => {
 	const [ disabled, setDisabled ] = useState( true );
 	const { title, description, continueLabel } = useScreen( 'pages' );
 
@@ -48,7 +58,12 @@ const ScreenPages = ( { selectedPages, onSelect, onContinueClick, recordTracksEv
 			/>
 			<div className="screen-container__body">
 				<VStack spacing="4">
-					<PageList selectedPages={ selectedPages } onSelectPage={ onSelect } />
+					<PatternPageList
+						categories={ categories }
+						pagesMapByCategory={ pagesMapByCategory }
+						selectedPages={ selectedPages }
+						onSelectPage={ onSelect }
+					/>
 				</VStack>
 			</div>
 			<div className="screen-container__footer">

@@ -4,14 +4,14 @@ import {
 	Site,
 	type SiteSelect,
 	sortLaunchpadTasksByCompletionStatus,
-	useLaunchpad,
+	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import { ShareSiteModal } from './action-components';
 import Launchpad from './launchpad';
 import { setUpActionsForTasks } from './setup-actions';
-import type { Task } from './types';
+import type { EventHandlers, Task } from './types';
 
 export const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 
@@ -20,6 +20,7 @@ type DefaultWiredLaunchpadProps = {
 	checklistSlug: string;
 	launchpadContext: string;
 	onSiteLaunched?: () => void;
+	onTaskClick?: EventHandlers[ 'onTaskClick' ];
 	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
 };
 
@@ -28,11 +29,12 @@ const DefaultWiredLaunchpad = ( {
 	checklistSlug,
 	launchpadContext,
 	onSiteLaunched,
+	onTaskClick,
 	onPostFilterTasks,
 }: DefaultWiredLaunchpadProps ) => {
 	const {
 		data: { checklist },
-	} = useLaunchpad( siteSlug, checklistSlug );
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug );
 
 	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
@@ -92,6 +94,7 @@ const DefaultWiredLaunchpad = ( {
 			},
 			eventHandlers: {
 				onSiteLaunched,
+				onTaskClick,
 			},
 		} );
 

@@ -261,7 +261,7 @@ export default function () {
 		'/checkout/offer-professional-email/:domain/:receiptId/no-site',
 		redirectLoggedOut,
 		noSite,
-		upsellNudge,
+		checkoutThankYou,
 		makeLayout,
 		clientRender
 	);

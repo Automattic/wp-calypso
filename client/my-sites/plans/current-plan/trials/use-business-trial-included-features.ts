@@ -1,4 +1,4 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import advancedDesignTools from 'calypso/assets/images/plans/wpcom/business-trial/advanced-design-tools.svg';
@@ -16,6 +16,7 @@ export default function useBusinessTrialIncludedFeatures(
 	siteAdminUrl: string
 ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	return [
 		{
@@ -29,7 +30,9 @@ export default function useBusinessTrialIncludedFeatures(
 		},
 		{
 			id: 'advanced-design-tools',
-			title: translate( 'Advanced Design Tools' ),
+			title: hasEnTranslation( 'Advanced design tools' )
+				? translate( 'Advanced design tools' )
+				: translate( 'Advanced Design Tools' ),
 			text: translate(
 				'Make your site even more unique with extended color schemes, typography, and control over your site’s CSS.'
 			),

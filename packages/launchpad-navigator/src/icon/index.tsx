@@ -1,5 +1,5 @@
 import { CircularProgressBar } from '@automattic/components';
-import { LaunchpadNavigator, useLaunchpad } from '@automattic/data-stores';
+import { LaunchpadNavigator, useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { select } from '@wordpress/data';
 import type { Task } from '@automattic/launchpad';
 
@@ -15,7 +15,7 @@ const LaunchpadNavigatorIcon = ( { siteSlug }: LaunchpadNavigatorIconProps ) => 
 
 	const {
 		data: { checklist },
-	} = useLaunchpad( siteSlug, currentNavigatorChecklistSlug );
+	} = useSortedLaunchpadTasks( siteSlug, currentNavigatorChecklistSlug );
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;

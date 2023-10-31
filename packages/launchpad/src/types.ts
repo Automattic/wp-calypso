@@ -63,6 +63,7 @@ export interface PermittedActions {
 
 export type EventHandlers = {
 	onSiteLaunched?: () => void;
+	onTaskClick?: ( task: Task ) => void;
 };
 
 export interface LaunchpadTaskActionsProps {

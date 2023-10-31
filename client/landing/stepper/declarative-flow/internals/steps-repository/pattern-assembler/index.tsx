@@ -30,8 +30,9 @@ import {
 	useDotcomPatterns,
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
-	usePages,
 	usePatternCategories,
+	usePatternPages,
+	usePatternPagesMapByCategory,
 	usePatternsMapByCategory,
 	useRecipe,
 	useSyncNavigatorScreen,
@@ -40,6 +41,7 @@ import {
 import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
+import PatternPagePreviewList from './pattern-page-preview-list';
 import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenConfirmation from './screen-confirmation';
@@ -47,7 +49,6 @@ import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
 import ScreenPages from './screen-pages';
 import ScreenPatternListPanel from './screen-pattern-list-panel';
-import ScreenSections from './screen-sections';
 import ScreenStyles from './screen-styles';
 import ScreenUpsell from './screen-upsell';
 import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
@@ -99,6 +100,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		[ dotcomPatterns ]
 	);
 	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns );
+	const pagesMapByCategory = usePatternPagesMapByCategory( dotcomPatterns );
 	const {
 		header,
 		footer,
@@ -145,7 +147,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		[ colorVariation, fontVariation ]
 	);
 
-	const { pages, setPages } = usePages();
+	const { pages, setPages } = usePatternPages();
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
@@ -535,20 +537,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
-						surveyDismissed={ surveyDismissed }
-						setSurveyDismissed={ setSurveyDismissed }
-						sectionsCount={ sections.length }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
-						onContinueClick={ onContinue }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTIONS } partialMatch>
-					<ScreenSections
+						sections={ sections }
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
-						sections={ sections }
 						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
 					/>
@@ -566,6 +559,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
 					<ScreenPages
+						categories={ categories }
+						pagesMapByCategory={ pagesMapByCategory }
 						selectedPages={ pages }
 						onSelect={ onScreenPagesSelect }
 						onContinueClick={ onContinue }
@@ -578,7 +573,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
-					<ScreenConfirmation onConfirm={ onConfirm } />
+					<ScreenConfirmation
+						onConfirm={ onConfirm }
+						surveyDismissed={ surveyDismissed }
+						setSurveyDismissed={ setSurveyDismissed }
+					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">
@@ -590,19 +589,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			</div>
 			<div className="pattern-assembler__sidebar-panel">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN_PATTERNS }>
-					<ScreenPatternListPanel
-						categories={ categories }
-						selectedHeader={ header }
-						selectedSections={ sections }
-						selectedFooter={ footer }
-						patternsMapByCategory={ patternsMapByCategory }
-						onSelect={ onSelect }
-						recordTracksEvent={ recordTracksEvent }
-						isNewSite={ isNewSite }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTIONS_PATTERNS }>
 					<ScreenPatternListPanel
 						categories={ categories }
 						selectedHeader={ header }
@@ -632,20 +618,31 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					/>
 				</NavigatorScreen>
 			</div>
-			<PatternLargePreview
-				header={ header }
-				sections={ sections }
-				footer={ footer }
-				activePosition={ activePosition }
-				onDeleteSection={ onDeleteSection }
-				onMoveUpSection={ onMoveUpSection }
-				onMoveDownSection={ onMoveDownSection }
-				onDeleteHeader={ onDeleteHeader }
-				onDeleteFooter={ onDeleteFooter }
-				onShuffle={ onShuffle }
-				recordTracksEvent={ recordTracksEvent }
-				isNewSite={ isNewSite }
-			/>
+			{ currentScreen.name === 'pages' ? (
+				<PatternPagePreviewList
+					selectedHeader={ header }
+					selectedSections={ sections }
+					selectedFooter={ footer }
+					selectedPages={ pages }
+					pagesMapByCategory={ pagesMapByCategory }
+					isNewSite={ isNewSite }
+				/>
+			) : (
+				<PatternLargePreview
+					header={ header }
+					sections={ sections }
+					footer={ footer }
+					activePosition={ activePosition }
+					onDeleteSection={ onDeleteSection }
+					onMoveUpSection={ onMoveUpSection }
+					onMoveDownSection={ onMoveDownSection }
+					onDeleteHeader={ onDeleteHeader }
+					onDeleteFooter={ onDeleteFooter }
+					onShuffle={ onShuffle }
+					recordTracksEvent={ recordTracksEvent }
+					isNewSite={ isNewSite }
+				/>
+			) }
 		</div>
 	);
 

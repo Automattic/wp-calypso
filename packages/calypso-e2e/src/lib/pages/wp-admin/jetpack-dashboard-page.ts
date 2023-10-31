@@ -9,7 +9,7 @@ export type SettingsTabs =
 	| 'Discussion'
 	| 'Traffic'
 	| 'Newsletter'
-	| 'Earn';
+	| 'Monetize';
 // Discriminated union type.
 type JetpackTabs =
 	| { view: 'Dashboard'; tab: DashboardTabs }

@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, englishLocales } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
@@ -21,6 +22,8 @@ import {
 	getSignupUrl,
 	pathWithLeadingSlash,
 	isReactLostPasswordScreenEnabled,
+	canDoMagicLogin,
+	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
@@ -34,6 +37,7 @@ import {
 	loginUser,
 	resetAuthAccountType,
 } from 'calypso/state/login/actions';
+import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
 	getRedirectToOriginal,
@@ -82,6 +86,7 @@ export class LoginForm extends Component {
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
 		hideSignupLink: PropTypes.bool,
+		isSignupExistingAccount: PropTypes.bool,
 	};
 
 	state = {
@@ -91,7 +96,12 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
-		const { disableAutoFocus } = this.props;
+		const { disableAutoFocus, isSignupExistingAccount, userEmail } = this.props;
+
+		if ( isSignupExistingAccount && userEmail ) {
+			this.props.getAuthAccountType( userEmail );
+		}
+
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
 			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
@@ -309,6 +319,38 @@ export class LoginForm extends Component {
 				</Notice>
 			);
 		}
+	}
+
+	renderLoginFromSignupNotice() {
+		const signupUrl = this.getSignupUrl();
+
+		if (
+			hasTranslation(
+				'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.'
+			) ||
+			englishLocales.includes( this.props.locale )
+		) {
+			return (
+				<Notice status="is-transparent-info" showDismiss={ false }>
+					{ this.props.translate(
+						'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
+						{
+							components: {
+								returnToSignup: <a href={ signupUrl } onClick={ this.recordSignUpLinkClick } />,
+							},
+						}
+					) }
+				</Notice>
+			);
+		}
+
+		return (
+			<Notice status="is-transparent-info" showDismiss={ false }>
+				{ this.props.translate( 'An account with this email address already exists.' ) }
+				&nbsp;
+				{ this.props.translate( 'Log in to your account' ) }
+			</Notice>
+		);
 	}
 
 	onWooCommerceSocialSuccess = ( ...args ) => {
@@ -545,6 +587,78 @@ export class LoginForm extends Component {
 		);
 	}
 
+	recordSignUpLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-form' } );
+	};
+
+	getSignupUrl() {
+		const { oauth2Client, currentQuery, currentRoute, pathname, locale } = this.props;
+
+		return this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
+	}
+
+	handleMagicLoginClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click', {
+			origin: 'login-form',
+		} );
+		this.props.resetMagicLoginRequestForm();
+	};
+
+	renderMagicLoginLink() {
+		if (
+			! canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.wccomFrom,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return null;
+		}
+
+		const loginLink = getLoginLinkPageUrl(
+			this.props.locale,
+			this.props.currentRoute,
+			this.props.currentQuery?.signup_url,
+			this.props.oauth2Client?.id
+		);
+		const { query, usernameOrEmail } = this.props;
+		const emailAddress = usernameOrEmail || query?.email_address || this.state.usernameOrEmail;
+
+		const magicLoginPageLinkWithEmail = addQueryArgs( { email_address: emailAddress }, loginLink );
+
+		if (
+			hasTranslation(
+				'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?'
+			) ||
+			englishLocales.includes( this.props.locale )
+		) {
+			return this.props.translate(
+				'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
+				{
+					components: {
+						magicLoginLink: (
+							<a href={ magicLoginPageLinkWithEmail } onClick={ this.handleMagicLoginClick } />
+						),
+					},
+				}
+			);
+		}
+
+		return this.props.translate(
+			'Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
+			{
+				components: {
+					magicLoginLink: (
+						<a href={ magicLoginPageLinkWithEmail } onClick={ this.handleMagicLoginClick } />
+					),
+				},
+			}
+		);
+	}
+
 	render() {
 		const {
 			accountType,
@@ -555,15 +669,13 @@ export class LoginForm extends Component {
 			isP2Login,
 			isJetpackWooDnaFlow,
 			wccomFrom,
-			currentRoute,
 			currentQuery,
-			pathname,
-			locale,
 			showSocialLoginFormOnly,
 			isWoo,
 			isPartnerSignup,
 			isWooCoreProfilerFlow,
 			hideSignupLink,
+			isSignupExistingAccount,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -574,9 +686,7 @@ export class LoginForm extends Component {
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
 
-		const signupUrl = this.props.signupUrl
-			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
+		const signupUrl = this.getSignupUrl();
 
 		const socialToS = this.props.translate(
 			// To make any changes to this copy please speak to the legal team
@@ -663,6 +773,9 @@ export class LoginForm extends Component {
 								) }
 							</p>
 						) }
+
+						{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
+
 						<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
 						<FormTextInput
@@ -733,7 +846,7 @@ export class LoginForm extends Component {
 							/>
 
 							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ requestError.message } />
+								<FormInputValidation isError text={ this.renderMagicLoginLink() } />
 							) }
 						</div>
 					</div>
@@ -814,8 +927,8 @@ export default connect(
 			socialAccountLinkService: getSocialAccountLinkService( state ),
 			userEmail:
 				props.userEmail ||
-				getInitialQueryArguments( state ).email_address ||
-				getCurrentQueryArguments( state ).email_address,
+				getInitialQueryArguments( state )?.email_address ||
+				getCurrentQueryArguments( state )?.email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 			currentQuery: getCurrentQueryArguments( state ),
 		};
@@ -827,5 +940,6 @@ export default connect(
 		loginUser,
 		recordTracksEvent,
 		resetAuthAccountType,
+		resetMagicLoginRequestForm,
 	}
 )( localize( LoginForm ) );

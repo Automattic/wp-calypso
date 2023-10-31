@@ -2,7 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import FormattedHeader from 'calypso/components/formatted-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
@@ -69,12 +69,10 @@ const DiscoverStream = ( props ) => {
 	}
 
 	const DiscoverHeader = () => (
-		<FormattedHeader
-			brandFont
-			headerText={ translate( 'Discover' ) }
-			subHeaderText={ subHeaderText }
-			align="left"
-			hasScreenOptions
+		<NavigationHeader
+			navigationItems={ [] }
+			title={ translate( 'Discover' ) }
+			subtitle={ subHeaderText }
 			className={ classNames( 'discover-stream-header', {
 				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 			} ) }

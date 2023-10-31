@@ -15,6 +15,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import wasMigrationTrialSite from 'calypso/state/selectors/was-migration-trial-site';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { BusinessTrialPlans } from '../business-trial-plans';
@@ -26,6 +27,7 @@ const BusinessTrialExpired = (): JSX.Element => {
 	const siteSlug = selectedSite?.slug ?? null;
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+	const siteIsMigration = useSelector( ( state ) => wasMigrationTrialSite( state, siteId ) );
 
 	const nonBusinessTrialPurchases = useMemo(
 		() =>
@@ -81,9 +83,23 @@ const BusinessTrialExpired = (): JSX.Element => {
 							{ translate( 'Your free trial has ended' ) }
 						</h1>
 						<div className="business-trial-expired__subtitle">
-							{ translate(
-								'Don’t lose all that hard work! Upgrade to a paid plan to launch your migrated website.'
-							) }
+							{ siteIsMigration
+								? translate(
+										'Don’t lose all that hard work! Upgrade to a paid plan to launch your migrated website, or {{a}}create a new site{{/a}}.',
+										{
+											components: {
+												a: <a href="/start" />,
+											},
+										}
+								  )
+								: translate(
+										'Don’t lose all that hard work! Upgrade to a paid plan or {{a}}create a new site{{/a}}.',
+										{
+											components: {
+												a: <a href="/start" />,
+											},
+										}
+								  ) }
 						</div>
 						{ nonBusinessTrialPurchases && nonBusinessTrialPurchases.length > 0 && (
 							<div className="business-trial-expired__manage-purchases">

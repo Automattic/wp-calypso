@@ -1,3 +1,4 @@
+import { useAddOnCheckoutLink } from '@automattic/data-stores';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -13,7 +14,6 @@ import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsGrid from './components/add-ons-grid';
-import useAddOnCheckoutLink from './hooks/use-add-on-checkout-link';
 import useAddOnPurchaseStatus from './hooks/use-add-on-purchase-status';
 import useAddOns from './hooks/use-add-ons';
 import type { ReactElement } from 'react';
@@ -96,8 +96,10 @@ interface Props {
 
 const AddOnsMain: React.FunctionComponent< Props > = () => {
 	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
+	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const addOns = useAddOns( selectedSite?.ID );
+	const filteredAddOns = addOns.filter( ( addOn ) => ! addOn?.exceedsSiteStorageLimits );
+
 	const checkoutLink = useAddOnCheckoutLink();
 
 	const canManageSite = useSelector( ( state ) => {
@@ -113,7 +115,7 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 	}
 
 	const handleActionPrimary = ( addOnSlug: string, quantity?: number ) => {
-		page.redirect( `${ checkoutLink( addOnSlug, quantity ) }` );
+		page.redirect( `${ checkoutLink( selectedSite?.slug ?? null, addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSelected = () => {
@@ -131,7 +133,7 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 					actionPrimary={ { text: translate( 'Buy add-on' ), handler: handleActionPrimary } }
 					actionSecondary={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
 					useAddOnAvailabilityStatus={ useAddOnPurchaseStatus }
-					addOns={ addOns }
+					addOns={ filteredAddOns }
 					highlightFeatured={ true }
 				/>
 			</ContentWithHeader>

@@ -5,8 +5,8 @@
 	.checkout-thank-you__header-text {
 		color: var(--color-text-subtle);
 		font-size: initial;
-		margin: initial;
 		text-align: left;
+		margin-bottom: 20px;
 
 		@include break-mobile {
 			text-align: center;

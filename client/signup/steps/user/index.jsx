@@ -176,6 +176,7 @@ export class UserStep extends Component {
 			wccomFrom,
 			isWhiteLogin: isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
+			emailAddress: this.props?.step?.form?.email,
 		} );
 	}
 
