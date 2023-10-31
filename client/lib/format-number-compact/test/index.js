@@ -5,6 +5,10 @@ describe( 'formatNumberCompact', () => {
 		const counts = formatNumberCompact( 999, 'en' );
 		expect( counts ).toEqual( '999' );
 	} );
+	test( 'does nothing for negative number if number is > -1000', () => {
+		const counts = formatNumberCompact( -999, 'en' );
+		expect( counts ).toEqual( '-999' );
+	} );
 	test( 'shows 2 sig figs for counts < 10000', () => {
 		const counts = formatNumberCompact( 1234, 'en' );
 		expect( counts ).toEqual( '1.2K' );
@@ -13,17 +17,21 @@ describe( 'formatNumberCompact', () => {
 		const counts = formatNumberCompact( 123456, 'en' );
 		expect( counts ).toEqual( '123K' );
 	} );
-	test( 'rounds abbreviated counts', () => {
+	test( 'rounds abbreviated counts for thousands', () => {
 		const counts = formatNumberCompact( 1897, 'en' );
 		expect( counts ).toEqual( '1.9K' );
 	} );
-	test( 'shows groupings for huge numbers', () => {
+	test( 'rounds abbreviated counts for millions', () => {
 		const counts = formatNumberCompact( 123456789, 'en' );
-		expect( counts ).toEqual( '123,457K' );
+		expect( counts ).toEqual( '123.5M' );
 	} );
-	test( 'handles negative numbers', () => {
+	test( 'handles negative numbers in thousands', () => {
+		const counts = formatNumberCompact( -1897, 'en' );
+		expect( counts ).toEqual( '-1.9K' );
+	} );
+	test( 'handles negative numbers in millions', () => {
 		const counts = formatNumberCompact( -123456789, 'en' );
-		expect( counts ).toEqual( '-123,457K' );
+		expect( counts ).toEqual( '-123.5M' );
 	} );
 	describe( 'es', () => {
 		test( 'shows 2 sig figs for counts < 10000', () => {
