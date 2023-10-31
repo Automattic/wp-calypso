@@ -88,11 +88,12 @@ const JetpackCloudSidebar = ( {
 				</SidebarNavigator>
 			</SidebarMain>
 
-			{ ! isJetpackManage && jetpackAdminUrl && (
-				<SidebarFooter className="jetpack-cloud-sidebar__footer">
-					<ul>
+			<SidebarFooter className="jetpack-cloud-sidebar__footer">
+				<ul>
+					{ ! isJetpackManage && jetpackAdminUrl && (
 						<SidebarNavigatorMenuItem
 							isExternalLink
+							isSelected={ false }
 							title={ translate( 'WP Admin' ) }
 							link={ jetpackAdminUrl }
 							path={ jetpackAdminUrl }
@@ -101,9 +102,28 @@ const JetpackCloudSidebar = ( {
 								dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' ) );
 							} }
 						/>
-					</ul>
-				</SidebarFooter>
-			) }
+					) }
+					<SidebarNavigatorMenuItem
+						isExternalLink
+						isSelected={ false }
+						title={ translate( 'Get help', {
+							comment: 'Jetpack Cloud sidebar navigation item',
+						} ) }
+						link="https://jetpack.com/support"
+						path=""
+						icon={ <JetpackIcons icon="help" /> }
+						onClickMenuItem={ ( link ) => {
+							dispatch(
+								recordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
+									menu_item: 'Jetpack Cloud / Support',
+								} )
+							);
+
+							window.open( link, '_blank' );
+						} }
+					/>
+				</ul>
+			</SidebarFooter>
 
 			<SiteSelector
 				showAddNewSite
