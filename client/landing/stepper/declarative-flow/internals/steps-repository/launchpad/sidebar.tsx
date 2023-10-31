@@ -47,7 +47,7 @@ function getUrlInfo( url: string ) {
 }
 
 function recordUnverifiedDomainDialogShownTracksEvent( site_id?: number ) {
-	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_continue_anyway', {
+	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_shown', {
 		site_id,
 	} );
 }
