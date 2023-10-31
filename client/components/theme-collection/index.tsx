@@ -77,8 +77,7 @@ export default function ThemeCollection( {
 						cssMode: true,
 						mousewheel: true,
 						keyboard: {
-							enabled: true,
-							onlyInViewport: false,
+							enabled: false,
 						},
 						navigation: {
 							nextEl: '.theme-collection__carousel-nav-button--next',
