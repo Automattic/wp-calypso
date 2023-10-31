@@ -119,19 +119,19 @@ $calypso-header-height: 31px;
 	}
 
 	@include display-grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 395px;
+	grid-template-columns: minmax(380px, auto) minmax(auto, 395px);
 	grid-column-gap: 60px;
 	grid-template-areas:
-		"header header actions"
-		"content content actions";
+		"header actions"
+		"content actions";
 	grid-auto-rows: auto 1fr;
 
-	@include breakpoint-deprecated( "<1280px" ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		grid-template-areas:
-			"header header header"
-			"actions actions actions"
-			"content content content";
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+			"header"
+			"actions"
+			"content";
+		grid-template-columns: minmax(0, 1fr);
 		padding-top: 20px;
 	}
 
@@ -149,13 +149,21 @@ $calypso-header-height: 31px;
 		grid-area: actions;
 		height: fit-content;
 
-		@include breakpoint-deprecated( "<1280px" ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			margin-top: 40px;
 		}
 
 		.plugin-details__sidebar {
 			background-color: var(--studio-gray-0);
 			padding: 40px;
+
+			@include breakpoint-deprecated( "<1280px" ) {
+				padding: 30px;
+			}
+
+			@include breakpoint-deprecated( "<960px" ) {
+				padding: 40px;
+			}
 		}
 
 		.plugin-details-download-card {
