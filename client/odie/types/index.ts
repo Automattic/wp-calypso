@@ -46,7 +46,6 @@ export type Message = {
 export type Chat = {
 	chat_id?: number | null;
 	messages: Message[];
-	context: Context;
 };
 
 export type OdieAllowedSectionNames =
@@ -58,4 +57,4 @@ export type OdieAllowedSectionNames =
 	| 'checkout'
 	| 'help-center';
 
-export type OdieAllowedBots = 'wapuu';
+export type OdieAllowedBots = 'wpcom-support-chat' | null;

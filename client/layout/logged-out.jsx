@@ -198,7 +198,7 @@ const LayoutLoggedOut = ( {
 		classes[ 'has-no-masterbar' ] = false;
 		masterbar = <WooCoreProfilerMasterbar />;
 	} else {
-		masterbar = (
+		masterbar = ! masterbarIsHidden && (
 			<MasterbarLoggedOut
 				title={ sectionTitle }
 				sectionName={ sectionName }
@@ -336,7 +336,11 @@ export default withCurrentRoute(
 			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 			const wccomFrom = currentQuery?.[ 'wccom-from' ];
 			const masterbarIsHidden =
-				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
+				! ( currentSection || currentRoute ) ||
+				! masterbarIsVisible( state ) ||
+				noMasterbarForSection ||
+				noMasterbarForRoute;
+
 			return {
 				isJetpackLogin,
 				isWhiteLogin,

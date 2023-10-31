@@ -76,16 +76,12 @@ export default function ThemeCollection( {
 					swiperInstance.current = new Swiper( el, {
 						cssMode: true,
 						mousewheel: true,
-						keyboard: {
-							enabled: true,
-							onlyInViewport: false,
-						},
 						navigation: {
 							nextEl: '.theme-collection__carousel-nav-button--next',
 							prevEl: '.theme-collection__carousel-nav-button--previous',
 						},
 						slideToClickedSlide: false,
-						loop: true,
+						rewind: true,
 						slidesPerView: 1.2,
 						spaceBetween: -16,
 						breakpoints: {

@@ -39,8 +39,8 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 		right: initial;
 	}
 
-	// The menu should render "on top" of the profile picture
-	z-index: 1;
+	// The menu should render "on top" of the profile picture & site switcher
+	z-index: 20;
 
 	width: 220px;
 	margin: 0;

@@ -60,7 +60,7 @@ class TagStreamHeader extends Component {
 			showBack,
 			showSort,
 		} = this.props;
-		const sortOrder = this.props.sort || 'relevance';
+		const sortOrder = this.props.sort || 'date';
 
 		// A bit of a hack: check for a prompt tag (which always have a description) from the slug before waiting for tag info to load,
 		// so we can set a smaller title size and prevent it from resizing as the page loads. Should be refactored if tag descriptions
@@ -86,16 +86,16 @@ class TagStreamHeader extends Component {
 							{ showSort && (
 								<SegmentedControl compact>
 									<SegmentedControl.Item
-										selected={ sortOrder !== 'date' }
-										onClick={ this.useRelevanceSort }
-									>
-										{ this.props.translate( 'Popular' ) }
-									</SegmentedControl.Item>
-									<SegmentedControl.Item
-										selected={ sortOrder === 'date' }
+										selected={ sortOrder !== 'relevance' }
 										onClick={ this.useDateSort }
 									>
 										{ this.props.translate( 'Recent' ) }
+									</SegmentedControl.Item>
+									<SegmentedControl.Item
+										selected={ sortOrder === 'relevance' }
+										onClick={ this.useRelevanceSort }
+									>
+										{ this.props.translate( 'Popular' ) }
 									</SegmentedControl.Item>
 								</SegmentedControl>
 							) }

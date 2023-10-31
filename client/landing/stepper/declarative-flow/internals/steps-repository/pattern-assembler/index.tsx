@@ -364,6 +364,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 						headerHtml: header?.html,
 						footerHtml: footer?.html,
+						pages: pages
+							.map( ( category ) => pagesMapByCategory[ category ] )
+							.map( ( patterns ) => ( {
+								title: patterns[ 0 ].title,
+								content: patterns[ 0 ].html,
+							} ) ),
 						globalStyles: syncedGlobalStylesUserConfig,
 						// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
 						// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site

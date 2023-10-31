@@ -53,6 +53,10 @@ const useHighlightLabels = ( {
 				if ( isPremiumPlan( planSlug ) ) {
 					label = translate( 'Best for Link in Bio' );
 				}
+			} else if ( 'plans-videopress' === intent ) {
+				if ( isBusinessPlan( planSlug ) ) {
+					label = translate( 'Best for Video' );
+				}
 			} else if ( 'plans-blog-onboarding' === intent ) {
 				if ( isPremiumPlan( planSlug ) ) {
 					label = translate( 'Best for Blog' );

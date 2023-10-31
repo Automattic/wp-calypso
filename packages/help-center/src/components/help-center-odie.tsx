@@ -35,7 +35,7 @@ export const HelpCenterOdie = () => {
 					</PopoverMenuItem>
 				</EllipsisMenu>
 			</div>
-			<OdieAssistant botNameSlug="wapuu" />
+			<OdieAssistant />
 		</div>
 	);
 };

@@ -8,7 +8,7 @@ import { receiveSite, requestSite } from 'calypso/state/sites/actions';
 const SET_SITE_INTERFACE_MUTATION_KEY = 'set-site-interface-mutation-key';
 
 interface MutationResponse {
-	WPCOM_ADMIN_INTERFACE: 'wp-admin' | 'calypso';
+	interface: 'wp-admin' | 'calypso';
 }
 
 interface MutationError {
@@ -39,12 +39,12 @@ export const useSiteInterfaceMutation = (
 		onSuccess: ( ...params ) => {
 			options?.onSuccess?.( ...params );
 			const [ data ] = params;
-			if ( ! data?.WPCOM_ADMIN_INTERFACE || ! site ) {
+			if ( ! data?.interface || ! site ) {
 				throw new Error( 'Invalid response from hosting/admin-interface' );
 			}
 			const newOptions = {
 				...( site.options || {} ),
-				wpcom_admin_interface: data.WPCOM_ADMIN_INTERFACE,
+				wpcom_admin_interface: data.interface,
 			};
 			// Apply the new interface option to the site on redux store
 			dispatch( receiveSite( { ...site, options: newOptions } ) );

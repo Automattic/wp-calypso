@@ -56,6 +56,12 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 			return;
 		}
 
+		if ( ! siteId || syncStatus === SiteSyncStatus.FAILED ) {
+			dispatch( setSyncInProgress( siteId, false ) );
+			clearIntervalId();
+			return;
+		}
+
 		if ( isSyncInProgress === true && ! intervalIdRef.current ) {
 			intervalIdRef.current = setInterval( () => dispatch( fetchSyncStatus( siteId ) ), 5000 );
 		}
