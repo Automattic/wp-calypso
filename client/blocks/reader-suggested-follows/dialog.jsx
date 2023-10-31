@@ -32,13 +32,13 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) 
 			isVisible={ isVisible }
 			onClose={ onClose }
 			showCloseIcon={ true }
-			label={ translate( 'Suggested subscriptions' ) }
+			label={ translate( 'Suggested sites' ) }
 			shouldCloseOnEsc={ true }
 		>
 			<div className="reader-recommended-follows-dialog__content">
 				<div className="reader-recommended-follows-dialog__header">
 					<h2 className="reader-recommended-follows-dialog__title">
-						{ translate( 'Suggested subscriptions' ) }
+						{ translate( 'Suggested sites' ) }
 					</h2>
 					<p className="reader-recommended-follows-dialog__description">
 						{ translate( "While you're at it, you might check out these sites." ) }
