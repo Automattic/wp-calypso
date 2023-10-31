@@ -32,7 +32,7 @@ import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adj
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
-import { arePropsEqual } from '../../lib/perf-utils';
+import { arePropsEqual } from '../../lib/performance-utils';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
 import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
