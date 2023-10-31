@@ -42,9 +42,6 @@ class HandleEmailedLinkForm extends Component {
 		clientId: PropTypes.string,
 		emailAddress: PropTypes.string.isRequired,
 		token: PropTypes.string.isRequired,
-		redirectTo: PropTypes.string,
-		transition: PropTypes.bool,
-		activate: PropTypes.string,
 
 		// Connected props
 		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
@@ -152,28 +149,12 @@ class HandleEmailedLinkForm extends Component {
 			translate,
 			initialQuery,
 			oauth2Client,
-			redirectTo,
-			transition,
-			token,
-			activate,
 		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 
-		if ( isExpired && ! isFetching ) {
-			const postId = new URLSearchParams( redirectTo ).get( 'redirect_to_blog_post_id' );
-
-			return (
-				<EmailedLoginLinkExpired
-					isGravPoweredClient={ isGravPoweredClient }
-					redirectTo={ redirectTo }
-					transition={ transition }
-					token={ token }
-					emailAddress={ emailAddress }
-					postId={ postId }
-					activate={ activate }
-				/>
-			);
+		if ( isExpired ) {
+			return <EmailedLoginLinkExpired isGravPoweredClient={ isGravPoweredClient } />;
 		}
 
 		let buttonLabel;
@@ -255,18 +236,16 @@ class HandleEmailedLinkForm extends Component {
 		}
 
 		return (
-			! isFetching && (
-				<EmptyContent
-					action={ action }
-					className={ classNames( 'magic-login__handle-link', {
-						'magic-login__is-fetching-auth': isFetching,
-					} ) }
-					illustration={ illustration }
-					illustrationWidth={ 500 }
-					line={ line }
-					title={ title }
-				/>
-			)
+			<EmptyContent
+				action={ action }
+				className={ classNames( 'magic-login__handle-link', {
+					'magic-login__is-fetching-auth': isFetching,
+				} ) }
+				illustration={ illustration }
+				illustrationWidth={ 500 }
+				line={ line }
+				title={ title }
+			/>
 		);
 	}
 }
