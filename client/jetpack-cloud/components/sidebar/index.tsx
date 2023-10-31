@@ -93,7 +93,6 @@ const JetpackCloudSidebar = ( {
 					{ ! isJetpackManage && jetpackAdminUrl && (
 						<SidebarNavigatorMenuItem
 							isExternalLink
-							isSelected={ false }
 							title={ translate( 'WP Admin' ) }
 							link={ jetpackAdminUrl }
 							path={ jetpackAdminUrl }
@@ -105,21 +104,18 @@ const JetpackCloudSidebar = ( {
 					) }
 					<SidebarNavigatorMenuItem
 						isExternalLink
-						isSelected={ false }
 						title={ translate( 'Get help', {
 							comment: 'Jetpack Cloud sidebar navigation item',
 						} ) }
 						link="https://jetpack.com/support"
 						path=""
 						icon={ <JetpackIcons icon="help" /> }
-						onClickMenuItem={ ( link ) => {
+						onClickMenuItem={ () => {
 							dispatch(
 								recordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
 									menu_item: 'Jetpack Cloud / Support',
 								} )
 							);
-
-							window.open( link, '_blank' );
 						} }
 					/>
 				</ul>

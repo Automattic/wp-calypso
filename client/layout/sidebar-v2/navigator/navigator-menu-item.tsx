@@ -45,6 +45,7 @@ export const SidebarNavigatorMenuItem = ( {
 				href={ link }
 				id={ id }
 				as="a"
+				target={ isExternalLink ? '_blank' : undefined }
 			>
 				<HStack justify="flex-start">
 					{ icon && <Icon style={ { fill: 'currentcolor' } } icon={ icon } size={ ICON_SIZE } /> }

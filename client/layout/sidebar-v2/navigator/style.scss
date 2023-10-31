@@ -43,7 +43,7 @@
 .sidebar-v2__navigator-sub-menu .components-navigator-back-button,
 .sidebar-v2__menu-item.components-item {
 	border-radius: 4px;
-	&:focus {
+	&:focus-visible {
 		box-shadow: 0 0 0 1px var(--studio-gray-10);
 	}
 }
