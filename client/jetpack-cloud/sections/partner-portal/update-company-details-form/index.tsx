@@ -22,7 +22,7 @@ export default function UpdateCompanyDetailsForm() {
 	const contactPerson = partner?.contact_person ?? '';
 	const companyWebsite = partner?.company_website ?? '';
 	const companyType = partner?.company_type ?? '';
-	const managedSites = partner?.managed_sites ?? '';
+	const managedSites = partner?.managed_sites ?? '1-5';
 	const country = partner?.address.country ?? '';
 	const city = partner?.address.city ?? '';
 	const line1 = partner?.address.line1 ?? '';
