@@ -46,13 +46,13 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-function recordUnverifiedDomainDialogShownTracksEvent( site_id?: string ) {
+function recordUnverifiedDomainDialogShownTracksEvent( site_id?: number ) {
 	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_continue_anyway', {
 		site_id,
 	} );
 }
 
-function recordUnverifiedDomainContinueAnywayClickedTracksEvent( site_id?: string ) {
+function recordUnverifiedDomainContinueAnywayClickedTracksEvent( site_id?: number ) {
 	recordTracksEvent( 'calypso_launchpad_unverified_continue_anyway_clicked', {
 		site_id,
 	} );
