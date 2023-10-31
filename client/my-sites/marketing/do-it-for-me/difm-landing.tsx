@@ -117,6 +117,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		svg {
 			margin-inline-end: 0;
 			margin-inline-start: auto;
+			flex-shrink: 0;
 		}
 		.foldable-faq__question-text {
 			padding-inline-start: 0;
