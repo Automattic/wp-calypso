@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, KeyboardEvent, FormEvent, useRef } from 'react';
+import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import ArrowUp from 'calypso/assets/images/odie/arrow-up.svg';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import { useDispatch } from 'calypso/state';
@@ -19,10 +19,17 @@ export const OdieSendMessageButton = ( {
 } ) => {
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { addMessage, setIsLoading, botNameSlug } = useOdieAssistantContext();
+	const { addMessage, setIsLoading, botNameSlug, initialUserMessage, chat } =
+		useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	useEffect( () => {
+		if ( initialUserMessage && ! chat.chat_id ) {
+			setMessageString( initialUserMessage );
+		}
+	}, [ initialUserMessage, chat.chat_id ] );
 
 	const sendMessage = async () => {
 		try {
