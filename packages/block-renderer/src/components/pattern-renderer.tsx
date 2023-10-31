@@ -35,10 +35,12 @@ const PatternRenderer = ( {
 			minHeight={ minHeight }
 			inlineCss={ inlineCss }
 		>
-			<div
-				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: patternHtml ?? '' } }
-			/>
+			{ patternHtml ? (
+				<div
+					// eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: patternHtml } }
+				/>
+			) : null }
 		</BlockRendererContainer>
 	);
 };

@@ -4,7 +4,7 @@ import {
 	__unstableEditorStyles as EditorStyles,
 	privateApis as blockEditorPrivateApis,
 } from '@wordpress/block-editor';
-import { useResizeObserver, useRefEffect } from '@wordpress/compose';
+import { useResizeObserver, useRefEffect, useMergeRefs } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import React, { useMemo, useState, useContext, ReactNode } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
@@ -95,13 +95,22 @@ const ScaledBlockRendererContainer = ( {
 		bodyElement.style.boxSizing = 'border-box';
 		bodyElement.style.position = 'absolute';
 		bodyElement.style.width = '100%';
-
-		// Load scripts and styles manually to avoid a flash of unstyled content.
-		Promise.all( [
-			loadStyles( bodyElement, styleAssets ),
-			loadScripts( bodyElement, scriptAssets as HTMLScriptElement[] ),
-		] ).then( () => setIsLoaded( true ) );
 	}, [] );
+
+	const contentAssetsRef = useRefEffect< HTMLBodyElement >(
+		( bodyElement ) => {
+			if ( ! children ) {
+				return;
+			}
+
+			// Load scripts and styles manually to avoid a flash of unstyled content.
+			Promise.all( [
+				loadStyles( bodyElement, styleAssets ),
+				loadScripts( bodyElement, scriptAssets as HTMLScriptElement[] ),
+			] ).then( () => setIsLoaded( true ) );
+		},
+		[ children ]
+	);
 
 	const scale = containerWidth / viewportWidth;
 	const scaledHeight = contentHeight * scale || minHeight;
@@ -119,7 +128,7 @@ const ScaledBlockRendererContainer = ( {
 			} }
 		>
 			<Iframe
-				contentRef={ contentRef }
+				contentRef={ useMergeRefs( [ contentRef, contentAssetsRef ] ) }
 				aria-hidden
 				tabIndex={ -1 }
 				loading="lazy"
