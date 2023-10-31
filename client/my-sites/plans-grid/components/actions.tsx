@@ -23,8 +23,6 @@ import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
-import { useSelector } from 'calypso/state';
-import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/npm-ready/data-store/use-default-storage-option';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
@@ -249,7 +247,14 @@ const LoggedInPlansFeatureActionButton = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug ),
 		[ planSlug ]
 	);
-	const { current, storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
+	const {
+		current,
+		storageAddOnsForPlan,
+		pricing: { billingPeriod },
+	} = gridPlansIndex[ planSlug ];
+	const currentPlanBillingPeriod = currentSitePlanSlug
+		? gridPlansIndex[ currentSitePlanSlug ]?.pricing.billingPeriod
+		: null;
 	const defaultStorageOption = useDefaultStorageOption( {
 		storageOptions,
 		storageAddOnsForPlan,
@@ -262,12 +267,6 @@ const LoggedInPlansFeatureActionButton = ( {
 			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
 	)?.checkoutLink;
 	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
-	const currentPlanBillPeriod = useSelector( ( state ) => {
-		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
-	} );
-	const gridPlanBillPeriod = useSelector( ( state ) => {
-		return planSlug ? getPlanBillPeriod( state, planSlug ) : null;
-	} );
 
 	if (
 		freePlan ||
@@ -326,9 +325,9 @@ const LoggedInPlansFeatureActionButton = ( {
 		currentSitePlanSlug &&
 		! current &&
 		! isTrialPlan &&
-		currentPlanBillPeriod &&
-		gridPlanBillPeriod &&
-		currentPlanBillPeriod > gridPlanBillPeriod
+		currentPlanBillingPeriod &&
+		billingPeriod &&
+		currentPlanBillingPeriod > billingPeriod
 	) {
 		return (
 			<Button className={ classes } disabled={ true }>
