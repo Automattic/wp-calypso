@@ -335,13 +335,13 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.domains__domain-side-content {
-			width: 290px;
 			border-bottom: 1px solid;
 			border-bottom-color: var(--studio-gray-5);
 			padding: 20px 0;
 			margin: 0;
 
 			@include break-small {
+				width: 290px;
 				margin: 0 20px;
 			}
 
