@@ -303,14 +303,9 @@ body.is-section-signup.is-white-signup {
 			display: none;
 
 			@include break-large {
-				width: 30vw;
 				margin-top: 0;
 				flex-direction: column;
 				display: flex;
-			}
-
-			@include break-wide {
-				width: 350px;
 			}
 		}
 
@@ -340,6 +335,7 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.domains__domain-side-content {
+			width: 290px;
 			border-bottom: 1px solid;
 			border-bottom-color: var(--studio-gray-5);
 			padding: 20px 0;
