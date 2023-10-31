@@ -47,13 +47,13 @@ function getUrlInfo( url: string ) {
 }
 
 function recordUnverifiedDomainDialogShownTracksEvent( site_id?: number ) {
-	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_shown', {
+	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_dialog_shown', {
 		site_id,
 	} );
 }
 
 function recordUnverifiedDomainContinueAnywayClickedTracksEvent( site_id?: number ) {
-	recordTracksEvent( 'calypso_launchpad_unverified_continue_anyway_clicked', {
+	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_continue_anyway_clicked', {
 		site_id,
 	} );
 }
