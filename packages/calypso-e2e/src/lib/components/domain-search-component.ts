@@ -72,7 +72,10 @@ export class DomainSearchComponent {
 	 * @param {string} keyword Unique keyword to select domains.
 	 * @returns {string} Domain that was selected.
 	 */
-	async selectDomain( keyword: string ): Promise< string > {
+	async selectDomain(
+		keyword: string,
+		{ multiple }: { multiple?: boolean } = {}
+	): Promise< string > {
 		const target = this.page.getByRole( 'button' ).filter( { hasText: keyword } );
 		await target.waitFor();
 
@@ -82,9 +85,12 @@ export class DomainSearchComponent {
 		// If multiple domain selections are enabled, the Continue button appears
 		// on the right hand sidebar.
 		// See: 21483-explat-experiment
-		const continueButton = this.page.getByRole( 'button', { name: 'Continue' } );
-		if ( await continueButton.count() ) {
+		// Note: do not use this flow for the moment, because this method needs to be
+		// updated in order to support multiple domains.
+		if ( ! multiple ) {
 			await this.clickButton( 'Continue' );
+		} else {
+			// noop - multiple domains is not supported.
 		}
 
 		return selectedDomain;
@@ -113,6 +119,6 @@ export class DomainSearchComponent {
 	 * @param {string} text Exact text to match on.
 	 */
 	async clickButton( text: string ): Promise< void > {
-		await this.page.click( `button:text-is("${ text }")` );
+		await this.page.getByRole( 'button', { name: text } ).click();
 	}
 }
