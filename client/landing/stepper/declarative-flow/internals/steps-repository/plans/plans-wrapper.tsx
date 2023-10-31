@@ -85,7 +85,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
-	const isInSignup = isDomainUpsellFlow( flowName ) ? false : true;
 	const plansIntent = getPlansIntent( flowName );
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
@@ -145,7 +144,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					siteId={ site?.ID }
 					showBiennialToggle={ false }
 					hideFreePlan={ hideFreePlan }
-					isInSignup={ isInSignup }
+					isInSignup={ true }
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onSelectPlan }
