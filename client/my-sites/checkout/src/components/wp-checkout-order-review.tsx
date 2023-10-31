@@ -41,6 +41,7 @@ const SiteSummary = styled.div`
 
 const CouponLinkWrapper = styled.div`
 	font-size: 14px;
+	margin-bottom: 2em;
 `;
 
 const CouponField = styled( Coupon )``;
