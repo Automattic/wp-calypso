@@ -1,7 +1,7 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Badge, CircularProgressBar, Dialog, Gridicon } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { Launchpad } from '@automattic/launchpad';
+import { LaunchpadInternal } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
@@ -260,7 +260,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 							</p>
 						</div>
 					) }
-					<Launchpad
+					<LaunchpadInternal
 						siteSlug={ siteSlug }
 						taskFilter={ () => enhancedTasks || [] }
 						makeLastTaskPrimaryAction={ true }

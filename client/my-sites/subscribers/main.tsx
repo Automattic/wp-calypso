@@ -131,9 +131,7 @@ const SubscribersPage = ( {
 					onCancel={ resetSubscriber }
 					onConfirm={ onConfirmModal }
 				/>
-				{ selectedSite && (
-					<AddSubscribersModal siteId={ selectedSite.ID } siteTitle={ selectedSite.title } />
-				) }
+				{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
 			</Main>
 		</SubscribersPageProvider>
 	);

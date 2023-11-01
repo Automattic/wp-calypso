@@ -15,8 +15,7 @@ require_once WP_CONTENT_DIR . '/themes/h4/landing/marketing/pages/_common/lib/fu
 if ( ! isset( $args ) ) {
 	$args = array();
 }
-$happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
-$website_clasname        = '';
+$website_clasname = '';
 if ( isset( $args['website'] ) ) {
 	$website_clasname = 'is-' . $args['website'];
 }
@@ -178,7 +177,7 @@ if ( isset( $args['website'] ) ) {
 							<a role="menuitem" class="x-dropdown-link x-link"
 								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/ecommerce/' ) ); ?>"
 								tabindex="-1">
-								<?php echo esc_html( __( 'Store', 'happy-blocks' ) ); ?>
+								<?php echo esc_html( __( 'Commerce', 'happy-blocks' ) ); ?>
 							</a>
 						</li>
 						<li>
@@ -446,7 +445,7 @@ if ( isset( $args['website'] ) ) {
 								<a role="menuitem" class="x-menu-link x-link"
 									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/ecommerce/' ) ); ?>"
 									tabindex="-1">
-									<?php echo esc_html( __( 'Store', 'happy-blocks' ) ); ?>
+									<?php echo esc_html( __( 'Commerce', 'happy-blocks' ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">

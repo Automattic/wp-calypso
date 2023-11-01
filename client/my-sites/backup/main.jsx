@@ -222,7 +222,7 @@ function BackupStatus( {
 											dispatch( recordTracksEvent( 'calypso_jetpack_backup_copy_site' ) )
 										}
 									>
-										{ translate( 'Copy this site' ) }
+										{ translate( 'Copy site' ) }
 									</Button>
 								</Tooltip>
 							) }

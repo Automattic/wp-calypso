@@ -70,7 +70,7 @@ const PluginDetailsSidebarUSP = ( {
 	links = undefined,
 	first = false,
 } ) => {
-	const isNarrow = useBreakpoint( '<1040px' );
+	const isNarrow = useBreakpoint( '<960px' );
 	const Header = () => {
 		return (
 			<>

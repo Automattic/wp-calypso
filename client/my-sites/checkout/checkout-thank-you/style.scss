@@ -874,7 +874,7 @@ main.akismet-checkout-thank-you {
 
 	.akismet-checkout-thank-you__card {
 		box-shadow: 0 0 40px 0 #00000014;
-
+		margin-top: var(--masterbar-checkout-height);
 		padding: 2rem;
 		margin-bottom: 0;
 
@@ -884,6 +884,10 @@ main.akismet-checkout-thank-you {
 			background-position: bottom;
 
 			padding: 5rem;
+		}
+
+		@include break-large {
+			margin-top: calc(var(--masterbar-checkout-height) + 24px);
 		}
 	}
 

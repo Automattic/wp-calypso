@@ -11,6 +11,27 @@ main.activity-log-v2 {
 
 	.filterbar .filterbar__wrap.card {
 		display: flex;
+		flex-direction: row;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			display: block;
+			height: auto;
+			margin-bottom: 1.5rem;
+
+			.filterbar__text-control,
+			.filterbar__label {
+				margin: 0;
+			}
+
+			.filterbar__text-control {
+				margin-bottom: 5px;
+			}
+
+			.filterbar__label,
+			.filterbar__control-list {
+				display: inline-flex;
+			}
+		}
 	}
 
 	.activity-card-list__date-group-date {
@@ -54,4 +75,8 @@ main.activity-log-v2 {
 	width: 168px;
 	white-space: normal;
 	text-align: left;
+}
+
+.activity-log-v2__clone-button {
+	white-space: nowrap;
 }
