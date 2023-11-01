@@ -1,19 +1,20 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
+import { SiteDetails } from '@automattic/data-stores';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
+import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import './style.scss';
 
 type AddSubscribersModalProps = {
-	siteId: number;
-	siteTitle: string;
+	site: SiteDetails;
 };
 
-const AddSubscribersModal = ( { siteId, siteTitle }: AddSubscribersModalProps ) => {
+const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const translate = useTranslate();
 	const { showAddSubscribersModal, setShowAddSubscribersModal, addSubscribersCallback } =
 		useSubscribersPage();
@@ -26,7 +27,7 @@ const AddSubscribersModal = ( { siteId, siteTitle }: AddSubscribersModalProps ) 
 	}, [] );
 
 	const modalTitle = translate( 'Add subscribers to %s', {
-		args: [ siteTitle ],
+		args: [ site.title ],
 		comment: "%s is the site's title",
 	} );
 
@@ -40,6 +41,10 @@ const AddSubscribersModal = ( { siteId, siteTitle }: AddSubscribersModalProps ) 
 	if ( ! showAddSubscribersModal ) {
 		return null;
 	}
+
+	const isFreeSite = site?.plan?.is_free ?? false;
+	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
+	const hasSubscriberLimit = isFreeSite || isBusinessTrial;
 
 	return (
 		<Modal
@@ -61,7 +66,8 @@ const AddSubscribersModal = ( { siteId, siteTitle }: AddSubscribersModalProps ) 
 			) }
 
 			<AddSubscriberForm
-				siteId={ siteId }
+				siteId={ site.ID }
+				hasSubscriberLimit={ hasSubscriberLimit }
 				submitBtnAlwaysEnable={ true }
 				onImportStarted={ onImportStarted }
 				onImportFinished={ onImportFinished }

@@ -7,6 +7,20 @@
 	--scss-font-body-small: #{$font-body-small};
 }
 
+.plans-features-main__escape-hatch {
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+
+	button {
+		text-decoration: underline;
+		font-size: var(--scss-font-body-small);
+		font-weight: 500;
+	}
+}
+
 .is-2023-pricing-grid {
 	margin: 0 auto;
 
