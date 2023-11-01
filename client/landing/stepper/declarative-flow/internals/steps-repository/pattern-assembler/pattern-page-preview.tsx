@@ -1,11 +1,12 @@
 import { PatternRenderer } from '@automattic/block-renderer';
-import { useMemo } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-page-preview.scss';
 
 interface Props {
 	title: string;
+	style: CSSProperties;
 	patterns: Pattern[];
 	shouldShufflePosts: boolean;
 }
@@ -13,13 +14,13 @@ interface Props {
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT = 500;
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH = 1080;
 
-const PatternPagePreview = ( { title, patterns, shouldShufflePosts }: Props ) => {
+const PatternPagePreview = ( { title, style, patterns, shouldShufflePosts }: Props ) => {
 	const validPatterns = useMemo( () => patterns.filter( Boolean ) as Pattern[], [ patterns ] );
 
 	return (
 		<div className="pattern-assembler__preview">
 			<div className="pattern-assembler__preview-frame">
-				<div className="pattern-assembler__preview-frame-content">
+				<div className="pattern-assembler__preview-frame-content" style={ style }>
 					{ validPatterns.map( ( pattern ) => (
 						<PatternRenderer
 							key={ pattern.ID }
