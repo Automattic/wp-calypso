@@ -35,6 +35,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/wpcom-checkout#readme",
 	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-stripe": "workspace:^",
 		"@automattic/components": "workspace:^",
