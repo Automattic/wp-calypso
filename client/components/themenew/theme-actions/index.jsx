@@ -3,10 +3,13 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import { useSelector } from 'calypso/state';
 import { getTheme, isThemeActive } from 'calypso/state/themes/selectors';
-import useThemeShowcaseTracks from './hooks/use-theme-showcase-tracks';
-import { useThemeContext } from './theme-context';
+import useThemeShowcaseTracks from '../hooks/use-theme-showcase-tracks';
+import { useThemeContext } from '../theme-context';
+import ThemeActionCustomize from './theme-action-customize';
+import ThemeActionLivePreview from './theme-action-live-preview';
 
 export default function ThemeActions() {
 	const { themeId } = useThemeContext();
@@ -58,7 +61,11 @@ export default function ThemeActions() {
 					isVisible
 					onClose={ closePopover }
 					position="top left"
-				></PopoverMenu>
+				>
+					<ThemeActionCustomize />
+					<ThemeActionLivePreview />
+					<PopoverMenuSeparator />
+				</PopoverMenu>
 			) }
 		</span>
 	);

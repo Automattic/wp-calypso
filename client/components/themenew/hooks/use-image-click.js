@@ -1,14 +1,13 @@
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { trackClick } from 'calypso/my-sites/themes/helpers';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import { getThemeDetailsUrl, isThemeActive } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useThemeContext } from '../theme-context';
+import useIsFSEActive from './use-is-fse-active';
+import useThemeCustomizeUrl from './use-theme-customize-url';
 import useThemeShowcaseTracks from './use-theme-showcase-tracks';
 
 export default function useImageClick( { tabFilter } ) {
@@ -19,16 +18,9 @@ export default function useImageClick( { tabFilter } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isActiveTheme = useSelector( ( state ) => isThemeActive( state, themeId, siteId ) );
+	const isFSEActive = useIsFSEActive();
 
-	const { data } = useActiveThemeQuery( siteId, isLoggedIn );
-	const isFSEActive = data?.[ 0 ]?.is_block_theme ?? false;
-
-	const customizeUrl = useSelector( ( state ) =>
-		addQueryArgs( getCustomizeUrl( state, themeId, siteId, isFSEActive ), {
-			from: 'theme-info',
-			style_variation: selectedStyleVariation?.slug,
-		} )
-	);
+	const themeCustomizeUrl = useThemeCustomizeUrl();
 
 	const themeDetailsUrl = useSelector( ( state ) =>
 		getThemeDetailsUrl( state, themeId, siteId, {
@@ -40,8 +32,8 @@ export default function useImageClick( { tabFilter } ) {
 	const { recordThemeClick } = useThemeShowcaseTracks();
 
 	const imageClickUrl = useMemo(
-		() => ( isLoggedIn && isActiveTheme ? customizeUrl : themeDetailsUrl ),
-		[ customizeUrl, isActiveTheme, isLoggedIn, themeDetailsUrl ]
+		() => ( isLoggedIn && isActiveTheme ? themeCustomizeUrl : themeDetailsUrl ),
+		[ themeCustomizeUrl, isActiveTheme, isLoggedIn, themeDetailsUrl ]
 	);
 
 	const imageLabel = useMemo( () => {
