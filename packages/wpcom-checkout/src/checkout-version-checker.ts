@@ -1,12 +1,12 @@
 import config from '@automattic/calypso-config';
 
-export function hasCheckoutVersion( version: string ) {
-	/**
-	 * This function can be used to query the checkoutVersion parameter from the URL. Useful for A/B testing.
-	 * @param {string} version
-	 * @returns {boolean}
-	 */
+/**
+ * This function can be used to query the checkoutVersion parameter from the URL. Useful for A/B testing.
+ * @param {string} version
+ * @returns {boolean}
+ */
 
+export function hasCheckoutVersion( version: string ) {
 	if ( typeof window === 'undefined' ) {
 		return false;
 	}
