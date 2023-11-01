@@ -30,7 +30,7 @@
 .tag-stream__header-controls {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 
 	@include breakpoint-deprecated( ">1040px" ) {
 		padding-bottom: 20px;

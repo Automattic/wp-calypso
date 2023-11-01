@@ -739,7 +739,9 @@
 		flex-direction: row;
 		gap: 20px;
 		// compensate for line height so that visual margin is 36px;
-		margin-bottom: 29px;
+		padding: 0 0 24px 0;
+		margin-bottom: 16px;
+
 
 		.reader-tag-sidebar-stats__item {
 			display: flex;
