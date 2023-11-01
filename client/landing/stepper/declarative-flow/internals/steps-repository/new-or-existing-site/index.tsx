@@ -106,26 +106,24 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 	const Container = flow === HUNDRED_YEAR_PLAN_FLOW ? HundredYearPlanStepWrapper : StepContainer;
 
 	return (
-		<>
-			<Container
-				stepContent={
-					<IntentScreen
-						intents={ intents }
-						onSelect={ newOrExistingSiteSelected }
-						preventWidows={ preventWidows }
-						intentsAlt={ [] }
-					/>
-				}
-				formattedHeader={
-					<FormattedHeader brandFont headerText={ getHeaderText() } subHeaderAlign="center" />
-				}
-				justifyStepContent="center"
-				stepName="new-or-existing-site"
-				flowName={ flow }
-				recordTracksEvent={ recordTracksEvent }
-				hideBack={ isBlogOnboardingFlow( flow ) }
-			/>
-		</>
+		<Container
+			stepContent={
+				<IntentScreen
+					intents={ intents }
+					onSelect={ newOrExistingSiteSelected }
+					preventWidows={ preventWidows }
+					intentsAlt={ [] }
+				/>
+			}
+			formattedHeader={
+				<FormattedHeader brandFont headerText={ getHeaderText() } subHeaderAlign="center" />
+			}
+			justifyStepContent="center"
+			stepName="new-or-existing-site"
+			flowName={ flow }
+			recordTracksEvent={ recordTracksEvent }
+			hideBack={ isBlogOnboardingFlow( flow ) }
+		/>
 	);
 };
 
