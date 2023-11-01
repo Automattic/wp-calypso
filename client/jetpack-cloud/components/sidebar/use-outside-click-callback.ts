@@ -4,7 +4,6 @@ import * as React from 'react';
 /**
  * Hook that executes `callback` is the 'Escape' key is pressed
  * or if the user clicks outside of `ref`.
- *
  * @param ref       Ref to an HTML element
  * @param callback  Function to be executed
  */
