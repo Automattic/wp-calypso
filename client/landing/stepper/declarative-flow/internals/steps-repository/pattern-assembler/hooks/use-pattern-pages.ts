@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSearchParams } from 'react-router-dom';
-import { INITIAL_PAGE } from '../constants';
+import { INITIAL_PAGES } from '../constants';
 
 const usePatternPages = () => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
@@ -8,7 +8,7 @@ const usePatternPages = () => {
 
 	const pages = page_slugs.length
 		? page_slugs
-		: [ ...( isEnabled( 'pattern-assembler/add-pages' ) ? [ INITIAL_PAGE ] : [] ) ];
+		: [ ...( isEnabled( 'pattern-assembler/add-pages' ) ? INITIAL_PAGES : [] ) ];
 
 	const setPages = ( pages: string[] ) => {
 		setSearchParams(

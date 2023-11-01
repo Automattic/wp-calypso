@@ -68,7 +68,7 @@ export const ORDERED_PATTERN_CATEGORIES = [
 	'contact',
 ];
 
-export const INITIAL_PAGE = 'about';
+export const INITIAL_PAGES = [ 'about' ];
 
 export const PATTERN_PAGES_CATEGORIES = [ 'about', 'contact', 'portfolio', 'posts', 'services' ];
 
