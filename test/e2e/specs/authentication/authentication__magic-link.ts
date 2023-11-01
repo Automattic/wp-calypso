@@ -32,6 +32,11 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 		await loginPage.fillUsername( credentials.email as string );
 		await loginPage.clickSubmit();
 
+		// Introduced in https://github.com/Automattic/wp-calypso/pull/83674.
+		await page.getByText( 'Enter a password instead' ).waitFor();
+	} );
+
+	it( 'Obtain magic link from email', async function () {
 		emailClient = new EmailClient();
 		magicLinkEmail = await emailClient.getLastMatchingMessage( {
 			inboxId: SecretsManager.secrets.mailosaur.defaultUserInboxId,
