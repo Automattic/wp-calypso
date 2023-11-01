@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-type LayoutType = 'Header' | 'Sections' | 'Footer';
+type LayoutType = 'Header' | 'Footer';
 
 /**
  * Class encapsulating the Site Assembler flow.
@@ -31,13 +31,16 @@ export class SiteAssemblerFlow {
 	 * @param {LayoutType} type Type of the layout component.
 	 */
 	async clickLayoutComponentType( type: LayoutType ): Promise< void > {
-		await this.page
-			.getByRole( 'button', { name: type } )
-			// Add `or` because the categories for the Section type is now
-			// shown at the top level.
+		await Promise.race( [
+			this.page.getByRole( 'list' ).getByRole( 'button', { name: type } ).click(),
+			// Patterns formerly called "Sections" are now at top level,
+			// and they are `option` instead of a `button`.
 			// See: https://github.com/Automattic/wp-calypso/pull/83625
-			.or( this.page.getByRole( 'option', { name: type } ) )
-			.click();
+			this.page
+				.getByRole( 'listbox', { name: 'Block pattern categories' } )
+				.getByRole( 'option', { name: type } )
+				.click(),
+		] );
 	}
 
 	/**
