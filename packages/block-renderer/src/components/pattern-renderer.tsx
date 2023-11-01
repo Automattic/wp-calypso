@@ -28,6 +28,7 @@ const PatternRenderer = ( {
 
 	return (
 		<BlockRendererContainer
+			key={ pattern?.ID }
 			styles={ pattern?.styles ?? [] }
 			scripts={ pattern?.scripts ?? '' }
 			viewportWidth={ viewportWidth }
