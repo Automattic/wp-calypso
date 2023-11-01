@@ -37,7 +37,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 			type="href"
 			href={ emailManagement( selectedSite.slug, domain.name ) }
 			title={ translate( 'Email' ) }
-			description={ translate( 'Send and receive emails from your email@%(domainName)s', {
+			description={ translate( 'Send and receive emails from youremail@%(domainName)s', {
 				args: { domainName: domain.name },
 			} ) }
 			ctaText={ translate( 'Add professional email' ) }
