@@ -1,6 +1,5 @@
 import fs from 'fs';
 import { exit } from 'process';
-import util from 'util';
 import fetch from 'node-fetch';
 import yargs from 'yargs';
 
@@ -26,11 +25,12 @@ const filePath = argv.file;
 function openJestOutputJSON() {
 	let data;
 	try {
+		fs.accessSync( filePath );
 		data = fs.readFileSync( filePath, 'utf8' );
 	} catch ( error ) {
 		console.error( 'An error occurred while accessing the file:', error );
+		exit();
 	}
-
 	return JSON.parse( data );
 }
 
@@ -115,8 +115,6 @@ function buildSlackMessage( failures ) {
 			text: '@gpt, can you tell me more about the error(s) above, provide link(s) to the E2E test file in GitHub, and a snippet of the relevant code section?',
 		},
 	} );
-
-	console.log( util.inspect( body, { showHidden: false, depth: null, colors: true } ) );
 	return body;
 }
 
@@ -145,5 +143,4 @@ if ( failures.length === 0 ) {
 	exit();
 }
 const body = buildSlackMessage( failures );
-const response = await postMessage( body );
-console.log( await response.json() );
+await postMessage( body );
