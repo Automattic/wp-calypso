@@ -16,6 +16,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
+import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
@@ -123,7 +124,9 @@ class Followers extends Component {
 
 		let emptyTitle;
 		const site = this.props.site;
-		const isSiteOnFreePlan = site && site.plan.is_free;
+		const isFreeSite = site?.plan?.is_free ?? false;
+		const isHostingTrial = site ? isHostingTrialSite( site ) : false;
+		const isSiteOnFreePlan = isFreeSite || isHostingTrial;
 
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {

@@ -9,13 +9,13 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
 import type { FollowersQuery } from './types';
 import type { Member } from '../types';
-
 import './style.scss';
 
 interface Props {
@@ -81,6 +81,10 @@ function Subscribers( props: Props ) {
 		templateState = 'default';
 	}
 
+	const isFreeSite = site?.plan?.is_free ?? false;
+	const isHostingTrial = site ? isHostingTrialSite( site ) : false;
+	const isSiteOnFreePlan = isFreeSite || isHostingTrial;
+
 	switch ( templateState ) {
 		case 'default':
 		case 'loading':
@@ -141,6 +145,7 @@ function Subscribers( props: Props ) {
 									siteId={ site?.ID }
 									submitBtnAlwaysEnable={ true }
 									onImportFinished={ refetch }
+									isSiteOnFreePlan={ isSiteOnFreePlan }
 								/>
 							</EmailVerificationGate>
 						</>
