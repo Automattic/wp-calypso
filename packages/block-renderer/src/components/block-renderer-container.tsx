@@ -97,20 +97,13 @@ const ScaledBlockRendererContainer = ( {
 		bodyElement.style.width = '100%';
 	}, [] );
 
-	const contentAssetsRef = useRefEffect< HTMLBodyElement >(
-		( bodyElement ) => {
-			if ( ! children ) {
-				return;
-			}
-
-			// Load scripts and styles manually to avoid a flash of unstyled content.
-			Promise.all( [
-				loadStyles( bodyElement, styleAssets ),
-				loadScripts( bodyElement, scriptAssets as HTMLScriptElement[] ),
-			] ).then( () => setIsLoaded( true ) );
-		},
-		[ children ]
-	);
+	const contentAssetsRef = useRefEffect< HTMLBodyElement >( ( bodyElement ) => {
+		// Load scripts and styles manually to avoid a flash of unstyled content.
+		Promise.all( [
+			loadStyles( bodyElement, styleAssets ),
+			loadScripts( bodyElement, scriptAssets as HTMLScriptElement[] ),
+		] ).then( () => setIsLoaded( true ) );
+	}, [] );
 
 	const scale = containerWidth / viewportWidth;
 	const scaledHeight = contentHeight * scale || minHeight;

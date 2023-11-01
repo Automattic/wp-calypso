@@ -28,6 +28,7 @@ const PatternRenderer = ( {
 
 	return (
 		<BlockRendererContainer
+			key={ pattern?.ID }
 			styles={ pattern?.styles ?? [] }
 			scripts={ pattern?.scripts ?? '' }
 			viewportWidth={ viewportWidth }
@@ -35,12 +36,10 @@ const PatternRenderer = ( {
 			minHeight={ minHeight }
 			inlineCss={ inlineCss }
 		>
-			{ patternHtml ? (
-				<div
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: patternHtml } }
-				/>
-			) : null }
+			<div
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={ { __html: patternHtml ?? '' } }
+			/>
 		</BlockRendererContainer>
 	);
 };
