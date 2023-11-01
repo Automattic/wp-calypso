@@ -72,26 +72,23 @@ export class DomainSearchComponent {
 	 * @param {string} keyword Unique keyword to select domains.
 	 * @returns {string} Domain that was selected.
 	 */
-	async selectDomain(
-		keyword: string,
-		{ multiple }: { multiple?: boolean } = {}
-	): Promise< string > {
+	async selectDomain( keyword: string ): Promise< string > {
 		const target = this.page.getByRole( 'button' ).filter( { hasText: keyword } );
 		await target.waitFor();
 
-		const selectedDomain = await target.innerText();
+		// The `heading` element represents the entire domain (including the tld).
+		const selectedDomain = await target.getByRole( 'heading' ).innerText();
+
 		await target.click();
 
 		// If multiple domain selections are enabled, the Continue button appears
 		// on the right hand sidebar.
 		// See: 21483-explat-experiment
-		// Note: do not use this flow for the moment, because this method needs to be
-		// updated in order to support multiple domains.
-		if ( ! multiple ) {
-			await this.clickButton( 'Continue' );
-		} else {
-			// noop - multiple domains is not supported.
-		}
+		// Note: this page object does not currently support multiple domain selection.
+		await Promise.race( [
+			this.clickButton( 'Continue' ),
+			this.page.waitForURL( /start\/plans/ ),
+		] );
 
 		return selectedDomain;
 	}
