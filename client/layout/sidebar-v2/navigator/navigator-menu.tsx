@@ -51,8 +51,9 @@ export const SidebarNavigatorMenu = ( {
 								{ description && (
 									<div className="sidebar-v2__navigator-group-description">{ description }</div>
 								) }
-								{ children }
 							</li>
+
+							{ children }
 						</ul>
 					</VStack>
 				</CardBody>
