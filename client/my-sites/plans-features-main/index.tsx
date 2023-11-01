@@ -375,15 +375,16 @@ const PlansFeaturesMain = ( {
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
-	// TODO: plans from upsell takes precedence for setting intent right now
-	// - this is currently set to the default wpcom set until we have updated tailored features for all plans
-	// - at which point, we'll inject the upsell plan to the tailored plans mix instead
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
 
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 	useEffect( () => {
+		// TODO: plans from upsell takes precedence for setting intent right now
+		// - this is currently set to the default wpcom set until we have updated tailored features for all plans
+		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
+
 		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
 			setIntent( 'plans-default-wpcom' );
 		} else if ( ! intent ) {
@@ -395,14 +396,8 @@ const PlansFeaturesMain = ( {
 		}
 	}, [ intent, intentFromProps, intentFromSiteMeta.intent, planFromUpsells, forceDefaultPlans ] );
 
-	const [ showEscapeHatch, setShowEscapeHatch ] = useState( false );
-	useEffect( () => {
-		if ( intentFromSiteMeta.intent && ! isInSignup && intent !== 'plans-default-wpcom' ) {
-			setShowEscapeHatch( true );
-		} else if ( showEscapeHatch ) {
-			setShowEscapeHatch( false );
-		}
-	}, [ intent, intentFromSiteMeta.intent, isInSignup, showEscapeHatch ] );
+	const showEscapeHatch =
+		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
 		useFreeHostingTrialAssignment();
@@ -801,11 +796,10 @@ const PlansFeaturesMain = ( {
 									canUserManageCurrentPlan={ canUserManageCurrentPlan }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 								/>
-								{ showEscapeHatch && (
-									<ComparisonGridToggle
-										onClick={ () => setForceDefaultPlans( true ) }
-										label={ translate( 'Show all plans' ) }
-									/>
+								{ showEscapeHatch && hidePlansFeatureComparison && (
+									<Button onClick={ () => setForceDefaultPlans( true ) }>
+										{ translate( 'View all plans' ) }
+									</Button>
 								) }
 								{ ! hidePlansFeatureComparison && (
 									<>
@@ -818,6 +812,12 @@ const PlansFeaturesMain = ( {
 											}
 											ref={ observableForOdieRef }
 										/>
+										{ showEscapeHatch && (
+											<ComparisonGridToggle
+												onClick={ () => setForceDefaultPlans( true ) }
+												label={ translate( 'View all plans' ) }
+											/>
+										) }
 										<div
 											ref={ plansComparisonGridRef }
 											className={ comparisonGridContainerClasses }
@@ -861,6 +861,12 @@ const PlansFeaturesMain = ( {
 												onClick={ toggleShowPlansComparisonGrid }
 												label={ translate( 'Hide comparison' ) }
 											/>
+											{ showEscapeHatch && (
+												<ComparisonGridToggle
+													onClick={ () => setForceDefaultPlans( true ) }
+													label={ translate( 'View all plans' ) }
+												/>
+											) }
 										</div>
 									</>
 								) }
