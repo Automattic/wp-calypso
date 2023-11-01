@@ -49,8 +49,8 @@ const ThumbnailWrapper = ( { showEditSite, editSiteURL, children }: ThumbnailWra
 
 interface SitePreviewProps {
 	isFSEActive: boolean;
-	showEditSite: boolean;
-	showSiteDetails: boolean;
+	showEditSite?: boolean;
+	showSiteDetails?: boolean;
 }
 
 const SitePreview = ( {
