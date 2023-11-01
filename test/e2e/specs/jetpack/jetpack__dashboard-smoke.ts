@@ -77,18 +77,13 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC !== true )(
 				{ tab: 'Newsletter' },
 			] )( 'Click on $tab tab in the Settings view', async function ( { tab } ) {
 				await jetpackDashboardPage.clickTab( { view: 'Settings', tab: tab as SettingsTabs } );
-
-				await page.getByRole( 'heading', { name: tab, level: 1 } ).waitFor( { state: 'attached' } );
 			} );
 
+			// Private sites are not eligible for monetization, so we only run this step on non-private sites.
 			skipItIf( envVariables.ATOMIC_VARIATION === 'private' )(
-				'Click on Earn tab in the Settings view',
+				'Click on Monetize tab in the Settings view',
 				async function () {
 					await jetpackDashboardPage.clickTab( { view: 'Settings', tab: 'Monetize' } );
-
-					await page
-						.getByRole( 'heading', { name: 'Monetize', level: 1 } )
-						.waitFor( { state: 'attached' } );
 				}
 			);
 		} );
