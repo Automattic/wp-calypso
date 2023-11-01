@@ -8,7 +8,6 @@ import { useSelector } from 'calypso/state';
 import {
 	isJetpackMinimumVersion,
 	isJetpackSite as isJetpackSiteSelector,
-	isSimpleSite as isSimpleSiteSelector,
 } from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { SubscriptionOptions } from '../settings-reading/main';
@@ -28,14 +27,14 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
-	const isSimpleSite = useSelector( isSimpleSiteSelector );
-	const isJetpackSite = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
 
+	const isJetpackSite = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
 	const isJetpackVersionSupported = useSelector( ( state: AppState ) => {
 		return siteId && isJetpackSite && isJetpackMinimumVersion( state, siteId, '12.8' );
 	} );
 
-	const hasWelcomeEmailFeature = isSimpleSite || isJetpackVersionSupported;
+	// For Simple & Atomic sites. On Jetpack sites, ensure it meets minimum supported version.
+	const hasWelcomeEmailFeature = ! isJetpackSite || ( isJetpackSite && isJetpackVersionSupported );
 
 	const updateSubscriptionOptions =
 		( option: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
