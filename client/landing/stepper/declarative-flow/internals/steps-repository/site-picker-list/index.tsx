@@ -198,7 +198,8 @@ const SitePicker: Step = function SitePicker( { navigation, flow } ) {
 			site.capabilities?.manage_options &&
 			( site.is_wpcom_atomic || ! site.jetpack ) &&
 			! site.options?.is_wpforteams_site &&
-			! site.is_wpcom_staging_site
+			! site.is_wpcom_staging_site &&
+			site.launch_status === 'unlaunched'
 		);
 	};
 

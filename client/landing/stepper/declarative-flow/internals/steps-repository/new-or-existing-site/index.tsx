@@ -8,6 +8,7 @@ import {
 	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -101,24 +102,27 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 	const Container = flow === HUNDRED_YEAR_PLAN_FLOW ? HundredYearPlanStepWrapper : StepContainer;
 
 	return (
-		<Container
-			stepContent={
-				<IntentScreen
-					intents={ intents }
-					onSelect={ newOrExistingSiteSelected }
-					preventWidows={ preventWidows }
-					intentsAlt={ [] }
-				/>
-			}
-			formattedHeader={
-				<FormattedHeader brandFont headerText={ getHeaderText() } subHeaderAlign="center" />
-			}
-			justifyStepContent="center"
-			stepName="new-or-existing-site"
-			flowName={ flow }
-			recordTracksEvent={ recordTracksEvent }
-			hideBack={ isBlogOnboardingFlow( flow ) }
-		/>
+		<>
+			<Container
+				stepContent={
+					<IntentScreen
+						intents={ intents }
+						onSelect={ newOrExistingSiteSelected }
+						preventWidows={ preventWidows }
+						intentsAlt={ [] }
+					/>
+				}
+				formattedHeader={
+					<FormattedHeader brandFont headerText={ getHeaderText() } subHeaderAlign="center" />
+				}
+				justifyStepContent="center"
+				stepName="new-or-existing-site"
+				flowName={ flow }
+				recordTracksEvent={ recordTracksEvent }
+				hideBack={ isBlogOnboardingFlow( flow ) }
+			/>
+			{ isBlogOnboardingFlow( flow ) && <QuerySites allSites /> }
+		</>
 	);
 };
 
