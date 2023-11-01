@@ -2,11 +2,8 @@ import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import {
 	updateLaunchpadSettings,
 	LaunchpadNavigator,
-<<<<<<< HEAD
 	useSortedLaunchpadTasks,
-=======
 	useLaunchpadNavigator,
->>>>>>> 1bc24b64dd (Fixes the Luanchpad navigator ring)
 } from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
 import { useDispatch } from '@wordpress/data';
