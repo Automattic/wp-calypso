@@ -33,15 +33,11 @@ class PasswordlessSignupForm extends Component {
 		locale: 'en',
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			isSubmitting: false,
-			email: props.userEmail,
-			errorMessages: null,
-		};
-	}
+	state = {
+		isSubmitting: false,
+		email: this.props.userEmail,
+		errorMessages: null,
+	};
 
 	submitTracksEvent = ( isSuccessful, props ) => {
 		const tracksEventName = isSuccessful
