@@ -584,7 +584,9 @@ const PlansFeaturesMain = ( {
 	 * Check : https://github.com/Automattic/wp-calypso/pull/80232 for more details.
 	 */
 	const gridPlanForSpotlight = useMemo( () => {
-		return sitePlanSlug && isSpotlightOnCurrentPlan && SPOTLIGHT_ENABLED_INTENTS.includes( intent )
+		return sitePlanSlug &&
+			isSpotlightOnCurrentPlan &&
+			SPOTLIGHT_ENABLED_INTENTS.includes( intent ?? '' )
 			? gridPlansForFeaturesGrid.find(
 					( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
 			  )
