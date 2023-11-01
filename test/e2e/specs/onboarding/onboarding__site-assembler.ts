@@ -80,7 +80,7 @@ describe( 'Onboarding: Site Assembler', () => {
 			siteAssemblerFlow = new SiteAssemblerFlow( page );
 		} );
 
-		it( 'Select "Header"', async function () {
+		it( 'Select a Header pattern', async function () {
 			// The pane is now open by default.
 			// @see https://github.com/Automattic/wp-calypso/pull/80924
 			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
@@ -88,14 +88,14 @@ describe( 'Onboarding: Site Assembler', () => {
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 1 );
 		} );
 
-		it( 'Select "Sections"', async function () {
+		it( 'Select a Quote pattern', async function () {
 			await siteAssemblerFlow.clickLayoutComponentType( 'Quotes' );
 			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
 		} );
 
-		it( 'Select "Footer"', async function () {
+		it( 'Select a Footer pattern', async function () {
 			await siteAssemblerFlow.clickLayoutComponentType( 'Footer' );
 			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
