@@ -81,7 +81,7 @@ const AISitePrompt: Step = function ( props ) {
 			.catch( ( error ) => {
 				console.error( 'big sky error', error ); /* eslint-disable-line no-console */
 				setLoading( false );
-				submit?.();
+				goNext?.();
 			} );
 	};
 
