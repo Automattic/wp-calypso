@@ -9,6 +9,7 @@ import { Component } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
+import ThemeShowcaseContext from 'calypso/components/themenew/theme-showcase-context';
 import ThemesList from 'calypso/components/themes-list';
 import { getThemeShowcaseEventRecorder } from 'calypso/my-sites/themes/events/theme-showcase-tracks';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -201,6 +202,7 @@ class ThemesSelection extends Component {
 			themes,
 			source,
 			query,
+			filterString,
 			upsellUrl,
 			upsellBanner,
 			siteId,
@@ -216,40 +218,42 @@ class ThemesSelection extends Component {
 
 		return (
 			<div className="themes__selection">
-				<QueryThemes query={ query } siteId={ source } />
-				{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
-				<ThemesList
-					upsellUrl={ upsellUrl }
-					upsellBanner={ upsellBanner }
-					themes={ interlacedThemes }
-					fetchNextPage={ this.fetchNextPage }
-					recordTracksEvent={ this.props.recordTracksEvent }
-					onMoreButtonClick={ this.props.themeShowcaseEventRecorder.recordThemeClick }
-					onMoreButtonItemClick={ this.props.themeShowcaseEventRecorder.recordThemeClick }
-					getButtonOptions={ this.getOptions }
-					onScreenshotClick={ this.onScreenshotClick }
-					onStyleVariationClick={ this.onStyleVariationClick }
-					getScreenshotUrl={ this.props.getScreenshotUrl }
-					getActionLabel={ this.props.getActionLabel }
-					isActive={ this.props.isThemeActive }
-					getPrice={ this.props.getPremiumThemePrice }
-					isInstalling={ this.props.isInstallingTheme }
-					loading={ isRequesting }
-					placeholderCount={ this.props.placeholderCount }
-					bookmarkRef={ this.props.bookmarkRef }
-					siteId={ siteId }
-					searchTerm={ query.search }
-					tabFilter={ tabFilter }
-				>
-					{ this.props.children }
-				</ThemesList>
-				<SearchThemesTracks
-					query={ query }
-					interlacedThemes={ interlacedThemes }
-					wpComThemes={ themes }
-					wpOrgThemes={ wpOrgThemes }
-					isRequesting={ isRequesting }
-				/>
+				<ThemeShowcaseContext.Provider value={ { filterString, query, themes: interlacedThemes } }>
+					<QueryThemes query={ query } siteId={ source } />
+					{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
+					<ThemesList
+						upsellUrl={ upsellUrl }
+						upsellBanner={ upsellBanner }
+						themes={ interlacedThemes }
+						fetchNextPage={ this.fetchNextPage }
+						recordTracksEvent={ this.props.recordTracksEvent }
+						onMoreButtonClick={ this.props.themeShowcaseEventRecorder.recordThemeClick }
+						onMoreButtonItemClick={ this.props.themeShowcaseEventRecorder.recordThemeClick }
+						getButtonOptions={ this.getOptions }
+						onScreenshotClick={ this.onScreenshotClick }
+						onStyleVariationClick={ this.onStyleVariationClick }
+						getScreenshotUrl={ this.props.getScreenshotUrl }
+						getActionLabel={ this.props.getActionLabel }
+						isActive={ this.props.isThemeActive }
+						getPrice={ this.props.getPremiumThemePrice }
+						isInstalling={ this.props.isInstallingTheme }
+						loading={ isRequesting }
+						placeholderCount={ this.props.placeholderCount }
+						bookmarkRef={ this.props.bookmarkRef }
+						siteId={ siteId }
+						searchTerm={ query.search }
+						tabFilter={ tabFilter }
+					>
+						{ this.props.children }
+					</ThemesList>
+					<SearchThemesTracks
+						query={ query }
+						interlacedThemes={ interlacedThemes }
+						wpComThemes={ themes }
+						wpOrgThemes={ wpOrgThemes }
+						isRequesting={ isRequesting }
+					/>
+				</ThemeShowcaseContext.Provider>
 			</div>
 		);
 	}

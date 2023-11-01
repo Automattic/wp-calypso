@@ -4,6 +4,7 @@ import { useQueryThemes } from 'calypso/components/data/query-themes';
 import ThemeCollection from 'calypso/components/theme-collection';
 import ThemeCollectionItem from 'calypso/components/theme-collection/theme-collection-item';
 import ThemeCollectionPlaceholder from 'calypso/components/theme-collection/theme-collection-placeholder';
+import ThemeNew from 'calypso/components/themenew';
 import { ThemeBlock } from 'calypso/components/themes-list';
 import {
 	ThemesQuery,
@@ -93,7 +94,8 @@ export default function ShowcaseThemeCollection( {
 				{ themes.length > 0 ? (
 					themes.map( ( theme: Theme, index: number ) => (
 						<ThemeCollectionItem key={ theme.id }>
-							<ThemeBlock
+							<ThemeNew position={ index } themeId={ theme.id } />
+							{ /*<ThemeBlock
 								getActionLabel={ getActionLabel }
 								getButtonOptions={ getOptions }
 								getPrice={ getPrice }
@@ -107,7 +109,7 @@ export default function ShowcaseThemeCollection( {
 								onMoreButtonItemClick={ recordThemeClick }
 								onScreenshotClick={ onScreenshotClick }
 								onStyleVariationClick={ onStyleVariationClick }
-							/>
+					/>*/ }
 						</ThemeCollectionItem>
 					) )
 				) : (

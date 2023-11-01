@@ -8,12 +8,18 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import { getThemeDetailsUrl, isThemeActive } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useThemeContext } from '../theme-context';
+import useThemeShowcaseTracks from './use-theme-showcase-tracks';
 
-export default function useImageClick( { selectedStyleVariation, tabFilter, themeId } ) {
+export default function useImageClick( { index, tabFilter } ) {
+	const { selectedStyleVariation, themeId } = useThemeContext();
+
 	const translate = useTranslate();
+
 	const siteId = useSelector( getSelectedSiteId );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isActiveTheme = useSelector( ( state ) => isThemeActive( state, themeId, siteId ) );
+
 	const { data } = useActiveThemeQuery( siteId, isLoggedIn );
 	const isFSEActive = data?.[ 0 ]?.is_block_theme ?? false;
 
@@ -23,12 +29,15 @@ export default function useImageClick( { selectedStyleVariation, tabFilter, them
 			style_variation: selectedStyleVariation?.slug,
 		} )
 	);
+
 	const themeDetailsUrl = useSelector( ( state ) =>
 		getThemeDetailsUrl( state, themeId, siteId, {
 			styleVariationSlug: selectedStyleVariation?.slug,
 			tabFilter,
 		} )
 	);
+
+	const { recordThemeClick } = useThemeShowcaseTracks();
 
 	const imageClickUrl = useMemo(
 		() => ( isLoggedIn && isActiveTheme ? customizeUrl : themeDetailsUrl ),
@@ -49,12 +58,10 @@ export default function useImageClick( { selectedStyleVariation, tabFilter, them
 
 	const onImageClick = () => {
 		trackClick( 'theme', 'screenshot' );
-
-		/**
-		 * @todo Implement the Theme Showcase Event Recorder
-		 * to avoid massive prop drilling or obscure functions passed around.
-		 */
-		// themeShowcaseEventRecorder.recordThemeClick( themeId, index, 'screenshot_info' );
+		recordThemeClick( 'calypso_themeshowcase_theme_click', {
+			action: 'screenshot_info',
+			themePosition: index,
+		} );
 	};
 
 	return { imageClickUrl, imageLabel, onImageClick };
