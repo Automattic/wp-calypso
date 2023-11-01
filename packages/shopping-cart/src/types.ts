@@ -441,7 +441,7 @@ export interface ResponseCartProduct {
 	 * The override_code is a string that identifies the reason for the override.
 	 * When displaying the reason to the customer, use the human_readable_reason.
 	 */
-	cost_overrides?: ResponseCartCostOverrides[];
+	cost_overrides?: ResponseCartCostOverride[];
 
 	/**
 	 * If set, is used to transform the usage/quantity of units used to derive the number of units
@@ -544,7 +544,7 @@ export interface ResponseCartProductVariant {
 	volume?: number;
 }
 
-export interface ResponseCartCostOverrides {
+export interface ResponseCartCostOverride {
 	human_readable_reason: string;
 	new_price: number;
 	old_price: number;

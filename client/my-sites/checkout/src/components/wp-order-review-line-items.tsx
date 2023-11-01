@@ -62,7 +62,14 @@ const CostOverridesListStyle = styled.div`
 	}
 `;
 
-function CostOverridesList( { costOverridesList } ) {
+function CostOverridesList( {
+	costOverridesList,
+}: {
+	costOverridesList: Array< {
+		human_readable_reason: string;
+		discount_amount: number;
+	} >;
+} ) {
 	return (
 		<>
 			{ costOverridesList.map( ( costOverride ) => {
@@ -72,7 +79,7 @@ function CostOverridesList( { costOverridesList } ) {
 							{ costOverride.human_readable_reason }
 						</span>
 						<span className="cost-overrides-list-item__discount">
-							-{ formatCurrency( costOverride.discount_amount, 'USD' ) }
+							{ formatCurrency( -costOverride.discount_amount, 'USD' ) }
 						</span>
 					</div>
 				);
