@@ -9,7 +9,7 @@ import { useDispatch } from 'calypso/state';
 import { updateDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import ImportBindFileConfirmationDialog from './import-bind-file-confirmation-dialog';
-import { DnsImportBindFileButtonProps } from './types';
+import { DnsImportBindFileButtonProps, ImportedDnsRecord } from './types';
 
 function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonProps ) {
 	const { __ } = useI18n();
@@ -19,7 +19,47 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 		setImportBindFileConfirmationDialogIsVisible,
 	] = useState( false );
 	const [ submitting, setSubmitting ] = useState( false );
-	const [ recordsToImport, setRecordsToImport ] = useState< string[] | null >( null );
+	const [ recordsToImport, setRecordsToImport ] = useState< ImportedDnsRecord[] | null >( null );
+
+	const numberOfSelectedRecords = recordsToImport?.reduce( ( numberOfSelectedRecords, record ) => {
+		if ( record.selected ) {
+			return numberOfSelectedRecords + 1;
+		}
+		return numberOfSelectedRecords;
+	}, 0 );
+
+	const toggleSelectedRecord = ( recordIndex: number ) => {
+		if ( recordsToImport ) {
+			const newRecordsToImport: ImportedDnsRecord[] = [];
+			recordsToImport.forEach( ( record: ImportedDnsRecord, index: number ) => {
+				if ( index === recordIndex ) {
+					record.selected = ! record.selected;
+				}
+				newRecordsToImport.push( { ...record } );
+			} );
+			setRecordsToImport( newRecordsToImport );
+		}
+	};
+
+	const toggleAllRecords = () => {
+		if ( recordsToImport ) {
+			if ( numberOfSelectedRecords === recordsToImport?.length ) {
+				const newRecordsToImport: ImportedDnsRecord[] = [];
+				recordsToImport.forEach( ( record: ImportedDnsRecord ) => {
+					record.selected = false;
+					newRecordsToImport.push( { ...record } );
+				} );
+				setRecordsToImport( newRecordsToImport );
+			} else {
+				const newRecordsToImport: ImportedDnsRecord[] = [];
+				recordsToImport.forEach( ( record: ImportedDnsRecord ) => {
+					record.selected = true;
+					newRecordsToImport.push( { ...record } );
+				} );
+				setRecordsToImport( newRecordsToImport );
+			}
+		}
+	};
 
 	const className = classNames( 'dns__breadcrumb-button import-bind-file', {
 		'is-icon-button': isMobile,
@@ -27,7 +67,8 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 
 	const importDnsRecords = async () => {
 		try {
-			await dispatch( updateDns( domain, recordsToImport, [] ) );
+			const selectedRecordsToImport = recordsToImport?.filter( ( record ) => record.selected );
+			await dispatch( updateDns( domain, selectedRecordsToImport, [] ) );
 			dispatch( successNotice( __( 'BIND file imported succesfully!' ) ) );
 		} catch ( error: unknown ) {
 			if ( error instanceof Error ) {
@@ -66,7 +107,12 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 				formData,
 			} );
 
-			setRecordsToImport( recordsToImport );
+			const processedRecordsToImport = recordsToImport.map( ( record: ImportedDnsRecord ) => {
+				record.selected = true;
+				return record;
+			} );
+
+			setRecordsToImport( processedRecordsToImport );
 			showImportBindFileDialog();
 		} catch ( error: unknown ) {
 			if ( error instanceof Error ) {
@@ -83,6 +129,9 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 				visible={ importBindFileConfirmationDialogIsVisible }
 				onClose={ closeImportBindFileDialog }
 				recordsToImport={ recordsToImport }
+				toggleSelectedRecord={ toggleSelectedRecord }
+				toggleAllRecords={ toggleAllRecords }
+				numberOfSelectedRecords={ numberOfSelectedRecords }
 			/>
 
 			<FilePicker onPick={ onFileSelected }>
