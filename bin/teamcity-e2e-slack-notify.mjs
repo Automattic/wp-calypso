@@ -6,9 +6,6 @@ import yargs from 'yargs';
 
 /* CLI Arguments */
 
-/**
- *
- */
 const { argv } = yargs( process.argv ).options( {
 	file: {
 		type: 'string',
@@ -22,32 +19,33 @@ const filePath = argv.file;
 /* Methods */
 
 /**
- *
- * @returns
+ * Opens and parses the test result JSON produced by Jest.
+ * @returns {JSON} JSON parsed test suite result.
+ * @throws {Error} If file was not present.
  */
-function openFailuresJSON() {
+function openJestOutputJSON() {
+	let data;
 	try {
-		const data = fs.readFileSync( filePath, 'utf8' );
-
-		return JSON.parse( data );
+		data = fs.readFileSync( filePath, 'utf8' );
 	} catch ( error ) {
-		console.error( 'An error occurred while reading the JSON file:', error );
+		console.error( 'An error occurred while accessing the file:', error );
 	}
+
+	return JSON.parse( data );
 }
 
 /**
- *
- * @param {*} results
- * @returns
+ * Extracts all stack traces for failing test steps.
+ * @param {JSON} results Test suite results produced by Jest.
+ * @returns {{step: string, error: string}[]} Array of failure objects.
  */
-// Function to recursively search for "failureMessages" in the JSON
 function extractFailureMessages( results ) {
 	const failureMessages = [];
 
 	// Short circuit if nothing consistently failed.
 	// Consistently here means failed on both initial run and then the retry.
 	if ( ! results.numFailedTests ) {
-		exit();
+		return failureMessages;
 	}
 
 	for ( const result of results.testResults ) {
@@ -61,9 +59,9 @@ function extractFailureMessages( results ) {
 }
 
 /**
- *
- * @param {*} failures
- * @returns
+ * Builds the message to be posted to Slack using Block Kit.
+ * @param {{step: string, error: string}[]} failures Array of failure objects.
+ * @returns {JSON} Body for the POST request.
  */
 function buildSlackMessage( failures ) {
 	// Build the body using Slack Block Kit.
@@ -74,7 +72,7 @@ function buildSlackMessage( failures ) {
 				type: 'section',
 				text: {
 					type: 'mrkdwn',
-					text: `:x: E2E Build Failed: ${ process.env.tc_project_name }: ${ process.env.tc_build_conf_name }, #${ process.env.tc_build_number }`,
+					text: `:x: E2E Build Failed on branch *${ process.env.tc_build_branch }*: ${ process.env.tc_project_name }: ${ process.env.tc_build_conf_name }, #${ process.env.tc_build_number }`,
 				},
 			},
 			{
@@ -106,26 +104,26 @@ function buildSlackMessage( failures ) {
 						'*' + failure.step.join( ': ' ) + '*' + '\n' + '```' + failure.error.pop() + '\n```',
 				},
 			},
-			{ type: 'divider' },
-			{
-				type: 'section',
-				text: {
-					type: 'mrkdwn',
-					text: 'placeholder text so that I do not waste a8c GPT bandwidth',
-					// text: '@gpt, can you tell me more about the error in the section above, and give me a link to the E2E test file in GitHub?',
-				},
-			}
+			{ type: 'divider' }
 		);
 	}
+	body.blocks.push( {
+		type: 'section',
+		text: {
+			type: 'mrkdwn',
+			// text: 'placeholder text so that I do not waste a8c GPT bandwidth',
+			text: '@gpt, can you tell me more about the error(s) above, provide link(s) to the E2E test file in GitHub, and a snippet of the relevant code section?',
+		},
+	} );
 
 	console.log( util.inspect( body, { showHidden: false, depth: null, colors: true } ) );
 	return body;
 }
 
 /**
- *
- * @param {*} body
- * @returns
+ * Sends the message to Slack.
+ * @param {JSON} body Body for the POST request.
+ * @returns {Promise<Response>} Response from Slack endpoint.
  */
 async function postMessage( body ) {
 	return await fetch( 'https://slack.com/api/chat.postMessage', {
@@ -138,9 +136,14 @@ async function postMessage( body ) {
 	} );
 }
 
-// Build a mapping of test steps that failed and the corresponding stacktrace.
-const json = openFailuresJSON( filePath );
+const json = openJestOutputJSON( filePath );
+if ( ! json ) {
+	exit();
+}
 const failures = extractFailureMessages( json );
+if ( failures.length === 0 ) {
+	exit();
+}
 const body = buildSlackMessage( failures );
 const response = await postMessage( body );
 console.log( await response.json() );
