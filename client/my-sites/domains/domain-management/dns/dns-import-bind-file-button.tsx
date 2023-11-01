@@ -123,12 +123,12 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 	return (
 		<>
 			<ImportBindFileConfirmationDialog
-				visible={ importBindFileConfirmationDialogIsVisible }
+				numberOfSelectedRecords={ numberOfSelectedRecords }
 				onClose={ closeImportBindFileDialog }
 				recordsToImport={ recordsToImport }
-				toggleRecord={ toggleRecord }
 				toggleAllRecords={ toggleAllRecords }
-				numberOfSelectedRecords={ numberOfSelectedRecords }
+				toggleRecord={ toggleRecord }
+				visible={ importBindFileConfirmationDialogIsVisible }
 			/>
 
 			<FilePicker onPick={ onFileSelected }>

@@ -84,7 +84,7 @@ function ImportBindFileConfirmationDialog( {
 		);
 	};
 
-	const renderRecordAsRow = ( record, index ) => {
+	const renderRecordRow = ( record, index ) => {
 		const className = classNames( 'import-bind-file-confirmation-dialog__row', {
 			'not-selected': ! record.selected,
 		} );
@@ -105,7 +105,7 @@ function ImportBindFileConfirmationDialog( {
 		return [
 			renderHeader(),
 			recordsToImport.map( ( record, index ) => {
-				return renderRecordAsRow( record, index );
+				return renderRecordRow( record, index );
 			} ),
 		];
 	};
