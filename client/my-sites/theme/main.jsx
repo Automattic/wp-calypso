@@ -1144,6 +1144,7 @@ class ThemeSheet extends Component {
 			translate,
 			isLoggedIn,
 			isPremium,
+			isThemeInstalled,
 			isThemePurchased,
 			isSiteBundleEligible,
 			isSiteEligibleForManagedExternalThemes,
@@ -1242,6 +1243,7 @@ class ThemeSheet extends Component {
 				( isPremium && ! isThemePurchased ) ||
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
 				( isExternallyManagedTheme &&
+					! isThemeInstalled &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
 
 			const upsellNudgePlan =
@@ -1518,8 +1520,8 @@ export default connect(
 			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),
-			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isThemeInstalled: !! getTheme( state, siteId, themeId ),
+			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
