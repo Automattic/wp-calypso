@@ -70,8 +70,12 @@ export const isECommerceTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 };
 
+export const isBusinessTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return isHostingTrialSite( site ) || isECommerceTrialSite( site );
+};
+
 export const isTrialSite = ( site: SiteExcerptNetworkData ) => {
-	return isMigrationTrialSite( site ) || isHostingTrialSite( site ) || isECommerceTrialSite( site );
+	return isMigrationTrialSite( site ) || isBusinessTrialSite( site );
 };
 
 export const siteDefaultInterface = ( site: SiteExcerptNetworkData ) => {

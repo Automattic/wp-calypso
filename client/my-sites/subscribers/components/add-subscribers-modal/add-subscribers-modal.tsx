@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
-import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
+import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import './style.scss';
 
 type AddSubscribersModalProps = {
@@ -43,8 +43,8 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	}
 
 	const isFreeSite = site?.plan?.is_free ?? false;
-	const isHostingTrial = site ? isHostingTrialSite( site ) : false;
-	const hasSubscriberLimit = isFreeSite || isHostingTrial;
+	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
+	const hasSubscriberLimit = isFreeSite || isBusinessTrial;
 
 	return (
 		<Modal
