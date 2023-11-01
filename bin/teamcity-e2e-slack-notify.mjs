@@ -79,7 +79,7 @@ function buildSlackMessage( failures ) {
 				type: 'section',
 				text: {
 					type: 'mrkdwn',
-					text: ':teamcity: <https://teamcity.a8c.com/buildConfiguration/calypso_calypso_WebApp_Calypso_E2E_Playwright_desktop/11093402?buildTab=log&focusLine=613&linesState=530.586.587.588.589.665.666.667.668&logView=flowAware|*Build*>',
+					text: `:teamcity: <${ process.env.BUILD_URL }|*Build*>`,
 				},
 			},
 			{
