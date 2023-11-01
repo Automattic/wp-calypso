@@ -91,6 +91,7 @@ export class LoginForm extends Component {
 		currentQuery: PropTypes.object,
 		hideSignupLink: PropTypes.bool,
 		isSignupExistingAccount: PropTypes.bool,
+		sendMagicLoginLink: PropTypes.func,
 	};
 
 	state = {
@@ -257,6 +258,10 @@ export class LoginForm extends Component {
 			} );
 
 			return;
+		}
+
+		if ( isPasswordlessAccount( this.props.accountType ) ) {
+			this.props.sendMagicLoginLink?.();
 		}
 
 		this.loginUser();
