@@ -6,9 +6,9 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	StepContainer,
 	isBlogOnboardingFlow,
+	START_WRITING_FLOW,
 } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -23,58 +23,62 @@ type NewOrExistingSiteIntent = SelectItem< ChoiceType >;
 
 const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 	const translate = useTranslate();
-	if ( HUNDRED_YEAR_PLAN_FLOW === flowName ) {
-		return [
-			{
-				key: 'existing-site',
-				title: translate( 'Existing WordPress.com site' ),
-				description: (
-					<p>
-						{ translate( 'Upgrade an existing site to the %(planTitle)s.', {
-							args: {
-								planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
-							},
-						} ) }
-					</p>
-				),
-				icon: <WordPressLogo size={ 24 } />,
-				value: 'existing-site',
-				actionText: translate( 'Select a site' ),
-			},
-			{
-				key: 'new-site',
-				title: translate( 'New site' ),
-				description: (
-					<p>
-						{ translate(
-							"Craft your legacy from the ground up. We'll be by your side every step of the way."
-						) }
-					</p>
-				),
-				icon: <NewSiteIcon />,
-				value: 'new-site',
-				actionText: translate( 'Start a new site' ),
-			},
-		];
+	switch ( flowName ) {
+		case HUNDRED_YEAR_PLAN_FLOW:
+			return [
+				{
+					key: 'existing-site',
+					title: translate( 'Existing WordPress.com site' ),
+					description: (
+						<p>
+							{ translate( 'Upgrade an existing site to the %(planTitle)s.', {
+								args: {
+									planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
+								},
+							} ) }
+						</p>
+					),
+					icon: <WordPressLogo size={ 24 } />,
+					value: 'existing-site',
+					actionText: translate( 'Select a site' ),
+				},
+				{
+					key: 'new-site',
+					title: translate( 'New site' ),
+					description: (
+						<p>
+							{ translate(
+								"Craft your legacy from the ground up. We'll be by your side every step of the way."
+							) }
+						</p>
+					),
+					icon: <NewSiteIcon />,
+					value: 'new-site',
+					actionText: translate( 'Start a new site' ),
+				},
+			];
+		case START_WRITING_FLOW:
+			return [
+				{
+					key: 'existing-site',
+					title: translate( 'Existing WordPress.com site' ),
+					description: <p>{ translate( 'Using an existing site' ) }</p>,
+					icon: <WordPressLogo size={ 24 } />,
+					value: 'existing-site',
+					actionText: translate( 'Select a site' ),
+				},
+				{
+					key: 'new-site',
+					title: translate( 'New site' ),
+					description: <p>{ translate( 'Creating a new site' ) }</p>,
+					icon: <NewSiteIcon />,
+					value: 'new-site',
+					actionText: translate( 'Start a new site' ),
+				},
+			];
+		default:
+			return [];
 	}
-	return [
-		{
-			key: 'existing-site',
-			title: translate( 'Existing WordPress.com site' ),
-			description: <p>{ translate( 'Using an existing site' ) }</p>,
-			icon: <WordPressLogo size={ 24 } />,
-			value: 'existing-site',
-			actionText: translate( 'Select a site' ),
-		},
-		{
-			key: 'new-site',
-			title: translate( 'New site' ),
-			description: <p>{ translate( 'Creating a new site' ) }</p>,
-			icon: <NewSiteIcon />,
-			value: 'new-site',
-			actionText: translate( 'Start a new site' ),
-		},
-	];
 };
 
 const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation, flow } ) {
@@ -121,7 +125,6 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 				recordTracksEvent={ recordTracksEvent }
 				hideBack={ isBlogOnboardingFlow( flow ) }
 			/>
-			{ isBlogOnboardingFlow( flow ) && <QuerySites allSites /> }
 		</>
 	);
 };
