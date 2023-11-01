@@ -1,8 +1,8 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { translate } from 'i18n-calypso';
-import FormattedHeader from 'calypso/components/formatted-header';
+import { useTranslate } from 'i18n-calypso';
+import NavigationHeader from 'calypso/components/navigation-header';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
@@ -24,6 +24,7 @@ import {
 
 const DiscoverStream = ( props ) => {
 	const locale = useLocale();
+	const translate = useTranslate();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedTab = props.selectedTab;
@@ -49,6 +50,12 @@ const DiscoverStream = ( props ) => {
 		},
 	} );
 
+	// Add dailyprompt to the front of interestTags if not present.
+	const hasDailyPrompt = interestTags.filter( ( tag ) => tag.slug === 'dailyprompt' ).length;
+	if ( ! hasDailyPrompt ) {
+		interestTags.unshift( { title: translate( 'Daily prompts' ), slug: 'dailyprompt' } );
+	}
+
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
 	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
@@ -69,12 +76,10 @@ const DiscoverStream = ( props ) => {
 	}
 
 	const DiscoverHeader = () => (
-		<FormattedHeader
-			brandFont
-			headerText={ translate( 'Discover' ) }
-			subHeaderText={ subHeaderText }
-			align="left"
-			hasScreenOptions
+		<NavigationHeader
+			navigationItems={ [] }
+			title={ translate( 'Discover' ) }
+			subtitle={ subHeaderText }
 			className={ classNames( 'discover-stream-header', {
 				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 			} ) }

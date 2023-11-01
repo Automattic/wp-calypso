@@ -1,0 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.pattern-assembler__preview-list {
+	box-sizing: border-box;
+	display: grid;
+	flex: 1;
+	gap: 36px 48px;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: min-content;
+	height: 100vh;
+	overflow-y: scroll;
+	padding: 100px 12px;
+
+	@include break-huge {
+		gap: 48px;
+	}
+}

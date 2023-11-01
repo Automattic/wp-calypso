@@ -17,4 +17,6 @@ export interface AddOnMeta {
 		formattedMonthlyPrice: string;
 		formattedYearlyPrice: string;
 	} | null;
+	checkoutLink?: string;
+	exceedsSiteStorageLimits?: boolean;
 }

@@ -129,11 +129,10 @@ export const HelpCenterContactPage: FC = () => {
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
-				{ /* Easter */ }
 				<GMClosureNotice
-					displayAt="2023-04-03 00:00Z"
-					closesAt="2023-04-09 00:00Z"
-					reopensAt="2023-04-10 07:00Z"
+					displayAt="2023-11-06 00:00Z"
+					closesAt="2023-11-11 00:00Z"
+					reopensAt="2023-11-21 07:00Z"
 					enabled={ renderChat.render }
 				/>
 

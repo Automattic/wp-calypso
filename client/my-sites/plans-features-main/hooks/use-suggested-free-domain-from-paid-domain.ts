@@ -1,6 +1,7 @@
 import configApi from '@automattic/calypso-config';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
+import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
 
@@ -17,16 +18,18 @@ export function useGetFreeSubdomainSuggestion( query: string | null ): {
 
 	const result = ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined;
 
-	if ( query && ! isLoading && ! result ) {
-		logToLogstash( {
-			feature: 'calypso_client',
-			message: `Sub domain suggestion wasn't available for query: ${ query }`,
-			severity: 'warn',
-			properties: {
-				env: configApi( 'env_id' ),
-			},
-		} );
-	}
+	useEffect( () => {
+		if ( query && ! isLoading && ! result ) {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: `Sub domain suggestion wasn't available for query: ${ query }`,
+				severity: 'warn',
+				properties: {
+					env: configApi( 'env_id' ),
+				},
+			} );
+		}
+	}, [ query, isLoading, result ] );
 
 	return useMemo(
 		() => ( {

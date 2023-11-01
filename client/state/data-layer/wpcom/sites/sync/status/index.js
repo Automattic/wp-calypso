@@ -5,7 +5,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	setSiteSyncStatus,
-	siteSyncStatusFetchingFailure,
+	siteSyncFailure,
 	setSyncingTargetSite,
 	setSyncingSourceSite,
 	setSiteSyncLastRestoreId,
@@ -42,10 +42,18 @@ export const receiveStatus =
 			// Update the site object to reflect the new status
 			dispatch( requestSite( siteId ) );
 		}
+		if ( status === SiteSyncStatus.FAILED ) {
+			dispatch(
+				siteSyncFailure( {
+					siteId: siteId,
+					error: 'staging_site_sync_failed',
+				} )
+			);
+		}
 	};
 
 export const requestingStatusFailure = ( response ) => {
-	return siteSyncStatusFetchingFailure( {
+	return siteSyncFailure( {
 		siteId: response.siteId,
 		error: response.meta?.dataLayer?.error?.message,
 	} );

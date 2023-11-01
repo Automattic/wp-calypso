@@ -337,14 +337,14 @@ class Plans extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan, isHostingTrial } ) {
+	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan } ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
 		if ( isWooExpressPlan ) {
 			return this.renderWooExpressPlansPage();
 		}
-		if ( isBusinessTrial || isHostingTrial ) {
+		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
 		}
 
@@ -374,8 +374,9 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-		const isBusinessTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
-		const isHostingTrial = currentPlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
+		const isBusinessTrial =
+			currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+			currentPlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
 		const isWooExpressPlan = [
 			PLAN_WOOEXPRESS_MEDIUM,
 			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
@@ -410,7 +411,7 @@ class Plans extends Component {
 
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && <ModernizedLayout dropShadowOnHeader={ isFreePlan } /> }
+				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
@@ -456,7 +457,6 @@ class Plans extends Component {
 									isEcommerceTrial,
 									isBusinessTrial,
 									isWooExpressPlan,
-									isHostingTrial,
 								} ) }
 								<PerformanceTrackerStop />
 							</Main>

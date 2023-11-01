@@ -1,4 +1,5 @@
 import { Moment } from 'moment';
+import wasTrialSite from 'calypso/state/selectors/was-trial-site';
 import { AppState } from 'calypso/types';
 import getECommerceTrialDaysLeft from './get-ecommerce-trial-days-left';
 import getECommerceTrialExpiration from './get-ecommerce-trial-expiration';
@@ -56,6 +57,10 @@ export function isTrialExpired( state: AppState, siteId: number ): boolean | nul
 
 	if ( isSiteOnHostingTrial( state, siteId ) ) {
 		return isHostingTrialExpired( state, siteId );
+	}
+
+	if ( wasTrialSite( state, siteId ) ) {
+		return true;
 	}
 
 	return null;

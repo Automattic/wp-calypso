@@ -499,7 +499,7 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'tools.php',
 					slug: 'tools-earn',
-					title: translate( 'Earn' ),
+					title: translate( 'Monetize' ),
 					type: 'menu-item',
 					url: `/earn/${ siteDomain }`,
 				},

@@ -28,14 +28,15 @@ export const JumpToRecent = ( {
 	const [ isLastMessageVisible, setIsLastMessageVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const jumpToRecent = () => {
+		lastMessageRef?.current?.scrollIntoView( { behavior: 'smooth' } );
 		dispatch(
 			recordTracksEvent( 'calypso_odie_chat_jump_to_recent_click', {
 				bot_name_slug: botNameSlug,
 				bot_setting: botSetting,
 			} )
 		);
-		lastMessageRef?.current?.scrollIntoView( { behavior: 'smooth' } );
 	};
+
 	const { isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
