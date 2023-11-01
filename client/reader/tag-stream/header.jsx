@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -60,6 +60,7 @@ class TagStreamHeader extends Component {
 			onFollowToggle,
 			showBack,
 			showSort,
+			translate,
 		} = this.props;
 		const sortOrder = this.props.sort || 'date';
 
@@ -87,13 +88,13 @@ class TagStreamHeader extends Component {
 										selected={ sortOrder !== 'relevance' }
 										onClick={ this.useDateSort }
 									>
-										{ this.props.translate( 'Recent' ) }
+										{ translate( 'Recent' ) }
 									</SegmentedControl.Item>
 									<SegmentedControl.Item
 										selected={ sortOrder === 'relevance' }
 										onClick={ this.useRelevanceSort }
 									>
-										{ this.props.translate( 'Popular' ) }
+										{ translate( 'Popular' ) }
 									</SegmentedControl.Item>
 								</SegmentedControl>
 							) }
