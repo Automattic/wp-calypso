@@ -31,6 +31,7 @@ export const useBloggingPrompts = (
 			per_page: per_page,
 			after: start_date,
 			order: 'desc',
+			force_year: new Date().getFullYear(),
 		},
 		`/sites/${ siteId }/blogging-prompts`
 	);
