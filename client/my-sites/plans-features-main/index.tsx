@@ -375,14 +375,29 @@ const PlansFeaturesMain = ( {
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
-	// TODO: plans from upsell takes precedence for setting intent right now
-	// - this is currently set to the default wpcom set until we have updated tailored features for all plans
-	// - at which point, we'll inject the upsell plan to the tailored plans mix instead
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
-	const intent = planFromUpsells
-		? 'plans-default-wpcom'
-		: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom';
+	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
+
+	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
+	useEffect( () => {
+		// TODO: plans from upsell takes precedence for setting intent right now
+		// - this is currently set to the default wpcom set until we have updated tailored features for all plans
+		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
+
+		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
+			setIntent( 'plans-default-wpcom' );
+		} else if ( ! intent ) {
+			setIntent(
+				planFromUpsells
+					? 'plans-default-wpcom'
+					: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom'
+			);
+		}
+	}, [ intent, intentFromProps, intentFromSiteMeta.intent, planFromUpsells, forceDefaultPlans ] );
+
+	const showEscapeHatch =
+		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
 		useFreeHostingTrialAssignment();
@@ -569,7 +584,9 @@ const PlansFeaturesMain = ( {
 	 * Check : https://github.com/Automattic/wp-calypso/pull/80232 for more details.
 	 */
 	const gridPlanForSpotlight = useMemo( () => {
-		return sitePlanSlug && isSpotlightOnCurrentPlan && SPOTLIGHT_ENABLED_INTENTS.includes( intent )
+		return sitePlanSlug &&
+			isSpotlightOnCurrentPlan &&
+			SPOTLIGHT_ENABLED_INTENTS.includes( intent ?? '' )
 			? gridPlansForFeaturesGrid.find(
 					( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
 			  )
@@ -781,6 +798,13 @@ const PlansFeaturesMain = ( {
 									canUserManageCurrentPlan={ canUserManageCurrentPlan }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 								/>
+								{ showEscapeHatch && hidePlansFeatureComparison && (
+									<div className="plans-features-main__escape-hatch">
+										<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
+											{ translate( 'View all plans' ) }
+										</Button>
+									</div>
+								) }
 								{ ! hidePlansFeatureComparison && (
 									<>
 										<ComparisonGridToggle
@@ -792,6 +816,13 @@ const PlansFeaturesMain = ( {
 											}
 											ref={ observableForOdieRef }
 										/>
+										{ showEscapeHatch && (
+											<div className="plans-features-main__escape-hatch">
+												<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
+													{ translate( 'View all plans' ) }
+												</Button>
+											</div>
+										) }
 										<div
 											ref={ plansComparisonGridRef }
 											className={ comparisonGridContainerClasses }
@@ -835,6 +866,13 @@ const PlansFeaturesMain = ( {
 												onClick={ toggleShowPlansComparisonGrid }
 												label={ translate( 'Hide comparison' ) }
 											/>
+											{ showEscapeHatch && (
+												<div className="plans-features-main__escape-hatch">
+													<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
+														{ translate( 'View all plans' ) }
+													</Button>
+												</div>
+											) }
 										</div>
 									</>
 								) }
