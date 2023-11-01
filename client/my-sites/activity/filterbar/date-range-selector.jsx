@@ -1,21 +1,30 @@
-import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight as compose } from 'lodash';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import DateRangePicker from 'calypso/components/date-range';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import DateControlPicker from 'calypso/components/stats-date-control/stats-date-control-picker';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 export class DateRangeSelector extends Component {
 	state = {
 		fromDate: null,
 		toDate: null,
+		datePickerLabel: null,
+		selectedShortcut: null,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			fromDate: this.getFromDate(),
+			toDate: this.getToDate(),
+			datePickerLabel: props.customLabel ? props.customLabel : this.getFormattedDate(),
+		};
+	}
 
 	handleDateRangeCommit = ( startDate, endDate ) => {
 		const { moment, selectDateRange } = this.props;
@@ -122,45 +131,71 @@ export class DateRangeSelector extends Component {
 	};
 
 	render() {
-		const { customLabel, isVisible } = this.props;
+		const { translate } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
-		const now = new Date();
 
-		const buttonClass = classnames( 'filterbar__selection', {
-			'is-selected': from,
-			'is-active': isVisible && ! from,
-		} );
+		const dateRange = {
+			chartStart: from,
+			chartEnd: to,
+		};
+
+		const shortcutList = [
+			{
+				id: 'today',
+				label: translate( 'Today' ),
+				offset: 0,
+				range: 0,
+				period: 'day',
+			},
+			{
+				id: 'yesterday',
+				label: translate( 'Yesterday' ),
+				offset: 1,
+				range: 0,
+				period: 'day',
+			},
+			{
+				id: 'last-7-days',
+				label: translate( 'Last 7 Days' ),
+				offset: 0,
+				range: 6,
+				period: 'day',
+			},
+			{
+				id: 'last-30-days',
+				label: translate( 'Last 30 Days' ),
+				offset: 0,
+				range: 29,
+				period: 'day',
+			},
+			{
+				id: 'last-year',
+				label: translate( 'Last Year' ),
+				offset: 0,
+				range: 364, // ranges are zero based!
+				period: 'month',
+			},
+		];
+
+		const onShorcuteSelect = ( shortcut ) => {
+			const { moment } = this.props;
+			const anchor = moment().subtract( shortcut.offset, 'days' );
+			const endDate = anchor.format( 'YYYY-MM-DD' );
+			const startDate = anchor.subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
+			this.handleDateRangeCommit( startDate, endDate );
+			this.setState( { datePickerLabel: shortcut.label } );
+			this.setState( { selectedShortcut: shortcut.id } );
+		};
 
 		return (
-			<DateRangePicker
-				selectedStartDate={ from }
-				selectedEndDate={ to }
-				lastSelectableDate={ now }
-				onDateCommit={ this.handleDateRangeCommit }
-				renderTrigger={ ( props ) => (
-					<Fragment>
-						<Button
-							className={ buttonClass }
-							compact
-							borderless
-							onClick={ props.onTriggerClick }
-							ref={ props.buttonRef }
-						>
-							{ customLabel ? customLabel : this.getFormattedDate( from, to ) }
-						</Button>
-						{ ( from || to ) && (
-							<Button
-								className="filterbar__selection-close"
-								compact
-								borderless
-								onClick={ this.handleResetSelection }
-							>
-								<Gridicon icon="cross-small" />
-							</Button>
-						) }
-					</Fragment>
-				) }
+			<DateControlPicker
+				buttonLabel={ this.state.datePickerLabel }
+				dateRange={ dateRange }
+				shortcutList={ shortcutList }
+				onApply={ this.handleDateRangeCommit }
+				onShortcut={ onShorcuteSelect }
+				selectedShortcut={ this.state.selectedShortcut }
 			/>
 		);
 	}
