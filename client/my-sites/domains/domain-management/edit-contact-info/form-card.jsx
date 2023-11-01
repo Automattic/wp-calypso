@@ -472,7 +472,7 @@ class EditContactInfoFormCard extends Component {
 						) }
 						icon="cross-circle"
 						showDismiss={ false }
-						status="is-warning"
+						status="is-error"
 					>
 						<NoticeAction onClick={ () => this.props.verifyIcannEmail( selectedDomain.domain ) }>
 							{ translate( 'Resend Email' ) }
