@@ -126,7 +126,7 @@ class Followers extends Component {
 		const site = this.props.site;
 		const isFreeSite = site?.plan?.is_free ?? false;
 		const isHostingTrial = site ? isHostingTrialSite( site ) : false;
-		const isSiteOnFreePlan = isFreeSite || isHostingTrial;
+		const hasSubscriberLimit = isFreeSite || isHostingTrial;
 
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
@@ -141,7 +141,7 @@ class Followers extends Component {
 							>
 								<AddSubscriberForm
 									siteId={ this.props.site.ID }
-									isSiteOnFreePlan={ isSiteOnFreePlan }
+									hasSubscriberLimit={ hasSubscriberLimit }
 									flowName="people"
 									showSubtitle={ true }
 									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }

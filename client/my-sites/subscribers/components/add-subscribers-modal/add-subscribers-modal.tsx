@@ -44,7 +44,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isHostingTrial = site ? isHostingTrialSite( site ) : false;
-	const isSiteOnFreePlan = isFreeSite || isHostingTrial;
+	const hasSubscriberLimit = isFreeSite || isHostingTrial;
 
 	return (
 		<Modal
@@ -67,7 +67,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 
 			<AddSubscriberForm
 				siteId={ site.ID }
-				isSiteOnFreePlan={ isSiteOnFreePlan }
+				hasSubscriberLimit={ hasSubscriberLimit }
 				submitBtnAlwaysEnable={ true }
 				onImportStarted={ onImportStarted }
 				onImportFinished={ onImportFinished }

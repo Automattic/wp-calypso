@@ -83,7 +83,7 @@ function Subscribers( props: Props ) {
 
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isHostingTrial = site ? isHostingTrialSite( site ) : false;
-	const isSiteOnFreePlan = isFreeSite || isHostingTrial;
+	const hasSubscriberLimit = isFreeSite || isHostingTrial;
 
 	switch ( templateState ) {
 		case 'default':
@@ -145,7 +145,7 @@ function Subscribers( props: Props ) {
 									siteId={ site?.ID }
 									submitBtnAlwaysEnable={ true }
 									onImportFinished={ refetch }
-									isSiteOnFreePlan={ isSiteOnFreePlan }
+									hasSubscriberLimit={ hasSubscriberLimit }
 								/>
 							</EmailVerificationGate>
 						</>
