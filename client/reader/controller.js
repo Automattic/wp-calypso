@@ -362,3 +362,24 @@ export async function pendingSubscriptionsManager( context, next ) {
 	);
 	return next();
 }
+
+/**
+ * Middleware to redirect logged out users to /discover.
+ * Intended for reader pages that do not have
+ * logged out support such as /read.
+ *
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectLoggedOutToDiscover( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	const discoverUrl = window.location.origin + '/discover';
+
+	return page.redirect( discoverUrl );
+}
