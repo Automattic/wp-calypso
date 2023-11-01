@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
 .hundred-year-plan-step-wrapper.new-or-existing-site {
@@ -48,6 +49,19 @@
 			transform-origin: 0 0;
 		}
 	}
+	.formatted-header {
+		.formatted-header__title {
+			font-size: rem(32px);
+			@include break-small {
+				font-size: rem(36px);
+			}
+		}
+		margin-top: 72px;
+		@include break-small {
+			margin-top: 0;
+		}
+	}
+
 	.step-container {
 		display: flex;
 		flex-direction: column;
@@ -55,11 +69,33 @@
 		align-items: center;
 		-webkit-box-pack: center;
 		justify-content: center;
-		width: 100%;
-		min-height: calc(100vh - 100px);
+		@include break-small {
+			margin-top: 0;
+			min-height: 100vh;
+		}
 
 		.step-container__content {
 			min-height: auto;
+			@media (max-width: $break-mobile ) {
+				width: 100%;
+			}
+			.select-items {
+				@media (max-width: $break-mobile ) {
+					margin-left: 20px;
+					margin-right: 20px;
+				}
+			}
+			.select-items__item {
+				@media (min-width: $break-small ) {
+					width: 456px;
+				}
+
+				button.select-items__item-button {
+					@media (max-width: $break-mobile ) {
+						width: 279px;
+					}
+				}
+			}
 		}
 	}
 }

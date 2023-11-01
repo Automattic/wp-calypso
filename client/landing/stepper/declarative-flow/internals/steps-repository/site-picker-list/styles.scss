@@ -3,6 +3,9 @@
 @import "../hundred-year-plan-step-wrapper/mixins";
 
 .site-picker {
+	.step-container__header {
+		margin-top: 74px;
+	}
 	.step-container__content {
 		.formatted-header {
 			.formatted-header__title {

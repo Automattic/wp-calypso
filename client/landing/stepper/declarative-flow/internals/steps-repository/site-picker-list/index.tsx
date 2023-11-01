@@ -96,7 +96,6 @@ const Placeholders = () => (
 
 const ConfirmationModal = ( {
 	isFetching,
-	siteTitle,
 	siteDomain,
 	onConfirm,
 	closeModal,
@@ -121,15 +120,18 @@ const ConfirmationModal = ( {
 			) : (
 				<>
 					<Subtitle>
-						{ translate( 'Are you sure use {{strong}}%(siteTitle)s (%(siteDomain)s){{/strong}}?', {
-							args: {
-								siteTitle: siteTitle || '',
-								siteDomain: siteDomain || '',
-							},
-							components: {
-								strong: <strong />,
-							},
-						} ) }
+						{ translate(
+							'Starting with {{strong}}%(siteDomain)s{{/strong}} will reset content and customization of your site.{{br}}{{/br}}Any blog posts and media uploads will be unpublished and saved.',
+							{
+								args: {
+									siteDomain: siteDomain || '',
+								},
+								components: {
+									strong: <strong />,
+									br: <br />,
+								},
+							}
+						) }
 					</Subtitle>
 					<Footer>
 						<ButtonsContainer>
