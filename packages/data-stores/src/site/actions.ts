@@ -468,7 +468,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			footerHtml,
 			pages,
 			globalStyles,
-			shouldResetContent,
+			canReplaceContent,
 			siteSetupOption,
 		}: AssembleSiteOptions = {}
 	) {
@@ -506,7 +506,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				templates,
 				pages,
 				global_styles: globalStyles,
-				should_reset_content: shouldResetContent,
+				can_replace_content: canReplaceContent,
 				site_setup_option: siteSetupOption,
 			},
 			method: 'POST',
