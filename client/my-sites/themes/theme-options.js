@@ -191,6 +191,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! siteId ||
 			isJetpackSiteMultiSite( state, siteId ) ||
 			( isExternallyManagedTheme( state, themeId ) &&
+				! getTheme( state, siteId, themeId ) &&
 				! isMarketplaceThemeSubscribed( state, themeId, siteId ) ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			( ! isWpcomTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) ||
