@@ -2,13 +2,16 @@ import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import {
 	updateLaunchpadSettings,
 	LaunchpadNavigator,
+<<<<<<< HEAD
 	useSortedLaunchpadTasks,
+=======
+	useLaunchpadNavigator,
+>>>>>>> 1bc24b64dd (Fixes the Luanchpad navigator ring)
 } from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useLaunchpadNavigator } from 'calypso/data/launchpad-navigator/use-launchpad-navigator';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
