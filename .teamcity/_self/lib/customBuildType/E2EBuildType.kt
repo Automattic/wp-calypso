@@ -157,23 +157,6 @@ open class E2EBuildType(
 			}
 
 			bashNodeScript {
-				name = "Send TeamCity Message"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					export slack_oauth_token="%TEAMCITY_SLACK_RICH_NOTIFICATION_APP_OAUTH_TOKEN%"
-					export tc_build_conf_name="%system.teamcity.buildConfName%"
-					export tc_project_name="%system.teamcity.projectName%"
-					export tc_build_number=%build.number%
-					export tc_build_branch=%teamcity.build.branch%
-
-					node ./bin/teamcity-e2e-slack-notify.mjs --file test/e2e/test.json
-				"""
-				dockerImage = "%docker_image_e2e%"
-			}
-
-			bashNodeScript {
 				name = "Collect results"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 				scriptContent = """
