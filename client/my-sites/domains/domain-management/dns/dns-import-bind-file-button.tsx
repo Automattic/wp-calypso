@@ -22,13 +22,10 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 	const [ recordsToImport, setRecordsToImport ] = useState< ImportedDnsRecord[] | null >( null );
 
 	const numberOfSelectedRecords = recordsToImport?.reduce( ( numberOfSelectedRecords, record ) => {
-		if ( record.selected ) {
-			return numberOfSelectedRecords + 1;
-		}
-		return numberOfSelectedRecords;
+		return numberOfSelectedRecords + ( record.selected ? 1 : 0 );
 	}, 0 );
 
-	const toggleSelectedRecord = ( recordIndex: number ) => {
+	const toggleRecord = ( recordIndex: number ) => {
 		if ( recordsToImport ) {
 			const newRecordsToImport: ImportedDnsRecord[] = [];
 			recordsToImport.forEach( ( record: ImportedDnsRecord, index: number ) => {
@@ -129,7 +126,7 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 				visible={ importBindFileConfirmationDialogIsVisible }
 				onClose={ closeImportBindFileDialog }
 				recordsToImport={ recordsToImport }
-				toggleSelectedRecord={ toggleSelectedRecord }
+				toggleRecord={ toggleRecord }
 				toggleAllRecords={ toggleAllRecords }
 				numberOfSelectedRecords={ numberOfSelectedRecords }
 			/>

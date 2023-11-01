@@ -9,7 +9,7 @@ function ImportBindFileConfirmationDialog( {
 	onClose,
 	recordsToImport,
 	toggleAllRecords,
-	toggleSelectedRecord,
+	toggleRecord,
 	visible,
 } ) {
 	const { __, _n } = useI18n();
@@ -94,7 +94,7 @@ function ImportBindFileConfirmationDialog( {
 				<CheckboxControl
 					__nextHasNoMarginBottom
 					checked={ record.selected }
-					onChange={ () => toggleSelectedRecord( index ) }
+					onChange={ () => toggleRecord( index ) }
 					label={ renderRecordAsString( record ) }
 				/>
 			</div>
