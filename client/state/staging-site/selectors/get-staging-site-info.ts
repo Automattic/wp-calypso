@@ -4,5 +4,12 @@ import 'calypso/state/staging-site/init';
 
 const emptyData = {};
 
-export const getStagingSiteInfo = ( state: AppState, siteId: number | null ) =>
-	siteId ? state?.stagingSite?.[ siteId ] ?? emptyData : emptyData;
+export const getStagingSiteInfo = ( state: AppState, siteId: number | null ) => {
+	if ( ! siteId ) {
+		return emptyData;
+	}
+	if ( ! state?.stagingSite?.[ siteId ] ) {
+		return emptyData;
+	}
+	return state?.stagingSite?.[ siteId ];
+};
