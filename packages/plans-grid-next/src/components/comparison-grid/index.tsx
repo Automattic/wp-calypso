@@ -983,53 +983,35 @@ const ComparisonGrid = ( {
 	const isMediumBreakpoint = usePricingBreakpoint( mediumBreakpoint );
 	const isSmallBreakpoint = usePricingBreakpoint( smallBreakpoint );
 
-	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
+	const [ visibleGridPlans, setVisibleGridPlans ] = useState< GridPlan[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {
 		return sortPlans( gridPlans, currentSitePlanSlug, isMediumBreakpoint );
 	}, [ gridPlans, currentSitePlanSlug, isMediumBreakpoint ] );
 
 	useEffect( () => {
-		let newVisiblePlans = displayedGridPlans.map( ( { planSlug } ) => planSlug );
-		let visibleLength = newVisiblePlans.length;
+		let visibleLength = displayedGridPlans.length;
 
 		visibleLength = isLargeBreakpoint ? 4 : visibleLength;
 		visibleLength = isMediumBreakpoint ? 3 : visibleLength;
 		visibleLength = isSmallBreakpoint ? 2 : visibleLength;
 
-		if ( newVisiblePlans.length !== visibleLength ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
-		}
-
-		setVisiblePlans( newVisiblePlans );
-	}, [ isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, displayedGridPlans, isInSignup ] );
-
-	const visibleGridPlans = useMemo(
-		() =>
-			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = displayedGridPlans.find(
-					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
-				);
-
-				if ( gridPlan ) {
-					acc.push( gridPlan );
-				}
-
-				return acc;
-			}, [] as GridPlan[] ),
-		[ visiblePlans, displayedGridPlans ]
-	);
+		setVisibleGridPlans( displayedGridPlans.slice( 0, visibleLength ) );
+	}, [ isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, displayedGridPlans ] );
 
 	const onPlanChange = useCallback(
 		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
-			const newPlan = event.currentTarget.value;
-			const newVisiblePlans = visiblePlans.map( ( plan ) =>
-				plan === currentPlan ? ( newPlan as PlanSlug ) : plan
-			);
-
-			setVisiblePlans( newVisiblePlans );
+			const newPlanSlug = event.currentTarget.value;
+			setVisibleGridPlans( ( visibleGridPlans ) => {
+				const newPlan = displayedGridPlans.find(
+					( plan ) => plan.planSlug === newPlanSlug
+				) as GridPlan;
+				return visibleGridPlans.map( ( plan ) =>
+					plan.planSlug === currentPlan ? newPlan : plan
+				);
+			} );
 		},
-		[ visiblePlans ]
+		[ displayedGridPlans ]
 	);
 
 	const planFeatureFootnotes = useMemo( () => {
