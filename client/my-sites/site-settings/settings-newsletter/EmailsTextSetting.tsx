@@ -30,10 +30,11 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 
 	const isJetpackSite = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
 	const isJetpackVersionSupported = useSelector( ( state: AppState ) => {
-		return siteId && isJetpackSite && isJetpackMinimumVersion( state, siteId, '12.8' );
+		return siteId && isJetpackSite && isJetpackMinimumVersion( state, siteId, '12.8-a.11' );
 	} );
 
-	// For Simple & Atomic sites. On Jetpack sites, ensure it meets minimum supported version.
+	// isJetpackSite applies for both Atomic & self-hosted Jetpack,
+	// it needs to meet the minimum version 12.8-a.11 at least.
 	const hasWelcomeEmailFeature = ! isJetpackSite || ( isJetpackSite && isJetpackVersionSupported );
 
 	const updateSubscriptionOptions =
