@@ -184,7 +184,7 @@ const WebServerSettingsCard = ( {
 		);
 	};
 
-	const recommendedValue = '8.0';
+	const recommendedValue = '8.1';
 
 	const changePhpVersion = ( event ) => {
 		const newVersion = event.target.value;
@@ -208,21 +208,18 @@ const WebServerSettingsCard = ( {
 				value: '7.4',
 			},
 			{
+				label: '8.0',
+				value: '8.0',
+			},
+			{
 				label: translate( '%s (recommended)', {
-					args: '8.0',
+					args: '8.1',
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: recommendedValue,
 			},
 			{
-				label: '8.1',
-				value: '8.1',
-			},
-			{
-				label: translate( '%s (experimental)', {
-					args: '8.2',
-					comment: 'PHP Version for a version switcher',
-				} ),
+				label: '8.2',
 				value: '8.2',
 			},
 		];
