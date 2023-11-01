@@ -11,8 +11,6 @@ import './style.scss';
 // Default estimated time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-const flowsWithDesignPicker = [ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ];
-
 const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => {
 	const { __ } = useI18n();
 	let steps = [];
@@ -38,6 +36,32 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 		case HOSTING_LP_FLOW:
 			steps = [ { title: __( 'Creating your account' ) } ];
 			break;
+		case 'setup-site':
+			// Custom durations give a more believable loading effect while setting up
+			// the site with headstart. Which can take quite a long time.
+			steps = [
+				{ title: __( 'Laying the foundations' ), duration: 7000 },
+				{ title: __( 'Turning on the lights' ), duration: 3000 },
+				{ title: __( 'Making it beautiful' ), duration: 4000 },
+				{ title: __( 'Personalizing your site' ), duration: 7000 },
+				{ title: __( 'Sprinkling some magic' ), duration: 4000 },
+				{ title: __( 'Securing your data' ), duration: 9000 },
+				{ title: __( 'Enabling encryption' ), duration: 3000 },
+				{ title: __( 'Optimizing your content' ), duration: 6000 },
+				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
+				{ title: __( 'Closing the loop' ) },
+			];
+			break;
+		case 'do-it-for-me':
+		case 'do-it-for-me-store':
+			steps = [
+				{ title: __( 'Saving your selections' ), duration: 7000 },
+				{ title: __( 'Turning on the lights' ), duration: 3000 },
+				{ title: __( 'Planning the next chess move' ), duration: 4000 },
+				{ title: __( 'Making you cookies' ), duration: 9000 },
+				{ title: __( 'Closing the loop' ) },
+			];
+			break;
 		default:
 			steps = [
 				! isDestinationSetupSiteFlow && { title: __( 'Building your site' ) },
@@ -47,23 +71,6 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 				{ title: __( 'Making you cookies' ) },
 				{ title: __( 'Planning the next chess move' ) },
 			];
-	}
-
-	if ( flowsWithDesignPicker.includes( flowName ) ) {
-		// Custom durations give a more believable loading effect while setting up
-		// the site with headstart. Which can take quite a long time.
-		steps = [
-			{ title: __( 'Laying the foundations' ), duration: 7000 },
-			{ title: __( 'Turning on the lights' ), duration: 3000 },
-			{ title: __( 'Making it beautiful' ), duration: 4000 },
-			{ title: __( 'Personalizing your site' ), duration: 7000 },
-			{ title: __( 'Sprinkling some magic' ), duration: 4000 },
-			{ title: __( 'Securing your data' ), duration: 9000 },
-			{ title: __( 'Enabling encryption' ), duration: 3000 },
-			{ title: __( 'Optimizing your content' ), duration: 6000 },
-			{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
-			{ title: __( 'Closing the loop' ) },
-		];
 	}
 
 	return useRef( steps.filter( Boolean ) );
@@ -78,7 +85,8 @@ export default function ReskinnedProcessingScreen( props ) {
 	const { isDestinationSetupSiteFlow, flowName } = props;
 	const totalSteps = steps.current.length;
 	const shouldShowNewSpinner =
-		isDestinationSetupSiteFlow || flowsWithDesignPicker.includes( flowName );
+		isDestinationSetupSiteFlow ||
+		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ].includes( flowName );
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
