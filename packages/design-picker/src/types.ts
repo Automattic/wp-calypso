@@ -96,6 +96,7 @@ export interface PreviewData {
 export interface Design {
 	slug: string;
 	title: string;
+	shortDescription?: string | null;
 	description?: string;
 	recipe?: DesignRecipe;
 	is_premium: boolean;

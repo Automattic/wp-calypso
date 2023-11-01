@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import {
 	Onboard,
 	updateLaunchpadSettings,
-	useStarterDesignBySlug,
 	useStarterDesignsQuery,
 	getThemeIdFromStylesheet,
 } from '@automattic/data-stores';
@@ -214,7 +213,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		pickDesign,
 		pickUnlistedDesign,
 		recordPreviewDesign,
-		recordPreviewStyleVariation
+		recordPreviewStyleVariation,
+		disableCheckoutImmediately
 	);
 
 	const shouldUnlockGlobalStyles =
@@ -226,16 +226,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}, [ isPreviewingDesign ] );
 
 	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
-	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
-		enabled: isPreviewingDesign,
-		select: ( design: Design ) => {
-			if ( disableCheckoutImmediately && design?.style_variations ) {
-				design.style_variations = [];
-			}
-
-			return design;
-		},
-	} );
 
 	function getEventPropsByDesign(
 		design: Design,
@@ -821,11 +811,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					}
 					title={ headerDesignTitle }
 					selectedDesignTitle={ designTitle }
-					shortDescription={ selectedDesign.description }
-					description={ selectedDesignDetails?.description }
-					variations={
-						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
-					}
+					shortDescription={ selectedDesign.shortDescription }
+					description={ selectedDesign?.description }
+					variations={ selectedDesignHasStyleVariations ? selectedDesign?.style_variations : [] }
 					selectedVariation={ selectedStyleVariation }
 					onSelectVariation={ previewDesignVariation }
 					actionButtons={ actionButtons }

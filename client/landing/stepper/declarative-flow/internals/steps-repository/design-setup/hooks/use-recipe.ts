@@ -1,11 +1,12 @@
+import { useStarterDesignBySlug } from '@automattic/data-stores';
 import {
-	isDefaultGlobalStylesVariationSlug,
 	isAssemblerDesign,
 	isAssemblerSupported,
+	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE } from '../../../../../stores';
 import type { GlobalStyles, OnboardSelect, StarterDesigns } from '@automattic/data-stores';
@@ -18,7 +19,8 @@ const useRecipe = (
 	pickDesign: ( design?: Design, options?: { shouldGoToAssembler: boolean } ) => void,
 	pickUnlistedDesign: ( theme: string ) => void,
 	recordPreviewDesign: ( design: Design, styleVariation?: StyleVariation ) => void,
-	recordPreviewStyleVariation: ( design: Design, styleVariation?: StyleVariation ) => void
+	recordPreviewStyleVariation: ( design: Design, styleVariation?: StyleVariation ) => void,
+	disableCheckoutImmediately: boolean
 ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
@@ -67,15 +69,22 @@ const useRecipe = (
 		[]
 	);
 
-	const preselectedDesign = useMemo(
-		() =>
-			allDesigns?.designs.find( ( design ) =>
-				design.is_virtual
-					? design.recipe?.slug === preselectedThemeSlug
-					: design.slug === preselectedThemeSlug
-			),
-		[ allDesigns ]
-	);
+	const { data: preselectedDesignDetails } = useStarterDesignBySlug( preselectedThemeSlug || '', {
+		enabled: !! preselectedThemeSlug,
+		select: ( design: Design ) => {
+			if ( disableCheckoutImmediately && design?.style_variations ) {
+				design.style_variations = [];
+			}
+
+			const descriptionArray = design.description?.split( '.' );
+			design.shortDescription =
+				descriptionArray && descriptionArray.length > 0 ? descriptionArray[ 0 ] + '.' : null;
+
+			return design;
+		},
+	} );
+
+	const preselectedDesign = preselectedThemeSlug ? preselectedDesignDetails : null;
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
@@ -208,10 +217,16 @@ const useRecipe = (
 			return;
 		}
 
-		if ( preselectedThemeSlug && ! preselectedDesign ) {
+		if ( isPreviewingDesign && preselectedThemeSlug && ! preselectedDesign ) {
 			pickUnlistedDesign( preselectedThemeSlug );
 		}
-	}, [ allDesigns, preselectedThemeSlug, preselectedDesign, pickUnlistedDesign ] );
+	}, [
+		allDesigns,
+		preselectedThemeSlug,
+		preselectedDesign,
+		pickUnlistedDesign,
+		isPreviewingDesign,
+	] );
 
 	/**
 	 * Initialize the preselected colors
