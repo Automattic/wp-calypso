@@ -116,6 +116,6 @@ export class DomainSearchComponent {
 	 * @param {string} text Exact text to match on.
 	 */
 	async clickButton( text: string ): Promise< void > {
-		await this.page.getByRole( 'button', { name: text } ).click();
+		await this.page.getByRole( 'button', { name: text, exact: true } ).click();
 	}
 }
