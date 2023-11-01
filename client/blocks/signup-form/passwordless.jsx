@@ -32,11 +32,17 @@ class PasswordlessSignupForm extends Component {
 		locale: 'en',
 	};
 
-	state = {
-		isSubmitting: false,
-		email: this.props.step && this.props.step.form ? this.props.step.form.email : '',
-		errorMessages: null,
-	};
+	constructor( props ) {
+		super( props );
+
+		const email = props.step?.form?.email ?? props.queryArgs?.user_email;
+
+		this.state = {
+			isSubmitting: false,
+			email,
+			errorMessages: null,
+		};
+	}
 
 	submitTracksEvent = ( isSuccessful, props ) => {
 		const tracksEventName = isSuccessful
