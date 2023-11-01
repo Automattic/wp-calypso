@@ -6,6 +6,7 @@ import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import ManageSelectedSiteSidebar from '../sidebar-navigation/manage-selected-site';
 import Landing from './main';
 import { isSiteEligibleForJetpackCloud, getLandingPath } from './selectors';
 
@@ -31,6 +32,11 @@ const landForSiteId = ( siteId: number | null, context: PageJS.Context, next: ()
 	const siteFeatures = getFeaturesBySiteId( state, siteId );
 	if ( isEligible === null || ! siteFeatures ) {
 		debug( '[landForSiteId]: rendering interstitial Landing page' );
+
+		// To make the UI feel seamless transition, we want to have the sidebar appear on the interstitial page
+		if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
+			context.secondary = <ManageSelectedSiteSidebar path={ context.path } />;
+		}
 		context.primary = <Landing siteId={ siteId as number } />;
 		next();
 		return;
