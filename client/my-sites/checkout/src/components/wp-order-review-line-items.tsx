@@ -64,11 +64,13 @@ const CostOverridesListStyle = styled.div`
 
 function CostOverridesList( {
 	costOverridesList,
+	currency,
 }: {
 	costOverridesList: Array< {
 		human_readable_reason: string;
 		discount_amount: number;
 	} >;
+	currency: string;
 } ) {
 	return (
 		<>
@@ -79,7 +81,7 @@ function CostOverridesList( {
 							{ costOverride.human_readable_reason }
 						</span>
 						<span className="cost-overrides-list-item__discount">
-							{ formatCurrency( -costOverride.discount_amount, 'USD' ) }
+							{ formatCurrency( -costOverride.discount_amount, currency ) }
 						</span>
 					</div>
 				);
@@ -198,7 +200,10 @@ export function WPOrderReviewLineItems( {
 			) }
 			{ hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
 				<CostOverridesListStyle>
-					<CostOverridesList costOverridesList={ costOverridesList } />
+					<CostOverridesList
+						costOverridesList={ costOverridesList }
+						currency={ responseCart.currency }
+					/>
 				</CostOverridesListStyle>
 			) }
 		</WPOrderReviewList>
