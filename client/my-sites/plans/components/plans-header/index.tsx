@@ -5,6 +5,7 @@ import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import './style.scss';
 
@@ -68,11 +69,11 @@ const PlansHeader: React.FunctionComponent< {
 	}
 
 	return (
-		<FormattedHeader
-			className="plans__formatted-header plans__section-header modernized-header"
-			headerText={ translate( 'Plans' ) }
-			subHeaderText={ plansDescription }
-			align="left"
+		<NavigationHeader
+			className="plans__section-header"
+			navigationItems={ [] }
+			title={ translate( 'Plans' ) }
+			subtitle={ plansDescription }
 		/>
 	);
 };

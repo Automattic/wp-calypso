@@ -50,6 +50,7 @@ export const TASK_FIVERR = 'home-task-fiverr';
 export const TASK_DOMAIN_UPSELL = 'home-task-domain-upsell';
 export const TASK_GOOGLE_DOMAIN_OWNERS = 'home-task-google-domain-owners';
 export const LAUNCHPAD_INTENT_BUILD = 'home-launchpad-intent-build';
+export const LAUNCHPAD_INTENT_HOSTING = 'home-launchpad-intent-hosting';
 export const LAUNCHPAD_INTENT_WRITE = 'home-launchpad-intent-write';
 export const LAUNCHPAD_INTENT_FREE_NEWSLETTER = 'home-launchpad-intent-free-newsletter';
 export const LAUNCHPAD_INTENT_PAID_NEWSLETTER = 'home-launchpad-intent-paid-newsletter';

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import CheckMark from 'calypso/assets/images/icons/check-mark.svg';
 import Plus from 'calypso/assets/images/icons/plus.svg';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
@@ -10,16 +11,21 @@ import {
 	recordFollow as recordFollowTracks,
 	recordUnfollow as recordUnfollowTracks,
 } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 function ReaderFollowButton( props ) {
 	const { onFollowToggle, railcar, followSource, hasButtonStyle, isButtonOnly, siteUrl, iconSize } =
 		props;
 
+	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
+
 	function recordFollowToggle( isFollowing ) {
-		if ( isFollowing ) {
-			recordFollowTracks( siteUrl, railcar, { follow_source: followSource } );
-		} else {
-			recordUnfollowTracks( siteUrl, railcar, { follow_source: followSource } );
+		if ( isLoggedIn ) {
+			if ( isFollowing ) {
+				recordFollowTracks( siteUrl, railcar, { follow_source: followSource } );
+			} else {
+				recordUnfollowTracks( siteUrl, railcar, { follow_source: followSource } );
+			}
 		}
 
 		if ( onFollowToggle ) {

@@ -411,7 +411,7 @@ class Plans extends Component {
 
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && <ModernizedLayout dropShadowOnHeader={ isFreePlan } /> }
+				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />

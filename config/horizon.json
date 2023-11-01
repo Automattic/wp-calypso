@@ -43,6 +43,7 @@
 		"home/layout-dev": true,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
+		"importer/site-backups": false,
 		"importer/unified": true,
 		"importers/substack": true,
 		"individual-subscriber-stats": true,

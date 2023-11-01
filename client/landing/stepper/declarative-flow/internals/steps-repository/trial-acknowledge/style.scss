@@ -103,10 +103,17 @@
 			font-size: 0.875rem;
 			letter-spacing: -0.1px;
 
+			display: flex;
+			flex-direction: row;
+			align-items: baseline;
+			gap: 4px;
+
 			svg {
 				fill: var(--color-success);
 				position: relative;
 				top: 4px;
+				flex-grow: 0;
+				flex-shrink: 0;
 			}
 		}
 	}

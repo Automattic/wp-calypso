@@ -112,7 +112,7 @@ export class Filterbar extends Component {
 		if ( ! filter ) {
 			return true;
 		}
-		if ( filter.group || filter.on || filter.before || filter.after ) {
+		if ( filter.group || filter.on || filter.before || filter.after || filter.textSearch ) {
 			return false;
 		}
 		if ( filter.page !== 1 ) {

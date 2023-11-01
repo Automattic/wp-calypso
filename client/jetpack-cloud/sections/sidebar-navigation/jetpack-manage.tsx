@@ -3,25 +3,24 @@ import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import {
 	JETPACK_MANAGE_DASHBOARD_LINK,
 	JETPACK_MANAGE_PLUGINS_LINK,
 	JETPACK_MANAGE_LICENCES_LINK,
 	JETPACK_MANAGE_BILLING_LINK,
 } from './lib/constants';
-import { redirectPage, isMenuItemSelected } from './lib/sidebar';
 import type { MenuItemProps } from './types';
 
 const BILLING_MENU_ITEM_ID = 'partner-portal-billing-menu-item';
 
-const JetpackManageSidebar = () => {
+const JetpackManageSidebar = ( { path }: { path: string } ) => {
 	const translate = useTranslate();
 
 	const createItem = ( props: MenuItemProps ) => ( {
 		...props,
-		onClickMenuItem: redirectPage,
 		trackEventName: 'calypso_jetpack_sidebar_menu_click',
-		isSelected: isMenuItemSelected( props.link ),
+		isSelected: itemLinkMatches( props.link, path ),
 	} );
 
 	const menuItems = [

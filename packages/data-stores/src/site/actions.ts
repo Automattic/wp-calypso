@@ -466,6 +466,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			homeHtml,
 			headerHtml,
 			footerHtml,
+			pages,
 			globalStyles,
 			shouldResetContent,
 			siteSetupOption,
@@ -503,6 +504,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			apiNamespace: 'wpcom/v2',
 			body: {
 				templates,
+				pages,
 				global_styles: globalStyles,
 				should_reset_content: shouldResetContent,
 				site_setup_option: siteSetupOption,

@@ -26,7 +26,9 @@ export default function StatusInfo( props: Props ) {
 		case 'wordpress-org':
 			return (
 				<p>
-					{ translate( 'This amazing community have great taste–this site runs on WordPress!' ) }
+					{ translate(
+						'This amazing community have great taste–this site runs on self-hosted WordPress!'
+					) }
 				</p>
 			);
 		case 'automattic-com':
@@ -103,7 +105,9 @@ export default function StatusInfo( props: Props ) {
 		case 'transfer-google-domain-hosting-wp':
 			return (
 				<p>
-					{ translate( 'The owner of this site has great taste—this site runs on WordPress!' ) }
+					{ translate(
+						'The owner of this site has great taste—this site runs on self-hosted WordPress!'
+					) }
 				</p>
 			);
 		case 'idle':

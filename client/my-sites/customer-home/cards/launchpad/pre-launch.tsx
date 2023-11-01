@@ -1,3 +1,4 @@
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useState } from 'react';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
@@ -36,6 +37,13 @@ const LaunchpadPreLaunch = (): JSX.Element => {
 
 	const onSiteLaunched = () => {
 		setCelebrateLaunchModalIsOpenWrapper( true );
+		// currently the action to update site_launch status on atomic doesn't fire
+		// this is a workaround until that is fixed
+		if ( site?.is_wpcom_atomic ) {
+			updateLaunchpadSettings( siteId, {
+				checklist_statuses: { site_launched: true },
+			} );
+		}
 	};
 
 	return (

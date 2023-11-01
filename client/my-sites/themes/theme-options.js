@@ -212,6 +212,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		getUrl: ( state, themeId, siteId, options ) =>
 			addQueryArgs( getCustomizeUrl( state, themeId, siteId, isFSEActive ), {
 				style_variation: options?.styleVariationSlug,
+				from: 'theme-info',
 			} ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||

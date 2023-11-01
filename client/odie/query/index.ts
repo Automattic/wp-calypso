@@ -3,34 +3,42 @@ import apiFetch from '@wordpress/api-fetch';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { useOdieAssistantContext } from '../context';
-import type { Chat, Message, Context } from '../types';
+import { setOdieStorage } from '../data';
+import type { Chat, Message, OdieAllowedBots } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
-const buildSupportChatRequest = ( message: Message, context: Context, chat_id?: string | null ) => {
+const buildSendChatMessage = (
+	message: Message,
+	botNameSlug: OdieAllowedBots,
+	chat_id?: number | null
+) => {
+	const baseApiPath = '/help-center/odie/chat/';
+	const wpcomBaseApiPath = '/odie/chat/';
+
+	const apiPathWithIds =
+		chat_id !== null && chat_id !== undefined
+			? `${ baseApiPath }${ botNameSlug }/${ chat_id }`
+			: `${ baseApiPath }${ botNameSlug }`;
+
+	const wpcomApiPathWithIds =
+		chat_id !== null && chat_id !== undefined
+			? `${ wpcomBaseApiPath }${ botNameSlug }/${ chat_id }`
+			: `${ wpcomBaseApiPath }${ botNameSlug }`;
+
 	return canAccessWpcomApis()
-		? odieSendSupportMessage( message, context, chat_id )
+		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds )
 		: apiFetch( {
-				path: '/help-center/odie/question',
+				path: apiPathWithIds,
 				method: 'POST',
-				data: { question: message, context, chat_id },
+				data: { message },
 		  } );
 };
 
-function odieSendMessage( messages: Message[], context: Context, chat_id?: string | null ) {
-	const path = `/odie/send_message`;
+function odieWpcomSendSupportMessage( message: Message, path: string ) {
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { messages, context, chat_id },
-	} );
-}
-
-function odieSendSupportMessage( message: Message, context: Context, chat_id?: string | null ) {
-	const path = `/odie/support/chat/respond`;
-	return wpcom.req.post( {
-		path,
-		apiNamespace: 'wpcom/v2',
-		body: { question: message.content, context: context ?? [], chat_id },
+		body: { message: message.content },
 	} );
 }
 
@@ -40,27 +48,52 @@ export const useOdieSendMessage = (): UseMutationResult<
 	unknown,
 	{ message: Message }
 > => {
-	const { chat, setChat, botSetting } = useOdieAssistantContext();
+	const { chat, setChat, botNameSlug } = useOdieAssistantContext();
 
 	return useMutation( {
 		mutationFn: ( { message }: { message: Message } ) => {
-			// If chat_id is defined, we only send the message to the current chat
-			// Otherwise we send previous messages and the new one appended to the end to the server
-			const messagesToSend = chat?.chat_id ? [ message ] : [ ...chat.messages, message ];
-			const fetchFunction =
-				botSetting === 'wapuu'
-					? () => odieSendMessage( messagesToSend, chat.context, chat.chat_id )
-					: () => buildSupportChatRequest( message, chat.context, chat.chat_id );
-
-			return fetchFunction();
+			return buildSendChatMessage( message, botNameSlug, chat.chat_id );
 		},
 		onSuccess: ( data ) => {
-			setChat( { ...chat, chat_id: data.chat_id } );
+			setChat( { ...chat, chat_id: parseInt( data.chat_id ) } );
+			setOdieStorage( 'chat_id', data.chat_id );
 		},
 	} );
 };
 
-// TODO: We will add lately a clear chat to forget the session
+const buildGetChatMessage = (
+	botNameSlug: OdieAllowedBots,
+	chat_id: number | null | undefined
+): Promise< Chat > => {
+	const baseApiPath = `/help-center/odie/chat/${ botNameSlug }/${ chat_id }`;
+	const wpcomBaseApiPath = `/odie/chat/${ botNameSlug }/${ chat_id }`;
+
+	return canAccessWpcomApis()
+		? odieWpcomGetChat( wpcomBaseApiPath )
+		: ( apiFetch( {
+				path: baseApiPath,
+				method: 'GET',
+		  } ) as Promise< Chat > );
+};
+
+function odieWpcomGetChat( path: string ): Promise< Chat > {
+	return wpcom.req.get( {
+		path,
+		apiNamespace: 'wpcom/v2',
+	} ) as Promise< Chat >;
+}
+
+export const useOdieGetChat = (
+	botNameSlug: OdieAllowedBots,
+	chatId: number | undefined | null
+) => {
+	return useQuery< Chat, unknown >( {
+		queryKey: [ 'chat', botNameSlug, chatId ],
+		queryFn: () => buildGetChatMessage( botNameSlug, chatId ),
+		refetchOnWindowFocus: false,
+		enabled: !! chatId,
+	} );
+};
 
 const odieGetChat = ( chat_id: string | null ) => {
 	const path = `/odie/get_chat/${ chat_id }`;

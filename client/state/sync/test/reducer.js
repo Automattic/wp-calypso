@@ -1,6 +1,6 @@
 import {
 	SITE_SYNC_STATUS_REQUEST as REQUEST_STATUS,
-	SITE_SYNC_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
+	SITE_SYNC_FAILURE as REQUEST_STATUS_FAILURE,
 } from 'calypso/state/action-types';
 import { setSiteSyncStatus, setSyncInProgress } from 'calypso/state/sync/actions';
 import { serialize, deserialize } from 'calypso/state/utils';

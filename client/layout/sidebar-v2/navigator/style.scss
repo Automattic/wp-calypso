@@ -5,20 +5,8 @@
 }
 
 .sidebar-v2__navigator-sub-menu.components-card-body {
-	padding: 0;
-
-	.components-navigator-back-button {
-		padding-block-start: 0;
-		margin-block-end: 8px;
-		color: var(--studio-gray-90);
-		font-size: rem(16px);
-		font-weight: 600;
-		justify-content: start;
-
-		&:focus {
-			box-shadow: none;
-		}
-	}
+	// Container cuts off content if we do not add 1px padding.
+	padding: 1px;
 }
 
 .sidebar-v2__navigator-group-description {
@@ -28,16 +16,43 @@
 	padding: 0 12px;
 }
 
-.sidebar-v2__menu-item.components-item {
-	font-size: rem(13px);
+.sidebar-v2__navigator-sub-menu ul {
+	list-style: none;
+	margin: 0;
+}
 
-	&.is-active {
-		border-radius: 4px;
-	}
+.sidebar-v2__navigator-sub-menu-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--studio-gray-90);
+	font-size: rem(16px);
+	font-weight: 600;
+	justify-content: start;
+	margin-block-end: 8px;
+}
+
+.sidebar-v2__menu-item.components-item {
+	color: inherit;
+
+	font-size: rem(13px);
+}
+
+.sidebar-v2__navigator-sub-menu .components-navigator-back-button,
+.sidebar-v2__menu-item.components-item {
+	border-radius: 4px;
 
 	&:hover:not(.is-active) {
 		background: var(--studio-gray-0);
 		color: initial;
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 1px var(--studio-gray-10);
 	}
 }
 
