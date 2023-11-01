@@ -438,13 +438,6 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-store-nux': {
-			stepName: 'plans-store-nux',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'domainItem' ],
-			providesDependencies: [ 'cartItems' ],
-		},
-
 		'mailbox-plan': {
 			stepName: 'mailbox-plan',
 			apiRequestFunction: addPlanToCart,
