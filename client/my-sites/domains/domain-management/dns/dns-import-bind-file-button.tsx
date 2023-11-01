@@ -26,36 +26,26 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 	}, 0 );
 
 	const toggleRecord = ( recordIndex: number ) => {
-		if ( recordsToImport ) {
-			const newRecordsToImport: ImportedDnsRecord[] = [];
-			recordsToImport.forEach( ( record: ImportedDnsRecord, index: number ) => {
-				if ( index === recordIndex ) {
-					record.selected = ! record.selected;
-				}
-				newRecordsToImport.push( { ...record } );
-			} );
-			setRecordsToImport( newRecordsToImport );
+		if ( ! recordsToImport ) {
+			return;
 		}
+
+		const newRecordsToImport = [ ...recordsToImport ];
+		newRecordsToImport[ recordIndex ].selected = ! newRecordsToImport[ recordIndex ].selected;
+		setRecordsToImport( newRecordsToImport );
 	};
 
 	const toggleAllRecords = () => {
-		if ( recordsToImport ) {
-			if ( numberOfSelectedRecords === recordsToImport?.length ) {
-				const newRecordsToImport: ImportedDnsRecord[] = [];
-				recordsToImport.forEach( ( record: ImportedDnsRecord ) => {
-					record.selected = false;
-					newRecordsToImport.push( { ...record } );
-				} );
-				setRecordsToImport( newRecordsToImport );
-			} else {
-				const newRecordsToImport: ImportedDnsRecord[] = [];
-				recordsToImport.forEach( ( record: ImportedDnsRecord ) => {
-					record.selected = true;
-					newRecordsToImport.push( { ...record } );
-				} );
-				setRecordsToImport( newRecordsToImport );
-			}
+		if ( ! recordsToImport ) {
+			return;
 		}
+
+		const newSelectedState = numberOfSelectedRecords !== recordsToImport?.length;
+		const newRecordsToImport = [ ...recordsToImport ];
+		newRecordsToImport.forEach( ( record: ImportedDnsRecord ) => {
+			record.selected = newSelectedState;
+		} );
+		setRecordsToImport( newRecordsToImport );
 	};
 
 	const className = classNames( 'dns__breadcrumb-button import-bind-file', {

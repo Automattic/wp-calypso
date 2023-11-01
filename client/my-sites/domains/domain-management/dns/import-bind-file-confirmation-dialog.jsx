@@ -73,9 +73,9 @@ function ImportBindFileConfirmationDialog( {
 			<div className="import-bind-file-confirmation-dialog__header">
 				<CheckboxControl
 					__nextHasNoMarginBottom
-					checked={ numberOfSelectedRecords === recordsToImport.length }
+					checked={ numberOfSelectedRecords === recordsToImport?.length }
 					indeterminate={
-						numberOfSelectedRecords > 0 && numberOfSelectedRecords < recordsToImport.length
+						numberOfSelectedRecords > 0 && numberOfSelectedRecords < recordsToImport?.length
 					}
 					onChange={ () => toggleAllRecords() }
 					label={ headerLabel }
@@ -113,12 +113,12 @@ function ImportBindFileConfirmationDialog( {
 	return (
 		<Dialog
 			isVisible={ visible }
-			buttons={ recordsToImport && recordsToImport.length > 0 ? importButtons : okButton }
+			buttons={ recordsToImport?.length > 0 ? importButtons : okButton }
 			onClose={ onCancel }
 			className="import-bind-file-confirmation-dialog"
 		>
 			<h1>{ __( 'Import DNS records' ) }</h1>
-			{ recordsToImport && recordsToImport.length > 0 ? (
+			{ recordsToImport?.length > 0 ? (
 				<>
 					<p>{ __( "Please select which DNS records you'd like to import to your domain:" ) }</p>
 					<div>{ renderImportedRecords() }</div>
