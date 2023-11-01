@@ -121,6 +121,8 @@ export interface BillingTransactionItem {
 	 */
 	amount_integer: number;
 
+	cost_overrides: ReceiptCostOverride[];
+
 	currency: string;
 	licensed_quantity: number | null;
 	new_quantity: number | null;
@@ -130,6 +132,24 @@ export interface BillingTransactionItem {
 	variation_slug: string;
 	months_per_renewal_interval: number;
 	wpcom_product_slug: string;
+}
+
+export interface ReceiptCostOverride {
+	id: string;
+	human_readable_reason: string;
+	override_code: string;
+
+	/**
+	 * The price as it was before this price change was applied. It is a float
+	 * in the currency's standard unit (eg: dollars in USD).
+	 */
+	old_price: number;
+
+	/**
+	 * The price as it was after this price change was applied. It is a float
+	 * in the currency's standard unit (eg: dollars in USD).
+	 */
+	new_price: number;
 }
 
 export interface UpcomingCharge {
