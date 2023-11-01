@@ -1,10 +1,10 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import {
 	updateLaunchpadSettings,
-	useSortedLaunchpadTasks,
 	LaunchpadNavigator,
+	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
-import { DefaultWiredLaunchpad, type Task } from '@automattic/launchpad';
+import { Launchpad, type Task } from '@automattic/launchpad';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -117,7 +117,7 @@ const CustomerHomeLaunchpad = ( {
 					</div>
 				) }
 			</div>
-			<DefaultWiredLaunchpad
+			<Launchpad
 				siteSlug={ siteSlug }
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
