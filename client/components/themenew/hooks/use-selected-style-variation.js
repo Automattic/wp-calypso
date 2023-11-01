@@ -13,7 +13,7 @@ export default function useSelectedStyleVariation() {
 		} );
 	};
 	const onStyleVariationMoreClick = () => {
-		recordThemeClick( 'calypso_themeshowcase_theme_style_variation_more_click', {} );
+		recordThemeClick( 'calypso_themeshowcase_theme_style_variation_more_click' );
 	};
 
 	return { onStyleVariationClick, onStyleVariationMoreClick };

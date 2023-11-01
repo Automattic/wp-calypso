@@ -9,6 +9,7 @@ import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useImageClick from './hooks/use-image-click';
 import useSelectedStyleVariation from './hooks/use-selected-style-variation';
+import ThemeActions from './theme-actions';
 import { useThemeContext } from './theme-context';
 import ThemePlaceholder from './theme-placeholder';
 import ThemeThumbnail from './theme-thumbnail';
@@ -66,10 +67,7 @@ export default function Theme( props ) {
 			onImageClick={ props?.onImageClick || onImageClick }
 			onStyleVariationClick={ onStyleVariationClick }
 			onStyleVariationMoreClick={ onStyleVariationMoreClick }
-			/**
-			 * @todo Implement the options menu.
-			 */
-			optionsMenu={ [] }
+			optionsMenu={ <ThemeActions /> }
 			ref={ bookmarkRef }
 			selectedStyleVariation={ selectedStyleVariation }
 			styleVariations={ style_variations }

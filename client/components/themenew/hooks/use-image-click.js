@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useThemeContext } from '../theme-context';
 import useThemeShowcaseTracks from './use-theme-showcase-tracks';
 
-export default function useImageClick( { index, tabFilter } ) {
+export default function useImageClick( { tabFilter } ) {
 	const { selectedStyleVariation, themeId } = useThemeContext();
 
 	const translate = useTranslate();
@@ -58,10 +58,7 @@ export default function useImageClick( { index, tabFilter } ) {
 
 	const onImageClick = () => {
 		trackClick( 'theme', 'screenshot' );
-		recordThemeClick( 'calypso_themeshowcase_theme_click', {
-			action: 'screenshot_info',
-			themePosition: index,
-		} );
+		recordThemeClick( 'calypso_themeshowcase_theme_click', { action: 'screenshot_info' } );
 	};
 
 	return { imageClickUrl, imageLabel, onImageClick };
