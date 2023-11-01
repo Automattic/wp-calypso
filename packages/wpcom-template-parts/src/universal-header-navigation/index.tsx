@@ -140,7 +140,7 @@ const UniversalNavbarHeader = ( {
 														) }
 														<ClickableItem
 															titleValue=""
-															content={ __( 'Store', __i18n_text_domain__ ) }
+															content={ __( 'Commerce', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl( '//wordpress.com/ecommerce/' ) }
 															type="dropdown"
 															target="_self"
@@ -492,7 +492,7 @@ const UniversalNavbarHeader = ( {
 											) }
 											<ClickableItem
 												titleValue=""
-												content={ __( 'Store', __i18n_text_domain__ ) }
+												content={ __( 'Commerce', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/ecommerce/' ) }
 												type="menu"
 											/>
