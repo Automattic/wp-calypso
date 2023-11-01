@@ -107,34 +107,6 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
-// Converts (and round) days to units for a given period. E.g. return how many months is 300 days.
-const convertDaysToPeriodUnits = ( days, period ) => {
-	// If the period is 'day' use the value provided.
-	if ( period === 'day' ) {
-		return days;
-	}
-	// Confirm period is valid before trusting.
-	const validPeriods = [ 'week', 'month', 'year' ];
-	if ( validPeriods.includes( period ) === false ) {
-		return days;
-	}
-	// Determine denominator for math.
-	const daysInPeriod = {
-		week: 7,
-		month: 30,
-		year: 365,
-	};
-	const denominator = daysInPeriod[ period ];
-	// Determine quantity based on period.
-	// The +1 is to account for API date partitioning when using requesting weeks.
-	let newQuantity = Math.ceil( days / denominator );
-	if ( period === 'week' ) {
-		newQuantity += 1;
-	}
-	// Return new quantity for the chart.
-	return newQuantity;
-};
-
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -203,7 +175,7 @@ class StatsSite extends Component {
 
 	// Return a default amount of days to subtracts from the present day depending on the period selected.
 	// Used in case no starting date is present in the URL.
-	getDefaultRangeForPeriod( period ) {
+	getDefaultDaysForPeriod( period ) {
 		switch ( period ) {
 			case 'day':
 				return 30;
@@ -258,8 +230,8 @@ class StatsSite extends Component {
 				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 			}
 
-			// Sort out quantity for chart. Default to 30 days.
-			let daysInRange = this.getDefaultRangeForPeriod( period );
+			// Find the quantity of bars for the chart.
+			let daysInRange = this.getDefaultDaysForPeriod( period );
 			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
 			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 
@@ -275,9 +247,19 @@ class StatsSite extends Component {
 					.format( 'YYYY-MM-DD' );
 			}
 
-			// how many units of data to ask for the bar for a given period
-			this.state.customChartQuantity = convertDaysToPeriodUnits( daysInRange, period );
-			customChartRange.daysInRange = daysInRange; // never used
+			// Calculate diff between requested start and end in `priod` units.
+			// Move end point (most recent) to the end of period to account for partial periods
+			// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
+			const adjustedChartEndDate =
+				period === 'day'
+					? moment( customChartRange.chartEnd )
+					: moment( customChartRange.chartEnd ).endOf( period );
+
+			this.state.customChartQuantity = Math.ceil(
+				adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
+			);
+
+			customChartRange.daysInRange = daysInRange;
 		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
