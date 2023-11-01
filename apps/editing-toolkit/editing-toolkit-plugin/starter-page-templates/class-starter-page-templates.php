@@ -234,6 +234,9 @@ class Starter_Page_Templates {
 				'name'  => 'current',
 			),
 		);
+
+		$registered_page_templates = $this->get_registered_page_templates();
+
 		/**
 		 * Filters the config before it's passed to the frontend.
 		 *
@@ -242,7 +245,7 @@ class Starter_Page_Templates {
 		$config = apply_filters(
 			'fse_starter_page_templates_config',
 			array(
-				'templates'    => array_merge( $default_templates, $page_templates ),
+				'templates'    => array_merge( $default_templates, $page_templates, $registered_page_templates ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'screenAction' => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
 			)
@@ -339,5 +342,59 @@ class Starter_Page_Templates {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
 		return get_iso_639_locale( $language );
+	}
+
+	/**
+	 * Gets the registered page templates
+	 */
+	public function get_registered_page_templates() {
+		$registered_page_templates = array();
+
+		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
+			$registered_categories = $this->get_registered_categories();
+			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
+				if ( ! array_key_exists( 'blockTypes', $pattern ) ) {
+					continue;
+				}
+
+				$post_content_offset = array_search( 'core/post-content', $pattern['blockTypes'] );
+				if ( $post_content_offset !== false ) {
+					$categories = array();
+					foreach ( $pattern['categories'] as $category ) {
+						$registered_category = $registered_categories[ $category ];
+						if ( $registered_category ) {
+							$categories[ $category ] = array(
+								'slug'        => $registered_category['name'],
+								'title'       => $registered_category['label'],
+								'description' => $registered_category['description'],
+							);
+						}
+					}
+
+					$registered_page_templates[] = array(
+						'ID'          => null,
+						'title'       => $pattern['title'],
+						'description' => $pattern['description'],
+						'name'        => $pattern['name'],
+						'html'        => $pattern['content'],
+						'categories'  => $categories,
+					);
+				}
+			}
+		}
+
+		return $registered_page_templates;
+	}
+
+	public function get_registered_categories() {
+		$registered_categories = array();
+
+		if ( class_exists( 'WP_Block_Pattern_Categories_Registry' ) ) {
+			foreach ( \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered() as $category ) {
+				$registered_categories[ $category['name'] ] = $category;
+			}
+		}
+
+		return $registered_categories;
 	}
 }

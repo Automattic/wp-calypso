@@ -157,6 +157,7 @@ class Block_Patterns_From_API {
 		}
 
 		$this->update_core_patterns_with_wpcom_categories();
+		$this->update_pattern_block_types();
 
 		// Temporarily removing the call to `update_pattern_post_types` while we investigate
 		// https://github.com/Automattic/wp-calypso/issues/79145.
@@ -294,6 +295,28 @@ class Block_Patterns_From_API {
 
 				$pattern['postTypes'] = $post_types;
 				$pattern_name         = $pattern['name'];
+				unset( $pattern['name'] );
+				register_block_pattern( $pattern_name, $pattern );
+			}
+		}
+	}
+
+	/**
+	 * Ensure that all patterns with a blockType property are registered with appropriate postTypes.
+	 */
+	private function update_pattern_block_types() {
+		if ( ! class_exists( 'WP_Block_Patterns_Registry' ) ) {
+			return;
+		}
+		foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
+			if ( ! array_key_exists( 'blockTypes', $pattern ) || empty( $pattern['blockTypes'] ) ) {
+				continue;
+			}
+
+			$post_content_offset = array_search( 'core/post-content', $pattern['blockTypes'] );
+			if ( $post_content_offset !== false ) {
+				unregister_block_pattern( $pattern['name'] );
+				$pattern['blockTypes'] = array_splice( $pattern['blockTypes'], $post_content_offset, 1 );
 				unset( $pattern['name'] );
 				register_block_pattern( $pattern_name, $pattern );
 			}
