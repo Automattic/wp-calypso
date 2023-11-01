@@ -34,7 +34,10 @@ import {
 	renderTransactionQuantitySummary,
 } from './utils';
 import { VatVendorDetails } from './vat-vendor-details';
-import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
+import type {
+	BillingTransaction,
+	BillingTransactionItem,
+} from 'calypso/state/billing-transactions/types';
 import type { IAppState } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
 import type { FormEvent } from 'react';
@@ -277,6 +280,26 @@ function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	);
 }
 
+function ReceiptItemDiscounts( { item }: { item: BillingTransactionItem } ) {
+	return (
+		<ul className="billing-history__receipt-item-discounts-list">
+			{ item.cost_overrides.map( ( discount ) => {
+				// TODO: filter out discounts we don't want to show, like domain transfer price assignments.
+				const discountAmount = discount.old_price - discount.new_price;
+				const formattedDiscountAmount = formatCurrency( discountAmount, item.currency, {
+					stripZeros: true,
+				} );
+				return (
+					<li key={ discount.id }>
+						<span>{ discount.human_readable_reason }</span>
+						<span>{ formattedDiscountAmount }</span>
+					</li>
+				);
+			} ) }
+		</ul>
+	);
+}
+
 function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
@@ -284,27 +307,34 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 	const items = groupedTransactionItems.map( ( item ) => {
 		const termLabel = getTransactionTermLabel( item, translate );
 		return (
-			<tr key={ item.id }>
-				<td className="billing-history__receipt-item-name">
-					<span>{ item.variation }</span>
-					<small>({ item.type_localized })</small>
-					{ termLabel && <em>{ termLabel }</em> }
-					<br />
-					{ item.domain && <em>{ item.domain }</em> }
-					{ item.licensed_quantity && (
-						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
-					) }
-				</td>
-				<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
-					{ formatCurrency( item.amount_integer, item.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ) }
-					{ transaction.credit && (
-						<span className="billing-history__credit-badge">{ translate( 'Refund' ) }</span>
-					) }
-				</td>
-			</tr>
+			<>
+				<tr key={ item.id }>
+					<td className="billing-history__receipt-item-name">
+						<span>{ item.variation }</span>
+						<small>({ item.type_localized })</small>
+						{ termLabel && <em>{ termLabel }</em> }
+						<br />
+						{ item.domain && <em>{ item.domain }</em> }
+						{ item.licensed_quantity && (
+							<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
+						) }
+					</td>
+					<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
+						{ formatCurrency( item.amount_integer, item.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ) }
+						{ transaction.credit && (
+							<span className="billing-history__credit-badge">{ translate( 'Refund' ) }</span>
+						) }
+					</td>
+				</tr>
+				<tr>
+					<td className="billing-history__receipt-item-discounts" colSpan={ 2 }>
+						<ReceiptItemDiscounts item={ item } />
+					</td>
+				</tr>
+			</>
 		);
 	} );
 

@@ -370,6 +370,17 @@ textarea.billing-history__billing-details-editable {
 	}
 }
 
+ul.billing-history__receipt-item-discounts-list {
+	list-style-type: none;
+	margin: 0 0 0 30px;
+	font-size: $font-body-small;
+}
+
+ul.billing-history__receipt-item-discounts-list li {
+	display: flex;
+	justify-content: space-between;
+}
+
 .billing-history__receipt-links {
 	padding: 0 40px 10px;
 }
