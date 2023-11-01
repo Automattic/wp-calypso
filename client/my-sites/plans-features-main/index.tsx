@@ -797,9 +797,11 @@ const PlansFeaturesMain = ( {
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
-									<Button onClick={ () => setForceDefaultPlans( true ) }>
-										{ translate( 'View all plans' ) }
-									</Button>
+									<div className="plans-features-main__escape-hatch">
+										<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
+											{ translate( 'View all plans' ) }
+										</Button>
+									</div>
 								) }
 								{ ! hidePlansFeatureComparison && (
 									<>
@@ -813,10 +815,11 @@ const PlansFeaturesMain = ( {
 											ref={ observableForOdieRef }
 										/>
 										{ showEscapeHatch && (
-											<ComparisonGridToggle
-												onClick={ () => setForceDefaultPlans( true ) }
-												label={ translate( 'View all plans' ) }
-											/>
+											<div className="plans-features-main__escape-hatch">
+												<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
+													{ translate( 'View all plans' ) }
+												</Button>
+											</div>
 										) }
 										<div
 											ref={ plansComparisonGridRef }
@@ -862,10 +865,11 @@ const PlansFeaturesMain = ( {
 												label={ translate( 'Hide comparison' ) }
 											/>
 											{ showEscapeHatch && (
-												<ComparisonGridToggle
-													onClick={ () => setForceDefaultPlans( true ) }
-													label={ translate( 'View all plans' ) }
-												/>
+												<div className="plans-features-main__escape-hatch">
+													<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
+														{ translate( 'View all plans' ) }
+													</Button>
+												</div>
 											) }
 										</div>
 									</>
