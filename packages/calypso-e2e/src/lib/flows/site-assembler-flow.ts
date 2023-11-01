@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-type LayoutType = 'Header' | 'Footer';
 
 /**
  * Class encapsulating the Site Assembler flow.
@@ -28,9 +27,9 @@ export class SiteAssemblerFlow {
 	/**
 	 * Given a component type, clicks on the heading item to show available components.
 	 *
-	 * @param {LayoutType} type Type of the layout component.
+	 * @param {string} type Type of the layout component.
 	 */
-	async clickLayoutComponentType( type: LayoutType ): Promise< void > {
+	async clickLayoutComponentType( type: string ): Promise< void > {
 		await Promise.race( [
 			this.page.getByRole( 'list' ).getByRole( 'button', { name: type } ).click(),
 			// Patterns formerly called "Sections" are now at top level,
