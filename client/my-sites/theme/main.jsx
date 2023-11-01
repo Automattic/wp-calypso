@@ -78,6 +78,7 @@ import {
 	isWporgTheme,
 	getCanonicalTheme,
 	getPremiumThemePrice,
+	getTheme,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
@@ -857,6 +858,7 @@ class ThemeSheet extends Component {
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted,
+			isThemeInstalled,
 		} = this.props;
 		const { isAtomicTransferCompleted } = this.state;
 		if ( isActive ) {
@@ -883,7 +885,8 @@ class ThemeSheet extends Component {
 			} else if (
 				isExternallyManagedTheme &&
 				! isMarketplaceThemeSubscribed &&
-				isSiteEligibleForManagedExternalThemes
+				isSiteEligibleForManagedExternalThemes &&
+				! isThemeInstalled
 			) {
 				return translate( 'Subscribe to activate' );
 			} else if ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) {
@@ -1409,6 +1412,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isStandaloneJetpack,
 		demoUrl,
 		showTryAndCustomize,
+		isThemeInstalled,
 		isBundledSoftwareSet,
 		isExternallyManagedTheme,
 		isSiteEligibleForManagedExternalThemes,
@@ -1435,7 +1439,8 @@ const ThemeSheetWithOptions = ( props ) => {
 	} else if (
 		isExternallyManagedTheme &&
 		isSiteEligibleForManagedExternalThemes &&
-		! isMarketplaceThemeSubscribed
+		! isMarketplaceThemeSubscribed &&
+		! isThemeInstalled
 	) {
 		defaultOption = 'subscribe';
 	} else if ( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) {
@@ -1514,6 +1519,7 @@ export default connect(
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),
 			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
+			isThemeInstalled: !! getTheme( state, siteId, themeId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
