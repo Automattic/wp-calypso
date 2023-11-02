@@ -271,7 +271,6 @@ export class PlansStep extends Component {
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
-			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment, // TODO clk: confirm this is still needed
 			'has-no-sidebar': true,
 			'is-wide-layout': false,
 			'is-extra-wide-layout': true,
@@ -338,10 +337,6 @@ export default connect(
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		isLoadingExperiment: false,
-		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
-		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
-		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
-		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
