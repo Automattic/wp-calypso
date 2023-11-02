@@ -4,9 +4,9 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { noop, useOdieAssistantContext } from './context';
 import ChatMessage from './message';
 import { OdieSendMessageButton } from './send-message-input';
+import { useScrollStop } from './useScrollStop';
 
 import './style.scss';
-import { useScrollStop } from './useScrollStop';
 
 export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
