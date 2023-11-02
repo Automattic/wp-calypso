@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
 import { createSitesListComponent } from '@automattic/sites';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -180,13 +181,14 @@ export function SitesDashboard( {
 	} );
 
 	const isMobile = useMobileBreakpoint();
+	const isYoloCommandPalletteDevelopment = isEnabled( 'yolo/command-pallette' );
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
 
 	return (
 		<main>
-			<WpcomCommandPalette />
+			{ isYoloCommandPalletteDevelopment && <WpcomCommandPalette /> }
 			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
 				<HeaderControls>
