@@ -1,26 +1,21 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Button, Gridicon, ShortenedNumber, WordPressLogo } from '@automattic/components';
+import { Gridicon, ShortenedNumber } from '@automattic/components';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useRef, useState, useMemo, useContext } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import Tooltip from 'calypso/components/tooltip';
-import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
-import SitesOverviewContext from '../context';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
-import SiteBackupStaging from '../site-backup-staging';
-import SiteSelectCheckbox from '../site-select-checkbox';
-import SiteSetFavorite from '../site-set-favorite';
 import useRowMetadata from './hooks/use-row-metadata';
 import SiteBoostColumn from './site-boost-column';
+import SiteNameColumn from './site-name-column';
 import type { AllowedTypes, SiteData } from '../types';
 
 interface Props {
@@ -52,16 +47,7 @@ export default function SiteStatusContent( {
 
 	let { tooltip } = metadataRest;
 
-	const { isBulkManagementActive } = useContext( SitesOverviewContext );
-
-	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
-		'jetpack/pro-dashboard-wpcom-atomic-hosting'
-	);
-
-	const isWPCOMAtomicSite = rows.site.value.is_atomic;
-
 	const siteId = rows.site.value.blog_id;
-	const siteUrl = rows.site.value.url;
 
 	const isLicenseSelected = useSelector( ( state ) =>
 		hasSelectedLicensesOfType( state, siteId, type )
@@ -121,100 +107,14 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'site' ) {
-		// Site issues is the sum of scan threats and plugin updates
-		let siteIssuesCount = rows.scan.threats + rows.plugin.updates;
-		let isHighSeverityError = !! rows.scan.threats;
-		if ( [ 'failed', 'warning' ].includes( rows.backup.status ) ) {
-			siteIssuesCount = siteIssuesCount + 1;
-			isHighSeverityError = isHighSeverityError || 'failed' === rows.backup.status;
-		}
-		if ( [ 'failed' ].includes( rows.monitor.status ) ) {
-			siteIssuesCount = siteIssuesCount + 1;
-			isHighSeverityError = true;
-		}
-		let errorContent;
-		if ( siteError ) {
-			errorContent = (
-				<span className="sites-overview__status-critical">
-					<Gridicon size={ 24 } icon="notice-outline" />
-				</span>
-			);
-		} else if ( siteIssuesCount ) {
-			errorContent = (
-				<span
-					className={ classNames(
-						'sites-overview__status-count',
-						isHighSeverityError ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
-					) }
-				>
-					{ siteIssuesCount }
-				</span>
-			);
-		}
-
-		const WPCOMHostedSiteBadgeColumn = isWPCOMAtomicSiteCreationEnabled && (
-			<div className="fixed-host-column">
-				<WordPressLogo
-					className={ classNames( 'wordpress-logo', { 'is-visible': isWPCOMAtomicSite } ) }
-					size={ 18 }
-				/>
-			</div>
-		);
-
-		const siteRedirectURL =
-			isWPCOMAtomicSiteCreationEnabled && isWPCOMAtomicSite
-				? `https://wordpress.com/home/${ urlToSlug( siteUrl ) }`
-				: `/activity-log/${ urlToSlug( siteUrl ) }`;
-
-		const handleSiteClick = () => {
-			dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_site_link_click' ) );
-		};
-
 		return (
-			<>
-				{ isBulkManagementActive ? (
-					<SiteSelectCheckbox
-						isLargeScreen={ isLargeScreen }
-						item={ rows }
-						siteError={ hasAnyError }
-						disabled={ rows.site.value.is_atomic }
-						tooltip={
-							rows.site.value.is_atomic
-								? translate( 'Monitoring is managed by WordPress.com' )
-								: undefined
-						}
-					/>
-				) : (
-					<SiteSetFavorite
-						isFavorite={ isFavorite }
-						siteId={ rows.site.value.blog_id }
-						siteUrl={ siteUrl }
-					/>
-				) }
-				{ isLargeScreen ? (
-					<Button
-						className="sites-overview__row-text"
-						borderless
-						compact
-						href={ siteRedirectURL }
-						target={ isWPCOMAtomicSiteCreationEnabled && isWPCOMAtomicSite ? '_blank' : undefined }
-						onClick={ handleSiteClick }
-					>
-						{ WPCOMHostedSiteBadgeColumn }
-						{ siteUrl }
-						<SiteBackupStaging siteId={ siteId } />
-					</Button>
-				) : (
-					<>
-						<span className="sites-overview__row-text">
-							{ WPCOMHostedSiteBadgeColumn }
-							{ siteUrl } <SiteBackupStaging siteId={ siteId } />
-						</span>
-					</>
-				) }
-				<span className="sites-overview__overlay"></span>
-				{ errorContent }
-			</>
+			<SiteNameColumn
+				rows={ rows }
+				isLargeScreen={ isLargeScreen }
+				siteError={ siteError }
+				isFavorite={ isFavorite }
+				hasAnyError={ hasAnyError }
+			/>
 		);
 	}
 
