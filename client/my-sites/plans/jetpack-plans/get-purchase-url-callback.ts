@@ -77,10 +77,10 @@ export function buildCheckoutURL(
 	// to pass all products separated by comma in the URL.
 	const path = siteSlug
 		? `/checkout/${ siteSlug }/${ productsString }`
-		: `/jetpack/connect/${ productsString }`;
+		: `/checkout/${ productsString }`;
 
 	return isJetpackCloud()
-		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` )
+		? addQueryArgs( urlQueryArgs, `${ host }${ path }` )
 		: addQueryArgs( urlQueryArgs, path );
 }
 
