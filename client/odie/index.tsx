@@ -83,7 +83,7 @@ const OdieAssistant = () => {
 				</div>
 				<OdieSendMessageButton
 					scrollToBottom={ scrollToBottom }
-					enableStickToBottom={ () => {} }
+					enableStickToBottom={ () => setStickToBottom( true ) }
 					bottomElement={ bottomElement?.target }
 					isBottomVisible={ inView }
 				/>
