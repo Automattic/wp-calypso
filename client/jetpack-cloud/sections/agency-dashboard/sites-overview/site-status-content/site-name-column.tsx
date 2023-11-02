@@ -1,19 +1,18 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, WordPressLogo } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
-import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SitesOverviewContext from '../context';
 import SiteBackupStaging from '../site-backup-staging';
 import SiteSelectCheckbox from '../site-select-checkbox';
 import SiteSetFavorite from '../site-set-favorite';
-import { SiteData } from '../types';
+import { RowMetaData, SiteData } from '../types';
 
 type Props = {
 	rows: SiteData;
+	metadata: RowMetaData;
 	isLargeScreen?: boolean;
 	isFavorite: boolean;
 	siteError: boolean;
@@ -22,15 +21,17 @@ type Props = {
 
 export default function SiteNameColumn( {
 	rows,
+	metadata,
 	isLargeScreen,
 	isFavorite,
 	siteError,
 	hasAnyError,
 }: Props ) {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+
+	const { link, isExternalLink, tooltip } = metadata;
 
 	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
 		'jetpack/pro-dashboard-wpcom-atomic-hosting'
@@ -80,11 +81,6 @@ export default function SiteNameColumn( {
 		</div>
 	);
 
-	const siteRedirectURL =
-		isWPCOMAtomicSiteCreationEnabled && isWPCOMAtomicSite
-			? `https://wordpress.com/home/${ urlToSlug( siteUrl ) }`
-			: `/activity-log/${ urlToSlug( siteUrl ) }`;
-
 	const handleSiteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_site_link_click' ) );
 	};
@@ -97,11 +93,7 @@ export default function SiteNameColumn( {
 					item={ rows }
 					siteError={ hasAnyError }
 					disabled={ rows.site.value.is_atomic }
-					tooltip={
-						rows.site.value.is_atomic
-							? translate( 'Monitoring is managed by WordPress.com' )
-							: undefined
-					}
+					tooltip={ tooltip }
 				/>
 			) : (
 				<SiteSetFavorite
@@ -115,8 +107,8 @@ export default function SiteNameColumn( {
 					className="sites-overview__row-text"
 					borderless
 					compact
-					href={ siteRedirectURL }
-					target={ isWPCOMAtomicSiteCreationEnabled && isWPCOMAtomicSite ? '_blank' : undefined }
+					href={ link }
+					target={ isExternalLink ? '_blank' : undefined }
 					onClick={ handleSiteClick }
 				>
 					{ WPCOMHostedSiteBadgeColumn }

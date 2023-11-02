@@ -41,6 +41,7 @@ export default function SiteStatusContent( {
 		return (
 			<SiteNameColumn
 				rows={ rows }
+				metadata={ metadata }
 				isLargeScreen={ isLargeScreen }
 				siteError={ siteError }
 				isFavorite={ isFavorite }
