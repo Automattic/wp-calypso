@@ -19,7 +19,7 @@
 }
 
 // .has-header-section only applies for logged out views
-.layout.has-header-section.is-section-reader .navigation-header h1 {
+.layout.has-header-section.is-section-reader .tag-stream__header .navigation-header h1 {
 	@extend .wp-brand-font;
 	font-weight: 600;
 	font-size: 2.25rem;
