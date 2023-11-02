@@ -141,7 +141,6 @@ class DomainRegistrationSuggestion extends Component {
 			premiumDomain,
 			isCartPendingUpdateDomain,
 			flowName,
-			currentUser,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = suggestionSelected || hasDomainInCart( cart, domain );
@@ -156,7 +155,7 @@ class DomainRegistrationSuggestion extends Component {
 
 			buttonStyles = { ...buttonStyles, primary: false };
 
-			if ( shouldUseMultipleDomainsInCart( flowName, currentUser ) ) {
+			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 				buttonStyles = { ...buttonStyles, borderless: true };
 
 				buttonContent = translate( '{{checkmark/}} Selected', {
@@ -198,10 +197,7 @@ class DomainRegistrationSuggestion extends Component {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 
-		if (
-			shouldUseMultipleDomainsInCart( flowName, currentUser ) &&
-			getDomainRegistrations( cart ).length > 0
-		) {
+		if ( shouldUseMultipleDomainsInCart( flowName ) && getDomainRegistrations( cart ).length > 0 ) {
 			buttonStyles = { ...buttonStyles, primary: false };
 		}
 
