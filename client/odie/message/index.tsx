@@ -164,7 +164,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 						>
 							{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
 						</AsyncLoad>
-						{ ! isUser && <WasThisHelpfulButtons message={ message } /> }
+						{ ! isUser && messageFullyTyped && <WasThisHelpfulButtons message={ message } /> }
 					</>
 				) }
 				{ message.type === 'introduction' && (
