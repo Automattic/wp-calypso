@@ -30,6 +30,7 @@ import {
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
+import { WpcomCommandPalette } from './wpcom-command-pallette';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesDashboardProps {
@@ -185,6 +186,7 @@ export function SitesDashboard( {
 
 	return (
 		<main>
+			<WpcomCommandPalette />
 			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
 				<HeaderControls>

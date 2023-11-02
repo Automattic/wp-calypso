@@ -2,7 +2,7 @@ import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress
 import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon } from '@wordpress/icons';
 import classnames from 'classnames';
-import { Command, useCommandState } from 'cmdk';
+import { useCommandState, Command } from 'cmdk';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { useSMPCommands } from '../hooks/use-smp-commands';
 
