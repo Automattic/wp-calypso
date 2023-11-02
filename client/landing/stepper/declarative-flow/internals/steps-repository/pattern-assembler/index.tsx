@@ -25,6 +25,7 @@ import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record
 import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_SCREEN } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import {
+	useCategoryPatternsMap,
 	useCurrentScreen,
 	useCustomStyles,
 	useDotcomPatterns,
@@ -32,8 +33,6 @@ import {
 	useInitialPath,
 	usePatternCategories,
 	usePatternPages,
-	usePatternPagesMapByCategory,
-	usePatternsMapByCategory,
 	useRecipe,
 	useSyncNavigatorScreen,
 	useIsNewSite,
@@ -95,8 +94,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const categories = usePatternCategories( site?.ID );
 	// Fetching curated patterns and categories from PTK api
 	const dotcomPatterns = useDotcomPatterns( locale );
-	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns );
-	const pagesMapByCategory = usePatternPagesMapByCategory( dotcomPatterns );
+	const { allCategoryPatternsMap, layoutCategoryPatternsMap, pageCategoryPatternsMap } =
+		useCategoryPatternsMap( dotcomPatterns );
 	const {
 		header,
 		footer,
@@ -361,7 +360,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						headerHtml: header?.html,
 						footerHtml: footer?.html,
 						pages: pages
-							.map( ( category ) => pagesMapByCategory[ category ] )
+							.map( ( category ) => pageCategoryPatternsMap[ category ] )
 							.map( ( patterns ) => ( {
 								title: patterns[ 0 ].title,
 								content: patterns[ 0 ].html,
@@ -486,10 +485,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	const onShuffle = ( type: string, pattern: Pattern, position?: number ) => {
 		const availableCategory = Object.keys( pattern.categories ).find(
-			( category ) => patternsMapByCategory[ category ]
+			( category ) => layoutCategoryPatternsMap[ category ]
 		);
 		const selectedCategory = pattern.category?.name || availableCategory || '';
-		const patterns = patternsMapByCategory[ selectedCategory ];
+		const patterns = layoutCategoryPatternsMap[ selectedCategory ];
 		const shuffledPattern = getShuffledPattern( patterns, pattern );
 		injectCategoryToPattern( shuffledPattern, categories, selectedCategory );
 
@@ -543,7 +542,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						hasFooter={ !! footer }
 						sections={ sections }
 						categories={ categories }
-						patternsMapByCategory={ patternsMapByCategory }
+						patternsMapByCategory={ layoutCategoryPatternsMap }
 						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
 					/>
@@ -562,7 +561,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
 					<ScreenPages
 						categories={ categories }
-						pagesMapByCategory={ pagesMapByCategory }
+						pagesMapByCategory={ pageCategoryPatternsMap }
 						selectedPages={ pages }
 						onSelect={ onScreenPagesSelect }
 						onContinueClick={ onContinue }
@@ -596,7 +595,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						selectedHeader={ header }
 						selectedSections={ sections }
 						selectedFooter={ footer }
-						patternsMapByCategory={ patternsMapByCategory }
+						patternsMapByCategory={ layoutCategoryPatternsMap }
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
 						isNewSite={ isNewSite }
@@ -626,7 +625,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					selectedSections={ sections }
 					selectedFooter={ footer }
 					selectedPages={ pages }
-					pagesMapByCategory={ pagesMapByCategory }
+					pagesMapByCategory={ pageCategoryPatternsMap }
 					isNewSite={ isNewSite }
 				/>
 			) : (
@@ -666,7 +665,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<PatternAssemblerContainer
 					siteId={ site?.ID }
 					stylesheet={ stylesheet }
-					patternsMapByCategory={ patternsMapByCategory }
+					patternsMapByCategory={ allCategoryPatternsMap }
 					siteInfo={ siteInfo }
 					isNewSite={ isNewSite }
 				>
