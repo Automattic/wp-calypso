@@ -220,7 +220,7 @@ $custom-border-corner-size: 16px;
 
 	&.is-hidden {
 		opacity: 0;
-		bottom: -18px !important;
+		bottom: 0 !important;
 	}
 
 	&.is-visible {
