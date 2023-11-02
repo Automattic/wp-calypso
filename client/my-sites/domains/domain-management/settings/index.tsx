@@ -596,7 +596,7 @@ const Settings = ( {
 			return (
 				<Notice
 					text={ translate(
-						'You must respond to the ICANN email to verify your domain email address or your domain will stop working. Check your details are correct below. '
+						'You must respond to the ICANN email to verify your domain email address or your domain will stop working. Check your contact information is correct below. '
 					) }
 					icon="cross-circle"
 					showDismiss={ false }
