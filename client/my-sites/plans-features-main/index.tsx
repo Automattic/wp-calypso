@@ -15,7 +15,7 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-import { Button, Spinner } from '@automattic/components';
+import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
@@ -65,7 +65,6 @@ import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sit
 import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import useStorageAddOns from '../add-ons/hooks/use-storage-add-ons';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
-import { LoadingPlaceHolder } from './components/loading-placeholder';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
@@ -735,9 +734,10 @@ const PlansFeaturesMain = ( {
 						{ translate( `Unlock a powerful bundle of features. Or {{loader}}{{/loader}}`, {
 							components: {
 								loader: (
-									<LoadingPlaceHolder
+									<LoadingPlaceholder
 										display="inline-block"
 										width="155px"
+										minHeight="0px"
 										height="15px"
 										borderRadius="2px"
 									/>
