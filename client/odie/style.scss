@@ -33,6 +33,7 @@
 	flex-direction: column;
 	align-items: flex-start;
 	height: 100%;
+	overscroll-behavior: contain;
 
 	.odie-chatbox-bottom-edge {
 		min-height: 1px;
