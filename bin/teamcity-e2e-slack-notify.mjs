@@ -66,7 +66,7 @@ function extractFailureMessages( results ) {
 function buildSlackMessage( failures ) {
 	// Build the body using Slack Block Kit.
 	const body = {
-		channel: 'C0615Q8GMFX',
+		channel: 'C02DQP0FP',
 		blocks: [
 			{
 				type: 'section',
