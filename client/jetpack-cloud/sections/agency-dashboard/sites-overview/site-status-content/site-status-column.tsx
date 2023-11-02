@@ -2,11 +2,13 @@ import { Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import Tooltip from 'calypso/components/tooltip';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 import { AllowedTypes, RowMetaData, SiteData } from '../types';
 
@@ -24,7 +26,10 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 		tooltipId,
 		eventName,
 		row: { value, status },
+		...metadataRest
 	} = metadata;
+
+	let { tooltip } = metadataRest;
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -33,6 +38,10 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 
 	const isLicenseSelected = useSelector( ( state ) =>
 		hasSelectedLicensesOfType( state, siteId, type )
+	);
+
+	const isMultiSite = useSelector( ( state ) =>
+		isJetpackSiteMultiSite( state, rows.site.value.blog_id )
 	);
 
 	const issueLicenseRedirectUrl = useMemo( () => {
@@ -60,7 +69,30 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 		dispatch( recordTracksEvent( eventName ) );
 	}, [ dispatch, eventName ] );
 
+	const statusContentRef = useRef< HTMLSpanElement | null >( null );
+	const [ showTooltip, setShowTooltip ] = useState( false );
+
+	const handleShowTooltip = () => {
+		setShowTooltip( true );
+	};
+	const handleHideTooltip = () => {
+		setShowTooltip( false );
+	};
+
+	// Show "Not supported on multisite" when the the site is multisite and the product is Scan or
+	// Backup and the site does not have a backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
+	const showMultisiteNotSupported =
+		isMultiSite && ( type === 'scan' || ( type === 'backup' && ! rows.site.value.has_backup ) );
+
+	if ( showMultisiteNotSupported ) {
+		tooltip = translate( 'Not supported on multisite' );
+	}
+
 	const content = useMemo( () => {
+		if ( showMultisiteNotSupported ) {
+			return <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
+		}
+
 		switch ( status ) {
 			case 'critical': {
 				return <div className="sites-overview__critical">{ value as string }</div>;
@@ -104,38 +136,68 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 		handleDeselectLicenseAction,
 		handleSelectLicenseAction,
 		isLicenseSelected,
+		showMultisiteNotSupported,
 		status,
 		translate,
 		value,
 	] );
 
-	let wrappedContent;
+	let wrappedContent = content;
 
-	if ( link ) {
-		let target = '_self';
-		let rel;
-		if ( isExternalLink ) {
-			target = '_blank';
-			rel = 'noreferrer';
+	if ( ! showMultisiteNotSupported ) {
+		if ( link ) {
+			let target = '_self';
+			let rel;
+			if ( isExternalLink ) {
+				target = '_blank';
+				rel = 'noreferrer';
+			}
+			wrappedContent = (
+				<a
+					data-testid={ `row-${ tooltipId }` }
+					target={ target }
+					rel={ rel }
+					onClick={ handleClickRowAction }
+					href={ link }
+				>
+					{ content }
+				</a>
+			);
 		}
-		wrappedContent = (
-			<a
-				data-testid={ `row-${ tooltipId }` }
-				target={ target }
-				rel={ rel }
-				onClick={ handleClickRowAction }
-				href={ link }
-			>
-				{ content }
-			</a>
+
+		if ( disabled ) {
+			wrappedContent = (
+				<span className="sites-overview__disabled sites-overview__row-status">{ content }</span>
+			);
+		}
+	}
+
+	if ( tooltip && ! disabled ) {
+		return (
+			<>
+				<span
+					ref={ statusContentRef }
+					role="button"
+					tabIndex={ 0 }
+					onMouseEnter={ handleShowTooltip }
+					onMouseLeave={ handleHideTooltip }
+					onMouseDown={ handleHideTooltip }
+					className="sites-overview__row-status"
+				>
+					{ wrappedContent }
+				</span>
+				<Tooltip
+					id={ tooltipId }
+					context={ statusContentRef.current }
+					isVisible={ showTooltip }
+					position="bottom"
+					className="sites-overview__tooltip"
+				>
+					{ tooltip }
+				</Tooltip>
+			</>
 		);
 	}
 
-	if ( disabled ) {
-		wrappedContent = (
-			<span className="sites-overview__disabled sites-overview__row-status">{ content }</span>
-		);
-	}
-
-	return wrappedContent ?? content;
+	return <span className="sites-overview__row-status">{ wrappedContent }</span>;
 }

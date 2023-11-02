@@ -1,9 +1,3 @@
-import { Gridicon } from '@automattic/components';
-import { translate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
-import Tooltip from 'calypso/components/tooltip';
-import { useSelector } from 'calypso/state';
-import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
 import useRowMetadata from './hooks/use-row-metadata';
 import SiteBoostColumn from './site-boost-column';
@@ -35,11 +29,7 @@ export default function SiteStatusContent( {
 		...metadataRest
 	} = metadata;
 
-	let { tooltip } = metadataRest;
-
-	const isMultiSite = useSelector( ( state ) =>
-		isJetpackSiteMultiSite( state, rows.site.value.blog_id )
-	);
+	const { tooltip } = metadataRest;
 
 	// Disable clicks/hover when there is a site error &
 	// when the row is not monitor and monitor status is down
@@ -48,16 +38,6 @@ export default function SiteStatusContent( {
 
 	// Disable selection and toggle when there is a site error or site is down
 	const hasAnyError = !! ( siteError || siteDown );
-
-	const statusContentRef = useRef< HTMLSpanElement | null >( null );
-	const [ showTooltip, setShowTooltip ] = useState( false );
-
-	const handleShowTooltip = () => {
-		setShowTooltip( true );
-	};
-	const handleHideTooltip = () => {
-		setShowTooltip( false );
-	};
 
 	if ( type === 'site' ) {
 		return (
@@ -95,55 +75,12 @@ export default function SiteStatusContent( {
 		return <SiteBoostColumn site={ rows.site.value } />;
 	}
 
-	let content;
-
-	// Show "Not supported on multisite" when the the site is multisite and the product is Scan or
-	// Backup and the site does not have a backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
-	const showMultisiteNotSupported =
-		isMultiSite && ( type === 'scan' || ( type === 'backup' && ! rows.site.value.has_backup ) );
-
-	if ( showMultisiteNotSupported ) {
-		content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
-		tooltip = translate( 'Not supported on multisite' );
-	} else {
-		content = (
-			<SiteStatusColumn
-				type={ type }
-				rows={ rows }
-				metadata={ metadata }
-				disabled={ disabledStatus }
-			/>
-		);
-	}
-
 	return (
-		<>
-			{ tooltip && ! disabledStatus ? (
-				<>
-					<span
-						ref={ statusContentRef }
-						role="button"
-						tabIndex={ 0 }
-						onMouseEnter={ handleShowTooltip }
-						onMouseLeave={ handleHideTooltip }
-						onMouseDown={ handleHideTooltip }
-						className="sites-overview__row-status"
-					>
-						{ content }
-					</span>
-					<Tooltip
-						id={ tooltipId }
-						context={ statusContentRef.current }
-						isVisible={ showTooltip }
-						position="bottom"
-						className="sites-overview__tooltip"
-					>
-						{ tooltip }
-					</Tooltip>
-				</>
-			) : (
-				<span className="sites-overview__row-status">{ content }</span>
-			) }
-		</>
+		<SiteStatusColumn
+			type={ type }
+			rows={ rows }
+			metadata={ metadata }
+			disabled={ disabledStatus }
+		/>
 	);
 }
