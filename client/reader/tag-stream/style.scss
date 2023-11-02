@@ -1,8 +1,5 @@
-@import "@automattic/typography/styles/variables";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-
 .tag-stream__header {
+	margin-bottom: 10px;
 	.tag-stream__header-follow .follow-button {
 		background: inherit;
 	}
@@ -35,10 +32,8 @@
 	justify-content: space-between;
 	align-items: flex-start;
 
-	padding: 16px;
-
-	@include break-mobile {
-		padding: 0 0 16px 0;
+	@include breakpoint-deprecated( ">1040px" ) {
+		padding-bottom: 20px;
 	}
 }
 
@@ -61,17 +56,11 @@
 .is-reader-page .card.header-cake {
 	background: none;
 	box-shadow: none;
+	padding: 0;
 	position: relative;
 
 	.button.header-cake__back {
 		padding: 0;
-	}
-
-	padding: 16px;
-	margin: 0;
-
-	@include break-small {
-		padding: 0 0 16px 0;
 	}
 }
 
