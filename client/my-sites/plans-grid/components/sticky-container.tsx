@@ -16,7 +16,7 @@ const styles = ( { disabled, stickyOffset }: { disabled: boolean; stickyOffset: 
 		: css`
 				position: sticky;
 				top: ${ stickyOffset + 'px' };
-				z-index: 1;
+				z-index: 2;
 		  `;
 
 const Container = styled.div`
