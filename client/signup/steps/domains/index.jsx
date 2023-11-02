@@ -186,6 +186,10 @@ export class RenderDomainsStep extends Component {
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName, this.props.currentUser ) ) {
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
+
+		if ( this.props.flowName === 'onboarding-pm' ) {
+			loadExperimentAssignment( 'calypso_gf_signup_onboardingpm_domains_hide_free_subdomain_v2' );
+		}
 	}
 
 	getLocale() {
@@ -1011,9 +1015,9 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<ProvideExperimentData
-				name="calypso_gf_signup_onboardingpm_domains_hide_free_subdomain"
+				name="calypso_gf_signup_onboardingpm_domains_hide_free_subdomain_v2"
 				options={ {
-					isEligible: includeWordPressDotCom && this.props.flowName === 'onboarding-pm',
+					isEligible: this.props.flowName === 'onboarding-pm',
 				} }
 			>
 				{ ( isLoadingExperiment, experimentAssignment ) => (
