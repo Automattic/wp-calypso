@@ -192,9 +192,12 @@ export class LoginForm extends Component {
 	}
 
 	isUsernameOrEmailView() {
-		const { hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
+		const { hasAccountTypeLoaded, socialAccountIsLinking, currentQuery } = this.props;
+
+		const hasEmailFilled = currentQuery?.email_address && currentQuery.email_address.length > 0;
 
 		return (
+			! hasEmailFilled &&
 			! socialAccountIsLinking &&
 			! hasAccountTypeLoaded &&
 			! ( this.props.isWoo && ! this.props.isPartnerSignup )
