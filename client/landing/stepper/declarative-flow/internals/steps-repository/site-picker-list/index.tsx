@@ -121,7 +121,7 @@ const ConfirmationModal = ( {
 				<>
 					<Subtitle>
 						{ translate(
-							'Starting with {{strong}}%(siteDomain)s{{/strong}} will reset content and customization of your site.{{br}}{{/br}}Any blog posts and media uploads will be unpublished and saved.',
+							'Starting with {{strong}}%(siteDomain)s{{/strong}} will reset content and customization of your site.{{br}}{{/br}}{{br}}{{/br}}Any blog posts and media uploads will be unpublished and saved.',
 							{
 								args: {
 									siteDomain: siteDomain || '',

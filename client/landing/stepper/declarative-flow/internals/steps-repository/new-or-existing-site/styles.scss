@@ -74,6 +74,7 @@
 			min-height: 100vh;
 		}
 
+
 		.step-container__content {
 			min-height: auto;
 			@media (max-width: $break-mobile ) {
@@ -86,10 +87,21 @@
 				}
 			}
 			.select-items__item {
+				.select-items__item-icon {
+					@media (min-width: $break-mobile ) {
+						top: 32px;
+					}
+				}
 				@media (min-width: $break-small ) {
 					width: 456px;
 				}
+				.select-items__item-info-wrapper {
+					align-items: center;
 
+					.select-items__item-title {
+						margin-bottom: 0;
+					}
+				}
 				button.select-items__item-button {
 					@media (max-width: $break-mobile ) {
 						width: 279px;

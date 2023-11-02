@@ -88,6 +88,14 @@
 }
 
 .start-writing.site-picker {
+	.formatted-header {
+		.formatted-header__title {
+			font-size: rem(32px);
+			@include break-small {
+				font-size: rem(36px);
+			}
+		}
+	}
 	.signup-header {
 		.wordpress-logo {
 			position: absolute;

@@ -62,7 +62,7 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 				{
 					key: 'existing-site',
 					title: translate( 'Existing WordPress.com site' ),
-					description: <p>{ translate( 'Using an existing site' ) }</p>,
+					description: '',
 					icon: <WordPressLogo size={ 24 } />,
 					value: 'existing-site',
 					actionText: translate( 'Select a site' ),
@@ -70,7 +70,7 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 				{
 					key: 'new-site',
 					title: translate( 'New site' ),
-					description: <p>{ translate( 'Creating a new site' ) }</p>,
+					description: '',
 					icon: <NewSiteIcon />,
 					value: 'new-site',
 					actionText: translate( 'Start a new site' ),
