@@ -42,3 +42,13 @@
 		}
 	}
 }
+
+.themes-list {
+	.theme-collection__container {
+		padding-top: 48px;
+		background-color: var(--studio-gray-0);
+		grid-column: 1/-1;
+		grid-row-start: 3;
+		margin: 0 -32px 48px;
+	}
+}
