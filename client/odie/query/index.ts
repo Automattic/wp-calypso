@@ -55,7 +55,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 			return buildSendChatMessage( message, botNameSlug, chat.chat_id );
 		},
 		onSuccess: ( data ) => {
-			setChat( { ...chat, chat_id: parseInt( data.chat_id ) } );
+			setChat( { messages: chat.messages, chat_id: parseInt( data.chat_id ) } );
 			setOdieStorage( 'chat_id', data.chat_id );
 		},
 	} );
@@ -87,11 +87,12 @@ export const useOdieGetChat = (
 	botNameSlug: OdieAllowedBots,
 	chatId: number | undefined | null
 ) => {
+	const { chat } = useOdieAssistantContext();
 	return useQuery< Chat, unknown >( {
 		queryKey: [ 'chat', botNameSlug, chatId ],
 		queryFn: () => buildGetChatMessage( botNameSlug, chatId ),
 		refetchOnWindowFocus: false,
-		enabled: !! chatId,
+		enabled: !! chatId && ! chat.chat_id,
 	} );
 };
 
