@@ -1,20 +1,15 @@
 import { Gridicon } from '@automattic/components';
-import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import page from 'page';
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
-import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { useSelector } from 'calypso/state';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
-import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 import useRowMetadata from './hooks/use-row-metadata';
 import SiteBoostColumn from './site-boost-column';
 import SiteNameColumn from './site-name-column';
 import SiteStatsColumn from './site-stats-column';
+import SiteStatusColumn from './site-status-column';
 import type { AllowedTypes, SiteData } from '../types';
 
 interface Props {
@@ -32,25 +27,17 @@ export default function SiteStatusContent( {
 	isFavorite = false,
 	siteError,
 }: Props ) {
-	const dispatch = useDispatch();
-
+	const metadata = useRowMetadata( rows, type, isLargeScreen );
 	const {
-		link,
-		isExternalLink,
-		row: { value, status },
+		row: { status },
 		tooltipId,
 		siteDown,
-		eventName,
 		...metadataRest
-	} = useRowMetadata( rows, type, isLargeScreen );
+	} = metadata;
 
 	let { tooltip } = metadataRest;
 
 	const siteId = rows.site.value.blog_id;
-
-	const isLicenseSelected = useSelector( ( state ) =>
-		hasSelectedLicensesOfType( state, siteId, type )
-	);
 
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 
@@ -70,31 +57,6 @@ export default function SiteStatusContent( {
 	};
 	const handleHideTooltip = () => {
 		setShowTooltip( false );
-	};
-
-	const handleClickRowAction = () => {
-		dispatch( recordTracksEvent( eventName ) );
-	};
-
-	const issueLicenseRedirectUrl = useMemo( () => {
-		return addQueryArgs( `/partner-portal/issue-license/`, {
-			site_id: siteId,
-			product_slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
-			source: 'dashboard',
-		} );
-	}, [ siteId, type ] );
-
-	const handleSelectLicenseAction = () => {
-		const inactiveProducts = Object.values( rows ).filter( ( row ) => row?.status === 'inactive' );
-		if ( inactiveProducts.length > 1 ) {
-			return dispatch( selectLicense( siteId, type ) );
-		}
-		// Redirect to issue-license if there is only one inactive product available for a site
-		return page( issueLicenseRedirectUrl );
-	};
-
-	const handleDeselectLicenseAction = () => {
-		dispatch( unselectLicense( siteId, type ) );
 	};
 
 	if ( type === 'site' ) {
@@ -144,85 +106,14 @@ export default function SiteStatusContent( {
 			return <SiteBoostColumn site={ rows.site.value } />;
 		}
 
-		switch ( status ) {
-			case 'critical': {
-				// We know value is a string because we've handled the other types of non-string values above.
-				content = <div className="sites-overview__critical">{ value as string }</div>;
-				break;
-			}
-			case 'failed': {
-				content = <div className="sites-overview__failed">{ value as string }</div>;
-				break;
-			}
-			case 'warning': {
-				content = <div className="sites-overview__warning">{ value as string }</div>;
-				break;
-			}
-			case 'success': {
-				content = <Gridicon icon="checkmark" size={ 18 } className="sites-overview__grey-icon" />;
-				break;
-			}
-			case 'disabled': {
-				content = (
-					<Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />
-				);
-				break;
-			}
-			case 'progress': {
-				content = <Gridicon icon="time" size={ 18 } className="sites-overview__grey-icon" />;
-				break;
-			}
-			case 'inactive': {
-				content = ! isLicenseSelected ? (
-					<button
-						className="sites-overview__column-action-button"
-						onClick={ handleSelectLicenseAction }
-					>
-						<Gridicon icon="plus-small" size={ 16 } />
-						<span>{ translate( 'Add' ) }</span>
-					</button>
-				) : (
-					<button
-						className="sites-overview__column-action-button is-selected"
-						onClick={ handleDeselectLicenseAction }
-					>
-						<Gridicon icon="checkmark" size={ 16 } />
-						<span>{ translate( 'Selected' ) }</span>
-					</button>
-				);
-				break;
-			}
-		}
-	}
-
-	let updatedContent = content;
-
-	if ( ! showMultisiteNotSupported ) {
-		if ( link ) {
-			let target = undefined;
-			let rel;
-			if ( isExternalLink ) {
-				target = '_blank';
-				rel = 'noreferrer';
-			}
-			updatedContent = (
-				<a
-					data-testid={ `row-${ tooltipId }` }
-					target={ target }
-					rel={ rel }
-					onClick={ handleClickRowAction }
-					href={ link }
-				>
-					{ content }
-				</a>
-			);
-		}
-
-		if ( disabledStatus ) {
-			updatedContent = (
-				<span className="sites-overview__disabled sites-overview__row-status">{ content } </span>
-			);
-		}
+		content = (
+			<SiteStatusColumn
+				type={ type }
+				rows={ rows }
+				metadata={ metadata }
+				disabled={ disabledStatus }
+			/>
+		);
 	}
 
 	return (
@@ -238,7 +129,7 @@ export default function SiteStatusContent( {
 						onMouseDown={ handleHideTooltip }
 						className="sites-overview__row-status"
 					>
-						{ updatedContent }
+						{ content }
 					</span>
 					<Tooltip
 						id={ tooltipId }
@@ -251,7 +142,7 @@ export default function SiteStatusContent( {
 					</Tooltip>
 				</>
 			) : (
-				<span className="sites-overview__row-status">{ updatedContent }</span>
+				<span className="sites-overview__row-status">{ content }</span>
 			) }
 		</>
 	);
