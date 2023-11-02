@@ -41,9 +41,24 @@ type ChatMessageProps = {
 const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const isUser = message.role === 'user';
 	const { botName } = useOdieAssistantContext();
+	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
 	const translate = useTranslate();
+
+	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
+		delayBetweenCharacters: 66,
+		randomDelayBetweenCharacters: true,
+		charactersPerInterval: 5,
+	} );
+
+	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
+	const sources = message?.context?.sources ?? [];
+	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
+	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
+
+	const messageFullyTyped =
+		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );
@@ -58,12 +73,6 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 		isUser ? 'odie-chatbox-message-user' : 'odie-chatbox-message-wapuu'
 	);
 
-	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
-		delayBetweenCharacters: 66,
-		randomDelayBetweenCharacters: true,
-		charactersPerInterval: 5,
-	} );
-
 	const handleFullscreenToggle = () => {
 		setIsFullscreen( ! isFullscreen );
 	};
@@ -73,6 +82,13 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 			scrollToBottom();
 		}
 	}, [ message, realTimeMessage, scrollToBottom ] );
+
+	useEffect( () => {
+		if ( messageFullyTyped && ! scrolledToBottom ) {
+			scrollToBottom();
+			setScrolledToBottom( true );
+		}
+	}, [ messageFullyTyped, scrolledToBottom, scrollToBottom ] );
 
 	if ( ! currentUser || ! botName ) {
 		return;
@@ -139,14 +155,6 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const messageHeader = (
 		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
 	);
-
-	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
-	const sources = message?.context?.sources ?? [];
-	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
-	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
-
-	const messageFullyTyped =
-		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
 
 	const messageContent = (
 		<div className="odie-chatbox-message-sources-container">
