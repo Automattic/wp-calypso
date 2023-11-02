@@ -3,6 +3,7 @@
  */
 import { renderHook } from '@testing-library/react';
 import { Site, SiteData } from '../../../types';
+import * as useIsNotMultisiteSupported from '../use-is-not-multisite-supported';
 import useRowMetadata from '../use-row-metadata';
 
 const FAKE_SITE: Site = {
@@ -105,6 +106,7 @@ const rows: SiteData = {
 
 describe( 'useRowMetadata', () => {
 	it( 'should return the expected site metadata', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'site', true ) );
@@ -112,6 +114,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Backup metadata', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'backup', true ) );
@@ -120,6 +123,7 @@ describe( 'useRowMetadata', () => {
 			eventName: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
 			isExternalLink: false,
 			link: `/backup/${ FAKE_SITE.url }`,
+			notSupported: false,
 			row: rows.backup,
 			siteDown: false,
 			tooltip: 'Latest backup failed',
@@ -129,6 +133,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Backup metadata for atomic sites.', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () =>
@@ -154,6 +159,7 @@ describe( 'useRowMetadata', () => {
 			eventName: 'calypso_jetpack_agency_dashboard_backup_success_click_large_screen',
 			isExternalLink: true,
 			link: `https://wordpress.com/backup/${ FAKE_SITE.url }`,
+			notSupported: false,
 			row: {
 				type: 'backup',
 				value: 'success',
@@ -167,6 +173,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Scan metadata', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'scan', true ) );
@@ -175,6 +182,7 @@ describe( 'useRowMetadata', () => {
 			eventName: 'calypso_jetpack_agency_dashboard_scan_threats_click_large_screen',
 			isExternalLink: false,
 			link: `/scan/${ FAKE_SITE.url }`,
+			notSupported: false,
 			row: rows.scan,
 			siteDown: false,
 			tooltip: 'Potential threats found',
@@ -184,6 +192,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Scan metadata for atomic sites.', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () =>
@@ -204,6 +213,7 @@ describe( 'useRowMetadata', () => {
 			eventName: 'calypso_jetpack_agency_dashboard_scan_threats_click_large_screen',
 			isExternalLink: false,
 			link: '',
+			notSupported: false,
 			row: rows.scan,
 			siteDown: false,
 			tooltip: 'Potential threats found',
@@ -213,6 +223,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Monitor metadata', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'monitor', false ) );
@@ -221,6 +232,7 @@ describe( 'useRowMetadata', () => {
 			eventName: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_small_screen',
 			isExternalLink: true,
 			link: `https://jptools.wordpress.com/debug/?url=${ FAKE_SITE.url }`,
+			notSupported: false,
 			row: rows.monitor,
 			siteDown: false,
 			tooltip: 'Site appears to be offline',
@@ -230,6 +242,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected plugin metadata', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'plugin', false ) );
@@ -238,6 +251,7 @@ describe( 'useRowMetadata', () => {
 			eventName: 'calypso_jetpack_agency_dashboard_update_plugins_click_small_screen',
 			isExternalLink: true,
 			link: `https://wordpress.com/plugins/updates/${ FAKE_SITE.url }`,
+			notSupported: false,
 			row: rows.plugin,
 			siteDown: false,
 			tooltip: 'Plugin updates are available',
@@ -247,6 +261,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Stats metadata', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'stats', false ) );
@@ -255,6 +270,7 @@ describe( 'useRowMetadata', () => {
 			eventName: undefined,
 			isExternalLink: false,
 			link: '',
+			notSupported: false,
 			row: rows.stats,
 			siteDown: false,
 			tooltip: undefined,
@@ -264,6 +280,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Boost metadata', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'boost', false ) );
@@ -272,11 +289,36 @@ describe( 'useRowMetadata', () => {
 			eventName: undefined,
 			isExternalLink: false,
 			link: '',
+			notSupported: false,
 			row: rows.boost,
 			siteDown: false,
 			tooltip: undefined,
 			tooltipId: `${ FAKE_SITE.blog_id }-boost`,
 		};
 		expect( metadata ).toEqual( expected );
+	} );
+
+	it( 'should return not multisite supported for backup with license', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( true );
+		const {
+			result: { current: metadata },
+		} = renderHook( () =>
+			useRowMetadata(
+				{ ...rows, site: { ...rows.site, value: { ...rows.site.value, has_backup: true } } },
+				'backup',
+				true
+			)
+		);
+
+		expect( metadata.notSupported ).toEqual( true );
+	} );
+
+	it( 'should return not multisite supported for scan', () => {
+		jest.spyOn( useIsNotMultisiteSupported, 'default' ).mockReturnValue( true );
+		const {
+			result: { current: metadata },
+		} = renderHook( () => useRowMetadata( rows, 'scan', true ) );
+
+		expect( metadata.notSupported ).toEqual( true );
 	} );
 } );
