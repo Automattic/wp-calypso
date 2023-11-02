@@ -92,7 +92,6 @@ class Help_Center {
 			$this->version,
 			true
 		);
-		wp_script_add_data( 'help-center-script', 'strategy', 'defer' );
 
 		wp_enqueue_style(
 			'help-center-style',
