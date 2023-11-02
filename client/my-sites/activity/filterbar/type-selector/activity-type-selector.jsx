@@ -12,7 +12,13 @@ import { TypeSelector } from './type-selector';
 const ActivityTypeSelector = ( props ) => {
 	const { translate } = props;
 
-	return <TypeSelector { ...props } title={ translate( 'Activity Type' ) } />;
+	return (
+		<TypeSelector
+			{ ...props }
+			title={ translate( 'Activity Type' ) }
+			showAppliedFiltersCount={ true }
+		/>
+	);
 };
 
 const activityCountsQueryKey = ( siteId, filter ) => [

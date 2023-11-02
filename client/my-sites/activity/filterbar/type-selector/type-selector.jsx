@@ -196,29 +196,52 @@ export class TypeSelector extends Component {
 
 	isSelected = ( key ) => this.getSelectedCheckboxes().includes( key );
 
-	render() {
-		const { title, isVisible, isNested } = this.props;
+	hasSelectedCheckboxes = () => this.getSelectedCheckboxes().length > 0;
+
+	renderTypeSelectorButton = () => {
+		const { isNested, isVisible, showAppliedFiltersCount, title } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
-		const hasSelectedCheckboxes = selectedCheckboxes.length > 0;
+		const hasSelectedCheckboxes = this.hasSelectedCheckboxes();
 
 		const buttonClass = classnames( 'filterbar__selection', {
 			'is-selected': hasSelectedCheckboxes,
 			'is-active': isVisible && ! hasSelectedCheckboxes,
 		} );
 
+		// If the type selector is nested, we don't want to display the title
+		// unless there are no selected checkboxes.
+		const shouldDisplayTitle = ! isNested || ( isNested && ! hasSelectedCheckboxes );
+
+		// If the type selector is not nested and has selected checkboxes, we want to display a delimiter.
+		const shouldDisplayDelimiter = ! isNested && hasSelectedCheckboxes;
+
+		// Decide the display content for selected checkboxes
+		const selectedCheckboxesContent = showAppliedFiltersCount
+			? `${ selectedCheckboxes.length } activities selected`
+			: selectedCheckboxes.map( this.typeKeyToName ).join( ', ' );
+
+		return (
+			<Button
+				className={ buttonClass }
+				compact
+				borderless
+				onClick={ this.props.onButtonClick }
+				ref={ this.typeButton }
+			>
+				{ shouldDisplayTitle && title }
+				{ shouldDisplayDelimiter && <span>: </span> }
+				{ hasSelectedCheckboxes && selectedCheckboxesContent }
+			</Button>
+		);
+	};
+
+	render() {
+		const { isVisible, isNested } = this.props;
+		const hasSelectedCheckboxes = this.hasSelectedCheckboxes();
+
 		return (
 			<Fragment>
-				<Button
-					className={ buttonClass }
-					compact
-					borderless
-					onClick={ this.props.onButtonClick }
-					ref={ this.typeButton }
-				>
-					{ ( ! isNested || ( isNested && ! hasSelectedCheckboxes ) ) && title }
-					{ ! isNested && hasSelectedCheckboxes && <span>: </span> }
-					{ hasSelectedCheckboxes && selectedCheckboxes.map( this.typeKeyToName ).join( ', ' ) }
-				</Button>
+				{ this.renderTypeSelectorButton() }
 				{ hasSelectedCheckboxes && (
 					<Button
 						className="type-selector__selection-close"
