@@ -5,16 +5,18 @@ import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const useCurrentPlanManageHref = () => {
-	const siteId = useSelector( getSelectedSiteId );
+const useCurrentPlanManageHref = ( siteId?: number ) => {
+	const selectedSiteId = useSelector( getSelectedSiteId ) || siteId;
 	const purchaseId = useSelector( ( state: IAppState ) =>
-		siteId ? getCurrentPlanPurchaseId( state, siteId ) : null
+		selectedSiteId ? getCurrentPlanPurchaseId( state, selectedSiteId ) : null
 	);
-	const selectedSiteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+	const selectedSiteSlug = useSelector( ( state: IAppState ) =>
+		getSiteSlug( state, selectedSiteId )
+	);
 
 	return purchaseId && selectedSiteSlug
 		? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-		: `/plans/my-plan/${ siteId }`;
+		: `/plans/my-plan/${ selectedSiteId }`;
 };
 
 export default useCurrentPlanManageHref;

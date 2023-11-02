@@ -261,7 +261,7 @@ const PlansFeaturesMain = ( {
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const observableForOdieRef = useObservableForOdie();
-	const currentPlanManageHref = useCurrentPlanManageHref();
+	const currentPlanManageHref = useCurrentPlanManageHref( siteId ?? undefined );
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
 		siteId
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
@@ -375,7 +375,7 @@ const PlansFeaturesMain = ( {
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
-	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
+	const intentFromSiteMeta = usePlanIntentFromSiteMeta( siteId ?? undefined );
 	const planFromUpsells = usePlanFromUpsells();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
 
@@ -419,6 +419,7 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
+		siteId: siteId || undefined,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
@@ -522,6 +523,7 @@ const PlansFeaturesMain = ( {
 		showBiennialToggle,
 		kind: planTypeSelector,
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+		siteId: siteId ?? undefined,
 	};
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized

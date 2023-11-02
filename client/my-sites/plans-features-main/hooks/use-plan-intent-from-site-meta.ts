@@ -8,8 +8,8 @@ interface IntentFromSiteMeta {
 	intent: PlansIntent | null | undefined;
 }
 
-const usePlanIntentFromSiteMeta = (): IntentFromSiteMeta => {
-	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+const usePlanIntentFromSiteMeta = ( siteId?: number ): IntentFromSiteMeta => {
+	const selectedSiteId = ( useSelector( getSelectedSiteId ) || siteId ) ?? undefined;
 	const siteIntent = useSiteIntent( selectedSiteId );
 
 	if ( siteIntent.isFetching ) {

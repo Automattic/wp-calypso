@@ -48,6 +48,7 @@ export type PlanTypeSelectorProps = {
 	hideDiscountLabel?: boolean;
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
+	siteId?: number;
 };
 
 interface PathArgs {
@@ -134,6 +135,7 @@ export type IntervalTypeProps = Pick<
 	| 'showBiennialToggle'
 	| 'selectedPlan'
 	| 'selectedFeature'
+	| 'siteId'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -144,7 +146,9 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
 		showBiennialToggle,
+		siteId,
 	} = props;
+
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
@@ -152,7 +156,8 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
 	const maxDiscount = useMaxDiscount( props.plans );
 	const currentPlanBillingPeriod = useSelector( ( state ) => {
-		const currentSitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
+		const selectedSiteId = getSelectedSiteId( state ) || siteId;
+		const currentSitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
 	} );
 

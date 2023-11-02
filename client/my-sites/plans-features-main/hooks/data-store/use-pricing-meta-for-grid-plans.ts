@@ -28,6 +28,7 @@ interface Props {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
 	storageAddOns?: ( AddOnMeta | null )[] | null;
+	siteId?: number;
 }
 
 function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
@@ -55,8 +56,9 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
 	storageAddOns,
+	siteId,
 }: Props ) => {
-	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	const selectedSiteId = ( useSelector( getSelectedSiteId ) || siteId ) ?? undefined;
 	const currentPlan = useSelector( ( state: IAppState ) =>
 		getCurrentPlan( state, selectedSiteId )
 	);
