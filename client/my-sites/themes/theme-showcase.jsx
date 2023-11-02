@@ -562,8 +562,6 @@ class ThemeShowcase extends Component {
 		const tiers = this.getTiers();
 
 		const classnames = classNames( 'theme-showcase', {
-			'is-discovery-view':
-				this.props.tier === '' && this.isThemeDiscoveryEnabled() && ! isCollectionView,
 			'is-collection-view': isCollectionView,
 		} );
 
