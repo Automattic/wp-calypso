@@ -4,17 +4,18 @@ import { INITIAL_PAGES } from '../constants';
 
 const usePatternPages = () => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
-	const page_slugs = ( searchParams.get( 'page_slugs' ) || '' ).split( ',' ).filter( Boolean );
+	const page_slugs = searchParams.get( 'page_slugs' );
 
-	const pages = page_slugs.length
-		? page_slugs
-		: [ ...( isEnabled( 'pattern-assembler/add-pages' ) ? INITIAL_PAGES : [] ) ];
+	const pages =
+		page_slugs !== null
+			? page_slugs.split( ',' ).filter( Boolean )
+			: [ ...( isEnabled( 'pattern-assembler/add-pages' ) ? INITIAL_PAGES : [] ) ];
 
 	const setPages = ( pages: string[] ) => {
 		setSearchParams(
 			( currentSearchParams ) => {
 				if ( pages.length === 0 ) {
-					currentSearchParams.delete( 'page_slugs' );
+					currentSearchParams.set( 'page_slugs', '' );
 				} else {
 					currentSearchParams.set( 'page_slugs', pages.join( ',' ) );
 				}
