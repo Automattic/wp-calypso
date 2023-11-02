@@ -34,20 +34,33 @@ export interface TaxVendorInfo {
 	country_code: string;
 
 	/**
-	 * The localized name of the tax (eg: "VAT", "GST", etc.).
-	 */
-	tax_name: string;
-
-	/**
 	 * The mailing address to display on receipts as a list of strings (each
 	 * string should be on its own line).
 	 */
 	address: string[];
 
 	/**
+	 * An object containing tax names and corresponding vendor ids that are used for the user's country
+	 *
+	 * This will deprecate the vat_id and tax_name properties
+	 * For now, those two properties will stay in place for backwards compatibility
+	 *
+	 * Property: The localized name of the tax (eg: "VAT", "GST", etc.).
+	 * Value: A8c vendor id for that specific tax
+	 */
+	tax_name_and_vendor_id_object: object;
+
+	/**
 	 * The vendor's VAT id.
+	 * @deprecated This is still in place for backwards compability with cached clients
 	 */
 	vat_id: string;
+
+	/**
+	 * The localized name of the tax (eg: "VAT", "GST", etc.).
+	 * @deprecated This is still in place for backwards compability with cached clients
+	 */
+	tax_name: string;
 }
 
 export interface Purchase {
