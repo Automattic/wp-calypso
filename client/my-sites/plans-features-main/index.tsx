@@ -381,10 +381,13 @@ const PlansFeaturesMain = ( {
 
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 	useEffect( () => {
+		if ( ! intent && intentFromSiteMeta.processing ) {
+			return;
+		}
+
 		// TODO: plans from upsell takes precedence for setting intent right now
 		// - this is currently set to the default wpcom set until we have updated tailored features for all plans
 		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
-
 		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
 			setIntent( 'plans-default-wpcom' );
 		} else if ( ! intent ) {
@@ -394,7 +397,14 @@ const PlansFeaturesMain = ( {
 					: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom'
 			);
 		}
-	}, [ intent, intentFromProps, intentFromSiteMeta.intent, planFromUpsells, forceDefaultPlans ] );
+	}, [
+		intent,
+		intentFromProps,
+		intentFromSiteMeta.intent,
+		planFromUpsells,
+		forceDefaultPlans,
+		intentFromSiteMeta.processing,
+	] );
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
