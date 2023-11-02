@@ -1,3 +1,19 @@
+.is-section-reader .tag-stream__header {
+	&.has-description {
+		.info-popover {
+			display: none;
+		}
+		.formatted-header__subtitle {
+			display: inline-block;
+		}
+	}
+
+	.navigation-header {
+		margin: 0 auto;
+		padding: 0 0 16px 0;
+	}
+}
+
 .tag-stream__header {
 	margin-bottom: 10px;
 	.tag-stream__header-follow .follow-button {
