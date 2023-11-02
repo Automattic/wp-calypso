@@ -322,33 +322,18 @@ export class LoginForm extends Component {
 	}
 
 	renderLoginFromSignupNotice() {
-		const signupUrl = this.getSignupUrl();
-
-		if (
-			hasTranslation(
-				'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.'
-			) ||
-			englishLocales.includes( this.props.locale )
-		) {
-			return (
-				<Notice status="is-transparent-info" showDismiss={ false }>
-					{ this.props.translate(
-						'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
-						{
-							components: {
-								returnToSignup: <a href={ signupUrl } onClick={ this.recordSignUpLinkClick } />,
-							},
-						}
-					) }
-				</Notice>
-			);
-		}
-
 		return (
 			<Notice status="is-transparent-info" showDismiss={ false }>
-				{ this.props.translate( 'An account with this email address already exists.' ) }
-				&nbsp;
-				{ this.props.translate( 'Log in to your account' ) }
+				{ this.props.translate(
+					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
+					{
+						components: {
+							returnToSignup: (
+								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
+							),
+						},
+					}
+				) }
 			</Notice>
 		);
 	}
