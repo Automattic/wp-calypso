@@ -98,7 +98,7 @@ export class LoginForm extends Component {
 	componentDidMount() {
 		const { disableAutoFocus, isSignupExistingAccount, userEmail } = this.props;
 
-		if ( isSignupExistingAccount && userEmail ) {
+		if ( isSignupExistingAccount || userEmail ) {
 			this.props.getAuthAccountType( userEmail );
 		}
 
@@ -192,12 +192,10 @@ export class LoginForm extends Component {
 	}
 
 	isUsernameOrEmailView() {
-		const { hasAccountTypeLoaded, socialAccountIsLinking, currentQuery } = this.props;
-
-		const hasEmailFilled = currentQuery?.email_address && currentQuery.email_address.length > 0;
+		const { hasAccountTypeLoaded, socialAccountIsLinking, userEmail } = this.props;
 
 		return (
-			! hasEmailFilled &&
+			! userEmail &&
 			! socialAccountIsLinking &&
 			! hasAccountTypeLoaded &&
 			! ( this.props.isWoo && ! this.props.isPartnerSignup )
