@@ -55,6 +55,26 @@ describe( 'SyncOptionsPanel component', () => {
 		expect( screen.getByLabelText( 'Test 3' ) ).toBeInTheDocument();
 		expect( screen.getAllByTestId( 'danger-zone-checkbox' ) ).toHaveLength( 2 );
 	} );
+	it( 'shows disabled sqls item correctly', () => {
+		const items = [
+			{
+				name: 'sqls',
+				label: 'Site database',
+				subTitle: 'Overwrite the database.',
+				checked: false,
+				isDangerous: true,
+			},
+		];
+		render(
+			<SyncOptionsPanel items={ items } isSqlsOptionDisabled={ true } onChange={ jest.fn } />
+		);
+		expect( screen.getByLabelText( 'Site database' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( 'Site database synchronization is not supported for Woo Commerce sites.' )
+		).toBeInTheDocument();
+		expect( screen.queryByText( 'Overwrite the database.' ) ).not.toBeInTheDocument();
+		expect( screen.getAllByTestId( 'danger-zone-checkbox' ) ).toHaveLength( 1 );
+	} );
 
 	it( 'provides the selected items when onChange function is provided', () => {
 		const items = [
