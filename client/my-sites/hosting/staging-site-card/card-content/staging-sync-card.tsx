@@ -422,7 +422,7 @@ export const SiteSyncCard = ( {
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
-	const isSiteWooStore = useSelector( ( state ) => isSiteStore( state, productionSiteId ) );
+	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, productionSiteId ) );
 	const {
 		progress,
 		resetSyncStatus,
