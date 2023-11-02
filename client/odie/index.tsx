@@ -18,7 +18,7 @@ const OdieAssistant = () => {
 	const lastScrollHeight = useRef( 0 );
 
 	const scrollToBottom = useCallback(
-		( smooth: boolean = false, force: boolean = false ) => {
+		( smooth = false, force = false ) => {
 			if ( force || stickToBottom ) {
 				requestAnimationFrame( () => {
 					if ( bottomElement?.target ) {
