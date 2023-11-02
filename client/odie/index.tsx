@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { noop, useOdieAssistantContext } from './context';
@@ -32,6 +32,10 @@ const OdieAssistant = () => {
 		},
 		[ bottomElement?.target, stickToBottom ]
 	);
+
+	useEffect( () => {
+		scrollToBottom();
+	}, [ scrollToBottom ] );
 
 	const handleScroll = useCallback( () => {
 		if ( ! chatboxMessagesRef.current ) {
@@ -71,7 +75,7 @@ const OdieAssistant = () => {
 							<ChatMessage
 								message={ message }
 								key={ index }
-								scrollToBottom={ isLast ? () => scrollToBottom( true, true ) : noop }
+								scrollToBottom={ isLast ? () => scrollToBottom( false, true ) : noop }
 							/>
 						);
 					} ) }
