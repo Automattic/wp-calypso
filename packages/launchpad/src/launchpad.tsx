@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import {
 	LaunchpadNavigator,
 	Site,
@@ -89,7 +90,7 @@ const Launchpad = ( {
 			siteSlug,
 			tracksData,
 			extraActions: {
-				setActiveChecklist,
+				...( config.isEnabled( 'launchpad/navigator' ) ? { setActiveChecklist } : {} ),
 				setShareSiteModalIsOpen,
 			},
 			eventHandlers: {

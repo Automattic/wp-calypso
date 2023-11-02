@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { LaunchpadNavigator } from '@automattic/data-stores';
 import { useFlowProgress, BUILD_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
@@ -74,7 +75,7 @@ const build: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'build',
-						setActiveChecklist,
+						...( config.isEnabled( 'launchpad/navigator' ) ? { setActiveChecklist } : {} ),
 						siteId,
 						siteSlug,
 					} );

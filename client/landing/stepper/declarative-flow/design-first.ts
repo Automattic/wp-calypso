@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	OnboardSelect,
 	LaunchpadNavigator,
@@ -216,7 +217,7 @@ const designFirst: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: site?.options?.site_intent,
-						setActiveChecklist,
+						...( config.isEnabled( 'launchpad/navigator' ) ? { setActiveChecklist } : {} ),
 						siteId,
 						siteSlug,
 					} );

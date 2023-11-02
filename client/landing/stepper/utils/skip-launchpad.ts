@@ -2,7 +2,7 @@ import { updateLaunchpadSettings } from '@automattic/data-stores';
 
 type SkipLaunchpadProps = {
 	checklistSlug?: string | null;
-	setActiveChecklist: ( siteSlug: string, checklistSlug: string ) => Promise< unknown >;
+	setActiveChecklist?: ( siteSlug: string, checklistSlug: string ) => Promise< unknown >;
 	siteId: string | null;
 	siteSlug: string | null;
 };
@@ -18,7 +18,7 @@ export const skipLaunchpad = async ( {
 			// If we're making both API calls, allow them to happen concurrently.
 			await Promise.allSettled( [
 				updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } ),
-				setActiveChecklist( siteSlug, checklistSlug ),
+				setActiveChecklist?.( siteSlug, checklistSlug ),
 			] );
 		} else {
 			await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );

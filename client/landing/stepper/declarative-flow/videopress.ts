@@ -306,7 +306,7 @@ const videopress: Flow = {
 				case 'launchpad':
 					await skipLaunchpad( {
 						checklistSlug: 'videopress',
-						setActiveChecklist,
+						...( config.isEnabled( 'launchpad/navigator' ) ? { setActiveChecklist } : {} ),
 						siteId,
 						siteSlug,
 					} );

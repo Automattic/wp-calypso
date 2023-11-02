@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { LaunchpadNavigator } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, WRITE_FLOW } from '@automattic/onboarding';
@@ -82,7 +83,7 @@ const write: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'write',
-						setActiveChecklist,
+						...( config.isEnabled( 'launchpad/navigator' ) ? { setActiveChecklist } : {} ),
 						siteId,
 						siteSlug,
 					} );

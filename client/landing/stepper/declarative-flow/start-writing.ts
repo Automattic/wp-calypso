@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	LaunchpadNavigator,
 	OnboardSelect,
@@ -197,7 +198,7 @@ const startWriting: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'start-writing',
-						setActiveChecklist,
+						...( config.isEnabled( 'launchpad/navigator' ) ? { setActiveChecklist } : {} ),
 						siteId,
 						siteSlug,
 					} );

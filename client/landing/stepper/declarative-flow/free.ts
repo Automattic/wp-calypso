@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { LaunchpadNavigator, type OnboardSelect, type UserSelect } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
@@ -171,7 +172,7 @@ const free: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'free',
-						setActiveChecklist,
+						...( config.isEnabled( 'launchpad/navigator' ) ? { setActiveChecklist } : {} ),
 						siteId,
 						siteSlug,
 					} );
