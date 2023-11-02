@@ -20,6 +20,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
+import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -378,9 +379,20 @@ class ThemeShowcase extends Component {
 			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
 		};
 
+		const showCollections = tier === '' && this.isThemeDiscoveryEnabled() && ! isCollectionView;
+
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themesSelectionProps } />
+				<ThemesSelection { ...themesSelectionProps }>
+					{ showCollections && (
+						<ThemeCollectionsLayout
+							getOptions={ this.getThemeOptions }
+							getScreenshotUrl={ this.getScreenshotUrl }
+							getActionLabel={ this.getActionLabel }
+							onSeeAll={ this.onCollectionSeeAll }
+						/>
+					) }
+				</ThemesSelection>
 			</div>
 		);
 	};
