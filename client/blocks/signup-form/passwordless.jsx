@@ -26,6 +26,7 @@ class PasswordlessSignupForm extends Component {
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
+		userEmail: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -34,7 +35,7 @@ class PasswordlessSignupForm extends Component {
 
 	state = {
 		isSubmitting: false,
-		email: this.props.step && this.props.step.form ? this.props.step.form.email : '',
+		email: this.props.userEmail,
 		errorMessages: null,
 	};
 
