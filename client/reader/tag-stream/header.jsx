@@ -68,6 +68,8 @@ class TagStreamHeader extends Component {
 		// so we can set a smaller title size and prevent it from resizing as the page loads. Should be refactored if tag descriptions
 		// end up getting used for other things besides prompt tags.
 		const isPromptTag = new RegExp( /^dailyprompt-\d+$/ ).test( title );
+
+		// Display the tag description as the title if there is one.
 		const titleText = description ?? title;
 		const subtitleText = description ? title : null;
 
@@ -80,11 +82,7 @@ class TagStreamHeader extends Component {
 
 		return (
 			<div className={ classes }>
-				<NavigationHeader
-					navigationItems={ [ {} ] }
-					title={ titleText }
-					subtitle={ subtitleText }
-				/>
+				<NavigationHeader title={ titleText } subtitle={ subtitleText } />
 				{ ( showSort || showFollow ) && (
 					<div className="tag-stream__header-controls">
 						<div className="tag-stream__header-sort-picker">
