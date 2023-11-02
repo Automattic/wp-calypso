@@ -16,7 +16,6 @@ const OdieAssistant = () => {
 	const chatboxMessagesRef = useRef< HTMLDivElement | null >( null );
 	const { ref: bottomRef, entry: bottomElement, inView } = useInView( { threshold: 0 } );
 	const [ stickToBottom, setStickToBottom ] = useState( true );
-	const lastScrollHeight = useRef( 0 );
 
 	const scrollToBottom = useCallback(
 		( smooth = false, force = false ) => {
@@ -43,23 +42,13 @@ const OdieAssistant = () => {
 			return;
 		}
 
-		const { scrollTop, scrollHeight, clientHeight } = chatboxMessagesRef.current;
-		const isUserScroll = lastScrollHeight.current === scrollHeight;
+		const isAtBottom =
+			chatboxMessagesRef.current.scrollTop + chatboxMessagesRef.current.clientHeight ===
+			chatboxMessagesRef.current.scrollHeight;
 
-		// If the scrollHeight didn't change, then it's a user scroll
-		if ( isUserScroll ) {
-			// User scrolls up: stickToBottom is set to false
-			if ( scrollTop < scrollHeight - clientHeight ) {
-				setStickToBottom( false );
-			}
-			// User scrolls down (near the end, within 10 pixels of the bottom): stickToBottom is set to true
-			else if ( scrollTop >= scrollHeight - clientHeight - 10 ) {
-				setStickToBottom( true );
-			}
+		if ( isAtBottom ) {
+			setStickToBottom( true );
 		}
-
-		// Update the last scroll height for the next scroll event
-		lastScrollHeight.current = scrollHeight;
 	}, [] );
 
 	useScrollStop( chatboxMessagesRef.current, () => setStickToBottom( false ) );
