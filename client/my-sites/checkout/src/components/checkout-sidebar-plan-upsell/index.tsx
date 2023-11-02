@@ -20,6 +20,7 @@ import {
 	getItemVariantDiscountPercentage,
 } from '../item-variation-picker/util';
 import './style.scss';
+
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
 
 export function CheckoutSidebarPlanUpsell() {

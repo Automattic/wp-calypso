@@ -8,6 +8,7 @@ import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { ItemVariantDropDownPrice } from './variant-dropdown-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
+
 interface CurrentOptionProps {
 	open: boolean;
 }

@@ -24,6 +24,7 @@ import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import { convertErrorToString } from '../lib/analytics';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
+
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
 const isError = ( err: unknown ): err is Error => err instanceof Error;

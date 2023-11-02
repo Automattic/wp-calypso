@@ -90,6 +90,7 @@ import type {
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, ReactNode } from 'react';
+
 const debug = debugFactory( 'calypso:wp-checkout' );
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
