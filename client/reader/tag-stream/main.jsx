@@ -3,6 +3,7 @@ import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import titleCase from 'to-title-case';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -102,7 +103,7 @@ class TagStream extends Component {
 		const emptyContent = () => <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
 		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
-		const titleText = title.replace( /-/g, ' ' );
+		const titleText = titleCase( title.replace( /-/g, ' ' ) );
 
 		let imageSearchString = this.props.encodedTagSlug;
 
@@ -133,20 +134,18 @@ class TagStream extends Component {
 
 		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
 		const tagHeader = () => (
-			<>
-				<TagStreamHeader
-					title={ titleText }
-					description={ this.props.description }
-					imageSearchString={ imageSearchString }
-					showFollow={ !! ( tag && tag.id ) }
-					following={ this.isSubscribed() }
-					onFollowToggle={ this.toggleFollowing }
-					showBack={ this.props.showBack }
-					showSort={ true }
-					sort={ this.props.sort }
-					recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
-				/>
-			</>
+			<TagStreamHeader
+				title={ titleText }
+				description={ this.props.description }
+				imageSearchString={ imageSearchString }
+				showFollow={ !! ( tag && tag.id ) }
+				following={ this.isSubscribed() }
+				onFollowToggle={ this.toggleFollowing }
+				showBack={ this.props.showBack }
+				showSort={ true }
+				sort={ this.props.sort }
+				recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
+			/>
 		);
 		const sidebarProps = ! isReaderTagEmbedPage( window.location ) && {
 			streamSidebar: () => (

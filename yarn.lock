@@ -1109,7 +1109,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@wordpress/components": ^25.9.1
+    "@wordpress/components": ^25.10.0
     classnames: ^2.3.1
     postcss: ^8.4.5
     react: ^18.2.0

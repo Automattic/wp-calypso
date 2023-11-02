@@ -324,10 +324,12 @@ class SharingServiceExamples extends Component {
 	}
 
 	nextdoor() {
-		const label = this.props.translate( 'Automatically share posts to Nextdoor.' );
+		const label = this.props.translate(
+			'Connect with friends, neighbors, and local businesses by automatically sharing your posts to Nextdoor.'
+		);
 		const image = {
 			src: nextdoorExample,
-			alt: this.props.translate( 'Share posts to Nextdoor', {
+			alt: this.props.translate( 'Share posts with your local community on Nextdoor.', {
 				textOnly: true,
 			} ),
 		};
