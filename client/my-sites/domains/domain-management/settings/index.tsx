@@ -600,7 +600,7 @@ const Settings = ( {
 					) }
 					icon="cross-circle"
 					showDismiss={ false }
-					status="is-error"
+					status="is-warning"
 				>
 					<NoticeAction onClick={ () => verifyIcannEmail( domain.domain ) }>
 						{ translate( 'Resend Email' ) }
