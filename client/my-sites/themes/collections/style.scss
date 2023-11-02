@@ -49,6 +49,10 @@
 		background-color: var(--studio-gray-0);
 		grid-column: 1/-1;
 		grid-row-start: 3;
-		margin: 0 -32px 48px;
+		margin: 0 0 48px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin: 0 -32px 48px;
+		}
 	}
 }
