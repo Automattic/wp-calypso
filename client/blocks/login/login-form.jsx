@@ -47,7 +47,11 @@ import {
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
-import { isPartnerSignupQuery, isRegularAccount } from 'calypso/state/login/utils';
+import {
+	isPartnerSignupQuery,
+	isPasswordlessAccount,
+	isRegularAccount,
+} from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -87,6 +91,7 @@ export class LoginForm extends Component {
 		currentQuery: PropTypes.object,
 		hideSignupLink: PropTypes.bool,
 		isSignupExistingAccount: PropTypes.bool,
+		sendMagicLoginLink: PropTypes.func,
 	};
 
 	state = {
@@ -192,7 +197,12 @@ export class LoginForm extends Component {
 	}
 
 	isUsernameOrEmailView() {
-		const { hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
+		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking, isSignupExistingAccount } =
+			this.props;
+
+		if ( isSignupExistingAccount && hasAccountTypeLoaded ) {
+			return isPasswordlessAccount( accountType );
+		}
 
 		return (
 			! socialAccountIsLinking &&
@@ -248,6 +258,10 @@ export class LoginForm extends Component {
 			} );
 
 			return;
+		}
+
+		if ( isPasswordlessAccount( this.props.accountType ) ) {
+			this.props.sendMagicLoginLink?.();
 		}
 
 		this.loginUser();

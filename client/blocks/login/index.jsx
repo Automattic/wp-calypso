@@ -133,11 +133,19 @@ class Login extends Component {
 			window.scrollTo( 0, 0 );
 		}
 
-		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
-			this.props.sendEmailLogin();
-			this.handleTwoFactorRequested( 'link' );
+		if (
+			! prevProps.accountType &&
+			isPasswordlessAccount( this.props.accountType ) &&
+			! this.props.isSignupExistingAccount
+		) {
+			this.sendMagicLoginLink();
 		}
 	}
+
+	sendMagicLoginLink = () => {
+		this.props.sendEmailLogin();
+		this.handleTwoFactorRequested( 'link' );
+	};
 
 	showContinueAsUser = () => {
 		const {
@@ -724,6 +732,7 @@ class Login extends Component {
 							handleUsernameChange={ handleUsernameChange }
 							signupUrl={ signupUrl }
 							showSocialLoginFormOnly={ true }
+							sendMagicLoginLink={ this.sendMagicLoginLink }
 						/>
 					</Fragment>
 				);
@@ -748,6 +757,7 @@ class Login extends Component {
 				signupUrl={ signupUrl }
 				hideSignupLink={ isGravPoweredLoginPage }
 				isSignupExistingAccount={ isSignupExistingAccount }
+				sendMagicLoginLink={ this.sendMagicLoginLink }
 			/>
 		);
 	}
