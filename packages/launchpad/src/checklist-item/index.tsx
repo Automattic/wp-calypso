@@ -49,7 +49,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 				<Button
 					className="checklist-item__checklist-primary-button"
 					data-task={ id }
-					onClick={ handlePrimaryAction }
+					onClick={ () => handlePrimaryAction() }
 					{ ...buttonProps }
 				>
 					{ title }
@@ -58,7 +58,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 				<Button
 					className="checklist-item__task-content"
 					data-task={ id }
-					onClick={ actionDispatch }
+					onClick={ () => actionDispatch?.() }
 					{ ...buttonProps }
 				>
 					{ completed && (

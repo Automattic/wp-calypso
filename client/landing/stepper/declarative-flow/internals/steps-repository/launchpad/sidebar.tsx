@@ -1,7 +1,12 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Badge, CircularProgressBar, Dialog, Gridicon } from '@automattic/components';
+import { Badge, CircularProgressBar, Gridicon } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { LaunchpadInternal } from '@automattic/launchpad';
+import {
+	LaunchpadInternal,
+	UnverifiedDomainEmailNagDialog,
+	recordUnverifiedDomainDialogShownTracksEvent,
+	recordUnverifiedDomainContinueAnywayClickedTracksEvent,
+} from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
@@ -15,7 +20,6 @@ import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-emai
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { useSelector } from 'calypso/state';
@@ -44,18 +48,6 @@ function getUrlInfo( url: string ) {
 	const topLevelDomain = urlWithoutProtocol.match( /\..*/ )?.[ 0 ] || '';
 
 	return [ siteName, topLevelDomain ];
-}
-
-function recordUnverifiedDomainDialogShownTracksEvent( site_id?: number ) {
-	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_dialog_shown', {
-		site_id,
-	} );
-}
-
-function recordUnverifiedDomainContinueAnywayClickedTracksEvent( site_id?: number ) {
-	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_continue_anyway_clicked', {
-		site_id,
-	} );
 }
 
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
@@ -275,40 +267,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 					) }
 				</div>
 			</div>
-			<Dialog
+			<UnverifiedDomainEmailNagDialog
 				isVisible={ showConfirmModal }
-				buttons={ [
-					{
-						action: 'cancel',
-						label: translate( 'Cancel' ),
-					},
-					{
-						action: 'launch',
-						label: translate( 'Continue anyway' ),
-						isPrimary: true,
-						onClick: () => {
-							recordUnverifiedDomainContinueAnywayClickedTracksEvent( site?.ID );
-							enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch?.( true );
-							setShowConfirmModal( false );
-						},
-					},
-				] }
+				domain={ sidebarDomain?.domain as string }
 				onClose={ () => setShowConfirmModal( false ) }
-			>
-				<p>
-					{ translate(
-						'Your domain email address is still unverified. This will cause {{strong}}%(domain)s{{/strong}} to be suspended in the future.{{break/}}{{break/}}Please check your inbox for the ICANN verification email.',
-						{
-							components: {
-								p: <p />,
-								break: <br />,
-								strong: <strong />,
-							},
-							args: { domain: sidebarDomain?.domain },
-						}
-					) }
-				</p>
-			</Dialog>
+				onContinue={ () => {
+					recordUnverifiedDomainContinueAnywayClickedTracksEvent( site?.ID );
+					enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch?.( true );
+					setShowConfirmModal( false );
+				} }
+			/>
 		</>
 	);
 };

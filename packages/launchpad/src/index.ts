@@ -4,4 +4,5 @@ export { default as LaunchpadInternal } from './launchpad-internal';
 export { default as Launchpad } from './launchpad';
 export { setUpActionsForTasks } from './setup-actions';
 export * from './action-components';
+export * from './unverified-domain-email-nag-dialog';
 export * from './types';

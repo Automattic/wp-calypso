@@ -8,7 +8,7 @@ export interface Task {
 	title?: string;
 	subtitle?: string | React.ReactNode | null;
 	badge_text?: string;
-	actionDispatch?: () => void;
+	actionDispatch?: ( force?: boolean ) => void;
 	isLaunchTask?: boolean;
 	extra_data?: TaskExtraData;
 	calypso_path?: string;
@@ -59,6 +59,7 @@ export interface LaunchpadResponse {
 export interface PermittedActions {
 	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
 	setActiveChecklist: ( siteSlug: string, activeChecklistSlug: string ) => void;
+	setUnverifiedDomainEmailModalIsOpen?: () => void;
 }
 
 export type EventHandlers = {
@@ -69,6 +70,7 @@ export type EventHandlers = {
 export interface LaunchpadTaskActionsProps {
 	siteSlug: string | null;
 	tasks: Task[];
+	customDomain?: { name: string; isPendingIcannVerification?: boolean };
 	tracksData: LaunchpadTracksData;
 	extraActions: PermittedActions;
 	uiContext?: 'calypso';

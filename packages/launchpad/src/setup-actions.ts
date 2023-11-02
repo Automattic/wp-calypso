@@ -17,6 +17,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 
 export const setUpActionsForTasks = ( {
 	siteSlug,
+	customDomain,
 	tasks,
 	tracksData,
 	extraActions,
@@ -41,7 +42,7 @@ export const setUpActionsForTasks = ( {
 
 	// Add actions to the tasks.
 	return tasks.map( ( task: Task ) => {
-		let action: () => void;
+		let action: ( force?: boolean ) => void;
 		let logMissingCalypsoPath = false;
 		let useCalypsoPath = true;
 		const hasCalypsoPath = task.calypso_path !== undefined;
@@ -122,7 +123,14 @@ export const setUpActionsForTasks = ( {
 				case 'blog_launched':
 				case 'videopress_launched':
 				case 'link_in_bio_launched':
-					action = async () => {
+					action = async ( force?: boolean ) => {
+						if ( customDomain?.isPendingIcannVerification ) {
+							if ( ! force ) {
+								extraActions.setUnverifiedDomainEmailModalIsOpen?.();
+								return;
+							}
+						}
+
 						await wpcomRequest( {
 							path: `/sites/${ siteSlug }/launch`,
 							apiVersion: '1.1',
@@ -149,13 +157,13 @@ export const setUpActionsForTasks = ( {
 			} );
 		}
 
-		const actionDispatch = () => {
+		const actionDispatch = ( force?: boolean ) => {
 			recordTaskClickTracksEvent( task );
 			if ( siteSlug && setActiveChecklist ) {
 				setActiveChecklist( siteSlug, checklistSlug );
 			}
 			onTaskClick?.( task );
-			action?.();
+			action?.( force );
 		};
 
 		// Note that we double-check for both the flag and a valid calypso_path as a safety check.

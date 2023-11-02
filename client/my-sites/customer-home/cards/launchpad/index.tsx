@@ -1,7 +1,7 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import {
-	updateLaunchpadSettings,
 	LaunchpadNavigator,
+	updateLaunchpadSettings,
 	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useLaunchpadNavigator } from 'calypso/data/launchpad-navigator/use-launchpad-navigator';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
@@ -29,6 +30,9 @@ const CustomerHomeLaunchpad = ( {
 	const launchpadContext = 'customer-home';
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
+	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
+	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
+	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
 
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
@@ -122,6 +126,8 @@ const CustomerHomeLaunchpad = ( {
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
 				onSiteLaunched={ onSiteLaunched }
+				siteId={ siteId }
+				customDomain={ customDomain }
 			/>
 		</div>
 	);
