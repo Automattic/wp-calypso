@@ -91,7 +91,6 @@ const AISitePrompt: Step = function ( props ) {
 				<div className="site-prompt__instructions-container">
 					<form onSubmit={ onSubmit }>
 						<TextareaControl
-							label={ __( 'Please describe your site, business and ideas in detail.' ) }
 							help={ __( 'Sharing more detail here will help AI understand your intent better.' ) }
 							value={ prompt }
 							onChange={ ( value ) => setPrompt( value ) }
