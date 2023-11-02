@@ -125,11 +125,9 @@ const AISitePrompt: Step = function ( props ) {
 					formattedHeader={
 						<FormattedHeader
 							id="site-prompt-header"
-							headerText={ __(
-								'Tell us a bit about what you would like to see on your new site.'
-							) }
+							headerText={ __( 'Tell us a bit about your web site or business.' ) }
 							subHeaderText={ __(
-								'We will create a home page template for you using best practices and AI help.'
+								'We will create a home page template for you based on best practices for sites like yours.'
 							) }
 							align="left"
 						/>
