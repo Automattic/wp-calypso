@@ -33,8 +33,7 @@ export function getExternalBackUrl( source, sectionName = null ) {
 /**
  * Check if we should use multiple domains in domain flows.
  */
-// eslint-disable-next-line no-unused-vars -- currentUser is helpful for a/b tests. Leaving it for now.
-export function shouldUseMultipleDomainsInCart( flowName, currentUser ) {
+export function shouldUseMultipleDomainsInCart( flowName ) {
 	const enabledFlows = [ 'domain', 'onboarding' ];
 
 	if ( isE2ETest() ) {
