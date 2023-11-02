@@ -333,9 +333,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		const design = getDesign() as Design;
 		const stylesheet = design.recipe?.stylesheet ?? '';
 		const themeId = getThemeIdFromStylesheet( stylesheet );
-		const hasBlogPatterns = !! sections.find(
-			( { categories } ) => categories[ 'posts' ] || categories[ 'blog' ]
-		);
 
 		if ( ! siteSlugOrId || ! site?.ID || ! themeId ) {
 			return;
@@ -366,9 +363,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 								content: patterns[ 0 ].html,
 							} ) ),
 						globalStyles: syncedGlobalStylesUserConfig,
-						// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
-						// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
-						shouldResetContent: isNewSite && hasBlogPatterns,
+						// Newly created sites can have the content replaced when necessary,
+						// e.g. when the homepage has a blog pattern, we replace the posts with the content from theme demo site.
+						// TODO: Ask users whether they want that.
+						canReplaceContent: isNewSite,
 						// All sites using the assembler set the option wpcom_site_setup
 						siteSetupOption: design.is_virtual ? 'assembler-virtual-theme' : 'assembler',
 					} )
