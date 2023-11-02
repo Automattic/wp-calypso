@@ -37,9 +37,9 @@ export default function SiteStatusContent( {
 
 	let { tooltip } = metadataRest;
 
-	const siteId = rows.site.value.blog_id;
-
-	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
+	const isMultiSite = useSelector( ( state ) =>
+		isJetpackSiteMultiSite( state, rows.site.value.blog_id )
+	);
 
 	// Disable clicks/hover when there is a site error &
 	// when the row is not monitor and monitor status is down
@@ -71,6 +71,30 @@ export default function SiteStatusContent( {
 		);
 	}
 
+	// We will show "Site Down" when the site is down which is handled differently.
+	if ( type === 'monitor' && ! siteDown ) {
+		return (
+			<ToggleActivateMonitoring
+				site={ rows.site.value }
+				settings={ rows.monitor.settings }
+				status={ status }
+				tooltip={ tooltip }
+				tooltipId={ tooltipId }
+				siteError={ hasAnyError }
+				isLargeScreen={ isLargeScreen }
+			/>
+		);
+	}
+
+	if ( type === 'stats' ) {
+		return <SiteStatsColumn stats={ rows.stats.value } />;
+	}
+
+	// We will show a progress icon when the site score is being fetched.
+	if ( type === 'boost' && status !== 'progress' ) {
+		return <SiteBoostColumn site={ rows.site.value } />;
+	}
+
 	let content;
 
 	// Show "Not supported on multisite" when the the site is multisite and the product is Scan or
@@ -82,30 +106,6 @@ export default function SiteStatusContent( {
 		content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
 		tooltip = translate( 'Not supported on multisite' );
 	} else {
-		// We will show "Site Down" when the site is down which is handled differently.
-		if ( type === 'monitor' && ! siteDown ) {
-			return (
-				<ToggleActivateMonitoring
-					site={ rows.site.value }
-					settings={ rows.monitor.settings }
-					status={ status }
-					tooltip={ tooltip }
-					tooltipId={ tooltipId }
-					siteError={ hasAnyError }
-					isLargeScreen={ isLargeScreen }
-				/>
-			);
-		}
-
-		if ( type === 'stats' ) {
-			return <SiteStatsColumn stats={ rows.stats.value } />;
-		}
-
-		// We will show a progress icon when the site score is being fetched.
-		if ( type === 'boost' && status !== 'progress' ) {
-			return <SiteBoostColumn site={ rows.site.value } />;
-		}
-
 		content = (
 			<SiteStatusColumn
 				type={ type }
