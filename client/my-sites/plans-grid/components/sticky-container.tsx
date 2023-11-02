@@ -36,7 +36,7 @@ export function StickyContainer( props: Props ) {
 	 * So when position:sticky takes effect, the intersection ratio will always be ~99%
 	 */
 	useLayoutEffect( () => {
-		if ( ! IntersectionObserver ) {
+		if ( ! window || ! window[ 'IntersectionObserver' ] ) {
 			return;
 		}
 		const observer = new IntersectionObserver(
