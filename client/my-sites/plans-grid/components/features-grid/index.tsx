@@ -52,7 +52,7 @@ interface FeaturesGridType extends PlansGridProps {
 
 class FeaturesGrid extends Component< FeaturesGridType > {
 	renderTable( renderedGridPlans: GridPlan[] ) {
-		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
+		const { translate, gridPlanForSpotlight, stickyRowOffset } = this.props;
 		// Do not render the spotlight plan if it exists
 		const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 			? renderedGridPlans
@@ -79,7 +79,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
 						stickyOffset={ stickyRowOffset }
-						topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
 					>
 						{ ( isStuck: boolean ) =>
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
