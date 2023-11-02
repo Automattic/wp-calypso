@@ -3,31 +3,9 @@ import domReady from '@wordpress/dom-ready';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
-
-/**
- * Return true if the user is currently previewing a theme.
- * FIXME: This is copied from Gutenberg; we should be creating a selector for the `core/edit-site` store.
- * @see https://github.com/WordPress/gutenberg/blob/053c8f733c85d80c891fa308b071b9a18e5194e9/packages/edit-site/src/utils/is-previewing-theme.js#L6
- * @returns {boolean} isPreviewingTheme
- */
-function isPreviewingTheme() {
-	return getQueryArg( window.location.href, 'wp_theme_preview' ) !== undefined;
-}
-
-/**
- * Return the theme slug if the user is currently previewing a theme.
- * FIXME: This is copied from Gutenberg; we should be creating a selector for the `core/edit-site` store.
- * @see https://github.com/WordPress/gutenberg/blob/053c8f733c85d80c891fa308b071b9a18e5194e9/packages/edit-site/src/utils/is-previewing-theme.js#L6
- * @returns {string|null} currentlyPreviewingTheme
- */
-function currentlyPreviewingTheme() {
-	if ( isPreviewingTheme() ) {
-		return getQueryArg( window.location.href, 'wp_theme_preview' );
-	}
-	return null;
-}
+import { LivePreviewUpgradeNotice } from './upgrade-notice';
+import { currentlyPreviewingTheme, isPreviewingTheme } from './utils';
 
 /**
  * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
@@ -117,7 +95,12 @@ const LivePreviewNotice = () => {
 
 const registerLivePreviewPlugin = () => {
 	registerPlugin( 'wpcom-live-preview', {
-		render: () => <LivePreviewNotice />,
+		render: () => (
+			<>
+				<LivePreviewNotice />
+				<LivePreviewUpgradeNotice />
+			</>
+		),
 	} );
 };
 
