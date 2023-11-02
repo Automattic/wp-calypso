@@ -19,6 +19,7 @@
 		"catch-js-errors": true,
 		"checkout/google-pay": true,
 		"checkout/vat-form": true,
+		"checkout/checkout-version": false,
 		"cloudflare": true,
 		"composite-checkout-testing": true,
 		"current-site/domain-warning": true,
