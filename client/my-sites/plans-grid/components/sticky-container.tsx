@@ -4,20 +4,27 @@ import { useRef, type ElementType, useState, useLayoutEffect, ReactNode } from '
 
 type Props = {
 	children: ( isStuck: boolean ) => ReactNode;
-	stickyClass?: string;
-	element?: ElementType;
+	stickyClass?: string; // class to apply when the element is "stuck"
+	element?: ElementType; // which element to render, defaults to div
 	stickyOffset?: number; // offset from the top of the scrolling container to control when the element should start sticking, default 0
-	topOffset?: number; // offset from the top of the scrolling container to control the position of the sticky element, default 0
+	disabled?: boolean; // force disabled sticky behaviour if set to true
 };
 
-const Container = styled.div< { topOffset: number } >`
-	position: sticky;
-	top: ${ ( props ) => props.topOffset + 'px' };
-	z-index: 1;
+const styles = ( { disabled, stickyOffset }: { disabled: boolean; stickyOffset: number } ) =>
+	disabled
+		? ''
+		: css`
+				position: sticky;
+				top: ${ stickyOffset + 'px' };
+				z-index: 2;
+		  `;
+
+const Container = styled.div`
+	${ styles }
 `;
 
 export function StickyContainer( props: Props ) {
-	const { stickyOffset = 0, topOffset = 0, stickyClass = '', element = 'div', children } = props;
+	const { stickyOffset = 0, stickyClass = '', element = 'div', disabled = false, children } = props;
 
 	const stickyRef = useRef( null );
 	const [ isStuck, setIsStuck ] = useState( false );
@@ -29,6 +36,9 @@ export function StickyContainer( props: Props ) {
 	 * So when position:sticky takes effect, the intersection ratio will always be ~99%
 	 */
 	useLayoutEffect( () => {
+		if ( typeof IntersectionObserver === 'undefined' ) {
+			return;
+		}
 		const observer = new IntersectionObserver(
 			( [ entry ] ) => {
 				if ( entry.intersectionRatio === 0 ) {
@@ -74,7 +84,8 @@ export function StickyContainer( props: Props ) {
 				{ ...props }
 				as={ element }
 				ref={ stickyRef }
-				topOffset={ topOffset }
+				stickyOffset={ stickyOffset }
+				disabled={ disabled }
 				className={ isStuck ? stickyClass : '' }
 			>
 				{ children( isStuck ) }

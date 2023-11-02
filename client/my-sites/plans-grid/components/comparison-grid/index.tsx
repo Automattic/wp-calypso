@@ -15,7 +15,16 @@ import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
+import {
+	useState,
+	useCallback,
+	useEffect,
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+	forwardRef,
+} from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import getPlanFeaturesObject from 'calypso/my-sites/plans-grid/lib/get-plan-features-object';
@@ -32,6 +41,7 @@ import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
+import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
 	GridPlan,
@@ -104,6 +114,11 @@ const Grid = styled.div< { isInSignup?: boolean } >`
 	${ plansBreakSmall( css`
 		border-radius: 5px;
 	` ) }
+
+	> .is-sticky-header-row {
+		border-bottom: solid 1px #e0e0e0;
+		background: #fff;
+	}
 `;
 
 const Row = styled.div< {
@@ -140,7 +155,7 @@ const Row = styled.div< {
 
 const PlanRow = styled( Row )`
 	&:last-of-type {
-		display: none;
+		display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 	}
 
 	${ plansBreakSmall( css`
@@ -212,6 +227,10 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 		&:last-of-type {
 			padding-inline-end: 0;
 			border-right: none;
+		}
+
+		&.is-stuck {
+			padding-bottom: 16px;
 		}
 	` ) }
 `;
@@ -316,6 +335,7 @@ type ComparisonGridProps = {
 	selectedFeature?: string;
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean;
+	stickyRowOffset: number;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showRefundPeriod?: boolean;
 };
@@ -336,6 +356,8 @@ type ComparisonGridHeaderProps = {
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
+	isStuck: boolean;
+	isHiddenInMobile?: boolean;
 };
 
 type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
@@ -371,6 +393,7 @@ const ComparisonGridHeaderCell = ( {
 	isPlanUpgradeCreditEligible,
 	siteId,
 	showRefundPeriod,
+	isStuck,
 }: ComparisonGridHeaderCellProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
@@ -390,9 +413,11 @@ const ComparisonGridHeaderCell = ( {
 		'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,
 		'is-only-highlight': highlightAdjacencyMatrix[ planSlug ]?.isOnlyHighlight,
 		'is-current-plan': gridPlan.current,
+		'is-stuck': isStuck,
 	} );
 	const popularBadgeClasses = classNames( {
 		'is-current-plan': gridPlan.current,
+		'popular-badge-is-stuck': isStuck,
 	} );
 	const showPlanSelect = ! allVisible && ! gridPlan.current;
 
@@ -468,70 +493,78 @@ const ComparisonGridHeaderCell = ( {
 	);
 };
 
-const ComparisonGridHeader = ( {
-	displayedGridPlans,
-	visibleGridPlans,
-	isInSignup,
-	isLaunchPage,
-	flowName,
-	isFooter,
-	onPlanChange,
-	currentSitePlanSlug,
-	currentPlanManageHref,
-	canUserManageCurrentPlan,
-	onUpgradeClick,
-	siteId,
-	planActionOverrides,
-	selectedPlan,
-	showRefundPeriod,
-}: ComparisonGridHeaderProps ) => {
-	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
-	const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
-		gridPlans: displayedGridPlans,
-	} );
+const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderProps >(
+	(
+		{
+			displayedGridPlans,
+			visibleGridPlans,
+			isInSignup,
+			isLaunchPage,
+			flowName,
+			isFooter,
+			onPlanChange,
+			currentSitePlanSlug,
+			currentPlanManageHref,
+			canUserManageCurrentPlan,
+			onUpgradeClick,
+			siteId,
+			planActionOverrides,
+			selectedPlan,
+			isHiddenInMobile,
+			showRefundPeriod,
+			isStuck,
+		},
+		ref
+	) => {
+		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
+		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
+			gridPlans: displayedGridPlans,
+		} );
 
-	const isLargeCurrency = useIsLargeCurrency( {
-		prices,
-		currencyCode: currencyCode || 'USD',
-	} );
-	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
-		siteId ?? 0,
-		displayedGridPlans.map( ( { planSlug } ) => planSlug )
-	);
-	return (
-		<PlanRow>
-			<RowTitleCell
-				key="feature-name"
-				className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
-			/>
-			{ visibleGridPlans.map( ( { planSlug }, index ) => (
-				<ComparisonGridHeaderCell
-					planSlug={ planSlug }
-					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-					key={ planSlug }
-					isLastInRow={ index === visibleGridPlans.length - 1 }
-					isFooter={ isFooter }
-					allVisible={ allVisible }
-					isInSignup={ isInSignup }
-					visibleGridPlans={ visibleGridPlans }
-					onPlanChange={ onPlanChange }
-					displayedGridPlans={ displayedGridPlans }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					currentPlanManageHref={ currentPlanManageHref }
-					canUserManageCurrentPlan={ canUserManageCurrentPlan }
-					flowName={ flowName }
-					onUpgradeClick={ onUpgradeClick }
-					isLaunchPage={ isLaunchPage }
-					isLargeCurrency={ isLargeCurrency }
-					planActionOverrides={ planActionOverrides }
-					selectedPlan={ selectedPlan }
-					siteId={ siteId }
-					showRefundPeriod={ showRefundPeriod }
+		const isLargeCurrency = useIsLargeCurrency( {
+			prices,
+			currencyCode: currencyCode || 'USD',
+		} );
+		const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
+			siteId ?? 0,
+			displayedGridPlans.map( ( { planSlug } ) => planSlug )
+		);
+		return (
+			<PlanRow isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
+				<RowTitleCell
+					key="feature-name"
+					className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
 				/>
-			) ) }
-		</PlanRow>
-	);
-};
+				{ visibleGridPlans.map( ( { planSlug }, index ) => (
+					<ComparisonGridHeaderCell
+						planSlug={ planSlug }
+						isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+						key={ planSlug }
+						isLastInRow={ index === visibleGridPlans.length - 1 }
+						isFooter={ isFooter }
+						allVisible={ allVisible }
+						isInSignup={ isInSignup }
+						visibleGridPlans={ visibleGridPlans }
+						onPlanChange={ onPlanChange }
+						displayedGridPlans={ displayedGridPlans }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						currentPlanManageHref={ currentPlanManageHref }
+						canUserManageCurrentPlan={ canUserManageCurrentPlan }
+						flowName={ flowName }
+						onUpgradeClick={ onUpgradeClick }
+						isLaunchPage={ isLaunchPage }
+						isLargeCurrency={ isLargeCurrency }
+						planActionOverrides={ planActionOverrides }
+						selectedPlan={ selectedPlan }
+						siteId={ siteId }
+						showRefundPeriod={ showRefundPeriod }
+						isStuck={ isStuck }
+					/>
+				) ) }
+			</PlanRow>
+		);
+	}
+);
 
 const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	feature?: FeatureObject;
@@ -958,6 +991,7 @@ const ComparisonGrid = ( {
 	selectedPlan,
 	selectedFeature,
 	showUpgradeableStorage,
+	stickyRowOffset,
 	onStorageAddOnClick,
 	showRefundPeriod,
 }: ComparisonGridProps ) => {
@@ -1080,25 +1114,37 @@ const ComparisonGrid = ( {
 		};
 	}, [ featureGroupMap ] );
 
+	// 100px is the padding of the footer row
+	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
+
 	return (
 		<div className="plan-comparison-grid">
 			<Grid isInSignup={ isInSignup }>
-				<ComparisonGridHeader
-					siteId={ siteId }
-					displayedGridPlans={ displayedGridPlans }
-					visibleGridPlans={ visibleGridPlans }
-					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
-					flowName={ flowName }
-					onPlanChange={ onPlanChange }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					currentPlanManageHref={ currentPlanManageHref }
-					canUserManageCurrentPlan={ canUserManageCurrentPlan }
-					onUpgradeClick={ onUpgradeClick }
-					planActionOverrides={ planActionOverrides }
-					selectedPlan={ selectedPlan }
-					showRefundPeriod={ showRefundPeriod }
-				/>
+				<StickyContainer
+					disabled={ isBottomHeaderInView }
+					stickyClass="is-sticky-header-row"
+					stickyOffset={ stickyRowOffset }
+				>
+					{ ( isStuck: boolean ) => (
+						<ComparisonGridHeader
+							siteId={ siteId }
+							displayedGridPlans={ displayedGridPlans }
+							visibleGridPlans={ visibleGridPlans }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							flowName={ flowName }
+							onPlanChange={ onPlanChange }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							currentPlanManageHref={ currentPlanManageHref }
+							canUserManageCurrentPlan={ canUserManageCurrentPlan }
+							onUpgradeClick={ onUpgradeClick }
+							planActionOverrides={ planActionOverrides }
+							selectedPlan={ selectedPlan }
+							showRefundPeriod={ showRefundPeriod }
+							isStuck={ isStuck }
+						/>
+					) }
+				</StickyContainer>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
 					<FeatureGroup
 						key={ featureGroup.slug }
@@ -1132,6 +1178,9 @@ const ComparisonGrid = ( {
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }
+					isStuck={ false }
+					isHiddenInMobile={ true }
+					ref={ bottomHeaderRef }
 				/>
 			</Grid>
 
