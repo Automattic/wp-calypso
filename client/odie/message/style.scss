@@ -371,9 +371,10 @@ $custom-border-corner-size: 16px;
 	.foldable-card {
 		margin: 0 !important;
 		width: 100% !important;
+		box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
 
 		.foldable-card__header > span.foldable-card__main > button > span {
-			width: 0;
+			display: none;
 		}
 	}
 

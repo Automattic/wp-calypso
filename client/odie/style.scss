@@ -25,6 +25,7 @@
 
 .chatbox-messages {
 	overflow-y: auto;
+	overflow-x: hidden;
 	word-wrap: break-word;
 	font-size: medium;
 	max-width: 100%;
