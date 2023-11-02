@@ -243,7 +243,6 @@ export function planItem( productSlug: string ): { product_slug: string } | null
 
 /**
  * Determines whether a domain Item supports purchasing a privacy subscription
- *
  * @param {string} productSlug - e.g. domain_reg, dotblog_domain
  * @param {{product_slug: string, is_privacy_protection_product_purchase_allowed?: boolean}[]} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
  * @returns {boolean} true if the domainItem supports privacy protection purchase
@@ -260,7 +259,6 @@ export function supportsPrivacyProtectionPurchase(
 
 /**
  * Creates a new shopping cart item for a domain.
- *
  * @param {string} productSlug - the unique string that identifies the product
  * @param {string} domain - domain name
  * @param {string|undefined} [source] - optional source for the domain item, e.g. `getdotblog`.
@@ -284,7 +282,6 @@ export function domainItem(
 
 /**
  * Creates a new shopping cart item for a premium theme.
- *
  * @param {string} themeSlug - the unique string that identifies the product
  * @param {string} [source] - optional source for the domain item, e.g. `getdotblog`.
  * @returns {MinimalRequestCartProduct} the new item
@@ -301,7 +298,6 @@ export function themeItem( themeSlug: string, source?: string ): MinimalRequestC
 
 /**
  * Creates a new shopping cart item for a marketplace theme subscription.
- *
  * @param productSlug the unique string that identifies the product
  * @returns {MinimalRequestCartProduct} the new item
  */
@@ -865,10 +861,6 @@ export function getDomainPriceRule(
 			return 'INCLUDED_IN_HIGHER_PLAN';
 		}
 
-		return 'PRICE';
-	}
-
-	if ( isDomainOnly ) {
 		return 'PRICE';
 	}
 
