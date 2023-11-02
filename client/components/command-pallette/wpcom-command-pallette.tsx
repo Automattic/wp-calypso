@@ -4,7 +4,7 @@ import { Icon, search as inputIcon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useCommandState, Command } from 'cmdk';
 import { useEffect, useMemo, useState, useRef } from 'react';
-import { useSMPCommands } from '../hooks/use-smp-commands';
+import { useSMPCommands } from 'calypso/sites-dashboard/hooks/use-smp-commands';
 
 import '@wordpress/commands/build-style/style.css';
 
