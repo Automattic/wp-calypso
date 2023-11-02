@@ -103,6 +103,7 @@ export { isJetpackStatsFreeProductSlug } from './is-jetpack-stats-free-product-s
 export { isJetpackVideoPress } from './is-jetpack-videopress';
 export { isJetpackBoostSlug } from './is-jetpack-boost-slug';
 export { isJetpackVideoPressSlug } from './is-jetpack-videopress-slug';
+export { isJetpackCreatorSlug } from './is-jetpack-creator-slug';
 export { default as isJetpackLegacyItem } from './is-jetpack-legacy-item';
 export { default as isJetpackPurchasableItem } from './is-jetpack-purchasable-item';
 export * from './is-monthly';

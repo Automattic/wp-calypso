@@ -12,6 +12,7 @@ import {
 	isJetpackStatsPaidProductSlug,
 	isJetpackVideoPressSlug,
 	isJetpackAISlug,
+	isJetpackCreatorSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
@@ -29,6 +30,7 @@ type featureString =
 	| 'stats'
 	| 'support'
 	| 'videopress'
+	| 'creator'
 	| 'complete';
 
 function getFeatureStrings(
@@ -128,6 +130,18 @@ function getFeatureStrings(
 				translate( 'Video and story blocks' ),
 				translate( 'Unlimited logins for team members' ),
 			];
+		case 'creator':
+			return [
+				translate( 'Display ads with WordAds' ),
+				translate( 'Pay with PayPal' ),
+				translate( 'Import unlimited subscribers' ),
+				translate( '40+ Jetpack blocks' ),
+				translate( 'Paid content gating' ),
+				translate( 'Paywall access' ),
+				translate( 'Newsletter' ),
+				translate( 'Priority support' ),
+				translate( '2% transaction fees' ),
+			];
 		default:
 			return [];
 	}
@@ -217,6 +231,10 @@ export default function getJetpackProductFeatures(
 
 	if ( isJetpackVideoPressSlug( product.product_slug ) ) {
 		return getFeatureStrings( 'videopress', translate );
+	}
+
+	if ( isJetpackCreatorSlug( product.product_slug ) ) {
+		return getFeatureStrings( 'creator', translate );
 	}
 
 	return [];
