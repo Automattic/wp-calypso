@@ -10,6 +10,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -181,6 +182,7 @@ const StagingToProductionSync = ( {
 	isSyncInProgress,
 	onConfirm,
 	showSyncPanel,
+	isSqlsOptionDisabled,
 }: {
 	disabled: boolean;
 	siteSlug: string;
@@ -190,6 +192,7 @@ const StagingToProductionSync = ( {
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 	showSyncPanel: boolean;
+	isSqlsOptionDisabled: boolean;
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
@@ -203,6 +206,7 @@ const StagingToProductionSync = ( {
 						items={ synchronizationOptions }
 						disabled={ disabled }
 						onChange={ onSelectItems }
+						isSqlsOptionDisabled={ isSqlsOptionDisabled }
 					></SyncOptionsPanel>
 				</>
 			) }
@@ -418,6 +422,7 @@ export const SiteSyncCard = ( {
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
+	const isSiteWooStore = useSelector( ( state ) => isSiteStore( state, productionSiteId ) );
 	const {
 		progress,
 		resetSyncStatus,
@@ -541,6 +546,7 @@ export const SiteSyncCard = ( {
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
+					isSqlsOptionDisabled={ isSiteWooStore }
 				/>
 			) }
 			{ selectedOption !== actionForType && (
