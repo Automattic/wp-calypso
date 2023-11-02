@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import slugToSelectorProduct from '../../slug-to-selector-product';
 import { useBundlesToDisplay } from '../hooks/use-bundles-to-display';
 import { useProductsToDisplay } from '../hooks/use-products-to-display';
 import { getSortedDisplayableProducts } from '../utils/get-sorted-displayable-products';
@@ -18,12 +17,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	const translate = useTranslate();
 
 	const allItems = useMemo(
-		() =>
-			getSortedDisplayableProducts( [
-				...popularProducts,
-				...otherProducts,
-				slugToSelectorProduct( 'jetpack_creator_yearly' )!,
-			] ),
+		() => getSortedDisplayableProducts( [ ...popularProducts, ...otherProducts ] ),
 		[ popularProducts, otherProducts ]
 	);
 
