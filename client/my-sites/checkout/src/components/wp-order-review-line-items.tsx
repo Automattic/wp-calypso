@@ -1,6 +1,5 @@
 import { isAkismetProduct, isJetpackPurchasableItem } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import formatCurrency from '@automattic/format-currency';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
 	canItemBeRemovedFromCart,
@@ -12,7 +11,6 @@ import {
 	NonProductLineItem,
 	LineItem,
 	getPartnerCoupon,
-	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -43,52 +41,6 @@ const WPOrderReviewListItem = styled.li`
 	display: block;
 	list-style: none;
 `;
-
-const CostOverridesListStyle = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	font-size: 14px;
-	font-weight: 400;
-
-	& .cost-overrides-list-item {
-		display: flex;
-		justify-content: space-between;
-		padding: 2px 0px;
-
-		&__reason {
-			color: #008a20;
-		}
-	}
-`;
-
-function CostOverridesList( {
-	costOverridesList,
-	currency,
-}: {
-	costOverridesList: Array< {
-		human_readable_reason: string;
-		discount_amount: number;
-	} >;
-	currency: string;
-} ) {
-	return (
-		<>
-			{ costOverridesList.map( ( costOverride ) => {
-				return (
-					<div className="cost-overrides-list-item">
-						<span className="cost-overrides-list-item__reason">
-							{ costOverride.human_readable_reason }
-						</span>
-						<span className="cost-overrides-list-item__discount">
-							{ formatCurrency( -costOverride.discount_amount, currency ) }
-						</span>
-					</div>
-				);
-			} ) }
-		</>
-	);
-}
 
 export function WPOrderReviewSection( {
 	children,
@@ -134,23 +86,6 @@ export function WPOrderReviewLineItems( {
 
 	const [ initialProducts ] = useState( () => responseCart.products );
 
-	// Loop through responseCart.products
-	const costOverridesList = responseCart.products.flatMap( ( product ) => {
-		// Store product cost_overrides object
-		const costOverrides = product?.cost_overrides;
-		if ( ! costOverrides ) {
-			return [];
-		}
-
-		// Return array of human readable reasons with discount amount
-		return costOverrides.map( ( costOverride ) => {
-			return {
-				human_readable_reason: costOverride.human_readable_reason,
-				discount_amount: costOverride.old_price - costOverride.new_price,
-			};
-		} );
-	} );
-
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
@@ -190,21 +125,13 @@ export function WPOrderReviewLineItems( {
 					/>
 				</WPOrderReviewListItem>
 			) }
-			{ ! hasCheckoutVersion( '2' ) && creditsLineItem && responseCart.sub_total_integer > 0 && (
+			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
 				<NonProductLineItem
 					subtotal
 					lineItem={ creditsLineItem }
 					isSummary={ isSummary }
 					isPwpoUser={ isPwpoUser }
 				/>
-			) }
-			{ hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
-				<CostOverridesListStyle>
-					<CostOverridesList
-						costOverridesList={ costOverridesList }
-						currency={ responseCart.currency }
-					/>
-				</CostOverridesListStyle>
 			) }
 		</WPOrderReviewList>
 	);

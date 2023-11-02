@@ -1,6 +1,5 @@
 import { isMultiYearDomainProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -21,7 +20,7 @@ const CurrentOption = styled.button< CurrentOptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	padding: ${ hasCheckoutVersion( '2' ) ? '4px 16px' : '14px 16px' };
+	padding: 14px 16px;
 	width: 100%;
 	cursor: pointer;
 

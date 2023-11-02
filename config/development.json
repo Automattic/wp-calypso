@@ -37,7 +37,6 @@
 		"cancellation-offers": true,
 		"checkout/google-pay": true,
 		"checkout/vat-form": true,
-		"checkout/checkout-version": true,
 		"cloudflare": true,
 		"comments/filters-in-posts": true,
 		"current-site/domain-warning": true,

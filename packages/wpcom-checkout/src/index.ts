@@ -29,4 +29,3 @@ export * from './get-country-postal-code-support';
 export * from './get-country-tax-requirements';
 export * from './can-item-be-removed-from-cart';
 export * from './partner-coupon';
-export * from './checkout-version-checker';

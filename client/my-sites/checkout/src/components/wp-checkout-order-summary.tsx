@@ -28,9 +28,6 @@ import {
 	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
-	getCreditsLineItemFromCart,
-	getSubtotalLineItemFromCart,
-	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -88,24 +85,18 @@ export default function WPCheckoutOrderSummary( {
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
-			{ ! hasCheckoutVersion( '2' ) && (
-				<CheckoutSummaryFeatures>
-					<CheckoutSummaryFeaturesTitle>
-						{ responseCart.is_gift_purchase
-							? translate( 'WordPress.com Gift Subscription' )
-							: translate( 'Included with your purchase' ) }
-					</CheckoutSummaryFeaturesTitle>
-					{ isCartUpdating ? (
-						<LoadingCheckoutSummaryFeaturesList />
-					) : (
-						<CheckoutSummaryFeaturesWrapper
-							siteId={ siteId }
-							nextDomainIsFree={ nextDomainIsFree }
-						/>
-					) }
-				</CheckoutSummaryFeatures>
-			) }
-
+			<CheckoutSummaryFeatures>
+				<CheckoutSummaryFeaturesTitle>
+					{ responseCart.is_gift_purchase
+						? translate( 'WordPress.com Gift Subscription' )
+						: translate( 'Included with your purchase' ) }
+				</CheckoutSummaryFeaturesTitle>
+				{ isCartUpdating ? (
+					<LoadingCheckoutSummaryFeaturesList />
+				) : (
+					<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
+				) }
+			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
 			) }
@@ -117,49 +108,32 @@ export default function WPCheckoutOrderSummary( {
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const subtotalLineItem = getSubtotalLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
-	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 
 	return (
-		<>
-			<CheckoutSummaryAmountWrapper>
-				{ hasCheckoutVersion( '2' ) && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + subtotalLineItem.id }>
-						<span>{ subtotalLineItem.label }</span>
-						<span>{ subtotalLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
-				{ couponLineItem && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
-						<span>{ couponLineItem.label }</span>
-						<span>{ couponLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
-				{ taxLineItems.map( ( taxLineItem ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
-						<span>{ taxLineItem.label }</span>
-						<span>{ taxLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) ) }
-
-				{ hasCheckoutVersion( '2' ) && creditsLineItem && responseCart.sub_total_integer > 0 && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
-						<span>{ creditsLineItem?.label }</span>
-						<span>{ creditsLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
-				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
-					<span className="wp-checkout-order-summary__total-price">
-						{ totalLineItem.formattedAmount }
-					</span>
-				</CheckoutSummaryTotal>
-			</CheckoutSummaryAmountWrapper>
-		</>
+		<CheckoutSummaryAmountWrapper>
+			{ couponLineItem && (
+				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
+					<span>{ couponLineItem.label }</span>
+					<span>{ couponLineItem.formattedAmount }</span>
+				</CheckoutSummaryLineItem>
+			) }
+			{ taxLineItems.map( ( taxLineItem ) => (
+				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+					<span>{ taxLineItem.label }</span>
+					<span>{ taxLineItem.formattedAmount }</span>
+				</CheckoutSummaryLineItem>
+			) ) }
+			<CheckoutSummaryTotal>
+				<span>{ translate( 'Total' ) }</span>
+				<span className="wp-checkout-order-summary__total-price">
+					{ totalLineItem.formattedAmount }
+				</span>
+			</CheckoutSummaryTotal>
+		</CheckoutSummaryAmountWrapper>
 	);
 }
 

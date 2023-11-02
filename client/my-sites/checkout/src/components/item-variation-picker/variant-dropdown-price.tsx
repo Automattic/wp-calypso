@@ -1,7 +1,7 @@
 import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { hasCheckoutVersion, styled } from '@automattic/wpcom-checkout';
+import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -68,7 +68,6 @@ const Variant = styled.div`
 const Label = styled.span`
 	display: flex;
 	white-space: nowrap;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
 		flex-direction: column;
@@ -89,7 +88,6 @@ const IntroPricingText = styled.span`
 
 const PriceTextContainer = styled.span`
 	text-align: right;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -253,12 +251,10 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ ! hasCheckoutVersion( '2' ) && hasDiscount && ! isIntroductoryOffer && ! isJetpack && (
+				{ hasDiscount && ! isIntroductoryOffer && ! isJetpack && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
-				{ ! hasCheckoutVersion( '2' ) && (
-					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
-				) }
+				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				<IntroPricing>
 					<IntroPricingText>
 						{ isIntroductoryOffer && translatedIntroOfferDetails() }

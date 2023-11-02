@@ -49,15 +49,9 @@ const ThumbnailWrapper = ( { showEditSite, editSiteURL, children }: ThumbnailWra
 
 interface SitePreviewProps {
 	isFSEActive: boolean;
-	showEditSite?: boolean;
-	showSiteDetails?: boolean;
 }
 
-const SitePreview = ( {
-	isFSEActive,
-	showEditSite = true,
-	showSiteDetails = true,
-}: SitePreviewProps ): JSX.Element => {
+const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 	const { __ } = useI18n();
 	const selectedSite = useSelector( getSelectedSite );
 	const canManageSite = useSelector( ( state ) =>
@@ -70,7 +64,7 @@ const SitePreview = ( {
 		return <></>;
 	}
 
-	const shouldShowEditSite = isFSEActive && showEditSite && canManageSite;
+	const shouldShowEditSite = isFSEActive && canManageSite;
 
 	const editSiteURL = addQueryArgs( `/site-editor/${ selectedSite.slug }`, {
 		canvas: 'edit',
@@ -95,17 +89,15 @@ const SitePreview = ( {
 					/>
 				</div>
 			</ThumbnailWrapper>
-			{ showSiteDetails && (
-				<div className="home-site-preview__action-bar">
-					<div className="home-site-preview__site-info">
-						<h2 className="home-site-preview__info-title">{ selectedSite.name }</h2>
-						<SiteUrl href={ selectedSite.URL } title={ selectedSite.URL }>
-							<Truncated>{ selectedSite.slug }</Truncated>
-						</SiteUrl>
-					</div>
-					<SitePreviewEllipsisMenu />
+			<div className="home-site-preview__action-bar">
+				<div className="home-site-preview__site-info">
+					<h2 className="home-site-preview__info-title">{ selectedSite.name }</h2>
+					<SiteUrl href={ selectedSite.URL } title={ selectedSite.URL }>
+						<Truncated>{ selectedSite.slug }</Truncated>
+					</SiteUrl>
 				</div>
-			) }
+				<SitePreviewEllipsisMenu />
+			</div>
 		</div>
 	);
 };
