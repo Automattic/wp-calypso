@@ -15,7 +15,7 @@ const ActivityTypeSelector = ( props ) => {
 	return (
 		<TypeSelector
 			{ ...props }
-			title={ translate( 'Activity Type' ) }
+			title={ translate( 'Activity type' ) }
 			showAppliedFiltersCount={ true }
 		/>
 	);
