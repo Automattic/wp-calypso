@@ -32,7 +32,7 @@
 		width: 100%;
 
 		.blogging-prompt__prompt-navigation {
-			align-items: center;
+			align-items: flex-start;
 			display: flex;
 			gap: 20px;
 		}
@@ -41,6 +41,18 @@
 			font-size: $font-title-small;
 			font-weight: 500;
 			line-height: 26px;
+		}
+		.blogging-prompt__answered-text {
+			font-size: $font-body;
+			text-align: center;
+			line-height: 18px;
+			margin-top: 10px;
+			color: var(--color-success);
+			> svg {
+				position: relative;
+				top: 3px;
+				margin-right: 2px;
+			}
 		}
 		button.navigation-link {
 			border-radius: 50%;
