@@ -6,6 +6,7 @@ import ChatMessage from './message';
 import { OdieSendMessageButton } from './send-message-input';
 
 import './style.scss';
+import { useScrollStop } from './useScrollStop';
 
 export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
@@ -61,6 +62,8 @@ const OdieAssistant = () => {
 		lastScrollHeight.current = scrollHeight;
 	}, [] );
 
+	useScrollStop( chatboxMessagesRef.current, () => setStickToBottom( false ) );
+
 	return (
 		<div className="chatbox">
 			<TrackComponentView
@@ -75,7 +78,7 @@ const OdieAssistant = () => {
 							<ChatMessage
 								message={ message }
 								key={ index }
-								scrollToBottom={ isLast ? () => scrollToBottom( false, true ) : noop }
+								scrollToBottom={ isLast ? () => scrollToBottom( false, false ) : noop }
 							/>
 						);
 					} ) }
