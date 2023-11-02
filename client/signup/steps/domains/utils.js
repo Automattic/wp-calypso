@@ -36,6 +36,7 @@ export function getExternalBackUrl( source, sectionName = null ) {
 export function shouldUseMultipleDomainsInCart( flowName ) {
 	const enabledFlows = [ 'domain', 'onboarding' ];
 
+	// The onboarding E2E tests are not yet updated to handle multiple domains.
 	if ( isE2ETest() ) {
 		return false;
 	}
