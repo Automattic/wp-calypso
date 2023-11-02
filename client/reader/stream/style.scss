@@ -810,10 +810,7 @@
 }
 
 .tag-stream__main .stream__header .section-nav {
-	margin-top: 26px;
-	@include break-medium {
-		margin-top: 0;
-	}
+	margin-top: 0;
 }
 
 .stream__header .section-nav {
