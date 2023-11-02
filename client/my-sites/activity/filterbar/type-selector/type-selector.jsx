@@ -199,7 +199,7 @@ export class TypeSelector extends Component {
 	hasSelectedCheckboxes = () => this.getSelectedCheckboxes().length > 0;
 
 	renderTypeSelectorButton = () => {
-		const { isNested, isVisible, showAppliedFiltersCount, title } = this.props;
+		const { isNested, isVisible, showAppliedFiltersCount, title, translate } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 		const hasSelectedCheckboxes = this.hasSelectedCheckboxes();
 
@@ -215,9 +215,20 @@ export class TypeSelector extends Component {
 		// If the type selector is not nested and has selected checkboxes, we want to display a delimiter.
 		const shouldDisplayDelimiter = ! isNested && hasSelectedCheckboxes;
 
+		const activitiesSelectedText = translate(
+			'%(selectedCount)s activity selected',
+			'%(selectedCount)s activities selected',
+			{
+				count: selectedCheckboxes.length,
+				args: {
+					selectedCount: selectedCheckboxes.length,
+				},
+			}
+		);
+
 		// Decide the display content for selected checkboxes
 		const selectedCheckboxesContent = showAppliedFiltersCount
-			? `${ selectedCheckboxes.length } activities selected`
+			? activitiesSelectedText
 			: selectedCheckboxes.map( this.typeKeyToName ).join( ', ' );
 
 		return (
