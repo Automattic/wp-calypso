@@ -1,3 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .is-section-reader .tag-stream__header {
 	&.has-description {
 		.info-popover {
@@ -12,6 +16,15 @@
 		margin: 0 auto;
 		padding: 0 0 16px 0;
 	}
+}
+
+// .has-header-section only applies for logged out views
+.layout.has-header-section.is-section-reader .navigation-header h1 {
+	@extend .wp-brand-font;
+	font-weight: 600;
+	font-size: 2.25rem;
+	line-height: 48px;
+	margin-bottom: 4px;
 }
 
 .tag-stream__header {
@@ -48,7 +61,8 @@
 	justify-content: space-between;
 	align-items: flex-start;
 
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include break-small {
+		padding-top: 20px;
 		padding-bottom: 20px;
 	}
 }
