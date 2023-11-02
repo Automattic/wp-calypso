@@ -20,7 +20,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
-import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -60,10 +59,6 @@ const staticFilters = {
 	RECOMMENDED: {
 		key: 'recommended',
 		text: translate( 'Recommended' ),
-	},
-	DISCOVER: {
-		key: 'discover',
-		text: translate( 'Discover' ),
 	},
 	ALL: {
 		key: 'all',
@@ -145,8 +140,7 @@ class ThemeShowcase extends Component {
 		( this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lits' ) ) ||
 		( ! this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lots' ) );
 
-	getDefaultStaticFilter = () =>
-		this.isThemeDiscoveryEnabled() ? staticFilters.DISCOVER : staticFilters.RECOMMENDED;
+	getDefaultStaticFilter = () => staticFilters.RECOMMENDED;
 
 	isStaticFilter = ( tabFilter ) => {
 		return Object.values( staticFilters ).some(
@@ -172,9 +166,7 @@ class ThemeShowcase extends Component {
 
 		return {
 			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
-			...( this.isThemeDiscoveryEnabled()
-				? { DISCOVER: staticFilters.DISCOVER }
-				: { RECOMMENDED: staticFilters.RECOMMENDED } ),
+			RECOMMENDED: staticFilters.RECOMMENDED,
 			ALL: staticFilters.ALL,
 			...this.subjectFilters,
 		};
@@ -363,13 +355,6 @@ class ThemeShowcase extends Component {
 			if ( tabFilter.key === staticFilters.MYTHEMES.key && this.props.tier !== 'all' ) {
 				newUrlParams.tier = 'all';
 			}
-
-			if ( tabFilter.key === staticFilters.DISCOVER.key ) {
-				newUrlParams.category = null;
-				newUrlParams.filter = null;
-				newUrlParams.tier = 'all';
-				newUrlParams.search = null;
-			}
 		} else {
 			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
 			newUrlParams.filter = [ filterWithoutSubjects, subjectTerm ].join( '+' );
@@ -458,22 +443,9 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 
-		const showCollections = this.props.tier === '' && this.isThemeDiscoveryEnabled();
-
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
-			case staticFilters.DISCOVER.key:
-				if ( showCollections && ! this.props.isCollectionView ) {
-					return (
-						<ThemeCollectionsLayout
-							getOptions={ this.getThemeOptions }
-							getScreenshotUrl={ this.getScreenshotUrl }
-							getActionLabel={ this.getActionLabel }
-							onSeeAll={ this.onCollectionSeeAll }
-						/>
-					);
-				}
 			default:
 				return this.allThemes( { themeProps } );
 		}

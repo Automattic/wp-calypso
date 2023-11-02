@@ -4,6 +4,7 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import { preventWidows } from 'calypso/lib/formatting';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
+import './theme-collection-view-header.scss';
 
 export default function ThemeCollectionViewHeader( { backUrl, filter, tier } ) {
 	const keyParts = [ tier, filter ];
