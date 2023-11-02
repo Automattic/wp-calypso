@@ -16,6 +16,7 @@ const services = ( translate = ( string ) => string ) => ( {
 	mastodon: { icon: 'mastodon', label: translate( 'Mastodon' ) },
 	x: { icon: 'x', label: translate( 'X' ) },
 	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) },
+	nextdoor: { icon: 'nextdoor', label: translate( 'Nextdoor' ) },
 } );
 
 const noop = () => {};

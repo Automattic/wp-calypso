@@ -1,6 +1,7 @@
 import {
 	FEATURE_SOCIAL_INSTAGRAM_CONNECTION,
 	FEATURE_SOCIAL_MASTODON_CONNECTION,
+	FEATURE_SOCIAL_NEXTDOOR_CONNECTION,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { get, find, map } from 'lodash';
@@ -10,6 +11,7 @@ import { connect } from 'react-redux';
 import FacebookSharePreview from 'calypso/components/share/facebook-share-preview';
 import LinkedinSharePreview from 'calypso/components/share/linkedin-share-preview';
 import MastodonSharePreview from 'calypso/components/share/mastodon-share-preview';
+import NextdoorSharePreview from 'calypso/components/share/nextdoor-share-preview';
 import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
 import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
 import VerticalMenu from 'calypso/components/vertical-menu';
@@ -33,14 +35,15 @@ import {
 
 import './style.scss';
 
-const serviceNames = {
-	facebook: 'Facebook',
-	'instagram-business': 'Instagram',
-	x: 'X',
-	linkedin: 'LinkedIn',
-	tumblr: 'Tumblr',
-	mastodon: 'Mastodon',
-};
+const defaultServices = [
+	'facebook',
+	'instagram-business',
+	'x',
+	'linkedin',
+	'tumblr',
+	'mastodon',
+	'nextdoor',
+];
 
 class SharingPreviewPane extends PureComponent {
 	static propTypes = {
@@ -57,7 +60,7 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	static defaultProps = {
-		services: Object.keys( serviceNames ),
+		services: defaultServices,
 	};
 
 	constructor( props ) {
@@ -155,6 +158,14 @@ class SharingPreviewPane extends PureComponent {
 						articleContent={ post.content }
 					/>
 				);
+			case 'nextdoor':
+				return (
+					<NextdoorSharePreview
+						{ ...previewProps }
+						articleExcerpt={ post.excerpt }
+						articleContent={ post.content }
+					/>
+				);
 			default:
 				return null;
 		}
@@ -205,6 +216,11 @@ const mapStateToProps = ( state, ownProps ) => {
 	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_INSTAGRAM_CONNECTION ) ) {
 		disabledServices.push( 'instagram-business' );
 	}
+
+	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_NEXTDOOR_CONNECTION ) ) {
+		disabledServices.push( 'nextdoor' );
+	}
+
 	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ) ) {
 		disabledServices.push( 'mastodon' );
 	}

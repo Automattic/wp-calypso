@@ -381,7 +381,7 @@ const PlansFeaturesMain = ( {
 
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 	useEffect( () => {
-		if ( ! intent && intentFromSiteMeta.processing ) {
+		if ( intentFromSiteMeta.processing ) {
 			return;
 		}
 
@@ -664,7 +664,8 @@ const PlansFeaturesMain = ( {
 		retargetViewPlans();
 	}, [] );
 
-	const isLoadingGridPlans = Boolean( intentFromSiteMeta.processing || ! gridPlans );
+	const isLoadingGridPlans = Boolean( ! intent || ! gridPlans );
+
 	const handleStorageAddOnClick = useCallback(
 		( addOnSlug: WPComStorageAddOnSlug ) =>
 			recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {

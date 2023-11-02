@@ -236,7 +236,7 @@ class SharingServiceDescription extends Component {
 				} );
 			},
 			nextdoor() {
-				return this.props.translate( 'Share posts to Nextdoor.' );
+				return this.props.translate( 'Share posts with your local community on Nextdoor.' );
 			},
 		} ),
 		numberOfConnections: 0,
