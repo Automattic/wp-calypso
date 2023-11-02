@@ -24,12 +24,10 @@ export default function SiteStatusContent( {
 	const metadata = useRowMetadata( rows, type, isLargeScreen );
 	const {
 		row: { status },
+		tooltip,
 		tooltipId,
 		siteDown,
-		...metadataRest
 	} = metadata;
-
-	const { tooltip } = metadataRest;
 
 	// Disable clicks/hover when there is a site error &
 	// when the row is not monitor and monitor status is down

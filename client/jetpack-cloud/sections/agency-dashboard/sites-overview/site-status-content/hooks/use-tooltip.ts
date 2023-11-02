@@ -3,7 +3,9 @@ import { useMemo } from 'react';
 import {
 	AllowedStatusTypes as AllowedStatusType,
 	AllowedTypes as AllowedRowType,
+	SiteData,
 } from '../../types';
+import useIsNotMultisiteSupported from './use-is-not-multisite-supported';
 
 type TooltipGetter = Partial<
 	Record< AllowedStatusType, ( translate: typeof RawTranslateFn ) => TranslateResult >
@@ -47,16 +49,21 @@ const ALL_TOOLTIPS: Partial< Record< AllowedRowType, TooltipGetter > > = {
 	boost,
 };
 
-const useTooltip = (
-	type: AllowedRowType,
-	status: AllowedStatusType
-): TranslateResult | undefined => {
+const useTooltip = ( type: AllowedRowType, rows: SiteData ): TranslateResult | undefined => {
+	// Show "Not supported on multisite" when the the site is multisite and the product is Scan or
+	// Backup and the site does not have a backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
+	const isNotMultisiteSupported = useIsNotMultisiteSupported( rows?.site?.value, type );
+
 	const translate = useTranslate();
 
-	return useMemo(
-		() => ALL_TOOLTIPS[ type ]?.[ status ]?.( translate ),
-		[ status, translate, type ]
-	);
+	return useMemo( () => {
+		const row = rows[ type ];
+		if ( isNotMultisiteSupported ) {
+			return translate( 'Not supported on multisite' );
+		}
+
+		return ALL_TOOLTIPS[ type ]?.[ row?.status ]?.( translate );
+	}, [ isNotMultisiteSupported, rows, translate, type ] );
 };
 
 export default useTooltip;
