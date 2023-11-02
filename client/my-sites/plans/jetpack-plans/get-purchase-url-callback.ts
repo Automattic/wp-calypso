@@ -31,6 +31,8 @@ export function buildCheckoutURL(
 	urlQueryArgs: QueryArgs = {}
 ): string {
 	const productsArray = Array.isArray( products ) ? products : [ products ];
+	// Since purchases of multiple products are allowed, we need to pass all products separated
+	// by comma in the URL.
 	const productsString = productsArray.join( ',' );
 
 	if ( isJetpackCloud() ) {
@@ -72,9 +74,9 @@ export function buildCheckoutURL(
 		);
 	}
 
-	// If there is not siteSlug, we need to redirect the user to the site selection
-	// step of the flow. Since purchases of multiple products are allowed, we need
-	// to pass all products separated by comma in the URL.
+	// If there is not siteSlug, we need to redirect the user to the site selection step of the
+	// flow (`/checkout/:productSlug` (without a site) will open site selection, if a site has not already been selected).
+	// The Jetpack Search product executes this flow (because price is based on the site's number of posts).
 	const path = siteSlug
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/checkout/${ productsString }`;
