@@ -1,0 +1,211 @@
+.nextdoor-preview {
+	&__wrapper {
+		max-width: clamp(200px, 100%, 600px);
+	}
+
+	// When the preview is in a section of all previews
+	&__section &__wrapper {
+		padding: 0;
+	}
+
+	&__section.social-preview__section {
+		width: clamp(200px, 100%, 600px);
+	}
+
+	&__container {
+
+		box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+		overflow: hidden;
+		background-color: #fff;
+
+		&.small-preview {
+			// When the preview has media, we want to hide the border radius on the bottom
+			border-end-end-radius: 0;
+			border-end-start-radius: 0;
+		}
+	}
+
+	&__header {
+		display: flex;
+		gap: 0.5rem;
+		margin-bottom: 8px;
+		align-items: center;
+
+		&--avatar {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			overflow: hidden;
+			display: flex;
+			align-items: center;
+			flex-shrink: 0;
+		}
+
+		&--avatar img {
+			width: 100%;
+			object-fit: contain;
+		}
+
+		&--details {
+			display: flex;
+			flex-direction: column;
+		}
+
+		&--name {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-weight: 600;
+			font-size: 1rem;
+			line-height: 20px;
+			letter-spacing: -0.32px;
+		}
+
+		&--meta {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+			color: #666;
+			letter-spacing: -0.32px;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 14px;
+			line-height: 19px;
+			white-space: pre-wrap;
+		}
+	}
+
+	&__footer {
+		margin-top: 24px;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+
+		&--actions {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+
+		&--actions-item {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 13px;
+			font-weight: 600;
+			line-height: 16px;
+		}
+	}
+
+	&__content {
+		padding: 12px 16px;
+	}
+
+	&__card {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 16px;
+		box-shadow: rgba(0, 0, 0, 0.08) 0 1px 4px 0, rgba(0, 0, 0, 0.2) 0 0 2px 0;
+		display: flex;
+		flex-direction: column;
+		margin-top: 12px;
+		overflow: hidden;
+
+		&.small-preview {
+			flex-direction: row;
+			align-items: center;
+		}
+
+		&--chevron-wrapper {
+			width: 40px;
+			min-width: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+
+	&__caption {
+		margin-bottom: 20px;
+		font-size: 1rem;
+		line-height: 20px;
+		font-weight: 400;
+	}
+
+	&__media-item {
+		display: flex;
+
+		img,
+		video {
+			width: 100%;
+			object-fit: cover;
+		}
+	}
+
+	&__description {
+		padding: 16px;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+
+		.small-preview & {
+			padding: 10px;
+			flex-grow: 1;
+		}
+
+		&--title {
+			margin: 0;
+			font-weight: 600;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 15px;
+			line-height: 20px;
+		}
+
+		&--url {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 13px;
+			color: #666;
+		}
+	}
+
+	&__media {
+		// compensate for the content padding
+		margin-inline: -16px;
+	}
+
+	&__image {
+		object-fit: cover;
+		width: 100%;
+		aspect-ratio: 16/9;
+
+		.small-preview & {
+			width: 62px;
+			height: 62px;
+		}
+	}
+
+	&__default-avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background-color: rgb(140 110 99);
+		color: #fff;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: x-large;
+	}
+
+	&__default-image {
+		background-color: #f1ffca;
+		height: 62px;
+		width: 62px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}

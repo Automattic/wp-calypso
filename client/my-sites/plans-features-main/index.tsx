@@ -174,7 +174,6 @@ export interface PlansFeaturesMainProps {
 	hideEnterprisePlan?: boolean;
 	isStepperUpgradeFlow?: boolean;
 	isLaunchPage?: boolean | null;
-	isReskinned?: boolean;
 	isPlansInsideStepper?: boolean;
 	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
@@ -226,7 +225,6 @@ const PlansFeaturesMain = ( {
 	hideEcommercePlan,
 	hideEnterprisePlan,
 	intent: intentFromProps, // do not set a default value for this prop here
-	isReskinned,
 	showBiennialToggle,
 	customerType = 'personal',
 	planTypeSelector = 'interval',
@@ -381,7 +379,7 @@ const PlansFeaturesMain = ( {
 
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 	useEffect( () => {
-		if ( ! intent && intentFromSiteMeta.processing ) {
+		if ( intentFromSiteMeta.processing ) {
 			return;
 		}
 
@@ -664,7 +662,8 @@ const PlansFeaturesMain = ( {
 		retargetViewPlans();
 	}, [] );
 
-	const isLoadingGridPlans = Boolean( intentFromSiteMeta.processing || ! gridPlans );
+	const isLoadingGridPlans = Boolean( ! intent || ! gridPlans );
+
 	const handleStorageAddOnClick = useCallback(
 		( addOnSlug: WPComStorageAddOnSlug ) =>
 			recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
@@ -792,7 +791,6 @@ const PlansFeaturesMain = ( {
 									selectedFeature={ selectedFeature }
 									selectedPlan={ selectedPlan }
 									siteId={ siteId }
-									isReskinned={ isReskinned }
 									intervalType={ intervalType }
 									hideUnavailableFeatures={ hideUnavailableFeatures }
 									currentSitePlanSlug={ sitePlanSlug }
@@ -856,7 +854,6 @@ const PlansFeaturesMain = ( {
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }
 												siteId={ siteId }
-												isReskinned={ isReskinned }
 												intervalType={ intervalType }
 												hideUnavailableFeatures={ hideUnavailableFeatures }
 												currentSitePlanSlug={ sitePlanSlug }
