@@ -191,16 +191,3 @@
 		}
 	}
 }
-
-.theme-showcase.theme-discovery {
-	.themes-list {
-		grid-template-columns: repeat(1, 1fr);
-
-		@include breakpoint-deprecated( ">660px" ) {
-			grid-template-columns: repeat(2, 1fr);
-		}
-		@include break-xlarge {
-			grid-template-columns: repeat(3, 1fr);
-		}
-	}
-}
