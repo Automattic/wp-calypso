@@ -49,8 +49,8 @@ export default function useImageClick( { tabFilter } ) {
 	}, [ isActiveTheme, isFSEActive, isLoggedIn, translate ] );
 
 	const onImageClick = () => {
-		trackClick( 'theme', 'screenshot' );
 		recordThemeClick( 'calypso_themeshowcase_theme_click', { action: 'screenshot_info' } );
+		trackClick( 'theme', 'screenshot' );
 	};
 
 	return { imageClickUrl, imageLabel, onImageClick };

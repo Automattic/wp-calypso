@@ -26,15 +26,13 @@ export default function ThemeActionLivePreview() {
 	}
 
 	const onClick = () => {
-		dispatch( livePreview( themeId, siteId, 'list' ) );
 		recordThemeClick( 'calypso_themeshowcase_theme_click', { action: 'live_preview' } );
+		dispatch( livePreview( themeId, siteId, 'list' ) );
 	};
 
 	return (
 		<PopoverMenuItem onClick={ onClick }>
-			{ translate( 'Preview & Customize', {
-				comment: 'label for previewing a block theme',
-			} ) }
+			{ translate( 'Preview & Customize', { comment: 'label for previewing a block theme' } ) }
 		</PopoverMenuItem>
 	);
 }

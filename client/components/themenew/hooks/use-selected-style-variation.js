@@ -7,10 +7,10 @@ export default function useSelectedStyleVariation() {
 	const { recordThemeClick } = useThemeShowcaseTracks();
 
 	const onStyleVariationClick = ( styleVariation ) => {
-		setSelectedStyleVariation( styleVariation );
 		recordThemeClick( 'calypso_themeshowcase_theme_style_variation_click', {
 			styleVariationSlug: styleVariation?.slug,
 		} );
+		setSelectedStyleVariation( styleVariation );
 	};
 	const onStyleVariationMoreClick = () => {
 		recordThemeClick( 'calypso_themeshowcase_theme_style_variation_more_click' );

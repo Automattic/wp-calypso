@@ -8,8 +8,15 @@ import { useSelector } from 'calypso/state';
 import { getTheme, isThemeActive } from 'calypso/state/themes/selectors';
 import useThemeShowcaseTracks from '../hooks/use-theme-showcase-tracks';
 import { useThemeContext } from '../theme-context';
+import ThemeActionActivate from './theme-action-activate';
 import ThemeActionCustomize from './theme-action-customize';
 import ThemeActionLivePreview from './theme-action-live-preview';
+import ThemeActionPreview from './theme-action-preview';
+import ThemeActionPurchase from './theme-action-purchase';
+import ThemeActionSubscribe from './theme-action-subscribe';
+import ThemeActionUpgradePlan from './theme-action-upgrade-plan';
+import ThemeActionUpgradePlanForBundledThemes from './theme-action-upgrade-plan-for-bundled-themes';
+import ThemeActionUpgradePlanForExternallyManagedThemes from './theme-action-upgrade-plan-for-externally-managed-themes';
 
 export default function ThemeActions() {
 	const { themeId } = useThemeContext();
@@ -26,15 +33,15 @@ export default function ThemeActions() {
 	const moreButtonRef = useRef( null );
 
 	const togglePopover = () => {
-		setIsPopoverVisible( ! isPopoverVisible );
 		recordThemeClick( 'calypso_themeshowcase_theme_click', {
 			action: isPopoverVisible ? 'popup_close' : 'popup_open',
 		} );
+		setIsPopoverVisible( ! isPopoverVisible );
 	};
 
 	const closePopover = () => {
-		setIsPopoverVisible( false );
 		recordThemeClick( 'calypso_themeshowcase_theme_click', { action: 'popup_close' } );
+		setIsPopoverVisible( false );
 	};
 
 	const { name } = theme;
@@ -64,6 +71,13 @@ export default function ThemeActions() {
 				>
 					<ThemeActionCustomize />
 					<ThemeActionLivePreview />
+					<ThemeActionPreview />
+					<ThemeActionPurchase />
+					<ThemeActionSubscribe />
+					<ThemeActionUpgradePlan />
+					<ThemeActionUpgradePlanForBundledThemes />
+					<ThemeActionUpgradePlanForExternallyManagedThemes />
+					<ThemeActionActivate />
 					<PopoverMenuSeparator />
 				</PopoverMenu>
 			) }

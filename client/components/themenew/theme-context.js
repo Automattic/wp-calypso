@@ -2,6 +2,8 @@ import { createContext, useContext, useState } from 'react';
 
 const ThemeContext = createContext( {
 	position: 1,
+	selectedStyleVariation: {},
+	setSelectedStyleVariation: () => {},
 	themeId: '',
 } );
 
