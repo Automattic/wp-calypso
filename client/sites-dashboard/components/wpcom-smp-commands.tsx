@@ -142,7 +142,6 @@ export const generateCommandsArrayWpcom = ( {
 				navigate( createSiteUrl );
 			},
 			icon: addNewSiteIcon,
-			separator: true,
 		},
 	];
 
