@@ -1,4 +1,4 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card, Gridicon, Button } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -31,7 +31,7 @@ const ListStreamHeader = ( {
 			<NavigationHeader title={ title } subtitle={ description }>
 				{ ! isPublic && (
 					<div className="list-stream__header-title-privacy">
-						<Gridicon icon="lock" size={ 18 } title={ translate( 'Private list' ) } />
+						<Gridicon icon="lock" size={ 24 } title={ translate( 'Private list' ) } />
 					</div>
 				) }
 
@@ -49,14 +49,9 @@ const ListStreamHeader = ( {
 
 				{ showEdit && editUrl && (
 					<div className="list-stream__header-edit">
-						<a href={ editUrl } rel={ isExternal( editUrl ) ? 'external' : '' }>
-							<span className="list-stream__header-action-icon">
-								<Gridicon icon="cog" size={ 24 } />
-							</span>
-							<span className="list-stream__header-action-label screen-reader-text">
-								{ translate( 'Edit' ) }
-							</span>
-						</a>
+						<Button rel={ isExternal( editUrl ) ? 'external' : '' } href={ editUrl }>
+							{ translate( 'Edit' ) }
+						</Button>
 					</div>
 				) }
 			</NavigationHeader>
