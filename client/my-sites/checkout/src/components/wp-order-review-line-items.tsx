@@ -134,22 +134,29 @@ export function WPOrderReviewLineItems( {
 
 	const [ initialProducts ] = useState( () => responseCart.products );
 
-	// Loop through responseCart.products
-	const costOverridesList = responseCart.products.flatMap( ( product ) => {
+	// Collect cost overrides from each line item and group them by type so we
+	// can show them all together after the line item list.
+	const costOverridesGrouped = responseCart.products.reduce<
+		Record< string, { human_readable_reason: string; discount_amount: number } >
+	>( ( grouped, product ) => {
 		// Store product cost_overrides object
 		const costOverrides = product?.cost_overrides;
 		if ( ! costOverrides ) {
-			return [];
+			return grouped;
 		}
 
 		// Return array of human readable reasons with discount amount
-		return costOverrides.map( ( costOverride ) => {
-			return {
+		costOverrides.forEach( ( costOverride ) => {
+			const discountAmount = grouped[ costOverride.override_code ]?.discount_amount ?? 0;
+			const newDiscountAmount = costOverride.old_price - costOverride.new_price;
+			grouped[ costOverride.override_code ] = {
 				human_readable_reason: costOverride.human_readable_reason,
-				discount_amount: costOverride.old_price - costOverride.new_price,
+				discount_amount: discountAmount + newDiscountAmount,
 			};
 		} );
-	} );
+		return grouped;
+	}, {} );
+	const costOverridesList = Object.values( costOverridesGrouped );
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
