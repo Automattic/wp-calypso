@@ -19,7 +19,7 @@ class MySitesNavigation extends Component {
 		};
 
 		let asyncSidebar = null;
-		let showSitePicker = true;
+		let renderSitePicker = true;
 		let sitePickerProps = {};
 
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
@@ -32,7 +32,7 @@ class MySitesNavigation extends Component {
 				);
 
 				// For the new Jetpack cloud sidebar, it has its own site picker.
-				showSitePicker = false;
+				renderSitePicker = false;
 			} else {
 				asyncSidebar = <AsyncLoad require="calypso/components/jetpack/sidebar" { ...asyncProps } />;
 			}
@@ -53,7 +53,7 @@ class MySitesNavigation extends Component {
 
 		return (
 			<div className="my-sites__navigation">
-				{ showSitePicker && (
+				{ renderSitePicker && (
 					<SitePicker
 						allSitesPath={ this.props.allSitesPath }
 						siteBasePath={ this.props.siteBasePath }
