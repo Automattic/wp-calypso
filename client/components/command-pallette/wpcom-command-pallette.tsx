@@ -4,7 +4,7 @@ import { Icon, search as inputIcon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useCommandState, Command } from 'cmdk';
 import { useEffect, useMemo, useState, useRef } from 'react';
-import { useSMPCommands } from 'calypso/sites-dashboard/hooks/use-smp-commands';
+import { useCommandPallette } from './use-command-pallette';
 
 import '@wordpress/commands/build-style/style.css';
 
@@ -24,7 +24,7 @@ export function CommandMenuGroup( {
 	setSearch,
 }: CommandMenuGroupProps ) {
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
-	const { commands: smpDefaultCommands } = useSMPCommands( {
+	const { commands: smpDefaultCommands } = useCommandPallette( {
 		selectedCommandName,
 		setSelectedCommandName,
 	} );

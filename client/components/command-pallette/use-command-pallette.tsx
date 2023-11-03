@@ -65,7 +65,7 @@ const siteToAction =
 		};
 	};
 
-export const useSMPCommands = ( {
+export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 }: UseSMPCommands ) => {
