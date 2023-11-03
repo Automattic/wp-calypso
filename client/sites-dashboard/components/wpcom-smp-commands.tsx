@@ -7,6 +7,7 @@ import {
 	edit as newPostIcon,
 	upload as publishIcon,
 	external as viewSitehIcon,
+	commentAuthorAvatar as profileIcon,
 } from '@wordpress/icons';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
@@ -29,6 +30,29 @@ export const generateCommandsArrayWpcom = ( {
 		};
 
 	const commands = [
+		{
+			name: 'addNewSite',
+			label: __( 'Add New Site' ),
+			searchLabel: __( 'new site' ),
+			context: 'Adding a new website',
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( createSiteUrl );
+			},
+			icon: addNewSiteIcon,
+		},
+		{
+			name: 'openProfile',
+			label: __( 'Open my profile' ),
+			searchLabel: __( 'profile' ),
+			context: 'Opening my profile',
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/me` );
+			},
+
+			icon: profileIcon,
+		},
 		{
 			name: 'ssh',
 			label: __( 'SSH' ),
@@ -131,17 +155,6 @@ export const generateCommandsArrayWpcom = ( {
 				},
 			},
 			icon: viewSitehIcon,
-		},
-		{
-			name: 'addNewSite',
-			label: __( 'Add New Site' ),
-			searchLabel: __( 'new site' ),
-			context: 'Adding a new website',
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( createSiteUrl );
-			},
-			icon: addNewSiteIcon,
 		},
 	];
 
