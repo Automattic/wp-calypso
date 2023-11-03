@@ -423,6 +423,7 @@ $mobile-card-max-width: 440px;
 .plan-features-2023-grid__plan-spotlight {
 	background-color: var(--studio-white);
 	.plan-features-2023-grid__plan-spotlight-card {
+		position: relative;
 		max-width: 100%;
 		margin-bottom: 64px;
 		border: 1px solid #e0e0e0;
