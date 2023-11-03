@@ -151,6 +151,7 @@ const InnerSearch = (
 		searchMode = 'when-typing',
 		searchIcon,
 		submitOnOpenIconClick = false,
+		value,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -197,12 +198,11 @@ const InnerSearch = (
 	}, [ onSearch, delayTimeout, delaySearch ] );
 
 	useEffect( () => {
-		if ( keyword ) {
-			onSearch?.( keyword );
-		}
+		onSearch?.( keyword );
 		// Disable reason: This effect covers the case where a keyword was passed in as the default value and we only want to run it on first search; the useUpdateEffect below will handle the rest of the time that keyword updates
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ value ] );
+	// The above doesn't work
 
 	useUpdateEffect( () => {
 		if ( searchMode === 'on-enter' ) {

@@ -361,6 +361,10 @@ class RegisterDomainStep extends Component {
 				),
 			} );
 		}
+
+		if ( this.props.suggestion !== prevProps.suggestion ) {
+			this.state.lastQuery = getDomainSuggestionSearch( this.props.suggestion, MIN_QUERY_LENGTH );
+		}
 	}
 
 	getOtherManagedSubdomainsQuantity() {
@@ -602,6 +606,7 @@ class RegisterDomainStep extends Component {
 
 		return (
 			<>
+				{ /* Adding a key on `value` to the Search component to force a re-render works.*/ }
 				<Search { ...componentProps }></Search>
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</>
