@@ -56,7 +56,9 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 				: translate(
 						'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				  ),
-			continueLabel: translate( 'Save and continue' ),
+			continueLabel: isAddPagesEnabled
+				? translate( 'Select pages' )
+				: translate( 'Save and continue' ),
 			backLabel: hasEnTranslation( 'styles' ) ? translate( 'styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.STYLES_COLORS,
 		},
