@@ -60,7 +60,7 @@
 		"webpack": "^5.68.0"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.22.15",
+		"@babel/runtime": "^7.23.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
