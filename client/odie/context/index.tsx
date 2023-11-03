@@ -3,10 +3,8 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearOdieStorage, useOdieStorage } from '../data';
-import useOdieUserTracking from '../track-location/useOdieUserTracking';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
-import type { OdieUserTracking } from '../track-location/useOdieUserTracking';
 import type { Chat, Context, Message, Nudge, OdieAllowedBots } from '../types';
 import type { ReactNode } from 'react';
 
@@ -19,7 +17,7 @@ export const noop = () => {};
  *
  */
 interface OdieAssistantContextInterface {
-	addMessage: ( message: Message ) => void;
+	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
 	botSetting?: string;
@@ -31,8 +29,6 @@ interface OdieAssistantContextInterface {
 	isNudging: boolean;
 	isVisible: boolean;
 	lastNudge: Nudge | null;
-	lastUserLocations: OdieUserTracking[];
-	onChatLoaded?: () => void;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
@@ -41,7 +37,6 @@ interface OdieAssistantContextInterface {
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
-	setOnChatLoaded: ( onChatLoaded: () => void ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 }
 
@@ -57,8 +52,6 @@ const defaultContextInterfaceValues = {
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
-	lastUserLocations: [],
-	onChatLoaded: noop,
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
@@ -67,7 +60,6 @@ const defaultContextInterfaceValues = {
 	setIsNudging: noop,
 	setIsVisible: noop,
 	setIsLoading: noop,
-	setOnChatLoaded: noop,
 	trackEvent: noop,
 };
 
@@ -95,23 +87,23 @@ const OdieAssistantProvider = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const odieIsEnabled = config.isEnabled( 'wapuu' );
-	const lastUserLocations = useOdieUserTracking();
 
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
-	const [ onChatLoaded, setOnChatLoaded ] = useState< () => void >( noop );
 
 	const existingChatIdString = useOdieStorage( 'chat_id' );
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
-	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId, onChatLoaded );
+	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId );
 
 	const [ chat, setChat ] = useState< Chat >( existingChat );
 
 	useEffect( () => {
-		setChat( existingChat );
-	}, [ existingChat ] );
+		if ( existingChat.chat_id ) {
+			setChat( existingChat );
+		}
+	}, [ existingChat, existingChat.chat_id ] );
 
 	const clearChat = useCallback( () => {
 		clearOdieStorage( 'chat_id' );
@@ -140,14 +132,22 @@ const OdieAssistantProvider = ( {
 		} );
 	};
 
-	const addMessage = ( message: Message ) => {
-		setChat( ( prevChat ) => ( {
-			...prevChat,
-			messages:
-				prevChat.messages[ prevChat.messages.length - 1 ].type === 'placeholder'
-					? [ ...prevChat.messages.slice( 0, -1 ), message ]
-					: [ ...prevChat.messages, message ],
-		} ) );
+	const addMessage = ( message: Message | Message[] ) => {
+		setChat( ( prevChat ) => {
+			// Normalize message to always be an array
+			const newMessages = Array.isArray( message ) ? message : [ message ];
+
+			// Determine if the last message is a placeholder
+			const shouldRemovePlaceholder =
+				prevChat.messages[ prevChat.messages.length - 1 ]?.type === 'placeholder';
+
+			return {
+				chat_id: prevChat.chat_id,
+				messages: shouldRemovePlaceholder
+					? [ ...prevChat.messages.slice( 0, -1 ), ...newMessages ] // Remove placeholder and add new messages
+					: [ ...prevChat.messages, ...newMessages ], // Just add new messages
+			};
+		} );
 	};
 
 	if ( ! odieIsEnabled ) {
@@ -169,8 +169,6 @@ const OdieAssistantProvider = ( {
 				isNudging,
 				isVisible,
 				lastNudge,
-				lastUserLocations,
-				onChatLoaded: noop,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,
@@ -179,7 +177,6 @@ const OdieAssistantProvider = ( {
 				setIsLoading,
 				setIsNudging,
 				setIsVisible,
-				setOnChatLoaded,
 				trackEvent,
 			} }
 		>
