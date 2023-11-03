@@ -41,10 +41,6 @@ const startWriting: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/new-or-existing-site' ),
 			},
 			{
-				slug: 'site-picker',
-				asyncComponent: () => import( './internals/steps-repository/site-picker-list' ),
-			},
-			{
 				slug: 'site-creation-step',
 				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
 			},
@@ -119,24 +115,7 @@ const startWriting: Flow = {
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
 						return navigate( 'site-creation-step' );
 					}
-					return navigate( 'site-picker' );
-				case 'site-picker': {
-					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
-						setSelectedSite( providedDependencies?.siteId );
-						await Promise.all( [
-							setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW ),
-							saveSiteSettings( providedDependencies?.siteId, {
-								launchpad_screen: 'full',
-							} ),
-						] );
-
-						const siteOrigin = window.location.origin;
-
-						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
-						);
-					}
-				}
+					return redirect( '/post?start-writing=true' );
 				case 'site-creation-step':
 					return navigate( 'processing' );
 				case 'processing': {
