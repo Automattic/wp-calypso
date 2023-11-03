@@ -2501,7 +2501,9 @@ const getPlanJetpackCreatorDetails = (): IncompleteJetpackPlan => ( {
 			'Craft stunning content, boost your subscriber base, and monetize your online presence.'
 		),
 	getDescription: () =>
-		translate( 'Enhanced creator network, lower fees, display ads, and extra payment options.' ),
+		translate(
+			'Craft stunning content, boost your subscriber base, and monetize your online presence.'
+		),
 	getLightboxDescription: () =>
 		translate(
 			'Craft stunning content, boost your subscriber base, and monetize your online presence.'
