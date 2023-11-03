@@ -606,7 +606,6 @@ class RegisterDomainStep extends Component {
 
 		return (
 			<>
-				{ /* Adding a key on `value` to the Search component to force a re-render works.*/ }
 				<Search { ...componentProps }></Search>
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</>
