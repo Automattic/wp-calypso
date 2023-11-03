@@ -68,12 +68,32 @@ const newsletter: Flow = {
 			},
 		];
 	},
-	useSideEffect() {
+	useSideEffect( currentStepRoute: string ) {
 		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
 			setHidePlansFeatureComparison( true );
 			clearSignupDestinationCookie();
 		}, [] );
+
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+
+		const isLoadingIntroScreen = 'intro' === currentStepRoute || undefined === currentStepRoute;
+
+		const logInUrl = useLoginUrl( {
+			variationName: this.name,
+			redirectTo: `/setup/${ this.name }/newsletterSetup`,
+			pageTitle: 'Newsletter',
+		} );
+
+		// Unless showing intro step, send non-logged-in users to account screen.
+		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
+			window.location.assign( logInUrl );
+			// Return STOP_FLOW to prevent the flow from rendering.
+			return 'STOP_FLOW';
+		}
 	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
@@ -86,8 +106,6 @@ const newsletter: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
-		const isLoadingIntroScreen =
-			! isComingFromMarketingPage && ( 'intro' === _currentStep || undefined === _currentStep );
 
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
@@ -109,14 +127,6 @@ const newsletter: Flow = {
 				} );
 			}
 		};
-
-		// Unless showing intro step, send non-logged-in users to account screen.
-		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
-			window.location.assign( logInUrl );
-			const noop = () => {};
-			// Return a noop navigation object to stop execution of the hook in a TS-safe way.
-			return { goNext: noop, goBack: noop, goToStep: noop, submit: noop };
-		}
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
