@@ -76,7 +76,7 @@ function CostOverridesList( {
 		<>
 			{ costOverridesList.map( ( costOverride ) => {
 				return (
-					<div className="cost-overrides-list-item">
+					<div className="cost-overrides-list-item" key={ costOverride.human_readable_reason }>
 						<span className="cost-overrides-list-item__reason">
 							{ costOverride.human_readable_reason }
 						</span>
