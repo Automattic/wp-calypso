@@ -186,7 +186,7 @@ export function WPOrderReviewLineItems( {
 					}
 				/>
 			) ) }
-			{ couponLineItem && (
+			{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem
 						lineItem={ couponLineItem }

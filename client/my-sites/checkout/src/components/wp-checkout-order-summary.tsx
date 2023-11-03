@@ -133,7 +133,7 @@ function CheckoutSummaryPriceList() {
 						<span>{ subtotalLineItem.formattedAmount }</span>
 					</CheckoutSummaryLineItem>
 				) }
-				{ couponLineItem && (
+				{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
 						<span>{ couponLineItem.label }</span>
 						<span>{ couponLineItem.formattedAmount }</span>
