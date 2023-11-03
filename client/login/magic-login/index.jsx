@@ -138,7 +138,7 @@ class MagicLogin extends Component {
 			return (
 				<AppPromo
 					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
-					campaign="calypso-emailed-login-link-check-email"
+					campaign="calypso-login-link-check-email"
 					className="magic-link-app-promo"
 					iconSize={ 32 }
 					hasQRCode={ true }
@@ -170,7 +170,7 @@ class MagicLogin extends Component {
 				</div>
 				<AppPromo
 					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
-					campaign="calypso-emailed-login-link"
+					campaign="calypso-login-link"
 					className="magic-link-app-promo"
 					iconSize={ 32 }
 					hasQRCode={ true }
