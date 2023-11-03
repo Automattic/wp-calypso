@@ -62,26 +62,28 @@ const CostOverridesListStyle = styled.div`
 	}
 `;
 
+interface CostOverrideForDisplay {
+	humanReadableReason: string;
+	discountAmount: number;
+}
+
 function CostOverridesList( {
 	costOverridesList,
 	currency,
 }: {
-	costOverridesList: Array< {
-		human_readable_reason: string;
-		discount_amount: number;
-	} >;
+	costOverridesList: Array< CostOverrideForDisplay >;
 	currency: string;
 } ) {
 	return (
 		<>
 			{ costOverridesList.map( ( costOverride ) => {
 				return (
-					<div className="cost-overrides-list-item" key={ costOverride.human_readable_reason }>
+					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 						<span className="cost-overrides-list-item__reason">
-							{ costOverride.human_readable_reason }
+							{ costOverride.humanReadableReason }
 						</span>
 						<span className="cost-overrides-list-item__discount">
-							{ formatCurrency( -costOverride.discount_amount, currency ) }
+							{ formatCurrency( -costOverride.discountAmount, currency ) }
 						</span>
 					</div>
 				);
@@ -137,7 +139,7 @@ export function WPOrderReviewLineItems( {
 	// Collect cost overrides from each line item and group them by type so we
 	// can show them all together after the line item list.
 	const costOverridesGrouped = responseCart.products.reduce<
-		Record< string, { human_readable_reason: string; discount_amount: number } >
+		Record< string, CostOverrideForDisplay >
 	>( ( grouped, product ) => {
 		// Store product cost_overrides object
 		const costOverrides = product?.cost_overrides;
@@ -147,11 +149,11 @@ export function WPOrderReviewLineItems( {
 
 		// Return array of human readable reasons with discount amount
 		costOverrides.forEach( ( costOverride ) => {
-			const discountAmount = grouped[ costOverride.override_code ]?.discount_amount ?? 0;
+			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
 			const newDiscountAmount = costOverride.old_price - costOverride.new_price;
 			grouped[ costOverride.override_code ] = {
-				human_readable_reason: costOverride.human_readable_reason,
-				discount_amount: discountAmount + newDiscountAmount,
+				humanReadableReason: costOverride.human_readable_reason,
+				discountAmount: discountAmount + newDiscountAmount,
 			};
 		} );
 		return grouped;
