@@ -1,14 +1,9 @@
 import {
 	plus as addNewSiteIcon,
-	code as sshIcon,
 	globe as domainsIcon,
-	settings as hostingConfigurationIcon,
-	page as newPageIcon,
-	edit as newPostIcon,
-	upload as publishIcon,
-	external as viewSitehIcon,
 	commentAuthorAvatar as profileIcon,
 } from '@wordpress/icons';
+import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
@@ -54,19 +49,26 @@ export const generateCommandsArrayWpcom = ( {
 			icon: profileIcon,
 		},
 		{
-			name: 'ssh',
-			label: __( 'SSH' ),
-			searchLabel: __( 'ssh' ),
-			context: 'Accessing via SSH',
-			callback: setStateCallback( 'ssh' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
-				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			name: 'openAccountSettings',
+			label: __( 'Open account settings' ),
+			searchLabel: __( 'account' ),
+			context: 'Openining account settings',
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/me/account` );
 			},
-			icon: sshIcon,
+			icon: <MaterialIcon icon="settings" />,
+		},
+		{
+			name: 'acessPurchases',
+			label: __( 'Open my purchases' ),
+			searchLabel: __( 'puchases' ),
+			context: 'Openining my purchases',
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `me/purchases` );
+			},
+			icon: <MaterialIcon icon="credit_card" />,
 		},
 		{
 			name: 'domains',
@@ -83,78 +85,6 @@ export const generateCommandsArrayWpcom = ( {
 					isCustomDomain( site.slug ) && ! isNotAtomicJetpack( site ),
 			},
 			icon: domainsIcon,
-		},
-		{
-			name: 'hostingConfiguration',
-			label: __( 'Hosting Configuration' ),
-			searchLabel: __( 'hosting' ),
-			context: 'Configuring hosting settings',
-			callback: setStateCallback( 'hostingConfiguration' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }` );
-				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
-			},
-			icon: hostingConfigurationIcon,
-		},
-		{
-			name: 'newPage',
-			label: __( 'New Page' ),
-			searchLabel: __( 'create page' ),
-			context: 'Adding a new page',
-			callback: setStateCallback( 'newPage' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/page/${ site.slug }` );
-				},
-			},
-			icon: newPageIcon,
-		},
-		{
-			name: 'newPost',
-			label: __( 'New Post' ),
-			searchLabel: __( 'create post' ),
-			context: 'Adding a new post',
-			callback: setStateCallback( 'newPost' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/post/${ site.slug }` );
-				},
-			},
-			icon: newPostIcon,
-		},
-		{
-			name: 'publish',
-			label: __( 'Publish' ),
-			searchLabel: __( 'publish content' ),
-			context: 'Publishing the content',
-			callback: setStateCallback( 'publish' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/settings/general/${ site.slug }#site-privacy-settings` );
-				},
-				filter: ( site: SiteExcerptData ) => site?.launch_status === 'unlaunched',
-			},
-			icon: publishIcon,
-		},
-		{
-			name: 'view',
-			label: __( 'View site' ),
-			searchLabel: __( 'view public site frontend' ),
-			context: 'Publishing the content',
-			callback: setStateCallback( 'view' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( site.URL );
-				},
-			},
-			icon: viewSitehIcon,
 		},
 	];
 
