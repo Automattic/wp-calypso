@@ -70,7 +70,9 @@ describe( 'SyncOptionsPanel component', () => {
 		);
 		expect( screen.getByLabelText( 'Site database' ) ).toBeInTheDocument();
 		expect(
-			screen.getByText( 'Site database synchronization is not supported for Woo Commerce sites.' )
+			screen.getByText(
+				'Site database synchronization is disabled because WooCommerce sites are not supported.'
+			)
 		).toBeInTheDocument();
 		expect( screen.queryByText( 'Overwrite the database.' ) ).not.toBeInTheDocument();
 		expect( screen.getAllByTestId( 'danger-zone-checkbox' ) ).toHaveLength( 1 );

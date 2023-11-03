@@ -164,7 +164,7 @@ export default function SyncOptionsPanel( {
 									help={
 										<ItemSubtitle>
 											{ translate(
-												'Site database synchronization is not supported for Woo Commerce sites.'
+												'Site database synchronization is disabled because WooCommerce sites are not supported.'
 											) }
 										</ItemSubtitle>
 									}
