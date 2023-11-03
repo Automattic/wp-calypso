@@ -73,9 +73,9 @@ export class EditorToolbarComponent {
 	/**
 	 * Translate string.
 	 */
-	private async translateFromPage( string: string ): Promise< string > {
+	private async translateFromPage( string: string, context?: string ): Promise< string > {
 		const editorParent = await this.editor.parent();
-		return translateFromPage( editorParent, string );
+		return translateFromPage( editorParent, string, context );
 	}
 
 	/* General helper */
@@ -104,7 +104,10 @@ export class EditorToolbarComponent {
 	async openBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage( 'Toggle block inserter' );
+		const translatedButtonName = await this.translateFromPage(
+			'Toggle block inserter',
+			'Generic label for block inserter button'
+		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
 			name: translatedButtonName,
 			exact: true,
@@ -123,7 +126,10 @@ export class EditorToolbarComponent {
 	async closeBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage( 'Toggle block inserter' );
+		const translatedButtonName = await this.translateFromPage(
+			'Toggle block inserter',
+			'Generic label for block inserter button'
+		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
 			name: translatedButtonName,
 			exact: true,
