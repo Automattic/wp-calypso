@@ -160,7 +160,7 @@ function getFeatureStrings(
 					args: {
 						// Nov 6 - 8, 2023: $500 free Blaze advertising credits
 						// Nov 9 - 12, 2023: $150 free Blaze advertising credits
-						credits: new Date() < new Date( '2023-11-09' ) ? '500' : '150',
+						credits: Date.now() < Date.UTC( 2023, 10, 9 ) ? '500' : '150',
 					},
 				} ),
 			];
@@ -259,8 +259,8 @@ export default function getJetpackProductFeatures(
 	if ( isJetpackCreatorSlug( product.product_slug ) ) {
 		// Blaze launch promo: Nov 6 - Nov 12, 2023, only for annual plans
 		const blazePromo =
-			new Date() > new Date( '2023-11-06' ) &&
-			new Date() < new Date( '2023-11-13' ) &&
+			Date.now() > Date.UTC( 2023, 10, 6 ) &&
+			Date.now() < Date.UTC( 2023, 10, 13 ) &&
 			product.product_slug !== PLAN_JETPACK_CREATOR_MONTHLY
 				? getFeatureStrings( 'creator-promo', translate )
 				: [];
