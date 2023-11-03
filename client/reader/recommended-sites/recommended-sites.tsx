@@ -1,4 +1,4 @@
-import { Railcar } from '@automattic/calypso-analytics';
+import { recordTracksEvent, Railcar } from '@automattic/calypso-analytics';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -74,6 +74,10 @@ const RecommendedSites = () => {
 			.slice( 0, displayRecommendedSitesTotal );
 	}, [ recommendedSites, blockedSites ] );
 
+	const onClickDiscover = () => {
+		recordTracksEvent( 'calypso_reader_subscriptions_recommended_discover_click' );
+	};
+
 	useEffect( () => {
 		if ( filteredRecommendedSites.length <= 4 ) {
 			dispatch( requestRecommendedSites( { seed, offset } ) );
@@ -82,7 +86,14 @@ const RecommendedSites = () => {
 
 	return (
 		<div className="recommended-sites">
-			<h2 className="recommended-sites__heading">{ translate( 'Recommended sites' ) }</h2>
+			<h2 className="recommended-sites__heading">
+				{ translate( 'Recommended sites' ) } (
+				<a href="/discover" onClick={ onClickDiscover }>
+					{ translate( 'Discover more' ) }
+				</a>
+				)
+			</h2>
+
 			<RecommendedSitesResponsiveContainer>
 				{ filteredRecommendedSites.map( ( { blogId, feedId, railcar }, index ) => {
 					return (
