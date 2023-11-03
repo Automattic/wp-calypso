@@ -134,11 +134,7 @@ class Login extends Component {
 			window.scrollTo( 0, 0 );
 		}
 
-		if (
-			! prevProps.accountType &&
-			isPasswordlessAccount( this.props.accountType ) &&
-			! this.props.isSignupExistingAccount
-		) {
+		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
 			this.sendMagicLoginLink();
 		}
 
@@ -161,7 +157,6 @@ class Login extends Component {
 		this.props.sendEmailLogin();
 		this.handleTwoFactorRequested( 'link' );
 	};
-
 
 	showContinueAsUser = () => {
 		const {

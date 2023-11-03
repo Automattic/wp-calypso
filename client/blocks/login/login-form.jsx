@@ -193,12 +193,7 @@ export class LoginForm extends Component {
 	}
 
 	isUsernameOrEmailView() {
-		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking, isSignupExistingAccount } =
-			this.props;
-
-		if ( isSignupExistingAccount && hasAccountTypeLoaded ) {
-			return isPasswordlessAccount( accountType );
-		}
+		const { hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
 		return (
 			! socialAccountIsLinking &&
