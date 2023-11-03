@@ -92,8 +92,8 @@ function odieWpcomGetChat( path: string ): Promise< Chat > {
 export const useOdieGetChat = (
 	botNameSlug: OdieAllowedBots,
 	chatId: number | undefined | null,
-	page: number = 1,
-	perPage: number = 10
+	page = 1,
+	perPage = 10
 ) => {
 	const { chat } = useOdieAssistantContext();
 	return useQuery< Chat, unknown >( {
