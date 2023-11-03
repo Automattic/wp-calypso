@@ -26,7 +26,7 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: 'marketplace',
 		},
-		title: translate( 'Partner' ),
+		title: translate( 'Partner Themes' ),
 		fullTitle: translate( 'Partner Themes' ),
 		collectionSlug: 'partner-themes',
 		description: (
