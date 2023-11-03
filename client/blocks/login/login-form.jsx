@@ -101,11 +101,7 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
-		const { disableAutoFocus, isSignupExistingAccount, userEmail } = this.props;
-
-		if ( isSignupExistingAccount && userEmail ) {
-			this.props.getAuthAccountType( userEmail );
-		}
+		const { disableAutoFocus } = this.props;
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
