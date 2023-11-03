@@ -63,6 +63,7 @@ class ThemesSelection extends Component {
 			recordThemeClick: PropTypes.func,
 			recordThemeStyleVariationClick: PropTypes.func,
 		} ),
+		children: PropTypes.node,
 	};
 
 	static defaultProps = {
@@ -239,7 +240,9 @@ class ThemesSelection extends Component {
 					siteId={ siteId }
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }
-				/>
+				>
+					{ this.props.children }
+				</ThemesList>
 				<SearchThemesTracks
 					query={ query }
 					interlacedThemes={ interlacedThemes }
@@ -422,7 +425,9 @@ class ThemesSelectionWithPage extends React.Component {
 				{ ...this.props }
 				page={ this.state.page }
 				incrementPage={ this.incrementPage }
-			/>
+			>
+				{ this.props.children }
+			</ConnectedThemesSelection>
 		);
 	}
 }
