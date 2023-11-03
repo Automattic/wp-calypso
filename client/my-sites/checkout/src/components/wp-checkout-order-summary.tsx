@@ -555,14 +555,11 @@ function CheckoutSummaryJetpackProductFeatures( { product }: { product: Response
 
 	return (
 		<>
-			{ productFeatures.map( ( feature ) => {
-				// Needed to support Jetpack Creator launch (see: ../lib/get-jetpack-product-features.ts:135)
-				const m = feature.match( /<b>(.*)<\/b>/ );
-
+			{ productFeatures.map( ( feature, index ) => {
 				return (
-					<CheckoutSummaryFeaturesListItem key={ feature }>
-						<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
-						{ m ? <strong>{ m[ 1 ] }</strong> : feature }
+					<CheckoutSummaryFeaturesListItem key={ `feature${ index }` }>
+						<WPCheckoutCheckIcon id={ `icon${ index }` } />
+						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }

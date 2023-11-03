@@ -13,9 +13,12 @@ import {
 	isJetpackVideoPressSlug,
 	isJetpackAISlug,
 	isJetpackCreatorSlug,
+	PLAN_JETPACK_CREATOR_MONTHLY,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { createElement } from 'react';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
+import type { ReactElement } from 'react';
 
 type featureString =
 	| 'ai'
@@ -31,12 +34,13 @@ type featureString =
 	| 'support'
 	| 'videopress'
 	| 'creator'
+	| 'creator-promo'
 	| 'complete';
 
 function getFeatureStrings(
 	feature: featureString,
 	translate: ReturnType< typeof useTranslate >
-): string[] {
+): ( ReactElement | number | string )[] {
 	switch ( feature ) {
 		case 'ai':
 			return [
@@ -132,9 +136,6 @@ function getFeatureStrings(
 			];
 		case 'creator':
 			return [
-				// Note: this is temporary promotion of free Blaze credits for Creator plan
-				// If not necessary anymore, remove this logic: (../components/wp-checkout-order-summary.tsx:560)
-				`<b>${ translate( '$500 free Blaze advertising credits' ) }</b>`,
 				translate( 'Display ads with WordAds' ),
 				translate( 'Pay with PayPal' ),
 				translate( 'Import unlimited subscribers' ),
@@ -145,6 +146,25 @@ function getFeatureStrings(
 				translate( 'Priority support' ),
 				translate( '2% transaction fees' ),
 			];
+		case 'creator-promo': {
+			return [
+				/* translators: Blaze is a product name and should not be translated.
+					{{strong}} is a React component that renders a <strong> tag.
+					%(credits)s is a placeholder for the number of credits.
+					The Blaze promo is only available from Nov 6 - 12, 2023.
+				*/
+				translate( '{{strong}}$%(credits)s free Blaze advertising credits{{/strong}}', {
+					components: {
+						strong: createElement( 'strong' ),
+					},
+					args: {
+						// Nov 6 - 8, 2023: $500 free Blaze advertising credits
+						// Nov 9 - 12, 2023: $150 free Blaze advertising credits
+						credits: new Date() < new Date( '2023-11-09' ) ? '500' : '150',
+					},
+				} ),
+			];
+		}
 		default:
 			return [];
 	}
@@ -153,7 +173,7 @@ function getFeatureStrings(
 export default function getJetpackProductFeatures(
 	product: WithSnakeCaseSlug,
 	translate: ReturnType< typeof useTranslate >
-): string[] {
+): ( ReactElement | number | string )[] {
 	if ( isJetpackAISlug( product.product_slug ) ) {
 		return getFeatureStrings( 'ai', translate );
 	}
@@ -205,7 +225,7 @@ export default function getJetpackProductFeatures(
 			...getFeatureStrings( 'scan', translate ),
 			...getFeatureStrings( 'support', translate ),
 		].filter( ( productFeature ) => {
-			return ! securityExcludes.includes( productFeature );
+			return ! securityExcludes.includes( productFeature.toString() );
 		} );
 	}
 
@@ -237,7 +257,14 @@ export default function getJetpackProductFeatures(
 	}
 
 	if ( isJetpackCreatorSlug( product.product_slug ) ) {
-		return getFeatureStrings( 'creator', translate );
+		// Blaze launch promo: Nov 6 - Nov 12, 2023, only for annual plans
+		const blazePromo =
+			new Date() > new Date( '2023-11-06' ) &&
+			new Date() < new Date( '2023-11-13' ) &&
+			product.product_slug !== PLAN_JETPACK_CREATOR_MONTHLY
+				? getFeatureStrings( 'creator-promo', translate )
+				: [];
+		return [ ...blazePromo, ...getFeatureStrings( 'creator', translate ) ];
 	}
 
 	return [];
