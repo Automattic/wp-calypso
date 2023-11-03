@@ -134,10 +134,12 @@ const ReaderTagSidebar = ( {
 				{ translate( 'See all tags' ) }
 			</a>
 			<AppPromo
-				title={ translate( 'Download the Jetpack App for the best mobile reading experience' ) }
+				title={ translate( 'Get the Jetpack App ' ) }
 				campaign="calypso-reader-tag"
 				hasQRCode={ true }
-				subheader={ translate( 'Comes with darkmode, offline reading and custom styles' ) }
+				subheader={ translate(
+					'For the ultimate on-the-go reading experience. Scan the QR Code below to get started.'
+				) }
 				hasGetAppButton={ false }
 				iconSize={ 40 }
 			/>

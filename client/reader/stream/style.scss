@@ -803,6 +803,8 @@
 
 	.app-promo {
 		background-color: transparent;
+		border-radius: 10px; /* stylelint-disable-line scales/radii */
+		padding: 16px 16px 24px;
 
 		.get-apps__card-text {
 			display: none;
@@ -810,6 +812,10 @@
 
 		.app-promo__qr-code {
 			margin: 20px 0 0;
+		}
+
+		.card-heading {
+			margin-bottom: 16px;
 		}
 	}
 }
