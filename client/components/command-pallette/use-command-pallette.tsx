@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useI18n } from '@wordpress/react-i18n';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
@@ -68,6 +69,7 @@ export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 }: UseSMPCommands ) => {
+	const { __ } = useI18n();
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: 'sites-dashboard-command-palette',
 		ref: 'topbar',
