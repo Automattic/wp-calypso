@@ -367,7 +367,8 @@ class ThemeShowcase extends Component {
 	};
 
 	allThemes = ( { themeProps } ) => {
-		const { filter, isCollectionView, isJetpackSite, tier, children, search } = this.props;
+		const { filter, isCollectionView, isJetpackSite, tier, children, search, category } =
+			this.props;
 		if ( isJetpackSite ) {
 			return children;
 		}
@@ -379,7 +380,9 @@ class ThemeShowcase extends Component {
 		};
 
 		const showCollections =
-			! search && ! filter && tier === '' && this.isThemeDiscoveryEnabled() && ! isCollectionView;
+			! ( category || search || filter || isCollectionView ) &&
+			tier === '' &&
+			this.isThemeDiscoveryEnabled();
 
 		return (
 			<div className="theme-showcase__all-themes">
