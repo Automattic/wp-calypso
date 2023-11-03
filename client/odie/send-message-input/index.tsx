@@ -15,12 +15,11 @@ import './style.scss';
 export const OdieSendMessageButton = ( {
 	scrollToBottom,
 	enableStickToBottom,
-	isBottomVisible,
+	enableJumpToRecent,
 }: {
-	bottomElement: Element | null | undefined;
-	scrollToBottom: ( smooth?: boolean, force?: boolean ) => void;
+	scrollToBottom: ( smooth?: boolean ) => void;
 	enableStickToBottom: () => void;
-	isBottomVisible: boolean;
+	enableJumpToRecent: boolean;
 } ) => {
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
@@ -113,8 +112,8 @@ export const OdieSendMessageButton = ( {
 	return (
 		<>
 			<JumpToRecent
-				scrollToBottom={ () => scrollToBottom( true, true ) }
-				isBottomVisible={ isBottomVisible }
+				scrollToBottom={ () => scrollToBottom( true ) }
+				enableJumpToRecent={ enableJumpToRecent }
 				bottomOffset={ divContainerHeight ?? 0 }
 			/>
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
@@ -131,7 +130,7 @@ export const OdieSendMessageButton = ( {
 							setMessageString( event.currentTarget.value )
 						}
 						onKeyPress={ handleKeyPress }
-						onKeyUp={ () => scrollToBottom( false, true ) }
+						onKeyUp={ () => scrollToBottom( false ) }
 					/>
 					<button
 						type="submit"

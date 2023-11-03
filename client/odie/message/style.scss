@@ -214,18 +214,19 @@ $custom-border-corner-size: 16px;
 	gap: 8px;
 	height: 96px;
 	justify-content: center;
-	transition: opacity 0.3s ease 0.3s, bottom 0.3s ease 0.3s;
 	z-index: 5;
 	pointer-events: none;
 
 	&.is-hidden {
 		opacity: 0;
 		bottom: 0 !important;
+		transition: opacity 0.3s ease, bottom 0.3s ease;
 	}
 
 	&.is-visible {
 		opacity: 1;
 		bottom: 24px;
+		transition: opacity 0.3s ease 0.3s, bottom 0.3s ease 0.3s;
 	}
 
 	.odie-jump-to-recent-message-button {

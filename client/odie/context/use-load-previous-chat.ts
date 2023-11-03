@@ -7,7 +7,7 @@ export const useLoadPreviousChat = (
 	botNameSlug: OdieAllowedBots,
 	chatId: number | null | undefined
 ) => {
-	const { data: existingChat } = useOdieGetChat( botNameSlug, chatId );
+	const { data: existingChat } = useOdieGetChat( botNameSlug, chatId, 1, 30 );
 	const [ chat, setChat ] = useState< Chat >( {
 		chat_id: null,
 		messages: [ getOdieInitialMessage( botNameSlug ) ],
@@ -23,8 +23,7 @@ export const useLoadPreviousChat = (
 				messages: [ getOdieInitialMessage( botNameSlug ) ],
 			} );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ botNameSlug, chatId ] );
+	}, [ botNameSlug, chatId, existingChat ] );
 
 	return chat;
 };

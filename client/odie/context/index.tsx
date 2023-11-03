@@ -3,10 +3,8 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearOdieStorage, useOdieStorage } from '../data';
-import useOdieUserTracking from '../track-location/useOdieUserTracking';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
-import type { OdieUserTracking } from '../track-location/useOdieUserTracking';
 import type { Chat, Context, Message, Nudge, OdieAllowedBots } from '../types';
 import type { ReactNode } from 'react';
 
@@ -31,7 +29,6 @@ interface OdieAssistantContextInterface {
 	isNudging: boolean;
 	isVisible: boolean;
 	lastNudge: Nudge | null;
-	lastUserLocations: OdieUserTracking[];
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
@@ -55,7 +52,6 @@ const defaultContextInterfaceValues = {
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
-	lastUserLocations: [],
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
@@ -91,7 +87,6 @@ const OdieAssistantProvider = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const odieIsEnabled = config.isEnabled( 'wapuu' );
-	const lastUserLocations = useOdieUserTracking();
 
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -174,7 +169,6 @@ const OdieAssistantProvider = ( {
 				isNudging,
 				isVisible,
 				lastNudge,
-				lastUserLocations,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,

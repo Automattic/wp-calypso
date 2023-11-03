@@ -63,10 +63,16 @@ export const useOdieSendMessage = (): UseMutationResult<
 
 const buildGetChatMessage = (
 	botNameSlug: OdieAllowedBots,
-	chat_id: number | null | undefined
+	chat_id: number | null | undefined,
+	page: number,
+	perPage: number
 ): Promise< Chat > => {
-	const baseApiPath = `/help-center/odie/chat/${ botNameSlug }/${ chat_id }`;
-	const wpcomBaseApiPath = `/odie/chat/${ botNameSlug }/${ chat_id }`;
+	const urlQueryParams = new URLSearchParams( {
+		page_number: page.toString(),
+		items_per_page: perPage.toString(),
+	} );
+	const baseApiPath = `/help-center/odie/chat/${ botNameSlug }/${ chat_id }?${ urlQueryParams.toString() }`;
+	const wpcomBaseApiPath = `/odie/chat/${ botNameSlug }/${ chat_id }?${ urlQueryParams.toString() }`;
 
 	return canAccessWpcomApis()
 		? odieWpcomGetChat( wpcomBaseApiPath )
@@ -85,12 +91,14 @@ function odieWpcomGetChat( path: string ): Promise< Chat > {
 
 export const useOdieGetChat = (
 	botNameSlug: OdieAllowedBots,
-	chatId: number | undefined | null
+	chatId: number | undefined | null,
+	page: number = 1,
+	perPage: number = 10
 ) => {
 	const { chat } = useOdieAssistantContext();
 	return useQuery< Chat, unknown >( {
-		queryKey: [ 'chat', botNameSlug, chatId ],
-		queryFn: () => buildGetChatMessage( botNameSlug, chatId ),
+		queryKey: [ 'chat', botNameSlug, chatId, page, perPage ],
+		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
 	} );

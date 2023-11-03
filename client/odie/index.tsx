@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { noop, useOdieAssistantContext } from './context';
+import { useOdieAssistantContext } from './context';
 import ChatMessage from './message';
 import { OdieSendMessageButton } from './send-message-input';
-import { useScrollStop } from './useScrollStop';
 
 import './style.scss';
 
@@ -34,24 +33,8 @@ const OdieAssistant = () => {
 	);
 
 	useEffect( () => {
-		scrollToBottom();
-	}, [ scrollToBottom ] );
-
-	const handleScroll = useCallback( () => {
-		if ( ! chatboxMessagesRef.current ) {
-			return;
-		}
-
-		const isAtBottom =
-			chatboxMessagesRef.current.scrollTop + chatboxMessagesRef.current.clientHeight ===
-			chatboxMessagesRef.current.scrollHeight;
-
-		if ( isAtBottom ) {
-			setStickToBottom( true );
-		}
-	}, [] );
-
-	useScrollStop( chatboxMessagesRef.current, () => setStickToBottom( false ) );
+		scrollToBottom( false, true );
+	}, [ scrollToBottom, chat.messages.length ] );
 
 	return (
 		<div className="chatbox">
@@ -60,24 +43,34 @@ const OdieAssistant = () => {
 				eventProperties={ { bot_name_slug: botNameSlug } }
 			/>
 			<div className="chat-box-message-container">
-				<div className="chatbox-messages" ref={ chatboxMessagesRef } onScroll={ handleScroll }>
+				<div
+					className="chatbox-messages"
+					ref={ chatboxMessagesRef }
+					onWheel={ ( event: WheelEvent< HTMLDivElement > ) => {
+						// If delta is negative, we are scrolling up so we want to disable stick to bottom
+						// we might improve this in the future for touch devices
+						if ( event.deltaY < 0 ) {
+							setStickToBottom( false );
+						} else if ( chatboxMessagesRef.current ) {
+							const scrollHeight = chatboxMessagesRef.current.scrollHeight;
+							const scrollTop = chatboxMessagesRef.current.scrollTop;
+							const clientHeight = chatboxMessagesRef.current.clientHeight;
+							const scrollBottom = scrollHeight - scrollTop - clientHeight;
+							setStickToBottom( scrollBottom < 8 );
+						}
+					} }
+				>
 					{ chat.messages.map( ( message, index ) => {
-						const isLast = index === chat.messages.length - 1;
 						return (
-							<ChatMessage
-								message={ message }
-								key={ index }
-								scrollToBottom={ isLast ? () => scrollToBottom( false, false ) : noop }
-							/>
+							<ChatMessage message={ message } key={ index } scrollToBottom={ scrollToBottom } />
 						);
 					} ) }
 					<div className="odie-chatbox-bottom-edge" ref={ bottomRef }></div>
 				</div>
 				<OdieSendMessageButton
-					scrollToBottom={ scrollToBottom }
+					scrollToBottom={ () => scrollToBottom( true, true ) }
 					enableStickToBottom={ () => setStickToBottom( true ) }
-					bottomElement={ bottomElement?.target }
-					isBottomVisible={ inView }
+					enableJumpToRecent={ ! inView && ! stickToBottom }
 				/>
 			</div>
 		</div>

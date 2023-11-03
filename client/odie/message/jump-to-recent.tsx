@@ -17,11 +17,11 @@ const heightOffset = 48;
 
 export const JumpToRecent = ( {
 	scrollToBottom,
-	isBottomVisible,
+	enableJumpToRecent,
 	bottomOffset,
 }: {
 	scrollToBottom: () => void;
-	isBottomVisible: boolean;
+	enableJumpToRecent: boolean;
 	bottomOffset: number;
 } ) => {
 	const { botSetting, botNameSlug } = useOdieAssistantContext();
@@ -51,8 +51,8 @@ export const JumpToRecent = ( {
 	}
 
 	const className = classnames( 'odie-gradient-to-white', {
-		'is-visible': ! isBottomVisible,
-		'is-hidden': isBottomVisible,
+		'is-visible': enableJumpToRecent,
+		'is-hidden': ! enableJumpToRecent,
 	} );
 
 	return (
