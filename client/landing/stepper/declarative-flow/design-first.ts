@@ -34,6 +34,18 @@ const designFirst: Flow = {
 	useSteps() {
 		return [
 			{
+				slug: 'check-sites',
+				asyncComponent: () => import( './internals/steps-repository/sites-checker' ),
+			},
+			{
+				slug: 'new-or-existing-site',
+				asyncComponent: () => import( './internals/steps-repository/new-or-existing-site' ),
+			},
+			{
+				slug: 'site-picker',
+				asyncComponent: () => import( './internals/steps-repository/site-picker-list' ),
+			},
+			{
 				slug: 'site-creation-step',
 				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
 			},
@@ -97,6 +109,40 @@ const designFirst: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 
 			switch ( currentStep ) {
+				case 'check-sites':
+					// Check for unlaunched sites
+					if ( providedDependencies?.filteredSitesCount === 0 ) {
+						// No unlaunched sites, redirect to new site creation step
+						return navigate( 'site-creation-step' );
+					}
+					// With unlaunched sites, continue to new-or-existing-site step
+					return navigate( 'new-or-existing-site' );
+				case 'new-or-existing-site':
+					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
+						return navigate( 'site-creation-step' );
+					}
+					return navigate( 'site-picker' );
+				case 'site-picker': {
+					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
+						setSelectedSite( providedDependencies?.siteId );
+						await Promise.all( [
+							setIntentOnSite( providedDependencies?.siteSlug, DESIGN_FIRST_FLOW ),
+							saveSiteSettings( providedDependencies?.siteId, {
+								launchpad_screen: 'full',
+							} ),
+						] );
+
+						return window.location.assign(
+							addQueryArgs( `/setup/update-design/designSetup`, {
+								siteSlug: providedDependencies?.siteSlug,
+								flowToReturnTo: DESIGN_FIRST_FLOW,
+								theme: getQueryArg( window.location.href, 'theme' ),
+								style_variation: getQueryArg( window.location.href, 'style_variation' ),
+							} )
+						);
+					}
+					return navigate( 'launchpad' );
+				}
 				case 'site-creation-step':
 					return navigate( 'processing' );
 				case 'processing': {
@@ -267,7 +313,10 @@ const designFirst: Flow = {
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
 				redirect( logInUrl );
-			} else if ( isSiteCreationStep && ! shouldCreateNewSite ) {
+			} else if (
+				isSiteCreationStep &&
+				( ! userAlreadyHasSites || getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' )
+			) {
 				// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
 				// This prevents a bunch of sites being created accidentally.
 				redirect( `/themes` );

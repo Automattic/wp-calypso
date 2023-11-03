@@ -7,6 +7,7 @@ import {
 	StepContainer,
 	isBlogOnboardingFlow,
 	START_WRITING_FLOW,
+	DESIGN_FIRST_FLOW,
 } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -57,6 +58,7 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 					actionText: translate( 'Start a new site' ),
 				},
 			];
+		case DESIGN_FIRST_FLOW:
 		case START_WRITING_FLOW:
 			return [
 				{
