@@ -324,7 +324,6 @@ class ThemeShowcase extends Component {
 			tier,
 			category,
 			search: showCollection ? '' : this.props.search,
-			isCollectionView: showCollection,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
 				this.props.category === staticFilters.MYTHEMES.key && {
@@ -368,7 +367,7 @@ class ThemeShowcase extends Component {
 	};
 
 	allThemes = ( { themeProps } ) => {
-		const { filter, isCollectionView, isJetpackSite, tier, children } = this.props;
+		const { filter, isCollectionView, isJetpackSite, tier, children, search } = this.props;
 		if ( isJetpackSite ) {
 			return children;
 		}
@@ -379,7 +378,8 @@ class ThemeShowcase extends Component {
 			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
 		};
 
-		const showCollections = tier === '' && this.isThemeDiscoveryEnabled() && ! isCollectionView;
+		const showCollections =
+			! search && ! filter && tier === '' && this.isThemeDiscoveryEnabled() && ! isCollectionView;
 
 		return (
 			<div className="theme-showcase__all-themes">
