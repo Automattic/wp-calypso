@@ -556,10 +556,13 @@ function CheckoutSummaryJetpackProductFeatures( { product }: { product: Response
 	return (
 		<>
 			{ productFeatures.map( ( feature ) => {
+				// Needed to support Jetpack Creator launch (see: ../lib/get-jetpack-product-features.ts:135)
+				const m = feature.match( /<b>(.*)<\/b>/ );
+
 				return (
 					<CheckoutSummaryFeaturesListItem key={ feature }>
 						<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
-						{ feature }
+						{ m ? <strong>{ m[ 1 ] }</strong> : feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }

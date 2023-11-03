@@ -132,6 +132,9 @@ function getFeatureStrings(
 			];
 		case 'creator':
 			return [
+				// Note: this is temporary promotion of free Blaze credits for Creator plan
+				// If not necessary anymore, remove this logic: (../components/wp-checkout-order-summary.tsx:560)
+				`<b>${ translate( '$500 free Blaze advertising credits' ) }</b>`,
 				translate( 'Display ads with WordAds' ),
 				translate( 'Pay with PayPal' ),
 				translate( 'Import unlimited subscribers' ),
