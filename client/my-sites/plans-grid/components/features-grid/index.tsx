@@ -33,22 +33,13 @@ import PlanFeaturesContainer from '../plan-features-container';
 import PlanLogo from '../plan-logo';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
-import type { PlansGridProps } from '../..';
+import { FeaturesGridType } from './types';
 import type { GridPlan } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 type PlanRowOptions = {
 	isTableCell?: boolean;
 	isStuck?: boolean;
 };
-
-interface FeaturesGridType extends PlansGridProps {
-	isLargeCurrency: boolean;
-	translate: LocalizeProps[ 'translate' ];
-	canUserManageCurrentPlan?: boolean | null;
-	currentPlanManageHref?: string;
-	isPlanUpgradeCreditEligible: boolean;
-	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
-}
 
 class FeaturesGrid extends Component< FeaturesGridType > {
 	renderTable( renderedGridPlans: GridPlan[] ) {

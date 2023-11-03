@@ -1,11 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { HOSTING_LP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 
 const noop = () => {};
 
 const getUserSocialStepOrFallback = () =>
 	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
+
+const getOnboardingPMUserStep = () => {
+	const result = loadExperimentAssignment( 'wpcom_hosting_business_plan_free_trial' );
+};
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -23,6 +28,7 @@ export function generateFlows( {
 	getHostingFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
+	const onboardinUserStep = getUserSocialStepOrFallback();
 
 	const flows = [
 		{
