@@ -152,7 +152,7 @@ export const ThankYouThemeSection = ( {
 
 	useEffect( () => {
 		if ( isActive && isWoo ) {
-			page( `/setup/plugin-bundle/checkForWoo?siteSlug=${ siteSlug }` );
+			page( `/setup/plugin-bundle/?siteSlug=${ siteSlug }` );
 		}
 	}, [ isWoo, isActive ] );
 

@@ -59,7 +59,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				} ),
 				{}
 			),
-		[]
+		[ stepPaths ]
 	);
 
 	const location = useLocation();
