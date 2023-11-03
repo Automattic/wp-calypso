@@ -133,7 +133,14 @@ const ReaderTagSidebar = ( {
 			>
 				{ translate( 'See all tags' ) }
 			</a>
-			<AppPromo />
+			<AppPromo
+				title={ translate( 'Download the Jetpack App for the best mobile reading experience' ) }
+				campaign="calypso-reader-tag"
+				hasQRCode={ true }
+				subheader={ translate( 'Comes with darkmode, offline reading and custom styles' ) }
+				hasGetAppButton={ false }
+				iconSize={ 40 }
+			/>
 			{ relatedSitesLinks && (
 				<div className="reader-tag-sidebar-related-sites">
 					<h2>{ translate( 'Related Sites' ) }</h2>

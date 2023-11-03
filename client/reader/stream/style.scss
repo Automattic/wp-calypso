@@ -800,6 +800,18 @@
 	.reader-feed-header__seen-button {
 		margin-bottom: 24px;
 	}
+
+	.app-promo {
+		background-color: transparent;
+
+		.get-apps__card-text {
+			display: none;
+		}
+
+		.app-promo__qr-code {
+			margin: 20px 0 0;
+		}
+	}
 }
 
 // Posts and Sites tabbed headers
