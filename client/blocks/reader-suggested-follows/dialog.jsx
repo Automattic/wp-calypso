@@ -16,7 +16,7 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) 
 
 	useEffect( () => {
 		if ( isVisible ) {
-			dispatch( recordReaderTracksEvent( 'calypso_reader_suggested_follows_viewed' ) );
+			dispatch( recordReaderTracksEvent( 'calypso_reader_suggested_follows_dialog_viewed' ) );
 		}
 	}, [ isVisible, dispatch ] );
 
