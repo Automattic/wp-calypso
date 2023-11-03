@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import FollowButton from 'calypso/blocks/follow-button/button';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { isExternal } from 'calypso/lib/url';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
@@ -27,46 +28,38 @@ const ListStreamHeader = ( {
 
 	return (
 		<Card className={ classes }>
-			<span className="list-stream__header-icon">
-				<Gridicon icon="list-unordered" size={ 24 } />
-			</span>
+			<NavigationHeader title={ title } subtitle={ description }>
+				{ ! isPublic && (
+					<div className="list-stream__header-title-privacy">
+						<Gridicon icon="lock" size={ 18 } title={ translate( 'Private list' ) } />
+					</div>
+				) }
 
-			<div className="list-stream__header-details">
-				<div className="list-stream__header-title">
-					<h1>{ title }</h1>
-					{ ! isPublic && (
-						<div className="list-stream__header-title-privacy">
-							<Gridicon icon="lock" size={ 18 } title={ translate( 'Private list' ) } />
-						</div>
-					) }
-				</div>
-				{ description && <p className="list-stream__header-description">{ description }</p> }
-			</div>
+				{ showFollow && (
+					<div className="list-stream__header-follow">
+						<FollowButton
+							iconSize={ 24 }
+							following={ following }
+							onFollowToggle={ onFollowToggle }
+							followIcon={ ReaderFollowFeedIcon( { iconSize: 24 } ) }
+							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 24 } ) }
+						/>
+					</div>
+				) }
 
-			{ showFollow && (
-				<div className="list-stream__header-follow">
-					<FollowButton
-						iconSize={ 24 }
-						following={ following }
-						onFollowToggle={ onFollowToggle }
-						followIcon={ ReaderFollowFeedIcon( { iconSize: 24 } ) }
-						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 24 } ) }
-					/>
-				</div>
-			) }
-
-			{ showEdit && editUrl && (
-				<div className="list-stream__header-edit">
-					<a href={ editUrl } rel={ isExternal( editUrl ) ? 'external' : '' }>
-						<span className="list-stream__header-action-icon">
-							<Gridicon icon="cog" size={ 24 } />
-						</span>
-						<span className="list-stream__header-action-label screen-reader-text">
-							{ translate( 'Edit' ) }
-						</span>
-					</a>
-				</div>
-			) }
+				{ showEdit && editUrl && (
+					<div className="list-stream__header-edit">
+						<a href={ editUrl } rel={ isExternal( editUrl ) ? 'external' : '' }>
+							<span className="list-stream__header-action-icon">
+								<Gridicon icon="cog" size={ 24 } />
+							</span>
+							<span className="list-stream__header-action-label screen-reader-text">
+								{ translate( 'Edit' ) }
+							</span>
+						</a>
+					</div>
+				) }
+			</NavigationHeader>
 		</Card>
 	);
 };
