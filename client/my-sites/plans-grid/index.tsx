@@ -80,6 +80,7 @@ const WrappedComparisonGrid = ( {
 	onStorageAddOnClick,
 	currentPlanManageHref,
 	canUserManageCurrentPlan,
+	stickyRowOffset,
 	...otherProps
 }: PlansGridProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
@@ -109,6 +110,7 @@ const WrappedComparisonGrid = ( {
 					selectedFeature={ selectedFeature }
 					showLegacyStorageFeature={ showLegacyStorageFeature }
 					showUpgradeableStorage={ showUpgradeableStorage }
+					stickyRowOffset={ stickyRowOffset }
 					onStorageAddOnClick={ onStorageAddOnClick }
 					{ ...otherProps }
 				/>
@@ -138,6 +140,7 @@ const WrappedComparisonGrid = ( {
 					selectedFeature={ selectedFeature }
 					showLegacyStorageFeature={ showLegacyStorageFeature }
 					showUpgradeableStorage={ showUpgradeableStorage }
+					stickyRowOffset={ stickyRowOffset }
 					onStorageAddOnClick={ onStorageAddOnClick }
 					{ ...otherProps }
 				/>

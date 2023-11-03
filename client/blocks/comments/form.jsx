@@ -1,5 +1,3 @@
-import config from '@automattic/calypso-config';
-import { getUrlParts } from '@automattic/calypso-url';
 import { Button, FormInputValidation } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -8,10 +6,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Gravatar from 'calypso/components/gravatar';
-import { navigate } from 'calypso/lib/navigate';
-import { createAccountUrl } from 'calypso/lib/paths';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -66,22 +61,10 @@ class PostCommentForm extends Component {
 
 	handleTextChange = ( event ) => {
 		if ( ! this.props.isLoggedIn ) {
-			const { pathname } = getUrlParts( window.location.href );
-			// Redirect to create account page when not logged in and on reader tag embed page
-			if ( isReaderTagEmbedPage( window.location ) ) {
-				return window.open(
-					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
-					'_blank'
-				);
-			}
-			// Redirect to create account page when not logged in and the login window component is disabled
-			if ( ! config.isEnabled( 'reader/login-window' ) ) {
-				return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
-			}
-			this.props.registerLastActionRequiresLogin( {
+			return this.props.registerLastActionRequiresLogin( {
 				type: 'comment',
-				siteId: this.props.siteId,
-				postId: this.props.postId,
+				siteId: this.props.post.site_ID,
+				postId: this.props.post.ID,
 				commentId: this.props.placeholderId,
 			} );
 		}
@@ -102,14 +85,13 @@ class PostCommentForm extends Component {
 
 		// Do not submit form if the user is not logged in
 		if ( ! this.props.isLoggedIn ) {
-			this.props.registerLastActionRequiresLogin( {
+			return this.props.registerLastActionRequiresLogin( {
 				type: 'comment-submit',
-				siteId: this.props.siteId,
-				postId: this.props.postId,
+				siteId: this.props.post.site_ID,
+				postId: this.props.post.ID,
 				commentId: this.props.placeholderId,
 				commentText: commentText,
 			} );
-			return false;
 		}
 
 		if ( this.props.placeholderId ) {

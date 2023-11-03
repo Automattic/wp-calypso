@@ -303,14 +303,9 @@ body.is-section-signup.is-white-signup {
 			display: none;
 
 			@include break-large {
-				width: 30vw;
 				margin-top: 0;
 				flex-direction: column;
 				display: flex;
-			}
-
-			@include break-wide {
-				width: 350px;
 			}
 		}
 
@@ -346,6 +341,7 @@ body.is-section-signup.is-white-signup {
 			margin: 0;
 
 			@include break-small {
+				width: 290px;
 				margin: 0 20px;
 			}
 

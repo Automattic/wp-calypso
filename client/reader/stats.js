@@ -52,7 +52,7 @@ function getLocation( path ) {
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		const sort = searchParams.get( 'sort' );
-		return `topic_page:${ sort || 'relevance' }`;
+		return `topic_page:${ sort === 'relevance' ? 'relevance' : 'date' }`;
 	}
 	if ( path.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
 		return 'single_post';

@@ -25,12 +25,13 @@ const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick }: Props ) => {
 					? addOn.featureSlugs?.includes( selectedStorageOption )
 					: false;
 			} );
-			const storageAddOnCartItem = storageAddOn && {
-				product_slug: storageAddOn.productSlug,
-				quantity: storageAddOn.quantity,
-				volume: 1,
-				extra: { feature_slug: selectedStorageOption },
-			};
+			const storageAddOnCartItem = storageAddOn &&
+				! storageAddOn.purchased && {
+					product_slug: storageAddOn.productSlug,
+					quantity: storageAddOn.quantity,
+					volume: 1,
+					extra: { feature_slug: selectedStorageOption },
+				};
 
 			if ( cartItemForPlan ) {
 				onUpgradeClick?.( [

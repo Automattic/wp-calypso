@@ -10,6 +10,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -19,15 +20,23 @@ import { useCheckSyncStatus } from '../use-site-sync-status';
 import { StagingSiteSyncLoadingBarCardContent } from './staging-site-sync-loading-bar-card-content';
 const stagingSiteSyncSuccess = 'staging-site-sync-success';
 
-const STAGING_SYNC_ERROR_CODES = [
+const STAGING_SYNC_JETPACK_ERROR_CODES = [
 	'staging_site_cannot_sync_staging',
 	'staging_site_cannot_sync_production',
 ];
-function useIsPermanentSyncError( error: string | null | undefined ) {
+const STAGING_SYNC_FAILED_ERROR_CODES = [ 'staging_site_sync_failed' ];
+
+function useIsJetpackConnectionSyncError( error: string | null | undefined ) {
 	if ( ! error ) {
 		return false;
 	}
-	return Object.values( STAGING_SYNC_ERROR_CODES ).includes( error );
+	return STAGING_SYNC_JETPACK_ERROR_CODES.includes( error );
+}
+function useIsFailedSyncError( error: string | null | undefined ) {
+	if ( ! error ) {
+		return false;
+	}
+	return STAGING_SYNC_FAILED_ERROR_CODES.includes( error );
 }
 
 const synchronizationOptions: CheckboxOptionItem[] = [
@@ -173,6 +182,7 @@ const StagingToProductionSync = ( {
 	isSyncInProgress,
 	onConfirm,
 	showSyncPanel,
+	isSqlsOptionDisabled,
 }: {
 	disabled: boolean;
 	siteSlug: string;
@@ -182,6 +192,7 @@ const StagingToProductionSync = ( {
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 	showSyncPanel: boolean;
+	isSqlsOptionDisabled: boolean;
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
@@ -195,6 +206,7 @@ const StagingToProductionSync = ( {
 						items={ synchronizationOptions }
 						disabled={ disabled }
 						onChange={ onSelectItems }
+						isSqlsOptionDisabled={ isSqlsOptionDisabled }
 					></SyncOptionsPanel>
 				</>
 			) }
@@ -296,7 +308,8 @@ const SyncCardContainer = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const isStagingSyncError = useIsPermanentSyncError( error ) && siteToSync;
+	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error ) && siteToSync;
+	const isFailedSyncError = useIsFailedSyncError( error ) && siteToSync;
 
 	return (
 		<StagingSyncCardBody>
@@ -313,7 +326,7 @@ const SyncCardContainer = ( {
 									'Refresh your staging site with the latest from production, or push changes in your staging site to production.'
 							  ) }
 					</SyncContainerContent>
-					{ error && isStagingSyncError && (
+					{ error && isJetpackConnectionError && (
 						<Notice
 							status="is-error"
 							icon="mention"
@@ -336,7 +349,21 @@ const SyncCardContainer = ( {
 							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
 						</Notice>
 					) }
-					{ error && ! isStagingSyncError && (
+					{ error && isFailedSyncError && (
+						<Notice
+							status="is-error"
+							icon="mention"
+							showDismiss={ false }
+							text={ translate( 'We couldn’t synchronize changes to the %(siteType)s site.', {
+								args: {
+									siteType: siteToSync,
+								},
+							} ) }
+						>
+							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
+						</Notice>
+					) }
+					{ error && ! isJetpackConnectionError && ! isFailedSyncError && (
 						<Notice
 							status="is-error"
 							icon="mention"
@@ -395,6 +422,7 @@ export const SiteSyncCard = ( {
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
+	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, productionSiteId ) );
 	const {
 		progress,
 		resetSyncStatus,
@@ -518,6 +546,7 @@ export const SiteSyncCard = ( {
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
+					isSqlsOptionDisabled={ isSiteWooStore }
 				/>
 			) }
 			{ selectedOption !== actionForType && (

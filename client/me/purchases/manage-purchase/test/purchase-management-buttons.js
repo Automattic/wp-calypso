@@ -203,7 +203,8 @@ describe( 'Purchase Management Buttons', () => {
 		AKISMET_PRODUCTS_LIST.filter(
 			( product ) =>
 				product !== PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY &&
-				product !== PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY
+				product !== PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY &&
+				AKISMET_UPGRADES_PRODUCTS_MAP.hasOwnProperty( product )
 		)
 	)( 'generates the correct upgrade URL for %s', ( product_slug ) => {
 		nock( 'https://public-api.wordpress.com' )

@@ -509,11 +509,17 @@ export interface SourceSiteMigrationDetails {
 	target_blog_slug?: string;
 }
 
+export interface Page {
+	title: string;
+	content: string;
+}
+
 export interface AssembleSiteOptions {
 	homeHtml?: string;
 	headerHtml?: string;
 	footerHtml?: string;
+	pages?: Page[];
 	globalStyles?: GlobalStyles;
-	shouldResetContent?: boolean;
+	canReplaceContent?: boolean;
 	siteSetupOption?: string;
 }

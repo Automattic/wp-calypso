@@ -31,7 +31,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@jest/globals": "^29.5.0",
+		"@jest/globals": "^29.7.0",
 		"@types/node": "^18.17.3",
 		"@types/node-fetch": "^2.6.1",
 		"@wordpress/i18n": "^4.44.0",

@@ -1,5 +1,5 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
-import { Gridicon, WordPressLogo } from '@automattic/components';
+import { Gridicon, WordPressLogo, FoldableCard } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { StepContainer } from '@automattic/onboarding';
@@ -9,7 +9,6 @@ import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, type ReactElement, PropsWithChildren } from 'react';
-import FoldableCard from 'calypso/components/foldable-card';
 import { VideoPreload } from 'calypso/components/hundred-year-loader-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';

@@ -9,14 +9,8 @@ import './style.scss';
 export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
 
-type OdieAssistantProps = {
-	botNameSlug: string;
-};
-
-const OdieAssistant = ( props: OdieAssistantProps ) => {
-	const { botNameSlug } = props;
-	const { chat } = useOdieAssistantContext();
-
+const OdieAssistant = () => {
+	const { chat, botNameSlug } = useOdieAssistantContext();
 	const messagesEndRef = useRef< HTMLDivElement | null >( null );
 	const messagesContainer = useRef< HTMLDivElement | null >( null );
 	const bottomRef = useRef< HTMLDivElement | null >( null );

@@ -1,4 +1,5 @@
 import validUrl from 'valid-url';
+import { isE2ETest } from 'calypso/lib/e2e';
 
 // Only override the back button from an external URL source on the below step(s) which is typically where we'd send them to as the 'entry'.
 // We don't want to send them "back" to the source URL if they click back on "domains-launch/mapping" for example. Just send them back to the previous step.
@@ -32,14 +33,13 @@ export function getExternalBackUrl( source, sectionName = null ) {
 /**
  * Check if we should use multiple domains in domain flows.
  */
-export function shouldUseMultipleDomainsInCart( flowName, currentUser ) {
-	const enabledFlows = [ 'domain' ];
-	const enabledFlowsUnderFlag = [ 'onboarding' ];
+export function shouldUseMultipleDomainsInCart( flowName ) {
+	const enabledFlows = [ 'domain', 'onboarding' ];
 
-	const status =
-		enabledFlows.includes( flowName ) ||
-		( 'treatment' === currentUser?.calypso_multi_domains_experiment &&
-			enabledFlowsUnderFlag.includes( flowName ) );
+	// The onboarding E2E tests are not yet updated to handle multiple domains.
+	if ( isE2ETest() ) {
+		return false;
+	}
 
-	return status;
+	return enabledFlows.includes( flowName );
 }

@@ -110,6 +110,26 @@ body.is-section-home.theme-default.color-scheme {
 		@include break-large {
 			padding-left: 0;
 		}
+
+		.app-promo__icon {
+			margin: 0 0 6px;
+		}
+
+		.card-heading {
+			text-align: left;
+		}
+
+		.app-promo__app-badges .get-apps__app-badge {
+			display: inline;
+		}
+
+		.get-apps__app-badge img {
+			margin: 0 0 0 -7px;
+		}
+
+		.app-promo__app-badges-text {
+			text-align: left;
+		}
 	}
 
 	@include break-mobile {
@@ -191,8 +211,12 @@ body.is-section-home.theme-default.color-scheme {
 .customer-home__main .card-heading,
 .customer-home__main .foldable-card__header {
 	margin-top: 0;
-	font-size: $font-body;
-	font-weight: 600;
+	font-size: $font-body-large;
+	font-weight: 500;
+}
+
+.customer-home__main .blogging-prompt .blogging-prompt__card .blogging-prompt__prompt-text {
+	font-size: $font-body-large;
 }
 
 .customer-home__card-subheader {

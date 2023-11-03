@@ -1,7 +1,7 @@
-import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
-import FormattedHeader from 'calypso/components/formatted-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 import withDimensions from 'calypso/lib/with-dimensions';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
@@ -13,21 +13,18 @@ function FollowingStream( { ...props } ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<>
-			<FormattedHeader
-				brandFont
-				headerText={ __( 'Recent' ) }
-				subHeaderText={ __( "Stay current with the blogs you've subscribed to." ) }
-				align="left"
-				hasScreenOptions
-				className={ classNames( 'following-stream-header', {
-					'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
-				} ) }
-			/>
 			<Stream
 				{ ...props }
 				className="following"
 				streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
 			>
+				<NavigationHeader
+					title={ translate( 'Recent' ) }
+					subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
+					className={ classNames( 'following-stream-header', {
+						'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+					} ) }
+				/>
 				<FollowingIntro />
 			</Stream>
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />

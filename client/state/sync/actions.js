@@ -1,6 +1,6 @@
 import {
 	SITE_SYNC_STATUS_REQUEST,
-	SITE_SYNC_STATUS_REQUEST_FAILURE,
+	SITE_SYNC_FAILURE,
 	SITE_SYNC_STATUS_SET,
 	SITE_SYNC_IS_SYNCING_IN_PROGRESS,
 	SITE_SYNC_TARGET_SITE,
@@ -85,14 +85,15 @@ export const setSyncInProgress = ( siteId, isSyncingInProgress ) => ( {
 
 /**
  * Report a failure of fetching site sync status (for example, the status
- * endpoint returns 404).
+ * endpoint returns 404) or general sync failure.
+ *
  * @param {Object} param failure details
  * @param {number} param.siteId The site id to which the status belongs
  * @param {string} param.error The error string received
  * @returns {Object} An action object
  */
-export const siteSyncStatusFetchingFailure = ( { siteId, error } ) => ( {
-	type: SITE_SYNC_STATUS_REQUEST_FAILURE,
+export const siteSyncFailure = ( { siteId, error } ) => ( {
+	type: SITE_SYNC_FAILURE,
 	siteId,
 	error,
 } );

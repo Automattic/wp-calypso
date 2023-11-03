@@ -599,14 +599,8 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-agency-signup',
-		paths: [ '/agency/signup' ],
+		paths: [ '/manage/signup', '/agency/signup' ],
 		module: 'calypso/jetpack-cloud/sections/agency-signup',
-		group: 'jetpack-cloud',
-	},
-	{
-		name: 'jetpack-cloud-partner-program-signup',
-		paths: [ '/partner-program/signup' ],
-		module: 'calypso/jetpack-cloud/sections/partner-program-signup',
 		group: 'jetpack-cloud',
 	},
 	{

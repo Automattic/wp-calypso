@@ -133,6 +133,7 @@ export type PlansIntent =
 	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
+	| 'plans-videopress'
 	| 'default';
 
 interface Props {
@@ -249,6 +250,9 @@ const usePlanTypesWithIntent = ( {
 				TYPE_BUSINESS,
 				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 			];
+			break;
+		case 'plans-videopress':
+			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
 		default:
 			planTypes = availablePlanTypes;

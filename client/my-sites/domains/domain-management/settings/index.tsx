@@ -318,18 +318,42 @@ const Settings = ( {
 		);
 	};
 
-	const renderDnsRecordsNotice = () => {
-		if (
-			( ! englishLocales.includes( getLocaleSlug() || '' ) &&
-				! i18n.hasTranslation(
-					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
-				) ) ||
-			areAllWpcomNameServers() ||
-			! nameservers ||
-			! nameservers.length
-		) {
+	const renderExternalNameserversNotice = ( noticeType: string ) => {
+		if ( areAllWpcomNameServers() || ! nameservers || ! nameservers.length ) {
 			return null;
 		}
+
+		const dnsRecordsNotice = translate(
+			"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
+			{
+				components: {
+					a: (
+						<a
+							href={ domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
+								nameservers: true,
+							} ) }
+						/>
+					),
+				},
+			}
+		);
+
+		const domainForwardingNotice = translate(
+			"Your domain is using external name servers so the Domain Forwarding records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
+			{
+				components: {
+					a: (
+						<a
+							href={ domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
+								nameservers: true,
+							} ) }
+						/>
+					),
+				},
+			}
+		);
+
+		const notice = noticeType === 'DNS' ? dnsRecordsNotice : domainForwardingNotice;
 
 		return (
 			<div className="dns-records-card-notice">
@@ -339,25 +363,7 @@ const Settings = ( {
 					className="dns-records-card-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="dns-records-card-notice__message">
-					{ translate(
-						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
-						{
-							components: {
-								a: (
-									<a
-										href={ domainManagementEdit(
-											selectedSite.slug,
-											selectedDomainName,
-											currentRoute,
-											{ nameservers: true }
-										) }
-									/>
-								),
-							},
-						}
-					) }
-				</div>
+				<div className="dns-records-card-notice__message">{ notice }</div>
 			</div>
 		);
 	};
@@ -381,7 +387,7 @@ const Settings = ( {
 				>
 					{ domain.canManageDnsRecords ? (
 						<>
-							{ renderDnsRecordsNotice() }
+							{ renderExternalNameserversNotice( 'DNS' ) }
 							<DnsRecords
 								dns={ dns }
 								selectedDomainName={ selectedDomainName }
@@ -424,7 +430,11 @@ const Settings = ( {
 				subtitle={ translate( 'Forward your domain to another' ) }
 				isDisabled={ domain.isMoveToNewSitePending }
 			>
-				<DomainForwardingCard domain={ domain } />
+				{ renderExternalNameserversNotice( 'DOMAIN_FORWARDING' ) }
+				<DomainForwardingCard
+					domain={ domain }
+					areAllWpcomNameServers={ areAllWpcomNameServers() }
+				/>
 			</Accordion>
 		);
 	};

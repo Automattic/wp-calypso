@@ -1,13 +1,11 @@
-import { getUrlParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import titleCase from 'to-title-case';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
-import { navigate } from 'calypso/lib/navigate';
-import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import HeaderBack from 'calypso/reader/header-back';
@@ -19,6 +17,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import getReaderTagBySlug from 'calypso/state/reader/tags/selectors/get-reader-tag-by-slug';
+import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
@@ -80,8 +79,10 @@ class TagStream extends Component {
 		const toggleAction = isFollowing ? unfollowTag : followTag;
 
 		if ( ! this.props.isLoggedIn ) {
-			const { pathname } = getUrlParts( window.location.href );
-			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+			return this.props.registerLastActionRequiresLogin( {
+				type: 'follow-tag',
+				tag: decodedTagSlug,
+			} );
 		}
 
 		toggleAction( decodedTagSlug );
@@ -102,7 +103,7 @@ class TagStream extends Component {
 		const emptyContent = () => <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
 		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
-		const titleText = title.replace( /-/g, ' ' );
+		const titleText = titleCase( title.replace( /-/g, ' ' ) );
 
 		let imageSearchString = this.props.encodedTagSlug;
 
@@ -133,20 +134,18 @@ class TagStream extends Component {
 
 		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
 		const tagHeader = () => (
-			<>
-				<TagStreamHeader
-					title={ titleText }
-					description={ this.props.description }
-					imageSearchString={ imageSearchString }
-					showFollow={ !! ( tag && tag.id ) }
-					following={ this.isSubscribed() }
-					onFollowToggle={ this.toggleFollowing }
-					showBack={ this.props.showBack }
-					showSort={ true }
-					sort={ this.props.sort }
-					recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
-				/>
-			</>
+			<TagStreamHeader
+				title={ titleText }
+				description={ this.props.description }
+				imageSearchString={ imageSearchString }
+				showFollow={ !! ( tag && tag.id ) }
+				following={ this.isSubscribed() }
+				onFollowToggle={ this.toggleFollowing }
+				showBack={ this.props.showBack }
+				showSort={ true }
+				sort={ this.props.sort }
+				recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
+			/>
 		);
 		const sidebarProps = ! isReaderTagEmbedPage( window.location ) && {
 			streamSidebar: () => (
@@ -191,5 +190,6 @@ export default connect(
 		followTag: requestFollowTag,
 		recordReaderTracksEvent,
 		unfollowTag: requestUnfollowTag,
+		registerLastActionRequiresLogin,
 	}
 )( localize( TagStream ) );

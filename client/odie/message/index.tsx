@@ -16,10 +16,9 @@ import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
-import { getLinkDataFromMarkdown } from './link-markdown-processor';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
-import type { Message } from '../types';
+import type { Message, Source } from '../types';
 
 import './style.scss';
 
@@ -63,6 +62,10 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		return;
 	}
 
+	const wapuuAvatarClasses = classnames( 'odie-chatbox-message-avatar', {
+		'odie-chatbox-message-avatar-wapuu-liked': message.liked,
+	} );
+
 	const messageAvatarHeader = isUser ? (
 		<>
 			<Gravatar
@@ -84,7 +87,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 					textOnly: true,
 					args: { botName },
 				} ) }
-				className="odie-chatbox-message-avatar"
+				className={ wapuuAvatarClasses }
 			/>
 			{ message.type === 'placeholder' ? (
 				<img
@@ -121,12 +124,18 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
 	);
 
-	const hasSources = message.sources && message.sources.length > 0;
+	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
+	const sources = message?.context?.sources ?? [];
+	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
+	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
+
+	const messageFullyTyped =
+		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
 
 	const messageContent = (
 		<div ref={ isLast ? messageEndRef : null } className={ messageClasses }>
 			{ messageHeader }
-			{ message.type === 'message' && (
+			{ ( message.type === 'message' || ! message.type ) && (
 				<>
 					<AsyncLoad
 						require="react-markdown"
@@ -138,7 +147,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 					>
 						{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
 					</AsyncLoad>
-					{ hasSources && (
+					{ hasSources && messageFullyTyped && (
 						<div className="odie-chatbox-message-sources">
 							<strong>
 								{ translate( 'Sources:', {
@@ -148,19 +157,15 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 									args: { botName },
 								} ) }
 							</strong>
-							{ message.sources?.map( ( source: string, index: number ) => (
-								<CustomALink
-									key={ index }
-									href={ getLinkDataFromMarkdown( source )?.url ?? '' }
-									inline={ false }
-								>
-									{ getLinkDataFromMarkdown( source )?.title }
+							{ sources.map( ( source: Source, index: number ) => (
+								<CustomALink key={ index } href={ source.url } inline={ false }>
+									{ source?.title }
 								</CustomALink>
 							) ) }
 						</div>
 					) }
 
-					{ ! isUser && <WasThisHelpfulButtons /> }
+					{ ! isUser && <WasThisHelpfulButtons message={ message } /> }
 				</>
 			) }
 			{ message.type === 'introduction' && (

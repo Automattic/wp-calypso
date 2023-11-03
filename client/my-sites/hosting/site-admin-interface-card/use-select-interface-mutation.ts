@@ -1,14 +1,17 @@
-import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useMutation, UseMutationOptions } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import wp from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
-import { requestSite } from 'calypso/state/sites/actions';
+import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { receiveSite, requestSite } from 'calypso/state/sites/actions';
 
 const SET_SITE_INTERFACE_MUTATION_KEY = 'set-site-interface-mutation-key';
+const PERSISTENT_DATA_DELAY = 1200;
 
 interface MutationResponse {
-	message: string;
+	interface: 'wp-admin' | 'calypso';
 }
 
 interface MutationError {
@@ -16,16 +19,38 @@ interface MutationError {
 	message: string;
 }
 
+interface UseSiteInterfaceMutationOptions
+	extends UseMutationOptions< MutationResponse, MutationError, string > {
+	onSuccess?: () => void;
+}
+
+function waitMs( ms: number ) {
+	return new Promise( ( resolve ) => {
+		setTimeout( () => {
+			resolve( null );
+		}, ms );
+	} );
+}
+
 export const useSiteInterfaceMutation = (
 	siteId: number,
-	options: UseMutationOptions< MutationResponse, MutationError, string > = {}
+	options: UseSiteInterfaceMutationOptions = {}
 ) => {
-	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
+	const site = useSelector( ( state ) => getRawSite( state, siteId ) );
+	const isRequestingMenu = useSelector( ( state ) => getIsRequestingAdminMenu( state ) );
+	const [ hasSuccessfullyFinished, setHasSuccessfullyFinished ] = useState( false );
+	useEffect( () => {
+		if ( hasSuccessfullyFinished && ! isRequestingMenu ) {
+			setHasSuccessfullyFinished( false );
+			options?.onSuccess?.();
+		}
+	}, [ hasSuccessfullyFinished, isRequestingMenu, options ] );
 	const queryKey = [ SET_SITE_INTERFACE_MUTATION_KEY, siteId ];
-	const mutation = useMutation( {
+
+	const mutation = useMutation< MutationResponse, MutationError, string >( {
 		mutationFn: async ( value: string ) => {
-			return wp.req.post(
+			const response = await wp.req.post(
 				{
 					path: `/sites/${ siteId }/hosting/admin-interface`,
 					apiNamespace: 'wpcom/v2',
@@ -34,24 +59,39 @@ export const useSiteInterfaceMutation = (
 					interface: value,
 				}
 			);
+			// Wait for persistent data to be updated on the atomic server
+			await waitMs( PERSISTENT_DATA_DELAY );
+			return response;
 		},
 		mutationKey: queryKey,
-		onSuccess: options?.onSuccess,
+		onSuccess: ( ...params ) => {
+			dispatch( requestAdminMenu( siteId ) );
+			setHasSuccessfullyFinished( true );
+			const [ data ] = params;
+			if ( ! data?.interface || ! site ) {
+				throw new Error( 'Invalid response from hosting/admin-interface' );
+			}
+			const newOptions = {
+				...( site.options || {} ),
+				wpcom_admin_interface: data.interface,
+			};
+			// Apply the new interface option to the site on redux store
+			dispatch( receiveSite( { ...site, options: newOptions } ) );
+		},
 		onMutate: options?.onMutate,
 		onError( _err: MutationError, _newActive: string, prevValue: unknown ) {
-			// Revert to previous settings on failure
-			queryClient.setQueryData( queryKey, prevValue );
-			options?.onError?.( _err, _newActive, prevValue );
-		},
-		onSettled: () => {
+			// Request site info on failure
 			dispatch( requestSite( siteId ) );
 			dispatch( requestAdminMenu( siteId ) );
+			options?.onError?.( _err, _newActive, prevValue );
 		},
 	} );
 
 	const { mutate } = mutation;
 
-	const setSiteInterface = useCallback( mutate, [ mutate ] );
-
-	return setSiteInterface;
+	return {
+		...mutation,
+		setSiteInterface: mutate,
+		isLoading: mutation.isLoading || isRequestingMenu,
+	};
 };

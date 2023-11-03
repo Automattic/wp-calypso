@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
@@ -22,9 +23,11 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
+	isJetpackCloudOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
@@ -103,6 +106,15 @@ const LayoutLoggedOut = ( {
 		! currentRoute.startsWith( '/log-in/webauthn' ) &&
 		! currentRoute.startsWith( '/log-in/backup' );
 
+	const isMagicLogin = currentRoute && currentRoute.startsWith( '/log-in/link' );
+
+	const isWpcomMagicLogin =
+		isMagicLogin &&
+		! isJetpackLogin &&
+		! isGravPoweredLoginPage &&
+		! isJetpackCloudOAuth2Client( oauth2Client ) &&
+		! isWooOAuth2Client( oauth2Client );
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -123,9 +135,17 @@ const LayoutLoggedOut = ( {
 		'is-grav-powered-client': isGravPoweredClient,
 		'is-grav-powered-login-page': isGravPoweredLoginPage,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
+		'is-magic-login': isMagicLogin,
+		'is-wpcom-magic-login': isWpcomMagicLogin,
 	};
 
 	let masterbar = null;
+
+	// Open new window to create account page when a logged in action was triggered on the Reader tag embed page and the user is not logged in
+	if ( ! isLoggedIn && loggedInAction && isReaderTagEmbed ) {
+		const { pathname } = getUrlParts( window.location.href );
+		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
+	}
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
@@ -178,7 +198,7 @@ const LayoutLoggedOut = ( {
 		classes[ 'has-no-masterbar' ] = false;
 		masterbar = <WooCoreProfilerMasterbar />;
 	} else {
-		masterbar = (
+		masterbar = ! masterbarIsHidden && (
 			<MasterbarLoggedOut
 				title={ sectionTitle }
 				sectionName={ sectionName }
@@ -244,13 +264,17 @@ const LayoutLoggedOut = ( {
 				/>
 			) }
 
-			{ ! isLoggedIn && config.isEnabled( 'reader/login-window' ) && (
+			{ ! isLoggedIn && ! isReaderTagEmbed && (
 				<ReaderJoinConversationDialog
 					onClose={ () => clearLastActionRequiresLogin() }
 					isVisible={ !! loggedInAction }
 					loggedInAction={ loggedInAction }
 					onLoginSuccess={ () => {
-						window.location.reload();
+						if ( loggedInAction?.redirectTo ) {
+							window.location = loggedInAction.redirectTo;
+						} else {
+							window.location.reload();
+						}
 					} }
 				/>
 			) }
@@ -312,7 +336,11 @@ export default withCurrentRoute(
 			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 			const wccomFrom = currentQuery?.[ 'wccom-from' ];
 			const masterbarIsHidden =
-				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
+				! ( currentSection || currentRoute ) ||
+				! masterbarIsVisible( state ) ||
+				noMasterbarForSection ||
+				noMasterbarForRoute;
+
 			return {
 				isJetpackLogin,
 				isWhiteLogin,

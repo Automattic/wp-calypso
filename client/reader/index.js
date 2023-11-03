@@ -16,6 +16,7 @@ import {
 	legacyRedirects,
 	readA8C,
 	readFollowingP2,
+	redirectLoggedOutToDiscover,
 	sidebar,
 	updateLastRoute,
 	blogDiscoveryByFeedId,
@@ -48,7 +49,7 @@ export default async function () {
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
 			'/read',
-			redirectLoggedOutToSignup,
+			redirectLoggedOutToDiscover,
 			updateLastRoute,
 			sidebar,
 			following,

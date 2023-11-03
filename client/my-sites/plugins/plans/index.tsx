@@ -103,7 +103,6 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
 					intent="plans-plugins"
-					isReskinned
 				/>
 			</div>
 

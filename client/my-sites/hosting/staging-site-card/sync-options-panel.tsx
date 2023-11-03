@@ -63,11 +63,13 @@ export default function SyncOptionsPanel( {
 	reset,
 	disabled,
 	onChange,
+	isSqlsOptionDisabled,
 }: {
 	items: CheckboxOptionItem[];
 	reset: boolean;
 	disabled: boolean;
 	onChange: ( items: CheckboxOptionItem[] ) => void;
+	isSqlsOptionDisabled: boolean;
 } ) {
 	const initialItemsMap = useMemo(
 		() =>
@@ -155,14 +157,31 @@ export default function SyncOptionsPanel( {
 				{ dangerousItems.map( ( item ) => {
 					return (
 						<div data-testid="danger-zone-checkbox" key={ item.name }>
-							<ToggleWithLabelFontSize
-								data-testid="danger-zone-checkbox"
-								disabled={ disabled }
-								help={ <ItemSubtitle>{ item.subTitle }</ItemSubtitle> }
-								label={ item.label }
-								checked={ item.checked }
-								onChange={ () => handleCheckChange( item ) }
-							/>
+							{ 'sqls' === item.name && isSqlsOptionDisabled ? (
+								<ToggleWithLabelFontSize
+									data-testid="danger-zone-checkbox"
+									disabled={ true }
+									help={
+										<ItemSubtitle>
+											{ translate(
+												'Site database synchronization is disabled because WooCommerce sites are not supported.'
+											) }
+										</ItemSubtitle>
+									}
+									label={ item.label }
+									checked={ item.checked }
+									onChange={ () => handleCheckChange( item ) }
+								/>
+							) : (
+								<ToggleWithLabelFontSize
+									data-testid="danger-zone-checkbox"
+									disabled={ disabled || isSqlsOptionDisabled }
+									help={ <ItemSubtitle>{ item.subTitle }</ItemSubtitle> }
+									label={ item.label }
+									checked={ item.checked }
+									onChange={ () => handleCheckChange( item ) }
+								/>
+							) }
 						</div>
 					);
 				} ) }

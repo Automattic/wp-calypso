@@ -17,11 +17,11 @@ import {
 	SalesforceLogo,
 	SlackLogo,
 	TimeLogo,
+	FoldableCard,
 } from '@automattic/components';
 import classNames from 'classnames';
 import { LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
-import FoldableCard from 'calypso/components/foldable-card';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
@@ -52,7 +52,7 @@ interface FeaturesGridType extends PlansGridProps {
 
 class FeaturesGrid extends Component< FeaturesGridType > {
 	renderTable( renderedGridPlans: GridPlan[] ) {
-		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
+		const { translate, gridPlanForSpotlight, stickyRowOffset } = this.props;
 		// Do not render the spotlight plan if it exists
 		const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 			? renderedGridPlans
@@ -79,7 +79,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
 						stickyOffset={ stickyRowOffset }
-						topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
 					>
 						{ ( isStuck: boolean ) =>
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
@@ -135,20 +134,19 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		}
 
 		const spotlightPlanClasses = classNames(
-			'plan-features-2023-grid__plan-spotlight-card',
+			'plan-features-2023-grid__plan-spotlight',
 			getPlanClass( gridPlanForSpotlight.planSlug )
 		);
 
 		return (
-			<div className="plan-features-2023-grid__plan-spotlight">
-				<div className={ spotlightPlanClasses }>
-					{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
-					{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
-					{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
-				</div>
+			<div className={ spotlightPlanClasses }>
+				{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
+				{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanStorageOptions( [ gridPlanForSpotlight ] ) }
+				{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
 			</div>
 		);
 	}
@@ -237,25 +235,16 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	renderPlanPrice( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const {
-			isReskinned,
-			isLargeCurrency,
-			translate,
-			isPlanUpgradeCreditEligible,
-			currentSitePlanSlug,
-			siteId,
-		} = this.props;
+		const { isLargeCurrency, translate, isPlanUpgradeCreditEligible, currentSitePlanSlug, siteId } =
+			this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
 			const isWooExpressPlus = isWooExpressPlusPlan( planSlug );
-			const classes = classNames( 'plan-features-2023-grid__table-item', {
-				'has-border-top': ! isReskinned,
-			} );
 
 			return (
 				<PlanDivOrTdContainer
 					scope="col"
 					key={ planSlug }
-					className={ classes }
+					className="plan-features-2023-grid__table-item plan-price"
 					isTableCell={ options?.isTableCell }
 				>
 					<PlanFeatures2023GridHeaderPrice
@@ -364,56 +353,60 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			handleUpgradeClick,
 		} = this.props;
 
-		return renderedGridPlans.map( ( { planSlug, availableForPurchase } ) => {
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
+		return renderedGridPlans.map(
+			( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
+				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
-			// Leaving it `undefined` makes it use the default label
-			let buttonText;
+				// Leaving it `undefined` makes it use the default label
+				let buttonText;
 
-			if (
-				isWooExpressMediumPlan( planSlug ) &&
-				! isWooExpressMediumPlan( currentSitePlanSlug || '' )
-			) {
-				buttonText = translate( 'Get Performance', { textOnly: true } );
-			} else if (
-				isWooExpressSmallPlan( planSlug ) &&
-				! isWooExpressSmallPlan( currentSitePlanSlug || '' )
-			) {
-				buttonText = translate( 'Get Essential', { textOnly: true } );
+				if (
+					isWooExpressMediumPlan( planSlug ) &&
+					! isWooExpressMediumPlan( currentSitePlanSlug || '' )
+				) {
+					buttonText = translate( 'Get Performance', { textOnly: true } );
+				} else if (
+					isWooExpressSmallPlan( planSlug ) &&
+					! isWooExpressSmallPlan( currentSitePlanSlug || '' )
+				) {
+					buttonText = translate( 'Get Essential', { textOnly: true } );
+				}
+
+				return (
+					<PlanDivOrTdContainer
+						key={ planSlug }
+						className={ classes }
+						isTableCell={ options?.isTableCell }
+					>
+						<PlanFeatures2023GridActions
+							currentPlanManageHref={ currentPlanManageHref }
+							canUserManageCurrentPlan={ canUserManageCurrentPlan }
+							availableForPurchase={ availableForPurchase }
+							className={ getPlanClass( planSlug ) }
+							freePlan={ isFreePlan( planSlug ) }
+							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
+							isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							isMonthlyPlan={ isMonthlyPlan }
+							onUpgradeClick={ ( overridePlanSlug ) =>
+								handleUpgradeClick( overridePlanSlug ?? planSlug )
+							}
+							planSlug={ planSlug }
+							flowName={ flowName }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							buttonText={ buttonText }
+							planActionOverrides={ planActionOverrides }
+							showMonthlyPrice={ true }
+							siteId={ siteId }
+							isStuck={ options?.isStuck || false }
+							isLargeCurrency={ isLargeCurrency }
+							storageOptions={ storageOptions }
+						/>
+					</PlanDivOrTdContainer>
+				);
 			}
-
-			return (
-				<PlanDivOrTdContainer
-					key={ planSlug }
-					className={ classes }
-					isTableCell={ options?.isTableCell }
-				>
-					<PlanFeatures2023GridActions
-						currentPlanManageHref={ currentPlanManageHref }
-						canUserManageCurrentPlan={ canUserManageCurrentPlan }
-						availableForPurchase={ availableForPurchase }
-						className={ getPlanClass( planSlug ) }
-						freePlan={ isFreePlan( planSlug ) }
-						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
-						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
-						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
-						onUpgradeClick={ ( overridePlanSlug ) =>
-							handleUpgradeClick( overridePlanSlug ?? planSlug )
-						}
-						planSlug={ planSlug }
-						flowName={ flowName }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						buttonText={ buttonText }
-						planActionOverrides={ planActionOverrides }
-						showMonthlyPrice={ true }
-						siteId={ siteId }
-						isStuck={ options?.isStuck || false }
-						isLargeCurrency={ isLargeCurrency }
-					/>
-				</PlanDivOrTdContainer>
-			);
-		} );
+		);
 	}
 
 	renderEnterpriseClientLogos() {
@@ -519,8 +512,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 				( storageOptions.length === 1 ||
 					intervalType !== 'yearly' ||
 					! showUpgradeableStorage ||
-					! isInSignup ||
-					! ( flowName === 'onboarding' ) );
+					( isInSignup && ! ( flowName === 'onboarding' ) ) );
 
 			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
 				flowName: flowName ?? '',

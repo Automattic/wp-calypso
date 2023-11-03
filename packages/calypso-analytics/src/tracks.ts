@@ -41,7 +41,7 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?63' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?64' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {

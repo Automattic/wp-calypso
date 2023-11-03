@@ -35,7 +35,6 @@ const stepNameToModuleName = {
 	'plans-premium': 'plans',
 	'plans-site-selected': 'plans',
 	'plans-site-selected-legacy': 'plans',
-	'plans-store-nux': 'plans-atomic-store',
 	site: 'site',
 	'rewind-migrate': 'rewind-migrate',
 	'rewind-were-backing': 'rewind-were-backing',

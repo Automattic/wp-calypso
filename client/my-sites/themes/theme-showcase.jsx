@@ -20,7 +20,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
-import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -141,6 +140,8 @@ class ThemeShowcase extends Component {
 		( this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lits' ) ) ||
 		( ! this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lots' ) );
 
+	getDefaultStaticFilter = () => staticFilters.RECOMMENDED;
+
 	isStaticFilter = ( tabFilter ) => {
 		return Object.values( staticFilters ).some(
 			( staticFilter ) => tabFilter.key === staticFilter.key
@@ -163,17 +164,9 @@ class ThemeShowcase extends Component {
 			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
-		const recommendedFilter = {
-			...staticFilters.RECOMMENDED,
-			...( this.props.tier === '' &&
-				this.isThemeDiscoveryEnabled() && { text: this.props.translate( 'Discover' ) } ),
-		};
-
 		return {
-			...( shouldShowMyThemesFilter && {
-				MYTHEMES: staticFilters.MYTHEMES,
-			} ),
-			RECOMMENDED: recommendedFilter,
+			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
+			RECOMMENDED: staticFilters.RECOMMENDED,
 			ALL: staticFilters.ALL,
 			...this.subjectFilters,
 		};
@@ -202,7 +195,7 @@ class ThemeShowcase extends Component {
 
 	findTabFilter = ( tabFilters, filterKey ) =>
 		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
-		staticFilters.RECOMMENDED;
+		this.getDefaultStaticFilter();
 
 	getSelectedTabFilter = () => {
 		const filter = this.props.filter ?? '';
@@ -259,6 +252,10 @@ class ThemeShowcase extends Component {
 			filter: filterString,
 			// Strip filters and excess whitespace
 			search,
+			...( ( this.isThemeDiscoveryEnabled() && ! this.props.category && search ) ||
+				( filterString && {
+					category: staticFilters.ALL.key,
+				} ) ),
 			// If a category isn't selected we search in the all category.
 			...( search &&
 				! subjectStringFilter && {
@@ -298,7 +295,7 @@ class ThemeShowcase extends Component {
 		};
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const categorySection =
-			category && category !== staticFilters.RECOMMENDED.key ? `/${ category }` : '';
+			category && category !== this.getDefaultStaticFilter().key ? `/${ category }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
 
@@ -317,8 +314,16 @@ class ThemeShowcase extends Component {
 	onTierSelectFilter = ( { value: tier } ) => {
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
+
+		const category = tier !== 'all' && ! this.props.category ? '' : this.props.category;
+		const showCollection =
+			this.isThemeDiscoveryEnabled() && ! this.props.filterString && ! category && tier !== 'all';
+
 		const url = this.constructUrl( {
 			tier,
+			category,
+			search: showCollection ? '' : this.props.search,
+			isCollectionView: showCollection,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
 				this.props.category === staticFilters.MYTHEMES.key && {
@@ -342,6 +347,7 @@ class ThemeShowcase extends Component {
 			.join( '+' );
 
 		const newUrlParams = {};
+
 		if ( this.isStaticFilter( tabFilter ) ) {
 			newUrlParams.category = tabFilter.key;
 			newUrlParams.filter = filterWithoutSubjects;
@@ -437,22 +443,9 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 
-		const showCollections = this.props.tier === '' && this.isThemeDiscoveryEnabled();
-
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
-			case staticFilters.RECOMMENDED.key:
-				if ( showCollections && ! this.props.isCollectionView ) {
-					return (
-						<ThemeCollectionsLayout
-							getOptions={ this.getThemeOptions }
-							getScreenshotUrl={ this.getScreenshotUrl }
-							getActionLabel={ this.getActionLabel }
-							onSeeAll={ this.onCollectionSeeAll }
-						/>
-					);
-				}
 			default:
 				return this.allThemes( { themeProps } );
 		}
@@ -541,8 +534,6 @@ class ThemeShowcase extends Component {
 		const tiers = this.getTiers();
 
 		const classnames = classNames( 'theme-showcase', {
-			'is-discovery-view':
-				this.props.tier === '' && this.isThemeDiscoveryEnabled() && ! isCollectionView,
 			'is-collection-view': isCollectionView,
 		} );
 
@@ -614,7 +605,8 @@ class ThemeShowcase extends Component {
 								isCollectionView: false,
 								tier: '',
 								filter: '',
-								category: staticFilters.RECOMMENDED.key,
+								search: '',
+								category: this.getDefaultStaticFilter().key,
 							} ) }
 							filter={ this.props.filter }
 							tier={ this.props.tier }

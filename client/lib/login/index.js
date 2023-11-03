@@ -168,3 +168,48 @@ export const isReactLostPasswordScreenEnabled = () => {
 		cookies.enable_react_password_screen === 'yes'
 	);
 };
+
+export const canDoMagicLogin = (
+	twoFactorAuthType,
+	oauth2Client,
+	wccomFrom,
+	isJetpackWooCommerceFlow
+) => {
+	if ( ! config.isEnabled( `login/magic-login` ) || twoFactorAuthType ) {
+		return false;
+	}
+
+	// jetpack cloud cannot have users being sent to WordPress.com
+	if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+		return false;
+	}
+
+	if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+		return false;
+	}
+
+	if ( isJetpackWooCommerceFlow ) {
+		return false;
+	}
+
+	return true;
+};
+
+export const getLoginLinkPageUrl = ( locale = 'en', currentRoute, signupUrl, oauth2ClientId ) => {
+	// The email address from the URL (if present) is added to the login
+	// parameters in this.handleMagicLoginLinkClick(). But it's left out
+	// here deliberately, to ensure that if someone copies this link to
+	// paste somewhere else, their email address isn't included in it.
+	const loginParameters = {
+		locale: locale,
+		twoFactorAuthType: 'link',
+		signupUrl: signupUrl,
+		oauth2ClientId,
+	};
+
+	if ( currentRoute === '/log-in/jetpack' ) {
+		loginParameters.twoFactorAuthType = 'jetpack/link';
+	}
+
+	return login( loginParameters );
+};

@@ -17,5 +17,4 @@ export const isStorageUpgradeableForPlan = ( {
 	storageOptions.length > 1 &&
 	intervalType === 'yearly' &&
 	showUpgradeableStorage &&
-	isInSignup &&
-	flowName === 'onboarding';
+	( flowName === 'onboarding' || ! isInSignup );

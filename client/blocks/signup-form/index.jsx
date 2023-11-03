@@ -18,6 +18,7 @@ import {
 	pick,
 	omitBy,
 	snakeCase,
+	isEmpty,
 } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -646,7 +647,7 @@ class SignupForm extends Component {
 					id="email"
 					name="email"
 					type="email"
-					value={ formState.getFieldValue( this.state.form, 'email' ) }
+					value={ this.getEmailValue() }
 					isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
 					isValid={ this.state.validationInitialized && isEmailValid }
 					onBlur={ this.handleBlur }
@@ -1069,6 +1070,12 @@ class SignupForm extends Component {
 		return this.props.horizontal || 'videopress-account' === this.props.flowName;
 	};
 
+	getEmailValue = () => {
+		return isEmpty( formState.getFieldValue( this.state.form, 'email' ) )
+			? this.props.queryArgs?.user_email
+			: formState.getFieldValue( this.state.form, 'email' );
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1178,6 +1185,7 @@ class SignupForm extends Component {
 					isReskinned={ this.props.isReskinned }
 					redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 					queryArgs={ this.props.queryArgs }
+					userEmail={ this.getEmailValue() }
 					notice={ this.getNotice( true ) }
 				/>
 			);
@@ -1213,6 +1221,7 @@ class SignupForm extends Component {
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
 						queryArgs={ this.props.queryArgs }
+						userEmail={ this.getEmailValue() }
 						{ ...gravatarProps }
 					/>
 

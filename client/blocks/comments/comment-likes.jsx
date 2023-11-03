@@ -20,19 +20,19 @@ class CommentLikeButtonContainer extends Component {
 
 	handleLikeToggle( liked ) {
 		if ( ! this.props.isLoggedIn ) {
-			this.props.registerLastActionRequiresLogin( {
+			return this.props.registerLastActionRequiresLogin( {
 				type: liked ? 'comment-like' : 'comment-unlike',
 				siteId: this.props.siteId,
 				postId: this.props.postId,
 				commentId: this.props.commentId,
 			} );
-		} else {
-			this.recordLikeToggle( liked );
 		}
-		this.props.onLikeToggle( liked );
+		this.recordLikeToggle( liked );
 	}
 
 	recordLikeToggle = ( liked ) => {
+		this.props.onLikeToggle( liked );
+
 		if ( liked ) {
 			this.props.likeComment( this.props.siteId, this.props.postId, this.props.commentId );
 		} else {

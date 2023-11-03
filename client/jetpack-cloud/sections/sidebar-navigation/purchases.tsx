@@ -1,6 +1,7 @@
 import { chevronLeft, formatListBulletsRTL, payment, receipt, store, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -12,20 +13,19 @@ import {
 	JETPACK_MANAGE_PAYMENT_METHODS_LINK,
 	JETPACK_MANAGE_PRICES_LINK,
 } from './lib/constants';
-import { isMenuItemSelected, redirectPage } from './lib/sidebar';
+import { redirectPage } from './lib/sidebar';
 import { MenuItemProps } from './types';
 
-const createItem = ( props: Omit< MenuItemProps, 'path' > ) => ( {
-	...props,
-	path: JETPACK_MANAGE_PARTNER_PORTAL_LINK,
-	onClickMenuItem: redirectPage,
-	trackEventName: 'calypso_jetpack_sidebar_menu_click',
-	isSelected: isMenuItemSelected( props.link ),
-} );
-
-const PurchasesSidebar = () => {
+const PurchasesSidebar = ( { path }: { path: string } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const createItem = ( props: Omit< MenuItemProps, 'path' > ) => ( {
+		...props,
+		path: JETPACK_MANAGE_PARTNER_PORTAL_LINK,
+		trackEventName: 'calypso_jetpack_sidebar_menu_click',
+		isSelected: itemLinkMatches( props.link, path ),
+	} );
 
 	const menuItems = [
 		createItem( {
@@ -75,14 +75,16 @@ const PurchasesSidebar = () => {
 			isJetpackManage
 			path={ JETPACK_MANAGE_PARTNER_PORTAL_LINK }
 			menuItems={ menuItems }
+			title={ translate( 'Purchases' ) }
 			description={ translate( 'Manage all your billing related settings from one place.' ) }
 			backButtonProps={ {
-				label: translate( 'Purchases' ),
+				label: translate( 'Back to Sites' ),
 				icon: chevronLeft,
 				onClick: () => {
 					dispatch(
 						recordTracksEvent( 'calypso_jetpack_sidebar_new_purchases_back_button_click' )
 					);
+
 					redirectPage( JETPACK_MANAGE_DASHBOARD_LINK );
 				},
 			} }

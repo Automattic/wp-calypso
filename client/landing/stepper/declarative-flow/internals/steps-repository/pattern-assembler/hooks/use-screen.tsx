@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from '../constants';
+import { NAVIGATOR_PATHS } from '../constants';
 import type { ScreenName } from '../types';
 
 export type UseScreenOptions = {
@@ -42,19 +42,6 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			backLabel: hasEnTranslation( 'patterns' ) ? translate( 'patterns' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.MAIN_HEADER,
 		},
-		sections: {
-			name: 'sections',
-			title: translate( 'Sections' ),
-			description: hasEnTranslation(
-				'Find the right patterns for you by exploring the list of categories below.'
-			)
-				? translate( 'Find the right patterns for you by exploring the list of categories below.' )
-				: translate(
-						'Find the section patterns for your homepage by exploring the categories below.'
-				  ),
-			continueLabel: translate( 'Save sections' ),
-			initialPath: `${ NAVIGATOR_PATHS.SECTIONS }/${ INITIAL_CATEGORY }`,
-		},
 		styles: {
 			name: 'styles',
 			title: hasEnTranslation( 'Select styles' )
@@ -69,7 +56,9 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 				: translate(
 						'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				  ),
-			continueLabel: translate( 'Save and continue' ),
+			continueLabel: isAddPagesEnabled
+				? translate( 'Select pages' )
+				: translate( 'Save and continue' ),
 			backLabel: hasEnTranslation( 'styles' ) ? translate( 'styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.STYLES_COLORS,
 		},
@@ -109,7 +98,6 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 
 	const previousScreens = {
 		main: null,
-		sections: screens.main,
 		styles: screens.main,
 		pages: screens.styles,
 		upsell: isAddPagesEnabled ? screens.pages : screens.styles,
@@ -131,7 +119,6 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 
 	const nextScreens = {
 		main: screens.styles,
-		sections: screens.main,
 		styles: ( () => {
 			if ( isAddPagesEnabled ) {
 				return screens.pages;

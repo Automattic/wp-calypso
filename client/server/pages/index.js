@@ -815,14 +815,43 @@ function wpcomPages( app ) {
 			} );
 	} );
 
-	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		if ( req.cookies.subkey || req.context.isLoggedIn || calypsoEnv !== 'production' ) {
-			// If the user is logged in, or has a subkey cookie, they are authorized to view the page
-			return next();
+	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res ) {
+		// For users on subkey or not logged in, redirect to the email login link page.
+		if ( req.cookies.subkey || ! req.context.isLoggedIn ) {
+			return res.redirect( 'https://wordpress.com/email-subscriptions' );
 		}
 
-		// Otherwise, show them email subscriptions external landing page
-		res.redirect( 'https://wordpress.com/email-subscriptions' );
+		const basePath = 'https://wordpress.com/read/subscriptions';
+
+		// If user enters /subscriptions/sites(.*),
+		// redirect to /read/subscriptions.
+		if ( req.path.match( '/subscriptions/sites' ) ) {
+			return res.redirect( basePath );
+		}
+
+		// If user enters /site/*,
+		// redirect to /read/site/subscription/*.
+		const siteFragment = req.path.match( /site\/(.*)/i );
+		if ( siteFragment && siteFragment[ 1 ] ) {
+			return res.redirect( 'https://wordpress.com/read/site/subscription/' + siteFragment[ 1 ] );
+		}
+
+		// If user enters /subscriptions/(comments|pending)(.*),
+		// redirect to /read/subscriptions/(comments\pending)(.*)
+		const commentsOrPendingFragment = req.path.match( /(comments(.*)|pending(.*))/gi );
+		if ( commentsOrPendingFragment ) {
+			return res.redirect( basePath + '/' + commentsOrPendingFragment[ 0 ] );
+		}
+
+		// If user enters /subscriptions/settings,
+		// redirect to /me/notifications/subscriptions?referrer=management.
+		if ( req.path.match( '/subscriptions/settings' ) ) {
+			return res.redirect(
+				'https://wordpress.com/me/notifications/subscriptions?referrer=management'
+			);
+		}
+
+		return res.redirect( basePath );
 	} );
 
 	// Redirects from the /start/domain-transfer flow to the new /setup/domain-transfer.

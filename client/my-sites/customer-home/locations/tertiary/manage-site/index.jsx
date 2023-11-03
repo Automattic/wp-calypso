@@ -1,6 +1,5 @@
 import { createElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import AppPromo from 'calypso/blocks/app-promo';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import QuickLinks from 'calypso/my-sites/customer-home/cards/actions/quick-links';
 import QuickLinksForHostedSites from 'calypso/my-sites/customer-home/cards/actions/quick-links-for-hosted-sites';
@@ -14,6 +13,7 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SITE_PREVIEW,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import AppPromo from 'calypso/my-sites/customer-home/cards/features/app-promo';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import QuickStart from 'calypso/my-sites/customer-home/cards/features/quick-start';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';

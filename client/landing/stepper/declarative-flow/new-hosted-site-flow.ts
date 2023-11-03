@@ -8,6 +8,8 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useSelector } from 'calypso/state';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -155,7 +157,7 @@ const hosting: Flow = {
 	},
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
-
+		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -165,7 +167,11 @@ const hosting: Flow = {
 			if ( ! userIsLoggedIn ) {
 				window.location.assign( '/start/hosting' );
 			}
-		}, [ userIsLoggedIn ] );
+
+			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
+				window.location.assign( '/setup/new-hosted-site' );
+			}
+		}, [ userIsLoggedIn, isEligible, currentStepSlug ] );
 
 		useEffect(
 			() => {
