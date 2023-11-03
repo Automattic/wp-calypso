@@ -186,10 +186,6 @@ export class RenderDomainsStep extends Component {
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName, this.props.currentUser ) ) {
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
-
-		if ( this.props.flowName === 'onboarding-pm' ) {
-			loadExperimentAssignment( 'calypso_gf_signup_onboardingpm_domains_hide_free_subdomain_v2' );
-		}
 	}
 
 	getLocale() {
