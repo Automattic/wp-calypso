@@ -134,21 +134,19 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		}
 
 		const spotlightPlanClasses = classNames(
-			'plan-features-2023-grid__plan-spotlight-card',
+			'plan-features-2023-grid__plan-spotlight',
 			getPlanClass( gridPlanForSpotlight.planSlug )
 		);
 
 		return (
-			<div className="plan-features-2023-grid__plan-spotlight">
-				<div className={ spotlightPlanClasses }>
-					{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
-					{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanStorageOptions( [ gridPlanForSpotlight ] ) }
-					{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
-				</div>
+			<div className={ spotlightPlanClasses }>
+				{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
+				{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanStorageOptions( [ gridPlanForSpotlight ] ) }
+				{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
 			</div>
 		);
 	}
