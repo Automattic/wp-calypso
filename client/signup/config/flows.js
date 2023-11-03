@@ -184,12 +184,8 @@ function getWithThemeDestination( {
 
 	const style = styleVariation ? `&styleVariation=${ styleVariation }` : '';
 
-	if ( MARKETPLACE_THEME === themeType || PREMIUM_THEME === themeType ) {
+	if ( [ MARKETPLACE_THEME, PREMIUM_THEME, WOOCOMMERCE_THEME ].includes( themeType ) ) {
 		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }${ style }`;
-	}
-
-	if ( themeType === WOOCOMMERCE_THEME ) {
-		return `/setup/plugin-bundle/?siteSlug=${ siteSlug }&showLaunchpad=true`;
 	}
 
 	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;

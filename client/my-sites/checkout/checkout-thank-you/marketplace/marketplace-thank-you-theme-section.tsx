@@ -3,12 +3,14 @@ import { Gridicon, Button } from '@automattic/components';
 import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useCallback, useEffect } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { useSelector, useDispatch } from 'calypso/state';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { activate } from 'calypso/state/themes/actions';
 import {
@@ -16,6 +18,7 @@ import {
 	hasActivatedTheme,
 	isThemeActive,
 	isActivatingTheme,
+	doesThemeBundleSoftwareSet,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
@@ -128,6 +131,10 @@ export const ThankYouThemeSection = ( {
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
 	const themeOptions = useSelector( ( state ) => getThemePreviewThemeOptions( state ) );
 
+	const isWoo = useSelector( ( state ) => doesThemeBundleSoftwareSet( state, theme.id ) );
+
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+
 	const themeStyleVariation =
 		themeOptions && themeOptions.themeId === theme.id ? themeOptions.styleVariation : undefined;
 
@@ -142,6 +149,12 @@ export const ThankYouThemeSection = ( {
 		},
 		[ siteId, theme ]
 	);
+
+	useEffect( () => {
+		if ( isActive && isWoo ) {
+			page.redirect( `/setup/plugin-bundle/?siteSlug=${ siteSlug }` );
+		}
+	}, [ isWoo, isActive ] );
 
 	const handleActivateTheme = useCallback( () => {
 		if ( isActive ) {
