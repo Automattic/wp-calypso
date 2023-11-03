@@ -151,10 +151,10 @@ export const ThankYouThemeSection = ( {
 	);
 
 	useEffect( () => {
-		if ( isActive && isWoo ) {
+		if ( isActive && isWoo && isOnboardingFlow ) {
 			page( `/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteSlug=${ siteSlug }` );
 		}
-	}, [ isWoo, isActive ] );
+	}, [ isWoo, isActive, isOnboardingFlow ] );
 
 	const handleActivateTheme = useCallback( () => {
 		if ( isActive ) {
