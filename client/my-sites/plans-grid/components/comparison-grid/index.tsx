@@ -644,7 +644,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							planSlug={ planSlug }
 							storageOptions={ gridPlan.features.storageOptions }
 							onStorageAddOnClick={ onStorageAddOnClick }
-							priceOnSeparateLine
+							hideSelectedAddOnPrice
 						/>
 					) : (
 						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>

@@ -15,14 +15,14 @@ type StorageAddOnDropdownProps = {
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	priceOnSeparateLine?: boolean;
+	hideSelectedAddOnPrice?: boolean;
 };
 
 type StorageAddOnOptionProps = {
 	title?: string;
 	price?: string;
 	isLargeCurrency?: boolean;
-	priceOnSeparateLine?: boolean;
+	hideSelectedAddOnPrice?: boolean;
 };
 
 const getStorageOptionPrice = (
@@ -38,7 +38,7 @@ const StorageAddOnOption = ( {
 	title,
 	price,
 	isLargeCurrency = false,
-	priceOnSeparateLine,
+	hideSelectedAddOnPrice,
 }: StorageAddOnOptionProps ) => {
 	const translate = useTranslate();
 
@@ -48,7 +48,7 @@ const StorageAddOnOption = ( {
 
 	return (
 		<>
-			{ price && ! isLargeCurrency && ! priceOnSeparateLine ? (
+			{ price && ! isLargeCurrency && ! hideSelectedAddOnPrice ? (
 				<div>
 					<span className="storage-add-on-dropdown-option__title">{ title }</span>
 					<div className="storage-add-on-dropdown-option__price-container">
@@ -70,7 +70,7 @@ export const StorageAddOnDropdown = ( {
 	planSlug,
 	storageOptions,
 	onStorageAddOnClick,
-	priceOnSeparateLine = false,
+	hideSelectedAddOnPrice = false,
 }: StorageAddOnDropdownProps ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
@@ -127,7 +127,7 @@ export const StorageAddOnDropdown = ( {
 				title={ selectedOptionTitle }
 				price={ selectedOptionPrice }
 				isLargeCurrency={ isLargeCurrency }
-				priceOnSeparateLine={ priceOnSeparateLine }
+				hideSelectedAddOnPrice={ hideSelectedAddOnPrice }
 			/>
 		),
 	};
@@ -152,7 +152,7 @@ export const StorageAddOnDropdown = ( {
 				value={ selectedOption }
 				onChange={ handleOnChange }
 			/>
-			{ selectedOptionPrice && ( isLargeCurrency || priceOnSeparateLine ) && (
+			{ selectedOptionPrice && isLargeCurrency && ! hideSelectedAddOnPrice && (
 				<div className="storage-add-on-dropdown__offset-price-container">
 					<span className="storage-add-on-dropdown__offset-price">
 						{ ` + ${ selectedOptionPrice }/${ translate( 'month' ) }` }
