@@ -15,6 +15,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useOdieAssistantContext } from '../context';
+import { useOdieGetMessageFeedback } from '../query';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
@@ -45,6 +46,9 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
 	const translate = useTranslate();
+
+	const { data: existingFeedback, isFetching: isFetchingExistingFeedback } =
+		useOdieGetMessageFeedback( isUser, message.message_id || null );
 
 	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
 		delayBetweenCharacters: 66,
@@ -172,7 +176,10 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 						>
 							{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
 						</AsyncLoad>
-						{ ! isUser && messageFullyTyped && <WasThisHelpfulButtons message={ message } /> }
+						{ ! isFetchingExistingFeedback &&
+							! existingFeedback &&
+							! isUser &&
+							messageFullyTyped && <WasThisHelpfulButtons message={ message } /> }
 					</>
 				) }
 				{ message.type === 'introduction' && (
