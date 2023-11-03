@@ -178,7 +178,7 @@ function getWithThemeDestination( {
 		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
 	}
 
-	if ( DOT_ORG_THEME === themeType || themeType === WOOCOMMERCE_THEME ) {
+	if ( DOT_ORG_THEME === themeType ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
