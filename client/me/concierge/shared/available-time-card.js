@@ -7,7 +7,7 @@
 
 import 'moment-timezone'; // monkey patches the existing moment.js
 import config from '@automattic/calypso-config';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, FoldableCard } from '@automattic/components';
 import { getLanguage } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
@@ -15,7 +15,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import day from 'calypso/assets/images/quick-start/day.svg';
 import night from 'calypso/assets/images/quick-start/night.svg';
-import FoldableCard from 'calypso/components/foldable-card';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
