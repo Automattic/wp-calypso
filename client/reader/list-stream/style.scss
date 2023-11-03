@@ -21,6 +21,12 @@
 	&:hover {
 		cursor: default;
 	}
+
+	// Main layout already has mx
+	.navigation-header {
+		margin: 0 auto;
+		padding: 16px 0 16px 0;
+	}
 }
 
 .list-stream__header-icon {
