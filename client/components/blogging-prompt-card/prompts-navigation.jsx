@@ -113,17 +113,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 				>
 					<Gridicon icon={ backIcon } size={ 18 } />
 				</Button>
-				<div className="blogging-prompt__prompt-text">
-					{ getPrompt()?.text }
-					<div className="blogging-prompt__answered-text">
-						{ getPrompt()?.answered && (
-							<>
-								<Gridicon icon="checkmark" size={ 18 } />
-								{ translate( 'Answered' ) }
-							</>
-						) }
-					</div>
-				</div>
+				<div className="blogging-prompt__prompt-text">{ getPrompt()?.text }</div>
 				<Button
 					aria-label={ translate( 'Show next prompt' ) }
 					borderless={ false }
@@ -190,11 +180,22 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 						{ translate( 'Learn more' ) }
 					</a>
 				) }
-				<Button href={ getNewPostLink() } onClick={ handleBloggingPromptClick }>
-					{ translate( 'Post Answer', {
-						comment:
-							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
-					} ) }
+				<Button
+					href={ getNewPostLink() }
+					onClick={ handleBloggingPromptClick }
+					className="blogging-prompt__new-post-link"
+				>
+					{ getPrompt()?.answered ? (
+						<>
+							<Gridicon icon="checkmark" size={ 18 } />
+							{ translate( 'Answered' ) }
+						</>
+					) : (
+						translate( 'Post Answer', {
+							comment:
+								'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
+						} )
+					) }
 				</Button>
 			</div>
 		);

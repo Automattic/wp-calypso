@@ -42,18 +42,6 @@
 			font-weight: 500;
 			line-height: 26px;
 		}
-		.blogging-prompt__answered-text {
-			font-size: $font-body;
-			text-align: center;
-			line-height: 18px;
-			margin-top: 10px;
-			color: var(--color-success);
-			> svg {
-				position: relative;
-				top: 3px;
-				margin-right: 2px;
-			}
-		}
 		button.navigation-link {
 			border-radius: 50%;
 			height: 44px;
@@ -70,6 +58,12 @@
 		margin-top: 24px;
 		width: 100%;
 
+		.blogging-prompt__new-post-link  svg {
+			position: relative;
+			top: 4px;
+			margin-right: 4px;
+			color: var(--color-success);
+		}
 		.blogging-prompt__prompt-responses {
 			align-items: center;
 			display: flex;
