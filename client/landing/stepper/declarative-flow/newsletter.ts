@@ -33,7 +33,6 @@ const newsletter: Flow = {
 	useSteps() {
 		const query = useQuery();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
-
 		return [
 			// Load intro step component only when not coming from the marketing page
 			...( ! isComingFromMarketingPage
@@ -114,6 +113,9 @@ const newsletter: Flow = {
 		// Unless showing intro step, send non-logged-in users to account screen.
 		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
 			window.location.assign( logInUrl );
+			const noop = () => {};
+			// Return a noop navigation object to stop execution of the hook in a TS-safe way.
+			return { goNext: noop, goBack: noop, goToStep: noop, submit: noop };
 		}
 
 		// trigger guides on step movement, we don't care about failures or response
