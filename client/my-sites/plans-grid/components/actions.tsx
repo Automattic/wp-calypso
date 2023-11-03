@@ -297,6 +297,11 @@ const LoggedInPlansFeatureActionButton = ( {
 			return (
 				<Button
 					className={ classNames( classes, 'is-storage-upgradeable' ) }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_signup_storage_add_on_upgrade_click', {
+							add_on_slug: selectedStorageOptionForPlan,
+						} )
+					}
 					href={ storageAddOnCheckoutHref }
 				>
 					{ translate( 'Upgrade' ) }
