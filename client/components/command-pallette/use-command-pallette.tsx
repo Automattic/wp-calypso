@@ -41,7 +41,7 @@ interface Command {
 	siteFunctions?: SiteFunctions;
 	separator?: boolean;
 }
-interface UseSMPCommands {
+interface useCommandPalletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 }
@@ -68,7 +68,7 @@ const siteToAction =
 export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
-}: UseSMPCommands ) => {
+}: useCommandPalletteOptions ) => {
 	const { __ } = useI18n();
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: 'sites-dashboard-command-palette',
