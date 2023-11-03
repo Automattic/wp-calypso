@@ -10,7 +10,7 @@ type Ticket = {
 	is_chat_overflow: boolean;
 	source: string;
 	blog_url: string;
-	ai_id?: string;
+	ai_chat_id?: string;
 	ai_message?: string;
 };
 
