@@ -134,9 +134,12 @@ const CheckoutModalWrapper = styled.div`
 const CheckoutModalContent = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	display: block;
+	font-size: 16px;
+	line-height: 1.5em;
 	width: 100%;
 	max-width: 350px;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	border-radius: 2px;
 	padding: 32px;
 	animation: ${ animateIn } 0.2s 0.1s ease-out;
 	animation-fill-mode: backwards;
@@ -145,9 +148,9 @@ const CheckoutModalContent = styled.div`
 const CheckoutModalTitle = styled.h1`
 	margin: 0 0 16px;
 	font-weight: ${ ( props ) => props.theme.weights.normal };
-	font-size: 24px;
+	font-size: 20px;
 	color: ${ ( props ) => props.theme.colors.textColor };
-	line-height: 1.3;
+	line-height: 1.5;
 `;
 
 const CheckoutModalCopy = styled.p`
