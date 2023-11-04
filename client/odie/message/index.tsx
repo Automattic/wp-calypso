@@ -15,7 +15,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useOdieAssistantContext } from '../context';
-import { useOdieGetMessageFeedback } from '../query';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
@@ -47,9 +46,6 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const currentUser = useSelector( getCurrentUser );
 	const translate = useTranslate();
 
-	const { data: existingFeedback, isFetching: isFetchingExistingFeedback } =
-		useOdieGetMessageFeedback( isUser, message.message_id || null );
-
 	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
 		delayBetweenCharacters: 66,
 		randomDelayBetweenCharacters: true,
@@ -57,6 +53,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	} );
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
+	const hasFeedback = !! message?.rating_value;
 	const sources = message?.context?.sources ?? [];
 	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
 	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
@@ -176,10 +173,9 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 						>
 							{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
 						</AsyncLoad>
-						{ ! isFetchingExistingFeedback &&
-							! existingFeedback &&
-							! isUser &&
-							messageFullyTyped && <WasThisHelpfulButtons message={ message } /> }
+						{ ! hasFeedback && ! isUser && messageFullyTyped && (
+							<WasThisHelpfulButtons message={ message } />
+						) }
 					</>
 				) }
 				{ message.type === 'introduction' && (

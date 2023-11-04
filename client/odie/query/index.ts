@@ -65,11 +65,13 @@ const buildGetChatMessage = (
 	botNameSlug: OdieAllowedBots,
 	chat_id: number | null | undefined,
 	page: number,
-	perPage: number
+	perPage: number,
+	includeFeedback: boolean
 ): Promise< Chat > => {
 	const urlQueryParams = new URLSearchParams( {
 		page_number: page.toString(),
 		items_per_page: perPage.toString(),
+		include_feedback: includeFeedback.toString(),
 	} );
 	const baseApiPath = `/help-center/odie/chat/${ botNameSlug }/${ chat_id }?${ urlQueryParams.toString() }`;
 	const wpcomBaseApiPath = `/odie/chat/${ botNameSlug }/${ chat_id }?${ urlQueryParams.toString() }`;
@@ -93,39 +95,15 @@ export const useOdieGetChat = (
 	botNameSlug: OdieAllowedBots,
 	chatId: number | undefined | null,
 	page = 1,
-	perPage = 10
+	perPage = 10,
+	includeFeedback = true
 ) => {
 	const { chat } = useOdieAssistantContext();
 	return useQuery< Chat, unknown >( {
-		queryKey: [ 'chat', botNameSlug, chatId, page, perPage ],
-		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage ),
+		queryKey: [ 'chat', botNameSlug, chatId, page, perPage, includeFeedback ],
+		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
-	} );
-};
-
-const odieWpcomGetMessageFeedback = (
-	botNameSlug: OdieAllowedBots,
-	chatId: number | null,
-	messageId: number | null
-) => {
-	const path = `/odie/chat/${ botNameSlug }/${ chatId }/${ messageId }/feedback`;
-
-	return wpcom.req.get( {
-		path,
-		apiNamespace: 'wpcom/v2',
-	} ) as Promise< number >;
-};
-
-export const useOdieGetMessageFeedback = ( isUser: boolean, messageId: number | null ) => {
-	const { chat, botNameSlug } = useOdieAssistantContext();
-	const chatId = chat.chat_id;
-
-	return useQuery( {
-		queryKey: [ 'feedback', botNameSlug, chatId, messageId ],
-		queryFn: () => odieWpcomGetMessageFeedback( botNameSlug, chatId || 0, messageId || 0 ),
-		refetchOnWindowFocus: false,
-		enabled: ! isUser && !! chatId && !! messageId,
 	} );
 };
 

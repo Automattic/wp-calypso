@@ -41,6 +41,7 @@ export type Message = {
 	liked?: boolean | null;
 	simulateTyping?: boolean;
 	context?: Context;
+	rating_value?: number;
 };
 
 export type Chat = {
