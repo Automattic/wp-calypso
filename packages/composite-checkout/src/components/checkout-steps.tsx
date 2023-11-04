@@ -642,16 +642,6 @@ const StepContentWrapper = styled.div< StepContentWrapperProps & HTMLAttributes<
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	box-sizing: border-box;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding-left: 40px;
-	}
-
-	.rtl & {
-		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-			padding-left: 0;
-			padding-right: 40px;
-		}
 	}
 `;
 
@@ -664,16 +654,6 @@ const StepSummaryWrapper = styled.div< StepContentWrapperProps & HTMLAttributes<
 	font-size: 14px;
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	box-sizing: border-box;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding-left: 40px;
-	}
-
-	.rtl & {
-		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-			padding-left: 0;
-			padding-right: 40px;
-		}
 	}
 `;
 
@@ -868,9 +848,7 @@ const HeaderEditButton = styled( Button )`
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 function CheckoutStepHeader( {
-	id,
 	className,
-	stepNumber,
 	title,
 	isActive,
 	isComplete,
@@ -897,9 +875,6 @@ function CheckoutStepHeader( {
 			isActive={ isActive }
 			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
 		>
-			<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
-				{ stepNumber || null }
-			</Stepper>
 			<StepTitle
 				fullWidth={ ! shouldShowEditButton }
 				isComplete={ isComplete }
