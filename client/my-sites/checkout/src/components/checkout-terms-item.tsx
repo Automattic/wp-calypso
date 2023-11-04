@@ -1,10 +1,11 @@
 import { Gridicon } from '@automattic/components';
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import type { MouseEventHandler, PropsWithChildren } from 'react';
 
 const Wrapper = styled.div`
-	padding-left: 24px;
+	padding-left: ${ hasCheckoutVersion( '2' ) ? '0px' : '24px' };
 	position: relative;
 	font-size: 12px;
 
@@ -40,7 +41,7 @@ const CheckoutTermsItem = ( {
 } > ) => {
 	return (
 		<Wrapper className={ classNames( 'checkout__terms-item', className ) } onClick={ onClick }>
-			<Gridicon icon="info-outline" size={ 18 } />
+			{ ! hasCheckoutVersion( '2' ) && <Gridicon icon="info-outline" size={ 18 } /> }
 			{ isPrewrappedChildren ? children : <p>{ children }</p> }
 		</Wrapper>
 	);
