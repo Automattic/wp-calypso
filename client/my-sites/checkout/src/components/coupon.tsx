@@ -98,20 +98,38 @@ const animateInRTL = keyframes`
   }
 `;
 
+const CouponFieldHeader = styled.p`
+	font-size: 14px;
+	margin-bottom: 0.5em;
+`;
+
 const CouponWrapper = styled.form`
-	margin: 0;
 	padding-top: 0;
 	position: relative;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 2em;
+	column-gap: 6px;
+	border-radius: 2px;
+
+	& > div {
+		flex: 1 1 auto;
+	}
+
+	.coupon-code {
+		font-size: 14px;
+		padding: 10px 16px;
+		border-radius: 2px;
+	}
 `;
 
 const ApplyButton = styled( Button )`
-	position: absolute;
-	top: 3px;
-	right: 3px;
-	padding: 8px;
+	padding: 12px 16px;
 	animation: ${ animateIn } 0.2s ease-out;
 	animation-fill-mode: backwards;
 	margin: 0;
+	font-size: 14px;
+	max-height: 43px;
 
 	.rtl & {
 		animation-name: ${ animateInRTL };
