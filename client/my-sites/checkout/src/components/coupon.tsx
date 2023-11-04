@@ -25,7 +25,6 @@ export default function Coupon( {
 	const {
 		couponFieldValue,
 		setCouponFieldValue,
-		isApplyButtonActive,
 		isFreshOrEdited,
 		setIsFreshOrEdited,
 		handleCouponSubmit,
@@ -37,34 +36,35 @@ export default function Coupon( {
 	const errorMessage = getCouponErrorMessageFromStatus( translate, couponStatus, isFreshOrEdited );
 
 	return (
-		<CouponWrapper
-			className={ joinClasses( [ className, 'coupon' ] ) }
-			onSubmit={ ( event ) => {
-				event.preventDefault();
-				setIsFreshOrEdited( false );
-				handleCouponSubmit();
-			} }
-		>
-			<Field
-				id={ id }
-				inputClassName="coupon-code"
-				value={ couponFieldValue }
-				disabled={ disabled || isPending }
-				placeholder={ String( translate( 'Enter your coupon code' ) ) }
-				isError={ hasCouponError && ! isFreshOrEdited }
-				errorMessage={ errorMessage }
-				onChange={ ( input ) => {
-					setIsFreshOrEdited( true );
-					setCouponFieldValue( input );
+		<>
+			<CouponFieldHeader>Coupon code</CouponFieldHeader>
+			<CouponWrapper
+				className={ joinClasses( [ className, 'coupon' ] ) }
+				onSubmit={ ( event ) => {
+					event.preventDefault();
+					setIsFreshOrEdited( false );
+					handleCouponSubmit();
 				} }
-			/>
+			>
+				<Field
+					id={ id }
+					inputClassName="coupon-code"
+					value={ couponFieldValue }
+					disabled={ disabled || isPending }
+					placeholder={ String( translate( 'Enter your coupon code' ) ) }
+					isError={ hasCouponError && ! isFreshOrEdited }
+					errorMessage={ errorMessage }
+					onChange={ ( input ) => {
+						setIsFreshOrEdited( true );
+						setCouponFieldValue( input );
+					} }
+				/>
 
-			{ isApplyButtonActive && (
 				<ApplyButton disabled={ isPending } buttonType="secondary">
 					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
 				</ApplyButton>
-			) }
-		</CouponWrapper>
+			</CouponWrapper>
+		</>
 	);
 }
 
