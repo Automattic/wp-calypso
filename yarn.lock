@@ -8400,7 +8400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^6.4.1, @typescript-eslint/eslint-plugin@npm:^6.8.0":
+"@typescript-eslint/eslint-plugin@npm:^6.4.1, @typescript-eslint/eslint-plugin@npm:^6.9.0":
   version: 6.9.1
   resolution: "@typescript-eslint/eslint-plugin@npm:6.9.1"
   dependencies:
@@ -8441,7 +8441,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^6.4.1, @typescript-eslint/parser@npm:^6.8.0":
+"@typescript-eslint/parser@npm:^6.4.1, @typescript-eslint/parser@npm:^6.9.0":
   version: 6.9.1
   resolution: "@typescript-eslint/parser@npm:6.9.1"
   dependencies:
@@ -16047,7 +16047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jest@npm:^27.2.3, eslint-plugin-jest@npm:^27.4.3":
+"eslint-plugin-jest@npm:^27.2.3, eslint-plugin-jest@npm:^27.6.0":
   version: 27.6.0
   resolution: "eslint-plugin-jest@npm:27.6.0"
   dependencies:
@@ -32434,8 +32434,8 @@ __metadata:
     "@types/uuid": ^8.3.4
     "@types/validator": ^13.7.1
     "@types/webpack-env": ^1.16.3
-    "@typescript-eslint/eslint-plugin": ^6.8.0
-    "@typescript-eslint/parser": ^6.8.0
+    "@typescript-eslint/eslint-plugin": ^6.9.0
+    "@typescript-eslint/parser": ^6.9.0
     "@wordpress/base-styles": ^4.35.0
     "@wordpress/components": ^25.10.0
     "@wordpress/data": ^9.14.0
@@ -32465,7 +32465,7 @@ __metadata:
     eslint-nibble: ^8.1.0
     eslint-plugin-import: ^2.29.0
     eslint-plugin-inclusive-language: ^2.2.1
-    eslint-plugin-jest: ^27.4.3
+    eslint-plugin-jest: ^27.6.0
     eslint-plugin-jsdoc: ^46.8.2
     eslint-plugin-jsx-a11y: ^6.7.1
     eslint-plugin-md: ^1.0.19
