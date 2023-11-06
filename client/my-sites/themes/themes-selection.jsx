@@ -220,6 +220,7 @@ class ThemesSelection extends Component {
 		return (
 			<div className="themes__selection">
 				<ThemeShowcaseContextProvider
+					bookmarkRef={ this.props.bookmarkRef }
 					filterString={ filterString }
 					locale={ locale }
 					query={ query }

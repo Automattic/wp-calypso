@@ -26,10 +26,6 @@ export default function ThemeActionInfo() {
 
 	const { recordThemeClick } = useThemeShowcaseTracks();
 
-	if ( isLoggedIn && siteId ) {
-		return null;
-	}
-
 	const href = localizeThemesPath( themeDetailsUrl, locale, ! isLoggedIn );
 
 	const onClick = () => recordThemeClick( 'calypso_themeshowcase_theme_click', { action: 'info' } );

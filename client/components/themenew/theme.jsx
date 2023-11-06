@@ -1,24 +1,22 @@
 import { isDefaultGlobalStylesVariationSlug, ThemeCard } from '@automattic/design-picker';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getTheme, isInstallingTheme, isThemeActive } from 'calypso/state/themes/selectors';
-import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useImageClick from './hooks/use-image-click';
 import useSelectedStyleVariation from './hooks/use-selected-style-variation';
+import useThemesBookmark from './hooks/use-themes-bookmark';
 import ThemeActions from './theme-actions';
 import { useThemeContext } from './theme-context';
 import ThemePlaceholder from './theme-placeholder';
 import ThemeThumbnail from './theme-thumbnail';
 import ThemeUpdateAlert from './theme-update-alert';
 
-export default function Theme( props ) {
+export default function Theme( { isPlaceholder } ) {
 	const { selectedStyleVariation, themeId } = useThemeContext();
-
-	const { bookmarkRef, isPlaceholder } = props;
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -26,11 +24,11 @@ export default function Theme( props ) {
 	const isActive = useSelector( ( state ) => isThemeActive( state, themeId, siteId ) );
 	const isInstalling = useSelector( ( state ) => isInstallingTheme( state, themeId, siteId ) );
 
-	const dispatch = useDispatch();
-
 	const { onStyleVariationClick, onStyleVariationMoreClick } = useSelectedStyleVariation();
 	const { imageClickUrl, imageLabel, onImageClick } = useImageClick( { selectedStyleVariation } );
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
+
+	const { bookmarkRef, setThemesBookmark } = useThemesBookmark();
 
 	if ( isPlaceholder || ! theme ) {
 		return <ThemePlaceholder />;
@@ -40,8 +38,6 @@ export default function Theme( props ) {
 
 	const isLockedStyleVariation =
 		shouldLimitGlobalStyles && ! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
-
-	const setBookmark = () => dispatch( setThemesBookmark( themeId ) );
 
 	return (
 		<ThemeCard
@@ -56,15 +52,15 @@ export default function Theme( props ) {
 			banner={ <ThemeUpdateAlert /> }
 			description={ decodeEntities( description ) }
 			image={ <ThemeThumbnail /> }
-			imageActionLabel={ props?.imageActionLabel || imageLabel }
-			imageClickUrl={ props?.imageClickUrl || imageClickUrl }
+			imageActionLabel={ imageLabel }
+			imageClickUrl={ imageClickUrl }
 			isActive={ isActive }
 			isInstalling={ isInstalling }
 			isSoftLaunched={ soft_launched }
 			isShowDescriptionOnImageHover
 			name={ name }
-			onClick={ setBookmark }
-			onImageClick={ props?.onImageClick || onImageClick }
+			onClick={ setThemesBookmark }
+			onImageClick={ onImageClick }
 			onStyleVariationClick={ onStyleVariationClick }
 			onStyleVariationMoreClick={ onStyleVariationMoreClick }
 			optionsMenu={ <ThemeActions /> }

@@ -3,12 +3,10 @@ import { ThemeContextProvider } from './theme-context';
 
 import '../theme/style.scss';
 
-export default function ( props ) {
-	const { position, themeId, ...restProps } = props;
-
+export default function ( { isPlaceholder, position, themeId } ) {
 	return (
 		<ThemeContextProvider position={ position } themeId={ themeId }>
-			<Theme { ...restProps } />
+			<Theme isPlaceholder={ isPlaceholder } />
 		</ThemeContextProvider>
 	);
 }

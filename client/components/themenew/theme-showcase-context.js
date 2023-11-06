@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 
 export const ThemeShowcaseContext = createContext( {
+	bookmarkRef: null,
 	filterString: '',
 	locale: '',
 	origin: 'wpcom',
@@ -13,6 +14,7 @@ export const useThemeShowcaseContext = () => useContext( ThemeShowcaseContext );
 
 export function ThemeShowcaseContextProvider( {
 	children,
+	bookmarkRef,
 	filterString,
 	locale,
 	origin,
@@ -22,7 +24,7 @@ export function ThemeShowcaseContextProvider( {
 } ) {
 	return (
 		<ThemeShowcaseContext.Provider
-			value={ { filterString, locale, origin, query, tabFilter, themes } }
+			value={ { bookmarkRef, filterString, locale, origin, query, tabFilter, themes } }
 		>
 			{ children }
 		</ThemeShowcaseContext.Provider>
