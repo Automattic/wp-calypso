@@ -30,8 +30,13 @@ export default function useOutsideClickCallback(
 	);
 
 	useEffect( () => {
-		document.addEventListener( 'keydown', handleEscape );
-		document.addEventListener( 'click', handleClick );
+		// HACK: adding these event listeners synchronously causes some sort of
+		// race condition on the Plugins page, but delaying them via setTimeout
+		// seems to take care of it.
+		setTimeout( () => {
+			document.addEventListener( 'keydown', handleEscape );
+			document.addEventListener( 'click', handleClick );
+		}, 0 );
 
 		return () => {
 			document.removeEventListener( 'keydown', handleEscape );
