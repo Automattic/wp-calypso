@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import { useSelector } from 'calypso/state';
-import { getTheme, isThemeActive } from 'calypso/state/themes/selectors';
+import { isThemeActive } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useThemeShowcaseTracks from '../hooks/use-theme-showcase-tracks';
 import { useThemeContext } from '../theme-context';
@@ -24,12 +24,11 @@ import ThemeActionUpgradePlanForBundledThemes from './theme-action-upgrade-plan-
 import ThemeActionUpgradePlanForExternallyManagedThemes from './theme-action-upgrade-plan-for-externally-managed-themes';
 
 export default function ThemeActions() {
-	const { themeId } = useThemeContext();
+	const { theme, themeId } = useThemeContext();
 
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', themeId ) );
 	const isActive = useSelector( ( state ) => isThemeActive( state, themeId, siteId ) );
 
 	const { recordThemeClick } = useThemeShowcaseTracks();

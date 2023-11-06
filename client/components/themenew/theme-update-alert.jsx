@@ -2,17 +2,15 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'calypso/state';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
-import { getTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useThemeContext } from './theme-context';
 
 export default function ThemeUpdateAlert() {
-	const { themeId } = useThemeContext();
+	const { theme, themeId } = useThemeContext();
 
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', themeId ) );
 	/**
 	 * @todo Implement a themesUpdate selector
 	 */

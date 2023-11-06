@@ -3,13 +3,12 @@ import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automat
 import photon from 'photon';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
-import { getTheme, isExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
 import { useThemeContext } from './theme-context';
 
 export default function ThemeThumbnail() {
-	const { selectedStyleVariation, themeId } = useThemeContext();
+	const { selectedStyleVariation, theme, themeId } = useThemeContext();
 
-	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', themeId ) );
 	const isExternallyManaged = useSelector( ( state ) =>
 		isExternallyManagedTheme( state, themeId )
 	);

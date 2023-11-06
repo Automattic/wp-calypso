@@ -6,7 +6,6 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { activate } from 'calypso/state/themes/actions';
 import {
-	getTheme,
 	isExternallyManagedTheme,
 	isThemePremium,
 	isPremiumThemeAvailable,
@@ -19,7 +18,7 @@ import useThemeShowcaseTracks from '../hooks/use-theme-showcase-tracks';
 import { useThemeContext } from '../theme-context';
 
 export default function ThemeActionActivate() {
-	const { themeId } = useThemeContext();
+	const { theme, themeId } = useThemeContext();
 
 	const translate = useTranslate();
 
@@ -29,7 +28,6 @@ export default function ThemeActionActivate() {
 	const isExternallyManaged = useSelector( ( state ) =>
 		isExternallyManagedTheme( state, themeId )
 	);
-	const theme = useSelector( ( state ) => getTheme( state, siteId, themeId ) );
 	const isSubscribed = useSelector( ( state ) =>
 		isMarketplaceThemeSubscribed( state, themeId, siteId )
 	);

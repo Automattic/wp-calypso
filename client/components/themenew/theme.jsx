@@ -4,7 +4,7 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getTheme, isInstallingTheme, isThemeActive } from 'calypso/state/themes/selectors';
+import { isInstallingTheme, isThemeActive } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useImageClick from './hooks/use-image-click';
 import useSelectedStyleVariation from './hooks/use-selected-style-variation';
@@ -16,11 +16,10 @@ import ThemeThumbnail from './theme-thumbnail';
 import ThemeUpdateAlert from './theme-update-alert';
 
 export default function Theme( { isPlaceholder } ) {
-	const { selectedStyleVariation, themeId } = useThemeContext();
+	const { selectedStyleVariation, theme, themeId } = useThemeContext();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', themeId ) );
 	const isActive = useSelector( ( state ) => isThemeActive( state, themeId, siteId ) );
 	const isInstalling = useSelector( ( state ) => isInstallingTheme( state, themeId, siteId ) );
 
