@@ -161,9 +161,10 @@ class Login extends Component {
 			page( magicLoginUrl );
 		}
 	}
-	UNSAFE_componentWillReceiveProps() {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
-			this.props.requestError?.field === 'usernameOrEmail' &&
+			nextProps.accountType ||
+			this.props.requestError?.field === 'usernameOrEmail' ||
 			this.props.requestError?.code === 'email_login_not_allowed'
 		) {
 			this.setState( { waitAccountType: false } );
