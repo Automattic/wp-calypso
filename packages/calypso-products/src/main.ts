@@ -17,7 +17,6 @@ import {
 	TYPE_FREE,
 	TYPE_FLEXIBLE,
 	TYPE_JETPACK_STARTER,
-	TYPE_JETPACK_CREATOR,
 	TYPE_STARTER,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -378,10 +377,6 @@ export function isStarterPlan( planSlug: string ): boolean {
 
 export function isJetpackStarterPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_JETPACK_STARTER } );
-}
-
-export function isJetpackCreatorPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_JETPACK_CREATOR } );
 }
 
 export function isSecurityDailyPlan( planSlug: string ): boolean {

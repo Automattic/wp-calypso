@@ -22,7 +22,6 @@ import {
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
 	TYPE_100_YEAR,
-	TYPE_JETPACK_CREATOR,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -361,22 +360,6 @@ export class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 
-	getJetpackCreatorFeatures() {
-		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
-
-		return (
-			<Fragment>
-				<MonetizeSite selectedSite={ selectedSite } />
-				<SellOnlinePaypal isJetpack />
-				<HappinessSupportCard
-					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-					isPlaceholder={ isPlaceholder }
-					contactButtonEventName="calypso_livechat_my_plan_jetpack_complete"
-				/>
-			</Fragment>
-		);
-	}
-
 	getFeatures() {
 		const { plan, isPlaceholder } = this.props;
 
@@ -402,7 +385,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PREMIUM ]: () => this.getJetpackPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getJetpackPersonalFeatures(),
 				[ TYPE_FREE ]: () => this.getJetpackFreeFeatures(),
-				[ TYPE_JETPACK_CREATOR ]: () => this.getJetpackCreatorFeatures(),
 				[ TYPE_SECURITY_DAILY ]: () => this.getJetpackSecurityFeatures(),
 				[ TYPE_SECURITY_REALTIME ]: () => this.getJetpackSecurityFeatures(),
 				[ TYPE_ALL ]: () => this.getJetpackCompleteFeatures(),

@@ -1,5 +1,5 @@
-import { JETPACK_CREATOR_PLANS } from './constants';
+import { JETPACK_CREATOR_PRODUCTS } from './constants';
 
 export function isJetpackCreatorSlug( productSlug: string ): boolean {
-	return ( JETPACK_CREATOR_PLANS as ReadonlyArray< string > ).includes( productSlug );
+	return ( JETPACK_CREATOR_PRODUCTS as ReadonlyArray< string > ).includes( productSlug );
 }
