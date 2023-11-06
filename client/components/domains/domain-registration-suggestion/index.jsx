@@ -319,6 +319,7 @@ class DomainRegistrationSuggestion extends Component {
 				className="domain-registration-suggestion__hsts-tooltip"
 				iconSize={ infoPopoverSize }
 				position="right"
+				showOnHover
 			>
 				{ ( showHstsNotice && this.getHstsMessage() ) ||
 					( showDotGayNotice && this.getDotGayMessage() ) }
