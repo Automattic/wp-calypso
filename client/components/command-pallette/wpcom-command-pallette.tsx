@@ -110,7 +110,7 @@ export const WpcomCommandPalette = () => {
 
 		document.addEventListener( 'keydown', down );
 		return () => document.removeEventListener( 'keydown', down );
-	}, [] );
+	}, [ toggle ] );
 
 	const closeAndReset = () => {
 		setSearch( '' );
