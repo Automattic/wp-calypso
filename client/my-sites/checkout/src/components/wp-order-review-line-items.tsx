@@ -55,10 +55,14 @@ const CostOverridesListStyle = styled.div`
 		display: flex;
 		justify-content: space-between;
 		padding: 2px 0px;
+	}
 
-		&__reason {
-			color: #008a20;
-		}
+	& .cost-overrides-list-item__reason {
+		color: #008a20;
+	}
+
+	& .cost-overrides-list-item__discount {
+		white-space: nowrap;
 	}
 `;
 
