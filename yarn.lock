@@ -29921,17 +29921,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:10.3.1":
+"swiper@npm:10.3.1, swiper@npm:^10.1.0":
   version: 10.3.1
   resolution: "swiper@npm:10.3.1"
   checksum: 1e9ad5480cbf451d99fab280553d5105eb314f381d98610771f0808cac03962d87967a190696686d62bce8e4ebcbf34962c369f9d502b34fef1582ced17f6f98
-  languageName: node
-  linkType: hard
-
-"swiper@npm:^10.1.0":
-  version: 10.1.0
-  resolution: "swiper@npm:10.1.0"
-  checksum: 88bdb25c960f5fce81d7e09909338ca5ac3eb6f2f4b65924565d1f8fe47365f7d5eb7458694befe27f52a651db88dcddc14c4d85609d41e18aad1676a656599e
   languageName: node
   linkType: hard
 
