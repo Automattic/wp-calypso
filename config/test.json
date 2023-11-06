@@ -65,6 +65,7 @@
 		"layout/query-selected-editor": true,
 		"layout/support-article-dialog": true,
 		"legal-updates-banner": true,
+		"login/social-first": true,
 		"mailchimp": true,
 		"marketplace-add-review": true,
 		"marketplace-fetch-all-dynamic-products": true,

@@ -92,6 +92,7 @@
 		"livechat_solution": true,
 		"login/magic-login": true,
 		"logmein": true,
+		"login/social-first": true,
 		"mailchimp": true,
 		"marketplace-add-review": true,
 		"marketplace-domain-bundle": true,
