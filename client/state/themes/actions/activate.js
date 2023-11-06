@@ -13,6 +13,7 @@ import {
 	hasActivationModalAccepted,
 	wasAtomicTransferDialogAccepted,
 	isExternallyManagedTheme,
+	doesThemeBundleSoftwareSet,
 } from 'calypso/state/themes/selectors';
 import 'calypso/state/themes/init';
 import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-redirect-to-thank-you-page';
@@ -41,6 +42,8 @@ export function activate(
 			// Keep default behaviour on Atomic. See https://github.com/Automattic/wp-calypso/pull/65846#issuecomment-1192650587
 			keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
 		}
+
+		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
 
 		/**
 		 * Make sure to show the Atomic transfer dialog if the theme requires
@@ -85,7 +88,12 @@ export function activate(
 		if ( shouldRedirectToThankYouPage( getState(), themeId ) ) {
 			dispatchActivateAction( dispatch, getState );
 
-			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );
+			const continueWithPluginBundle =
+				isWooTheme && skipActivationModal ? `&continueWithPluginBundle=true` : '';
+
+			return page(
+				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }${ continueWithPluginBundle }`
+			);
 		}
 
 		/* Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)

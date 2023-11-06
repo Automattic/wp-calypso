@@ -14,7 +14,8 @@ import MasterbarStyled from './masterbar-styled';
 
 export function useThemesThankYouData(
 	themeSlugs: string[],
-	isOnboardingFlow: boolean
+	isOnboardingFlow: boolean,
+	continueWithPluginBundle: boolean | null
 ): ThankYouData {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -53,7 +54,13 @@ export function useThemesThankYouData(
 			.filter( ( theme ) => theme )
 			.map( ( theme ) => ( {
 				stepKey: `theme_information_${ theme.id }`,
-				stepSection: <ThankYouThemeSection theme={ theme } isOnboardingFlow={ isOnboardingFlow } />,
+				stepSection: (
+					<ThankYouThemeSection
+						theme={ theme }
+						isOnboardingFlow={ isOnboardingFlow }
+						continueWithPluginBundle={ continueWithPluginBundle }
+					/>
+				),
 			} ) ),
 	};
 

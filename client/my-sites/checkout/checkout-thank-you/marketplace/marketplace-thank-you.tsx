@@ -30,11 +30,13 @@ const MarketplaceThankYou = ( {
 	themeSlugs,
 	isOnboardingFlow,
 	styleVariationSlug,
+	continueWithPluginBundle,
 }: {
 	pluginSlugs: Array< string >;
 	themeSlugs: Array< string >;
 	isOnboardingFlow: boolean;
 	styleVariationSlug: string | null;
+	continueWithPluginBundle: boolean | null;
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -64,7 +66,7 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 		themesProgressbarSteps,
 		isAtomicNeededForThemes,
-	] = useThemesThankYouData( themeSlugs, isOnboardingFlow );
+	] = useThemesThankYouData( themeSlugs, isOnboardingFlow, continueWithPluginBundle );
 
 	const firstTheme = themesList[ 0 ];
 	useEffect( () => {

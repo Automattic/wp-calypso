@@ -18,7 +18,6 @@ import {
 	hasActivatedTheme,
 	isThemeActive,
 	isActivatingTheme,
-	doesThemeBundleSoftwareSet,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
@@ -113,9 +112,11 @@ const ThemeNameSectionWrapper = styled.div`
 export const ThankYouThemeSection = ( {
 	theme,
 	isOnboardingFlow,
+	continueWithPluginBundle,
 }: {
 	theme: any;
 	isOnboardingFlow: boolean;
+	continueWithPluginBundle: boolean | null;
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -130,8 +131,6 @@ export const ThankYouThemeSection = ( {
 	);
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
 	const themeOptions = useSelector( ( state ) => getThemePreviewThemeOptions( state ) );
-
-	const isWoo = useSelector( ( state ) => doesThemeBundleSoftwareSet( state, theme.id ) );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -151,10 +150,10 @@ export const ThankYouThemeSection = ( {
 	);
 
 	useEffect( () => {
-		if ( isActive && isWoo && isOnboardingFlow ) {
+		if ( isActive && continueWithPluginBundle ) {
 			page( `/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteSlug=${ siteSlug }` );
 		}
-	}, [ isWoo, isActive, isOnboardingFlow ] );
+	}, [ isActive, continueWithPluginBundle ] );
 
 	const handleActivateTheme = useCallback( () => {
 		if ( isActive ) {
