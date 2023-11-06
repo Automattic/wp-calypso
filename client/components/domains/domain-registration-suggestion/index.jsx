@@ -243,16 +243,6 @@ class DomainRegistrationSuggestion extends Component {
 		};
 	}
 
-	renderDomainParts( domain ) {
-		const { name, tld } = this.getDomainParts( domain );
-		return (
-			<div className="domain-registration-suggestion__domain-title">
-				<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
-				<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
-			</div>
-		);
-	}
-
 	renderDomain() {
 		const {
 			showHstsNotice,
@@ -260,7 +250,7 @@ class DomainRegistrationSuggestion extends Component {
 			suggestion: { domain_name: domain },
 		} = this.props;
 
-		const title = this.renderDomainParts( domain );
+		const { name, tld } = this.getDomainParts( domain );
 
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':
@@ -270,7 +260,11 @@ class DomainRegistrationSuggestion extends Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">
-					{ title } { ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+					<div className="domain-registration-suggestion__domain-title">
+						<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
+						<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+						{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+					</div>
 				</h3>
 				{ this.renderBadges() }
 			</div>
