@@ -13,6 +13,8 @@ import EmptyContent from 'calypso/components/empty-content';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
@@ -27,6 +29,7 @@ import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
 	getPluginOnSite,
@@ -37,6 +40,7 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
@@ -78,6 +82,11 @@ const Home = ( {
 	} );
 
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
+
+	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
+	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
+	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
+
 	useEffect( () => {
 		if ( ! isFreePlanProduct( sitePlan ) ) {
 			return;
@@ -167,6 +176,26 @@ const Home = ( {
 		</div>
 	);
 
+	const renderUnverifiedEmailNotice = () => {
+		if ( customDomain?.isPendingIcannVerification ) {
+			return (
+				<Notice
+					text={ translate(
+						'You must respond to the ICANN email to verify your domain email address or your domain will stop working. Please check your inbox and respond to the email.'
+					) }
+					icon="cross-circle"
+					showDismiss={ false }
+					status="is-warning"
+				>
+					<NoticeAction onClick={ () => verifyIcannEmail( customDomain.name ) }>
+						{ translate( 'Resend Email' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+		return null;
+	};
+
 	return (
 		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
@@ -185,6 +214,9 @@ const Home = ( {
 					} }
 				/>
 			) : null }
+
+			{ renderUnverifiedEmailNotice() }
+
 			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
 			{ ! isLoading && layout && ! homeLayoutError ? (
 				<>
