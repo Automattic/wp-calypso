@@ -68,7 +68,7 @@ const siteToAction =
 export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
-}: useCommandPalletteOptions ) => {
+}: useCommandPalletteOptions ): { commands: Command[] } => {
 	const { __ } = useI18n();
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: 'sites-dashboard-command-palette',
