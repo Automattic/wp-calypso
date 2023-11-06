@@ -35,35 +35,25 @@ export function CommandMenuGroup( {
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
 				return (
-					<>
-						{ command.separator && (
-							<Command.Separator
-								style={ {
-									backgroundColor: 'var(--studio-gray-20)',
-									height: 1,
-								} }
-							/>
-						) }
-						<Command.Item
-							key={ command.name }
-							value={ command.searchLabel ?? command.label }
-							onSelect={ () => command.callback( { close, setSearch } ) }
-							id={ command.name }
+					<Command.Item
+						key={ command.name }
+						value={ command.searchLabel ?? command.label }
+						onSelect={ () => command.callback( { close, setSearch } ) }
+						id={ command.name }
+					>
+						<HStack
+							alignment="left"
+							className={ classnames( 'commands-command-menu__item', {
+								'has-icon': command.icon || command.image,
+							} ) }
 						>
-							<HStack
-								alignment="left"
-								className={ classnames( 'commands-command-menu__item', {
-									'has-icon': command.icon || command.image,
-								} ) }
-							>
-								{ command.icon && <Icon icon={ command.icon } /> }
-								{ command.image }
-								<span>
-									<TextHighlight text={ command.label } highlight={ search } />
-								</span>
-							</HStack>
-						</Command.Item>
-					</>
+							{ command.icon && <Icon icon={ command.icon } /> }
+							{ command.image }
+							<span>
+								<TextHighlight text={ command.label } highlight={ search } />
+							</span>
+						</HStack>
+					</Command.Item>
 				);
 			} ) }
 		</Command.Group>
