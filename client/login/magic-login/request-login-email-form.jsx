@@ -183,8 +183,8 @@ class RequestLoginEmailForm extends Component {
 					<div className="magic-login__form-header-icon">
 						<img
 							src={ siteIcon }
-							width={ 60 }
-							height={ 60 }
+							width={ 64 }
+							height={ 64 }
 							alt={ `${ this.state.site?.name } icon` }
 						/>
 					</div>
