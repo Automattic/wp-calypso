@@ -7,6 +7,8 @@ import {
 	isWooExpressSmallPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	isWooExpressPlan,
+	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -186,7 +188,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						{ this.renderPlanTagline( [ gridPlan ] ) }
 						{ this.renderPlanPrice( [ gridPlan ] ) }
 						{ this.renderBillingTimeframe( [ gridPlan ] ) }
-						{ this.renderMobileFreeDomain( gridPlan.planSlug, gridPlan.isMonthlyPlan ) }
+						{ this.renderMobileFreeDomain( gridPlan ) }
 						{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						{ this.renderTopButtons( [ gridPlan ] ) }
 						<CardContainer
@@ -209,12 +211,24 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			} );
 	}
 
-	renderMobileFreeDomain( planSlug: PlanSlug, isMonthlyPlan?: boolean ) {
+	renderMobileFreeDomain( gridPlan: GridPlan ) {
 		const { translate } = this.props;
+		const { planSlug, isMonthlyPlan } = gridPlan;
 
 		if ( isMonthlyPlan || isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
 			return null;
 		}
+
+		// Remove the custom domain feature for Woo Express plans with introductory offer.
+		if (
+			isWooExpressPlan( planSlug ) &&
+			! gridPlan.features.wpcomFeatures.some(
+				( feature ) => feature.getSlug() === FEATURE_CUSTOM_DOMAIN
+			)
+		) {
+			return null;
+		}
+
 		const { paidDomainName } = this.props;
 
 		const displayText = paidDomainName
