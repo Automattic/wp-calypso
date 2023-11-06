@@ -36,8 +36,6 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import PremiumBadge from './premium-badge';
 
-import './style.scss';
-
 class DomainRegistrationSuggestion extends Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
@@ -257,6 +255,8 @@ class DomainRegistrationSuggestion extends Component {
 
 	renderDomain() {
 		const {
+			showHstsNotice,
+			showDotGayNotice,
 			suggestion: { domain_name: domain },
 		} = this.props;
 
@@ -269,7 +269,9 @@ class DomainRegistrationSuggestion extends Component {
 
 		return (
 			<div className={ titleWrapperClassName }>
-				<h3 className="domain-registration-suggestion__title">{ title }</h3>
+				<h3 className="domain-registration-suggestion__title">
+					{ title } { ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+				</h3>
 				{ this.renderBadges() }
 			</div>
 		);
@@ -314,6 +316,22 @@ class DomainRegistrationSuggestion extends Component {
 		);
 	}
 
+	renderInfoBubble() {
+		const { isFeatured, showHstsNotice, showDotGayNotice } = this.props;
+
+		const infoPopoverSize = isFeatured ? 22 : 18;
+		return (
+			<InfoPopover
+				className="domain-registration-suggestion__hsts-tooltip"
+				iconSize={ infoPopoverSize }
+				position="right"
+			>
+				{ ( showHstsNotice && this.getHstsMessage() ) ||
+					( showDotGayNotice && this.getDotGayMessage() ) }
+			</InfoPopover>
+		);
+	}
+
 	renderBadges() {
 		const {
 			suggestion: { isRecommended, isBestAlternative, is_premium: isPremium },
@@ -321,8 +339,6 @@ class DomainRegistrationSuggestion extends Component {
 			isFeatured,
 			productSaleCost,
 			premiumDomain,
-			showHstsNotice,
-			showDotGayNotice,
 		} = this.props;
 		const badges = [];
 
@@ -351,28 +367,6 @@ class DomainRegistrationSuggestion extends Component {
 		if ( isPremium ) {
 			badges.push(
 				<PremiumBadge key="premium" restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
-			);
-		}
-
-		if ( showHstsNotice ) {
-			badges.push(
-				<Badge key="hsts-notice">
-					{ translate( 'SSL Required' ) }
-					<InfoPopover iconSize={ 16 } showOnHover>
-						{ this.getHstsMessage() }
-					</InfoPopover>
-				</Badge>
-			);
-		}
-
-		if ( showDotGayNotice ) {
-			badges.push(
-				<Badge key="lgbtq">
-					{ translate( 'LGBTQ' ) }
-					<InfoPopover iconSize={ 16 } showOnHover>
-						{ this.getDotGayMessage() }
-					</InfoPopover>
-				</Badge>
 			);
 		}
 
