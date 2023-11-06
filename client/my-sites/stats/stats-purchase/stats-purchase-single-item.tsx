@@ -83,7 +83,6 @@ const StatsCommercialPurchase = ( {
 	redirectUri,
 	showClassificationDispute = true,
 }: StatsCommercialPurchaseProps ) => {
-	showClassificationDispute = true;
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 
