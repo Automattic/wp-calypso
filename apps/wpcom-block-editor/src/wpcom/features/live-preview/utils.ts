@@ -1,5 +1,8 @@
 import { getQueryArg } from '@wordpress/url';
 
+export const WOOCOMMERCE_THEME = 'woocommerce';
+export const PREMIUM_THEME = 'premium';
+
 /**
  * Return true if the user is currently previewing a theme.
  * FIXME: This is copied from Gutenberg; we should be creating a selector for the `core/edit-site` store.

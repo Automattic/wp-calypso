@@ -3,9 +3,11 @@ import domReady from '@wordpress/dom-ready';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
+import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
+import { usePreviewingTheme } from './hooks/use-previewing-theme';
 import { LivePreviewUpgradeNotice } from './upgrade-notice';
-import { currentlyPreviewingTheme, isPreviewingTheme } from './utils';
+import { isPreviewingTheme } from './utils';
 
 /**
  * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
@@ -29,21 +31,8 @@ const NOTICE_ID = 'wpcom-live-preview/notice';
  * And this should be moved to jetpack-mu-wpcom.
  * @see https://github.com/Automattic/wp-calypso/issues/82218
  */
-const LivePreviewNotice = () => {
+const LivePreviewNotice: FC< { previewingThemeName: string } > = ( { previewingThemeName } ) => {
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
-
-	const { previewingThemeName, currentTheme } = useSelect( ( select ) => {
-		const previewingThemeSlug = currentlyPreviewingTheme();
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const previewingTheme = ( select( 'core' ) as any ).getTheme( previewingThemeSlug );
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const currentTheme = ( select( 'core' ) as any ).getCurrentTheme();
-
-		return {
-			previewingThemeName: previewingTheme?.name?.rendered || previewingThemeSlug,
-			currentTheme,
-		};
-	}, [] );
 
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const dashboardLink =
@@ -82,25 +71,28 @@ const LivePreviewNotice = () => {
 			);
 		}
 		return () => removeNotice( NOTICE_ID );
-	}, [
-		siteEditorStore,
-		dashboardLink,
-		createWarningNotice,
-		removeNotice,
-		previewingThemeName,
-		currentTheme,
-	] );
+	}, [ siteEditorStore, dashboardLink, createWarningNotice, removeNotice, previewingThemeName ] );
 	return null;
+};
+
+const LivePreviewNoticePlugin = () => {
+	const previewingTheme = usePreviewingTheme();
+	const { canPreviewButNeedUpgrade } = useCanPreviewButNeedUpgrade( {
+		previewingThemeType: previewingTheme?.type,
+	} );
+	return (
+		<>
+			<LivePreviewNotice { ...{ previewingThemeName: previewingTheme.name } } />
+			<LivePreviewUpgradeNotice
+				{ ...{ canPreviewButNeedUpgrade, previewingThemeType: previewingTheme.type } }
+			/>
+		</>
+	);
 };
 
 const registerLivePreviewPlugin = () => {
 	registerPlugin( 'wpcom-live-preview', {
-		render: () => (
-			<>
-				<LivePreviewNotice />
-				<LivePreviewUpgradeNotice />
-			</>
-		),
+		render: () => <LivePreviewNoticePlugin />,
 	} );
 };
 
