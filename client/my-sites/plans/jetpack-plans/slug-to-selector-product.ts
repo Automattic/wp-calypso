@@ -33,6 +33,7 @@ import {
 	getJetpackProductRecommendedFor,
 	getJetpackPlanAlsoIncludedFeatures,
 	TERM_TRIENNIALLY,
+	isJetpackCreatorPlan,
 } from '@automattic/calypso-products';
 import {
 	getHelpLink,
@@ -214,7 +215,9 @@ function itemToSelectorProduct(
 			description: getForCurrentCROIteration( item.getDescription ),
 			featuredDescription: getFeaturedPlanDescription( item ),
 			lightboxDescription: getLightboxPlanDescription( item ),
-			productsIncluded: item.getProductsIncluded?.() || [],
+			productsIncluded:
+				// There are no products included for Jetpack Creator plans, so we don't want to show the "Included" section
+				item.getProductsIncluded?.() || ( isJetpackCreatorPlan( productSlug ) ? undefined : [] ),
 			whatIsIncluded: item.getWhatIsIncluded
 				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],
