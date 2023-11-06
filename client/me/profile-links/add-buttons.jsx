@@ -9,7 +9,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class AddProfileLinksButtons extends Component {
 	static propTypes = {
-		showingForm: PropTypes.string,
+		disabled: PropTypes.bool,
 		showPopoverMenu: PropTypes.bool,
 		onShowAddWordPress: PropTypes.func.isRequired,
 		onShowAddOther: PropTypes.func.isRequired,
@@ -32,14 +32,14 @@ class AddProfileLinksButtons extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, disabled } = this.props;
 
 		return (
 			<Fragment>
 				<Button
 					ref={ this.popoverContext }
 					compact
-					disabled={ !! this.props.showingForm }
+					disabled={ disabled }
 					onClick={ this.props.onShowPopoverMenu }
 				>
 					<Gridicon icon="add-outline" />

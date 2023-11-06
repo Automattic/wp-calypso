@@ -1,11 +1,11 @@
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
+import { useAddProfileLinkMutation } from '../profile-links/data/use-add-profile-link-mutation';
 
 import './style.scss';
 
@@ -132,7 +132,15 @@ class ProfileLinksAddOther extends Component {
 	}
 }
 
-export default connect( null, {
-	addUserProfileLinks,
-	recordGoogleEvent,
-} )( localize( ProfileLinksAddOther ) );
+export default function EnhancedProfileLinksAddOther( props ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	return (
+		<ProfileLinksAddOther
+			recordGoogleEvent={ ( ...args ) => dispatch( recordGoogleEvent( ...args ) ) }
+			translate={ translate }
+			{ ...props }
+		/>
+	);
+}

@@ -1,14 +1,13 @@
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { find, map, pickBy } from 'lodash';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
 import getPublicSites from 'calypso/state/selectors/get-public-sites';
 import getSites from 'calypso/state/selectors/get-sites';
-import isSiteInProfileLinks from 'calypso/state/selectors/is-site-in-profile-links';
+import { useProfileLinksQuery } from '../profile-links/data/use-profile-links-query';
 import ProfileLinksAddWordPressSite from './site';
 
 import './style.scss';
@@ -195,22 +194,30 @@ class ProfileLinksAddWordPress extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const publicSites = getPublicSites( state );
-		const publicSitesNotInProfileLinks = publicSites.filter(
-			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			( site ) => ! isSiteInProfileLinks( state, site.domain )
-		);
+export default function EnhancedProfileLinksAddWordPress( props ) {
+	const translate = useTranslate();
 
-		return {
-			publicSites,
-			publicSitesNotInProfileLinks,
-			sites: getSites( state ),
-		};
-	},
-	{
-		addUserProfileLinks,
-		recordGoogleEvent,
-	}
-)( localize( ProfileLinksAddWordPress ) );
+	const { data: profileLinks } = useProfileLinksQuery();
+
+	const dispatch = useDispatch();
+	const sites = useSelector( getSites );
+	const publicSites = useSelector( getPublicSites );
+
+	const publicSitesNotInProfileLinks = publicSites.filter( ( site ) => {
+		return ! profileLinks.some(
+			// the regex below is used to strip any leading scheme from the profileLink's URL
+			( profileLink ) => profileLink.value.replace( /^.*:\/\//, '' ) === site.domain
+		);
+	} );
+
+	return (
+		<ProfileLinksAddWordPress
+			sites={ sites }
+			publicSites={ publicSites }
+			publicSitesNotInProfileLinks={ publicSitesNotInProfileLinks }
+			recordGoogleEvent={ ( ...args ) => dispatch( recordGoogleEvent( ...args ) ) }
+			translate={ translate }
+			{ ...props }
+		/>
+	);
+}

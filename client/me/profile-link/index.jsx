@@ -23,6 +23,7 @@ class ProfileLink extends Component {
 		title: PropTypes.string.isRequired,
 		url: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
+		onRemoveLink: PropTypes.func,
 	};
 
 	recordClickEvent = ( action ) => {
@@ -35,7 +36,7 @@ class ProfileLink extends Component {
 
 	handleRemoveButtonClick = () => {
 		this.recordClickEvent( 'Remove Link Next to Site' );
-		this.props.onRemoveLink();
+		this.props.onRemoveLink?.();
 	};
 
 	renderRemove() {
