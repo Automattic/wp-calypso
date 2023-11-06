@@ -1,7 +1,11 @@
 import { useGlobalStyle } from '@automattic/global-styles';
+import {
+	__unstableComposite as Composite,
+	__unstableUseCompositeState as useCompositeState,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { CSSProperties, useMemo } from 'react';
-import PatternPagePreview from './pattern-page-preview';
+import { CSSProperties, useMemo, useState } from 'react';
+import PatternPagePreview, { PatternPagePreviewModal } from './pattern-page-preview';
 import type { Pattern } from './types';
 import './pattern-page-preview-list.scss';
 
@@ -23,6 +27,8 @@ const PatternPagePreviewList = ( {
 	isNewSite,
 }: Props ) => {
 	const translate = useTranslate();
+	const composite = useCompositeState( { orientation: 'horizontal' } );
+	const [ zoomedPage, setZoomedPage ] = useState< Pattern[] >( [] );
 
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const patternPagePreviewStyle = useMemo(
@@ -40,28 +46,45 @@ const PatternPagePreviewList = ( {
 		[ selectedHeader, selectedSections, selectedFooter ]
 	);
 
+	const handleClick = ( patterns: Pattern[] ) => {
+		setZoomedPage( patterns );
+	};
+
 	return (
-		<div className="pattern-assembler__preview-list">
-			<PatternPagePreview
-				title={ translate( 'Homepage' ) }
-				style={ patternPagePreviewStyle }
-				patterns={ homepage }
-				shouldShufflePosts={ isNewSite }
-			/>
-			{ pages.map( ( page ) => (
+		<>
+			<Composite { ...composite } role="listbox" className="pattern-assembler__preview-list">
 				<PatternPagePreview
-					key={ page.ID }
+					composite={ composite }
+					title={ translate( 'Homepage' ) }
 					style={ patternPagePreviewStyle }
-					title={ page.title }
-					patterns={ [
-						...( selectedHeader ? [ selectedHeader ] : [] ),
-						page,
-						...( selectedFooter ? [ selectedFooter ] : [] ),
-					] }
-					shouldShufflePosts={ false }
+					patterns={ homepage }
+					shouldShufflePosts={ isNewSite }
+					onClick={ handleClick }
 				/>
-			) ) }
-		</div>
+				{ pages.map( ( page ) => (
+					<PatternPagePreview
+						key={ page.ID }
+						composite={ composite }
+						style={ patternPagePreviewStyle }
+						title={ page.title }
+						patterns={ [
+							...( selectedHeader ? [ selectedHeader ] : [] ),
+							page,
+							...( selectedFooter ? [ selectedFooter ] : [] ),
+						] }
+						shouldShufflePosts={ isNewSite }
+						onClick={ handleClick }
+					/>
+				) ) }
+			</Composite>
+			<PatternPagePreviewModal
+				style={ patternPagePreviewStyle }
+				patterns={ zoomedPage }
+				shouldShufflePosts={ isNewSite }
+				isOpen={ !! zoomedPage.length }
+				onClose={ () => setZoomedPage( [] ) }
+			/>
+		</>
 	);
 };
 
