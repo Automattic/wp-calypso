@@ -1,5 +1,4 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { includes, pick } from 'lodash';
 import moment from 'moment';
 import {
 	INVITES_DELETE_REQUEST,
@@ -59,8 +58,19 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
 			const siteInvites = { pending: [], accepted: [] };
 			action.invites.forEach( ( invite ) => {
 				// Not renaming `avatar_URL` because it is used as-is by <Gravatar>
-				const user = pick( invite.user, 'login', 'email', 'name', 'avatar_URL' );
-				const invitedBy = pick( invite.invited_by, 'name', 'login', 'avatar_URL' );
+				const { login, email, name, avatar_URL } = invite.user;
+				const user = { login, email, name, avatar_URL };
+				const {
+					name: invitedByName,
+					login: invitedByLogin,
+					avatar_URL: invitedByAvatar_URL,
+				} = invite.invited_by;
+				const invitedBy = {
+					name: invitedByName,
+					login: invitedByLogin,
+					avatar_URL: invitedByAvatar_URL,
+				};
+
 				const inviteForState = {
 					key: invite.invite_key,
 					role: invite.role,
@@ -138,7 +148,10 @@ export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, acti
  * @returns {Array}                  Updated array of invite objects.
  */
 function deleteInvites( siteInvites, invitesToDelete ) {
-	return siteInvites.filter( ( siteInvite ) => ! includes( invitesToDelete, siteInvite.key ) );
+	if ( ! Array.isArray( siteInvites ) || ! Array.isArray( invitesToDelete ) ) {
+		return siteInvites ?? [];
+	}
+	return siteInvites.filter( ( siteInvite ) => ! invitesToDelete.includes( siteInvite.key ) );
 }
 
 /**

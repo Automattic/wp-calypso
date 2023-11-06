@@ -1,5 +1,4 @@
 import treeSelect from '@automattic/tree-select';
-import { get, find } from 'lodash';
 
 import 'calypso/state/invites/init';
 
@@ -69,6 +68,8 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
 	return state.invites.counts[ siteId ] || null;
 }
 
+const findInvite = ( invites, inviteId ) =>
+	Array.isArray( invites ) ? invites.find( ( invite ) => invite.key === inviteId ) : undefined;
 /**
  * Returns an invite object for the given site and invite ID, or `null` if no
  * invite with the given ID exists for the site.
@@ -84,8 +85,8 @@ export const getInviteForSite = treeSelect(
 			return null;
 		}
 		return (
-			find( siteInvites.pending, { key: inviteId } ) ||
-			find( siteInvites.accepted, { key: inviteId } ) ||
+			findInvite( siteInvites.pending, inviteId ) ||
+			findInvite( siteInvites.accepted, inviteId ) ||
 			null
 		);
 	}
@@ -100,7 +101,7 @@ export const getInviteForSite = treeSelect(
  * @returns {boolean}          Whether invites resend is being requested
  */
 export function isRequestingInviteResend( state, siteId, inviteId ) {
-	return 'requesting' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
+	return 'requesting' === state.invites.requestingResend[ siteId ]?.[ inviteId ];
 }
 
 /**
@@ -112,7 +113,7 @@ export function isRequestingInviteResend( state, siteId, inviteId ) {
  * @returns {boolean}          Whether invite resend was a success
  */
 export function didInviteResendSucceed( state, siteId, inviteId ) {
-	return 'success' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
+	return 'success' === state.invites.requestingResend[ siteId ]?.[ inviteId ];
 }
 
 /**
@@ -124,7 +125,7 @@ export function didInviteResendSucceed( state, siteId, inviteId ) {
  * @returns {boolean}          Whether invites resend is being requested
  */
 export function isDeletingInvite( state, siteId, inviteId ) {
-	return 'requesting' === get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
+	return 'requesting' === state.invites.deleting[ siteId ]?.[ inviteId ];
 }
 
 /**
@@ -136,7 +137,7 @@ export function isDeletingInvite( state, siteId, inviteId ) {
  * @returns {boolean}          Whether invites resend is being requested
  */
 export function didInviteDeletionSucceed( state, siteId, inviteId ) {
-	return 'success' === get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
+	return 'success' === state.invites.deleting[ siteId ]?.[ inviteId ];
 }
 
 /**
@@ -147,10 +148,11 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
  * @returns {boolean}          Whether an invite is being deleted
  */
 export function isDeletingAnyInvite( state, siteId ) {
-	return (
-		-1 !==
-		Object.values( get( state, [ 'invites', 'deleting', siteId ], {} ) ).indexOf( 'requesting' )
-	);
+	const invites = state.invites.deleting[ siteId ];
+	if ( ! invites ) {
+		return false;
+	}
+	return -1 !== Object.values( invites ).indexOf( 'requesting' );
 }
 
 /**
