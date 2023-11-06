@@ -164,6 +164,7 @@
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
+		"subscribers-launchpad": false,
 		"subscription-gifting": true,
 		"subscription-management-add-sites-modal": true,
 		"subscription-management-comments-view": true,
