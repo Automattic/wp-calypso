@@ -4,12 +4,9 @@ import {
 	commentAuthorAvatar as profileIcon,
 } from '@wordpress/icons';
 import MaterialIcon from 'calypso/components/material-icon';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
-import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
 export const generateCommandsArrayWpcom = ( {
-	setSelectedCommandName,
 	createSiteUrl,
 	__,
 }: {
@@ -17,13 +14,6 @@ export const generateCommandsArrayWpcom = ( {
 	createSiteUrl: string;
 	__: ( text: string ) => string;
 } ) => {
-	const setStateCallback =
-		( actionName: string ) =>
-		( { setSearch }: { setSearch: ( search: string ) => void } ) => {
-			setSearch( '' );
-			setSelectedCommandName( actionName );
-		};
-
 	const commands = [
 		{
 			name: 'addNewSite',
@@ -71,18 +61,13 @@ export const generateCommandsArrayWpcom = ( {
 			icon: <MaterialIcon icon="credit_card" />,
 		},
 		{
-			name: 'domains',
-			label: __( 'Domains' ),
-			searchLabel: __( 'domains' ),
+			name: 'manageDomains',
+			label: __( 'Manage Domains' ),
+			searchLabel: __( 'manage domains' ),
 			context: 'Managing domains',
-			callback: setStateCallback( 'domains' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/domains/manage/${ site.slug }/dns/${ site.slug }` );
-				},
-				filter: ( site: SiteExcerptData ) =>
-					isCustomDomain( site.slug ) && ! isNotAtomicJetpack( site ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `domains/manage` );
 			},
 			icon: domainsIcon,
 		},
