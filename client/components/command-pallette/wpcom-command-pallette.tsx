@@ -8,8 +8,6 @@ import { useCommandPallette } from './use-command-pallette';
 
 import '@wordpress/commands/build-style/style.css';
 
-// Files ported and adpted from https://github.com/WordPress/gutenberg/blob/f92f9e28ba4fb2e435cb89d5b327b707cb805ba7/packages/commands/src/components/command-menu.js
-
 interface CommandMenuGroupProps {
 	isContextual?: boolean;
 	search: string;
@@ -104,9 +102,8 @@ function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
 }
 
 export const WpcomCommandPalette = () => {
-	// const { registerShortcut } = useDispatch( keyboardShortcutsStore );
 	const [ search, setSearch ] = useState( '' );
-	const [ isOpen, setIsOpen ] = useState( false ); // useSelect( ( select ) => select( commandsStore ).isOpen(), [] );
+	const [ isOpen, setIsOpen ] = useState( false );
 	const { close, toggle } = {
 		close: () => setIsOpen( false ),
 		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
