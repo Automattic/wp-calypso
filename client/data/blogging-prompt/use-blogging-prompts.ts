@@ -1,6 +1,6 @@
 import { Url } from 'url';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import moment from 'moment';
+import { addQueryArgs } from 'calypso/lib/url';
 import wp from 'calypso/lib/wp';
 import { SiteId } from 'calypso/types';
 
@@ -23,15 +23,23 @@ interface AnsweredUsersSample {
 
 export const useBloggingPrompts = (
 	siteId: SiteId,
+	start_date: string,
 	per_page: number
 ): UseQueryResult< BloggingPrompt[] | null > => {
-	const today = moment().format( '--MM-DD' );
-
+	const path = addQueryArgs(
+		{
+			per_page: per_page,
+			after: start_date,
+			order: 'desc',
+			force_year: new Date().getFullYear(),
+		},
+		`/sites/${ siteId }/blogging-prompts`
+	);
 	return useQuery( {
-		queryKey: [ 'blogging-prompts', siteId, today, per_page ],
+		queryKey: [ 'blogging-prompts', siteId, start_date, per_page ],
 		queryFn: () =>
 			wp.req.get( {
-				path: `/sites/${ siteId }/blogging-prompts?per_page=${ per_page }&after=${ today }&order=desc`,
+				path: path,
 				apiNamespace: 'wpcom/v3',
 			} ),
 		enabled: !! siteId,

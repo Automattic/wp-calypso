@@ -1,9 +1,11 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
@@ -20,9 +22,19 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const notificationSettingsLink = '/me/notifications' + ( siteSlug ? '#' + siteSlug : '' );
-	const maxNumberOfPrompts = 10;
-	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
+
+	const maxNumberOfPrompts = isBloganuary() ? 31 : 10;
+	const today = moment().format( '--MM-DD' );
+	const januaryDate = '--01-01';
+	const startDate = isBloganuary() ? januaryDate : today;
+
+	const { data: prompts } = useBloggingPrompts( siteId, startDate, maxNumberOfPrompts );
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
+
+	if ( ! index && isBloganuary() ) {
+		// get the offset for the day of the month.
+		index = parseInt( moment().format( 'D' ) ) - 1;
+	}
 
 	if ( ! prompts ) {
 		return null;
@@ -74,7 +86,9 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 					<LightbulbIcon />
 					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
 					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
-						{ translate( 'Daily writing prompt' ) }
+						{ isBloganuary()
+							? translate( 'Bloganuary writing prompt' )
+							: translate( 'Daily writing prompt' ) }
 					</span>
 					{ showMenu && renderMenu() }
 				</CardHeading>

@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -89,6 +90,15 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		);
 	};
 
+	const trackBloganuaryMoreInfoClick = () => {
+		dispatch(
+			recordTracksEvent( tracksPrefix + 'bloganuary_more_info_click', {
+				site_id: siteId,
+				prompt_id: getPrompt()?.id,
+			} )
+		);
+	};
+
 	const renderPromptNavigation = () => {
 		const buttonClasses = classnames( 'navigation-link' );
 
@@ -159,6 +169,17 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		return (
 			<div className="blogging-prompt__prompt-answers">
 				{ renderResponses() }
+				{ isBloganuary() && (
+					<a
+						href="https://wordpress.com/bloganuary"
+						className="blogging-prompt__bloganuary-link"
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ trackBloganuaryMoreInfoClick }
+					>
+						{ translate( 'Learn more' ) }
+					</a>
+				) }
 				<Button href={ getNewPostLink() } onClick={ handleBloggingPromptClick }>
 					{ translate( 'Post Answer', {
 						comment:
