@@ -38,7 +38,7 @@ const ReaderTagSidebar = ( {
 		return null;
 	}
 
-	const showRecentPrompts = tag.indexOf( 'dailyprompt' === 0 ) || tag.indexOf( 'bloganuary' );
+	const showRecentPrompts = tag.indexOf( 'dailyprompt' === 0 ) || tag.indexOf( 'bloganuary' ) === 0;
 
 	const handleRecentPromptClick = ( prompt ) => {
 		recordAction( 'clicked_reader_sidebar_recent_prompt' );
