@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { LaunchpadNavigator, type UserSelect } from '@automattic/data-stores';
 import { useFlowProgress, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -143,7 +142,7 @@ const linkInBio: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'link-in-bio-tld',
-						...( config.isEnabled( 'launchpad/navigator' ) ? { setActiveChecklist } : {} ),
+						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

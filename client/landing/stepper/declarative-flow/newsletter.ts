@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	LaunchpadNavigator,
 	updateLaunchpadSettings,
@@ -196,7 +195,7 @@ const newsletter: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'newsletter',
-						...( config.isEnabled( 'launchpad/navigator' ) ? { setActiveChecklist } : {} ),
+						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );
