@@ -94,22 +94,25 @@ export default function ShowcaseThemeCollection( {
 				{ themes.length > 0 ? (
 					themes.map( ( theme: Theme, index: number ) => (
 						<ThemeCollectionItem key={ theme.id }>
-							<ThemeNew position={ index } themeId={ theme.id } />
-							{ /*<ThemeBlock
-								getActionLabel={ getActionLabel }
-								getButtonOptions={ getOptions }
-								getPrice={ getPrice }
-								getScreenshotUrl={ getScreenshotUrl }
-								index={ index }
-								isActive={ isActive }
-								isInstalling={ isInstalling }
-								siteId={ siteId }
-								theme={ theme }
-								onMoreButtonClick={ recordThemeClick }
-								onMoreButtonItemClick={ recordThemeClick }
-								onScreenshotClick={ onScreenshotClick }
-								onStyleVariationClick={ onStyleVariationClick }
-					/>*/ }
+							{ config.isEnabled( 'themes/new-theme-card' ) ? (
+								<ThemeNew position={ index } themeId={ theme.id } />
+							) : (
+								<ThemeBlock
+									getActionLabel={ getActionLabel }
+									getButtonOptions={ getOptions }
+									getPrice={ getPrice }
+									getScreenshotUrl={ getScreenshotUrl }
+									index={ index }
+									isActive={ isActive }
+									isInstalling={ isInstalling }
+									siteId={ siteId }
+									theme={ theme }
+									onMoreButtonClick={ recordThemeClick }
+									onMoreButtonItemClick={ recordThemeClick }
+									onScreenshotClick={ onScreenshotClick }
+									onStyleVariationClick={ onStyleVariationClick }
+								/>
+							) }
 						</ThemeCollectionItem>
 					) )
 				) : (
