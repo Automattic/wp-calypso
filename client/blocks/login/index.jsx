@@ -25,9 +25,9 @@ import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
-import { rebootAfterLogin } from 'calypso/state/login/actions';
+import { rebootAfterLogin, getAuthAccountType } from 'calypso/state/login/actions';
 import {
-	getAuthAccountType,
+	getAuthAccountType as getAuthAccountTypeSelector,
 	getRedirectToOriginal,
 	getLastCheckedUsernameOrEmail,
 	getRequestNotice,
@@ -104,11 +104,14 @@ class Login extends Component {
 		isGravPoweredClient: PropTypes.bool,
 		isGravPoweredLoginPage: PropTypes.bool,
 		isSignupExistingAccount: PropTypes.bool,
+		accountType: PropTypes.string,
+		getAuthAccountType: PropTypes.func,
 	};
 
 	state = {
 		isBrowserSupported: isWebAuthnSupported(),
 		continueAsAnotherUser: false,
+		waitAccountType: false,
 	};
 
 	static defaultProps = {
@@ -116,6 +119,13 @@ class Login extends Component {
 		isWhiteLogin: false,
 		isJetpackWooCommerceFlow: false,
 	};
+
+	componentWillMount() {
+		if ( ! this.props.accountType && this.props.loginEmailAddress ) {
+			this.setState( { waitAccountType: true } );
+			this.props.getAuthAccountType( this.props.loginEmailAddress );
+		}
+	}
 
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
@@ -144,12 +154,20 @@ class Login extends Component {
 		) {
 			const magicLoginUrl = login( {
 				locale: this.props.locale,
-				twoFactorAuthType: 'link',
+				twoFactorAuthType: this.props.loginEmailAddress ? '' : 'link',
 				oauth2ClientId: this.props.currentQuery?.client_id,
 				redirectTo: this.props.currentQuery?.redirect_to,
 			} );
-
 			page( magicLoginUrl );
+		}
+	}
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		if (
+			nextProps.accountType ||
+			this.props.requestError?.field === 'usernameOrEmail' ||
+			this.props.requestError?.code === 'email_login_not_allowed'
+		) {
+			this.setState( { waitAccountType: false } );
 		}
 	}
 
@@ -769,6 +787,8 @@ class Login extends Component {
 				hideSignupLink={ isGravPoweredLoginPage }
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
+				accountType={ this.props.accountType }
+				hasAccountTypeLoaded={ !! this.props.accountType }
 			/>
 		);
 	}
@@ -780,29 +800,31 @@ class Login extends Component {
 	render() {
 		const { isJetpack, oauth2Client, locale } = this.props;
 		return (
-			<div
-				className={ classNames( 'login', {
-					'is-jetpack': isJetpack,
-					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
-				} ) }
-			>
-				{ this.renderHeader() }
+			! this.state.waitAccountType && (
+				<div
+					className={ classNames( 'login', {
+						'is-jetpack': isJetpack,
+						'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+					} ) }
+				>
+					{ this.renderHeader() }
 
-				<ErrorNotice locale={ locale } />
+					<ErrorNotice locale={ locale } />
 
-				{ this.renderNotice() }
+					{ this.renderNotice() }
 
-				{ this.renderContent() }
+					{ this.renderContent() }
 
-				{ this.renderFooter() }
-			</div>
+					{ this.renderFooter() }
+				</div>
+			)
 		);
 	}
 }
 
 export default connect(
 	( state ) => ( {
-		accountType: getAuthAccountType( state ),
+		accountType: getAuthAccountTypeSelector( state ),
 		redirectTo: getRedirectToOriginal( state ),
 		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
 		currentUser: getCurrentUser( state ),
@@ -841,6 +863,7 @@ export default connect(
 	{
 		rebootAfterLogin,
 		sendEmailLogin,
+		getAuthAccountType,
 	},
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...ownProps,
