@@ -1,7 +1,7 @@
+import { FoldableCard } from '@automattic/components';
 import classnames from 'classnames';
 import { PureComponent, ReactNode } from 'react';
 import CardHeading from 'calypso/components/card-heading';
-import FoldableCard from 'calypso/components/foldable-card';
 import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 

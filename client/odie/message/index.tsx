@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Button } from '@automattic/components';
+import { Button, FoldableCard } from '@automattic/components';
 import { useTyper } from '@automattic/help-center/src/hooks';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { RefObject, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
 import MaximizeIcon from 'calypso/assets/images/odie/maximize-icon.svg';
@@ -22,18 +22,43 @@ import type { Message, Source } from '../types';
 
 import './style.scss';
 
-type ChatMessageProps = {
-	message: Message;
-	isLast: boolean;
-	messageEndRef: RefObject< HTMLDivElement >;
+// This is due to the AsyncLoad component. The initial scroll is not working properly, due to
+// the fact that the AsyncLoad component is not rendering the children immediately. In order to solve that
+// we know that the placeholder component will be unmounted when the AsyncLoad component has finished loading.
+const ComponentLoadedReporter = ( { callback }: { callback: () => void } ) => {
+	useEffect( () => {
+		return callback;
+	}, [ callback ] );
+
+	return null;
 };
 
-const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => {
+type ChatMessageProps = {
+	message: Message;
+	scrollToBottom: () => void;
+};
+
+const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const isUser = message.role === 'user';
 	const { botName } = useOdieAssistantContext();
+	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
 	const translate = useTranslate();
+
+	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
+		delayBetweenCharacters: 66,
+		randomDelayBetweenCharacters: true,
+		charactersPerInterval: 5,
+	} );
+
+	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
+	const sources = message?.context?.sources ?? [];
+	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
+	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
+
+	const messageFullyTyped =
+		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );
@@ -48,15 +73,22 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		isUser ? 'odie-chatbox-message-user' : 'odie-chatbox-message-wapuu'
 	);
 
-	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
-		delayBetweenCharacters: 66,
-		randomDelayBetweenCharacters: true,
-		charactersPerInterval: 5,
-	} );
-
 	const handleFullscreenToggle = () => {
 		setIsFullscreen( ! isFullscreen );
 	};
+
+	useEffect( () => {
+		if ( message.content !== realTimeMessage && message.simulateTyping ) {
+			scrollToBottom();
+		}
+	}, [ message, realTimeMessage, scrollToBottom ] );
+
+	useEffect( () => {
+		if ( messageFullyTyped && ! scrolledToBottom ) {
+			scrollToBottom();
+			setScrolledToBottom( true );
+		}
+	}, [ messageFullyTyped, scrolledToBottom, scrollToBottom ] );
 
 	if ( ! currentUser || ! botName ) {
 		return;
@@ -104,7 +136,7 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 			) }
 
 			<div className="message-header-buttons">
-				{ message.type !== 'placeholder' && (
+				{ message.content?.length > 600 && (
 					<Button compact borderless onClick={ handleFullscreenToggle }>
 						<img
 							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
@@ -124,54 +156,49 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
 	);
 
-	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
-	const sources = message?.context?.sources ?? [];
-	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
-	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
-
-	const messageFullyTyped =
-		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
-
 	const messageContent = (
-		<div ref={ isLast ? messageEndRef : null } className={ messageClasses }>
-			{ messageHeader }
-			{ ( message.type === 'message' || ! message.type ) && (
-				<>
-					<AsyncLoad
-						require="react-markdown"
-						placeholder={ null }
-						transformLinkUri={ uriTransformer }
-						components={ {
-							a: CustomALink,
-						} }
-					>
-						{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
-					</AsyncLoad>
-					{ hasSources && messageFullyTyped && (
-						<div className="odie-chatbox-message-sources">
-							<strong>
-								{ translate( 'Sources:', {
-									context:
-										'Below this text are links to sources for the current message received from %(botName)s',
-									textOnly: true,
-									args: { botName },
-								} ) }
-							</strong>
-							{ sources.map( ( source: Source, index: number ) => (
-								<CustomALink key={ index } href={ source.url } inline={ false }>
-									{ source?.title }
-								</CustomALink>
-							) ) }
-						</div>
-					) }
-
-					{ ! isUser && <WasThisHelpfulButtons message={ message } /> }
-				</>
-			) }
-			{ message.type === 'introduction' && (
-				<div className="odie-introduction-message-content">
-					<div className="odie-chatbox-introduction-message">{ message.content }</div>
-				</div>
+		<div className="odie-chatbox-message-sources-container">
+			<div className={ messageClasses }>
+				{ messageHeader }
+				{ ( message.type === 'message' || ! message.type ) && (
+					<>
+						<AsyncLoad
+							require="react-markdown"
+							placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
+							transformLinkUri={ uriTransformer }
+							components={ {
+								a: CustomALink,
+							} }
+						>
+							{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
+						</AsyncLoad>
+						{ ! isUser && messageFullyTyped && <WasThisHelpfulButtons message={ message } /> }
+					</>
+				) }
+				{ message.type === 'introduction' && (
+					<div className="odie-introduction-message-content">
+						<div className="odie-chatbox-introduction-message">{ message.content }</div>
+					</div>
+				) }
+			</div>
+			{ hasSources && messageFullyTyped && (
+				<FoldableCard
+					header={ translate( 'Sources:', {
+						context:
+							'Below this text are links to sources for the current message received from the bot.',
+						textOnly: true,
+					} ) }
+					screenReaderText="More"
+					onClick={ scrollToBottom }
+				>
+					<div className="odie-chatbox-message-sources">
+						{ sources.map( ( source: Source, index: number ) => (
+							<CustomALink key={ index } href={ source.url } inline={ false }>
+								{ source?.title }
+							</CustomALink>
+						) ) }
+					</div>
+				</FoldableCard>
 			) }
 		</div>
 	);

@@ -12,7 +12,21 @@
 	}
 
 	.app-promo__icon {
-		margin-bottom: 6px;
+		display: block;
+		margin: 0 auto 6px;
+	}
+
+	.card-heading {
+		text-align: center;
+	}
+
+	@include break-mobile {
+		.app-promo__icon {
+			margin: 0 0 6px;
+		}
+		.card-heading {
+			text-align: left;
+		}
 	}
 
 	.app-promo__title {
@@ -29,6 +43,8 @@
 
 	.app-promo__app-badges {
 		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 
 	// Reset preexisting, global styles for store buttons.
@@ -36,12 +52,28 @@
 		max-height: none;
 		max-width: none;
 		width: auto;
+		display: block;
 	}
 
 	.app-promo__app-badges .get-apps__app-badge img {
 		max-width: 100%;
 		vertical-align: top;
-		width: 179px;
+		width: 150px;
+		display: block;
+		margin: 0 auto;
+
+		@include break-mobile {
+			margin: 0 -7px 0;
+		}
+	}
+
+	.app-promo__app-badges-text {
+		text-align: center;
+		color: var(--color-text-subtle);
+
+		@include break-mobile {
+			text-align: left;
+		}
 	}
 
 	// These style replicate a preexisting approach for cropping the Google
@@ -68,5 +100,22 @@
 			text-decoration: none;
 		}
 	}
+}
 
+.app-promo__qr-code {
+	// This is a hack to allow us to use a feature flag to hide this subpanel
+	// without the parent card having a big ugly blank space at the bottom.
+	margin-top: 50px;
+	margin-bottom: 40px;
+	display: flex;
+	align-items: center;
+
+	.get-apps__card-text {
+		padding: 0 50px;
+		margin-bottom: 0;
+	}
+}
+
+.app-promo__qr-code-placeholder {
+	background-color: var(--color-neutral-0);
 }

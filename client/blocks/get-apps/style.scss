@@ -182,20 +182,6 @@ body.get-apps__body {
 			margin-left: 0;
 		}
 	}
-
-	.get-apps__qr-code-subpanel {
-		// This is a hack to allow us to use a feature flag to hide this subpanel
-		// without the parent card having a big ugly blank space at the bottom.
-		margin-top: 50px;
-		margin-bottom: 40px;
-		display: flex;
-		align-items: center;
-
-		.get-apps__card-text {
-			padding: 0 50px;
-			margin-bottom: 0;
-		}
-	}
 }
 
 .get-apps__illustration {

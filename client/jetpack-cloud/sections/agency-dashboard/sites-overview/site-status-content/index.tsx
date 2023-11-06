@@ -197,7 +197,7 @@ export default function SiteStatusContent( {
 						borderless
 						compact
 						href={ siteRedirectURL }
-						target={ isWPCOMAtomicSiteCreationEnabled && isWPCOMAtomicSite ? '_blank' : '_self' }
+						target={ isWPCOMAtomicSiteCreationEnabled && isWPCOMAtomicSite ? '_blank' : undefined }
 						onClick={ handleSiteClick }
 					>
 						{ WPCOMHostedSiteBadgeColumn }
@@ -332,7 +332,7 @@ export default function SiteStatusContent( {
 
 	if ( ! showMultisiteNotSupported ) {
 		if ( link ) {
-			let target = '_self';
+			let target = undefined;
 			let rel;
 			if ( isExternalLink ) {
 				target = '_blank';

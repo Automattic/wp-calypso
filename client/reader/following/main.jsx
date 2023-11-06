@@ -13,19 +13,18 @@ function FollowingStream( { ...props } ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<>
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ translate( 'Recent' ) }
-				subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
-				className={ classNames( 'following-stream-header', {
-					'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
-				} ) }
-			/>
 			<Stream
 				{ ...props }
 				className="following"
 				streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
 			>
+				<NavigationHeader
+					title={ translate( 'Recent' ) }
+					subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
+					className={ classNames( 'following-stream-header', {
+						'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+					} ) }
+				/>
 				<FollowingIntro />
 			</Stream>
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />

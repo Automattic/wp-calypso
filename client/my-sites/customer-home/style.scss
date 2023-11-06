@@ -110,6 +110,26 @@ body.is-section-home.theme-default.color-scheme {
 		@include break-large {
 			padding-left: 0;
 		}
+
+		.app-promo__icon {
+			margin: 0 0 6px;
+		}
+
+		.card-heading {
+			text-align: left;
+		}
+
+		.app-promo__app-badges .get-apps__app-badge {
+			display: inline;
+		}
+
+		.get-apps__app-badge img {
+			margin: 0 0 0 -7px;
+		}
+
+		.app-promo__app-badges-text {
+			text-align: left;
+		}
 	}
 
 	@include break-mobile {

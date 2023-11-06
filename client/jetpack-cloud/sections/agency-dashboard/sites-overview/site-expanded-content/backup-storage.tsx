@@ -67,7 +67,8 @@ const BackupStorageContent = ( {
 
 	// Show plugin name only if it is a activity from a plugin
 	const pluginName =
-		backup?.activityName.startsWith( 'plugin__' ) && backup.activityDescription[ 0 ]?.children[ 0 ];
+		backup?.activityName.startsWith( 'plugin__' ) &&
+		backup.activityDescription?.[ 0 ]?.children?.[ 0 ];
 
 	const showLoader = isLoading || ! backup;
 	const extractedBackupTitle = useExtractedBackupTitle( backup );

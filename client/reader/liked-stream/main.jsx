@@ -19,10 +19,9 @@ class LikedStream extends Component {
 		return (
 			<>
 				<NavigationHeader
-					navigationItems={ [] }
 					title={ translate( 'Likes' ) }
 					subtitle={ translate( 'Rediscover content that you liked.' ) }
-					className="following-stream-header"
+					className="liked-stream-header"
 				/>
 				<Stream
 					{ ...this.props }

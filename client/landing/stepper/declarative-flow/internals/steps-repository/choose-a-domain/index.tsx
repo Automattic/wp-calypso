@@ -103,6 +103,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
+					key={ domainSuggestion }
 					suggestion={ domainSuggestion }
 					domainsWithPlansOnly={ true }
 					onAddDomain={ submitWithDomain }

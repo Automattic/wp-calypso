@@ -5,12 +5,13 @@ import {
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -40,6 +41,7 @@ const SiteSummary = styled.div`
 
 const CouponLinkWrapper = styled.div`
 	font-size: 14px;
+	margin-bottom: 2em;
 `;
 
 const CouponField = styled( Coupon )``;
@@ -55,6 +57,14 @@ const CouponEnableButton = styled.button`
 	}
 `;
 
+const SitePreviewWrapper = styled.div`
+	& .home-site-preview {
+		padding-bottom: 1.5em;
+	}
+	& .home-site-preview .home-site-preview__remove-pointer {
+		aspect-ratio: 16 / 9;
+	}
+`;
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
@@ -122,46 +132,59 @@ export default function WPCheckoutOrderReview( {
 	);
 
 	return (
-		<div
-			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
-		>
-			{ domainUrl && <SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary> }
-			{ planIsP2Plus && selectedSiteData?.name && (
-				<SiteSummary>
-					{ translate( 'Upgrade: {{strong}}%s{{/strong}}', {
-						args: selectedSiteData.name,
-						components: {
-							strong: <strong />,
-						},
-					} ) }
-				</SiteSummary>
+		<>
+			{ hasCheckoutVersion( '2' ) && (
+				<div className="checkout-site-preview">
+					<SitePreviewWrapper>
+						<SitePreview showEditSite={ false } showSiteDetails={ false } />
+					</SitePreviewWrapper>
+				</div>
 			) }
+			<div
+				className={ joinClasses( [
+					className,
+					'checkout-review-order',
+					isSummary && 'is-summary',
+				] ) }
+			>
+				{ domainUrl && <SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary> }
+				{ planIsP2Plus && selectedSiteData?.name && (
+					<SiteSummary>
+						{ translate( 'Upgrade: {{strong}}%s{{/strong}}', {
+							args: selectedSiteData.name,
+							components: {
+								strong: <strong />,
+							},
+						} ) }
+					</SiteSummary>
+				) }
 
-			<WPOrderReviewSection>
-				<WPOrderReviewLineItems
-					removeProductFromCart={ removeProductFromCart }
-					removeCoupon={ removeCouponAndClearField }
-					onChangeSelection={ onChangeSelection }
-					isSummary={ isSummary }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					responseCart={ responseCart }
-					isPwpoUser={ isPwpoUser ?? false }
-					onRemoveProduct={ onRemoveProduct }
-					onRemoveProductClick={ onRemoveProductClick }
-					onRemoveProductCancel={ onRemoveProductCancel }
-				/>
-			</WPOrderReviewSection>
+				<WPOrderReviewSection>
+					<WPOrderReviewLineItems
+						removeProductFromCart={ removeProductFromCart }
+						removeCoupon={ removeCouponAndClearField }
+						onChangeSelection={ onChangeSelection }
+						isSummary={ isSummary }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						responseCart={ responseCart }
+						isPwpoUser={ isPwpoUser ?? false }
+						onRemoveProduct={ onRemoveProduct }
+						onRemoveProductClick={ onRemoveProductClick }
+						onRemoveProductCancel={ onRemoveProductCancel }
+					/>
+				</WPOrderReviewSection>
 
-			{ ! isAkismetCheckout() && (
-				<CouponFieldArea
-					isCouponFieldVisible={ isCouponFieldVisible }
-					setCouponFieldVisible={ setCouponFieldVisible }
-					isPurchaseFree={ isPurchaseFree }
-					couponStatus={ couponStatus }
-					couponFieldStateProps={ couponFieldStateProps }
-				/>
-			) }
-		</div>
+				{ ! isAkismetCheckout() && (
+					<CouponFieldArea
+						isCouponFieldVisible={ isCouponFieldVisible }
+						setCouponFieldVisible={ setCouponFieldVisible }
+						isPurchaseFree={ isPurchaseFree }
+						couponStatus={ couponStatus }
+						couponFieldStateProps={ couponFieldStateProps }
+					/>
+				) }
+			</div>
+		</>
 	);
 }
 

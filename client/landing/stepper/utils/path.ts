@@ -62,7 +62,7 @@ export const getLoginUrl = ( {
 	const loginPath = `/start/account/${
 		isEnabled( 'signup/social-first' ) ? 'user-social' : 'user'
 	}`;
-	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
+	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }/${ locale }` : loginPath;
 
 	// Empty values are ignored down the call stack, so we don't need to check for them here.
 	return addQueryArgs( localizedLoginPath, {

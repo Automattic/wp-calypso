@@ -57,7 +57,6 @@ class WPCOM_Domain_Upsell_Callout {
 			$version,
 			true
 		);
-		wp_script_add_data( 'wpcom-domain-upsell-callout-script', 'strategy', 'defer' );
 
 		wp_set_script_translations( 'wpcom-domain-upsell-callout-script', 'full-site-editing' );
 
