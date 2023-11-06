@@ -10,6 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
+import wpcom from 'calypso/lib/wp';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -54,13 +55,24 @@ class RequestLoginEmailForm extends Component {
 		submitButtonLabel: PropTypes.string,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
+		blogId: PropTypes.string,
 	};
 
 	state = {
 		usernameOrEmail: this.props.userEmail || '',
+		site: {},
 	};
 
 	usernameOrEmailRef = createRef();
+
+	componentDidMount() {
+		const blogId = this.props.blogId;
+		if ( blogId ) {
+			wpcom.req
+				.get( `/sites/${ this.props.blogId }` )
+				.then( ( result ) => this.setState( { site: result } ) );
+		}
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.requestError && this.props.requestError ) {
@@ -124,6 +136,12 @@ class RequestLoginEmailForm extends Component {
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
 
+		const siteIcon =
+			this.state.site?.icon?.ico ??
+			this.state.site?.icon?.img ??
+			this.state.site?.logo?.url ??
+			null;
+
 		if ( showCheckYourEmail ) {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 
@@ -161,6 +179,16 @@ class RequestLoginEmailForm extends Component {
 
 		return (
 			<div className="magic-login__form">
+				{ siteIcon && (
+					<div className="magic-login__form-header-icon">
+						<img
+							src={ siteIcon }
+							width={ 60 }
+							height={ 60 }
+							alt={ `${ this.state.site?.name } icon` }
+						/>
+					</div>
+				) }
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
@@ -219,6 +247,7 @@ const mapState = ( state ) => {
 		requestError: getMagicLoginRequestEmailError( state ),
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
+		blogId: getCurrentQueryArguments( state ).blog_id,
 		userEmail:
 			getLastCheckedUsernameOrEmail( state ) ||
 			getCurrentQueryArguments( state ).email_address ||
