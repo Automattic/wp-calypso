@@ -137,9 +137,7 @@ class ThemeShowcase extends Component {
 		this.props.setBackPath( this.constructUrl() );
 	}
 
-	isThemeDiscoveryEnabled = () =>
-		( this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lits' ) ) ||
-		( ! this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lots' ) );
+	isThemeDiscoveryEnabled = () => config.isEnabled( 'themes/discovery' );
 
 	getDefaultStaticFilter = () => staticFilters.RECOMMENDED;
 
