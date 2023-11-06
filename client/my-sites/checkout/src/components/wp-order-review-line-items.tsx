@@ -71,6 +71,32 @@ interface CostOverrideForDisplay {
 	discountAmount: number;
 }
 
+function filterAndGroupCostOverridesForDisplay(
+	responseCart: ResponseCart
+): CostOverrideForDisplay[] {
+	// Collect cost overrides from each line item and group them by type so we
+	// can show them all together after the line item list.
+	const costOverridesGrouped = responseCart.products.reduce<
+		Record< string, CostOverrideForDisplay >
+	>( ( grouped, product ) => {
+		const costOverrides = product?.cost_overrides;
+		if ( ! costOverrides ) {
+			return grouped;
+		}
+
+		costOverrides.forEach( ( costOverride ) => {
+			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
+			const newDiscountAmount = costOverride.old_price - costOverride.new_price;
+			grouped[ costOverride.override_code ] = {
+				humanReadableReason: costOverride.human_readable_reason,
+				discountAmount: discountAmount + newDiscountAmount,
+			};
+		} );
+		return grouped;
+	}, {} );
+	return Object.values( costOverridesGrouped );
+}
+
 function CostOverridesList( {
 	costOverridesList,
 	currency,
@@ -140,29 +166,7 @@ export function WPOrderReviewLineItems( {
 
 	const [ initialProducts ] = useState( () => responseCart.products );
 
-	// Collect cost overrides from each line item and group them by type so we
-	// can show them all together after the line item list.
-	const costOverridesGrouped = responseCart.products.reduce<
-		Record< string, CostOverrideForDisplay >
-	>( ( grouped, product ) => {
-		// Store product cost_overrides object
-		const costOverrides = product?.cost_overrides;
-		if ( ! costOverrides ) {
-			return grouped;
-		}
-
-		// Return array of human readable reasons with discount amount
-		costOverrides.forEach( ( costOverride ) => {
-			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			const newDiscountAmount = costOverride.old_price - costOverride.new_price;
-			grouped[ costOverride.override_code ] = {
-				humanReadableReason: costOverride.human_readable_reason,
-				discountAmount: discountAmount + newDiscountAmount,
-			};
-		} );
-		return grouped;
-	}, {} );
-	const costOverridesList = Object.values( costOverridesGrouped );
+	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart );
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
