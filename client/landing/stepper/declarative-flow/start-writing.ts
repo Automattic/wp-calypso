@@ -297,6 +297,11 @@ const startWriting: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
+		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
+			result = {
+				state: AssertConditionState.CHECKING,
+				message: `${ flowName } with no preexisting sites`,
+			};
 		}
 
 		return result;

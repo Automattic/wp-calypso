@@ -281,12 +281,8 @@ const designFirst: Flow = {
 		const isSiteCreationStep =
 			currentPath.endsWith( 'setup/design-first' ) ||
 			currentPath.endsWith( 'setup/design-first/' ) ||
-			currentPath.includes( 'setup/design-first/site-creation-step' );
+			currentPath.includes( 'setup/design-first/check-sites' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
-
-		// Allow to create a new site if people are from the Theme Showcase or they don't have a site
-		const shouldCreateNewSite =
-			getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' || ! userAlreadyHasSites;
 
 		// There is a race condition where useLocale is reporting english,
 		// despite there being a locale in the URL so we need to look it up manually.
@@ -317,9 +313,7 @@ const designFirst: Flow = {
 				isSiteCreationStep &&
 				( ! userAlreadyHasSites || getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' )
 			) {
-				// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
-				// This prevents a bunch of sites being created accidentally.
-				redirect( `/themes` );
+				redirect( '/setup/design-first/site-creation-step' );
 			}
 		}, [] );
 
@@ -330,10 +324,10 @@ const designFirst: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( isSiteCreationStep && ! shouldCreateNewSite ) {
+		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires no preexisting sites`,
+				message: `${ flowName } with no preexisting sites`,
 			};
 		}
 
