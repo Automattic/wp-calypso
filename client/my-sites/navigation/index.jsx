@@ -26,8 +26,9 @@ class MySitesNavigation extends Component {
 			if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
 				asyncSidebar = (
 					<AsyncLoad
-						require="calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site"
-						{ ...asyncProps }
+						require="calypso/jetpack-cloud/components/sidebar"
+						path={ this.props.path }
+						initialPath="/managed-sites"
 					/>
 				);
 

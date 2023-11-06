@@ -1,6 +1,6 @@
 import { chevronLeft, formatListBulletsRTL, payment, receipt, store, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
+import { SidebarNavigatorMenu, SidebarNavigatorMenuItem } from 'calypso/layout/sidebar-v2';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -16,7 +16,7 @@ import {
 import { redirectPage } from './lib/sidebar';
 import { MenuItemProps } from './types';
 
-const PurchasesSidebar = ( { path }: { path: string } ) => {
+const PurchasesSidebarMenu = ( { path }: { path: string } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -71,10 +71,8 @@ const PurchasesSidebar = ( { path }: { path: string } ) => {
 	];
 
 	return (
-		<NewSidebar
-			isJetpackManage
+		<SidebarNavigatorMenu
 			path={ JETPACK_MANAGE_PARTNER_PORTAL_LINK }
-			menuItems={ menuItems }
 			title={ translate( 'Purchases' ) }
 			description={ translate( 'Manage all your billing related settings from one place.' ) }
 			backButtonProps={ {
@@ -88,8 +86,20 @@ const PurchasesSidebar = ( { path }: { path: string } ) => {
 					redirectPage( JETPACK_MANAGE_DASHBOARD_LINK );
 				},
 			} }
-		/>
+		>
+			{ menuItems.map( ( item ) => (
+				<SidebarNavigatorMenuItem
+					key={ item.link }
+					{ ...item }
+					onClickMenuItem={ () => {
+						if ( item.trackEventName ) {
+							dispatch( recordTracksEvent( item.trackEventName, item.trackEventProps ) );
+						}
+					} }
+				/>
+			) ) }
+		</SidebarNavigatorMenu>
 	);
 };
 
-export default PurchasesSidebar;
+export default PurchasesSidebarMenu;
