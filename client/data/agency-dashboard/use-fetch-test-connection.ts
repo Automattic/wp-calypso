@@ -9,7 +9,6 @@ const STALE_TIME = 1000 * 60;
 const getQueryKey = ( ID: Site[ 'blog_id' ] ) => [ 'jetpack-fetch-test-connection', ID ];
 
 const queryOptions = {
-	refetchOnWindowFocus: false,
 	staleTime: STALE_TIME,
 };
 
