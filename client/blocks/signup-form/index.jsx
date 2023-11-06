@@ -327,6 +327,7 @@ class SignupForm extends Component {
 					if ( field === 'email' ) {
 						recordTracksEvent( 'calypso_signup_email_validation_failed', {
 							error: keys( fieldError )[ 0 ],
+							email: fields.email,
 						} );
 
 						timesEmailValidationFailed++;
