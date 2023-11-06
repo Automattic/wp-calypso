@@ -55,7 +55,6 @@ export type ThankYouProps = {
 };
 
 export type ThankYouData = [
-	any[],
 	ThankYouSectionProps,
 	boolean,
 	JSX.Element,
@@ -65,5 +64,7 @@ export type ThankYouData = [
 	boolean,
 	React.ReactElement | null,
 ];
+
+export type ThankYouThemeData = [ any[], ...ThankYouData ];
 
 export type ThankYouSteps = { steps: string[]; additionalSteps: string[] };

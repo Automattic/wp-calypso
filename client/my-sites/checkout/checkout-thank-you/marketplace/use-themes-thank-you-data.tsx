@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
-import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
+import { ThankYouSectionProps, ThankYouThemeData } from 'calypso/components/thank-you/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
@@ -16,7 +16,7 @@ export function useThemesThankYouData(
 	themeSlugs: string[],
 	isOnboardingFlow: boolean,
 	continueWithPluginBundle: boolean | null
-): ThankYouData {
+): ThankYouThemeData {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
