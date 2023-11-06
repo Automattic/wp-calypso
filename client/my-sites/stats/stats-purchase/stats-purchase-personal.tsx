@@ -51,6 +51,7 @@ const PersonalPurchase = ( {
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
+	const [ isDonationChecked, setDonationChecked ] = useState( false );
 	const {
 		sliderStepPrice,
 		minSliderPrice,
@@ -184,6 +185,16 @@ const PersonalPurchase = ( {
 								} }
 							/>
 						</li>
+						<li>
+							<CheckboxControl
+								className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+								checked={ isDonationChecked }
+								label={ translate( `I don't solicite donations or sponsorships` ) }
+								onChange={ ( value ) => {
+									setDonationChecked( value );
+								} }
+							/>
+						</li>
 					</ul>
 				</div>
 			) }
@@ -192,7 +203,9 @@ const PersonalPurchase = ( {
 				<ButtonComponent
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
-					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
+					disabled={
+						! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
+					}
 					onClick={ () =>
 						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
 					}
