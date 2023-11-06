@@ -392,7 +392,6 @@ class MagicLogin extends Component {
 						tosComponent={ this.renderGravPoweredMagicLoginTos() }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
-						blogId={ query?.blog_id }
 					/>
 					<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
 					<div className="grav-powered-magic-login__login-page-link">
