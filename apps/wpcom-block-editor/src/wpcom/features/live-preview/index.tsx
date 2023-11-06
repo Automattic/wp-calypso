@@ -2,27 +2,13 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { FC, useEffect } from 'react';
 import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
 import { LivePreviewUpgradeNotice } from './upgrade-notice';
-import { isPreviewingTheme } from './utils';
+import { getUnlock, isPreviewingTheme } from './utils';
 
-/**
- * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let unlock: ( object: any ) => any | undefined;
-try {
-	unlock = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-		'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
-		'@wordpress/edit-site'
-	).unlock;
-} catch ( error ) {
-	// eslint-disable-next-line no-console
-	console.error( 'Error: Unable to get the unlock api. Reason: %s', error );
-}
+const unlock = getUnlock();
 
 const NOTICE_ID = 'wpcom-live-preview/notice';
 
@@ -99,9 +85,7 @@ const LivePreviewNoticePlugin = () => {
 			<LivePreviewNotice
 				{ ...{ canPreviewButNeedUpgrade, previewingThemeName: previewingTheme.name } }
 			/>
-			<LivePreviewUpgradeNotice
-				{ ...{ canPreviewButNeedUpgrade, previewingThemeType: previewingTheme.type } }
-			/>
+			<LivePreviewUpgradeNotice { ...{ canPreviewButNeedUpgrade, previewingTheme } } />
 		</>
 	);
 };
