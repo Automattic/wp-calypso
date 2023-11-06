@@ -5,6 +5,8 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { CSSProperties, useMemo, useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternPagePreview, { PatternPagePreviewModal } from './pattern-page-preview';
 import type { Pattern } from './types';
 import './pattern-page-preview-list.scss';
@@ -46,8 +48,12 @@ const PatternPagePreviewList = ( {
 		[ selectedHeader, selectedSections, selectedFooter ]
 	);
 
-	const handleClick = ( patterns: Pattern[] ) => {
+	const handleClick = ( patterns: Pattern[], pageSlug: string ) => {
 		setZoomedPage( patterns );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_PREVIEW_CLICK, {
+			pattern_names: patterns.map( ( pattern ) => pattern.name ).join( ',' ),
+			page_slug: pageSlug,
+		} );
 	};
 
 	return (
@@ -59,9 +65,9 @@ const PatternPagePreviewList = ( {
 					style={ patternPagePreviewStyle }
 					patterns={ homepage }
 					shouldShufflePosts={ isNewSite }
-					onClick={ handleClick }
+					onClick={ ( patterns ) => handleClick( patterns, 'homepage' ) }
 				/>
-				{ pages.map( ( page ) => (
+				{ pages.map( ( page, index ) => (
 					<PatternPagePreview
 						key={ page.ID }
 						composite={ composite }
@@ -73,7 +79,7 @@ const PatternPagePreviewList = ( {
 							...( selectedFooter ? [ selectedFooter ] : [] ),
 						] }
 						shouldShufflePosts={ isNewSite }
-						onClick={ handleClick }
+						onClick={ ( patterns ) => handleClick( patterns, selectedPages[ index ] ) }
 					/>
 				) ) }
 			</Composite>
