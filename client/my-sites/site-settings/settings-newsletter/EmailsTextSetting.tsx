@@ -67,7 +67,7 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 						<FormTextarea
 							name="welcome_email_message"
 							id="welcome_email_message"
-							value={ value?.welcome }
+							value={ value?.welcome || '' }
 							onChange={ updateSubscriptionOptions( 'welcome' ) }
 							disabled={ disabled }
 							autoCapitalize="none"
