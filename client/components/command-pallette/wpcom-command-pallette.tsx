@@ -85,8 +85,7 @@ function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
 			value={ search }
 			onValueChange={ setSearch }
 			placeholder={ __( 'Search for commands' ) }
-			aria-activedescendant={ selectedItemId }
-			icon={ search }
+			aria-activedescendant={ `${ selectedItemId }` }
 		/>
 	);
 }
