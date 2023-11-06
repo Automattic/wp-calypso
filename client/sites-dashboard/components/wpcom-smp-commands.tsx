@@ -28,7 +28,7 @@ export const generateCommandsArrayWpcom = ( {
 		{
 			name: 'addNewSite',
 			label: __( 'Add New Site' ),
-			searchLabel: __( 'new site' ),
+			searchLabel: __( 'add new site' ),
 			context: 'Adding a new website',
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -39,7 +39,7 @@ export const generateCommandsArrayWpcom = ( {
 		{
 			name: 'openProfile',
 			label: __( 'Open my profile' ),
-			searchLabel: __( 'profile' ),
+			searchLabel: __( 'open my profile' ),
 			context: 'Opening my profile',
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -51,7 +51,7 @@ export const generateCommandsArrayWpcom = ( {
 		{
 			name: 'openAccountSettings',
 			label: __( 'Open account settings' ),
-			searchLabel: __( 'account' ),
+			searchLabel: __( 'open account settings' ),
 			context: 'Openining account settings',
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -62,7 +62,7 @@ export const generateCommandsArrayWpcom = ( {
 		{
 			name: 'acessPurchases',
 			label: __( 'Open my purchases' ),
-			searchLabel: __( 'puchases' ),
+			searchLabel: __( 'open my purchases' ),
 			context: 'Openining my purchases',
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -84,7 +84,7 @@ export const generateCommandsArrayWpcom = ( {
 		{
 			name: 'manageDns',
 			label: __( 'Manage DNS records' ),
-			searchLabel: __( 'manage dns' ),
+			searchLabel: __( 'manage dns records' ),
 			context: 'Managing DNS records',
 			callback: setStateCallback( 'manageDns' ),
 			siteFunctions: {
