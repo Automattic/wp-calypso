@@ -328,7 +328,7 @@ class Login extends Component {
 			isSignupExistingAccount,
 		} = this.props;
 
-		let headerText = translate( 'Log in to your account' );
+		let headerText = translate( 'Log into WordPress.com' );
 		let preHeader = null;
 		let postHeader = null;
 
@@ -783,6 +783,7 @@ class Login extends Component {
 
 	render() {
 		const { isJetpack, oauth2Client, locale } = this.props;
+
 		return (
 			<div
 				className={ classNames( 'login', {
