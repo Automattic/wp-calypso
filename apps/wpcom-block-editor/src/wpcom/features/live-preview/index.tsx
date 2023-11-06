@@ -31,7 +31,10 @@ const NOTICE_ID = 'wpcom-live-preview/notice';
  * And this should be moved to jetpack-mu-wpcom.
  * @see https://github.com/Automattic/wp-calypso/issues/82218
  */
-const LivePreviewNotice: FC< { previewingThemeName: string } > = ( { previewingThemeName } ) => {
+const LivePreviewNotice: FC< {
+	canPreviewButNeedUpgrade: boolean;
+	previewingThemeName: string;
+} > = ( { canPreviewButNeedUpgrade, previewingThemeName } ) => {
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
@@ -47,31 +50,42 @@ const LivePreviewNotice: FC< { previewingThemeName: string } > = ( { previewingT
 		}
 		if ( ! isPreviewingTheme() ) {
 			removeNotice( NOTICE_ID );
-		} else {
-			createWarningNotice(
-				sprintf(
-					// translators: %s: theme name
-					__(
-						'You are previewing the %s theme. You can try out your own style customizations, which will only be saved if you activate this theme.',
-						'wpcom-live-preview'
-					),
-					previewingThemeName
-				),
-				{
-					id: NOTICE_ID,
-					isDismissible: false,
-					actions: dashboardLink && [
-						{
-							label: __( 'Back to themes', 'wpcom-live-preview' ),
-							url: dashboardLink,
-							variant: 'secondary',
-						},
-					],
-				}
-			);
+			return;
 		}
+		// Avoid showing the redundant notice.
+		if ( canPreviewButNeedUpgrade ) {
+			return;
+		}
+		createWarningNotice(
+			sprintf(
+				// translators: %s: theme name
+				__(
+					'You are previewing the %s theme. You can try out your own style customizations, which will only be saved if you activate this theme.',
+					'wpcom-live-preview'
+				),
+				previewingThemeName
+			),
+			{
+				id: NOTICE_ID,
+				isDismissible: false,
+				actions: dashboardLink && [
+					{
+						label: __( 'Back to themes', 'wpcom-live-preview' ),
+						url: dashboardLink,
+						variant: 'secondary',
+					},
+				],
+			}
+		);
 		return () => removeNotice( NOTICE_ID );
-	}, [ siteEditorStore, dashboardLink, createWarningNotice, removeNotice, previewingThemeName ] );
+	}, [
+		siteEditorStore,
+		dashboardLink,
+		createWarningNotice,
+		removeNotice,
+		previewingThemeName,
+		canPreviewButNeedUpgrade,
+	] );
 	return null;
 };
 
@@ -82,7 +96,9 @@ const LivePreviewNoticePlugin = () => {
 	} );
 	return (
 		<>
-			<LivePreviewNotice { ...{ previewingThemeName: previewingTheme.name } } />
+			<LivePreviewNotice
+				{ ...{ canPreviewButNeedUpgrade, previewingThemeName: previewingTheme.name } }
+			/>
 			<LivePreviewUpgradeNotice
 				{ ...{ canPreviewButNeedUpgrade, previewingThemeType: previewingTheme.type } }
 			/>
