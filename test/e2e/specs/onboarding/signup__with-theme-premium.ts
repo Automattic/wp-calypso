@@ -9,7 +9,6 @@ import {
 	UserSignupPage,
 	SignupPickPlanPage,
 	CartCheckoutPage,
-	StartSiteFlow,
 	SecretsManager,
 	NewSiteResponse,
 	RestAPIClient,
@@ -111,17 +110,11 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			}
 		} );
 
-		it( 'Click on the continue on Design Picker', async function () {
-			const startSiteFlow = new StartSiteFlow( page );
-
-			await startSiteFlow.clickButton( 'Continue' );
-		} );
-
-		it( 'Land in Home dashboard', async function () {
-			await page.waitForURL(
-				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` ),
-				{ timeout: 30 * 1000 }
-			);
+		it( 'Installs theme in Marketplace thank you page', async () => {
+			await Promise.all( [
+				page.waitForURL( /.*marketplace\/thank-you.*/ ),
+				page.waitForLoadState(),
+			] );
 		} );
 
 		it( 'Checks the active theme', async function () {
