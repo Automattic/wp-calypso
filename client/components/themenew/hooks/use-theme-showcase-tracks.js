@@ -3,13 +3,15 @@ import { property, snakeCase } from 'lodash';
 import { useSelector } from 'calypso/state';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemeType, isThemeActive } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useThemeContext } from '../theme-context';
 import { useThemeShowcaseContext } from '../theme-showcase-context';
 
 export default function useThemeShowcaseTracks() {
 	const { position, themeId } = useThemeContext();
 
-	const isActive = useSelector( ( state ) => isThemeActive( state, themeId ) );
+	const siteId = useSelector( getSelectedSiteId );
+	const isActive = useSelector( ( state ) => isThemeActive( state, themeId, siteId ) );
 	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
 
 	const { filterString, query, themes } = useThemeShowcaseContext();

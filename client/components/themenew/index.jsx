@@ -1,6 +1,8 @@
 import Theme from './theme';
 import { ThemeContextProvider } from './theme-context';
 
+import '../theme/style.scss';
+
 export default function ( props ) {
 	const { position, themeId, ...restProps } = props;
 

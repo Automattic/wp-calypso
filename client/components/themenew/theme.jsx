@@ -23,7 +23,7 @@ export default function Theme( props ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', themeId ) );
-	const isActive = useSelector( ( state ) => isThemeActive( state, themeId ) );
+	const isActive = useSelector( ( state ) => isThemeActive( state, themeId, siteId ) );
 	const isInstalling = useSelector( ( state ) => isInstallingTheme( state, themeId, siteId ) );
 
 	const dispatch = useDispatch();
@@ -32,7 +32,7 @@ export default function Theme( props ) {
 	const { imageClickUrl, imageLabel, onImageClick } = useImageClick( { selectedStyleVariation } );
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
-	if ( isPlaceholder ) {
+	if ( isPlaceholder || ! theme ) {
 		return <ThemePlaceholder />;
 	}
 
