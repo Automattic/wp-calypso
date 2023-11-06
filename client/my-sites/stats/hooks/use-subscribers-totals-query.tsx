@@ -20,6 +20,7 @@ const selectSubscribers = ( payload: {
 	total_wpcom: number;
 } ) => {
 	return {
+		total: payload.total,
 		total_email: payload.total_email,
 		total_wpcom: payload.total_wpcom,
 	};
@@ -62,7 +63,7 @@ export default function useSubscribersTotalsQueries( siteId: number | null ) {
 		data: {
 			total_email: queries[ 0 ]?.data?.total_email,
 			total_wpcom: queries[ 0 ]?.data?.total_wpcom,
-			total: queries[ 1 ]?.data?.email_subscribers,
+			total: queries[ 0 ]?.data?.total,
 			paid_subscribers: queries[ 1 ]?.data?.paid_subscribers,
 			free_subscribers:
 				queries[ 1 ]?.data?.email_subscribers !== undefined &&
