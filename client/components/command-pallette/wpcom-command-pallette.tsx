@@ -101,7 +101,7 @@ export const WpcomCommandPalette = () => {
 
 	// Cmd+K shortcut
 	useEffect( () => {
-		const down = ( e: any ) => {
+		const down = ( e: KeyboardEvent ) => {
 			if ( e.key === 'k' && ( e.metaKey || e.ctrlKey ) ) {
 				e.preventDefault();
 				toggle();
@@ -121,7 +121,7 @@ export const WpcomCommandPalette = () => {
 		return false;
 	}
 
-	const onKeyDown = ( event: any ) => {
+	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		if (
 			// Ignore keydowns from IMEs
 			event.nativeEvent.isComposing ||
