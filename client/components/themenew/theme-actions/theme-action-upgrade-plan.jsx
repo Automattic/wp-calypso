@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -14,10 +15,12 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useThemeShowcaseTracks from '../hooks/use-theme-showcase-tracks';
 import { useThemeContext } from '../theme-context';
+import { useThemeShowcaseContext } from '../theme-showcase-context';
 
 // Jetpack-specific plan upgrade
 export default function ThemeActionUpgradePlan() {
 	const { selectedStyleVariation, themeId } = useThemeContext();
+	const { locale } = useThemeShowcaseContext();
 
 	const translate = useTranslate();
 
@@ -54,12 +57,14 @@ export default function ThemeActionUpgradePlan() {
 		return null;
 	}
 
+	const href = localizeThemesPath( jetpackUpgradeUrl, locale, ! isLoggedIn );
+
 	const onClick = () => {
 		recordThemeClick( 'calypso_themeshowcase_theme_click', { action: 'upgrade_plan' } );
 	};
 
 	return (
-		<PopoverMenuItem href={ jetpackUpgradeUrl } onClick={ onClick }>
+		<PopoverMenuItem href={ href } onClick={ onClick }>
 			{ translate( 'Upgrade to activate', {
 				comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
 			} ) }

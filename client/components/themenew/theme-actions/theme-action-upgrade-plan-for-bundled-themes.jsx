@@ -1,6 +1,7 @@
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -15,10 +16,12 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useThemeShowcaseTracks from '../hooks/use-theme-showcase-tracks';
 import { useThemeContext } from '../theme-context';
+import { useThemeShowcaseContext } from '../theme-showcase-context';
 
 // WPCOM-specific plan upgrade for premium themes with bundled software sets
 export default function ThemeActionUpgradePlanForBundledThemes() {
 	const { selectedStyleVariation, themeId } = useThemeContext();
+	const { locale } = useThemeShowcaseContext();
 
 	const translate = useTranslate();
 
@@ -62,6 +65,12 @@ export default function ThemeActionUpgradePlanForBundledThemes() {
 		} )
 	);
 
+	const href = localizeThemesPath(
+		`/checkout/${ siteSlug }/business?redirect_to=${ redirectTo }`,
+		locale,
+		! isLoggedIn
+	);
+
 	const onClick = () => {
 		recordThemeClick( 'calypso_themeshowcase_theme_click', {
 			action: 'upgrade_plan_for_bundled_themes',
@@ -69,10 +78,7 @@ export default function ThemeActionUpgradePlanForBundledThemes() {
 	};
 
 	return (
-		<PopoverMenuItem
-			href={ `/checkout/${ siteSlug }/business?redirect_to=${ redirectTo }` }
-			onClick={ onClick }
-		>
+		<PopoverMenuItem href={ href } onClick={ onClick }>
 			{ translate( 'Upgrade to activate', {
 				comment:
 					'label prompting user to upgrade the WordPress.com plan to activate a certain theme',

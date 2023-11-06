@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getThemeSignupUrl } from 'calypso/state/themes/selectors';
@@ -10,7 +11,7 @@ import { useThemeShowcaseContext } from '../theme-showcase-context';
 
 export default function ThemeActionSignup() {
 	const { selectedStyleVariation, themeId } = useThemeContext();
-	const { tabFilter } = useThemeShowcaseContext();
+	const { locale, tabFilter } = useThemeShowcaseContext();
 
 	const translate = useTranslate();
 
@@ -29,11 +30,13 @@ export default function ThemeActionSignup() {
 		return null;
 	}
 
+	const href = localizeThemesPath( themeSignupUrl, locale, ! isLoggedIn );
+
 	const onClick = () =>
 		recordThemeClick( 'calypso_themeshowcase_theme_click', { action: 'signup' } );
 
 	return (
-		<PopoverMenuItem href={ themeSignupUrl } onClick={ onClick }>
+		<PopoverMenuItem href={ href } onClick={ onClick }>
 			{ translate( 'Pick this design', {
 				comment: 'when signing up for a WordPress.com account with a selected theme',
 			} ) }

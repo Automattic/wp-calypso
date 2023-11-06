@@ -212,6 +212,7 @@ class ThemesSelection extends Component {
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
+			locale,
 		} = this.props;
 
 		const interlacedThemes = interlaceThemes( themes, wpOrgThemes, query.search, isLastPage );
@@ -220,6 +221,7 @@ class ThemesSelection extends Component {
 			<div className="themes__selection">
 				<ThemeShowcaseContextProvider
 					filterString={ filterString }
+					locale={ locale }
 					query={ query }
 					tabFilter={ tabFilter }
 					themes={ interlacedThemes }

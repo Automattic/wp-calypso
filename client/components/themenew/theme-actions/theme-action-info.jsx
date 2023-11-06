@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
@@ -10,7 +11,7 @@ import { useThemeShowcaseContext } from '../theme-showcase-context';
 
 export default function ThemeActionInfo() {
 	const { selectedStyleVariation, themeId } = useThemeContext();
-	const { tabFilter } = useThemeShowcaseContext();
+	const { locale, tabFilter } = useThemeShowcaseContext();
 
 	const translate = useTranslate();
 
@@ -29,10 +30,12 @@ export default function ThemeActionInfo() {
 		return null;
 	}
 
+	const href = localizeThemesPath( themeDetailsUrl, locale, ! isLoggedIn );
+
 	const onClick = () => recordThemeClick( 'calypso_themeshowcase_theme_click', { action: 'info' } );
 
 	return (
-		<PopoverMenuItem href={ themeDetailsUrl } onClick={ onClick }>
+		<PopoverMenuItem href={ href } onClick={ onClick }>
 			{ translate( 'Info', {
 				comment: 'label for displaying the theme info sheet',
 			} ) }
