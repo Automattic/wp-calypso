@@ -53,6 +53,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	} );
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
+	const hasFeedback = !! message?.rating_value;
 	const sources = message?.context?.sources ?? [];
 	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
 	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
@@ -172,7 +173,9 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 						>
 							{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
 						</AsyncLoad>
-						{ ! isUser && messageFullyTyped && <WasThisHelpfulButtons message={ message } /> }
+						{ ! hasFeedback && ! isUser && messageFullyTyped && (
+							<WasThisHelpfulButtons message={ message } />
+						) }
 					</>
 				) }
 				{ message.type === 'introduction' && (

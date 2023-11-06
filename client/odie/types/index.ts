@@ -33,6 +33,7 @@ export type MessageType =
 	| 'introduction';
 
 export type Message = {
+	message_id?: number;
 	content: string;
 	meta?: Record< string, string >;
 	role: MessageRole;
@@ -40,7 +41,7 @@ export type Message = {
 	liked?: boolean | null;
 	simulateTyping?: boolean;
 	context?: Context;
-	id?: string;
+	rating_value?: number;
 };
 
 export type Chat = {
