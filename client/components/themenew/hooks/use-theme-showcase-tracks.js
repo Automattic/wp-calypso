@@ -1,11 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { property, snakeCase } from 'lodash';
-import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemeType, isThemeActive } from 'calypso/state/themes/selectors';
 import { useThemeContext } from '../theme-context';
-import ThemeShowcaseContext from '../theme-showcase-context';
+import { useThemeShowcaseContext } from '../theme-showcase-context';
 
 export default function useThemeShowcaseTracks() {
 	const { position, themeId } = useThemeContext();
@@ -13,7 +12,7 @@ export default function useThemeShowcaseTracks() {
 	const isActive = useSelector( ( state ) => isThemeActive( state, themeId ) );
 	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
 
-	const { filterString, query, themes } = useContext( ThemeShowcaseContext );
+	const { filterString, query, themes } = useThemeShowcaseContext();
 	const {
 		filter = DEFAULT_THEME_QUERY.filter,
 		number = DEFAULT_THEME_QUERY.number,

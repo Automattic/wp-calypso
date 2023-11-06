@@ -9,7 +9,7 @@ import { Component } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
-import ThemeShowcaseContext from 'calypso/components/themenew/theme-showcase-context';
+import { ThemeShowcaseContextProvider } from 'calypso/components/themenew/theme-showcase-context';
 import ThemesList from 'calypso/components/themes-list';
 import { getThemeShowcaseEventRecorder } from 'calypso/my-sites/themes/events/theme-showcase-tracks';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -218,7 +218,12 @@ class ThemesSelection extends Component {
 
 		return (
 			<div className="themes__selection">
-				<ThemeShowcaseContext.Provider value={ { filterString, query, themes: interlacedThemes } }>
+				<ThemeShowcaseContextProvider
+					filterString={ filterString }
+					query={ query }
+					tabFilter={ tabFilter }
+					themes={ interlacedThemes }
+				>
 					<QueryThemes query={ query } siteId={ source } />
 					{ shouldFetchWpOrgThemes && <QueryThemes query={ wpOrgQuery } siteId="wporg" /> }
 					<ThemesList
@@ -253,7 +258,7 @@ class ThemesSelection extends Component {
 						wpOrgThemes={ wpOrgThemes }
 						isRequesting={ isRequesting }
 					/>
-				</ThemeShowcaseContext.Provider>
+				</ThemeShowcaseContextProvider>
 			</div>
 		);
 	}

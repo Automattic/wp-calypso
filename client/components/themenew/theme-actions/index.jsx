@@ -10,10 +10,14 @@ import useThemeShowcaseTracks from '../hooks/use-theme-showcase-tracks';
 import { useThemeContext } from '../theme-context';
 import ThemeActionActivate from './theme-action-activate';
 import ThemeActionCustomize from './theme-action-customize';
+import ThemeActionDelete from './theme-action-delete';
+import ThemeActionInfo from './theme-action-info';
 import ThemeActionLivePreview from './theme-action-live-preview';
 import ThemeActionPreview from './theme-action-preview';
 import ThemeActionPurchase from './theme-action-purchase';
+import ThemeActionSignup from './theme-action-signup';
 import ThemeActionSubscribe from './theme-action-subscribe';
+import ThemeActionTryAndCustomize from './theme-action-try-and-customize';
 import ThemeActionUpgradePlan from './theme-action-upgrade-plan';
 import ThemeActionUpgradePlanForBundledThemes from './theme-action-upgrade-plan-for-bundled-themes';
 import ThemeActionUpgradePlanForExternallyManagedThemes from './theme-action-upgrade-plan-for-externally-managed-themes';
@@ -78,7 +82,13 @@ export default function ThemeActions() {
 					<ThemeActionUpgradePlanForBundledThemes />
 					<ThemeActionUpgradePlanForExternallyManagedThemes />
 					<ThemeActionActivate />
+					<ThemeActionTryAndCustomize />
+					<ThemeActionDelete />
+					<ThemeActionSignup />
+
 					<PopoverMenuSeparator />
+
+					<ThemeActionInfo />
 				</PopoverMenu>
 			) }
 		</span>

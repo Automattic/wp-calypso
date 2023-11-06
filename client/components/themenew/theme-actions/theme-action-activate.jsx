@@ -6,6 +6,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { activate } from 'calypso/state/themes/actions';
 import {
+	getTheme,
 	isExternallyManagedTheme,
 	isThemePremium,
 	isPremiumThemeAvailable,
@@ -28,6 +29,7 @@ export default function ThemeActionActivate() {
 	const isExternallyManaged = useSelector( ( state ) =>
 		isExternallyManagedTheme( state, themeId )
 	);
+	const theme = useSelector( ( state ) => getTheme( state, siteId, themeId ) );
 	const isSubscribed = useSelector( ( state ) =>
 		isMarketplaceThemeSubscribed( state, themeId, siteId )
 	);
@@ -47,7 +49,7 @@ export default function ThemeActionActivate() {
 		! siteId ||
 		! isLoggedIn ||
 		isJetpackMultisite ||
-		( isExternallyManaged && ! isSubscribed ) ||
+		( isExternallyManaged && ! theme && ! isSubscribed ) ||
 		isActive ||
 		( ! isWpcom && ! isAtomic ) ||
 		( isPremium && ! isAlreadyPurchased )
