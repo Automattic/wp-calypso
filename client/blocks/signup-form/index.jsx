@@ -73,11 +73,13 @@ const debug = debugModule( 'calypso:signup-form:form' );
 let usernamesSearched = [];
 let timesUsernameValidationFailed = 0;
 let timesPasswordValidationFailed = 0;
+let timesEmailValidationFailed = 0;
 
 const resetAnalyticsData = () => {
 	usernamesSearched = [];
 	timesUsernameValidationFailed = 0;
 	timesPasswordValidationFailed = 0;
+	timesEmailValidationFailed = 0;
 };
 
 class SignupForm extends Component {
@@ -321,6 +323,14 @@ class SignupForm extends Component {
 
 						timesPasswordValidationFailed++;
 					}
+
+					if ( field === 'email' ) {
+						recordTracksEvent( 'calypso_signup_email_validation_failed', {
+							error: keys( fieldError )[ 0 ],
+						} );
+
+						timesEmailValidationFailed++;
+					}
 				} );
 
 				if ( fields.email ) {
@@ -454,6 +464,7 @@ class SignupForm extends Component {
 				unique_usernames_searched: usernamesSearched.length,
 				times_username_validation_failed: timesUsernameValidationFailed,
 				times_password_validation_failed: timesPasswordValidationFailed,
+				times_email_validation_failed: timesEmailValidationFailed,
 			};
 
 			this.props.submitForm( this.state.form, this.getUserData(), analyticsData, () => {
