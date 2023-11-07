@@ -56,6 +56,9 @@ const PatternPageList = ( {
 	const categoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_PAGES_CATEGORIES );
 	const composite = useCompositeState( { orientation: 'vertical' } );
 
+	const getCategoryLabel = ( category: Category ) =>
+		category.name === 'posts' ? translate( 'Blog' ) : category.label;
+
 	return (
 		<Composite
 			{ ...composite }
@@ -74,7 +77,8 @@ const PatternPageList = ( {
 				>
 					<PatternPageListItem label={ translate( 'Homepage' ) } isDisabled />
 				</CompositeItem>
-				{ categoriesInOrder.map( ( { name, label } ) => {
+				{ categoriesInOrder.map( ( category: Category ) => {
+					const { name } = category;
 					const isSelected = name ? selectedPages.includes( name ) : false;
 					const hasPages = name && pagesMapByCategory[ name ]?.length;
 
@@ -91,7 +95,10 @@ const PatternPageList = ( {
 							aria-checked={ isSelected }
 							onClick={ () => onSelectPage( name ) }
 						>
-							<PatternPageListItem label={ label } isSelected={ isSelected } />
+							<PatternPageListItem
+								label={ getCategoryLabel( category ) }
+								isSelected={ isSelected }
+							/>
 						</CompositeItem>
 					);
 				} ) }
