@@ -5,6 +5,7 @@ import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
@@ -55,6 +56,38 @@ const removeWhiteBackground = function () {
 	}
 
 	document.body.classList.remove( 'is-white-signup' );
+};
+
+/**
+ * Load experiment related to showing social signup on the onboarding-pm flow user step and redirect to proper path.
+ * This function returns the parameters required for a paid media redirect if applicable and null if not.
+ * If assigned to experiment treatment and the user lands on the onboarding-pm flow we redirect them to the onboarding-pm-social flow
+ * If in control and the user lands on the onboarding-pm-social flow we redirect them to the onboarding-pm flow
+ * @param {boolean} userLoggedIn
+ * @param {string} flowName the current flow name
+ * @param {*} context the page context
+ * @returns the newer context params with the updated flow details or null
+ */
+const getPaidMediaRedirect = async ( userLoggedIn, flowName, context ) => {
+	let redirectParams = null;
+
+	const stepName = getStepName( context.params );
+	if ( ! userLoggedIn && ( ! stepName || stepName.includes( 'user' ) ) ) {
+		if ( [ 'onboarding-pm', 'onboarding-pm-social' ].includes( flowName ) ) {
+			const result = await loadExperimentAssignment(
+				'calypso_gf_signup_onboardingpm_passwordless_registration'
+			);
+			if ( flowName === 'onboarding-pm' && result?.variationName === 'treatment' ) {
+				redirectParams = { ...context.params, flowName: 'onboarding-pm-social' };
+			} else if (
+				flowName === 'onboarding-pm-social' &&
+				( ! result?.variationName || result?.variationName === 'control' )
+			) {
+				redirectParams = { ...context.params, flowName: 'onboarding-pm' };
+			}
+		}
+	}
+	return redirectParams;
 };
 
 export const addVideoPressSignupClassName = () => {
@@ -160,7 +193,7 @@ export default {
 		next();
 	},
 
-	redirectToFlow( context, next ) {
+	async redirectToFlow( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const localeFromParams = context.params.lang;
@@ -222,6 +255,17 @@ export default {
 				( context.querystring ? '?' + context.querystring : '' ) +
 				( context.hashstring ? '#' + context.hashstring : '' );
 			return;
+		}
+
+		/**
+		 * Temporary Experiment related redirect
+		 */
+		const paidMediaRedirect = await getPaidMediaRedirect( userLoggedIn, flowName, context );
+		if ( paidMediaRedirect ) {
+			return page.redirect(
+				getValidPath( paidMediaRedirect, userLoggedIn ) +
+					( context.querystring ? '?' + context.querystring : '' )
+			);
 		}
 
 		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
