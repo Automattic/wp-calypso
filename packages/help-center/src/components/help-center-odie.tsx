@@ -7,7 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import OdieAssistant from 'calypso/odie';
-import { noop, useOdieAssistantContext } from 'calypso/odie/context';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 /**
  * Internal Dependencies
  */
@@ -28,10 +28,6 @@ export const HelpCenterOdie = () => {
 					>
 						<Gridicon icon="comment" />
 						{ __( 'Start a New Chat' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem onClick={ noop } className="help-center__container-header-menu-item">
-						<Gridicon icon="mail" />
-						{ __( 'Send Transcript to Email' ) }
 					</PopoverMenuItem>
 				</EllipsisMenu>
 			</div>

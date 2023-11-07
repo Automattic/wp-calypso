@@ -118,8 +118,6 @@ class StatsPeriodNavigation extends PureComponent {
 			disableNextArrow,
 			queryParams,
 			slug,
-			pathTemplate,
-			onChangeChartQuantity,
 			isWithNewDateControl,
 			dateRange,
 		} = this.props;
@@ -135,14 +133,7 @@ class StatsPeriodNavigation extends PureComponent {
 				<div className="stats-period-navigation__children">{ children }</div>
 				{ isWithNewDateControl ? (
 					<div className="stats-period-navigation__date-control">
-						<StatsDateControl
-							slug={ slug }
-							queryParams={ queryParams }
-							period={ period }
-							pathTemplate={ pathTemplate }
-							onChangeChartQuantity={ onChangeChartQuantity }
-							dateRange={ dateRange }
-						/>
+						<StatsDateControl slug={ slug } queryParams={ queryParams } dateRange={ dateRange } />
 						<div className="stats-period-navigation__period-control">
 							{ this.props.activeTab && (
 								<Legend

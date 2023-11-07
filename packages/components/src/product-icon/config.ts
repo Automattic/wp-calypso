@@ -4,6 +4,7 @@ import jetpackBackupAddon from './images/jetpack-backup-addon.svg';
 import jetpackBackup from './images/jetpack-backup.svg';
 import jetpackBoost from './images/jetpack-boost.svg';
 import jetpackBundles from './images/jetpack-bundles.svg';
+import jetpackCreator from './images/jetpack-creator.svg';
 import jetpackCrm from './images/jetpack-crm.svg';
 import jetpackFree from './images/jetpack-free.svg';
 import jetpackGoldenToken from './images/jetpack-golden-token.svg';
@@ -45,6 +46,7 @@ export const paths = {
 	'wpcom-premium': wpcomPremium,
 	'jetpack-backup-addon': jetpackBackupAddon,
 	'jetpack-golden-token-lifetime': jetpackGoldenToken,
+	'jetpack-creator': jetpackCreator,
 };
 
 export type SupportedSlugs =
@@ -139,6 +141,9 @@ export type SupportedSlugs =
 	| 'jetpack_starter_monthly'
 	| 'jetpack_videopress'
 	| 'jetpack_videopress_monthly'
+	| 'jetpack_creator_monthly'
+	| 'jetpack_creator_yearly'
+	| 'jetpack_creator_bi_yearly'
 	| 'jetpack_backup_addon_storage_10gb_monthly'
 	| 'jetpack_backup_addon_storage_100gb_monthly'
 	| 'jetpack_backup_addon_storage_1tb_monthly'
@@ -254,4 +259,9 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 	'jetpack-videopress': [ 'jetpack_videopress', 'jetpack_videopress_monthly' ],
 	'jetpack-starter': [ 'jetpack_starter_yearly', 'jetpack_starter_monthly' ],
 	'jetpack-golden-token-lifetime': [ 'jetpack_golden_token_lifetime' ],
+	'jetpack-creator': [
+		'jetpack_creator_monthly',
+		'jetpack_creator_yearly',
+		'jetpack_creator_bi_yearly',
+	],
 } as const;

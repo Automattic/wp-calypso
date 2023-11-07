@@ -5,7 +5,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 const DATE_FORMAT = 'LLL';
 
-const ClosureNotice = ( { closesAt, displayAt, holidayName, reopensAt } ) => {
+const ClosureNotice = ( { closesAt, displayAt, reopensAt } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
@@ -20,14 +20,13 @@ const ClosureNotice = ( { closesAt, displayAt, holidayName, reopensAt } ) => {
 
 	if ( currentDate.isBefore( closesAt ) ) {
 		message = translate(
-			'{{strong}}Note:{{/strong}} Quick Start sessions will be closed for %(holidayName)s from %(closesAt)s until %(reopensAt)s. ' +
+			'{{strong}}Notice:{{/strong}} Quick Start sessions will be closed from %(closesAt)s until %(reopensAt)s. ' +
 				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} and we’ll ' +
 				'get to it as fast as we can. Thank you!',
 			{
 				args: {
 					closesAt: moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
 					reopensAt: moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
-					holidayName,
 				},
 				components: {
 					link: <a href="/help/contact" />,
@@ -37,17 +36,19 @@ const ClosureNotice = ( { closesAt, displayAt, holidayName, reopensAt } ) => {
 		);
 	} else {
 		message = translate(
-			'{{strong}}Note:{{/strong}} Quick Start sessions are closed for %(holidayName)s and will reopen %(reopensAt)s. ' +
-				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} and we’ll ' +
-				'get back to you as fast as we can. Thank you!',
+			'{{strong}}Quick Start Sessions will be closed from %(closesAt)s – %(reopensAt)s.{{/strong}}{{br/}}' +
+				'Once a year, Happiness Engineers get together to work on improving our services, building new features, and learning how to better serve you. ' +
+				'During this time, we will continue to provide support over email. If you need to get in touch with us, please submit a {{link}}support request from this page{{/link}} and we will get to it as fast as we can. ' +
+				'Quick Start Sessions will re-open at %(reopensAt)s. Thank you for your understanding!',
 			{
 				args: {
+					closesAt: moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
 					reopensAt: moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
-					holidayName,
 				},
 				components: {
 					link: <a href="/help/contact" />,
 					strong: <strong />,
+					br: <br />,
 				},
 			}
 		);

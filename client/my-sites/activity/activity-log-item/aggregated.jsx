@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, FoldableCard } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { omit, flowRight as compose } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { applySiteOffset } from 'calypso/lib/site/timezone';

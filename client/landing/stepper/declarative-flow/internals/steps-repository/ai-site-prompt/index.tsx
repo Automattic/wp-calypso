@@ -56,7 +56,7 @@ const AISitePrompt: Step = function ( props ) {
 		event.preventDefault();
 		setLoading( true );
 		wpcomRequest( {
-			path: '/pattern-assembler/ai/v3/generate',
+			path: '/pattern-assembler/ai/latest/generate',
 			method: 'POST',
 			apiNamespace: 'wpcom/v2',
 			body: {
@@ -81,7 +81,7 @@ const AISitePrompt: Step = function ( props ) {
 			.catch( ( error ) => {
 				console.error( 'big sky error', error ); /* eslint-disable-line no-console */
 				setLoading( false );
-				submit?.();
+				goNext?.();
 			} );
 	};
 
@@ -91,7 +91,6 @@ const AISitePrompt: Step = function ( props ) {
 				<div className="site-prompt__instructions-container">
 					<form onSubmit={ onSubmit }>
 						<TextareaControl
-							label={ __( 'Please describe your site, business and ideas in detail.' ) }
 							help={ __( 'Sharing more detail here will help AI understand your intent better.' ) }
 							value={ prompt }
 							onChange={ ( value ) => setPrompt( value ) }
@@ -125,8 +124,10 @@ const AISitePrompt: Step = function ( props ) {
 					formattedHeader={
 						<FormattedHeader
 							id="site-prompt-header"
-							headerText={ __( 'Tell us a bit about the site you want.' ) }
-							subHeaderText={ __( 'And let WordPress do Wonders.' ) }
+							headerText={ __( 'Tell us a bit about your web site or business.' ) }
+							subHeaderText={ __(
+								'We will create a home page template for you based on best practices for sites like yours.'
+							) }
 							align="left"
 						/>
 					}

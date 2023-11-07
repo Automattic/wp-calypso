@@ -6,7 +6,7 @@ import type { SiteInfo } from '../types';
 interface Props {
 	siteId: number | string;
 	stylesheet?: string;
-	patternIds: string[];
+	patternIdsByCategory: Record< string, string[] >;
 	children: JSX.Element;
 	siteInfo: SiteInfo;
 }
@@ -14,11 +14,16 @@ interface Props {
 const PatternsRendererProvider = ( {
 	siteId,
 	stylesheet = '',
-	patternIds,
+	patternIdsByCategory,
 	children,
 	siteInfo = {},
 }: Props ) => {
-	const renderedPatterns = useRenderedPatterns( siteId, stylesheet, patternIds, siteInfo );
+	const renderedPatterns = useRenderedPatterns(
+		siteId,
+		stylesheet,
+		patternIdsByCategory,
+		siteInfo
+	);
 
 	return (
 		<PatternsRendererContext.Provider value={ renderedPatterns }>

@@ -1,3 +1,4 @@
+import { ConfettiAnimation } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
 import { emailManagement } from 'calypso/my-sites/email/paths';
@@ -38,6 +39,7 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 				buttonText={ translate( 'Add email' ) }
 				trackEvent="calypso_domain_transfer_thank_you_professional_email_click"
 			/>
+			<ConfettiAnimation delay={ 1000 } />
 		</ThankYouLayout>
 	);
 };

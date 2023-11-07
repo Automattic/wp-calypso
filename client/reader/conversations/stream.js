@@ -29,9 +29,9 @@ export default function ( props ) {
 	return (
 		<>
 			<NavigationHeader
-				navigationItems={ [] }
 				title={ translate( 'Conversations' ) }
 				subtitle={ translate( 'Monitor all of your ongoing discussions.' ) }
+				className="conversations__header"
 			/>
 			<Stream
 				key="conversations"

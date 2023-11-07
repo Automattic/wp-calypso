@@ -214,7 +214,9 @@ function itemToSelectorProduct(
 			description: getForCurrentCROIteration( item.getDescription ),
 			featuredDescription: getFeaturedPlanDescription( item ),
 			lightboxDescription: getLightboxPlanDescription( item ),
-			productsIncluded: item.getProductsIncluded?.() || [],
+			productsIncluded:
+				// There are no products included for Jetpack Creator plans, so we don't want to show the "Included" section
+				item.getProductsIncluded?.() || [],
 			whatIsIncluded: item.getWhatIsIncluded
 				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],

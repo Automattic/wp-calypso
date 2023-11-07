@@ -647,10 +647,11 @@ async function openLinksInParentFrame( calypsoPort ) {
 	const body = document.querySelector( '.interface-interface-skeleton__body' );
 	sidebarsObserver.observe( body, { childList: true } );
 
+	// Observes the popover slot for the "Manage reusable blocks" link which can be found
+	// in the reusable block's more menu or in the block-editor menu
 	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
-		const isComponentsPopover = ( node ) => node.classList.contains( 'components-popover' );
-
 		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
+			// We should leave the URL alone so it goes to the fancy site-editor view, not a regular old post listing
 			anchorElem.href = manageReusableBlocksUrl;
 			anchorElem.target = '_top';
 		};
@@ -664,11 +665,13 @@ async function openLinksInParentFrame( calypsoPort ) {
 					continue;
 				}
 
-				if ( isComponentsPopover( node ) ) {
-					const manageReusableBlocksAnchorElem = node.querySelector(
-						'a[href$="edit.php?post_type=wp_block"]'
+				const popoverSlot = node.querySelector( '.components-popover' );
+
+				if ( popoverSlot ) {
+					const manageReusableBlocksAnchorElem = popoverSlot.querySelector(
+						'a[href$="site-editor.php?path=%2Fpatterns"]'
 					);
-					const manageNavigationMenusAnchorElem = node.querySelector(
+					const manageNavigationMenusAnchorElem = popoverSlot.querySelector(
 						'a[href$="edit.php?post_type=wp_navigation"]'
 					);
 
@@ -692,7 +695,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 			}
 		}
 	} );
-	const popoverSlotElem = document.querySelector( '.interface-interface-skeleton ~ .popover-slot' );
+	const popoverSlotElem = document.querySelector( 'body' );
 	popoverSlotElem && popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.

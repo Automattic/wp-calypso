@@ -1,14 +1,8 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
-import {
-	updateLaunchpadSettings,
-	useSortedLaunchpadTasks,
-	LaunchpadNavigator,
-} from '@automattic/data-stores';
-import { DefaultWiredLaunchpad, type Task } from '@automattic/launchpad';
-import { useDispatch } from '@wordpress/data';
+import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/data-stores';
+import { Launchpad, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useLaunchpadNavigator } from 'calypso/data/launchpad-navigator/use-launchpad-navigator';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -42,30 +36,6 @@ const CustomerHomeLaunchpad = ( {
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
-
-	const { setActiveChecklist, receiveActiveChecklistSlug } = useDispatch(
-		LaunchpadNavigator.store
-	);
-
-	const {
-		data: { current_checklist: currentNavigatorChecklist },
-	} = useLaunchpadNavigator( siteSlug, null );
-
-	// Ensure that if we updated the checklist on the server, we update the navigator.
-	// One case where this can happen is when we launch a site and switch to a post-launch checklist.
-	useEffect( () => {
-		receiveActiveChecklistSlug( currentNavigatorChecklist );
-
-		if ( siteSlug && checklistSlug ) {
-			setActiveChecklist( siteSlug, checklistSlug );
-		}
-	}, [
-		checklistSlug,
-		currentNavigatorChecklist,
-		receiveActiveChecklistSlug,
-		setActiveChecklist,
-		siteSlug,
-	] );
 
 	// return nothing if the launchpad is dismissed
 	if ( isDismissed ) {
@@ -117,7 +87,7 @@ const CustomerHomeLaunchpad = ( {
 					</div>
 				) }
 			</div>
-			<DefaultWiredLaunchpad
+			<Launchpad
 				siteSlug={ siteSlug }
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }

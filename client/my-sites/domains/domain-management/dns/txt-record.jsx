@@ -24,9 +24,9 @@ class TxtRecord extends Component {
 
 		if ( value?.length === 0 ) {
 			return translate( 'TXT records may not be empty' );
-		} else if ( value?.length > 65535 ) {
+		} else if ( value?.length > 2048 ) {
 			return translate(
-				'TXT records may not exceed 65535 characters. {{supportLink}}Learn more{{/supportLink}}.',
+				'TXT records may not exceed 2048 characters. {{supportLink}}Learn more{{/supportLink}}.',
 				{
 					components: {
 						supportLink: (

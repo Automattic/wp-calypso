@@ -90,6 +90,9 @@ project {
 		password("MATTICBOT_GITHUB_BEARER_TOKEN", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN, label = "Matticbot GitHub Bearer Token")
 		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
 
+		// TeamCity Rich Notificaion App.
+		password("TEAMCITY_SLACK_RICH_NOTIFICATION_APP_OAUTH_TOKEN", "credentialsJSON:1ade13b3-4f88-4b2a-a71a-9c6f95698d00", display=ParameterDisplay.HIDDEN)
+
 		// Values related to the WPCOM VCS
 		password("WPCOM_JETPACK_PLUGIN_PATH", "credentialsJSON:db955a02-2a79-4167-a823-ac4840fd71d7", display = ParameterDisplay.HIDDEN)
 		password("WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH", "credentialsJSON:81683f57-784e-4535-9af0-26212c9e599b", display = ParameterDisplay.HIDDEN)

@@ -1,7 +1,7 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 
-export type Formatter = ( text: string, options?: any ) => string;
+export type Formatter< Options = unknown > = ( text: string, options?: Options ) => string;
 type AugmentFormatterReturnType< T extends Formatter, TNewReturn > = (
 	...a: Parameters< T >
 ) => ReturnType< T > | TNewReturn;
@@ -34,7 +34,7 @@ export const firstValid: ( ...args: ConditionalFormatter[] ) => NullableFormatte
 	( a ) =>
 		( predicates.find( ( p ) => false !== p( a ) ) as Formatter )?.( a );
 
-export const stripHtmlTags: Formatter = ( description, allowedTags = [] ) => {
+export const stripHtmlTags: Formatter< Array< string > > = ( description, allowedTags = [] ) => {
 	const pattern = new RegExp( `(<([^${ allowedTags.join( '' ) }>]+)>)`, 'gi' );
 
 	return description ? description.replace( pattern, '' ) : '';
@@ -46,13 +46,19 @@ export const hasTag = ( text: string, tag: string ): boolean => {
 	return pattern.test( text );
 };
 
+export const formatNextdoorDate = new Intl.DateTimeFormat( 'en-GB', {
+	// Result: "7 Oct", "31 Dec"
+	day: 'numeric',
+	month: 'short',
+} ).format;
+
 export const formatTweetDate = new Intl.DateTimeFormat( 'en-US', {
 	// Result: "Apr 7", "Dec 31"
 	month: 'short',
 	day: 'numeric',
 } ).format;
 
-export type Platform = 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'mastodon';
+export type Platform = 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'mastodon' | 'nextdoor';
 
 type PreviewTextOptions = {
 	platform: Platform;
@@ -69,6 +75,7 @@ export const hashtagUrlMap: Record< Platform, string > = {
 	linkedin: 'https://www.linkedin.com/feed/hashtag/?keywords=%1$s',
 	instagram: 'https://www.instagram.com/explore/tags/%1$s',
 	mastodon: 'https://%2$s/tags/%1$s',
+	nextdoor: 'https://nextdoor.com/hashtag/%1$s',
 };
 
 /**

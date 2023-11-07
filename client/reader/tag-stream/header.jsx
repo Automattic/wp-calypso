@@ -1,10 +1,11 @@
 import classnames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
@@ -59,13 +60,18 @@ class TagStreamHeader extends Component {
 			onFollowToggle,
 			showBack,
 			showSort,
+			translate,
 		} = this.props;
-		const sortOrder = this.props.sort || 'relevance';
+		const sortOrder = this.props.sort || 'date';
 
 		// A bit of a hack: check for a prompt tag (which always have a description) from the slug before waiting for tag info to load,
 		// so we can set a smaller title size and prevent it from resizing as the page loads. Should be refactored if tag descriptions
 		// end up getting used for other things besides prompt tags.
 		const isPromptTag = new RegExp( /^dailyprompt-\d+$/ ).test( title );
+
+		// Display the tag description as the title if there is one.
+		const titleText = description ?? title;
+		const subtitleText = description ? title : null;
 
 		const classes = classnames( {
 			'tag-stream__header': true,
@@ -76,26 +82,23 @@ class TagStreamHeader extends Component {
 
 		return (
 			<div className={ classes }>
-				<div className="tag-stream__header-title-group">
-					<h1 className="tag-stream__header-title">{ title }</h1>
-					{ description && <h2 className="tag-stream__header-description">{ description }</h2> }
-				</div>
+				<NavigationHeader title={ titleText } subtitle={ subtitleText } />
 				{ ( showSort || showFollow ) && (
 					<div className="tag-stream__header-controls">
 						<div className="tag-stream__header-sort-picker">
 							{ showSort && (
 								<SegmentedControl compact>
 									<SegmentedControl.Item
-										selected={ sortOrder !== 'date' }
-										onClick={ this.useRelevanceSort }
-									>
-										{ this.props.translate( 'Popular' ) }
-									</SegmentedControl.Item>
-									<SegmentedControl.Item
-										selected={ sortOrder === 'date' }
+										selected={ sortOrder !== 'relevance' }
 										onClick={ this.useDateSort }
 									>
-										{ this.props.translate( 'Recent' ) }
+										{ translate( 'Recent' ) }
+									</SegmentedControl.Item>
+									<SegmentedControl.Item
+										selected={ sortOrder === 'relevance' }
+										onClick={ this.useRelevanceSort }
+									>
+										{ translate( 'Popular' ) }
 									</SegmentedControl.Item>
 								</SegmentedControl>
 							) }

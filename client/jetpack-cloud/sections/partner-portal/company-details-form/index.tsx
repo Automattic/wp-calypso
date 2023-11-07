@@ -50,6 +50,7 @@ interface Props {
 		state?: string;
 	};
 	submitLabel: string;
+	showSignupFields?: boolean;
 }
 
 export default function CompanyDetailsForm( {
@@ -58,6 +59,7 @@ export default function CompanyDetailsForm( {
 	initialValues = {},
 	onSubmit,
 	submitLabel,
+	showSignupFields = false,
 	referrer,
 }: Props ) {
 	const translate = useTranslate();
@@ -74,7 +76,7 @@ export default function CompanyDetailsForm( {
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
-	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-5' );
+	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '' );
 	const [ partnerProgramOptIn, setPartnerProgramOptIn ] = useState( false );
 
 	const [ showPartnerProgramOptIn, setShowPartnerProgramOptIn ] = useState( false );
@@ -190,58 +192,62 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Choose which of the below options best describes your company:' ) }
-					</FormLabel>
-					<FormRadio
-						label={ translate( 'Agency' ) }
-						value="agency"
-						checked={ companyType === 'agency' }
-						onChange={ handleCompanyTypeChange }
-						disabled={ isLoading }
-						className={ undefined }
-					/>
-					<FormRadio
-						label={ translate( 'Freelancer/Pro' ) }
-						value="freelancer"
-						checked={ companyType === 'freelancer' }
-						onChange={ handleCompanyTypeChange }
-						disabled={ isLoading }
-						className={ undefined }
-					/>
-					<FormRadio
-						label={ translate( 'A business with multiple sites' ) }
-						value="business"
-						checked={ companyType === 'business' }
-						onChange={ handleCompanyTypeChange }
-						disabled={ isLoading }
-						className={ undefined }
-					/>
-				</FormFieldset>
+				{ showSignupFields && (
+					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Choose which of the below options best describes your company:' ) }
+						</FormLabel>
+						<FormRadio
+							label={ translate( 'Agency' ) }
+							value="agency"
+							checked={ companyType === 'agency' }
+							onChange={ handleCompanyTypeChange }
+							disabled={ isLoading }
+							className={ undefined }
+						/>
+						<FormRadio
+							label={ translate( 'Freelancer/Pro' ) }
+							value="freelancer"
+							checked={ companyType === 'freelancer' }
+							onChange={ handleCompanyTypeChange }
+							disabled={ isLoading }
+							className={ undefined }
+						/>
+						<FormRadio
+							label={ translate( 'A business with multiple sites' ) }
+							value="business"
+							checked={ companyType === 'business' }
+							onChange={ handleCompanyTypeChange }
+							disabled={ isLoading }
+							className={ undefined }
+						/>
+					</FormFieldset>
+				) }
 				{ showPartnerProgramOptIn && ! isLoading && (
 					<PartnerProgramOptInFieldSet
 						setPartnerProgramOptIn={ setPartnerProgramOptIn }
 						isChecked={ partnerProgramOptIn }
 					/>
 				) }
-				<FormFieldset>
-					<FormLabel>{ translate( 'How many sites do you manage?' ) }</FormLabel>
-					<SelectControl
-						id="managed_sites"
-						name="managed_sites"
-						value={ managedSites }
-						options={ [
-							{ value: '1-5', label: translate( '1-5' ) },
-							{ value: '6-20', label: translate( '6-20' ) },
-							{ value: '21-50', label: translate( '21-50' ) },
-							{ value: '51-100', label: translate( '51-100' ) },
-							{ value: '101-500', label: translate( '101-500' ) },
-							{ value: '500+', label: translate( '500+' ) },
-						] }
-						onChange={ setManagedSites }
-					/>
-				</FormFieldset>
+				{ showSignupFields && (
+					<FormFieldset>
+						<FormLabel>{ translate( 'How many sites do you manage?' ) }</FormLabel>
+						<SelectControl
+							id="managed_sites"
+							name="managed_sites"
+							value={ managedSites }
+							options={ [
+								{ value: '1-5', label: translate( '1-5' ) },
+								{ value: '6-20', label: translate( '6-20' ) },
+								{ value: '21-50', label: translate( '21-50' ) },
+								{ value: '51-100', label: translate( '51-100' ) },
+								{ value: '101-500', label: translate( '101-500' ) },
+								{ value: '500+', label: translate( '500+' ) },
+							] }
+							onChange={ setManagedSites }
+						/>
+					</FormFieldset>
+				) }
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (

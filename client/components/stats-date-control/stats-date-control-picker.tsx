@@ -93,6 +93,7 @@ const DateControlPicker = ( {
 				context={ infoReferenceElement?.current }
 				isVisible={ popoverOpened }
 				className="stats-date-control-picker__popover-wrapper"
+				onClose={ () => togglePopoverOpened( false ) }
 			>
 				<div className="stats-date-control-picker__popover-content">
 					<DateControlPickerShortcuts

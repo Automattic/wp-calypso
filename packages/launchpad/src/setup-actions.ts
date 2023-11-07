@@ -151,7 +151,7 @@ export const setUpActionsForTasks = ( {
 
 		const actionDispatch = () => {
 			recordTaskClickTracksEvent( task );
-			if ( siteSlug && setActiveChecklist ) {
+			if ( siteSlug && setActiveChecklist && config.isEnabled( 'launchpad/navigator' ) ) {
 				setActiveChecklist( siteSlug, checklistSlug );
 			}
 			onTaskClick?.( task );
