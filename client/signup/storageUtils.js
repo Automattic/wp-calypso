@@ -83,3 +83,29 @@ export const getSignupCompleteStepNameAndClear = () => {
 	clearSignupCompleteStepName();
 	return value;
 };
+export const setSignupStartTimeInSeconds = () => {
+	const currentTimeInSeconds = Math.floor( Date.now() / 1000 );
+
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.setItem( 'wpcom_signup_start_time_in_second', currentTimeInSeconds )
+	);
+	return currentTimeInSeconds;
+};
+export const getSignupStartTimeInSeconds = () =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.getItem( 'wpcom_signup_start_time_in_second' )
+	);
+export const clearSignupStartTimeInSeconds = () =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.removeItem( 'wpcom_signup_start_time_in_second' )
+	);
+export const getSignupCompleteElapsedTimeInSeconds = () => {
+	const beginTime = getSignupStartTimeInSeconds();
+
+	if ( beginTime == null ) {
+		return null;
+	}
+	clearSignupStartTimeInSeconds();
+
+	return Math.floor( Date.now() / 1000 ) - beginTime;
+};
