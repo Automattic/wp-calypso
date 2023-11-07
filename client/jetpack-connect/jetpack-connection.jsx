@@ -103,7 +103,9 @@ const jetpackConnection = ( WrappedComponent ) => {
 			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
 				const currentPlan = retrievePlan();
 				clearPlan();
-				if ( currentPlan ) {
+				if ( source === 'jetpack-manage' ) {
+					this.setState( { status: ALREADY_CONNECTED } );
+				} else if ( currentPlan ) {
 					if ( currentPlan === PLAN_JETPACK_FREE ) {
 						debug( `Redirecting to wpadmin` );
 						return navigate( this.props.siteHomeUrl + JETPACK_ADMIN_PATH );

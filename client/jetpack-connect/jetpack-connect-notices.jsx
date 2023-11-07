@@ -177,6 +177,12 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.icon = 'notice';
 				return noticeValues;
 
+			case ALREADY_CONNECTED:
+				noticeValues.text = translate( 'This site is already connected' );
+				noticeValues.status = 'is-info';
+				noticeValues.icon = 'notice';
+				return noticeValues;
+
 			case ALREADY_CONNECTED_BY_OTHER_USER:
 				noticeValues.text = translate(
 					'This site is already connected to a different WordPress.com user, ' +
