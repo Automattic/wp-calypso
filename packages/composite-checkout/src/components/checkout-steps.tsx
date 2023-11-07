@@ -597,8 +597,11 @@ export function CheckoutFormSubmit( {
 	submitButton?: ReactNode;
 } ) {
 	const { state } = useContext( CheckoutStepGroupContext );
-	const { activeStepNumber, totalSteps } = state;
+	const { activeStepNumber, totalSteps, stepCompleteStatus } = state;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
+		( isComplete ) => isComplete === true
+	);
 	const { onPageLoadError } = useContext( CheckoutContext );
 	const onSubmitButtonLoadError = useCallback(
 		( error: Error ) => onPageLoadError?.( 'submit_button_load', error ),
@@ -609,13 +612,29 @@ export function CheckoutFormSubmit( {
 		customPropertyForSubmitButtonHeight
 	);
 
+	const isDisabled = ( () => {
+		if ( disableSubmitButton ) {
+			return true;
+		}
+		if ( activeStepNumber === 0 && areAllStepsComplete ) {
+			// We enable the submit button if no step is active and all the steps are
+			// complete so that we have the option of marking all steps as complete.
+			return false;
+		}
+		if ( isThereAnotherNumberedStep ) {
+			// If there is another step after the active one, we disable the submit
+			// button so you have to complete the step first.
+			return true;
+		}
+		return false;
+	} )();
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
 			{ submitButton || (
 				<CheckoutSubmitButton
 					validateForm={ validateForm }
-					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
+					disabled={ isDisabled }
 					onLoadError={ onSubmitButtonLoadError }
 				/>
 			) }
