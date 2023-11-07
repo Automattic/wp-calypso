@@ -293,7 +293,7 @@ function removeP2DetailsStepFromFlow( flow ) {
 function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	// Check for site slug before heading to checkout.
 	// Sometimes, previous visits to the signup flow will have cart items leftovers.
-	// In this cast redirecting to checkout would be incorrect, and it would redirect to /checkout/undefined.
+	// In this case, redirecting to checkout would be incorrect, and it would redirect to /checkout/undefined.
 	// If a flow wants us to go to checkout, it will have `siteSlug` set.
 	if ( ! dependencies.siteSlug ) {
 		return destination;
