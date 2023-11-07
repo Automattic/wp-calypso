@@ -72,15 +72,6 @@ class AccountCloseConfirmDialog extends Component {
 			...( siteCount > 0
 				? [
 						{
-							englishText: 'Start a new site',
-							text: translate( 'Start a new site' ),
-							href: onboardingUrl() + '?ref=me-account-close',
-							supportLink: localizeUrl(
-								'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account'
-							),
-							supportPostId: 3991,
-						},
-						{
 							englishText: "Change your site's address",
 							text: translate( "Change your site's address" ),
 							href: '/settings/general',
@@ -96,6 +87,15 @@ class AccountCloseConfirmDialog extends Component {
 						},
 				  ]
 				: [] ),
+			{
+				englishText: 'Start a new site',
+				text: translate( 'Start a new site' ),
+				href: onboardingUrl() + '?ref=me-account-close',
+				supportLink: localizeUrl(
+					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account'
+				),
+				supportPostId: 3991,
+			},
 			{
 				englishText: 'Change your username',
 				text: translate( 'Change your username' ),
