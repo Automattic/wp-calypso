@@ -33,7 +33,7 @@ declare const browser: Browser;
  */
 describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Premium';
-	const themeSlug = 'outland';
+	let themeSlug: string | null = null;
 
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepremium',
@@ -66,6 +66,10 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 
 		it( 'Navigate to Signup page', async function () {
 			const themeDetailsPage = new ThemesDetailPage( page );
+
+			const pageMatch = new URL( page.url() ).pathname.match( 'theme/(.*)/?' );
+
+			themeSlug = Array.isArray( pageMatch ) ? pageMatch[ 1 ] : null;
 
 			await themeDetailsPage.pickThisDesign();
 		} );
@@ -125,7 +129,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 				page.waitForLoadState(),
 			] );
 
-			await page.getByRole( 'link', { name: 'Customize this design' } );
+			await page.waitForSelector( 'text="Customize this design"' );
 		} );
 
 		it( 'Checks the active theme', async function () {
