@@ -8,17 +8,24 @@ export function isTermsEqual( localTermEdits, savedTerms ) {
 	return Object.entries( localTermEdits ).every( ( [ taxonomy, terms ] ) => {
 		const termsArray = Object.values( terms );
 		const isHierarchical = typeof termsArray[ 0 ] === 'object' && termsArray[ 0 ] !== null;
-		const normalizedEditedTerms = isHierarchical
-			? termsArray.map( ( term ) => term.ID )
-			: termsArray;
+		const normalizedEditedTerms = new Set(
+			isHierarchical ? termsArray.map( ( term ) => term.ID ) : termsArray
+		);
 		const normalizedKey = isHierarchical ? 'ID' : 'name';
-		const normalizedSavedTerms = Object.values( savedTerms[ taxonomy ] ?? {} ).map(
-			( value ) => value[ normalizedKey ]
+		const normalizedSavedTerms = new Set(
+			Object.values( savedTerms[ taxonomy ] ?? {} ).map( ( value ) => value[ normalizedKey ] )
 		);
 
-		return ! [
-			...normalizedEditedTerms.filter( ( x ) => ! normalizedSavedTerms.includes( x ) ),
-			...normalizedSavedTerms.filter( ( x ) => ! normalizedEditedTerms.includes( x ) ),
-		].length;
+		if ( normalizedEditedTerms.size !== normalizedSavedTerms.size ) {
+			return false;
+		}
+
+		for ( const term of normalizedEditedTerms ) {
+			if ( ! normalizedSavedTerms.has( term ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	} );
 }
