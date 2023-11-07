@@ -71,14 +71,13 @@ const MarketplaceThankYou = ( {
 	const firstTheme = themesList[ 0 ];
 	useEffect( () => {
 		if ( firstTheme && styleVariationSlug ) {
-			const styleVariation = firstTheme.style_variations.filter(
+			const styleVariation = firstTheme.style_variations.find(
 				( variation: { slug: string } ) => variation.slug === styleVariationSlug
 			);
-			dispatch(
-				setThemePreviewOptions( firstTheme.id, null, null, {
-					styleVariation: styleVariation[ 0 ],
-				} )
-			);
+
+			if ( styleVariation ) {
+				dispatch( setThemePreviewOptions( firstTheme.id, null, null, { styleVariation } ) );
+			}
 		}
 	}, [ dispatch, firstTheme, styleVariationSlug ] );
 
