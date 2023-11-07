@@ -18,6 +18,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { FormDivider } from 'calypso/lib/authentication';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
@@ -880,7 +881,8 @@ export class LoginForm extends Component {
 
 				{ config.isEnabled( 'signup/social' ) && ! isCoreProfilerLostPasswordFlow && (
 					<Fragment>
-						<Divider>{ this.props.translate( 'or' ) }</Divider>
+						<FormDivider />
+						{ /* <Divider>{ this.props.translate( 'or' ) }</Divider> */ }
 						<SocialLoginForm
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null

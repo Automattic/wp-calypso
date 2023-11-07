@@ -449,7 +449,7 @@ $image-height: 47px;
 
 		/* START - Note: Patches below needed to continue using the current Divider in the form for both reskin and old versions.
 		We can remove when we refactor the Divider itself (or rethink current usage), and leave the default card styles intact.
-		Ideally, the Divider used in Login should be consolidated with the inline Separator's styles used in Signup (see `.signup-form__separator`) */
+		Ideally, the Divider used in Login should be consolidated with the inline Separator's styles used in Signup (see `.auth-form__separator`) */
 		padding-left: 20px;
 		padding-right: 20px;
 
@@ -459,7 +459,7 @@ $image-height: 47px;
 
 		form {
 			.login__divider span {
-				/* Note: Same as `.signup-form__separator-text` */
+				/* Note: Same as `.auth-form__separator-text` */
 				background: #fdfdfd;
 				text-transform: uppercase;
 				text-align: center;
@@ -471,11 +471,6 @@ $image-height: 47px;
 			.card {
 				padding-left: 0;
 				padding-right: 0;
-			}
-
-			.card.login__social {
-				border-top: 1px solid #eaeaeb; // same as `.signup-form__separator::before`
-				padding-top: 30px;
 			}
 		}
 		/* END - Note */

@@ -40,6 +40,7 @@ import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { FormDivider } from 'calypso/lib/authentication';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import {
@@ -1227,13 +1228,7 @@ class SignupForm extends Component {
 
 					{ ! isGravatar && (
 						<>
-							{ showSeparator && (
-								<div className="signup-form__separator">
-									<div className="signup-form__separator-text">
-										{ this.props.translate( 'or' ) }
-									</div>
-								</div>
-							) }
+							{ showSeparator && <FormDivider /> }
 
 							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 								<SocialSignupForm
@@ -1269,11 +1264,7 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ showSeparator && (
-					<div className="signup-form__separator">
-						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-					</div>
-				) }
+				{ showSeparator && <FormDivider /> }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<Fragment>
