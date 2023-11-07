@@ -8,6 +8,8 @@ export type TransformedFeatureObject = FeatureObject & {
 };
 
 export interface PlanActionOverrides {
+	canUserManageCurrentPlan: boolean | null;
+	currentPlanManageHref: string | null;
 	loggedInFreePlan?: {
 		callback?: () => void;
 		text?: TranslateResult;
