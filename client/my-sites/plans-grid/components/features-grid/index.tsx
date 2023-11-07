@@ -253,6 +253,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						isLargeCurrency={ isLargeCurrency }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						siteId={ siteId }
+						visibleGridPlans={ renderedGridPlans }
 					/>
 					{ isWooExpressPlus && (
 						<div className="plan-features-2023-grid__header-tagline">

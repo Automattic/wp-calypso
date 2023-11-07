@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { usePlansGridContext } from '../grid-context';
+import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 
 interface PlanFeatures2023GridHeaderPriceProps {
 	planSlug: PlanSlug;
@@ -10,6 +11,7 @@ interface PlanFeatures2023GridHeaderPriceProps {
 	isPlanUpgradeCreditEligible: boolean;
 	currentSitePlanSlug?: string | null;
 	siteId?: number | null;
+	visibleGridPlans: GridPlan[];
 }
 
 const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
@@ -20,7 +22,7 @@ const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
 	gap: 4px;
 `;
 
-const Badge = styled.div< { isForIntroOffer?: boolean } >`
+const Badge = styled.div< { isForIntroOffer?: boolean; isHidden?: boolean } >`
 	text-align: center;
 	white-space: nowrap;
 	font-size: 0.75rem;
@@ -38,6 +40,7 @@ const Badge = styled.div< { isForIntroOffer?: boolean } >`
 	color: ${ ( { isForIntroOffer } ) =>
 		isForIntroOffer ? 'var( --studio-blue-50 )' : 'var( --studio-green-40 )' };
 	text-transform: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'uppercase' : 'none' ) };
+	visibility: ${ ( { isHidden } ) => ( isHidden ? 'hidden' : 'visible' ) };
 `;
 
 const HeaderPriceContainer = styled.div`
@@ -128,6 +131,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	planSlug,
 	isLargeCurrency,
 	isPlanUpgradeCreditEligible,
+	visibleGridPlans,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
@@ -136,6 +140,9 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer },
 	} = gridPlansIndex[ planSlug ];
 	const shouldShowDiscountedPrice = Boolean( discountedPrice.monthly );
+	const isAnyVisibleGridPlanDiscounted = visibleGridPlans.some(
+		( { pricing } ) => pricing.discountedPrice.monthly
+	);
 	const isPricedPlan = null !== originalPrice.monthly;
 	const shouldShowIntroPricing = introOffer && ! introOffer.isOfferComplete;
 
@@ -147,7 +154,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		<>
 			{ isPricedPlan ? (
 				<HeaderPriceContainer>
-					{ shouldShowIntroPricing && (
+					{ shouldShowIntroPricing ? (
 						<>
 							{ ! current && (
 								<Badge className="plan-features-2023-grid__badge" isForIntroOffer={ true }>
@@ -163,45 +170,52 @@ const PlanFeatures2023GridHeaderPrice = ( {
 								priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							/>
 						</>
-					) }
-					{ ! shouldShowIntroPricing && shouldShowDiscountedPrice && (
+					) : (
 						<>
-							<Badge className="plan-features-2023-grid__badge">
-								{ isPlanUpgradeCreditEligible
-									? translate( 'Credit applied' )
-									: translate( 'One time discount' ) }
-							</Badge>
-							<PricesGroup isLargeCurrency={ isLargeCurrency }>
-								<PlanPrice
-									currencyCode={ currencyCode }
-									rawPrice={ originalPrice.monthly }
-									displayPerMonthNotation={ false }
-									isLargeCurrency={ isLargeCurrency }
-									isSmallestUnit={ true }
-									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
-									original
-								/>
-								<PlanPrice
-									currencyCode={ currencyCode }
-									rawPrice={ discountedPrice.monthly }
-									displayPerMonthNotation={ false }
-									isLargeCurrency={ isLargeCurrency }
-									isSmallestUnit={ true }
-									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
-									discounted
-								/>
-							</PricesGroup>
+							{ shouldShowDiscountedPrice ? (
+								<>
+									<Badge className="plan-features-2023-grid__badge">
+										{ isPlanUpgradeCreditEligible
+											? translate( 'Credit applied' )
+											: translate( 'One time discount' ) }
+									</Badge>
+									<PricesGroup isLargeCurrency={ isLargeCurrency }>
+										<PlanPrice
+											currencyCode={ currencyCode }
+											rawPrice={ originalPrice.monthly }
+											displayPerMonthNotation={ false }
+											isLargeCurrency={ isLargeCurrency }
+											isSmallestUnit={ true }
+											priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+											original
+										/>
+										<PlanPrice
+											currencyCode={ currencyCode }
+											rawPrice={ discountedPrice.monthly }
+											displayPerMonthNotation={ false }
+											isLargeCurrency={ isLargeCurrency }
+											isSmallestUnit={ true }
+											priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+											discounted
+										/>
+									</PricesGroup>
+								</>
+							) : (
+								<>
+									{ isAnyVisibleGridPlanDiscounted && (
+										<Badge className="plan-features-2023-grid__badge" isHidden={ true }></Badge>
+									) }
+									<PlanPrice
+										currencyCode={ currencyCode }
+										rawPrice={ originalPrice.monthly }
+										displayPerMonthNotation={ false }
+										isLargeCurrency={ isLargeCurrency }
+										isSmallestUnit={ true }
+										priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+									/>
+								</>
+							) }
 						</>
-					) }
-					{ ! shouldShowIntroPricing && ! shouldShowDiscountedPrice && (
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ originalPrice.monthly }
-							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency }
-							isSmallestUnit={ true }
-							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
-						/>
 					) }
 				</HeaderPriceContainer>
 			) : null }
