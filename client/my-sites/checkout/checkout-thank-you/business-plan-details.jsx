@@ -1,6 +1,5 @@
 import { isBusiness, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
@@ -30,7 +29,7 @@ const BusinessPlanDetails = ( {
 		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
 	);
 
-	const plan = find( sitePlans.data, isBusiness );
+	const plan = sitePlans.data?.find( isBusiness );
 	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
 	return (

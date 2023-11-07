@@ -1,6 +1,5 @@
 import { isEcommerce, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
 import updatesImage from 'calypso/assets/images/illustrations/updates.svg';
@@ -9,7 +8,7 @@ import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 
 const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
-	const plan = find( sitePlans.data, isEcommerce );
+	const plan = sitePlans.data?.find( isEcommerce );
 	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
 	return (

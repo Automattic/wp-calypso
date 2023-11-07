@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
@@ -22,7 +21,7 @@ const PremiumPlanDetails = ( {
 	customizeUrl,
 } ) => {
 	const translate = useTranslate();
-	const plan = find( sitePlans.data, isPremium );
+	const plan = sitePlans.data?.find( isPremium );
 	const isPremiumPlan = isPremium( selectedSite.plan );
 	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
