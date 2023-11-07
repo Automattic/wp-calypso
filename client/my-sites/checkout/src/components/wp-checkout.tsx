@@ -20,6 +20,7 @@ import {
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 	FormStatus,
+	usePaymentMethod,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
@@ -322,6 +323,7 @@ export default function WPCheckout( {
 		} );
 
 	const { transactionStatus } = useTransactionStatus();
+	const paymentMethod = usePaymentMethod();
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
 		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
@@ -639,7 +641,11 @@ export default function WPCheckout( {
 						) }
 						validatingButtonText={ validatingButtonText }
 						validatingButtonAriaLabel={ validatingButtonText }
-						isCompleteCallback={ () => false }
+						isCompleteCallback={ () => {
+							// We want to consider this step complete only if there is a
+							// payment method selected.
+							return Boolean( paymentMethod );
+						} }
 					/>
 					<CheckoutFormSubmit
 						validateForm={ validateForm }
