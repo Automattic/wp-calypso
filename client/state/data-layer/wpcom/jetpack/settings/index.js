@@ -1,20 +1,25 @@
 import { translate } from 'i18n-calypso';
 import { get, omit, startsWith } from 'lodash';
 import { trailingslashit } from 'calypso/lib/route';
-import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'calypso/state/action-types';
+import {
+	JETPACK_SETTINGS_REQUEST,
+	JETPACK_SETTINGS_SAVE,
+	JETPACK_SETTINGS_CLONE,
+} from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
+	cloneJetpackSettingsSuccess,
 } from 'calypso/state/jetpack/settings/actions';
 import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
 	sanitizeSettings,
 } from 'calypso/state/jetpack/settings/utils';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
@@ -154,6 +159,46 @@ export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) 
 	};
 };
 
+export const cloneJetpackSettings = ( action ) => ( dispatch ) => {
+	const { sourceSiteId, siteId } = action;
+
+	dispatch(
+		http(
+			{
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				path: '/sites/' + sourceSiteId + '/jetpack-clone-settings/',
+				body: {
+					destination_blog_id: siteId,
+				},
+			},
+			{
+				...action,
+				meta: { ...action.meta },
+			}
+		)
+	);
+};
+
+export const handleCloneSuccess = ( { siteId }, { message } ) => {
+	cloneJetpackSettingsSuccess( siteId );
+	return [
+		successNotice( message || translate( 'Settings copied successfully.' ), {
+			id: `jps-notice-success-${ siteId }`,
+			duration: 5000,
+		} ),
+	];
+};
+
+export const handleCloneFailure = ( { siteId }, { message } ) => {
+	return [
+		errorNotice( message || translate( 'An unexpected error occurred. Please try again later.' ), {
+			id: `jps-notice-error-${ siteId }`,
+			duration: 5000,
+		} ),
+	];
+};
+
 registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
 	[ JETPACK_SETTINGS_REQUEST ]: [
 		dispatchRequest( {
@@ -169,6 +214,13 @@ registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
 			fetch: saveJetpackSettings,
 			onSuccess: handleSaveSuccess,
 			onError: retryOrAnnounceSaveFailure,
+		} ),
+	],
+	[ JETPACK_SETTINGS_CLONE ]: [
+		dispatchRequest( {
+			fetch: cloneJetpackSettings,
+			onSuccess: handleCloneSuccess,
+			onError: handleCloneFailure,
 		} ),
 	],
 } );

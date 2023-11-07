@@ -592,6 +592,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'jetpack-clone-settings',
+		paths: [ '/jetpack-clone-settings' ],
+		module: 'calypso/my-sites/jetpack-clone-settings',
+		group: 'sites',
+	},
+	{
 		name: 'jetpack-cloud-partner-portal',
 		paths: [ '/partner-portal' ],
 		module: 'calypso/jetpack-cloud/sections/partner-portal',
