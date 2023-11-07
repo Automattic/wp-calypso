@@ -21,17 +21,18 @@ $breakpoint-mobile: 660px;
 		height: 0;
 		width: 100%;
 	}
+
+	.auth-form__separator-text {
+		background-color: #fdfdfd;
+		text-transform: uppercase;
+		text-align: center;
+		padding: 24px 0;
+		font-size: 0.75rem;
+		z-index: 1;
+		color: var(--studio-gray-50);
+	}
 }
 
-.auth-form__separator-text {
-	background-color: #fdfdfd;
-	text-transform: uppercase;
-	text-align: center;
-	padding: 24px 0;
-	font-size: 0.75rem;
-	z-index: 1;
-	color: var(--studio-gray-50);
-}
 
 .is-section-signup {
 	.auth-form__separator {
