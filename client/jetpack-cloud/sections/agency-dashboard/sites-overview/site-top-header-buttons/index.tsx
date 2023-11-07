@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import AddNewSiteButton from 'calypso/components/jetpack/add-new-site-button';
+import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import WPCOMHostingPopover from './wpcom-hosting-popover';
@@ -20,6 +21,21 @@ export default function SiteTopHeaderButtons() {
 
 	const buttonRef = useRef< HTMLElement | null >( null );
 	const [ toggleIsOpen, setToggleIsOpen ] = useState( false );
+
+	const handleNewLandingPage = async () => {
+		const response = await wpcomJpl.req.post( {
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack-licensing/create-simple-site',
+		} );
+
+		const { siteurl } = response;
+		const editorPageUrl = `${ decodeURI(
+			siteurl
+		) }/wp-admin/site-editor.php?postType=wp_template&postId=${ encodeURIComponent(
+			'pub/twentytwentythree//home'
+		) }&canvas=edit`;
+		window.location = editorPageUrl;
+	};
 
 	return (
 		<div
@@ -37,6 +53,10 @@ export default function SiteTopHeaderButtons() {
 				}
 			>
 				{ translate( 'Issue License', { context: 'button label' } ) }
+			</Button>
+
+			<Button className="sites-overview__issue-license-button" onClick={ handleNewLandingPage }>
+				{ translate( 'New landing page' ) }
 			</Button>
 
 			{ isWPCOMAtomicSiteCreationEnabled ? (
