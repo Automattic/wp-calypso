@@ -46,15 +46,13 @@ const SiteSelector = () => {
 			className="jetpack-cloud-sidebar__site-selector"
 			indicator
 			showAddNewSite
-			showAllSites
-			groups
+			showAllSites={ canAccessJetpackManage }
 			/* eslint-disable-next-line jsx-a11y/no-autofocus */
 			autoFocus={ isVisible }
 			isJetpackAgencyDashboard={ canAccessJetpackManage }
 			allSitesPath="/dashboard"
 			siteBasePath="/landing"
 			wpcomSiteBasePath="https://wordpress.com/home"
-			filter={ () => true }
 		/>
 	);
 };
