@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -87,25 +88,28 @@ export default function IntentStep( props: Props ) {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
-		<StepWrapper
-			headerText={ headerText }
-			fallbackHeaderText={ headerText }
-			headerImageUrl={ intentImageUrl }
-			subHeaderText={ subHeaderText }
-			fallbackSubHeaderText={ subHeaderText }
-			stepContent={
-				<IntentScreen
-					intents={ intents }
-					intentsAlt={ intentsAlt }
-					onSelect={ submitIntent }
-					preventWidows={ preventWidows }
-				/>
-			}
-			align="left"
-			hideSkip
-			isHorizontalLayout={ true }
-			siteId={ siteId }
-			{ ...props }
-		/>
+		<>
+			<PageViewTracker path="setup/setup-site/" title="WhereWillYouStart" />
+			<StepWrapper
+				headerText={ headerText }
+				fallbackHeaderText={ headerText }
+				headerImageUrl={ intentImageUrl }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
+				stepContent={
+					<IntentScreen
+						intents={ intents }
+						intentsAlt={ intentsAlt }
+						onSelect={ submitIntent }
+						preventWidows={ preventWidows }
+					/>
+				}
+				align="left"
+				hideSkip
+				isHorizontalLayout={ true }
+				siteId={ siteId }
+				{ ...props }
+			/>
+		</>
 	);
 }
