@@ -151,7 +151,13 @@ interface Props {
 	hideEnterprisePlan?: boolean;
 	isInSignup?: boolean;
 	// whether plan is upgradable from current plan (used in logged-in state)
-	usePlanUpgradeabilityCheck?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
+	usePlanUpgradeabilityCheck?: ( {
+		planSlugs,
+		sitePlanSlug,
+	}: {
+		planSlugs: PlanSlug[];
+		sitePlanSlug: string | null;
+	} ) => {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
@@ -308,7 +314,10 @@ const useGridPlans = ( {
 		term,
 		intent,
 	} );
-	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs: availablePlanSlugs } );
+	const planUpgradeability = usePlanUpgradeabilityCheck?.( {
+		planSlugs: availablePlanSlugs,
+		sitePlanSlug: sitePlanSlug ?? null,
+	} );
 
 	// only fetch highlights for the plans that are available for the intent
 	const highlightLabels = useHighlightLabels( {
