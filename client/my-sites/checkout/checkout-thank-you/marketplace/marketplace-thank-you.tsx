@@ -58,7 +58,7 @@ const MarketplaceThankYou = ( {
 		thankYouHeaderAction,
 	] = usePluginsThankYouData( pluginSlugs );
 	const [
-		themesList,
+		firstTheme,
 		themesSection,
 		allThemesFetched,
 		themesGoBackSection,
@@ -68,7 +68,6 @@ const MarketplaceThankYou = ( {
 		isAtomicNeededForThemes,
 	] = useThemesThankYouData( themeSlugs, isOnboardingFlow, continueWithPluginBundle );
 
-	const firstTheme = themesList[ 0 ];
 	useEffect( () => {
 		if ( firstTheme && styleVariationSlug ) {
 			const styleVariation = firstTheme.style_variations.find(

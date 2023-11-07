@@ -101,7 +101,7 @@ export function useThemesThankYouData(
 	const isAtomicNeeded = hasDotOrgThemes || hasExternallyManagedThemes;
 
 	return [
-		themesList,
+		themesList[ 0 ] ?? null,
 		themesSection,
 		allThemesFetched,
 		goBackSection,

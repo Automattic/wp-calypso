@@ -66,6 +66,6 @@ export type ThankYouData = [
 	React.ReactElement | null,
 ];
 
-export type ThankYouThemeData = [ Theme[], ...ThankYouData ];
+export type ThankYouThemeData = [ Theme, ...ThankYouData ];
 
 export type ThankYouSteps = { steps: string[]; additionalSteps: string[] };
