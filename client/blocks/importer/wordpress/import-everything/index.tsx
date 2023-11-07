@@ -186,6 +186,7 @@ export class ImportEverything extends SectionMigrate {
 				isMigrateFromWp={ isMigrateFromWp }
 				isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 				startImport={ this.startMigration }
+				navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
 				onContentOnlyClick={ onContentOnlySelection }
 				onFreeTrialClick={ () => {
 					stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );

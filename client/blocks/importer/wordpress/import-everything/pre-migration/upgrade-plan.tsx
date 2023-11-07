@@ -1,13 +1,15 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import UpgradePlanDetails from './upgrade-plan-details';
 import type { URL } from 'calypso/types';
 
@@ -15,6 +17,7 @@ interface Props {
 	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
 	startImport: () => void;
+	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
 	isBusy: boolean;
@@ -28,7 +31,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const {
 		targetSite,
 		startImport,
-		onFreeTrialClick,
+		navigateToVerifyEmailStep,
 		onContentOnlyClick,
 		isBusy,
 		migrationTrackingProps,
@@ -40,6 +43,21 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		migrationTrialEligibility?.eligible ||
 		// If the user's email is unverified, we still want to show the trial plan option
 		migrationTrialEligibility?.error_code === 'email-unverified';
+
+	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+		onSuccess: () => {
+			// After the trial is added, we need to request the site again to get the updated plan
+			targetSite && dispatch( requestSite( targetSite.ID ) );
+		},
+	} );
+
+	const onFreeTrialClick = () => {
+		if ( migrationTrialEligibility?.error_code === 'email-unverified' ) {
+			navigateToVerifyEmailStep();
+		} else {
+			addHostingTrial( targetSite.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
+		}
+	};
 
 	useEffect( () => {
 		dispatch(
@@ -77,7 +95,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				{ isEnabled( 'plans/migration-trial' ) && (
 					<>
 						<Button
-							busy={ isBusy }
+							busy={ isAddingTrial }
 							disabled={ ! isEligibleForTrialPlan }
 							transparent={ true }
 							onClick={ onFreeTrialClick }

@@ -30,6 +30,7 @@ interface PreMigrationProps {
 	isMigrateFromWp: boolean;
 	isTargetSitePlanCompatible: boolean;
 	startImport: ( props?: StartImportTrackingProps ) => void;
+	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
 	onNotAuthorizedClick: () => void;
@@ -46,6 +47,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isMigrateFromWp,
 		isTrial,
 		startImport,
+		navigateToVerifyEmailStep,
 		onFreeTrialClick,
 		onContentOnlyClick,
 		onNotAuthorizedClick,
@@ -221,6 +223,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						sourceSiteUrl={ sourceSiteUrl }
 						targetSite={ targetSite }
 						startImport={ onUpgradeAndMigrateClick }
+						navigateToVerifyEmailStep={ navigateToVerifyEmailStep }
 						onFreeTrialClick={ onFreeTrialClick }
 						onContentOnlyClick={ onContentOnlyClick }
 						isBusy={

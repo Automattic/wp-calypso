@@ -98,6 +98,10 @@ export function useStepNavigator(
 		} );
 	}
 
+	function goToVerifyEmailPage() {
+		navigation.submit?.( { action: 'verify-email' } );
+	}
+
 	function goToSitePickerPage() {
 		navigation.goToStep?.( `sitePicker?from=${ fromSite }` );
 	}
@@ -113,6 +117,7 @@ export function useStepNavigator(
 		goToWpAdminWordPressPluginPage,
 		goToAddDomainPage,
 		goToSitePickerPage,
+		goToVerifyEmailPage,
 		navigate: ( path ) => navigator( path ),
 	};
 }
