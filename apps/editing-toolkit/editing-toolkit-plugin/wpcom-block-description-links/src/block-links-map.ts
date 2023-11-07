@@ -180,8 +180,6 @@ const blockLinks: { [ key: string ]: string } = {
 	'jetpack/tiled-gallery':
 		'https://wordpress.com/support/wordpress-editor/blocks/tiled-gallery-block/',
 
-	'jetpack/slideshow': 'https://wordpress.com/support/wordpress-editor/blocks/slideshow-block/',
-
 	'jetpack/subscriptions':
 		'https://wordpress.com/support/wordpress-editor/blocks/subscription-form-block/',
 
