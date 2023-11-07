@@ -117,6 +117,44 @@ class RequestLoginEmailForm extends Component {
 		return this.state.usernameOrEmail;
 	}
 
+	getSubHeaderText() {
+		const { translate, locale } = this.props;
+		const siteName = this.state.site?.name;
+
+		// If we have a siteName and new translation is available
+		if (
+			siteName &&
+			( englishLocales.includes( locale ) ||
+				hasTranslation(
+					'We’ll send you an email with a login link that will log you in right away to {site name}.'
+				) )
+		) {
+			return translate(
+				'We’ll send you an email with a login link that will log you in right away to %(siteName)s.',
+				{
+					args: {
+						siteName,
+					},
+				}
+			);
+		}
+
+		// If no siteName but new translation is available
+		if (
+			englishLocales.includes( locale ) ||
+			hasTranslation( 'We’ll send you an email with a login link that will log you in right away.' )
+		) {
+			return translate(
+				'We’ll send you an email with a login link that will log you in right away.'
+			);
+		}
+
+		// Fallback is old text
+		return translate(
+			'Get a link sent to the email address associated with your account to log in instantly without your password.'
+		);
+	}
+
 	render() {
 		const {
 			currentUser,
@@ -159,14 +197,6 @@ class RequestLoginEmailForm extends Component {
 			typeof requestError === 'string' && requestError.length
 				? requestError
 				: translate( 'Unable to complete request' );
-
-		const subHeaderText =
-			englishLocales.includes( locale ) ||
-			hasTranslation( 'We’ll send you an email with a login link that will log you in right away.' )
-				? translate( 'We’ll send you an email with a login link that will log you in right away.' )
-				: translate(
-						'Get a link sent to the email address associated with your account to log in instantly without your password.'
-				  );
 
 		const buttonLabel =
 			englishLocales.includes( locale ) || hasTranslation( 'Send Link' )
@@ -212,7 +242,9 @@ class RequestLoginEmailForm extends Component {
 					</p>
 				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
-					<p className="magic-login__form-sub-header">{ ! hideSubHeaderText && subHeaderText }</p>
+					<p className="magic-login__form-sub-header">
+						{ ! hideSubHeaderText && this.getSubHeaderText() }
+					</p>
 					<FormLabel htmlFor="usernameOrEmail">{ formLabel }</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
