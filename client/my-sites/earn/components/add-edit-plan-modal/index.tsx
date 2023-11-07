@@ -356,10 +356,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					<ToggleControl
 						onChange={ ( newValue ) => {
 							setEditedPostIsTier( newValue );
-							if ( newValue ) {
-								// tiers plans subscribe to newsletter by default
-								setEditedPostPaidNewsletter( true );
-							}
+							setEditedPostPaidNewsletter( newValue );
 						} }
 						checked={ editedPostIsTier }
 						disabled={ !! product.ID }
