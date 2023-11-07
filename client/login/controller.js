@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { removeLocaleFromPath } from '@automattic/i18n-utils';
 import page from 'page';
 import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
@@ -210,18 +211,14 @@ export function redirectDefaultLocale( context, next ) {
 		return next();
 	}
 
-	// Do not redirect if user is logged in and the locale is different than english
-	// so we force the page to display in english
+	// Allow logged in non-en user locales to load /log-in/en in english
+	// because /log-in won't render in english for these users.
 	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
 	if ( currentUserLocale && currentUserLocale !== 'en' ) {
 		return next();
 	}
 
-	if ( context.params.isJetpack === 'jetpack' ) {
-		page.redirect( '/log-in/jetpack' );
-	} else {
-		page.redirect( '/log-in' );
-	}
+	page.redirect( removeLocaleFromPath( context.canonicalPath ) );
 }
 
 export function redirectJetpack( context, next ) {
