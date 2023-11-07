@@ -12,6 +12,7 @@ import './styles.scss';
 
 interface Props {
 	domain: string;
+	rawDomain: string;
 	domainCategory?: SPECIAL_DOMAIN_CATEGORY;
 	conversionAction?: CONVERSION_ACTION;
 	hostingProvider?: HostingProvider;
@@ -20,8 +21,15 @@ interface Props {
 }
 
 export default function HeadingInformation( props: Props ) {
-	const { domain, domainCategory, conversionAction, hostingProvider, urlData, onCheckAnotherSite } =
-		props;
+	const {
+		domain,
+		rawDomain,
+		domainCategory,
+		conversionAction,
+		hostingProvider,
+		urlData,
+		onCheckAnotherSite,
+	} = props;
 	const finalStatus = domainCategory ?? conversionAction;
 
 	const recordCtaEvent = ( ctaName: string ) => {
@@ -87,7 +95,7 @@ export default function HeadingInformation( props: Props ) {
 		<div className="heading-information">
 			<summary>
 				<h5>{ translate( 'Site Profiler' ) }</h5>
-				<div className="domain">{ domain }</div>
+				<div className="domain">{ rawDomain }</div>
 				<StatusInfo
 					conversionAction={ conversionAction }
 					hostingProvider={ hostingProvider }

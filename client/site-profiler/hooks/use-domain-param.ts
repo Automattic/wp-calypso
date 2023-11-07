@@ -9,6 +9,7 @@ import isSpecialDomain, { prepareSpecialDomain } from '../utils/is-special-domai
 
 export default function useDomainParam( value = '' ) {
 	const [ domain, setDomain ] = useState( value );
+	const [ rawDomain, setRawDomain ] = useState( value );
 	const [ isValid, setIsValid ] = useState< undefined | boolean >();
 	const [ isSpecial, setIsSpecial ] = useState( isSpecialDomain( value ) );
 	const [ category, setCategory ] = useState< SPECIAL_DOMAIN_CATEGORY >();
@@ -26,12 +27,15 @@ export default function useDomainParam( value = '' ) {
 		}
 
 		const preparedDomain = prepareDomain( value, isSpecial );
+		const preparedRawDomain = prepareRawDomain( value );
+
 		setCategory( getDomainCategory( preparedDomain ) );
 		setDomain( preparedDomain );
+		setRawDomain( preparedRawDomain );
 		setReadyForDataFetch( ! isSpecial && !! domain && !! isValid );
-	}, [ value, isSpecial, isValid ] );
+	}, [ value, rawDomain, isSpecial, isValid, domain ] );
 
-	return { domain, isValid, isSpecial, category, readyForDataFetch };
+	return { domain, rawDomain, isValid, isSpecial, category, readyForDataFetch };
 }
 
 function prepareDomain( domain: string, isSpecial: boolean ) {
@@ -44,4 +48,12 @@ function prepareDomain( domain: string, isSpecial: boolean ) {
 	return isSpecial
 		? prepareSpecialDomain( domainLc )
 		: getFixedDomainSearch( extractDomainFromInput( domainLc ) );
+}
+
+function prepareRawDomain( domain: string ) {
+	if ( ! domain ) {
+		return '';
+	}
+
+	return decodeURIComponent( domain.toLowerCase() );
 }
