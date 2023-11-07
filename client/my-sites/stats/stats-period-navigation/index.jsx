@@ -65,9 +65,13 @@ class StatsPeriodNavigation extends PureComponent {
 
 	queryParamsForNextDate = ( nextDay ) => {
 		const { dateRange, moment, queryParams } = this.props;
-		// Test if we need to update the chart start/end dates.
 		// Takes a 'YYYY-MM-DD' string.
 		const newParams = { startDate: nextDay };
+		// Maintain previous behaviour if we don't have a date range to work with.
+		if ( dateRange === undefined ) {
+			return newParams;
+		}
+		// Test if we need to update the chart start/end dates.
 		const isAfter = moment( nextDay ).isAfter( moment( queryParams.chartEnd ) );
 		if ( isAfter ) {
 			newParams.chartStart = moment( queryParams.chartEnd ).add( 1, 'days' ).format( 'YYYY-MM-DD' );
@@ -93,9 +97,13 @@ class StatsPeriodNavigation extends PureComponent {
 
 	queryParamsForPreviousDate = ( previousDay ) => {
 		const { dateRange, moment, queryParams } = this.props;
-		// Test if we need to update the chart start/end dates.
 		// Takes a 'YYYY-MM-DD' string.
 		const newParams = { startDate: previousDay };
+		// Maintain previous behaviour if we don't have a date range to work with.
+		if ( dateRange === undefined ) {
+			return newParams;
+		}
+		// Test if we need to update the chart start/end dates.
 		const isBefore = moment( previousDay ).isBefore( moment( queryParams.chartStart ) );
 		if ( isBefore ) {
 			newParams.chartEnd = moment( queryParams.chartStart )
