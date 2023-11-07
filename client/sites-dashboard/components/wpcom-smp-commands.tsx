@@ -13,10 +13,14 @@ export const generateCommandsArrayWpcom = ( {
 	setSelectedCommandName,
 	createSiteUrl,
 	__,
+	username,
+	password,
 }: {
 	setSelectedCommandName: ( actionName: string ) => void;
 	createSiteUrl: string;
 	__: ( text: string ) => string;
+	username: string | null;
+	password: string | null;
 } ) => {
 	const setStateCallback =
 		( actionName: string ) =>
@@ -117,6 +121,21 @@ export const generateCommandsArrayWpcom = ( {
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				navigator.clipboard.writeText( SFTP_URL );
+			},
+		},
+		{
+			name: 'hostingConfiguration',
+			label: __( 'Hosting Configuration' ),
+			searchLabel: __( 'hosting' ),
+			context: 'Configuring hosting settings',
+			callback: setStateCallback( 'hostingConfiguration' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }` );
+					console.log( username );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
 		},
 	];

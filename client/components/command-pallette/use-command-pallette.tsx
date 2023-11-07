@@ -4,6 +4,9 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { generateCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+import { useSelector } from 'calypso/state';
+import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const SiteImage = styled.img( {
 	height: 24,
@@ -79,8 +82,31 @@ export const useCommandPallette = ( {
 		( site ) => ! site.options?.is_domain_only
 	);
 
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+
+	let username;
+	let password;
+
+	const users = useSelector( ( state ) => getAtomicHostingSftpUsers( state, siteId ) );
+	if ( users !== null ) {
+		if ( users.length ) {
+			// Pick first user. Rest of users will be handled in next phases.
+			username = users[ 0 ].username;
+			password = users[ 0 ].password;
+		} else {
+			// No SFTP user created yet.
+			username = null;
+			password = null;
+		}
+	}
 	// Call the generateCommandsArray function to get the commands array
-	const commands = generateCommandsArrayWpcom( { setSelectedCommandName, __, createSiteUrl } );
+	const commands = generateCommandsArrayWpcom( {
+		setSelectedCommandName,
+		__,
+		createSiteUrl,
+		username,
+		password,
+	} );
 
 	const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
