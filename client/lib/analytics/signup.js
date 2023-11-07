@@ -42,6 +42,7 @@ export const SIGNUP_DOMAIN_ORIGIN = {
 
 export function recordSignupComplete(
 	{
+		elapsedTime,
 		flow,
 		siteId,
 		isNewUser,
@@ -60,7 +61,6 @@ export function recordSignupComplete(
 	now
 ) {
 	const isNewSite = !! siteId;
-	const elapsedTime = getSignupCompleteElapsedTimeInSeconds();
 
 	if ( ! now ) {
 		// Delay using the analytics localStorage queue.
@@ -68,7 +68,7 @@ export function recordSignupComplete(
 			'signup',
 			'recordSignupComplete',
 			{
-				elapsedTime,
+				elapsedTime: elapsedTime ?? getSignupCompleteElapsedTimeInSeconds(),
 				flow,
 				siteId,
 				isNewUser,
@@ -93,7 +93,7 @@ export function recordSignupComplete(
 	// blog_id instead of site_id here. We keep using "siteId" otherwise since
 	// all the other fields still refer with "site". e.g. isNewSite
 	recordTracksEvent( 'calypso_signup_complete', {
-		elapsed_time: elapsedTime,
+		elapsed_time: elapsedTime ?? getSignupCompleteElapsedTimeInSeconds(),
 		flow,
 		blog_id: siteId,
 		is_new_user: isNewUser,

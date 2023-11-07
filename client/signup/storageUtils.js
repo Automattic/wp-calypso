@@ -96,12 +96,12 @@ export const clearSignupStartTimeInSeconds = () =>
 		sessionStorage?.removeItem( 'wpcom_signup_start_time_in_second' )
 	);
 export const getSignupCompleteElapsedTimeInSeconds = () => {
-	const beginTime = getSignupStartTimeInSeconds();
+	const startTime = getSignupStartTimeInSeconds();
 
-	if ( beginTime == null ) {
+	if ( startTime == null ) {
 		return null;
 	}
 	clearSignupStartTimeInSeconds();
 
-	return Math.floor( Date.now() / 1000 ) - beginTime;
+	return Math.floor( Date.now() / 1000 ) - startTime;
 };
