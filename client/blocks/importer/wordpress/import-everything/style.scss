@@ -306,20 +306,26 @@ $business-plan-color: #7f54b3;
 		}
 
 		button.button {
-			&.is-primary {
-				background-color: $business-plan-color;
-				color: var(--studio-purple-0);
+			border-radius: 4px;
 
-				&.is-busy {
-					background-image: linear-gradient(-45deg, $business-plan-color 28%, var(--studio-purple-70) 28%, var(--studio-purple-70) 72%, $business-plan-color 72%);
-				}
+			&.is-primary {
+				background-color: $business-plan-color !important;
+				color: var(--studio-purple-0);
+			}
+
+			&.is-busy {
+				background-image: linear-gradient(-45deg, $business-plan-color 28%, var(--studio-purple-70) 28%, var(--studio-purple-70) 72%, $business-plan-color 72%);
+				color: #fff;
 			}
 
 			&.is-transparent {
 				border-color: $business-plan-color;
 				color: $business-plan-color;
-			}
 
+				&[disabled] {
+					color: #fff;
+				}
+			}
 
 			&:hover {
 				opacity: 0.85;

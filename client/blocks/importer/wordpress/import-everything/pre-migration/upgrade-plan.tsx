@@ -89,7 +89,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 			</div>
 
 			<UpgradePlanDetails>
-				<NextButton isBusy={ isBusy } onClick={ () => startImport() }>
+				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ () => startImport() }>
 					{ translate( 'Upgrade and migrate' ) }
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
@@ -97,7 +97,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 						<Button
 							busy={ isAddingTrial }
 							disabled={ ! isEligibleForTrialPlan }
-							transparent={ true }
+							transparent={ ! isAddingTrial }
 							onClick={ onFreeTrialClick }
 						>
 							{ translate( 'Try 7-days for free' ) }
