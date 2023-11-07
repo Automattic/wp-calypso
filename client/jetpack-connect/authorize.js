@@ -69,7 +69,12 @@ import {
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
-import { JPC_PATH_PLANS, JPC_PATH_PLANS_COMPLETE, REMOTE_PATH_AUTH } from './constants';
+import {
+	JPC_JETPACK_MANAGE_PATH,
+	JPC_PATH_PLANS,
+	JPC_PATH_PLANS_COMPLETE,
+	REMOTE_PATH_AUTH,
+} from './constants';
 import Disclaimer from './disclaimer';
 import { JetpackFeatures } from './features';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
@@ -259,6 +264,14 @@ export class JetpackAuthorize extends Component {
 			clearSource();
 			debug( 'Closing window after authorize - from migration flow' );
 			window.close();
+		}
+
+		const urlParams = new URLSearchParams( window.location.search );
+		const source = urlParams.get( 'source' );
+
+		if ( source === 'jetpack-manage' ) {
+			const urlRedirect = `${ JPC_JETPACK_MANAGE_PATH }?site_connected=${ urlToSlug( homeUrl ) }`;
+			navigate( urlRedirect );
 		}
 
 		if ( this.isJetpackPartnerCoupon() ) {
