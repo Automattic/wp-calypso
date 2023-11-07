@@ -2,7 +2,6 @@ import { calculateMonthlyPriceForPlan, getPlan, Plan } from '@automattic/calypso
 import formatCurrency from '@automattic/format-currency';
 import { useEffect, useState } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
-import wpcom from 'calypso/lib/wp';
 import config from '../config';
 import { ApiPricingPlan } from '../types.js';
 
@@ -53,7 +52,10 @@ const usePricingPlans = () => {
 			setIsLoading( true );
 			setError( null );
 			try {
-				const data = await wpcom.req.get( '/plans?locale=' + config.locale, { apiVersion: '1.5' } );
+				const response = await fetch(
+					'https://public-api.wordpress.com/rest/v1.5/plans?locale=' + config.locale
+				);
+				const data = await response.json();
 				setPlans( parsePlans( data ) );
 			} catch ( e: unknown ) {
 				setError( e );
