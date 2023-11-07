@@ -83,14 +83,10 @@ export const getSignupCompleteStepNameAndClear = () => {
 	clearSignupCompleteStepName();
 	return value;
 };
-export const setSignupStartTimeInSeconds = () => {
-	const currentTimeInSeconds = Math.floor( Date.now() / 1000 );
-
+export const setSignupStartTimeInSeconds = () =>
 	ignoreFatalsForSessionStorage( () =>
-		sessionStorage?.setItem( 'wpcom_signup_start_time_in_second', currentTimeInSeconds )
+		sessionStorage?.setItem( 'wpcom_signup_start_time_in_second', Math.floor( Date.now() / 1000 ) )
 	);
-	return currentTimeInSeconds;
-};
 export const getSignupStartTimeInSeconds = () =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.getItem( 'wpcom_signup_start_time_in_second' )

@@ -17,13 +17,12 @@ import {
 const signupDebug = debug( 'calypso:analytics:signup' );
 
 export function recordSignupStart( flow, ref, optionalProps ) {
-	const startTime = setSignupStartTimeInSeconds();
+	setSignupStartTimeInSeconds();
 
 	// Tracks
 	recordTracksEvent( 'calypso_signup_start', {
 		flow,
 		ref,
-		start_time: startTime,
 		...optionalProps,
 	} );
 	// Google Analytics
