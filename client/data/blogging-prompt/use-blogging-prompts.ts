@@ -1,10 +1,10 @@
-import { useSelector } from 'react-redux';
 import { Url } from 'url';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
-import { SiteId } from 'calypso/types';
 import wp from 'calypso/lib/wp';
 import { getMyPostCounts } from 'calypso/state/posts/counts/selectors';
+import { SiteId } from 'calypso/types';
 
 export interface BloggingPrompt {
 	id: number;
@@ -26,14 +26,6 @@ interface PublishedPosts {
 	publish: string;
 }
 
-const selectPrompts = ( response: { prompts: BloggingPrompt[] } ): BloggingPrompt[] | null => {
-	const prompts = response && response.prompts;
-	if ( ! prompts ) {
-		return null;
-	}
-	return prompts;
-};
-
 export const useBloggingPrompts = (
 	siteId: SiteId,
 	start_date: string,
@@ -54,7 +46,13 @@ export const useBloggingPrompts = (
 	) as PublishedPosts;
 
 	return useQuery( {
-		queryKey: [ 'blogging-prompts', siteId, start_date, per_page, 'posts-' + publishedPosts?.publish ],
+		queryKey: [
+			'blogging-prompts',
+			siteId,
+			start_date,
+			per_page,
+			'posts-' + publishedPosts?.publish,
+		],
 		queryFn: () =>
 			wp.req.get( {
 				path: path,
