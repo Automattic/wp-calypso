@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { AllowedTypes, RowMetaData, SiteData } from '../../types';
 import getLinks from '../lib/get-links';
 import getRowEventName from '../lib/get-row-event-name';
-import useIsNotMultisiteSupported from './use-is-not-multisite-supported';
+import useIsMultisiteSupported from './use-is-multisite-supported';
 import useTooltip from './use-tooltip';
 
 /**
@@ -14,7 +14,7 @@ const useRowMetadata = (
 	type: AllowedTypes,
 	isLargeScreen: boolean
 ): RowMetaData => {
-	const isMultisiteNotSupported = useIsNotMultisiteSupported( rows.site?.value, type );
+	const isSupported = useIsMultisiteSupported( rows.site?.value, type );
 
 	const row = rows[ type ];
 	const tooltip = useTooltip( type, rows );
@@ -35,17 +35,17 @@ const useRowMetadata = (
 
 		return {
 			row,
-			link: isMultisiteNotSupported ? '' : link,
+			link: ! isSupported ? '' : link,
 			isExternalLink,
 			tooltip,
 			tooltipId: `${ siteId }-${ type }`,
 			siteDown: rows.monitor.error,
 			eventName,
-			notSupported: isMultisiteNotSupported,
+			isSupported,
 		};
 	}, [
 		isLargeScreen,
-		isMultisiteNotSupported,
+		isSupported,
 		row,
 		rows.monitor.error,
 		rows.site?.value?.blog_id,

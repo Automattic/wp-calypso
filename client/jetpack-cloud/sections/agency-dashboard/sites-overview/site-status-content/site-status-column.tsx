@@ -26,7 +26,7 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 		eventName,
 		row: { value, status },
 		tooltip,
-		notSupported,
+		isSupported,
 	} = metadata;
 
 	const dispatch = useDispatch();
@@ -74,7 +74,7 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 	};
 
 	const content = useMemo( () => {
-		if ( notSupported ) {
+		if ( ! isSupported ) {
 			return <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
 		}
 
@@ -121,7 +121,7 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 		handleDeselectLicenseAction,
 		handleSelectLicenseAction,
 		isLicenseSelected,
-		notSupported,
+		isSupported,
 		status,
 		translate,
 		value,
