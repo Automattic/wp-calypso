@@ -1,9 +1,7 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { NavigatorHeader } from '@automattic/onboarding';
-import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 import './screen-activation.scss';
@@ -15,8 +13,6 @@ interface Props {
 const ScreenActivation = ( { onActivate }: Props ) => {
 	const translate = useTranslate();
 	const { title, description, continueLabel } = useScreen( 'activation' );
-	const [ isConfirmed, setIsConfirmed ] = useState( false );
-	const toggleConfirm = () => setIsConfirmed( ( value ) => ! value );
 
 	return (
 		<>
@@ -31,7 +27,7 @@ const ScreenActivation = ( { onActivate }: Props ) => {
 				</strong>
 				<p className="screen-activation__description">
 					{ translate(
-						'After activation, this layout will replace your existing homepage. But you can still access your old content. {{a}}Learn more{{/a}}.',
+						'This will replace your homepage, but your content will remain accessible. {{a}}Learn more{{/a}}.',
 						{
 							components: {
 								a: (
@@ -47,19 +43,7 @@ const ScreenActivation = ( { onActivate }: Props ) => {
 				</p>
 			</div>
 			<div className="screen-container__footer">
-				<CheckboxControl
-					className="screen-activation__checkbox"
-					label={ translate( 'I understand that this layout will replace my existing homepage.' ) }
-					checked={ isConfirmed }
-					onChange={ toggleConfirm }
-				/>
-				<Button
-					className="pattern-assembler__button"
-					primary
-					disabled={ ! isConfirmed }
-					aria-disabled={ ! isConfirmed }
-					onClick={ onActivate }
-				>
+				<Button className="pattern-assembler__button" primary onClick={ onActivate }>
 					{ continueLabel }
 				</Button>
 			</div>

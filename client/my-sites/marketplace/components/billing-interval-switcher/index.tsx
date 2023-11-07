@@ -17,6 +17,7 @@ const PluginAnnualSavingLabelMobile = styled.span< PluginAnnualSavingLabelProps 
 
 const BillingIntervalSwitcherContainer = styled.div`
 	display: flex;
+	flex-wrap: wrap;
 	margin-top: -4px;
 	margin-bottom: 16px;
 `;

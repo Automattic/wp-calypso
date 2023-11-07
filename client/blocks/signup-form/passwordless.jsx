@@ -26,6 +26,7 @@ class PasswordlessSignupForm extends Component {
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
+		userEmail: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -34,7 +35,7 @@ class PasswordlessSignupForm extends Component {
 
 	state = {
 		isSubmitting: false,
-		email: this.props.step && this.props.step.form ? this.props.step.form.email : '',
+		email: this.props.userEmail,
 		errorMessages: null,
 	};
 
@@ -105,47 +106,15 @@ class PasswordlessSignupForm extends Component {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-			const email = typeof this.state.email === 'string' ? this.state.email.trim() : '';
-			const response = await wpcom.req.get(
-				`/users/${ encodeURIComponent( email ) }/auth-options`
+			page(
+				addQueryArgs(
+					{
+						email_address: this.state.email,
+						is_signup_existing_account: true,
+					},
+					this.props.logInUrl
+				)
 			);
-			// Just for https://github.com/Automattic/wp-calypso/pull/83249. Passwordless accounts will be changed to facilitate emailing the login link.
-			if ( ! response?.passwordless ) {
-				page(
-					addQueryArgs(
-						{
-							email_address: this.state.email,
-							is_signup_existing_account: true,
-						},
-						this.props.logInUrl
-					)
-				);
-				return;
-			}
-
-			const errorMessage = (
-				<>
-					{ this.props.translate( 'An account with this email address already exists.' ) }
-					&nbsp;
-					{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
-						components: {
-							a: (
-								<a
-									href={ `${ this.props.logInUrl }&email_address=${ encodeURIComponent(
-										this.state.email
-									) }` }
-								/>
-							),
-						},
-					} ) }
-				</>
-			);
-
-			this.setState( {
-				errorMessages: [ errorMessage ],
-				isSubmitting: false,
-			} );
-
 			return;
 		}
 

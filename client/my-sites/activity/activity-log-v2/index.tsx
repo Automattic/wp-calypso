@@ -63,7 +63,7 @@ const ActivityLogV2: FunctionComponent = () => {
 								dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_copy_site' ) )
 							}
 						>
-							{ translate( 'Copy this site' ) }
+							{ translate( 'Copy site' ) }
 						</Button>
 					</Tooltip>
 				) }

@@ -199,7 +199,8 @@
 	}
 
 	.domain-registration-suggestion__hsts-tooltip {
-		display: flex;
+		display: inline;
+		vertical-align: middle;
 		align-items: center;
 		justify-content: center;
 		margin-left: 4px;
@@ -251,7 +252,7 @@
 	@include break-mobile {
 		width: auto;
 		flex: 1 0 auto;
-		margin-left: 1em;
+		margin-left: 28px;
 		margin-top: 0;
 	}
 
@@ -354,7 +355,6 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-suggestion__content-domain {
 			justify-content: space-between;
-			margin-right: 40px;
 		}
 
 		.domain-product-price__free-text {

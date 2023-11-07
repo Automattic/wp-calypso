@@ -741,13 +741,14 @@
 		// compensate for line height so that visual margin is 36px;
 		margin-bottom: 29px;
 
+
 		.reader-tag-sidebar-stats__item {
 			display: flex;
 			flex-direction: column;
 		}
 
 		.reader-tag-sidebar-stats__count {
-			font-size: $font-title-medium;
+			font-size: $font-title-small;
 			font-weight: bold;
 			width: 90px;
 		}

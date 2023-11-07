@@ -25,6 +25,7 @@
 
 .chatbox-messages {
 	overflow-y: auto;
+	overflow-x: hidden;
 	word-wrap: break-word;
 	font-size: medium;
 	max-width: 100%;
@@ -33,9 +34,14 @@
 	flex-direction: column;
 	align-items: flex-start;
 	height: 100%;
+	overscroll-behavior: contain;
 
 	.odie-chatbox-bottom-edge {
-		min-height: 10px;
+		min-height: 8px;
+		width: 100%;
+	}
+
+	.odie-chatbox-message-sources-container {
 		width: 100%;
 	}
 }

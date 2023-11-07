@@ -125,6 +125,7 @@ export default function AgencySignupForm() {
 					isLoading={ createPartner.isLoading }
 					onSubmit={ onSubmit }
 					submitLabel={ translate( 'Continue' ) }
+					showSignupFields={ true }
 					referrer={ referrer }
 				/>
 			) }

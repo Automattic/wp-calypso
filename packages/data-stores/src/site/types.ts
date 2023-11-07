@@ -520,6 +520,6 @@ export interface AssembleSiteOptions {
 	footerHtml?: string;
 	pages?: Page[];
 	globalStyles?: GlobalStyles;
-	shouldResetContent?: boolean;
+	canReplaceContent?: boolean;
 	siteSetupOption?: string;
 }

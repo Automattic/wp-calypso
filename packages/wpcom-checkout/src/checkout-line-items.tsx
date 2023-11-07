@@ -30,6 +30,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
+import { hasCheckoutVersion } from './checkout-version-checker';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
@@ -82,7 +83,7 @@ export const LineItem = styled( CheckoutLineItem )< {
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
 	font-size: 1.1em;
-	padding: 20px 0;
+	padding: ${ hasCheckoutVersion( '2' ) ? '10px' : '20px' } 0;
 	position: relative;
 
 	.checkout-line-item__price {
@@ -159,27 +160,33 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	display: flex;
 	gap: 0.5em;
 	font-weight: ${ ( { theme } ) => theme.weights.bold };
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 	.rtl & {
 		margin-right: 12px;
 		margin-left: 0;
 	}
 `;
-
+const BillingLine = styled.div`
+	width: 100%;
+	display: ${ hasCheckoutVersion( '2' ) ? 'flex' : 'block' };
+	justify-content: ${ hasCheckoutVersion( '2' ) ? 'space-between' : 'inherit' };
+	align-items: ${ hasCheckoutVersion( '2' ) ? 'center' : 'inherit' };
+`;
 const DeleteButtonWrapper = styled.div`
 	width: 100%;
+	display: ${ hasCheckoutVersion( '2' ) ? 'flex' : 'inherit' };
+	justify-content: ${ hasCheckoutVersion( '2' ) ? 'flex-end' : 'inherit' };
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
-	display: inline-block;
 	width: auto;
-	font-size: 0.75rem;
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	margin-top: 4px;
 `;
 
 function LineItemPrice( {
@@ -267,7 +274,9 @@ function WPNonProductLineItem( {
 								setIsModalVisible( true );
 							} }
 						>
-							{ translate( 'Remove from cart' ) }
+							{ hasCheckoutVersion( '2' )
+								? translate( 'Remove' )
+								: translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 
@@ -1113,7 +1122,7 @@ function CheckoutLineItem( {
 				/>
 			</span>
 
-			{ product && ! containsPartnerCoupon && (
+			{ ! hasCheckoutVersion( '2' ) && product && ! containsPartnerCoupon && (
 				<>
 					<UpgradeCreditInformationLineItem>
 						<UpgradeCreditInformation product={ product } />
@@ -1138,66 +1147,69 @@ function CheckoutLineItem( {
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
 
-			{ children }
+			<BillingLine>
+				{ children }
+				{ hasDeleteButton && removeProductFromCart && (
+					<>
+						<DeleteButtonWrapper>
+							<DeleteButton
+								className="checkout-line-item__remove-product"
+								buttonType="text-button"
+								aria-label={ String(
+									translate( 'Remove %s from cart', {
+										args: label,
+									} )
+								) }
+								disabled={ isDisabled }
+								onClick={ () => {
+									setIsModalVisible( true );
+									onRemoveProductClick?.( label );
+								} }
+							>
+								{ hasCheckoutVersion( '2' )
+									? translate( 'Remove' )
+									: translate( 'Remove from cart' ) }
+							</DeleteButton>
+						</DeleteButtonWrapper>
 
-			{ hasDeleteButton && removeProductFromCart && (
-				<>
-					<DeleteButtonWrapper>
-						<DeleteButton
-							className="checkout-line-item__remove-product"
-							buttonType="text-button"
-							aria-label={ String(
-								translate( 'Remove %s from cart', {
-									args: label,
-								} )
-							) }
-							disabled={ isDisabled }
-							onClick={ () => {
-								setIsModalVisible( true );
-								onRemoveProductClick?.( label );
+						<CheckoutModal
+							isVisible={ isModalVisible }
+							closeModal={ () => {
+								setIsModalVisible( false );
 							} }
-						>
-							{ translate( 'Remove from cart' ) }
-						</DeleteButton>
-					</DeleteButtonWrapper>
+							primaryAction={ () => {
+								let product_uuids_to_remove = [ product.uuid ];
 
-					<CheckoutModal
-						isVisible={ isModalVisible }
-						closeModal={ () => {
-							setIsModalVisible( false );
-						} }
-						primaryAction={ () => {
-							let product_uuids_to_remove = [ product.uuid ];
+								// Gifts need to be all or nothing, to prevent leaving
+								// the site in a state where it requires other purchases
+								// in order to actually work correctly for the period of
+								// the gift (for example, gifting a plan renewal without
+								// a domain renewal would likely lead the site's domain
+								// to expire soon afterwards).
+								if ( product.is_gift_purchase ) {
+									product_uuids_to_remove = responseCart.products
+										.filter( ( cart_product ) => cart_product.is_gift_purchase )
+										.map( ( cart_product ) => cart_product.uuid );
+								}
 
-							// Gifts need to be all or nothing, to prevent leaving
-							// the site in a state where it requires other purchases
-							// in order to actually work correctly for the period of
-							// the gift (for example, gifting a plan renewal without
-							// a domain renewal would likely lead the site's domain
-							// to expire soon afterwards).
-							if ( product.is_gift_purchase ) {
-								product_uuids_to_remove = responseCart.products
-									.filter( ( cart_product ) => cart_product.is_gift_purchase )
-									.map( ( cart_product ) => cart_product.uuid );
-							}
-
-							Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
-								// Nothing needs to be done here. CartMessages will display the error to the user.
-							} );
-							onRemoveProduct?.( label );
-						} }
-						cancelAction={ () => {
-							onRemoveProductCancel?.( label );
-						} }
-						secondaryAction={ () => {
-							onRemoveProductCancel?.( label );
-						} }
-						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
-						title={ modalCopy.title }
-						copy={ modalCopy.description }
-					/>
-				</>
-			) }
+								Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+									// Nothing needs to be done here. CartMessages will display the error to the user.
+								} );
+								onRemoveProduct?.( label );
+							} }
+							cancelAction={ () => {
+								onRemoveProductCancel?.( label );
+							} }
+							secondaryAction={ () => {
+								onRemoveProductCancel?.( label );
+							} }
+							secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
+							title={ modalCopy.title }
+							copy={ modalCopy.description }
+						/>
+					</>
+				) }
+			</BillingLine>
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

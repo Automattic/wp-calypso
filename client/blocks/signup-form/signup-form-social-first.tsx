@@ -24,6 +24,7 @@ interface SignupFormSocialFirst {
 	handleSocialResponse: () => void;
 	isReskinned: boolean;
 	queryArgs: object;
+	userEmail: string;
 	notice: JSX.Element | false;
 }
 
@@ -39,6 +40,7 @@ const SignupFormSocialFirst = ( {
 	handleSocialResponse,
 	isReskinned,
 	queryArgs,
+	userEmail,
 	notice,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
@@ -97,6 +99,7 @@ const SignupFormSocialFirst = ( {
 						queryArgs={ queryArgs }
 						labelText={ __( 'Your email' ) }
 						submitButtonLabel={ __( 'Continue' ) }
+						userEmail={ userEmail }
 						{ ...gravatarProps }
 					/>
 					<Button

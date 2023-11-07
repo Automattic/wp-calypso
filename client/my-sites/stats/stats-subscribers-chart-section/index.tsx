@@ -40,7 +40,10 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	// Note that the incoming data is ordered ascending (newest to oldest)
 	// but uPlot expects descending in its deafult configuration.
 	const x: number[] = data.map( ( point ) => Number( new Date( point.period ) ) / 1000 ).reverse();
-	const y: number[] = data.map( ( point ) => Number( point.subscribers ) ).reverse();
+	// Reserve null values for points with no data.
+	const y: Array< number | null > = data
+		.map( ( point ) => ( point.subscribers === null ? null : Number( point.subscribers ) ) )
+		.reverse();
 
 	return [ x, y ];
 }

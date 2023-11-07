@@ -13,9 +13,13 @@ import { Message } from '../types';
 import './style.scss';
 
 export const OdieSendMessageButton = ( {
-	bottomRef,
+	scrollToBottom,
+	enableStickToBottom,
+	enableJumpToRecent,
 }: {
-	bottomRef: React.MutableRefObject< HTMLDivElement | null >;
+	scrollToBottom: ( smooth?: boolean ) => void;
+	enableStickToBottom: () => void;
+	enableJumpToRecent: boolean;
 } ) => {
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
@@ -47,13 +51,14 @@ export const OdieSendMessageButton = ( {
 				type: 'message',
 			} as Message;
 
-			addMessage( message );
-
-			addMessage( {
-				content: '...',
-				role: 'bot',
-				type: 'placeholder',
-			} );
+			addMessage( [
+				message,
+				{
+					content: '...',
+					role: 'bot',
+					type: 'placeholder',
+				},
+			] );
 
 			const receivedMessage = await sendOdieMessage( { message } );
 			dispatch(
@@ -85,13 +90,11 @@ export const OdieSendMessageButton = ( {
 			return;
 		}
 		setMessageString( '' );
-		bottomRef?.current?.scrollIntoView( { behavior: 'smooth' } );
 		await sendMessage();
-		bottomRef?.current?.scrollIntoView( { behavior: 'smooth' } );
 	};
 
 	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
-		bottomRef?.current?.scrollIntoView( { behavior: 'instant' } );
+		scrollToBottom();
 		if ( event.key === 'Enter' && ! event.shiftKey ) {
 			event.preventDefault();
 			await sendMessageIfNotEmpty();
@@ -100,6 +103,7 @@ export const OdieSendMessageButton = ( {
 
 	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
+		enableStickToBottom();
 		await sendMessageIfNotEmpty();
 	};
 
@@ -107,7 +111,11 @@ export const OdieSendMessageButton = ( {
 
 	return (
 		<>
-			<JumpToRecent lastMessageRef={ bottomRef } bottomOffset={ divContainerHeight ?? 0 } />
+			<JumpToRecent
+				scrollToBottom={ () => scrollToBottom( true ) }
+				enableJumpToRecent={ enableJumpToRecent }
+				bottomOffset={ divContainerHeight ?? 0 }
+			/>
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
 					<TextareaAutosize
@@ -122,6 +130,7 @@ export const OdieSendMessageButton = ( {
 							setMessageString( event.currentTarget.value )
 						}
 						onKeyPress={ handleKeyPress }
+						onKeyUp={ () => scrollToBottom( false ) }
 					/>
 					<button
 						type="submit"

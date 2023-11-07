@@ -81,7 +81,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 	const stepName = 'plans';
-	const isReskinned = true;
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
@@ -153,7 +152,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
 					flowName={ flowName }
-					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }

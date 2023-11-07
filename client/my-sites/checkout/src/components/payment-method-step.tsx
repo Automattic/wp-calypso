@@ -5,6 +5,7 @@ import {
 	getCreditsLineItemFromCart,
 	getSubtotalLineItemFromCart,
 	NonProductLineItem,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -63,20 +64,22 @@ export default function PaymentMethodStep() {
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
-			<WPOrderReviewSection>
-				<NonTotalPrices>
-					<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
-					{ taxLineItems.map( ( taxLineItem ) => (
-						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-					) ) }
-					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-						<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-					) }
-				</NonTotalPrices>
-				<TotalPrice>
-					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-				</TotalPrice>
-			</WPOrderReviewSection>
+			{ ! hasCheckoutVersion( '2' ) && (
+				<WPOrderReviewSection>
+					<NonTotalPrices>
+						<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
+						{ taxLineItems.map( ( taxLineItem ) => (
+							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+						) ) }
+						{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+							<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+						) }
+					</NonTotalPrices>
+					<TotalPrice>
+						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+					</TotalPrice>
+				</WPOrderReviewSection>
+			) }
 		</>
 	);
 }

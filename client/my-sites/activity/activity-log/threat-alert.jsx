@@ -1,11 +1,10 @@
-import { Button, Card, Spinner } from '@automattic/components';
+import { Button, Card, Spinner, FoldableCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import DiffViewer from 'calypso/components/diff-viewer';
-import FoldableCard from 'calypso/components/foldable-card';
 import InfoPopover from 'calypso/components/info-popover';
 import MarkedLines from 'calypso/components/marked-lines';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
