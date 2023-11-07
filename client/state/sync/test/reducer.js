@@ -1,6 +1,6 @@
 import {
 	SITE_SYNC_STATUS_REQUEST as REQUEST_STATUS,
-	SITE_SYNC_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
+	SITE_SYNC_FAILURE as REQUEST_STATUS_FAILURE,
 } from 'calypso/state/action-types';
 import { setSiteSyncStatus, setSyncInProgress } from 'calypso/state/sync/actions';
 import { serialize, deserialize } from 'calypso/state/utils';
@@ -31,7 +31,7 @@ describe( 'state', () => {
 						isSyncingInProgress: true,
 						syncingTargetSite: 'production',
 						syncingSourceSite: 'staging',
-						restoreId: '12345',
+						lastRestoreId: '12345',
 						fetchingStatus: true,
 					},
 				};
@@ -41,7 +41,7 @@ describe( 'state', () => {
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'progress' );
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingTargetSite' );
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingSourceSite' );
-				expect( serialized[ SITE_ID ] ).toHaveProperty( 'restoreId' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'lastRestoreId' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'fetchingStatus' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'isSyncingInProgress' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'error' );
@@ -51,7 +51,7 @@ describe( 'state', () => {
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'progress' );
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingTargetSite' );
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingSourceSite' );
-				expect( serialized[ SITE_ID ] ).toHaveProperty( 'restoreId' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'lastRestoreId' );
 				// The non-persisted property has default value, persisted value is ignored
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'isSyncingInProgress', false );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'fetchingStatus', false );
@@ -66,7 +66,7 @@ describe( 'state', () => {
 					isSyncingInProgress: true,
 					syncingTargetSite: 'production',
 					syncingSourceSite: 'staging',
-					restoreId: '12345',
+					lastRestoreId: '12345',
 					fetchingStatus: false,
 					error: null,
 				};
@@ -83,7 +83,7 @@ describe( 'state', () => {
 					isSyncingInProgress: true,
 					syncingTargetSite: 'production',
 					syncingSourceSite: 'staging',
-					restoreId: '12345',
+					lastRestoreId: '12345',
 					fetchingStatus: false,
 					error: null,
 				};

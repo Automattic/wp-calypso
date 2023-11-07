@@ -70,8 +70,20 @@ export const isECommerceTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 };
 
+export const isBusinessTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return isMigrationTrialSite( site ) || isHostingTrialSite( site );
+};
+
 export const isTrialSite = ( site: SiteExcerptNetworkData ) => {
-	return isMigrationTrialSite( site ) || isHostingTrialSite( site ) || isECommerceTrialSite( site );
+	return isBusinessTrialSite( site ) || isECommerceTrialSite( site );
+};
+
+export const siteDefaultInterface = ( site: SiteExcerptNetworkData ) => {
+	return site?.options?.wpcom_admin_interface;
+};
+
+export const getSiteWpAdminUrl = ( site: SiteExcerptNetworkData ) => {
+	return site?.options?.admin_url;
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';

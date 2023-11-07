@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
@@ -10,16 +9,14 @@ import Sidebar, {
 	SidebarNavigatorMenu,
 	SidebarNavigatorMenuItem,
 } from 'calypso/layout/sidebar-v2';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasJetpackPartnerAccess } from 'calypso/state/partner-portal/partner/selectors';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SidebarHeader from './header';
 
 import './style.scss';
-
-// This is meant to be the "base" sidebar component. All context-specific sidebars
-// (Sites Management, Plugin Management, Purchases, non-Manage functionality)
-// would use it to construct the right experience for that context.
 
 type Props = {
 	className?: string;
@@ -30,12 +27,14 @@ type Props = {
 		path: string;
 		link: string;
 		title: string;
-		onClickMenuItem: ( path: string ) => void;
+		onClickMenuItem?: ( path: string ) => void;
 		withChevron?: boolean;
 		isExternalLink?: boolean;
-		isSelected: boolean;
+		isSelected?: boolean;
 		trackEventName?: string;
+		trackEventProps?: { [ key: string ]: string };
 	}[];
+	title?: string;
 	description?: string;
 	backButtonProps?: {
 		icon: JSX.Element;
@@ -49,6 +48,7 @@ const JetpackCloudSidebar = ( {
 	isJetpackManage,
 	path,
 	menuItems,
+	title,
 	description,
 	backButtonProps,
 }: Props ) => {
@@ -57,7 +57,10 @@ const JetpackCloudSidebar = ( {
 		siteId ? getJetpackAdminUrl( state, siteId ) : null
 	);
 
+	const canAccessJetpackManage = useSelector( hasJetpackPartnerAccess );
+
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	return (
 		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
@@ -67,6 +70,7 @@ const JetpackCloudSidebar = ( {
 				<SidebarNavigator initialPath={ path }>
 					<SidebarNavigatorMenu
 						path={ path }
+						title={ title }
 						description={ description }
 						backButtonProps={ backButtonProps }
 					>
@@ -76,9 +80,10 @@ const JetpackCloudSidebar = ( {
 								{ ...item }
 								onClickMenuItem={ ( path ) => {
 									if ( item.trackEventName ) {
-										recordTracksEvent( item.trackEventName );
+										dispatch( recordTracksEvent( item.trackEventName, item.trackEventProps ) );
 									}
-									item.onClickMenuItem( path );
+
+									item.onClickMenuItem?.( path );
 								} }
 							/>
 						) ) }
@@ -86,26 +91,42 @@ const JetpackCloudSidebar = ( {
 				</SidebarNavigator>
 			</SidebarMain>
 
-			{ ! isJetpackManage && jetpackAdminUrl && (
-				<SidebarFooter>
+			<SidebarFooter className="jetpack-cloud-sidebar__footer">
+				<ul>
+					{ ! isJetpackManage && jetpackAdminUrl && (
+						<SidebarNavigatorMenuItem
+							isExternalLink
+							title={ translate( 'WP Admin' ) }
+							link={ jetpackAdminUrl }
+							path={ jetpackAdminUrl }
+							icon={ <JetpackIcons icon="wordpress" /> }
+							onClickMenuItem={ () => {
+								dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' ) );
+							} }
+						/>
+					) }
 					<SidebarNavigatorMenuItem
-						title={ translate( 'WP Admin' ) }
-						link={ jetpackAdminUrl }
-						path={ jetpackAdminUrl }
-						icon={ <JetpackIcons icon="wordpress" /> }
-						onClickMenuItem={ ( link ) => {
-							recordTracksEvent( 'calypso_jetpack_sidebar_wp_admin_link_click' );
-							window.open( link, '_blank' );
-						} }
 						isExternalLink
-						isSelected={ false }
+						title={ translate( 'Get help', {
+							comment: 'Jetpack Cloud sidebar navigation item',
+						} ) }
+						link="https://jetpack.com/support"
+						path=""
+						icon={ <JetpackIcons icon="help" /> }
+						onClickMenuItem={ () => {
+							dispatch(
+								recordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
+									menu_item: 'Jetpack Cloud / Support',
+								} )
+							);
+						} }
 					/>
-				</SidebarFooter>
-			) }
+				</ul>
+			</SidebarFooter>
 
 			<SiteSelector
 				showAddNewSite
-				showAllSites={ isJetpackManage }
+				showAllSites={ canAccessJetpackManage }
 				isJetpackAgencyDashboard={ isJetpackManage }
 				className="jetpack-cloud-sidebar__site-selector"
 				allSitesPath="/dashboard"

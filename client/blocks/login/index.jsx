@@ -1,4 +1,6 @@
 import config from '@automattic/calypso-config';
+import { englishLocales } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
@@ -11,6 +13,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import { preventWidows } from 'calypso/lib/formatting';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -28,6 +31,7 @@ import {
 	getRedirectToOriginal,
 	getLastCheckedUsernameOrEmail,
 	getRequestNotice,
+	getRequestError,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 	isTwoFactorAuthTypeSupported,
@@ -99,6 +103,7 @@ class Login extends Component {
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
 		isGravPoweredLoginPage: PropTypes.bool,
+		isSignupExistingAccount: PropTypes.bool,
 	};
 
 	state = {
@@ -130,10 +135,28 @@ class Login extends Component {
 		}
 
 		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
-			this.props.sendEmailLogin();
-			this.handleTwoFactorRequested( 'link' );
+			this.sendMagicLoginLink();
+		}
+
+		if (
+			this.props.requestError?.field === 'usernameOrEmail' &&
+			this.props.requestError?.code === 'email_login_not_allowed'
+		) {
+			const magicLoginUrl = login( {
+				locale: this.props.locale,
+				twoFactorAuthType: 'link',
+				oauth2ClientId: this.props.currentQuery?.client_id,
+				redirectTo: this.props.currentQuery?.redirect_to,
+			} );
+
+			page( magicLoginUrl );
 		}
 	}
+
+	sendMagicLoginLink = () => {
+		this.props.sendEmailLogin();
+		this.handleTwoFactorRequested( 'link' );
+	};
 
 	showContinueAsUser = () => {
 		const {
@@ -295,6 +318,8 @@ class Login extends Component {
 			isGravPoweredClient,
 			isGravPoweredLoginPage,
 			isWooCoreProfilerFlow,
+			isSignupExistingAccount,
+			locale,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -391,7 +416,7 @@ class Login extends Component {
 						<p className="login__header-subtitle">
 							{ this.showContinueAsUser()
 								? translate(
-										"All Woo Express stores are powered by WordPress.com!{{br/}}First, select the account you'd like to use.",
+										"All Woo stores are powered by WordPress.com!{{br/}}First, select the account you'd like to use.",
 										{
 											components: {
 												br: <br />,
@@ -399,7 +424,7 @@ class Login extends Component {
 										}
 								  )
 								: translate(
-										"All Woo Express stores are powered by WordPress.com!{{br/}}Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+										"All Woo stores are powered by WordPress.com!{{br/}}Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 										{
 											components: {
 												signupLink: <a href={ this.getSignupUrl() } />,
@@ -538,6 +563,11 @@ class Login extends Component {
 					{ translate( 'Enter your details to log in to your account.' ) }
 				</p>
 			);
+		} else if ( isSignupExistingAccount ) {
+			headerText =
+				hasTranslation( 'Log in to your existing account' ) || englishLocales.includes( locale )
+					? preventWidows( translate( 'Log in to your existing account' ) )
+					: translate( 'Log in to your account' );
 		}
 
 		if ( isWhiteLogin ) {
@@ -608,6 +638,7 @@ class Login extends Component {
 			isWooCoreProfilerFlow,
 			currentQuery,
 			isGravPoweredLoginPage,
+			isSignupExistingAccount,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -712,6 +743,7 @@ class Login extends Component {
 							handleUsernameChange={ handleUsernameChange }
 							signupUrl={ signupUrl }
 							showSocialLoginFormOnly={ true }
+							sendMagicLoginLink={ this.sendMagicLoginLink }
 						/>
 					</Fragment>
 				);
@@ -735,6 +767,8 @@ class Login extends Component {
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
 				hideSignupLink={ isGravPoweredLoginPage }
+				isSignupExistingAccount={ isSignupExistingAccount }
+				sendMagicLoginLink={ this.sendMagicLoginLink }
 			/>
 		);
 	}
@@ -798,6 +832,11 @@ export default connect(
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+		isSignupExistingAccount: !! (
+			getInitialQueryArguments( state )?.is_signup_existing_account ||
+			getCurrentQueryArguments( state )?.is_signup_existing_account
+		),
+		requestError: getRequestError( state ),
 	} ),
 	{
 		rebootAfterLogin,

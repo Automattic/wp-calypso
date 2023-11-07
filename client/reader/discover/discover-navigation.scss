@@ -1,13 +1,14 @@
-.formatted-header.is-left-align.discover-stream-header {
+.is-section-reader .navigation-header.discover-stream-header {
 	margin: 0 auto;
 	max-width: 600px;
 	&.reader-dual-column {
 		max-width: 968px; // Max width of dual column reader stream.
 	}
 	@media only screen and (max-width: 660px) {
-		margin: 30px 30px 0;
+		padding: 0 30px;
 	}
 }
+
 .discover-stream-navigation {
 	position: relative;
 	margin: auto;

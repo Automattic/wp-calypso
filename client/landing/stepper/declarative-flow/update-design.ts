@@ -11,10 +11,7 @@ import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DesignSetup from './internals/steps-repository/design-setup';
-import ErrorStep from './internals/steps-repository/error-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import Processing from './internals/steps-repository/processing-step';
+import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
@@ -26,12 +23,7 @@ const updateDesign: Flow = {
 		return translate( 'Choose Design' );
 	},
 	useSteps() {
-		return [
-			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'processing', component: Processing },
-			{ slug: 'error', component: ErrorStep },
-		];
+		return [ STEPS.DESIGN_SETUP, STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR ];
 	},
 
 	useStepNavigation( currentStep, navigate ) {

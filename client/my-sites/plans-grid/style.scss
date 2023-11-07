@@ -50,17 +50,28 @@ $mobile-card-max-width: 440px;
 				}
 			}
 
-			&.is-free-hosting-trial {
-				background-color: var(--color-primary);
-				color: var(--studio-purple-0);
-			}
-
 			&.is-business-plan {
 				background-color: #7f54b3;
 				color: var(--studio-purple-0);
 
 				&:focus {
 					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+				}
+
+				+ .button {
+					font-size: $font-body-small;
+					color: #7f54b3;
+					text-decoration: none;
+
+					&:focus {
+						box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+					}
+
+					.gridicon {
+						width: 18px;
+						height: 18px;
+						top: 4px;
+					}
 				}
 			}
 
@@ -122,6 +133,11 @@ $mobile-card-max-width: 440px;
 				background-color: var(--studio-white);
 				color: var(--studio-gray-100);
 				box-shadow: inset 0 0 0 1px var(--studio-gray-10);
+
+				&.is-storage-upgradeable {
+					background-color: var(--color-accent);
+					color: var(--color-text-inverted);
+				}
 
 				&:hover {
 					box-shadow: inset 0 0 0 1px var(--studio-gray-80);
@@ -377,20 +393,15 @@ $mobile-card-max-width: 440px;
 	border: none;
 	background-color: var(--color-surface);
 	position: relative;
-	vertical-align: baseline;
+	vertical-align: top;
 
 	.is-bold {
 		font-weight: 600;
 	}
 
-	&.is-bottom-aligned {
-		vertical-align: bottom;
-	}
-
 
 	&.is-top-buttons {
 		padding: 0 20px;
-		vertical-align: bottom;
 		@include plans-2023-break-small {
 			padding-top: 16px;
 			padding-bottom: 16px;
@@ -411,44 +422,53 @@ $mobile-card-max-width: 440px;
 
 .plan-features-2023-grid__plan-spotlight {
 	background-color: var(--studio-white);
-	.plan-features-2023-grid__plan-spotlight-card {
-		max-width: 100%;
-		margin-bottom: 64px;
-		border: 1px solid #e0e0e0;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 0 0 5px 5px;
-		div.plan-features-2023-grid__table-item {
-			border: none;
-			&.is-top-buttons {
-				position: absolute;
-				top: 46px;
-				right: 0;
-				border-left: 0;
-			}
+	position: relative;
+	max-width: 100%;
+	margin-bottom: 64px;
+	border: 1px solid #e0e0e0;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 0 0 5px 5px;
+	div.plan-features-2023-grid__table-item {
+		border: none;
+		&.is-top-buttons {
+			position: absolute;
+			top: 46px;
+			right: 0;
+			border-left: 0;
+		}
 
-			&.plan-features-2023-grid__header-billing-info {
-				padding-bottom: 32px;
-				@include plans-2023-break-small {
-					padding-bottom: 32px;
-				}
-			}
-
-			&.popular-plan-parent-class .plan-features-2023-grid__popular-badge {
-				padding-bottom: 23px;
-			}
-
-			.plan-features-2023-grid__header-title {
-				margin-top: 24px;
-			}
-
-			.plan-features-2023-grid__header-tagline {
-				min-height: 0;
+		&.plan-features-2023-grid__header-billing-info {
+			padding-bottom: 16px;
+			@include plans-2023-break-small {
 				padding-bottom: 16px;
 			}
+		}
 
-			.plan-features-2023-grid__header-logo {
-				display: none;
-			}
+		&.popular-plan-parent-class .plan-features-2023-grid__popular-badge {
+			padding-bottom: 23px;
+		}
+
+		&.plan-features-2023-grid__storage {
+			padding-top: 0;
+			padding-bottom: 32px;
+			width: 205px;
+		}
+
+		.plan-features-2023-grid__header-title {
+			margin-top: 24px;
+		}
+
+		.plan-features-2023-grid__header-tagline {
+			min-height: 0;
+			padding-bottom: 16px;
+		}
+
+		.plan-features-2023-grid__header-logo {
+			display: none;
+		}
+
+		.plan-features-2023-gridrison__actions {
+			width: 200px;
 		}
 	}
 }
@@ -495,7 +515,14 @@ $mobile-card-max-width: 440px;
 	}
 }
 
+.plan-features-2023-grid__multiple-actions-container {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
 .plan-features-2023-grid__actions-button {
+	flex: 1;
 	width: 100%;
 
 	&.disabled,
@@ -809,8 +836,12 @@ body.is-section-signup.is-white-signup,
 
 
 .plan-comparison-grid {
-	.plan-features-2023-gridrison__actions-buttons {
-		min-height: 40px;
+	.plan-features-2023-gridrison__actions {
+		margin-bottom: auto;
+
+		&-buttons {
+			min-height: 40px;
+		}
 	}
 	.plan-comparison-grid__header-cell {
 		display: flex;
@@ -878,6 +909,11 @@ body.is-section-signup.is-white-signup,
 					/* stylelint-disable-next-line */
 					border-radius: 5px 5px 0 0;
 					border-style: solid;
+					transition: top 0.2s ease;
+				}
+
+				.popular-badge-is-stuck {
+					top: -10px;
 				}
 
 				&.is-left-of-highlight {
@@ -1105,27 +1141,4 @@ body.is-section-signup.is-white-signup,
 	max-width: 768px;
 	margin-left: auto !important;
 	margin-right: auto !important;
-}
-
-.plan-features-2023-grid__refund-notice {
-	text-align: center;
-	padding-top: 8px;
-	font-size: $font-body-extra-small;
-	line-height: 16px;
-
-	&.is-personal-plan {
-		color: var(--studio-blue-60);
-	}
-
-	&.is-premium-plan {
-		color: #004687;
-	}
-
-	&.is-business-plan {
-		color: #7f54b3;
-	}
-
-	&.is-ecommerce-plan {
-		color: #55347d;
-	}
 }

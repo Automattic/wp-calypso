@@ -110,6 +110,26 @@ body.is-section-home.theme-default.color-scheme {
 		@include break-large {
 			padding-left: 0;
 		}
+
+		.app-promo__icon {
+			margin: 0 0 6px;
+		}
+
+		.card-heading {
+			text-align: left;
+		}
+
+		.app-promo__app-badges .get-apps__app-badge {
+			display: inline;
+		}
+
+		.get-apps__app-badge img {
+			margin: 0 0 0 -7px;
+		}
+
+		.app-promo__app-badges-text {
+			text-align: left;
+		}
 	}
 
 	@include break-mobile {
@@ -171,7 +191,7 @@ body.is-section-home.theme-default.color-scheme {
 	box-shadow: none;
 
 	@include breakpoint-deprecated( ">660px" ) {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
+		border-radius: 3px;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		border-bottom: none;
 		padding: 16px 24px;
@@ -191,8 +211,12 @@ body.is-section-home.theme-default.color-scheme {
 .customer-home__main .card-heading,
 .customer-home__main .foldable-card__header {
 	margin-top: 0;
-	font-size: $font-body;
-	font-weight: 600;
+	font-size: $font-body-large;
+	font-weight: 500;
+}
+
+.customer-home__main .blogging-prompt .blogging-prompt__card .blogging-prompt__prompt-text {
+	font-size: $font-body-large;
 }
 
 .customer-home__card-subheader {
@@ -239,7 +263,7 @@ body.is-section-home.theme-default.color-scheme {
 		margin: 0;
 	}
 
-	border-radius: 3px; /* stylelint-disable-line scales/radii */
+	border-radius: 3px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		box-shadow: 0 0 0 1px var(--color-border-subtle);

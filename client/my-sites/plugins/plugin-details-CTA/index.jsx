@@ -300,7 +300,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 									<>
 										{ price ? (
 											<>
-												{ price + ' ' }
+												{ price }
 												<span className="plugin-details-cta__period">{ period }</span>
 											</>
 										) : (

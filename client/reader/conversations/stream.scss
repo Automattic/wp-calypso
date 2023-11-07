@@ -1,9 +1,8 @@
-.formatted-header.is-left-align.conversations-stream-header,
-.formatted-header.is-left-align.has-screen-options.conversations-stream-header {
+.is-section-reader .conversations__header.navigation-header {
 	margin: 0 auto;
 	max-width: 600px;
 	@media only screen and (max-width: 660px) {
-		margin: 30px 30px 0;
+		padding: 0 30px;
 	}
 }
 

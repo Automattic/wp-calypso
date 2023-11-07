@@ -9,7 +9,7 @@ export type SettingsTabs =
 	| 'Discussion'
 	| 'Traffic'
 	| 'Newsletter'
-	| 'Earn';
+	| 'Monetize';
 // Discriminated union type.
 type JetpackTabs =
 	| { view: 'Dashboard'; tab: DashboardTabs }
@@ -50,7 +50,7 @@ export class JetpackDashboardPage {
 	 * @param {JetpackTabs} param View and tab to click on.
 	 */
 	async clickTab( param: JetpackTabs ) {
-		// Switch to the correct view if required.
+		// Switch to the correct view (Dashboard/Settings) if required.
 		await this.page
 			.getByRole( 'main' )
 			.getByRole( 'link', { name: param.view, exact: true } )
@@ -62,5 +62,13 @@ export class JetpackDashboardPage {
 			.getByRole( 'main' )
 			.getByRole( 'menuitem', { name: param.tab, exact: true } )
 			.click();
+
+		// Filter the nav tabs to elements that have `.is-selected` (should be only one),
+		// and verify the resulting element is the tab that was clicked on earlier.
+		await this.page
+			.getByRole( 'main' )
+			.filter( { has: this.page.locator( '.is-selected' ) } )
+			.filter( { hasText: param.tab } )
+			.waitFor();
 	}
 }

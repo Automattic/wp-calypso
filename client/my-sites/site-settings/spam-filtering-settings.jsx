@@ -4,14 +4,13 @@ import {
 	WPCOM_FEATURES_ANTISPAM,
 	isJetpackAntiSpam,
 } from '@automattic/calypso-products';
-import { FormInputValidation, Gridicon } from '@automattic/components';
+import { FormInputValidation, Gridicon, FoldableCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import ExternalLink from 'calypso/components/external-link';
-import FoldableCard from 'calypso/components/foldable-card';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';

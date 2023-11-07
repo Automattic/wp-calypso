@@ -18,6 +18,7 @@ export const HostingFlowForkingPage = ( { siteCount }: HostingFlowForkingPagePro
 				alignItems: 'center',
 				margin: 0,
 				padding: 0,
+				gap: '32px',
 				[ MEDIA_QUERIES.small ]: {
 					width: '100%',
 					maxWidth: '100%',

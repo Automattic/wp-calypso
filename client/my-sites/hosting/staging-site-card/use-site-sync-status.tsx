@@ -9,7 +9,7 @@ import {
 	getSyncStatus,
 	getSyncProgress,
 	getSyncTargetSite,
-	getSyncRestoreId,
+	getSyncLastRestoreId,
 	getSyncSourceSite,
 	isFetchingSyncStatus,
 } from 'calypso/state/sync/selectors';
@@ -39,7 +39,7 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 	const syncStatusError = useSelector( ( state ) => getSyncStatusError( state, siteId ) );
 	const syncingTargetSite = useSelector( ( state ) => getSyncTargetSite( state, siteId ) );
 	const syncingSourceSite = useSelector( ( state ) => getSyncSourceSite( state, siteId ) );
-	const syncRestoreId = useSelector( ( state ) => getSyncRestoreId( state, siteId ) );
+	const syncLastRestoreId = useSelector( ( state ) => getSyncLastRestoreId( state, siteId ) );
 	const fetchingStatus = useSelector( ( state ) => isFetchingSyncStatus( state, siteId ) );
 
 	const clearIntervalId = useCallback( () => {
@@ -51,6 +51,12 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 
 	useEffect( () => {
 		if ( ! siteId || syncStatus === SiteSyncStatus.COMPLETED ) {
+			dispatch( setSyncInProgress( siteId, false ) );
+			clearIntervalId();
+			return;
+		}
+
+		if ( ! siteId || syncStatus === SiteSyncStatus.FAILED ) {
 			dispatch( setSyncInProgress( siteId, false ) );
 			clearIntervalId();
 			return;
@@ -88,7 +94,7 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 			error: syncStatusError,
 			sourceSite: syncingSourceSite,
 			targetSite: syncingTargetSite,
-			restoreId: syncRestoreId,
+			lastRestoreId: syncLastRestoreId,
 			fetchingStatus: fetchingStatus,
 		} ),
 		[
@@ -99,7 +105,7 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 			syncStatusError,
 			syncingTargetSite,
 			syncingSourceSite,
-			syncRestoreId,
+			syncLastRestoreId,
 			fetchingStatus,
 		]
 	);
@@ -117,7 +123,7 @@ const withSyncStatus = createHigherOrderComponent(
 		const [ hideRewindProgress, setHideRewindProgress ] = useState( false );
 
 		useEffect( () => {
-			setHideRewindProgress( rewindState?.rewind?.restoreId === syncData.restoreId );
+			setHideRewindProgress( rewindState?.rewind?.restoreId === syncData.lastRestoreId );
 		}, [ syncData, rewindState, hideRewindProgress ] );
 
 		return (

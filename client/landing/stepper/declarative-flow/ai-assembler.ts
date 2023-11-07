@@ -9,10 +9,7 @@ import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AISitePrompt from './internals/steps-repository/ai-site-prompt';
-import ErrorStep from './internals/steps-repository/error-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import ProcessingStep from './internals/steps-repository/processing-step';
+import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -57,14 +54,11 @@ const withAIAssemblerFlow: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'site-prompt', component: AISitePrompt },
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'error', component: ErrorStep },
-			{
-				slug: 'celebration-step',
-				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
-			},
+			STEPS.SITE_PROMPT,
+			STEPS.PATTERN_ASSEMBLER,
+			STEPS.PROCESSING,
+			STEPS.ERROR,
+			STEPS.CELEBRATION,
 		];
 	},
 
@@ -130,7 +124,15 @@ const withAIAssemblerFlow: Flow = {
 			}
 		};
 
-		return { submit, goBack };
+		const goNext = () => {
+			switch ( _currentStep ) {
+				case 'site-prompt': {
+					return navigate( 'patternAssembler' );
+				}
+			}
+		};
+
+		return { submit, goBack, goNext };
 	},
 };
 

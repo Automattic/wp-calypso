@@ -1,6 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from '../constants';
+import { NAVIGATOR_PATHS } from '../constants';
 import type { ScreenName } from '../types';
 
 export type UseScreenOptions = {
@@ -21,6 +22,7 @@ export type Screen = {
 };
 
 const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Screen => {
+	const isAddPagesEnabled = isEnabled( 'pattern-assembler/add-pages' );
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const screens: Record< ScreenName, Screen > = {
@@ -40,19 +42,6 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			backLabel: hasEnTranslation( 'patterns' ) ? translate( 'patterns' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.MAIN_HEADER,
 		},
-		sections: {
-			name: 'sections',
-			title: translate( 'Sections' ),
-			description: hasEnTranslation(
-				'Find the right patterns for you by exploring the list of categories below.'
-			)
-				? translate( 'Find the right patterns for you by exploring the list of categories below.' )
-				: translate(
-						'Find the section patterns for your homepage by exploring the categories below.'
-				  ),
-			continueLabel: translate( 'Save sections' ),
-			initialPath: `${ NAVIGATOR_PATHS.SECTIONS }/${ INITIAL_CATEGORY }`,
-		},
 		styles: {
 			name: 'styles',
 			title: hasEnTranslation( 'Select styles' )
@@ -67,9 +56,21 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 				: translate(
 						'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				  ),
-			continueLabel: translate( 'Save and continue' ),
+			continueLabel: isAddPagesEnabled
+				? translate( 'Select pages' )
+				: translate( 'Save and continue' ),
 			backLabel: hasEnTranslation( 'styles' ) ? translate( 'styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.STYLES_COLORS,
+		},
+		pages: {
+			name: 'pages',
+			title: translate( 'Add more pages' ),
+			description: translate(
+				"We've included common pages in your website, but feel free to add more or change the current ones."
+			),
+			continueLabel: translate( 'Save and continue' ),
+			backLabel: translate( 'pages' ),
+			initialPath: NAVIGATOR_PATHS.PAGES,
 		},
 		upsell: {
 			name: 'upsell',
@@ -97,17 +98,39 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 
 	const previousScreens = {
 		main: null,
-		sections: screens.main,
 		styles: screens.main,
-		upsell: screens.styles,
-		activation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
-		confirmation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
+		pages: screens.styles,
+		upsell: isAddPagesEnabled ? screens.pages : screens.styles,
+		activation: ( () => {
+			if ( options.shouldUnlockGlobalStyles ) {
+				return screens.upsell;
+			}
+
+			return isAddPagesEnabled ? screens.pages : screens.styles;
+		} )(),
+		confirmation: ( () => {
+			if ( options.shouldUnlockGlobalStyles ) {
+				return screens.upsell;
+			}
+
+			return isAddPagesEnabled ? screens.pages : screens.styles;
+		} )(),
 	};
 
 	const nextScreens = {
 		main: screens.styles,
-		sections: screens.main,
 		styles: ( () => {
+			if ( isAddPagesEnabled ) {
+				return screens.pages;
+			}
+
+			if ( options.shouldUnlockGlobalStyles ) {
+				return screens.upsell;
+			}
+
+			return options.isNewSite ? screens.confirmation : screens.activation;
+		} )(),
+		pages: ( () => {
 			if ( options.shouldUnlockGlobalStyles ) {
 				return screens.upsell;
 			}

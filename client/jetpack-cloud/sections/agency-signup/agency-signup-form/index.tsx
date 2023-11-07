@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
 import formatApiPartner from 'calypso/jetpack-cloud/sections/partner-portal/lib/format-api-partner';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -26,6 +27,10 @@ export default function AgencySignupForm() {
 	const partner = useSelector( getCurrentPartner );
 	const hasFetched = useSelector( hasFetchedPartner );
 	const notificationId = 'partner-portal-agency-signup-form';
+	const queryParams = new URLSearchParams( window.location.search );
+	const refQueryParam = queryParams.get( 'ref' );
+
+	const referrer = refQueryParam === 'agencies-lp' ? 'agencies-lp' : 'manage-lp';
 
 	const createPartner = useCreatePartnerMutation( {
 		onSuccess: ( partner ) => {
@@ -55,12 +60,15 @@ export default function AgencySignupForm() {
 					contact_person: payload.contactPerson,
 					company_website: payload.companyWebsite,
 					company_type: payload.companyType,
+					managed_sites: payload.managedSites,
+					partner_program_opt_in: payload.partnerProgramOptIn,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
+					referrer: payload.referrer,
 				} )
 			);
 		},
@@ -75,11 +83,16 @@ export default function AgencySignupForm() {
 	} );
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_agency_signup_start' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_agency_signup_start', {
+				form_referrer_source: referrer,
+			} )
+		);
 	}, [] );
 
 	return (
 		<Card className="agency-signup-form">
+			<QueryJetpackPartnerPortalPartner />
 			<svg
 				className="agency-signup-form__logo"
 				width="32"
@@ -97,7 +110,7 @@ export default function AgencySignupForm() {
 			</svg>
 
 			<CardHeading className="agency-signup-form__heading">
-				{ translate( 'Sign up as an Agency' ) }
+				{ translate( 'Sign up for Jetpack Manage' ) }
 			</CardHeading>
 
 			<h2 className="agency-signup-form__subheading">
@@ -112,6 +125,8 @@ export default function AgencySignupForm() {
 					isLoading={ createPartner.isLoading }
 					onSubmit={ onSubmit }
 					submitLabel={ translate( 'Continue' ) }
+					showSignupFields={ true }
+					referrer={ referrer }
 				/>
 			) }
 		</Card>

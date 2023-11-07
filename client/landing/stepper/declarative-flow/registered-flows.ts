@@ -9,7 +9,6 @@ import {
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
-	ONBOARDING_PM_FLOW,
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
@@ -104,9 +103,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
-
-	[ ONBOARDING_PM_FLOW ]: () =>
-		import( /* webpackChunkName: "new-hosted-site-flow" */ './onboarding-pm' ),
 
 	[ DOMAIN_TRANSFER ]: () =>
 		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),

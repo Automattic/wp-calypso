@@ -1,8 +1,9 @@
-import { updateLaunchpadSettings, type UserSelect } from '@automattic/data-stores';
+import { LaunchpadNavigator, type UserSelect } from '@automattic/data-stores';
 import { useFlowProgress, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -51,6 +52,7 @@ const linkInBio: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		setStepProgress( flowProgress );
 
@@ -138,10 +140,13 @@ const linkInBio: Flow = {
 		const goNext = async () => {
 			switch ( _currentStepSlug ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'link-in-bio-tld',
+						setActiveChecklist,
+						siteId,
+						siteSlug,
+					} );
+					return;
 
 				default:
 					return navigate( 'intro' );

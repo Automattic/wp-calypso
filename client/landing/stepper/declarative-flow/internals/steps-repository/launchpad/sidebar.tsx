@@ -1,7 +1,7 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Badge, CircularProgressBar, Dialog, Gridicon } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { Launchpad } from '@automattic/launchpad';
+import { LaunchpadInternal } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
@@ -15,6 +15,7 @@ import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-emai
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { useSelector } from 'calypso/state';
@@ -43,6 +44,18 @@ function getUrlInfo( url: string ) {
 	const topLevelDomain = urlWithoutProtocol.match( /\..*/ )?.[ 0 ] || '';
 
 	return [ siteName, topLevelDomain ];
+}
+
+function recordUnverifiedDomainDialogShownTracksEvent( site_id?: number ) {
+	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_dialog_shown', {
+		site_id,
+	} );
+}
+
+function recordUnverifiedDomainContinueAnywayClickedTracksEvent( site_id?: number ) {
+	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_continue_anyway_clicked', {
+		site_id,
+	} );
 }
 
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
@@ -114,7 +127,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			getPlanCartItem(),
 			getDomainCartItem(),
 			stripeConnectUrl,
-			() => setShowConfirmModal( true ),
+			() => {
+				recordUnverifiedDomainDialogShownTracksEvent( site?.ID );
+				setShowConfirmModal( true );
+			},
 			isDomainEmailUnverified
 		);
 
@@ -244,7 +260,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 							</p>
 						</div>
 					) }
-					<Launchpad
+					<LaunchpadInternal
 						siteSlug={ siteSlug }
 						taskFilter={ () => enhancedTasks || [] }
 						makeLastTaskPrimaryAction={ true }
@@ -271,6 +287,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 						label: translate( 'Continue anyway' ),
 						isPrimary: true,
 						onClick: () => {
+							recordUnverifiedDomainContinueAnywayClickedTracksEvent( site?.ID );
 							enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch?.( true );
 							setShowConfirmModal( false );
 						},

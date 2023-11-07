@@ -12,7 +12,7 @@
 		cursor: pointer;
 		transition: all 200ms ease-in-out;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
+		border-radius: 3px;
 
 		&:hover,
 		&:focus {
@@ -30,6 +30,7 @@
 		.home-site-preview__thumbnail {
 			display: block;
 			height: 235px;
+			pointer-events: none;
 			width: 100%;
 			iframe {
 				// The idea is to zoom-out the iframe to get most of the content

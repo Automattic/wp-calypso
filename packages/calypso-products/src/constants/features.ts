@@ -219,6 +219,7 @@ export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
 export const FEATURE_SOCIAL_INSTAGRAM_CONNECTION = 'social-instagram-connection';
+export const FEATURE_SOCIAL_NEXTDOOR_CONNECTION = 'social-nextdoor-connection';
 export const FEATURE_JETPACK_MONITOR_MONTHLY = PRODUCT_JETPACK_MONITOR_MONTHLY;
 export const FEATURE_JETPACK_MONITOR_YEARLY = PRODUCT_JETPACK_MONITOR_YEARLY;
 export const FEATURE_MONITOR_1_MINUTE_CHECK_INTERVAL = 'monitor-1-minute-check-interval';
@@ -325,6 +326,8 @@ export const FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO = 'payment-transaction-fees-
 export const FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL = 'payment-transaction-fees-0-all';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR = 'payment-transaction-fees-2-regular';
 export const FEATURE_GROUP_PAYMENT_TRANSACTION_FEES = 'payment-transaction-fees-group';
+export const FEATURE_COMMISSION_FEE_STANDARD_FEATURES = 'payment-commission-fee-standard';
+export const FEATURE_COMMISSION_FEE_WOO_FEATURES = 'payment-commission-fee-woo';
 export const FEATURE_THE_READER = 'the-reader';
 
 // Pricing Grid 2023 Features

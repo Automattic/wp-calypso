@@ -1,12 +1,11 @@
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
-import { JetpackLogo } from '@automattic/components';
+import { JetpackLogo, FoldableCard } from '@automattic/components';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
-import FoldableCard from 'calypso/components/foldable-card';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';

@@ -20,7 +20,7 @@ const redirectIfHasNoAccess = ( context: PageJS.Context ) => {
 
 const setSidebar = ( context: PageJS.Context ): void => {
 	if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar />;
+		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
 	} else {
 		context.secondary = <DashboardSidebar path={ context.path } />;
 	}

@@ -13,6 +13,7 @@ export function translateInvalidPartnerParameterError( parameters: object, detai
 		contact_person: __( 'Contact person' ),
 		company_website: __( 'Company website' ),
 		company_type: __( 'Company type' ),
+		managed_sites: __( 'Managed sites' ),
 		city: __( 'City' ),
 		country: __( 'Country' ),
 		line1: __( 'Address line 1' ),

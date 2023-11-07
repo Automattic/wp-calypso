@@ -6,9 +6,9 @@ import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -68,11 +68,9 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
 			<QueryBillingTransactions />
 			{ ! isJetpackCloud() && (
-				<FormattedHeader
-					brandFont
-					className="billing-history__page-heading"
-					headerText={ titles.sectionTitle }
-					subHeaderText={ translate(
+				<NavigationHeader
+					title={ titles.sectionTitle }
+					subtitle={ translate(
 						'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -80,7 +78,6 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 							},
 						}
 					) }
-					align="left"
 				/>
 			) }
 			<PurchasesNavigation section="billingHistory" siteSlug={ siteSlug } />
@@ -132,12 +129,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 				title="Billing History > Receipt"
 			/>
 			<QueryBillingTransaction transactionId={ receiptId } />
-			<FormattedHeader
-				brandFont
-				className="billing-history__page-heading"
-				headerText={ titles.sectionTitle }
-				align="left"
-			/>
+			<NavigationHeader title={ titles.sectionTitle } />
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }

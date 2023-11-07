@@ -16,7 +16,7 @@ function serviceToIconName( service ) {
 }
 
 function hasRoundIcon( service ) {
-	return [ 'facebook' ].includes( service );
+	return [ 'facebook', 'nextdoor' ].includes( service );
 }
 
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {

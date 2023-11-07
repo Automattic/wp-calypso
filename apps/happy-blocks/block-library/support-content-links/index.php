@@ -23,7 +23,7 @@
 	</p>
 	<p>
 		<?php esc_html_e( 'New to WordPress.com? ', 'happy-blocks' ); ?>
-		<a href="<?php echo esc_url( 'https://wordpress.com/support/start/' ); ?>" target="_blank" rel="noreferrer noopener">
+		<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/plans/' ) ); ?>" target="_blank" rel="noreferrer noopener">
 			<?php esc_html_e( 'Find your perfect-fit plan here.', 'happy-blocks' ); ?>
 		</a>
 	</p>

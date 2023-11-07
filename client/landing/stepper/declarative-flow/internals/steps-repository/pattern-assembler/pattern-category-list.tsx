@@ -5,7 +5,9 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
+import { file } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { ORDERED_PATTERN_CATEGORIES } from './constants';
 import { useCategoriesOrder } from './hooks';
 import PatternCount from './pattern-count';
 import type { Pattern, Category } from './types';
@@ -27,7 +29,7 @@ const PatternCategoryList = ( {
 	onSelectCategory,
 }: Props ) => {
 	const translate = useTranslate();
-	const categoriesInOrder = useCategoriesOrder( categories );
+	const categoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_CATEGORIES );
 	const composite = useCompositeState( { orientation: 'vertical' } );
 
 	return (
@@ -59,7 +61,7 @@ const PatternCategoryList = ( {
 							aria-current={ isActive }
 							onClick={ () => onSelectCategory( name ) }
 						>
-							<NavigatorItem active={ isActive }>
+							<NavigatorItem icon={ file } active={ isActive }>
 								<>
 									{ label }
 									<PatternCount count={ patternCountMapByCategory[ name ] } />

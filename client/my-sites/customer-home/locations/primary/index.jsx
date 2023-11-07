@@ -34,8 +34,10 @@ import {
 	TASK_DOMAIN_UPSELL,
 	TASK_GOOGLE_DOMAIN_OWNERS,
 	LAUNCHPAD_INTENT_BUILD,
+	LAUNCHPAD_INTENT_HOSTING,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad/intent-build';
+import LaunchpadIntentHosting from 'calypso/my-sites/customer-home/cards/launchpad/intent-hosting';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -86,6 +88,7 @@ const cardComponents = {
 	[ TASK_SITE_RESUME_COPY ]: SiteResumeCopy,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
 	[ LAUNCHPAD_INTENT_BUILD ]: LaunchpadIntentBuild,
+	[ LAUNCHPAD_INTENT_HOSTING ]: LaunchpadIntentHosting,
 	[ TASK_UPSELL_TITAN ]: TitanBanner,
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,

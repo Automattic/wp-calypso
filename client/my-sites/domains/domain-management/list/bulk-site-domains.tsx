@@ -163,6 +163,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				/>
 				{ changeSiteAddressSourceDomain && (
 					<SiteAddressChanger
+						hasNonWpcomDomains={ hasNonWpcomDomains }
 						currentDomain={ changeSiteAddressSourceDomain }
 						currentDomainSuffix={ changeSiteAddressSourceDomain.name.match( /\.\w+\.\w+$/ )?.[ 0 ] }
 						isDialogVisible

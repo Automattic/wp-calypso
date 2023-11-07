@@ -11,6 +11,8 @@ import Accordion from 'calypso/components/domains/accordion';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
 import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
@@ -35,7 +37,7 @@ import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
-import { requestWhois } from 'calypso/state/domains/management/actions';
+import { requestWhois, verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { getWhoisData } from 'calypso/state/domains/management/selectors';
 import {
 	getByPurchaseId,
@@ -76,6 +78,7 @@ const Settings = ( {
 	selectedSite,
 	updateNameservers,
 	whoisData,
+	verifyIcannEmail,
 }: SettingsPageProps ) => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
@@ -318,18 +321,42 @@ const Settings = ( {
 		);
 	};
 
-	const renderDnsRecordsNotice = () => {
-		if (
-			( ! englishLocales.includes( getLocaleSlug() || '' ) &&
-				! i18n.hasTranslation(
-					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
-				) ) ||
-			areAllWpcomNameServers() ||
-			! nameservers ||
-			! nameservers.length
-		) {
+	const renderExternalNameserversNotice = ( noticeType: string ) => {
+		if ( areAllWpcomNameServers() || ! nameservers || ! nameservers.length ) {
 			return null;
 		}
+
+		const dnsRecordsNotice = translate(
+			"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
+			{
+				components: {
+					a: (
+						<a
+							href={ domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
+								nameservers: true,
+							} ) }
+						/>
+					),
+				},
+			}
+		);
+
+		const domainForwardingNotice = translate(
+			"Your domain is using external name servers so the Domain Forwarding records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
+			{
+				components: {
+					a: (
+						<a
+							href={ domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
+								nameservers: true,
+							} ) }
+						/>
+					),
+				},
+			}
+		);
+
+		const notice = noticeType === 'DNS' ? dnsRecordsNotice : domainForwardingNotice;
 
 		return (
 			<div className="dns-records-card-notice">
@@ -339,25 +366,7 @@ const Settings = ( {
 					className="dns-records-card-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="dns-records-card-notice__message">
-					{ translate(
-						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
-						{
-							components: {
-								a: (
-									<a
-										href={ domainManagementEdit(
-											selectedSite.slug,
-											selectedDomainName,
-											currentRoute,
-											{ nameservers: true }
-										) }
-									/>
-								),
-							},
-						}
-					) }
-				</div>
+				<div className="dns-records-card-notice__message">{ notice }</div>
 			</div>
 		);
 	};
@@ -381,7 +390,7 @@ const Settings = ( {
 				>
 					{ domain.canManageDnsRecords ? (
 						<>
-							{ renderDnsRecordsNotice() }
+							{ renderExternalNameserversNotice( 'DNS' ) }
 							<DnsRecords
 								dns={ dns }
 								selectedDomainName={ selectedDomainName }
@@ -424,7 +433,11 @@ const Settings = ( {
 				subtitle={ translate( 'Forward your domain to another' ) }
 				isDisabled={ domain.isMoveToNewSitePending }
 			>
-				<DomainForwardingCard domain={ domain } />
+				{ renderExternalNameserversNotice( 'DOMAIN_FORWARDING' ) }
+				<DomainForwardingCard
+					domain={ domain }
+					areAllWpcomNameServers={ areAllWpcomNameServers() }
+				/>
 			</Accordion>
 		);
 	};
@@ -578,6 +591,26 @@ const Settings = ( {
 		);
 	};
 
+	const renderUnverifiedEmailNotice = () => {
+		if ( domain?.isPendingIcannVerification ) {
+			return (
+				<Notice
+					text={ translate(
+						'You must respond to the ICANN email to verify your domain email address or your domain will stop working. Check your contact information is correct below. '
+					) }
+					icon="cross-circle"
+					showDismiss={ false }
+					status="is-warning"
+				>
+					<NoticeAction onClick={ () => verifyIcannEmail( domain.domain ) }>
+						{ translate( 'Resend Email' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+		return null;
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		if ( ! domain ) {
@@ -585,6 +618,7 @@ const Settings = ( {
 		}
 		return (
 			<>
+				{ renderUnverifiedEmailNotice() }
 				{ renderStatusSection() }
 				{ renderDetailsSection() }
 				{ renderTranferInMappedDomainSection() }
@@ -650,5 +684,6 @@ export default connect(
 	{
 		requestWhois,
 		recordTracksEvent,
+		verifyIcannEmail,
 	}
 )( withDomainNameservers( Settings ) );

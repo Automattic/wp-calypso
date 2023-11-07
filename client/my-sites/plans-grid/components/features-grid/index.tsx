@@ -7,7 +7,9 @@ import {
 	isWooExpressSmallPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
-	isFreeHostingTrial,
+	isBusinessTrial,
+	isWooExpressPlan,
+	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -18,12 +20,11 @@ import {
 	SalesforceLogo,
 	SlackLogo,
 	TimeLogo,
+	FoldableCard,
 } from '@automattic/components';
-import { isAnyHostingFlow } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
-import FoldableCard from 'calypso/components/foldable-card';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
@@ -54,7 +55,7 @@ interface FeaturesGridType extends PlansGridProps {
 
 class FeaturesGrid extends Component< FeaturesGridType > {
 	renderTable( renderedGridPlans: GridPlan[] ) {
-		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
+		const { translate, gridPlanForSpotlight, stickyRowOffset } = this.props;
 		// Do not render the spotlight plan if it exists
 		const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 			? renderedGridPlans
@@ -81,15 +82,11 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
 						stickyOffset={ stickyRowOffset }
-						topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
 					>
 						{ ( isStuck: boolean ) =>
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
 						}
 					</StickyContainer>
-					<tr>
-						{ this.maybeRenderRefundNotice( gridPlansWithoutSpotlight, { isTableCell: true } ) }
-					</tr>
 					<tr>
 						{ this.renderPreviousFeaturesIncludedTitle( gridPlansWithoutSpotlight, {
 							isTableCell: true,
@@ -140,20 +137,19 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		}
 
 		const spotlightPlanClasses = classNames(
-			'plan-features-2023-grid__plan-spotlight-card',
+			'plan-features-2023-grid__plan-spotlight',
 			getPlanClass( gridPlanForSpotlight.planSlug )
 		);
 
 		return (
-			<div className="plan-features-2023-grid__plan-spotlight">
-				<div className={ spotlightPlanClasses }>
-					{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
-					{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
-					{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
-				</div>
+			<div className={ spotlightPlanClasses }>
+				{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
+				{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
+				{ this.renderPlanStorageOptions( [ gridPlanForSpotlight ] ) }
+				{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
 			</div>
 		);
 	}
@@ -193,10 +189,9 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						{ this.renderPlanTagline( [ gridPlan ] ) }
 						{ this.renderPlanPrice( [ gridPlan ] ) }
 						{ this.renderBillingTimeframe( [ gridPlan ] ) }
-						{ this.renderMobileFreeDomain( gridPlan.planSlug, gridPlan.isMonthlyPlan ) }
+						{ this.renderMobileFreeDomain( gridPlan ) }
 						{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						{ this.renderTopButtons( [ gridPlan ] ) }
-						{ this.maybeRenderRefundNotice( [ gridPlan ] ) }
 						<CardContainer
 							header={ translate( 'Show all features' ) }
 							planSlug={ gridPlan.planSlug }
@@ -217,12 +212,24 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			} );
 	}
 
-	renderMobileFreeDomain( planSlug: PlanSlug, isMonthlyPlan?: boolean ) {
+	renderMobileFreeDomain( gridPlan: GridPlan ) {
 		const { translate } = this.props;
+		const { planSlug, isMonthlyPlan } = gridPlan;
 
 		if ( isMonthlyPlan || isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
 			return null;
 		}
+
+		// Remove the custom domain feature for Woo Express plans with introductory offer.
+		if (
+			isWooExpressPlan( planSlug ) &&
+			! gridPlan.features.wpcomFeatures.some(
+				( feature ) => feature.getSlug() === FEATURE_CUSTOM_DOMAIN
+			)
+		) {
+			return null;
+		}
+
 		const { paidDomainName } = this.props;
 
 		const displayText = paidDomainName
@@ -243,25 +250,16 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	renderPlanPrice( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const {
-			isReskinned,
-			isLargeCurrency,
-			translate,
-			isPlanUpgradeCreditEligible,
-			currentSitePlanSlug,
-			siteId,
-		} = this.props;
+		const { isLargeCurrency, translate, isPlanUpgradeCreditEligible, currentSitePlanSlug, siteId } =
+			this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
 			const isWooExpressPlus = isWooExpressPlusPlan( planSlug );
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
-				'has-border-top': ! isReskinned,
-			} );
 
 			return (
 				<PlanDivOrTdContainer
 					scope="col"
 					key={ planSlug }
-					className={ classes }
+					className="plan-features-2023-grid__table-item plan-price"
 					isTableCell={ options?.isTableCell }
 				>
 					<PlanFeatures2023GridHeaderPrice
@@ -294,7 +292,10 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					isTableCell={ options?.isTableCell }
 					key={ planSlug }
 				>
-					<PlanFeatures2023GridBillingTimeframe planSlug={ planSlug } />
+					<PlanFeatures2023GridBillingTimeframe
+						planSlug={ planSlug }
+						showRefundPeriod={ this.props.showRefundPeriod }
+					/>
 				</PlanDivOrTdContainer>
 			);
 		} );
@@ -367,85 +368,62 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			handleUpgradeClick,
 		} = this.props;
 
-		return renderedGridPlans.map( ( { planSlug, availableForPurchase } ) => {
-			const classes = classNames(
-				'plan-features-2023-grid__table-item',
-				'is-top-buttons',
-				'is-bottom-aligned'
-			);
+		return renderedGridPlans.map(
+			( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
+				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
-			// Leaving it `undefined` makes it use the default label
-			let buttonText;
+				// Leaving it `undefined` makes it use the default label
+				let buttonText;
 
-			if (
-				isWooExpressMediumPlan( planSlug ) &&
-				! isWooExpressMediumPlan( currentSitePlanSlug || '' )
-			) {
-				buttonText = translate( 'Get Performance', { textOnly: true } );
-			} else if (
-				isWooExpressSmallPlan( planSlug ) &&
-				! isWooExpressSmallPlan( currentSitePlanSlug || '' )
-			) {
-				buttonText = translate( 'Get Essential', { textOnly: true } );
+				if (
+					isWooExpressMediumPlan( planSlug ) &&
+					! isWooExpressMediumPlan( currentSitePlanSlug || '' )
+				) {
+					buttonText = translate( 'Get Performance', { textOnly: true } );
+				} else if (
+					isWooExpressSmallPlan( planSlug ) &&
+					! isWooExpressSmallPlan( currentSitePlanSlug || '' )
+				) {
+					buttonText = translate( 'Get Essential', { textOnly: true } );
+				} else if ( isBusinessTrial( currentSitePlanSlug || '' ) ) {
+					buttonText = translate( 'Get Business', { textOnly: true } );
+				}
+
+				return (
+					<PlanDivOrTdContainer
+						key={ planSlug }
+						className={ classes }
+						isTableCell={ options?.isTableCell }
+					>
+						<PlanFeatures2023GridActions
+							currentPlanManageHref={ currentPlanManageHref }
+							canUserManageCurrentPlan={ canUserManageCurrentPlan }
+							availableForPurchase={ availableForPurchase }
+							className={ getPlanClass( planSlug ) }
+							freePlan={ isFreePlan( planSlug ) }
+							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
+							isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							isMonthlyPlan={ isMonthlyPlan }
+							onUpgradeClick={ ( overridePlanSlug ) =>
+								handleUpgradeClick( overridePlanSlug ?? planSlug )
+							}
+							planSlug={ planSlug }
+							flowName={ flowName }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							buttonText={ buttonText }
+							planActionOverrides={ planActionOverrides }
+							showMonthlyPrice={ true }
+							siteId={ siteId }
+							isStuck={ options?.isStuck || false }
+							isLargeCurrency={ isLargeCurrency }
+							storageOptions={ storageOptions }
+						/>
+					</PlanDivOrTdContainer>
+				);
 			}
-
-			return (
-				<PlanDivOrTdContainer
-					key={ planSlug }
-					className={ classes }
-					isTableCell={ options?.isTableCell }
-				>
-					<PlanFeatures2023GridActions
-						currentPlanManageHref={ currentPlanManageHref }
-						canUserManageCurrentPlan={ canUserManageCurrentPlan }
-						availableForPurchase={ availableForPurchase }
-						className={ getPlanClass( planSlug ) }
-						trialPlan={ isFreeHostingTrial( planSlug ) }
-						freePlan={ isFreePlan( planSlug ) }
-						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
-						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
-						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
-						onUpgradeClick={ () => handleUpgradeClick( planSlug ) }
-						planSlug={ planSlug }
-						flowName={ flowName }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						buttonText={ buttonText }
-						planActionOverrides={ planActionOverrides }
-						showMonthlyPrice={ true }
-						siteId={ siteId }
-						isStuck={ options?.isStuck || false }
-						isLargeCurrency={ isLargeCurrency }
-					/>
-				</PlanDivOrTdContainer>
-			);
-		} );
-	}
-
-	maybeRenderRefundNotice( gridPlan: GridPlan[], options?: PlanRowOptions ) {
-		const { translate, flowName } = this.props;
-
-		if ( ! isAnyHostingFlow( flowName ) ) {
-			return false;
-		}
-
-		return gridPlan.map( ( { planSlug, pricing: { billingPeriod } } ) => (
-			<PlanDivOrTdContainer
-				key={ planSlug }
-				className="plan-features-2023-grid__table-item"
-				isTableCell={ options?.isTableCell }
-			>
-				{ ! isFreePlan( planSlug ) && ! isFreeHostingTrial( planSlug ) && (
-					<div className={ `plan-features-2023-grid__refund-notice ${ getPlanClass( planSlug ) }` }>
-						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
-							args: {
-								dayCount: billingPeriod === 365 ? 14 : 7,
-							},
-						} ) }
-					</div>
-				) }
-			</PlanDivOrTdContainer>
-		) );
+		);
 	}
 
 	renderEnterpriseClientLogos() {
@@ -551,8 +529,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 				( storageOptions.length === 1 ||
 					intervalType !== 'yearly' ||
 					! showUpgradeableStorage ||
-					! isInSignup ||
-					! ( flowName === 'onboarding' ) );
+					( isInSignup && ! ( flowName === 'onboarding' ) ) );
 
 			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
 				flowName: flowName ?? '',

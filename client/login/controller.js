@@ -160,14 +160,30 @@ export function magicLoginUse( context, next ) {
 
 	const previousQuery = context.state || {};
 
-	const { client_id, email, redirect_to, token } = previousQuery;
+	const { client_id, email, redirect_to, token, transition: isTransition } = previousQuery;
+
+	let activate = '';
+	try {
+		const params = new URLSearchParams( new URL( redirect_to ).search );
+		activate = params.get( 'activate' );
+	} catch ( e ) {
+		// redirect_to isn't always given, the URL constructor will throw in this case
+	}
+	const transition = isTransition === 'true';
 
 	const flow = redirect_to?.includes( 'jetpack/connect' ) ? 'jetpack' : null;
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 
 	context.primary = (
-		<PrimaryComponent clientId={ client_id } emailAddress={ email } token={ token } />
+		<PrimaryComponent
+			clientId={ client_id }
+			emailAddress={ email }
+			token={ token }
+			redirectTo={ redirect_to }
+			transition={ transition }
+			activate={ activate }
+		/>
 	);
 
 	next();

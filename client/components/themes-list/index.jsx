@@ -131,6 +131,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 			{ tabFilter !== 'my-themes' && props.themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
 			) }
+			{ props.children }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</div>
@@ -162,6 +163,7 @@ ThemesList.propTypes = {
 	siteId: PropTypes.number,
 	searchTerm: PropTypes.string,
 	upsellCardDisplayed: PropTypes.func,
+	children: PropTypes.node,
 };
 
 ThemesList.defaultProps = {

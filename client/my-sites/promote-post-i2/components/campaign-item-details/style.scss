@@ -312,6 +312,16 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				margin-bottom: 24px;
 			}
 
+			.campaign-item-details__locations {
+				display: flex;
+				flex-direction: column;
+
+				i {
+					font-weight: 500;
+					font-style: normal;
+				}
+			}
+
 			.campaign-item-details__label .amount {
 				color: $studio-gray-60;
 				font-weight: 400;

@@ -44,6 +44,14 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	SCREEN_UPSELL_UPGRADE_LATER_BUTTON_CLICK:
 		'calypso_signup_pattern_assembler_screen_upsell_upgrade_later_button_click',
 
+	/*
+	 * Screen Pages
+	 */
+	SCREEN_PAGES_PAGE_ADD: 'calypso_signup_pattern_assembler_screen_pages_page_add',
+	SCREEN_PAGES_PAGE_REMOVE: 'calypso_signup_pattern_assembler_screen_pages_page_remove',
+	SCREEN_PAGES_PAGE_PREVIEW_CLICK:
+		'calypso_signup_pattern_assembler_screen_pages_page_preview_click',
+
 	/**
 	 * Pattern Panels
 	 */
@@ -64,6 +72,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	/**
 	 * Large Preview
 	 */
-	LARGE_PREVIEW_ADD_HEADER_BUTTON_CLICK:
-		'calypso_signup_pattern_assembler_large_preview_add_header_button_click',
+	LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE:
+		'calypso_signup_pattern_assembler_large_preview_zoom_out_scale_change',
 } as const;

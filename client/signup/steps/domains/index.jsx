@@ -1,5 +1,5 @@
-import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { PLAN_PERSONAL, isFreeWordPressComDomain } from '@automattic/calypso-products';
+import { Button, FoldableCard } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
@@ -20,7 +20,6 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
-import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
@@ -39,14 +38,14 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { loadExperimentAssignment, ProvideExperimentData } from 'calypso/lib/explat';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl, isPlanSelectionAvailableLaterInFlow } from 'calypso/signup/utils';
 import {
@@ -54,7 +53,11 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -687,21 +690,25 @@ export class RenderDomainsStep extends Component {
 		const { step } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
+		const domainCart = getDomainRegistrations( this.props.cart );
 		const { suggestion } = step;
-		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
+		const isPurchasingItem =
+			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;
 		const siteUrl =
 			suggestion &&
 			( isPurchasingItem
 				? suggestion.domain_name
 				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
 
-		const domainItem = isPurchasingItem
-			? domainRegistration( {
-					domain: suggestion.domain_name,
-					productSlug: suggestion.product_slug,
-			  } )
-			: undefined;
-		const domainCart = getDomainRegistrations( this.props.cart );
+		let domainItem;
+
+		if ( isPurchasingItem ) {
+			const selectedDomain = domainCart?.length > 0 ? domainCart[ 0 ] : suggestion;
+			domainItem = domainRegistration( {
+				domain: selectedDomain?.domain_name || selectedDomain?.meta,
+				productSlug: selectedDomain?.product_slug,
+			} );
+		}
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -999,57 +1006,82 @@ export class RenderDomainsStep extends Component {
 		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? null;
 
 		return (
-			<RegisterDomainStep
-				key="domainForm"
-				path={ this.props.path }
-				initialState={ initialState }
-				onAddDomain={ this.handleAddDomain }
-				isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
-				isCartPendingUpdateDomain={ this.state.isCartPendingUpdateDomain }
-				products={ this.props.productsList }
-				basePath={ this.props.path }
-				promoTlds={ promoTlds }
-				mapDomainUrl={ this.getUseYourDomainUrl() }
-				otherManagedSubdomains={ this.props.otherManagedSubdomains }
-				otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
-				transferDomainUrl={ this.getUseYourDomainUrl() }
-				useYourDomainUrl={ this.getUseYourDomainUrl() }
-				onAddMapping={ this.handleAddMapping.bind( this, { sectionName: 'domainForm' } ) }
-				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerUnavailableOption={ ! this.props.isDomainOnly }
-				isDomainOnly={ this.props.isDomainOnly }
-				analyticsSection={ this.getAnalyticsSection() }
-				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ includeWordPressDotCom }
-				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
-				isSignupStep
-				isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
-				showExampleSuggestions={ showExampleSuggestions }
-				suggestion={ initialQuery }
-				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( {
-					isSignup: true,
-					isDomainOnly: this.props.isDomainOnly,
-					flowName: this.props.flowName,
-				} ) }
-				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
-				selectedSite={ this.props.selectedSite }
-				showSkipButton={ this.props.showSkipButton }
-				onSkip={ this.handleSkip }
-				hideFreePlan={ this.handleSkip }
-				forceHideFreeDomainExplainerAndStrikeoutUi={
-					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
-				}
-				isReskinned={ this.props.isReskinned }
-				reskinSideContent={ this.getSideContent() }
-				isInLaunchFlow={ 'launch-site' === this.props.flowName }
-				promptText={
-					this.isHostingFlow()
-						? this.props.translate( 'Stand out with a short and memorable domain' )
-						: undefined
-				}
-				wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-			/>
+			<ProvideExperimentData
+				name="calypso_gf_signup_onboardingpm_domains_hide_free_subdomain_v2"
+				options={ {
+					isEligible: this.props.flowName === 'onboarding-pm',
+				} }
+			>
+				{ ( isLoadingExperiment, experimentAssignment ) => (
+					<RegisterDomainStep
+						key="domainForm"
+						path={ this.props.path }
+						initialState={ initialState }
+						onAddDomain={ ( suggestion, position ) => {
+							if (
+								experimentAssignment?.variationName === 'treatment' &&
+								isFreeWordPressComDomain( suggestion )
+							) {
+								logToLogstash( {
+									feature: 'calypso_client',
+									message:
+										'hide free subdomain test: treatment group has falsely picked a free dotcom subdomain',
+									severity: 'error',
+								} );
+							}
+							this.handleAddDomain( suggestion, position );
+						} }
+						isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
+						isCartPendingUpdateDomain={ this.state.isCartPendingUpdateDomain }
+						products={ this.props.productsList }
+						basePath={ this.props.path }
+						promoTlds={ promoTlds }
+						mapDomainUrl={ this.getUseYourDomainUrl() }
+						otherManagedSubdomains={ this.props.otherManagedSubdomains }
+						otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
+						transferDomainUrl={ this.getUseYourDomainUrl() }
+						useYourDomainUrl={ this.getUseYourDomainUrl() }
+						onAddMapping={ this.handleAddMapping.bind( this, { sectionName: 'domainForm' } ) }
+						onSave={ this.handleSave.bind( this, 'domainForm' ) }
+						offerUnavailableOption={ ! this.props.isDomainOnly }
+						isDomainOnly={ this.props.isDomainOnly }
+						analyticsSection={ this.getAnalyticsSection() }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						includeWordPressDotCom={
+							experimentAssignment?.variationName === 'treatment' ? false : includeWordPressDotCom
+						}
+						includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
+						isSignupStep
+						isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
+						showExampleSuggestions={ showExampleSuggestions }
+						suggestion={ initialQuery }
+						designType={ this.getDesignType() }
+						vendor={ getSuggestionsVendor( {
+							isSignup: true,
+							isDomainOnly: this.props.isDomainOnly,
+							flowName: this.props.flowName,
+						} ) }
+						deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
+						selectedSite={ this.props.selectedSite }
+						showSkipButton={ this.props.showSkipButton }
+						onSkip={ this.handleSkip }
+						hideFreePlan={ this.handleSkip }
+						forceHideFreeDomainExplainerAndStrikeoutUi={
+							this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+						}
+						isReskinned={ this.props.isReskinned }
+						reskinSideContent={ this.getSideContent() }
+						isInLaunchFlow={ 'launch-site' === this.props.flowName }
+						promptText={
+							this.isHostingFlow()
+								? this.props.translate( 'Stand out with a short and memorable domain' )
+								: undefined
+						}
+						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
+						hasPendingRequests={ isLoadingExperiment }
+					/>
+				) }
+			</ProvideExperimentData>
 		);
 	};
 
@@ -1358,6 +1390,7 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<StepWrapper
+				hideBack={ flowName === 'domain' }
 				flowName={ flowName }
 				stepName={ stepName }
 				backUrl={ backUrl }
@@ -1423,11 +1456,11 @@ const RenderDomainsStepConnect = connect(
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 		const selectedSite = getSelectedSite( state );
-		const eligibleForProPlan = isEligibleForProPlan( state, selectedSite?.ID );
 		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
 
 		return {
 			designType: getDesignType( state ),
+			currentUser: getCurrentUser( state ),
 			productsList,
 			productsLoaded,
 			selectedSite,
@@ -1437,7 +1470,6 @@ const RenderDomainsStepConnect = connect(
 				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
 				[ 'pro', 'starter' ].includes( flowName ),
 			userLoggedIn: isUserLoggedIn( state ),
-			eligibleForProPlan,
 			multiDomainDefaultPlan,
 		};
 	},

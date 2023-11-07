@@ -1,4 +1,10 @@
-import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
+import type { OdieUserTracking } from '../track-location/useOdieUserTracking';
+
+export type Source = {
+	title: string;
+	url: string;
+	heading: string;
+};
 
 export type Context = {
 	nudge_id?: string | undefined;
@@ -6,7 +12,7 @@ export type Context = {
 	session_id?: string;
 	site_id: number | null;
 	user_tracking?: OdieUserTracking[];
-	// etc
+	sources?: Source[];
 };
 
 export type Nudge = {
@@ -27,18 +33,20 @@ export type MessageType =
 	| 'introduction';
 
 export type Message = {
+	message_id?: number;
 	content: string;
 	meta?: Record< string, string >;
 	role: MessageRole;
 	type: MessageType;
+	liked?: boolean | null;
 	simulateTyping?: boolean;
-	sources?: string[];
+	context?: Context;
+	rating_value?: number;
 };
 
 export type Chat = {
-	chat_id?: string | null;
+	chat_id?: number | null;
 	messages: Message[];
-	context: Context;
 };
 
 export type OdieAllowedSectionNames =
@@ -50,4 +58,4 @@ export type OdieAllowedSectionNames =
 	| 'checkout'
 	| 'help-center';
 
-export type OdieAllowedBots = 'wapuu';
+export type OdieAllowedBots = 'wpcom-support-chat' | null;

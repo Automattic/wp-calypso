@@ -1,6 +1,8 @@
 import { Button } from '@wordpress/components';
 import { chevronUp, chevronDown, edit, shuffle, trash } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import type { Category } from './types';
@@ -12,11 +14,13 @@ type PatternActionBarProps = {
 	onMoveUp?: () => void;
 	onMoveDown?: () => void;
 	onShuffle: () => void;
+	onMouseLeave?: ( event: React.MouseEvent< HTMLElement > ) => void;
 	disableMoveUp?: boolean;
 	disableMoveDown?: boolean;
 	patternType: string;
 	category?: Category;
 	source: 'list' | 'large_preview';
+	isOverflow?: boolean;
 };
 
 const PatternActionBar = ( {
@@ -25,11 +29,13 @@ const PatternActionBar = ( {
 	onMoveUp,
 	onMoveDown,
 	onShuffle,
+	onMouseLeave,
 	disableMoveUp,
 	disableMoveDown,
 	patternType,
 	category,
 	source,
+	isOverflow,
 }: PatternActionBarProps ) => {
 	const translate = useTranslate();
 	const eventProps = {
@@ -39,10 +45,14 @@ const PatternActionBar = ( {
 	};
 
 	return (
+		// eslint-disable-next-line jsx-a11y/interactive-supports-focus
 		<div
-			className="pattern-action-bar"
+			className={ classnames( 'pattern-assembler__pattern-action-bar', {
+				'pattern-assembler__pattern-action-bar--overflow': isOverflow,
+			} ) }
 			role="menubar"
 			aria-label={ translate( 'Pattern actions' ) }
+			onMouseLeave={ onMouseLeave }
 		>
 			{ onMoveUp && onMoveDown && (
 				<div className="pattern-action-bar__block">

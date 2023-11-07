@@ -441,8 +441,11 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
-	TYPE_HOSTING_TRIAL,
 	GROUP_P2,
+	FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
+	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
+	FEATURE_COMMISSION_FEE_WOO_FEATURES,
+	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 } from './constants';
 import type {
 	BillingTerm,
@@ -622,7 +625,10 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			},
 		];
 	},
-	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	get2023PlanComparisonConditionalFeatures: () => [
+		FEATURE_SHARES_SOCIAL_MEDIA_JP,
+		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+	],
 	getNewsletterSignupFeatures: () => [
 		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
 		FEATURE_PREMIUM_CONTENT_JP,
@@ -862,7 +868,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			},
 		];
 	},
-	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	get2023PlanComparisonConditionalFeatures: () => [
+		FEATURE_SHARES_SOCIAL_MEDIA_JP,
+		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+	],
 	getNewsletterDescription: () =>
 		i18n.translate(
 			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
@@ -1096,7 +1105,11 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			};
 		} );
 	},
-	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	get2023PlanComparisonConditionalFeatures: () => [
+		FEATURE_SHARES_SOCIAL_MEDIA_JP,
+		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+		FEATURE_COMMISSION_FEE_WOO_FEATURES,
+	],
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
 			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
@@ -1493,7 +1506,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			},
 		];
 	},
-	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	get2023PlanComparisonConditionalFeatures: () => [
+		FEATURE_SHARES_SOCIAL_MEDIA_JP,
+		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+	],
 	get2023PlanComparisonJetpackFeatureOverride: () => [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
@@ -1698,6 +1714,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SELL_60_COUNTRIES,
 		FEATURE_SHIPPING_INTEGRATIONS,
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
+		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+		FEATURE_COMMISSION_FEE_WOO_FEATURES,
 	],
 	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature ) => {
 		let storageOptionSlugs = [];
@@ -2238,6 +2256,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 		FEATURE_ANTISPAM_V2,
 		FEATURE_WAF,
+		FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
 	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T1_BI_YEARLY,
@@ -2276,6 +2295,13 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 const getPlanJetpackSecurityT2Details = (): IncompleteJetpackPlan => ( {
 	...getPlanJetpackSecurityT1Details(),
 	type: TYPE_SECURITY_T2,
+	getPlanCardFeatures: () => [
+		FEATURE_PLAN_SECURITY_DAILY,
+		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_WAF,
+		FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
+	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T2_YEARLY,
 		FEATURE_JETPACK_BACKUP_T2_MONTHLY,
@@ -2333,6 +2359,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
 		FEATURE_PRODUCT_SEARCH_V2,
 		FEATURE_CRM_V2,
+		FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
 	],
 	getIncludedFeatures: () =>
 		compact( [
@@ -3663,7 +3690,7 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	...getPlanBusinessDetails(),
 	getPlanTagline: () => i18n.translate( 'Try all the features of our Business plan.' ),
-	type: TYPE_HOSTING_TRIAL,
+	type: TYPE_BUSINESS,
 	group: GROUP_WPCOM,
 	getProductId: () => 1058,
 	getPathSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,

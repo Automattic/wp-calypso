@@ -340,6 +340,8 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
+						ai_chat_id: gptResponse?.answer_id,
+						ai_message: gptResponse?.response,
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {

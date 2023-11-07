@@ -8,9 +8,9 @@ import ActivityCardList from 'calypso/components/activity-card-list';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Upsell from 'calypso/components/jetpack/upsell';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -63,7 +63,7 @@ const ActivityLogV2: FunctionComponent = () => {
 								dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_copy_site' ) )
 							}
 						>
-							{ translate( 'Copy this site' ) }
+							{ translate( 'Copy site' ) }
 						</Button>
 					</Tooltip>
 				) }
@@ -105,12 +105,11 @@ const ActivityLogV2: FunctionComponent = () => {
 			{ isJetpackCloud() ? (
 				jetpackCloudHeader
 			) : (
-				<FormattedHeader
-					headerText="Activity"
-					subHeaderText={ translate(
+				<NavigationHeader
+					title={ translate( 'Activity' ) }
+					subtitle={ translate(
 						'This is the complete event history for your site. Filter by date range and/or activity type.'
 					) }
-					align="left"
 				/>
 			) }
 			<div className="activity-log-v2__content">

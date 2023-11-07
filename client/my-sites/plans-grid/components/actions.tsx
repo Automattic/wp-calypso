@@ -8,11 +8,16 @@ import {
 	planMatches,
 	TERM_ANNUALLY,
 	type PlanSlug,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	type StorageOption,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
+import { useSelect } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
@@ -21,6 +26,7 @@ import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-ma
 import { useSelector } from 'calypso/state';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import { usePlansGridContext } from '../grid-context';
+import useDefaultStorageOption from '../hooks/npm-ready/data-store/use-default-storage-option';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { PlanActionOverrides } from '../types';
 
@@ -29,13 +35,13 @@ type PlanFeaturesActionsButtonProps = {
 	canUserManageCurrentPlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
-	trialPlan?: boolean;
 	freePlan: boolean;
 	currentPlanManageHref?: string;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
-	onUpgradeClick: () => void;
+	isMonthlyPlan?: boolean;
+	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
 	planSlug: PlanSlug;
 	flowName?: string | null;
 	buttonText?: string;
@@ -46,6 +52,7 @@ type PlanFeaturesActionsButtonProps = {
 	siteId?: number | null;
 	isStuck: boolean;
 	isLargeCurrency?: boolean;
+	storageOptions?: StorageOption[];
 };
 
 const DummyDisabledButton = styled.div`
@@ -61,32 +68,30 @@ const DummyDisabledButton = styled.div`
 `;
 
 const SignupFlowPlanFeatureActionButton = ( {
-	trialPlan,
 	freePlan,
 	planTitle,
 	classes,
 	priceString,
 	isStuck,
 	isLargeCurrency,
+	hasFreeTrialPlan,
 	handleUpgradeButtonClick,
 	busy,
 }: {
-	trialPlan: boolean;
 	freePlan: boolean;
 	planTitle: TranslateResult;
 	classes: string;
 	priceString: string | null;
 	isStuck: boolean;
 	isLargeCurrency: boolean;
-	handleUpgradeButtonClick: () => void;
+	hasFreeTrialPlan: boolean;
+	handleUpgradeButtonClick: ( isFreeTrialPlan?: boolean ) => void;
 	busy?: boolean;
 } ) => {
 	const translate = useTranslate();
 	let btnText;
 
-	if ( trialPlan ) {
-		btnText = translate( 'Start trial' );
-	} else if ( freePlan ) {
+	if ( freePlan ) {
 		btnText = translate( 'Start with Free' );
 	} else if ( isStuck && ! isLargeCurrency ) {
 		btnText = translate( 'Get %(plan)s – %(priceString)s', {
@@ -117,8 +122,27 @@ const SignupFlowPlanFeatureActionButton = ( {
 		} );
 	}
 
+	if ( hasFreeTrialPlan ) {
+		return (
+			<div className="plan-features-2023-grid__multiple-actions-container">
+				<Button
+					className={ classes }
+					onClick={ () => handleUpgradeButtonClick( true ) }
+					busy={ busy }
+				>
+					{ translate( 'Try for free' ) }
+				</Button>
+				{ ! isStuck && (
+					<Button borderless onClick={ () => handleUpgradeButtonClick( false ) }>
+						{ btnText } <Gridicon icon="arrow-right" />
+					</Button>
+				) }
+			</div>
+		);
+	}
+
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick } busy={ busy }>
+		<Button className={ classes } onClick={ () => handleUpgradeButtonClick( false ) } busy={ busy }>
 			{ btnText }
 		</Button>
 	);
@@ -190,6 +214,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	priceString,
 	isStuck,
 	isLargeCurrency,
+	isMonthlyPlan,
 	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
@@ -198,6 +223,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	currentSitePlanSlug,
 	buttonText,
 	planActionOverrides,
+	storageOptions,
 }: {
 	freePlan: boolean;
 	availableForPurchase?: boolean;
@@ -205,19 +231,37 @@ const LoggedInPlansFeatureActionButton = ( {
 	priceString: string | null;
 	isStuck: boolean;
 	isLargeCurrency: boolean;
+	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
-	planSlug: string;
+	planSlug: PlanSlug;
 	currentPlanManageHref?: string;
 	canUserManageCurrentPlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
 	planActionOverrides?: PlanActionOverrides;
+	storageOptions?: StorageOption[];
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
-	const { current } = gridPlansIndex[ planSlug ];
+	const selectedStorageOptionForPlan = useSelect(
+		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug ),
+		[ planSlug ]
+	);
+	const { current, storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
+	const defaultStorageOption = useDefaultStorageOption( {
+		storageOptions,
+		storageAddOnsForPlan,
+	} );
+	const canPurchaseStorageAddOns = storageAddOnsForPlan?.some(
+		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
+	);
+	const storageAddOnCheckoutHref = storageAddOnsForPlan?.find(
+		( addOn ) =>
+			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
+	)?.checkoutLink;
+	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
 	const currentPlanBillPeriod = useSelector( ( state ) => {
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
 	} );
@@ -225,7 +269,10 @@ const LoggedInPlansFeatureActionButton = ( {
 		return planSlug ? getPlanBillPeriod( state, planSlug ) : null;
 	} );
 
-	if ( freePlan ) {
+	if (
+		freePlan ||
+		( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected )
+	) {
 		if ( planActionOverrides?.loggedInFreePlan ) {
 			return (
 				<Button
@@ -246,6 +293,17 @@ const LoggedInPlansFeatureActionButton = ( {
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
+		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
+			return (
+				<Button
+					className={ classNames( classes, 'is-storage-upgradeable' ) }
+					href={ storageAddOnCheckoutHref }
+				>
+					{ translate( 'Upgrade' ) }
+				</Button>
+			);
+		}
+
 		return (
 			<Button
 				className={ classes }
@@ -259,7 +317,8 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	const isTrialPlan =
 		currentSitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+		currentSitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
 
 	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
 	if (
@@ -322,10 +381,16 @@ const LoggedInPlansFeatureActionButton = ( {
 			comment: '%(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
 		} );
 	} else if ( isStuck && isLargeCurrency ) {
-		buttonTextFallback = translate( 'Upgrade – %(plan)s', {
-			context: 'verb',
-			args: { plan: planTitle ?? '' },
-			comment: '%(plan)s is the name of the plan ',
+		buttonTextFallback = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
+			args: {
+				plan: planTitle,
+				priceString: priceString ?? '',
+			},
+			comment:
+				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+			components: {
+				span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
+			},
 		} );
 	} else {
 		buttonTextFallback = translate( 'Upgrade', { context: 'verb' } );
@@ -367,7 +432,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	className,
 	currentSitePlanSlug,
 	freePlan = false,
-	trialPlan = false,
 	currentPlanManageHref,
 	isInSignup,
 	isLaunchPage,
@@ -380,6 +444,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	planActionOverrides,
 	isStuck,
 	isLargeCurrency,
+	isMonthlyPlan,
+	storageOptions,
 } ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
@@ -387,6 +453,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		planTitle,
 		current,
 		pricing: { currencyCode, originalPrice, discountedPrice },
+		freeTrialPlanSlug,
 	} = gridPlansIndex[ planSlug ];
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
@@ -395,16 +462,21 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		'is-large-currency': isLargeCurrency,
 	} );
 
-	const handleUpgradeButtonClick = () => {
-		if ( ! freePlan ) {
-			recordTracksEvent( 'calypso_plan_features_upgrade_click', {
-				current_plan: currentSitePlanSlug,
-				upgrading_to: planSlug,
-			} );
-		}
+	const handleUpgradeButtonClick = useCallback(
+		( isFreeTrialPlan?: boolean ) => {
+			const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
 
-		onUpgradeClick && onUpgradeClick();
-	};
+			if ( ! freePlan ) {
+				recordTracksEvent( 'calypso_plan_features_upgrade_click', {
+					current_plan: currentSitePlanSlug,
+					upgrading_to: upgradePlan,
+				} );
+			}
+
+			onUpgradeClick?.( upgradePlan );
+		},
+		[ currentSitePlanSlug, freePlan, freeTrialPlanSlug, onUpgradeClick, planSlug ]
+	);
 
 	if ( isWpcomEnterpriseGridPlan ) {
 		const vipLandingPageUrlWithoutUtmCampaign =
@@ -462,12 +534,12 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<SignupFlowPlanFeatureActionButton
 				freePlan={ freePlan }
-				trialPlan={ trialPlan }
 				planTitle={ planTitle }
 				classes={ classes }
 				priceString={ priceString }
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
+				hasFreeTrialPlan={ !! freeTrialPlanSlug }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 				busy={ freePlan && planActionOverrides?.loggedInFreePlan?.status === 'blocked' }
 			/>
@@ -489,7 +561,9 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			priceString={ priceString }
 			isStuck={ isStuck }
 			isLargeCurrency={ !! isLargeCurrency }
+			isMonthlyPlan={ isMonthlyPlan }
 			planTitle={ planTitle }
+			storageOptions={ storageOptions }
 		/>
 	);
 };

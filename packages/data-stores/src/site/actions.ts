@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -466,8 +467,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			homeHtml,
 			headerHtml,
 			footerHtml,
+			pages,
 			globalStyles,
-			shouldResetContent,
+			canReplaceContent,
 			siteSetupOption,
 		}: AssembleSiteOptions = {}
 	) {
@@ -498,13 +500,16 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			},
 		].filter( Boolean ) as RequestTemplate[];
 
+		const endpointSuffix = isEnabled( 'pattern-assembler/perf-test' ) ? '-perf-test' : '';
+
 		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/site-assembler`,
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/site-assembler${ endpointSuffix }`,
 			apiNamespace: 'wpcom/v2',
 			body: {
 				templates,
+				pages,
 				global_styles: globalStyles,
-				should_reset_content: shouldResetContent,
+				can_replace_content: canReplaceContent,
 				site_setup_option: siteSetupOption,
 			},
 			method: 'POST',

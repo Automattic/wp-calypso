@@ -59,7 +59,7 @@ const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
 				onClick={ () => setShowAddSubscribersModal( true ) }
 			>
 				<Gridicon icon="plus" size={ 24 } />
-				{ translate( 'Add subscribers' ) }
+				<span className="add-subscribers-button-text">{ translate( 'Add subscribers' ) }</span>
 			</Button>
 			<SubscribersHeaderPopover siteId={ selectedSiteId } />
 		</NavigationHeader>
@@ -131,9 +131,7 @@ const SubscribersPage = ( {
 					onCancel={ resetSubscriber }
 					onConfirm={ onConfirmModal }
 				/>
-				{ selectedSite && (
-					<AddSubscribersModal siteId={ selectedSite.ID } siteTitle={ selectedSite.title } />
-				) }
+				{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
 			</Main>
 		</SubscribersPageProvider>
 	);

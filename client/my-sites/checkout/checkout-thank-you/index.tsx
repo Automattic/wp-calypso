@@ -52,7 +52,6 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
-import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import {
@@ -86,6 +85,7 @@ import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
+import DomainOnlyThankYou from './domains/domain-only-thank-you-redesign-v2';
 import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
@@ -563,9 +563,6 @@ export class CheckoutThankYou extends Component<
 					( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
 				);
 			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
-		} else if ( isStarterPlanEnabled() ) {
-			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
-			showHappinessSupport = false;
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -654,10 +651,15 @@ export class CheckoutThankYou extends Component<
 
 			const emailFallback = email ? email : this.props.user?.email ?? '';
 			const siteSlug = this.props.domainOnlySiteFlow ? domainName : this.props.selectedSiteSlug;
+			const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
+			// support redesign v2 for domain only purchases
+			if ( isRedesignV2( this.props ) ) {
+				return <DomainOnlyThankYou domains={ domains ?? [] } />;
+			}
 			return (
 				<DomainThankYou
 					domain={ domainName ?? '' }
-					domains={ purchases.filter( predicate ).map( ( purchase ) => purchase?.meta ) }
+					domains={ domains }
 					email={ professionalEmailPurchase ? professionalEmailPurchase.meta : emailFallback }
 					hasProfessionalEmail={ wasTitanEmailProduct }
 					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace || wasDomainOnly }

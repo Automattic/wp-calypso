@@ -343,6 +343,7 @@ export async function siteSubscription( context, next ) {
 			require="calypso/reader/site-subscription"
 			subscriptionId={ context.params.subscription_id }
 			blogId={ context.params.blog_id }
+			transition={ context.query.transition === 'true' }
 		/>
 	);
 	return next();
@@ -360,4 +361,21 @@ export async function pendingSubscriptionsManager( context, next ) {
 		<AsyncLoad require="calypso/reader/site-subscriptions-manager/pending-subscriptions-manager" />
 	);
 	return next();
+}
+
+/**
+ * Middleware to redirect logged out users to /discover.
+ * Intended for reader pages that do not support logged out users such as /read.
+ *
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectLoggedOutToDiscover( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+	return page.redirect( '/discover' );
 }

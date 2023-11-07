@@ -7,8 +7,10 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -18,10 +20,29 @@ import { useCheckSyncStatus } from '../use-site-sync-status';
 import { StagingSiteSyncLoadingBarCardContent } from './staging-site-sync-loading-bar-card-content';
 const stagingSiteSyncSuccess = 'staging-site-sync-success';
 
+const STAGING_SYNC_JETPACK_ERROR_CODES = [
+	'staging_site_cannot_sync_staging',
+	'staging_site_cannot_sync_production',
+];
+const STAGING_SYNC_FAILED_ERROR_CODES = [ 'staging_site_sync_failed' ];
+
+function useIsJetpackConnectionSyncError( error: string | null | undefined ) {
+	if ( ! error ) {
+		return false;
+	}
+	return STAGING_SYNC_JETPACK_ERROR_CODES.includes( error );
+}
+function useIsFailedSyncError( error: string | null | undefined ) {
+	if ( ! error ) {
+		return false;
+	}
+	return STAGING_SYNC_FAILED_ERROR_CODES.includes( error );
+}
+
 const synchronizationOptions: CheckboxOptionItem[] = [
 	{
 		name: 'sqls',
-		label: 'Site Database (SQL)',
+		label: 'Site database (SQL)',
 		subTitle: translate(
 			'Overwrite the database, including any posts, pages, products, or orders.'
 		),
@@ -30,42 +51,35 @@ const synchronizationOptions: CheckboxOptionItem[] = [
 	},
 	{
 		name: 'themes',
-		label: translate( 'Themes' ),
-		subTitle: translate( 'All files and directories in the themes directory.' ),
+		label: translate( 'Theme files and directories' ),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'plugins',
-		label: translate( 'Plugins' ),
-		subTitle: translate( 'All files and directories in the plugins directory.' ),
+		label: translate( 'Plugin files and directories' ),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'uploads',
-		label: translate( 'Media Uploads' ),
+		label: translate( 'Media uploads' ),
 		subTitle: translate(
-			'All files and directories in the uploads directory. You must also select ‘Site database‘ if it is necessary for the files to appear as media uploads in WordPress.'
+			'You must also select ‘Site database’ for the files to appear in the Media Library.'
 		),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'contents',
-		label: translate( 'wp-content Directory' ),
-		subTitle: translate(
-			'All files and directories in the wp-content directory other than themes, plugins, and uploads.'
-		),
+		label: translate( 'wp-content files and directories' ),
+		subTitle: translate( 'Apart from themes, plugins, and uploads.' ),
 		checked: false,
 		isDangerous: false,
 	},
 	{
 		name: 'roots',
-		label: translate( 'Web Root' ),
-		subTitle: translate(
-			'All files and directories in the WordPress root other than wp-content, including any non WordPress files.'
-		),
+		label: translate( 'Additional web root files and directories' ),
 		checked: false,
 		isDangerous: false,
 	},
@@ -152,7 +166,10 @@ interface SyncCardProps {
 	onPush: ( ( items?: string[] ) => void ) | ( () => void );
 	disabled: boolean;
 	productionSiteId: number;
-	stagingSiteId?: number;
+	siteUrls: {
+		production: string | null;
+		staging: string | null;
+	};
 	error?: string | null;
 }
 
@@ -165,6 +182,7 @@ const StagingToProductionSync = ( {
 	isSyncInProgress,
 	onConfirm,
 	showSyncPanel,
+	isSqlsOptionDisabled,
 }: {
 	disabled: boolean;
 	siteSlug: string;
@@ -174,6 +192,7 @@ const StagingToProductionSync = ( {
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 	showSyncPanel: boolean;
+	isSqlsOptionDisabled: boolean;
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
@@ -181,12 +200,13 @@ const StagingToProductionSync = ( {
 		<>
 			{ showSyncPanel && (
 				<>
-					<OptionsTreeTitle>{ translate( 'Synchronize the following:' ) }</OptionsTreeTitle>
+					<OptionsTreeTitle>{ translate( 'Synchronize this data:' ) }</OptionsTreeTitle>
 					<SyncOptionsPanel
 						reset={ ! isSyncInProgress }
 						items={ synchronizationOptions }
 						disabled={ disabled }
 						onChange={ onSelectItems }
+						isSqlsOptionDisabled={ isSqlsOptionDisabled }
 					></SyncOptionsPanel>
 				</>
 			) }
@@ -273,6 +293,7 @@ const SyncCardContainer = ( {
 	progress,
 	isSyncInProgress,
 	siteToSync,
+	siteUrls,
 	onRetry,
 	error,
 }: {
@@ -281,11 +302,14 @@ const SyncCardContainer = ( {
 	progress: number;
 	isSyncInProgress: boolean;
 	siteToSync: 'production' | 'staging' | null;
+	siteUrls: SyncCardProps[ 'siteUrls' ];
 	error?: string | null;
 	onRetry?: () => void;
 } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error ) && siteToSync;
+	const isFailedSyncError = useIsFailedSyncError( error ) && siteToSync;
 
 	return (
 		<StagingSyncCardBody>
@@ -302,7 +326,44 @@ const SyncCardContainer = ( {
 									'Refresh your staging site with the latest from production, or push changes in your staging site to production.'
 							  ) }
 					</SyncContainerContent>
-					{ error && (
+					{ error && isJetpackConnectionError && (
+						<Notice
+							status="is-error"
+							icon="mention"
+							showDismiss={ false }
+							text={ translate(
+								'We couldn’t connect to the %(siteType)s site: {{br/}} %(siteUrl)s',
+								{
+									args: {
+										siteType: siteToSync,
+										siteUrl: siteUrls[ siteToSync ]
+											? urlToSlug( siteUrls[ siteToSync ] as string )
+											: '',
+									},
+									components: {
+										br: <br />,
+									},
+								}
+							) }
+						>
+							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
+						</Notice>
+					) }
+					{ error && isFailedSyncError && (
+						<Notice
+							status="is-error"
+							icon="mention"
+							showDismiss={ false }
+							text={ translate( 'We couldn’t synchronize changes to the %(siteType)s site.', {
+								args: {
+									siteType: siteToSync,
+								},
+							} ) }
+						>
+							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
+						</Notice>
+					) }
+					{ error && ! isJetpackConnectionError && ! isFailedSyncError && (
 						<Notice
 							status="is-error"
 							icon="mention"
@@ -349,6 +410,7 @@ export const SiteSyncCard = ( {
 	onPull,
 	disabled,
 	productionSiteId,
+	siteUrls,
 	error,
 }: SyncCardProps ) => {
 	const dispatch = useDispatch();
@@ -360,6 +422,7 @@ export const SiteSyncCard = ( {
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
+	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, productionSiteId ) );
 	const {
 		progress,
 		resetSyncStatus,
@@ -431,6 +494,7 @@ export const SiteSyncCard = ( {
 			progress={ progress }
 			isSyncInProgress={ isSyncInProgress }
 			error={ syncError }
+			siteUrls={ siteUrls }
 			onRetry={ () => {
 				if ( selectedOption === 'push' ) {
 					onPushInternal();
@@ -482,6 +546,7 @@ export const SiteSyncCard = ( {
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
+					isSqlsOptionDisabled={ isSiteWooStore }
 				/>
 			) }
 			{ selectedOption !== actionForType && (

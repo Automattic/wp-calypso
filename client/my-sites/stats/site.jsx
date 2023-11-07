@@ -107,33 +107,6 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
-const quantityForDaysAndPeriod = ( days, period ) => {
-	// If the period is 'day' use the value provided.
-	if ( period === 'day' ) {
-		return days;
-	}
-	// Confirm period is valid before trusting.
-	const validPeriods = [ 'week', 'month', 'year' ];
-	if ( validPeriods.includes( period ) === false ) {
-		return days;
-	}
-	// Determine denominator for math.
-	const daysInPeriod = {
-		week: 7,
-		month: 30,
-		year: 365,
-	};
-	const denominator = daysInPeriod[ period ];
-	// Determine quantity based on period.
-	// The +1 is to account for API date partitioning when using requesting weeks.
-	let newQuantity = Math.ceil( days / denominator );
-	if ( period === 'week' ) {
-		newQuantity += 1;
-	}
-	// Return new quantity for the chart.
-	return newQuantity;
-};
-
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -171,7 +144,6 @@ class StatsSite extends Component {
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
-	onChangeChartQuantity = ( customChartQuantity ) => this.setState( { customChartQuantity } );
 
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
@@ -198,6 +170,23 @@ class StatsSite extends Component {
 		}
 		const isValid = moment( inputDate ).isValid();
 		return isValid ? inputDate : null;
+	}
+
+	// Return a default amount of days to subtracts from the present day depending on the period selected.
+	// Used in case no starting date is present in the URL.
+	getDefaultDaysForPeriod( period ) {
+		switch ( period ) {
+			case 'day':
+				return 30;
+			case 'week':
+				return 12 * 7; // ~last 3 months
+			case 'month':
+				return 6 * 30; // ~last 6 months
+			case 'year':
+				return 5 * 365; // ~last 5 years
+			default:
+				return 30;
+		}
 	}
 
 	renderStats() {
@@ -230,28 +219,47 @@ class StatsSite extends Component {
 		// Set up a custom range for the chart.
 		// Dependant on new date range picker controls.
 		let customChartRange = null;
+		let customChartQuantity;
+
 		if ( isDateControlEnabled ) {
 			// Sort out end date for chart.
 			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+
 			if ( chartEnd ) {
 				customChartRange = { chartEnd };
 			} else {
 				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 			}
-			// Sort out quantity for chart. Default to 30 days.
-			let daysInRange = 30;
+
+			// Find the quantity of bars for the chart.
+			let daysInRange = this.getDefaultDaysForPeriod( period );
 			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
 			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+
 			if ( chartStart && isSameOrBefore ) {
 				// Add one to calculation to include the start date.
 				daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
 				customChartRange.chartStart = chartStart;
 			} else {
+				// if start date is missing let the frequency of data take over to avoid showing one bar
+				// (e.g. months defaulting to 30 days and showing one point)
 				customChartRange.chartStart = moment()
 					.subtract( daysInRange, 'days' )
 					.format( 'YYYY-MM-DD' );
 			}
-			this.state.customChartQuantity = quantityForDaysAndPeriod( daysInRange, period );
+
+			// Calculate diff between requested start and end in `priod` units.
+			// Move end point (most recent) to the end of period to account for partial periods
+			// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
+			const adjustedChartEndDate =
+				period === 'day'
+					? moment( customChartRange.chartEnd )
+					: moment( customChartRange.chartEnd ).endOf( period );
+
+			customChartQuantity = Math.ceil(
+				adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
+			);
+
 			customChartRange.daysInRange = daysInRange;
 		}
 
@@ -360,7 +368,7 @@ class StatsSite extends Component {
 							queryDate={ queryDate }
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
-							customQuantity={ this.state.customChartQuantity }
+							customQuantity={ customChartQuantity }
 							customRange={ customChartRange }
 							hideLegend={ isDateControlEnabled }
 						/>

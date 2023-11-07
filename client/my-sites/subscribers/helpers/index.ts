@@ -1,11 +1,6 @@
 import { SubscriberListArgs } from '../types';
 
-const URL_PREFIX = 'https://wordpress.com';
-
-const getEarnPageUrl = ( siteSlug: string | null ) => `${ URL_PREFIX }/earn/${ siteSlug ?? '' }`;
-
-const getEarnPaymentsPageUrl = ( siteSlug: string | null ) =>
-	`${ URL_PREFIX }/earn/payments/${ siteSlug ?? '' }`;
+const getEarnPaymentsPageUrl = ( siteSlug: string | null ) => `/earn/payments/${ siteSlug ?? '' }`;
 
 const getSubscribersCacheKey = (
 	siteId: number | undefined | null,
@@ -93,7 +88,6 @@ const sanitizeInt = ( intString: string ) => {
 const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
 
 export {
-	getEarnPageUrl,
 	getEarnPaymentsPageUrl,
 	getSubscriberDetailsCacheKey,
 	getSubscriberDetailsUrl,
