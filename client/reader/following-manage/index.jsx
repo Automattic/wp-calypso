@@ -168,6 +168,12 @@ class FollowingManage extends Component {
 		}
 	}
 
+	goBack() {
+		if ( typeof window !== 'undefined' ) {
+			window.history.back();
+		}
+	}
+
 	render() {
 		const {
 			sitesQuery,
@@ -200,7 +206,7 @@ class FollowingManage extends Component {
 		return (
 			<Fragment>
 				<div className="following-manage__header">
-					<HeaderCake backHref="/read">
+					<HeaderCake onClick={ this.goBack }>
 						<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 					</HeaderCake>
 				</div>
