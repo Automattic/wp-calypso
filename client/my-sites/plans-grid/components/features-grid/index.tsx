@@ -7,6 +7,7 @@ import {
 	isWooExpressSmallPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	isBusinessTrial,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -382,6 +383,8 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					! isWooExpressSmallPlan( currentSitePlanSlug || '' )
 				) {
 					buttonText = translate( 'Get Essential', { textOnly: true } );
+				} else if ( isBusinessTrial( currentSitePlanSlug || '' ) ) {
+					buttonText = translate( 'Get Business', { textOnly: true } );
 				}
 
 				return (
