@@ -32,6 +32,11 @@ const PatternPagePreviewList = ( {
 	const composite = useCompositeState( { orientation: 'horizontal' } );
 	const [ zoomedPage, setZoomedPage ] = useState< Pattern[] >( [] );
 
+	// Using zoomedPage to control whether the modal is opened or not causes a flash of empty content.
+	// To prevent this, we use another separate state.
+	// See: https://github.com/Automattic/wp-calypso/pull/83902#discussion_r1383357522.
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
+
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const patternPagePreviewStyle = useMemo(
 		() => ( { '--pattern-page-preview-background': backgroundColor } ) as CSSProperties,
@@ -50,6 +55,8 @@ const PatternPagePreviewList = ( {
 
 	const handleClick = ( patterns: Pattern[], pageSlug: string ) => {
 		setZoomedPage( patterns );
+		setIsModalOpen( true );
+
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_PREVIEW_CLICK, {
 			pattern_names: patterns.map( ( pattern ) => pattern.name ).join( ',' ),
 			page_slug: pageSlug,
@@ -87,8 +94,8 @@ const PatternPagePreviewList = ( {
 				style={ patternPagePreviewStyle }
 				patterns={ zoomedPage }
 				shouldShufflePosts={ isNewSite }
-				isOpen={ !! zoomedPage.length }
-				onClose={ () => setZoomedPage( [] ) }
+				isOpen={ isModalOpen }
+				onClose={ () => setIsModalOpen( false ) }
 			/>
 		</>
 	);
