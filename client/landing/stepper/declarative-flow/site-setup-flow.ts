@@ -477,7 +477,7 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'verifyEmail':
-					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'difmStartingPoint': {
 					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );

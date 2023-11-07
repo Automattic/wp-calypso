@@ -222,7 +222,7 @@ const importFlow: Flow = {
 					return navigate( providedDependencies?.url as string );
 
 				case 'verifyEmail':
-					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker': {
 					switch ( providedDependencies?.action ) {

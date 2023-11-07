@@ -168,7 +168,7 @@ const importHostedSiteFlow: Flow = {
 				}
 
 				case 'verifyEmail':
-					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
