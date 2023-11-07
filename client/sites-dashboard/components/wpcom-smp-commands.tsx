@@ -6,7 +6,7 @@ import {
 import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
-import { SFTP_PORT } from 'calypso/my-sites/hosting/sftp-card';
+import { SFTP_PORT, SFTP_URL } from 'calypso/my-sites/hosting/sftp-card';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
 export const generateCommandsArrayWpcom = ( {
@@ -107,6 +107,17 @@ export const generateCommandsArrayWpcom = ( {
 				close();
 				const portSFTP = SFTP_PORT.toString();
 				navigator.clipboard.writeText( portSFTP );
+			},
+			icon: domainsIcon,
+		},
+		{
+			name: 'copySshSftpURL',
+			label: __( 'Copy SSH/SFTP URL' ),
+			searchLabel: __( 'copy ssh/sftp url' ),
+			context: 'Copying SSH/SFTP URL',
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigator.clipboard.writeText( SFTP_URL );
 			},
 			icon: domainsIcon,
 		},
