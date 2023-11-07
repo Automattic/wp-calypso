@@ -74,3 +74,59 @@ $breakpoint-mobile: 660px;
 		margin-bottom: 2rem;
 	}
 }
+
+.is-wpcom-migration {
+	.auth-form__separator {
+		margin-top: -12px;
+
+		.auth-form__separator-text {
+			background: var(--studio-gray-0);
+			padding: 0 24px;
+			font-size: 0.75rem;
+			color: var(--studio-gray-50);
+		}
+	}
+}
+
+.crowdsignal {
+	.auth-form__separator {
+		margin: 10px auto;
+		text-transform: lowercase;
+
+		.auth-form__separator-text {
+			background-color: transparent;
+			color: var(--color-text);
+			font-size: $font-title-small;
+			font-weight: 600;
+		}
+	}
+}
+
+.is-jetpack-login {
+	.auth-form__separator {
+		background: var(--color-surface);
+		margin-bottom: -10px;
+		margin-top: -10px;
+
+		.auth-form__separator-text {
+			font-size: 0.875rem;
+		}
+	}
+}
+
+.jetpack-cloud {
+	.auth-form__separator {
+		width: 100%;
+
+		&::before {
+			background: var(--color-neutral-5);
+			content: "";
+			height: 1px;
+			left: 0;
+			position: absolute;
+			top: 50%;
+			width: 100%;
+			z-index: 1;
+		}
+	}
+}

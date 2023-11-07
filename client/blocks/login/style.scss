@@ -431,38 +431,6 @@
 			width: auto;
 		}
 	}
-
-	.login__divider {
-		color: var(--p2-color-border);
-		font-size: var(--p2-font-size-form-xs);
-		margin: 0 auto 2rem;
-		max-width: 400px;
-		overflow: hidden;
-		text-align: center;
-		width: 100%;
-		text-transform: none;
-
-		&::before,
-		&::after {
-			background-color: var(--p2-color-border);
-			content: "";
-			display: inline-block;
-			height: 1px;
-			position: relative;
-			vertical-align: middle;
-			width: 50%;
-		}
-
-		&::before {
-			margin-left: -50%;
-			right: 0.5em;
-		}
-
-		&::after {
-			left: 0.5em;
-			margin-right: -50%;
-		}
-	}
 }
 
 .is-wpcom-migration.main {
@@ -509,7 +477,6 @@
 		}
 
 		.login__social {
-			border-top: 1px solid #eaeaeb;
 			padding-top: 2rem;
 			padding-bottom: 2rem;
 
