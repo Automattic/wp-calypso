@@ -7,35 +7,29 @@ type Props = {
 	stats: SiteStats;
 };
 
-const getTrendIcon = ( viewsTrend: 'up' | 'down' ) => {
-	if ( viewsTrend === 'up' ) {
-		return arrowUp;
-	} else if ( viewsTrend === 'down' ) {
-		return arrowDown;
+const getTrendIcon = ( viewsTrend: 'up' | 'down' | 'same' ) => {
+	switch ( viewsTrend ) {
+		case 'up':
+			return <Icon icon={ arrowUp } size={ 16 } />;
+		case 'down':
+			return <Icon icon={ arrowDown } size={ 16 } />;
+		default:
+			return <span className="empty-icon" />;
 	}
 };
 
 export default function SiteStatsColumn( { stats }: Props ) {
 	const { total: totalViews, trend: viewsTrend } = stats.views;
-	if ( viewsTrend === 'same' ) {
-		return (
-			<>
-				<span className="sites-overview__stats-trend sites-overview__stats-trend__same" />
-				<div className="sites-overview__stats">
-					<ShortenedNumber value={ totalViews } />
-				</div>
-			</>
-		);
-	}
 	const trendIcon = getTrendIcon( viewsTrend );
 	return (
 		<span
-			className={ classNames( 'sites-overview__stats-trend', {
-				'sites-overview__stats-trend__up': viewsTrend === 'up',
-				'sites-overview__stats-trend__down': viewsTrend === 'down',
-			} ) }
+			className={ classNames(
+				'sites-overview__stats-trend',
+				`sites-overview__stats-trend__${ viewsTrend }`
+			) }
 		>
-			{ trendIcon && <Icon icon={ trendIcon } size={ 16 } /> }
+			{ trendIcon }
+
 			<div className="sites-overview__stats">
 				<ShortenedNumber value={ totalViews } />
 			</div>
