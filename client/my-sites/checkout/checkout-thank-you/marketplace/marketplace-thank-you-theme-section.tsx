@@ -153,7 +153,7 @@ export const ThankYouThemeSection = ( {
 		if ( isActive && continueWithPluginBundle ) {
 			page( `/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteSlug=${ siteSlug }` );
 		}
-	}, [ isActive, continueWithPluginBundle ] );
+	}, [ isActive, continueWithPluginBundle, siteSlug ] );
 
 	const handleActivateTheme = useCallback( () => {
 		if ( isActive ) {
