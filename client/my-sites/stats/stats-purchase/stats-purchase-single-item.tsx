@@ -109,7 +109,7 @@ I can confirm that,
 - I don't have ads on my site.
 - I don't sell products/services on my site.
 - I don't promote a business on my site.
-- I don't solicite donations or sponsorships on my site.\n
+- I don't solicit donations or sponsorships on my site.\n
 Could you please take a look at my site and update the classification if necessary?\n
 Thanks\n\n`;
 		const emailHref = `mailto:${ mailTo }?subject=${ encodeURIComponent(
@@ -180,7 +180,7 @@ Thanks\n\n`;
 										<CheckboxControl
 											className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
 											checked={ isDonationChecked }
-											label={ translate( `I don't solicite donations or sponsorships on my site` ) }
+											label={ translate( `I don't solicit donations or sponsorships on my site` ) }
 											onChange={ ( value ) => {
 												setDonationChecked( value );
 											} }
