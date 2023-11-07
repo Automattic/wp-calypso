@@ -67,7 +67,7 @@ export default function TermsOfServiceConsent() {
 
 			{ ! fetchedPartner && <Spinner /> }
 
-			{ ! hasConsented && (
+			{ fetchedPartner && ! hasConsented && (
 				<Card>
 					<CardHeading>{ translate( 'Terms of Service' ) }</CardHeading>
 
