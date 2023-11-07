@@ -67,6 +67,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		sourceSiteId,
 		fetchMigrationEnabledStatus,
 		isFetchingData: isFetchingMigrationData,
+		isInitFetchingDone,
 		siteCanMigrate,
 	} = useSiteMigrateInfo( targetSite.ID, sourceSiteSlug, isTargetSitePlanCompatible );
 
@@ -121,6 +122,13 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	}, [] );
 
 	/**
+	 * Fetch the initial migration enabled status
+	 */
+	useEffect( () => {
+		fetchMigrationEnabledStatus();
+	}, [] );
+
+	/**
 	 * Fetch the credentials if the site is eligible for migration
 	 */
 	useEffect( () => {
@@ -159,7 +167,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	 * Decide the render state based on the current component state
 	 */
 	useEffect( () => {
-		if ( requiresPluginUpdate ) {
+		if ( ! isInitFetchingDone ) {
+			setRenderState( 'loading' );
+		} else if ( requiresPluginUpdate ) {
 			setRenderState( 'update-plugin' );
 		} else if ( ! isTargetSitePlanCompatible ) {
 			setRenderState( 'upgrade-plan' );
@@ -176,6 +186,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		sourceSiteId,
 		showCredentials,
 		requiresPluginUpdate,
+		isInitFetchingDone,
 		isFetchingCredentials,
 		isFetchingMigrationData,
 		isTargetSitePlanCompatible,

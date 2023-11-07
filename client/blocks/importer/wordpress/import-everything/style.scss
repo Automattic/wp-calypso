@@ -322,7 +322,7 @@ $business-plan-color: #7f54b3;
 				border-color: $business-plan-color;
 				color: $business-plan-color;
 
-				&[disabled] {
+				&.isBusy {
 					color: #fff;
 				}
 			}
