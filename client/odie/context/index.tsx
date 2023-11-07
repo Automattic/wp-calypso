@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -79,17 +78,18 @@ const OdieAssistantProvider = ( {
 	botSetting = 'wapuu',
 	initialUserMessage,
 	extraContactOptions,
+	enabled = true,
 	children,
 }: {
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
 	botSetting?: string;
+	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
 	extraContactOptions?: ReactNode;
 	children?: ReactNode;
 } ) => {
 	const dispatch = useDispatch();
-	const odieIsEnabled = config.isEnabled( 'wapuu' );
 
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -153,7 +153,7 @@ const OdieAssistantProvider = ( {
 		} );
 	};
 
-	if ( ! odieIsEnabled ) {
+	if ( ! enabled ) {
 		return <>{ children }</>;
 	}
 
