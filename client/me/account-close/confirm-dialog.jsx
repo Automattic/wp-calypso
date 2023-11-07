@@ -65,26 +65,37 @@ class AccountCloseConfirmDialog extends Component {
 	};
 
 	render() {
-		const { currentUsername, isVisible, translate } = this.props;
+		const { currentUsername, siteCount, isVisible, translate } = this.props;
 		const isDeleteButtonDisabled = currentUsername && this.state.inputValue !== currentUsername;
 
 		const alternativeOptions = [
-			{
-				englishText: 'Start a new site',
-				text: translate( 'Start a new site' ),
-				href: onboardingUrl() + '?ref=me-account-close',
-				supportLink: localizeUrl(
-					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account'
-				),
-				supportPostId: 3991,
-			},
-			{
-				englishText: "Change your site's address",
-				text: translate( "Change your site's address" ),
-				href: '/settings/general',
-				supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
-				supportPostId: 11280,
-			},
+			...( siteCount > 0
+				? [
+						{
+							englishText: 'Start a new site',
+							text: translate( 'Start a new site' ),
+							href: onboardingUrl() + '?ref=me-account-close',
+							supportLink: localizeUrl(
+								'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account'
+							),
+							supportPostId: 3991,
+						},
+						{
+							englishText: "Change your site's address",
+							text: translate( "Change your site's address" ),
+							href: '/settings/general',
+							supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
+							supportPostId: 11280,
+						},
+						{
+							englishText: 'Delete a site',
+							text: translate( 'Delete a site' ),
+							href: '/settings/delete-site',
+							supportLink: localizeUrl( 'https://wordpress.com/support/delete-site/' ),
+							supportPostId: 14411,
+						},
+				  ]
+				: [] ),
 			{
 				englishText: 'Change your username',
 				text: translate( 'Change your username' ),
@@ -98,13 +109,6 @@ class AccountCloseConfirmDialog extends Component {
 				href: '/me/security',
 				supportLink: localizeUrl( 'https://wordpress.com/support/passwords/#change-your-password' ),
 				supportPostId: 89,
-			},
-			{
-				englishText: 'Delete a site',
-				text: translate( 'Delete a site' ),
-				href: '/settings/delete-site',
-				supportLink: localizeUrl( 'https://wordpress.com/support/delete-site/' ),
-				supportPostId: 14411,
 			},
 		];
 
@@ -214,6 +218,7 @@ export default connect(
 
 		return {
 			currentUsername: user && user.username,
+			siteCount: user && user.site_count,
 		};
 	},
 	{
