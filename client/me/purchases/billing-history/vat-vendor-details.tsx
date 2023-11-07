@@ -21,7 +21,7 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 					<div key={ addressLine }>{ addressLine }</div>
 				) ) }
 			</span>
-			{ vendorInfo.vat_id && (
+			{ vendorInfo.tax_name_and_vendor_id_object && (
 				<span className="receipt__vat-vendor-details-number">
 					<strong>{ vendorInfo.tax_name }</strong> { vendorInfo.vat_id }
 				</span>
