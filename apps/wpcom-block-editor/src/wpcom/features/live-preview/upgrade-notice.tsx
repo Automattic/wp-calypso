@@ -3,6 +3,7 @@ import { getCalypsoUrl } from '@automattic/calypso-url';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { FC, useCallback, useEffect } from 'react';
+import { usePreviewingTheme } from './hooks/use-previewing-theme';
 import { WOOCOMMERCE_THEME, getUnlock, isPreviewingTheme } from './utils';
 
 declare global {
@@ -17,7 +18,7 @@ const unlock = getUnlock();
 
 export const LivePreviewUpgradeNotice: FC< {
 	canPreviewButNeedUpgrade: boolean;
-	previewingTheme: { name: string; type?: string };
+	previewingTheme: ReturnType< typeof usePreviewingTheme >;
 } > = ( { canPreviewButNeedUpgrade, previewingTheme } ) => {
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
@@ -57,38 +58,41 @@ export const LivePreviewUpgradeNotice: FC< {
 		}
 
 		if ( canPreviewButNeedUpgrade ) {
-			const requiredPlan = previewingTheme.type === WOOCOMMERCE_THEME ? 'Business' : 'Premium';
-			createWarningNotice(
-				sprintf(
-					// translators: %1$s: The previewing theme name, %2$s: The required plan name ('Business' or 'Premium')
-					__(
-						'You are previewing the %1$s theme. You can try out your own style customizations, which will only be saved if you activate this theme. This theme can be activated after upgrading to the %2$s plan or higher.',
-						'wpcom-live-preview'
-					),
-					previewingTheme.name,
-					requiredPlan
+			const noticeTextUpgrade = sprintf(
+				// translators: %1$s: The previewing theme name, %2$s: The theme type ('Woo Commerce' or 'Premium'), %3$s: The required plan name ('Business' or 'Premium')
+				__(
+					'You are previewing %1$s, a %2$s theme. To unlock this theme upgrade to the %3$s plan.',
+					'wpcom-live-preview'
 				),
-				{
-					id: UPGRADE_NOTICE_ID,
-					isDismissible: false,
-					actions: [
-						{
-							label: __( 'Upgrade now', 'wpcom-live-preview' ),
-							onClick: upgradePlan,
-							variant: 'primary',
-						},
-						...( dashboardLink
-							? [
-									{
-										label: __( 'Back to themes', 'wpcom-live-preview' ),
-										url: dashboardLink,
-										variant: 'secondary',
-									},
-							  ]
-							: [] ),
-					],
-				}
+				previewingTheme.name,
+				previewingTheme.typeDisplay,
+				previewingTheme.requiredPlan
 			);
+			const noticeTextCustomize = __(
+				'You can try out your own style customizations, which will only be saved if you activate this theme.',
+				'wpcom-live-preview'
+			);
+			createWarningNotice( noticeTextUpgrade + '<br/>' + noticeTextCustomize, {
+				id: UPGRADE_NOTICE_ID,
+				isDismissible: false,
+				__unstableHTML: true,
+				actions: [
+					{
+						label: __( 'Upgrade now', 'wpcom-live-preview' ),
+						onClick: upgradePlan,
+						variant: 'primary',
+					},
+					...( dashboardLink
+						? [
+								{
+									label: __( 'Back to themes', 'wpcom-live-preview' ),
+									url: dashboardLink,
+									variant: 'secondary',
+								},
+						  ]
+						: [] ),
+				],
+			} );
 		}
 		return () => removeNotice( UPGRADE_NOTICE_ID );
 	}, [
@@ -100,6 +104,8 @@ export const LivePreviewUpgradeNotice: FC< {
 		previewingTheme.type,
 		previewingTheme.name,
 		dashboardLink,
+		previewingTheme.typeDisplay,
+		previewingTheme.requiredPlan,
 	] );
 	return null;
 };

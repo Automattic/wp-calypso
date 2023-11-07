@@ -29,6 +29,9 @@ export const usePreviewingTheme = () => {
 		previewingThemeSlug as string
 	);
 	const [ previewingThemeType, setPreviewingThemeType ] = useState< string >();
+	const previewingThemeTypeDisplay =
+		previewingThemeType === WOOCOMMERCE_THEME ? 'Woo Commerce' : 'Premium';
+	const requiredPlan = previewingThemeType === WOOCOMMERCE_THEME ? 'Business' : 'Premium';
 
 	useEffect( () => {
 		wpcom.req
@@ -56,5 +59,7 @@ export const usePreviewingTheme = () => {
 	return {
 		name: previewingThemeName,
 		type: previewingThemeType,
+		typeDisplay: previewingThemeTypeDisplay,
+		requiredPlan,
 	};
 };
