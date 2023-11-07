@@ -40,7 +40,7 @@ type ChatMessageProps = {
 
 const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const isUser = message.role === 'user';
-	const { botName } = useOdieAssistantContext();
+	const { botName, extraContactOptions } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
@@ -57,6 +57,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const sources = message?.context?.sources ?? [];
 	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
 	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
+	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 
 	const messageFullyTyped =
 		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
@@ -183,6 +184,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 						<div className="odie-chatbox-introduction-message">{ message.content }</div>
 					</div>
 				) }
+				{ isRequestingHumanSupport && extraContactOptions }
 			</div>
 			{ hasSources && messageFullyTyped && (
 				<FoldableCard

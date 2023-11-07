@@ -77,6 +77,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 							botSetting="supportDocs"
 							botName="Wapuu"
 							initialUserMessage={ searchTerm }
+							extraContactOptions={ <HelpCenterContactPage hideHeaders /> }
 						>
 							<HelpCenterOdie />
 						</OdieAssistantProvider>

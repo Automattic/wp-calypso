@@ -65,7 +65,7 @@ const OdieAssistant = () => {
 							<ChatMessage message={ message } key={ index } scrollToBottom={ scrollToBottom } />
 						);
 					} ) }
-					<div className="odie-chatbox-bottom-edge" ref={ bottomRef }></div>
+					<div className="odie-chatbox-bottom-edge" ref={ bottomRef } />
 				</div>
 				<OdieSendMessageButton
 					scrollToBottom={ () => scrollToBottom( true, true ) }

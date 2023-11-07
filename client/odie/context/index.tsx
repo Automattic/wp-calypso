@@ -28,6 +28,7 @@ interface OdieAssistantContextInterface {
 	isLoading: boolean;
 	isNudging: boolean;
 	isVisible: boolean;
+	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
@@ -77,12 +78,14 @@ const OdieAssistantProvider = ( {
 	botNameSlug = null,
 	botSetting = 'wapuu',
 	initialUserMessage,
+	extraContactOptions,
 	children,
 }: {
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
 	botSetting?: string;
 	initialUserMessage?: string | null | undefined;
+	extraContactOptions?: ReactNode;
 	children?: ReactNode;
 } ) => {
 	const dispatch = useDispatch();
@@ -163,6 +166,7 @@ const OdieAssistantProvider = ( {
 				botSetting,
 				chat,
 				clearChat,
+				extraContactOptions,
 				initialUserMessage,
 				isLoadingChat: false,
 				isLoading: isLoading,

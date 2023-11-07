@@ -21,7 +21,6 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from '..';
 import {
 	useChatStatus,
-	useIsWapuuEnabled,
 	useShouldRenderChatOption,
 	useShouldRenderEmailOption,
 	useStillNeedHelpURL,
@@ -37,10 +36,15 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 	return <span { ...props }></span>;
 };
 
-export const HelpCenterContactPage: FC = () => {
+type HelpCenterContactPageProps = {
+	hideHeaders?: boolean;
+};
+
+export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
+	hideHeaders = false,
+} ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
-	const isWapuuEnabled = useIsWapuuEnabled();
 	const renderEmail = useShouldRenderEmailOption();
 	const {
 		hasActiveChats,
@@ -125,9 +129,11 @@ export const HelpCenterContactPage: FC = () => {
 
 	return (
 		<div className="help-center-contact-page">
-			<BackButton />
+			{ ! hideHeaders && <BackButton /> }
 			<div className="help-center-contact-page__content">
-				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
+				{ ! hideHeaders && (
+					<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
+				) }
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
 				<GMClosureNotice
 					displayAt="2023-11-06 00:00Z"
@@ -200,23 +206,6 @@ export const HelpCenterContactPage: FC = () => {
 								<div>
 									<h2>{ emailHeaderText }</h2>
 									<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
-								</div>
-							</div>
-						</Link>
-					) }
-					{ isWapuuEnabled && (
-						<Link to="/odie">
-							<div
-								className={ classnames( 'help-center-contact-page__box', 'odie' ) }
-								role="button"
-								tabIndex={ 0 }
-							>
-								<div className="help-center-contact-page__box-icon">
-									<Icon icon={ comment } />
-								</div>
-								<div>
-									<h2>{ __( 'Wapuu', __i18n_text_domain__ ) }</h2>
-									<p>{ __( 'Get an immediate reply using a trained AI', __i18n_text_domain__ ) }</p>
 								</div>
 							</div>
 						</Link>
