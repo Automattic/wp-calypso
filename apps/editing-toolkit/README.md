@@ -4,6 +4,10 @@ This plugin includes many sub-features which add blocks and new functionality to
 
 This code is developed in the calypso monorepo at <https://github.com/Automattic/wp-calypso/tree/trunk/apps/editing-toolkit>.
 
+
+> **Warning**
+> New features are currently frozen to use Jetpacks packages instead. More information: p58i-dox-p2
+
 ## Rename Info
 
 This plugin has been renamed from Full Site Editing Plugin to WordPress.com Editing Toolkit Plugin.
