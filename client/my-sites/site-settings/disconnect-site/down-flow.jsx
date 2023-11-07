@@ -59,6 +59,7 @@ function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) 
 					href={ localizeUrl(
 						'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/'
 					) }
+					target="_blank"
 				>
 					<Gridicon
 						className="disconnect-site__action-icon disconnect-site__troubleshoot-icon"
