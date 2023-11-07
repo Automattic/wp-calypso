@@ -98,7 +98,7 @@ function useCachedContactDetailsForCheckoutForm(
 				if ( cachedContactDetails.countryCode ) {
 					setShouldShowContactDetailsValidationErrors( false );
 					debug( 'Contact details are populated; attempting to skip to payment method step' );
-					return setStepCompleteStatus( 'contact-form' );
+					return setStepCompleteStatus( 'payment-method-step' );
 				}
 				return false;
 			} )
