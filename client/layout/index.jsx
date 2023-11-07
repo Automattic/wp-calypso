@@ -15,6 +15,7 @@ import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
+import OdieWidget from 'calypso/components/odie-widget';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
@@ -316,9 +317,12 @@ class Layout extends Component {
 					</div>
 					<div id="primary" className="layout__primary">
 						{ this.shouldShowOdieAssistant() ? (
-							<OdieAssistantProvider sectionName={ this.props.sectionName }>
-								{ this.props.primary }
-							</OdieAssistantProvider>
+							<>
+								<OdieAssistantProvider sectionName={ this.props.sectionName }>
+									{ this.props.primary }
+								</OdieAssistantProvider>
+								{ config.isEnabled( 'odie/widget' ) && <OdieWidget /> }
+							</>
 						) : (
 							this.props.primary
 						) }
