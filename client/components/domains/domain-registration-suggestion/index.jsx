@@ -405,6 +405,7 @@ class DomainRegistrationSuggestion extends Component {
 			suggestion: { domain_name: domain },
 			productCost,
 			productSaleCost,
+			productRenewCost,
 			premiumDomain,
 			showStrikedOutPrice,
 			isReskinned,
@@ -424,6 +425,7 @@ class DomainRegistrationSuggestion extends Component {
 				priceRule={ this.getPriceRule() }
 				price={ productCost }
 				salePrice={ productSaleCost }
+				renewPrice={ productRenewCost }
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
@@ -450,6 +452,7 @@ const mapStateToProps = ( state, props ) => {
 
 	let productCost;
 	let productSaleCost;
+	let productRenewCost;
 
 	if ( isPremium ) {
 		productCost = props.premiumDomain?.cost;
@@ -457,6 +460,15 @@ const mapStateToProps = ( state, props ) => {
 			productSaleCost = formatCurrency( props.premiumDomain?.sale_cost, currentUserCurrencyCode, {
 				stripZeros,
 			} );
+		}
+		if ( props.premiumDomain?.renew_raw_cost ) {
+			productRenewCost = formatCurrency(
+				props.premiumDomain?.renew_raw_cost,
+				currentUserCurrencyCode,
+				{
+					stripZeros,
+				}
+			);
 		}
 	} else {
 		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
@@ -473,6 +485,7 @@ const mapStateToProps = ( state, props ) => {
 		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
 		productSaleCost,
+		productRenewCost,
 		flowName,
 		currentUser: getCurrentUser( state ),
 	};

@@ -163,8 +163,38 @@ class DomainProductPrice extends Component {
 		);
 	}
 
+	renderHighLowPrice() {
+		const { price, renewPrice, translate } = this.props;
+
+		const className = classnames( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
+			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
+		} );
+
+		return (
+			<div className={ className }>
+				<div className="domain-product-price__premium-register-price">
+					{ translate( '%(price)s {{small}}for the first year{{/small}}', {
+						args: { price },
+						components: { small: <small /> },
+					} ) }
+				</div>
+				<div className="domain-product-price__premium-renewal-price">
+					{ translate( '%(renewPrice)s {{small}}/year afterwards{{/small}}', {
+						args: { renewPrice },
+						components: { small: <small /> },
+						comment: '%(renewPrice)s is the annual renewal price of a premium domain',
+					} ) }
+				</div>
+			</div>
+		);
+	}
+
 	renderPrice() {
-		const { salePrice, showStrikedOutPrice, price, translate } = this.props;
+		const { salePrice, renewPrice, showStrikedOutPrice, price, translate } = this.props;
+		if ( renewPrice && renewPrice !== price ) {
+			return this.renderHighLowPrice();
+		}
+
 		if ( salePrice ) {
 			return this.renderSalePrice();
 		}
