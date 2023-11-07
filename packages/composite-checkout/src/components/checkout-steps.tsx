@@ -102,9 +102,6 @@ function createCheckoutStepGroupActions(
 	onStateChange: () => void
 ): CheckoutStepGroupActions {
 	const setActiveStepNumber = ( stepNumber: number ) => {
-		if ( stepNumber < 1 ) {
-			throw new Error( `Cannot set step number to '${ stepNumber }' because it is too low` );
-		}
 		if ( stepNumber > state.totalSteps && state.totalSteps === 0 ) {
 			throw new Error(
 				`Cannot set step number to '${ stepNumber }' because the total number of steps is 0`
@@ -289,7 +286,7 @@ export const CheckoutStepGroupInner = ( {
 				}
 				if ( isElementAStep( child ) ) {
 					stepNumber = nextStepNumber || 0;
-					nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
+					nextStepNumber = stepNumber === totalSteps ? 0 : stepNumber + 1;
 					const isStepActive = areStepsActive && activeStepNumber === stepNumber;
 					const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 					return (
@@ -441,7 +438,7 @@ export const CheckoutStep = ( {
 		const completeResult = Boolean( await Promise.resolve( isCompleteCallback() ) );
 		debug( `isCompleteCallback for step ${ stepNumber } finished with`, completeResult );
 		setThisStepCompleteStatus( completeResult );
-		if ( completeResult && nextStepNumber ) {
+		if ( completeResult && nextStepNumber !== null ) {
 			setActiveStepNumber( nextStepNumber );
 		}
 		setFormReady();
