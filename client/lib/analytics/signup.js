@@ -42,7 +42,6 @@ export const SIGNUP_DOMAIN_ORIGIN = {
 
 export function recordSignupComplete(
 	{
-		elapsedTime,
 		flow,
 		siteId,
 		isNewUser,
@@ -57,6 +56,7 @@ export function recordSignupComplete(
 		isTransfer,
 		isMapping,
 		signupDomainOrigin,
+		elapsedTime = null,
 	},
 	now
 ) {
