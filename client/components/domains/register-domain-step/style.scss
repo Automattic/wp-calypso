@@ -392,3 +392,14 @@ body.is-section-signup.is-white-signup {
 	border-right: none;
 	border-left: none;
 }
+
+.register-domain-and-show-summary {
+	display: flex;
+
+	.your-domains-summary {
+		background: #fff;
+		min-width: 210px;
+		padding: 20px;
+		margin-left: 20px;
+	}
+}
