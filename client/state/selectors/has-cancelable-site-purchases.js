@@ -1,9 +1,10 @@
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-
 import 'calypso/state/purchases/init';
+import isTrialPlan from '../sites/plans/selectors/trials/is-trial-plan';
 
 /**
  * Does the site have any current purchases that can be canceled (i.e. purchases other than legacy premium theme purchases)?
+ * Trial plans are not actual purchases, so they are not cancelable.
  *
  * Note: there is an is_cancelable flag on the purchase object, but it returns true for legacy premium theme purchases.
  * @param  {Object}  state       global state
@@ -24,7 +25,13 @@ export const hasCancelableSitePurchases = ( state, siteId ) => {
 			return true;
 		}
 
-		return purchase.productSlug !== 'premium_theme';
+		const isTrial = isTrialPlan( purchase );
+
+		if ( isTrial || purchase.productSlug === 'premium_theme' ) {
+			return false;
+		}
+
+		return true;
 	} );
 
 	return purchases && purchases.length > 0;

@@ -1,18 +1,8 @@
-import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import moment, { Moment } from 'moment';
 import { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { getCurrentPlan } from '..';
+import { isECommerceTrialPlan } from './is-trial-plan';
 import type { AppState } from 'calypso/types';
-
-/**
- * Checks if the plan is an ecommerce trial.
- *
- * @param {SitePlanData} plan - Plan object
- * @returns {boolean} returns true if the plan is an ecommerce trial
- */
-function isECommerceTrialPlan( plan: SitePlanData ): boolean {
-	return plan.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-}
 
 /**
  * Returns the expiration date of the ECommerce trial. If the trial is not active, returns null.
