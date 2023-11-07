@@ -144,6 +144,13 @@ class StatsModule extends Component {
 			'stats-module__footer-actions--summary': summary,
 		} );
 
+		if (
+			this.props.statType === 'statsTopAuthors' &&
+			( ! this.props.data || this.props.data.length <= 1 )
+		) {
+			return null;
+		}
+
 		return (
 			<>
 				{ siteId && statType && (
