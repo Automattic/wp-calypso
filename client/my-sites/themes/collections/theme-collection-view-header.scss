@@ -3,7 +3,40 @@
 
 .theme-showcase.is-collection-view {
 	.theme-collection-view-header {
-		background-color: #e5f4ff;
+		&.is-logged-in {
+			margin: 0;
+			padding: 0;
+
+			.navigation-header__main {
+				padding-bottom: 20px;
+			}
+
+			.theme-collection-view-header__description {
+				color: var(--studio-gray-50);
+			}
+
+			.theme-collection-view-header__info {
+				padding-left: 16px;
+
+				@include break-small {
+					padding-left: 0;
+				}
+			}
+		}
+
+		&:not(.is-logged-in) {
+			background-color: #e5f4ff;
+
+			.theme-collection-view-header__title {
+				color: var(--studio-blue-50);
+				font-family: $brand-serif;
+				font-size: rem(44px);
+				font-style: normal;
+				font-weight: 400;
+				margin-bottom: 16px;
+			}
+		}
+
 		padding: 32px 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
@@ -34,13 +67,11 @@
 	}
 
 	.theme-collection-view-header__title {
-		color: var(--studio-blue-50);
-		font-family: $brand-serif;
-		font-size: rem(44px);
+		font-size: rem(30px);
 		font-style: normal;
-		font-weight: 400;
+		font-weight: 600;
 		line-height: 1.15;
-		margin-bottom: 16px;
+		margin-bottom: 8px;
 	}
 
 	.theme-collection-view-header__description {
