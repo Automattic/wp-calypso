@@ -565,10 +565,10 @@ function CheckoutSummaryJetpackProductFeatures( { product }: { product: Response
 
 	return (
 		<>
-			{ productFeatures.map( ( feature ) => {
+			{ productFeatures.map( ( feature, index ) => {
 				return (
-					<CheckoutSummaryFeaturesListItem key={ feature }>
-						<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
+					<CheckoutSummaryFeaturesListItem key={ `feature${ index }` }>
+						<WPCheckoutCheckIcon id={ `icon${ index }` } />
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);

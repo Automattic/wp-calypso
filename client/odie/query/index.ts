@@ -65,11 +65,13 @@ const buildGetChatMessage = (
 	botNameSlug: OdieAllowedBots,
 	chat_id: number | null | undefined,
 	page: number,
-	perPage: number
+	perPage: number,
+	includeFeedback: boolean
 ): Promise< Chat > => {
 	const urlQueryParams = new URLSearchParams( {
 		page_number: page.toString(),
 		items_per_page: perPage.toString(),
+		include_feedback: includeFeedback.toString(),
 	} );
 	const baseApiPath = `/help-center/odie/chat/${ botNameSlug }/${ chat_id }?${ urlQueryParams.toString() }`;
 	const wpcomBaseApiPath = `/odie/chat/${ botNameSlug }/${ chat_id }?${ urlQueryParams.toString() }`;
@@ -92,32 +94,50 @@ function odieWpcomGetChat( path: string ): Promise< Chat > {
 export const useOdieGetChat = (
 	botNameSlug: OdieAllowedBots,
 	chatId: number | undefined | null,
-	page: number = 1,
-	perPage: number = 10
+	page = 1,
+	perPage = 10,
+	includeFeedback = true
 ) => {
 	const { chat } = useOdieAssistantContext();
 	return useQuery< Chat, unknown >( {
-		queryKey: [ 'chat', botNameSlug, chatId, page, perPage ],
-		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage ),
+		queryKey: [ 'chat', botNameSlug, chatId, page, perPage, includeFeedback ],
+		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
 	} );
 };
 
-const odieGetChat = ( chat_id: string | null ) => {
-	const path = `/odie/get_chat/${ chat_id }`;
-	return wpcom.req.get( {
+const odieWpcomSendMessageFeedback = (
+	botNameSlug: OdieAllowedBots,
+	chatId: number,
+	messageId: number,
+	rating_value: number
+) => {
+	const path = `/odie/chat/${ botNameSlug }/${ chatId }/${ messageId }/feedback`;
+
+	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
+		body: { rating_value },
 	} );
 };
 
-export const useOdieGetChatPollQuery = ( chat_id: string | null ) => {
-	return useQuery< Chat, Error >( {
-		queryKey: [ 'odie-get-chat', chat_id ],
-		queryFn: async () => await odieGetChat( chat_id ),
-		refetchInterval: 5000,
-		refetchOnWindowFocus: false,
-		enabled: !! chat_id,
+// It will post a new message using the current chat_id
+export const useOdieSendMessageFeedback = (): UseMutationResult<
+	number,
+	unknown,
+	{ rating_value: number; message: Message }
+> => {
+	const { chat, botNameSlug } = useOdieAssistantContext();
+
+	return useMutation( {
+		mutationFn: ( { rating_value, message }: { rating_value: number; message: Message } ) => {
+			return odieWpcomSendMessageFeedback(
+				botNameSlug,
+				chat.chat_id || 0,
+				message.message_id || 0,
+				rating_value
+			);
+		},
 	} );
 };

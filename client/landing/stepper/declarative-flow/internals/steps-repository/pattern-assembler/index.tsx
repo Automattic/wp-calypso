@@ -518,10 +518,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const onScreenPagesSelect = ( page: string ) => {
 		if ( pages.includes( page ) ) {
 			setPages( pages.filter( ( item ) => item !== page ) );
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_REMOVE_PAGE, { page } );
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_REMOVE, { page } );
 		} else {
 			setPages( [ ...pages, page ] );
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_ADD_PAGE, { page } );
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_ADD, { page } );
 		}
 	};
 
