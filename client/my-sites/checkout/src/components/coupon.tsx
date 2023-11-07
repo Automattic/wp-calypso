@@ -1,5 +1,5 @@
 import { Button } from '@automattic/composite-checkout';
-import { Field, styled, joinClasses } from '@automattic/wpcom-checkout';
+import { Field, styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -25,6 +25,7 @@ export default function Coupon( {
 	const {
 		couponFieldValue,
 		setCouponFieldValue,
+		isApplyButtonActive,
 		isFreshOrEdited,
 		setIsFreshOrEdited,
 		handleCouponSubmit,
@@ -37,7 +38,7 @@ export default function Coupon( {
 
 	return (
 		<>
-			<CouponFieldHeader>Coupon code</CouponFieldHeader>
+			{ hasCheckoutVersion( '2' ) && <CouponFieldHeader>Coupon code</CouponFieldHeader> }
 			<CouponWrapper
 				className={ joinClasses( [ className, 'coupon' ] ) }
 				onSubmit={ ( event ) => {
@@ -59,10 +60,11 @@ export default function Coupon( {
 						setCouponFieldValue( input );
 					} }
 				/>
-
-				<ApplyButton disabled={ isPending } buttonType="secondary">
-					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
-				</ApplyButton>
+				{ ( hasCheckoutVersion( '2' ) || isApplyButtonActive ) && (
+					<ApplyButton disabled={ isPending } buttonType="secondary">
+						{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
+					</ApplyButton>
+				) }
 			</CouponWrapper>
 		</>
 	);
@@ -104,32 +106,34 @@ const CouponFieldHeader = styled.p`
 `;
 
 const CouponWrapper = styled.form`
+	margin: ${ hasCheckoutVersion( '2' ) ? '0 0 2em' : '0' };
 	padding-top: 0;
 	position: relative;
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 2em;
-	column-gap: 6px;
+	display: ${ hasCheckoutVersion( '2' ) ? 'flex' : null };
+	justify-content: ${ hasCheckoutVersion( '2' ) ? 'space-between' : null };
+	column-gap: ${ hasCheckoutVersion( '2' ) ? '6px' : null };
 	border-radius: 2px;
 
 	& > div {
-		flex: 1 1 auto;
+		flex: ${ hasCheckoutVersion( '2' ) ? '1 1 auto' : null };
 	}
 
 	.coupon-code {
-		font-size: 14px;
-		padding: 10px 16px;
-		border-radius: 2px;
+		font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : null };
+		padding: ${ hasCheckoutVersion( '2' ) ? '10px 16px' : null };
 	}
 `;
 
 const ApplyButton = styled( Button )`
-	padding: 12px 16px;
+	position: ${ hasCheckoutVersion( '2' ) ? null : 'absolute' };
+	padding: ${ hasCheckoutVersion( '2' ) ? '12px 16px' : '8px' };
+	top: ${ hasCheckoutVersion( '2' ) ? '0' : '3px' };
+	right: ${ hasCheckoutVersion( '2' ) ? '0' : '3px' };
 	animation: ${ animateIn } 0.2s ease-out;
 	animation-fill-mode: backwards;
 	margin: 0;
-	font-size: 14px;
-	max-height: 43px;
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : null };
+	max-height: ${ hasCheckoutVersion( '2' ) ? '43px' : null };
 
 	.rtl & {
 		animation-name: ${ animateInRTL };

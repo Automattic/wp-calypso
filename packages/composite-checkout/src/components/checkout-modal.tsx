@@ -1,3 +1,4 @@
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -134,12 +135,12 @@ const CheckoutModalWrapper = styled.div`
 const CheckoutModalContent = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	display: block;
-	font-size: 16px;
-	line-height: 1.5em;
+	font-size: ${ hasCheckoutVersion( '2' ) ? '16px' : null };
+	line-height: ${ hasCheckoutVersion( '2' ) ? '1.5em' : null };
 	width: 100%;
 	max-width: 350px;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	border-radius: 2px;
+	border-radius: ${ hasCheckoutVersion( '2' ) ? '2px' : null };
 	padding: 32px;
 	animation: ${ animateIn } 0.2s 0.1s ease-out;
 	animation-fill-mode: backwards;
@@ -148,9 +149,9 @@ const CheckoutModalContent = styled.div`
 const CheckoutModalTitle = styled.h1`
 	margin: 0 0 16px;
 	font-weight: ${ ( props ) => props.theme.weights.normal };
-	font-size: 20px;
+	font-size: ${ hasCheckoutVersion( '2' ) ? '20px' : '24px' };
 	color: ${ ( props ) => props.theme.colors.textColor };
-	line-height: 1.5;
+	line-height: ${ hasCheckoutVersion( '2' ) ? '1.5' : '1.3' };
 `;
 
 const CheckoutModalCopy = styled.p`

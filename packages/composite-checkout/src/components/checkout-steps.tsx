@@ -1,3 +1,4 @@
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -642,6 +643,16 @@ const StepContentWrapper = styled.div< StepContentWrapperProps & HTMLAttributes<
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	box-sizing: border-box;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-left: ${ hasCheckoutVersion( '2' ) ? null : '40px' };
+	}
+
+	.rtl & {
+		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+			padding-left: ${ hasCheckoutVersion( '2' ) ? null : 0 };
+			padding-right: ${ hasCheckoutVersion( '2' ) ? null : '40px' };
+		}
 	}
 `;
 
@@ -654,6 +665,16 @@ const StepSummaryWrapper = styled.div< StepContentWrapperProps & HTMLAttributes<
 	font-size: 14px;
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	box-sizing: border-box;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-left: ${ hasCheckoutVersion( '2' ) ? null : '40px' };
+	}
+
+	.rtl & {
+		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+			padding-left: ${ hasCheckoutVersion( '2' ) ? null : '0' };
+			padding-right: ${ hasCheckoutVersion( '2' ) ? null : '40px' };
+		}
 	}
 `;
 
@@ -848,7 +869,9 @@ const HeaderEditButton = styled( Button )`
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 function CheckoutStepHeader( {
+	id,
 	className,
+	stepNumber,
 	title,
 	isActive,
 	isComplete,
@@ -875,6 +898,11 @@ function CheckoutStepHeader( {
 			isActive={ isActive }
 			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
 		>
+			{ ! hasCheckoutVersion( '2' ) && (
+				<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
+					{ stepNumber || null }
+				</Stepper>
+			) }
 			<StepTitle
 				fullWidth={ ! shouldShowEditButton }
 				isComplete={ isComplete }
