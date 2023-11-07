@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { FormDivider } from 'calypso/lib/authentication';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -12,7 +13,6 @@ import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import Divider from '../divider';
 import './two-factor-actions.scss';
 
 class TwoFactorActions extends Component {
@@ -70,9 +70,7 @@ class TwoFactorActions extends Component {
 
 		return (
 			<Fragment>
-				{ this.props.isWoo && ! this.props.isPartnerSignup && (
-					<Divider>{ this.props.translate( 'or' ) }</Divider>
-				) }
+				{ this.props.isWoo && ! this.props.isPartnerSignup && <FormDivider /> }
 				<Card className="two-factor-authentication__actions wp-login__links">
 					{ isSecurityKeyAvailable && (
 						<Button data-e2e-link="2fa-security-key-link" onClick={ this.recordSecurityKey }>

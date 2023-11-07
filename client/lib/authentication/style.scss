@@ -88,20 +88,6 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.crowdsignal {
-	.auth-form__separator {
-		margin: 10px auto;
-		text-transform: lowercase;
-
-		.auth-form__separator-text {
-			background-color: transparent;
-			color: var(--color-text);
-			font-size: $font-title-small;
-			font-weight: 600;
-		}
-	}
-}
-
 .is-jetpack-login {
 	.auth-form__separator {
 		background: var(--color-surface);

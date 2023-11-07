@@ -457,22 +457,6 @@ $image-height: 47px;
 			margin-top: 64px;
 		}
 
-		form {
-			.login__divider span {
-				/* Note: Same as `.auth-form__separator-text` */
-				background: #fdfdfd;
-				text-transform: uppercase;
-				text-align: center;
-				padding: 0 24px;
-				font-size: 0.75rem;
-				color: var(--studio-gray-50);
-			}
-
-			.card {
-				padding-left: 0;
-				padding-right: 0;
-			}
-		}
 		/* END - Note */
 	}
 
@@ -681,7 +665,7 @@ $image-height: 47px;
 		}
 	}
 
-	div.login__divider span {
+	div.auth-form__separator .auth-form__separator-text {
 		font-size: 15px;
 		text-transform: lowercase;
 		color: inherit;
@@ -692,7 +676,7 @@ $image-height: 47px;
 		background-color: inherit;
 	}
 
-	.login__divider,
+	.auth-form__separator,
 	.grav-powered-login__divider {
 		margin-top: 30px;
 	}
@@ -730,7 +714,7 @@ $image-height: 47px;
 			width: fit-content;
 		}
 
-		.login__divider,
+		.auth-form__separator,
 		.grav-powered-login__divider {
 			margin-top: 48px;
 		}

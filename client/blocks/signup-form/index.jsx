@@ -25,7 +25,6 @@ import PropTypes from 'prop-types';
 import { Component, useEffect, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
-import Divider from 'calypso/blocks/login/divider';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -1268,7 +1267,7 @@ class SignupForm extends Component {
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<Fragment>
-						{ this.props.isWoo && <Divider>{ this.props.translate( 'or' ) }</Divider> }
+						{ this.props.isWoo && <FormDivider /> }
 						<SocialSignupForm
 							handleResponse={ this.props.handleSocialResponse }
 							socialService={ this.props.socialService }

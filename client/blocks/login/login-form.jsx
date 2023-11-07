@@ -58,7 +58,6 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import Divider from './divider';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
@@ -722,7 +721,7 @@ export class LoginForm extends Component {
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (
 				<Fragment>
-					<Divider>{ this.props.translate( 'or' ) }</Divider>
+					<FormDivider />
 					<SocialLoginForm
 						linkingSocialService={
 							this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
@@ -882,7 +881,6 @@ export class LoginForm extends Component {
 				{ config.isEnabled( 'signup/social' ) && ! isCoreProfilerLostPasswordFlow && (
 					<Fragment>
 						<FormDivider />
-						{ /* <Divider>{ this.props.translate( 'or' ) }</Divider> */ }
 						<SocialLoginForm
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
