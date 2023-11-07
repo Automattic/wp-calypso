@@ -3,8 +3,10 @@ import { Button } from '@wordpress/components';
 import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, ReactElement, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Swiper as SwiperType } from 'swiper/types';
 import { preventWidows } from 'calypso/lib/formatting';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 interface ThemeCollectionProps {
@@ -23,6 +25,7 @@ export default function ThemeCollection( {
 	onSeeAll,
 	collectionIndex,
 }: PropsWithChildren< ThemeCollectionProps > ): ReactElement {
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const swiperInstance = useRef< SwiperType | null >( null );
 	const swiperContainerId = `swiper-container-${ collectionSlug }`;
 
@@ -84,18 +87,31 @@ export default function ThemeCollection( {
 						rewind: true,
 						slidesPerView: 1.2,
 						spaceBetween: -16,
-						breakpoints: {
-							// deprecated Calypso breakpoints used in the Theme Showcase
-							'660': {
-								slidesPerView: 2.2,
-								spaceBetween: -32,
-							},
-							// break-xlarge in Gutenberg breakpoints
-							'1080': {
-								slidesPerView: 3,
-								spaceBetween: -48,
-							},
-						},
+						breakpoints: isLoggedIn
+							? {
+									// break-small in Gutenberg breakpoints
+									600: {
+										slidesPerView: 2.2,
+										spaceBetween: -24,
+									},
+									// break-large in Gutenberg breakpoints
+									960: {
+										slidesPerView: 3,
+										spaceBetween: -32,
+									},
+							  }
+							: {
+									// deprecated Calypso breakpoints used in the Theme Showcase
+									660: {
+										slidesPerView: 2.2,
+										spaceBetween: -32,
+									},
+									// break-xlarge in Gutenberg breakpoints
+									1080: {
+										slidesPerView: 3,
+										spaceBetween: -48,
+									},
+							  },
 						modules: [ Navigation, Keyboard, Mousewheel ],
 					} );
 					setSwiperLoaded( true );
@@ -106,7 +122,7 @@ export default function ThemeCollection( {
 		return () => {
 			swiperInstance.current?.destroy();
 		};
-	}, [ swiperContainerId, isSwiperLoaded ] );
+	}, [ isLoggedIn, swiperContainerId, isSwiperLoaded ] );
 
 	return (
 		<div className="theme-collection__container swiper-container" id={ swiperContainerId }>
