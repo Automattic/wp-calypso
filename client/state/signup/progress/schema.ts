@@ -24,6 +24,7 @@ export const schema = {
 };
 
 export interface StepState {
+	lastKnownFlow: string;
 	formData: {
 		url: string;
 	};

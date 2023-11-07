@@ -52,11 +52,11 @@ describe( 'flow-controller', () => {
 		test( 'should reset stores if there are processing steps in the state upon instantitaion', () => {
 			const store = createSignupStore( {
 				signup: {
-					progress: [
-						{ stepName: 'stepA', status: 'processing' },
-						{ stepName: 'stepB' },
-						{ stepName: 'stepC' },
-					],
+					progress: {
+						stepA: { stepName: 'stepA', status: 'processing' },
+						stepB: { stepName: 'stepB' },
+						stepC: { stepName: 'stepC' },
+					},
 				},
 			} );
 
@@ -72,7 +72,7 @@ describe( 'flow-controller', () => {
 		test( 'should reset stores if user is logged in and there is a user step in the saved progress', () => {
 			const store = createSignupStore( {
 				signup: {
-					progress: [ { stepName: 'user' } ],
+					progress: { user: { stepName: 'user' } },
 				},
 			} );
 
@@ -83,6 +83,42 @@ describe( 'flow-controller', () => {
 			} );
 
 			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
+		} );
+
+		test( 'should reset stores if a step in signup progress does not exist in the current flow', () => {
+			const store = createSignupStore( {
+				signup: {
+					progress: { stepNotInfLow: { stepName: 'stepNotInfLow', lastKnownFlow: 'simple_flow' } },
+				},
+			} );
+
+			signupFlowController = new SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+
+			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
+		} );
+
+		test( 'should not reset stores if a step in signup progress does not exist in the current flow', () => {
+			const store = createSignupStore( {
+				signup: {
+					progress: {
+						stepNotInfLow: { stepName: 'stepNotInfLow', lastKnownFlow: 'some_random_flow' },
+					},
+				},
+			} );
+
+			signupFlowController = new SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+
+			expect( getSignupProgress( store.getState() ) ).toEqual( {
+				stepNotInfLow: { stepName: 'stepNotInfLow', lastKnownFlow: 'some_random_flow' },
+			} );
 		} );
 	} );
 
