@@ -23,6 +23,7 @@ import {
 	getPlanCartItem,
 } from 'calypso/lib/cart-values/cart-items';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
@@ -371,7 +372,31 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 		cartItem,
 	};
 	const newCartItems = [ cartItem ];
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug );
+
+	const logErrorIfExistsCallback = ( error, result ) => {
+		if ( error ) {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: error?.message || '',
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				properties: {
+					type: 'calypso_bbe_process_item_cart_error',
+					flow: step.lastKnownFlow,
+				},
+			} );
+			callback( error );
+			return;
+		}
+		callback( error, result );
+	};
+
+	processItemCart(
+		providedDependencies,
+		newCartItems,
+		logErrorIfExistsCallback,
+		reduxStore,
+		siteSlug
+	);
 }
 
 /**
@@ -391,6 +416,15 @@ export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxS
 
 		const createSiteWithCartCallback = ( error, result ) => {
 			if ( error ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: error?.message || '',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					properties: {
+						type: 'calypso_bbe_create_site_with_cart_error',
+						flow: step.lastKnownFlow,
+					},
+				} );
 				callback( error );
 				return;
 			}
