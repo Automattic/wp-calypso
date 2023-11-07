@@ -45,7 +45,7 @@ const AddNewSiteButton = ( {
 
 			<PopoverMenuItem
 				onClick={ onClickJetpackMenuItem }
-				href="https://wordpress.com/jetpack/connect"
+				href="https://wordpress.com/jetpack/connect?source=jetpack-manage"
 			>
 				<JetpackLogo className="gridicon" size={ 18 } />
 				<span>{ translate( 'Connect a site to Jetpack' ) }</span>
