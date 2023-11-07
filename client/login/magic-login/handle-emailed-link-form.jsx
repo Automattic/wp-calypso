@@ -125,11 +125,10 @@ class HandleEmailedLinkForm extends Component {
 		}
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillUpdate( nextProps, nextState ) {
-		const { authError, isAuthenticated, isFetching } = nextProps;
+	componentDidUpdate() {
+		const { authError, isAuthenticated, isFetching } = this.props;
 
-		if ( ! nextState.hasSubmitted || isFetching ) {
+		if ( ! this.state.hasSubmitted || isFetching ) {
 			// Don't do anything here unless the browser has received the `POST` response
 			return;
 		}
