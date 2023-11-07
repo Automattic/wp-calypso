@@ -431,6 +431,10 @@
 			width: auto;
 		}
 	}
+
+	.auth-form__separator {
+		margin-bottom: 2rem;
+	}
 }
 
 .is-wpcom-migration.main {
@@ -509,6 +513,17 @@
 			}
 		}
 
+		.auth-form__separator {
+			margin-top: -12px;
+
+			.auth-form__separator-text {
+				background: var(--studio-gray-0);
+				padding: 0 24px;
+				font-size: 0.75rem;
+				color: var(--studio-gray-50);
+			}
+		}
+
 		.login__form-header {
 			font-size: rem(44px);
 			line-height: rem(48px);
@@ -537,6 +552,35 @@
 			.accessible-focus &:focus {
 				box-shadow: 0 0 0 2px var(--color-accent) !important;
 			}
+		}
+	}
+}
+
+.layout.is-jetpack-login {
+	.auth-form__separator {
+		background: var(--color-surface);
+		margin-bottom: -10px;
+		margin-top: -10px;
+
+		.auth-form__separator-text {
+			font-size: 0.875rem;
+		}
+	}
+}
+
+.layout.jetpack-cloud {
+	.auth-form__separator {
+		width: 100%;
+
+		&::before {
+			background: var(--color-neutral-5);
+			content: "";
+			height: 1px;
+			left: 0;
+			position: absolute;
+			top: 50%;
+			width: 100%;
+			z-index: 1;
 		}
 	}
 }
