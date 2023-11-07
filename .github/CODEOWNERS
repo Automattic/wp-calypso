@@ -101,7 +101,7 @@
 /packages/calypso-e2e @Automattic/team-calypso-platform
 
 # Node updates
-/.nvmrc @Automattic/ground-control
+/.nvmrc @Automattic/team-calypso-platform
 
 # Domains
 /client/components/data/domain-management @Automattic/nomado
