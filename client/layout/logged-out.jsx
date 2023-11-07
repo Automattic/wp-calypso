@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
@@ -6,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
+import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
@@ -21,9 +23,11 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
+	isJetpackCloudOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
@@ -32,6 +36,8 @@ import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
 } from 'calypso/state/oauth2-clients/ui/selectors';
+import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
+import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -65,10 +71,13 @@ const LayoutLoggedOut = ( {
 	isPartnerSignupStart,
 	isWooCoreProfilerFlow,
 	locale,
+	/* eslint-disable no-shadow */
+	clearLastActionRequiresLogin,
 } ) => {
 	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
+	const loggedInAction = useSelector( getLastActionRequiresLogin );
 	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
 
 	const isCheckout = sectionName === 'checkout';
@@ -97,6 +106,15 @@ const LayoutLoggedOut = ( {
 		! currentRoute.startsWith( '/log-in/webauthn' ) &&
 		! currentRoute.startsWith( '/log-in/backup' );
 
+	const isMagicLogin = currentRoute && currentRoute.startsWith( '/log-in/link' );
+
+	const isWpcomMagicLogin =
+		isMagicLogin &&
+		! isJetpackLogin &&
+		! isGravPoweredLoginPage &&
+		! isJetpackCloudOAuth2Client( oauth2Client ) &&
+		! isWooOAuth2Client( oauth2Client );
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -117,9 +135,17 @@ const LayoutLoggedOut = ( {
 		'is-grav-powered-client': isGravPoweredClient,
 		'is-grav-powered-login-page': isGravPoweredLoginPage,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
+		'is-magic-login': isMagicLogin,
+		'is-wpcom-magic-login': isWpcomMagicLogin,
 	};
 
 	let masterbar = null;
+
+	// Open new window to create account page when a logged in action was triggered on the Reader tag embed page and the user is not logged in
+	if ( ! isLoggedIn && loggedInAction && isReaderTagEmbed ) {
+		const { pathname } = getUrlParts( window.location.href );
+		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
+	}
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
@@ -172,7 +198,7 @@ const LayoutLoggedOut = ( {
 		classes[ 'has-no-masterbar' ] = false;
 		masterbar = <WooCoreProfilerMasterbar />;
 	} else {
-		masterbar = (
+		masterbar = ! masterbarIsHidden && (
 			<MasterbarLoggedOut
 				title={ sectionTitle }
 				sectionName={ sectionName }
@@ -237,6 +263,21 @@ const LayoutLoggedOut = ( {
 					isLoggedIn={ isLoggedIn }
 				/>
 			) }
+
+			{ ! isLoggedIn && ! isReaderTagEmbed && (
+				<ReaderJoinConversationDialog
+					onClose={ () => clearLastActionRequiresLogin() }
+					isVisible={ !! loggedInAction }
+					loggedInAction={ loggedInAction }
+					onLoginSuccess={ () => {
+						if ( loggedInAction?.redirectTo ) {
+							window.location = loggedInAction.redirectTo;
+						} else {
+							window.location.reload();
+						}
+					} }
+				/>
+			) }
 		</div>
 	);
 };
@@ -254,66 +295,74 @@ LayoutLoggedOut.propTypes = {
 };
 
 export default withCurrentRoute(
-	connect( ( state, { currentSection, currentRoute, currentQuery } ) => {
-		const sectionGroup = currentSection?.group ?? null;
-		const sectionName = currentSection?.name ?? null;
-		const sectionTitle = currentSection?.title ?? '';
-		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isPartnerSignup = isPartnerSignupQuery( currentQuery );
-		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
-		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
-		const oauth2Client = getCurrentOAuth2Client( state );
-		const isGravatar = isGravatarOAuth2Client( oauth2Client );
-		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
-		const redirectToOriginal = getRedirectToOriginal( state ) || '';
-		const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'client_id' );
-		const isGravPoweredClient =
-			isGravPoweredOAuth2Client( oauth2Client ) ||
-			// To cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
-			isGravPoweredOAuth2Client( { id: Number( clientId ) } );
-		const isReskinLoginRoute =
-			currentRoute.startsWith( '/log-in' ) &&
-			! isJetpackLogin &&
-			! isP2Login &&
-			Boolean( currentQuery?.client_id ) === false;
-		const isWhiteLogin =
-			isReskinLoginRoute ||
-			( isPartnerSignup && ! isPartnerSignupStart ) ||
-			isGravatar ||
-			isGravPoweredClient;
-		const noMasterbarForRoute =
-			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
-		const isPopup = '1' === currentQuery?.is_popup;
-		const noMasterbarForSection =
-			! isWooOAuth2Client( oauth2Client ) &&
-			[ 'signup', 'jetpack-connect' ].includes( sectionName );
-		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
-		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
-		const wccomFrom = currentQuery?.[ 'wccom-from' ];
-		const masterbarIsHidden =
-			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
+	connect(
+		( state, { currentSection, currentRoute, currentQuery } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
+			const sectionTitle = currentSection?.title ?? '';
+			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+			const isPartnerSignup = isPartnerSignupQuery( currentQuery );
+			const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
+			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
+			const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+			const oauth2Client = getCurrentOAuth2Client( state );
+			const isGravatar = isGravatarOAuth2Client( oauth2Client );
+			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
+			const redirectToOriginal = getRedirectToOriginal( state ) || '';
+			const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get(
+				'client_id'
+			);
+			const isGravPoweredClient =
+				isGravPoweredOAuth2Client( oauth2Client ) ||
+				// To cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
+				isGravPoweredOAuth2Client( { id: Number( clientId ) } );
+			const isReskinLoginRoute =
+				currentRoute.startsWith( '/log-in' ) &&
+				! isJetpackLogin &&
+				! isP2Login &&
+				Boolean( currentQuery?.client_id ) === false;
+			const isWhiteLogin =
+				isReskinLoginRoute ||
+				( isPartnerSignup && ! isPartnerSignupStart ) ||
+				isGravatar ||
+				isGravPoweredClient;
+			const noMasterbarForRoute =
+				isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
+			const isPopup = '1' === currentQuery?.is_popup;
+			const noMasterbarForSection =
+				! isWooOAuth2Client( oauth2Client ) &&
+				[ 'signup', 'jetpack-connect' ].includes( sectionName );
+			const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
+			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
+			const wccomFrom = currentQuery?.[ 'wccom-from' ];
+			const masterbarIsHidden =
+				! ( currentSection || currentRoute ) ||
+				! masterbarIsVisible( state ) ||
+				noMasterbarForSection ||
+				noMasterbarForRoute;
 
-		return {
-			isJetpackLogin,
-			isWhiteLogin,
-			isPopup,
-			isJetpackWooCommerceFlow,
-			isJetpackWooDnaFlow,
-			isP2Login,
-			isGravatar,
-			isWPJobManager,
-			isGravPoweredClient,
-			wccomFrom,
-			masterbarIsHidden,
-			sectionGroup,
-			sectionName,
-			sectionTitle,
-			oauth2Client,
-			useOAuth2Layout: showOAuth2Layout( state ),
-			isPartnerSignup,
-			isPartnerSignupStart,
-			isWooCoreProfilerFlow,
-		};
-	} )( localize( LayoutLoggedOut ) )
+			return {
+				isJetpackLogin,
+				isWhiteLogin,
+				isPopup,
+				isJetpackWooCommerceFlow,
+				isJetpackWooDnaFlow,
+				isP2Login,
+				isGravatar,
+				isWPJobManager,
+				isGravPoweredClient,
+				wccomFrom,
+				masterbarIsHidden,
+				sectionGroup,
+				sectionName,
+				sectionTitle,
+				oauth2Client,
+				useOAuth2Layout: showOAuth2Layout( state ),
+				isPartnerSignup,
+				isPartnerSignupStart,
+				isWooCoreProfilerFlow,
+			};
+		},
+		{ clearLastActionRequiresLogin }
+	)( localize( LayoutLoggedOut ) )
 );

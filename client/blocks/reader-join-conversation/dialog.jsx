@@ -1,23 +1,50 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import useLoginWindow from 'calypso/data/reader/use-login-window';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+
 import './style.scss';
 
-const ReaderJoinConversationDialog = ( { onClose, isVisible, onLoginSuccess } ) => {
+const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onLoginSuccess } ) => {
 	const translate = useTranslate();
 
-	const { login, createAccount } = useLoginWindow( { onLoginSuccess: onLoginSuccess } );
+	const trackEvent = ( eventName ) => {
+		let eventProps = {};
+		if ( loggedInAction ) {
+			eventProps = {
+				type: loggedInAction?.type,
+				blog_id: loggedInAction?.siteId,
+				post_id: loggedInAction?.postId,
+				tag: loggedInAction?.tag,
+			};
+		}
+		recordTracksEvent( eventName, eventProps );
+	};
+
+	const handleLoginSuccess = () => {
+		trackEvent( 'calypso_reader_dialog_login_success' );
+		onLoginSuccess();
+	};
+
+	// Use useEffect to only track the event once when the dialog is first shown
+	useEffect( () => {
+		if ( isVisible ) {
+			trackEvent( 'calypso_reader_dialog_shown' );
+		}
+	}, [ isVisible ] );
+
+	const { login, createAccount } = useLoginWindow( { onLoginSuccess: handleLoginSuccess } );
 
 	const onLoginClick = () => {
-		recordTracksEvent( 'calypso_reader_dialog_login_clicked' );
+		trackEvent( 'calypso_reader_dialog_login_clicked' );
 		login();
 	};
 
 	const onCreateAccountClick = () => {
-		recordTracksEvent( 'calypso_reader_dialog_create_account_clicked' );
+		trackEvent( 'calypso_reader_dialog_create_account_clicked' );
 		createAccount();
 	};
 

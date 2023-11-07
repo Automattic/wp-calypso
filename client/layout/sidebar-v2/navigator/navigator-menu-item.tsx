@@ -6,31 +6,34 @@ import {
 } from '@wordpress/components';
 import { Icon, chevronRightSmall, external } from '@wordpress/icons';
 import classnames from 'classnames';
+import { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
 const ICON_SIZE = 24;
 
 interface Props {
+	id?: string;
 	icon: JSX.Element;
 	path: string;
 	link: string;
-	title: string;
+	title: TranslateResult;
 	onClickMenuItem: ( path: string ) => void;
 	withChevron?: boolean;
 	isExternalLink?: boolean;
-	isSelected: boolean;
+	isSelected?: boolean;
 }
 
 export const SidebarNavigatorMenuItem = ( {
+	id,
 	icon,
 	path,
 	link,
 	title,
 	onClickMenuItem,
-	withChevron,
-	isExternalLink,
-	isSelected,
+	withChevron = false,
+	isExternalLink = false,
+	isSelected = false,
 }: Props ) => {
 	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
 		return (
@@ -39,6 +42,10 @@ export const SidebarNavigatorMenuItem = ( {
 					'is-active': isSelected,
 				} ) }
 				onClick={ () => onClickMenuItem( link ) }
+				href={ link }
+				id={ id }
+				as="a"
+				target={ isExternalLink ? '_blank' : undefined }
 			>
 				<HStack justify="flex-start">
 					{ icon && <Icon style={ { fill: 'currentcolor' } } icon={ icon } size={ ICON_SIZE } /> }
@@ -53,8 +60,10 @@ export const SidebarNavigatorMenuItem = ( {
 	};
 
 	return (
-		<NavigatorButton as={ SidebarItem } path={ path }>
-			{ title }
-		</NavigatorButton>
+		<li>
+			<NavigatorButton as={ SidebarItem } path={ path }>
+				{ title }
+			</NavigatorButton>
+		</li>
 	);
 };

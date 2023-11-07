@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -58,15 +59,23 @@ export default function LivePreviewModal() {
 	);
 	const themeName = theme?.name?.rendered || themeSlug;
 
-	const onClose = () => {
+	const onClose = ( closedBy = 'close_icon' ) => {
 		setIsModalOpen( false );
+		recordTracksEvent( 'calypso_block_theme_live_preview_modal_close', {
+			theme: themeSlug,
+			closed_by: closedBy,
+		} );
 	};
 
 	const onContinue = () => {
 		if ( shouldSuppressModal ) {
 			suppressModal();
 		}
-		onClose();
+		onClose( 'continue_button' );
+		recordTracksEvent( 'calypso_block_theme_live_preview_modal_continue_click', {
+			do_not_show_again: shouldSuppressModal,
+			theme: themeSlug,
+		} );
 	};
 
 	return (
@@ -76,7 +85,7 @@ export default function LivePreviewModal() {
 			isVisible={ isModalOpen }
 			isFullScreen
 		>
-			<Button className="live-preview-modal__close-icon" onClick={ onClose }>
+			<Button className="live-preview-modal__close-icon" onClick={ () => onClose() }>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24">
 					<path d="M18.36 19.78L12 13.41l-6.36 6.37-1.42-1.42L10.59 12 4.22 5.64l1.42-1.42L12 10.59l6.36-6.36 1.41 1.41L13.41 12l6.36 6.36z" />
 				</svg>

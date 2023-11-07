@@ -12,6 +12,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'manage_subscribers',
 	'connect_social_media',
 	'drive_traffic',
+	'site_monitoring_page',
 ];
 
 export const setUpActionsForTasks = ( {
@@ -24,7 +25,7 @@ export const setUpActionsForTasks = ( {
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
 	const { setShareSiteModalIsOpen, setActiveChecklist } = extraActions;
-	const { onSiteLaunched } = eventHandlers || {};
+	const { onSiteLaunched, onTaskClick } = eventHandlers || {};
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -153,6 +154,7 @@ export const setUpActionsForTasks = ( {
 			if ( siteSlug && setActiveChecklist ) {
 				setActiveChecklist( siteSlug, checklistSlug );
 			}
+			onTaskClick?.( task );
 			action?.();
 		};
 

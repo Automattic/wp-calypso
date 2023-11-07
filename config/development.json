@@ -51,7 +51,6 @@
 		"devdocs": true,
 		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"domains/add-multiple-domains-to-cart": false,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/dashes-filter": false,
 		"domains/kracken-ui/exact-match-filter": true,
@@ -78,6 +77,7 @@
 		"i18n/community-translator": false,
 		"i18n/empathy-mode": true,
 		"i18n/translation-scanner": true,
+		"importer/site-backups": true,
 		"importer/unified": true,
 		"importers/substack": true,
 		"individual-subscriber-stats": true,
@@ -137,6 +137,7 @@
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"pattern-assembler/add-pages": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
@@ -201,6 +202,8 @@
 		"themes/block-theme-previews": true,
 		"themes/discovery-lits": false,
 		"themes/discovery-lots": true,
+		"themes/discovery-randomize-collections": true,
+		"themes/discovery-randomize-collection-themes": true,
 		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
@@ -220,7 +223,6 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/staging-sites-i3": true,
 		"yolo/wp-admin-site-default": true
 	}
 }

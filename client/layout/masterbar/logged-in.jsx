@@ -224,17 +224,17 @@ class MasterbarLoggedIn extends Component {
 		} = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
-		// eslint-disable-next-line no-nested-ternary
-		const homeUrl = hasNoSites
-			? '/sites'
-			: isCustomerHomeEnabled
-			? `/home/${ siteSlug }`
-			: getStatsPathForTab( 'day', siteSlug );
+		const homeUrl =
+			// eslint-disable-next-line no-nested-ternary
+			hasNoSites || isSiteTrialExpired
+				? '/sites'
+				: isCustomerHomeEnabled
+				? `/home/${ siteSlug }`
+				: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: homeUrl;
-		mySitesUrl = isSiteTrialExpired ? `/home/` : mySitesUrl;
 
 		const icon =
 			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();

@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -50,7 +51,6 @@ const TrialCurrentPlan = () => {
 
 	/**
 	 * Redirects to the checkout page with Plan on cart.
-	 *
 	 * @param ctaPosition - The position of the CTA that triggered the redirect.
 	 */
 	const goToCheckoutWithPlan = ( ctaPosition: string ) => {
@@ -100,7 +100,9 @@ const TrialCurrentPlan = () => {
 
 				{ ! displayAllIncluded && (
 					<Button
-						className="trial-current-plan__included-view-all"
+						className={ classnames( 'trial-current-plan__included-view-all', {
+							'is-ecommerce': isEcommerceTrial,
+						} ) }
 						onClick={ viewAllIncludedFeatures }
 					>
 						{ translate( 'View all' ) }

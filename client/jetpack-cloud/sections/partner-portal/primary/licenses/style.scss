@@ -1,9 +1,12 @@
-@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .licenses {
 	.search {
 		box-shadow: 0 0 0 1px var(--color-neutral-5);
 		margin-block-end: 8px;
+	}
+
+	.partner-portal-layout__body {
+		padding-block: 16px;
 	}
 }

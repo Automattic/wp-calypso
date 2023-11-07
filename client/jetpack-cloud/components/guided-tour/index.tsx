@@ -1,4 +1,5 @@
 import { Popover, Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -10,22 +11,62 @@ import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selec
 import './style.scss';
 
 export interface Tour {
-	targetId: string;
+	target: string;
 	title: string;
 	description: string;
+	popoverPosition?:
+		| 'top'
+		| 'top right'
+		| 'right'
+		| 'bottom right'
+		| 'bottom'
+		| 'bottom left'
+		| 'left'
+		| 'top left';
 }
 
 interface Props {
+	className?: string;
 	tours: Tour[];
 	preferenceName: string;
 }
 
-const GuidedTour = ( { tours, preferenceName }: Props ) => {
+// This hook will return the async element matching the target selector.
+// After timeout has passed, it will return null.
+//
+// @param target - The selector to match the element against
+// @param timeoutDuration - The maximum duration (in milliseconds) to wait for the element
+//
+// @returns The element matching the target selector, or null if the timeout has passed
+const useAsyncElement = ( target: string, timeoutDuration: number ): HTMLElement | null => {
+	const [ asyncElement, setAsyncElement ] = useState< HTMLElement | null >( null );
+
+	useEffect( () => {
+		// Set timeout to ensure we don't wait too long for the element
+		const endTime = Date.now() + timeoutDuration;
+
+		const getAsyncElement = ( endTime: number ) => {
+			const element = document.querySelector( target ) as HTMLElement | null;
+			if ( element ) {
+				setAsyncElement( element );
+			} else if ( Date.now() < endTime ) {
+				requestAnimationFrame( () => getAsyncElement( endTime ) );
+			} else {
+				setAsyncElement( null );
+			}
+		};
+
+		getAsyncElement( endTime );
+	}, [ target, timeoutDuration ] );
+
+	return asyncElement;
+};
+
+const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
-	const [ targetElement, setTargetElement ] = useState< HTMLElement | null >( null );
 	const [ isVisible, setIsVisible ] = useState( false );
 
 	const preference = useSelector( ( state ) => getPreference( state, preferenceName ) );
@@ -33,27 +74,18 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 
 	const isDismissed = preference?.dismiss;
 
-	const { title, description, targetId } = tours[ currentStep ];
+	const { title, description, target, popoverPosition } = tours[ currentStep ];
 
-	// Set the target element for the popover
-	useEffect( () => {
-		if ( targetId ) {
-			const element = document.querySelector( `#${ targetId }` ) as HTMLElement | null;
-			setTargetElement( element );
-		}
-	}, [ targetId ] );
+	const targetElement = useAsyncElement( target, 3000 );
 
-	// Show the popover after a short delay to allow the popover to be positioned correctly
 	useEffect( () => {
 		if ( targetElement && ! isDismissed && hasFetched ) {
-			setTimeout( () => {
-				setIsVisible( true );
-				dispatch(
-					recordTracksEvent( 'calypso_jetpack_cloud_start_tour', {
-						tour: preferenceName,
-					} )
-				);
-			}, 100 );
+			setIsVisible( true );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_cloud_start_tour', {
+					tour: preferenceName,
+				} )
+			);
 		}
 	}, [ dispatch, isDismissed, preferenceName, targetElement, hasFetched ] );
 
@@ -81,7 +113,12 @@ const GuidedTour = ( { tours, preferenceName }: Props ) => {
 	const lastTourLabel = tours.length === 1 ? translate( 'Got it' ) : translate( 'Done' );
 
 	return (
-		<Popover isVisible={ isVisible } context={ targetElement } className="guided-tour__popover">
+		<Popover
+			isVisible={ isVisible }
+			className={ classNames( className, 'guided-tour__popover' ) }
+			context={ targetElement }
+			position={ popoverPosition }
+		>
 			<h2 className="guided-tour__popover-heading">{ title }</h2>
 			<p className="guided-tour__popover-description">{ description }</p>
 			<div className="guided-tour__popover-footer">

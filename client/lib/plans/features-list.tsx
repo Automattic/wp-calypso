@@ -300,6 +300,8 @@ import {
 	isBusinessPlan,
 	isFreePlan,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+	FEATURE_COMMISSION_FEE_WOO_FEATURES,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -1726,6 +1728,55 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES ]: {
 		getSlug: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 		getTitle: () => i18n.translate( 'Transaction fees for payments' ),
+	},
+	[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: {
+		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+		getTitle: () =>
+			i18n.translate(
+				'Commission fee for standard payment features (plus standard processing\u00A0fee)'
+			),
+		getConditionalTitle: ( planSlug ) => {
+			if ( ! planSlug ) {
+				return '—';
+			}
+
+			if ( isFreePlan( planSlug ) ) {
+				return '10%';
+			}
+			if ( isPersonalPlan( planSlug ) ) {
+				return '8%';
+			}
+
+			if ( isPremiumPlan( planSlug ) ) {
+				return '4%';
+			}
+
+			if ( isBusinessPlan( planSlug ) ) {
+				return '2%';
+			}
+
+			if ( isEcommercePlan( planSlug ) ) {
+				return '0%';
+			}
+			return '—';
+		},
+	},
+	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
+		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
+		getTitle: () =>
+			i18n.translate(
+				'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
+			),
+		getConditionalTitle: ( planSlug ) => {
+			if ( ! planSlug ) {
+				return '';
+			}
+
+			if ( isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ) {
+				return '0%';
+			}
+			return '—';
+		},
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,

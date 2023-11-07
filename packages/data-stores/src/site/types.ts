@@ -71,7 +71,7 @@ export interface CreateSiteParams {
 		anchor_fm_podcast_id?: string;
 		is_blank_canvas?: boolean;
 		is_videopress_initial_purchase?: boolean;
-		wpcom_admin_interface?: boolean;
+		wpcom_admin_interface?: string;
 	};
 }
 
@@ -247,6 +247,7 @@ export interface SiteDetailsOptions {
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
 	is_commercial?: boolean | null;
+	wpcom_admin_interface?: string;
 }
 
 export type SiteOption = keyof NonNullable< SiteDetails[ 'options' ] >;
@@ -508,10 +509,16 @@ export interface SourceSiteMigrationDetails {
 	target_blog_slug?: string;
 }
 
+export interface Page {
+	title: string;
+	content: string;
+}
+
 export interface AssembleSiteOptions {
 	homeHtml?: string;
 	headerHtml?: string;
 	footerHtml?: string;
+	pages?: Page[];
 	globalStyles?: GlobalStyles;
 	shouldResetContent?: boolean;
 	siteSetupOption?: string;

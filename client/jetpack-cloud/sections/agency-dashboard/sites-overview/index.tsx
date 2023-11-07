@@ -42,6 +42,8 @@ import type { Site } from '../sites-overview/types';
 
 import './style.scss';
 
+const QUERY_PARAM_PROVISIONING = 'provisioning';
+
 export default function SitesOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -127,7 +129,7 @@ export default function SitesOverview() {
 	}, [ refetch, jetpackSiteDisconnected ] );
 
 	const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
-	const pageTitle = isNewNavigation ? translate( 'Sites Management' ) : translate( 'Dashboard' );
+	const pageTitle = isNewNavigation ? translate( 'Sites' ) : translate( 'Dashboard' );
 
 	const basePath = '/dashboard';
 
@@ -246,8 +248,19 @@ export default function SitesOverview() {
 	const [ hasDismissedProvisioningNotice, setHasDismissedProvisioningNotice ] =
 		useState< boolean >( false );
 	const isProvisioningSite =
-		'true' === getQueryArg( window.location.href, 'provisioning' ) ||
+		'true' === getQueryArg( window.location.href, QUERY_PARAM_PROVISIONING ) ||
 		( ! isLoadingProvisioningBlogIds && Number( provisioningBlogIds?.length ) > 0 );
+
+	const onDismissProvisioningNotice = () => {
+		setHasDismissedProvisioningNotice( true );
+
+		// Delete query param 'provisioning' from the URL.
+		window.history.replaceState(
+			null,
+			'',
+			removeQueryArgs( window.location.href, QUERY_PARAM_PROVISIONING )
+		);
+	};
 
 	return (
 		<div className="sites-overview">
@@ -259,10 +272,7 @@ export default function SitesOverview() {
 						<DashboardBanners />
 
 						{ isProvisioningSite && ! hasDismissedProvisioningNotice && (
-							<Notice
-								status="is-info"
-								onDismissClick={ () => setHasDismissedProvisioningNotice( true ) }
-							>
+							<Notice status="is-info" onDismissClick={ onDismissProvisioningNotice }>
 								{ translate(
 									"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
 								) }

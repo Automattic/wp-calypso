@@ -53,6 +53,7 @@ const PatternLargePreview = ( {
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 	const [ device, setDevice ] = useState< string >( 'computer' );
 	const [ zoomOutScale, setZoomOutScale ] = useState( 1 );
+	const zoomOutScaleRef = useRef( zoomOutScale );
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const patternLargePreviewStyle = useMemo(
 		() =>
@@ -65,9 +66,11 @@ const PatternLargePreview = ( {
 
 	const [ debouncedRecordZoomOutScaleChange ] = useDebouncedCallback( ( value: number ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
-			zoom_out_scale: value,
+			from_scale: zoomOutScaleRef.current,
+			to_scale: value,
 		} );
-	}, 1000 );
+		zoomOutScaleRef.current = value;
+	}, 300 );
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
 
@@ -101,7 +104,10 @@ const PatternLargePreview = ( {
 		};
 
 		const handleMouseLeave = ( event: React.MouseEvent< HTMLElement > ) => {
-			if ( ! frameRef.current?.contains( event.relatedTarget as Node ) ) {
+			const hasNextActiveElement =
+				event.relatedTarget instanceof Node &&
+				! frameRef.current?.contains( event.relatedTarget as Node );
+			if ( ! hasNextActiveElement ) {
 				setActiveElement( null );
 			}
 		};
@@ -213,16 +219,23 @@ const PatternLargePreview = ( {
 	useEffect( () => {
 		const handleMouseLeave = ( event: MouseEvent ) => {
 			const relatedTarget = event.relatedTarget as HTMLElement | null;
-			if ( ! relatedTarget?.closest( '.pattern-assembler__pattern-action-bar' ) ) {
+			if ( ! relatedTarget?.closest?.( '.pattern-assembler__pattern-action-bar' ) ) {
 				setActiveElement( null );
 			}
 		};
+
+		// When the value of the `hasSelectedPattern` changes, it will append/remove the
+		// frame to the DOM. Hence, we need to check the value to bind the event again
+		// after the frame is removed and then appended to the DOM.
+		if ( ! hasSelectedPattern ) {
+			return;
+		}
 
 		frameRef.current?.addEventListener( 'mouseleave', handleMouseLeave );
 		return () => {
 			frameRef.current?.removeEventListener( 'mouseleave', handleMouseLeave );
 		};
-	}, [ frameRef, setActiveElement ] );
+	}, [ frameRef, hasSelectedPattern, setActiveElement ] );
 
 	return (
 		<DeviceSwitcher

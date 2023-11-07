@@ -1,15 +1,17 @@
 import { Count } from '@automattic/components';
 import { get } from 'lodash';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
+import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import ReaderSidebarHelper from '../../sidebar/helper';
 import '../style.scss';
 
@@ -17,6 +19,7 @@ const ReaderListFollowingItem = ( props ) => {
 	const { site, path, isUnseen, feed, follow, siteId } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
+	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
 	let feedIcon = get( follow, 'site_icon' );
 
@@ -29,14 +32,21 @@ const ReaderListFollowingItem = ( props ) => {
 		feedIcon = get( feed, 'image' );
 	}
 
-	const handleSidebarClick = ( selectedSite ) => {
+	const handleSidebarClick = ( event, streamLink ) => {
 		recordAction( 'clicked_reader_sidebar_following_item' );
 		recordGaEvent( 'Clicked Reader Sidebar Following Item' );
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_sidebar_following_item_clicked', {
-				blog: decodeURIComponent( selectedSite.URL ),
+				blog: decodeURIComponent( follow?.URL ),
 			} )
 		);
+		if ( ! isLoggedIn ) {
+			event.preventDefault();
+			return props.registerLastActionRequiresLogin( {
+				type: 'sidebar-link',
+				redirectTo: streamLink,
+			} );
+		}
 	};
 
 	let streamLink;
@@ -64,7 +74,7 @@ const ReaderListFollowingItem = ( props ) => {
 			<a
 				className="reader-sidebar-site_link"
 				href={ streamLink }
-				onClick={ () => handleSidebarClick( follow ) }
+				onClick={ ( event ) => handleSidebarClick( event, streamLink ) }
 			>
 				<span className="reader-sidebar-site_siteicon">
 					{ ! siteIcon && ! feedIcon && ! site && <QueryReaderSite siteId={ siteId } /> }
@@ -100,13 +110,16 @@ const ReaderListFollowingItem = ( props ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default connect( ( state, ownProps ) => {
-	const feedId = get( ownProps.follow, 'feed_ID' );
-	const siteId = get( ownProps.follow, 'blog_ID' );
+export default connect(
+	( state, ownProps ) => {
+		const feedId = get( ownProps.follow, 'feed_ID' );
+		const siteId = get( ownProps.follow, 'blog_ID' );
 
-	return {
-		feed: getFeed( state, feedId ),
-		site: getSite( state, siteId ),
-		siteId: siteId,
-	};
-} )( ReaderListFollowingItem );
+		return {
+			feed: getFeed( state, feedId ),
+			site: getSite( state, siteId ),
+			siteId: siteId,
+		};
+	},
+	{ registerLastActionRequiresLogin }
+)( ReaderListFollowingItem );

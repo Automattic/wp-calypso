@@ -14,7 +14,6 @@ import {
 	isFreeJetpackPlan,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	isFreePlan,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	JETPACK_COMPLETE_PLANS,
@@ -22,7 +21,6 @@ import {
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -35,8 +33,8 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -47,7 +45,6 @@ import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checkl
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -214,7 +211,6 @@ class CurrentPlan extends Component {
 			shouldShowDomainWarnings,
 			showThankYou,
 			translate,
-			eligibleForProPlan,
 			isJetpackNotAtomic,
 		} = this.props;
 
@@ -235,18 +231,9 @@ class CurrentPlan extends Component {
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		}
 
-		// Ensures the Plan tab is shown in case the plan changes after the controller redirect.
-		if ( eligibleForProPlan && isFreePlanProduct( selectedSite.plan ) ) {
-			page.redirect( `/plans/${ selectedSite.slug }` );
-
-			return null;
-		}
-
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && (
-					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
-				) }
+				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
 					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
@@ -257,14 +244,13 @@ class CurrentPlan extends Component {
 				<QuerySiteProducts siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<div>
-					<FormattedHeader
-						brandFont
-						className="current-plan__section-header modernized-header"
-						headerText={ translate( 'Plans' ) }
-						subHeaderText={ translate(
+					<NavigationHeader
+						className="plans__section-header"
+						navigationItems={ [] }
+						title={ translate( 'Plans' ) }
+						subtitle={ translate(
 							'Learn about the features included in your WordPress.com plan.'
 						) }
-						align="left"
 					/>
 					<div className="current-plan current-plan__content">
 						{ showThankYou && ! this.state.hideThankYouModal && (
@@ -327,7 +313,6 @@ export default connect( ( state, { requestThankYou } ) => {
 	const isJetpackNotAtomic = false === isAutomatedTransfer && isJetpack;
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
-	const eligibleForProPlan = isEligibleForProPlan( state, selectedSiteId );
 
 	return {
 		currentPlan,
@@ -342,7 +327,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 		scheduleId: getConciergeScheduleId( state ),
-		eligibleForProPlan,
 		isJetpackNotAtomic,
 	};
 } )( localize( CurrentPlan ) );

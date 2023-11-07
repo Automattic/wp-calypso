@@ -27,6 +27,7 @@ export interface FormState {
 	path: string;
 	kpri: string;
 	role: string;
+	save_as_staging: boolean;
 }
 
 export const INITIAL_FORM_STATE: FormState = {
@@ -39,6 +40,7 @@ export const INITIAL_FORM_STATE: FormState = {
 	kpri: '',
 	site_url: '',
 	role: 'main',
+	save_as_staging: false,
 };
 
 export interface FormInteractions {
@@ -50,6 +52,7 @@ export interface FormInteractions {
 	kpri: boolean;
 	site_url: boolean;
 	role: boolean;
+	save_as_staging: boolean;
 }
 
 export const INITIAL_FORM_INTERACTION: FormInteractions = {
@@ -61,6 +64,7 @@ export const INITIAL_FORM_INTERACTION: FormInteractions = {
 	kpri: false,
 	site_url: false,
 	role: false,
+	save_as_staging: false,
 };
 
 interface Error {

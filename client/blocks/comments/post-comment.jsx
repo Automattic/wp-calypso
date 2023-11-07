@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
@@ -20,6 +21,7 @@ import { expandComments } from 'calypso/state/comments/actions';
 import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
@@ -106,8 +108,9 @@ class PostComment extends PureComponent {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	};
 
-	handleReply = () => {
+	onLikeToggle = () => {
 		if ( ! this.props.isLoggedIn ) {
+			// Redirect to create account page when not logged in and the login window component is not enabled
 			const { pathname } = getUrlParts( window.location.href );
 			if ( isReaderTagEmbedPage( window.location ) ) {
 				return window.open(
@@ -115,7 +118,21 @@ class PostComment extends PureComponent {
 					'_blank'
 				);
 			}
-			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+			// Do not redirect to create account page when not logged in and the login window component is enabled
+			if ( ! config.isEnabled( 'reader/login-window' ) ) {
+				return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+			}
+		}
+	};
+
+	handleReply = () => {
+		if ( ! this.props.isLoggedIn ) {
+			return this.props.registerLastActionRequiresLogin( {
+				type: 'reply',
+				siteId: this.props.post.site_ID,
+				postId: this.props.post.ID,
+				commentId: this.props.commentId,
+			} );
 		}
 		this.props.onReplyClick( this.props.commentId );
 		this.setState( { showReplies: true } ); // show the comments when replying
@@ -469,6 +486,7 @@ class PostComment extends PureComponent {
 					activeReplyCommentId={ this.props.activeReplyCommentId }
 					commentId={ this.props.commentId }
 					handleReply={ this.handleReply }
+					onLikeToggle={ this.onLikeToggle }
 					onReplyCancel={ this.props.onReplyCancel }
 					showReadMore={ overflowY && ! this.state.showFull && showReadMoreInActions }
 					onReadMore={ this.onReadMore }
@@ -494,7 +512,7 @@ const ConnectedPostComment = connect(
 		currentUser: getCurrentUser( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ expandComments, recordReaderTracksEvent }
+	{ expandComments, recordReaderTracksEvent, registerLastActionRequiresLogin }
 )( withDimensions( PostComment ) );
 
 export default ConnectedPostComment;

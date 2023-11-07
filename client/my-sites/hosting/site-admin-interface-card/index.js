@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Card } from '@automattic/components';
+import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -18,6 +19,13 @@ import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 const successNoticeId = 'admin-interface-change-success';
 const failureNoticeId = 'admin-interface-change-failure';
 
+const FormRadioStyled = styled( FormRadio )( {
+	'&.form-radio:disabled:checked::before': {
+		backgroundColor: 'var(--color-primary)',
+		opacity: 0.6,
+	},
+} );
+
 const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -26,7 +34,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 		dispatch( removeNotice( failureNoticeId ) );
 	};
 
-	const setSiteInterface = useSiteInterfaceMutation( siteId, {
+	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
 		onMutate: () => {
 			removeAllNotices();
 		},
@@ -86,11 +94,12 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 
 			<FormFieldset>
 				<FormLabel>
-					<FormRadio
+					<FormRadioStyled
 						label={ translate( 'Default style' ) }
 						value="calypso"
 						checked={ selectedAdminInterface === 'calypso' }
 						onChange={ ( event ) => handleInputChange( event.target.value ) }
+						disabled={ isUpdating }
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
@@ -99,11 +108,12 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 			</FormFieldset>
 			<FormFieldset>
 				<FormLabel>
-					<FormRadio
+					<FormRadioStyled
 						label={ translate( 'Classic style' ) }
 						value="wp-admin"
 						checked={ selectedAdminInterface === 'wp-admin' }
 						onChange={ ( event ) => handleInputChange( event.target.value ) }
+						disabled={ isUpdating }
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
@@ -116,7 +126,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) ?? 'calypso';
+	const adminInterface = getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso';
 
 	return { siteId, adminInterface };
 } )( localize( SiteAdminInterfaceCard ) );

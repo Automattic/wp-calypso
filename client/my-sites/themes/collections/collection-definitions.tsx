@@ -2,6 +2,22 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
 
+export type ThemeCollectionDefinition = {
+	query: {
+		collection: string;
+		filter: string;
+		number: number;
+		page: number;
+		search: string;
+		tier: string;
+	};
+	title: string;
+	fullTitle: string;
+	collectionSlug: string;
+	description: JSX.Element | null;
+	seeAllLink: string;
+};
+
 export const THEME_COLLECTIONS = {
 	recommended: {
 		query: {
@@ -40,6 +56,21 @@ export const THEME_COLLECTIONS = {
 			</p>
 		),
 		seeAllLink: '/themes/premium',
+	},
+	free: {
+		query: {
+			collection: 'recommended',
+			filter: '',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: 'free',
+		},
+		title: translate( 'Free' ),
+		fullTitle: translate( 'Free Themes' ),
+		collectionSlug: 'free-themes',
+		description: null,
+		seeAllLink: '/themes/free',
 	},
 	marketplace: {
 		query: {

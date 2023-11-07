@@ -1,9 +1,9 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 type ExcerptSettingProps = {
 	value?: boolean;
@@ -44,10 +44,9 @@ export const ExcerptSetting = ( {
 					{
 						components: {
 							link: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/support/launch-a-newsletter/' ) }
-									target="_blank"
-									rel="noreferrer"
+								<InlineSupportLink
+									showIcon={ false }
+									supportContext="subscriptions-and-newsletters"
 								/>
 							),
 						},

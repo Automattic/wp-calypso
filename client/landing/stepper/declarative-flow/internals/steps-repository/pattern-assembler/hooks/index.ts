@@ -6,6 +6,8 @@ export { default as useGlobalStylesUpgradeProps } from './use-global-styles-upgr
 export { default as useInitialPath } from './use-initial-path';
 export { default as usePatternCategories } from './use-pattern-categories';
 export { default as usePatternCountMapByCategory } from './use-pattern-count-map-by-category';
+export { default as usePatternPages } from './use-pattern-pages';
+export { default as usePatternPagesMapByCategory } from './use-pattern-pages-map-by-category';
 export { default as usePatternsMapByCategory } from './use-patterns-map-by-category';
 export { default as useRecipe } from './use-recipe';
 export { default as useScreen } from './use-screen';

@@ -107,7 +107,8 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
-const quantityForDaysAndPeriod = ( days, period ) => {
+// Converts (and round) days to units for a given period. E.g. return how many months is 300 days.
+const convertDaysToPeriodUnits = ( days, period ) => {
 	// If the period is 'day' use the value provided.
 	if ( period === 'day' ) {
 		return days;
@@ -200,6 +201,23 @@ class StatsSite extends Component {
 		return isValid ? inputDate : null;
 	}
 
+	// Return a default amount of days to subtracts from the present day depending on the period selected.
+	// Used in case no starting date is present in the URL.
+	getDefaultRangeForPeriod( period ) {
+		switch ( period ) {
+			case 'day':
+				return 30;
+			case 'week':
+				return 12 * 7; // ~last 3 months
+			case 'month':
+				return 6 * 30; // ~last 6 months
+			case 'year':
+				return 5 * 365; // ~last 5 years
+			default:
+				return 30;
+		}
+	}
+
 	renderStats() {
 		const {
 			date,
@@ -233,26 +251,33 @@ class StatsSite extends Component {
 		if ( isDateControlEnabled ) {
 			// Sort out end date for chart.
 			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+
 			if ( chartEnd ) {
 				customChartRange = { chartEnd };
 			} else {
 				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 			}
+
 			// Sort out quantity for chart. Default to 30 days.
-			let daysInRange = 30;
+			let daysInRange = this.getDefaultRangeForPeriod( period );
 			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
 			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+
 			if ( chartStart && isSameOrBefore ) {
 				// Add one to calculation to include the start date.
 				daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
 				customChartRange.chartStart = chartStart;
 			} else {
+				// if start date is missing let the frequency of data take over to avoid showing one bar
+				// (e.g. months defaulting to 30 days and showing one point)
 				customChartRange.chartStart = moment()
 					.subtract( daysInRange, 'days' )
 					.format( 'YYYY-MM-DD' );
 			}
-			this.state.customChartQuantity = quantityForDaysAndPeriod( daysInRange, period );
-			customChartRange.daysInRange = daysInRange;
+
+			// how many units of data to ask for the bar for a given period
+			this.state.customChartQuantity = convertDaysToPeriodUnits( daysInRange, period );
+			customChartRange.daysInRange = daysInRange; // never used
 		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );

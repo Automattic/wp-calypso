@@ -9,9 +9,6 @@ productionConfig.features.is_running_in_jetpack_site =
 // @see https://github.com/Automattic/wp-calypso/blob/trunk/docs/translation-chunks.md
 productionConfig.features[ 'use-translation-chunks' ] = false;
 
-// Override the redesign feature
-productionConfig.features[ 'promote-post/widget-i2' ] = true;
-
 // Sets the advertising path prefix for this app
 productionConfig.advertising_dashboard_path_prefix = '/advertising';
 

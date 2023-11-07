@@ -1,4 +1,5 @@
-import { Badge, Button, Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
 import { Task } from '../types';
@@ -28,6 +29,13 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	// when clicking on the task list items.
 	const buttonHref = task.useCalypsoPath && task.calypso_path ? task.calypso_path : undefined;
 
+	// The Button component does not accept the `disabled` and `href` props together.
+	// This code will only add href property if the disabled variable is false.
+	const buttonProps = {
+		disabled,
+		...( disabled ? {} : { href: buttonHref } ),
+	};
+
 	return (
 		<li
 			className={ classnames( 'checklist-item__task', {
@@ -40,20 +48,18 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 			{ isPrimaryAction ? (
 				<Button
 					className="checklist-item__checklist-primary-button"
-					disabled={ disabled }
 					data-task={ id }
-					href={ buttonHref }
 					onClick={ handlePrimaryAction }
+					{ ...buttonProps }
 				>
 					{ title }
 				</Button>
 			) : (
 				<Button
 					className="checklist-item__task-content"
-					disabled={ disabled }
 					data-task={ id }
-					href={ buttonHref }
 					onClick={ actionDispatch }
+					{ ...buttonProps }
 				>
 					{ completed && (
 						// show checkmark for completed tasks regardless if they are disabled or kept active

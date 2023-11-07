@@ -6,6 +6,15 @@
 	padding: 0;
 	position: relative;
 
+	.all-sites__title {
+		display: flex;
+		align-items: center;
+
+		.all-sites__title-chevron-icon {
+			margin-inline-start: 12px;
+		}
+	}
+
 	.all-sites__content {
 		padding: 13px 4px 13px 16px;
 		cursor: pointer;

@@ -3,8 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useDispatch } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -45,11 +45,11 @@ const SubscriberDetailsPage = ( {
 		subscriptionId,
 		userId
 	);
-
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
 			siteId: selectedSiteId as number,
-			subscriptionId: subscriptionId || subscriber?.subscription_id,
+			subscriptionId: subscriber?.subscription_id,
+			userId,
 		} );
 
 	const isLoading = isLoadingDetails || isLoadingNewsletterCategories;
@@ -105,9 +105,9 @@ const SubscriberDetailsPage = ( {
 
 	return (
 		<Main wideLayout className="subscriber-details-page">
-			<FixedNavigationHeader navigationItems={ navigationItems }>
+			<NavigationHeader navigationItems={ navigationItems }>
 				<SubscriberPopover onUnsubscribe={ unsubscribeClickHandler } />
-			</FixedNavigationHeader>
+			</NavigationHeader>
 			{ subscriber && ! isLoading && selectedSiteId && (
 				<SubscriberDetails
 					subscriber={ subscriber }

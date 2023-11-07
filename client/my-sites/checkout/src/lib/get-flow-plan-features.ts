@@ -8,7 +8,7 @@ import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import {
 	getHighlightedFeatures,
 	getPlanFeatureAccessor,
-} from 'calypso/my-sites/plan-features-comparison/util';
+} from 'calypso/my-sites/plan-features/util';
 
 export default function getFlowPlanFeatures(
 	flowName: string,

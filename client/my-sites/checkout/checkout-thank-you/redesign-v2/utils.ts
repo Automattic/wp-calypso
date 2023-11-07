@@ -1,11 +1,10 @@
 import { isWpComPlan } from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
-import { isBulkDomainTransfer } from '../utils';
+import { isBulkDomainTransfer, isDomainOnly } from '../utils';
 
 /**
  * Determines whether the current checkout flow is for a redesign V2 purchase.
  * Used for gradually rolling out the redesign.
- *
  * @returns {boolean} True if the checkout flow is for a redesign V2 purchase, false otherwise.
  */
 export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
@@ -16,6 +15,11 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	}
 
 	const purchases = getPurchases( props );
+
+	// Domain only purchases.
+	if ( isDomainOnly( purchases ) ) {
+		return true;
+	}
 
 	// We are in the bulk domain transfer flow.
 	if ( isBulkDomainTransfer( purchases ) ) {
