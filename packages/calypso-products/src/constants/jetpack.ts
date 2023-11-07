@@ -50,6 +50,9 @@ export const PRODUCT_JETPACK_STATS_FREE = 'jetpack_stats_free_yearly';
 export const PRODUCT_JETPACK_MONITOR_YEARLY = 'jetpack_monitor_yearly';
 export const PRODUCT_JETPACK_MONITOR_MONTHLY = 'jetpack_monitor_monthly';
 export const PRODUCT_JETPACK_MONITOR = PRODUCT_JETPACK_MONITOR_YEARLY;
+export const PRODUCT_JETPACK_CREATOR_BI_YEARLY = 'jetpack_creator_bi_yearly';
+export const PRODUCT_JETPACK_CREATOR_YEARLY = 'jetpack_creator_yearly';
+export const PRODUCT_JETPACK_CREATOR_MONTHLY = 'jetpack_creator_monthly';
 
 //add-on products
 export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY =
@@ -226,6 +229,13 @@ export const JETPACK_AI_PRODUCTS = < const >[
 	PRODUCT_JETPACK_AI_YEARLY,
 ];
 
+// Creator
+export const JETPACK_CREATOR_PRODUCTS = < const >[
+	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
+	PRODUCT_JETPACK_CREATOR_YEARLY,
+	PRODUCT_JETPACK_CREATOR_MONTHLY,
+];
+
 // WooCommerce Products
 export const WOOCOMMERCE_PRODUCTS = < const >[
 	PRODUCT_WOOCOMMERCE_BOOKINGS,
@@ -248,6 +258,7 @@ export const JETPACK_PRODUCTS_LIST = < const >[
 	...JETPACK_AI_PRODUCTS,
 	...JETPACK_STATS_PRODUCTS,
 	...JETPACK_MONITOR_PRODUCTS,
+	...JETPACK_CREATOR_PRODUCTS,
 ];
 
 export const JETPACK_PRODUCTS_BY_TERM = < const >[
@@ -329,6 +340,11 @@ export const JETPACK_PRODUCTS_BY_TERM = < const >[
 		yearly: PRODUCT_JETPACK_MONITOR_YEARLY,
 		monthly: PRODUCT_JETPACK_MONITOR_MONTHLY,
 	},
+	{
+		biYearly: PRODUCT_JETPACK_CREATOR_BI_YEARLY,
+		yearly: PRODUCT_JETPACK_CREATOR_YEARLY,
+		monthly: PRODUCT_JETPACK_CREATOR_MONTHLY,
+	},
 ];
 export const JETPACK_PRODUCT_PRICE_MATRIX = < const >{
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -383,6 +399,10 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = < const >{
 		relatedProduct: PRODUCT_JETPACK_STATS_MONTHLY,
 		ratio: 12,
 	},
+	[ PRODUCT_JETPACK_CREATOR_YEARLY ]: {
+		relatedProduct: PRODUCT_JETPACK_CREATOR_MONTHLY,
+		ratio: 12,
+	},
 };
 // Key/value: Superseding product/Products superseded (yearly terms)
 export const JETPACK_PRODUCT_UPGRADE_MAP: Record< string, string[] > = {
@@ -409,9 +429,6 @@ export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
 export const PLAN_JETPACK_STARTER_YEARLY = 'jetpack_starter_yearly';
 export const PLAN_JETPACK_STARTER_MONTHLY = 'jetpack_starter_monthly';
 export const PLAN_JETPACK_GOLDEN_TOKEN = 'jetpack_golden_token_lifetime';
-export const PLAN_JETPACK_CREATOR_BI_YEARLY = 'jetpack_creator_bi_yearly';
-export const PLAN_JETPACK_CREATOR_YEARLY = 'jetpack_creator_yearly';
-export const PLAN_JETPACK_CREATOR_MONTHLY = 'jetpack_creator_monthly';
 
 // Legacy Security Plans
 export const PLAN_JETPACK_SECURITY_DAILY = 'jetpack_security_daily';
@@ -466,13 +483,6 @@ export const JETPACK_STARTER_PLANS = < const >[
 	PLAN_JETPACK_STARTER_MONTHLY,
 ];
 
-// Creator
-export const JETPACK_CREATOR_PLANS = < const >[
-	PLAN_JETPACK_CREATOR_BI_YEARLY,
-	PLAN_JETPACK_CREATOR_YEARLY,
-	PLAN_JETPACK_CREATOR_MONTHLY,
-];
-
 export const JETPACK_MONTHLY_PLANS = < const >[
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -482,10 +492,8 @@ export const JETPACK_MONTHLY_PLANS = < const >[
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
-	PLAN_JETPACK_CREATOR_MONTHLY,
 ];
 export const JETPACK_RESET_PLANS = < const >[
-	...JETPACK_CREATOR_PLANS,
 	...JETPACK_STARTER_PLANS,
 	...JETPACK_SECURITY_PLANS,
 	...JETPACK_COMPLETE_PLANS,
@@ -517,11 +525,6 @@ export const JETPACK_RESET_PLANS_BY_TERM = < const >[
 	{
 		yearly: PLAN_JETPACK_STARTER_YEARLY,
 		monthly: PLAN_JETPACK_STARTER_MONTHLY,
-	},
-	{
-		biYearly: PLAN_JETPACK_CREATOR_BI_YEARLY,
-		yearly: PLAN_JETPACK_CREATOR_YEARLY,
-		monthly: PLAN_JETPACK_CREATOR_MONTHLY,
 	},
 ];
 export const JETPACK_PLANS = < const >[
@@ -799,6 +802,12 @@ export const JETPACK_PRODUCT_RECCOMENDATION_MAP: Record< string, string[] > = {
 		JETPACK_TAG_FOR_MEMBERSHIP_SITES,
 		JETPACK_TAG_FOR_ONLINE_FORUMS,
 		JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
+	],
+	[ PRODUCT_JETPACK_CREATOR_YEARLY ]: [
+		JETPACK_TAG_FOR_EDUCATORS,
+		JETPACK_TAG_FOR_BLOGGERS,
+		JETPACK_TAG_FOR_VIDEOGRAPHERS,
+		JETPACK_TAG_FOR_MEMBERSHIP_SITES,
 	],
 	// WooCommerce Extensions
 	[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
