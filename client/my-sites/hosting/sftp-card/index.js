@@ -43,7 +43,7 @@ import SshKeys from './ssh-keys';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 const SFTP_URL = 'sftp.wp.com';
-const SFTP_PORT = 22;
+export const SFTP_PORT = 22;
 
 const SftpClipboardButtonInput = styled( ClipboardButtonInput )( {
 	display: 'block',
