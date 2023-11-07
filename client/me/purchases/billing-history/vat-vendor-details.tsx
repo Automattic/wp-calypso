@@ -8,12 +8,20 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 		return null;
 	}
 
+	// We need a combined string of the object properties for the combinedTaxName in the vendor info header
+	const vendorInfoCombinedTaxName = Object.keys( vendorInfo.tax_name_and_vendor_id_object ).join( '/' );
+
+	// We need to create a string of the taxName and taxID that contains each combination
+	// const vendorInfoTaxNamesAndIDs = Object.keys(vendorInfo.tax_name_and_vendor_id_object).map(function(taxName, taxID) {
+	// 	return '<strong>'+taxName+'</strong> '+taxID+' <br />';
+	// });
+
 	return (
 		<li>
 			<strong>
-				{ translate( 'Vendor %(taxName)s Details', {
-					args: { taxName: vendorInfo.tax_name },
-					comment: 'taxName is a localized tax, like VAT or GST',
+				{ translate( 'Vendor %(combinedTaxName)s Details', {
+					args: { combinedTaxName: vendorInfoCombinedTaxName },
+					comment: 'combinedTaxName is a localized tax, like VAT or GST',
 				} ) }
 			</strong>
 			<span>
@@ -21,11 +29,9 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 					<div key={ addressLine }>{ addressLine }</div>
 				) ) }
 			</span>
-			{ vendorInfo.tax_name_and_vendor_id_object && (
-				<span className="receipt__vat-vendor-details-number">
-					<strong>{ vendorInfo.tax_name }</strong> { vendorInfo.vat_id }
-				</span>
-			) }
+			{ /* <span className="receipt__vat-vendor-details-number">
+				{ vendorInfoTaxNamesAndIDs }
+				</span> */ }
 		</li>
 	);
 }
