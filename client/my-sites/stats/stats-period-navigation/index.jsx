@@ -64,7 +64,7 @@ class StatsPeriodNavigation extends PureComponent {
 	calculatePeriod = ( period ) => ( this.isHoursPeriod( period ) ? 'day' : period );
 
 	queryParamsForNextDate = ( nextDay ) => {
-		const { dateRange, moment, queryParams } = this.props;
+		const { dateRange, moment } = this.props;
 		// Takes a 'YYYY-MM-DD' string.
 		const newParams = { startDate: nextDay };
 		// Maintain previous behaviour if we don't have a date range to work with.
@@ -72,10 +72,10 @@ class StatsPeriodNavigation extends PureComponent {
 			return newParams;
 		}
 		// Test if we need to update the chart start/end dates.
-		const isAfter = moment( nextDay ).isAfter( moment( queryParams.chartEnd ) );
+		const isAfter = moment( nextDay ).isAfter( moment( dateRange.chartEnd ) );
 		if ( isAfter ) {
-			newParams.chartStart = moment( queryParams.chartEnd ).add( 1, 'days' ).format( 'YYYY-MM-DD' );
-			newParams.chartEnd = moment( queryParams.chartEnd )
+			newParams.chartStart = moment( dateRange.chartEnd ).add( 1, 'days' ).format( 'YYYY-MM-DD' );
+			newParams.chartEnd = moment( dateRange.chartEnd )
 				.add( dateRange.daysInRange, 'days' )
 				.format( 'YYYY-MM-DD' );
 		}
@@ -96,7 +96,7 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	queryParamsForPreviousDate = ( previousDay ) => {
-		const { dateRange, moment, queryParams } = this.props;
+		const { dateRange, moment } = this.props;
 		// Takes a 'YYYY-MM-DD' string.
 		const newParams = { startDate: previousDay };
 		// Maintain previous behaviour if we don't have a date range to work with.
@@ -104,12 +104,12 @@ class StatsPeriodNavigation extends PureComponent {
 			return newParams;
 		}
 		// Test if we need to update the chart start/end dates.
-		const isBefore = moment( previousDay ).isBefore( moment( queryParams.chartStart ) );
+		const isBefore = moment( previousDay ).isBefore( moment( dateRange.chartStart ) );
 		if ( isBefore ) {
-			newParams.chartEnd = moment( queryParams.chartStart )
+			newParams.chartEnd = moment( dateRange.chartStart )
 				.subtract( 1, 'days' )
 				.format( 'YYYY-MM-DD' );
-			newParams.chartStart = moment( queryParams.chartStart )
+			newParams.chartStart = moment( dateRange.chartStart )
 				.subtract( dateRange.daysInRange, 'days' )
 				.format( 'YYYY-MM-DD' );
 		}
