@@ -8,23 +8,30 @@
 			position: relative;
 			z-index: z-index("button-group-parent", ".button-group .button:focus");
 		}
+
+		&:active,
+		&:focus,
+		&:hover {
+			border-left-width: 1px;
+			margin-left: -1px;
+		}
 	}
 
 	.button:first-child {
 		border-left-width: 1px;
 		border-top-left-radius: 2px;
 		border-bottom-left-radius: 2px;
-		&:active {
-			border-right-width: 0;
+
+		&:active,
+		&:focus,
+		&:hover {
+			margin-left: 0;
 		}
 	}
 
 	.button:last-child {
 		border-top-right-radius: 2px;
 		border-bottom-right-radius: 2px;
-		&:active {
-			border-left-width: 0;
-		}
 	}
 
 	.section-header & .button {

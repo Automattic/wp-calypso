@@ -16,9 +16,9 @@ class Buttons extends PureComponent {
 	render() {
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>
+				<button className="docs__design-toggle button" onClick={ this.toggleButtons }>
 					{ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
-				</a>
+				</button>
 				<Card>
 					<div className="docs__design-button-group-row">
 						<ButtonGroup>
@@ -29,9 +29,11 @@ class Buttons extends PureComponent {
 					<div className="docs__design-button-group-row">
 						<ButtonGroup>
 							<Button compact={ this.state.compact }>Button one</Button>
-							<Button compact={ this.state.compact }>Button two</Button>
 							<Button compact={ this.state.compact } scary>
-								Button Three
+								Button two
+							</Button>
+							<Button compact={ this.state.compact } scary>
+								Button three
 							</Button>
 						</ButtonGroup>
 					</div>
