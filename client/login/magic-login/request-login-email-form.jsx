@@ -107,6 +107,7 @@ class RequestLoginEmailForm extends Component {
 
 		this.props.sendEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
+			blogId: this.props.blogId,
 			requestLoginEmailFormFlow: true,
 			createAccount: this.props.createAccountForNewUser,
 			...( this.props.flow ? { flow: this.props.flow } : {} ),
