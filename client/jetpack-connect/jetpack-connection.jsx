@@ -88,6 +88,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 			this.setState( { url, status } );
 
+			const source = queryArgs?.source;
+
 			if (
 				( status === NOT_CONNECTED_JETPACK || status === NOT_CONNECTED_USER ) &&
 				this.isCurrentUrlFetched() &&
@@ -95,7 +97,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 				! this.state.redirecting
 			) {
 				debug( `Redirecting to remote_auth ${ this.props.siteHomeUrl }` );
-				this.redirect( 'remote_auth', this.props.siteHomeUrl );
+				this.redirect( 'remote_auth', this.props.siteHomeUrl, null, null, source );
 			}
 
 			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
@@ -145,11 +147,11 @@ const jetpackConnection = ( WrappedComponent ) => {
 			} );
 		};
 
-		redirect = ( type, url, product, queryArgs ) => {
+		redirect = ( type, url, product, queryArgs, source = null ) => {
 			if ( ! this.state.redirecting ) {
 				this.setState( { redirecting: true } );
 
-				redirect( type, url, product, queryArgs );
+				redirect( type, url, product, queryArgs, source );
 			}
 		};
 

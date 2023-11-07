@@ -148,7 +148,7 @@ export function parseAuthorizationQuery( query ) {
  * @param  {?Object}    queryArgs Query parameters
  * @returns {string}        Redirect url
  */
-export function redirect( type, url, product = null, queryArgs = {} ) {
+export function redirect( type, url, product = null, queryArgs = {}, source = null ) {
 	let urlRedirect = '';
 	const instr = '/jetpack/connect/instructions';
 
@@ -164,6 +164,9 @@ export function redirect( type, url, product = null, queryArgs = {} ) {
 
 	if ( type === 'remote_auth' ) {
 		urlRedirect = addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH );
+		if ( source ) {
+			urlRedirect = addQueryArgs( { source }, urlRedirect );
+		}
 		navigate( urlRedirect );
 	}
 
