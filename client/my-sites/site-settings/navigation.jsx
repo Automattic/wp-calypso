@@ -28,6 +28,7 @@ export class SiteSettingsNavigation extends Component {
 		return {
 			general: translate( 'General', { context: 'settings screen' } ),
 			performance: translate( 'Performance', { context: 'settings screen' } ),
+			reading: translate( 'Reading', { context: 'settings screen' } ),
 			writing: translate( 'Writing', { context: 'settings screen' } ),
 			discussion: translate( 'Discussion', { context: 'settings screen' } ),
 			security: translate( 'Security', { context: 'settings screen' } ),
@@ -74,6 +75,14 @@ export class SiteSettingsNavigation extends Component {
 					</NavItem>
 
 					<NavItem
+						path={ `/settings/reading/${ site.slug }` }
+						preloadSectionName="settings-reading"
+						selected={ section === 'reading' }
+					>
+						{ strings.performance }
+					</NavItem>
+
+					<NavItem
 						path={ `/settings/writing/${ site.slug }` }
 						preloadSectionName="settings-writing"
 						selected={ section === 'writing' }
@@ -82,11 +91,11 @@ export class SiteSettingsNavigation extends Component {
 					</NavItem>
 
 					<NavItem
-						path={ `/settings/discussion/${ site.slug }` }
-						preloadSectionName="settings-discussion"
-						selected={ section === 'discussion' }
+						path={ `/settings/reading/${ site.slug }` }
+						preloadSectionName="settings-reading"
+						selected={ section === 'reading' }
 					>
-						{ strings.discussion }
+						{ strings.reading }
 					</NavItem>
 
 					{ shouldShowJetpackSettings && site.jetpack && (
