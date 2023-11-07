@@ -189,7 +189,7 @@ const PersonalPurchase = ( {
 							<CheckboxControl
 								className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
 								checked={ isDonationChecked }
-								label={ translate( `I don't solicite donations or sponsorships on my site` ) }
+								label={ translate( `I don't solicit donations or sponsorships on my site` ) }
 								onChange={ ( value ) => {
 									setDonationChecked( value );
 								} }
