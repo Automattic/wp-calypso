@@ -114,6 +114,10 @@ describe( 'Onboarding: Site Assembler', () => {
 		it( 'Pick default style', async function () {
 			await siteAssemblerFlow.clickButton( 'Select styles' );
 			await siteAssemblerFlow.pickStyle( 'Color: Free style' );
+			await siteAssemblerFlow.clickButton( 'Select pages' );
+		} );
+
+		it( 'Click "Save and continue" in the Pages screen', async function () {
 			await siteAssemblerFlow.clickButton( 'Save and continue' );
 		} );
 
