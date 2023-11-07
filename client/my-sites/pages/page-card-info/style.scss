@@ -2,6 +2,13 @@
 	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	vertical-align: middle;
+
+	.gridicon {
+    padding-right: 0.15rem;
+    position: relative;
+    top: 0.15rem;
+    
+}
 }
 
 .page-card-info__site-url {
