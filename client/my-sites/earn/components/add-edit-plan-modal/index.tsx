@@ -17,7 +17,7 @@ import {
 	PLAN_YEARLY_FREQUENCY,
 	PLAN_MONTHLY_FREQUENCY,
 	PLAN_ONE_TIME_FREQUENCY,
-	TIER_TYPE,
+	TYPE_TIER,
 } from 'calypso/my-sites/earn/memberships/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -134,7 +134,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 
 	const [ editedPostIsTier, setEditedPostIsTier ] = useState(
-		product?.type === TIER_TYPE ?? false
+		product?.type === TYPE_TIER ?? false
 	);
 
 	const [ editedSchedule, setEditedSchedule ] = useState(
@@ -244,7 +244,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		};
 
 		if ( editedPostIsTier ) {
-			product.type = TIER_TYPE;
+			product.type = TYPE_TIER;
 		}
 
 		return product;
