@@ -55,8 +55,6 @@ export interface PlansGridProps {
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	currentPlanManageHref?: string;
-	canUserManageCurrentPlan?: boolean | null;
 	showRefundPeriod?: boolean;
 }
 
@@ -77,8 +75,6 @@ const WrappedComparisonGrid = ( {
 	showLegacyStorageFeature,
 	showUpgradeableStorage,
 	onStorageAddOnClick,
-	currentPlanManageHref,
-	canUserManageCurrentPlan,
 	stickyRowOffset,
 	...otherProps
 }: PlansGridProps ) => {
@@ -100,8 +96,6 @@ const WrappedComparisonGrid = ( {
 				isLaunchPage={ isLaunchPage }
 				flowName={ flowName }
 				currentSitePlanSlug={ currentSitePlanSlug }
-				currentPlanManageHref={ currentPlanManageHref }
-				canUserManageCurrentPlan={ canUserManageCurrentPlan }
 				onUpgradeClick={ handleUpgradeClick }
 				siteId={ siteId }
 				selectedPlan={ selectedPlan }
@@ -117,16 +111,8 @@ const WrappedComparisonGrid = ( {
 };
 
 const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
-	const {
-		siteId,
-		intent,
-		gridPlans,
-		usePricingMetaForGridPlans,
-		allFeaturesList,
-		onUpgradeClick,
-		currentPlanManageHref,
-		canUserManageCurrentPlan,
-	} = props;
+	const { siteId, intent, gridPlans, usePricingMetaForGridPlans, allFeaturesList, onUpgradeClick } =
+		props;
 	const translate = useTranslate();
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible(
 		siteId,
@@ -156,8 +142,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 				isLargeCurrency={ isLargeCurrency }
-				canUserManageCurrentPlan={ canUserManageCurrentPlan }
-				currentPlanManageHref={ currentPlanManageHref }
 				translate={ translate }
 				handleUpgradeClick={ handleUpgradeClick }
 			/>

@@ -537,9 +537,10 @@ const PlansFeaturesMain = ( {
 	 */
 	const planActionOverrides = useMemo( () => {
 		let actionOverrides: PlanActionOverrides | undefined;
-
+		const commonProps = { canUserManageCurrentPlan, currentPlanManageHref };
 		if ( isInSignup ) {
 			actionOverrides = {
+				...commonProps,
 				loggedInFreePlan: {
 					status:
 						isPlanUpsellEnabledOnFreeDomain.isLoading || resolvedSubdomainName.isLoading
@@ -551,6 +552,7 @@ const PlansFeaturesMain = ( {
 
 		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) && intentFromProps !== 'plans-p2' ) {
 			actionOverrides = {
+				...commonProps,
 				loggedInFreePlan: {
 					status:
 						isPlanUpsellEnabledOnFreeDomain.isLoading || resolvedSubdomainName.isLoading
@@ -574,6 +576,8 @@ const PlansFeaturesMain = ( {
 
 		return actionOverrides;
 	}, [
+		canUserManageCurrentPlan,
+		currentPlanManageHref,
 		isInSignup,
 		sitePlanSlug,
 		isPlanUpsellEnabledOnFreeDomain.isLoading,
@@ -804,8 +808,6 @@ const PlansFeaturesMain = ( {
 									usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
-									currentPlanManageHref={ currentPlanManageHref }
-									canUserManageCurrentPlan={ canUserManageCurrentPlan }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -867,8 +869,6 @@ const PlansFeaturesMain = ( {
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
-												currentPlanManageHref={ currentPlanManageHref }
-												canUserManageCurrentPlan={ canUserManageCurrentPlan }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
 											/>
 											<ComparisonGridToggle
