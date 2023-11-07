@@ -21,7 +21,9 @@ const DEFAULT_DIMENSIONS = {
 
 interface UplotChartProps {
 	data: uPlot.AlignedData;
-	fillColor?: string;
+	mainColor?: string;
+	fillColorFrom?: string;
+	fillColorTo?: string;
 	options?: Partial< uPlot.Options >;
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
@@ -30,7 +32,9 @@ interface UplotChartProps {
 
 export default function UplotChart( {
 	data,
-	fillColor = 'rgba(48, 87, 220, 0.4)',
+	mainColor = '#3057DC',
+	fillColorFrom = 'rgba(48, 87, 220, 0.4)',
+	fillColorTo = 'rgba(48, 87, 220, 0)',
 	legendContainer,
 	options: propOptions,
 	solidFill = false,
@@ -41,7 +45,7 @@ export default function UplotChart( {
 	const uplotContainer = useRef( null );
 	const { spline } = uPlot.paths;
 
-	const scaleGradient = useScaleGradient( fillColor );
+	const scaleGradient = useScaleGradient( fillColorFrom );
 
 	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
@@ -116,9 +120,11 @@ export default function UplotChart( {
 						},
 					},
 					{
-						fill: solidFill ? fillColor : getGradientFill( fillColor, scaleGradient ),
+						fill: solidFill
+							? fillColorFrom
+							: getGradientFill( fillColorFrom, fillColorTo, scaleGradient ),
 						label: translate( 'Subscribers' ),
-						stroke: '#3057DC',
+						stroke: mainColor,
 						width: 2,
 						paths: ( u, seriesIdx, idx0, idx1 ) => {
 							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
@@ -149,7 +155,18 @@ export default function UplotChart( {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			};
-		}, [ fillColor, legendContainer, propOptions, scaleGradient, solidFill, spline, translate ] )
+		}, [
+			mainColor,
+			fillColorFrom,
+			fillColorTo,
+			legendContainer,
+			propOptions,
+			scaleGradient,
+			solidFill,
+			spline,
+			translate,
+			period,
+		] )
 	);
 
 	useResize( uplot, uplotContainer );
