@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
@@ -32,7 +33,9 @@ const ReaderTagSidebar = ( {
 	const dispatch = useDispatch();
 	const isFollowing = useSelector( ( state ) => getReaderTagBySlug( state, tag )?.isFollowing );
 	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
-	const { data: prompts } = useBloggingPrompts( primarySiteId, 10 );
+
+	const today = moment().subtract( 10, 'd' ).format( '--MM-DD' );
+	const { data: prompts } = useBloggingPrompts( primarySiteId, today, 10 );
 
 	if ( relatedMetaByTag === undefined ) {
 		return null;
