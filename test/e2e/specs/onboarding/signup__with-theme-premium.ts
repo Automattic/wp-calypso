@@ -19,6 +19,7 @@ import {
 	NoticeComponent,
 	PurchasesPage,
 	ThemesDetailPage,
+	ThemesPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -54,9 +55,17 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			await BrowserManager.setStoreCookie( page, { currency: 'USD' } );
 		} );
 
+		it( 'Navigate to Theme Showcase', async function () {
+			const themesPage = new ThemesPage( page );
+			await themesPage.visitShowcase();
+		} );
+
+		it( 'Selects a Premium theme', async function () {
+			await page.locator( 'div.theme-card:has(div.premium-badge)' ).first().click();
+		} );
+
 		it( 'Navigate to Signup page', async function () {
 			const themeDetailsPage = new ThemesDetailPage( page );
-			await themeDetailsPage.visitTheme( themeSlug );
 
 			await themeDetailsPage.pickThisDesign();
 		} );
@@ -115,6 +124,8 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 				page.waitForURL( /.*marketplace\/thank-you.*/ ),
 				page.waitForLoadState(),
 			] );
+
+			await page.getByRole( 'link', { name: 'Customize this design' } );
 		} );
 
 		it( 'Checks the active theme', async function () {

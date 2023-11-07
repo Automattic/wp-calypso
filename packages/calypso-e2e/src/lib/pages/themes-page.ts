@@ -1,4 +1,5 @@
 import { ElementHandle, Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	// Curent theme
@@ -133,5 +134,25 @@ export class ThemesPage {
 	 */
 	async validateCurrentTheme( expectedTheme: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.currentTheme( expectedTheme ) );
+	}
+
+	/**
+	 * Visit the Theme showcase page.
+	 *
+	 * @param siteSlug
+	 */
+	async visitShowcase( siteSlug: string | null = null ) {
+		const targetUrl = `themes/${ siteSlug ?? '' }`;
+
+		// We are getting a pending status for https://wordpress.com/cspreport intermittently
+		// which causes the login to hang on networkidle when running the tests locally.
+		// This fulfill's the route request with status 200.
+		// See https://github.com/Automattic/wp-calypso/issues/69294
+		await this.page.route( '**/cspreport', ( route ) => {
+			route.fulfill( {
+				status: 200,
+			} );
+		} );
+		return await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 }
