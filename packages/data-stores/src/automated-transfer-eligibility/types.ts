@@ -1,12 +1,14 @@
 import * as actions from './actions';
-import * as selectors from './selectors';
-import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
-
+import { statusMapping } from './constants';
+import type { DispatchFromMap } from '../mapped-types';
 export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;
 }
 
-export interface TransferEligibilityError {
+export type TransferEligibilityHold = ( typeof statusMapping )[ keyof typeof statusMapping ];
+
+// This type exists for when we haven't checked that code is part of statusMapping.
+export interface InternalTransferEligibilityError {
 	code: string;
 	message: string;
 }
@@ -29,7 +31,7 @@ export interface TransferEligibilityWarningsType {
 export interface TransferEligibility {
 	[ index: number ]: TransferEligibility;
 
-	errors: TransferEligibilityError[];
+	errors: InternalTransferEligibilityError[];
 	is_eligible: boolean;
 	warnings: TransferEligibilityWarningsType;
 }
@@ -37,9 +39,3 @@ export interface TransferEligibility {
 export type State = {
 	[ key: number ]: TransferEligibility;
 };
-
-export interface StatusMapping {
-	[ key: string ]: any;
-}
-
-export type TransferSelectFn = ( storeKey: string ) => SelectFromMap< typeof selectors >;

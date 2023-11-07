@@ -1,4 +1,4 @@
-import { ProductsList } from '@automattic/data-stores';
+import { AutomatedTransferEligibility, ProductsList } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -11,11 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import {
-	AUTOMATED_ELIGIBILITY_STORE,
-	SITE_STORE,
-	ONBOARD_STORE,
-} from 'calypso/landing/stepper/stores';
+import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerce-install';
@@ -23,8 +19,15 @@ import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/aut
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
-import type { TransferEligibilityError } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
+
+const {
+	store: transferStore,
+	getEligibilityHolds,
+	getEligibilityWarnings,
+	getNonSubdomainWarnings,
+	getWpcomSubdomainWarning,
+} = AutomatedTransferEligibility;
 
 const Divider = styled.hr`
 	border-top: 1px solid #eee;
@@ -46,68 +49,49 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	const { __ } = useI18n();
 	const site = useSite();
 	const siteId = site && site?.ID;
-	const isAtomicSite = useSelect(
-		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
-		[ siteId ]
-	);
-	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
 
+	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	useEffect( () => {
 		if ( ! siteId ) {
 			return;
 		}
-
 		requestLatestAtomicTransfer( siteId );
 	}, [ requestLatestAtomicTransfer, siteId ] );
 
-	const eligibilityHolds = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityHolds( siteId ),
+	const { eligibilityHolds, eligibilityWarnings, wpcomSubdomainWarning, warnings } = useSelect(
+		( select ) => {
+			const eligibility = select( transferStore ).getAutomatedTransferEligibility( siteId );
+			return {
+				eligibilityHolds: getEligibilityHolds( eligibility ),
+				eligibilityWarnings: getEligibilityWarnings( eligibility ),
+				wpcomSubdomainWarning: getWpcomSubdomainWarning( eligibility ),
+				warnings: getNonSubdomainWarnings( eligibility ),
+			};
+		},
 		[ siteId ]
 	);
-	const eligibilityWarnings = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityWarnings( siteId ),
-		[ siteId ]
-	);
-	const wpcomSubdomainWarning = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getWpcomSubdomainWarning( siteId ),
-		[ siteId ]
-	);
-	const warnings = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getNonSubdomainWarnings( siteId ),
-		[ siteId ]
-	);
-	const latestAtomicTransfer = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransfer( siteId || 0 ),
-		[ siteId ]
-	);
-	const latestAtomicTransferError = useSelect(
-		( select ) =>
-			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransferError( siteId || 0 ),
-		[ siteId ]
-	);
+
+	const { latestAtomicTransfer, latestAtomicTransferError, requiresUpgrade, isAtomicSite } =
+		useSelect(
+			( select ) => {
+				const selectors = select( SITE_STORE ) as SiteSelect;
+				return {
+					latestAtomicTransfer: selectors.getSiteLatestAtomicTransfer( siteId || 0 ),
+					latestAtomicTransferError: selectors.getSiteLatestAtomicTransferError( siteId || 0 ),
+					requiresUpgrade: selectors.requiresUpgrade( siteId ),
+					isAtomicSite: siteId && selectors.isSiteAtomic( siteId ),
+				};
+			},
+			[ siteId ]
+		);
+
 	const productsList = useSelect(
 		( select ) => select( ProductsList.store ).getProductsList(),
 		[]
 	);
-	const requiresUpgrade = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).requiresUpgrade( siteId ),
-		[ siteId ]
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
 	);
 
 	const wpcomDomain = site?.URL?.replace( /http[s]*:\/\//, '' );
@@ -119,7 +103,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	// Filter the Woop transferring blockers.
 	const transferringBlockers = eligibilityHolds?.filter(
-		( hold: TransferEligibilityError ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold.code )
+		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
 	const isTransferStuck = latestAtomicTransfer?.is_stuck || false;
@@ -127,16 +111,10 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	// Add blocked-transfer-hold when something is wrong in the transfer status.
 	if (
-		! transferringBlockers?.includes( {
-			code: eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER,
-			message: '',
-		} ) &&
+		! transferringBlockers?.includes( 'BLOCKED_ATOMIC_TRANSFER' ) &&
 		( isBlockByTransferStatus || isTransferStuck )
 	) {
-		transferringBlockers?.push( {
-			code: eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER,
-			message: '',
-		} );
+		transferringBlockers?.push( 'BLOCKED_ATOMIC_TRANSFER' );
 	}
 
 	const transferringDataIsAvailable =
