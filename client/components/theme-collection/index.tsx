@@ -91,13 +91,22 @@ export default function ThemeCollection( {
 							? {
 									// break-small in Gutenberg breakpoints
 									600: {
-										slidesPerView: 2.2,
+										//slidesPerView: 2.2,
 										spaceBetween: -24,
 									},
 									// break-large in Gutenberg breakpoints
 									960: {
-										slidesPerView: 3,
+										slidesPerView: 1.2,
 										spaceBetween: -32,
+									},
+									// Breakpoint adjusted to the navigation sidebar
+									1009: {
+										slidesPerView: 2.1,
+										spaceBetween: -32,
+									},
+									// Breakpoint adjusted to the navigation sidebar
+									1361: {
+										slidesPerView: 3,
 									},
 							  }
 							: {

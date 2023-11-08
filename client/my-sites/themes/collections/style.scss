@@ -88,12 +88,16 @@
 	.theme-collection__list-item.swiper-slide {
 		@include break-small {
 			margin-left: 0;
-			max-width: 48%;
 			padding: 0 24px;
 		}
 		@include break-large {
-			max-width: 37%;
 			padding: 0 32px;
+		}
+		@media (min-width: 1009px) {
+			max-width: 50%;
+		}
+		@media (min-width: 1361px) {
+			max-width: 37%;
 		}
 	}
 }
