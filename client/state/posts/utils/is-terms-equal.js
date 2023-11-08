@@ -12,8 +12,11 @@ export function isTermsEqual( localTermEdits, savedTerms ) {
 			isHierarchical ? termsArray.map( ( term ) => term.ID ) : termsArray
 		);
 		const normalizedKey = isHierarchical ? 'ID' : 'name';
+		const savedTermsValues = savedTerms[ taxonomy ] ? Object.values( savedTerms[ taxonomy ] ) : [];
 		const normalizedSavedTerms = new Set(
-			Object.values( savedTerms[ taxonomy ] ?? {} ).map( ( value ) => value[ normalizedKey ] )
+			savedTermsValues.length > 0
+				? savedTermsValues.map( ( value ) => value[ normalizedKey ] )
+				: savedTermsValues
 		);
 
 		if ( normalizedEditedTerms.size !== normalizedSavedTerms.size ) {
