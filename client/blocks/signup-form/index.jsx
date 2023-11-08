@@ -582,6 +582,7 @@ class SignupForm extends Component {
 															this.formStateController.handleFieldChange( {
 																name: 'email',
 																value: suggestedEmail,
+																hideError: true,
 															} );
 														} }
 													/>
