@@ -231,6 +231,12 @@ const useErrorHttpCodeSeries = () => {
 			stroke: 'rgba(9, 181, 133, 1)',
 		},
 		{
+			statusCode: 429,
+			fill: 'rgba(164, 92, 64, 0.1)',
+			label: __( '429: Too Many Requests' ),
+			stroke: 'rgba(164, 92, 64, 1)',
+		},
+		{
 			statusCode: 500,
 			fill: 'rgba(235, 101, 148, 0.1)',
 			label: __( '500: Internal server error' ),
