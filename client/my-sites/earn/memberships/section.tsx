@@ -214,7 +214,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 					<NoticeAction
 						external
 						icon="create"
-						href={ `/earn/payments-plans/${ site?.slug }${ ADD_NEWSLETTER_PAYMENT_PLAN_HASH }` }
+						href={ `/earn/payments-plans/${ site?.slug }${ ADD_TIER_PLAN_HASH }` }
 					>
 						{ translate( 'Add payments' ) }
 					</NoticeAction>
