@@ -270,7 +270,10 @@ export class JetpackAuthorize extends Component {
 		const source = urlParams.get( 'source' );
 
 		if ( source === 'jetpack-manage' ) {
-			const urlRedirect = `${ JPC_JETPACK_MANAGE_PATH }?site_connected=${ urlToSlug( homeUrl ) }`;
+			const urlRedirect = addQueryArgs(
+				{ site_connected: urlToSlug( homeUrl ) },
+				JPC_JETPACK_MANAGE_PATH
+			);
 			navigate( urlRedirect );
 		}
 
