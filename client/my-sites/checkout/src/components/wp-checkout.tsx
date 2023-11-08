@@ -62,6 +62,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import CheckoutTerms from '../components/checkout-terms';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -786,11 +787,27 @@ const CheckoutSummaryBody = styled.div`
 function SubmitButtonHeader() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const translate = useTranslate();
+	const shouldCollapseLastStep = useShouldCollapseLastStep();
+
+	if ( shouldCollapseLastStep ) {
+		return (
+			<CheckoutTermsWrapper>
+				<CheckoutTerms cart={ responseCart } />
+			</CheckoutTermsWrapper>
+		);
+	}
+
+	const scrollToTOS = () => document?.getElementById( 'checkout-terms' )?.scrollIntoView();
 
 	return (
-		<CheckoutTermsWrapper>
-			<CheckoutTerms cart={ responseCart } />
-		</CheckoutTermsWrapper>
+		<SubmitButtonHeaderWrapper>
+			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
+				components: {
+					button: <button onClick={ scrollToTOS } />,
+				},
+			} ) }
+		</SubmitButtonHeaderWrapper>
 	);
 }
 
@@ -878,6 +895,34 @@ const JetpackCheckoutSealsSection = styled.div< React.HTMLAttributes< HTMLDivEle
 
 const JetpackSealText = styled.span`
 	padding: 0.1875rem 0 0 0;
+`;
+
+const SubmitButtonHeaderWrapper = styled.div`
+	display: none;
+	font-size: 13px;
+	margin-top: -5px;
+	margin-bottom: 10px;
+	text-align: center;
+
+	.checkout__step-wrapper--last-step & {
+		display: block;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+			display: none;
+		}
+	}
+
+	button {
+		color: ${ ( props ) => props.theme.colors.highlight };
+		display: inline;
+		font-size: 13px;
+		text-decoration: underline;
+		width: auto;
+
+		&:hover {
+			color: ${ ( props ) => props.theme.colors.highlightOver };
+		}
+	}
 `;
 
 const CheckoutTermsWrapper = styled.div`
