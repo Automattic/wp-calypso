@@ -6,6 +6,7 @@ import {
 	VIDEOPRESS_FLOW,
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
+	VIDEOPRESS_PURCHASE_FLOW,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -169,7 +170,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 			{ title: __( 'Starting up your channel' ), duration: 5000 },
 		];
 		return videoPressLoadingMessages;
-	} else if ( VIDEOPRESS_TV_PURCHASE_FLOW === flow ) {
+	} else if ( VIDEOPRESS_TV_PURCHASE_FLOW === flow || VIDEOPRESS_PURCHASE_FLOW === flow ) {
 		const videoPressLoadingMessages = [
 			{ title: __( 'Scouting the locations' ), duration: 5000 },
 			{ title: __( 'Kicking off the casting' ), duration: 5000 },

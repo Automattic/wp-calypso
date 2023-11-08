@@ -123,7 +123,7 @@ const videopressPurchase: Flow = {
 							{
 								product_slug: planProductObject.storeSlug,
 								extra: {
-									signup_flow: VIDEOPRESS_TV_PURCHASE_FLOW,
+									signup_flow: VIDEOPRESS_PURCHASE_FLOW,
 								},
 							},
 					  ]
@@ -141,7 +141,7 @@ const videopressPurchase: Flow = {
 						);
 						persistSignupDestination( redirectTo );
 						setSignupCompleteSlug( _siteSlug || '' );
-						setSignupCompleteFlowName( VIDEOPRESS_TV_PURCHASE_FLOW );
+						setSignupCompleteFlowName( VIDEOPRESS_PURCHASE_FLOW );
 
 						window.location.replace(
 							`/checkout/${ _siteSlug }?signup=1&redirect_to=${ redirectTo }`
