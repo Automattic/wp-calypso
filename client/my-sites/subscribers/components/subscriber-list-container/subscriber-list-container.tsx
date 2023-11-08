@@ -22,10 +22,9 @@ const SubscriberListContainer = ( {
 	const { grandTotal, total, perPage, page, pageChangeCallback, searchTerm, isLoading } =
 		useSubscribersPage();
 	useRecordSearch();
-
 	return (
 		<section className="subscriber-list-container">
-			{ ! isLoading && Boolean( grandTotal ) && (
+			{ ! isLoading && ( Boolean( grandTotal ) || searchTerm ) && (
 				<>
 					<div className="subscriber-list-container__header">
 						<span className="subscriber-list-container__title">
@@ -72,7 +71,7 @@ const SubscriberListContainer = ( {
 					<GrowYourAudience />
 				</>
 			) }
-			{ ! isLoading && ! grandTotal && <EmptyListView /> }
+			{ ! isLoading && ! grandTotal && ! searchTerm && <EmptyListView /> }
 		</section>
 	);
 };
