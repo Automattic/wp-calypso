@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {
-	getYearlyPlanByMonthly,
 	isWpComPlan,
 	plansLink,
 	isMonthly,
 	PLAN_ANNUAL_PERIOD,
+	PlanSlug,
+	getPlanSlugForTermVariant,
+	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { Popover } from '@automattic/components';
 import styled from '@emotion/styled';
@@ -17,18 +19,8 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import { Primitive } from 'utility-types';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { addQueryArgs } from 'calypso/lib/url';
-import { useSelector } from 'calypso/state';
-import {
-	getPlanBySlug,
-	getPlanRawPrice,
-	getDiscountedRawPrice,
-	getPlanBillPeriod,
-} from 'calypso/state/plans/selectors';
-import { getSitePlanSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { IAppState } from 'calypso/state/types';
+import type { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import './style.scss';
 
 export type PlanTypeSelectorProps = {
@@ -42,12 +34,14 @@ export type PlanTypeSelectorProps = {
 	selectedFeature?: string;
 	showBiennialToggle?: boolean;
 	isInSignup: boolean;
-	plans: string[];
+	plans: PlanSlug[];
 	eligibleForWpcomMonthlyPlans?: boolean;
 	isPlansInsideStepper: boolean;
 	hideDiscountLabel?: boolean;
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
+	currentSitePlanSlug?: PlanSlug;
+	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 };
 
 interface PathArgs {
@@ -56,7 +50,7 @@ interface PathArgs {
 
 type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: PathArgs ) => string;
 
-export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
+const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
 	const { intervalType = '' } = additionalArgs;
 	const defaultArgs = {
 		customerType: null,
@@ -96,7 +90,7 @@ type PopupMessageProps = {
 };
 
 // eslint-disable @typescript-eslint/no-use-before-define
-export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
+const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	context,
 	children,
 	isVisible,
@@ -122,7 +116,7 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	);
 };
 
-export type IntervalTypeProps = Pick<
+type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
 	| 'intervalType'
 	| 'plans'
@@ -134,9 +128,11 @@ export type IntervalTypeProps = Pick<
 	| 'showBiennialToggle'
 	| 'selectedPlan'
 	| 'selectedFeature'
+	| 'currentSitePlanSlug'
+	| 'usePricingMetaForGridPlans'
 >;
 
-export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
+const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
 	const {
 		intervalType,
@@ -144,17 +140,23 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
 		showBiennialToggle,
+		currentSitePlanSlug,
+		usePricingMetaForGridPlans,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
-	const maxDiscount = useMaxDiscount( props.plans );
-	const currentPlanBillingPeriod = useSelector( ( state ) => {
-		const currentSitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
-		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
+	const maxDiscount = useMaxDiscount( props.plans, usePricingMetaForGridPlans );
+	const pricingMeta = usePricingMetaForGridPlans( {
+		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
+		withoutProRatedCredits: true,
+		storageAddOns: null,
 	} );
+	const currentPlanBillingPeriod = currentSitePlanSlug
+		? pricingMeta?.[ currentSitePlanSlug ].billingPeriod
+		: null;
 
 	if ( showBiennialToggle ) {
 		// skip showing toggle if current plan's term is higher than 1 year
@@ -232,29 +234,9 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	);
 };
 
-export const ExperimentalIntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = (
-	props
-) => {
-	return (
-		<ProvideExperimentData name="calypso_show_interval_type_selector_2022_07">
-			{ ( isLoading, experimentAssignment ) => {
-				if ( isLoading || ! props.intervalType ) {
-					return <></>;
-				}
-
-				if ( 'treatment' !== experimentAssignment?.variationName ) {
-					return <></>;
-				}
-
-				return <IntervalTypeToggle { ...props } />;
-			} }
-		</ProvideExperimentData>
-	);
-};
-
 type CustomerTypeProps = Pick< PlanTypeSelectorProps, 'customerType' | 'isInSignup' >;
 
-export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( props ) => {
+const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( props ) => {
 	const translate = useTranslate();
 	const { customerType } = props;
 	const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
@@ -299,28 +281,49 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	return null;
 };
 
-function useMaxDiscount( plans: string[] ): number {
-	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
+function useMaxDiscount(
+	plans: PlanSlug[],
+	usePricingMetaForGridPlans: UsePricingMetaForGridPlans
+): number {
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
-	const discounts = useSelector( ( state: IAppState ) => {
-		return wpcomMonthlyPlans.map( ( planSlug ) => {
-			const monthlyPlan = getPlanBySlug( state, planSlug );
-			const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planSlug ) );
+	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
+	const yearlyVariantPlanSlugs = wpcomMonthlyPlans
+		.map( ( planSlug ) => getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY ) )
+		.filter( Boolean ) as PlanSlug[];
 
-			if ( ! yearlyPlan ) {
-				return 0;
-			}
+	const monthlyPlansPricing = usePricingMetaForGridPlans( {
+		planSlugs: wpcomMonthlyPlans,
+		withoutProRatedCredits: true,
+		storageAddOns: null,
+	} );
+	const yearlyPlansPricing = usePricingMetaForGridPlans( {
+		planSlugs: yearlyVariantPlanSlugs,
+		withoutProRatedCredits: true,
+		storageAddOns: null,
+	} );
 
-			const monthlyPlanAnnualCost =
-				( getPlanRawPrice( state, monthlyPlan?.product_id ?? 0 ) ?? 0 ) * 12;
-			const rawPrice = getPlanRawPrice( state, yearlyPlan.product_id );
-			const discountPrice = getDiscountedRawPrice( state, yearlyPlan.product_id );
-			const yearlyPlanCost = discountPrice || rawPrice || 0;
+	const discounts = wpcomMonthlyPlans.map( ( planSlug ) => {
+		const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
-			return Math.floor(
-				( ( monthlyPlanAnnualCost - yearlyPlanCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100
-			);
-		} );
+		if ( ! yearlyVariantPlanSlug ) {
+			return 0;
+		}
+
+		const monthlyPlanAnnualCost =
+			( monthlyPlansPricing?.[ planSlug ]?.originalPrice.full ?? 0 ) * 12;
+
+		if ( ! monthlyPlanAnnualCost ) {
+			return 0;
+		}
+
+		const yearlyPlanAnnualCost =
+			yearlyPlansPricing?.[ yearlyVariantPlanSlug ]?.discountedPrice.full ||
+			yearlyPlansPricing?.[ yearlyVariantPlanSlug ]?.originalPrice.full ||
+			0;
+
+		return Math.floor(
+			( ( monthlyPlanAnnualCost - yearlyPlanAnnualCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100
+		);
 	} );
 	const currentMaxDiscount = discounts.length ? Math.max( ...discounts ) : 0;
 
