@@ -48,7 +48,7 @@ export interface TaxVendorInfo {
 	 * Property: The localized name of the tax (eg: "VAT", "GST", etc.).
 	 * Value: A8c vendor id for that specific tax
 	 */
-	tax_name_and_vendor_id_object: object;
+	tax_name_and_vendor_id_array: object;
 
 	/**
 	 * The vendor's VAT id.
