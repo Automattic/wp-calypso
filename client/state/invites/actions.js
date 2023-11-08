@@ -103,9 +103,11 @@ const deleteInvitesFailureNotice = ( siteId, inviteIds ) => ( dispatch, getState
 		const invitee = ( invite.user.email || invite.user.login ) ?? '';
 		dispatch(
 			errorNotice(
-				translate( 'An error occurred while deleting the invite for %s.', {
-					args: invitee.length > 20 ? invitee.slice( 0, 20 ) + '…' : invitee,
-				} )
+				invitee.length > 20
+					? translate( 'An error occurred while deleting the invite for %s….', {
+							args: invitee.slice( 0, 20 ),
+					  } )
+					: translate( 'An error occurred while deleting the invite for %s.', { args: invitee } )
 			)
 		);
 	}
