@@ -185,6 +185,7 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 		[
 			addOnPrices1GBSpace100,
 			addOnPrices1GBSpace50,
+			checkoutLink,
 			displayCost1GBSpace100,
 			displayCost1GBSpace50,
 			displayCostCustomDesign,
@@ -198,6 +199,7 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 			featureSlugsJetpackStatsPWYWYearly,
 			featureSlugsJetpackStatsYearly,
 			featureSlugsUnlimitedThemes,
+			selectedSite?.slug,
 			translate,
 		]
 	);
