@@ -1,0 +1,52 @@
+.subscriber-launchpad {
+	padding: 16px 24px;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	gap: 30px;
+	background: #fff;
+	margin: 60px auto;
+	max-width: 569px;
+
+	.subscriber-launchpad__header {
+		display: flex;
+		justify-content: space-between;
+		padding: 20px 0;
+		.subscriber-launchpad__progress-bar-container {
+			margin: 0 0 10px 6px;
+		}
+		.subscriber-launchpad__title {
+			font-weight: 500;
+		}
+		.subscriber-launchpad__description {
+			margin-bottom: 0;
+			color: var(--color-neutral-60);
+			font-size: $font-body-small;
+		}
+	}
+	.launchpad__checklist-wrapper {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		.checklist__tasks {
+			flex: 1;
+			.checklist-item__task-content {
+				padding: 16px 0;
+
+				&.is-placeholder {
+					border-bottom: 1px solid var(--studio-gray-5);
+					.checklist-item__content {
+						min-height: 20px;
+					}
+				}
+
+				&.is-placeholder:last-child {
+					border-bottom: none;
+				}
+
+				.checklist-item__text {
+					font-weight: 500;
+					line-height: 20px;
+				}
+			}
+		}
+	}
+}

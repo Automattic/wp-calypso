@@ -13,7 +13,7 @@ import {
 	isJetpackVideoPressSlug,
 	isJetpackAISlug,
 	isJetpackCreatorSlug,
-	PLAN_JETPACK_CREATOR_MONTHLY,
+	PRODUCT_JETPACK_CREATOR_MONTHLY,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { createElement } from 'react';
@@ -261,7 +261,7 @@ export default function getJetpackProductFeatures(
 		const blazePromo =
 			Date.now() > Date.UTC( 2023, 10, 6 ) &&
 			Date.now() < Date.UTC( 2023, 10, 13 ) &&
-			product.product_slug !== PLAN_JETPACK_CREATOR_MONTHLY
+			product.product_slug !== PRODUCT_JETPACK_CREATOR_MONTHLY
 				? getFeatureStrings( 'creator-promo', translate )
 				: [];
 		return [ ...blazePromo, ...getFeatureStrings( 'creator', translate ) ];

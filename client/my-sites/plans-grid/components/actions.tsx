@@ -18,9 +18,9 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
+import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
 import { useSelector } from 'calypso/state';
@@ -479,32 +479,41 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	);
 
 	if ( isWpcomEnterpriseGridPlan ) {
-		const vipLandingPageUrlWithoutUtmCampaign =
-			'https://wpvip.com/wordpress-vip-agile-content-platform?utm_source=WordPresscom&utm_medium=automattic_referral';
+		const vipLandingPageUrlWithUtmCampaign = addQueryArgs(
+			'https://wpvip.com/wordpress-vip-agile-content-platform',
+			{
+				utm_source: 'WordPresscom',
+				utm_medium: 'automattic_referral',
+				utm_campaign: 'calypso_signup',
+			}
+		);
 
 		return (
-			<ExternalLinkWithTracking
-				href={ `${ vipLandingPageUrlWithoutUtmCampaign }&utm_campaign=calypso_signup` }
+			<Button
+				className={ classNames( classes ) }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } )
+				}
+				href={ vipLandingPageUrlWithUtmCampaign }
 				target="_blank"
-				tracksEventName="calypso_plan_step_enterprise_click"
-				tracksEventProps={ { flow: flowName } }
 			>
-				<Button className={ classNames( classes ) }>{ translate( 'Learn more' ) }</Button>
-			</ExternalLinkWithTracking>
+				{ translate( 'Learn more' ) }
+			</Button>
 		);
 	}
 
 	if ( isWooExpressPlusPlan ) {
 		return (
-			<ExternalLinkWithTracking
+			<Button
 				className={ classNames( classes ) }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_plan_step_woo_express_plus_click', { flow: flowName } )
+				}
 				href="https://woocommerce.com/get-in-touch/"
 				target="_blank"
-				tracksEventName="calypso_plan_step_woo_express_plus_click"
-				tracksEventProps={ { flow: flowName } }
 			>
 				{ translate( 'Get in touch' ) }
-			</ExternalLinkWithTracking>
+			</Button>
 		);
 	}
 

@@ -75,16 +75,6 @@
 		margin-left: 0;
 		margin-right: 0;
 	}
-
-	@include breakpoint-deprecated( ">660px" ) {
-		margin-left: 0;
-		max-width: 48%;
-		padding: 0 32px;
-	}
-	@include break-xlarge {
-		max-width: 37%;
-		padding: 0 48px;
-	}
 }
 
 .theme-collection__list-wrapper {

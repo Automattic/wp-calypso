@@ -7,6 +7,7 @@ import {
 	isWooExpressSmallPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	isBusinessTrial,
 	isWooExpressPlan,
 	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
@@ -384,6 +385,8 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					! isWooExpressSmallPlan( currentSitePlanSlug || '' )
 				) {
 					buttonText = translate( 'Get Essential', { textOnly: true } );
+				} else if ( isBusinessTrial( currentSitePlanSlug || '' ) ) {
+					buttonText = translate( 'Get Business', { textOnly: true } );
 				}
 
 				return (

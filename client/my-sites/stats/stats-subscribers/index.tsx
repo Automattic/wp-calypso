@@ -9,8 +9,13 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import version_compare from 'calypso/lib/version-compare';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	getSiteSlug,
+	getJetpackStatsAdminVersion,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
@@ -38,8 +43,14 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	// Run-time configuration.
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isChartVisible = config.isEnabled( 'stats/subscribers-chart-section' );
+	// Always show chart for Calypso, and check compatibility for Odyssey.
+	const isChartVisible =
+		! isOdysseyStats ||
+		( statsAdminVersion && version_compare( statsAdminVersion, '0.11.0-alpha', '>=' ) );
 
 	const today = new Date().toISOString().slice( 0, 10 );
 

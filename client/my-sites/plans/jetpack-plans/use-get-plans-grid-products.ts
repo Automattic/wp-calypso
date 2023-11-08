@@ -23,7 +23,7 @@ import {
 	JETPACK_STATS_PRODUCTS,
 	getPlan,
 	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
-	JETPACK_CREATOR_PLANS,
+	JETPACK_CREATOR_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -46,12 +46,8 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	const purchasedProducts =
 		useSelector( ( state ) => getSiteProducts( state, siteId ) )
 			?.map( ( { productSlug } ) => productSlug )
-			// If the Creator plan/bundle has been purchased we want to show it in the list of products.
-			.concat( currentPlan ? [ currentPlan ] : [] )
 			.filter( ( productSlug ) =>
-				(
-					[ ...JETPACK_PRODUCTS_LIST, ...JETPACK_CREATOR_PLANS ] as ReadonlyArray< string >
-				 ).includes( productSlug )
+				( [ ...JETPACK_PRODUCTS_LIST ] as ReadonlyArray< string > ).includes( productSlug )
 			) ?? [];
 
 	// Directly and indirectly owned products
@@ -69,10 +65,10 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// If Jetpack Creator is directly or indirectly owned, continue, otherwise make it available.
 	if (
 		! ownedProducts.some( ( ownedProduct ) =>
-			( JETPACK_CREATOR_PLANS as ReadonlyArray< string > ).includes( ownedProduct )
+			( JETPACK_CREATOR_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
 		)
 	) {
-		availableProducts = [ ...availableProducts, ...JETPACK_CREATOR_PLANS ];
+		availableProducts = [ ...availableProducts, ...JETPACK_CREATOR_PRODUCTS ];
 	}
 
 	const backupProductsToShow: string[] = [];

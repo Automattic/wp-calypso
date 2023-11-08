@@ -1003,6 +1003,14 @@ class ThemeSheet extends Component {
 	goBack = () => {
 		const { backPath, locale, isLoggedIn, themeId } = this.props;
 		this.props.recordTracksEvent( 'calypso_theme_sheet_back_click', { theme_name: themeId } );
+
+		// Use history back when coming from customize your store screen.
+		const urlParams = new URLSearchParams( window.location.search );
+		if ( urlParams.has( 'from', 'customize-store' ) && window.history.length > 1 ) {
+			window.history.back();
+			return;
+		}
+
 		page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
 	};
 

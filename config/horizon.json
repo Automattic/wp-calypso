@@ -83,7 +83,7 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"p2/p2-plus": true,
-		"pattern-assembler/add-pages": false,
+		"pattern-assembler/add-pages": true,
 		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
@@ -124,7 +124,6 @@
 		"site-profiler": true,
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
-		"stats/subscribers-chart-section": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/date-control": true,
 		"stats/type-detection": true,
@@ -163,7 +162,8 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/hosting-metrics-i1": false,
-		"yolo/wp-admin-site-default": true
+		"yolo/wp-admin-site-default": true,
+		"yolo/command-pallette": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

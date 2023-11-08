@@ -14,7 +14,9 @@ const WIDTH = 450;
 const styleUrl = ( url ) => `url(${ url })`;
 
 const initialReduxState = {
-	siteSettings: {},
+	siteSettings: {
+		items: {},
+	},
 	sites: {
 		items: [],
 	},

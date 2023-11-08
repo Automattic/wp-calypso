@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-type LayoutType = 'Header' | 'Sections' | 'Footer';
 
 /**
  * Class encapsulating the Site Assembler flow.
@@ -28,19 +27,19 @@ export class SiteAssemblerFlow {
 	/**
 	 * Given a component type, clicks on the heading item to show available components.
 	 *
-	 * @param {LayoutType} type Type of the layout component.
+	 * @param {string} type Type of the layout component.
 	 */
-	async clickLayoutComponentType( type: LayoutType ): Promise< void > {
-		// Select any button under the block pattern categories.
-		if ( type === 'Sections' ) {
-			await this.page
+	async clickLayoutComponentType( type: string ): Promise< void > {
+		await Promise.race( [
+			this.page.getByRole( 'list' ).getByRole( 'button', { name: type } ).click(),
+			// Patterns formerly called "Sections" are now at top level,
+			// and they are `option` instead of a `button`.
+			// See: https://github.com/Automattic/wp-calypso/pull/83625
+			this.page
 				.getByRole( 'listbox', { name: 'Block pattern categories' } )
-				.getByRole( 'option' )
-				.nth( 0 )
-				.click();
-		} else {
-			await this.page.getByRole( 'button', { name: type } ).click();
-		}
+				.getByRole( 'option', { name: type } )
+				.click(),
+		] );
 	}
 
 	/**

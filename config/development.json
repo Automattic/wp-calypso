@@ -187,7 +187,6 @@
 		"ssr/prefetch-timebox": false,
 		"stats/date-control": true,
 		"stats/new-video-summary": true,
-		"stats/subscribers-chart-section": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
@@ -226,6 +225,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/wp-admin-site-default": true
+		"yolo/wp-admin-site-default": true,
+		"yolo/command-pallette": true
 	}
 }

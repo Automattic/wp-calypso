@@ -71,7 +71,6 @@ const ScreenMain = ( {
 				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigatorItem
-							checked={ hasHeader }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
 							onClick={ () => handleSelectCategory( 'header', 'header' ) }
@@ -94,7 +93,6 @@ const ScreenMain = ( {
 						</VStack>
 
 						<NavigatorItem
-							checked={ hasFooter }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
 							onClick={ () => handleSelectCategory( 'footer', 'footer' ) }

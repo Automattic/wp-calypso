@@ -152,7 +152,6 @@
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
 		"stats/new-video-summary": false,
-		"stats/subscribers-chart-section": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/date-control": true,
 		"stats/type-detection": true,
@@ -192,7 +191,8 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/wp-admin-site-default": false
+		"yolo/wp-admin-site-default": true,
+		"yolo/command-pallette": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",
