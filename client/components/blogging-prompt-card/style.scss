@@ -32,7 +32,7 @@
 		width: 100%;
 
 		.blogging-prompt__prompt-navigation {
-			align-items: center;
+			align-items: flex-start;
 			display: flex;
 			gap: 20px;
 		}
@@ -58,6 +58,11 @@
 		margin-top: 24px;
 		width: 100%;
 
+		.blogging-prompt__new-post-link svg {
+			position: relative;
+			top: 4px;
+			margin-right: 4px;
+		}
 		.blogging-prompt__prompt-responses {
 			align-items: center;
 			display: flex;

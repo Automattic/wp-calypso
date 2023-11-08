@@ -167,6 +167,7 @@ export interface RowMetaData {
 	tooltip?: TranslateResult;
 	tooltipId: string;
 	siteDown?: boolean;
+	isSupported: boolean;
 	eventName: string | undefined;
 }
 

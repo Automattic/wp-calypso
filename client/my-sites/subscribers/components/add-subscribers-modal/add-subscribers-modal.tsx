@@ -20,10 +20,22 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 		useSubscribersPage();
 
 	useEffect( () => {
-		// Open "add subscribers" modal by default via URL
-		if ( window.location.hash === '#add-subscribers' ) {
-			setShowAddSubscribersModal( true );
-		}
+		const handleHashChange = () => {
+			// Open "add subscribers" via URL hash
+			if ( window.location.hash === '#add-subscribers' ) {
+				setShowAddSubscribersModal( true );
+			}
+		};
+
+		// Listen to the hashchange event
+		window.addEventListener( 'hashchange', handleHashChange );
+
+		// Make it work on load as well
+		handleHashChange();
+
+		return () => {
+			window.removeEventListener( 'hashchange', handleHashChange );
+		};
 	}, [] );
 
 	const modalTitle = translate( 'Add subscribers to %s', {
@@ -49,7 +61,18 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	return (
 		<Modal
 			title={ modalTitle as string }
-			onRequestClose={ () => setShowAddSubscribersModal( false ) }
+			onRequestClose={ () => {
+				if ( window.location.hash === '#add-subscribers' ) {
+					// Doing this instead of window.location.hash = '' because window.location.hash keeps the # symbol
+					// Also this makes the back button show the modal again, which is neat
+					history.pushState(
+						'',
+						document.title,
+						window.location.pathname + window.location.search
+					);
+				}
+				setShowAddSubscribersModal( false );
+			} }
 			overlayClassName="add-subscribers-modal"
 		>
 			{ isUploading && (

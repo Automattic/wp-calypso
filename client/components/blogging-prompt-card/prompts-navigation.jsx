@@ -58,6 +58,10 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		// Prevent navigating away so we have time to record the click.
 		e.preventDefault();
 
+		if ( getPrompt()?.answered ) {
+			return;
+		}
+
 		dispatch(
 			recordTracksEvent( tracksPrefix + 'answer_prompt', {
 				site_id: siteId,
@@ -180,11 +184,23 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 						{ translate( 'Learn more' ) }
 					</a>
 				) }
-				<Button href={ getNewPostLink() } onClick={ handleBloggingPromptClick }>
-					{ translate( 'Post Answer', {
-						comment:
-							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
-					} ) }
+				<Button
+					href={ getNewPostLink() }
+					onClick={ handleBloggingPromptClick }
+					className="blogging-prompt__new-post-link"
+					disabled={ getPrompt()?.answered }
+				>
+					{ getPrompt()?.answered ? (
+						<>
+							<Gridicon icon="checkmark" size={ 18 } />
+							{ translate( 'Answered' ) }
+						</>
+					) : (
+						translate( 'Post Answer', {
+							comment:
+								'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
+						} )
+					) }
 				</Button>
 			</div>
 		);

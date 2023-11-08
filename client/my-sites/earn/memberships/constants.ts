@@ -8,4 +8,4 @@ export const PLAN_YEARLY_FREQUENCY = '1 year';
 
 export const PLAN_ONE_TIME_FREQUENCY = 'one-time';
 
-export const TIER_TYPE = 'tier';
+export const TYPE_TIER = 'tier';
