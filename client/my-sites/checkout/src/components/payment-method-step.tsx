@@ -10,7 +10,7 @@ import {
 import styled from '@emotion/styled';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import { WPOrderReviewSection } from './wp-order-review-line-items';
+import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 
 const CheckoutTermsWrapper = styled.div`
 	& > * {
@@ -42,6 +42,10 @@ const CheckoutTermsWrapper = styled.div`
 	}
 `;
 
+const PriceTallySection = styled.div< { shouldCollapseLastStep: boolean } >`
+	padding-bottom: ${ ( { shouldCollapseLastStep } ) => ( shouldCollapseLastStep ? '24px' : '0' ) };
+`;
+
 const NonTotalPrices = styled.div`
 	font-size: 12px;
 	border-top: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
@@ -58,6 +62,7 @@ export default function BeforeSubmitCheckoutHeader() {
 	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
+	const shouldCollapseLastStep = useShouldCollapseLastStep();
 	return (
 		<>
 			<CheckoutTermsWrapper>
@@ -65,7 +70,7 @@ export default function BeforeSubmitCheckoutHeader() {
 			</CheckoutTermsWrapper>
 
 			{ ! hasCheckoutVersion( '2' ) && (
-				<WPOrderReviewSection>
+				<PriceTallySection shouldCollapseLastStep={ shouldCollapseLastStep }>
 					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
 						{ taxLineItems.map( ( taxLineItem ) => (
@@ -78,7 +83,7 @@ export default function BeforeSubmitCheckoutHeader() {
 					<TotalPrice>
 						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
 					</TotalPrice>
-				</WPOrderReviewSection>
+				</PriceTallySection>
 			) }
 		</>
 	);
