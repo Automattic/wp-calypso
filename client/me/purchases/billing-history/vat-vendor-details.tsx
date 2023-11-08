@@ -12,7 +12,9 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 		<li>
 			<strong>
 				{ translate( 'Vendor %(combinedTaxName)s Details', {
-					args: { combinedTaxName: vendorInfoCombinedTaxName },
+					args: {
+						combinedTaxName: Object.keys( vendorInfo.tax_name_and_vendor_id_array ).join( '/' ),
+					},
 					comment: 'combinedTaxName is a localized tax, like VAT or GST',
 				} ) }
 			</strong>
@@ -21,9 +23,13 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 					<div key={ addressLine }>{ addressLine }</div>
 				) ) }
 			</span>
-			{ <span className="receipt__vat-vendor-details-number">
-				{ vendorInfoTaxNamesAndIDs }
-				</span> }
+			<span className="receipt__vat-vendor-details-number">
+				{ Object.entries( vendorInfo.tax_name_and_vendor_id_array ).map( ( [ taxName, taxID ] ) => (
+					<div key={ taxName }>
+						<strong>{ taxName }</strong> { taxID }
+					</div>
+				) ) }
+			</span>
 		</li>
 	);
 }
