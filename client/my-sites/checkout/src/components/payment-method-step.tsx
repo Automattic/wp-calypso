@@ -9,38 +9,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import CheckoutTerms from '../components/checkout-terms';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
-
-const CheckoutTermsWrapper = styled.div`
-	& > * {
-		margin: 16px 0;
-		padding-left: 24px;
-		position: relative;
-	}
-
-	.rtl & > * {
-		margin: 16px 0;
-		padding-right: 24px;
-		padding-left: 0;
-	}
-
-	& div:first-of-type {
-		padding-right: 0;
-		padding-left: 0;
-		margin-right: 0;
-		margin-left: 0;
-		margin-top: 32px;
-	}
-
-	a {
-		text-decoration: underline;
-	}
-
-	a:hover {
-		text-decoration: none;
-	}
-`;
 
 const NonTotalPrices = styled.div`
 	font-size: 12px;
@@ -60,10 +29,6 @@ export default function PaymentMethodStep() {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	return (
 		<>
-			<CheckoutTermsWrapper>
-				<CheckoutTerms cart={ responseCart } />
-			</CheckoutTermsWrapper>
-
 			{ ! hasCheckoutVersion( '2' ) && (
 				<WPOrderReviewSection>
 					<NonTotalPrices>

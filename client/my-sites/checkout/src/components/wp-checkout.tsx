@@ -60,6 +60,7 @@ import { saveContactDetailsCache } from 'calypso/state/domains/management/action
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import CheckoutTerms from '../components/checkout-terms';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -783,18 +784,13 @@ const CheckoutSummaryBody = styled.div`
 `;
 
 function SubmitButtonHeader() {
-	const translate = useTranslate();
-
-	const scrollToTOS = () => document?.getElementById( 'checkout-terms' )?.scrollIntoView();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 
 	return (
-		<SubmitButtonHeaderWrapper>
-			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
-				components: {
-					button: <button onClick={ scrollToTOS } />,
-				},
-			} ) }
-		</SubmitButtonHeaderWrapper>
+		<CheckoutTermsWrapper>
+			<CheckoutTerms cart={ responseCart } />
+		</CheckoutTermsWrapper>
 	);
 }
 
@@ -884,31 +880,33 @@ const JetpackSealText = styled.span`
 	padding: 0.1875rem 0 0 0;
 `;
 
-const SubmitButtonHeaderWrapper = styled.div`
-	display: none;
-	font-size: 13px;
-	margin-top: -5px;
-	margin-bottom: 10px;
-	text-align: center;
-
-	.checkout__step-wrapper--last-step & {
-		display: block;
-
-		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-			display: none;
-		}
+const CheckoutTermsWrapper = styled.div`
+	& > * {
+		margin: 16px 0;
+		padding-left: 24px;
+		position: relative;
 	}
 
-	button {
-		color: ${ ( props ) => props.theme.colors.highlight };
-		display: inline;
-		font-size: 13px;
-		text-decoration: underline;
-		width: auto;
+	.rtl & > * {
+		margin: 16px 0;
+		padding-right: 24px;
+		padding-left: 0;
+	}
 
-		&:hover {
-			color: ${ ( props ) => props.theme.colors.highlightOver };
-		}
+	& div:first-of-type {
+		padding-right: 0;
+		padding-left: 0;
+		margin-right: 0;
+		margin-left: 0;
+		margin-top: 32px;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+
+	a:hover {
+		text-decoration: none;
 	}
 `;
 
