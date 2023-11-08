@@ -127,6 +127,18 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 		setShowDeleteDialog( false );
 	}
 
+	function getPriceFromProduct( product: Product, price: string ) {
+		switch ( product.renewal_schedule ) {
+			case PLAN_MONTHLY_FREQUENCY:
+				return translate( '%s/month', { args: price } );
+			case PLAN_YEARLY_FREQUENCY:
+				return translate( '%s/year', { args: price } );
+			case PLAN_ONE_TIME_FREQUENCY:
+			default:
+				return price;
+		}
+	}
+
 	return (
 		<div>
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
@@ -188,12 +200,13 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 										{ currentProduct?.title }
 									</div>
 									<sub className="memberships__products-product-price">
-										{ currentProduct.subscribe_as_site_subscriber
-											? translate( '%s/month', { args: price } )
-											: price }
-										{ currentAnnualProduct && translate( ' (%s/year)', { args: annualPrice } ) }
+										{ getPriceFromProduct( currentProduct, price ) }
+										{ currentAnnualProduct &&
+											translate( ' (%s)', {
+												args: getPriceFromProduct( currentAnnualProduct, annualPrice ),
+											} ) }
 									</sub>
-									{ currentProduct?.subscribe_as_site_subscriber && (
+									{ currentProduct.type === TYPE_TIER && (
 										<div className="memberships__products-product-badge">
 											<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
 										</div>
