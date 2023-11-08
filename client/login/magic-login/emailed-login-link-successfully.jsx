@@ -1,4 +1,4 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -45,18 +45,26 @@ class EmailedLoginLinkSuccessfully extends Component {
 		const { translate, emailAddress } = this.props;
 		const line = [
 			emailAddress
-				? translate( 'We just emailed a link to %(emailAddress)s.', {
-						args: {
-							emailAddress,
-						},
-				  } )
-				: translate( 'We just emailed you a link.' ),
+				? translate(
+						'If you have a WordPress.com account, we’ve sent an email to {{span}} %(emailAddress)s {{/span}} with a link you can use to sign in.',
+						{
+							args: {
+								emailAddress,
+							},
+							components: {
+								span: <span className="magic-login__confirmation-email" />,
+							},
+						}
+				  )
+				: translate(
+						'If you have a WordPress.com account, we’ve sent an email to your email address with a link you can use to sign in.'
+				  ),
 			' ',
 			translate( 'Please check your inbox and click the link to log in.' ),
 		];
 
 		return (
-			<div>
+			<div className="magic-login__confirmation">
 				<RedirectWhenLoggedIn
 					redirectTo="/help"
 					replaceCurrentLocation={ true }
@@ -78,8 +86,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 						} ) }
 						onClick={ this.onClickBackLink }
 					>
-						<Gridicon icon="arrow-left" size={ 18 } />
-						{ translate( 'Back to login' ) }
+						{ translate( 'Enter a password instead' ) }
 					</a>
 				</div>
 			</div>
