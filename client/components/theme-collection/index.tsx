@@ -3,9 +3,9 @@ import { Button } from '@wordpress/components';
 import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, ReactElement, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Swiper as SwiperType } from 'swiper/types';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
@@ -91,7 +91,7 @@ export default function ThemeCollection( {
 							? {
 									// break-small in Gutenberg breakpoints
 									600: {
-										//slidesPerView: 2.2,
+										slidesPerView: 1.2,
 										spaceBetween: -24,
 									},
 									// break-large in Gutenberg breakpoints
@@ -99,26 +99,32 @@ export default function ThemeCollection( {
 										slidesPerView: 1.2,
 										spaceBetween: -32,
 									},
-									// Breakpoint adjusted to the navigation sidebar
+									// Breakpoint adjusted for CSS grid repositioning
 									1009: {
 										slidesPerView: 2.1,
 										spaceBetween: -32,
 									},
-									// Breakpoint adjusted to the navigation sidebar
+									// Breakpoint adjusted for CSS grid repositioning
 									1361: {
 										slidesPerView: 3,
+										spaceBetween: -32,
 									},
 							  }
 							: {
 									// deprecated Calypso breakpoints used in the Theme Showcase
 									660: {
-										slidesPerView: 2.2,
+										slidesPerView: 1.2,
+										spaceBetween: -32,
+									},
+									// Breakpoint adjusted for CSS grid repositioning
+									736: {
+										slidesPerView: 2.1,
 										spaceBetween: -32,
 									},
 									// break-xlarge in Gutenberg breakpoints
 									1080: {
 										slidesPerView: 3,
-										spaceBetween: -48,
+										spaceBetween: -32,
 									},
 							  },
 						modules: [ Navigation, Keyboard, Mousewheel ],

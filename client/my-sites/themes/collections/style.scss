@@ -30,10 +30,6 @@
 			margin-left: -16px;
 			margin-right: -16px;
 		}
-		@include break-xlarge {
-			margin-left: -32px;
-			margin-right: -32px;
-		}
 	}
 	.theme-collection__meta {
 		margin-left: 16px;
@@ -43,20 +39,18 @@
 			margin-left: 32px;
 			margin-right: 32px;
 		}
-		@include break-xlarge {
-			margin-left: 48px;
-			margin-right: 48px;
-		}
 	}
 	.theme-collection__list-item.swiper-slide {
 		@include breakpoint-deprecated( ">660px" ) {
 			margin-left: 0;
-			max-width: 48%;
 			padding: 0 32px;
+		}
+		@media (min-width: 736px) {
+			max-width: 48%;
 		}
 		@include break-xlarge {
 			max-width: 37%;
-			padding: 0 48px;
+			padding: 0 32px;
 		}
 	}
 }
