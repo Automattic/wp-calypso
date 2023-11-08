@@ -252,7 +252,7 @@ function LineItemWrapper( {
 	const shouldShowVariantSelector =
 		onChangeSelection &&
 		! isWooMobile &&
-		! isRenewal &&
+		( ! isRenewal || ( isRenewal && product.is_domain_registration ) ) &&
 		! hasPartnerCoupon &&
 		! has100YearPlanProduct;
 
