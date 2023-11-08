@@ -62,6 +62,7 @@ export type MessageType =
 	| 'meta'
 	| 'error'
 	| 'placeholder'
+	| 'dislike-feedback'
 	| 'help-link'
 	| 'introduction';
 

@@ -140,15 +140,31 @@ const OdieAssistantProvider = ( {
 			// Normalize message to always be an array
 			const newMessages = Array.isArray( message ) ? message : [ message ];
 
-			// Determine if the last message is a placeholder
-			const shouldRemovePlaceholder =
-				prevChat.messages[ prevChat.messages.length - 1 ]?.type === 'placeholder';
+			// Check if the last message is a placeholder
+			const lastMessage = prevChat.messages[ prevChat.messages.length - 1 ];
+			const isLastMessagePlaceholder = lastMessage?.type === 'placeholder';
 
+			// Check if the new message is of type 'dislike-feedback'
+			const isNewMessageDislikeFeedback = newMessages.some(
+				( msg ) => msg.type === 'dislike-feedback'
+			);
+
+			// If there's a placeholder and the new message is 'dislike-feedback', insert before placeholder
+			if ( isLastMessagePlaceholder && isNewMessageDislikeFeedback ) {
+				return {
+					chat_id: prevChat.chat_id,
+					messages: [
+						...prevChat.messages.slice( 0, -1 ), // Take all messages except placeholder
+						...newMessages, // Insert new messages
+						lastMessage, // Re-insert placeholder at the end
+					],
+				};
+			}
+
+			// For all other cases, append new messages at the end
 			return {
 				chat_id: prevChat.chat_id,
-				messages: shouldRemovePlaceholder
-					? [ ...prevChat.messages.slice( 0, -1 ), ...newMessages ] // Remove placeholder and add new messages
-					: [ ...prevChat.messages, ...newMessages ], // Just add new messages
+				messages: [ ...prevChat.messages, ...newMessages ],
 			};
 		} );
 	};
