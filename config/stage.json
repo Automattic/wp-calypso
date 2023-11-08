@@ -147,7 +147,6 @@
 		"site-profiler": true,
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
-		"stats/subscribers-chart-section": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/type-detection": true,
 		"stats/date-control": true,

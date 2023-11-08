@@ -187,7 +187,6 @@
 		"ssr/prefetch-timebox": false,
 		"stats/date-control": true,
 		"stats/new-video-summary": true,
-		"stats/subscribers-chart-section": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,

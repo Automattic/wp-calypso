@@ -152,7 +152,6 @@
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
 		"stats/new-video-summary": false,
-		"stats/subscribers-chart-section": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/date-control": true,
 		"stats/type-detection": true,
