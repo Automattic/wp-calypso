@@ -133,7 +133,7 @@ class AccountSettingsClose extends Component {
 											{ translate( 'Premium themes' ) }
 										</ActionPanelFigureListItem>
 									) }
-									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
+									<ActionPanelFigureListItem>Gravatar</ActionPanelFigureListItem>
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
