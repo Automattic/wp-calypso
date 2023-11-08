@@ -544,22 +544,25 @@ class SignupForm extends Component {
 						'aim.com',
 						'bigpond.net.au',
 					];
-					const maxDistance = 2;
-					let suggestedDomain;
+
+					if ( validDomains.includes( extractedEmailDomainAddress ) ) {
+						return;
+					}
 
 					if (
 						extractedEmailDomainAddress &&
 						! messages?.email &&
 						this.state.suggestDomainTypoFix
 					) {
-						suggestedDomain = this.suggestEmailDomainWithinDistance(
+						const levenshteinMaxDistance = 2;
+						const suggestedDomain = this.suggestEmailDomainWithinDistance(
 							extractedEmailDomainAddress,
 							validDomains,
-							maxDistance
+							levenshteinMaxDistance
 						);
 
 						if ( suggestedDomain ) {
-							const suggestedEmail = fields.email.replace( /\\@.*/, `@${ suggestedDomain }` );
+							const suggestedEmail = fields.email.replace( /@.*/, `@${ suggestedDomain }` );
 							messages = Object.assign( {}, messages, {
 								email: {
 									invalid: this.props.translate(
@@ -572,14 +575,14 @@ class SignupForm extends Component {
 														plain={ true }
 														className="signup-form__domain-suggestion-confirmation"
 														onClick={ () => {
-															this.formStateController.handleFieldChange( {
-																name: 'email',
-																value: suggestedEmail,
-															} );
 															this.setState( ( prevState ) => ( {
 																...prevState,
 																suggestDomainTypoFix: false,
 															} ) );
+															this.formStateController.handleFieldChange( {
+																name: 'email',
+																value: suggestedEmail,
+															} );
 														} }
 													/>
 												),
@@ -942,7 +945,12 @@ class SignupForm extends Component {
 					isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
 					isValid={ this.state.validationInitialized && isEmailValid }
 					onBlur={ this.handleBlur }
-					onChange={ this.handleChangeEvent }
+					onChange={ ( event ) => {
+						this.setState( {
+							suggestDomainTypoFix: true,
+						} );
+						this.handleChangeEvent( event );
+					} }
 				/>
 				{ this.emailDisableExplanation() }
 
