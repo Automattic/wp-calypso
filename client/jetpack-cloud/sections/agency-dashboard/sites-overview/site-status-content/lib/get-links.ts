@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { AllowedTypes } from '../../types';
 
@@ -23,7 +23,19 @@ const getLinks = (
 
 	const siteUrlWithMultiSiteSupport = urlToSlug( siteUrl );
 
+	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
+		'jetpack/pro-dashboard-wpcom-atomic-hosting'
+	);
+
 	switch ( type ) {
+		case 'site': {
+			link =
+				isWPCOMAtomicSiteCreationEnabled && isAtomicSite
+					? `https://wordpress.com/home/${ urlToSlug( siteUrl ) }`
+					: `/activity-log/${ urlToSlug( siteUrl ) }`;
+			isExternalLink = isWPCOMAtomicSiteCreationEnabled && isAtomicSite;
+			break;
+		}
 		case 'backup': {
 			if ( status !== 'inactive' ) {
 				link = isAtomicSite
