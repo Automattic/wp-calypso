@@ -86,6 +86,11 @@
 
 .magic-login__request-link {
 	max-width: 400px;
+
+	.magic-login__loading {
+		display: flex;
+		justify-content: center;
+	}
 }
 
 .magic-login__form {
