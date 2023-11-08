@@ -216,7 +216,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 						icon="create"
 						href={ `/earn/payments-plans/${ site?.slug }${ ADD_TIER_PLAN_HASH }` }
 					>
-						{ translate( 'Add payments' ) }
+						{ translate( 'Add tiers' ) }
 					</NoticeAction>
 				</Notice>
 			);

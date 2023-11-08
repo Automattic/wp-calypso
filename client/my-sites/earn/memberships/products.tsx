@@ -76,7 +76,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const defaultToTierPanel =
 		window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
 		window.location.hash === ADD_TIER_PLAN_HASH;
-	const default_product_type = product?.type ?? ( defaultToTierPanel ? TYPE_TIER : null );
+	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
 
 	const trackUpgrade = () =>
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
@@ -225,7 +225,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }
 					product={ Object.assign( product ?? {}, {
-						type: default_product_type,
+						type: product ? product.type : default_product_type,
 					} ) }
 					annualProduct={ annualProduct }
 				/>
