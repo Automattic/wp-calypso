@@ -49,7 +49,7 @@ const usePricingPlans = () => {
 
 	useEffect( () => {
 		( async () => {
-			// Dynamicallt importing wpcom allows us to avoid issues when the JS assets are concatenated.
+			// Dynamically importing wpcom allows us to avoid issues when the JS assets are concatenated.
 			const { default: wpcom } = await import( 'calypso/lib/wp' );
 
 			const fetchPlans = async () => {
