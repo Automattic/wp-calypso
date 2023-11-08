@@ -1,10 +1,13 @@
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
+import { useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import useManySubsSite from '../../hooks/use-many-subs-site';
 import { useSubscribersQuery } from '../../queries';
@@ -89,8 +92,19 @@ export const SubscribersPageProvider = ( {
 		subscribersQueryResult.isFetching
 	);
 
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const completeImportSubscribersTask = async () => {
+		if ( selectedSiteSlug ) {
+			await updateLaunchpadSettings( selectedSiteSlug, {
+				checklist_statuses: { import_subscribers: true },
+			} );
+		}
+	};
+
 	const addSubscribersCallback = () => {
 		setShowAddSubscribersModal( false );
+		completeImportSubscribersTask();
+
 		dispatch(
 			successNotice(
 				translate(
