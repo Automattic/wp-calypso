@@ -63,10 +63,10 @@ const getLinks = (
 			break;
 		}
 		case 'plugin': {
-			link = `https://wordpress.com/plugins/updates/${ siteUrlWithMultiSiteSupport }`;
+			link = `https://wordpress.com/plugins/${ siteUrlWithMultiSiteSupport }`;
 			isExternalLink = true;
 			// FIXME: Remove this condition when we enable plugin management in production
-			if ( config.isEnabled( 'jetpack/plugin-management' ) ) {
+			if ( config.isEnabled( 'jetpack/plugin-management' ) && ! isAtomicSite ) {
 				link =
 					status === 'warning'
 						? `/plugins/updates/${ siteUrlWithMultiSiteSupport }`
