@@ -53,7 +53,7 @@ const TotalPrice = styled.div`
 	padding: 16px 0;
 `;
 
-export default function PaymentMethodStep() {
+export default function BeforeSubmitCheckoutHeader() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
