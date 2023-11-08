@@ -63,7 +63,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 			title={ modalTitle as string }
 			onRequestClose={ () => {
 				if ( window.location.hash === '#add-subscribers' ) {
-					// Doing this instead of window.location.hash = '' because window.location.hash keepts the # symbol
+					// Doing this instead of window.location.hash = '' because window.location.hash keeps the # symbol
 					// Also this makes the back button show the modal again, which is neat
 					history.pushState(
 						'',
