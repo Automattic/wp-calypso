@@ -10,31 +10,34 @@ const useDashboardShowLargeScreen = (
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 
 	const [ isOverflowing, setIsOverflowing ] = useState( false );
+	const [ tableWidth, setTableWidth ] = useState( 0 );
 
 	const checkIfOverflowing = useCallback( () => {
+		setIsOverflowing( tableWidth > containerRef?.current?.clientWidth );
+	}, [ containerRef, tableWidth ] );
+
+	// We will need to remember the table width once to properly check if it is overflowing
+	useEffect( () => {
 		const siteTableEle = siteTableRef ? siteTableRef.current : null;
 
-		if ( siteTableEle ) {
-			if ( siteTableEle.clientWidth > containerRef?.current?.clientWidth ) {
-				setTimeout( () => {
-					setIsOverflowing( true );
-				}, 1 );
-			}
+		if ( ! tableWidth && siteTableEle ) {
+			setTableWidth( siteTableEle.clientWidth );
 		}
-	}, [ siteTableRef, containerRef ] );
+	}, [ siteTableRef, tableWidth ] );
 
-	useEffect( () => {
-		window.addEventListener( 'resize', checkIfOverflowing );
-		return () => {
-			window.removeEventListener( 'resize', checkIfOverflowing );
-		};
-	}, [ checkIfOverflowing ] );
+	useEffect(
+		() => {
+			checkIfOverflowing();
 
-	useEffect( () => {
-		checkIfOverflowing();
+			window.addEventListener( 'resize', checkIfOverflowing );
+			return () => {
+				window.removeEventListener( 'resize', checkIfOverflowing );
+			};
+		},
 		// Do not add checkIfOverflowing to the dependency array as it will cause an infinite loop
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+		[]
+	);
 
 	return isDesktop && ! isOverflowing;
 };
