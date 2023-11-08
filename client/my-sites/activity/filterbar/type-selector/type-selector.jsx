@@ -46,17 +46,44 @@ export class TypeSelector extends Component {
 		if ( hasAllIssues && ! isParentType ) {
 			selectedCheckboxes.splice( parentTypeIndex, 1 );
 		}
+
 		if ( selectedCheckboxes.includes( type ) ) {
+			// Find the type object to see if it has children
+			const typeToUnselect = this.props.types.find( ( typeItem ) => typeItem.key === type );
+
+			// If the type has children, we'll need to remove them as well
+			let checkboxesToKeep = selectedCheckboxes;
+			if ( typeToUnselect && typeToUnselect.children ) {
+				const childrenKeys = typeToUnselect.children.map( ( child ) => child.key );
+				checkboxesToKeep = selectedCheckboxes.filter( ( ch ) => ! childrenKeys.includes( ch ) );
+			}
+
+			// Remove the type from the selection
+			const updatedSelection = checkboxesToKeep.filter( ( ch ) => ch !== type );
+
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: selectedCheckboxes.filter( ( ch ) => ch !== type ),
+				selectedCheckboxes: updatedSelection,
 			} );
 		} else {
+			let updatedSelection = [ ...selectedCheckboxes ];
+
+			// If it's a parent type, we simply use the parentTypeKey
+			if ( isParentType ) {
+				updatedSelection = [ parentTypeKey ];
+			} else {
+				// Find the type object and add its children if it has any
+				const currentType = this.props.types.find( ( typeItem ) => typeItem.key === type );
+				if ( currentType && currentType.children ) {
+					currentType.children.forEach( ( child ) => updatedSelection.push( child.key ) );
+				}
+				// Always add the type itself to the selection
+				updatedSelection.push( type );
+			}
+
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: isParentType
-					? [ parentTypeKey ]
-					: [ ...new Set( selectedCheckboxes ).add( type ) ],
+				selectedCheckboxes: updatedSelection,
 			} );
 		}
 	};
