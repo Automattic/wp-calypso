@@ -23,7 +23,7 @@ export const OdieSendMessageButton = ( {
 } ) => {
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { addMessage, setIsLoading, botNameSlug, initialUserMessage, chat } =
+	const { addMessage, setIsLoading, botNameSlug, initialUserMessage, chat, isLoading } =
 		useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const dispatch = useDispatch();
@@ -94,10 +94,19 @@ export const OdieSendMessageButton = ( {
 	};
 
 	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+		if ( isLoading ) {
+			return;
+		}
 		scrollToBottom();
 		if ( event.key === 'Enter' && ! event.shiftKey ) {
 			event.preventDefault();
 			await sendMessageIfNotEmpty();
+		}
+	};
+
+	const handleKeyUp = () => {
+		if ( ! isLoading ) {
+			scrollToBottom( false );
 		}
 	};
 
@@ -130,12 +139,12 @@ export const OdieSendMessageButton = ( {
 							setMessageString( event.currentTarget.value )
 						}
 						onKeyPress={ handleKeyPress }
-						onKeyUp={ () => scrollToBottom( false ) }
+						onKeyUp={ handleKeyUp }
 					/>
 					<button
 						type="submit"
 						className="odie-send-message-inner-button"
-						disabled={ messageString.trim() === '' }
+						disabled={ messageString.trim() === '' || isLoading }
 					>
 						<img
 							src={ ArrowUp }

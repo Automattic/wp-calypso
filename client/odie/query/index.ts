@@ -48,7 +48,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 	unknown,
 	{ message: Message }
 > => {
-	const { chat, setChat, botNameSlug } = useOdieAssistantContext();
+	const { chat, setChat, botNameSlug, setIsLoading } = useOdieAssistantContext();
 
 	return useMutation( {
 		mutationFn: ( { message }: { message: Message } ) => {
@@ -57,6 +57,12 @@ export const useOdieSendMessage = (): UseMutationResult<
 		onSuccess: ( data ) => {
 			setChat( { messages: chat.messages, chat_id: parseInt( data.chat_id ) } );
 			setOdieStorage( 'chat_id', data.chat_id );
+		},
+		onMutate: () => {
+			setIsLoading( true );
+		},
+		onSettled: () => {
+			setIsLoading( false );
 		},
 	} );
 };
