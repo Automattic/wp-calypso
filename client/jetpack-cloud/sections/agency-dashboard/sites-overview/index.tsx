@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -128,8 +127,7 @@ export default function SitesOverview() {
 		}
 	}, [ refetch, jetpackSiteDisconnected ] );
 
-	const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
-	const pageTitle = isNewNavigation ? translate( 'Sites' ) : translate( 'Dashboard' );
+	const pageTitle = translate( 'Sites' );
 
 	const basePath = '/dashboard';
 

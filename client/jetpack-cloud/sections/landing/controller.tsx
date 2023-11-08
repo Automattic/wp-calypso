@@ -34,9 +34,7 @@ const landForSiteId = ( siteId: number | null, context: Context, next: () => voi
 		debug( '[landForSiteId]: rendering interstitial Landing page' );
 
 		// To make the UI feel seamless transition, we want to have the sidebar appear on the interstitial page
-		if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-			context.secondary = <ManageSelectedSiteSidebar path={ context.path } />;
-		}
+		context.secondary = <ManageSelectedSiteSidebar path={ context.path } />;
 		context.primary = <Landing siteId={ siteId as number } />;
 		next();
 		return;
