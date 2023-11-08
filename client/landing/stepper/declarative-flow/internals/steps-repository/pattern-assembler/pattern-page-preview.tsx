@@ -2,7 +2,7 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { Dialog } from '@automattic/components';
 import { __unstableCompositeItem as CompositeItem } from '@wordpress/components';
 import { CSSProperties, useMemo } from 'react';
-import { encodePatternId } from './utils';
+import { encodePatternId, isPagePattern } from './utils';
 import type { Pattern } from './types';
 import './pattern-page-preview.scss';
 
@@ -25,6 +25,17 @@ interface PatternPagePreviewProps {
 
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT = 500;
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH = 1080;
+
+// A copy of the title block in Creatio 2's page.html.
+const getPageTitlePattern = ( title: string ) => `
+	<div
+		class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained"
+		style="margin-top:var(--wp--preset--spacing--60);margin-bottom:var(--wp--preset--spacing--60)"
+	>
+		<h2 class="has-text-align-left alignwide wp-block-post-title has-xxxx-large-font-size">
+			${ title }
+		</h2>
+	</div>`;
 
 export const PatternPagePreviewModal = ( {
 	style,
@@ -52,6 +63,7 @@ export const PatternPagePreviewModal = ( {
 						viewportWidth={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH }
 						viewportHeight={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT }
 						shouldShufflePosts={ shouldShufflePosts }
+						prependHtml={ isPagePattern( pattern ) ? getPageTitlePattern( pattern.title ) : '' }
 					/>
 				) ) }
 			</div>
@@ -86,6 +98,7 @@ const PatternPagePreview = ( {
 							patternId={ encodePatternId( pattern.ID ) }
 							viewportWidth={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH }
 							viewportHeight={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT }
+							prependHtml={ isPagePattern( pattern ) ? getPageTitlePattern( pattern.title ) : '' }
 							shouldShufflePosts={ shouldShufflePosts }
 						/>
 					) ) }
