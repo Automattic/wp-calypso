@@ -48,23 +48,27 @@ const usePricingPlans = () => {
 	const [ error, setError ] = useState< unknown >( null );
 
 	useEffect( () => {
-		const fetchPlans = async () => {
-			setIsLoading( true );
-			setError( null );
-			try {
-				const response = await fetch(
-					'https://public-api.wordpress.com/rest/v1.5/plans?locale=' + config.locale
-				);
-				const data = await response.json();
-				setPlans( parsePlans( data ) );
-			} catch ( e: unknown ) {
-				setError( e );
-			} finally {
-				setIsLoading( false );
-			}
-		};
+		( async () => {
+			// Dynamically importing wpcom allows us to avoid issues when the JS assets are concatenated.
+			const { default: wpcom } = await import( 'calypso/lib/wp' );
 
-		fetchPlans();
+			const fetchPlans = async () => {
+				setIsLoading( true );
+				setError( null );
+				try {
+					const data = await wpcom.req.get( '/plans?locale=' + config.locale, {
+						apiVersion: '1.5',
+					} );
+					setPlans( parsePlans( data ) );
+				} catch ( e: unknown ) {
+					setError( e );
+				} finally {
+					setIsLoading( false );
+				}
+			};
+
+			fetchPlans();
+		} )();
 	}, [] );
 
 	return { data: plans, isLoading, error };
