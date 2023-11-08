@@ -196,7 +196,7 @@ export class LoginForm extends Component {
 		const { hasAccountTypeLoaded, socialAccountIsLinking, userEmail, accountType } = this.props;
 
 		return (
-			userEmail && accountType !== 'passwordless',
+			userEmail && ! accountType,
 			! socialAccountIsLinking &&
 				! hasAccountTypeLoaded &&
 				! ( this.props.isWoo && ! this.props.isPartnerSignup )

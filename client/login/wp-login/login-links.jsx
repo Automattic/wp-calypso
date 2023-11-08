@@ -22,6 +22,7 @@ import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getAuthAccountType } from 'calypso/state/login/actions';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -88,6 +89,8 @@ export class LoginLinks extends Component {
 
 	handleMagicLoginLinkClick = ( event ) => {
 		event.preventDefault();
+
+		this.props.getAuthAccountType( this.props.usernameOrEmail );
 
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click', {
 			origin: 'login-links',
@@ -387,5 +390,6 @@ export default connect(
 	{
 		recordTracksEvent,
 		resetMagicLoginRequestForm,
+		getAuthAccountType,
 	}
 )( localize( LoginLinks ) );

@@ -37,6 +37,7 @@ import {
 	isTwoFactorAuthTypeSupported,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
+	isRequesting,
 } from 'calypso/state/login/selectors';
 import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -44,6 +45,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
@@ -106,12 +108,12 @@ class Login extends Component {
 		isSignupExistingAccount: PropTypes.bool,
 		accountType: PropTypes.string,
 		getAuthAccountType: PropTypes.func,
+		isMagicLoginEmailRequested: PropTypes.bool,
 	};
 
 	state = {
 		isBrowserSupported: isWebAuthnSupported(),
 		continueAsAnotherUser: false,
-		waitAccountType: false,
 	};
 
 	static defaultProps = {
@@ -121,9 +123,14 @@ class Login extends Component {
 	};
 
 	componentWillMount() {
-		if ( ! this.props.accountType && this.props.loginEmailAddress ) {
-			this.setState( { waitAccountType: true } );
-			this.props.getAuthAccountType( this.props.loginEmailAddress );
+		if ( ! this.props.isRequesting ) {
+			if (
+				! this.props.isMagicLoginEmailRequested &&
+				( isPasswordlessAccount( this.props.accountType ) ||
+					this.props.accountType === 'email_login_not_allowed' )
+			) {
+				this.sendMagicLoginLink();
+			}
 		}
 	}
 
@@ -132,7 +139,6 @@ class Login extends Component {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
 			page( login( { isJetpack: this.props.isJetpack, locale: this.props.locale } ) );
 		}
-
 		window.scrollTo( 0, 0 );
 	}
 
@@ -143,34 +149,7 @@ class Login extends Component {
 		if ( isNewPage || hasNotice ) {
 			window.scrollTo( 0, 0 );
 		}
-
-		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
-			this.sendMagicLoginLink();
-		}
-
-		if (
-			this.props.requestError?.field === 'usernameOrEmail' &&
-			this.props.requestError?.code === 'email_login_not_allowed'
-		) {
-			const magicLoginUrl = login( {
-				locale: this.props.locale,
-				twoFactorAuthType: this.props.loginEmailAddress ? '' : 'link',
-				oauth2ClientId: this.props.currentQuery?.client_id,
-				redirectTo: this.props.currentQuery?.redirect_to,
-			} );
-			page( magicLoginUrl );
-		}
 	}
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.accountType ||
-			this.props.requestError?.field === 'usernameOrEmail' ||
-			this.props.requestError?.code === 'email_login_not_allowed'
-		) {
-			this.setState( { waitAccountType: false } );
-		}
-	}
-
 	sendMagicLoginLink = () => {
 		this.props.sendEmailLogin();
 		this.handleTwoFactorRequested( 'link' );
@@ -800,24 +779,22 @@ class Login extends Component {
 	render() {
 		const { isJetpack, oauth2Client, locale } = this.props;
 		return (
-			! this.state.waitAccountType && (
-				<div
-					className={ classNames( 'login', {
-						'is-jetpack': isJetpack,
-						'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
-					} ) }
-				>
-					{ this.renderHeader() }
+			<div
+				className={ classNames( 'login', {
+					'is-jetpack': isJetpack,
+					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+				} ) }
+			>
+				{ this.renderHeader() }
 
-					<ErrorNotice locale={ locale } />
+				<ErrorNotice locale={ locale } />
 
-					{ this.renderNotice() }
+				{ this.renderNotice() }
 
-					{ this.renderContent() }
+				{ this.renderContent() }
 
-					{ this.renderFooter() }
-				</div>
-			)
+				{ this.renderFooter() }
+			</div>
 		);
 	}
 }
@@ -859,6 +836,8 @@ export default connect(
 			getCurrentQueryArguments( state )?.is_signup_existing_account
 		),
 		requestError: getRequestError( state ),
+		isRequesting: isRequesting( state ),
+		isMagicLoginEmailRequested: isMagicLoginEmailRequested( state ),
 	} ),
 	{
 		rebootAfterLogin,

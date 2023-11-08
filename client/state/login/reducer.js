@@ -409,7 +409,7 @@ export const authAccountType = ( state = null, action ) => {
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
 			return null;
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
-			return null;
+			return action.error.code;
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS: {
 			const {
 				data: { type },
@@ -418,8 +418,8 @@ export const authAccountType = ( state = null, action ) => {
 		}
 		case LOGIN_AUTH_ACCOUNT_TYPE_RESET:
 			return null;
-		case ROUTE_SET:
-			return null;
+		// case ROUTE_SET:
+		// 	return 'null 3 ROUTE_SET';
 	}
 
 	return state;
