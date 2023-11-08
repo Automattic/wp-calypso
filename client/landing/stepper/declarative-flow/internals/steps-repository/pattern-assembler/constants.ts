@@ -70,12 +70,20 @@ export const ORDERED_PATTERN_CATEGORIES = [
 
 export const INITIAL_PAGES = [ 'about' ];
 
-export const PATTERN_PAGES_CATEGORIES = [ 'about', 'contact', 'portfolio', 'posts', 'services' ];
-
-export const ORDERED_PATTERN_PAGES_CATEGORIES = [
+export const PATTERN_PAGES_CATEGORIES = [
 	'about',
 	'contact',
 	'portfolio',
-	'services',
 	'posts',
+	'services',
+	'store',
+];
+
+export const ORDERED_PATTERN_PAGES_CATEGORIES = [
+	'about',
+	'services',
+	'portfolio',
+	'store',
+	'posts',
+	'contact',
 ];
