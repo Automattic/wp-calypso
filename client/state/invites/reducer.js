@@ -58,13 +58,13 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
 			const siteInvites = { pending: [], accepted: [] };
 			action.invites.forEach( ( invite ) => {
 				// Not renaming `avatar_URL` because it is used as-is by <Gravatar>
-				const { login, email, name, avatar_URL } = invite.user;
+				const { login, email, name, avatar_URL } = invite.user ?? {};
 				const user = { login, email, name, avatar_URL };
 				const {
 					name: invitedByName,
 					login: invitedByLogin,
 					avatar_URL: invitedByAvatar_URL,
-				} = invite.invited_by;
+				} = invite.invited_by ?? {};
 				const invitedBy = {
 					name: invitedByName,
 					login: invitedByLogin,
@@ -148,8 +148,8 @@ export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, acti
  * @returns {Array}                  Updated array of invite objects.
  */
 function deleteInvites( siteInvites, invitesToDelete ) {
-	if ( ! Array.isArray( siteInvites ) || ! Array.isArray( invitesToDelete ) ) {
-		return siteInvites ?? [];
+	if ( ! Array.isArray( invitesToDelete ) ) {
+		return siteInvites;
 	}
 	return siteInvites.filter( ( siteInvite ) => ! invitesToDelete.includes( siteInvite.key ) );
 }

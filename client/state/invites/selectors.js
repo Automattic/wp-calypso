@@ -68,8 +68,7 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
 	return state.invites.counts[ siteId ] || null;
 }
 
-const findInvite = ( invites, inviteId ) =>
-	Array.isArray( invites ) ? invites.find( ( invite ) => invite.key === inviteId ) : undefined;
+const findInvite = ( invites, inviteId ) => invites.find( ( { key } ) => key === inviteId );
 /**
  * Returns an invite object for the given site and invite ID, or `null` if no
  * invite with the given ID exists for the site.
@@ -148,11 +147,11 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
  * @returns {boolean}          Whether an invite is being deleted
  */
 export function isDeletingAnyInvite( state, siteId ) {
-	const invites = state.invites.deleting[ siteId ];
-	if ( ! invites ) {
+	const siteInvites = state.invites.deleting[ siteId ];
+	if ( ! siteInvites ) {
 		return false;
 	}
-	return -1 !== Object.values( invites ).indexOf( 'requesting' );
+	return Object.values( siteInvites ).includes( 'requesting' );
 }
 
 /**

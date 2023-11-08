@@ -100,7 +100,7 @@ export function deleteInvite( siteId, inviteId ) {
 const deleteInvitesFailureNotice = ( siteId, inviteIds ) => ( dispatch, getState ) => {
 	for ( const inviteId of inviteIds ) {
 		const invite = getInviteForSite( getState(), siteId, inviteId );
-		const invitee = invite.user.email || invite.user.login;
+		const invitee = ( invite.user.email || invite.user.login ) ?? '';
 		dispatch(
 			errorNotice(
 				translate( 'An error occurred while deleting the invite for %s.', {
@@ -187,8 +187,8 @@ export function createAccount( userData, invite ) {
 		result
 			.then( () => {
 				recordTracksEvent( 'calypso_invite_account_created', {
-					is_p2_site: invite?.site?.is_wpforteams_site ?? false,
-					inviter_blog_id: invite?.site?.ID ?? false,
+					is_p2_site: invite.site?.is_wpforteams_site ?? false,
+					inviter_blog_id: invite.site?.ID ?? false,
 				} );
 			} )
 			.catch( ( error ) => {
