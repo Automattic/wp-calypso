@@ -1,6 +1,6 @@
 import { getPlanClass, PlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import PlanPill from 'calypso/components/plans/plan-pill';
+import PlanPill from 'calypso/my-sites/plans-grid/components/shared/plan-pill';
 import { usePlansGridContext } from '../grid-context';
 
 const PopularBadge: React.FunctionComponent< {
