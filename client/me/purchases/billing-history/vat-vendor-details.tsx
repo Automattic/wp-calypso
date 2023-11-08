@@ -12,9 +12,9 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 	const vendorInfoCombinedTaxName = Object.keys( vendorInfo.tax_name_and_vendor_id_object ).join( '/' );
 
 	// We need to create a string of the taxName and taxID that contains each combination
-	// const vendorInfoTaxNamesAndIDs = Object.keys(vendorInfo.tax_name_and_vendor_id_object).map(function(taxName, taxID) {
-	// 	return '<strong>'+taxName+'</strong> '+taxID+' <br />';
-	// });
+	const vendorInfoTaxNamesAndIDs = Object.keys(vendorInfo.tax_name_and_vendor_id_object).map(function(taxName, taxID) {
+		return '<strong>'+taxName+'</strong> '+taxID+' <br />';
+	});
 
 	return (
 		<li>
@@ -29,9 +29,9 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 					<div key={ addressLine }>{ addressLine }</div>
 				) ) }
 			</span>
-			{ /* <span className="receipt__vat-vendor-details-number">
+			{ <span className="receipt__vat-vendor-details-number">
 				{ vendorInfoTaxNamesAndIDs }
-				</span> */ }
+				</span> }
 		</li>
 	);
 }
