@@ -7,20 +7,18 @@ import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { SFTP_PORT, SFTP_URL } from 'calypso/my-sites/hosting/sftp-card';
+import { useSelector } from 'calypso/state';
+import { getAtomicHosting } from 'calypso/state/selectors/get-atomic-hosting';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
-export const generateCommandsArrayWpcom = ( {
+export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
 	createSiteUrl,
 	__,
-	username,
-	password,
 }: {
 	setSelectedCommandName: ( actionName: string ) => void;
 	createSiteUrl: string;
 	__: ( text: string ) => string;
-	username: string | null;
-	password: string | null;
 } ) => {
 	const setStateCallback =
 		( actionName: string ) =>
@@ -28,6 +26,8 @@ export const generateCommandsArrayWpcom = ( {
 			setSearch( '' );
 			setSelectedCommandName( actionName );
 		};
+
+	const AtomicHosting = useSelector( ( state ) => getAtomicHosting( state ) );
 
 	const commands = [
 		{
@@ -133,7 +133,11 @@ export const generateCommandsArrayWpcom = ( {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
 					navigate( `/hosting-config/${ site.slug }` );
-					console.log( username );
+
+					const SFTPUsers = AtomicHosting?.[ site.ID ]?.sftpUsers;
+					console.log( site.ID, AtomicHosting );
+					console.log( AtomicHosting?.[ site.ID ] );
+					console.log( SFTPUsers );
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
