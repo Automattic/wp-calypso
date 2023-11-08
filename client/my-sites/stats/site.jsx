@@ -163,7 +163,7 @@ class StatsSite extends Component {
 		// handles hiding author card if there is only one author
 		if ( moduleName === 'authors' ) {
 			// return this.props.authorsCount <= 1;
-			return true;
+			return true; // temporarily force this for testing
 		}
 
 		if (
