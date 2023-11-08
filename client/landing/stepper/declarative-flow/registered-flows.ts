@@ -10,6 +10,7 @@ import {
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
 	VIDEOPRESS_TV_FLOW,
+	VIDEOPRESS_PURCHASE_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
 } from '@automattic/onboarding';
@@ -118,6 +119,12 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'domain-user-transfer': () =>
 		import( /* webpackChunkName: "domain-user-transfer-flow" */ './domain-user-transfer' ),
+
+	[ VIDEOPRESS_PURCHASE_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "videopress-purchase-flow" */
+			`../declarative-flow/videopress-purchase`
+		),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
