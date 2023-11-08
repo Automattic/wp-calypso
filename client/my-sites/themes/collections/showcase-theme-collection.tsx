@@ -1,8 +1,6 @@
-import config from '@automattic/calypso-config';
 import { default as pageRouter } from 'page';
 import { ReactElement } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
-import Theme from 'calypso/components/theme';
 import ThemeCollection from 'calypso/components/theme-collection';
 import ThemeCollectionItem from 'calypso/components/theme-collection/theme-collection-item';
 import ThemeCollectionPlaceholder from 'calypso/components/theme-collection/theme-collection-placeholder';
@@ -14,6 +12,8 @@ import {
 } from 'calypso/my-sites/themes/collections/use-theme-collection';
 import { getThemeShowcaseEventRecorder } from 'calypso/my-sites/themes/events/theme-showcase-tracks';
 import { trackClick } from 'calypso/my-sites/themes/helpers';
+import { Theme } from 'calypso/types';
+import './style.scss';
 
 interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
 	collectionSlug: string;
@@ -23,24 +23,6 @@ interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
 	onSeeAll: () => void;
 	collectionIndex: number;
 }
-
-type Theme = {
-	id: string;
-};
-
-const sortedThemes: Map< string, Array< Theme > > = new Map();
-
-const cacheThemes = ( collectionSlug: string, themes: Array< Theme > ) => {
-	sortedThemes.set(
-		collectionSlug,
-		config.isEnabled( 'themes/discovery-randomize-collection-themes' )
-			? themes.sort( () => Math.random() - 0.5 )
-			: themes
-	);
-};
-
-const getCachedThemes = ( collectionSlug: string ): Array< Theme > =>
-	sortedThemes.get( collectionSlug ) ?? [];
 
 export default function ShowcaseThemeCollection( {
 	collectionSlug,
@@ -64,13 +46,6 @@ export default function ShowcaseThemeCollection( {
 		getThemeDetailsUrl,
 	} = useThemeCollection( query );
 	useQueryThemes( 'wpcom', query );
-	let themeList = getCachedThemes( collectionSlug );
-
-	if ( ! themeList.length && themes ) {
-		// We slice the array to the expected length to avoid some caching issues.
-		cacheThemes( collectionSlug, themes.slice( 0, query.number ) );
-		themeList = getCachedThemes( collectionSlug );
-	}
 
 	const { recordThemeClick, recordThemeStyleVariationClick, recordThemesStyleVariationMoreClick } =
 		getThemeShowcaseEventRecorder(
@@ -113,8 +88,8 @@ export default function ShowcaseThemeCollection( {
 				onSeeAll={ onSeeAll }
 				collectionIndex={ collectionIndex }
 			>
-				{ themeList.length > 0 ? (
-					themeList.map( ( theme: Theme, index: number ) => (
+				{ themes.length > 0 ? (
+					themes.map( ( theme: Theme, index: number ) => (
 						<ThemeCollectionItem key={ theme.id }>
 							<ThemeBlock
 								getActionLabel={ getActionLabel }
