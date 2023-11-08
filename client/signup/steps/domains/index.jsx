@@ -568,30 +568,31 @@ export class RenderDomainsStep extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart
-		const productsToAdd = ! hasPlan( this.props.cart )
-			? [ registration, this.props.multiDomainDefaultPlan ]
-			: [ registration ];
-
-		await this.props.shoppingCartManager.addProductsToCart( productsToAdd ).then( () => {
-			this.setState( { isCartPendingUpdateDomain: null } );
-		} );
+		// Add item_subtotal_integer property to registration, so it can be sorted by price.
+		registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
+			const productsToAdd = ! hasPlan( this.props.cart )
+				? [ registration, this.props.multiDomainDefaultPlan ]
+				: [ registration ];
+
+			// Add productsToAdd to productsInCart.
+			const productsInCart = [ ...this.props.cart.products, ...productsToAdd ];
+
 			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-			const sortedProducts = await this.sortProductsByPriceDescending();
+			const sortedProducts = await this.sortProductsByPriceDescending( productsInCart );
 
 			// Replace the products in the cart with the freshly sorted products.
-			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts ).then( () => {
-				this.setState( { isCartPendingUpdateDomain: null } );
-			} );
+			this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
+		} else {
+			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
+
+		this.setState( { isCartPendingUpdateDomain: null } );
 	}
 
-	async sortProductsByPriceDescending() {
-		// Get products from cart.
-		const productsInCart = this.props.cart.products;
-
+	async sortProductsByPriceDescending( productsInCart ) {
 		// Sort products by price descending, considering promotions.
 		productsInCart.sort( ( a, b ) => {
 			const getSortingValue = ( product ) => {
