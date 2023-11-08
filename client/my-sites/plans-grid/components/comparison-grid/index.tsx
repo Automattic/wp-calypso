@@ -78,7 +78,6 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	border: solid 1px #e0e0e0;
 	border-left: none;
 	border-right: none;
-	max-width: 290px;
 
 	.gridicon {
 		transform: ${ ( props ) =>
@@ -90,6 +89,7 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 		padding-inline-start: 0;
 		border: none;
 		padding: 0;
+		max-width: 290px;
 
 		.gridicon {
 			display: none;
