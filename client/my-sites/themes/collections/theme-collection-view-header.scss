@@ -11,10 +11,6 @@
 				padding-bottom: 20px;
 			}
 
-			.theme-collection-view-header__description {
-				color: var(--studio-gray-50);
-			}
-
 			.theme-collection-view-header__info {
 				padding-left: 16px;
 
@@ -22,12 +18,37 @@
 					padding-left: 0;
 				}
 			}
+
+			.formatted-header__title {
+				font-size: 1.25rem;
+				font-weight: 500;
+				line-height: 26px;
+				margin-bottom: 0;
+			}
+
+			.formatted-header__subtitle {
+				color: var(--color-neutral-60);
+				display: inline-block;
+				letter-spacing: -0.15px;
+				line-height: 20px;
+				margin: 0;
+				font-size: 0.875rem;
+			}
+
+			.breadcrumbs {
+				padding-bottom: 22px;
+				margin: 16px;
+
+				@include break-small {
+					margin: 0;
+				}
+			}
 		}
 
 		&:not(.is-logged-in) {
 			background-color: #e5f4ff;
 
-			.theme-collection-view-header__title {
+			.formatted-header__title {
 				color: var(--studio-blue-50);
 				font-family: $brand-serif;
 				font-size: rem(44px);
@@ -66,7 +87,7 @@
 		}
 	}
 
-	.theme-collection-view-header__title {
+	.formatted-header__title {
 		font-size: rem(30px);
 		font-style: normal;
 		font-weight: 600;
@@ -74,7 +95,7 @@
 		margin-bottom: 8px;
 	}
 
-	.theme-collection-view-header__description {
+	.formatted-header__subtitle {
 		color: var(--studio-gray-80);
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-large;
