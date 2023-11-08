@@ -14,7 +14,11 @@ import useOutsideClickCallback from './use-outside-click-callback';
 const SITES_FOCUS = 'sites';
 
 const scrollToTop = () => {
-	document.getElementById( 'secondary' ).scrollTop = 0;
+	const sidebarRoot = document.getElementById( 'secondary' );
+	if ( sidebarRoot ) {
+		sidebarRoot.scrollTop = 0;
+	}
+
 	window.scrollTo( 0, 0 );
 };
 
