@@ -10,7 +10,6 @@ import ProfileLinksAddOther from 'calypso/me/profile-links-add-other';
 import ProfileLinksAddWordPress from 'calypso/me/profile-links-add-wordpress';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useAddProfileLinkMutation } from './data/use-add-profile-link-mutation';
-import { useDeleteProfileLinkMutation } from './data/use-delete-profile-link-mutation';
 import { useProfileLinksQuery } from './data/use-profile-links-query';
 import type * as types from './data/types';
 
@@ -46,7 +45,6 @@ function ProfileLinksList( { profileLinks }: { profileLinks?: types.ProfileLink[
 	const translate = useTranslate();
 	const initialized = Array.isArray( profileLinks );
 	const countLinks = initialized ? profileLinks.length : 0;
-	const { deleteProfileLink } = useDeleteProfileLinkMutation();
 
 	if ( ! initialized ) {
 		return <Placeholders />;
@@ -64,7 +62,6 @@ function ProfileLinksList( { profileLinks }: { profileLinks?: types.ProfileLink[
 							title={ profileLink.title }
 							url={ profileLink.value }
 							slug={ profileLink.link_slug }
-							onRemoveLink={ () => deleteProfileLink( profileLink.link_slug ) }
 						/>
 					) ) }
 				</ul>
