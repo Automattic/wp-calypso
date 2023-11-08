@@ -123,14 +123,8 @@ class Login extends Component {
 	};
 
 	componentWillMount() {
-		if ( ! this.props.isRequesting ) {
-			if (
-				! this.props.isMagicLoginEmailRequested &&
-				( isPasswordlessAccount( this.props.accountType ) ||
-					this.props.accountType === 'email_login_not_allowed' )
-			) {
-				this.sendMagicLoginLink();
-			}
+		if ( this.shouldSendMagicLoginLink() ) {
+			this.sendMagicLoginLink();
 		}
 	}
 
@@ -146,10 +140,28 @@ class Login extends Component {
 		const hasNotice = this.props.requestNotice !== prevProps.requestNotice;
 		const isNewPage = this.props.twoFactorAuthType !== prevProps.twoFactorAuthType;
 
+		if ( this.shouldSendMagicLoginLink() ) {
+			this.sendMagicLoginLink();
+		}
+
 		if ( isNewPage || hasNotice ) {
 			window.scrollTo( 0, 0 );
 		}
 	}
+
+	shouldSendMagicLoginLink = () => {
+		if ( ! this.props.isRequesting ) {
+			if (
+				! this.props.isMagicLoginEmailRequested &&
+				( isPasswordlessAccount( this.props.accountType ) ||
+					this.props.accountType === 'email_login_not_allowed' )
+			) {
+				return true;
+			}
+		}
+		return false;
+	};
+
 	sendMagicLoginLink = () => {
 		this.props.sendEmailLogin();
 		this.handleTwoFactorRequested( 'link' );
