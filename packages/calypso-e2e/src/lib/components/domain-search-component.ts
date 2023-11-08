@@ -3,7 +3,6 @@ import { reloadAndRetry } from '../../element-helper';
 
 const selectors = {
 	searchInput: `.search-component__input`,
-	resultItem: ( keyword: string ) => `.domain-suggestion__content:has-text("${ keyword }")`,
 	firstResultItem: `.domain-suggestion:first-child .domain-suggestion__content`,
 };
 
@@ -74,13 +73,22 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
-		const targetItem = await this.page.waitForSelector( selectors.resultItem( keyword ) );
-		// Heading element inside a given result contains the full domain name string.
-		const selectedDomain = await targetItem
-			.waitForSelector( 'h3' )
-			.then( ( el ) => el.innerText() );
+		const target = this.page.getByRole( 'button' ).filter( { hasText: keyword } );
+		await target.waitFor();
 
-		await Promise.all( [ this.page.waitForNavigation(), targetItem.click() ] );
+		// The `heading` element represents the entire domain (including the tld).
+		const selectedDomain = await target.getByRole( 'heading' ).innerText();
+
+		await target.click();
+
+		// If multiple domain selections are enabled, the Continue button appears
+		// on the right hand sidebar.
+		// See: 21483-explat-experiment
+		// Note: this page object does not currently support multiple domain selection.
+		await Promise.race( [
+			this.clickButton( 'Continue' ),
+			this.page.waitForURL( /start\/plans/ ),
+		] );
 
 		return selectedDomain;
 	}
@@ -108,6 +116,6 @@ export class DomainSearchComponent {
 	 * @param {string} text Exact text to match on.
 	 */
 	async clickButton( text: string ): Promise< void > {
-		await this.page.click( `button:text-is("${ text }")` );
+		await this.page.getByRole( 'button', { name: text, exact: true } ).click();
 	}
 }
