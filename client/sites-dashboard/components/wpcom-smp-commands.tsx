@@ -3,23 +3,45 @@ import {
 	globe as domainsIcon,
 	commentAuthorAvatar as profileIcon,
 } from '@wordpress/icons';
+import { useEffect, useMemo } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { SFTP_PORT, SFTP_URL } from 'calypso/my-sites/hosting/sftp-card';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { requestAtomicSftpUsers, requestAtomicSshAccess } from 'calypso/state/hosting/actions';
 import { getAtomicHosting } from 'calypso/state/selectors/get-atomic-hosting';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
+
+function useFetchAtomicHosting( atomicSiteIDs: number[] | undefined ) {
+	const dispatch = useDispatch();
+	useEffect( () => {
+		if ( ! atomicSiteIDs ) {
+			return;
+		}
+		for ( const siteID of atomicSiteIDs ) {
+			dispatch( requestAtomicSshAccess( siteID ) );
+			dispatch( requestAtomicSftpUsers( siteID ) );
+		}
+	}, [ atomicSiteIDs, dispatch ] );
+}
 
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
 	createSiteUrl,
 	__,
+	allSites,
 }: {
 	setSelectedCommandName: ( actionName: string ) => void;
 	createSiteUrl: string;
 	__: ( text: string ) => string;
+	allSites: SiteExcerptData[];
 } ) => {
+	const atomicSiteIDs: number[] = useMemo(
+		() => allSites?.filter( ( site ) => site?.is_wpcom_atomic ).map( ( site ) => site.ID ),
+		[ allSites ]
+	);
+	useFetchAtomicHosting( atomicSiteIDs );
 	const setStateCallback =
 		( actionName: string ) =>
 		( { setSearch }: { setSearch: ( search: string ) => void } ) => {

@@ -80,7 +80,7 @@ export const useCommandPallette = ( {
 	);
 
 	// Call the generateCommandsArray function to get the commands array
-	const commands = useCommandsArrayWpcom( { setSelectedCommandName, __, createSiteUrl } );
+	const commands = useCommandsArrayWpcom( { setSelectedCommandName, __, createSiteUrl, allSites } );
 
 	const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
