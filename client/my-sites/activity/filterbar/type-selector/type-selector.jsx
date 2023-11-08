@@ -88,7 +88,7 @@ export class TypeSelector extends Component {
 				if ( item.children ) {
 					const name = findKeyInTypes( item.children, targetKey );
 					if ( name ) {
-						return name;
+						return item.name ? item.name + ' ' + name : name;
 					}
 				}
 			}
