@@ -24,7 +24,15 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
 import { Product, Query } from '../types';
-import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
+import {
+	ADD_NEW_PAYMENT_PLAN_HASH,
+	ADD_TIER_PLAN_HASH,
+	OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
+	PLAN_MONTHLY_FREQUENCY,
+	PLAN_ONE_TIME_FREQUENCY,
+	PLAN_YEARLY_FREQUENCY,
+	TYPE_TIER,
+} from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 import MembershipsSection from './section';
 import './style.scss';
@@ -35,7 +43,8 @@ type MembersProductsSectionProps = {
 
 const showAddEditDialogInitially =
 	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
-	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
+	window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
+	window.location.hash === ADD_TIER_PLAN_HASH;
 
 function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const translate = useTranslate();
@@ -64,9 +73,10 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
 
-	const subscribe_as_site_subscriber = product
-		? product?.subscribe_as_site_subscriber
-		: window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
+	const defaultToTierPanel =
+		window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
+		window.location.hash === ADD_TIER_PLAN_HASH;
+	const default_product_type = product?.type ?? ( defaultToTierPanel ? TYPE_TIER : null );
 
 	const trackUpgrade = () =>
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
