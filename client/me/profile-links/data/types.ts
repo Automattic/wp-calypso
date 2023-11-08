@@ -26,6 +26,4 @@ export type AddProfileLinksMutationOptions = UseMutationOptions<
 	unknown
 >;
 
-export type ProfileLinkResponse = {
-	profile_links: ProfileLink[];
-};
+export type ProfileLinkResponse = ProfileLink[];
