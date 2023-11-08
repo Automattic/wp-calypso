@@ -29,7 +29,7 @@ const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH = 1080;
 // A copy of the title block in Creatio 2's page.html.
 const getPageTitlePattern = ( title: string ) => `
 	<div
-		class="wp-block-group has-global-padding is-layout-constrained wp-container-9 wp-block-group-is-layout-constrained"
+		class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained"
 		style="margin-top:var(--wp--preset--spacing--60);margin-bottom:var(--wp--preset--spacing--60)"
 	>
 		<h2 class="has-text-align-left alignwide wp-block-post-title has-xxxx-large-font-size">
