@@ -326,6 +326,7 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
+	const shouldCollapseLastStep = useShouldCollapseLastStep();
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
 		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
@@ -613,27 +614,29 @@ export default function WPCheckout( {
 					<PaymentMethodStep
 						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
 						activeStepFooter={
-							<>
-								<PaymentMethodStepContent />
-								{ hasMarketplaceProduct && (
-									<AcceptTermsOfServiceCheckbox
-										isAccepted={ is3PDAccountConsentAccepted }
-										onChange={ setIs3PDAccountConsentAccepted }
-										isSubmitted={ isSubmitted }
-										message={ translate(
-											'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
-										) }
-									/>
-								) }
-								{ has100YearPlan && (
-									<AcceptTermsOfServiceCheckbox
-										isAccepted={ is100YearPlanTermsAccepted }
-										onChange={ setIs100YearPlanTermsAccepted }
-										isSubmitted={ isSubmitted }
-										message={ translate( 'I have read and agree to all of the above.' ) }
-									/>
-								) }
-							</>
+							! shouldCollapseLastStep && (
+								<>
+									<PaymentMethodStepContent />
+									{ hasMarketplaceProduct && (
+										<AcceptTermsOfServiceCheckbox
+											isAccepted={ is3PDAccountConsentAccepted }
+											onChange={ setIs3PDAccountConsentAccepted }
+											isSubmitted={ isSubmitted }
+											message={ translate(
+												'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+											) }
+										/>
+									) }
+									{ has100YearPlan && (
+										<AcceptTermsOfServiceCheckbox
+											isAccepted={ is100YearPlanTermsAccepted }
+											onChange={ setIs100YearPlanTermsAccepted }
+											isSubmitted={ isSubmitted }
+											message={ translate( 'I have read and agree to all of the above.' ) }
+										/>
+									) }
+								</>
+							)
 						}
 						editButtonText={ String( translate( 'Edit' ) ) }
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
