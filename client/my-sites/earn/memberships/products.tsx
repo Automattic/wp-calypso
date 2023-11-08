@@ -212,7 +212,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }
 					product={ Object.assign( product ?? {}, {
-						subscribe_as_site_subscriber: subscribe_as_site_subscriber,
+						type: default_product_type,
 					} ) }
 					annualProduct={ annualProduct }
 				/>
