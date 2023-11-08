@@ -127,6 +127,29 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		);
 	}
 
+	// Create URLSearchParams for forum
+	const forumUrlSearchParams = new URLSearchParams( {
+		mode: 'FORUM',
+		wapuuFlow: hideHeaders.toString(),
+	} );
+	const forumUrl = `/contact-form?${ forumUrlSearchParams.toString() }`;
+
+	// Create URLSearchParams for chat
+	const chatUrlSearchParams = new URLSearchParams( {
+		mode: 'CHAT',
+		wapuuFlow: hideHeaders.toString(),
+	} );
+	const chatUrl = `/contact-form?${ chatUrlSearchParams.toString() }`;
+
+	// Create URLSearchParams for email
+	const emailUrlSearchParams = new URLSearchParams( {
+		mode: 'EMAIL',
+		// Set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
+		overflow: ( renderChat.eligible && renderChat.state !== 'AVAILABLE' ).toString(),
+		wapuuFlow: hideHeaders.toString(),
+	} );
+	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
+
 	return (
 		<div className="help-center-contact-page">
 			{ ! hideHeaders && <BackButton /> }
@@ -143,7 +166,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				/>
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
-					<Link to="/contact-form?mode=FORUM">
+					<Link to={ forumUrl }>
 						<div
 							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
 							role="button"
@@ -161,10 +184,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 					{ renderChat.render && (
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
-							<ConditionalLink
-								active={ renderChat.state === 'AVAILABLE' }
-								to="/contact-form?mode=CHAT"
-							>
+							<ConditionalLink active={ renderChat.state === 'AVAILABLE' } to={ chatUrl }>
 								<div
 									className={ classnames( 'help-center-contact-page__box', 'chat', {
 										'is-disabled': renderChat.state !== 'AVAILABLE',
@@ -189,12 +209,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					) }
 
 					{ renderEmail.render && (
-						<Link
-							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
-							to={ `/contact-form?mode=EMAIL&overflow=${ (
-								renderChat.eligible && renderChat.state !== 'AVAILABLE'
-							).toString() }` }
-						>
+						<Link to={ emailUrl }>
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'email' ) }
 								role="button"
