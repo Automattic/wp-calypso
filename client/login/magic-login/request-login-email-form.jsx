@@ -175,12 +175,6 @@ class RequestLoginEmailForm extends Component {
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
 		const siteIcon = this.state.site?.icon?.ico ?? this.state.site?.icon?.img ?? null;
 
-		const siteIcon =
-			this.state.site?.icon?.ico ??
-			this.state.site?.icon?.img ??
-			this.state.site?.logo?.url ??
-			null;
-
 		if ( showCheckYourEmail ) {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 
