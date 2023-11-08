@@ -35,7 +35,7 @@ const useRowMetadata = (
 
 		return {
 			row,
-			link: ! isSupported ? '' : link,
+			link: isSupported ? link : '',
 			isExternalLink,
 			tooltip,
 			tooltipId: `${ siteId }-${ type }`,
