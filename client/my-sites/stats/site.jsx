@@ -20,6 +20,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -117,6 +118,7 @@ class StatsSite extends Component {
 		activeTab: null,
 		activeLegend: null,
 		customChartQuantity: null,
+		shouldHideAuthorsStats: true,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -157,6 +159,13 @@ class StatsSite extends Component {
 	isModuleHidden( moduleName ) {
 		// Determine which modules are hidden.
 		// @TODO: Rearrange the layout of modules to be more flexible with hidden blocks.
+
+		// handles hiding author card if there is only one author
+		if ( moduleName === 'authors' ) {
+			// return this.props.authorsCount <= 1;
+			return true;
+		}
+
 		if (
 			HIDDABLE_MODULES.includes( moduleName ) &&
 			this.props.moduleToggles[ moduleName ] === false
@@ -290,6 +299,8 @@ class StatsSite extends Component {
 			}
 		);
 
+		const statType = 'statsTopAuthors';
+
 		return (
 			<div className="stats">
 				{ ! isOdysseyStats && (
@@ -325,6 +336,15 @@ class StatsSite extends Component {
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
+						<h1> Anna test </h1>
+						<QuerySiteStats
+							siteId={ siteId }
+							statType={ statType }
+							query={ query }
+							requesting={ this.props.isRequestingTopAuthors } // You need to manage this in your component state or Redux store
+							requestSiteStats={ this.props.requestSiteStats } // Make sure this action is connected in your Redux setup
+							requestAllSiteStats={ this.props.requestAllSiteStats } // Make sure this action is connected in your Redux setup
+						/>
 						<StatsPeriodHeader>
 							<StatsPeriodNavigation
 								date={ date }
