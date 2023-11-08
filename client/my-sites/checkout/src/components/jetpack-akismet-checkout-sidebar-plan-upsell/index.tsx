@@ -140,32 +140,19 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 		{ strong: <strong /> }
 	);
 
-	const yearOnePrice = formatCurrency(
-		isComparisonWithIntroOffer ? currentVariant.priceInteger : currentVariant.priceBeforeDiscounts,
-		currentVariant.currency,
-		currencyConfig
-	);
+	const yearOnePrice = isComparisonWithIntroOffer
+		? currentVariant.priceInteger
+		: currentVariant.priceBeforeDiscounts;
 
-	const yearTwoPrice = formatCurrency(
-		currentVariant.priceBeforeDiscounts,
-		currentVariant.currency,
-		currencyConfig
-	);
+	const yearTwoPrice = currentVariant.priceBeforeDiscounts;
 
-	const twoYearTotal = formatCurrency(
+	const twoYearTotal =
 		currentVariant.priceBeforeDiscounts +
-			( isComparisonWithIntroOffer
-				? currentVariant.priceInteger
-				: currentVariant.priceBeforeDiscounts ),
-		currentVariant.currency,
-		currencyConfig
-	);
+		( isComparisonWithIntroOffer
+			? currentVariant.priceInteger
+			: currentVariant.priceBeforeDiscounts );
 
-	const twoYearTotalBiennial = formatCurrency(
-		biennialVariant.priceInteger,
-		biennialVariant.currency,
-		currencyConfig
-	);
+	const twoYearTotalBiennial = biennialVariant.priceInteger;
 
 	// We don't want to call out the two year plan if it doesn't save them money
 	if ( twoYearTotal >= twoYearTotalBiennial ) {
@@ -177,15 +164,29 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
 				<UpsellLine label={ __( 'Yearly plan' ) } boldLabel isTitle />
 
-				<UpsellLine label={ __( 'Year One' ) } value={ yearOnePrice } />
+				<UpsellLine
+					label={ __( 'Year One' ) }
+					value={ formatCurrency( yearOnePrice, currentVariant.currency, currencyConfig ) }
+				/>
 
-				<UpsellLine label={ __( 'Year Two' ) } value={ yearTwoPrice } />
+				<UpsellLine
+					label={ __( 'Year Two' ) }
+					value={ formatCurrency( yearTwoPrice, currentVariant.currency, currencyConfig ) }
+				/>
 
-				<UpsellLine label={ __( 'Total' ) } value={ twoYearTotal } boldValue />
+				<UpsellLine
+					label={ __( 'Total' ) }
+					value={ formatCurrency( twoYearTotal, currentVariant.currency, currencyConfig ) }
+					boldValue
+				/>
 
 				<UpsellLine label={ __( 'Two-year plan' ) } boldLabel isTitle />
 
-				<UpsellLine label={ __( 'Two-year total' ) } value={ twoYearTotalBiennial } boldValue />
+				<UpsellLine
+					label={ __( 'Two-year total' ) }
+					value={ formatCurrency( twoYearTotalBiennial, biennialVariant.currency, currencyConfig ) }
+					boldValue
+				/>
 			</div>
 
 			<PromoCardCTA
