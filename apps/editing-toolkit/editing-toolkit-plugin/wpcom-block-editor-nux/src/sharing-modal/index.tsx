@@ -18,6 +18,7 @@ import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-ce
 import postPublishedImage from './images/illo-share.svg';
 import InlineSocialLogo from './inline-social-logo';
 import InlineSocialLogosSprite from './inline-social-logos-sprite';
+import SuggestedTags from './suggested-tags';
 import useSharingModalDismissed from './use-sharing-modal-dismissed';
 
 import './style.scss';
@@ -28,6 +29,7 @@ type CoreEditorPlaceholder = {
 		title: string;
 		status: string;
 		password: string;
+		meta: object;
 	};
 	getCurrentPostType: ( ...args: unknown[] ) => string;
 	isCurrentPostPublished: ( ...args: unknown[] ) => boolean;
@@ -46,6 +48,7 @@ const SharingModalInner: React.FC = () => {
 		title,
 		status: postStatus,
 		password: postPassword,
+		meta: postMeta,
 	} = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
 		[]
@@ -65,9 +68,10 @@ const SharingModalInner: React.FC = () => {
 	const shouldShowVideoCelebrationModal =
 		useShouldShowVideoCelebrationModal( isCurrentPostPublished );
 
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isOpen, setIsOpen ] = useState( true );
 	const closeModal = () => setIsOpen( false );
 	const { createNotice } = useDispatch( noticesStore );
+	const shouldShowSuggestedTags = postMeta?.reader_suggested_tags?.length > 0;
 
 	useEffect( () => {
 		// The first post will show a different modal.
@@ -191,7 +195,7 @@ const SharingModalInner: React.FC = () => {
 					<p>
 						{ createInterpolateElement(
 							__(
-								'Your post is now live and was delivered to each of <a>your subscribers</a>.',
+								'TEST: Your post is now live and was delivered to each of <a>your subscribers</a>.',
 								'full-site-editing'
 							),
 							{
@@ -282,11 +286,14 @@ const SharingModalInner: React.FC = () => {
 					</div>
 				</div>
 				<div className="wpcom-block-editor-post-published-sharing-modal__right">
-					<img
-						className="wpcom-block-editor-post-published-sharing-modal__image"
-						src={ postPublishedImage }
-						alt={ __( 'Share Post', 'full-site-editing' ) }
-					/>
+					{ shouldShowSuggestedTags && <SuggestedTags /> }
+					{ ! shouldShowSuggestedTags && (
+						<img
+							className="wpcom-block-editor-post-published-sharing-modal__image"
+							src={ postPublishedImage }
+							alt={ __( 'Share Post', 'full-site-editing' ) }
+						/>
+					) }
 				</div>
 			</div>
 		</Modal>
