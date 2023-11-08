@@ -1,4 +1,5 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -92,6 +93,7 @@ export const SubscribersPageProvider = ( {
 		subscribersQueryResult.isFetching
 	);
 
+	const queryClient = useQueryClient();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const completeImportSubscribersTask = async () => {
 		if ( selectedSiteSlug ) {
@@ -99,6 +101,7 @@ export const SubscribersPageProvider = ( {
 				checklist_statuses: { import_subscribers: true },
 			} );
 		}
+		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
 	};
 
 	const addSubscribersCallback = () => {
