@@ -60,7 +60,6 @@ import { saveContactDetailsCache } from 'calypso/state/domains/management/action
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import CheckoutTerms from '../components/checkout-terms';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -79,7 +78,7 @@ import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice'
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
-import PaymentMethodStepContent from './payment-method-step';
+import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
@@ -616,7 +615,7 @@ export default function WPCheckout( {
 						activeStepFooter={
 							! shouldCollapseLastStep && (
 								<>
-									<PaymentMethodStepContent />
+									<BeforeSubmitCheckoutHeader />
 									{ hasMarketplaceProduct && (
 										<AcceptTermsOfServiceCheckbox
 											isAccepted={ is3PDAccountConsentAccepted }
@@ -654,7 +653,15 @@ export default function WPCheckout( {
 					/>
 					<CheckoutFormSubmit
 						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
+						submitButtonHeader={
+							<SubmitButtonHeader
+								is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
+								setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }
+								is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
+								setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
+								isSubmitted={ isSubmitted }
+							/>
+						}
 						submitButtonFooter={ <JetpackCheckoutSeals /> }
 					/>
 				</CheckoutStepGroup>
@@ -787,17 +794,52 @@ const CheckoutSummaryBody = styled.div`
 	}
 `;
 
-function SubmitButtonHeader() {
+function SubmitButtonHeader( {
+	is3PDAccountConsentAccepted,
+	setIs3PDAccountConsentAccepted,
+	is100YearPlanTermsAccepted,
+	setIs100YearPlanTermsAccepted,
+	isSubmitted,
+}: {
+	is3PDAccountConsentAccepted: boolean;
+	setIs3PDAccountConsentAccepted: ( isAccepted: boolean ) => void;
+	is100YearPlanTermsAccepted: boolean;
+	setIs100YearPlanTermsAccepted: ( isAccepted: boolean ) => void;
+	isSubmitted: boolean;
+} ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const has100YearPlan = cartHas100YearPlan( responseCart );
+	const hasMarketplaceProduct = useSelector( ( state ) => {
+		return responseCart.products.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
+	} );
+
 	const translate = useTranslate();
 	const shouldCollapseLastStep = useShouldCollapseLastStep();
 
 	if ( shouldCollapseLastStep ) {
 		return (
-			<CheckoutTermsWrapper>
-				<CheckoutTerms cart={ responseCart } />
-			</CheckoutTermsWrapper>
+			<>
+				<BeforeSubmitCheckoutHeader />
+				{ hasMarketplaceProduct && (
+					<AcceptTermsOfServiceCheckbox
+						isAccepted={ is3PDAccountConsentAccepted }
+						onChange={ setIs3PDAccountConsentAccepted }
+						isSubmitted={ isSubmitted }
+						message={ translate(
+							'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+						) }
+					/>
+				) }
+				{ has100YearPlan && (
+					<AcceptTermsOfServiceCheckbox
+						isAccepted={ is100YearPlanTermsAccepted }
+						onChange={ setIs100YearPlanTermsAccepted }
+						isSubmitted={ isSubmitted }
+						message={ translate( 'I have read and agree to all of the above.' ) }
+					/>
+				) }
+			</>
 		);
 	}
 
@@ -925,36 +967,6 @@ const SubmitButtonHeaderWrapper = styled.div`
 		&:hover {
 			color: ${ ( props ) => props.theme.colors.highlightOver };
 		}
-	}
-`;
-
-const CheckoutTermsWrapper = styled.div`
-	& > * {
-		margin: 16px 0;
-		padding-left: 24px;
-		position: relative;
-	}
-
-	.rtl & > * {
-		margin: 16px 0;
-		padding-right: 24px;
-		padding-left: 0;
-	}
-
-	& div:first-of-type {
-		padding-right: 0;
-		padding-left: 0;
-		margin-right: 0;
-		margin-left: 0;
-		margin-top: 32px;
-	}
-
-	a {
-		text-decoration: underline;
-	}
-
-	a:hover {
-		text-decoration: none;
 	}
 `;
 
