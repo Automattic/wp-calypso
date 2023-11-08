@@ -56,9 +56,6 @@ const PatternPageList = ( {
 	const categoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_PAGES_CATEGORIES );
 	const composite = useCompositeState( { orientation: 'vertical' } );
 
-	const getCategoryLabel = ( category: Category ) =>
-		category.name === 'posts' ? translate( 'Blog' ) : category.label;
-
 	return (
 		<Composite
 			{ ...composite }
@@ -96,7 +93,7 @@ const PatternPageList = ( {
 							onClick={ () => onSelectPage( name ) }
 						>
 							<PatternPageListItem
-								label={ getCategoryLabel( category ) }
+								label={ pagesMapByCategory[ name ][ 0 ].title }
 								isSelected={ isSelected }
 							/>
 						</CompositeItem>
