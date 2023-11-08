@@ -80,6 +80,6 @@ export const getThemesForQueryIgnoringPage = createSelector(
 		// over different pages) which we need to remove manually here for now.
 		return [ ...new Set( themesForQueryIgnoringPage ) ];
 	},
-	( state ) => state.themes.queries,
+	( state ) => [ state.themes.queries, state.sites?.plans ],
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
 );
