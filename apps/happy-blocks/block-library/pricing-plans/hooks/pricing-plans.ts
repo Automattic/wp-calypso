@@ -2,6 +2,7 @@ import { calculateMonthlyPriceForPlan, getPlan, Plan } from '@automattic/calypso
 import formatCurrency from '@automattic/format-currency';
 import { useEffect, useState } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
+import wpcomRequest from 'wpcom-proxy-request';
 import config from '../config';
 import { ApiPricingPlan } from '../types.js';
 
@@ -48,27 +49,23 @@ const usePricingPlans = () => {
 	const [ error, setError ] = useState< unknown >( null );
 
 	useEffect( () => {
-		( async () => {
-			// Dynamically importing wpcom allows us to avoid issues when the JS assets are concatenated.
-			const { default: wpcom } = await import( 'calypso/lib/wp' );
+		const fetchPlans = async () => {
+			setIsLoading( true );
+			setError( null );
+			try {
+				const data: ApiPricingPlan[] = await wpcomRequest( {
+					path: '/plans?locale=' + config.locale,
+					apiVersion: '1.5',
+				} );
+				setPlans( parsePlans( data ) );
+			} catch ( e: unknown ) {
+				setError( e );
+			} finally {
+				setIsLoading( false );
+			}
+		};
 
-			const fetchPlans = async () => {
-				setIsLoading( true );
-				setError( null );
-				try {
-					const data = await wpcom.req.get( '/plans?locale=' + config.locale, {
-						apiVersion: '1.5',
-					} );
-					setPlans( parsePlans( data ) );
-				} catch ( e: unknown ) {
-					setError( e );
-				} finally {
-					setIsLoading( false );
-				}
-			};
-
-			fetchPlans();
-		} )();
+		fetchPlans();
 	}, [] );
 
 	return { data: plans, isLoading, error };
