@@ -72,6 +72,16 @@ export class TypeSelector extends Component {
 		return [];
 	};
 
+	/**
+	 * Resolves a Activity Type key to its corresponding display name.
+	 *
+	 * It searches the provided `key` through all `types` and its potential children recursively.
+	 * If the key is found, the corresponding name is returned.
+	 * If the key is not found, it returns the key itself as a fallback.k.
+	 *
+	 * @param {string} key - Activity Type key
+	 * @returns {string} - The resolved display name or the key itself if not found.
+	 */
 	typeKeyToName = ( key ) => {
 		const { types, isNested, parentType } = this.props;
 		const allTypes = [ ...types ];
@@ -88,6 +98,7 @@ export class TypeSelector extends Component {
 				if ( item.children ) {
 					const name = findKeyInTypes( item.children, targetKey );
 					if ( name ) {
+						// If the parent type has a name, we want to prepend it to the child type name.
 						return item.name ? item.name + ' ' + name : name;
 					}
 				}
