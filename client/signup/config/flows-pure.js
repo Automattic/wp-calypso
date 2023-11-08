@@ -176,15 +176,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'onboarding-pm-social',
-			steps: [ userSocialStep, 'domains', 'plans-pm' ],
-			destination: getSignupDestination,
-			description: 'Paid media experiment with user social',
-			lastModified: '2023-11-06',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'import',
 			steps: [ userSocialStep, 'domains', 'plans-import' ],
 			destination: ( dependencies ) =>
