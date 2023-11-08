@@ -8,14 +8,6 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 		return null;
 	}
 
-	// We need a combined string of the object properties for the combinedTaxName in the vendor info header
-	const vendorInfoCombinedTaxName = Object.keys( vendorInfo.tax_name_and_vendor_id_object ).join( '/' );
-
-	// We need to create a string of the taxName and taxID that contains each combination
-	const vendorInfoTaxNamesAndIDs = Object.keys(vendorInfo.tax_name_and_vendor_id_object).map(function(taxName, taxID) {
-		return '<strong>'+taxName+'</strong> '+taxID+' <br />';
-	});
-
 	return (
 		<li>
 			<strong>
