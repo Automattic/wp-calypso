@@ -8,17 +8,22 @@ import { SubscriberList } from 'calypso/my-sites/subscribers/components/subscrib
 import { SubscriberListActionsBar } from 'calypso/my-sites/subscribers/components/subscriber-list-actions-bar';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
+import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { useRecordSearch } from '../../tracks';
 import { GrowYourAudience } from '../grow-your-audience';
 
 import './style.scss';
 
 type SubscriberListContainerProps = {
+	siteId: number | null;
 	onClickView: ( subscriber: Subscriber ) => void;
 	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
 };
 
 const SubscriberListContainer = ( {
+	siteId,
 	onClickView,
 	onClickUnsubscribe,
 }: SubscriberListContainerProps ) => {
@@ -26,9 +31,13 @@ const SubscriberListContainer = ( {
 		useSubscribersPage();
 	useRecordSearch();
 
-	const EmptyComponent = config.isEnabled( 'subscribers-launchpad' )
-		? SubscriberLaunchpad
-		: EmptyListView;
+	const isSimple = useSelector( isSimpleSite );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+
+	const EmptyComponent =
+		config.isEnabled( 'subscribers-launchpad' ) && ( isSimple || isAtomic )
+			? SubscriberLaunchpad
+			: EmptyListView;
 
 	return (
 		<section className="subscriber-list-container">
