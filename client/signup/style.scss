@@ -722,53 +722,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				display: none;
 			}
 
-			.signup-form__separator {
-				position: relative;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: calc(100% - 32px);
-				margin: 20px auto;
-
-				@include break-medium {
-					width: 60px;
-					margin: 0;
-				}
-
-				&::before {
-					position: absolute;
-					content: "";
-					border-inline-start: 0;
-					border-block-start: $separator-style;
-					inset-block-start: 50%;
-					inset-inline-start: 0;
-					height: 0;
-					width: 100%;
-
-					@include break-medium {
-						border-inline-start: $separator-style;
-						border-block-start: 0;
-						inset-block-start: 0;
-						inset-inline-start: 50%;
-						height: 100%;
-					}
-				}
-			}
-
-			.signup-form__separator-text {
-				background-color: #fdfdfd;
-				text-transform: uppercase;
-				text-align: center;
-				padding: 24px 0;
-				font-size: 0.75rem;
-				z-index: 1;
-				color: var(--studio-gray-50);
-
-				@media screen and (max-width: $breakpoint-mobile ) {
-					padding: 0 24px;
-				}
-			}
-
 			.social-buttons__service-name {
 				margin-inline-start: 12px;
 			}
