@@ -10,7 +10,12 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTable } from './components/site-logs-table';
 import { SiteLogsToolbar } from './components/site-logs-toolbar';
-import { getDateRangeQueryParam, updateDateRangeQueryParam } from './site-monitoring-filter-params';
+import {
+	getDateRangeQueryParam,
+	updateDateRangeQueryParam,
+	getSeverityQueryParam,
+	updateSeverityQueryParam,
+} from './site-monitoring-filter-params';
 import type { Moment } from 'moment';
 
 export type LogType = 'php' | 'web';
@@ -45,6 +50,10 @@ export const LogsTab = ( {
 		};
 	} );
 
+	const [ severity, setSeverity ] = useState( () => {
+		return getSeverityQueryParam() || '';
+	} );
+
 	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
 
 	const autoRefreshCallback = useCallback( () => {
@@ -53,10 +62,23 @@ export const LogsTab = ( {
 	}, [ getLatestDateRange ] );
 	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
 
+	const buildFilterParam = ( logType: string, severity: string ) => {
+		const filters = {};
+
+		if ( logType === 'php' ) {
+			if ( severity ) {
+				filters.severity = [ severity ];
+			}
+		}
+
+		return filters;
+	};
+
 	const { data, isInitialLoading, isFetching } = useSiteLogsQuery( siteId, {
 		logType,
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
+		filter: buildFilterParam( logType, severity ),
 		sortOrder: 'desc',
 		pageSize,
 		pageIndex: currentPageIndex,
@@ -115,6 +137,12 @@ export const LogsTab = ( {
 		updateDateRangeQueryParam( { startTime, endTime } );
 	};
 
+	const handleSeverityChange = ( severity: string ) => {
+		setSeverity( severity );
+		setAutoRefresh( false );
+		updateSeverityQueryParam( severity );
+	};
+
 	const headerTitles =
 		logType === 'php'
 			? [ 'severity', 'timestamp', 'message' ]
@@ -127,6 +155,8 @@ export const LogsTab = ( {
 				startDateTime={ dateRange.startTime }
 				endDateTime={ dateRange.endTime }
 				onDateTimeChange={ handleDateTimeChange }
+				onSeverityChange={ handleSeverityChange }
+				severity={ severity }
 			>
 				<ToggleControl
 					className="site-logs__auto-refresh"

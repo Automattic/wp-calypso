@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
@@ -36,6 +37,8 @@ const SiteLogsToolbarDownloadProgress = ( {
 
 type Props = {
 	onDateTimeChange: ( startDateTime: Moment, endDateTime: Moment ) => void;
+	onSeverityChange: ( severity: string ) => void;
+	severity: string;
 	logType: SiteLogsTab;
 	startDateTime: Moment;
 	endDateTime: Moment;
@@ -44,6 +47,8 @@ type Props = {
 
 export const SiteLogsToolbar = ( {
 	onDateTimeChange,
+	onSeverityChange,
+	severity,
 	logType,
 	startDateTime,
 	endDateTime,
@@ -67,6 +72,21 @@ export const SiteLogsToolbar = ( {
 		onDateTimeChange( newStart || startDateTime, newEnd || endDateTime );
 	};
 
+	const handleSeverityChange = ( newSeverity: string ) => {
+		onSeverityChange( newSeverity );
+	};
+
+	const severities = [
+		{ value: '', label: translate( 'All levels' ) },
+		{ value: 'User', label: translate( 'User' ) },
+		{ value: 'Warning', label: translate( 'Warning' ) },
+		{ value: 'Deprecated', label: translate( 'Deprecated' ) },
+		{ value: 'Fatal error', label: translate( 'Fatal error' ) },
+	];
+
+	const selectedSeverity =
+		severities.find( ( item ) => severity === item.value ) || severities[ 0 ];
+
 	return (
 		<div className="site-logs-toolbar">
 			<div className="site-logs-toolbar__top-row">
@@ -88,6 +108,24 @@ export const SiteLogsToolbar = ( {
 					max={ moment() }
 					min={ startDateTime }
 				/>
+				{ logType === 'php' && (
+					<>
+						<label htmlFor="severity">{ translate( 'Severity' ) }</label>
+						<SelectDropdown
+							id="severity"
+							selectedText={ selectedSeverity.label }
+							initialSelected={ severity }
+						>
+							{ severities.map( ( option ) => (
+								<SelectDropdown.Item onClick={ () => handleSeverityChange( option.value ) }>
+									<span>
+										<strong>{ option.label }</strong>
+									</span>
+								</SelectDropdown.Item>
+							) ) }
+						</SelectDropdown>
+					</>
+				) }
 
 				<Button
 					disabled={ isDownloading }

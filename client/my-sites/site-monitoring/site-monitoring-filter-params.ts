@@ -45,3 +45,24 @@ export function updateDateRangeQueryParam(
 
 	page.replace( url.pathname + url.search );
 }
+
+export function getSeverityQueryParam(): string {
+	const { searchParams } = new URL( window.location.href );
+	return searchParams.get( 'severity' ) || '';
+}
+
+export function updateSeverityQueryParam( severity: string | null ) {
+	const url = new URL( window.location.href );
+
+	if ( severity ) {
+		if ( ! severity ) {
+			return;
+		}
+
+		url.searchParams.set( 'severity', severity );
+	} else {
+		url.searchParams.delete( 'severity' );
+	}
+
+	page.replace( url.pathname + url.search );
+}
