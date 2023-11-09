@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
 import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
 import {
@@ -453,14 +452,6 @@ class MagicLogin extends Component {
 		);
 	}
 
-	renderLoading() {
-		return (
-			<div className="magic-login__loading">
-				<LoadingEllipsis />
-			</div>
-		);
-	}
-
 	render() {
 		const { oauth2Client, showCheckYourEmail } = this.props;
 
@@ -497,11 +488,7 @@ class MagicLogin extends Component {
 
 				<GlobalNotices id="notices" />
 
-				{ this.props.isSendingEmail ? (
-					this.renderLoading()
-				) : (
-					<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
-				) }
+				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
 
 				{ this.renderLinks() }
 			</Main>
