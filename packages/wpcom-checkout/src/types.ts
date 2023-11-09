@@ -45,10 +45,10 @@ export interface TaxVendorInfo {
 	 * This will deprecate the vat_id and tax_name properties
 	 * For now, those two properties will stay in place for backwards compatibility
 	 *
-	 * Property: The localized name of the tax (eg: "VAT", "GST", etc.).
+	 * Key:   The localized name of the tax (eg: "VAT", "GST", etc.).
 	 * Value: A8c vendor id for that specific tax
 	 */
-	tax_name_and_vendor_id_array: object;
+	tax_name_and_vendor_id_array: Record< string, string >;
 
 	/**
 	 * The vendor's VAT id.
