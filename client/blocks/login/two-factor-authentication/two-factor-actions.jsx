@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { FormDivider } from 'calypso/lib/authentication';
+import { FormDivider } from 'calypso/blocks/authentication';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
