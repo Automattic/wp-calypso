@@ -641,7 +641,7 @@ class SignupForm extends Component {
 												plain={ true }
 												className="signup-form__domain-suggestion-confirmation"
 												onClick={ () => {
-													handleEmailSuggestionOption( this.state.emailSuggestion?.domain );
+													handleEmailSuggestionOption( this.state.emailSuggestion?.full );
 												} }
 											>
 												Yes
