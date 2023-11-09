@@ -64,11 +64,18 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 		loginWindow?.close();
 	};
 
+	const onCloseClick = () => {
+		setIsLoginPopupOpen( false );
+		trackEvent( 'calypso_reader_dialog_close_clicked' );
+		loginWindow?.close();
+		onClose();
+	};
+
 	return (
 		<Dialog
 			additionalClassNames="reader-join-conversation-dialog"
 			isVisible={ isVisible }
-			onClose={ onClose }
+			onClose={ onCloseClick }
 			showCloseIcon={ true }
 			label={ translate( 'Join the conversation' ) }
 			shouldCloseOnEsc={ true }
