@@ -45,6 +45,34 @@ const CheckoutTermsWrapper = styled.div< { shouldCollapseLastStep: boolean } >`
 	a:hover {
 		text-decoration: none;
 	}
+
+	& .checkout__terms-foldable-card {
+		box-shadow: none;
+		& .foldable-card__header {
+			font-size: 12px;
+			font-weight: 500;
+			line-height: 1.5;
+			padding: 0;
+		}
+		& .checkout__terms-item {
+			margin-top: 0;
+
+			& p {
+				margin-bottom: 18px;
+			}
+		}
+		& .foldable-card.is-expanded,
+		.foldable-card__content {
+			display: block;
+			padding: 0;
+			border-top: none;
+			margin-top: 4px;
+		}
+		& .foldable-card__header.has-border .foldable-card__summary,
+		.foldable-card__header.has-border .foldable-card__summary-expanded {
+			margin-right: 60px;
+		}
+	}
 `;
 
 const NonTotalPrices = styled.div`
