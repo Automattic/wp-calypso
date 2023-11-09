@@ -4,9 +4,9 @@ import styled from '@emotion/styled';
 interface LoadingPlaceholderProps {
 	delayMS?: number;
 	display?: 'block' | 'inline-block';
-	width?: string;
-	height?: string;
-	minHeight?: string;
+	width?: string | number;
+	height?: string | number;
+	minHeight?: string | number;
 	borderRadius?: string;
 }
 
