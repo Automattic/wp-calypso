@@ -26,26 +26,59 @@ export const useCommandsArrayWpcom = ( {
 			setSelectedCommandName( actionName );
 		};
 
-	const copySshSftpDetails = async (
+	const fetchSshUsersDetails = async (
 		siteId: number,
-		copyType: 'username' | 'connectionString',
-		siteSlug: string
+		copyType: 'username' | 'connectionString'
 	) => {
 		const response = await wpcom.req.get( {
 			path: `/sites/${ siteId }/hosting/ssh-users`,
 			apiNamespace: 'wpcom/v2',
 		} );
 
-		const sshUsers = response?.users;
+		const sshUserResponse = response?.users;
 
-		if ( sshUsers !== null ) {
-			if ( sshUsers.length ) {
-				const details =
-					copyType === 'username' ? sshUsers[ 0 ] : `ssh ${ sshUsers[ 0 ] }@sftp.wp.com`;
-				navigator.clipboard.writeText( details );
-			} else {
-				navigate( `/hosting-config/${ siteSlug }` );
+		if ( sshUserResponse !== null ) {
+			if ( sshUserResponse?.length ) {
+				const sshUser =
+					copyType === 'username'
+						? sshUserResponse[ 0 ]
+						: `ssh ${ sshUserResponse[ 0 ] }@sftp.wp.com`;
+				return sshUser;
 			}
+		}
+
+		return null;
+	};
+
+	const copySshSftpDetails = async (
+		siteId: number,
+		copyType: 'username' | 'connectionString',
+		siteSlug: string
+	) => {
+		const sshUser = await fetchSshUsersDetails( siteId, copyType );
+
+		if ( sshUser !== null ) {
+			navigator.clipboard.writeText( sshUser );
+		} else {
+			navigate( `/hosting-config/${ siteSlug }` );
+		}
+	};
+
+	const resetSshSftpPassword = async ( siteId: number, siteSlug: string ) => {
+		const sshUser = await fetchSshUsersDetails( siteId, 'username' );
+
+		const response = await wpcom.req.post( {
+			path: `/sites/${ siteId }/hosting/ssh-user/${ sshUser }/reset-password`,
+			apiNamespace: 'wpcom/v2',
+			body: {},
+		} );
+
+		const sshPassword = response?.password;
+
+		if ( sshPassword !== null ) {
+			navigator.clipboard.writeText( sshPassword );
+		} else {
+			navigate( `/hosting-config/${ siteSlug }` );
 		}
 	};
 
@@ -167,6 +200,20 @@ export const useCommandsArrayWpcom = ( {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
 					await copySshSftpDetails( site.ID, 'connectionString', site.slug );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+		},
+		{
+			name: 'resetSshSftpPassword',
+			label: __( 'Reset SSH/SFTP password' ),
+			searchLabel: __( 'reset ssh/sftp password' ),
+			context: 'Resetting SSH/SFTP password',
+			callback: setStateCallback( 'resetSshSftpPassword' ),
+			siteFunctions: {
+				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					resetSshSftpPassword( site.ID, site.slug );
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
