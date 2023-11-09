@@ -39,7 +39,7 @@ describe( 'sortProductsByPriceDescending', () => {
 	} );
 
 	test( 'should sort products by item_subtotal_integer', async () => {
-		instance.props.cart.products = [
+		const products = [
 			{
 				meta: 'domain.com',
 				item_subtotal_integer: 200, // The price we consider when sorting.
@@ -54,13 +54,13 @@ describe( 'sortProductsByPriceDescending', () => {
 			},
 		];
 
-		const sortedProducts = await instance.sortProductsByPriceDescending();
+		const sortedProducts = instance.sortProductsByPriceDescending( products );
 		expect( sortedProducts[ 0 ].meta ).toBe( 'domain.com' );
 		expect( sortedProducts[ 1 ].meta ).toBe( 'domain.net' );
 	} );
 
 	test( 'should sort products by item_original_cost_integer', async () => {
-		instance.props.cart.products = [
+		const products = [
 			{
 				meta: 'domain.com',
 				item_subtotal_integer: 2000, // The price we consider when sorting.
@@ -81,13 +81,13 @@ describe( 'sortProductsByPriceDescending', () => {
 			},
 		];
 
-		const sortedProducts = await instance.sortProductsByPriceDescending();
+		const sortedProducts = instance.sortProductsByPriceDescending( products );
 		expect( sortedProducts[ 0 ].meta ).toBe( 'domain.kitchen' );
 		expect( sortedProducts[ 1 ].meta ).toBe( 'domain.com' );
 	} );
 
 	test( 'should sort products considering cost_overrides', async () => {
-		instance.props.cart.products = [
+		const products = [
 			{
 				meta: 'domain.store',
 				item_subtotal_integer: 96,
@@ -137,7 +137,7 @@ describe( 'sortProductsByPriceDescending', () => {
 			},
 		];
 
-		const sortedProducts = await instance.sortProductsByPriceDescending();
+		const sortedProducts = instance.sortProductsByPriceDescending( products );
 		expect( sortedProducts[ 0 ].meta ).toBe( 'domain.fish' );
 		expect( sortedProducts[ 1 ].meta ).toBe( 'domain.kitchen' );
 		expect( sortedProducts[ 2 ].meta ).toBe( 'domain.blog' );
