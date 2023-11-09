@@ -26,10 +26,6 @@ export const useCommandsArrayWpcom = ( {
 			setSelectedCommandName( actionName );
 		};
 
-	//const siteId = 136847962;
-	//const { data } = useSshUsersQuery( siteId );
-	//const { users } = data?.users || [];
-
 	const commands = [
 		{
 			name: 'addNewSite',
