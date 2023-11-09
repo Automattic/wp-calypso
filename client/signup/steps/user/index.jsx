@@ -706,7 +706,7 @@ const ExperimentWrappedUser = ( props ) => {
 			if ( typeof globalDiv === 'object' ) {
 				if ( variationName === 'treatment' ) {
 					globalDiv.classList.add( 'is-passwordless-experiment' );
-				} else if ( ! variationName || experimentAssignment?.variationName === 'control' ) {
+				} else if ( variationName === null || variationName === 'control' ) {
 					globalDiv.classList.remove( 'is-passwordless-experiment' );
 				}
 			}
