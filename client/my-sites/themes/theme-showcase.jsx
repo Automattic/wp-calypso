@@ -366,11 +366,7 @@ class ThemeShowcase extends Component {
 	};
 
 	allThemes = ( { themeProps } ) => {
-		const { filter, isCollectionView, isJetpackSite, tier, children, search, category } =
-			this.props;
-		if ( isJetpackSite ) {
-			return children;
-		}
+		const { filter, isCollectionView, tier, search, category } = this.props;
 
 		// In Collection View of pricing tiers (e.g. Partner themes), prevent requesting only recommended themes.
 		const themesSelectionProps = {
@@ -521,6 +517,7 @@ class ThemeShowcase extends Component {
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 			isCollectionView,
+			isJetpackSite,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
@@ -550,6 +547,7 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
+			source: isJetpackSite ? 'wpcom' : null,
 		};
 
 		const tabFilters = this.getTabFilters();
