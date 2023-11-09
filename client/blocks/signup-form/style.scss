@@ -139,7 +139,11 @@
 
 body.is-section-signup,
 body.is-section-accept-invite {
-	.signup__step.is-user-social {
+	.signup__step.is-user-social,
+	// ::::: Onboarding_PM_Passwordless_Experiment ::::::
+	// This selector is part of an experiment which is supposed to be cleaned up
+	// https://github.com/Automattic/wp-calypso/pull/83886
+	.is-onboarding-pm .signup__step.is-user.is-passwordless-experiment {
 		.signup-form-social-first {
 			width: 327px;
 			margin: 0 auto;
