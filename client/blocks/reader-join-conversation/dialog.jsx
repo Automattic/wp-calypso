@@ -60,7 +60,9 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 			<div className="reader-join-conversation-dialog__content">
 				<WordPressLogo size={ 32 } />
 				<h1>{ translate( 'Join the conversation' ) }</h1>
-				<p>{ translate( 'Sign in to like, comment, reblog, and follow your favorite blogs.' ) }</p>
+				<p>
+					{ translate( 'Sign in to like, comment, reblog, and subscribe to your favorite blogs.' ) }
+				</p>
 				<Button
 					isPrimary
 					onClick={ onCreateAccountClick }

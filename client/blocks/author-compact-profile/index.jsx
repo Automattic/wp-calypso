@@ -83,7 +83,7 @@ class AuthorCompactProfile extends Component {
 				<div className="author-compact-profile__follow">
 					{ followCount ? (
 						<div className="author-compact-profile__follow-count">
-							{ this.props.translate( '%(followCount)s follower', '%(followCount)s followers', {
+							{ this.props.translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 								count: followCount,
 								args: {
 									followCount: numberFormat( followCount ),
