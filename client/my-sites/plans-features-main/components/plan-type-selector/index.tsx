@@ -19,6 +19,7 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import { Primitive } from 'utility-types';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { addQueryArgs } from 'calypso/lib/url';
 import type { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import './style.scss';
@@ -50,7 +51,7 @@ interface PathArgs {
 
 type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: PathArgs ) => string;
 
-const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
+export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
 	const { intervalType = '' } = additionalArgs;
 	const defaultArgs = {
 		customerType: null,
@@ -90,7 +91,7 @@ type PopupMessageProps = {
 };
 
 // eslint-disable @typescript-eslint/no-use-before-define
-const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
+export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	context,
 	children,
 	isVisible,
@@ -116,7 +117,7 @@ const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	);
 };
 
-type IntervalTypeProps = Pick<
+export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
 	| 'intervalType'
 	| 'plans'
@@ -132,7 +133,7 @@ type IntervalTypeProps = Pick<
 	| 'usePricingMetaForGridPlans'
 >;
 
-const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
+export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
 	const {
 		intervalType,
@@ -234,9 +235,29 @@ const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props
 	);
 };
 
+export const ExperimentalIntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = (
+	props
+) => {
+	return (
+		<ProvideExperimentData name="calypso_show_interval_type_selector_2022_07">
+			{ ( isLoading, experimentAssignment ) => {
+				if ( isLoading || ! props.intervalType ) {
+					return <></>;
+				}
+
+				if ( 'treatment' !== experimentAssignment?.variationName ) {
+					return <></>;
+				}
+
+				return <IntervalTypeToggle { ...props } />;
+			} }
+		</ProvideExperimentData>
+	);
+};
+
 type CustomerTypeProps = Pick< PlanTypeSelectorProps, 'customerType' | 'isInSignup' >;
 
-const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( props ) => {
+export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( props ) => {
 	const translate = useTranslate();
 	const { customerType } = props;
 	const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
