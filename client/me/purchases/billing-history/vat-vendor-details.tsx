@@ -11,11 +11,11 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 	return (
 		<li>
 			<strong>
-				{ translate( 'Vendor %(combinedTaxName)s Details', {
+				{ translate( 'Vendor %(taxName)s Details', {
 					args: {
-						combinedTaxName: Object.keys( vendorInfo.tax_name_and_vendor_id_array ).join( '/' ),
+						taxName: Object.keys( vendorInfo.tax_name_and_vendor_id_array ).join( '/' ),
 					},
-					comment: 'combinedTaxName is a localized tax, like VAT or GST',
+					comment: 'taxName is a localized tax, like VAT or GST',
 				} ) }
 			</strong>
 			<span>
