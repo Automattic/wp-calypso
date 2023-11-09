@@ -299,14 +299,8 @@ const LoggedInPlansFeatureActionButton = ( {
 		}
 
 		return (
-			<Button
-				className={ classes }
-				href={ planActionOverrides?.currentPlanManageHref ?? '' }
-				disabled={ ! planActionOverrides?.currentPlanManageHref }
-			>
-				{ planActionOverrides?.canUserManageCurrentPlan
-					? translate( 'Manage plan' )
-					: translate( 'View plan' ) }
+			<Button className={ classes } disabled={ ! planActionOverrides?.currentPlan?.callback }>
+				{ planActionOverrides?.currentPlan?.text }
 			</Button>
 		);
 	}

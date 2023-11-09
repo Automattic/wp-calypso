@@ -8,12 +8,14 @@ export type TransformedFeatureObject = FeatureObject & {
 };
 
 export interface PlanActionOverrides {
-	canUserManageCurrentPlan: boolean | null;
-	currentPlanManageHref: string | null;
 	loggedInFreePlan?: {
-		callback?: () => void;
 		text?: TranslateResult;
 		status?: 'blocked' | 'enabled';
+		callback?: () => void;
+	};
+	currentPlan?: {
+		text?: TranslateResult;
+		callback?: () => void;
 	};
 }
 
