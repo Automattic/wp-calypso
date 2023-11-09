@@ -156,6 +156,24 @@ $section-max-width: 1224px;
 		fill: var(--studio-blue-30);
 	}
 }
+.site-monitoring-http-verbs-pie-chart {
+	.pie-chart__chart-section-verb-post,
+	.pie-chart__legend-sample-verb-post {
+		fill: var(--studio-blue-20);
+	}
+	.pie-chart__chart-section-verb-get,
+	.pie-chart__legend-sample-verb-get {
+		fill: var(--studio-blue-30);
+	}
+	.pie-chart__chart-section-verb-delete,
+	.pie-chart__legend-sample-verb-delete {
+		fill: var(--studio-blue-40);
+	}
+	.pie-chart__chart-section-verb-head,
+	.pie-chart__legend-sample-verb-head {
+		fill: var(--studio-blue-50);
+	}
+}
 
 .site-monitoring-php-static-pie-chart {
 	.pie-chart__chart-section-dynamic,
