@@ -165,7 +165,18 @@ function useAggregateHttpVerbData(
 		metric,
 		dimension
 	);
-	const allowedVerbs: string[] = [ 'GET', 'POST', 'HEAD', 'DELETE', 'PUT', 'PATCH' ];
+	const allowedVerbs: string[] = [ 'GET', 'POST', 'HEAD', 'DELETE' ];
+
+	const defaultData: Record< ( typeof allowedVerbs )[ number ], number > = allowedVerbs.reduce(
+		( acc, verb ) => {
+			acc[ verb ] = 0;
+			return acc;
+		},
+		{} as Record< ( typeof allowedVerbs )[ number ], number >
+	);
+
+	data.formattedData = { ...defaultData, ...data.formattedData };
+
 	return {
 		formattedData: Object.keys( data.formattedData ).reduce(
 			( filtered: Record< string, number >, key: string ) => {
@@ -371,20 +382,11 @@ export const MetricsTab = () => {
 							name: 'HEAD',
 							className: 'verb-head',
 						},
-						PUT: {
-							name: 'PUT',
-							className: 'verb-put',
-						},
-						PATCH: {
-							name: 'PATCH',
-							className: 'verb-patch',
-						},
 						DELETE: {
 							name: 'DELETE',
 							className: 'verb-delete',
 						},
 					} ) }
-					fixedOrder
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
 					title={ __( 'Response types' ) }

@@ -149,7 +149,7 @@ $section-max-width: 1224px;
 .site-monitoring-http-verbs-pie-chart {
 	.pie-chart__chart-section-verb-post,
 	.pie-chart__legend-sample-verb-post {
-		fill: var(--studio-blue-20);
+		fill: var(--studio-blue-60);
 	}
 	.pie-chart__chart-section-verb-get,
 	.pie-chart__legend-sample-verb-get {
@@ -157,19 +157,11 @@ $section-max-width: 1224px;
 	}
 	.pie-chart__chart-section-verb-delete,
 	.pie-chart__legend-sample-verb-delete {
-		fill: var(--studio-blue-40);
+		fill: var(--studio-red-10);
 	}
 	.pie-chart__chart-section-verb-head,
 	.pie-chart__legend-sample-verb-head {
-		fill: var(--studio-blue-50);
-	}
-	.pie-chart__chart-section-verb-put,
-	.pie-chart__legend-sample-verb-put {
-		fill: var(--studio-blue-60);
-	}
-	.pie-chart__chart-section-verb-patch,
-	.pie-chart__legend-sample-verb-patch {
-		fill: var(--studio-blue-70);
+		fill: var(--studio-blue-5);
 	}
 }
 

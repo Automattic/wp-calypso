@@ -37,13 +37,12 @@ class LegendItem extends Component {
 		const { percent, value } = this.props;
 
 		let valueString = '';
-
 		if ( value && percent ) {
 			valueString = `${ value } (${ percent }%)`;
 		} else if ( value ) {
 			valueString = value;
 		} else if ( percent ) {
-			valueString = `${ percent }%`;
+			valueString = percent === '0' ? '-' : `${ percent }%`;
 		}
 
 		return valueString.length > 0 ? (
