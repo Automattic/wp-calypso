@@ -37,5 +37,6 @@ export default function useChatStatus(
 		isPrecancellationChatOpen: Boolean( chatStatus?.is_precancellation_chat_open ),
 		supportActivity,
 		supportLevel: chatStatus?.supportLevel,
+		wapuuAssistantEnabled: chatStatus?.wapuu_assistant_enabled,
 	};
 }

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -28,6 +27,7 @@ interface OdieAssistantContextInterface {
 	isLoading: boolean;
 	isNudging: boolean;
 	isVisible: boolean;
+	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
@@ -77,16 +77,19 @@ const OdieAssistantProvider = ( {
 	botNameSlug = null,
 	botSetting = 'wapuu',
 	initialUserMessage,
+	extraContactOptions,
+	enabled = true,
 	children,
 }: {
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
 	botSetting?: string;
+	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
+	extraContactOptions?: ReactNode;
 	children?: ReactNode;
 } ) => {
 	const dispatch = useDispatch();
-	const odieIsEnabled = config.isEnabled( 'wapuu' );
 
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -132,25 +135,51 @@ const OdieAssistantProvider = ( {
 		} );
 	};
 
+	// This might need a rework in the future, like connecting messages to a client_chat_id and
+	// Update it to be a message.type = 'message' in order to keep simplicity.
 	const addMessage = ( message: Message | Message[] ) => {
 		setChat( ( prevChat ) => {
 			// Normalize message to always be an array
 			const newMessages = Array.isArray( message ) ? message : [ message ];
 
-			// Determine if the last message is a placeholder
-			const shouldRemovePlaceholder =
-				prevChat.messages[ prevChat.messages.length - 1 ]?.type === 'placeholder';
+			// Check if any message is a placeholder
+			const hasPlaceholder = prevChat.messages.some( ( msg ) => msg.type === 'placeholder' );
 
+			// Check if the new message is of type 'dislike-feedback'
+			const isNewMessageDislikeFeedback = newMessages.some(
+				( msg ) => msg.type === 'dislike-feedback'
+			);
+
+			// Remove placeholders if the new message is not 'dislike-feedback'
+			const filteredMessages =
+				hasPlaceholder && ! isNewMessageDislikeFeedback
+					? prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' )
+					: prevChat.messages;
+
+			// If the new message is 'dislike-feedback' and there's a placeholder, insert it before the placeholder
+			if ( hasPlaceholder && isNewMessageDislikeFeedback ) {
+				const lastPlaceholderIndex = prevChat.messages
+					.map( ( msg ) => msg.type )
+					.lastIndexOf( 'placeholder' );
+				return {
+					chat_id: prevChat.chat_id,
+					messages: [
+						...prevChat.messages.slice( 0, lastPlaceholderIndex ), // Take all messages before the last placeholder
+						...newMessages, // Insert new 'dislike-feedback' messages
+						...prevChat.messages.slice( lastPlaceholderIndex ), // Add back the placeholder and any messages after it
+					],
+				};
+			}
+
+			// For all other cases, append new messages at the end, without placeholders if not 'dislike-feedback'
 			return {
 				chat_id: prevChat.chat_id,
-				messages: shouldRemovePlaceholder
-					? [ ...prevChat.messages.slice( 0, -1 ), ...newMessages ] // Remove placeholder and add new messages
-					: [ ...prevChat.messages, ...newMessages ], // Just add new messages
+				messages: [ ...filteredMessages, ...newMessages ],
 			};
 		} );
 	};
 
-	if ( ! odieIsEnabled ) {
+	if ( ! enabled ) {
 		return <>{ children }</>;
 	}
 
@@ -163,6 +192,7 @@ const OdieAssistantProvider = ( {
 				botSetting,
 				chat,
 				clearChat,
+				extraContactOptions,
 				initialUserMessage,
 				isLoadingChat: false,
 				isLoading: isLoading,
