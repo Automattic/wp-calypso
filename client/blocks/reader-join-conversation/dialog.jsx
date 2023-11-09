@@ -79,25 +79,7 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 				<p>
 					{ translate( 'Sign in to like, comment, reblog, and subscribe to your favorite blogs.' ) }
 				</p>
-				{ ! isLoginPopupOpen && (
-					<Button
-						isPrimary
-						onClick={ onCreateAccountClick }
-						className="reader-join-conversation-dialog__create-account-button"
-					>
-						{ translate( 'Create a new account' ) }
-					</Button>
-				) }
-				{ ! isLoginPopupOpen && (
-					<Button
-						isLink
-						onClick={ onLoginClick }
-						className="reader-join-conversation-dialog__login"
-					>
-						{ translate( 'Log in' ) }
-					</Button>
-				) }
-				{ isLoginPopupOpen && (
+				{ isLoginPopupOpen ? (
 					<>
 						<SpinnerLine />
 						<Button
@@ -106,6 +88,23 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 							className="reader-join-conversation-dialog__cancel"
 						>
 							{ translate( 'Cancel' ) }
+						</Button>
+					</>
+				) : (
+					<>
+						<Button
+							isPrimary
+							onClick={ onCreateAccountClick }
+							className="reader-join-conversation-dialog__create-account-button"
+						>
+							{ translate( 'Create a new account' ) }
+						</Button>
+						<Button
+							isLink
+							onClick={ onLoginClick }
+							className="reader-join-conversation-dialog__login"
+						>
+							{ translate( 'Log in' ) }
 						</Button>
 					</>
 				) }
