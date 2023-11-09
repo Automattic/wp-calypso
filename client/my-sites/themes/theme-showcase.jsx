@@ -395,7 +395,6 @@ class ThemeShowcase extends Component {
 								getOptions={ this.getThemeOptions }
 								getScreenshotUrl={ this.getScreenshotUrl }
 								getActionLabel={ this.getActionLabel }
-								collectionIndex={ 0 }
 								onSeeAll={ () =>
 									this.onCollectionSeeAll( {
 										tier: THEME_COLLECTIONS.marketplace.query.tier,
