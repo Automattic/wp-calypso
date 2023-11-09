@@ -166,6 +166,7 @@ function useAggregateHttpVerbData(
 		dimension
 	);
 	const allowedVerbs: string[] = [ 'GET', 'POST', 'HEAD', 'DELETE' ];
+
 	return {
 		formattedData: Object.keys( data.formattedData ).reduce(
 			( filtered: Record< string, number >, key: string ) => {

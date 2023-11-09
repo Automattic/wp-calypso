@@ -146,16 +146,6 @@ $section-max-width: 1224px;
 	}
 }
 
-.site-monitoring-cache-pie-chart {
-	.pie-chart__chart-section-cache-miss,
-	.pie-chart__legend-sample-cache-miss {
-		fill: #bae0f9;
-	}
-	.pie-chart__chart-section-cache-hit,
-	.pie-chart__legend-sample-cache-hit {
-		fill: var(--studio-blue-30);
-	}
-}
 .site-monitoring-http-verbs-pie-chart {
 	.pie-chart__chart-section-verb-post,
 	.pie-chart__legend-sample-verb-post {
