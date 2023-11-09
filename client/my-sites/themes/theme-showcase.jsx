@@ -375,6 +375,8 @@ class ThemeShowcase extends Component {
 		};
 
 		const showCollections =
+			this.props.isJetpackSite &&
+			this.props.isAtomicSite &&
 			! ( category || search || filter || isCollectionView ) &&
 			tier === '' &&
 			this.isThemeDiscoveryEnabled();
