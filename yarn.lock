@@ -533,6 +533,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@automattic/viewport-react": "workspace:^"
     "@storybook/addon-actions": ^7.4.6
     "@storybook/react": ^7.4.6
     "@testing-library/dom": ^9.3.3

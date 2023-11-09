@@ -32,6 +32,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@automattic/typography": "workspace:^",
+		"@automattic/viewport-react": "workspace:^",
 		"@wordpress/base-styles": "^4.35.0",
 		"@wordpress/components": "^25.10.0",
 		"@wordpress/icons": "^9.35.0",
