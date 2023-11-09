@@ -10,6 +10,7 @@ import {
 	type PlanSlug,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	type StorageOption,
+	isP2FreePlan,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -283,6 +284,10 @@ const LoggedInPlansFeatureActionButton = ( {
 					{ planActionOverrides.loggedInFreePlan.text }
 				</Button>
 			);
+		}
+
+		if ( isP2FreePlan( planSlug ) && current ) {
+			return null;
 		}
 
 		return (

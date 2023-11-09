@@ -548,7 +548,7 @@ const PlansFeaturesMain = ( {
 			};
 		}
 
-		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
+		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) && intent !== 'plans-p2' ) {
 			actionOverrides = {
 				loggedInFreePlan: {
 					status:
