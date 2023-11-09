@@ -21,4 +21,12 @@
 		gap: 48px;
 		grid-template-columns: repeat(3, 1fr);
 	}
+
+	@media (min-width: 1600px) {
+		grid-template-columns: repeat(4, 1fr);
+	}
+
+	@media (min-width: 2560px) {
+		grid-template-columns: repeat(5, 1fr);
+	}
 }
