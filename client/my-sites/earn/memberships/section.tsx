@@ -24,7 +24,11 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
 import { Query } from '../types';
-import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH, LAUNCHPAD_HASH } from './constants';
+import {
+	ADD_TIER_PLAN_HASH,
+	OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
+	LAUNCHPAD_HASH,
+} from './constants';
 import './style.scss';
 
 type MembershipsSectionProps = {
@@ -210,9 +214,9 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 					<NoticeAction
 						external
 						icon="create"
-						href={ `/earn/payments-plans/${ site?.slug }${ ADD_NEWSLETTER_PAYMENT_PLAN_HASH }` }
+						href={ `/earn/payments-plans/${ site?.slug }${ ADD_TIER_PLAN_HASH }` }
 					>
-						{ translate( 'Add payments' ) }
+						{ translate( 'Add tiers' ) }
 					</NoticeAction>
 				</Notice>
 			);
@@ -379,7 +383,10 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
  * connection, this source is used to redirect the user the appropriate place.
  */
 function getSource() {
-	if ( window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH ) {
+	if (
+		window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
+		window.location.hash === ADD_TIER_PLAN_HASH
+	) {
 		return 'earn-newsletter';
 	}
 	if ( window.location.hash === LAUNCHPAD_HASH ) {

@@ -78,6 +78,7 @@ import {
 	isWporgTheme,
 	getCanonicalTheme,
 	getPremiumThemePrice,
+	getTheme,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
@@ -857,6 +858,7 @@ class ThemeSheet extends Component {
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted,
+			isThemeInstalled,
 		} = this.props;
 		const { isAtomicTransferCompleted } = this.state;
 		if ( isActive ) {
@@ -883,7 +885,8 @@ class ThemeSheet extends Component {
 			} else if (
 				isExternallyManagedTheme &&
 				! isMarketplaceThemeSubscribed &&
-				isSiteEligibleForManagedExternalThemes
+				isSiteEligibleForManagedExternalThemes &&
+				! isThemeInstalled
 			) {
 				return translate( 'Subscribe to activate' );
 			} else if ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) {
@@ -1000,6 +1003,14 @@ class ThemeSheet extends Component {
 	goBack = () => {
 		const { backPath, locale, isLoggedIn, themeId } = this.props;
 		this.props.recordTracksEvent( 'calypso_theme_sheet_back_click', { theme_name: themeId } );
+
+		// Use history back when coming from customize your store screen.
+		const urlParams = new URLSearchParams( window.location.search );
+		if ( urlParams.has( 'from', 'customize-store' ) && window.history.length > 1 ) {
+			window.history.back();
+			return;
+		}
+
 		page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
 	};
 
@@ -1141,6 +1152,7 @@ class ThemeSheet extends Component {
 			translate,
 			isLoggedIn,
 			isPremium,
+			isThemeInstalled,
 			isThemePurchased,
 			isSiteBundleEligible,
 			isSiteEligibleForManagedExternalThemes,
@@ -1239,6 +1251,7 @@ class ThemeSheet extends Component {
 				( isPremium && ! isThemePurchased ) ||
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
 				( isExternallyManagedTheme &&
+					! isThemeInstalled &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
 
 			const upsellNudgePlan =
@@ -1409,6 +1422,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isStandaloneJetpack,
 		demoUrl,
 		showTryAndCustomize,
+		isThemeInstalled,
 		isBundledSoftwareSet,
 		isExternallyManagedTheme,
 		isSiteEligibleForManagedExternalThemes,
@@ -1435,7 +1449,8 @@ const ThemeSheetWithOptions = ( props ) => {
 	} else if (
 		isExternallyManagedTheme &&
 		isSiteEligibleForManagedExternalThemes &&
-		! isMarketplaceThemeSubscribed
+		! isMarketplaceThemeSubscribed &&
+		! isThemeInstalled
 	) {
 		defaultOption = 'subscribe';
 	} else if ( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) {
@@ -1513,6 +1528,7 @@ export default connect(
 			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),
+			isThemeInstalled: !! getTheme( state, siteId, themeId ),
 			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),

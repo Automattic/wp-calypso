@@ -19,6 +19,8 @@ import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
+import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
+import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -136,9 +138,7 @@ class ThemeShowcase extends Component {
 		this.props.setBackPath( this.constructUrl() );
 	}
 
-	isThemeDiscoveryEnabled = () =>
-		( this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lits' ) ) ||
-		( ! this.props.isLoggedIn && config.isEnabled( 'themes/discovery-lots' ) );
+	isThemeDiscoveryEnabled = () => config.isEnabled( 'themes/discovery' );
 
 	getDefaultStaticFilter = () => staticFilters.RECOMMENDED;
 
@@ -323,7 +323,6 @@ class ThemeShowcase extends Component {
 			tier,
 			category,
 			search: showCollection ? '' : this.props.search,
-			isCollectionView: showCollection,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
 				this.props.category === staticFilters.MYTHEMES.key && {
@@ -367,7 +366,8 @@ class ThemeShowcase extends Component {
 	};
 
 	allThemes = ( { themeProps } ) => {
-		const { filter, isCollectionView, isJetpackSite, tier, children } = this.props;
+		const { filter, isCollectionView, isJetpackSite, tier, children, search, category } =
+			this.props;
 		if ( isJetpackSite ) {
 			return children;
 		}
@@ -378,9 +378,31 @@ class ThemeShowcase extends Component {
 			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
 		};
 
+		const showCollections =
+			! ( category || search || filter || isCollectionView ) &&
+			tier === '' &&
+			this.isThemeDiscoveryEnabled();
+
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themesSelectionProps } />
+				<ThemesSelection { ...themesSelectionProps }>
+					{ showCollections && (
+						<>
+							<ShowcaseThemeCollection
+								{ ...THEME_COLLECTIONS.marketplace }
+								getOptions={ this.getThemeOptions }
+								getScreenshotUrl={ this.getScreenshotUrl }
+								getActionLabel={ this.getActionLabel }
+								onSeeAll={ () =>
+									this.onCollectionSeeAll( {
+										tier: THEME_COLLECTIONS.marketplace.query.tier,
+										filter: THEME_COLLECTIONS.marketplace.query.filter,
+									} )
+								}
+							/>
+						</>
+					) }
+				</ThemesSelection>
 			</div>
 		);
 	};
@@ -610,6 +632,7 @@ class ThemeShowcase extends Component {
 							} ) }
 							filter={ this.props.filter }
 							tier={ this.props.tier }
+							isLoggedIn={ isLoggedIn }
 						/>
 					) }
 					<div className="themes__showcase">

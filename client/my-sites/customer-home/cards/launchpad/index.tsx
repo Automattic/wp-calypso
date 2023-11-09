@@ -1,12 +1,6 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
-import {
-	updateLaunchpadSettings,
-	LaunchpadNavigator,
-	useSortedLaunchpadTasks,
-	useLaunchpadNavigator,
-} from '@automattic/data-stores';
+import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
-import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -42,30 +36,6 @@ const CustomerHomeLaunchpad = ( {
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
-
-	const { setActiveChecklist, receiveActiveChecklistSlug } = useDispatch(
-		LaunchpadNavigator.store
-	);
-
-	const {
-		data: { current_checklist: currentNavigatorChecklist },
-	} = useLaunchpadNavigator( siteSlug, null );
-
-	// Ensure that if we updated the checklist on the server, we update the navigator.
-	// One case where this can happen is when we launch a site and switch to a post-launch checklist.
-	useEffect( () => {
-		receiveActiveChecklistSlug( currentNavigatorChecklist );
-
-		if ( siteSlug && checklistSlug ) {
-			setActiveChecklist( siteSlug, checklistSlug );
-		}
-	}, [
-		checklistSlug,
-		currentNavigatorChecklist,
-		receiveActiveChecklistSlug,
-		setActiveChecklist,
-		siteSlug,
-	] );
 
 	// return nothing if the launchpad is dismissed
 	if ( isDismissed ) {

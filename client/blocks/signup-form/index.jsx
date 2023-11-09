@@ -25,7 +25,6 @@ import PropTypes from 'prop-types';
 import { Component, useEffect, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
-import Divider from 'calypso/blocks/login/divider';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -40,6 +39,7 @@ import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { FormDivider } from 'calypso/lib/authentication';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import {
@@ -73,11 +73,13 @@ const debug = debugModule( 'calypso:signup-form:form' );
 let usernamesSearched = [];
 let timesUsernameValidationFailed = 0;
 let timesPasswordValidationFailed = 0;
+let timesEmailValidationFailed = 0;
 
 const resetAnalyticsData = () => {
 	usernamesSearched = [];
 	timesUsernameValidationFailed = 0;
 	timesPasswordValidationFailed = 0;
+	timesEmailValidationFailed = 0;
 };
 
 class SignupForm extends Component {
@@ -321,6 +323,15 @@ class SignupForm extends Component {
 
 						timesPasswordValidationFailed++;
 					}
+
+					if ( field === 'email' ) {
+						recordTracksEvent( 'calypso_signup_email_validation_failed', {
+							error: keys( fieldError )[ 0 ],
+							email: fields.email,
+						} );
+
+						timesEmailValidationFailed++;
+					}
 				} );
 
 				if ( fields.email ) {
@@ -454,6 +465,7 @@ class SignupForm extends Component {
 				unique_usernames_searched: usernamesSearched.length,
 				times_username_validation_failed: timesUsernameValidationFailed,
 				times_password_validation_failed: timesPasswordValidationFailed,
+				times_email_validation_failed: timesEmailValidationFailed,
 			};
 
 			this.props.submitForm( this.state.form, this.getUserData(), analyticsData, () => {
@@ -1227,13 +1239,7 @@ class SignupForm extends Component {
 
 					{ ! isGravatar && (
 						<>
-							{ showSeparator && (
-								<div className="signup-form__separator">
-									<div className="signup-form__separator-text">
-										{ this.props.translate( 'or' ) }
-									</div>
-								</div>
-							) }
+							{ showSeparator && <FormDivider /> }
 
 							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 								<SocialSignupForm
@@ -1269,15 +1275,11 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ showSeparator && (
-					<div className="signup-form__separator">
-						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-					</div>
-				) }
+				{ showSeparator && <FormDivider /> }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<Fragment>
-						{ this.props.isWoo && <Divider>{ this.props.translate( 'or' ) }</Divider> }
+						{ this.props.isWoo && <FormDivider /> }
 						<SocialSignupForm
 							handleResponse={ this.props.handleSocialResponse }
 							socialService={ this.props.socialService }

@@ -18,7 +18,7 @@ import {
 
 describe( 'utils', () => {
 	describe( 'isTermsEqual', () => {
-		test( 'should return false if term edits are the same as saved terms', () => {
+		test( 'should return true if term edits are the same as saved terms', () => {
 			const isEqual = isTermsEqual(
 				{
 					post_tag: [ 'ribs', 'chicken' ],

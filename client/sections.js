@@ -31,6 +31,12 @@ const sections = [
 		group: 'me',
 	},
 	{
+		name: 'promote-post-i2',
+		paths: [ '/advertising' ],
+		module: 'calypso/my-sites/promote-post-i2',
+		group: 'sites',
+	},
+	{
 		name: 'concierge',
 		paths: [ '/me/concierge', '/me/quickstart' ],
 		module: 'calypso/me/concierge',
@@ -631,12 +637,6 @@ const sections = [
 		name: 'add-ons',
 		paths: [ '/add-ons', '/add-ons/[^\\/]+' ],
 		module: 'calypso/my-sites/add-ons',
-		group: 'sites',
-	},
-	{
-		name: 'promote-post-i2',
-		paths: [ '/advertising' ],
-		module: 'calypso/my-sites/promote-post-i2',
 		group: 'sites',
 	},
 	{

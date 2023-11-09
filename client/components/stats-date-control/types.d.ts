@@ -2,7 +2,6 @@ interface StatsDateControlProps {
 	slug: string;
 	queryParams: string;
 	period: 'day' | 'week' | 'month' | 'year';
-	pathTemplate: string;
 	dateRange: any;
 }
 

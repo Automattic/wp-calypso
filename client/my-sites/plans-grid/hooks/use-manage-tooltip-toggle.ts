@@ -1,5 +1,5 @@
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import { hasTouch } from 'calypso/lib/touch-detect';
+import { hasTouch } from '../lib/touch-detect';
 
 export function useManageTooltipToggle(): [ string, Dispatch< SetStateAction< string > > ] {
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );

@@ -1,7 +1,7 @@
 import { Dialog } from '@automattic/components';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
+import { get, includes, isEmpty, isEqual, snakeCase } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -17,10 +17,10 @@ import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { requestWhois, saveWhois } from 'calypso/state/domains/management/actions';
 import {
-	isUpdatingWhois,
 	getWhoisData,
 	getWhoisSaveError,
 	getWhoisSaveSuccess,
+	isUpdatingWhois,
 } from 'calypso/state/domains/management/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -456,7 +456,6 @@ class EditContactInfoFormCard extends Component {
 		}
 
 		const updateWpcomEmailCheckboxDisabled = this.shouldDisableUpdateWpcomEmailCheckbox();
-
 		return (
 			<>
 				{ showContactInfoNote && (

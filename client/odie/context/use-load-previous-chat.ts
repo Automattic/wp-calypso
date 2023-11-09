@@ -5,10 +5,9 @@ import { getOdieInitialMessage } from './get-odie-initial-message';
 
 export const useLoadPreviousChat = (
 	botNameSlug: OdieAllowedBots,
-	chatId: number | null | undefined,
-	onChatLoaded?: () => void
+	chatId: number | null | undefined
 ) => {
-	const { data: existingChat } = useOdieGetChat( botNameSlug, chatId );
+	const { data: existingChat } = useOdieGetChat( botNameSlug, chatId, 1, 30 );
 	const [ chat, setChat ] = useState< Chat >( {
 		chat_id: null,
 		messages: [ getOdieInitialMessage( botNameSlug ) ],
@@ -24,7 +23,7 @@ export const useLoadPreviousChat = (
 				messages: [ getOdieInitialMessage( botNameSlug ) ],
 			} );
 		}
-	}, [ botNameSlug, chatId, existingChat, onChatLoaded ] );
+	}, [ botNameSlug, chatId, existingChat ] );
 
 	return chat;
 };

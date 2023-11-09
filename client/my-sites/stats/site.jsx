@@ -144,7 +144,6 @@ class StatsSite extends Component {
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
-	onChangeChartQuantity = ( customChartQuantity ) => this.setState( { customChartQuantity } );
 
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
@@ -220,6 +219,8 @@ class StatsSite extends Component {
 		// Set up a custom range for the chart.
 		// Dependant on new date range picker controls.
 		let customChartRange = null;
+		let customChartQuantity;
+
 		if ( isDateControlEnabled ) {
 			// Sort out end date for chart.
 			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
@@ -255,7 +256,7 @@ class StatsSite extends Component {
 					? moment( customChartRange.chartEnd )
 					: moment( customChartRange.chartEnd ).endOf( period );
 
-			this.state.customChartQuantity = Math.ceil(
+			customChartQuantity = Math.ceil(
 				adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
 			);
 
@@ -367,7 +368,7 @@ class StatsSite extends Component {
 							queryDate={ queryDate }
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
-							customQuantity={ this.state.customChartQuantity }
+							customQuantity={ customChartQuantity }
 							customRange={ customChartRange }
 							hideLegend={ isDateControlEnabled }
 						/>

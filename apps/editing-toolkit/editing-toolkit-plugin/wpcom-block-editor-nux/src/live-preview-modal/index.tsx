@@ -62,8 +62,13 @@ export default function LivePreviewModal() {
 	const onClose = ( closedBy = 'close_icon' ) => {
 		setIsModalOpen( false );
 		recordTracksEvent( 'calypso_block_theme_live_preview_modal_close', {
-			theme: themeSlug,
 			closed_by: closedBy,
+			/**
+			 * "Do not show this modal again" is active only when the modal is closed by "Continue" button.
+			 * https://github.com/Automattic/wp-calypso/pull/83572#issuecomment-1797122244
+			 */
+			do_not_show_again: closedBy === 'continue_button' ? shouldSuppressModal : null,
+			theme: themeSlug,
 		} );
 	};
 
@@ -72,10 +77,6 @@ export default function LivePreviewModal() {
 			suppressModal();
 		}
 		onClose( 'continue_button' );
-		recordTracksEvent( 'calypso_block_theme_live_preview_modal_continue_click', {
-			do_not_show_again: shouldSuppressModal,
-			theme: themeSlug,
-		} );
 	};
 
 	return (

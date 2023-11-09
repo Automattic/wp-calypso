@@ -75,6 +75,20 @@
 		background: unset;
 		color: var(--color-error-40);
 
+		&.is-compact {
+			.notice__icon-wrapper-drop {
+				width: 18px;
+				height: 18px;
+				top: unset;
+				left: unset;
+			}
+
+			.notice__icon-wrapper {
+				align-items: center;
+				padding-top: 0;
+			}
+		}
+
 		.notice__text a {
 			color: var(--color-link);
 		}

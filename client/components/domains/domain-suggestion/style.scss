@@ -199,7 +199,8 @@
 	}
 
 	.domain-registration-suggestion__hsts-tooltip {
-		display: flex;
+		display: inline;
+		vertical-align: middle;
 		align-items: center;
 		justify-content: center;
 		margin-left: 4px;

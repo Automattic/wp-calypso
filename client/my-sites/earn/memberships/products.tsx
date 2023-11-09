@@ -24,7 +24,15 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
 import { Product, Query } from '../types';
-import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
+import {
+	ADD_NEW_PAYMENT_PLAN_HASH,
+	ADD_TIER_PLAN_HASH,
+	OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
+	PLAN_MONTHLY_FREQUENCY,
+	PLAN_ONE_TIME_FREQUENCY,
+	PLAN_YEARLY_FREQUENCY,
+	TYPE_TIER,
+} from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 import MembershipsSection from './section';
 import './style.scss';
@@ -35,7 +43,8 @@ type MembersProductsSectionProps = {
 
 const showAddEditDialogInitially =
 	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
-	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
+	window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
+	window.location.hash === ADD_TIER_PLAN_HASH;
 
 function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const translate = useTranslate();
@@ -64,9 +73,10 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
 
-	const subscribe_as_site_subscriber = product
-		? product?.subscribe_as_site_subscriber
-		: window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
+	const defaultToTierPanel =
+		window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
+		window.location.hash === ADD_TIER_PLAN_HASH;
+	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
 
 	const trackUpgrade = () =>
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
@@ -115,6 +125,18 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	function closeDialog() {
 		setShowAddEditDialog( false );
 		setShowDeleteDialog( false );
+	}
+
+	function getPriceFromProduct( product: Product, price: string ) {
+		switch ( product.renewal_schedule ) {
+			case PLAN_MONTHLY_FREQUENCY:
+				return translate( '%s/month', { args: price } );
+			case PLAN_YEARLY_FREQUENCY:
+				return translate( '%s/year', { args: price } );
+			case PLAN_ONE_TIME_FREQUENCY:
+			default:
+				return price;
+		}
 	}
 
 	return (
@@ -178,12 +200,13 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 										{ currentProduct?.title }
 									</div>
 									<sub className="memberships__products-product-price">
-										{ currentProduct.subscribe_as_site_subscriber
-											? translate( '%s/month', { args: price } )
-											: price }
-										{ currentAnnualProduct && translate( ' (%s/year)', { args: annualPrice } ) }
+										{ getPriceFromProduct( currentProduct, price ) }
+										{ currentAnnualProduct &&
+											translate( ' (%s)', {
+												args: getPriceFromProduct( currentAnnualProduct, annualPrice ),
+											} ) }
 									</sub>
-									{ currentProduct?.subscribe_as_site_subscriber && (
+									{ currentProduct.type === TYPE_TIER && (
 										<div className="memberships__products-product-badge">
 											<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
 										</div>
@@ -202,7 +225,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }
 					product={ Object.assign( product ?? {}, {
-						subscribe_as_site_subscriber: subscribe_as_site_subscriber,
+						type: product ? product.type : default_product_type,
 					} ) }
 					annualProduct={ annualProduct }
 				/>

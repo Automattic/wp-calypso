@@ -118,6 +118,14 @@ class Notices extends PureComponent {
 						isCompact={ this.state.compactNotices ? true : null }
 					/>
 				</div>
+				<div>
+					<Notice
+						status="is-transparent-info"
+						showDismiss={ false }
+						text="I'm an `is-transparent-info` notice."
+						isCompact={ this.state.compactNotices ? true : null }
+					/>
+				</div>
 			</div>
 		);
 	}

@@ -6,6 +6,29 @@ export type Source = {
 	heading: string;
 };
 
+type Feature =
+	| 'login'
+	| 'logout'
+	| 'theme'
+	| 'plugin'
+	| 'admin'
+	| 'site-editing'
+	| 'domain'
+	| 'email'
+	| 'subscription'
+	| 'notification'
+	| 'podcast'
+	| 'facebook'
+	| 'unrelated-to-wordpress';
+
+type InquiryType =
+	| 'help'
+	| 'suggestion'
+	| 'refund'
+	| 'billing'
+	| 'unrelated-to-wordpress'
+	| 'request-for-human-support';
+
 export type Context = {
 	nudge_id?: string | undefined;
 	section_name?: string;
@@ -13,6 +36,16 @@ export type Context = {
 	site_id: number | null;
 	user_tracking?: OdieUserTracking[];
 	sources?: Source[];
+	prompt_tags?: {
+		feature?: Feature;
+		inquiry_type?: InquiryType;
+		language?: string;
+		product?: string;
+	};
+	flags?: {
+		forward_to_human_support?: boolean;
+		canned_response?: boolean;
+	};
 };
 
 export type Nudge = {
@@ -29,10 +62,12 @@ export type MessageType =
 	| 'meta'
 	| 'error'
 	| 'placeholder'
+	| 'dislike-feedback'
 	| 'help-link'
 	| 'introduction';
 
 export type Message = {
+	message_id?: number;
 	content: string;
 	meta?: Record< string, string >;
 	role: MessageRole;
@@ -40,7 +75,7 @@ export type Message = {
 	liked?: boolean | null;
 	simulateTyping?: boolean;
 	context?: Context;
-	id?: string;
+	rating_value?: number;
 };
 
 export type Chat = {

@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -21,7 +22,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
 
 	const getPrompt = () => {
-		return prompts !== undefined ? prompts[ promptIndex ] : null;
+		return prompts ? prompts[ promptIndex ] : null;
 	};
 
 	// If no site ID set, go through site selector before rendering post editor
@@ -57,6 +58,10 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		// Prevent navigating away so we have time to record the click.
 		e.preventDefault();
 
+		if ( getPrompt()?.answered ) {
+			return;
+		}
+
 		dispatch(
 			recordTracksEvent( tracksPrefix + 'answer_prompt', {
 				site_id: siteId,
@@ -83,6 +88,15 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 	const trackClickViewAllResponses = () => {
 		dispatch(
 			recordTracksEvent( tracksPrefix + 'view_all_responses', {
+				site_id: siteId,
+				prompt_id: getPrompt()?.id,
+			} )
+		);
+	};
+
+	const trackBloganuaryMoreInfoClick = () => {
+		dispatch(
+			recordTracksEvent( tracksPrefix + 'bloganuary_more_info_click', {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
 			} )
@@ -126,11 +140,12 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 			</div>
 		);
 
+		const link = new URL( prompt.answered_link );
+		const relativeLink = link.toString().substring( link.origin.length );
+
 		const viewAllResponses = (
 			<a
-				href={
-					'/tag/dailyprompt' + ( prompt && prompt.id ? '-' + encodeURIComponent( prompt.id ) : '' )
-				}
+				href={ relativeLink }
 				className="blogging-prompt__prompt-responses-link"
 				onClick={ trackClickViewAllResponses }
 			>
@@ -158,11 +173,34 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		return (
 			<div className="blogging-prompt__prompt-answers">
 				{ renderResponses() }
-				<Button href={ getNewPostLink() } onClick={ handleBloggingPromptClick }>
-					{ translate( 'Post Answer', {
-						comment:
-							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
-					} ) }
+				{ isBloganuary() && (
+					<a
+						href="https://wordpress.com/bloganuary"
+						className="blogging-prompt__bloganuary-link"
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ trackBloganuaryMoreInfoClick }
+					>
+						{ translate( 'Learn more' ) }
+					</a>
+				) }
+				<Button
+					href={ getNewPostLink() }
+					onClick={ handleBloggingPromptClick }
+					className="blogging-prompt__new-post-link"
+					disabled={ getPrompt()?.answered }
+				>
+					{ getPrompt()?.answered ? (
+						<>
+							<Gridicon icon="checkmark" size={ 18 } />
+							{ translate( 'Answered' ) }
+						</>
+					) : (
+						translate( 'Post Answer', {
+							comment:
+								'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
+						} )
+					) }
 				</Button>
 			</div>
 		);

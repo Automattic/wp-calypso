@@ -88,6 +88,7 @@ export const HelpCenterContactForm = () => {
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const overflow = params.get( 'overflow' ) === 'true';
+	const wapuuFlow = params.get( 'wapuuFlow' ) === 'true';
 	const navigate = useNavigate();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
@@ -185,6 +186,12 @@ export const HelpCenterContactForm = () => {
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
+
+	// if the user was chatting with Wapuu, we need to disable GPT (no more AI)
+	if ( wapuuFlow ) {
+		params.set( 'disable-gpt', 'true' );
+		params.set( 'show-gpt', 'false' );
+	}
 
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
@@ -340,6 +347,8 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
+						ai_chat_id: gptResponse?.answer_id,
+						ai_message: gptResponse?.response,
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {

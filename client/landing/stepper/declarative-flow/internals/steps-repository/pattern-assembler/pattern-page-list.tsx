@@ -74,7 +74,8 @@ const PatternPageList = ( {
 				>
 					<PatternPageListItem label={ translate( 'Homepage' ) } isDisabled />
 				</CompositeItem>
-				{ categoriesInOrder.map( ( { name, label } ) => {
+				{ categoriesInOrder.map( ( category: Category ) => {
+					const { name } = category;
 					const isSelected = name ? selectedPages.includes( name ) : false;
 					const hasPages = name && pagesMapByCategory[ name ]?.length;
 
@@ -91,7 +92,10 @@ const PatternPageList = ( {
 							aria-checked={ isSelected }
 							onClick={ () => onSelectPage( name ) }
 						>
-							<PatternPageListItem label={ label } isSelected={ isSelected } />
+							<PatternPageListItem
+								label={ pagesMapByCategory[ name ][ 0 ].title }
+								isSelected={ isSelected }
+							/>
 						</CompositeItem>
 					);
 				} ) }

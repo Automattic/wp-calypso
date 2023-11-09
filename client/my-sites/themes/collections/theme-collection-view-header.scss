@@ -3,7 +3,61 @@
 
 .theme-showcase.is-collection-view {
 	.theme-collection-view-header {
-		background-color: #e5f4ff;
+		&.is-logged-in {
+			margin: 0;
+			padding: 0;
+
+			.navigation-header__main {
+				padding-bottom: 20px;
+			}
+
+			.theme-collection-view-header__info {
+				padding-left: 16px;
+
+				@include break-small {
+					padding-left: 0;
+				}
+			}
+
+			.formatted-header__title {
+				font-size: 1.25rem;
+				font-weight: 500;
+				line-height: 26px;
+				margin-bottom: 0;
+			}
+
+			.formatted-header__subtitle {
+				color: var(--color-neutral-60);
+				display: inline-block;
+				letter-spacing: -0.15px;
+				line-height: 20px;
+				margin: 0;
+				font-size: 0.875rem;
+			}
+
+			.breadcrumbs {
+				padding-bottom: 22px;
+				margin: 16px;
+
+				@include break-small {
+					margin: 0;
+				}
+			}
+		}
+
+		&:not(.is-logged-in) {
+			background-color: #e5f4ff;
+
+			.formatted-header__title {
+				color: var(--studio-blue-50);
+				font-family: $brand-serif;
+				font-size: rem(44px);
+				font-style: normal;
+				font-weight: 400;
+				margin-bottom: 16px;
+			}
+		}
+
 		padding: 32px 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
@@ -33,17 +87,15 @@
 		}
 	}
 
-	.theme-collection-view-header__title {
-		color: var(--studio-blue-50);
-		font-family: $brand-serif;
-		font-size: rem(44px);
+	.formatted-header__title {
+		font-size: rem(30px);
 		font-style: normal;
-		font-weight: 400;
+		font-weight: 600;
 		line-height: 1.15;
-		margin-bottom: 16px;
+		margin-bottom: 8px;
 	}
 
-	.theme-collection-view-header__description {
+	.formatted-header__subtitle {
 		color: var(--studio-gray-80);
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-large;

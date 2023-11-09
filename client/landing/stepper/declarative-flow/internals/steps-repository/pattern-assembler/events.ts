@@ -47,8 +47,10 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	/*
 	 * Screen Pages
 	 */
-	SCREEN_PAGES_ADD_PAGE: 'calypso_signup_pattern_assembler_screen_pages_add_page',
-	SCREEN_PAGES_REMOVE_PAGE: 'calypso_signup_pattern_assembler_screen_pages_remove_page',
+	SCREEN_PAGES_PAGE_ADD: 'calypso_signup_pattern_assembler_screen_pages_page_add',
+	SCREEN_PAGES_PAGE_REMOVE: 'calypso_signup_pattern_assembler_screen_pages_page_remove',
+	SCREEN_PAGES_PAGE_PREVIEW_CLICK:
+		'calypso_signup_pattern_assembler_screen_pages_page_preview_click',
 
 	/**
 	 * Pattern Panels

@@ -72,12 +72,11 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		} );
 
 		it( 'Enter Onboarding flow for the selected domain', async function () {
-			await expect(
-				page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } )
-			).resolves.not.toThrow();
+			await page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } );
 
-			const urlRegex = `/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }`;
-			expect( page.url() ).toMatch( urlRegex );
+			// Additional assertions for the URL.
+			expect( page.url() ).toContain( 'siteSlug' );
+			expect( page.url() ).toContain( selectedFreeDomain );
 		} );
 
 		it( 'Select "Write" goal', async function () {

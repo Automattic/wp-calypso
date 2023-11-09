@@ -82,7 +82,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isDesktop = useDesktopBreakpoint();
 	const stepName = 'plans';
 	const customerType = 'personal';
-	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = isDomainUpsellFlow( flowName ) ? false : true;
 	const plansIntent = getPlansIntent( flowName );
@@ -240,7 +239,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const classes = classNames( 'plans-step', {
-		'in-vertically-scrolled-plans-experiment': isInVerticalScrollingPlansExperiment,
 		'has-no-sidebar': true,
 		'is-wide-layout': false,
 		'is-extra-wide-layout': true,
