@@ -178,7 +178,7 @@ export const pricesContext: Callback = ( context, next ) => {
 };
 
 export const landingPageContext: Callback = () => {
-	page.redirect( isNewNavigationEnabled ? '/partner-portal/billing' : '/partner-portal/licenses' );
+	page.redirect( '/partner-portal/billing' );
 };
 
 export const wpcomAtomicHostingContext: Callback = ( context, next ) => {
