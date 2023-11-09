@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
-import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
+import JetpackCloudSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import DashboardOverview from './dashboard-overview';
@@ -28,7 +28,9 @@ export function agencyDashboardContext( context: PageJS.Context, next: VoidFunct
 	context.header = <Header />;
 
 	if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
+		context.secondary = (
+			<JetpackCloudSidebar initialPath="/" path={ context.path } isJetpackManage />
+		);
 	} else {
 		context.secondary = <DashboardSidebar path={ context.path } />;
 	}

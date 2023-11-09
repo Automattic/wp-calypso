@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
-import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
+import JetpackCloudSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import Header from '../agency-dashboard/header';
 import DashboardSidebar from '../agency-dashboard/sidebar';
@@ -20,7 +20,9 @@ const redirectIfHasNoAccess = ( context: PageJS.Context ) => {
 
 const setSidebar = ( context: PageJS.Context ): void => {
 	if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
+		context.secondary = (
+			<JetpackCloudSidebar initialPath="/" path={ context.path } isJetpackManage />
+		);
 	} else {
 		context.secondary = <DashboardSidebar path={ context.path } />;
 	}

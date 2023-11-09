@@ -2,20 +2,24 @@ import { plugins, currencyDollar, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
-import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
+import { SidebarNavigatorMenu, SidebarNavigatorMenuItem } from 'calypso/layout/sidebar-v2';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_MANAGE_DASHBOARD_LINK,
 	JETPACK_MANAGE_PLUGINS_LINK,
 	JETPACK_MANAGE_LICENCES_LINK,
 	JETPACK_MANAGE_BILLING_LINK,
+	JETPACK_MANAGE_PARTNER_PORTAL_LINK,
 } from './lib/constants';
 import type { MenuItemProps } from './types';
 
 const BILLING_MENU_ITEM_ID = 'partner-portal-billing-menu-item';
 
-const JetpackManageSidebar = ( { path }: { path: string } ) => {
+const JetpackManageSidebarMenu = ( { path }: { path: string } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const createItem = ( props: MenuItemProps ) => ( {
 		...props,
@@ -54,7 +58,7 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 		createItem( {
 			id: BILLING_MENU_ITEM_ID,
 			icon: currencyDollar,
-			path: '/partner-portal/',
+			path: JETPACK_MANAGE_PARTNER_PORTAL_LINK,
 			link: JETPACK_MANAGE_BILLING_LINK,
 			title: translate( 'Purchases' ),
 			trackEventProps: {
@@ -65,7 +69,19 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 	];
 	return (
 		<>
-			<NewSidebar isJetpackManage path="/" menuItems={ menuItems } />
+			<SidebarNavigatorMenu path="/">
+				{ menuItems.map( ( item ) => (
+					<SidebarNavigatorMenuItem
+						key={ item.link }
+						{ ...item }
+						onClickMenuItem={ () => {
+							if ( item.trackEventName ) {
+								dispatch( recordTracksEvent( item.trackEventName, item.trackEventProps ) );
+							}
+						} }
+					/>
+				) ) }
+			</SidebarNavigatorMenu>
 
 			<GuidedTour
 				className="jetpack-cloud-sidebar__guided-tour"
@@ -99,4 +115,4 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 	);
 };
 
-export default JetpackManageSidebar;
+export default JetpackManageSidebarMenu;

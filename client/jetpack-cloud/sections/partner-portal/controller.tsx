@@ -1,5 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
+import JetpackCloudSidebar from 'calypso/jetpack-cloud/components/sidebar';
+import { JETPACK_MANAGE_PARTNER_PORTAL_LINK } from 'calypso/jetpack-cloud/components/sidebar/menu/lib/constants';
 import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
@@ -25,8 +27,6 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
-import NewPurchasesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/purchases';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
 	getCurrentPartner,
@@ -38,13 +38,18 @@ import getSites from 'calypso/state/selectors/get-sites';
 import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
-import type PageJS from 'page';
 
 const isNewNavigationEnabled = isEnabled( 'jetpack/new-navigation' );
 
 const setSidebar = ( context: PageJS.Context ): void => {
 	if ( isNewNavigationEnabled ) {
-		context.secondary = <NewPurchasesSidebar path={ context.path } />;
+		context.secondary = (
+			<JetpackCloudSidebar
+				isJetpackManage
+				path={ context.path }
+				initialPath={ JETPACK_MANAGE_PARTNER_PORTAL_LINK }
+			/>
+		);
 	} else {
 		context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	}
@@ -94,7 +99,9 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 
 	context.header = <Header />;
 	if ( isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
+		context.secondary = (
+			<JetpackCloudSidebar initialPath="/" path={ context.path } isJetpackManage />
+		);
 	} else {
 		context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	}

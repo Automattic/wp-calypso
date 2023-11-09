@@ -16,7 +16,7 @@ import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
-import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
+import { SidebarNavigatorMenu, SidebarNavigatorMenuItem } from 'calypso/layout/sidebar-v2';
 import {
 	settingsPath,
 	purchasesPath,
@@ -79,7 +79,7 @@ const useMenuItems = ( {
 			[
 				{
 					icon: <JetpackIcons icon="activity-log" size={ 24 } />,
-					path: '/',
+					path: '/managed-sites',
 					link: `${ JETPACK_CLOUD_ACTIVITY_LOG_LINK }/${ siteSlug }`,
 					title: translate( 'Activity Log' ),
 					trackEventName: 'calypso_jetpack_sidebar_activity_clicked',
@@ -88,7 +88,7 @@ const useMenuItems = ( {
 				},
 				{
 					icon: plugins,
-					path: '/',
+					path: '/managed-sites',
 					link: pluginsPath( siteSlug ),
 					title: translate( 'Plugins' ),
 					trackEventName: 'calypso_jetpack_sidebar_plugins_clicked',
@@ -97,7 +97,7 @@ const useMenuItems = ( {
 				},
 				{
 					icon: cloud,
-					path: '/',
+					path: '/managed-sites',
 					link: backupPath( siteSlug ),
 					title: translate( 'Backup' ),
 					trackEventName: 'calypso_jetpack_sidebar_backup_clicked',
@@ -106,7 +106,7 @@ const useMenuItems = ( {
 				},
 				{
 					icon: shield,
-					path: '/',
+					path: '/managed-sites',
 					link: scanPath( siteSlug ),
 					title: translate( 'Scan' ),
 					trackEventName: 'calypso_jetpack_sidebar_scan_clicked',
@@ -115,7 +115,7 @@ const useMenuItems = ( {
 				},
 				{
 					icon: search,
-					path: '/',
+					path: '/managed-sites',
 					link: `${ JETPACK_CLOUD_SEARCH_LINK }/${ siteSlug }`,
 					title: translate( 'Search' ),
 					trackEventName: 'calypso_jetpack_sidebar_search_clicked',
@@ -124,7 +124,7 @@ const useMenuItems = ( {
 				},
 				{
 					icon: <JetpackIcons icon="social" size={ 24 } />,
-					path: '/',
+					path: '/managed-sites',
 					link: `${ JETPACK_CLOUD_SOCIAL_LINK }/${ siteSlug }`,
 					title: translate( 'Social' ),
 					trackEventName: 'calypso_jetpack_sidebar_social_clicked',
@@ -133,7 +133,7 @@ const useMenuItems = ( {
 				},
 				{
 					icon: settings,
-					path: '/',
+					path: '/managed-sites',
 					link: settingsPath( siteSlug ),
 					title: translate( 'Settings' ),
 					trackEventName: 'calypso_jetpack_sidebar_settings_clicked',
@@ -142,7 +142,7 @@ const useMenuItems = ( {
 				},
 				{
 					icon: currencyDollar,
-					path: '/',
+					path: '/managed-sites',
 					link: purchasesPath( siteSlug ),
 					title: translate( 'Purchases' ),
 					trackEventName: 'calypso_jetpack_sidebar_purchases_clicked',
@@ -165,7 +165,7 @@ const useMenuItems = ( {
 	);
 };
 
-const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
+const ManageSelectedSiteSidebarMenu = ( { path }: { path: string } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -177,9 +177,9 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 		<>
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			{ siteId && <QueryScanState siteId={ siteId } /> }
-			<NewSidebar
-				path="/"
-				menuItems={ menuItems }
+
+			<SidebarNavigatorMenu
+				path="/managed-sites"
 				title={ isAgency ? translate( 'Manage' ) : undefined }
 				backButtonProps={
 					isAgency
@@ -196,7 +196,19 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 						  }
 						: undefined
 				}
-			/>
+			>
+				{ menuItems.map( ( item ) => (
+					<SidebarNavigatorMenuItem
+						key={ item.link }
+						{ ...item }
+						onClickMenuItem={ () => {
+							if ( item.trackEventName ) {
+								dispatch( recordTracksEvent( item.trackEventName, null ) );
+							}
+						} }
+					/>
+				) ) }
+			</SidebarNavigatorMenu>
 
 			<GuidedTour
 				className="jetpack-cloud-sidebar__guided-tour"
@@ -222,4 +234,4 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 	);
 };
 
-export default ManageSelectedSiteSidebar;
+export default ManageSelectedSiteSidebarMenu;
