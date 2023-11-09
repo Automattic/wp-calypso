@@ -174,6 +174,10 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 		}, 600 );
 	};
 
+	const shouldRenderExtraContactOptions =
+		( isRequestingHumanSupport !== undefined && isRequestingHumanSupport ) ||
+		( message && message.type === 'dislike-feedback' );
+
 	const messageContent = (
 		<div className="odie-chatbox-message-sources-container">
 			<div className={ messageClasses }>
@@ -212,8 +216,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 						{ message.content }
 					</AsyncLoad>
 				) }
-				{ ( isRequestingHumanSupport || message.type === 'dislike-feedback' ) &&
-					extraContactOptions }
+				{ shouldRenderExtraContactOptions && extraContactOptions }
 			</div>
 			{ hasSources && messageFullyTyped && (
 				<FoldableCard
