@@ -581,10 +581,10 @@ export class RenderDomainsStep extends Component {
 			const productsInCart = [ ...this.props.cart.products, ...productsToAdd ];
 
 			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-			const sortedProducts = await this.sortProductsByPriceDescending( productsInCart );
+			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
 
 			// Replace the products in the cart with the freshly sorted products.
-			this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
+			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
@@ -592,29 +592,27 @@ export class RenderDomainsStep extends Component {
 		this.setState( { isCartPendingUpdateDomain: null } );
 	}
 
-	async sortProductsByPriceDescending( productsInCart ) {
+	sortProductsByPriceDescending( productsInCart ) {
 		// Sort products by price descending, considering promotions.
-		productsInCart.sort( ( a, b ) => {
-			const getSortingValue = ( product ) => {
-				if ( product.item_subtotal_integer !== 0 ) {
-					return product.item_subtotal_integer;
-				}
+		const getSortingValue = ( product ) => {
+			if ( product.item_subtotal_integer !== 0 ) {
+				return product.item_subtotal_integer;
+			}
 
-				// Use the lowest non-zero new_price or fallback to item_original_cost_integer.
-				const nonZeroPrices =
-					product.cost_overrides
-						?.map( ( override ) => override.new_price * 100 )
-						.filter( ( price ) => price > 0 ) || [];
+			// Use the lowest non-zero new_price or fallback to item_original_cost_integer.
+			const nonZeroPrices =
+				product.cost_overrides
+					?.map( ( override ) => override.new_price * 100 )
+					.filter( ( price ) => price > 0 ) || [];
 
-				return nonZeroPrices.length
-					? Math.min( ...nonZeroPrices )
-					: product.item_original_cost_integer;
-			};
+			return nonZeroPrices.length
+				? Math.min( ...nonZeroPrices )
+				: product.item_original_cost_integer;
+		};
 
+		return productsInCart.sort( ( a, b ) => {
 			return getSortingValue( b ) - getSortingValue( a );
 		} );
-
-		return productsInCart;
 	}
 
 	removeDomainClickHandler = ( domain ) => () => {

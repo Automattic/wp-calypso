@@ -54,7 +54,7 @@ describe( 'sortProductsByPriceDescending', () => {
 			},
 		];
 
-		const sortedProducts = await instance.sortProductsByPriceDescending( products );
+		const sortedProducts = instance.sortProductsByPriceDescending( products );
 		expect( sortedProducts[ 0 ].meta ).toBe( 'domain.com' );
 		expect( sortedProducts[ 1 ].meta ).toBe( 'domain.net' );
 	} );
@@ -81,7 +81,7 @@ describe( 'sortProductsByPriceDescending', () => {
 			},
 		];
 
-		const sortedProducts = await instance.sortProductsByPriceDescending( products );
+		const sortedProducts = instance.sortProductsByPriceDescending( products );
 		expect( sortedProducts[ 0 ].meta ).toBe( 'domain.kitchen' );
 		expect( sortedProducts[ 1 ].meta ).toBe( 'domain.com' );
 	} );
@@ -137,7 +137,7 @@ describe( 'sortProductsByPriceDescending', () => {
 			},
 		];
 
-		const sortedProducts = await instance.sortProductsByPriceDescending( products );
+		const sortedProducts = instance.sortProductsByPriceDescending( products );
 		expect( sortedProducts[ 0 ].meta ).toBe( 'domain.fish' );
 		expect( sortedProducts[ 1 ].meta ).toBe( 'domain.kitchen' );
 		expect( sortedProducts[ 2 ].meta ).toBe( 'domain.blog' );
