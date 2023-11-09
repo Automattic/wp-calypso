@@ -655,17 +655,16 @@ export default function WPCheckout( {
 							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 						} }
 					/>
+					<CheckoutTermsAndCheckboxes
+						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
+						setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }
+						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
+						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
+						isSubmitted={ isSubmitted }
+					/>
 					<CheckoutFormSubmit
 						validateForm={ validateForm }
-						submitButtonHeader={
-							<SubmitButtonHeader
-								is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
-								setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }
-								is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
-								setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
-								isSubmitted={ isSubmitted }
-							/>
-						}
+						submitButtonHeader={ <SubmitButtonHeader /> }
 						submitButtonFooter={ <JetpackCheckoutSeals /> }
 					/>
 				</CheckoutStepGroup>
@@ -798,7 +797,14 @@ const CheckoutSummaryBody = styled.div`
 	}
 `;
 
-function SubmitButtonHeader( {
+const CheckoutTermsAndCheckboxesWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	padding-top: 32px;
+	padding-left: 40px;
+`;
+
+function CheckoutTermsAndCheckboxes( {
 	is3PDAccountConsentAccepted,
 	setIs3PDAccountConsentAccepted,
 	is100YearPlanTermsAccepted,
@@ -821,31 +827,36 @@ function SubmitButtonHeader( {
 	const translate = useTranslate();
 	const shouldCollapseLastStep = useShouldCollapseLastStep();
 
-	if ( shouldCollapseLastStep ) {
-		return (
-			<>
-				<BeforeSubmitCheckoutHeader />
-				{ hasMarketplaceProduct && (
-					<AcceptTermsOfServiceCheckbox
-						isAccepted={ is3PDAccountConsentAccepted }
-						onChange={ setIs3PDAccountConsentAccepted }
-						isSubmitted={ isSubmitted }
-						message={ translate(
-							'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
-						) }
-					/>
-				) }
-				{ has100YearPlan && (
-					<AcceptTermsOfServiceCheckbox
-						isAccepted={ is100YearPlanTermsAccepted }
-						onChange={ setIs100YearPlanTermsAccepted }
-						isSubmitted={ isSubmitted }
-						message={ translate( 'I have read and agree to all of the above.' ) }
-					/>
-				) }
-			</>
-		);
+	if ( ! shouldCollapseLastStep ) {
+		return null;
 	}
+	return (
+		<CheckoutTermsAndCheckboxesWrapper>
+			<BeforeSubmitCheckoutHeader />
+			{ hasMarketplaceProduct && (
+				<AcceptTermsOfServiceCheckbox
+					isAccepted={ is3PDAccountConsentAccepted }
+					onChange={ setIs3PDAccountConsentAccepted }
+					isSubmitted={ isSubmitted }
+					message={ translate(
+						'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+					) }
+				/>
+			) }
+			{ has100YearPlan && (
+				<AcceptTermsOfServiceCheckbox
+					isAccepted={ is100YearPlanTermsAccepted }
+					onChange={ setIs100YearPlanTermsAccepted }
+					isSubmitted={ isSubmitted }
+					message={ translate( 'I have read and agree to all of the above.' ) }
+				/>
+			) }
+		</CheckoutTermsAndCheckboxesWrapper>
+	);
+}
+
+function SubmitButtonHeader() {
+	const translate = useTranslate();
 
 	const scrollToTOS = () => document?.getElementById( 'checkout-terms' )?.scrollIntoView();
 
