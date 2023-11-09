@@ -31,6 +31,7 @@ import {
 	hasDomainInCart,
 	planItem,
 	hasPlan,
+	hasDomainRegistration,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -181,8 +182,12 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart
-		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
+		if (
+			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
+			hasDomainRegistration( this.props.cart )
+		) {
+			// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
 	}
