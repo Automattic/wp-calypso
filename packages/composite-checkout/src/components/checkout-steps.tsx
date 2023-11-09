@@ -273,7 +273,7 @@ export const CheckoutStepGroupInner = ( {
 		'active step',
 		activeStepNumber,
 		'step complete status',
-		stepCompleteStatus,
+		JSON.stringify( stepCompleteStatus ),
 		'total steps',
 		totalSteps
 	);
