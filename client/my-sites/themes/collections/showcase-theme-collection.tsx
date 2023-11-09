@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { default as pageRouter } from 'page';
 import { ReactElement } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
@@ -94,7 +95,7 @@ export default function ShowcaseThemeCollection( {
 				{ themes.length > 0 ? (
 					themes.map( ( theme: Theme, index: number ) => (
 						<ThemeCollectionItem key={ theme.id }>
-							{ config.isEnabled( 'themes/new-theme-card' ) ? (
+							{ isEnabled( 'themes/new-theme-card' ) ? (
 								<ThemeNew position={ index } themeId={ theme.id } />
 							) : (
 								<ThemeBlock
