@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import Tooltip from 'calypso/components/tooltip';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
@@ -11,7 +11,7 @@ interface Props {
 	siteError: boolean;
 	isLargeScreen?: boolean;
 	disabled?: boolean;
-	tooltip?: string;
+	tooltip?: ReactNode;
 }
 
 export default function SiteSelectCheckbox( {

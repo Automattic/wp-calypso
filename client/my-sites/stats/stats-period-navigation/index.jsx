@@ -63,16 +63,57 @@ class StatsPeriodNavigation extends PureComponent {
 
 	calculatePeriod = ( period ) => ( this.isHoursPeriod( period ) ? 'day' : period );
 
+	queryParamsForNextDate = ( nextDay ) => {
+		const { dateRange, moment } = this.props;
+		// Takes a 'YYYY-MM-DD' string.
+		const newParams = { startDate: nextDay };
+		// Maintain previous behaviour if we don't have a date range to work with.
+		if ( dateRange === undefined ) {
+			return newParams;
+		}
+		// Test if we need to update the chart start/end dates.
+		const isAfter = moment( nextDay ).isAfter( moment( dateRange.chartEnd ) );
+		if ( isAfter ) {
+			newParams.chartStart = moment( dateRange.chartEnd ).add( 1, 'days' ).format( 'YYYY-MM-DD' );
+			newParams.chartEnd = moment( dateRange.chartEnd )
+				.add( dateRange.daysInRange, 'days' )
+				.format( 'YYYY-MM-DD' );
+		}
+		return newParams;
+	};
+
 	handleArrowNext = () => {
 		const { date, moment, period, url, queryParams, isEmailStats, maxBars } = this.props;
 		const numberOfDAys = this.getNumberOfDays( isEmailStats, period, maxBars );
 		const usedPeriod = this.calculatePeriod( period );
 		const nextDay = moment( date ).add( numberOfDAys, usedPeriod ).format( 'YYYY-MM-DD' );
-		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
+		const newQueryParams = this.queryParamsForNextDate( nextDay );
+		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, newQueryParams ), {
 			addQueryPrefix: true,
 		} );
 		const href = `${ url }${ nextDayQuery }`;
 		this.handleArrowEvent( 'next', href );
+	};
+
+	queryParamsForPreviousDate = ( previousDay ) => {
+		const { dateRange, moment } = this.props;
+		// Takes a 'YYYY-MM-DD' string.
+		const newParams = { startDate: previousDay };
+		// Maintain previous behaviour if we don't have a date range to work with.
+		if ( dateRange === undefined ) {
+			return newParams;
+		}
+		// Test if we need to update the chart start/end dates.
+		const isBefore = moment( previousDay ).isBefore( moment( dateRange.chartStart ) );
+		if ( isBefore ) {
+			newParams.chartEnd = moment( dateRange.chartStart )
+				.subtract( 1, 'days' )
+				.format( 'YYYY-MM-DD' );
+			newParams.chartStart = moment( dateRange.chartStart )
+				.subtract( dateRange.daysInRange, 'days' )
+				.format( 'YYYY-MM-DD' );
+		}
+		return newParams;
 	};
 
 	handleArrowPrevious = () => {
@@ -80,10 +121,10 @@ class StatsPeriodNavigation extends PureComponent {
 		const numberOfDAys = this.getNumberOfDays( isEmailStats, period, maxBars );
 		const usedPeriod = this.calculatePeriod( period );
 		const previousDay = moment( date ).subtract( numberOfDAys, usedPeriod ).format( 'YYYY-MM-DD' );
-		const previousDayQuery = qs.stringify(
-			Object.assign( {}, queryParams, { startDate: previousDay } ),
-			{ addQueryPrefix: true }
-		);
+		const newQueryParams = this.queryParamsForPreviousDate( previousDay );
+		const previousDayQuery = qs.stringify( Object.assign( {}, queryParams, newQueryParams ), {
+			addQueryPrefix: true,
+		} );
 		const href = `${ url }${ previousDayQuery }`;
 		this.handleArrowEvent( 'previous', href );
 	};

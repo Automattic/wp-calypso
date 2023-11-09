@@ -1,8 +1,10 @@
-.plan-pill {
+@import "@automattic/typography/styles/variables.scss";
+
+.plans-grid__plan-pill {
 	position: absolute;
 	bottom: -10px;
 	left: 14px;
-	z-index: z-index("root", ".plan-pill");
+	z-index: 1;
 
 	padding: 4px;
 	border-radius: 2px;
@@ -17,7 +19,7 @@
 	white-space: nowrap;
 }
 
-.plan-pill.is-in-signup {
+.plans-grid__plan-pill.is-in-signup {
 	top: 10px;
 	bottom: unset;
 	right: 14px;

@@ -1,32 +1,38 @@
-import { Button } from '@wordpress/components';
-import { chevronLeft } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
-import page from 'page';
+import classNames from 'classnames';
+import React from 'react';
+import Breadcrumb from 'calypso/components/breadcrumb';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
+import CollectionBackButton from 'calypso/my-sites/themes/collections/collection-back-button';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import './theme-collection-view-header.scss';
 
-export default function ThemeCollectionViewHeader( { backUrl, filter, tier } ) {
+export default function ThemeCollectionViewHeader( { backUrl, filter, tier, isLoggedIn } ) {
 	const keyParts = [ tier, filter ];
 	const key = keyParts.filter( ( part ) => !! part ).join( '-' ) || 'recommended';
-	const { fullTitle, description } = THEME_COLLECTIONS[ key ];
+	const { title, description } = THEME_COLLECTIONS[ key ];
+
+	const classnames = classNames( 'theme-collection-view-header', {
+		'is-logged-in': isLoggedIn,
+	} );
+
+	const navigationItems = [
+		{ label: 'Themes', href: backUrl },
+		{ label: title, href: '' },
+	];
 
 	return (
-		<div className="theme-collection-view-header">
-			<Button
-				className="theme-collection-view-header__back"
-				icon={ chevronLeft }
-				onClick={ () => page( backUrl ) }
-				variant="link"
-			>
-				{ translate( 'Back' ) }
-			</Button>
-			{ fullTitle && <h2 className="theme-collection-view-header__title">{ fullTitle }</h2> }
-			{ description && (
-				<div className="theme-collection-view-header__description">
-					{ preventWidows( description ) }
-				</div>
+		<div className={ classnames }>
+			{ isLoggedIn ? (
+				<Breadcrumb items={ navigationItems } hideWhenOnlyOneLevel />
+			) : (
+				<CollectionBackButton backUrl={ backUrl } />
 			) }
+			<FormattedHeader
+				align="left"
+				headerText={ title }
+				subHeaderText={ preventWidows( description ) }
+			/>
 		</div>
 	);
 }

@@ -2,7 +2,8 @@ import type { ScaleGradientFunction } from '../hooks/use-scale-gradient';
 import type uPlot from 'uplot';
 
 export default function getGradientFill(
-	fillColor: string,
+	fillColorFrom: string,
+	fillColorTo: string,
 	scaleGradient: ScaleGradientFunction
 ): ( self: uPlot, seriesIdx: number ) => CanvasRenderingContext2D[ 'fillStyle' ] {
 	return ( u, seriesIdx ) => {
@@ -12,7 +13,7 @@ export default function getGradientFill(
 
 		// if values are not initialised default to a solid color
 		if ( s.min === Infinity || s.max === -Infinity ) {
-			return fillColor;
+			return fillColorFrom;
 		}
 
 		let min = Infinity;
@@ -35,8 +36,8 @@ export default function getGradientFill(
 		}
 
 		return scaleGradient( u, s.scale || 'y', 1, [
-			[ min + range * 0.0, 'rgba(48, 87, 220, 0)' ],
-			[ min + range * 1.0, 'rgba(48, 87, 220, 0.4)' ],
+			[ min + range * 0.0, fillColorTo ],
+			[ min + range * 1.0, fillColorFrom ],
 		] );
 	};
 }
