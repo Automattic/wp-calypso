@@ -684,8 +684,7 @@ export class LoginForm extends Component {
 			isSendingEmail,
 		} = this.props;
 
-		const isFormDisabled =
-			this.state.isFormDisabledWhileLoading || this.props.isFormDisabled || isSendingEmail;
+		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isFormFilled =
 			this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0;
 		const isSubmitButtonDisabled = isWoo && ! isPartnerSignup ? isFormFilled : isFormDisabled;
@@ -864,7 +863,7 @@ export class LoginForm extends Component {
 						<Button
 							type="submit"
 							primary
-							busy={ isSubmitButtonDisabled }
+							busy={ isSendingEmail }
 							disabled={ isSubmitButtonDisabled }
 						>
 							{ this.getLoginButtonText() }
