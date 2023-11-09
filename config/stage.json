@@ -102,7 +102,7 @@
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
 		"page/export": true,
-		"pattern-assembler/add-pages": true,
+		"pattern-assembler/add-pages": false,
 		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
@@ -185,7 +185,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/hosting-metrics-i1": true,
-		"yolo/wp-admin-site-default": false,
+		"yolo/wp-admin-site-default": true,
 		"yolo/command-pallette": false
 	},
 	"siftscience_key": "e00e878351",

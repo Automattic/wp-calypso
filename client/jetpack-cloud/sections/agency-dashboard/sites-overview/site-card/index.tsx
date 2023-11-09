@@ -36,9 +36,9 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const blogId = rows.site.value.blog_id;
 	const isConnectionHealthy = rows.site.value?.is_connection_healthy;
 
-	useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
+	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
-	const isSiteConnected = rows.site.value.is_connected;
+	const isSiteConnected = data?.connected ?? true;
 
 	const handleSetExpandedColumn = ( column: AllowedTypes ) => {
 		recordEvent( 'expandable_block_column_toggled', {

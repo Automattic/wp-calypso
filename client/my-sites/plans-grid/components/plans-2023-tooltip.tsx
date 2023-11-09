@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
 import { Dispatch, PropsWithChildren, SetStateAction, useEffect, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
-import { hasTouch } from 'calypso/lib/touch-detect';
+import { hasTouch } from '../lib/touch-detect';
 
 const HoverAreaContainer = styled.span`
 	max-width: 220px;

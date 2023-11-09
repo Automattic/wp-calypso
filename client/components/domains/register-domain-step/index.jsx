@@ -318,7 +318,7 @@ class RegisterDomainStep extends Component {
 		const query = this.state.lastQuery || storedQuery || this.getInitialQueryInLaunchFlow();
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
-			this.onSearch( query );
+			// We used to run the initial search here, it's now triggered on mount in a useEffect inside <Search />
 
 			// Delete the stored query once it is consumed.
 			globalThis?.sessionStorage?.removeItem( SESSION_STORAGE_QUERY_KEY );
@@ -1271,9 +1271,8 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	onSearch = async ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
+	onSearch = ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
-
 		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 
 		this.setState(

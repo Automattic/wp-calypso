@@ -140,6 +140,13 @@ $date-control-shortcut-min-width: 140px;
 		line-height: 18px;
 		letter-spacing: -0.24px;
 	}
-
+	#date-example {
+		border: none;
+		background-color: inherit;
+		color: var(--gray-gray-50, #646970);
+		font-size: 12px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-weight: 500;
+		line-height: 18px;
+		letter-spacing: -0.24px;
+	}
 }
-

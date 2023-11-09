@@ -20,7 +20,9 @@ export class SignupDomainPage {
 	 * Skips the domain selection screen.
 	 */
 	async skipDomainSelection(): Promise< void > {
-		const locator = this.page.locator( 'button:has-text("Choose my domain later"):visible' );
-		await locator.click();
+		await Promise.race( [
+			this.page.getByRole( 'button', { name: 'Skip Purchase', exact: true } ).click(),
+			this.page.getByRole( 'button', { name: 'Choose my domain later', exact: true } ).click(),
+		] );
 	}
 }

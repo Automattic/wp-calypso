@@ -856,6 +856,9 @@ describe( 'themes selectors', () => {
 		test( 'should return null if the query is not tracked', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {},
 					},
@@ -870,6 +873,9 @@ describe( 'themes selectors', () => {
 		test( 'should return null if the query manager has not received items for query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -889,6 +895,9 @@ describe( 'themes selectors', () => {
 		test( 'should return a concatenated array of all site themes ignoring page', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -918,6 +927,9 @@ describe( 'themes selectors', () => {
 		test( 'should remove recommendedThemes with no filter and no search in query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -946,6 +958,9 @@ describe( 'themes selectors', () => {
 		test( "should omit found items for which the requested result hasn't been received", () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {

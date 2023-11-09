@@ -29,6 +29,12 @@
 	align-items: center;
 	justify-content: center;
 
+	.magic-login__form-header-icon {
+		text-align: center;
+		img {
+			border-radius: 4px;
+		}
+	}
 	.magic-login .magic-login__form-header {
 		margin-bottom: 0;
 
@@ -38,8 +44,7 @@
 	}
 
 	.logged-out-form {
-		max-width: 340px;
-		padding-top: 0;
+		padding: 0 24px 0 24px;
 		.magic-login__form-sub-header {
 			text-align: center;
 		}
@@ -143,7 +148,7 @@
 .magic-login__footer {
 	a {
 		border-bottom: 1px solid #c8d7e1;
-		color: var(--color-neutral-50);
+		color: var(--studio-gray-90);
 		display: block;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 4em;
@@ -151,7 +156,7 @@
 		font-weight: 600;
 		padding: 0 24px;
 		text-align: center;
-		text-decoration: none;
+		text-decoration: underline;
 
 		&:hover {
 			color: var(--color-primary);
