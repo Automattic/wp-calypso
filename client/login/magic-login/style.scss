@@ -37,7 +37,8 @@
 	}
 	.magic-login .magic-login__form-header {
 		margin-bottom: 0;
-
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 120%;
 		@include break-mobile {
 			font-size: $font-title-large;
 		}
@@ -196,6 +197,7 @@
 	.logged-out-form {
 		.magic-login__form-sub-header {
 			color: var(--studio-gray-70);
+			margin: 4px 0 24px 0;
 		}
 
 		.form-label {
