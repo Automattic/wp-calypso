@@ -102,15 +102,18 @@ function createCheckoutStepGroupActions(
 	onStateChange: () => void
 ): CheckoutStepGroupActions {
 	const setActiveStepNumber = ( stepNumber: number ) => {
+		debug( `setting active step number to ${ stepNumber }` );
 		if ( stepNumber > state.totalSteps && state.totalSteps === 0 ) {
 			throw new Error(
 				`Cannot set step number to '${ stepNumber }' because the total number of steps is 0`
 			);
 		}
 		if ( stepNumber > state.totalSteps ) {
+			debug( `setting active step number to ${ stepNumber }; using highest step instead` );
 			stepNumber = state.totalSteps;
 		}
 		if ( stepNumber === state.activeStepNumber ) {
+			debug( `setting active step number to ${ stepNumber }; step already active` );
 			return;
 		}
 		state.activeStepNumber = stepNumber;
@@ -135,8 +138,20 @@ function createCheckoutStepGroupActions(
 		onStateChange();
 	};
 
+	/**
+	 * Update the current status of which steps are complete and which are
+	 * incomplete.
+	 *
+	 * Remember that a complete step can be active and an incomplete step can be
+	 * inactive. They are not connected.
+	 *
+	 * This merges the new status with the current status, so it's important to
+	 * explicitly disable any step that you want to be incomplete.
+	 */
 	const setStepCompleteStatus = ( newStatus: CheckoutStepCompleteStatus ) => {
-		state.stepCompleteStatus = newStatus;
+		const mergedStatus = { ...state.stepCompleteStatus, ...newStatus };
+		debug( `setting step complete status to '${ JSON.stringify( mergedStatus ) }'` );
+		state.stepCompleteStatus = mergedStatus;
 		onStateChange();
 	};
 
@@ -161,6 +176,7 @@ function createCheckoutStepGroupActions(
 	};
 
 	const setStepComplete = async ( stepId: string ) => {
+		debug( `attempting to set step complete: '${ stepId }'` );
 		const stepNumber = getStepNumberFromId( stepId );
 		if ( ! stepNumber ) {
 			throw new Error( `Cannot find step with id '${ stepId }' when trying to set step complete.` );
@@ -170,6 +186,9 @@ function createCheckoutStepGroupActions(
 		for ( let step = 1; step <= stepNumber; step++ ) {
 			if ( ! state.stepCompleteStatus[ step ] ) {
 				const didStepComplete = await getStepCompleteCallback( step )();
+				debug(
+					`attempting to set step complete: '${ stepId }'; step ${ step } result was ${ didStepComplete }`
+				);
 				if ( ! didStepComplete ) {
 					return false;
 				}
@@ -414,8 +433,7 @@ export const CheckoutStep = ( {
 	validatingButtonAriaLabel,
 }: CheckoutStepProps ) => {
 	const { __ } = useI18n();
-	const { state, actions } = useContext( CheckoutStepGroupContext );
-	const { stepCompleteStatus } = state;
+	const { actions } = useContext( CheckoutStepGroupContext );
 	const {
 		setActiveStepNumber,
 		setStepCompleteStatus,
@@ -428,7 +446,7 @@ export const CheckoutStep = ( {
 	const { onPageLoadError } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
-		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
+		setStepCompleteStatus( { [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
 
 	// This is the callback called when you press "Continue" on a step.
