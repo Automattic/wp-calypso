@@ -605,6 +605,17 @@
 
 	.stream__list {
 		width: 100%;
+
+		.app-promo {
+			background-color: #f0f2eb;
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
+			box-shadow: none;
+			border-bottom: 1px solid #e9e9ea;
+
+			.app-promo__title {
+				margin-bottom: 0;
+			}
+		}
 	}
 }
 
@@ -925,3 +936,4 @@
 .is-site-stream .stream__two-column .stream__right-column {
 	margin-top: 0;
 }
+
