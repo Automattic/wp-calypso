@@ -24,6 +24,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, useEffect, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -39,7 +40,6 @@ import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { FormDivider } from 'calypso/lib/authentication';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import {

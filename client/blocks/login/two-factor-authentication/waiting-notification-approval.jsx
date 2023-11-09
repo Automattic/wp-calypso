@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
-import { FormDivider } from 'calypso/lib/authentication';
+import { FormDivider } from 'calypso/blocks/authentication';
 import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
 
