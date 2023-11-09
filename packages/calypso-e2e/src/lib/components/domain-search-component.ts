@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
 import { reloadAndRetry } from '../../element-helper';
+import { plansPageUrl } from '../pages';
 
 const selectors = {
 	searchInput: `.search-component__input`,
@@ -85,10 +86,7 @@ export class DomainSearchComponent {
 		// on the right hand sidebar.
 		// See: 21483-explat-experiment
 		// Note: this page object does not currently support multiple domain selection.
-		await Promise.race( [
-			this.clickButton( 'Continue' ),
-			this.page.waitForURL( /start\/plans/ ),
-		] );
+		await Promise.race( [ this.clickButton( 'Continue' ), this.page.waitForURL( plansPageUrl ) ] );
 
 		return selectedDomain;
 	}

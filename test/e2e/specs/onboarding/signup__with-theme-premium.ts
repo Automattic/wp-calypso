@@ -61,7 +61,10 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 		} );
 
 		it( 'Selects a Premium theme', async function () {
-			await page.locator( 'div.theme-card:has(div.premium-badge)' ).first().click();
+			await page
+				.locator( 'div.theme-card:has(div.premium-badge):not(div.is-marketplace)' )
+				.first()
+				.click();
 		} );
 
 		it( 'Navigate to Signup page', async function () {
@@ -110,7 +113,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
 		} );
 
-		it( 'Skip upsell if present', async function () {
+		it( 'Skip business plan upsell', async function () {
 			const selector = 'button[data-e2e-button="decline"]';
 			await page.waitForSelector( selector );
 

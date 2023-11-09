@@ -153,6 +153,7 @@ export class ThemesPage {
 				status: 200,
 			} );
 		} );
-		return await this.page.goto( getCalypsoURL( targetUrl ) );
+		await this.page.goto( getCalypsoURL( targetUrl ) );
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 }
