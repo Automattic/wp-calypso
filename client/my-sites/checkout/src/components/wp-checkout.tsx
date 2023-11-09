@@ -647,8 +647,12 @@ export default function WPCheckout( {
 						validatingButtonAriaLabel={ validatingButtonText }
 						isCompleteCallback={ () => {
 							// We want to consider this step complete only if there is a
-							// payment method selected.
-							return Boolean( paymentMethod );
+							// payment method selected and it does not have required fields.
+							// This will not prevent the form from being submitted because
+							// the submit button will be active as long as the last step is
+							// shown, but it will prevent the payment method step from
+							// automatically collapsing when checkout loads.
+							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 						} }
 					/>
 					<CheckoutFormSubmit
