@@ -165,7 +165,7 @@ function useAggregateHttpVerbData(
 		metric,
 		dimension
 	);
-	const allowedVerbs: string[] = [ 'GET', 'POST', 'HEAD', 'DELETE' ];
+	const allowedVerbs: string[] = [ 'GET', 'POST', 'HEAD', 'DELETE', 'PUT', 'PATCH' ];
 
 	return {
 		formattedData: Object.keys( data.formattedData ).reduce(
@@ -360,17 +360,25 @@ export const MetricsTab = () => {
 					subtitle={ __( 'Percentage of traffic per HTTP request method' ) }
 					className="site-monitoring-http-verbs-pie-chart"
 					data={ getFormattedDataForPieChart( httpVerbFormattedData, {
-						POST: {
-							name: 'POST',
-							className: 'verb-post',
-						},
 						GET: {
 							name: 'GET',
 							className: 'verb-get',
 						},
+						POST: {
+							name: 'POST',
+							className: 'verb-post',
+						},
 						HEAD: {
 							name: 'HEAD',
 							className: 'verb-head',
+						},
+						PUT: {
+							name: 'PUT',
+							className: 'verb-put',
+						},
+						PATCH: {
+							name: 'PATCH',
+							className: 'verb-patch',
 						},
 						DELETE: {
 							name: 'DELETE',

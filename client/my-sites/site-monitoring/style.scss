@@ -163,6 +163,14 @@ $section-max-width: 1224px;
 	.pie-chart__legend-sample-verb-head {
 		fill: var(--studio-blue-50);
 	}
+	.pie-chart__chart-section-verb-put,
+	.pie-chart__legend-sample-verb-put {
+		fill: var(--studio-blue-60);
+	}
+	.pie-chart__chart-section-verb-patch,
+	.pie-chart__legend-sample-verb-patch {
+		fill: var(--studio-blue-70);
+	}
 }
 
 .site-monitoring-php-static-pie-chart {
