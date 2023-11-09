@@ -3,21 +3,19 @@ import {
 	globe as domainsIcon,
 	commentAuthorAvatar as profileIcon,
 } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
+import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { SFTP_PORT, SFTP_URL } from 'calypso/my-sites/hosting/sftp-card';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
-	createSiteUrl,
-	__,
 }: {
 	setSelectedCommandName: ( actionName: string ) => void;
-	createSiteUrl: string;
-	__: ( text: string ) => string;
 } ) => {
 	const setStateCallback =
 		( actionName: string ) =>
@@ -25,6 +23,12 @@ export const useCommandsArrayWpcom = ( {
 			setSearch( '' );
 			setSelectedCommandName( actionName );
 		};
+
+	const { __ } = useI18n();
+	const createSiteUrl = useAddNewSiteUrl( {
+		source: 'sites-dashboard-command-palette',
+		ref: 'topbar',
+	} );
 
 	const fetchSshUsersDetails = async (
 		siteId: number,

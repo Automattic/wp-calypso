@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
-import { useI18n } from '@wordpress/react-i18n';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 
 const SiteImage = styled.img( {
@@ -69,18 +67,13 @@ export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 }: useCommandPalletteOptions ): { commands: Command[] } => {
-	const { __ } = useI18n();
-	const createSiteUrl = useAddNewSiteUrl( {
-		source: 'sites-dashboard-command-palette',
-		ref: 'topbar',
-	} );
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
 
 	// Call the generateCommandsArray function to get the commands array
-	const commands = useCommandsArrayWpcom( { setSelectedCommandName, __, createSiteUrl } );
+	const commands = useCommandsArrayWpcom( { setSelectedCommandName } );
 
 	const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
