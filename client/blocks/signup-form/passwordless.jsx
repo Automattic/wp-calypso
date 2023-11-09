@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -19,6 +20,7 @@ import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { suggestCorrectEmail } from './utils';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -184,11 +186,57 @@ class PasswordlessSignupForm extends Component {
 		goToNextStep();
 	};
 
-	onInputChange = ( { target: { value } } ) =>
+	handleEmailDomainSuggestionError = ( email, emailSuggestion ) => {
+		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_generated', {
+			original_email: JSON.stringify( email ),
+			email_suggestion: JSON.stringify( emailSuggestion ),
+		} );
+		this.setState( {
+			email,
+			errorMessages: [
+				this.props.translate( 'Did you mean {{emailSuggestion/}}?', {
+					components: {
+						emailSuggestion: (
+							<Button
+								plain={ true }
+								className="signup-form__domain-suggestion-confirmation"
+								onClick={ () => {
+									this.setState( {
+										email: emailSuggestion,
+										errorMessages: null,
+									} );
+									this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_confirmation', {
+										original_email: JSON.stringify( email ),
+										email_suggestion: JSON.stringify( emailSuggestion ),
+									} );
+								} }
+							>
+								{ emailSuggestion }
+							</Button>
+						),
+					},
+				} ),
+			],
+		} );
+	};
+
+	debouncedEmailSuggestion = debounce( ( email ) => {
+		if ( emailValidator.validate( email ) ) {
+			const emailDomainSuggestion = suggestCorrectEmail( email );
+			if ( emailDomainSuggestion ) {
+				this.handleEmailDomainSuggestionError( email, emailDomainSuggestion );
+				return;
+			}
+		}
+	}, 500 );
+
+	onInputChange = ( { target: { value } } ) => {
+		this.debouncedEmailSuggestion( value );
 		this.setState( {
 			email: value,
 			errorMessages: null,
 		} );
+	};
 
 	renderNotice() {
 		return (
