@@ -384,7 +384,7 @@ export const MetricsTab = () => {
 							name: 'DELETE',
 							className: 'verb-delete',
 						},
-					} ).reverse() }
+					} ) }
 					fixedOrder
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
