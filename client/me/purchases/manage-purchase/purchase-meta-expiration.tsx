@@ -137,6 +137,17 @@ function PurchaseMetaExpiration( {
 				},
 			} );
 		}
+		const shouldShowTooltip = () => {
+			if ( ! purchase.expiryDate || ! purchase.renewDate ) {
+				return false;
+			}
+
+			if ( purchase.renewDate !== purchase.expiryDate ) {
+				return true;
+			}
+
+			return false;
+		};
 
 		return (
 			<li className="manage-purchase__meta-expiration">
@@ -154,7 +165,7 @@ function PurchaseMetaExpiration( {
 					} ) }
 				>
 					{ subsBillingText }
-					{ purchase.renewDate.length !== 0 && (
+					{ shouldShowTooltip() && (
 						<InfoPopover position="bottom right">
 							{ translate(
 								'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date. {{inlineSupportLink}}Learn more{{/inlineSupportLink}}',
