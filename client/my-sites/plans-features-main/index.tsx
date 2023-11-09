@@ -408,7 +408,7 @@ const PlansFeaturesMain = ( {
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
-		useFreeHostingTrialAssignment();
+		useFreeHostingTrialAssignment( intent );
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const gridPlans = useGridPlans( {
