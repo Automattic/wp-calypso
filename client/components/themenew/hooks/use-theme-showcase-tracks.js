@@ -4,11 +4,13 @@ import { useSelector } from 'calypso/state';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemeType, isThemeActive } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useThemeCollectionContext } from '../theme-collection-context';
 import { useThemeContext } from '../theme-context';
 import { useThemeShowcaseContext } from '../theme-showcase-context';
 
 export default function useThemeShowcaseTracks() {
-	const { position, themeId } = useThemeContext();
+	const { position, selectedStyleVariation, themeId } = useThemeContext();
+	const { position: collectionPosition, collectionId } = useThemeCollectionContext();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const isActive = useSelector( ( state ) => isThemeActive( state, themeId, siteId ) );
@@ -26,17 +28,14 @@ export default function useThemeShowcaseTracks() {
 	/**
 	 * @todo Implement a Collection context
 	 */
-	const recordThemeClick = (
-		event,
-		{ action = '', collectionId = null, collectionIndex = null, styleVariationSlug = '' }
-	) => {
+	const recordThemeClick = ( event, { action = '', styleVariationSlug } = {} ) => {
 		const adjustedPosition = position + 1;
 
 		const collectionProps =
-			null !== collectionId && null !== collectionIndex
+			'' !== collectionId
 				? {
 						collection: collectionId,
-						collection_index: ( collectionIndex || 0 ) + 1,
+						collection_index: ( collectionPosition || 0 ) + 1,
 						is_collection: true,
 				  }
 				: {};
@@ -55,7 +54,7 @@ export default function useThemeShowcaseTracks() {
 			page_number: page || null,
 			results: themes.map( property( 'id' ) ).join(),
 			results_rank: adjustedPosition,
-			style_variation: styleVariationSlug,
+			style_variation: styleVariationSlug || selectedStyleVariation?.slug || '@theme',
 			theme: themeId,
 			theme_on_page: Math.floor( adjustedPosition / number ),
 			theme_type: themeType,

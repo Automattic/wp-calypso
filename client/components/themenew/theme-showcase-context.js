@@ -22,12 +22,9 @@ export function ThemeShowcaseContextProvider( {
 	tabFilter,
 	themes,
 } ) {
+	const value = { bookmarkRef, filterString, locale, origin, query, tabFilter, themes };
 	return (
-		<ThemeShowcaseContext.Provider
-			value={ { bookmarkRef, filterString, locale, origin, query, tabFilter, themes } }
-		>
-			{ children }
-		</ThemeShowcaseContext.Provider>
+		<ThemeShowcaseContext.Provider value={ value }>{ children }</ThemeShowcaseContext.Provider>
 	);
 }
 

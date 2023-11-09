@@ -6,6 +6,7 @@ import ThemeCollection from 'calypso/components/theme-collection';
 import ThemeCollectionItem from 'calypso/components/theme-collection/theme-collection-item';
 import ThemeCollectionPlaceholder from 'calypso/components/theme-collection/theme-collection-placeholder';
 import ThemeNew from 'calypso/components/themenew';
+import { ThemeCollectionContextProvider } from 'calypso/components/themenew/theme-collection-context';
 import { ThemeBlock } from 'calypso/components/themes-list';
 import {
 	ThemesQuery,
@@ -84,7 +85,7 @@ export default function ShowcaseThemeCollection( {
 	};
 
 	return (
-		<>
+		<ThemeCollectionContextProvider collectionId={ collectionSlug } position={ collectionIndex }>
 			<ThemeCollection
 				collectionSlug={ collectionSlug }
 				title={ title }
@@ -120,6 +121,6 @@ export default function ShowcaseThemeCollection( {
 					<ThemeCollectionPlaceholder items={ 3 } />
 				) }
 			</ThemeCollection>
-		</>
+		</ThemeCollectionContextProvider>
 	);
 }
