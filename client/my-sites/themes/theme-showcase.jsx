@@ -625,6 +625,7 @@ class ThemeShowcase extends Component {
 							} ) }
 							filter={ this.props.filter }
 							tier={ this.props.tier }
+							isLoggedIn={ isLoggedIn }
 						/>
 					) }
 					<div className="themes__showcase">

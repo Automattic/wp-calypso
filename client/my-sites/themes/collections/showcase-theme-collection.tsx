@@ -18,7 +18,7 @@ import { trackClick } from 'calypso/my-sites/themes/helpers';
 interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
 	collectionSlug: string;
 	title: string;
-	description: ReactElement | null;
+	description: string | null;
 	query: ThemesQuery;
 	onSeeAll: () => void;
 	collectionIndex: number;
