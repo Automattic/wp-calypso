@@ -26,6 +26,29 @@ export const useCommandsArrayWpcom = ( {
 			setSelectedCommandName( actionName );
 		};
 
+	const copySshSftpDetails = async (
+		siteId: number,
+		copyType: 'username' | 'connectionString',
+		siteSlug: string
+	) => {
+		const response = await wpcom.req.get( {
+			path: `/sites/${ siteId }/hosting/ssh-users`,
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		const sshUsers = response?.users;
+
+		if ( sshUsers !== null ) {
+			if ( sshUsers.length ) {
+				const details =
+					copyType === 'username' ? sshUsers[ 0 ] : `ssh ${ sshUsers[ 0 ] }@sftp.wp.com`;
+				navigator.clipboard.writeText( details );
+			} else {
+				navigate( `/hosting-config/${ siteSlug }` );
+			}
+		}
+	};
+
 	const commands = [
 		{
 			name: 'addNewSite',
@@ -129,23 +152,7 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-
-					const response = await wpcom.req.get( {
-						path: `/sites/${ site.ID }/hosting/ssh-users`,
-						apiNamespace: 'wpcom/v2',
-					} );
-
-					const sshUsers = response?.users; // Access the data property from the response
-
-					if ( sshUsers !== null ) {
-						if ( sshUsers.length ) {
-							// Pick first user for the username
-							const username = sshUsers[ 0 ];
-							navigator.clipboard.writeText( username );
-						} else {
-							navigate( `/hosting-config/${ site.slug }` );
-						}
-					}
+					await copySshSftpDetails( site.ID, 'username', site.slug );
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
@@ -159,24 +166,7 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-
-					const response = await wpcom.req.get( {
-						path: `/sites/${ site.ID }/hosting/ssh-users`,
-						apiNamespace: 'wpcom/v2',
-					} );
-
-					const sshUsers = response?.users;
-
-					if ( sshUsers !== null ) {
-						if ( sshUsers.length ) {
-							// Pick first user for the username
-							const username = sshUsers[ 0 ];
-							const sshConnectString = `ssh ${ username }@sftp.wp.com`;
-							navigator.clipboard.writeText( sshConnectString );
-						} else {
-							navigate( `/hosting-config/${ site.slug }` );
-						}
-					}
+					await copySshSftpDetails( site.ID, 'connectionString', site.slug );
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
