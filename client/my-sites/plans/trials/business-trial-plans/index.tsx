@@ -1,4 +1,9 @@
-import { PLAN_FREE, getPlanPath, isBusinessPlan } from '@automattic/calypso-products';
+import {
+	PLAN_FREE,
+	PRODUCT_1GB_SPACE,
+	getPlanPath,
+	isBusinessPlan,
+} from '@automattic/calypso-products';
 import page from 'page';
 import { useCallback } from 'react';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -23,11 +28,15 @@ export function BusinessTrialPlans( props: BusinessTrialPlansProps ) {
 
 			const planPath = getPlanPath( upgradePlanSlug ) ?? '';
 
-			const checkoutUrl = isBusinessPlan( upgradePlanSlug )
-				? getTrialCheckoutUrl( { productSlug: planPath, siteSlug } )
+			const cartItemForStorageAddOn = cartItems?.find(
+				( items ) => items.product_slug === PRODUCT_1GB_SPACE
+			);
+
+			const testUrl = isBusinessPlan( upgradePlanSlug )
+				? getTrialCheckoutUrl( { productSlug: planPath, siteSlug, addOn: cartItemForStorageAddOn } )
 				: `/checkout/${ siteSlug }/${ planPath }`;
 
-			page( checkoutUrl );
+			page( testUrl );
 		},
 		[ siteSlug, triggerTracksEvent ]
 	);
