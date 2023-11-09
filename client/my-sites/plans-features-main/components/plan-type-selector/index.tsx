@@ -41,7 +41,7 @@ export type PlanTypeSelectorProps = {
 	hideDiscountLabel?: boolean;
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
-	currentSitePlanSlug?: PlanSlug;
+	currentSitePlanSlug?: PlanSlug | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 };
 
