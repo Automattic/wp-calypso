@@ -1,15 +1,13 @@
-import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSiteSlug, getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSettingsSection from '../reader-settings';
@@ -94,12 +92,10 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 
 const connectComponent = connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = siteId && getSiteSlug( state, siteId );
 	const siteUrl = siteId && getSiteUrl( state, siteId );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	return {
-		...( siteSlug && { siteSlug } ),
 		...( siteUrl && { siteUrl } ),
 		siteIsJetpack,
 		isAtomic,
@@ -116,7 +112,6 @@ type ReadingSettingsFormProps = {
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
 	siteIsJetpack: boolean | null;
-	siteSlug?: string;
 	siteUrl?: string;
 	updateFields: ( fields: Fields ) => void;
 };
@@ -133,11 +128,9 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			isRequestingSettings,
 			isSavingSettings,
 			siteIsJetpack,
-			siteSlug,
 			siteUrl,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
-			const translate = useTranslate();
 			const disabled = isRequestingSettings || isSavingSettings;
 			return (
 				<form onSubmit={ handleSubmitForm }>
@@ -151,21 +144,6 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
 					/>
-
-					{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
-					<SettingsSectionHeader
-						id="newsletter-settings"
-						title={ translate( 'Newsletter settings' ) }
-					/>
-					<Card className="site-settings__card">
-						<em>
-							{ translate( 'Newsletter settings have moved to their {{a}}own page{{/a}}.', {
-								components: {
-									a: <a href={ `/settings/newsletter/${ siteSlug }` } />,
-								},
-							} ) }
-						</em>
-					</Card>
 					<ReaderSettingsSection
 						fields={ fields }
 						handleAutosavingToggle={ handleAutosavingToggle }
