@@ -1,6 +1,4 @@
 import config from '@automattic/calypso-config';
-import { englishLocales } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
@@ -319,7 +317,6 @@ class Login extends Component {
 			isGravPoweredLoginPage,
 			isWooCoreProfilerFlow,
 			isSignupExistingAccount,
-			locale,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -564,10 +561,7 @@ class Login extends Component {
 				</p>
 			);
 		} else if ( isSignupExistingAccount ) {
-			headerText =
-				hasTranslation( 'Log in to your existing account' ) || englishLocales.includes( locale )
-					? preventWidows( translate( 'Log in to your existing account' ) )
-					: translate( 'Log in to your account' );
+			headerText = preventWidows( translate( 'Log in to your existing account' ) );
 		}
 
 		if ( isWhiteLogin ) {
