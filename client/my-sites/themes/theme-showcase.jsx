@@ -19,8 +19,9 @@ import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
+import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
+import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
-import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -388,12 +389,20 @@ class ThemeShowcase extends Component {
 			<div className="theme-showcase__all-themes">
 				<ThemesSelection { ...themesSelectionProps }>
 					{ showCollections && (
-						<ThemeCollectionsLayout
-							getOptions={ this.getThemeOptions }
-							getScreenshotUrl={ this.getScreenshotUrl }
-							getActionLabel={ this.getActionLabel }
-							onSeeAll={ this.onCollectionSeeAll }
-						/>
+						<>
+							<ShowcaseThemeCollection
+								{ ...THEME_COLLECTIONS.marketplace }
+								getOptions={ this.getThemeOptions }
+								getScreenshotUrl={ this.getScreenshotUrl }
+								getActionLabel={ this.getActionLabel }
+								onSeeAll={ () =>
+									this.onCollectionSeeAll( {
+										tier: THEME_COLLECTIONS.marketplace.query.tier,
+										filter: THEME_COLLECTIONS.marketplace.query.filter,
+									} )
+								}
+							/>
+						</>
 					) }
 				</ThemesSelection>
 			</div>
