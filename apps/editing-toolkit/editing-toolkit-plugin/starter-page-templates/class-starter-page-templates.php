@@ -357,7 +357,7 @@ class Starter_Page_Templates {
 					continue;
 				}
 
-				$post_content_offset = array_search( 'core/post-content', $pattern['blockTypes'] );
+				$post_content_offset = array_search( 'core/post-content', $pattern['blockTypes'], true );
 				if ( $post_content_offset !== false ) {
 					$categories = array();
 					foreach ( $pattern['categories'] as $category ) {
@@ -386,6 +386,9 @@ class Starter_Page_Templates {
 		return $registered_page_templates;
 	}
 
+	/**
+	 * Gets the registered categories.
+	 */
 	public function get_registered_categories() {
 		$registered_categories = array();
 

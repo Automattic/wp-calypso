@@ -313,10 +313,12 @@ class Block_Patterns_From_API {
 				continue;
 			}
 
-			$post_content_offset = array_search( 'core/post-content', $pattern['blockTypes'] );
+			$post_content_offset = array_search( 'core/post-content', $pattern['blockTypes'], true );
 			if ( $post_content_offset !== false ) {
 				unregister_block_pattern( $pattern['name'] );
+
 				$pattern['blockTypes'] = array_splice( $pattern['blockTypes'], $post_content_offset, 1 );
+				$pattern_name          = $pattern['name'];
 				unset( $pattern['name'] );
 				register_block_pattern( $pattern_name, $pattern );
 			}
