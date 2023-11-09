@@ -1,52 +1,68 @@
 import { useState, useRef } from 'react';
+import Button from '../button';
 import Tooltip from './';
 
-export const Default = ( { position } ) => {
-	const tooltipRef = useRef();
+const TooltipWrapper = ( { placement } ) => {
 	const [ show, setShow ] = useState( false );
-
-	const handleOpen = () => {
-		setShow( true );
+	const handleOpen = () => setShow( true );
+	const handleClose = () => setShow( false );
+	const tooltipRef = useRef();
+	const placements = {
+		top: 'top',
+		tl: 'top left',
+		tr: 'top right',
+		left: 'left',
+		right: 'right',
+		bottom: 'bottom',
+		bl: 'bottom left',
+		br: 'bottom right',
 	};
+	const buttonWidth = 80;
 
-	const handleClose = () => {
-		setShow( false );
-	};
-
-	const size = 30;
 	return (
-		<div>
-			<div style={ { padding: '150px' } }>
-				Tooltip context&nbsp;
-				<span
-					style={ {
-						width: size,
-						height: size,
-						lineHeight: `${ size }px`,
-						display: 'inline-block',
-						borderRadius: parseInt( size / 2 ),
-						backgroundColor: '#444',
-						color: 'white',
-						fontSize: '12px',
-						cursor: 'pointer',
-						textAlign: 'center',
-					} }
-					onMouseEnter={ handleOpen }
-					onMouseLeave={ handleClose }
-					onClick={ handleClose }
-					ref={ tooltipRef }
-				>
-					T
-				</span>
-				<Tooltip
-					id="tooltip__example"
-					isVisible={ show }
-					onClose={ handleClose }
-					position={ position }
-					context={ tooltipRef.current }
-				>
-					<div style={ { padding: '10px' } }>Simple Tooltip Instance</div>
-				</Tooltip>
+		<>
+			<Button
+				onMouseEnter={ handleOpen }
+				onMouseLeave={ handleClose }
+				onClick={ handleClose }
+				ref={ tooltipRef }
+				style={ { width: buttonWidth, margin: 4, borderRadius: '6px' } }
+			>
+				{ placement }
+			</Button>
+			<Tooltip
+				position={ placements[ placement.toLowerCase() ] }
+				isVisible={ show }
+				onClose={ handleClose }
+				context={ tooltipRef.current }
+			>
+				<div>Prompt</div>
+			</Tooltip>
+		</>
+	);
+};
+
+export const Default = () => {
+	const buttonWidth = 80;
+	return (
+		<div style={ { padding: '80px' } }>
+			<div className="demo">
+				<div style={ { marginInlineStart: buttonWidth + 4, whiteSpace: 'nowrap' } }>
+					<TooltipWrapper placement="TL" />
+					<TooltipWrapper placement="Top" />
+					<TooltipWrapper placement="TR" />
+				</div>
+				<div style={ { width: buttonWidth, float: 'inline-start' } }>
+					<TooltipWrapper placement="Left" />
+				</div>
+				<div style={ { width: buttonWidth, marginInlineStart: buttonWidth * 4 + 24 } }>
+					<TooltipWrapper placement="Right" />
+				</div>
+				<div style={ { marginInlineStart: buttonWidth, clear: 'both', whiteSpace: 'nowrap' } }>
+					<TooltipWrapper placement="BL" />
+					<TooltipWrapper placement="Bottom" />
+					<TooltipWrapper placement="BR" />
+				</div>
 			</div>
 		</div>
 	);
@@ -55,19 +71,4 @@ export const Default = ( { position } ) => {
 export default {
 	title: 'packages/components/Tooltip',
 	component: Tooltip,
-	argTypes: {
-		position: {
-			options: [
-				'top',
-				'top left',
-				'top right',
-				'left',
-				'right',
-				'bottom',
-				'bottom left',
-				'bottom right',
-			],
-			control: { type: 'radio' },
-		},
-	},
 };
