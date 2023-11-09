@@ -537,6 +537,7 @@ const PlansFeaturesMain = ( {
 	 */
 	const planActionOverrides = useMemo( () => {
 		let actionOverrides: PlanActionOverrides | undefined;
+
 		if ( isInSignup ) {
 			actionOverrides = {
 				loggedInFreePlan: {
@@ -559,12 +560,13 @@ const PlansFeaturesMain = ( {
 						callback: () => {
 							page.redirect( `/add-ons/${ siteSlug }` );
 						},
+						text: translate( 'Manage add-ons', { context: 'verb' } ),
 					},
 				};
 
 				if ( domainFromHomeUpsellFlow ) {
 					actionOverrides.loggedInFreePlan = {
-						...actionOverrides?.loggedInFreePlan,
+						...actionOverrides.loggedInFreePlan,
 						callback: showDomainUpsellDialog,
 						text: translate( 'Keep my plan', { context: 'verb' } ),
 					};
@@ -586,10 +588,10 @@ const PlansFeaturesMain = ( {
 		intentFromProps,
 		isPlanUpsellEnabledOnFreeDomain.isLoading,
 		resolvedSubdomainName.isLoading,
+		translate,
 		domainFromHomeUpsellFlow,
 		siteSlug,
 		showDomainUpsellDialog,
-		translate,
 		canUserManageCurrentPlan,
 		currentPlanManageHref,
 	] );

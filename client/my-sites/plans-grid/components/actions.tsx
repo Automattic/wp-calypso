@@ -299,7 +299,11 @@ const LoggedInPlansFeatureActionButton = ( {
 		}
 
 		return (
-			<Button className={ classes } disabled={ ! planActionOverrides?.currentPlan?.callback }>
+			<Button
+				className={ classes }
+				disabled={ ! planActionOverrides?.currentPlan?.callback }
+				onClick={ planActionOverrides?.currentPlan?.callback }
+			>
 				{ planActionOverrides?.currentPlan?.text }
 			</Button>
 		);
