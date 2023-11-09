@@ -11,8 +11,9 @@
 	flex-direction: column;
 	padding: 16px;
 	gap: 8px;
-	max-width: 378px;
-	width: 378px;
+	width: 100%;
+	box-sizing: border-box;
+	min-height: 64px;
 	ol,
 	ul {
 		margin: 0 0 1.5em 1.5em;
@@ -87,8 +88,7 @@
 	align-items: center;
 
 	.odie-chatbox-message {
-		border: 1px solid var(--color-neutral-10);
-		box-shadow: 0 2px 3px 0 var(--color-neutral-10);
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		max-width: 800px;
 		max-height: 800px;
 		width: auto;
@@ -214,18 +214,19 @@ $custom-border-corner-size: 16px;
 	gap: 8px;
 	height: 96px;
 	justify-content: center;
-	transition: ease, opacity 0.3s ease, bottom 0.3s ease;
 	z-index: 5;
 	pointer-events: none;
 
 	&.is-hidden {
 		opacity: 0;
-		bottom: -18px !important;
+		bottom: 0 !important;
+		transition: opacity 0.3s ease, bottom 0.3s ease;
 	}
 
 	&.is-visible {
 		opacity: 1;
 		bottom: 24px;
+		transition: opacity 0.3s ease 0.3s, bottom 0.3s ease 0.3s;
 	}
 
 	.odie-jump-to-recent-message-button {
@@ -364,5 +365,26 @@ $custom-border-corner-size: 16px;
 	100% {
 		transform: translateY(0);
 		opacity: 1;
+	}
+}
+
+.odie-chatbox-message-sources-container {
+	.foldable-card {
+		margin: 0 !important;
+		width: 100% !important;
+
+		.foldable-card__header > span.foldable-card__main > button > span {
+			display: none;
+		}
+	}
+
+	.odie-chatbox-message-sources {
+		margin: 12px;
+	}
+
+	&:nth-last-child(2) {
+		.foldable-card {
+			box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
+		}
 	}
 }

@@ -95,6 +95,7 @@ export interface ChatAvailability {
 	availability: Availability;
 	is_presales_chat_open: boolean;
 	is_precancellation_chat_open: boolean;
+	wapuu_assistant_enabled: boolean;
 }
 
 export interface OtherSupportAvailability {

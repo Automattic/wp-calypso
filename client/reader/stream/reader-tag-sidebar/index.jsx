@@ -1,9 +1,11 @@
 import { Button } from '@automattic/components';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
+import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
 import { useTagStats } from 'calypso/data/reader/use-tag-stats';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
@@ -16,6 +18,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderTagBySlug } from 'calypso/state/reader/tags/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import '../style.scss';
 
 const ReaderTagSidebar = ( {
@@ -23,6 +26,7 @@ const ReaderTagSidebar = ( {
 	showFollow,
 	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
 } ) => {
+	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
 	const translate = useTranslate();
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
 	const tagStats = useTagStats( tag );
@@ -30,9 +34,24 @@ const ReaderTagSidebar = ( {
 	const isFollowing = useSelector( ( state ) => getReaderTagBySlug( state, tag )?.isFollowing );
 	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 
+	const today = moment().subtract( 10, 'd' ).format( '--MM-DD' );
+	const { data: prompts } = useBloggingPrompts( primarySiteId, today, 10 );
+
 	if ( relatedMetaByTag === undefined ) {
 		return null;
 	}
+
+	const showRecentPrompts = tag.indexOf( 'dailyprompt' ) === 0 || tag.indexOf( 'bloganuary' ) === 0;
+
+	const handleRecentPromptClick = ( prompt ) => {
+		recordAction( 'clicked_reader_sidebar_recent_prompt' );
+		recordGaEvent( 'Clicked Reader Sidebar Recent Blogging Prompt' );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_sidebar_recent_prompt_clicked', {
+				prompt_id: prompt.id,
+			} )
+		);
+	};
 
 	const handleTagSidebarClick = () => {
 		recordAction( 'clicked_reader_sidebar_tag' );
@@ -143,6 +162,25 @@ const ReaderTagSidebar = ( {
 					<Button primary onClick={ trackSignupClick }>
 						{ translate( 'Join the WordPress.com community' ) }
 					</Button>
+				</div>
+			) }
+			{ showRecentPrompts && prompts && (
+				<div className="reader-tag-sidebar__recent-prompts">
+					<h2>{ translate( 'Recent Prompts' ) }</h2>
+					{ prompts.map( ( prompt ) => (
+						<div key={ 'prompt-link-' + prompt.id }>
+							<a
+								className="reader-tag-sidebar__recent-prompt-link"
+								href={ '/tag/dailyprompt-' + encodeURIComponent( prompt.id ) }
+								onClick={ () => {
+									handleRecentPromptClick( prompt );
+								} }
+							>
+								{ ' ' }
+								{ prompt.text }{ ' ' }
+							</a>
+						</div>
+					) ) }
 				</div>
 			) }
 		</>

@@ -8154,12 +8154,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/redux-mock-store@npm:1.0.4":
-  version: 1.0.4
-  resolution: "@types/redux-mock-store@npm:1.0.4"
+"@types/redux-mock-store@npm:1.0.5":
+  version: 1.0.5
+  resolution: "@types/redux-mock-store@npm:1.0.5"
   dependencies:
     redux: ^4.0.5
-  checksum: ba61fe78d72ba48ea33ae165034ded15d6f59856fbfd306653108d1830117a6ea52d3c4b2971247cd3bf6347b40e83a3fb7473ab12baaba351cb4a6d80ca9820
+  checksum: 091ab7ec2c254b030ff2addce0d9d5efa447b01703b86aff5ab9cd89acd0efb34987f82572d9032429e59d528c8c1f8bbb22dc7eb91bd378e7e360bca9c96787
   languageName: node
   linkType: hard
 
@@ -8400,7 +8400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^6.4.1, @typescript-eslint/eslint-plugin@npm:^6.8.0":
+"@typescript-eslint/eslint-plugin@npm:^6.4.1, @typescript-eslint/eslint-plugin@npm:^6.9.0":
   version: 6.9.1
   resolution: "@typescript-eslint/eslint-plugin@npm:6.9.1"
   dependencies:
@@ -8441,7 +8441,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^6.4.1, @typescript-eslint/parser@npm:^6.8.0":
+"@typescript-eslint/parser@npm:^6.4.1, @typescript-eslint/parser@npm:^6.9.0":
   version: 6.9.1
   resolution: "@typescript-eslint/parser@npm:6.9.1"
   dependencies:
@@ -12143,11 +12143,12 @@ __metadata:
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.5.1
     "@types/react": ^18.2.14
-    "@types/redux-mock-store": 1.0.4
+    "@types/redux-mock-store": 1.0.5
     "@wordpress/a11y": ^3.44.0
     "@wordpress/api-fetch": ^6.41.0
     "@wordpress/base-styles": ^4.35.0
     "@wordpress/blocks": ^12.21.0
+    "@wordpress/commands": ^0.15.0
     "@wordpress/components": ^25.10.0
     "@wordpress/compose": ^6.21.0
     "@wordpress/data": ^9.14.0
@@ -12172,6 +12173,7 @@ __metadata:
     circular-dependency-plugin: ^5.2.2
     classnames: ^2.3.1
     clipboard: ^2.0.6
+    cmdk: ^0.2.0
     component-closest: ^1.0.1
     component-event: ^0.2.0
     component-file-picker: ^0.2.1
@@ -16047,7 +16049,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jest@npm:^27.2.3, eslint-plugin-jest@npm:^27.4.3":
+"eslint-plugin-jest@npm:^27.2.3, eslint-plugin-jest@npm:^27.6.0":
   version: 27.6.0
   resolution: "eslint-plugin-jest@npm:27.6.0"
   dependencies:
@@ -32376,6 +32378,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"workspace@npm:^0.0.1-preview.1":
+  version: 0.0.1-preview.1
+  resolution: "workspace@npm:0.0.1-preview.1"
+  checksum: 8c2a2d67ff7d02edbbdde587ca010e9e1fbd57e96faf8ce91092ad4ca94ff61f26342de113152e8e890e24a808376aef4453a9f99c5d96710e0fad26e39f21bf
+  languageName: node
+  linkType: hard
+
 "wp-calypso@workspace:.":
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
@@ -32434,9 +32443,10 @@ __metadata:
     "@types/uuid": ^8.3.4
     "@types/validator": ^13.7.1
     "@types/webpack-env": ^1.16.3
-    "@typescript-eslint/eslint-plugin": ^6.8.0
-    "@typescript-eslint/parser": ^6.8.0
+    "@typescript-eslint/eslint-plugin": ^6.9.0
+    "@typescript-eslint/parser": ^6.9.0
     "@wordpress/base-styles": ^4.35.0
+    "@wordpress/commands": ^0.15.0
     "@wordpress/components": ^25.10.0
     "@wordpress/data": ^9.14.0
     "@wordpress/element": ^5.21.0
@@ -32455,6 +32465,7 @@ __metadata:
     chalk: ^4.1.2
     check-node-version: ^4.0.2
     chroma-js: ^2.1.2
+    cmdk: ^0.2.0
     config: ^3.3.6
     css-loader: ^6.5.1
     debug: ^4.3.3
@@ -32465,7 +32476,7 @@ __metadata:
     eslint-nibble: ^8.1.0
     eslint-plugin-import: ^2.29.0
     eslint-plugin-inclusive-language: ^2.2.1
-    eslint-plugin-jest: ^27.4.3
+    eslint-plugin-jest: ^27.6.0
     eslint-plugin-jsdoc: ^46.8.2
     eslint-plugin-jsx-a11y: ^6.7.1
     eslint-plugin-md: ^1.0.19
@@ -32529,6 +32540,7 @@ __metadata:
     webpack-cli: ^4.9.2
     webpack-dev-middleware: ^5.3.1
     whybundled: ^2.0.0
+    workspace: ^0.0.1-preview.1
     wpcom: "workspace:^"
     yargs: ^17.0.1
   dependenciesMeta:

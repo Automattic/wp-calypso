@@ -14,6 +14,7 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
 import { useAtomicTransfer } from './use-atomic-transfer';
@@ -22,17 +23,20 @@ import usePluginsThankYouData from './use-plugins-thank-you-data';
 import { useThankYouFoooter } from './use-thank-you-footer';
 import { useThankYouSteps } from './use-thank-you-steps';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
-
 import './style.scss';
 
 const MarketplaceThankYou = ( {
 	pluginSlugs,
 	themeSlugs,
 	isOnboardingFlow,
+	styleVariationSlug,
+	continueWithPluginBundle,
 }: {
 	pluginSlugs: Array< string >;
 	themeSlugs: Array< string >;
 	isOnboardingFlow: boolean;
+	styleVariationSlug: string | null;
+	continueWithPluginBundle: boolean | null;
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -54,6 +58,7 @@ const MarketplaceThankYou = ( {
 		thankYouHeaderAction,
 	] = usePluginsThankYouData( pluginSlugs );
 	const [
+		firstTheme,
 		themesSection,
 		allThemesFetched,
 		themesGoBackSection,
@@ -61,7 +66,19 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 		themesProgressbarSteps,
 		isAtomicNeededForThemes,
-	] = useThemesThankYouData( themeSlugs, isOnboardingFlow );
+	] = useThemesThankYouData( themeSlugs, isOnboardingFlow, continueWithPluginBundle );
+
+	useEffect( () => {
+		if ( firstTheme && styleVariationSlug ) {
+			const styleVariation = firstTheme.style_variations.find(
+				( variation: { slug: string } ) => variation.slug === styleVariationSlug
+			);
+
+			if ( styleVariation ) {
+				dispatch( setThemePreviewOptions( firstTheme.id, null, null, { styleVariation } ) );
+			}
+		}
+	}, [ dispatch, firstTheme, styleVariationSlug ] );
 
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0

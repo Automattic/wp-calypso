@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
 .hundred-year-plan-step-wrapper.new-or-existing-site {
@@ -33,6 +34,82 @@
 			width: 279px;
 			@include break-small {
 				width: 140px;
+			}
+		}
+	}
+}
+
+.start-writing,
+.design-first {
+	&.new-or-existing-site {
+		.signup-header {
+			.wordpress-logo {
+				position: absolute;
+				inset-block-start: 20px;
+				inset-inline-start: 24px;
+				fill: var(--color-text);
+				transform-origin: 0 0;
+			}
+		}
+		.formatted-header {
+			.formatted-header__title {
+				font-size: rem(32px);
+				@include break-small {
+					font-size: rem(36px);
+				}
+			}
+			margin-top: 72px;
+			@include break-small {
+				margin-top: 0;
+			}
+		}
+
+		.step-container {
+			display: flex;
+			flex-direction: column;
+			-webkit-box-align: center;
+			align-items: center;
+			-webkit-box-pack: center;
+			justify-content: center;
+			@include break-small {
+				margin-top: 0;
+				min-height: 100vh;
+			}
+
+
+			.step-container__content {
+				min-height: auto;
+				@media (max-width: $break-mobile ) {
+					width: 100%;
+				}
+				.select-items {
+					@media (max-width: $break-mobile ) {
+						margin-left: 20px;
+						margin-right: 20px;
+					}
+				}
+				.select-items__item {
+					.select-items__item-icon {
+						@media (min-width: $break-mobile ) {
+							top: 32px;
+						}
+					}
+					@media (min-width: $break-small ) {
+						width: 456px;
+					}
+					.select-items__item-info-wrapper {
+						align-items: center;
+
+						.select-items__item-title {
+							margin-bottom: 0;
+						}
+					}
+					button.select-items__item-button {
+						@media (max-width: $break-mobile ) {
+							width: 279px;
+						}
+					}
+				}
 			}
 		}
 	}

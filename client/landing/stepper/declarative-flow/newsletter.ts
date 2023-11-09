@@ -164,14 +164,14 @@ const newsletter: Flow = {
 						);
 					}
 
-					if ( providedDependencies?.goToCheckout ) {
+					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
 						persistSignupDestination( launchpadUrl );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								( providedDependencies?.siteSlug as string ) ?? ''
+								providedDependencies?.siteSlug as string
 							) }?redirect_to=${ launchpadUrl }&signup=1`
 						);
 					}

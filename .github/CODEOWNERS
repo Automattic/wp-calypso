@@ -10,7 +10,7 @@
 # See https://help.github.com/en/articles/about-code-owners for details on the format of this file
 
 # Repository configuration
-.github @Automattic/kitkat
+.github @Automattic/team-calypso-platform
 
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
@@ -97,11 +97,11 @@
 /packages/languages @Automattic/i18n
 
 # E2E specs
-/test/e2e @Automattic/kitkat @worldomonation
-/packages/calypso-e2e @Automattic/kitkat @worldomonation
+/test/e2e @Automattic/team-calypso-platform
+/packages/calypso-e2e @Automattic/team-calypso-platform
 
 # Node updates
-/.nvmrc @Automattic/ground-control
+/.nvmrc @Automattic/team-calypso-platform
 
 # Domains
 /client/components/data/domain-management @Automattic/nomado

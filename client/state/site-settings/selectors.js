@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/site-settings/init';
 
 /**
@@ -9,7 +7,7 @@ import 'calypso/state/site-settings/init';
  * @returns {boolean}        Whether site settings is being requested
  */
 export function isRequestingSiteSettings( state, siteId ) {
-	return get( state.siteSettings.requesting, [ siteId ], false );
+	return state.siteSettings.requesting[ siteId ] ?? false;
 }
 
 /**
@@ -19,7 +17,7 @@ export function isRequestingSiteSettings( state, siteId ) {
  * @returns {boolean}        Whether site settings is being requested
  */
 export function isSavingSiteSettings( state, siteId ) {
-	return get( state.siteSettings.saveRequests, [ siteId, 'saving' ], false );
+	return state.siteSettings.saveRequests[ siteId ]?.saving ?? false;
 }
 
 /**
@@ -29,7 +27,7 @@ export function isSavingSiteSettings( state, siteId ) {
  * @returns {string}         The request status (peding, success or error)
  */
 export function getSiteSettingsSaveRequestStatus( state, siteId ) {
-	return get( state.siteSettings.saveRequests, [ siteId, 'status' ] );
+	return state.siteSettings.saveRequests[ siteId ]?.status;
 }
 
 /**
@@ -51,7 +49,7 @@ export function getSiteSettingsSaveRequestStatus( state, siteId ) {
  * @returns {SiteSettingsItem}        Site settings
  */
 export function getSiteSettings( state, siteId ) {
-	return get( state.siteSettings.items, [ siteId ], null );
+	return state.siteSettings.items[ siteId ] ?? null;
 }
 
 /**
@@ -71,5 +69,5 @@ export function isSiteSettingsSaveSuccessful( state, siteId ) {
  * @returns {string}         The request error
  */
 export function getSiteSettingsSaveError( state, siteId ) {
-	return get( state.siteSettings.saveRequests, [ siteId, 'error' ], false );
+	return state.siteSettings.saveRequests[ siteId ]?.error ?? false;
 }

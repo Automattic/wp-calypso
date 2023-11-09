@@ -6,6 +6,7 @@ import { bumpStat } from 'calypso/state/analytics/actions';
 import { setSectionLoading } from 'calypso/state/ui/actions';
 import { activateNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import * as controller from './controller/index.web';
+import { composeHandlers } from './controller/shared';
 import sections from './sections';
 import isSectionEnabled from './sections-filter';
 import { receiveSections, load } from './sections-helper';
@@ -49,26 +50,8 @@ async function loadSection( context, sectionDefinition ) {
  */
 const _loadedSections = {};
 
-function createPageDefinition( path, sectionDefinition ) {
-	// skip this section if it's not enabled in current environment
-	const { envId } = sectionDefinition;
-	if ( envId && ! envId.includes( config( 'env_id' ) ) ) {
-		return;
-	}
-
-	const pathRegex = pathToRegExp( path );
-
-	// if the section doesn't support logged-out views, redirect to login if user is not logged in
-	if ( ! sectionDefinition.enableLoggedOut ) {
-		page( pathRegex, controller.redirectLoggedOut );
-	}
-
-	// Install navigation performance tracking.
-	if ( sectionDefinition.trackLoadPerformance ) {
-		page( pathRegex, performanceTrackerStart( sectionDefinition.name ) );
-	}
-
-	page( pathRegex, async function ( context, next ) {
+function loadSectionHandler( sectionDefinition ) {
+	return async ( context, next ) => {
 		try {
 			const loadedSection = _loadedSections[ sectionDefinition.module ];
 			if ( loadedSection ) {
@@ -100,7 +83,30 @@ function createPageDefinition( path, sectionDefinition ) {
 				LoadingError.show( context, sectionDefinition.name );
 			}
 		}
-	} );
+	};
+}
+
+function createPageDefinition( path, sectionDefinition ) {
+	// skip this section if it's not enabled in current environment
+	const { envId } = sectionDefinition;
+	if ( envId && ! envId.includes( config( 'env_id' ) ) ) {
+		return;
+	}
+
+	const pathRegex = pathToRegExp( path );
+	let handler = loadSectionHandler( sectionDefinition );
+
+	// Install navigation performance tracking.
+	if ( sectionDefinition.trackLoadPerformance ) {
+		handler = composeHandlers( performanceTrackerStart( sectionDefinition.name ), handler );
+	}
+
+	// if the section doesn't support logged-out views, redirect to login if user is not logged in
+	if ( ! sectionDefinition.enableLoggedOut ) {
+		handler = composeHandlers( controller.redirectLoggedOut, handler );
+	}
+
+	page( pathRegex, handler );
 }
 
 export const setupRoutes = () => {

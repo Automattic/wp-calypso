@@ -29,6 +29,7 @@ import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list'
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import useCheckout from 'calypso/landing/stepper/hooks/use-checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
@@ -587,7 +588,7 @@ export function getEnhancedTasks(
 							site?.ID
 								? setShowPlansModal( true )
 								: window.location.assign(
-										`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
+										`/earn/payments-plans/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
 								  );
 						},
 					};

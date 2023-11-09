@@ -3,7 +3,6 @@ import { useSelect } from '@wordpress/data';
 import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useOdieAssistantContext } from '../context';
@@ -17,18 +16,19 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 const heightOffset = 48;
 
 export const JumpToRecent = ( {
-	lastMessageRef,
+	scrollToBottom,
+	enableJumpToRecent,
 	bottomOffset,
 }: {
-	lastMessageRef: React.RefObject< HTMLDivElement >;
+	scrollToBottom: () => void;
+	enableJumpToRecent: boolean;
 	bottomOffset: number;
 } ) => {
 	const { botSetting, botNameSlug } = useOdieAssistantContext();
 	const translate = useTranslate();
-	const [ isLastMessageVisible, setIsLastMessageVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const jumpToRecent = () => {
-		lastMessageRef?.current?.scrollIntoView( { behavior: 'smooth' } );
+		scrollToBottom();
 		dispatch(
 			recordTracksEvent( 'calypso_odie_chat_jump_to_recent_click', {
 				bot_name_slug: botNameSlug,
@@ -46,37 +46,13 @@ export const JumpToRecent = ( {
 		};
 	}, [] );
 
-	useEffect( () => {
-		const handleIntersection = ( entries: IntersectionObserverEntry[] ) => {
-			const entry = entries[ 0 ];
-			const visibility = entry.intersectionRatio; // percentage of visibility (0, 1)
-
-			setIsLastMessageVisible( visibility > 0 );
-		};
-
-		const options = {
-			root: lastMessageRef.current?.parentElement,
-			threshold: [ 0, 1 ],
-		};
-
-		const observer = new IntersectionObserver( handleIntersection, options );
-
-		if ( lastMessageRef.current ) {
-			observer.observe( lastMessageRef.current );
-		}
-
-		return () => {
-			observer.disconnect();
-		};
-	}, [ lastMessageRef ] );
-
-	if ( isMinimized && botSetting === 'supportDocs' ) {
+	if ( isMinimized && botNameSlug === 'wpcom-support-chat' ) {
 		return null;
 	}
 
 	const className = classnames( 'odie-gradient-to-white', {
-		'is-visible': ! isLastMessageVisible,
-		'is-hidden': isLastMessageVisible,
+		'is-visible': enableJumpToRecent,
+		'is-hidden': ! enableJumpToRecent,
 	} );
 
 	return (
