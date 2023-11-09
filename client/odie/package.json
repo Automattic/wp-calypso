@@ -1,0 +1,33 @@
+{
+	"name": "odie",
+	"version": "1.0.0",
+	"main": "index.tsx",
+	"packageManager": "yarn@3.2.3",
+	"dependencies": {
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-intersection-observer": "^9.4.3",
+		"@wordpress/i18n": "4.45.0",
+		"@automattic/components": "2.0.1",
+		"@wordpress/icons": "9.36.0",
+		"classnames": "^2.3.1",
+		"i18n-calypso": "1.0.0",
+		"@tanstack/react-query": "^3.19.1",
+		"prop-types": "^15.7.2"
+	},
+	"devDependencies": {
+		"eslint-config-prettier": "^9.0.0",
+		"eslint-nibble": "^8.1.0",
+		"eslint-plugin-import": "^2.29.0",
+		"eslint-plugin-inclusive-language": "^2.2.1",
+		"eslint-plugin-jest": "^27.6.0",
+		"eslint-plugin-jsdoc": "^46.8.2",
+		"eslint-plugin-jsx-a11y": "^6.7.1",
+		"eslint-plugin-md": "^1.0.19",
+		"eslint-plugin-mocha": "^10.2.0",
+		"eslint-plugin-prettier": "^5.0.1",
+		"eslint-plugin-react": "^7.33.2",
+		"eslint-plugin-react-hooks": "^4.6.0",
+		"eslint-plugin-wpcalypso": "workspace:^"
+	}
+}

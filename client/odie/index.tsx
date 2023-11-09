@@ -1,6 +1,6 @@
+import { recordTracksPageView } from '@automattic/calypso-analytics';
 import { WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useOdieAssistantContext } from './context';
 import ChatMessage from './message';
 import { OdieSendMessageButton } from './send-message-input';
@@ -36,12 +36,14 @@ const OdieAssistant = () => {
 		scrollToBottom( false, true );
 	}, [ scrollToBottom, chat.messages.length ] );
 
+	useEffect( () => {
+		if ( botNameSlug ) {
+			recordTracksPageView( 'calypso_odie_chatbox_view', { bot_name_slug: botNameSlug } );
+		}
+	}, [ botNameSlug ] );
+
 	return (
 		<div className="chatbox">
-			<TrackComponentView
-				eventName="calypso_odie_chatbox_view"
-				eventProperties={ { bot_name_slug: botNameSlug } }
-			/>
 			<div className="chat-box-message-container">
 				<div
 					className="chatbox-messages"
