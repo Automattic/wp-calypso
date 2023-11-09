@@ -96,14 +96,6 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 				<FormLabel htmlFor="confirmation_email_message">
 					{ translate( 'Confirmation email message' ) }
 				</FormLabel>
-				<FormTextarea
-					name="confirmation_email_message"
-					id="confirmation_email_message"
-					value={ value?.invitation }
-					onChange={ updateSubscriptionOptions( 'invitation' ) }
-					autoCapitalize="none"
-					disabled
-				/>
 				<FormSettingExplanation>
 					{ translate(
 						'The ability to customize the confirmation email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
