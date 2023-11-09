@@ -108,15 +108,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			( items ) => items.product_slug === PRODUCT_1GB_SPACE
 		);
 
-		if ( cartItemForStorageAddOn ) {
-			setProductCartItems( [ cartItemForStorageAddOn ] );
-
-			cartItemForStorageAddOn.extra &&
-				recordTracksEvent( 'calypso_signup_storage_add_on_upgrade_click', {
-					add_on_slug: cartItemForStorageAddOn.extra.feature_slug,
-				} );
-		}
-
+		cartItemForStorageAddOn && setProductCartItems( [ cartItemForStorageAddOn ] );
 		setPlanCartItem( planCartItem );
 		props.onSubmit?.( planCartItem );
 	};
