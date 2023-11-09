@@ -60,6 +60,7 @@ export { default as JetpackUpsellCard } from './jetpack-upsell-card';
 export { UpsellMenuGroup } from './upsell-menu-group';
 export { default as PricingSlider } from './pricing-slider';
 export { default as Tooltip } from './tooltip';
+export { default as SegmentedControl } from './segmented-control';
 export * from './theme-type-badge';
 
 // Types
