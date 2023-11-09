@@ -1271,9 +1271,8 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	onSearch = async ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
+	onSearch = ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
-
 		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 
 		this.setState(
