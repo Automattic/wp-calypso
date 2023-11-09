@@ -408,7 +408,7 @@ const PlansFeaturesMain = ( {
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
-		useFreeHostingTrialAssignment();
+		useFreeHostingTrialAssignment( intent );
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const gridPlans = useGridPlans( {
@@ -548,7 +548,7 @@ const PlansFeaturesMain = ( {
 			};
 		}
 
-		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
+		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) && intentFromProps !== 'plans-p2' ) {
 			actionOverrides = {
 				loggedInFreePlan: {
 					status:

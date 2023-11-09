@@ -164,7 +164,6 @@ class MagicLogin extends Component {
 			<>
 				<div className="magic-login__footer">
 					<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
-						<Gridicon icon="arrow-left" size={ 18 } />
 						{ translate( 'Enter a password instead' ) }
 					</a>
 				</div>

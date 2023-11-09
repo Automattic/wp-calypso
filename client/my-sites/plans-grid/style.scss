@@ -685,7 +685,7 @@ body.is-section-signup.is-white-signup,
 					margin-bottom: 0;
 				}
 
-				.plan-pill {
+				.plans-grid__plan-pill {
 					font-family: Inter, $sans;
 					font-size: 0.75rem;
 					font-weight: 500;
@@ -708,14 +708,14 @@ body.is-section-signup.is-white-signup,
 				}
 
 				&:not(.with-plan-logo) {
-					.plan-pill {
+					.plans-grid__plan-pill {
 						transform: translate(20px, 0);
 					}
 				}
 
 				&.is-current-plan {
 					color: unset;
-					.plan-pill {
+					.plans-grid__plan-pill {
 						background: #e0e0e0;
 						color: var(--studio-gray-100);
 					}
@@ -879,7 +879,7 @@ body.is-section-signup.is-white-signup,
 		&.popular-plan-parent-class {
 			.plan-features-2023-grid__popular-badge {
 				&.is-current-plan {
-					.plan-pill {
+					.plans-grid__plan-pill {
 						background: #e0e0e0;
 						color: var(--studio-gray-100);
 					}
@@ -893,7 +893,7 @@ body.is-section-signup.is-white-signup,
 				background: #fff;
 				z-index: 2;
 
-				.plan-pill {
+				.plans-grid__plan-pill {
 					top: 20px;
 				}
 			}
@@ -969,7 +969,7 @@ body.is-section-signup.is-white-signup,
 			}
 		}
 
-		.plan-pill {
+		.plans-grid__plan-pill {
 			font-family: Inter, $sans;
 			font-size: 0.75rem;
 			font-weight: 500;

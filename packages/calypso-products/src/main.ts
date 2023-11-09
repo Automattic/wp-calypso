@@ -42,6 +42,7 @@ import {
 	TERM_CENTENNIALLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	GROUP_P2,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
@@ -470,6 +471,10 @@ export function isJetpackFreePlan( planSlug: string ): boolean {
 
 export function isJetpackOfferResetPlan( planSlug: string ): boolean {
 	return ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( planSlug );
+}
+
+export function isP2FreePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_P2 } );
 }
 
 export function isP2PlusPlan( planSlug: string ): boolean {
