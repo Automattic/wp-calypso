@@ -457,6 +457,13 @@ $image-height: 47px;
 			margin-top: 64px;
 		}
 
+		form {
+			.card {
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+
 		/* END - Note */
 	}
 
