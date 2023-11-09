@@ -32,11 +32,11 @@ export function BusinessTrialPlans( props: BusinessTrialPlansProps ) {
 				( items ) => items.product_slug === PRODUCT_1GB_SPACE
 			);
 
-			const testUrl = isBusinessPlan( upgradePlanSlug )
+			const checkoutUrl = isBusinessPlan( upgradePlanSlug )
 				? getTrialCheckoutUrl( { productSlug: planPath, siteSlug, addOn: cartItemForStorageAddOn } )
 				: `/checkout/${ siteSlug }/${ planPath }`;
 
-			page( testUrl );
+			page( checkoutUrl );
 		},
 		[ siteSlug, triggerTracksEvent ]
 	);
