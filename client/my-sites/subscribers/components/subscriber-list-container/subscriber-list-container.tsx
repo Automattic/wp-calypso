@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { numberFormat, translate } from 'i18n-calypso';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -34,10 +33,7 @@ const SubscriberListContainer = ( {
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
-	const EmptyComponent =
-		config.isEnabled( 'subscribers-launchpad' ) && ( isSimple || isAtomic )
-			? SubscriberLaunchpad
-			: EmptyListView;
+	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
 
 	return (
 		<section className="subscriber-list-container">
