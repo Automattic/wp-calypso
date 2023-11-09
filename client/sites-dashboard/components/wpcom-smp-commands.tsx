@@ -125,11 +125,11 @@ export const useCommandsArrayWpcom = ( {
 			},
 		},
 		{
-			name: 'copeSshSftpUsername',
+			name: 'copySshSftpUsername',
 			label: __( 'Copy SSH/SFTP username' ),
-			searchLabel: __( 'cope ssh/sftp username' ),
+			searchLabel: __( 'copy ssh/sftp username' ),
 			context: 'Copying SSH/SFTP username',
-			callback: setStateCallback( 'copySSH/SFTPUsername' ),
+			callback: setStateCallback( 'copySshSftpUsername' ),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -146,6 +146,37 @@ export const useCommandsArrayWpcom = ( {
 							// Pick first user for the username
 							const username = sshUsers[ 0 ];
 							navigator.clipboard.writeText( username );
+						} else {
+							navigate( `/hosting-config/${ site.slug }` );
+						}
+					}
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+		},
+		{
+			name: 'copySshConnectionString',
+			label: __( 'Copy SSH connection string' ),
+			searchLabel: __( 'copy ssh connection string' ),
+			context: 'Copying SSH connection string',
+			callback: setStateCallback( 'copySshConnectionString' ),
+			siteFunctions: {
+				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+
+					const response = await wpcom.req.get( {
+						path: `/sites/${ site.ID }/hosting/ssh-users`,
+						apiNamespace: 'wpcom/v2',
+					} );
+
+					const sshUsers = response?.users;
+
+					if ( sshUsers !== null ) {
+						if ( sshUsers.length ) {
+							// Pick first user for the username
+							const username = sshUsers[ 0 ];
+							const sshConnectString = `ssh ${ username }@sftp.wp.com`;
+							navigator.clipboard.writeText( sshConnectString );
 						} else {
 							navigate( `/hosting-config/${ site.slug }` );
 						}
