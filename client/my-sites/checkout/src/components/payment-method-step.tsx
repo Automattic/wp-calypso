@@ -42,10 +42,6 @@ const CheckoutTermsWrapper = styled.div< { shouldCollapseLastStep: boolean } >`
 	}
 `;
 
-const PriceTallySection = styled.div< { shouldCollapseLastStep: boolean } >`
-	padding-bottom: ${ ( { shouldCollapseLastStep } ) => ( shouldCollapseLastStep ? '24px' : '0' ) };
-`;
-
 const NonTotalPrices = styled.div`
 	font-size: 12px;
 	border-top: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
@@ -70,7 +66,7 @@ export default function BeforeSubmitCheckoutHeader() {
 			</CheckoutTermsWrapper>
 
 			{ ! hasCheckoutVersion( '2' ) && (
-				<PriceTallySection shouldCollapseLastStep={ shouldCollapseLastStep }>
+				<div>
 					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
 						{ taxLineItems.map( ( taxLineItem ) => (
@@ -83,7 +79,7 @@ export default function BeforeSubmitCheckoutHeader() {
 					<TotalPrice>
 						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
 					</TotalPrice>
-				</PriceTallySection>
+				</div>
 			) }
 		</>
 	);
