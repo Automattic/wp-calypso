@@ -53,6 +53,7 @@ export type ResponseDomain = {
 	aRecordsRequiredForMapping?: Array< string >;
 	autoRenewalDate: string;
 	autoRenewing: boolean;
+	availablePromos?: Array< string >;
 	beginTransferUntilDate: string;
 	blogId: number;
 	bundledPlanSubscriptionId: string | number | null | undefined;
