@@ -697,10 +697,9 @@ const ExperimentWrappedUser = ( props ) => {
 			isEligible: props.flowName === 'onboarding-pm',
 		}
 	);
-	const sc = Math.random() > 0;
 	useEffect( () => {
 		if ( ! isLoading ) {
-			if ( experimentAssignment?.variationName === 'treatment' || sc ) {
+			if ( experimentAssignment?.variationName === 'treatment' ) {
 				const [ globalDiv ] = document.getElementsByClassName( 'signup__step is-user' );
 				if ( typeof globalDiv === 'object' ) {
 					globalDiv.classList.add( 'is-passwordless-experiment' );
@@ -708,7 +707,7 @@ const ExperimentWrappedUser = ( props ) => {
 			}
 			setIsLayoutSwitchComplete( true );
 		}
-	}, [ experimentAssignment?.variationName, isLoading, setIsLayoutSwitchComplete, sc ] );
+	}, [ experimentAssignment?.variationName, isLoading, setIsLayoutSwitchComplete ] );
 
 	if ( ! isLayoutSwitchComplete ) {
 		return null;
@@ -717,7 +716,7 @@ const ExperimentWrappedUser = ( props ) => {
 		<ConnectedUser
 			{ ...props }
 			isSocialFirst={
-				experimentAssignment?.variationName === 'treatment' || sc ? true : props.isSocialFirst
+				experimentAssignment?.variationName === 'treatment' ? true : props.isSocialFirst
 			}
 		/>
 	);
