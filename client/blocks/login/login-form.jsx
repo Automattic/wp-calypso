@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
-import { localizeUrl, englishLocales } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
@@ -614,26 +613,8 @@ export class LoginForm extends Component {
 
 		const magicLoginPageLinkWithEmail = addQueryArgs( { email_address: emailAddress }, loginLink );
 
-		if (
-			hasTranslation(
-				'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?'
-			) ||
-			englishLocales.includes( this.props.locale )
-		) {
-			return this.props.translate(
-				'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
-				{
-					components: {
-						magicLoginLink: (
-							<a href={ magicLoginPageLinkWithEmail } onClick={ this.handleMagicLoginClick } />
-						),
-					},
-				}
-			);
-		}
-
 		return this.props.translate(
-			'Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
+			'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
 			{
 				components: {
 					magicLoginLink: (
