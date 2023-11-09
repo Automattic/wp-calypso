@@ -165,7 +165,7 @@ class SignupForm extends Component {
 			form: stateWithFilledUsername,
 			validationInitialized: false,
 			suggestDomainTypoFix: true,
-			suggestedEmailAddress: null,
+			emailSuggestion: null,
 		};
 	}
 
@@ -336,18 +336,18 @@ class SignupForm extends Component {
 
 				if ( fields.email ) {
 					if ( ! messages?.email && this.state.suggestDomainTypoFix ) {
-						const suggestedDomain = emailSpellChecker.run( {
+						const emailSuggestion = emailSpellChecker.run( {
 							email: fields.email,
 						} );
 
-						if ( suggestedDomain ) {
+						if ( emailSuggestion ) {
 							// Error message handled in getErrorMessagesWithLogin()
 							messages = Object.assign( {}, messages, {
 								email: {
 									suggest_domain: '',
 								},
 							} );
-							this.setState( { suggestedEmailAddress: suggestedDomain?.full } );
+							this.setState( { emailSuggestion } );
 						}
 					}
 
@@ -632,16 +632,16 @@ class SignupForm extends Component {
 					<span key={ error_code }>
 						<p>
 							{ this.props.translate(
-								'Did you mean {{suggestedEmail/}}? {{acceptEmailSuggestion/}}, {{ignoreEmailSuggestion/}}.',
+								'Did you mean @{{emailSuggestion/}}? {{acceptEmailSuggestion/}}, {{ignoreEmailSuggestion/}}.',
 								{
 									components: {
-										suggestedEmail: <span>{ this.state.suggestedEmailAddress }</span>,
+										emailSuggestion: <span>{ this.state.emailSuggestion?.domain }</span>,
 										acceptEmailSuggestion: (
 											<Button
 												plain={ true }
 												className="signup-form__domain-suggestion-confirmation"
 												onClick={ () => {
-													handleEmailSuggestionOption( this.state.suggestedEmailAddress );
+													handleEmailSuggestionOption( this.state.emailSuggestion?.domain );
 												} }
 											>
 												Yes
