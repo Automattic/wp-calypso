@@ -193,6 +193,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: <MaterialIcon icon="key" />,
 		},
 		{
 			name: 'copySshConnectionString',
@@ -207,6 +208,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: <MaterialIcon icon="key" />,
 		},
 		{
 			name: 'resetSshSftpPassword',
@@ -221,6 +223,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: <MaterialIcon icon="key" />,
 		},
 	];
 
