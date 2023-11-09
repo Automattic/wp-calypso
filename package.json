@@ -179,6 +179,7 @@
 		"@wordpress/is-shallow-equal": "^4.44.0",
 		"@wordpress/primitives": "^3.42.0",
 		"@wordpress/url": "^3.45.0",
+		"@zootools/email-spell-checker": "^1.12.0",
 		"browserslist": "^4.16.0",
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",

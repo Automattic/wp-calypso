@@ -10162,6 +10162,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@zootools/email-spell-checker@npm:^1.12.0":
+  version: 1.12.0
+  resolution: "@zootools/email-spell-checker@npm:1.12.0"
+  checksum: 0b2fa9d0aaf1e6d846fe9e261276fecbd5c48db2689814b702bcec6b63729d097b245f59cdfb3dfca65d66b68de24b67e3b317494bcfbfdd166c244cd298a0cc
+  languageName: node
+  linkType: hard
+
 "WordPressDesktop@workspace:desktop":
   version: 0.0.0-use.local
   resolution: "WordPressDesktop@workspace:desktop"
@@ -32447,6 +32454,7 @@ __metadata:
     "@wordpress/primitives": ^3.42.0
     "@wordpress/stylelint-config": ^21.27.0
     "@wordpress/url": ^3.45.0
+    "@zootools/email-spell-checker": ^1.12.0
     babel-loader: ^8.2.3
     browserslist: ^4.16.0
     bunyan: ^1.8.15

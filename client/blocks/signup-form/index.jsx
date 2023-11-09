@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import emailSpellChecker from '@zootools/email-spell-checker';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -164,6 +165,7 @@ class SignupForm extends Component {
 			form: stateWithFilledUsername,
 			validationInitialized: false,
 			suggestDomainTypoFix: true,
+			suggestedEmailAddress: null,
 		};
 	}
 
@@ -265,113 +267,6 @@ class SignupForm extends Component {
 		);
 	};
 
-	// TODO: REMOVE THIS ALGORITHM
-	// Using Jaccard algorithm
-
-	// suggestEmailDomainUsingJaccard( inputDomain, validDomains, minSimilarity ) {
-	// 	// Function to calculate Jaccard similarity between two sets
-	// 	function calculateJaccardSimilarity( setA, setB ) {
-	// 		const intersection = new Set( [ ...setA ].filter( ( x ) => setB.has( x ) ) );
-	// 		const union = new Set( [ ...setA, ...setB ] );
-	// 		return intersection.size / union.size;
-	// 	}
-
-	// 	let suggestedDomain = null;
-	// 	const inputSet = new Set( inputDomain );
-
-	// 	for ( let i = 0; i < validDomains.length; i++ ) {
-	// 		const domainSet = new Set( validDomains[ i ] );
-	// 		const similarity = calculateJaccardSimilarity( inputSet, domainSet );
-	// 		if ( similarity >= minSimilarity ) {
-	// 			suggestedDomain = validDomains[ i ];
-	// 			break; // Exit the loop as soon as a valid domain with sufficient similarity is found
-	// 		}
-	// 	}
-
-	// 	return suggestedDomain;
-	// }
-
-	// TODO: REMOVE THIS COMMENT AND CLEAN UP ALGORITHM
-	// Using the Levenshtein algorithm
-
-	suggestEmailDomainWithinDistance( inputDomain, validDomains, maxDistance ) {
-		// TODO: Check algorithm and remove one of them
-		// Function to calculate the Levenshtein distance between two strings
-		// function calculateLevenshteinDistance( str1, str2 ) {
-		// 	const m = str1.length;
-		// 	const n = str2.length;
-		// 	const dp = [ ...Array( m + 1 ) ].map( () => Array( n + 1 ).fill( 0 ) );
-
-		// 	for ( let i = 0; i <= m; i++ ) {
-		// 		for ( let j = 0; j <= n; j++ ) {
-		// 			if ( i === 0 ) {
-		// 				dp[ i ][ j ] = j;
-		// 			} else if ( j === 0 ) {
-		// 				dp[ i ][ j ] = i;
-		// 			} else if ( str1[ i - 1 ] === str2[ j - 1 ] ) {
-		// 				dp[ i ][ j ] = dp[ i - 1 ][ j - 1 ];
-		// 			} else {
-		// 				dp[ i ][ j ] = 1 + Math.min( dp[ i - 1 ][ j ], dp[ i ][ j - 1 ], dp[ i - 1 ][ j - 1 ] );
-		// 			}
-		// 		}
-		// 	}
-
-		// 	return dp[ m ][ n ];
-		// }
-
-		function calculateDamerauLevenshteinDistance( str1, str2 ) {
-			const m = str1.length;
-			const n = str2.length;
-			const dp = Array.from( Array( m + 1 ), () => Array( n + 1 ).fill( 0 ) );
-
-			for ( let i = 0; i <= m; i++ ) {
-				dp[ i ][ 0 ] = i;
-			}
-
-			for ( let j = 0; j <= n; j++ ) {
-				dp[ 0 ][ j ] = j;
-			}
-
-			for ( let i = 1; i <= m; i++ ) {
-				for ( let j = 1; j <= n; j++ ) {
-					if ( str1[ i - 1 ] === str2[ j - 1 ] ) {
-						dp[ i ][ j ] = dp[ i - 1 ][ j - 1 ];
-					} else {
-						dp[ i ][ j ] = Math.min(
-							dp[ i - 1 ][ j - 1 ] + 1, // substitution
-							dp[ i ][ j - 1 ] + 1, // insertion
-							dp[ i - 1 ][ j ] + 1 // deletion
-						);
-
-						if (
-							i > 1 &&
-							j > 1 &&
-							str1[ i - 1 ] === str2[ j - 2 ] &&
-							str1[ i - 2 ] === str2[ j - 1 ]
-						) {
-							dp[ i ][ j ] = Math.min( dp[ i ][ j ], dp[ i - 2 ][ j - 2 ] + 1 ); // transposition
-						}
-					}
-				}
-			}
-
-			return dp[ m ][ n ];
-		}
-
-		let suggestedDomain = null;
-
-		for ( let i = 0; i < validDomains.length; i++ ) {
-			// const currentDistance = calculateLevenshteinDistance( inputDomain, validDomains[ i ] );
-			const currentDistance = calculateDamerauLevenshteinDistance( inputDomain, validDomains[ i ] );
-			if ( currentDistance <= maxDistance ) {
-				suggestedDomain = validDomains[ i ];
-				break; // Exit the loop as soon as a valid domain within max distance is found
-			}
-		}
-
-		return suggestedDomain;
-	}
-
 	extractDomainWithExtension( email ) {
 		const atIndex = email.indexOf( '@' );
 		if ( atIndex !== -1 ) {
@@ -440,182 +335,19 @@ class SignupForm extends Component {
 				} );
 
 				if ( fields.email ) {
-					const extractedEmailDomainAddress = this.extractDomainWithExtension( fields.email );
-					// TODO: MOVE validDomains array
-					const validDomains = [
-						'gmail.com',
-						'yahoo.com',
-						'hotmail.com',
-						'aol.com',
-						'hotmail.co.uk',
-						'hotmail.fr',
-						'msn.com',
-						'yahoo.fr',
-						'wanadoo.fr',
-						'orange.fr',
-						'comcast.net',
-						'yahoo.co.uk',
-						'yahoo.com.br',
-						'yahoo.co.in',
-						'live.com',
-						'rediffmail.com',
-						'free.fr',
-						'gmx.de',
-						'web.de',
-						'yandex.ru',
-						'ymail.com',
-						'libero.it',
-						'outlook.com',
-						'uol.com.br',
-						'bol.com.br',
-						'mail.ru',
-						'cox.net',
-						'hotmail.it',
-						'sbcglobal.net',
-						'sfr.fr',
-						'live.fr',
-						'verizon.net',
-						'live.co.uk',
-						'googlemail.com',
-						'yahoo.es',
-						'ig.com.br',
-						'live.nl',
-						'bigpond.com',
-						'terra.com.br',
-						'yahoo.it',
-						'neuf.fr',
-						'yahoo.de',
-						'alice.it',
-						'rocketmail.com',
-						'att.net',
-						'laposte.net',
-						'facebook.com',
-						'bellsouth.net',
-						'yahoo.in',
-						'hotmail.es',
-						'charter.net',
-						'yahoo.ca',
-						'yahoo.com.au',
-						'rambler.ru',
-						'hotmail.de',
-						'tiscali.it',
-						'shaw.ca',
-						'yahoo.co.jp',
-						'sky.com',
-						'earthlink.net',
-						'optonline.net',
-						'freenet.de',
-						't-online.de',
-						'aliceadsl.fr',
-						'virgilio.it',
-						'home.nl',
-						'qq.com',
-						'telenet.be',
-						'me.com',
-						'yahoo.com.ar',
-						'tiscali.co.uk',
-						'yahoo.com.mx',
-						'voila.fr',
-						'gmx.net',
-						'mail.com',
-						'planet.nl',
-						'tin.it',
-						'live.it',
-						'ntlworld.com',
-						'arcor.de',
-						'yahoo.co.id',
-						'frontiernet.net',
-						'hetnet.nl',
-						'live.com.au',
-						'yahoo.com.sg',
-						'zonnet.nl',
-						'club-internet.fr',
-						'juno.com',
-						'optusnet.com.au',
-						'blueyonder.co.uk',
-						'bluewin.ch',
-						'skynet.be',
-						'sympatico.ca',
-						'windstream.net',
-						'mac.com',
-						'centurytel.net',
-						'chello.nl',
-						'live.ca',
-						'aim.com',
-						'bigpond.net.au',
-					];
-
-					if ( validDomains.includes( extractedEmailDomainAddress ) ) {
-						return;
-					}
-
-					if (
-						extractedEmailDomainAddress &&
-						! messages?.email &&
-						this.state.suggestDomainTypoFix
-					) {
-						const levenshteinMaxDistance = 2;
-						const suggestedDomain = this.suggestEmailDomainWithinDistance(
-							extractedEmailDomainAddress,
-							validDomains,
-							levenshteinMaxDistance
-						);
+					if ( ! messages?.email && this.state.suggestDomainTypoFix ) {
+						const suggestedDomain = emailSpellChecker.run( {
+							email: fields.email,
+						} );
 
 						if ( suggestedDomain ) {
-							const suggestedEmail = fields.email.replace( /@.*/, `@${ suggestedDomain }` );
+							// Error message handled in getErrorMessagesWithLogin()
 							messages = Object.assign( {}, messages, {
 								email: {
-									invalid: this.props.translate(
-										`Did you mean {{suggestedDomain/}}? {{confirmEmailSuggestion}}Yes{{/confirmEmailSuggestion}}, {{ignoreEmailSuggestion}}Nope{{/ignoreEmailSuggestion}}`,
-										{
-											components: {
-												suggestedDomain: <span>{ suggestedEmail }</span>,
-												confirmEmailSuggestion: (
-													<Button
-														plain={ true }
-														className="signup-form__domain-suggestion-confirmation"
-														onClick={ () => {
-															this.setState( ( prevState ) => ( {
-																...prevState,
-																suggestDomainTypoFix: false,
-															} ) );
-															this.formStateController.handleFieldChange( {
-																name: 'email',
-																value: suggestedEmail,
-																hideError: true,
-															} );
-														} }
-													/>
-												),
-												ignoreEmailSuggestion: (
-													<Button
-														plain={ true }
-														className="signup-form__domain-suggestion-confirmation"
-														onClick={ () => {
-															this.setState( ( prevState ) => ( {
-																...prevState,
-																isFieldDirty: {
-																	...prevState.isFieldDirty,
-																	email: false,
-																},
-																form: {
-																	...prevState.form,
-																	email: {
-																		...prevState.form.email,
-																		errors: [],
-																		isShowingErrors: false,
-																	},
-																},
-																suggestDomainTypoFix: false,
-															} ) );
-														} }
-													/>
-												),
-											},
-										}
-									),
+									suggest_domain: '',
 								},
 							} );
+							this.setState( { suggestedEmailAddress: suggestedDomain?.full } );
 						}
 					}
 
@@ -874,6 +606,58 @@ class SignupForm extends Component {
 											/>
 										),
 										pwdResetLink: <a href={ lostPassword( this.props.locale ) } />,
+									},
+								}
+							) }
+						</p>
+					</span>
+				);
+			}
+
+			// Handle scenario where the user has entered an email address with a typo in the domain
+			if ( error_code === 'suggest_domain' ) {
+				const emailInputValue = formState.getFieldValue( this.state.form, fieldName );
+				const handleEmailSuggestionOption = ( email ) => {
+					this.setState( {
+						suggestDomainTypoFix: false,
+					} );
+					this.formStateController.handleFieldChange( {
+						name: 'email',
+						hideError: true,
+						value: email,
+					} );
+				};
+
+				return (
+					<span key={ error_code }>
+						<p>
+							{ this.props.translate(
+								'Did you mean {{suggestedEmail/}}? {{acceptEmailSuggestion/}}, {{ignoreEmailSuggestion/}}.',
+								{
+									components: {
+										suggestedEmail: <span>{ this.state.suggestedEmailAddress }</span>,
+										acceptEmailSuggestion: (
+											<Button
+												plain={ true }
+												className="signup-form__domain-suggestion-confirmation"
+												onClick={ () => {
+													handleEmailSuggestionOption( this.state.suggestedEmailAddress );
+												} }
+											>
+												Yes
+											</Button>
+										),
+										ignoreEmailSuggestion: (
+											<Button
+												plain={ true }
+												className="signup-form__domain-suggestion-confirmation"
+												onClick={ () => {
+													handleEmailSuggestionOption( emailInputValue );
+												} }
+											>
+												Nope
+											</Button>
+										),
 									},
 								}
 							) }
