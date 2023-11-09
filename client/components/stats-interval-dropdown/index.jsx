@@ -1,5 +1,6 @@
 import { Button, Dropdown } from '@wordpress/components';
 import { check, Icon, chevronDown } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
@@ -22,7 +23,9 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) =>
 
 					return (
 						<li
-							className="stats-interval-dropdown-listing__interval"
+							className={ classNames( 'stats-interval-dropdown-listing__interval', {
+								[ 'is-selected' ]: isSelectedItem( intervalKey ),
+							} ) }
 							key={ intervalKey }
 							role="none"
 						>
