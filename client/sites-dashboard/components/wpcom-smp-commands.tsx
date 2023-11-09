@@ -6,9 +6,8 @@ import {
 import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
+import wpcom from 'calypso/lib/wp';
 import { SFTP_PORT, SFTP_URL } from 'calypso/my-sites/hosting/sftp-card';
-import { useSelector } from 'calypso/state';
-import { getAtomicHosting } from 'calypso/state/selectors/get-atomic-hosting';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
 export const useCommandsArrayWpcom = ( {
@@ -27,7 +26,9 @@ export const useCommandsArrayWpcom = ( {
 			setSelectedCommandName( actionName );
 		};
 
-	const AtomicHosting = useSelector( ( state ) => getAtomicHosting( state ) );
+	//const siteId = 136847962;
+	//const { data } = useSshUsersQuery( siteId );
+	//const { users } = data?.users || [];
 
 	const commands = [
 		{
@@ -124,20 +125,31 @@ export const useCommandsArrayWpcom = ( {
 			},
 		},
 		{
-			name: 'hostingConfiguration',
-			label: __( 'Hosting Configuration' ),
-			searchLabel: __( 'hosting' ),
-			context: 'Configuring hosting settings',
-			callback: setStateCallback( 'hostingConfiguration' ),
+			name: 'copeSshSftpUsername',
+			label: __( 'Copy SSH/SFTP username' ),
+			searchLabel: __( 'cope ssh/sftp username' ),
+			context: 'Copying SSH/SFTP username',
+			callback: setStateCallback( 'copySSH/SFTPUsername' ),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/hosting-config/${ site.slug }` );
 
-					const SFTPUsers = AtomicHosting?.[ site.ID ]?.sftpUsers;
-					console.log( site.ID, AtomicHosting );
-					console.log( AtomicHosting?.[ site.ID ] );
-					console.log( SFTPUsers );
+					const response = await wpcom.req.get( {
+						path: `/sites/${ site.ID }/hosting/ssh-users`,
+						apiNamespace: 'wpcom/v2',
+					} );
+
+					const sshUsers = response?.users; // Access the data property from the response
+
+					if ( sshUsers !== null ) {
+						if ( sshUsers.length ) {
+							// Pick first user for the username
+							const username = sshUsers[ 0 ];
+							navigator.clipboard.writeText( username );
+						} else {
+							navigate( `/hosting-config/${ site.slug }` );
+						}
+					}
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
