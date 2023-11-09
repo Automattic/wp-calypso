@@ -29,6 +29,13 @@
 	}
 }
 
+.is-section-stats {
+	.components-popover__content {
+		border-radius: 4px;
+		padding: 16px;
+	}
+}
+
 .stats-interval-dropdown__container {
 	position: relative;
 	width: 196px;
