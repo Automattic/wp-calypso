@@ -690,7 +690,9 @@ const ConnectedUser = connect(
 )( localize( UserStep ) );
 
 const ExperimentWrappedUser = ( props ) => {
-	const [ isLayoutSwitchComplete, setIsLayoutSwitchComplete ] = useState( false );
+	const [ isLayoutSwitchComplete, setIsLayoutSwitchComplete ] = useState(
+		props.flowName !== 'onboarding-pm'
+	);
 	const [ isLoading, experimentAssignment ] = useExperiment(
 		'calypso_gf_signup_onboardingpm_passwordless_registration',
 		{
@@ -698,16 +700,33 @@ const ExperimentWrappedUser = ( props ) => {
 		}
 	);
 	useEffect( () => {
-		if ( ! isLoading ) {
-			if ( experimentAssignment?.variationName === 'treatment' ) {
-				const [ globalDiv ] = document.getElementsByClassName( 'signup__step is-user' );
-				if ( typeof globalDiv === 'object' ) {
+		if ( ! isLoading && props.flowName === 'onboarding-pm' ) {
+			const [ globalDiv ] = document.getElementsByClassName( 'signup__step is-user' );
+			const variationName = experimentAssignment?.variationName;
+			if ( typeof globalDiv === 'object' ) {
+				if ( variationName === 'treatment' ) {
 					globalDiv.classList.add( 'is-passwordless-experiment' );
+				} else if ( ! variationName || experimentAssignment?.variationName === 'control' ) {
+					globalDiv.classList.remove( 'is-passwordless-experiment' );
 				}
 			}
+
 			setIsLayoutSwitchComplete( true );
 		}
-	}, [ experimentAssignment?.variationName, isLoading, setIsLayoutSwitchComplete ] );
+		return () => {
+			if ( props.flowName === 'onboarding-pm' ) {
+				const [ globalDiv ] = document.getElementsByClassName( 'signup__step is-user' );
+				if ( typeof globalDiv === 'object' ) {
+					globalDiv.classList.remove( 'is-passwordless-experiment' );
+				}
+			}
+		};
+	}, [
+		experimentAssignment?.variationName,
+		isLoading,
+		props.flowName,
+		setIsLayoutSwitchComplete,
+	] );
 
 	if ( ! isLayoutSwitchComplete ) {
 		return null;
@@ -715,9 +734,7 @@ const ExperimentWrappedUser = ( props ) => {
 	return (
 		<ConnectedUser
 			{ ...props }
-			isSocialFirst={
-				experimentAssignment?.variationName === 'treatment' ? true : props.isSocialFirst
-			}
+			isSocialFirst={ experimentAssignment?.variationName === 'treatment' || props.isSocialFirst }
 		/>
 	);
 };
