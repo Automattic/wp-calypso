@@ -55,6 +55,10 @@ Req.prototype.post = Req.prototype.put = function ( params, query, body, fn ) {
 
 /**
  * Make a `delete` request
+ *
+ * Note: to actually send a DELETE request you must define
+ * params.method = 'DELETE' when calling this function; otherwise
+ * it will default to using POST.
  * @param {Object | string} params - params object
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
