@@ -3,11 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import DateInput from './stats-date-control-date-input';
 import { DateControlPickerDateProps } from './types';
 
-const getLocaleDateFormat = () => {
-	const date = new Date( 2001, 11, 25 ).toLocaleDateString().substring( 0, 10 );
-	return date.replace( '2001', 'yyyy' ).replace( '12', 'mm' ).replace( '25', 'dd' );
-};
-
 const DateControlPickerDate = ( {
 	startDate = '',
 	endDate = '',
@@ -22,7 +17,8 @@ const DateControlPickerDate = ( {
 		<div className="date-control-picker-date">
 			<h2 className="date-control-picker-date__heading">
 				{ translate( 'Date Range' ) }
-				<span> ({ getLocaleDateFormat() }) </span>
+				<span> &#8212;</span>
+				<input id="date-example" type="date" disabled />
 			</h2>
 			<div className="stats-date-control-picker-dates__inputs">
 				<div className="stats-date-control-picker-dates__inputs-input-group">
