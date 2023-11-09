@@ -5,7 +5,6 @@ import ThemeCollection from 'calypso/components/theme-collection';
 import ThemeCollectionItem from 'calypso/components/theme-collection/theme-collection-item';
 import ThemeCollectionPlaceholder from 'calypso/components/theme-collection/theme-collection-placeholder';
 import { ThemeBlock } from 'calypso/components/themes-list';
-import { ThemeCollectionsLayoutProps } from 'calypso/my-sites/themes/collections/theme-collections-layout';
 import {
 	ThemesQuery,
 	useThemeCollection,
@@ -15,14 +14,17 @@ import { trackClick } from 'calypso/my-sites/themes/helpers';
 import { Theme } from 'calypso/types';
 import './style.scss';
 
-interface ShowcaseThemeCollectionProps extends ThemeCollectionsLayoutProps {
+type ShowcaseThemeCollectionProps = {
 	collectionSlug: string;
 	title: string;
 	description: ReactElement | null;
 	query: ThemesQuery;
 	onSeeAll: () => void;
 	collectionIndex: number;
-}
+	getActionLabel: ( themeId: string ) => string;
+	getOptions: ( themeId: string ) => void;
+	getScreenshotUrl: ( themeId: string ) => string;
+};
 
 export default function ShowcaseThemeCollection( {
 	collectionSlug,
