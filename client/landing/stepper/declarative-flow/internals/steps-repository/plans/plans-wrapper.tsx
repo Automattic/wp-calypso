@@ -111,7 +111,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		if ( cartItemForStorageAddOn ) {
 			setProductCartItems( [ cartItemForStorageAddOn ] );
 
-			cartItemForStorageAddOn?.extra &&
+			cartItemForStorageAddOn.extra &&
 				recordTracksEvent( 'calypso_signup_storage_add_on_upgrade_click', {
 					add_on_slug: cartItemForStorageAddOn.extra.feature_slug,
 				} );
