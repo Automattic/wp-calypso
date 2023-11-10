@@ -276,6 +276,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 			</div>
 			{ hasSources && messageFullyTyped && (
 				<FoldableCard
+					className="odie-sources-foldable-card"
 					clickableHeader
 					header={ translate( 'Sources', {
 						context:

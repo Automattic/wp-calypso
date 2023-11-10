@@ -21,6 +21,10 @@
 	}
 }
 
+.odie-sources-foldable-card {
+	overflow-x: hidden !important;
+}
+
 .odie-chatbox-message p:last-of-type {
 	margin-bottom: 0;
 }
@@ -100,7 +104,7 @@
 		.odie-chatbox-message-sources-container-fullscreen {
 			max-width: 800px;
 			max-height: 80vh;
-			overflow: auto;
+			overflow-y: auto;
 		}
 	}
 }
