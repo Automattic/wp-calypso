@@ -10,6 +10,7 @@ import { useCallback, useEffect, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
+import FetchSites from 'calypso/components/data/fetch-sites';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
@@ -282,7 +283,11 @@ class Layout extends Component {
 				<HtmlIsIframeClassname />
 				<DocumentHead />
 				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
-				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
+				{ isJetpackCloud() ? (
+					<FetchSites />
+				) : (
+					this.props.shouldQueryAllSites && <QuerySites allSites />
+				) }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (

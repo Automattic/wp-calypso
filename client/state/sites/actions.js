@@ -66,6 +66,25 @@ export function receiveSites( sites ) {
 	};
 }
 
+export const getSiteParams = () => {
+	const siteFilter = config( 'site_filter' );
+	return {
+		apiVersion: '1.2',
+		site_visibility: 'all',
+		include_domain_only: true,
+		site_activity: 'active',
+		fields: SITE_REQUEST_FIELDS,
+		options: SITE_REQUEST_OPTIONS,
+		filters: siteFilter?.length > 0 ? siteFilter.join( ',' ) : undefined,
+	};
+};
+
+/**
+ * Returns a promise that resolves to the sites
+ * @returns {Promise} Promise that resolves to the sites
+ */
+export const fetchSitesAPI = ( params ) => wpcom.me().sites( params );
+
 /**
  * Triggers a network request to request all visible sites
  * @returns {Function}        Action thunk
@@ -75,19 +94,8 @@ export function requestSites() {
 		dispatch( {
 			type: SITES_REQUEST,
 		} );
-		const siteFilter = config( 'site_filter' );
 
-		return wpcom
-			.me()
-			.sites( {
-				apiVersion: '1.2',
-				site_visibility: 'all',
-				include_domain_only: true,
-				site_activity: 'active',
-				fields: SITE_REQUEST_FIELDS,
-				options: SITE_REQUEST_OPTIONS,
-				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
-			} )
+		return fetchSitesAPI( getSiteParams() )
 			.then( ( response ) => {
 				dispatch( receiveSites( response.sites ) );
 				dispatch( {
