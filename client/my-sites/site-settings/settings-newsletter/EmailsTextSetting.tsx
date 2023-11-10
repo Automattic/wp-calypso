@@ -8,7 +8,6 @@ import { useSelector } from 'calypso/state';
 import {
 	isJetpackMinimumVersion,
 	isJetpackSite as isJetpackSiteSelector,
-	isSimpleSite as isSimpleSiteSelector,
 } from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { SubscriptionOptions } from '../settings-reading/main';
@@ -28,14 +27,15 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
-	const isSimpleSite = useSelector( isSimpleSiteSelector );
-	const isJetpackSite = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
 
+	const isJetpackSite = useSelector( ( state ) => isJetpackSiteSelector( state, siteId ) );
 	const isJetpackVersionSupported = useSelector( ( state: AppState ) => {
-		return siteId && isJetpackSite && isJetpackMinimumVersion( state, siteId, '12.8' );
+		return siteId && isJetpackSite && isJetpackMinimumVersion( state, siteId, '12.8-a.11' );
 	} );
 
-	const hasWelcomeEmailFeature = isSimpleSite || isJetpackVersionSupported;
+	// isJetpackSite applies for both Atomic & self-hosted Jetpack,
+	// it needs to meet the minimum version 12.8-a.11 at least.
+	const hasWelcomeEmailFeature = ! isJetpackSite || ( isJetpackSite && isJetpackVersionSupported );
 
 	const updateSubscriptionOptions =
 		( option: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -67,7 +67,7 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 						<FormTextarea
 							name="welcome_email_message"
 							id="welcome_email_message"
-							value={ value?.welcome }
+							value={ value?.welcome || '' }
 							onChange={ updateSubscriptionOptions( 'welcome' ) }
 							disabled={ disabled }
 							autoCapitalize="none"
@@ -96,14 +96,6 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 				<FormLabel htmlFor="confirmation_email_message">
 					{ translate( 'Confirmation email message' ) }
 				</FormLabel>
-				<FormTextarea
-					name="confirmation_email_message"
-					id="confirmation_email_message"
-					value={ value?.invitation }
-					onChange={ updateSubscriptionOptions( 'invitation' ) }
-					autoCapitalize="none"
-					disabled
-				/>
 				<FormSettingExplanation>
 					{ translate(
 						'The ability to customize the confirmation email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'

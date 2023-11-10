@@ -60,7 +60,7 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@babel/core": "^7.22.20",
+		"@babel/core": "^7.23.2",
 		"@size-limit/file": "^8.2.4",
 		"@wordpress/dependency-extraction-webpack-plugin": "^4.21.0",
 		"autoprefixer": "^10.2.5",

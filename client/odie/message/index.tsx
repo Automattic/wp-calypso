@@ -40,7 +40,7 @@ type ChatMessageProps = {
 
 const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const isUser = message.role === 'user';
-	const { botName } = useOdieAssistantContext();
+	const { botName, extraContactOptions, addMessage } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
@@ -57,6 +57,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const sources = message?.context?.sources ?? [];
 	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
 	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
+	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 
 	const messageFullyTyped =
 		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
@@ -157,6 +158,26 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
 	);
 
+	const onDislike = () => {
+		setTimeout( () => {
+			addMessage( {
+				content: translate(
+					'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
+					{
+						context: 'Message displayed when the user dislikes a message from the bot',
+						textOnly: true,
+					}
+				),
+				role: 'bot',
+				type: 'dislike-feedback',
+			} );
+		}, 600 );
+	};
+
+	const shouldRenderExtraContactOptions =
+		( isRequestingHumanSupport !== undefined && isRequestingHumanSupport ) ||
+		( message && message.type === 'dislike-feedback' );
+
 	const messageContent = (
 		<div className="odie-chatbox-message-sources-container">
 			<div className={ messageClasses }>
@@ -174,7 +195,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 							{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
 						</AsyncLoad>
 						{ ! hasFeedback && ! isUser && messageFullyTyped && (
-							<WasThisHelpfulButtons message={ message } />
+							<WasThisHelpfulButtons message={ message } onDislike={ onDislike } />
 						) }
 					</>
 				) }
@@ -183,6 +204,19 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 						<div className="odie-chatbox-introduction-message">{ message.content }</div>
 					</div>
 				) }
+				{ message.type === 'dislike-feedback' && (
+					<AsyncLoad
+						require="react-markdown"
+						placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
+						transformLinkUri={ uriTransformer }
+						components={ {
+							a: CustomALink,
+						} }
+					>
+						{ message.content }
+					</AsyncLoad>
+				) }
+				{ shouldRenderExtraContactOptions && extraContactOptions }
 			</div>
 			{ hasSources && messageFullyTyped && (
 				<FoldableCard

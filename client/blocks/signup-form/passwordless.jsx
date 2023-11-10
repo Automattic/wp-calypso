@@ -256,6 +256,8 @@ class PasswordlessSignupForm extends Component {
 							onChange={ this.onInputChange }
 							disabled={ isSubmitting || !! this.props.disabled }
 							placeholder={ this.props.inputPlaceholder }
+							// eslint-disable-next-line jsx-a11y/no-autofocus -- It's the only field on the page
+							autoFocus
 						/>
 					</ValidationFieldset>
 					{ this.props.renderTerms?.() }

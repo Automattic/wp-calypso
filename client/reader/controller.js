@@ -333,11 +333,32 @@ export async function blogDiscoveryByFeedId( context, next ) {
 }
 
 export async function siteSubscriptionsManager( context, next ) {
+	const basePath = sectionify( context.path );
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Subscription Management > Sites';
+	const mcKey = 'subscription-sites';
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
 	context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
 	return next();
 }
 
 export async function siteSubscription( context, next ) {
+	// It can be the 2 following:
+	// - /read/subscriptions/<subscription_id>
+	// - /read/site/subscription
+	const basePath = context.params.subscription_id
+		? '/read/subscriptions/<subscription_id>'
+		: sectionify( context.path );
+
+	const fullAnalyticsPageTitle =
+		analyticsPageTitle +
+		' > Subscription Management > Site ' +
+		( context.params.subscription_id
+			? 'Subscription: ' + context.params.subscription_id
+			: 'Blog: ' + context.params.blog_id );
+	const mcKey = 'subscription-site';
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/site-subscription"
@@ -350,6 +371,11 @@ export async function siteSubscription( context, next ) {
 }
 
 export async function commentSubscriptionsManager( context, next ) {
+	const basePath = sectionify( context.path );
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Subscription Management > Comments';
+	const mcKey = 'subscription-comments';
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
 	context.primary = (
 		<AsyncLoad require="calypso/reader/site-subscriptions-manager/comment-subscriptions-manager" />
 	);
@@ -357,6 +383,11 @@ export async function commentSubscriptionsManager( context, next ) {
 }
 
 export async function pendingSubscriptionsManager( context, next ) {
+	const basePath = sectionify( context.path );
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Subscription Management > Comments';
+	const mcKey = 'subscription-pending';
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
 	context.primary = (
 		<AsyncLoad require="calypso/reader/site-subscriptions-manager/pending-subscriptions-manager" />
 	);

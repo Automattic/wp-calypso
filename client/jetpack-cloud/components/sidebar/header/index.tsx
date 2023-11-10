@@ -1,12 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
 import { SidebarV2Header as SidebarHeader } from 'calypso/layout/sidebar-v2';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { AppState } from 'calypso/types';
 import JetpackLogo from './jetpack-logo.svg';
 import ProfileDropdown from './profile-dropdown';
 
@@ -27,7 +29,7 @@ const AllSitesIcon = () => (
 // close behavior that happens inside `<SiteSelector />`. Instead of
 // using the `getCurrentLayoutFocus` selector, we use internal state to
 // derive whether or not the site selector should be visible.
-const useToggleSiteSelector = ( {
+const useShowSiteSelector = ( {
 	forceAllSitesView,
 	selectedSiteId,
 }: {
@@ -35,9 +37,10 @@ const useToggleSiteSelector = ( {
 	selectedSiteId: number | null;
 } ) => {
 	const SITES_FOCUS = 'sites';
-	const SIDEBAR_FOCUS = 'sidebar';
 
-	const [ isVisible, setVisible ] = useState( false );
+	const isSiteSelectorVisible = useSelector(
+		( state: AppState ) => getCurrentLayoutFocus( state ) === SITES_FOCUS
+	);
 	const dispatch = useDispatch();
 
 	return useCallback( () => {
@@ -49,19 +52,19 @@ const useToggleSiteSelector = ( {
 				  } )
 		);
 
-		// If the site selector is currently visible, make it not visible,
-		// and vice versa
-		const nextFocus = isVisible ? SIDEBAR_FOCUS : SITES_FOCUS;
-		setVisible( ( val ) => ! val );
-		dispatch( setLayoutFocus( nextFocus ) );
-	}, [ dispatch, forceAllSitesView, isVisible, selectedSiteId ] );
+		// NOTE: If the selector is visible, dismissal will happen automatically
+		// when the user clicks outside the bounds of its root element
+		if ( ! isSiteSelectorVisible ) {
+			dispatch( setLayoutFocus( SITES_FOCUS ) );
+		}
+	}, [ dispatch, forceAllSitesView, isSiteSelectorVisible, selectedSiteId ] );
 };
 
 const Header = ( { forceAllSitesView = false }: Props ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const toggleSiteSelector = useToggleSiteSelector( { forceAllSitesView, selectedSiteId } );
+	const showSiteSelector = useShowSiteSelector( { forceAllSitesView, selectedSiteId } );
 
 	return (
 		<SidebarHeader className="jetpack-cloud-sidebar__header">
@@ -72,14 +75,14 @@ const Header = ( { forceAllSitesView = false }: Props ) => {
 					showCount={ false }
 					icon={ <AllSitesIcon /> }
 					title={ translate( 'All Sites' ) }
-					onSelect={ toggleSiteSelector }
+					onSelect={ showSiteSelector }
 				/>
 			) : (
 				<Site
 					showChevronDownIcon
 					className="jetpack-cloud-sidebar__selected-site"
 					siteId={ selectedSiteId }
-					onSelect={ toggleSiteSelector }
+					onSelect={ showSiteSelector }
 				/>
 			) }
 			<ProfileDropdown />

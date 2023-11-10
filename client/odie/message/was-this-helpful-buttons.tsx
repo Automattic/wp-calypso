@@ -1,13 +1,19 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useOdieAssistantContext } from '../context';
+import { noop, useOdieAssistantContext } from '../context';
 import { useOdieSendMessageFeedback } from '../query';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
 import type { Message } from '../types';
 
 import './style.scss';
 
-const WasThisHelpfulButtons = ( { message }: { message: Message } ) => {
+const WasThisHelpfulButtons = ( {
+	message,
+	onDislike = noop,
+}: {
+	message: Message;
+	onDislike?: () => void;
+} ) => {
 	const THUMBS_DOWN_RATING_VALUE = 2;
 	const THUMBS_UP_RATING_VALUE = 4;
 
@@ -25,6 +31,9 @@ const WasThisHelpfulButtons = ( { message }: { message: Message } ) => {
 			rating_value: isHelpful ? THUMBS_UP_RATING_VALUE : THUMBS_DOWN_RATING_VALUE,
 		} );
 		setMessageLikedStatus( message, isHelpful );
+		if ( ! isHelpful ) {
+			onDislike();
+		}
 	};
 
 	const thumbsUpClasses = classnames( {

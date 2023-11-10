@@ -8,6 +8,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { isGravPoweredOAuth2Client, isWPJobManagerOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -252,6 +253,11 @@ class HandleEmailedLinkForm extends Component {
 					/>
 				</div>
 			);
+		}
+
+		// transition is a GET parameter for when the user is transitioning from email user to WPCom user
+		if ( isFetching || transition ) {
+			return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
 		}
 
 		return (

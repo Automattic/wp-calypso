@@ -92,12 +92,14 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	.gridicon {
 		transform: ${ ( props ) =>
 			props.isHiddenInMobile ? 'rotateZ( 180deg )' : 'rotateZ( 0deg )' };
+		flex-shrink: 0;
 	}
 
 	${ plansBreakSmall( css`
 		padding-inline-start: 0;
 		border: none;
 		padding: 0;
+		max-width: 290px;
 
 		.gridicon {
 			display: none;
@@ -465,6 +467,7 @@ const ComparisonGridHeaderCell = ( {
 				isLargeCurrency={ isLargeCurrency }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				siteId={ siteId }
+				visibleGridPlans={ visibleGridPlans }
 			/>
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe
@@ -933,7 +936,7 @@ const FeatureGroup = ( {
 			>
 				<Title isHiddenInMobile={ isHiddenInMobile }>
 					<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
-					{ featureGroup.getTitle() }
+					<span>{ featureGroup.getTitle() }</span>
 				</Title>
 			</TitleRow>
 			{ featureObjects.map( ( feature ) => (

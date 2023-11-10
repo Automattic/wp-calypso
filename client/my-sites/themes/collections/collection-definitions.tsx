@@ -12,7 +12,7 @@ export type ThemeCollectionDefinition = {
 	title: string;
 	fullTitle: string;
 	collectionSlug: string;
-	description: JSX.Element | null;
+	description: string | null;
 	seeAllLink: string;
 };
 
@@ -29,9 +29,7 @@ export const THEME_COLLECTIONS = {
 		title: translate( 'Partner Themes' ),
 		fullTitle: translate( 'Partner Themes' ),
 		collectionSlug: 'partner-themes',
-		description: (
-			<p>{ translate( 'Professional themes designed and developed by our partners.' ) }</p>
-		),
+		description: translate( 'Professional themes designed and developed by our partners.' ),
 		seeAllLink: '/themes/marketplace',
 	},
 };

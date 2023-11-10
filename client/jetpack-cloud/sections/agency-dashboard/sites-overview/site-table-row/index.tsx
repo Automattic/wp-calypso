@@ -40,7 +40,8 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
+	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
+	const isConnected = data?.connected ?? true;
 
 	const currentSiteHasSelectedLicenses =
 		selectedLicensesSiteId === blogId && selectedLicenses?.length;
@@ -49,7 +50,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const shouldDisableLicenseSelection =
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
-	const hasSiteConnectionError = ! item.site.value.is_connected;
+	const hasSiteConnectionError = ! isConnected;
 	const siteError = item.monitor.error || hasSiteConnectionError;
 
 	return (

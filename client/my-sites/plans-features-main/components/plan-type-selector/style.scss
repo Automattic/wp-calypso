@@ -39,6 +39,10 @@ body.is-group-stepper .plans .segmented-control.price-toggle {
 				border-color: rgba(0, 0, 0, 0.04);
 			}
 		}
+
+		.segmented-control__text {
+			white-space: initial;
+		}
 	}
 }
 

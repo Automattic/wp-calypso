@@ -448,14 +448,14 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'users.php',
 					slug: 'users-all-people',
-					title: translate( 'All People' ),
+					title: translate( 'All Users' ),
 					type: 'submenu-item',
 					url: `/people/team/${ siteDomain }`,
 				},
 				{
 					parent: 'users.php',
 					slug: 'users-add-new',
-					title: translate( 'Add New', { context: 'user' } ),
+					title: translate( 'Add New User', { context: 'user' } ),
 					type: 'submenu-item',
 					url: `/people/new/${ siteDomain }`,
 				},

@@ -10,6 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
+import wpcom from 'calypso/lib/wp';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -54,13 +55,24 @@ class RequestLoginEmailForm extends Component {
 		submitButtonLabel: PropTypes.string,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
+		blogId: PropTypes.string,
 	};
 
 	state = {
 		usernameOrEmail: this.props.userEmail || '',
+		site: {},
 	};
 
 	usernameOrEmailRef = createRef();
+
+	componentDidMount() {
+		const blogId = this.props.blogId;
+		if ( blogId ) {
+			wpcom.req
+				.get( `/sites/${ this.props.blogId }` )
+				.then( ( result ) => this.setState( { site: result } ) );
+		}
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.requestError && this.props.requestError ) {
@@ -98,11 +110,50 @@ class RequestLoginEmailForm extends Component {
 			requestLoginEmailFormFlow: true,
 			createAccount: this.props.createAccountForNewUser,
 			...( this.props.flow ? { flow: this.props.flow } : {} ),
+			...( this.props.blogId ? { blogId: this.props.blogId } : {} ),
 		} );
 	};
 
 	getUsernameOrEmailFromState() {
 		return this.state.usernameOrEmail;
+	}
+
+	getSubHeaderText() {
+		const { translate, locale } = this.props;
+		const siteName = this.state.site?.name;
+
+		// If we have a siteName and new translation is available
+		if (
+			siteName &&
+			( englishLocales.includes( locale ) ||
+				hasTranslation(
+					'We’ll send you an email with a login link that will log you in right away to {site name}.'
+				) )
+		) {
+			return translate(
+				'We’ll send you an email with a login link that will log you in right away to %(siteName)s.',
+				{
+					args: {
+						siteName,
+					},
+				}
+			);
+		}
+
+		// If no siteName but new translation is available
+		if (
+			englishLocales.includes( locale ) ||
+			hasTranslation( 'We’ll send you an email with a login link that will log you in right away.' )
+		) {
+			return translate(
+				'We’ll send you an email with a login link that will log you in right away.'
+			);
+		}
+
+		// Fallback is old text
+		return translate(
+			'Get a link sent to the email address associated with your account to log in instantly without your password.'
+		);
 	}
 
 	render() {
@@ -123,6 +174,7 @@ class RequestLoginEmailForm extends Component {
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
+		const siteIcon = this.state.site?.icon?.ico ?? this.state.site?.icon?.img ?? null;
 
 		if ( showCheckYourEmail ) {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
@@ -142,14 +194,6 @@ class RequestLoginEmailForm extends Component {
 				? requestError
 				: translate( 'Unable to complete request' );
 
-		const subHeaderText =
-			englishLocales.includes( locale ) ||
-			hasTranslation( 'We’ll send you an email with a login link that will log you in right away.' )
-				? translate( 'We’ll send you an email with a login link that will log you in right away.' )
-				: translate(
-						'Get a link sent to the email address associated with your account to log in instantly without your password.'
-				  );
-
 		const buttonLabel =
 			englishLocales.includes( locale ) || hasTranslation( 'Send Link' )
 				? translate( 'Send link' )
@@ -161,6 +205,16 @@ class RequestLoginEmailForm extends Component {
 
 		return (
 			<div className="magic-login__form">
+				{ siteIcon && (
+					<div className="magic-login__form-header-icon">
+						<img
+							src={ siteIcon }
+							width={ 64 }
+							height={ 64 }
+							alt={ `${ this.state.site?.name } icon` }
+						/>
+					</div>
+				) }
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
@@ -184,7 +238,9 @@ class RequestLoginEmailForm extends Component {
 					</p>
 				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
-					<p className="magic-login__form-sub-header">{ ! hideSubHeaderText && subHeaderText }</p>
+					<p className="magic-login__form-sub-header">
+						{ ! hideSubHeaderText && this.getSubHeaderText() }
+					</p>
 					<FormLabel htmlFor="usernameOrEmail">{ formLabel }</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
@@ -219,6 +275,7 @@ const mapState = ( state ) => {
 		requestError: getMagicLoginRequestEmailError( state ),
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
+		blogId: getCurrentQueryArguments( state ).blog_id,
 		userEmail:
 			getLastCheckedUsernameOrEmail( state ) ||
 			getCurrentQueryArguments( state ).email_address ||

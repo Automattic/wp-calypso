@@ -68,7 +68,7 @@
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wpcom-checkout": "workspace:^",
 		"@automattic/wpcom-template-parts": "workspace:^",
-		"@babel/core": "^7.22.20",
+		"@babel/core": "^7.23.2",
 		"@emotion/css": "^11.11.2",
 		"@emotion/jest": "^11.11.0",
 		"@emotion/react": "^11.11.1",
@@ -218,7 +218,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@sentry/webpack-plugin": "^1.18.8",
-		"@storybook/addon-actions": "^7.4.6",
+		"@storybook/addon-actions": "^7.5.2",
 		"@tanstack/query-sync-storage-persister": "^4.29.1",
 		"@testing-library/dom": "^9.3.3",
 		"@testing-library/jest-dom": "^6.1.4",

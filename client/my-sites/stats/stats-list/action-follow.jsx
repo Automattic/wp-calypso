@@ -69,11 +69,11 @@ class StatsActionFollow extends Component {
 			following: isFollowing,
 		} );
 		const label = isFollowing
-			? this.props.translate( 'Following', {
-					context: 'Stats: Follow action / Following status',
+			? this.props.translate( 'Subscribed', {
+					context: 'Stats: Subscribe action / Subscription status',
 			  } )
-			: this.props.translate( 'Follow', {
-					context: 'Stats: Follow action / Following status',
+			: this.props.translate( 'Subscribe', {
+					context: 'Stats: Subscribe action / Subscription status',
 			  } );
 		const gridiconType = isFollowing ? 'reader-following' : 'reader-follow';
 		const wrapperClassSet = classNames( wrapperClass );
@@ -85,9 +85,9 @@ class StatsActionFollow extends Component {
 					onClick={ this.clickHandler }
 					className={ wrapperClassSet }
 					title={ siteDomain }
-					aria-label={ this.props.translate( 'Follow or unfollow user', {
+					aria-label={ this.props.translate( "Subscribe or unsubscribe to user's site", {
 						textOnly: true,
-						context: 'Stats ARIA label: Follow/Unfollow action',
+						context: 'Stats ARIA label: Subscribe/Unsubscribe action',
 					} ) }
 				>
 					<span className="module-content-list-item-action-label">
@@ -96,8 +96,8 @@ class StatsActionFollow extends Component {
 					</span>
 					<span className="module-content-list-item-action-label unfollow">
 						<Icon className="stats-icon" icon={ close } size={ 18 } />
-						{ this.props.translate( 'Unfollow', {
-							context: 'Stats ARIA label: Unfollow action',
+						{ this.props.translate( 'Unsubscribe', {
+							context: 'Stats ARIA label: Unsubscribe action',
 						} ) }
 					</span>
 				</a>

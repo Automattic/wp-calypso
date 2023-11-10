@@ -146,7 +146,15 @@ export default function SubscribersChartSection( {
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
 			{ ! isLoading && chartData.length !== 0 && (
-				<UplotChart data={ chartData } legendContainer={ legendRef } period={ period } />
+				<UplotChart
+					data={ chartData }
+					legendContainer={ legendRef }
+					period={ period }
+					// Use variable --studio-jetpack-green for chart colors on Odyssey Stats.
+					mainColor={ isOdysseyStats ? '#069e08' : undefined }
+					fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
+					fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
+				/>
 			) }
 		</div>
 	);
