@@ -68,7 +68,7 @@ const OdieAssistant = () => {
 					<div className="odie-chatbox-bottom-edge" ref={ bottomRef } />
 				</div>
 				<OdieSendMessageButton
-					scrollToBottom={ () => scrollToBottom( true, true ) }
+					scrollToBottom={ scrollToBottom }
 					enableStickToBottom={ () => setStickToBottom( true ) }
 					enableJumpToRecent={ ! inView && ! stickToBottom }
 				/>

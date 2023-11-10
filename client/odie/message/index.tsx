@@ -203,7 +203,15 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
 	);
 
+	const shouldRenderExtraContactOptions =
+		( ( isRequestingHumanSupport !== undefined && isRequestingHumanSupport ) ||
+			( message && message.type === 'dislike-feedback' ) ) &&
+		messageFullyTyped;
+
 	const onDislike = () => {
+		if ( shouldRenderExtraContactOptions ) {
+			return;
+		}
 		setTimeout( () => {
 			addMessage( {
 				content: translate(
@@ -216,12 +224,8 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 				role: 'bot',
 				type: 'dislike-feedback',
 			} );
-		}, 600 );
+		}, 1200 );
 	};
-
-	const shouldRenderExtraContactOptions =
-		( isRequestingHumanSupport !== undefined && isRequestingHumanSupport ) ||
-		( message && message.type === 'dislike-feedback' );
 
 	const odieChatBoxMessageSourcesContainerClass = classnames(
 		'odie-chatbox-message-sources-container',
@@ -273,7 +277,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 			{ hasSources && messageFullyTyped && (
 				<FoldableCard
 					clickableHeader
-					header={ translate( 'Sources:', {
+					header={ translate( 'Sources', {
 						context:
 							'Below this text are links to sources for the current message received from the bot.',
 						textOnly: true,
