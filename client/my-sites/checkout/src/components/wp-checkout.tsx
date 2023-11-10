@@ -66,6 +66,7 @@ import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
@@ -667,6 +668,7 @@ export default function WPCheckout( {
 						submitButtonHeader={ <SubmitButtonHeader /> }
 						submitButtonFooter={ <JetpackCheckoutSeals /> }
 					/>
+					{ hasCheckoutVersion( '2' ) && <CheckoutMoneyBackGuarantee cart={ responseCart } /> }
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</WPCheckoutWrapper>

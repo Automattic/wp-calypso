@@ -253,7 +253,7 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-function CheckoutSummaryRefundWindows( {
+export function CheckoutSummaryRefundWindows( {
 	cart,
 	highlight = false,
 }: {
