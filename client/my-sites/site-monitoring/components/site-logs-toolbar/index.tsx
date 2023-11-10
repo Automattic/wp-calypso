@@ -129,7 +129,10 @@ export const SiteLogsToolbar = ( {
 							initialSelected={ severity }
 						>
 							{ severities.map( ( option ) => (
-								<SelectDropdown.Item onClick={ () => onSeverityChange( option.value ) }>
+								<SelectDropdown.Item
+									key={ option.value }
+									onClick={ () => onSeverityChange( option.value ) }
+								>
 									<span>
 										<strong>{ option.label }</strong>
 									</span>
@@ -147,7 +150,10 @@ export const SiteLogsToolbar = ( {
 							initialSelected={ requestType }
 						>
 							{ requestTypes.map( ( option ) => (
-								<SelectDropdown.Item onClick={ () => onRequestTypeChange( option.value ) }>
+								<SelectDropdown.Item
+									key={ option.value }
+									onClick={ () => onRequestTypeChange( option.value ) }
+								>
 									<span>
 										<strong>{ option.label }</strong>
 									</span>
