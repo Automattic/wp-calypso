@@ -9,6 +9,8 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
 export const useCommandsArrayWpcom = ( {
@@ -24,6 +26,9 @@ export const useCommandsArrayWpcom = ( {
 		};
 
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
+	const displaySuccessNotice = ( message: string ) =>
+		dispatch( successNotice( message, { duration: 5000 } ) );
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: 'sites-dashboard-command-palette',
 		ref: 'topbar',
@@ -57,6 +62,9 @@ export const useCommandsArrayWpcom = ( {
 
 		const textToCopy = copyType === 'username' ? sshUser : `ssh ${ sshUser }@sftp.wp.com`;
 		navigator.clipboard.writeText( textToCopy );
+		const successMessage =
+			copyType === 'username' ? __( 'Copied username' ) : __( 'Copied SSH connection string' );
+		displaySuccessNotice( successMessage );
 	};
 
 	const resetSshSftpPassword = async ( siteId: number, siteSlug: string ) => {
@@ -75,6 +83,7 @@ export const useCommandsArrayWpcom = ( {
 		}
 
 		navigator.clipboard.writeText( sshPassword );
+		displaySuccessNotice( __( 'Copied new password' ) );
 	};
 
 	const commands = [
