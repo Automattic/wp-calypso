@@ -45,7 +45,6 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
 	const translate = useTranslate();
-	const [ isSourcesExpanded, setIsSourcesExpanded ] = useState( false );
 
 	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
 		delayBetweenCharacters: 66,
@@ -133,13 +132,6 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 			setScrolledToBottom( true );
 		}
 	}, [ messageFullyTyped, scrolledToBottom, scrollToBottom ] );
-
-	useEffect( () => {
-		if ( isSourcesExpanded ) {
-			fullscreenRef.current?.scrollTo( 0, fullscreenRef.current?.scrollHeight );
-			scrollToBottom();
-		}
-	}, [ isSourcesExpanded, scrollToBottom ] );
 
 	if ( ! currentUser || ! botName ) {
 		return;
@@ -289,8 +281,6 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 						textOnly: true,
 					} ) }
 					screenReaderText="More"
-					onOpen={ () => setIsSourcesExpanded( true ) }
-					onClose={ () => setIsSourcesExpanded( false ) }
 				>
 					<div className="odie-chatbox-message-sources">
 						{ sources.map( ( source: Source, index: number ) => (
