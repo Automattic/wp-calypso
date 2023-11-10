@@ -83,25 +83,24 @@ export const getSignupCompleteStepNameAndClear = () => {
 	clearSignupCompleteStepName();
 	return value;
 };
-export const setSignupStartTimeInSeconds = () =>
+export const setSignupStartTime = () =>
 	ignoreFatalsForSessionStorage( () =>
-		sessionStorage?.setItem( 'wpcom_signup_start_time_in_second', Math.floor( Date.now() / 1000 ) )
+		sessionStorage?.setItem( 'wpcom_signup_start_time', performance.now() )
 	);
-export const getSignupStartTimeInSeconds = () =>
-	ignoreFatalsForSessionStorage( () =>
-		sessionStorage?.getItem( 'wpcom_signup_start_time_in_second' )
-	);
-export const clearSignupStartTimeInSeconds = () =>
-	ignoreFatalsForSessionStorage( () =>
-		sessionStorage?.removeItem( 'wpcom_signup_start_time_in_second' )
-	);
-export const getSignupCompleteElapsedTimeInSeconds = () => {
-	const startTime = getSignupStartTimeInSeconds();
+export const getSignupStartTime = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.getItem( 'wpcom_signup_start_time' ) );
+
+export const clearSignupStartTime = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.removeItem( 'wpcom_signup_start_time' ) );
+
+export const getSignupCompleteElapsedTime = () => {
+	const startTime = getSignupStartTime();
 
 	if ( startTime == null ) {
 		return null;
 	}
-	clearSignupStartTimeInSeconds();
 
-	return Math.floor( Date.now() / 1000 ) - startTime;
+	clearSignupStartTime();
+
+	return Math.floor( performance.now() - startTime );
 };
