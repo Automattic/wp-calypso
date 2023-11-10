@@ -24,10 +24,7 @@ const extractDomainWithExtension = ( email: string ) => {
 	return;
 };
 
-const replaceEmailDomain = ( email: string, newDomain: string | null ) => {
-	if ( ! newDomain ) {
-		return newDomain;
-	}
+const replaceEmailDomain = ( email: string, newDomain: string ) => {
 	if ( email && newDomain ) {
 		email = email.toLowerCase();
 		const atIndex = email.indexOf( '@' );
