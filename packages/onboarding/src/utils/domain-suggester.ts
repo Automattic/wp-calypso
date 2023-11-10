@@ -11,7 +11,7 @@ const validDomains = [
 	'sbcglobal.net',
 ];
 
-export const extractDomainWithExtension = ( email: string ) => {
+const extractDomainWithExtension = ( email: string ) => {
 	if ( email ) {
 		email = email.toLowerCase();
 		const atIndex = email.indexOf( '@' );
@@ -27,6 +27,7 @@ const replaceEmailDomain = ( email: string, newDomain: string | null ) => {
 		return newDomain;
 	}
 	if ( email && newDomain ) {
+		email = email.toLowerCase();
 		const atIndex = email.indexOf( '@' );
 		if ( atIndex !== -1 ) {
 			const username = email.substring( 0, atIndex );
@@ -78,29 +79,30 @@ const calculateLevenshteinDistance = ( str1: string, str2: string ) => {
 export const suggestEmailCorrection = ( inputDomain: string ) => {
 	const extractedInputEmailDomain = extractDomainWithExtension( inputDomain );
 
-	if ( ! extractedInputEmailDomain || validDomains.includes( extractedInputEmailDomain ) ) {
-		return;
-	}
-
-	const maxDistance = 2;
 	let bestMatch = null;
 	let bestMatchDistance = Infinity;
 
-	// Iterate through each valid domain and calculate the Levenshtein distance
-	for ( let i = 0; i < validDomains.length; i++ ) {
-		const validDomain = validDomains[ i ];
-		const distance = calculateLevenshteinDistance( extractedInputEmailDomain, validDomain );
+	if ( extractedInputEmailDomain && ! validDomains.includes( extractedInputEmailDomain ) ) {
+		// Iterate through each valid domain and calculate the Levenshtein distance
+		const maxDistance = 2;
+		for ( let i = 0; i < validDomains.length; i++ ) {
+			const validDomain = validDomains[ i ];
+			const distance = calculateLevenshteinDistance( extractedInputEmailDomain, validDomain );
 
-		// If the distance is within the limit and better than the previous best match, update the suggestion
-		if ( distance <= maxDistance && distance < bestMatchDistance ) {
-			bestMatch = validDomain;
-			bestMatchDistance = distance;
+			// If the distance is within the limit and better than the previous best match, update the suggestion
+			if ( distance <= maxDistance && distance < bestMatchDistance ) {
+				bestMatch = validDomain;
+				bestMatchDistance = distance;
+			}
 		}
 	}
 
 	return {
-		original_email: inputDomain,
-		suggested_email: replaceEmailDomain( inputDomain, bestMatch ),
+		oldEmail: inputDomain,
+		oldDomain: extractedInputEmailDomain,
+		newDomain: bestMatch,
+		newEmail: replaceEmailDomain( inputDomain, bestMatch ),
 		distance: bestMatchDistance,
+		wasCorrected: bestMatch !== null,
 	};
 };
