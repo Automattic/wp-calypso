@@ -1,4 +1,3 @@
-import { get } from 'axios';
 import { parse } from 'csv-parse/sync';
 import { stringify } from 'csv-stringify/sync';
 import fs from 'fs-extra';
@@ -175,25 +174,24 @@ const records = parse( csvFileContent, {
 } );
 
 for ( const record of records ) {
-	const { data: wporgData } = await get( 'https://api.wordpress.org/plugins/info/1.2/', {
-		params: {
-			action: 'query_plugins',
-			'request[page]': 1,
-			'request[per_page]': 24,
-			'request[search]': record.search_term,
-			'request[locale]': getLocale( record.language ),
-		},
-	} );
+	const { data: wporgData } = await fetch(
+		'https://api.wordpress.org/plugins/info/1.2?' +
+			new URLSearchParams( {
+				action: 'query_plugins',
+				'request[page]': 1,
+				'request[per_page]': 24,
+				'request[search]': record.search_term,
+				'request[locale]': getLocale( record.language ),
+			} )
+	);
 
-	const { data: wpcomData } = await get(
-		'https://public-api.wordpress.com/wpcom/v2/marketplace/products',
-		{
-			params: {
+	const { data: wpcomData } = await fetch(
+		'https://public-api.wordpress.com/wpcom/v2/marketplace/products?' +
+			new URLSearchParams( {
 				type: 'all',
 				_envelope: 1,
 				q: record.search_term,
-			},
-		}
+			} )
 	);
 
 	const wpcomPlugins = Object.values( wpcomData.body.results );
@@ -201,7 +199,6 @@ for ( const record of records ) {
 
 	const plugins = [ ...wpcomPlugins, ...wporgPlugins ].slice( 0, 6 ); // show top 6 plugins
 
-	// eslint-disable-next-line no-console
 	console.log(
 		`fetched plugins for ${ record.search_term }: locale - ${ getLocale(
 			record.language

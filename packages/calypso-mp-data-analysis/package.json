@@ -11,7 +11,6 @@
 		"directory": "packages/calypso-mp-data-analysis"
 	},
 	"dependencies": {
-		"axios": "^0.27.2",
 		"csv-parse": "^5.1.0",
 		"csv-stringify": "^6.1.0",
 		"fs-extra": "^10.1.0"
