@@ -13,7 +13,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"peerDependencies": {
-		"@babel/core": "^7.22.20"
+		"@babel/core": "^7.23.2"
 	},
 	"publishConfig": {
 		"access": "public"

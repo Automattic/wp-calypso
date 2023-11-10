@@ -64,14 +64,14 @@ export const Filters = {
 		return {
 			name: 'follows',
 			index: 3,
-			label: i18n.translate( 'Follows', {
-				comment: 'Notifications filter: notifications about users following your blogs',
+			label: i18n.translate( 'Subscribers', {
+				comment: 'Notifications filter: notifications about users subscribing to your blogs',
 			} ),
-			emptyMessage: i18n.translate( 'No new followers to report yet.', {
-				comment: 'Notifications follows filter: no notifications',
+			emptyMessage: i18n.translate( 'No new subscribers to report yet.', {
+				comment: 'Notifications subscribers filter: no notifications',
 			} ),
 			emptyLinkMessage: i18n.translate( "Get noticed: comment on posts you've read.", {
-				comment: 'Notifications follows filter: no notifications',
+				comment: 'Notifications subscribers filter: no notifications',
 			} ),
 			emptyLink: 'https://wordpress.com/activities/likes/',
 

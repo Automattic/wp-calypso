@@ -110,6 +110,7 @@ class RequestLoginEmailForm extends Component {
 			requestLoginEmailFormFlow: true,
 			createAccount: this.props.createAccountForNewUser,
 			...( this.props.flow ? { flow: this.props.flow } : {} ),
+			...( this.props.blogId ? { blogId: this.props.blogId } : {} ),
 		} );
 	};
 

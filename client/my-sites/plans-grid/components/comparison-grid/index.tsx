@@ -467,6 +467,7 @@ const ComparisonGridHeaderCell = ( {
 				isLargeCurrency={ isLargeCurrency }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				siteId={ siteId }
+				visibleGridPlans={ visibleGridPlans }
 			/>
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe

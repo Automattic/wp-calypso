@@ -54,7 +54,12 @@
 		}
 	}
 
-
+	hr.spinner-line {
+		width: 80%;
+		margin: 12px 0;
+		height: 12px;
+		border-radius: 3px;
+	}
 }
 
 @media only screen and (max-width: 600px) {
