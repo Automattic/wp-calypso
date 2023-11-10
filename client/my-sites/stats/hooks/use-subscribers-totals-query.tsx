@@ -38,7 +38,12 @@ const selectPaidSubscribers = ( payload: {
 	};
 } ) => {
 	return {
-		email_subscribers: payload?.counts?.email_subscribers,
+		// The `email_subscribers` consists of email and wpcom subscribers, including the site owner.
+		// Exclude the site owner count to align with the `Total subscribers` count from querySubscribersTotals that has filtered the site owner.
+		email_subscribers:
+			payload?.counts?.email_subscribers > 0
+				? payload.counts.email_subscribers - 1
+				: payload.counts.email_subscribers,
 		paid_subscribers: payload?.counts?.paid_subscribers,
 		social_followers: payload?.counts?.social_followers,
 	};
