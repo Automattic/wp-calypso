@@ -29,10 +29,7 @@ export const useCommandsArrayWpcom = ( {
 		ref: 'topbar',
 	} );
 
-	const fetchSshUsersDetails = async (
-		siteId: number,
-		copyType: 'username' | 'connectionString'
-	) => {
+	const fetchSshUser = async ( siteId: number ) => {
 		const response = await wpcom.req.get( {
 			path: `/sites/${ siteId }/hosting/ssh-users`,
 			apiNamespace: 'wpcom/v2',
@@ -40,17 +37,11 @@ export const useCommandsArrayWpcom = ( {
 
 		const sshUserResponse = response?.users;
 
-		if ( sshUserResponse !== null ) {
-			if ( sshUserResponse?.length ) {
-				const sshUser =
-					copyType === 'username'
-						? sshUserResponse[ 0 ]
-						: `ssh ${ sshUserResponse[ 0 ] }@sftp.wp.com`;
-				return sshUser;
-			}
+		if ( ! sshUserResponse?.length ) {
+			return null;
 		}
 
-		return null;
+		return sshUserResponse[ 0 ];
 	};
 
 	const copySshSftpDetails = async (
@@ -58,17 +49,18 @@ export const useCommandsArrayWpcom = ( {
 		copyType: 'username' | 'connectionString',
 		siteSlug: string
 	) => {
-		const sshUser = await fetchSshUsersDetails( siteId, copyType );
+		const sshUser = await fetchSshUser( siteId );
 
-		if ( sshUser !== null ) {
-			navigator.clipboard.writeText( sshUser );
-		} else {
-			navigate( `/hosting-config/${ siteSlug }` );
+		if ( ! sshUser ) {
+			return navigate( `/hosting-config/${ siteSlug }` );
 		}
+
+		const textToCopy = copyType === 'username' ? sshUser : `ssh ${ sshUser }@sftp.wp.com`;
+		navigator.clipboard.writeText( textToCopy );
 	};
 
 	const resetSshSftpPassword = async ( siteId: number, siteSlug: string ) => {
-		const sshUser = await fetchSshUsersDetails( siteId, 'username' );
+		const sshUser = await fetchSshUser( siteId );
 
 		const response = await wpcom.req.post( {
 			path: `/sites/${ siteId }/hosting/ssh-user/${ sshUser }/reset-password`,
