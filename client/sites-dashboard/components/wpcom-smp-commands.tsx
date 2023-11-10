@@ -9,7 +9,6 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
-import { SFTP_PORT, SFTP_URL } from 'calypso/my-sites/hosting/sftp-card';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
 export const useCommandsArrayWpcom = ( {
@@ -158,42 +157,6 @@ export const useCommandsArrayWpcom = ( {
 					isCustomDomain( site.slug ) && ! isNotAtomicJetpack( site ),
 			},
 			icon: domainsIcon,
-		},
-		{
-			name: 'copySshSftpPort',
-			label: __( 'Copy SSH/SFTP port' ),
-			searchLabel: __( 'copy ssh/sftp port' ),
-			context: 'Copying SSH/SFTP port',
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				const portSFTP = SFTP_PORT.toString();
-				navigator.clipboard.writeText( portSFTP );
-			},
-		},
-		{
-			name: 'copySshSftpURL',
-			label: __( 'Copy SSH/SFTP URL' ),
-			searchLabel: __( 'copy ssh/sftp url' ),
-			context: 'Copying SSH/SFTP URL',
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigator.clipboard.writeText( SFTP_URL );
-			},
-		},
-		{
-			name: 'copySshSftpUsername',
-			label: __( 'Copy SSH/SFTP username' ),
-			searchLabel: __( 'copy ssh/sftp username' ),
-			context: 'Copying SSH/SFTP username',
-			callback: setStateCallback( 'copySshSftpUsername' ),
-			siteFunctions: {
-				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					await copySshSftpDetails( site.ID, 'username', site.slug );
-				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
-			},
-			icon: <MaterialIcon icon="key" />,
 		},
 		{
 			name: 'copySshConnectionString',
