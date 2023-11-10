@@ -1,18 +1,23 @@
 import config from '@automattic/calypso-config';
+import { useState } from 'react';
 import { addQueryArgs } from 'calypso/lib/url';
 
 interface UseLoginWindowProps {
 	onLoginSuccess: () => void;
+	onWindowClose: () => void;
 }
 
 interface UseLoginWindowReturn {
 	login: () => void;
 	createAccount: () => void;
+	loginWindow: Window | null;
 }
 
 export default function useLoginWindow( {
 	onLoginSuccess,
+	onWindowClose,
 }: UseLoginWindowProps ): UseLoginWindowReturn {
+	const [ loginWindow, setLoginWindow ] = useState< Window | null >( null );
 	const isBrowser: boolean = typeof window !== 'undefined';
 	const environment = config( 'env_id' );
 	const args = {
@@ -50,18 +55,21 @@ export default function useLoginWindow( {
 			return;
 		}
 
-		const loginWindow = window.open( url, windowName, windowFeatures );
+		const popupWindow = window.open( url, windowName, windowFeatures );
 
 		// Listen for logged in confirmation from the login window.
 		window.addEventListener( 'message', waitForLogin );
 
 		// Clean up loginWindow
 		const loginWindowClosed = setInterval( () => {
-			if ( loginWindow?.closed ) {
+			if ( popupWindow?.closed ) {
+				onWindowClose();
 				removeEventListener( 'message', waitForLogin );
 				clearInterval( loginWindowClosed );
 			}
 		}, 100 );
+
+		setLoginWindow( popupWindow );
 	};
 
 	const login = () => {
@@ -72,5 +80,5 @@ export default function useLoginWindow( {
 		openWindow( createAccountURL );
 	};
 
-	return { login, createAccount };
+	return { login, createAccount, loginWindow };
 }
