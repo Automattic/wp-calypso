@@ -70,12 +70,15 @@ export const useCommandsArrayWpcom = ( {
 	const resetSshSftpPassword = async ( siteId: number, siteSlug: string ) => {
 		const sshUser = await fetchSshUser( siteId );
 
+		if ( ! sshUser ) {
+			return navigate( `/hosting-config/${ siteSlug }` );
+		}
+
 		const response = await wpcom.req.post( {
 			path: `/sites/${ siteId }/hosting/ssh-user/${ sshUser }/reset-password`,
 			apiNamespace: 'wpcom/v2',
 			body: {},
 		} );
-
 		const sshPassword = response?.password;
 
 		if ( ! sshPassword ) {
