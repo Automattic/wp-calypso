@@ -95,7 +95,10 @@ export const SiteLogsToolbar = ( {
 	const requestTypes = [
 		{ value: '', label: translate( 'All types' ) },
 		{ value: 'GET', label: translate( 'GET' ) },
+		{ value: 'HEAD', label: translate( 'HEAD' ) },
 		{ value: 'POST', label: translate( 'POST' ) },
+		{ value: 'PUT', label: translate( 'PUT' ) },
+		{ value: 'DELETE', label: translate( 'DELETE' ) },
 	];
 
 	const selectedSeverity =
