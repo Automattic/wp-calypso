@@ -81,7 +81,7 @@ export const SiteLogsToolbar = ( {
 	};
 
 	const severities = [
-		{ value: '', label: translate( 'All levels' ) },
+		{ value: '', label: translate( 'All' ) },
 		{ value: 'User', label: translate( 'User' ) },
 		{ value: 'Warning', label: translate( 'Warning' ) },
 		{ value: 'Deprecated', label: translate( 'Deprecated' ) },
@@ -89,7 +89,7 @@ export const SiteLogsToolbar = ( {
 	];
 
 	const requestTypes = [
-		{ value: '', label: translate( 'All types' ) },
+		{ value: '', label: translate( 'All' ) },
 		{ value: 'GET', label: translate( 'GET' ) },
 		{ value: 'HEAD', label: translate( 'HEAD' ) },
 		{ value: 'POST', label: translate( 'POST' ) },
@@ -98,7 +98,7 @@ export const SiteLogsToolbar = ( {
 	];
 
 	const requestStatuses = [
-		{ value: '', label: translate( 'All statuses' ) },
+		{ value: '', label: translate( 'All' ) },
 		{ value: '200', label: translate( '200' ) },
 		{ value: '404', label: translate( '404' ) },
 	];
@@ -135,9 +135,10 @@ export const SiteLogsToolbar = ( {
 				/>
 				{ logType === 'php' && (
 					<>
-						<label htmlFor="severity">{ translate( 'Severity' ) }</label>
+						<label htmlFor="site-logs-severity">{ translate( 'Severity' ) }</label>
 						<SelectDropdown
-							id="severity"
+							id="site-logs-severity"
+							className="site-logs-toolbar-filter-severity"
 							selectedText={ selectedSeverity.label }
 							initialSelected={ severity }
 						>
@@ -156,9 +157,10 @@ export const SiteLogsToolbar = ( {
 				) }
 				{ logType === 'web' && (
 					<>
-						<label htmlFor="requestType">{ translate( 'Request Type' ) }</label>
+						<label htmlFor="site-logs-request-type">{ translate( 'Request Type' ) }</label>
 						<SelectDropdown
-							id="requestType"
+							id="site-logs-request-type"
+							className="site-logs-toolbar-filter-request-type"
 							selectedText={ selectedRequestType.label }
 							initialSelected={ requestType }
 						>
@@ -173,9 +175,10 @@ export const SiteLogsToolbar = ( {
 								</SelectDropdown.Item>
 							) ) }
 						</SelectDropdown>
-						<label htmlFor="requestStatus">{ translate( 'Request Status' ) }</label>
+						<label htmlFor="site-logs-request-status">{ translate( 'Status' ) }</label>
 						<SelectDropdown
-							id="requestStatus"
+							id="site-logs-request-status"
+							className="site-logs-toolbar-filter-request-status"
 							selectedText={ selectedRequestStatus.label }
 							initialSelected={ requestStatus }
 						>
