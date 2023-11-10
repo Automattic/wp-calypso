@@ -1,7 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { suggestEmailCorrection, extractDomainWithExtension } from '@automattic/onboarding';
+import { suggestEmailCorrection } from '@automattic/onboarding';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -186,24 +186,24 @@ class PasswordlessSignupForm extends Component {
 		goToNextStep();
 	};
 
-	handleAcceptDomainSuggestion = ( email, emailSuggestion ) => {
+	handleAcceptDomainSuggestion = ( newEmail, newDomain, oldDomain ) => {
 		this.setState( {
-			email: emailSuggestion,
+			email: newEmail,
 			errorMessages: null,
 		} );
 		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_confirmation', {
-			original_domain: JSON.stringify( extractDomainWithExtension( email ) ),
-			suggested_domain: JSON.stringify( extractDomainWithExtension( emailSuggestion ) ),
+			original_domain: JSON.stringify( oldDomain ),
+			suggested_domain: JSON.stringify( newDomain ),
 		} );
 	};
 
-	handleEmailDomainSuggestionError = ( email, emailSuggestion ) => {
+	handleEmailDomainSuggestionError = ( newEmail, oldEmail, newDomain, oldDomain ) => {
 		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_generated', {
-			original_domain: JSON.stringify( extractDomainWithExtension( email ) ),
-			suggested_domain: JSON.stringify( extractDomainWithExtension( emailSuggestion ) ),
+			original_domain: JSON.stringify( oldDomain ),
+			suggested_domain: JSON.stringify( newDomain ),
 		} );
 		this.setState( {
-			email,
+			email: oldEmail,
 			errorMessages: [
 				this.props.translate( 'Did you mean {{emailSuggestion/}}?', {
 					components: {
@@ -212,10 +212,10 @@ class PasswordlessSignupForm extends Component {
 								plain={ true }
 								className="signup-form__domain-suggestion-confirmation"
 								onClick={ () => {
-									this.handleAcceptDomainSuggestion( email, emailSuggestion );
+									this.handleAcceptDomainSuggestion( newEmail, newDomain, oldDomain );
 								} }
 							>
-								{ emailSuggestion }
+								{ newEmail }
 							</Button>
 						),
 					},
@@ -226,9 +226,10 @@ class PasswordlessSignupForm extends Component {
 
 	debouncedEmailSuggestion = debounce( ( email ) => {
 		if ( emailValidator.validate( email ) ) {
-			const emailDomainSuggestion = suggestEmailCorrection( email );
-			if ( emailDomainSuggestion?.suggested_email ) {
-				this.handleEmailDomainSuggestionError( email, emailDomainSuggestion.suggested_email );
+			const { newEmail, oldEmail, newDomain, oldDomain, wasCorrected } =
+				suggestEmailCorrection( email );
+			if ( wasCorrected ) {
+				this.handleEmailDomainSuggestionError( newEmail, oldEmail, newDomain, oldDomain );
 				return;
 			}
 		}
