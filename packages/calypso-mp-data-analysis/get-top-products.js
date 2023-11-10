@@ -24,7 +24,7 @@ const records = parse( csvFileContent, {
 } );
 
 for ( const record of records ) {
-	const { data: wporgData } = await fetch(
+	const wporgResponse = await fetch(
 		'https://api.wordpress.org/plugins/info/1.2?' +
 			new URLSearchParams( {
 				action: 'query_plugins',
@@ -35,7 +35,7 @@ for ( const record of records ) {
 			} )
 	);
 
-	const { data: wpcomData } = await fetch(
+	const wpcomResponse = await fetch(
 		'https://public-api.wordpress.com/wpcom/v2/marketplace/products?' +
 			new URLSearchParams( {
 				type: 'all',
@@ -43,6 +43,9 @@ for ( const record of records ) {
 				q: record.search_term,
 			} )
 	);
+
+	const wporgData = await wporgResponse.json();
+	const wpcomData = await wpcomResponse.json();
 
 	const wpcomPlugins = Object.values( wpcomData.body.results );
 	const wporgPlugins = Object.values( wporgData.plugins );
