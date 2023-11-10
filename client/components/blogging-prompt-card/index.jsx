@@ -1,9 +1,10 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
+import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import {
 	useAIBloggingPrompts,
@@ -15,6 +16,8 @@ import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/co
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import BellOffIcon from './bell-off-icon';
+import BloganuaryIcon from './bloganuary-icon';
+import LightbulbIcon from './lightbulb-icon';
 import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
@@ -24,6 +27,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const notificationSettingsLink = '/me/notifications' + ( siteSlug ? '#' + siteSlug : '' );
+	const moment = useLocalizedMoment();
 
 	const maxNumberOfPrompts = isBloganuary() ? 31 : 10;
 	const today = moment().format( '--MM-DD' );
@@ -80,7 +84,9 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 			>
 				<Button className="popover__menu-item" onClick={ hidePrompts }>
 					<Gridicon icon="not-visible" className="gridicons-not-visible" />
-					{ translate( 'Hide Daily Prompts' ) }
+					{ isBloganuary()
+						? translate( 'Hide Bloganuary Prompt' )
+						: translate( 'Hide Daily Prompts' ) }
 				</Button>
 				<Button className="popover__menu-item" href={ notificationSettingsLink }>
 					<BellOffIcon />
@@ -90,9 +96,23 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 		);
 	};
 
+	const prompt = prompts[ index ];
+	const promptDate = moment( prompt?.date ).format( 'LL' );
+
 	return (
 		<div className="blogging-prompt">
 			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
+				<CardHeading>
+					{ isBloganuary() ? <BloganuaryIcon /> : <LightbulbIcon /> }
+					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
+					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
+						{ isBloganuary()
+							? /* translators: %s: date of the writing prompt. */
+							  translate( 'Bloganuary prompt: %s', { args: promptDate } )
+							: translate( 'Daily writing prompt' ) }
+					</span>
+					{ showMenu && renderMenu() }
+				</CardHeading>
 				<PromptsNavigation
 					siteId={ siteId }
 					prompts={ prompts }
