@@ -55,6 +55,8 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	const hasFeedback = !! message?.rating_value;
+
+	const hasNegativeFeedback = message?.rating_value && message?.rating_value < 3;
 	const sources = message?.context?.sources ?? [];
 	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
 	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
@@ -205,7 +207,8 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 
 	const shouldRenderExtraContactOptions =
 		( ( isRequestingHumanSupport !== undefined && isRequestingHumanSupport ) ||
-			( message && message.type === 'dislike-feedback' ) ) &&
+			( message && message.type === 'dislike-feedback' ) ||
+			hasNegativeFeedback ) &&
 		messageFullyTyped;
 
 	const onDislike = () => {
@@ -214,13 +217,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 		}
 		setTimeout( () => {
 			addMessage( {
-				content: translate(
-					'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
-					{
-						context: 'Message displayed when the user dislikes a message from the bot',
-						textOnly: true,
-					}
-				),
+				content: '...',
 				role: 'bot',
 				type: 'dislike-feedback',
 			} );
@@ -269,7 +266,13 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 							a: CustomALink,
 						} }
 					>
-						{ message.content }
+						{ translate(
+							'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
+							{
+								context: 'Message displayed when the user dislikes a message from the bot',
+								textOnly: true,
+							}
+						) }
 					</AsyncLoad>
 				) }
 				{ shouldRenderExtraContactOptions && extraContactOptions }
