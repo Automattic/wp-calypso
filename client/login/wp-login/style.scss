@@ -350,6 +350,9 @@ $image-height: 47px;
 		@include break-mobile {
 			min-width: 170px;
 		}
+		&.is-busy {
+			background-image: linear-gradient(-45deg, var(--studio-gray-10) 28%, var(--studio-gray-20) 28%, var(--studio-gray-20) 72%, var(--studio-gray-10) 72%);
+		}
 	}
 
 	.login form {
