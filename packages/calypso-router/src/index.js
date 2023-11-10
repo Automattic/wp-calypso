@@ -707,26 +707,40 @@ Page.prototype.replace = function ( path, state, init, dispatch ) {
  */
 
 Page.prototype.dispatch = function ( ctx, prev ) {
-	var i = 0,
-		j = 0,
-		page = this;
+	let i = 0;
+	let j = 0;
 
-	function nextExit() {
-		var fn = page.exits[ j++ ];
-		if ( ! fn ) return nextEnter();
-		fn( prev, nextExit );
-	}
-
-	function nextEnter() {
-		var fn = page.callbacks[ i++ ];
-
-		if ( ctx.path !== page.current ) {
+	const nextEnter = () => {
+		if ( ctx.path !== this.current ) {
 			ctx.handled = false;
 			return;
 		}
-		if ( ! fn ) return unhandled.call( page, ctx );
+		let fn;
+		while ( 1 ) {
+			fn = this.callbacks[ i++ ];
+			if ( ! fn ) {
+				return unhandled.call( this, ctx );
+			}
+			if ( fn.match( ctx ) ) {
+				break;
+			}
+		}
 		fn( ctx, nextEnter );
-	}
+	};
+
+	const nextExit = () => {
+		let fn;
+		while ( 1 ) {
+			fn = this.exits[ j++ ];
+			if ( ! fn ) {
+				return nextEnter();
+			}
+			if ( fn.match( prev ) ) {
+				break;
+			}
+		}
+		fn( prev, nextExit );
+	};
 
 	if ( prev ) {
 		nextExit();
@@ -1184,11 +1198,15 @@ function Route( path, options, page ) {
  */
 
 Route.prototype.middleware = function ( fn ) {
-	var self = this;
-	return function ( ctx, next ) {
-		if ( self.match( ctx.path, ctx.params ) ) return fn( ctx, next );
-		next();
+	const handler = ( ctx, next ) => fn( ctx, next );
+	handler.match = ( ctx ) => {
+		if ( this.match( ctx.path, ctx.params ) ) {
+			ctx.routePath = this.path;
+			return true;
+		}
+		return false;
 	};
+	return handler;
 };
 
 /**
@@ -1223,11 +1241,5 @@ Route.prototype.match = function ( path, params ) {
 /**
  * Module exports.
  */
-
-var globalPage = createPage();
-var page_js = globalPage;
-var default_1 = globalPage;
-
-page_js.default = default_1;
-
-export default page_js;
+const globalPage = createPage();
+export default globalPage;
