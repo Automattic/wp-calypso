@@ -61,6 +61,7 @@ export { UpsellMenuGroup } from './upsell-menu-group';
 export { default as PricingSlider } from './pricing-slider';
 export { default as Tooltip } from './tooltip';
 export { default as SegmentedControl } from './segmented-control';
+export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
 export * from './theme-type-badge';
 
 // Types
