@@ -29,7 +29,6 @@ import {
 	getDomainRegistrations,
 	updatePrivacyForDomain,
 	hasDomainInCart,
-	planItem,
 	hasPlan,
 	hasDomainRegistration,
 } from 'calypso/lib/cart-values/cart-items';
@@ -1386,7 +1385,12 @@ export class RenderDomainsStep extends Component {
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				shouldHideNavButtons={ this.shouldHideNavButtons() }
-				stepContent={ <div>{ this.renderContent() }</div> }
+				stepContent={
+					<div>
+						<QueryProductsList type="domains" />
+						{ this.renderContent() }
+					</div>
+				}
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ true }
@@ -1436,7 +1440,7 @@ const RenderDomainsStepConnect = connect(
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 		const selectedSite = getSelectedSite( state );
-		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
+		const multiDomainDefaultPlan = { product_slug: PLAN_PERSONAL };
 
 		return {
 			designType: getDesignType( state ),
@@ -1472,7 +1476,6 @@ const RenderDomainsStepConnect = connect(
 export default function DomainsStep( props ) {
 	return (
 		<CalypsoShoppingCartProvider>
-			<QueryProductsList productSlugs="personal-bundle" />
 			<RenderDomainsStepConnect { ...props } />
 		</CalypsoShoppingCartProvider>
 	);
