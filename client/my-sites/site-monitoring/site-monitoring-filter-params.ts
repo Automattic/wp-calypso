@@ -3,6 +3,12 @@ import type { Moment } from 'moment';
 
 export type SiteMonitoringTab = 'metrics' | 'php' | 'web';
 
+const SiteMonitoringTabParams = {
+	metrics: [],
+	php: [ 'from', 'to', 'severity' ],
+	web: [ 'from', 'to', 'requestType', 'status' ],
+};
+
 export function getPageQueryParam(): SiteMonitoringTab | null {
 	const param = new URL( window.location.href ).searchParams.get( 'page' );
 	return param && [ 'metrics', 'php', 'web' ].includes( param )
@@ -61,4 +67,20 @@ export function updateFilterQueryParam( filter: string, value: string | null ) {
 	}
 
 	page.replace( url.pathname + url.search );
+}
+
+export function getQuerySearchForTab( tabName ): string {
+	if ( ! SiteMonitoringTabParams[ tabName ].length ) {
+		return '';
+	}
+
+	const url = new URL( window.location.href );
+
+	url.searchParams.forEach( ( value, key ) => {
+		if ( ! SiteMonitoringTabParams[ tabName ].includes( key ) ) {
+			url.searchParams.delete( key );
+		}
+	} );
+
+	return url.search;
 }
