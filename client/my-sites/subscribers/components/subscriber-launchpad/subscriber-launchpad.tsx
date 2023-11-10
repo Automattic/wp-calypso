@@ -43,7 +43,7 @@ const SubscriberLaunchpad = () => {
 
 SubscriberLaunchpad.hasTranslationsAvailable = ( locale: string ) => {
 	return (
-		locale === 'en' ||
+		locale.startsWith( 'en' ) ||
 		( i18n.hasTranslation( 'No subscribers yet?' ) &&
 			i18n.hasTranslation( 'Follow these steps to get started.' ) )
 	);
