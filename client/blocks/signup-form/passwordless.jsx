@@ -227,8 +227,8 @@ class PasswordlessSignupForm extends Component {
 	debouncedEmailSuggestion = debounce( ( email ) => {
 		if ( emailValidator.validate( email ) ) {
 			const emailDomainSuggestion = suggestEmailCorrection( email );
-			if ( emailDomainSuggestion?.suggested_domain ) {
-				this.handleEmailDomainSuggestionError( email, emailDomainSuggestion.suggested_domain );
+			if ( emailDomainSuggestion?.suggested_email ) {
+				this.handleEmailDomainSuggestionError( email, emailDomainSuggestion.suggested_email );
 				return;
 			}
 		}

@@ -99,8 +99,8 @@ export const suggestEmailCorrection = ( inputDomain: string ) => {
 	}
 
 	return {
-		original_domain: inputDomain,
-		suggested_domain: replaceEmailDomain( inputDomain, bestMatch ),
+		original_email: inputDomain,
+		suggested_email: replaceEmailDomain( inputDomain, bestMatch ),
 		distance: bestMatchDistance,
 	};
 };
