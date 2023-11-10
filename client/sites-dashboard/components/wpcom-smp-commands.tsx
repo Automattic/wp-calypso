@@ -70,11 +70,11 @@ export const useCommandsArrayWpcom = ( {
 
 		const sshPassword = response?.password;
 
-		if ( sshPassword !== null ) {
-			navigator.clipboard.writeText( sshPassword );
-		} else {
-			navigate( `/hosting-config/${ siteSlug }` );
+		if ( ! sshPassword ) {
+			return navigate( `/hosting-config/${ siteSlug }` );
 		}
+
+		navigator.clipboard.writeText( sshPassword );
 	};
 
 	const commands = [
