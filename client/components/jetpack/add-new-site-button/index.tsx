@@ -26,6 +26,8 @@ const AddNewSiteButton = ( {
 }: Props ): JSX.Element => {
 	const translate = useTranslate();
 
+	const jetpackConnectUrl = 'https://wordpress.com/jetpack/connect?source=jetpack-manage';
+
 	return (
 		<SplitButton
 			primary
@@ -36,17 +38,14 @@ const AddNewSiteButton = ( {
 			toggleIcon={ showMainButtonLabel ? undefined : 'plus' }
 			onToggle={ onToggleMenu }
 			onClick={ onClickAddNewSite }
-			href="https://wordpress.com/jetpack/connect"
+			href={ jetpackConnectUrl }
 		>
 			<PopoverMenuItem onClick={ onClickWpcomMenuItem } href="/partner-portal/create-site">
 				<WordPressLogo className="gridicon" size={ 18 } />
 				<span>{ translate( 'Create a new WordPress.com site' ) }</span>
 			</PopoverMenuItem>
 
-			<PopoverMenuItem
-				onClick={ onClickJetpackMenuItem }
-				href="https://wordpress.com/jetpack/connect?source=jetpack-manage"
-			>
+			<PopoverMenuItem onClick={ onClickJetpackMenuItem } href={ jetpackConnectUrl }>
 				<JetpackLogo className="gridicon" size={ 18 } />
 				<span>{ translate( 'Connect a site to Jetpack' ) }</span>
 			</PopoverMenuItem>
