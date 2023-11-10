@@ -1,6 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { suggestEmailCorrection, extractDomainWithExtension } from '@automattic/onboarding';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -20,7 +21,6 @@ import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { suggestCorrectEmail } from './utils';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -186,10 +186,21 @@ class PasswordlessSignupForm extends Component {
 		goToNextStep();
 	};
 
+	handleAcceptDomainSuggestion = ( email, emailSuggestion ) => {
+		this.setState( {
+			email: emailSuggestion,
+			errorMessages: null,
+		} );
+		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_confirmation', {
+			original_domain: JSON.stringify( extractDomainWithExtension( email ) ),
+			suggested_domain: JSON.stringify( extractDomainWithExtension( emailSuggestion ) ),
+		} );
+	};
+
 	handleEmailDomainSuggestionError = ( email, emailSuggestion ) => {
 		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_generated', {
-			original_email: JSON.stringify( email ),
-			email_suggestion: JSON.stringify( emailSuggestion ),
+			original_domain: JSON.stringify( extractDomainWithExtension( email ) ),
+			suggested_domain: JSON.stringify( extractDomainWithExtension( emailSuggestion ) ),
 		} );
 		this.setState( {
 			email,
@@ -201,14 +212,7 @@ class PasswordlessSignupForm extends Component {
 								plain={ true }
 								className="signup-form__domain-suggestion-confirmation"
 								onClick={ () => {
-									this.setState( {
-										email: emailSuggestion,
-										errorMessages: null,
-									} );
-									this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_confirmation', {
-										original_email: JSON.stringify( email ),
-										email_suggestion: JSON.stringify( emailSuggestion ),
-									} );
+									this.handleAcceptDomainSuggestion( email, emailSuggestion );
 								} }
 							>
 								{ emailSuggestion }
@@ -222,9 +226,9 @@ class PasswordlessSignupForm extends Component {
 
 	debouncedEmailSuggestion = debounce( ( email ) => {
 		if ( emailValidator.validate( email ) ) {
-			const emailDomainSuggestion = suggestCorrectEmail( email );
-			if ( emailDomainSuggestion ) {
-				this.handleEmailDomainSuggestionError( email, emailDomainSuggestion );
+			const emailDomainSuggestion = suggestEmailCorrection( email );
+			if ( emailDomainSuggestion?.suggested_domain ) {
+				this.handleEmailDomainSuggestionError( email, emailDomainSuggestion.suggested_domain );
 				return;
 			}
 		}
