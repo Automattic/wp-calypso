@@ -6,8 +6,14 @@
 	flex-direction: column;
 
 	.header {
+		$sale-banner-height: 3.5rem;
+
 		margin-bottom: 36px;
 		margin-top: 8.5rem;
+
+		&.has-sale-banner {
+			margin-top: 8.5rem + $sale-banner-height;
+		}
 	}
 
 	.header .formatted-header {
