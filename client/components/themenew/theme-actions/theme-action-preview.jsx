@@ -1,7 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import { useDispatch, useSelector } from 'calypso/state';
-import { showThemePreview } from 'calypso/state/themes/actions';
+import { showThemePreview, setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	getIsLivePreviewSupported,
 	getThemeDemoUrl,
@@ -9,11 +10,14 @@ import {
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useDeprecatedThemeOptions from '../hooks/use-deprecated-theme-options';
 import useThemeShowcaseTracks from '../hooks/use-theme-showcase-tracks';
 import { useThemeContext } from '../theme-context';
 
-export default function ThemeActionPreview() {
-	const { themeId } = useThemeContext();
+function ThemeActionPreview( { options: __deprecatedThemeOptions } ) {
+	const { selectedStyleVariation, themeId } = useThemeContext();
+	const { __deprecatedDefaultOption, __deprecatedSecondaryOption } =
+		useDeprecatedThemeOptions( __deprecatedThemeOptions );
 
 	const translate = useTranslate();
 
@@ -37,6 +41,11 @@ export default function ThemeActionPreview() {
 
 	const onClick = () => {
 		recordThemeClick( 'calypso_themeshowcase_theme_click', { action: 'preview' } );
+		dispatch(
+			setThemePreviewOptions( themeId, __deprecatedDefaultOption, __deprecatedSecondaryOption, {
+				styleVariation: selectedStyleVariation,
+			} )
+		);
 
 		if ( isWpcom && ! isExternallyManaged ) {
 			return dispatch( showThemePreview( themeId, siteId ) );
@@ -50,3 +59,5 @@ export default function ThemeActionPreview() {
 		</PopoverMenuItem>
 	);
 }
+
+export default connectOptions( ThemeActionPreview );

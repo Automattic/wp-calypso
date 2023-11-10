@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { activate } from 'calypso/state/themes/actions';
+import { activate, setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	isExternallyManagedTheme,
 	isThemePremium,
@@ -16,9 +16,11 @@ import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useThemeShowcaseTracks from '../hooks/use-theme-showcase-tracks';
 import { useThemeContext } from '../theme-context';
+import { useThemeShowcaseContext } from '../theme-showcase-context';
 
 export default function ThemeActionActivate() {
-	const { theme, themeId } = useThemeContext();
+	const { selectedStyleVariation, theme, themeId } = useThemeContext();
+	const { tabFilter } = useThemeShowcaseContext();
 
 	const translate = useTranslate();
 
@@ -59,6 +61,12 @@ export default function ThemeActionActivate() {
 		recordThemeClick( 'calypso_themeshowcase_theme_click', {
 			action: 'activate',
 		} );
+		dispatch(
+			setThemePreviewOptions( themeId, null, null, {
+				styleVariation: selectedStyleVariation,
+				tabFilter,
+			} )
+		);
 		dispatch( activate( themeId, siteId ) );
 	};
 

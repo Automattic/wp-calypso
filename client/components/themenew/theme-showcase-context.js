@@ -13,8 +13,8 @@ export const ThemeShowcaseContext = createContext( {
 export const useThemeShowcaseContext = () => useContext( ThemeShowcaseContext );
 
 export function ThemeShowcaseContextProvider( {
-	children,
 	bookmarkRef,
+	children,
 	filterString,
 	locale,
 	origin,
