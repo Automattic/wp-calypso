@@ -47,7 +47,6 @@ const CustomALink = ( {
 			>
 				{ children }
 			</a>
-			<Gridicon icon="external" size={ 18 } />
 		</span>
 	);
 };

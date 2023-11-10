@@ -117,13 +117,13 @@
 
 .odie-sources {
 	display: flex;
-	padding: 4px 8px;
 	align-items: center;
 	gap: 4px;
 	align-self: stretch;
 	border-radius: 4px;
 	background-color: var(--studio-gray-0);
 	width: fit-content;
+	padding: 0;
 	margin: 4px 0;
 
 	.odie-sources-link {
@@ -131,6 +131,7 @@
 		color: var(--studio-blue-40);
 		font-style: normal;
 		font-weight: 600;
+		padding: 4px 16px;
 	}
 
 	svg.gridicons-external {
@@ -140,8 +141,12 @@
 
 .odie-sources-inline {
 	display: inline;
-	padding: 0 8px;
+	padding: 0;
 	margin: 0;
+
+	.odie-sources-link {
+		padding: 0 8px;
+	}
 }
 
 $feedback-button-size: 28px;
