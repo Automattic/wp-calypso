@@ -13,6 +13,7 @@ const validDomains = [
 
 export const extractDomainWithExtension = ( email: string ) => {
 	if ( email ) {
+		email = email.toLowerCase();
 		const atIndex = email.indexOf( '@' );
 		if ( atIndex !== -1 ) {
 			return email.slice( atIndex + 1 );
