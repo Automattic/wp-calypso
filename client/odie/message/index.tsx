@@ -56,7 +56,6 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	const hasFeedback = !! message?.rating_value;
 
-	const hasNegativeFeedback = message?.rating_value && message?.rating_value < 3;
 	const sources = message?.context?.sources ?? [];
 	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
 	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
@@ -206,10 +205,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	);
 
 	const shouldRenderExtraContactOptions =
-		( ( isRequestingHumanSupport !== undefined && isRequestingHumanSupport ) ||
-			( message && message.type === 'dislike-feedback' ) ||
-			hasNegativeFeedback ) &&
-		messageFullyTyped;
+		isRequestingHumanSupport && ! hasFeedback && messageFullyTyped;
 
 	const onDislike = () => {
 		if ( shouldRenderExtraContactOptions ) {
@@ -258,22 +254,25 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 					</div>
 				) }
 				{ message.type === 'dislike-feedback' && (
-					<AsyncLoad
-						require="react-markdown"
-						placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
-						transformLinkUri={ uriTransformer }
-						components={ {
-							a: CustomALink,
-						} }
-					>
-						{ translate(
-							'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
-							{
-								context: 'Message displayed when the user dislikes a message from the bot',
-								textOnly: true,
-							}
-						) }
-					</AsyncLoad>
+					<>
+						<AsyncLoad
+							require="react-markdown"
+							placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
+							transformLinkUri={ uriTransformer }
+							components={ {
+								a: CustomALink,
+							} }
+						>
+							{ translate(
+								'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
+								{
+									context: 'Message displayed when the user dislikes a message from the bot',
+									textOnly: true,
+								}
+							) }
+						</AsyncLoad>
+						{ extraContactOptions }
+					</>
 				) }
 				{ shouldRenderExtraContactOptions && extraContactOptions }
 			</div>
