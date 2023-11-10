@@ -15,6 +15,8 @@ import {
 	updateDateRangeQueryParam,
 	getSeverityQueryParam,
 	updateSeverityQueryParam,
+	getRequestTypeQueryParam,
+	updateRequestTypeQueryParam,
 } from './site-monitoring-filter-params';
 import type { Moment } from 'moment';
 
@@ -22,6 +24,7 @@ export type LogType = 'php' | 'web';
 
 interface FilterType {
 	severity?: Array< string >;
+	request_type?: Array< string >;
 }
 
 const DEFAULT_PAGE_SIZE = 50;
@@ -58,6 +61,10 @@ export const LogsTab = ( {
 		return getSeverityQueryParam() || '';
 	} );
 
+	const [ requestType, setRequestType ] = useState( () => {
+		return getRequestTypeQueryParam() || '';
+	} );
+
 	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
 
 	const autoRefreshCallback = useCallback( () => {
@@ -66,12 +73,18 @@ export const LogsTab = ( {
 	}, [ getLatestDateRange ] );
 	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
 
-	const buildFilterParam = ( logType: string, severity: string ) => {
+	const buildFilterParam = ( logType: string, severity: string, requestType: string ) => {
 		const filters: FilterType = {};
 
 		if ( logType === 'php' ) {
 			if ( severity ) {
 				filters.severity = [ severity ];
+			}
+		}
+
+		if ( logType === 'web' ) {
+			if ( requestType ) {
+				filters.request_type = [ requestType ];
 			}
 		}
 
@@ -82,7 +95,7 @@ export const LogsTab = ( {
 		logType,
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
-		filter: buildFilterParam( logType, severity ),
+		filter: buildFilterParam( logType, severity, requestType ),
 		sortOrder: 'desc',
 		pageSize,
 		pageIndex: currentPageIndex,
@@ -147,6 +160,12 @@ export const LogsTab = ( {
 		updateSeverityQueryParam( severity );
 	};
 
+	const handleRequestTypeChange = ( requestType: string ) => {
+		setRequestType( requestType );
+		setAutoRefresh( false );
+		updateRequestTypeQueryParam( requestType );
+	};
+
 	const headerTitles =
 		logType === 'php'
 			? [ 'severity', 'timestamp', 'message' ]
@@ -160,7 +179,9 @@ export const LogsTab = ( {
 				endDateTime={ dateRange.endTime }
 				onDateTimeChange={ handleDateTimeChange }
 				onSeverityChange={ handleSeverityChange }
+				onRequestTypeChange={ handleRequestTypeChange }
 				severity={ severity }
+				requestType={ requestType }
 			>
 				<ToggleControl
 					className="site-logs__auto-refresh"

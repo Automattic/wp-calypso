@@ -38,20 +38,24 @@ const SiteLogsToolbarDownloadProgress = ( {
 type Props = {
 	onDateTimeChange: ( startDateTime: Moment, endDateTime: Moment ) => void;
 	onSeverityChange: ( severity: string ) => void;
-	severity: string;
+	onRequestTypeChange: ( severity: string ) => void;
 	logType: SiteLogsTab;
 	startDateTime: Moment;
 	endDateTime: Moment;
+	severity: string;
+	requestType: string;
 	children?: React.ReactNode;
 };
 
 export const SiteLogsToolbar = ( {
 	onDateTimeChange,
 	onSeverityChange,
-	severity,
+	onRequestTypeChange,
 	logType,
 	startDateTime,
 	endDateTime,
+	severity,
+	requestType,
 	children,
 }: Props ) => {
 	const translate = useTranslate();
@@ -76,6 +80,10 @@ export const SiteLogsToolbar = ( {
 		onSeverityChange( newSeverity );
 	};
 
+	const handleRequestTypeChange = ( newRequestType: string ) => {
+		onRequestTypeChange( newRequestType );
+	};
+
 	const severities = [
 		{ value: '', label: translate( 'All levels' ) },
 		{ value: 'User', label: translate( 'User' ) },
@@ -84,8 +92,17 @@ export const SiteLogsToolbar = ( {
 		{ value: 'Fatal error', label: translate( 'Fatal error' ) },
 	];
 
+	const requestTypes = [
+		{ value: '', label: translate( 'All types' ) },
+		{ value: 'GET', label: translate( 'GET' ) },
+		{ value: 'POST', label: translate( 'POST' ) },
+	];
+
 	const selectedSeverity =
 		severities.find( ( item ) => severity === item.value ) || severities[ 0 ];
+
+	const selectedRequestType =
+		requestTypes.find( ( item ) => requestType === item.value ) || requestTypes[ 0 ];
 
 	return (
 		<div className="site-logs-toolbar">
@@ -118,6 +135,24 @@ export const SiteLogsToolbar = ( {
 						>
 							{ severities.map( ( option ) => (
 								<SelectDropdown.Item onClick={ () => handleSeverityChange( option.value ) }>
+									<span>
+										<strong>{ option.label }</strong>
+									</span>
+								</SelectDropdown.Item>
+							) ) }
+						</SelectDropdown>
+					</>
+				) }
+				{ logType === 'web' && (
+					<>
+						<label htmlFor="requestType">{ translate( 'Request Type' ) }</label>
+						<SelectDropdown
+							id="severity"
+							selectedText={ selectedRequestType.label }
+							initialSelected={ requestType }
+						>
+							{ requestTypes.map( ( option ) => (
+								<SelectDropdown.Item onClick={ () => handleRequestTypeChange( option.value ) }>
 									<span>
 										<strong>{ option.label }</strong>
 									</span>

@@ -143,5 +143,13 @@ function areFilterParamsEqual( a: any, b: any ) {
 		return false;
 	}
 
+	if (
+		a.request_type &&
+		b.request_type &&
+		a.request_type.toString() !== b.request_type.toString()
+	) {
+		return false;
+	}
+
 	return true;
 }

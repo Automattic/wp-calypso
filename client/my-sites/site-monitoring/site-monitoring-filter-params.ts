@@ -66,3 +66,24 @@ export function updateSeverityQueryParam( severity: string | null ) {
 
 	page.replace( url.pathname + url.search );
 }
+
+export function getRequestTypeQueryParam(): string {
+	const { searchParams } = new URL( window.location.href );
+	return searchParams.get( 'requestType' ) || '';
+}
+
+export function updateRequestTypeQueryParam( requestType: string | null ) {
+	const url = new URL( window.location.href );
+
+	if ( requestType ) {
+		if ( ! requestType ) {
+			return;
+		}
+
+		url.searchParams.set( 'requestType', requestType );
+	} else {
+		url.searchParams.delete( 'requestType' );
+	}
+
+	page.replace( url.pathname + url.search );
+}
