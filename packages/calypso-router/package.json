@@ -13,8 +13,10 @@
 	},
 	"files": [
 		"dist",
-		"src"
+		"src",
+		"types"
 	],
+	"types": "types",
 	"keywords": [
 		"router"
 	],
