@@ -175,6 +175,9 @@
 .login__form-action {
 	button {
 		width: 100%;
+		&.is-primary.is-busy {
+			background-image: linear-gradient(-45deg, var(--studio-gray-10) 28%, var(--studio-gray-20) 28%, var(--studio-gray-20) 72%, var(--studio-gray-10) 72%);
+		}
 	}
 }
 

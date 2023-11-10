@@ -11,6 +11,7 @@ import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import FormsButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -860,14 +861,9 @@ export class LoginForm extends Component {
 					<p className="login__form-terms">{ socialToS }</p>
 					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
-						<Button
-							type="submit"
-							primary
-							busy={ isSendingEmail }
-							disabled={ isSubmitButtonDisabled }
-						>
+						<FormsButton primary busy={ isSendingEmail } disabled={ isSubmitButtonDisabled }>
 							{ this.getLoginButtonText() }
-						</Button>
+						</FormsButton>
 					</div>
 
 					{ ! hideSignupLink && isOauthLogin && (
