@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';

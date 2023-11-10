@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';

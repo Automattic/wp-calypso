@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import page, { type Callback, type Context } from 'page';
+import page, { type Callback, type Context } from '@automattic/calypso-router';
 import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import Header from '../agency-dashboard/header';

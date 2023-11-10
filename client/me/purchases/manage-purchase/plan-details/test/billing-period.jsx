@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import page from 'page';
 import { PlanBillingPeriod } from '../billing-period';
 
 const props = {

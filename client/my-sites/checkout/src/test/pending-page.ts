@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import page from 'page';
+import page from '@automattic/calypso-router';
 import {
 	SUCCESS,
 	ERROR,

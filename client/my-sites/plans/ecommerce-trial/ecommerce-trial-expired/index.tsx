@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React, { useCallback, useMemo, useState } from 'react';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';

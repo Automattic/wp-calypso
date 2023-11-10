@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { useDispatch, useSelector } from 'calypso/state';

@@ -1,4 +1,5 @@
 import { PLAN_PERSONAL, isFreeWordPressComDomain } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, FoldableCard } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
@@ -9,7 +10,6 @@ import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';

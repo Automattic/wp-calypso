@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import page, { type Callback, type Context } from '@automattic/calypso-router';
 import debugModule from 'debug';
-import page, { type Callback, type Context } from 'page';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';

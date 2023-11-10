@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import page, { type Callback, type Context } from 'page';
+import page, { type Callback, type Context } from '@automattic/calypso-router';
 import IssueLicenseV2 from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2';
 import {
 	publicToInternalLicenseFilter,

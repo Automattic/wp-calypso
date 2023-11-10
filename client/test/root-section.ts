@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
+import pageLibrary from '@automattic/calypso-router';
 import { waitFor } from '@testing-library/dom';
-import pageLibrary from 'page';
 import initRootSection from '../root';
 
 function initRouter( { state }: { state: any } ) {

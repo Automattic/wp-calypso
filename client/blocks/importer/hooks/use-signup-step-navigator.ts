@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
 import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { StepNavigator } from 'calypso/blocks/importer/types';

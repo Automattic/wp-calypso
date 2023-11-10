@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import MasterbarStyled from '../masterbar-styled';
 

@@ -1,7 +1,7 @@
+import page, { type Callback } from '@automattic/calypso-router';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
-import page, { type Callback } from 'page';
 import { useRef, useCallback, useEffect, ComponentType } from 'react';
 
 /**
