@@ -1,12 +1,13 @@
 import {
 	WPCOM_DIFM_LITE,
 	getPlan,
-	PLAN_PREMIUM,
 	isBusiness,
 	isPremium,
 	isEcommerce,
 	isPro,
 	getDIFMTieredPriceDetails,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -20,6 +21,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useSelector } from 'calypso/state';
 import {
@@ -233,6 +235,19 @@ const Description = styled.div`
 	font-size: 0.875rem;
 `;
 
+const hasHigherPlan = ( currentPlan: string, plan: typeof PLAN_PREMIUM | typeof PLAN_BUSINESS ) => {
+	const planMatchers =
+		plan === PLAN_PREMIUM
+			? [ isPremium, isBusiness, isEcommerce, isPro ]
+			: [ isBusiness, isEcommerce, isPro ];
+
+	return planMatchers.some( ( planMatcher ) =>
+		planMatcher( {
+			productSlug: currentPlan,
+		} )
+	);
+};
+
 const Step = ( {
 	index,
 	title,
@@ -261,20 +276,24 @@ export default function DIFMLanding( {
 	onPrimarySubmit,
 	onSecondarySubmit,
 	siteId,
+	planSlug,
 }: {
 	onPrimarySubmit: () => void;
 	onSecondarySubmit?: () => void;
 	showNewOrExistingSiteChoice: boolean;
 	siteId?: number | null;
+	planSlug: typeof PLAN_PREMIUM | typeof PLAN_BUSINESS;
 } ) {
 	const translate = useTranslate();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
 
-	const planObject = getPlan( PLAN_PREMIUM );
+	const planObject = getPlan( planSlug );
 	const planTitle = planObject?.getTitle();
-	const planCostInteger = useSelector( ( state ) => getProductCost( state, PLAN_PREMIUM ) );
+	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
+	const planStorageSlug = planObject?.get2023PricingGridSignupStorageOptions?.()?.[ 0 ].slug;
+	const planStorageString = planStorageSlug ? FEATURES_LIST[ planStorageSlug ]?.getTitle() : '';
 
 	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );
 	const extraPageCost = difmTieredPriceDetails?.perExtraPagePrice;
@@ -326,15 +345,11 @@ export default function DIFMLanding( {
 	);
 
 	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
-	const hasPremiumOrHigherPlan = currentPlan?.product_slug
-		? [ isPremium, isBusiness, isEcommerce, isPro ].some( ( planMatcher ) =>
-				planMatcher( {
-					productSlug: currentPlan.product_slug,
-				} )
-		  )
+	const hasCurrentPlanOrHigherPlan = currentPlan?.product_slug
+		? hasHigherPlan( currentPlan.product_slug, planSlug )
 		: false;
 
-	const subHeaderText = hasPremiumOrHigherPlan
+	const subHeaderText = hasCurrentPlanOrHigherPlan
 		? translate(
 				'{{sup}}*{{/sup}}One time fee. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
 				{
@@ -459,12 +474,13 @@ export default function DIFMLanding( {
 						<FoldableFAQ id="faq-2" question={ translate( 'How much does it cost?' ) }>
 							<p>
 								{ translate(
-									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, 13 GB of storage, a free domain for one year, and live chat support.',
+									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
 									{
 										args: {
 											displayCost,
 											planTitle: planTitle ?? '',
 											planCost,
+											storage: planStorageString,
 										},
 									}
 								) }
@@ -522,7 +538,10 @@ export default function DIFMLanding( {
 							<p>
 								{ translate(
 									'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
-										'Furthermore, our Premium plan offers live chat and priority email support if you need assistance.'
+										'Furthermore, our %s plan offers live chat and priority email support if you need assistance.',
+									{
+										args: [ planTitle || '' ],
+									}
 								) }
 							</p>
 						</FoldableFAQ>
