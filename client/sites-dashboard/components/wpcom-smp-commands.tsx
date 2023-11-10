@@ -174,6 +174,21 @@ export const useCommandsArrayWpcom = ( {
 			icon: <MaterialIcon icon="key" />,
 		},
 		{
+			name: 'openSshDetails',
+			label: __( 'Open SSH details' ),
+			searchLabel: __( 'open SSH details' ),
+			context: 'Opening SSH details',
+			callback: setStateCallback( 'openSshDetails' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: <MaterialIcon icon="key" />,
+		},
+		{
 			name: 'resetSshSftpPassword',
 			label: __( 'Reset SSH/SFTP password' ),
 			searchLabel: __( 'reset ssh/sftp password' ),
