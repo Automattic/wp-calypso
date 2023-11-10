@@ -155,7 +155,7 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 	const twoYearTotalBiennial = biennialVariant.priceInteger;
 
 	// We don't want to call out the two year plan if it doesn't save them money
-	if ( twoYearTotal >= twoYearTotalBiennial ) {
+	if ( twoYearTotal <= twoYearTotalBiennial ) {
 		return null;
 	}
 
