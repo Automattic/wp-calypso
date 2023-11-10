@@ -44,6 +44,8 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	const hasDomainTransfer = cart.products.some( ( product ) => isDomainTransfer( product ) );
 
 	const TermsCollapsedContent = styled.div`
+		margin-bottom: 0;
+
 		& .foldable-card__main {
 			position: relative;
 			left: 20px;

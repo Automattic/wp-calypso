@@ -25,7 +25,7 @@ const CheckoutTermsWrapper = styled.div`
 		padding-left: 0;
 	}
 
-	& div:first-of-type {
+	& > div:first-of-type {
 		padding-right: 0;
 		padding-left: 0;
 		margin-right: 0;
