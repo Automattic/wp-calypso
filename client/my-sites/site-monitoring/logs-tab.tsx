@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
-import { useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
+import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -21,11 +21,6 @@ import {
 import type { Moment } from 'moment';
 
 export type LogType = 'php' | 'web';
-
-interface FilterType {
-	severity?: Array< string >;
-	request_type?: Array< string >;
-}
 
 const DEFAULT_PAGE_SIZE = 50;
 

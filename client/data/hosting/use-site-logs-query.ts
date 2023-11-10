@@ -20,11 +20,16 @@ export type SiteLogsData = {
 
 export type SiteLogsTab = 'php' | 'web';
 
+export interface FilterType {
+	severity?: Array< string >;
+	request_type?: Array< string >;
+}
+
 export interface SiteLogsParams {
 	logType: SiteLogsTab;
 	start: number;
 	end: number;
-	filter: any;
+	filter: FilterType;
 	sortOrder?: 'asc' | 'desc';
 	pageSize?: number;
 	pageIndex?: number;
@@ -138,7 +143,7 @@ function areRequestParamsEqual( a: SiteLogsParams, b: SiteLogsParams ) {
 	);
 }
 
-function areFilterParamsEqual( a: any, b: any ) {
+function areFilterParamsEqual( a: FilterType, b: FilterType ) {
 	if ( a.severity && b.severity && a.severity.toString() !== b.severity.toString() ) {
 		return false;
 	}
