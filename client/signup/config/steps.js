@@ -1,4 +1,3 @@
-import { current as currentPage } from 'page';
 import {
 	addAddOnsToCart,
 	addPlanToCart,
@@ -35,7 +34,6 @@ export default generateSteps( {
 	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
-	currentPage,
 	setDesignOnSite,
 	setThemeOnSite,
 	setOptionsOnSite,
