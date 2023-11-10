@@ -58,6 +58,10 @@ export const LogsTab = ( {
 		return getFilterQueryParam( 'requestType' ) || '';
 	} );
 
+	const [ requestStatus, setRequestStatus ] = useState( () => {
+		return getFilterQueryParam( 'requestStatus' ) || '';
+	} );
+
 	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
 
 	const autoRefreshCallback = useCallback( () => {
@@ -66,7 +70,12 @@ export const LogsTab = ( {
 	}, [ getLatestDateRange ] );
 	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
 
-	const buildFilterParam = ( logType: string, severity: string, requestType: string ) => {
+	const buildFilterParam = (
+		logType: string,
+		severity: string,
+		requestType: string,
+		requestStatus: string
+	) => {
 		const filters: FilterType = {};
 
 		if ( logType === 'php' ) {
@@ -79,6 +88,9 @@ export const LogsTab = ( {
 			if ( requestType ) {
 				filters.request_type = [ requestType ];
 			}
+			if ( requestStatus ) {
+				filters.status = [ requestStatus ];
+			}
 		}
 
 		return filters;
@@ -88,7 +100,7 @@ export const LogsTab = ( {
 		logType,
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
-		filter: buildFilterParam( logType, severity, requestType ),
+		filter: buildFilterParam( logType, severity, requestType, requestStatus ),
 		sortOrder: 'desc',
 		pageSize,
 		pageIndex: currentPageIndex,
@@ -159,6 +171,12 @@ export const LogsTab = ( {
 		updateFilterQueryParam( 'requestType', requestType );
 	};
 
+	const handleRequestStatusChange = ( requestStatus: string ) => {
+		setRequestStatus( requestStatus );
+		setAutoRefresh( false );
+		updateFilterQueryParam( 'requestStatus', requestStatus );
+	};
+
 	const headerTitles =
 		logType === 'php'
 			? [ 'severity', 'timestamp', 'message' ]
@@ -173,8 +191,10 @@ export const LogsTab = ( {
 				onDateTimeChange={ handleDateTimeChange }
 				onSeverityChange={ handleSeverityChange }
 				onRequestTypeChange={ handleRequestTypeChange }
+				onRequestStatusChange={ handleRequestStatusChange }
 				severity={ severity }
 				requestType={ requestType }
+				requestStatus={ requestStatus }
 			>
 				<ToggleControl
 					className="site-logs__auto-refresh"

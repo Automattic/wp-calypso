@@ -38,12 +38,14 @@ const SiteLogsToolbarDownloadProgress = ( {
 type Props = {
 	onDateTimeChange: ( startDateTime: Moment, endDateTime: Moment ) => void;
 	onSeverityChange: ( severity: string ) => void;
-	onRequestTypeChange: ( severity: string ) => void;
+	onRequestTypeChange: ( requestType: string ) => void;
+	onRequestStatusChange: ( requestStatus: string ) => void;
 	logType: SiteLogsTab;
 	startDateTime: Moment;
 	endDateTime: Moment;
 	severity: string;
 	requestType: string;
+	requestStatus: string;
 	children?: React.ReactNode;
 };
 
@@ -51,11 +53,13 @@ export const SiteLogsToolbar = ( {
 	onDateTimeChange,
 	onSeverityChange,
 	onRequestTypeChange,
+	onRequestStatusChange,
 	logType,
 	startDateTime,
 	endDateTime,
 	severity,
 	requestType,
+	requestStatus,
 	children,
 }: Props ) => {
 	const translate = useTranslate();
@@ -93,11 +97,20 @@ export const SiteLogsToolbar = ( {
 		{ value: 'DELETE', label: translate( 'DELETE' ) },
 	];
 
+	const requestStatuses = [
+		{ value: '', label: translate( 'All statuses' ) },
+		{ value: '200', label: translate( '200' ) },
+		{ value: '404', label: translate( '404' ) },
+	];
+
 	const selectedSeverity =
 		severities.find( ( item ) => severity === item.value ) || severities[ 0 ];
 
 	const selectedRequestType =
 		requestTypes.find( ( item ) => requestType === item.value ) || requestTypes[ 0 ];
+
+	const selectedRequestStatus =
+		requestStatuses.find( ( item ) => requestStatus === item.value ) || requestStatuses[ 0 ];
 
 	return (
 		<div className="site-logs-toolbar">
@@ -145,7 +158,7 @@ export const SiteLogsToolbar = ( {
 					<>
 						<label htmlFor="requestType">{ translate( 'Request Type' ) }</label>
 						<SelectDropdown
-							id="severity"
+							id="requestType"
 							selectedText={ selectedRequestType.label }
 							initialSelected={ requestType }
 						>
@@ -153,6 +166,23 @@ export const SiteLogsToolbar = ( {
 								<SelectDropdown.Item
 									key={ option.value }
 									onClick={ () => onRequestTypeChange( option.value ) }
+								>
+									<span>
+										<strong>{ option.label }</strong>
+									</span>
+								</SelectDropdown.Item>
+							) ) }
+						</SelectDropdown>
+						<label htmlFor="requestStatus">{ translate( 'Request Status' ) }</label>
+						<SelectDropdown
+							id="requestStatus"
+							selectedText={ selectedRequestStatus.label }
+							initialSelected={ requestStatus }
+						>
+							{ requestStatuses.map( ( option ) => (
+								<SelectDropdown.Item
+									key={ option.value }
+									onClick={ () => onRequestStatusChange( option.value ) }
 								>
 									<span>
 										<strong>{ option.label }</strong>

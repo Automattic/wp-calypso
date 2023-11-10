@@ -23,6 +23,7 @@ export type SiteLogsTab = 'php' | 'web';
 export interface FilterType {
 	severity?: Array< string >;
 	request_type?: Array< string >;
+	status?: Array< string >;
 }
 
 export interface SiteLogsParams {
