@@ -249,12 +249,28 @@ function LineItemWrapper( {
 		isDeletable = false;
 	}
 
-	const shouldShowVariantSelector =
-		onChangeSelection &&
-		! isWooMobile &&
-		( ! isRenewal || ( isRenewal && product.is_domain_registration ) ) &&
-		! hasPartnerCoupon &&
-		! has100YearPlanProduct;
+	const shouldShowVariantSelector = ( () => {
+		if ( ! onChangeSelection ) {
+			return false;
+		}
+		if ( isWooMobile ) {
+			return false;
+		}
+
+		if ( isRenewal && ! product.is_domain_registration ) {
+			return false;
+		}
+
+		if ( hasPartnerCoupon ) {
+			return false;
+		}
+
+		if ( has100YearPlanProduct ) {
+			return false;
+		}
+
+		return true;
+	} )();
 
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
