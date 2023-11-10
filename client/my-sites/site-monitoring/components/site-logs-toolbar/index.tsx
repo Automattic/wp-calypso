@@ -76,14 +76,6 @@ export const SiteLogsToolbar = ( {
 		onDateTimeChange( newStart || startDateTime, newEnd || endDateTime );
 	};
 
-	const handleSeverityChange = ( newSeverity: string ) => {
-		onSeverityChange( newSeverity );
-	};
-
-	const handleRequestTypeChange = ( newRequestType: string ) => {
-		onRequestTypeChange( newRequestType );
-	};
-
 	const severities = [
 		{ value: '', label: translate( 'All levels' ) },
 		{ value: 'User', label: translate( 'User' ) },
@@ -137,7 +129,7 @@ export const SiteLogsToolbar = ( {
 							initialSelected={ severity }
 						>
 							{ severities.map( ( option ) => (
-								<SelectDropdown.Item onClick={ () => handleSeverityChange( option.value ) }>
+								<SelectDropdown.Item onClick={ () => onSeverityChange( option.value ) }>
 									<span>
 										<strong>{ option.label }</strong>
 									</span>
@@ -155,7 +147,7 @@ export const SiteLogsToolbar = ( {
 							initialSelected={ requestType }
 						>
 							{ requestTypes.map( ( option ) => (
-								<SelectDropdown.Item onClick={ () => handleRequestTypeChange( option.value ) }>
+								<SelectDropdown.Item onClick={ () => onRequestTypeChange( option.value ) }>
 									<span>
 										<strong>{ option.label }</strong>
 									</span>
