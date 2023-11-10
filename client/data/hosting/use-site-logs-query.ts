@@ -21,9 +21,7 @@ export type SiteLogsData = {
 export type SiteLogsTab = 'php' | 'web';
 
 export interface FilterType {
-	severity?: Array< string >;
-	request_type?: Array< string >;
-	status?: Array< string >;
+	[ key: string ]: Array< string >;
 }
 
 export interface SiteLogsParams {

@@ -3,7 +3,11 @@ import type { Moment } from 'moment';
 
 export type SiteMonitoringTab = 'metrics' | 'php' | 'web';
 
-const SiteMonitoringTabParams = {
+interface SiteMonitoringTabParamsType {
+	[ key: string ]: string[];
+}
+
+const SiteMonitoringTabParams: SiteMonitoringTabParamsType = {
 	metrics: [],
 	php: [ 'from', 'to', 'severity' ],
 	web: [ 'from', 'to', 'requestType', 'status' ],
@@ -69,7 +73,7 @@ export function updateFilterQueryParam( filter: string, value: string | null ) {
 	page.replace( url.pathname + url.search );
 }
 
-export function getQuerySearchForTab( tabName ): string {
+export function getQuerySearchForTab( tabName: string ): string {
 	if ( ! SiteMonitoringTabParams[ tabName ].length ) {
 		return '';
 	}
