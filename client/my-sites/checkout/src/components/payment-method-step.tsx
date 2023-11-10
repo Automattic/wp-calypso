@@ -15,7 +15,7 @@ import { WPOrderReviewSection } from './wp-order-review-line-items';
 const CheckoutTermsWrapper = styled.div`
 	& > * {
 		margin: 16px 0;
-		padding-left: 24px;
+		padding-left: ${ hasCheckoutVersion( '2' ) ? null : '24px' };
 		position: relative;
 	}
 
