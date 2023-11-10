@@ -56,7 +56,10 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	const hasFeedback = !! message?.rating_value;
 
-	const sources = message?.context?.sources ?? [];
+	// dedupe sources based on url
+	let sources = message?.context?.sources ?? [];
+	sources = [ ...new Map( sources.map( ( source ) => [ source.url, source ] ) ).values() ];
+
 	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
 	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
