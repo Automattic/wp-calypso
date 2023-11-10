@@ -203,7 +203,6 @@ class PasswordlessSignupForm extends Component {
 			suggested_domain: JSON.stringify( newDomain ),
 		} );
 		this.setState( {
-			email: oldEmail,
 			errorMessages: [
 				this.props.translate( 'Did you mean {{emailSuggestion/}}?', {
 					components: {
