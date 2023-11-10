@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { useLocale } from '@automattic/i18n-utils';
 import { numberFormat, translate } from 'i18n-calypso';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -33,9 +33,9 @@ const SubscriberListContainer = ( {
 
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-
+	const locale = useLocale();
 	const EmptyComponent =
-		config.isEnabled( 'subscribers-launchpad' ) && ( isSimple || isAtomic )
+		( isSimple || isAtomic ) && SubscriberLaunchpad.hasTranslationsAvailable( locale )
 			? SubscriberLaunchpad
 			: EmptyListView;
 
