@@ -60,7 +60,9 @@ const ChatMessage = (
 
 	// dedupe sources based on url
 	let sources = message?.context?.sources ?? [];
-	sources = [ ...new Map( sources.map( ( source ) => [ source.url, source ] ) ).values() ];
+	if ( sources.length > 0 ) {
+		sources = [ ...new Map( sources.map( ( source ) => [ source.url, source ] ) ).values() ];
+	}
 
 	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
 	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
@@ -286,11 +288,12 @@ const ChatMessage = (
 					screenReaderText="More"
 				>
 					<div className="odie-chatbox-message-sources">
-						{ sources.map( ( source: Source, index: number ) => (
-							<CustomALink key={ index } href={ source.url } inline={ false }>
-								{ source?.title }
-							</CustomALink>
-						) ) }
+						{ sources.length > 0 &&
+							sources.map( ( source: Source, index: number ) => (
+								<CustomALink key={ index } href={ source.url } inline={ false }>
+									{ source?.title }
+								</CustomALink>
+							) ) }
 					</div>
 				</FoldableCard>
 			) }
