@@ -4,16 +4,19 @@
 	"description": "Extracts data snapshots from the top 100 searches.",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
+	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/calypso-mp-data-analysis"
 	},
 	"dependencies": {
-		"axios": "^0.27.2",
 		"csv-parse": "^5.1.0",
 		"csv-stringify": "^6.1.0",
 		"fs-extra": "^10.1.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^"
 	},
 	"scripts": {
 		"generate": "node get-top-categories.js && node get-top-products.js"
