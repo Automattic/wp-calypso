@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
 import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
+import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div< { shouldCollapseLastStep: boolean } >`
 	& > * {
@@ -66,7 +67,7 @@ export default function BeforeSubmitCheckoutHeader() {
 			</CheckoutTermsWrapper>
 
 			{ ! hasCheckoutVersion( '2' ) && (
-				<div>
+				<WPOrderReviewSection>
 					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
 						{ taxLineItems.map( ( taxLineItem ) => (
@@ -79,7 +80,7 @@ export default function BeforeSubmitCheckoutHeader() {
 					<TotalPrice>
 						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
 					</TotalPrice>
-				</div>
+				</WPOrderReviewSection>
 			) }
 		</>
 	);
