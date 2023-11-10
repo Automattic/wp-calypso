@@ -428,8 +428,7 @@ class ReaderStream extends Component {
 			<AppPromo
 				iconSize={ 40 }
 				campaign="reader-stream"
-				title={ this.props.translate( 'Get the Jetpack App' ) }
-				subheader={ this.props.translate( 'Discover more blogs on the go' ) }
+				title={ this.props.translate( 'Read on the go with the Jetpack Mobile App' ) }
 				hasQRCode={ true }
 				hasGetAppButton={ false }
 			/>

@@ -607,13 +607,38 @@
 		width: 100%;
 
 		.app-promo {
-			background-color: #f0f2eb;
 			border-radius: 6px; /* stylelint-disable-line scales/radii */
-			box-shadow: none;
-			border-bottom: 1px solid #e9e9ea;
+			background-color: transparent;
+
+			.app-promo__qr-code {
+				margin: -10px 0 0;
+				flex-direction: row-reverse;
+			}
+
+			.get-apps__card-text {
+				padding: 0;
+			}
+			.app-promo__qr-code-canvas {
+				margin-left: 16px;
+			}
 
 			.app-promo__title {
-				margin-bottom: 0;
+				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			}
+
+			@include break-medium {
+				.app-promo__qr-code {
+					margin: -20px 0 0;
+				}
+
+				.app-promo__qr-code-canvas {
+					margin-top: -10px;
+				}
+
+				.app-promo__title {
+					margin-bottom: 0;
+					margin-right: 110px;
+				}
 			}
 		}
 	}
