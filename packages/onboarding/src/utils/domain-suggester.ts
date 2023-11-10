@@ -75,7 +75,7 @@ const calculateLevenshteinDistance = ( str1: string, str2: string ) => {
 	return dp[ m ][ n ];
 };
 
-export const suggestEmailCorrection = ( inputDomain: string ) => {
+export const suggestEmailCorrection = ( inputDomain: string, maxDistance = 2 ) => {
 	const extractedInputEmailDomain = extractDomainWithExtension( inputDomain );
 
 	let bestMatch = null;
