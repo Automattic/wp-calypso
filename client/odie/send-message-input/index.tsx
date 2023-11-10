@@ -116,7 +116,7 @@ export const OdieSendMessageButton = ( {
 	return (
 		<>
 			<JumpToRecent
-				scrollToBottom={ () => scrollToBottom( true ) }
+				scrollToBottom={ () => scrollToBottom( true, true ) }
 				enableJumpToRecent={ enableJumpToRecent }
 				bottomOffset={ divContainerHeight ?? 0 }
 			/>
