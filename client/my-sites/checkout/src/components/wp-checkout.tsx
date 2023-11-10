@@ -800,8 +800,10 @@ const CheckoutSummaryBody = styled.div`
 const CheckoutTermsAndCheckboxesWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
-	padding-top: 32px;
-	padding-left: 40px;
+	padding: 32px 20px 0 24px;
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		padding: 32px 20px 0 40px;
+	}
 `;
 
 function CheckoutTermsAndCheckboxes( {
