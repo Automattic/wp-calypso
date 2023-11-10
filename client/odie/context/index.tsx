@@ -1,6 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearOdieStorage, useOdieStorage } from '../data';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
@@ -26,6 +25,7 @@ interface OdieAssistantContextInterface {
 	isLoadingChat: boolean;
 	isLoading: boolean;
 	isNudging: boolean;
+	isMinimized: boolean;
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
@@ -51,6 +51,7 @@ const defaultContextInterfaceValues = {
 	isLoading: false,
 	isNudging: false,
 	isVisible: false,
+	isMinimized: false,
 	lastNudge: null,
 	sendNudge: noop,
 	setChat: noop,
@@ -77,6 +78,7 @@ const OdieAssistantProvider = ( {
 	botNameSlug = null,
 	botSetting = 'wapuu',
 	initialUserMessage,
+	isMinimized = false,
 	extraContactOptions,
 	enabled = true,
 	children,
@@ -86,11 +88,10 @@ const OdieAssistantProvider = ( {
 	botSetting?: string;
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
+	isMinimized?: boolean;
 	extraContactOptions?: ReactNode;
 	children?: ReactNode;
 } ) => {
-	const dispatch = useDispatch();
-
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
@@ -117,7 +118,7 @@ const OdieAssistantProvider = ( {
 	}, [ botNameSlug ] );
 
 	const trackEvent = ( event: string, properties?: Record< string, unknown > ) => {
-		dispatch( recordTracksEvent( event, properties ) );
+		recordTracksEvent( event, properties );
 	};
 
 	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
@@ -196,6 +197,7 @@ const OdieAssistantProvider = ( {
 				initialUserMessage,
 				isLoadingChat: false,
 				isLoading: isLoading,
+				isMinimized,
 				isNudging,
 				isVisible,
 				lastNudge,

@@ -1,12 +1,7 @@
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useSelect } from '@wordpress/data';
 import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useOdieAssistantContext } from '../context';
-import type { HelpCenterSelect } from '@automattic/data-stores';
 
 /**
  * This might be synced with CSS in client/odie/message/style.scss, which is half of the height for the gradient.
@@ -24,27 +19,15 @@ export const JumpToRecent = ( {
 	enableJumpToRecent: boolean;
 	bottomOffset: number;
 } ) => {
-	const { botSetting, botNameSlug } = useOdieAssistantContext();
+	const { botSetting, botNameSlug, isMinimized, trackEvent } = useOdieAssistantContext();
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const jumpToRecent = () => {
 		scrollToBottom();
-		dispatch(
-			recordTracksEvent( 'calypso_odie_chat_jump_to_recent_click', {
-				bot_name_slug: botNameSlug,
-				bot_setting: botSetting,
-			} )
-		);
+		trackEvent( 'calypso_odie_chat_jump_to_recent_click', {
+			bot_name_slug: botNameSlug,
+			bot_setting: botSetting,
+		} );
 	};
-
-	const { isMinimized } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			show: store.isHelpCenterShown(),
-			isMinimized: store.getIsMinimized(),
-			initialRoute: store.getInitialRoute(),
-		};
-	}, [] );
 
 	if ( isMinimized && botNameSlug === 'wpcom-support-chat' ) {
 		return null;

@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { preventWidows } from 'calypso/lib/formatting';
 import { Message, OdieAllowedBots } from '../types';
+import { preventWidows } from '../utils/prevent-widows';
 
 const getOdieInitialPrompt = ( botNameSlug: OdieAllowedBots = 'wpcom-support-chat' ): string => {
 	switch ( botNameSlug ) {

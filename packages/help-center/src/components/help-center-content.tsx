@@ -63,6 +63,15 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 		}
 	}, [ location ] );
 
+	const { isMinimized } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			show: store.isHelpCenterShown(),
+			isMinimized: store.getIsMinimized(),
+			initialRoute: store.getInitialRoute(),
+		};
+	}, [] );
+
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Routes>
@@ -80,6 +89,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 							botName="Wapuu"
 							enabled={ isWapuuEnabled }
 							initialUserMessage={ searchTerm }
+							isMinimized={ isMinimized }
 							extraContactOptions={ <HelpCenterContactPage hideHeaders /> }
 						>
 							<HelpCenterOdie />

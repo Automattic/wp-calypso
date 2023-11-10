@@ -1,0 +1,9 @@
+{
+	"scripts": {
+		"build": "tsc"
+	},
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"esModuleInterop": true
+	}
+}
