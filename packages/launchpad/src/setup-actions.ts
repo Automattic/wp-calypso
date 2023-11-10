@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { HelpCenter, updateLaunchpadSettings } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
+import { dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
@@ -45,10 +47,15 @@ export const setUpActionsForTasks = ( {
 		let logMissingCalypsoPath = false;
 		let useCalypsoPath = true;
 		const hasCalypsoPath = task.calypso_path !== undefined;
+		const HELP_CENTER_STORE = HelpCenter.register();
 
 		if ( uiContext === 'calypso' && hasCalypsoPath ) {
 			if ( task.id === 'drive_traffic' && ! isMobile() && hasCalypsoPath ) {
 				task.calypso_path = addQueryArgs( task.calypso_path, { tour: 'marketingConnectionsTour' } );
+			}
+
+			if ( task.id === 'add_subscribe_block' ) {
+				useCalypsoPath = false;
 			}
 
 			// Enable task in 'calypso' context
@@ -61,6 +68,13 @@ export const setUpActionsForTasks = ( {
 					updateLaunchpadSettings( siteSlug, {
 						checklist_statuses: { [ task.id ]: true },
 					} );
+				}
+				if ( task.id === 'add_subscribe_block' ) {
+					dispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
+					dispatch( HELP_CENTER_STORE ).setShowSupportDoc(
+						localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/' ),
+						170164
+					);
 				}
 			};
 		} else {
