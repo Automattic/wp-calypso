@@ -382,6 +382,7 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 				properties: {
 					type: 'calypso_bbe_process_item_cart_error',
 					flow: step.lastKnownFlow,
+					dependencies: JSON.stringify( providedDependencies ),
 				},
 			} );
 			callback( error );
@@ -423,6 +424,7 @@ export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxS
 					properties: {
 						type: 'calypso_bbe_create_site_with_cart_error',
 						flow: step.lastKnownFlow,
+						dependencies: JSON.stringify( providedDependencies ),
 					},
 				} );
 				callback( error );
