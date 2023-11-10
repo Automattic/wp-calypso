@@ -1,4 +1,4 @@
-import { WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { forwardRef, WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useOdieAssistantContext } from './context';
@@ -9,6 +9,8 @@ import './style.scss';
 
 export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
+
+const ForwardedChatMessage = forwardRef( ChatMessage );
 
 const OdieAssistant = () => {
 	const { chat, botNameSlug } = useOdieAssistantContext();
@@ -23,7 +25,8 @@ const OdieAssistant = () => {
 					if ( bottomElement?.target ) {
 						bottomElement.target.scrollIntoView( {
 							behavior: smooth ? 'smooth' : 'auto',
-							block: 'end',
+							block: 'start',
+							inline: 'nearest',
 						} );
 					}
 				} );
@@ -62,10 +65,14 @@ const OdieAssistant = () => {
 				>
 					{ chat.messages.map( ( message, index ) => {
 						return (
-							<ChatMessage message={ message } key={ index } scrollToBottom={ scrollToBottom } />
+							<ForwardedChatMessage
+								message={ message }
+								key={ index }
+								scrollToBottom={ scrollToBottom }
+								ref={ chat.messages.length - 1 === index ? bottomRef : undefined }
+							/>
 						);
 					} ) }
-					<div className="odie-chatbox-bottom-edge" ref={ bottomRef } />
 				</div>
 				<OdieSendMessageButton
 					scrollToBottom={ scrollToBottom }

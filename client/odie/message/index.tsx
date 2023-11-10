@@ -38,7 +38,10 @@ type ChatMessageProps = {
 	scrollToBottom: () => void;
 };
 
-const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
+const ChatMessage = (
+	{ message, scrollToBottom }: ChatMessageProps,
+	ref: React.Ref< HTMLDivElement >
+) => {
 	const isUser = message.role === 'user';
 	const { botName, extraContactOptions, addMessage } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
@@ -224,7 +227,7 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 
 	const messageContent = (
 		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ fullscreenRef }>
-			<div className={ messageClasses }>
+			<div className={ messageClasses } ref={ ref }>
 				{ messageHeader }
 				{ ( message.type === 'message' || ! message.type ) && (
 					<>
