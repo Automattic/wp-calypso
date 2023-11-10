@@ -4,7 +4,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes, map, concat } from 'lodash';
-import { current as currentPage } from 'page';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -187,7 +187,7 @@ class PostShare extends Component {
 			{ service_all: 0 }
 		);
 		const additionalProperties = {
-			context_path: sectionify( currentPage ),
+			context_path: sectionify( page.current ),
 			is_jetpack: isJetpack,
 			blog_id: siteId,
 		};
