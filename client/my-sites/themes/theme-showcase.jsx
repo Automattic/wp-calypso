@@ -365,8 +365,22 @@ class ThemeShowcase extends Component {
 		this.scrollToSearchInput();
 	};
 
+	shouldShowCollections = () => {
+		const { category, search, filter, isCollectionView, tier } = this.props;
+
+		if ( this.props.isJetpackSite && ! this.props.isAtomicSite ) {
+			return false;
+		}
+
+		return (
+			! ( category || search || filter || isCollectionView ) &&
+			tier === '' &&
+			this.isThemeDiscoveryEnabled()
+		);
+	};
+
 	allThemes = ( { themeProps } ) => {
-		const { filter, isCollectionView, tier, search, category } = this.props;
+		const { filter, isCollectionView, tier } = this.props;
 
 		// In Collection View of pricing tiers (e.g. Partner themes), prevent requesting only recommended themes.
 		const themesSelectionProps = {
@@ -374,17 +388,10 @@ class ThemeShowcase extends Component {
 			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
 		};
 
-		const showCollections =
-			this.props.isJetpackSite &&
-			this.props.isAtomicSite &&
-			! ( category || search || filter || isCollectionView ) &&
-			tier === '' &&
-			this.isThemeDiscoveryEnabled();
-
 		return (
 			<div className="theme-showcase__all-themes">
 				<ThemesSelection { ...themesSelectionProps }>
-					{ showCollections && (
+					{ this.shouldShowCollections() && (
 						<>
 							<ShowcaseThemeCollection
 								{ ...THEME_COLLECTIONS.marketplace }
