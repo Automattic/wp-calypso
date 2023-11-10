@@ -13,6 +13,7 @@ const validDomains = [
 	'sbcglobal.net',
 ];
 
+// This function extracts the domain from an email address.
 const extractDomainWithExtension = ( email: string ) => {
 	if ( email ) {
 		email = email.toLowerCase();
@@ -24,6 +25,7 @@ const extractDomainWithExtension = ( email: string ) => {
 	return;
 };
 
+// This function replaces the domain in an email address with a new domain.
 const replaceEmailDomain = ( email: string, newDomain: string ) => {
 	if ( email && newDomain ) {
 		email = email.toLowerCase();
@@ -36,6 +38,9 @@ const replaceEmailDomain = ( email: string, newDomain: string ) => {
 	return email;
 };
 
+// This function calculates the Levenshtein distance between two strings.
+// It is used to determine how similar two strings are.
+// For example, the distance between "kitten" and "sitting" is 3.
 const calculateLevenshteinDistance = ( str1: string, str2: string ) => {
 	const m = str1.length;
 	const n = str2.length;
@@ -75,6 +80,11 @@ const calculateLevenshteinDistance = ( str1: string, str2: string ) => {
 	return dp[ m ][ n ];
 };
 
+/**
+ * Suggests a correction for an email address.
+ * @param {string} inputDomain - The email address to be corrected.
+ * @param {string} maxDistance - The maximum Levenshtein distance between the input and the suggestion.
+ */
 export const suggestEmailCorrection = ( inputDomain: string, maxDistance = 2 ) => {
 	const extractedInputEmailDomain = extractDomainWithExtension( inputDomain );
 
@@ -83,7 +93,6 @@ export const suggestEmailCorrection = ( inputDomain: string, maxDistance = 2 ) =
 
 	if ( extractedInputEmailDomain && ! validDomains.includes( extractedInputEmailDomain ) ) {
 		// Iterate through each valid domain and calculate the Levenshtein distance
-		const maxDistance = 2;
 		for ( let i = 0; i < validDomains.length; i++ ) {
 			const validDomain = validDomains[ i ];
 			const distance = calculateLevenshteinDistance( extractedInputEmailDomain, validDomain );
@@ -100,7 +109,7 @@ export const suggestEmailCorrection = ( inputDomain: string, maxDistance = 2 ) =
 		oldEmail: inputDomain,
 		oldDomain: extractedInputEmailDomain,
 		newDomain: bestMatch,
-		newEmail: replaceEmailDomain( inputDomain, bestMatch ),
+		newEmail: inputDomain && bestMatch ? replaceEmailDomain( inputDomain, bestMatch ) : null,
 		distance: bestMatchDistance,
 		wasCorrected: bestMatch !== null,
 	};
