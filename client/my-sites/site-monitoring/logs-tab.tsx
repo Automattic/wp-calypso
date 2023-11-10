@@ -13,10 +13,8 @@ import { SiteLogsToolbar } from './components/site-logs-toolbar';
 import {
 	getDateRangeQueryParam,
 	updateDateRangeQueryParam,
-	getSeverityQueryParam,
-	updateSeverityQueryParam,
-	getRequestTypeQueryParam,
-	updateRequestTypeQueryParam,
+	getFilterQueryParam,
+	updateFilterQueryParam,
 } from './site-monitoring-filter-params';
 import type { Moment } from 'moment';
 
@@ -53,11 +51,11 @@ export const LogsTab = ( {
 	} );
 
 	const [ severity, setSeverity ] = useState( () => {
-		return getSeverityQueryParam() || '';
+		return getFilterQueryParam( 'severity' ) || '';
 	} );
 
 	const [ requestType, setRequestType ] = useState( () => {
-		return getRequestTypeQueryParam() || '';
+		return getFilterQueryParam( 'requestType' ) || '';
 	} );
 
 	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
@@ -152,13 +150,13 @@ export const LogsTab = ( {
 	const handleSeverityChange = ( severity: string ) => {
 		setSeverity( severity );
 		setAutoRefresh( false );
-		updateSeverityQueryParam( severity );
+		updateFilterQueryParam( 'severity', severity );
 	};
 
 	const handleRequestTypeChange = ( requestType: string ) => {
 		setRequestType( requestType );
 		setAutoRefresh( false );
-		updateRequestTypeQueryParam( requestType );
+		updateFilterQueryParam( 'requestType', requestType );
 	};
 
 	const headerTitles =

@@ -46,43 +46,18 @@ export function updateDateRangeQueryParam(
 	page.replace( url.pathname + url.search );
 }
 
-export function getSeverityQueryParam(): string {
+export function getFilterQueryParam( filter: string ): string {
 	const { searchParams } = new URL( window.location.href );
-	return searchParams.get( 'severity' ) || '';
+	return searchParams.get( filter ) || '';
 }
 
-export function updateSeverityQueryParam( severity: string | null ) {
+export function updateFilterQueryParam( filter: string, value: string | null ) {
 	const url = new URL( window.location.href );
 
-	if ( severity ) {
-		if ( ! severity ) {
-			return;
-		}
-
-		url.searchParams.set( 'severity', severity );
+	if ( value ) {
+		url.searchParams.set( filter, value );
 	} else {
-		url.searchParams.delete( 'severity' );
-	}
-
-	page.replace( url.pathname + url.search );
-}
-
-export function getRequestTypeQueryParam(): string {
-	const { searchParams } = new URL( window.location.href );
-	return searchParams.get( 'requestType' ) || '';
-}
-
-export function updateRequestTypeQueryParam( requestType: string | null ) {
-	const url = new URL( window.location.href );
-
-	if ( requestType ) {
-		if ( ! requestType ) {
-			return;
-		}
-
-		url.searchParams.set( 'requestType', requestType );
-	} else {
-		url.searchParams.delete( 'requestType' );
+		url.searchParams.delete( filter );
 	}
 
 	page.replace( url.pathname + url.search );
