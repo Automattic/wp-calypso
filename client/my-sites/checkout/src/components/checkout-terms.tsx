@@ -1,5 +1,6 @@
 import { isDomainTransfer } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
+import { hasCheckoutVersion, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -41,6 +42,20 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	// renewal text.
 	const hasDomainTransfer = cart.products.some( ( product ) => isDomainTransfer( product ) );
 
+	const TermsCollapsedContent = styled.div`
+		& .foldable-card__main {
+			position: relative;
+			left: 20px;
+		}
+
+		& .foldable-card__expand {
+			position: absolute;
+			left: -24px;
+			top: -3px;
+			width: 20px;
+		}
+	`;
+
 	return (
 		<Fragment>
 			<div className="checkout__terms" id="checkout-terms">
@@ -57,28 +72,48 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				isGiftPurchase={ Boolean( isGiftPurchase ) }
 				is100YearPlanPurchase={ has100YearPlan( cart ) }
 			/>
-			{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
-			{ ! isGiftPurchase && <RefundTerms100Year cart={ cart } /> }
-			<FoldableCard
-				compact
-				summary="Expand terms"
-				expandedSummary="Collapse terms"
-				className="checkout__terms-foldable-card"
-				header="Read more about your order's terms of service"
-				screenReaderText="Read more about your order's terms of service"
-			>
-				{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
-				{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
-				{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
-				{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
-				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
-				{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
-				{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
-				<EbanxTermsOfService />
-				{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
-				{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
-				<JetpackSocialAdvancedPricingDisclaimer />{ ' ' }
-			</FoldableCard>
+			{ hasCheckoutVersion( '2' ) ? (
+				<>
+					{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
+					{ ! isGiftPurchase && <RefundTerms100Year cart={ cart } /> }
+					<TermsCollapsedContent>
+						<FoldableCard
+							compact
+							className="checkout__terms-foldable-card"
+							header="Read more about your order's terms of service"
+							screenReaderText="Read more about your order's terms of service"
+						>
+							{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
+							{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
+							{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
+							{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
+							{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
+							{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
+							{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
+							<EbanxTermsOfService />
+							{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
+							{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
+							<JetpackSocialAdvancedPricingDisclaimer />{ ' ' }
+						</FoldableCard>
+					</TermsCollapsedContent>
+				</>
+			) : (
+				<>
+					{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
+					{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
+					{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
+					{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
+					{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
+					{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
+					{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
+					{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
+					{ ! isGiftPurchase && <RefundTerms100Year cart={ cart } /> }
+					<EbanxTermsOfService />
+					{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
+					{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
+					<JetpackSocialAdvancedPricingDisclaimer />
+				</>
+			) }
 		</Fragment>
 	);
 }
