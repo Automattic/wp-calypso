@@ -81,21 +81,27 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: rgba(0, 0, 0, 0.1);
 	z-index: 9999;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background-color: rgba(0, 0, 0, 0.1);
 
-	.odie-chatbox-message {
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
-		max-width: 800px;
-		max-height: 800px;
-		width: auto;
-		height: auto;
-		margin: auto;
-		overflow-y: auto;
-		font-size: $font-body;
+	.odie-fullscreen-backdrop {
+
+		.odie-chatbox-message {
+			box-shadow: 0 0 0 1px var(--color-border-subtle);
+			width: auto;
+			height: auto;
+			margin: auto;
+			font-size: $font-body;
+		}
+
+		.odie-chatbox-message-sources-container-fullscreen {
+			max-width: 800px;
+			max-height: 80vh;
+			overflow: auto;
+		}
 	}
 }
 
@@ -369,6 +375,7 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-message-sources-container {
+
 	.foldable-card {
 		margin: 0 !important;
 		width: 100% !important;
