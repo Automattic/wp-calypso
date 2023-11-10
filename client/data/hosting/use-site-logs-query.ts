@@ -144,17 +144,7 @@ function areRequestParamsEqual( a: SiteLogsParams, b: SiteLogsParams ) {
 }
 
 function areFilterParamsEqual( a: FilterType, b: FilterType ) {
-	if ( a.severity && b.severity && a.severity.toString() !== b.severity.toString() ) {
-		return false;
-	}
-
-	if (
-		a.request_type &&
-		b.request_type &&
-		a.request_type.toString() !== b.request_type.toString()
-	) {
-		return false;
-	}
-
-	return true;
+	return Object.keys( a ).every( ( filter ) => {
+		return b.hasOwnProperty( filter ) && a[ filter ].toString() === b[ filter ].toString();
+	} );
 }
