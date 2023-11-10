@@ -447,6 +447,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-router@workspace:packages/calypso-router":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-router@workspace:packages/calypso-router"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-sentry@workspace:^, @automattic/calypso-sentry@workspace:packages/calypso-sentry":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-sentry@workspace:packages/calypso-sentry"
