@@ -20,6 +20,10 @@ import type { Moment } from 'moment';
 
 export type LogType = 'php' | 'web';
 
+interface FilterType {
+	severity?: Array< string >;
+}
+
 const DEFAULT_PAGE_SIZE = 50;
 
 export const LogsTab = ( {
@@ -63,7 +67,7 @@ export const LogsTab = ( {
 	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
 
 	const buildFilterParam = ( logType: string, severity: string ) => {
-		const filters = {};
+		const filters: FilterType = {};
 
 		if ( logType === 'php' ) {
 			if ( severity ) {
