@@ -70,7 +70,7 @@ export const suggestCorrectEmail = ( inputDomain ) => {
 
 	const extractedInputEmailDomain = extractDomainWithExtension( inputDomain );
 
-	if ( validDomains.includes( extractedInputEmailDomain ) ) {
+	if ( ! extractedInputEmailDomain || validDomains.includes( extractedInputEmailDomain ) ) {
 		return;
 	}
 
