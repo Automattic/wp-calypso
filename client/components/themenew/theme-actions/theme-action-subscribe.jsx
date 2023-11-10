@@ -7,7 +7,6 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { addExternalManagedThemeToCart } from 'calypso/state/themes/actions';
 import {
-	isPremiumThemeAvailable,
 	isThemeActive,
 	doesThemeBundleSoftwareSet,
 	isExternallyManagedTheme,
@@ -39,9 +38,6 @@ export default function ThemeActionPurchase() {
 	const isSiteEligibleForExternallyManagedThemes = useSelector( ( state ) =>
 		isSiteEligibleForManagedExternalThemes( state, siteId )
 	);
-	const isAlreadyPurchased = useSelector( ( state ) =>
-		isPremiumThemeAvailable( state, themeId, siteId )
-	);
 
 	const { recordThemeClick } = useThemeShowcaseTracks();
 
@@ -55,9 +51,8 @@ export default function ThemeActionPurchase() {
 		isSubscribed ||
 		hasSoftwareSet ||
 		! isExternallyManaged ||
-		( isExternallyManaged && isSiteEligibleForExternallyManagedThemes ) ||
-		isActive ||
-		isAlreadyPurchased
+		( isExternallyManaged && ! isSiteEligibleForExternallyManagedThemes ) ||
+		isActive
 	) {
 		return null;
 	}

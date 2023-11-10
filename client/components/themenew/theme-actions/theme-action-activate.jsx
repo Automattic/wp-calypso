@@ -57,7 +57,7 @@ export default function ThemeActionActivate() {
 
 	const onClick = () => {
 		recordThemeClick( 'calypso_themeshowcase_theme_click', {
-			action: 'upgrade_plan_for_bundled_themes',
+			action: 'activate',
 		} );
 		dispatch( activate( themeId, siteId ) );
 	};

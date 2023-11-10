@@ -54,7 +54,7 @@ export default function ThemeActionUpgradePlanForExternallyManagedThemes() {
 
 	const onClick = () => {
 		recordThemeClick( 'calypso_themeshowcase_theme_click', {
-			action: 'upgrade_plan_for_bundled_themes',
+			action: 'upgrade_plan_for_externally_managed_themes',
 		} );
 		dispatch( addExternalManagedThemeToCart( themeId, siteId ) );
 	};
