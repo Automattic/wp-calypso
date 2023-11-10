@@ -12,7 +12,7 @@ const ThemeCollectionPlaceholder = ( { items }: ThemeCollectionPlaceholderProps 
 	times( items, ( index ) => (
 		<ThemeCollectionItem key={ `placeholder-${ index }` }>
 			{ isEnabled( 'themes/new-theme-card' ) ? (
-				<ThemeNew isPlaceholder={ true } key={ `placeholder-${ index }` } position={ index } />
+				<ThemeNew isPlaceholder={ true } key={ `placeholder-${ index }` } themePosition={ index } />
 			) : (
 				<Theme
 					key={ `placeholder-${ index }` }

@@ -85,7 +85,10 @@ export default function ShowcaseThemeCollection( {
 	};
 
 	return (
-		<ThemeCollectionContextProvider collectionId={ collectionSlug } position={ collectionIndex }>
+		<ThemeCollectionContextProvider
+			collectionId={ collectionSlug }
+			collectionPosition={ collectionIndex }
+		>
 			<ThemeCollection
 				collectionSlug={ collectionSlug }
 				title={ title }
@@ -97,7 +100,7 @@ export default function ShowcaseThemeCollection( {
 					themes.map( ( theme: Theme, index: number ) => (
 						<ThemeCollectionItem key={ theme.id }>
 							{ isEnabled( 'themes/new-theme-card' ) ? (
-								<ThemeNew position={ index } themeId={ theme.id } />
+								<ThemeNew themeId={ theme.id } themePosition={ index } />
 							) : (
 								<ThemeBlock
 									getActionLabel={ getActionLabel }

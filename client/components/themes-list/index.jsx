@@ -119,7 +119,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		<div className="themes-list" ref={ themesListRef }>
 			{ props.themes.map( ( theme, index ) =>
 				isEnabled( 'themes/new-theme-card' ) ? (
-					<ThemeNew key={ 'theme-block' + index } position={ index } themeId={ theme.id } />
+					<ThemeNew key={ 'theme-block' + index } themeId={ theme.id } themePosition={ index } />
 				) : (
 					<ThemeBlock
 						key={ 'theme-block' + index }

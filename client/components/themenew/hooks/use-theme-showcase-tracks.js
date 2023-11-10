@@ -9,8 +9,8 @@ import { useThemeContext } from '../theme-context';
 import { useThemeShowcaseContext } from '../theme-showcase-context';
 
 export default function useThemeShowcaseTracks() {
-	const { position, selectedStyleVariation, themeId } = useThemeContext();
-	const { position: collectionPosition, collectionId } = useThemeCollectionContext();
+	const { selectedStyleVariation, themeId, themePosition } = useThemeContext();
+	const { collectionId, collectionPosition } = useThemeCollectionContext();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const isActive = useSelector( ( state ) => isThemeActive( state, themeId, siteId ) );
@@ -25,11 +25,8 @@ export default function useThemeShowcaseTracks() {
 		tier = DEFAULT_THEME_QUERY.tier,
 	} = query;
 
-	/**
-	 * @todo Implement a Collection context
-	 */
 	const recordThemeClick = ( event, { action = '', styleVariationSlug } = {} ) => {
-		const adjustedPosition = position + 1;
+		const adjustedPosition = themePosition + 1;
 
 		const collectionProps =
 			'' !== collectionId

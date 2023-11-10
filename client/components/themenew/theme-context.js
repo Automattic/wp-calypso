@@ -5,15 +5,15 @@ import { getTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const ThemeContext = createContext( {
-	position: 1,
 	selectedStyleVariation: {},
 	setSelectedStyleVariation: () => {},
 	themeId: '',
+	themePosition: 0,
 } );
 
 export const useThemeContext = () => useContext( ThemeContext );
 
-export function ThemeContextProvider( { children, position, themeId } ) {
+export function ThemeContextProvider( { children, themeId, themePosition } ) {
 	/**
 	 * @todo Generalize this selector
 	 */
@@ -27,7 +27,13 @@ export function ThemeContextProvider( { children, position, themeId } ) {
 
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState();
 
-	const value = { position, selectedStyleVariation, setSelectedStyleVariation, theme, themeId };
+	const value = {
+		selectedStyleVariation,
+		setSelectedStyleVariation,
+		theme,
+		themeId,
+		themePosition,
+	};
 
 	return <ThemeContext.Provider value={ value }>{ children }</ThemeContext.Provider>;
 }
