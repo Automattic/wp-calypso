@@ -1,6 +1,6 @@
 import { CircularProgressBar } from '@automattic/components';
 import { Launchpad } from '@automattic/launchpad';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useSubscriberLaunchpadTasks } from 'calypso/my-sites/subscribers/hooks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -38,6 +38,14 @@ const SubscriberLaunchpad = () => {
 				launchpadContext="subscriber-list"
 			/>
 		</div>
+	);
+};
+
+SubscriberLaunchpad.hasTranslationsAvailable = ( locale: string ) => {
+	return (
+		locale === 'en' ||
+		( i18n.hasTranslation( 'No subscribers yet?' ) &&
+			i18n.hasTranslation( 'Follow these steps to get started.' ) )
 	);
 };
 
