@@ -1349,8 +1349,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderExampleSuggestions() {
-		const { isReskinned, domainsWithPlansOnly, offerUnavailableOption, products, path } =
-			this.props;
+		const { isReskinned, offerUnavailableOption } = this.props;
 
 		if ( isReskinned ) {
 			return this.renderBestNamesPrompt();
@@ -1358,11 +1357,7 @@ class RegisterDomainStep extends Component {
 
 		return (
 			<ExampleDomainSuggestions
-				domainsWithPlansOnly={ domainsWithPlansOnly }
 				offerUnavailableOption={ offerUnavailableOption }
-				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				path={ path }
-				products={ products }
 				url={ this.getUseYourDomainUrl() }
 			/>
 		);
