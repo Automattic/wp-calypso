@@ -1,3 +1,5 @@
+// Taken from: https://www.gmass.co/domains
+// These cover ~88% of email addresses.
 const validDomains = [
 	'gmail.com',
 	'yahoo.com',
