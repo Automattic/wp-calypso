@@ -3,7 +3,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import type { Callback } from 'page';
+import type { Callback } from '@automattic/calypso-router';
 import type { FunctionComponent } from 'react';
 import type { Store } from 'redux';
 

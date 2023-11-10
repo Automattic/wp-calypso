@@ -6,10 +6,10 @@ import {
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	getJetpackProductsDisplayNames,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useMemo, useCallback } from 'react';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';

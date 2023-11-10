@@ -3,12 +3,12 @@ import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { getStatsPurchaseURL } from 'calypso/my-sites/stats/stats-purchase/stats-purchase-notice';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

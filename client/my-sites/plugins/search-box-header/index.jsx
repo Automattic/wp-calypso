@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';

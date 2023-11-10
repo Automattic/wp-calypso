@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
+import page from '@automattic/calypso-router';
 import { getEmptyResponseCart } from '@automattic/shopping-cart';
 import { render, fireEvent, screen } from '@testing-library/react';
-import page from 'page';
 import { useReducer } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';

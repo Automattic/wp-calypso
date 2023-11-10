@@ -7,7 +7,7 @@ import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 } from '@automattic/calypso-products';
-import * as page from 'page';
+import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
 import { redirectJetpackLegacyPlans } from '../controller';

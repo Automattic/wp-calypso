@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import moment from 'moment';
-import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	isRemovable,

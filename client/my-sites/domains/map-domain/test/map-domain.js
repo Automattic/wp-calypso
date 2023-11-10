@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
+import pageSpy from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import pageSpy from 'page';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';

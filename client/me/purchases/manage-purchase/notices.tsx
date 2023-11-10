@@ -13,10 +13,10 @@ import {
 	is100Year,
 	getPlanPath,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
 import moment from 'moment';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

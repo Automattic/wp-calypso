@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { showSelectedPost } from '../utils';
 
 jest.mock( 'page', () => jest.fn() );

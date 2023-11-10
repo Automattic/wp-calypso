@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { setQueryArgs, updateQueryArgs, getQueryArgs } from '../index';
 
 jest.mock( 'react' );
