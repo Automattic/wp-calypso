@@ -1386,12 +1386,7 @@ export class RenderDomainsStep extends Component {
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				shouldHideNavButtons={ this.shouldHideNavButtons() }
-				stepContent={
-					<div>
-						<QueryProductsList />
-						{ this.renderContent() }
-					</div>
-				}
+				stepContent={ <div>{ this.renderContent() }</div> }
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ true }
@@ -1477,6 +1472,7 @@ const RenderDomainsStepConnect = connect(
 export default function DomainsStep( props ) {
 	return (
 		<CalypsoShoppingCartProvider>
+			<QueryProductsList productSlugs="personal-bundle" />
 			<RenderDomainsStepConnect { ...props } />
 		</CalypsoShoppingCartProvider>
 	);
