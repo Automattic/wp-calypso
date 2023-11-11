@@ -666,9 +666,16 @@ export default function WPCheckout( {
 					<CheckoutFormSubmit
 						validateForm={ validateForm }
 						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={ <JetpackCheckoutSeals /> }
+						submitButtonFooter={
+							// Temporarily disabling this lint rule until hasCheckoutVersion is removed
+							// eslint-disable-next-line no-nested-ternary
+							isJetpackCheckout() ? (
+								<JetpackCheckoutSeals />
+							) : hasCheckoutVersion( '2' ) ? (
+								<CheckoutMoneyBackGuarantee cart={ responseCart } />
+							) : null
+						}
 					/>
-					{ hasCheckoutVersion( '2' ) && <CheckoutMoneyBackGuarantee cart={ responseCart } /> }
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</WPCheckoutWrapper>
