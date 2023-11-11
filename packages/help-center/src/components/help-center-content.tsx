@@ -75,7 +75,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 					path="/odie"
 					element={
 						<OdieAssistantProvider
-							botNameSlug="wpcom-support-chat"
+							botNameSlug="wpcom-support-assistant"
 							botSetting="supportDocs"
 							botName="Wapuu"
 							enabled={ isWapuuEnabled }
