@@ -41,6 +41,7 @@ type PlanFeaturesActionsButtonProps = {
 	isLaunchPage?: boolean | null;
 	isMonthlyPlan?: boolean;
 	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
+	onDowngradeClick: () => void;
 	planSlug: PlanSlug;
 	flowName?: string | null;
 	buttonText?: string;
@@ -216,6 +217,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isMonthlyPlan,
 	planTitle,
 	handleUpgradeButtonClick,
+	handleDowngradeButtonClick,
 	planSlug,
 	currentPlanManageHref,
 	canUserManageCurrentPlan,
@@ -233,6 +235,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
+	handleDowngradeButtonClick: () => void;
 	planSlug: PlanSlug;
 	currentPlanManageHref?: string;
 	canUserManageCurrentPlan?: boolean | null;
@@ -417,7 +420,9 @@ const LoggedInPlansFeatureActionButton = ( {
 				showOnMobile={ false }
 				id="downgrade"
 			>
-				<DummyDisabledButton>{ translate( 'Downgrade', { context: 'verb' } ) }</DummyDisabledButton>
+				<DummyDisabledButton onClick={ handleDowngradeButtonClick }>
+					{ translate( 'Downgrade', { context: 'verb' } ) }
+				</DummyDisabledButton>
 				{ isMobile() && (
 					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
 						{ translate( 'Please contact support to downgrade your plan.' ) }
@@ -440,6 +445,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
+	onDowngradeClick,
 	planSlug,
 	flowName,
 	buttonText,
@@ -481,6 +487,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		},
 		[ currentSitePlanSlug, freePlan, freeTrialPlanSlug, onUpgradeClick, planSlug ]
 	);
+
+	const handleDowngradeButtonClick = useCallback( () => {
+		onDowngradeClick?.();
+	}, [ onDowngradeClick ] );
 
 	if ( isWpcomEnterpriseGridPlan ) {
 		const vipLandingPageUrlWithUtmCampaign = addQueryArgs(
@@ -566,6 +576,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
+			handleDowngradeButtonClick={ handleDowngradeButtonClick }
 			currentPlanManageHref={ currentPlanManageHref }
 			canUserManageCurrentPlan={ canUserManageCurrentPlan }
 			currentSitePlanSlug={ currentSitePlanSlug }

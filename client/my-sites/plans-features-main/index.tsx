@@ -369,6 +369,11 @@ const PlansFeaturesMain = ( {
 		[ onUpgradeClick, resolveModal, siteSlug, withDiscount ]
 	);
 
+	const handleDowngradeClick = useCallback( () => {
+		// just an intermediate implementation.
+		page( '/help' );
+	}, [ siteSlug ] );
+
 	const term = usePlanBillingPeriod( {
 		intervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
@@ -797,6 +802,7 @@ const PlansFeaturesMain = ( {
 									isInSignup={ isInSignup }
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
+									onDowngradeClick={ handleDowngradeClick }
 									flowName={ flowName }
 									selectedFeature={ selectedFeature }
 									selectedPlan={ selectedPlan }
@@ -860,6 +866,7 @@ const PlansFeaturesMain = ( {
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
+												onDowngradeClick={ handleDowngradeClick }
 												flowName={ flowName }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }

@@ -51,6 +51,7 @@ interface FeaturesGridType extends PlansGridProps {
 	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
+	handleDowngradeClick: () => void;
 }
 
 class FeaturesGrid extends Component< FeaturesGridType > {
@@ -367,6 +368,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			siteId,
 			isLargeCurrency,
 			handleUpgradeClick,
+			handleDowngradeClick,
 		} = this.props;
 
 		return renderedGridPlans.map(
@@ -410,6 +412,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 							onUpgradeClick={ ( overridePlanSlug ) =>
 								handleUpgradeClick( overridePlanSlug ?? planSlug )
 							}
+							onDowngradeClick={ handleDowngradeClick }
 							planSlug={ planSlug }
 							flowName={ flowName }
 							currentSitePlanSlug={ currentSitePlanSlug }

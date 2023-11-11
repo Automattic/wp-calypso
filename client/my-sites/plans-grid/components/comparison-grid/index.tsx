@@ -331,6 +331,7 @@ type ComparisonGridProps = {
 	currentPlanManageHref?: string;
 	canUserManageCurrentPlan?: boolean | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onDowngradeClick: () => void;
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
@@ -354,6 +355,7 @@ type ComparisonGridHeaderProps = {
 	currentPlanManageHref?: string;
 	canUserManageCurrentPlan?: boolean | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onDowngradeClick: () => void;
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
@@ -391,6 +393,7 @@ const ComparisonGridHeaderCell = ( {
 	flowName,
 	isLargeCurrency,
 	onUpgradeClick,
+	onDowngradeClick,
 	planActionOverrides,
 	isPlanUpgradeCreditEligible,
 	siteId,
@@ -488,6 +491,7 @@ const ComparisonGridHeaderCell = ( {
 				planSlug={ planSlug }
 				flowName={ flowName }
 				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
+				onDowngradeClick={ onDowngradeClick }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
 				isStuck={ false }
@@ -510,6 +514,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			currentPlanManageHref,
 			canUserManageCurrentPlan,
 			onUpgradeClick,
+			onDowngradeClick,
 			siteId,
 			planActionOverrides,
 			selectedPlan,
@@ -555,6 +560,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						canUserManageCurrentPlan={ canUserManageCurrentPlan }
 						flowName={ flowName }
 						onUpgradeClick={ onUpgradeClick }
+						onDowngradeClick={ onDowngradeClick }
 						isLaunchPage={ isLaunchPage }
 						isLargeCurrency={ isLargeCurrency }
 						planActionOverrides={ planActionOverrides }
@@ -969,6 +975,7 @@ const ComparisonGrid = ( {
 	currentPlanManageHref,
 	canUserManageCurrentPlan,
 	onUpgradeClick,
+	onDowngradeClick,
 	siteId,
 	planActionOverrides,
 	selectedPlan,
@@ -1121,6 +1128,7 @@ const ComparisonGrid = ( {
 							currentPlanManageHref={ currentPlanManageHref }
 							canUserManageCurrentPlan={ canUserManageCurrentPlan }
 							onUpgradeClick={ onUpgradeClick }
+							onDowngradeClick={ onDowngradeClick }
 							planActionOverrides={ planActionOverrides }
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
@@ -1155,6 +1163,7 @@ const ComparisonGrid = ( {
 					currentPlanManageHref={ currentPlanManageHref }
 					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ onUpgradeClick }
+					onDowngradeClick={ onDowngradeClick }
 					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
