@@ -62,7 +62,11 @@ export default function CountComparisonCard( {
 			>
 				<span
 					className="highlight-card-count-value"
-					title={ Number.isFinite( count ) ? String( count ) : undefined }
+					title={
+						heading && Number.isFinite( count )
+							? `${ String( count ) } ${ String( heading ).toLowerCase() }`
+							: undefined
+					}
 					ref={ textRef }
 				>
 					<ShortenedNumber value={ count } />
