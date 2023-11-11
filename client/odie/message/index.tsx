@@ -204,8 +204,7 @@ const ChatMessage = (
 		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
 	);
 
-	const shouldRenderExtraContactOptions =
-		isRequestingHumanSupport && ! hasFeedback && messageFullyTyped;
+	const shouldRenderExtraContactOptions = isRequestingHumanSupport && messageFullyTyped;
 
 	const onDislike = () => {
 		if ( shouldRenderExtraContactOptions ) {
@@ -229,7 +228,7 @@ const ChatMessage = (
 
 	const messageContent = (
 		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ fullscreenRef }>
-			<div className={ messageClasses } ref={ ref }>
+			<div className={ messageClasses }>
 				{ messageHeader }
 				{ ( message.type === 'message' || ! message.type ) && (
 					<>
@@ -316,7 +315,11 @@ const ChatMessage = (
 			</>
 		);
 	}
-	return messageContent;
+	return (
+		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ ref }>
+			{ messageContent }
+		</div>
+	);
 };
 
 export default ChatMessage;

@@ -13,11 +13,13 @@ import { Message } from '../types';
 import './style.scss';
 
 export const OdieSendMessageButton = ( {
+	scrollToRecent,
 	scrollToBottom,
 	enableStickToBottom,
 	enableJumpToRecent,
 }: {
-	scrollToBottom: ( smooth?: boolean, force?: boolean ) => void;
+	scrollToRecent: () => void;
+	scrollToBottom: ( force?: boolean ) => void;
 	enableStickToBottom: () => void;
 	enableJumpToRecent: boolean;
 } ) => {
@@ -90,6 +92,7 @@ export const OdieSendMessageButton = ( {
 			return;
 		}
 		setMessageString( '' );
+		enableStickToBottom();
 		await sendMessage();
 		scrollToBottom( true );
 	};
@@ -107,7 +110,6 @@ export const OdieSendMessageButton = ( {
 
 	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		enableStickToBottom();
 		await sendMessageIfNotEmpty();
 	};
 
@@ -116,7 +118,7 @@ export const OdieSendMessageButton = ( {
 	return (
 		<>
 			<JumpToRecent
-				scrollToBottom={ () => scrollToBottom( true, true ) }
+				scrollToBottom={ scrollToRecent }
 				enableJumpToRecent={ enableJumpToRecent }
 				bottomOffset={ divContainerHeight ?? 0 }
 			/>
