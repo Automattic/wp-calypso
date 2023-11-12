@@ -28,7 +28,7 @@ const {
 } = data;
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 describe( 'index', () => {
 	beforeEach( () => {

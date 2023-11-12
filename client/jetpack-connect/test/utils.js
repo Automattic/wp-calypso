@@ -145,7 +145,7 @@ jest.mock( 'calypso/lib/navigate', () => ( {
 	navigate: jest.fn(),
 } ) );
 
-jest.mock( 'page', () => ( {
+jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 

@@ -13,7 +13,7 @@ import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrad
 import { redirectJetpackLegacyPlans } from '../controller';
 import * as utils from '../utils';
 
-jest.mock( 'page' );
+jest.mock( '@automattic/calypso-router' );
 jest.mock( '../utils' );
 
 const mockStore = configureStore();

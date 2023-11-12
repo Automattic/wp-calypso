@@ -26,7 +26,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import UpsellNudge, { BUSINESS_PLAN_UPGRADE_UPSELL, PROFESSIONAL_EMAIL_UPSELL } from '../index';
 import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-methods';
 
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 const mockCountries = [ { code: 'US', has_postal_codes: true, name: 'United States' } ];
 

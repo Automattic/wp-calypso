@@ -16,7 +16,7 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
 } ) );
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( 'calypso/components/sites-popover', () => () => <div data-testid="sites-popover" /> );
 
 const markPostSeen = jest.fn();
