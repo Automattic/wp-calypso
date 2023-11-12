@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 
-jest.mock( 'page' );
+jest.mock( '@automattic/calypso-router' );
 jest.mock( 'calypso/lib/wporg', () => ( {
 	getWporgLocaleCode: () => 'it_US',
 	fetchPluginsList: () => Promise.resolve( [] ),

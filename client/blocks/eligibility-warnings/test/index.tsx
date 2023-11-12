@@ -10,7 +10,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import EligibilityWarnings from '..';
 
-jest.mock( 'page', () => ( {
+jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 

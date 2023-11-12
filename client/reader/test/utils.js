@@ -5,7 +5,7 @@
 import page from '@automattic/calypso-router';
 import { showSelectedPost } from '../utils';
 
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 describe( 'reader utils', () => {
 	const dispatch = jest.fn();

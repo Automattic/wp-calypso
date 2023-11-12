@@ -11,7 +11,7 @@ import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/const
 import { WeChatPaymentQRcode } from '../payment-methods/wechat/wechat-payment-qrcode';
 import { createTestReduxStore } from './util';
 
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 const cart = getEmptyResponseCart();
 

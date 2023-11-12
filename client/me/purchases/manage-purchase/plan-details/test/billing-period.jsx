@@ -34,7 +34,7 @@ jest.mock( 'calypso/lib/cart-values/cart-items', () => ( {
 	planItem: jest.fn(),
 } ) );
 
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 describe( 'PlanBillingPeriod', () => {
 	describe( 'a monthly plan', () => {

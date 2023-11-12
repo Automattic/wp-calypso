@@ -16,7 +16,7 @@ import { MapDomain } from '..';
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui, productsList } } );
 
-jest.mock( 'page', () => {
+jest.mock( '@automattic/calypso-router', () => {
 	const pageMock = jest.fn();
 	pageMock.redirect = jest.fn();
 	return pageMock;

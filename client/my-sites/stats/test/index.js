@@ -1,4 +1,4 @@
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '../controller', () => ( {
 	overview: jest.fn(),
 	insights: jest.fn(),
