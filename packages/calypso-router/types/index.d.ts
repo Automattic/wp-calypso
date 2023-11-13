@@ -5,16 +5,14 @@
 //                 Piotr Błażejewicz <https://github.com/peterblazejewicz>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-interface Static {
-	create( options?: Partial< Options > ): Static;
+interface Page {
+	create( options?: Partial< Options > ): Page;
 	/**
 	 * Expose Route
-	 * @type {Route}
 	 */
 	Route: Route;
 	/**
-	 * Export Context
-	 * @type {Context}
+	 * Expose Context
 	 */
 	Context: Context;
 	/**
@@ -27,18 +25,7 @@ interface Static {
 	 *
 	 *  Links that are not of the same origin are disregarded and will not be dispatched.
 	 */
-	( path: string, ...callbacks: Callback[] ): void;
-	/**
-	 *  Defines a route mapping path to the given callback(s).
-	 *
-	 *      page('/', user.list)
-	 *      page('/user/:id', user.load, user.show)
-	 *      page('/user/:id/edit', user.load, user.edit)
-	 *      page('*', notfound)
-	 *
-	 *  Links that are not of the same origin are disregarded and will not be dispatched.
-	 */
-	( path: RegExp, ...callbacks: Callback[] ): void;
+	( path: string | RegExp, ...callbacks: Callback[] ): void;
 	/**
 	 * This is equivalent to page('*', callback) for generic "middleware".
 	 */
@@ -104,7 +91,7 @@ interface Static {
 	 * Replace `path` with optional `state` object.
 	 *
 	 */
-	replace( path: string, state?: any, init?: boolean, dispatch?: boolean ): Context;
+	replace( path: string, state?: unknown, init?: boolean, dispatch?: boolean ): Context;
 	/**
 	 *  Navigate to the given path.
 	 *
@@ -191,36 +178,28 @@ interface Static {
 	current: string;
 }
 
-interface Route {
+class Route {
 	/**
 	 * Initialize `Route` with the given HTTP `path` & `options`
-	 * @param {string}  path    path
-	 * @param {Options} options Options
 	 */
-	new ( path: string, options?: RouteOptions ): Route;
+	constructor( path: string, options?: RouteOptions ): Route;
 	/**
 	 * Return route middleware with the given callback `fn()`.
-	 * @param {Callback} callback Callback
 	 */
 	middleware( fn: Callback ): Callback;
 	/**
 	 * Check if this route matches `path`, if so populate `params`.
-	 * @param  {string}  path   path
-	 * @param  {{}}    params params
-	 * @return {boolean}       true if matched, false otherwise
 	 */
-	match( path: string, params?: {} ): boolean;
+	match( path: string, params?: unknown ): boolean;
 }
 
 interface RouteOptions {
 	/**
 	 * enable case-sensitive routes
-	 * @type {[type]}
 	 */
 	sensitive?: boolean | undefined;
 	/**
 	 * enable strict matching for trailing slashes
-	 * @type {[type]}
 	 */
 	strict?: boolean | undefined;
 }
@@ -253,19 +232,14 @@ interface Options {
 }
 
 interface Callback {
-	( ctx: Context, next: () => any ): any;
+	( ctx: Context, next: () => void ): void;
 }
 
 /**
  * Routes are passed Context objects, these may be used to share state, for example ctx.user =, as well as the history "state" ctx.state that the pushState API provides.
  */
-interface Context {
-	/**
-	 * Initialize a new "request" `Context` with the given `path` and optional initial `state`.
-	 * @param {string} path  path
-	 * @param {any}    state state
-	 */
-	new ( path: string, state?: any ): Context;
+class Context {
+	constructor( path: string, state?: unknown ): Context;
 	[ idx: string ]: any;
 	/**
 	 * Saves the context using replaceState(). For example this is useful for caching HTML or other resources that were loaded for when a user presses "back".
@@ -302,7 +276,7 @@ interface Context {
 	/**
 	 *  The pushState state object.
 	 */
-	state: any;
+	state: unknown;
 	/**
 	 * The pushState title.
 	 */
@@ -310,11 +284,11 @@ interface Context {
 	/**
 	 * The parameters from the url, e.g. /user/:id => Context.params.id
 	 */
-	params: any;
+	params: { [ idx: string ]: any };
 }
 
-const page: Static;
+const page: Page;
 
-export { Callback, Context, Options, Route, RouteOptions, Static };
+export { Page, Callback, Context, Options, Route, RouteOptions };
 
 export default page;
