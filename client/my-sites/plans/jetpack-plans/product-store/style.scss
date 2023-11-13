@@ -12,7 +12,18 @@
 		margin-top: 8.5rem;
 
 		&.has-sale-banner {
+			$mobile-offset: 6rem;
+
 			margin-top: 8.5rem + $sale-banner-height;
+
+			// tablets
+			@media ( max-width: 900px ) {
+				margin-top: 8.5rem + $sale-banner-height + $mobile-offset / 3;
+			}
+			// mobiles
+			@media ( max-width: 560px ) {
+				margin-top: 8.5rem + $sale-banner-height + $mobile-offset;
+			}
 		}
 	}
 
