@@ -1,7 +1,7 @@
 import { suggestEmailCorrection } from '../domain-suggester';
 
 describe( 'suggestEmailCorrection', () => {
-	test( 'returns correct result and ignores processing for a domain included in valid email domain list', () => {
+	test( 'should return correct result and ignores processing for a domain included in valid email domain list', () => {
 		const result = suggestEmailCorrection( 'example@gmail.com' );
 		expect( result ).toEqual( {
 			oldEmail: 'example@gmail.com',
@@ -13,7 +13,7 @@ describe( 'suggestEmailCorrection', () => {
 		} );
 	} );
 
-	test( 'suggests a correction for an invalid email domain within the Levenshtein distance limit of 2', () => {
+	test( 'should suggest a correction for an invalid email domain within the Levenshtein distance limit of 2', () => {
 		const result = suggestEmailCorrection( 'example@gnail.com' );
 		expect( result ).toEqual( {
 			oldEmail: 'example@gnail.com',
@@ -25,7 +25,7 @@ describe( 'suggestEmailCorrection', () => {
 		} );
 	} );
 
-	test( 'does not suggest a correction for an invalid email domain beyond the default Levenshtein distance limit of 2', () => {
+	test( 'should not suggest a correction for an invalid email domain beyond the default Levenshtein distance limit of 2', () => {
 		const result = suggestEmailCorrection( 'example@ggggl.com' );
 		expect( result ).toEqual( {
 			oldEmail: 'example@ggggl.com',
@@ -36,6 +36,4 @@ describe( 'suggestEmailCorrection', () => {
 			wasCorrected: false,
 		} );
 	} );
-
-	// Add more test cases as needed
 } );
