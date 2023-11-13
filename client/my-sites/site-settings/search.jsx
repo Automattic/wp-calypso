@@ -150,7 +150,6 @@ class Search extends Component {
 
 		/**
 		 * Call WPCOM endpoints to update remote Jetpack sites' settings
-		 *
 		 * @param {boolean} jetpackSearchEnabled Whether Jetpack Search is enabled
 		 */
 		const handleJetpackSearchToggle = ( jetpackSearchEnabled ) => {
@@ -164,7 +163,6 @@ class Search extends Component {
 
 		/**
 		 * Call WPCOM endpoints to update remote Jetpack sites' settings
-		 *
 		 * @param {boolean} instantSearchEnabled Whether Instant Search is enabled
 		 */
 		const handleInstantSearchToggle = ( instantSearchEnabled ) => {
@@ -224,7 +222,6 @@ class Search extends Component {
 
 		/**
 		 * Change instant toggle status with Jetpack Search toggle and then save settings
-		 *
 		 * @param {boolean} jetpackSearchEnabled Whether Jetpack Search is enabled
 		 */
 		const handleJetpackSearchToggle = ( jetpackSearchEnabled ) => {
