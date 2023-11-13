@@ -16,7 +16,6 @@ import { useTranslate } from 'i18n-calypso';
 import { omit } from 'lodash';
 import * as React from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import './style.scss';
 
@@ -39,6 +38,7 @@ export type PlanTypeSelectorProps = {
 	isStepperUpgradeFlow: boolean;
 	currentSitePlanSlug?: PlanSlug | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 };
 
 interface PathArgs {
@@ -367,7 +367,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	...props
 } ) => {
 	useEffect( () => {
-		recordTracksEvent( 'calypso_plans_plan_type_selector_view', {
+		props.recordTracksEvent?.( 'calypso_plans_plan_type_selector_view', {
 			kind,
 		} );
 	}, [] );

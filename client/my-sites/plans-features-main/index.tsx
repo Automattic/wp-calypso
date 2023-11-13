@@ -531,6 +531,7 @@ const PlansFeaturesMain = ( {
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 		currentSitePlanSlug: sitePlanSlug,
 		usePricingMetaForGridPlans,
+		recordTracksEvent,
 	};
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
