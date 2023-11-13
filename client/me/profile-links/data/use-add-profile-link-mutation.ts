@@ -21,7 +21,7 @@ export const useAddProfileLinkMutation = ( options: AddProfileLinksMutationOptio
 		},
 	} );
 
-	const { mutate } = mutation;
+	const { mutate, mutateAsync } = mutation;
 
 	const addProfileLinks = useCallback(
 		( links: AddProfileLinksPayload ) => {
@@ -30,5 +30,12 @@ export const useAddProfileLinkMutation = ( options: AddProfileLinksMutationOptio
 		[ mutate ]
 	);
 
-	return { ...mutation, addProfileLinks };
+	const addProfileLinksAsync = useCallback(
+		( links: AddProfileLinksPayload ) => {
+			return mutateAsync( { links } );
+		},
+		[ mutateAsync ]
+	);
+
+	return { ...mutation, addProfileLinks, addProfileLinksAsync };
 };

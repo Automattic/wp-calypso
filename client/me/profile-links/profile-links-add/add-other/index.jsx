@@ -14,7 +14,6 @@ class ProfileLinksAddOther extends Component {
 		value: '',
 	};
 
-	// As the user types, the component state changes thanks to the LinkedStateMixin.
 	// This function, called in render, validates their input on each state change
 	// and is used to decide whether or not to enable the Add Site button
 	getFormDisabled() {
@@ -67,13 +66,13 @@ class ProfileLinksAddOther extends Component {
 		this.setState( { [ name ]: value } );
 	};
 
-	onSubmit = ( event ) => {
+	onSubmit = async ( event ) => {
 		event.preventDefault();
 
 		// When the form's submit button is disabled, the form's onSubmit does not
 		// get fired for ENTER presses in input text fields, so this check
 		// for getFormDisabled is merely here out of an abundance of caution
-		if ( this.getFormDisabled() ) {
+		if ( this.getFormDisabled() || this.props.isAddingProfileLinks ) {
 			return;
 		}
 
@@ -83,7 +82,6 @@ class ProfileLinksAddOther extends Component {
 				value: this.state.value.trim(),
 			},
 		] );
-		this.props.onSuccess();
 	};
 
 	render() {
@@ -113,8 +111,9 @@ class ProfileLinksAddOther extends Component {
 					/>
 					<FormButton
 						className="profile-links-add-other__add"
-						disabled={ this.getFormDisabled() }
+						disabled={ this.getFormDisabled() || this.props.isAddingProfileLinks }
 						onClick={ this.getClickHandler( 'Save Other Site Button' ) }
+						busy={ this.props.isAddingProfileLinks }
 					>
 						{ this.props.translate( 'Add Site' ) }
 					</FormButton>

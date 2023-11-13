@@ -8,6 +8,8 @@ export type ProfileLink = {
 
 export type AddProfileLinksPayload = Pick< ProfileLink, 'title' | 'value' >[];
 
+export type ProfileLinkResponse = ProfileLink[];
+
 export type AddProfileLinksResponse = {
 	added: ProfileLink[] | false;
 	malformed: ProfileLink[] | false;
@@ -25,5 +27,3 @@ export type AddProfileLinksMutationOptions = UseMutationOptions<
 	AddProfileLinksVariables,
 	unknown
 >;
-
-export type ProfileLinkResponse = ProfileLink[];

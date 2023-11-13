@@ -7,7 +7,7 @@ import { onboardingUrl } from 'calypso/lib/paths';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getPublicSites from 'calypso/state/selectors/get-public-sites';
 import getSites from 'calypso/state/selectors/get-sites';
-import { useProfileLinksQuery } from '../profile-links/data/use-profile-links-query';
+import { useProfileLinksQuery } from '../../data/use-profile-links-query';
 import ProfileLinksAddWordPressSite from './site';
 
 import './style.scss';
@@ -63,9 +63,13 @@ class ProfileLinksAddWordPress extends Component {
 		return checkedCount;
 	}
 
-	onAddableSubmit = ( event ) => {
+	onAddableSubmit = async ( event ) => {
 		event.preventDefault();
-		const { sites } = this.props;
+		const { sites, isAddingProfileLinks } = this.props;
+
+		if ( isAddingProfileLinks ) {
+			return;
+		}
 
 		const links = pickBy(
 			this.state,
@@ -83,7 +87,6 @@ class ProfileLinksAddWordPress extends Component {
 
 		if ( profileLinks.length ) {
 			this.props.addUserProfileLinks( profileLinks );
-			this.props.onSuccess();
 		}
 	};
 
@@ -123,13 +126,16 @@ class ProfileLinksAddWordPress extends Component {
 		const { translate } = this.props;
 		const checkedCount = this.getCheckedCount();
 
+		const isSubmitDisabled = 0 === checkedCount || this.props.isAddingProfileLinks;
+
 		return (
 			<form className="profile-links-add-wordpress" onSubmit={ this.onAddableSubmit }>
 				<p>{ translate( 'Please select one or more sites to add to your profile.' ) }</p>
 				<ul className="profile-links-add-wordpress__list">{ this.renderAddableSites() }</ul>
 				<FormButton
-					disabled={ 0 === checkedCount ? true : false }
+					disabled={ isSubmitDisabled }
 					onClick={ this.getClickHandler( 'Add WordPress Sites Button' ) }
+					busy={ this.props.isAddingProfileLinks }
 				>
 					{ translate( 'Add Site', 'Add Sites', { context: 'bulk action', count: checkedCount } ) }
 				</FormButton>

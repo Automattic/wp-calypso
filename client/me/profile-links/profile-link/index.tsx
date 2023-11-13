@@ -1,10 +1,12 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { withoutHttp } from 'calypso/lib/url';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
-import { useDeleteProfileLinkMutation } from '../profile-links/data/use-delete-profile-link-mutation';
+import { successNotice } from 'calypso/state/notices/actions';
+import { useDeleteProfileLinkMutation } from '../data/use-delete-profile-link-mutation';
 
 import './style.scss';
 
@@ -16,6 +18,8 @@ type ProfileLinkProps = {
 	isPlaceholder?: boolean;
 };
 
+const NOTICE_DURATION = 5000;
+
 function ProfileLink( {
 	imageSize = 100,
 	title,
@@ -24,7 +28,21 @@ function ProfileLink( {
 	isPlaceholder = false,
 }: ProfileLinkProps ) {
 	const dispatch = useDispatch();
-	const { deleteProfileLink, isLoading: isRemoving } = useDeleteProfileLinkMutation();
+	const translate = useTranslate();
+
+	const { deleteProfileLink, isLoading: isRemoving } = useDeleteProfileLinkMutation( {
+		onSuccess: ( data, { linkSlug } ) => {
+			dispatch(
+				successNotice(
+					translate( '%s removed from your profile links successfully.', { args: [ url ] } ),
+					{
+						id: `profile-links-${ linkSlug }`,
+						duration: NOTICE_DURATION,
+					}
+				)
+			);
+		},
+	} );
 
 	const recordClickEvent = ( action: string ) =>
 		dispatch( recordGoogleEventAction( 'Me', 'Clicked on ' + action ) );
