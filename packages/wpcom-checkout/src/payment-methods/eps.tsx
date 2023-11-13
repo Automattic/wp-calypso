@@ -67,6 +67,7 @@ export function createEpsMethod( {
 } ): PaymentMethod {
 	return {
 		id: 'eps',
+		hasRequiredFields: true,
 		paymentProcessorId: 'eps',
 		label: <EpsLabel />,
 		activeContent: <EpsFields />,

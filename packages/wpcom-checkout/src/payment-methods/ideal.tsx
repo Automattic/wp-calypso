@@ -77,6 +77,7 @@ export function createIdealMethod( {
 } ): PaymentMethod {
 	return {
 		id: 'ideal',
+		hasRequiredFields: true,
 		paymentProcessorId: 'ideal',
 		label: <IdealLabel />,
 		activeContent: <IdealFields />,

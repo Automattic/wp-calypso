@@ -16,6 +16,7 @@ import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
 export { createCreditCardPaymentMethodStore } from './store';
@@ -32,11 +33,12 @@ export function createCreditCardMethod( {
 	shouldShowTaxFields?: boolean;
 	submitButtonContent: ReactNode;
 	allowUseForAllSubscriptions?: boolean;
-} ) {
+} ): PaymentMethod {
 	return {
 		id: 'card',
 		paymentProcessorId: 'card',
 		label: <CreditCardLabel />,
+		hasRequiredFields: true,
 		activeContent: (
 			<CreditCardFields
 				shouldUseEbanx={ shouldUseEbanx }
