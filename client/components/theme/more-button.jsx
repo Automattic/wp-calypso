@@ -12,7 +12,6 @@ import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
  * Note that the check this function implements is incomplete --
  * it only returns false for absolute URLs, so it misses
  * relative URLs, or pure query strings, or hashbangs.
- *
  * @param  url URL to check
  * @returns     true if the given URL is located outside of Calypso
  */

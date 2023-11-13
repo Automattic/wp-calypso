@@ -6,7 +6,6 @@ import SiteIcon from '../';
 /**
  * Site ID of en.blog.wordpress.com, to be used as fallback for SiteIcon if
  * current user does not have a primary site.
- *
  * @type {number}
  */
 const EN_BLOG_SITE_ID = 3584907;
