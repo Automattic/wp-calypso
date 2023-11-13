@@ -7711,10 +7711,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/gradient-parser@npm:0.1.3, @types/gradient-parser@npm:^0.1.2":
+"@types/gradient-parser@npm:0.1.3":
   version: 0.1.3
   resolution: "@types/gradient-parser@npm:0.1.3"
   checksum: afe2f7be1482f96698f75eed9d2927558e3b84bd95d55442e0c637078a8581eb99d574bc5647ce6e422cd0b0b6cdfca6170783e55950a4bed9a78890a86ece9f
+  languageName: node
+  linkType: hard
+
+"@types/gradient-parser@npm:^0.1.4":
+  version: 0.1.5
+  resolution: "@types/gradient-parser@npm:0.1.5"
+  checksum: 8347fb24885aeb133421baec58d0eab4e8ec43d17f337bc4f1d23bde99ca5e87b82b44834eb00d71fd820503c530d4c75e4d9a98652e09b2f04b08fbc1057762
   languageName: node
   linkType: hard
 
@@ -32409,7 +32416,7 @@ __metadata:
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7
     "@types/fast-json-stable-stringify": ^2.0.0
-    "@types/gradient-parser": ^0.1.2
+    "@types/gradient-parser": ^0.1.4
     "@types/gtag.js": ^0.0.10
     "@types/highlight-words-core": ^1.2.1
     "@types/jest": ^29.5.7
