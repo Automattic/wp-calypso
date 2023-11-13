@@ -1305,7 +1305,7 @@ __metadata:
     react-redux: ^8.1.3
     redux: ^4.2.1
     redux-thunk: ^2.4.2
-    size-limit: ^8.2.4
+    size-limit: ^8.2.6
     webpack: ^5.68.0
     webpack-bundle-analyzer: ^4.5.0
     wpcom: "workspace:^"
@@ -21474,7 +21474,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lilconfig@npm:^2.0.3, lilconfig@npm:^2.0.6":
+"lilconfig@npm:^2.0.3, lilconfig@npm:^2.1.0":
   version: 2.1.0
   resolution: "lilconfig@npm:2.1.0"
   checksum: 64645641aa8d274c99338e130554abd6a0190533c0d9eb2ce7ebfaf2e05c7d9961f3ffe2bfa39efd3b60c521ba3dd24fa236fe2775fc38501bf82bf49d4678b8
@@ -28731,19 +28731,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"size-limit@npm:^8.2.4":
-  version: 8.2.4
-  resolution: "size-limit@npm:8.2.4"
+"size-limit@npm:^8.2.6":
+  version: 8.2.6
+  resolution: "size-limit@npm:8.2.6"
   dependencies:
     bytes-iec: ^3.1.1
     chokidar: ^3.5.3
     globby: ^11.1.0
-    lilconfig: ^2.0.6
+    lilconfig: ^2.1.0
     nanospinner: ^1.1.0
     picocolors: ^1.0.0
   bin:
     size-limit: bin.js
-  checksum: d58aa98cb863eb71b023c2c9338a8455aad4b085f490d04cc3e7174e60df222c70e4ec516b51e4317c14b3491f098f08fa1175702c16fef38a4b971c71dfd32c
+  checksum: 80a3cf1fe3a04a8e90722c2818ca74aadf063b0a88780da01e5c1e32f3b205496e2bd82bec305f81545f18675283cb9ac503e2383e69520d92a04329c8d1d270
   languageName: node
   linkType: hard
 

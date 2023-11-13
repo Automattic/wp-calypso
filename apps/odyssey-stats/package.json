@@ -73,7 +73,7 @@
 		"node-fetch": "^2.6.6",
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.3.11",
-		"size-limit": "^8.2.4",
+		"size-limit": "^8.2.6",
 		"webpack": "^5.68.0",
 		"webpack-bundle-analyzer": "^4.5.0"
 	}
