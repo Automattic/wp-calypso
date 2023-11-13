@@ -272,14 +272,14 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( getByLabelText( 'Private' ) ).toBeChecked();
 
 			await userEvent.click( publicRadio );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
 			} );
 
 			await userEvent.click( discourageRadio );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -368,7 +368,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( discourageRadio ).not.toBeChecked();
 
 			await userEvent.click( discourageRadio );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -493,7 +493,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 
 			await userEvent.click( publicRadio );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -584,7 +584,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( publicRadio ).not.toBeChecked();
 
 			await userEvent.click( hiddenCheckbox );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -604,7 +604,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( publicRadio ).toBeChecked();
 
 			await userEvent.click( hiddenCheckbox );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -647,7 +647,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					const radioButton = getByLabelText( text, { exact: false } );
 					expect( radioButton ).not.toBeChecked();
 					await userEvent.click( radioButton );
-					expect( testProps.updateFields ).toBeCalledWith( updatedFields );
+					expect( testProps.updateFields ).toHaveBeenCalledWith( updatedFields );
 				} );
 			} );
 
