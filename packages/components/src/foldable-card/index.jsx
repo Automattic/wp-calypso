@@ -15,6 +15,7 @@ class FoldableCard extends Component {
 		actionButton: PropTypes.node,
 		actionButtonExpanded: PropTypes.node,
 		cardKey: PropTypes.string,
+		clickableHeader: PropTypes.bool,
 		compact: PropTypes.bool,
 		disabled: PropTypes.bool,
 		expandedSummary: PropTypes.node,

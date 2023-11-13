@@ -24,6 +24,7 @@ import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import {
 	getAuthAccountType,
 	getRedirectToOriginal,
@@ -42,6 +43,8 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
+import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
@@ -102,6 +105,8 @@ class Login extends Component {
 		isGravPoweredClient: PropTypes.bool,
 		isGravPoweredLoginPage: PropTypes.bool,
 		isSignupExistingAccount: PropTypes.bool,
+		emailRequested: PropTypes.bool,
+		isSendingEmail: PropTypes.bool,
 	};
 
 	state = {
@@ -133,7 +138,11 @@ class Login extends Component {
 		}
 
 		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
-			this.sendMagicLoginLink();
+			this.props.sendEmailLogin();
+		}
+		// Passwordless email link sent.
+		if ( prevProps.isSendingEmail && this.props.emailRequested ) {
+			this.handleTwoFactorRequested( 'link' );
 		}
 
 		if (
@@ -763,6 +772,7 @@ class Login extends Component {
 				hideSignupLink={ isGravPoweredLoginPage }
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
+				isSendingEmail={ this.props.isSendingEmail }
 			/>
 		);
 	}
@@ -831,9 +841,12 @@ export default connect(
 			getCurrentQueryArguments( state )?.is_signup_existing_account
 		),
 		requestError: getRequestError( state ),
+		isSendingEmail: isFetchingMagicLoginEmail( state ),
+		emailRequested: isMagicLoginEmailRequested( state ),
 	} ),
 	{
 		rebootAfterLogin,
+		hideMagicLoginRequestForm,
 		sendEmailLogin,
 	},
 	( stateProps, dispatchProps, ownProps ) => ( {
@@ -844,7 +857,7 @@ export default connect(
 			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
-				showGlobalNotices: true,
+				showGlobalNotices: false,
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
 					( ownProps.isGravPoweredClient && ownProps.oauth2Client.name ) ||

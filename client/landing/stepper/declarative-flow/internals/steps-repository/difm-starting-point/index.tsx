@@ -1,3 +1,4 @@
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -33,6 +34,7 @@ const DIFMStartingPoint: Step = function ( { navigation } ) {
 						onPrimarySubmit={ onSubmit }
 						showNewOrExistingSiteChoice={ false }
 						siteId={ siteId }
+						planSlug={ PLAN_PREMIUM }
 					/>
 				}
 				recordTracksEvent={ recordTracksEvent }

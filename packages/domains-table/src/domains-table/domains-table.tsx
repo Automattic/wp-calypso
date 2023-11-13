@@ -52,7 +52,6 @@ interface BaseDomainsTableProps {
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainAction?: OnDomainAction;
 	userCanSetPrimaryDomains?: boolean;
-	shouldDisplayContactInfoBulkAction?: boolean;
 	isLoadingDomains?: boolean;
 
 	// These props allow table users to provide their own fetching functions. This is used for
@@ -117,7 +116,6 @@ type Value = {
 	onDomainAction( ...parameters: Parameters< OnDomainAction > ): void;
 	updatingDomain: DomainsTableUpdatingDomain | null;
 	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
-	shouldDisplayContactInfoBulkAction: boolean;
 	domainsTableColumns: DomainsTableColumn[];
 	currentUsersOwnsAllSelectedDomains: boolean;
 	currentUserCanBulkUpdateContactInfo: boolean;
@@ -141,7 +139,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		domainStatusPurchaseActions,
 		onDomainAction,
 		userCanSetPrimaryDomains,
-		shouldDisplayContactInfoBulkAction = false,
 		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo = false,
 	} = props;
@@ -422,7 +419,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		},
 		updatingDomain,
 		userCanSetPrimaryDomains,
-		shouldDisplayContactInfoBulkAction,
 		domainsTableColumns,
 		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo,

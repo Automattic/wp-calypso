@@ -13,11 +13,13 @@ import { Message } from '../types';
 import './style.scss';
 
 export const OdieSendMessageButton = ( {
+	scrollToRecent,
 	scrollToBottom,
 	enableStickToBottom,
 	enableJumpToRecent,
 }: {
-	scrollToBottom: ( smooth?: boolean ) => void;
+	scrollToRecent: () => void;
+	scrollToBottom: ( force?: boolean ) => void;
 	enableStickToBottom: () => void;
 	enableJumpToRecent: boolean;
 } ) => {
@@ -90,29 +92,24 @@ export const OdieSendMessageButton = ( {
 			return;
 		}
 		setMessageString( '' );
+		enableStickToBottom();
 		await sendMessage();
+		scrollToBottom( true );
 	};
 
 	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+		scrollToBottom( false );
 		if ( isLoading ) {
 			return;
 		}
-		scrollToBottom();
 		if ( event.key === 'Enter' && ! event.shiftKey ) {
 			event.preventDefault();
 			await sendMessageIfNotEmpty();
 		}
 	};
 
-	const handleKeyUp = () => {
-		if ( ! isLoading ) {
-			scrollToBottom( false );
-		}
-	};
-
 	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		enableStickToBottom();
 		await sendMessageIfNotEmpty();
 	};
 
@@ -121,7 +118,7 @@ export const OdieSendMessageButton = ( {
 	return (
 		<>
 			<JumpToRecent
-				scrollToBottom={ () => scrollToBottom( true ) }
+				scrollToBottom={ scrollToRecent }
 				enableJumpToRecent={ enableJumpToRecent }
 				bottomOffset={ divContainerHeight ?? 0 }
 			/>
@@ -139,7 +136,6 @@ export const OdieSendMessageButton = ( {
 							setMessageString( event.currentTarget.value )
 						}
 						onKeyPress={ handleKeyPress }
-						onKeyUp={ handleKeyUp }
 					/>
 					<button
 						type="submit"

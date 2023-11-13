@@ -1,3 +1,4 @@
+import { PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { useEffect } from 'react';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
@@ -6,7 +7,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch } from 'calypso/state';
 import { removeSiteSlugDependency } from 'calypso/state/signup/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { ChoiceType } from './types';
+import type { ChoiceType } from './types';
 
 import './style.scss';
 
@@ -22,7 +23,7 @@ interface Props {
 export default function NewOrExistingSiteStep( props: Props ) {
 	const dispatch = useDispatch();
 
-	const { stepName, goToNextStep, existingSiteCount } = props;
+	const { stepName, goToNextStep, existingSiteCount, flowName } = props;
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
@@ -49,6 +50,7 @@ export default function NewOrExistingSiteStep( props: Props ) {
 	};
 
 	const showNewOrExistingSiteChoice = existingSiteCount > 0;
+	const planSlug = 'do-it-for-me-store' === flowName ? PLAN_BUSINESS : PLAN_PREMIUM;
 
 	return (
 		<StepWrapper
@@ -61,6 +63,7 @@ export default function NewOrExistingSiteStep( props: Props ) {
 					}
 					onSecondarySubmit={ () => newOrExistingSiteSelected( 'new-site' ) }
 					showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
+					planSlug={ planSlug }
 				/>
 			}
 			hideFormattedHeader={ true }

@@ -59,6 +59,7 @@ export function getEnhancedTasks(
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
+	productCartItems?: MinimalRequestCartProduct[] | null,
 	stripeConnectUrl?: string,
 	setShowConfirmModal: () => void = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	isDomainEmailUnverified = false
@@ -410,7 +411,12 @@ export function getEnhancedTasks(
 					};
 					break;
 				case 'blog_launched': {
-					const onboardingCartItems = [ planCartItem, domainCartItem ].filter( Boolean );
+					// If user selected products during onboarding, update cart and redirect to checkout
+					const onboardingCartItems = [
+						planCartItem,
+						domainCartItem,
+						...( productCartItems ?? [] ),
+					].filter( Boolean ) as MinimalRequestCartProduct[];
 					let title = task.title;
 					if ( isBlogOnboardingFlow( flow ) && planCompleted && onboardingCartItems.length ) {
 						title = translate( 'Checkout and launch' );
@@ -441,10 +447,6 @@ export function getEnhancedTasks(
 								) as OnboardActions;
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Directing to checkout' ) );
-									// If user selected products during onboarding, update cart and redirect to checkout
-									const onboardingCartItems = [ planCartItem, domainCartItem ].filter(
-										Boolean
-									) as MinimalRequestCartProduct[];
 									if ( onboardingCartItems.length ) {
 										await replaceProductsInCart( siteSlug as string, onboardingCartItems );
 										const { goToCheckout } = useCheckout();
