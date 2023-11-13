@@ -16,7 +16,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
-import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
@@ -54,18 +53,6 @@ type PlanFeaturesActionsButtonProps = {
 	isLargeCurrency?: boolean;
 	storageOptions?: StorageOption[];
 };
-
-const DummyDisabledButton = styled.div`
-	background-color: var( --studio-white );
-	color: var( --studio-gray-5 );
-	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
-	font-weight: 500;
-	line-height: 20px;
-	border-radius: 4px;
-	padding: 10px 14px;
-	border: unset;
-	text-align: center;
-`;
 
 const SignupFlowPlanFeatureActionButton = ( {
 	freePlan,
@@ -414,9 +401,9 @@ const LoggedInPlansFeatureActionButton = ( {
 				showOnMobile={ false }
 				id="downgrade"
 			>
-				<DummyDisabledButton onClick={ handleDowngradeButtonClick }>
+				<Button className={ classes } onClick={ handleDowngradeButtonClick }>
 					{ translate( 'Downgrade', { context: 'verb' } ) }
-				</DummyDisabledButton>
+				</Button>
 				{ isMobile() && (
 					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
 						{ translate( 'Please contact support to downgrade your plan.' ) }
@@ -464,6 +451,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		'is-current-plan': current,
 		'is-stuck': isStuck,
 		'is-large-currency': isLargeCurrency,
+		'is-downgrade': ! availableForPurchase && ! isWpcomEnterpriseGridPlan,
 	} );
 
 	const handleUpgradeButtonClick = useCallback(
