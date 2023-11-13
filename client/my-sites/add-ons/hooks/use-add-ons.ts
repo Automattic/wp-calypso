@@ -273,8 +273,8 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 				} )
 				.map( ( addOn ) => {
 					const product = productsList[ addOn.productSlug ];
-					const name = addOn.name ? addOn.name : product.product_name;
-					const description = addOn.description ?? product.description;
+					const name = addOn.name ? addOn.name : product?.product_name;
+					const description = addOn.description ?? product?.description;
 
 					// if it's a storage add on
 					if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
