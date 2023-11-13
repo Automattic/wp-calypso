@@ -36,4 +36,28 @@ describe( 'suggestEmailCorrection', () => {
 			wasCorrected: false,
 		} );
 	} );
+
+	test( 'should suggest a correction for a captialized invalid email domain within the Levenshtein distance limit of 2', () => {
+		const result = suggestEmailCorrection( 'EXAMPLE@HOTMAAL.COM' );
+		expect( result ).toEqual( {
+			oldEmail: 'EXAMPLE@HOTMAAL.COM',
+			oldDomain: 'hotmaal.com',
+			newDomain: 'hotmail.com',
+			newEmail: 'example@hotmail.com',
+			distance: 1,
+			wasCorrected: true,
+		} );
+	} );
+
+	test( 'should not suggest a correction for a capitalized invalid email domain beyond the default Levenshtein distance limit of 2', () => {
+		const result = suggestEmailCorrection( 'EXAMPLE@ZZZZL.COM' );
+		expect( result ).toEqual( {
+			oldEmail: 'EXAMPLE@ZZZZL.COM',
+			oldDomain: 'zzzzl.com',
+			newDomain: null,
+			newEmail: null,
+			distance: Infinity,
+			wasCorrected: false,
+		} );
+	} );
 } );
