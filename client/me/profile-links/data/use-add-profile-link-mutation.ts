@@ -6,6 +6,7 @@ import type {
 	AddProfileLinksPayload,
 	AddProfileLinksResponse,
 	AddProfileLinksVariables,
+	ProfileLink,
 } from './types';
 
 export const useAddProfileLinkMutation = ( options: AddProfileLinksMutationOptions = {} ) => {
@@ -16,6 +17,18 @@ export const useAddProfileLinkMutation = ( options: AddProfileLinksMutationOptio
 		},
 		...options,
 		onSuccess: ( ...args ) => {
+			const [ data ] = args;
+
+			queryClient.setQueryData(
+				[ 'profile-links' ],
+				( cachedProfileLinks: ProfileLink[] | undefined ) => {
+					if ( ! cachedProfileLinks || ! data.added ) {
+						return cachedProfileLinks;
+					}
+					return [ ...cachedProfileLinks, ...data.added ];
+				}
+			);
+
 			queryClient.invalidateQueries( [ 'profile-links' ] );
 			options.onSuccess?.( ...args );
 		},
