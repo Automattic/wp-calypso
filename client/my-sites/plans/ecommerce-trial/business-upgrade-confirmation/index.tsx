@@ -53,7 +53,7 @@ const BusinessUpgradeConfirmation = () => {
 					</div>
 				</div>
 				<div className="trial-upgrade-confirmation__tasks">
-					<BusinessTrialIncluded displayAll={ true } />
+					<BusinessTrialIncluded displayAll={ true } displayOnlyActionableItems />
 				</div>
 			</Main>
 		</>

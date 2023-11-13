@@ -9,9 +9,10 @@ import useBusinessTrialIncludedFeatures from './use-business-trial-included-feat
 interface Props {
 	translate: typeof translate;
 	displayAll: boolean;
+	displayOnlyActionableItems?: boolean;
 }
 const BusinessTrialIncluded: FunctionComponent< Props > = ( props ) => {
-	const { displayAll = true } = props;
+	const { displayAll = true, displayOnlyActionableItems = false } = props;
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
@@ -19,10 +20,14 @@ const BusinessTrialIncluded: FunctionComponent< Props > = ( props ) => {
 
 	const allIncludedFeatures = useBusinessTrialIncludedFeatures( siteSlug, siteAdminUrl || '' );
 
-	const whatsIncluded = displayAll
+	let whatsIncluded = displayAll
 		? allIncludedFeatures
 		: // Show only first 4 items
 		  allIncludedFeatures.slice( 0, 4 );
+
+	if ( displayOnlyActionableItems ) {
+		whatsIncluded = whatsIncluded.filter( ( item ) => item.buttonClick );
+	}
 
 	return (
 		<>
