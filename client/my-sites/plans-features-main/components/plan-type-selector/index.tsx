@@ -8,19 +8,17 @@ import {
 	getPlanSlugForTermVariant,
 	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
-import { Popover } from '@automattic/components';
+import { Popover, SegmentedControl } from '@automattic/components';
 import styled from '@emotion/styled';
+import { useEffect, useState } from '@wordpress/element';
+import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { omit } from 'lodash';
-import { useEffect, useState } from 'react';
 import * as React from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
-import { Primitive } from 'utility-types';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ProvideExperimentData } from 'calypso/lib/explat';
-import { addQueryArgs } from 'calypso/lib/url';
 import type { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import './style.scss';
 
@@ -46,7 +44,7 @@ export type PlanTypeSelectorProps = {
 };
 
 interface PathArgs {
-	[ key: string ]: Primitive;
+	[ key: string ]: string | null;
 }
 
 type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: PathArgs ) => string;
@@ -54,33 +52,37 @@ type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: Pat
 export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
 	const { intervalType = '' } = additionalArgs;
 	const defaultArgs = {
-		customerType: null,
+		customerType: undefined,
 		discount: props.withDiscount,
 		feature: props.selectedFeature,
 		plan: props.selectedPlan,
 	};
+	// remove empty values from additionalArgs
+	const _additionalArgs = Object.keys( additionalArgs ).reduce( ( acc, key ) => {
+		return {
+			...acc,
+			...( additionalArgs[ key ] && { [ key ]: additionalArgs[ key ] } ),
+		};
+	}, {} );
 
 	if ( props.isInSignup || 'customerType' in additionalArgs || props.isStepperUpgradeFlow ) {
-		return addQueryArgs(
-			{
-				...defaultArgs,
-				...additionalArgs,
-			},
-			document.location?.search
-		);
+		return addQueryArgs( document.location?.search, {
+			...defaultArgs,
+			..._additionalArgs,
+		} );
 	}
 
 	return addQueryArgs(
-		{
-			...defaultArgs,
-			...omit( additionalArgs, 'intervalType' ),
-		},
 		plansLink(
 			props.basePlansPath || '/plans',
 			props.siteSlug,
 			intervalType ? String( intervalType ) : '',
 			true
-		)
+		),
+		{
+			...defaultArgs,
+			...omit( _additionalArgs, 'intervalType' ),
+		}
 	);
 };
 
