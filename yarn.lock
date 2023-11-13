@@ -1278,7 +1278,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@babel/core": ^7.23.2
-    "@size-limit/file": ^8.2.4
+    "@size-limit/file": ^8.2.6
     "@tanstack/react-query": 4.29.1
     "@wordpress/base-styles": ^4.35.0
     "@wordpress/data": ^9.14.0
@@ -6197,14 +6197,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@size-limit/file@npm:^8.2.4":
-  version: 8.2.4
-  resolution: "@size-limit/file@npm:8.2.4"
+"@size-limit/file@npm:^8.2.6":
+  version: 8.2.6
+  resolution: "@size-limit/file@npm:8.2.6"
   dependencies:
-    semver: 7.3.8
+    semver: 7.5.3
   peerDependencies:
-    size-limit: 8.2.4
-  checksum: fea70804685ee4b0540e145c608d1bcea6fc996e3d4903ad5abff66af0fe52309767c5a09b4539abbf24f275e70654fd3358db8170412ad70a6255ddd802c421
+    size-limit: 8.2.6
+  checksum: 45f1fa419d1024ec594d9784ad8af28d0bb396502031f05889da74e6d0a249be4a1659efa1124a44bf2332ca9902115ba831638ab61f464488d83f423dd5264f
   languageName: node
   linkType: hard
 
@@ -28419,14 +28419,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:7.3.8":
-  version: 7.3.8
-  resolution: "semver@npm:7.3.8"
+"semver@npm:7.5.3":
+  version: 7.5.3
+  resolution: "semver@npm:7.5.3"
   dependencies:
     lru-cache: ^6.0.0
   bin:
     semver: bin/semver.js
-  checksum: 7e581d679530db31757301c2117721577a2bb36a301a443aac833b8efad372cda58e7f2a464fe4412ae1041cc1f63a6c1fe0ced8c57ce5aca1e0b57bb0d627b9
+  checksum: 4cf3bab7e8cf8c2ae521fc4bcc50a4d6912a836360796b23b9f1c26f45d27a73f870e47664df4770bde0dd60dc4d4781a05fd49fe91d72376ea5519b9e791459
   languageName: node
   linkType: hard
 
