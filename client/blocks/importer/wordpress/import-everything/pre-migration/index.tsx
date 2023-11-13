@@ -169,10 +169,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	useEffect( () => {
 		if ( ! isInitFetchingDone ) {
 			setRenderState( 'loading' );
-		} else if ( ! isTargetSitePlanCompatible ) {
-			setRenderState( 'upgrade-plan' );
 		} else if ( requiresPluginUpdate ) {
 			setRenderState( 'update-plugin' );
+		} else if ( ! isTargetSitePlanCompatible ) {
+			setRenderState( 'upgrade-plan' );
 		} else if ( showCredentials ) {
 			setRenderState( 'credentials' );
 		} else if ( isFetchingCredentials || isFetchingMigrationData ) {
