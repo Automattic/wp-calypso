@@ -19,6 +19,16 @@
 		margin: 0 0 1.5em 1.5em;
 		width: calc(100% - 1.5em);
 	}
+
+	.help-center-contact-page {
+		.help-center-contact-page__content {
+			margin-bottom: 0 !important;
+		}
+	}
+}
+
+.odie-sources-foldable-card {
+	overflow-x: hidden !important;
 }
 
 .odie-chatbox-message p:last-of-type {
@@ -81,33 +91,47 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: rgba(0, 0, 0, 0.1);
 	z-index: 9999;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background-color: rgba(0, 0, 0, 0.1);
 
-	.odie-chatbox-message {
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
-		max-width: 800px;
-		max-height: 800px;
-		width: auto;
-		height: auto;
-		margin: auto;
-		overflow-y: auto;
-		font-size: $font-body;
+	.odie-fullscreen-backdrop {
+
+		.odie-chatbox-message {
+			box-shadow: 0 0 0 1px var(--color-border-subtle);
+			width: auto;
+			height: auto;
+			margin: auto;
+			font-size: $font-body;
+			padding-top: 0;
+
+			.message-header {
+				padding-top: 16px;
+				position: sticky;
+				top: 0;
+				background-color: #fff;
+			}
+		}
+
+		.odie-chatbox-message-sources-container-fullscreen {
+			max-width: 800px;
+			max-height: 80vh;
+			overflow-y: auto;
+		}
 	}
 }
 
 .odie-sources {
 	display: flex;
-	padding: 4px 8px;
 	align-items: center;
 	gap: 4px;
 	align-self: stretch;
 	border-radius: 4px;
 	background-color: var(--studio-gray-0);
 	width: fit-content;
+	padding: 0;
 	margin: 4px 0;
 
 	.odie-sources-link {
@@ -115,6 +139,7 @@
 		color: var(--studio-blue-40);
 		font-style: normal;
 		font-weight: 600;
+		padding: 4px 16px;
 	}
 
 	svg.gridicons-external {
@@ -123,9 +148,13 @@
 }
 
 .odie-sources-inline {
-	display: inline-flex;
-	padding: 0 8px;
+	display: inline;
+	padding: 0;
 	margin: 0;
+
+	.odie-sources-link {
+		padding: 0 4px;
+	}
 }
 
 $feedback-button-size: 28px;
@@ -369,6 +398,7 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-message-sources-container {
+
 	.foldable-card {
 		margin: 0 !important;
 		width: 100% !important;

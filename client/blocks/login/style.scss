@@ -432,36 +432,8 @@
 		}
 	}
 
-	.login__divider {
-		color: var(--p2-color-border);
-		font-size: var(--p2-font-size-form-xs);
-		margin: 0 auto 2rem;
-		max-width: 400px;
-		overflow: hidden;
-		text-align: center;
-		width: 100%;
-		text-transform: none;
-
-		&::before,
-		&::after {
-			background-color: var(--p2-color-border);
-			content: "";
-			display: inline-block;
-			height: 1px;
-			position: relative;
-			vertical-align: middle;
-			width: 50%;
-		}
-
-		&::before {
-			margin-left: -50%;
-			right: 0.5em;
-		}
-
-		&::after {
-			left: 0.5em;
-			margin-right: -50%;
-		}
+	.auth-form__separator {
+		margin-bottom: 2rem;
 	}
 }
 
@@ -509,7 +481,6 @@
 		}
 
 		.login__social {
-			border-top: 1px solid #eaeaeb;
 			padding-top: 2rem;
 			padding-bottom: 2rem;
 
@@ -542,10 +513,10 @@
 			}
 		}
 
-		.login__divider {
+		.auth-form__separator {
 			margin-top: -12px;
 
-			span {
+			.auth-form__separator-text {
 				background: var(--studio-gray-0);
 				padding: 0 24px;
 				font-size: 0.75rem;
@@ -581,6 +552,35 @@
 			.accessible-focus &:focus {
 				box-shadow: 0 0 0 2px var(--color-accent) !important;
 			}
+		}
+	}
+}
+
+.layout.is-jetpack-login {
+	.auth-form__separator {
+		background: var(--color-surface);
+		margin-bottom: -10px;
+		margin-top: -10px;
+
+		.auth-form__separator-text {
+			font-size: 0.875rem;
+		}
+	}
+}
+
+.layout.jetpack-cloud {
+	.auth-form__separator {
+		width: 100%;
+
+		&::before {
+			background: var(--color-neutral-5);
+			content: "";
+			height: 1px;
+			left: 0;
+			position: absolute;
+			top: 50%;
+			width: 100%;
+			z-index: 1;
 		}
 	}
 }

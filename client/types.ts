@@ -1,3 +1,4 @@
+import { StyleVariation } from '@automattic/design-picker';
 import type { NonUndefined } from 'utility-types';
 
 // Web stuff
@@ -41,6 +42,7 @@ export interface Theme {
 	preview_url: string;
 	screenshot: string;
 	screenshots: string[];
+	style_variations: StyleVariation[];
 	stylesheet: string;
 	supportDocumentation: string;
 	tags: string[];

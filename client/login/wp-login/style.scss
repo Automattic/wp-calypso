@@ -350,6 +350,9 @@ $image-height: 47px;
 		@include break-mobile {
 			min-width: 170px;
 		}
+		&.is-busy {
+			background-image: linear-gradient(-45deg, var(--studio-gray-10) 28%, var(--studio-gray-20) 28%, var(--studio-gray-20) 72%, var(--studio-gray-10) 72%);
+		}
 	}
 
 	.login form {
@@ -449,7 +452,7 @@ $image-height: 47px;
 
 		/* START - Note: Patches below needed to continue using the current Divider in the form for both reskin and old versions.
 		We can remove when we refactor the Divider itself (or rethink current usage), and leave the default card styles intact.
-		Ideally, the Divider used in Login should be consolidated with the inline Separator's styles used in Signup (see `.signup-form__separator`) */
+		Ideally, the Divider used in Login should be consolidated with the inline Separator's styles used in Signup (see `.auth-form__separator`) */
 		padding-left: 20px;
 		padding-right: 20px;
 
@@ -458,26 +461,12 @@ $image-height: 47px;
 		}
 
 		form {
-			.login__divider span {
-				/* Note: Same as `.signup-form__separator-text` */
-				background: #fdfdfd;
-				text-transform: uppercase;
-				text-align: center;
-				padding: 0 24px;
-				font-size: 0.75rem;
-				color: var(--studio-gray-50);
-			}
-
 			.card {
 				padding-left: 0;
 				padding-right: 0;
 			}
-
-			.card.login__social {
-				border-top: 1px solid #eaeaeb; // same as `.signup-form__separator::before`
-				padding-top: 30px;
-			}
 		}
+
 		/* END - Note */
 	}
 
@@ -686,7 +675,7 @@ $image-height: 47px;
 		}
 	}
 
-	div.login__divider span {
+	div.auth-form__separator .auth-form__separator-text {
 		font-size: 15px;
 		text-transform: lowercase;
 		color: inherit;
@@ -697,7 +686,7 @@ $image-height: 47px;
 		background-color: inherit;
 	}
 
-	.login__divider,
+	.auth-form__separator,
 	.grav-powered-login__divider {
 		margin-top: 30px;
 	}
@@ -735,7 +724,7 @@ $image-height: 47px;
 			width: fit-content;
 		}
 
-		.login__divider,
+		.auth-form__separator,
 		.grav-powered-login__divider {
 			margin-top: 48px;
 		}

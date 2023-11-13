@@ -143,7 +143,7 @@ describe( 'Launchpad', () => {
 					);
 				const initialReduxState = { currentUser: { id: user.ID } };
 				renderLaunchpad( props, defaultSiteDetails, initialReduxState, siteSlug );
-				expect( replaceMock ).not.toBeCalled();
+				expect( replaceMock ).not.toHaveBeenCalled();
 			} );
 		} );
 
@@ -168,8 +168,8 @@ describe( 'Launchpad', () => {
 					initialReduxState,
 					siteSlug
 				);
-				expect( replaceMock ).toBeCalledTimes( 1 );
-				expect( replaceMock ).toBeCalledWith( `/home/${ siteSlug }` );
+				expect( replaceMock ).toHaveBeenCalledTimes( 1 );
+				expect( replaceMock ).toHaveBeenCalledWith( `/home/${ siteSlug }` );
 			} );
 		} );
 
@@ -186,7 +186,7 @@ describe( 'Launchpad', () => {
 					{},
 					siteSlug
 				);
-				expect( replaceMock ).toBeCalledWith( `/home/${ siteSlug }` );
+				expect( replaceMock ).toHaveBeenCalledWith( `/home/${ siteSlug }` );
 			} );
 		} );
 
@@ -204,7 +204,7 @@ describe( 'Launchpad', () => {
 					initialReduxState,
 					''
 				);
-				expect( replaceMock ).toBeCalledWith( `/home` );
+				expect( replaceMock ).toHaveBeenCalledWith( `/home` );
 			} );
 		} );
 	} );

@@ -250,7 +250,7 @@ describe( 'useRowMetadata', () => {
 		const expected = {
 			eventName: 'calypso_jetpack_agency_dashboard_update_plugins_click_small_screen',
 			isExternalLink: true,
-			link: `https://wordpress.com/plugins/updates/${ FAKE_SITE.url }`,
+			link: `${ FAKE_SITE.url_with_scheme }/wp-admin/plugins.php`,
 			isSupported: true,
 			row: rows.plugin,
 			siteDown: false,

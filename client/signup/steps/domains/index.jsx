@@ -31,6 +31,7 @@ import {
 	hasDomainInCart,
 	planItem,
 	hasPlan,
+	hasDomainRegistration,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -181,8 +182,12 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart
-		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
+		if (
+			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
+			hasDomainRegistration( this.props.cart )
+		) {
+			// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
 	}
@@ -568,52 +573,51 @@ export class RenderDomainsStep extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart
-		const productsToAdd = ! hasPlan( this.props.cart )
-			? [ registration, this.props.multiDomainDefaultPlan ]
-			: [ registration ];
-
-		await this.props.shoppingCartManager.addProductsToCart( productsToAdd ).then( () => {
-			this.setState( { isCartPendingUpdateDomain: null } );
-		} );
+		// Add item_subtotal_integer property to registration, so it can be sorted by price.
+		registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
+			const productsToAdd = ! hasPlan( this.props.cart )
+				? [ registration, this.props.multiDomainDefaultPlan ]
+				: [ registration ];
+
+			// Add productsToAdd to productsInCart.
+			const productsInCart = [ ...this.props.cart.products, ...productsToAdd ];
+
 			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-			const sortedProducts = await this.sortProductsByPriceDescending();
+			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
 
 			// Replace the products in the cart with the freshly sorted products.
-			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts ).then( () => {
-				this.setState( { isCartPendingUpdateDomain: null } );
-			} );
+			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
+		} else {
+			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
+
+		this.setState( { isCartPendingUpdateDomain: null } );
 	}
 
-	async sortProductsByPriceDescending() {
-		// Get products from cart.
-		const productsInCart = this.props.cart.products;
-
+	sortProductsByPriceDescending( productsInCart ) {
 		// Sort products by price descending, considering promotions.
-		productsInCart.sort( ( a, b ) => {
-			const getSortingValue = ( product ) => {
-				if ( product.item_subtotal_integer !== 0 ) {
-					return product.item_subtotal_integer;
-				}
+		const getSortingValue = ( product ) => {
+			if ( product.item_subtotal_integer !== 0 ) {
+				return product.item_subtotal_integer;
+			}
 
-				// Use the lowest non-zero new_price or fallback to item_original_cost_integer.
-				const nonZeroPrices =
-					product.cost_overrides
-						?.map( ( override ) => override.new_price * 100 )
-						.filter( ( price ) => price > 0 ) || [];
+			// Use the lowest non-zero new_price or fallback to item_original_cost_integer.
+			const nonZeroPrices =
+				product.cost_overrides
+					?.map( ( override ) => override.new_price * 100 )
+					.filter( ( price ) => price > 0 ) || [];
 
-				return nonZeroPrices.length
-					? Math.min( ...nonZeroPrices )
-					: product.item_original_cost_integer;
-			};
+			return nonZeroPrices.length
+				? Math.min( ...nonZeroPrices )
+				: product.item_original_cost_integer;
+		};
 
+		return productsInCart.sort( ( a, b ) => {
 			return getSortingValue( b ) - getSortingValue( a );
 		} );
-
-		return productsInCart;
 	}
 
 	removeDomainClickHandler = ( domain ) => () => {
@@ -665,7 +669,7 @@ export class RenderDomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		const { step } = this.props;
+		const { step, cart, multiDomainDefaultPlan, shoppingCartManager, goToNextStep } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
 		const domainCart = getDomainRegistrations( this.props.cart );
@@ -709,14 +713,17 @@ export class RenderDomainsStep extends Component {
 			)
 		);
 
-		const productToRemove = this.props.cart.products.find(
-			( product ) => product.product_slug === this.props.multiDomainDefaultPlan.product_slug
+		const productToRemove = cart.products.find(
+			( product ) => product.product_slug === multiDomainDefaultPlan.product_slug
 		);
-		const uuidToRemove = productToRemove.uuid;
 
-		this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).then( () => {
-			this.props.goToNextStep();
-		} );
+		if ( productToRemove && productToRemove.uuid ) {
+			shoppingCartManager.removeProductFromCart( productToRemove.uuid ).then( () => {
+				goToNextStep();
+			} );
+		} else {
+			goToNextStep();
+		}
 	};
 
 	getSideContent = () => {

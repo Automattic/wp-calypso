@@ -104,13 +104,13 @@ class SearchFollowButton extends Component {
 					<strong>{ translate( 'Click below to add this site to your Reader feed:' ) }</strong>
 				</p>
 				<FollowButton
-					followLabel={ translate( 'Follow %s', {
+					followLabel={ translate( 'Subscribe to %s', {
 						args: followTitle,
-						comment: '%s is the name of the site being followed. For example: "Discover"',
+						comment: '%s is the name of the site being subscribed to. For example: "Discover"',
 					} ) }
-					followingLabel={ translate( 'Following %s', {
+					followingLabel={ translate( 'Subscribing to %s', {
 						args: followTitle,
-						comment: '%s is the name of the site being followed. For example: "Discover"',
+						comment: '%s is the name of the site being subscribed to. For example: "Discover"',
 					} ) }
 					siteUrl={ addSchemeIfMissing( followUrl, 'http' ) }
 					followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }

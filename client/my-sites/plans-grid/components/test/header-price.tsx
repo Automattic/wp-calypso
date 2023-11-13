@@ -28,6 +28,7 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 		isLargeCurrency: false,
 		planSlug: PLAN_PERSONAL as PlanSlug,
 		isPlanUpgradeCreditEligible: false,
+		visibleGridPlans: [],
 	};
 
 	beforeEach( () => {

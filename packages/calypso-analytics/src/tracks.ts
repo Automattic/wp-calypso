@@ -174,6 +174,16 @@ export function identifyUser( userData: any ): any {
 	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 }
 
+/**
+ * For tracking users between our products, generally passing the id via a request parameter.
+ *
+ * Use 'anon' for userIdType for anonymous users.
+ */
+export function signalUserFromAnotherProduct( userId: string, userIdType: string ): any {
+	debug( 'Tracks signalUserFromAnotherProduct.', userId, userIdType );
+	pushEventToTracksQueue( [ 'signalAliasUserGeneral', userId, userIdType ] );
+}
+
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 

@@ -13,17 +13,19 @@ import { Message } from '../types';
 import './style.scss';
 
 export const OdieSendMessageButton = ( {
+	scrollToRecent,
 	scrollToBottom,
 	enableStickToBottom,
 	enableJumpToRecent,
 }: {
-	scrollToBottom: ( smooth?: boolean ) => void;
+	scrollToRecent: () => void;
+	scrollToBottom: ( force?: boolean ) => void;
 	enableStickToBottom: () => void;
 	enableJumpToRecent: boolean;
 } ) => {
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { addMessage, setIsLoading, botNameSlug, initialUserMessage, chat } =
+	const { addMessage, setIsLoading, botNameSlug, initialUserMessage, chat, isLoading } =
 		useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const dispatch = useDispatch();
@@ -90,11 +92,16 @@ export const OdieSendMessageButton = ( {
 			return;
 		}
 		setMessageString( '' );
+		enableStickToBottom();
 		await sendMessage();
+		scrollToBottom( true );
 	};
 
 	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
-		scrollToBottom();
+		scrollToBottom( false );
+		if ( isLoading ) {
+			return;
+		}
 		if ( event.key === 'Enter' && ! event.shiftKey ) {
 			event.preventDefault();
 			await sendMessageIfNotEmpty();
@@ -103,7 +110,6 @@ export const OdieSendMessageButton = ( {
 
 	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		enableStickToBottom();
 		await sendMessageIfNotEmpty();
 	};
 
@@ -112,7 +118,7 @@ export const OdieSendMessageButton = ( {
 	return (
 		<>
 			<JumpToRecent
-				scrollToBottom={ () => scrollToBottom( true ) }
+				scrollToBottom={ scrollToRecent }
 				enableJumpToRecent={ enableJumpToRecent }
 				bottomOffset={ divContainerHeight ?? 0 }
 			/>
@@ -130,12 +136,11 @@ export const OdieSendMessageButton = ( {
 							setMessageString( event.currentTarget.value )
 						}
 						onKeyPress={ handleKeyPress }
-						onKeyUp={ () => scrollToBottom( false ) }
 					/>
 					<button
 						type="submit"
 						className="odie-send-message-inner-button"
-						disabled={ messageString.trim() === '' }
+						disabled={ messageString.trim() === '' || isLoading }
 					>
 						<img
 							src={ ArrowUp }

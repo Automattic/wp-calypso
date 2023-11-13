@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
@@ -267,7 +266,7 @@ describe( 'selectors', () => {
 			const call2 = getInviteForSite( state, 12345, '123456asdf789' );
 			expect( call1 ).toBe( call2 );
 
-			const newState = cloneDeep( state );
+			const newState = structuredClone( state );
 			const call3 = getInviteForSite( newState, 12345, '123456asdf789' );
 			expect( call3 ).toEqual( newState.invites.items[ 12345 ].accepted[ 0 ] );
 			expect( call3 ).not.toBe( call2 );

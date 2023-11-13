@@ -1,7 +1,6 @@
-import { isWooExpressPlan } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import { flatMap } from 'lodash';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getActiveTheme,
 	getCanonicalTheme,
@@ -57,7 +56,6 @@ export const getThemesForQueryIgnoringPage = createSelector(
 
 		// Set active theme to be the first theme in the array.
 		if ( selectedSiteId ) {
-			const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 			const currentThemeId = getActiveTheme( state, selectedSiteId );
 			const currentTheme = getCanonicalTheme( state, selectedSiteId, currentThemeId );
 			const index = themesForQueryIgnoringPage.findIndex(
@@ -70,8 +68,13 @@ export const getThemesForQueryIgnoringPage = createSelector(
 				// If activated theme is retired or a 3rd party theme, we have to show it
 				// if query is default
 				themesForQueryIgnoringPage.unshift( currentTheme );
-			} else if ( isWooExpressPlan( sitePlanSlug ) && isWooExpressDefaultQuery && currentTheme ) {
-				// Show the activate theme if the plan is WooExpress and the query is default
+			} else if (
+				( isSiteOnWooExpress( state, selectedSiteId ) ||
+					isSiteOnECommerceTrial( state, selectedSiteId ) ) &&
+				isWooExpressDefaultQuery &&
+				currentTheme
+			) {
+				// Show active theme if query is default and site is on WooExpress or eCommerce trial.
 				themesForQueryIgnoringPage.unshift( currentTheme );
 			}
 		}
@@ -80,6 +83,6 @@ export const getThemesForQueryIgnoringPage = createSelector(
 		// over different pages) which we need to remove manually here for now.
 		return [ ...new Set( themesForQueryIgnoringPage ) ];
 	},
-	( state ) => state.themes.queries,
+	( state ) => [ state.themes.queries, state.sites?.plans ],
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
 );
