@@ -625,7 +625,7 @@ class ThemeSheet extends Component {
 						) }
 					</div>
 				</div>
-				{ this.renderStyleVariations() }
+				{ ! retired && this.renderStyleVariations() }
 			</div>
 		);
 	};
