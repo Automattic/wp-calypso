@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_REPUBLICIZE } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes, map, concat } from 'lodash';
@@ -399,7 +400,10 @@ class PostShare extends Component {
 						}
 					>
 						{ connection.service === 'facebook' && (
-							<NoticeAction href="https://wordpress.com/support/publicize/#facebook-pages" external>
+							<NoticeAction
+								href={ localizeUrl( 'https://wordpress.com/support/publicize/#facebook-pages' ) }
+								external
+							>
 								{ translate( 'Learn More' ) }
 							</NoticeAction>
 						) }
