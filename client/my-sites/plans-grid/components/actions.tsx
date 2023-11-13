@@ -291,12 +291,6 @@ const LoggedInPlansFeatureActionButton = ( {
 		if ( isP2FreePlan( planSlug ) && current ) {
 			return null;
 		}
-
-		return (
-			<Button className={ classes } disabled={ true }>
-				{ translate( 'Contact support', { context: 'verb' } ) }
-			</Button>
-		);
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
