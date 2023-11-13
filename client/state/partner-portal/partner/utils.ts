@@ -2,7 +2,6 @@ import { sprintf, __ } from '@wordpress/i18n';
 
 /**
  * Translate a REST API rest_invalid_param error message.
- *
  * @param {Object} parameters Parameters with errors.
  * @param {Object} details Details of parameters with errors.
  * @returns {string} Human-readable error message.

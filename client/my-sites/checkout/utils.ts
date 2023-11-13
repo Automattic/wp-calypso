@@ -97,7 +97,6 @@ export function getProductSlugFromContext( context: PageJS.Context ): string | u
 
 /**
  * Prepends "http(s)" to user-supplied URL if protocol is missing.
- *
  * @param {string} inputUrl User-supplied URL
  * @param {?boolean} httpsIsDefault Default to 'https' if true vs 'http' if false
  * @returns {string} URL string with http(s) included

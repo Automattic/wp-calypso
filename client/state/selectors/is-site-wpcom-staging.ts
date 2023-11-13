@@ -3,7 +3,6 @@ import getRawSite from './get-raw-site';
 
 /**
  * Returns true if site is a Staging site, false otherwise.
- *
  * @param  {Object}   state  Global state tree
  * @param  {number | null}   siteId Site ID
  * @returns {boolean}        Whether site is a staging site or not

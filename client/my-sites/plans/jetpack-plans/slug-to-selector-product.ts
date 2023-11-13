@@ -125,7 +125,6 @@ function getLightboxPlanDescription( item: Plan ) {
 }
 /**
  * Converts data from a product, plan, or selector product to selector product.
- *
  * @param item Product, Plan, or SelectorProduct.
  * @returns SelectorProduct
  */
@@ -239,7 +238,6 @@ function itemToSelectorProduct(
 
 /**
  * Converts an item slug to a SelectorProduct item type.
- *
  * @param slug string
  * @returns SelectorProduct | null
  */

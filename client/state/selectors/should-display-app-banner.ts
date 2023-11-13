@@ -21,7 +21,6 @@ import { AppState } from 'calypso/types';
 
 /**
  * Returns true if the App Banner should be displayed
- *
  * @param {Object} state Global state tree
  * @returns {boolean} True if App Banner is visible
  */

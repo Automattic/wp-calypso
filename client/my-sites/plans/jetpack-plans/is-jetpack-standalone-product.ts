@@ -18,7 +18,6 @@ const ALL_JETPACK_STANDALONE_PRODUCTS = [
 
 /**
  * Determines if a Jetpack product is a standalone product.
- *
  * @example
  * jetpack_backup_daily	      > true
  * jetpack_security_t1_yearly > false
