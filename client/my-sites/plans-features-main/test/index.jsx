@@ -23,6 +23,7 @@ jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( 
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
+jest.mock( 'calypso/my-sites/add-ons/hooks/use-storage-add-ons.ts', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
