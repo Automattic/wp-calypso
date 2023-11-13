@@ -310,7 +310,7 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ areThereVariants && shouldShowVariantSelector && (
+				{ areThereVariants && shouldShowVariantSelector && onChangeSelection && (
 					<ItemVariationPicker
 						selectedItem={ product }
 						onChangeItemVariant={ onChangeSelection }
