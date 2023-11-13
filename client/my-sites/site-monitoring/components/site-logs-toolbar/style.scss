@@ -23,18 +23,6 @@
 		padding-bottom: 16px;
 	}
 
-	@media screen and ( max-width: 600px ) {
-		.site-logs-toolbar__top-row {
-			flex-direction: column;
-			align-items: stretch;
-		}
-	}
-
-	button {
-		height: 42px;
-		justify-content: center;
-	}
-
 	.site-logs-toolbar-filter-severity {
 		width: 140px;
 	}
@@ -45,6 +33,26 @@
 
 	.site-logs-toolbar-filter-request-status {
 		width: 90px;
+	}
+
+	@media screen and ( max-width: 600px ) {
+		.site-logs-toolbar__top-row {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.select-dropdown .select-dropdown__container {
+			width: 100%;
+		}
+
+		.select-dropdown {
+			width: 100%;
+		}
+	}
+
+	button {
+		height: 42px;
+		justify-content: center;
 	}
 }
 
