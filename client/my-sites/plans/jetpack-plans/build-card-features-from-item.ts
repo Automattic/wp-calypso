@@ -10,8 +10,8 @@ import type { Plan, Feature } from '@automattic/calypso-products';
 
 /**
  * Builds the feature item of a product card, from a feature key.
- * @param {Feature[]|Feature} featureKey Key of the feature
- * @returns {SelectorProductFeaturesItem} Feature item
+ * @param {Feature} featureKey Key of the feature
+ * @returns {SelectorProductFeaturesItem|undefined} Feature item
  */
 function buildCardFeatureItemFromFeatureKey(
 	featureKey: Feature
@@ -24,6 +24,8 @@ function buildCardFeatureItemFromFeatureKey(
 			text: feature.getTitle(),
 		};
 	}
+
+	return undefined;
 }
 
 /**

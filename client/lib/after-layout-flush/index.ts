@@ -28,6 +28,7 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 
 	const scheduleRAF = function ( rafFunc: T ) {
 		return function ( this: any, ...args: any[] ) {
+			// eslint-disable-next-line @typescript-eslint/no-this-alias
 			lastThis = this;
 			lastArgs = args;
 
@@ -47,6 +48,7 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 	const scheduleTimeout = function ( timeoutFunc: T ) {
 		return function ( this: any, ...args: any[] ) {
 			if ( ! hasRAF ) {
+				// eslint-disable-next-line @typescript-eslint/no-this-alias
 				lastThis = this;
 				lastArgs = args;
 			}

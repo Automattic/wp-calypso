@@ -164,14 +164,11 @@ function recordNoVisibleJetpackSitesPageView(
 
 /**
  * Show dedicated screen if user has no Jetpack site, or no visible Jetpack site
- * @param {string} siteFragment Parsed site slug
+ * @param {string|undefined} siteFragment Parsed site slug
  * @param {PageJSContext} context Route context
  * @returns {boolean} True if user has neither Jetpack sites nor visible Jetpack sites
  */
-export function noSite(
-	siteFragment: string | undefined,
-	context: PageJSContext
-): boolean | undefined {
+export function noSite( siteFragment: string | undefined, context: PageJSContext ): boolean {
 	const { getState } = context.store;
 	const currentUser = getCurrentUser( getState() ) as UserData;
 
@@ -186,6 +183,8 @@ export function noSite(
 		recordNoVisibleJetpackSitesPageView( context, siteFragment );
 		return true;
 	}
+
+	return false;
 }
 
 /**
