@@ -296,15 +296,17 @@ const LoggedInPlansFeatureActionButton = ( {
 					{ translate( 'Upgrade' ) }
 				</Button>
 			);
+		} else if ( planActionOverrides?.currentPlan ) {
+			const { callback, text } = planActionOverrides.currentPlan;
+			return (
+				<Button className={ classes } disabled={ ! callback } onClick={ callback }>
+					{ text }
+				</Button>
+			);
 		}
-
 		return (
-			<Button
-				className={ classes }
-				disabled={ ! planActionOverrides?.currentPlan?.callback }
-				onClick={ planActionOverrides?.currentPlan?.callback }
-			>
-				{ planActionOverrides?.currentPlan?.text }
+			<Button className={ classes } disabled>
+				{ translate( 'Active Plan' ) }
 			</Button>
 		);
 	}
