@@ -37,7 +37,7 @@
 		"dev/preferences-helper": true,
 		"devdocs": true,
 		"devdocs/color-scheme-picker": true,
-		"devdocs/redirect-loggedout-homepage": false,
+		"devdocs/redirect-loggedout-homepage": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
