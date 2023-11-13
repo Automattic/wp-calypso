@@ -267,6 +267,16 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
+		name: 'playground',
+		paths: [ '/playground', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/playground` ],
+		module: 'calypso/playground',
+		enableLoggedOut: false,
+		group: 'playground',
+		isomorphic: true,
+		title: 'Playground',
+		trackLoadPerformance: true,
+	},
+	{
 		name: 'domains',
 		paths: [ '/domains' ],
 		module: 'calypso/my-sites/domains',
