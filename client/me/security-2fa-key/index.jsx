@@ -1,10 +1,9 @@
 import { Button, Card, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
