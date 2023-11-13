@@ -360,7 +360,9 @@ export const HelpCenterContactForm = () => {
 								section: sectionName,
 							} );
 							navigate( '/success' );
-							resetStore();
+							if ( ! wapuuFlow ) {
+								resetStore();
+							}
 							// reset support-history cache
 							setTimeout( () => {
 								// wait 30 seconds until support-history endpoint actually updates
@@ -473,7 +475,7 @@ export const HelpCenterContactForm = () => {
 
 		// We're prefetching the GPT response,
 		// so only disabling the button while fetching if we're on the response screen
-		if ( showingGPTResponse && isFetchingGPTResponse ) {
+		if ( showingGPTResponse && isFetchingGPTResponse && ! wapuuFlow ) {
 			return true;
 		}
 
