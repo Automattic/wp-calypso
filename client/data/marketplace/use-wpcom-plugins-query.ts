@@ -59,7 +59,6 @@ export const getWPCOMPluginsQueryParams = (
 
 /**
  * Returns marketplace plugins list filtered by searchterm and type.
- *
  * @param {Type} type Optional The query type
  * @param {string} searchTerm Optional The term to search for
  * @param {string} tag Optional The tag to search for
@@ -104,7 +103,6 @@ export const getWPCOMPluginQueryParams = (
 
 /**
  * Returns a marketplace plugin data
- *
  * @param {Type} slug The plugin slug to query
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
@@ -146,7 +144,6 @@ export const getWPCOMFeaturedPluginsQueryParams = (): {
 
 /**
  * Returns the featured list of plugins from WPCOM
- *
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */

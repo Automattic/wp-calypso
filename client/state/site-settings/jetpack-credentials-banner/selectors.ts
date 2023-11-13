@@ -10,7 +10,6 @@ export const JETPACK_CREDENTIALS_BANNER_PREFERENCE = 'backup-scan-security-setti
 
 /**
  * Returns an array of Preferences associated with the banner.
- *
  * @param  {Object}  state  Global state tree
  * @returns {Preference[]}  Array of Preference objects
  */
@@ -26,7 +25,6 @@ export function getJetpackCredentialsBannerPreference( state: IAppState ): Prefe
 
 /**
  * Returns whether the banner was dismissed by the user.
- *
  * @param  {Object}  state  Global state tree
  * @returns {boolean}       Whether the banner was dismissed
  */
@@ -37,7 +35,6 @@ function isJetpackCredentialsBannerDismissed( state: IAppState ): boolean {
 
 /**
  * Returns the number of times the Jetpack Credentials Banner was viewed.
- *
  * @param  {Object}  state  Global state tree
  * @returns {number}        Number of times the banner was viewed
  */
@@ -49,7 +46,6 @@ function getJetpackCredentialsBannerViewCount( state: IAppState ): number {
 /**
  * Returns whether the banner was shown to the user, for the first time, more than 90
  * days ago.
- *
  * @param  {Object}  state  Global state tree
  * @returns {boolean}       Whether the limit was exceeded
  */
@@ -77,7 +73,6 @@ function isJetpackCredentialsBannerTimeLimitExceeded( state: IAppState ): boolea
  * 1. The view count is less than 10.
  * 2. The banner has not been dismissed by the user.
  * 3. The first time the user saw the banner was less than 90 days ago.
- *
  * @param  {Object}  state  Global state tree
  * @returns {boolean}       Whether the banner should be displayed
  */

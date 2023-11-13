@@ -10,7 +10,6 @@ import 'calypso/state/themes/init';
  *
  * Examples include Template First Themes, which can be determined by the feature
  * global-styles or auto-loading-homepage.
- *
  * @param {Object} state   Global state tree
  * @param {string} themeId An identifier for the theme - like
  *                         `independent-publisher-2` or `maywood`.

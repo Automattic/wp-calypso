@@ -9,7 +9,6 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Whether or not the current user can start a site owner transfer.
- *
  * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @returns {boolean} Whether current user can start site owner transfer.

@@ -10,7 +10,6 @@ type Params = {
 /**
  * Retrieves the values of the `duration` and `site` parameters passed in the
  * URL, in the context of the Jetpack plans/pricing page.
- *
  * @example
  * /pricing                    > { duration: undefined, site: undefined }
  * /pricing/annual             > { duration: 'annual', site: undefined }

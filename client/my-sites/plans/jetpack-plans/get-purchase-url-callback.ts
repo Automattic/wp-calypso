@@ -20,7 +20,6 @@ import type {
 
 /**
  * build the URL to checkout page for the enviroment and products.
- *
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
@@ -88,7 +87,6 @@ export function buildCheckoutURL(
 
 /**
  * Build the URL to the upsell page.
- *
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
@@ -124,7 +122,6 @@ export const buildUpsellURL = (
 
 /**
  * Get the function for generating the URL for the product checkout page
- *
  * @param {string} siteSlug Slug of the site
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url
  * @param {string} locale Selected locale

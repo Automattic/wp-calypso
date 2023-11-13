@@ -204,7 +204,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	 * this.
 	 *
 	 * Some historical work which has been combined into this timer:
-	 *
 	 * @see https://github.com/Automattic/wp-calypso/pull/43248
 	 * @see https://github.com/Automattic/wp-calypso/pull/36977
 	 * @see https://github.com/Automattic/wp-calypso/pull/41006

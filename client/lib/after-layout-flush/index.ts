@@ -14,7 +14,6 @@ interface Cancelable {
  *
  * Inspired by the Firefox performance best practices MDN article at:
  * https://developer.mozilla.org/en-US/Firefox/Performance_best_practices_for_Firefox_fe_engineers
- *
  * @param func - The function to be invoked after the layout flush
  * @returns The new delayed function
  */

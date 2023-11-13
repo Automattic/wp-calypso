@@ -28,7 +28,6 @@ function stringToDuration( duration?: string ): Duration | undefined {
 /**
  * Return the slug of a highlighted product if the given slug is Jetpack product
  * slug, otherwise, return null.
- *
  * @param {string} productSlug the slug of a Jetpack product
  * @returns {[string, string] | null} the monthly and yearly slug of a supported Jetpack product, in that order
  */

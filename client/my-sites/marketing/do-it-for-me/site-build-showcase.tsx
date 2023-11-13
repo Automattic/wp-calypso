@@ -23,7 +23,6 @@ import type { CSSPropertiesWithMultiValues } from '@emotion/serialize';
  *
  * Since the keyframes need to be expressed in terms of a percentage,
  * this function calculates the percentage in terms of the total animation time.
- *
  * @param slideCount Total number of slides in the slideshow
  * @param interval Time interval for displaying each slide, in seconds.
  * @param fadeDelay Time taken for the fade animation, in seconds.
@@ -54,7 +53,6 @@ function fadeAnimation( slideCount: number, interval: number, fadeDelay: number 
  *
  * For example, if the interval is 5 seconds, the second slide will start
  * fading in after 5 seconds, the third after 10 seconds and so on.
- *
  * @param slideCount Total number of slides in the slideshow
  * @param interval Time interval for displaying each slide, in seconds.
  */
@@ -77,7 +75,6 @@ type AnimatedSlideShowProps = {
 /**
  * This container element renders an animated slideshow with a fade animation.
  * The child elements should be div elements.
- *
  * @param props
  * @param props.slideCount Total number of slides in the slideshow
  * @param props.interval Time interval for displaying each slide, in seconds.
