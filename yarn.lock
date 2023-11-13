@@ -366,7 +366,7 @@ __metadata:
     form-data: ^4.0.0
     jest-docblock: ^29.7.0
     mailosaur: ^8.4.0
-    nock: ^13.3.4
+    nock: ^13.3.8
     node-fetch: ^2.6.7
     playwright: ^1.37
     totp-generator: ^0.0.12
@@ -627,7 +627,7 @@ __metadata:
     fast-json-stable-stringify: ^2.1.0
     i18n-calypso: "workspace:^"
     jest-fetch-mock: ^3.0.3
-    nock: ^13.3.4
+    nock: ^13.3.8
     node-fetch: ^2.6.6
     qs: ^6.9.1
     redux: ^4.2.1
@@ -7815,13 +7815,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.5":
-  version: 29.5.5
-  resolution: "@types/jest@npm:29.5.5"
+"@types/jest@npm:^29.5.7":
+  version: 29.5.8
+  resolution: "@types/jest@npm:29.5.8"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 0a3481f119099e6a0a381fec0d410cd33241267a0981576a7a832687fc3f888f79285289dc7c054c3589fd443f7ed1598d25fa7bc9708491b58da17e423b4aff
+  checksum: a28e7827ea7e1a2aace6a386868fa6b8402c162d6c71570aed2c29d3745ddc22ceef6899a20643071817905d3c57b670a7992fc8760bff65939351fd4dc481cf
   languageName: node
   linkType: hard
 
@@ -12170,7 +12170,7 @@ __metadata:
     moment: ^2.26.0
     moment-timezone: ^0.5.40
     moment-timezone-data-webpack-plugin: ^1.5.1
-    nock: ^13.3.4
+    nock: ^13.3.8
     page: ^1.11.5
     path-browserify: ^1.0.1
     percentage-regex: ^3.0.0
@@ -23271,14 +23271,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:^13.3.4":
-  version: 13.3.6
-  resolution: "nock@npm:13.3.6"
+"nock@npm:^13.3.8":
+  version: 13.3.8
+  resolution: "nock@npm:13.3.8"
   dependencies:
     debug: ^4.1.0
     json-stringify-safe: ^5.0.1
     propagate: ^2.0.0
-  checksum: cd5243c0d4416ed004a87cfe2a9d44d3cb39d40b6ae6931feb65c05368a4da88bb140a550ae2f45f2bad181cb917c7964947a4b9edac3168d3636d304e90e386
+  checksum: cf3a7b59495373651a92715c4f31a7d4050a70648e7c111a84805842ab47dd36a5648b4c9440fd2a9b44fa90c245da1641b90e15bbea018f895c45210dfe41f1
   languageName: node
   linkType: hard
 
@@ -32377,7 +32377,7 @@ __metadata:
     "@types/gradient-parser": ^0.1.2
     "@types/gtag.js": ^0.0.10
     "@types/highlight-words-core": ^1.2.1
-    "@types/jest": ^29.5.5
+    "@types/jest": ^29.5.7
     "@types/lodash": ^4.14.199
     "@types/node": ^18.17.3
     "@types/page": ^1.11.5
@@ -32455,7 +32455,7 @@ __metadata:
     mkdirp: ^1.0.4
     moment: ^2.26.0
     ncp: ^2.0.0
-    nock: ^13.3.4
+    nock: ^13.3.8
     node-fetch: ^2.6.6
     npm-run-all: ^4.1.5
     photon: "workspace:^"
