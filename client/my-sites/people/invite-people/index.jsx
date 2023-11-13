@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { filter, get, groupBy, includes, pickBy, some } from 'lodash';
@@ -389,7 +390,7 @@ class InvitePeople extends Component {
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://wordpress.com/support/user-roles/"
+				href={ localizeUrl( 'https://wordpress.com/support/user-roles/' ) }
 				onClick={ this.onClickRoleExplanation }
 			>
 				{ translate( 'Learn more about roles' ) }
