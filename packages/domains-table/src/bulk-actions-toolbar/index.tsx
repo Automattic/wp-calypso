@@ -3,7 +3,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useDomainsTable } from '../domains-table/domains-table';
 import contactIcon from './contact.svg';
 import transformIcon from './transform.svg';
 import './style.scss';
@@ -21,7 +20,6 @@ export function BulkActionsToolbar( {
 	selectedDomainCount,
 	canUpdateContactInfo,
 }: BulkActionsToolbarProps ) {
-	const { shouldDisplayContactInfoBulkAction } = useDomainsTable();
 	const { __, _n } = useI18n();
 	const [ controlKey, setControlKey ] = useState( 1 );
 
@@ -68,18 +66,16 @@ export function BulkActionsToolbar( {
 
 	return (
 		<div className="domains-table-bulk-actions-toolbar">
-			{ shouldDisplayContactInfoBulkAction && (
-				<Button onClick={ onUpdateContactInfo } disabled={ ! canUpdateContactInfo }>
-					<img
-						className="domains-table-bulk-actions-toolbar__icon"
-						src={ contactIcon }
-						width={ 18 }
-						height={ 18 }
-						alt=""
-					/>{ ' ' }
-					{ __( 'Edit contact information', __i18n_text_domain__ ) }
-				</Button>
-			) }
+			<Button onClick={ onUpdateContactInfo } disabled={ ! canUpdateContactInfo }>
+				<img
+					className="domains-table-bulk-actions-toolbar__icon"
+					src={ contactIcon }
+					width={ 18 }
+					height={ 18 }
+					alt=""
+				/>{ ' ' }
+				{ __( 'Edit contact information', __i18n_text_domain__ ) }
+			</Button>
 			<SelectDropdown
 				key={ controlKey }
 				className="domains-table-bulk-actions-toolbar__select"
