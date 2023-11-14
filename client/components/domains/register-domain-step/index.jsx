@@ -1390,7 +1390,9 @@ class RegisterDomainStep extends Component {
 
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
-			this.setState( { pendingCheckSuggestion: suggestion } );
+			// First add the domain
+			this.setState( { pendingCheckSuggestion: null } );
+			this.props.onAddDomain( suggestion, position );
 
 			this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
@@ -1406,14 +1408,13 @@ class RegisterDomainStep extends Component {
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
 						} );
+						// TODO: Remove item from mini-cart for multi-domain flows
 					} else if ( trademarkClaimsNoticeInfo ) {
 						this.setState( {
 							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
 							selectedSuggestion: suggestion,
 							selectedSuggestionPosition: position,
 						} );
-					} else {
-						this.props.onAddDomain( suggestion, position );
 					}
 				} );
 		} else {
