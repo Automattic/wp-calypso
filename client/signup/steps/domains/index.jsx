@@ -221,22 +221,6 @@ export class RenderDomainsStep extends Component {
 			return;
 		}
 
-		if (
-			! this.state.domainsInCart ||
-			! this.state.domainsInCart.some( ( domain ) => domain.meta === suggestion.domain_name )
-		) {
-			this.setState( {
-				domainsInCart: [
-					...( this.state.domainsInCart || [] ),
-					{
-						meta: suggestion.domain_name,
-						item_subtotal_display: '...',
-						temporary: true,
-					},
-				],
-			} );
-		}
-
 		const signupDomainOrigin = suggestion?.is_free
 			? SIGNUP_DOMAIN_ORIGIN.FREE
 			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
@@ -598,6 +582,24 @@ export class RenderDomainsStep extends Component {
 		registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			if (
+				! this.state.domainsInCart ||
+				! this.state.domainsInCart.some(
+					( domainInCart ) => domainInCart.meta === suggestion.domain_name
+				)
+			) {
+				this.setState( {
+					domainsInCart: [
+						...( this.state.domainsInCart || [] ),
+						{
+							meta: suggestion.domain_name,
+							item_subtotal_display: '...',
+							temporary: true,
+						},
+					],
+				} );
+			}
+
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 			const productsToAdd = ! hasPlan( this.props.cart )
 				? [ registration, this.props.multiDomainDefaultPlan ]
@@ -757,16 +759,7 @@ export class RenderDomainsStep extends Component {
 		const { translate, flowName } = this.props;
 		const serverDomains = getDomainRegistrations( this.props.cart );
 
-		// Initilize local state if we have server data
-		if ( ! this.state.domainsInCart || this.state.domainsInCart?.length === 0 ) {
-			this.state.domainsInCart = serverDomains;
-		}
-
-		let domainsInCart = this.state.domainsInCart;
-
-		domainsInCart = domainsInCart.map( ( cartDomain ) => {
-			return serverDomains.find( ( domain ) => domain.meta === cartDomain.meta ) ?? cartDomain;
-		} );
+		const domainsInCart = serverDomains;
 
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
