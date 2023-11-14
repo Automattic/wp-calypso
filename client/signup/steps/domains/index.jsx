@@ -164,7 +164,7 @@ export class RenderDomainsStep extends Component {
 			wpcomSubdomainSelected: false,
 			isRemovingDomain: null,
 			isGoingToNextStep: false,
-			domainsInCart: [],
+			temporaryCart: [],
 		};
 	}
 
@@ -583,14 +583,14 @@ export class RenderDomainsStep extends Component {
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
 			if (
-				! this.state.domainsInCart ||
-				! this.state.domainsInCart.some(
+				! this.state.temporaryCart ||
+				! this.state.temporaryCart.some(
 					( domainInCart ) => domainInCart.meta === suggestion.domain_name
 				)
 			) {
 				this.setState( {
-					domainsInCart: [
-						...( this.state.domainsInCart || [] ),
+					temporaryCart: [
+						...( this.state.temporaryCart || [] ),
 						{
 							meta: suggestion.domain_name,
 							item_subtotal_display: '...',
@@ -649,9 +649,9 @@ export class RenderDomainsStep extends Component {
 	};
 
 	removeDomain( { domain_name, product_slug } ) {
-		if ( this.state.domainsInCart?.length > 0 ) {
+		if ( this.state.temporaryCart?.length > 0 ) {
 			this.setState( {
-				domainsInCart: this.state.domainsInCart.filter( ( domain ) => domain.meta !== domain_name ),
+				temporaryCart: this.state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
 			} );
 		}
 
@@ -757,9 +757,19 @@ export class RenderDomainsStep extends Component {
 
 	getSideContent = () => {
 		const { translate, flowName } = this.props;
-		const serverDomains = getDomainRegistrations( this.props.cart );
+		const domainsInCart = getDomainRegistrations( this.props.cart );
 
-		const domainsInCart = serverDomains;
+		const additionalDomains = this.state.temporaryCart
+			.map( ( cartDomain ) => {
+				return domainsInCart.find( ( domain ) => domain.meta === cartDomain.meta )
+					? null
+					: cartDomain;
+			} )
+			.filter( Boolean );
+
+		if ( additionalDomains.length > 0 ) {
+			domainsInCart.push( ...additionalDomains );
+		}
 
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
@@ -1096,7 +1106,7 @@ export class RenderDomainsStep extends Component {
 						}
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
 						hasPendingRequests={ isLoadingExperiment }
-						temporaryCart={ this.state.domainsInCart }
+						temporaryCart={ this.state.temporaryCart }
 					/>
 				) }
 			</ProvideExperimentData>
