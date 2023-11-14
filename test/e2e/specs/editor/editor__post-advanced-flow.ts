@@ -43,6 +43,7 @@ describe( `Editor: Advanced Post Flow`, function () {
 
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		await testAccount.authenticateWpAdmin( page );
 	} );
 
 	describe( 'Publish post', function () {

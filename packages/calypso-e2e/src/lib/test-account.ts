@@ -10,6 +10,7 @@ import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
 import { SidebarComponent } from './components/sidebar-component';
 import { LoginPage } from './pages/login-page';
+import { WpAdminDashboardPage } from './pages/wp-admin/wp-admin-dashboard-page';
 import type { TestAccountCredentials } from '../secrets';
 
 /**
@@ -58,6 +59,22 @@ export class TestAccount {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.waitForSidebarInitialization();
 		}
+	}
+
+	/**
+	 * Authenticates the account on WP-Admin page.
+	 *
+	 * @param {Page} page Page object.
+	 */
+	async authenticateWpAdmin( page: Page ) {
+		const url = page.url();
+
+		// Go to the wp-admin page to init the cookie
+		const wpAdminDashboardPage = new WpAdminDashboardPage( page );
+		await wpAdminDashboardPage.visit( this.getSiteURL( { protocol: false } ) );
+
+		// Go back to the current page
+		await page.goto( url );
 	}
 
 	/**

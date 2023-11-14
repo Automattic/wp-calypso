@@ -41,6 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ), function () {
 
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		await testAccount.authenticateWpAdmin( page );
 
 		for ( const path of [ TEST_IMAGE_PATH, ALT_TEST_IMAGE_PATH ] ) {
 			const testFile = await MediaHelper.createTestFile( path );

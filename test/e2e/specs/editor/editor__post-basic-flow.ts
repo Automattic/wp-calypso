@@ -44,6 +44,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		await testAccount.authenticateWpAdmin( page );
 	} );
 
 	it( 'Go to the new post page', async function () {

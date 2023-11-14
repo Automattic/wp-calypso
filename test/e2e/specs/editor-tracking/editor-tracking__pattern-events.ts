@@ -29,6 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+			await testAccount.authenticateWpAdmin( page );
 
 			eventManager = new EditorTracksEventManager( page );
 			editorPage = new EditorPage( page );

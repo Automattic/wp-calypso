@@ -269,6 +269,7 @@ describe( 'I18N: Editor', function () {
 		} );
 
 		await testAccount.authenticate( page );
+		await testAccount.authenticateWpAdmin( page );
 		restAPIClient = new RestAPIClient( testAccount.credentials );
 
 		editorPage = new EditorPage( page );

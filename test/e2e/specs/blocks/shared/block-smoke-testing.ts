@@ -42,6 +42,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 			editorPage = new EditorPage( page );
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+			await testAccount.authenticateWpAdmin( page );
 		} );
 
 		it( 'Go to the new post page', async () => {

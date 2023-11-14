@@ -70,6 +70,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		await testAccount.authenticateWpAdmin( page );
 	} );
 
 	it( 'Start new post', async function () {

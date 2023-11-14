@@ -43,6 +43,7 @@ describe( 'CoBlocks: Extensions: Cover Styles', function () {
 
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		await testAccount.authenticateWpAdmin( page );
 
 		editorPage = new EditorPage( page );
 	} );

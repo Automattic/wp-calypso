@@ -40,6 +40,7 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
+				await testAccount.authenticateWpAdmin( page );
 			} );
 
 			afterAll( async function () {

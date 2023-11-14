@@ -52,6 +52,7 @@ describe( 'CoBlocks: Blocks', function () {
 		editorPage = new EditorPage( page );
 
 		await testAccount.authenticate( page );
+		await testAccount.authenticateWpAdmin( page );
 	} );
 
 	it( 'Go to the new post page', async () => {

@@ -143,6 +143,7 @@ describe(
 
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
+				await testAccount.authenticateWpAdmin( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				editorPage = new EditorPage( page );
