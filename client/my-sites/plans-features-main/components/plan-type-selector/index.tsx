@@ -144,13 +144,14 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
 		showBiennialToggle,
+		preCalculatedMaxDiscount,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
-	const maxDiscount = useMaxDiscount( props.plans );
+	const maxDiscount = useMaxDiscount( props.plans, preCalculatedMaxDiscount );
 	const currentPlanBillingPeriod = useSelector( ( state ) => {
 		const currentSitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
@@ -219,7 +220,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 								{ translate(
 									'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
 									{
-										args: { maxDiscount },
+										args: { maxDiscount: preCalculatedMaxDiscount || maxDiscount },
 										comment: 'Will be like "Save up to 30% by paying annually..."',
 									}
 								) }
@@ -299,7 +300,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	return null;
 };
 
-function useMaxDiscount( plans: string[] ): number {
+function useMaxDiscount( plans: string[], preCalculatedMaxDiscount: number ): number {
 	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
 	const discounts = useSelector( ( state: IAppState ) => {
@@ -322,6 +323,11 @@ function useMaxDiscount( plans: string[] ): number {
 			);
 		} );
 	} );
+
+	if ( preCalculatedMaxDiscount ) {
+		return preCalculatedMaxDiscount;
+	}
+
 	const currentMaxDiscount = discounts.length ? Math.max( ...discounts ) : 0;
 
 	if ( currentMaxDiscount > 0 && currentMaxDiscount !== maxDiscount ) {

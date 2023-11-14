@@ -14,23 +14,24 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import { IntervalTypeToggle } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepError } from '../components/sensei-step-error';
 import { SenseiStepProgress } from '../components/sensei-step-progress';
-import { PlansIntervalToggle } from './components';
 import { useFeatures, Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
 import { useBusinessPlanPricing, useSenseiProPricing } from './sensei-plan-products';
 import type { Step } from '../../types';
 import type { NewSiteBlogDetails, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './styles.scss';
 
 const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
-	const [ billingPeriod, setBillingPeriod ] = useState< PlanBillingPeriod >( 'ANNUALLY' );
+	const intervalType = getIntervalType();
+	const billingPeriod = 'yearly' === intervalType ? 'ANNUALLY' : 'MONTHLY';
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
 	const locale = useLocale();
 	const { __, hasTranslation } = useI18n();
@@ -153,10 +154,19 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 		>
 			{ status === Status.Initial && (
 				<>
-					<PlansIntervalToggle
+					{ /* <PlansIntervalToggle
 						intervalType={ billingPeriod }
 						onChange={ setBillingPeriod }
 						maxMonthlyDiscountPercentage={ annualDiscount }
+					/> */ }
+					<IntervalTypeToggle
+						intervalType={ intervalType }
+						plans={ [ businessPlan.productSlug ] }
+						isInSignup={ true }
+						isPlansInsideStepper={ true }
+						showBiennialToggle={ false }
+						eligibleForWpcomMonthlyPlans={ true }
+						preCalculatedMaxDiscount={ annualDiscount }
 					/>
 
 					<div className="plan-item-wrapper">
