@@ -71,10 +71,9 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<>
-			{ jetpackSaleCoupon && <JetpackSaleBanner coupon={ jetpackSaleCoupon } /> }
-
 			<div className="jpcom-masterbar">
 				<header className="header js-header force-opaque">
+					{ jetpackSaleCoupon && <JetpackSaleBanner coupon={ jetpackSaleCoupon } /> }
 					<div className="header__content-wrapper">
 						<div className="header__content-background-wrapper-sentinal" { ...outerDivProps }></div>
 						<div className={ classes }>
