@@ -101,7 +101,13 @@ export const StorageAddOnDropdown = ( {
 		if ( storageAddOnsForPlan && defaultStorageOption && ! selectedStorageOptionForPlan ) {
 			setSelectedStorageOptionForPlan( { addOnSlug: defaultStorageOption, planSlug } );
 		}
-	}, [] );
+	}, [
+		storageAddOnsForPlan,
+		defaultStorageOption,
+		selectedStorageOptionForPlan,
+		setSelectedStorageOptionForPlan,
+		planSlug,
+	] );
 
 	const selectControlOptions = storageOptions.map( ( storageOption ) => {
 		const title = getStorageStringFromFeature( storageOption.slug ) || '';
