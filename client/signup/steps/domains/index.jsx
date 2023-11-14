@@ -630,19 +630,8 @@ export class RenderDomainsStep extends Component {
 			( product ) => product.meta === domain_name && product.product_slug === product_slug
 		);
 		if ( productToRemove ) {
-			this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
 			const uuidToRemove = productToRemove.uuid;
-			this.props.shoppingCartManager
-				.removeProductFromCart( uuidToRemove )
-				.then( () => {
-					this.setState( { isCartPendingUpdateDomain: null } );
-				} )
-				.catch( () => {
-					this.setState( { isCartPendingUpdateDomain: null } );
-				} )
-				.finally( () => {
-					this.setState( { isRemovingDomain: null } );
-				} );
+			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove );
 		}
 	}
 
