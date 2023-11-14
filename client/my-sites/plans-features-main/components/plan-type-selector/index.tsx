@@ -13,7 +13,6 @@ import { useEffect, useState } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { omit } from 'lodash';
 import * as React from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import type { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
@@ -181,7 +180,8 @@ const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
 		),
 		{
 			...defaultArgs,
-			...omit( _additionalArgs, 'intervalType' ),
+			..._additionalArgs,
+			intervalType: undefined,
 		}
 	);
 };
@@ -246,7 +246,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		usePricingMetaForGridPlans,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
-	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
+	const segmentClasses = classNames( 'plan-type-selector__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
@@ -341,7 +341,10 @@ type CustomerTypeProps = Pick< PlanTypeSelectorProps, 'customerType' | 'isInSign
 export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( props ) => {
 	const translate = useTranslate();
 	const { customerType } = props;
-	const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
+	const segmentClasses = classNames(
+		'plan-type-selector__interval-type',
+		'is-customer-type-toggle'
+	);
 
 	return (
 		<SegmentedControl className={ segmentClasses } primary={ true }>
