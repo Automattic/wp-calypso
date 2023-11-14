@@ -33,7 +33,6 @@ const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) =>
  * Add the business plan and/or the external theme to the cart and redirect to checkout.
  * This action also manages the loading state of the cart. We'll use it to lock the CTA
  * button while the cart is being updated.
- *
  * @param themeId Theme ID to add to cart
  * @param siteId
  * @returns

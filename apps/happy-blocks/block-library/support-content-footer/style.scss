@@ -35,7 +35,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		display: flex;
 		margin-bottom: 2rem;
 		font-size: 1.25rem;
-		height: 202px;
 
 		.support-content-cta-left {
 			flex: 1;
@@ -54,11 +53,15 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		}
 
 		.support-content-cta-right {
-			text-align: right;
+			display: flex;
+			justify-content: flex-end;
 			flex: 1;
 
 			img {
 				height: 100%;
+				max-height: 202px;
+				// To prevent any white space around the image.
+				display: block;
 			}
 
 			figure {

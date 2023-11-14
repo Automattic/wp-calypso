@@ -149,6 +149,48 @@ function useAggregateSiteMetricsData(
 	};
 }
 
+/**
+ * Filter the data to only include the listed HTTP verbs
+ * @param timeRange
+ * @param metric
+ * @param dimension
+ */
+function useAggregateHttpVerbData(
+	timeRange: TimeRange,
+	metric?: MetricsType,
+	dimension?: DimensionParams
+): { formattedData: Record< string, number > } {
+	const data: { formattedData: Record< string, number > } = useAggregateSiteMetricsData(
+		timeRange,
+		metric,
+		dimension
+	);
+	const allowedVerbs: string[] = [ 'GET', 'POST', 'HEAD', 'DELETE' ];
+
+	const defaultData: Record< ( typeof allowedVerbs )[ number ], number > = allowedVerbs.reduce(
+		( acc, verb ) => {
+			acc[ verb ] = 0;
+			return acc;
+		},
+		{} as Record< ( typeof allowedVerbs )[ number ], number >
+	);
+
+	data.formattedData = { ...defaultData, ...data.formattedData };
+
+	return {
+		formattedData: Object.keys( data.formattedData ).reduce(
+			( filtered: Record< string, number >, key: string ) => {
+				if ( allowedVerbs.includes( key ) ) {
+					filtered[ key ] = data.formattedData[ key ];
+				}
+
+				return filtered;
+			},
+			{} as Record< string, number >
+		),
+	};
+}
+
 function getFormattedDataForPieChart(
 	data: Record< string, number >,
 	labels: Record<
@@ -247,10 +289,10 @@ export const MetricsTab = () => {
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
 	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData( timeRange );
-	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
+	const { formattedData: httpVerbFormattedData } = useAggregateHttpVerbData(
 		timeRange,
 		'requests_persec',
-		'page_is_cached'
+		'http_verb'
 	);
 	const { formattedData: phpVsStaticFormattedData } = useAggregateSiteMetricsData(
 		timeRange,
@@ -324,20 +366,27 @@ export const MetricsTab = () => {
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
-					title={ __( 'Cache efficiency' ) }
-					subtitle={ __( 'Percentage of cache hits versus cache misses' ) }
-					className="site-monitoring-cache-pie-chart"
-					data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
-						1: {
-							name: 'Cache hit',
-							className: 'cache-hit',
+					title={ __( 'HTTP request methods' ) }
+					subtitle={ __( 'Percentage of traffic per HTTP request method' ) }
+					className="site-monitoring-http-verbs-pie-chart"
+					data={ getFormattedDataForPieChart( httpVerbFormattedData, {
+						GET: {
+							name: 'GET',
+							className: 'verb-get',
 						},
-						0: {
-							name: 'Cache miss',
-							className: 'cache-miss',
+						POST: {
+							name: 'POST',
+							className: 'verb-post',
 						},
-					} ).reverse() }
-					fixedOrder
+						HEAD: {
+							name: 'HEAD',
+							className: 'verb-head',
+						},
+						DELETE: {
+							name: 'DELETE',
+							className: 'verb-delete',
+						},
+					} ) }
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
 					title={ __( 'Response types' ) }

@@ -188,7 +188,6 @@ class PostRelativeTime extends PureComponent {
 
 	/**
 	 * Get Newsletter status label
-	 *
 	 * @param {string} status Newsletter tatus
 	 */
 	getNewsletterStatus( status ) {
@@ -237,10 +236,9 @@ class PostRelativeTime extends PureComponent {
 
 	/**
 	 * Get Label for the status
-	 *
 	 * @param {string} statusText text status
 	 * @param {string} extraStatusClassName extra CSS class to be added to the label
-	 * @param {string} [statusIcon="aside"] icon for the label
+	 * @param {string} [statusIcon] icon for the label
 	 */
 	getLabel( statusText, extraStatusClassName, statusIcon = 'aside' ) {
 		if ( statusText ) {

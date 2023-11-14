@@ -30,7 +30,6 @@ type LogstashPerfMarks = Record< string, LogstashMark >;
  *
  * Unfortunately, due to how express passes around the request object, this modifies
  * the request context by reference.
- *
  * @param context  The request.context object.
  * @param markName A name for the marker being logged.
  * @param isChild  Optionally note this occured as part of a different mark.
@@ -71,7 +70,6 @@ export default function performanceMark(
 
 /**
  * Finalize the duration of any active marks and return the final array of data.
- *
  * @param context The request.context object.
  * @returns object The normalized mark data for logstash in object format.
  */

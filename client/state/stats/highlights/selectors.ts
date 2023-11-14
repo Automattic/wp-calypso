@@ -6,7 +6,6 @@ const EMPTY_RESULT = {};
 
 /**
  * Returns highlights values for a given site
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @returns {Object}           Highlights object; see schema.
@@ -17,7 +16,6 @@ export function getHighlights( state: object, siteId: number ) {
 
 /**
  * Returns whether or not the highlights are being loaded
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @returns {boolean}          	 Array of stat types as strings

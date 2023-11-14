@@ -18,6 +18,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
+import { TYPE_TIER } from 'calypso/my-sites/earn/memberships/constants';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -101,10 +102,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const { getPlanCartItem, getDomainCartItem } = useSelect(
+	const { planCartItem, domainCartItem, productCartItems } = useSelect(
 		( select ) => ( {
-			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
-			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
 		} ),
 		[]
 	);
@@ -124,8 +126,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			flow,
 			isEmailVerified,
 			checklistStatuses,
-			getPlanCartItem(),
-			getDomainCartItem(),
+			planCartItem,
+			domainCartItem,
+			productCartItems,
 			stripeConnectUrl,
 			() => {
 				recordUnverifiedDomainDialogShownTracksEvent( site?.ID );
@@ -268,8 +271,17 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 					{ showPlansModal && site?.ID && (
 						<RecurringPaymentsPlanAddEditModal
 							closeDialog={ () => setShowPlansModal( false ) }
-							product={ { subscribe_as_site_subscriber: true, price: 5 } }
-							annualProduct={ { subscribe_as_site_subscriber: true, price: 5 * 12 } }
+							product={ {
+								price: 5,
+								subscribe_as_site_subscriber: true,
+								title: translate( 'Paid newsletter' ),
+								type: TYPE_TIER,
+							} }
+							annualProduct={ {
+								price: 5 * 12,
+								subscribe_as_site_subscriber: true,
+								title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
+							} }
 							siteId={ site.ID }
 						/>
 					) }

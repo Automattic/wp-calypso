@@ -1,7 +1,6 @@
 import { Dialog, FormInputValidation, FoldableCard } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState, useEffect, useMemo } from 'react';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
@@ -228,7 +227,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		ID: annualProduct?.ID, // will the the ID if already existing
 		price: currentAnnualPrice,
 		interval: PLAN_YEARLY_FREQUENCY,
-		title: productDetails.title + __( '(yearly)', 'jetpack' ),
+		title: `${ productDetails.title } ${ translate( '(yearly)' ) }`,
 	} );
 
 	const getCurrentProductDetails = (): Product => {

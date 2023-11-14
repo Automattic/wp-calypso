@@ -22,12 +22,14 @@ const SEARCH_KEY = 's';
 
 const setUrlQuery = ( key: string, value: string ) => {
 	const path = window.location.pathname + window.location.search;
+	const nextPath = ! value
+		? removeQueryArgs( path, key )
+		: addQueryArgs( path, { [ key ]: value } );
 
-	if ( ! value ) {
-		return page.show( removeQueryArgs( path, key ) );
+	// Only trigger a page show when path has changed.
+	if ( nextPath !== path ) {
+		page.show( nextPath );
 	}
-
-	return page.show( addQueryArgs( path, { [ key ]: value } ) );
 };
 
 const initialUrlQuerySearchTerm = getUrlQuerySearchTerm();

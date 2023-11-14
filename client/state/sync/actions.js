@@ -86,7 +86,6 @@ export const setSyncInProgress = ( siteId, isSyncingInProgress ) => ( {
 /**
  * Report a failure of fetching site sync status (for example, the status
  * endpoint returns 404) or general sync failure.
- *
  * @param {Object} param failure details
  * @param {number} param.siteId The site id to which the status belongs
  * @param {string} param.error The error string received

@@ -467,6 +467,7 @@ const ComparisonGridHeaderCell = ( {
 				isLargeCurrency={ isLargeCurrency }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				siteId={ siteId }
+				visibleGridPlans={ visibleGridPlans }
 			/>
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe
@@ -573,9 +574,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
 	planSlug: PlanSlug;
-	isInSignup: boolean;
 	isStorageFeature: boolean;
-	flowName?: string | null;
 	intervalType: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
@@ -585,9 +584,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	feature,
 	visibleGridPlans,
 	planSlug,
-	isInSignup,
 	isStorageFeature,
-	flowName,
 	intervalType,
 	activeTooltipId,
 	showUpgradeableStorage,
@@ -625,9 +622,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	const storageOptions = gridPlan.features.storageOptions;
 	const defaultStorageOption = storageOptions.find( ( option ) => ! option.isAddOn );
 	const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
-		flowName: flowName ?? '',
 		intervalType,
-		isInSignup,
 		showUpgradeableStorage,
 		storageOptions,
 	} );
@@ -745,9 +740,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
 	planFeatureFootnotes: PlanFeatureFootnotes;
-	isInSignup: boolean;
 	isStorageFeature: boolean;
-	flowName?: string | null;
 	isHighlighted: boolean;
 	intervalType: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
@@ -760,9 +753,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures,
 	visibleGridPlans,
 	planFeatureFootnotes,
-	isInSignup,
 	isStorageFeature,
-	flowName,
 	isHighlighted,
 	intervalType,
 	activeTooltipId,
@@ -837,9 +828,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
 					planSlug={ planSlug }
-					isInSignup={ isInSignup }
 					isStorageFeature={ isStorageFeature }
-					flowName={ flowName }
 					intervalType={ intervalType }
 					activeTooltipId={ activeTooltipId }
 					setActiveTooltipId={ setActiveTooltipId }
@@ -854,8 +843,6 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 const FeatureGroup = ( {
 	featureGroup,
 	selectedFeature,
-	isInSignup,
-	flowName,
 	intervalType,
 	activeTooltipId,
 	setActiveTooltipId,
@@ -867,8 +854,6 @@ const FeatureGroup = ( {
 }: {
 	featureGroup: FeatureGroup;
 	selectedFeature?: string;
-	isInSignup: boolean;
-	flowName?: string | null;
 	intervalType: string;
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
@@ -946,9 +931,7 @@ const FeatureGroup = ( {
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
 					planFeatureFootnotes={ planFeatureFootnotes }
-					isInSignup={ isInSignup }
 					isStorageFeature={ false }
-					flowName={ flowName }
 					isHighlighted={ feature.getSlug() === selectedFeature }
 					intervalType={ intervalType }
 					activeTooltipId={ activeTooltipId }
@@ -964,9 +947,7 @@ const FeatureGroup = ( {
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
 					planFeatureFootnotes={ planFeatureFootnotes }
-					isInSignup={ isInSignup }
 					isStorageFeature={ true }
-					flowName={ flowName }
 					isHighlighted={ false }
 					intervalType={ intervalType }
 					activeTooltipId={ activeTooltipId }
@@ -1154,8 +1135,6 @@ const ComparisonGrid = ( {
 						visibleGridPlans={ visibleGridPlans }
 						featureGroupMap={ featureGroupMap }
 						selectedFeature={ selectedFeature }
-						isInSignup={ isInSignup }
-						flowName={ flowName }
 						intervalType={ intervalType }
 						activeTooltipId={ activeTooltipId }
 						setActiveTooltipId={ setActiveTooltipId }

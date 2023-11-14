@@ -80,6 +80,7 @@ export function createGiropayMethod( {
 } ): PaymentMethod {
 	return {
 		id: 'giropay',
+		hasRequiredFields: true,
 		paymentProcessorId: 'giropay',
 		label: <GiropayLabel />,
 		activeContent: <GiropayFields />,

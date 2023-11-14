@@ -6,7 +6,6 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Checks if the plan is an ecommerce trial.
- *
  * @param {SitePlanData} plan - Plan object
  * @returns {boolean} returns true if the plan is an ecommerce trial
  */
@@ -16,7 +15,6 @@ function isECommerceTrialPlan( plan: SitePlanData ): boolean {
 
 /**
  * Returns the expiration date of the ECommerce trial. If the trial is not active, returns null.
- *
  * @param {AppState} state - Global state tree
  * @param {number} siteId - Site ID
  * @returns {Moment|null} Expiration date of the trial, or null if the trial is not active.

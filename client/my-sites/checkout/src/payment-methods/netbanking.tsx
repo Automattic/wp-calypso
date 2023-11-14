@@ -148,6 +148,7 @@ export function createNetBankingMethod( {
 } ): PaymentMethod {
 	return {
 		id: 'netbanking',
+		hasRequiredFields: true,
 		paymentProcessorId: 'netbanking',
 		label: <NetBankingLabel />,
 		activeContent: <NetBankingFields />,

@@ -6,8 +6,6 @@
  *  - keyboard hotkeys
  *  - window/pane scrolling
  *  - service worker
- *
- *
  * @module notifications
  */
 
@@ -34,7 +32,6 @@ import './style.scss';
 /**
  * Returns whether or not the browser session
  * is currently visible to the user
- *
  * @returns {boolean} is the browser session visible
  */
 const getIsVisible = () => {

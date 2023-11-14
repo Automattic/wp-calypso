@@ -79,6 +79,7 @@ export function createSofortMethod( {
 } ): PaymentMethod {
 	return {
 		id: 'sofort',
+		hasRequiredFields: true,
 		paymentProcessorId: 'sofort',
 		label: <SofortLabel />,
 		activeContent: <SofortFields />,

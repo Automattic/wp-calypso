@@ -23,7 +23,10 @@ body.is-section-signup.is-white-signup .signup {
 			text-decoration: underline;
 		}
 	}
-
+	// ::::: Onboarding_PM_Passwordless_Experiment ::::::
+	// This selector is part of an experiment which is supposed to be cleaned up
+	// https://github.com/Automattic/wp-calypso/pull/83886
+	.signup__step.is-user.is-passwordless-experiment,
 	.signup__step.is-user-social {
 		.step-wrapper__navigation.action-buttons {
 			height: 60px;

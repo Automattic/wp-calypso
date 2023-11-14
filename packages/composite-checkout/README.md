@@ -66,6 +66,7 @@ Each payment method is an object with the following properties:
 - `id: string`. A unique id for this instance of this payment method.
 - `paymentProcessorId: string`. The id that will be used to map this payment method to a payment processor function. Unlike the `id`, this does not have to be unique.
 - `label?: React.ReactNode`. A component that displays that payment method selection button which can be as simple as the name and an icon.
+- `hasRequiredFields?: boolean`. If the payment method `activeContent` contains fields or other required interactions, this must be true!
 - `activeContent?: React.ReactNode`. A component that displays that payment method (this can return null or something like a credit card form).
 - `inactiveContent?: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
 - `submitButton: React.ReactNode`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. When disabled, it will be provided with the `disabled` prop and must disable the button.

@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
-import { localizeUrl, englishLocales } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
@@ -10,6 +9,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -18,7 +18,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { FormDivider } from 'calypso/lib/authentication';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
@@ -92,6 +91,7 @@ export class LoginForm extends Component {
 		hideSignupLink: PropTypes.bool,
 		isSignupExistingAccount: PropTypes.bool,
 		sendMagicLoginLink: PropTypes.func,
+		isSendingEmail: PropTypes.bool,
 	};
 
 	state = {
@@ -193,12 +193,12 @@ export class LoginForm extends Component {
 	}
 
 	isUsernameOrEmailView() {
-		const { hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
-
+		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
 		return (
-			! socialAccountIsLinking &&
-			! hasAccountTypeLoaded &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup )
+			isSendingEmail ||
+			( ! socialAccountIsLinking &&
+				! hasAccountTypeLoaded &&
+				! ( this.props.isWoo && ! this.props.isPartnerSignup ) )
 		);
 	}
 
@@ -327,33 +327,18 @@ export class LoginForm extends Component {
 	}
 
 	renderLoginFromSignupNotice() {
-		const signupUrl = this.getSignupUrl();
-
-		if (
-			hasTranslation(
-				'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.'
-			) ||
-			englishLocales.includes( this.props.locale )
-		) {
-			return (
-				<Notice status="is-transparent-info" showDismiss={ false }>
-					{ this.props.translate(
-						'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
-						{
-							components: {
-								returnToSignup: <a href={ signupUrl } onClick={ this.recordSignUpLinkClick } />,
-							},
-						}
-					) }
-				</Notice>
-			);
-		}
-
 		return (
 			<Notice status="is-transparent-info" showDismiss={ false }>
-				{ this.props.translate( 'An account with this email address already exists.' ) }
-				&nbsp;
-				{ this.props.translate( 'Log in to your account' ) }
+				{ this.props.translate(
+					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
+					{
+						components: {
+							returnToSignup: (
+								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
+							),
+						},
+					}
+				) }
 			</Notice>
 		);
 	}
@@ -634,26 +619,8 @@ export class LoginForm extends Component {
 
 		const magicLoginPageLinkWithEmail = addQueryArgs( { email_address: emailAddress }, loginLink );
 
-		if (
-			hasTranslation(
-				'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?'
-			) ||
-			englishLocales.includes( this.props.locale )
-		) {
-			return this.props.translate(
-				'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
-				{
-					components: {
-						magicLoginLink: (
-							<a href={ magicLoginPageLinkWithEmail } onClick={ this.handleMagicLoginClick } />
-						),
-					},
-				}
-			);
-		}
-
 		return this.props.translate(
-			'Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
+			'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
 			{
 				components: {
 					magicLoginLink: (
@@ -681,6 +648,7 @@ export class LoginForm extends Component {
 			isWooCoreProfilerFlow,
 			hideSignupLink,
 			isSignupExistingAccount,
+			isSendingEmail,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -859,7 +827,7 @@ export class LoginForm extends Component {
 					<p className="login__form-terms">{ socialToS }</p>
 					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
-						<FormsButton primary disabled={ isSubmitButtonDisabled }>
+						<FormsButton primary busy={ isSendingEmail } disabled={ isSubmitButtonDisabled }>
 							{ this.getLoginButtonText() }
 						</FormsButton>
 					</div>

@@ -4,7 +4,6 @@ import type { TitanMailboxFields } from 'calypso/my-sites/email/form/mailboxes/c
 
 /**
  * Creates a mailbox for a Professional Email (Titan) account
- *
  * @returns Returns the result of the `useMutation` call
  */
 export const useCreateTitanMailboxMutation = () => {

@@ -3,19 +3,20 @@ import {
 	globe as domainsIcon,
 	commentAuthorAvatar as profileIcon,
 } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
+import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
+import wpcom from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
-export const generateCommandsArrayWpcom = ( {
+export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
-	createSiteUrl,
-	__,
 }: {
 	setSelectedCommandName: ( actionName: string ) => void;
-	createSiteUrl: string;
-	__: ( text: string ) => string;
 } ) => {
 	const setStateCallback =
 		( actionName: string ) =>
@@ -23,6 +24,70 @@ export const generateCommandsArrayWpcom = ( {
 			setSearch( '' );
 			setSelectedCommandName( actionName );
 		};
+
+	const { __ } = useI18n();
+	const dispatch = useDispatch();
+	const displaySuccessNotice = ( message: string ) =>
+		dispatch( successNotice( message, { duration: 5000 } ) );
+	const createSiteUrl = useAddNewSiteUrl( {
+		source: 'sites-dashboard-command-palette',
+		ref: 'topbar',
+	} );
+
+	const fetchSshUser = async ( siteId: number ) => {
+		const response = await wpcom.req.get( {
+			path: `/sites/${ siteId }/hosting/ssh-users`,
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		const sshUserResponse = response?.users;
+
+		if ( ! sshUserResponse?.length ) {
+			return null;
+		}
+
+		return sshUserResponse[ 0 ];
+	};
+
+	const copySshSftpDetails = async (
+		siteId: number,
+		copyType: 'username' | 'connectionString',
+		siteSlug: string
+	) => {
+		const sshUser = await fetchSshUser( siteId );
+
+		if ( ! sshUser ) {
+			return navigate( `/hosting-config/${ siteSlug }` );
+		}
+
+		const textToCopy = copyType === 'username' ? sshUser : `ssh ${ sshUser }@sftp.wp.com`;
+		navigator.clipboard.writeText( textToCopy );
+		const successMessage =
+			copyType === 'username' ? __( 'Copied username' ) : __( 'Copied SSH connection string' );
+		displaySuccessNotice( successMessage );
+	};
+
+	const resetSshSftpPassword = async ( siteId: number, siteSlug: string ) => {
+		const sshUser = await fetchSshUser( siteId );
+
+		if ( ! sshUser ) {
+			return navigate( `/hosting-config/${ siteSlug }` );
+		}
+
+		const response = await wpcom.req.post( {
+			path: `/sites/${ siteId }/hosting/ssh-user/${ sshUser }/reset-password`,
+			apiNamespace: 'wpcom/v2',
+			body: {},
+		} );
+		const sshPassword = response?.password;
+
+		if ( ! sshPassword ) {
+			return navigate( `/hosting-config/${ siteSlug }` );
+		}
+
+		navigator.clipboard.writeText( sshPassword );
+		displaySuccessNotice( __( 'Copied new password' ) );
+	};
 
 	const commands = [
 		{
@@ -96,6 +161,51 @@ export const generateCommandsArrayWpcom = ( {
 					isCustomDomain( site.slug ) && ! isNotAtomicJetpack( site ),
 			},
 			icon: domainsIcon,
+		},
+		{
+			name: 'copySshConnectionString',
+			label: __( 'Copy SSH connection string' ),
+			searchLabel: __( 'copy ssh connection string' ),
+			context: 'Copying SSH connection string',
+			callback: setStateCallback( 'copySshConnectionString' ),
+			siteFunctions: {
+				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					await copySshSftpDetails( site.ID, 'connectionString', site.slug );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: <MaterialIcon icon="key" />,
+		},
+		{
+			name: 'openSshDetails',
+			label: __( 'Open SSH details' ),
+			searchLabel: __( 'open SSH details' ),
+			context: 'Opening SSH details',
+			callback: setStateCallback( 'openSshDetails' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: <MaterialIcon icon="key" />,
+		},
+		{
+			name: 'resetSshSftpPassword',
+			label: __( 'Reset SSH/SFTP password' ),
+			searchLabel: __( 'reset ssh/sftp password' ),
+			context: 'Resetting SSH/SFTP password',
+			callback: setStateCallback( 'resetSshSftpPassword' ),
+			siteFunctions: {
+				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					resetSshSftpPassword( site.ID, site.slug );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: <MaterialIcon icon="key" />,
 		},
 	];
 

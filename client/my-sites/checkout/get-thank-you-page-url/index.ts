@@ -625,7 +625,6 @@ function getFallbackDestination( {
 /**
  * This function returns the product slug of the next higher plan of the plan item in the cart.
  * Currently, it only supports premium plans.
- *
  * @param {ResponseCart} cart the cart object
  * @returns {string|undefined} the product slug of the next higher plan if it exists, undefined otherwise.
  */

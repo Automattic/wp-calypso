@@ -14,14 +14,12 @@ export type NavigationControls = {
 
 	/**
 	 * Call this function if you want to go to the proceed down the flow.
-	 *
 	 * @deprecated Avoid this method. Use submit() instead.
 	 */
 	goNext?: () => void;
 
 	/**
 	 * Call this function if you want to jump to a certain step.
-	 *
 	 * @deprecated Avoid this method. Use submit() instead.
 	 * If you need to skip forward several screens in
 	 * a stepper flow, handle that logic in submit().

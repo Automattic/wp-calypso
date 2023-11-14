@@ -109,7 +109,6 @@ function getHoldMessages(
  * This function defines how we should communicate each type of blocking hold the public-api returns.
  * Blocking holds are "hard stops" - if we detect any, we know the Atomic Transfer won't be possible and so we
  * should short-circuit any eligibility checks and just communicate the problem.
- *
  * @param {Function} translate Translate fn
  * @returns {Object} Dictionary of blocking holds and their corresponding messages
  */
@@ -311,7 +310,6 @@ function isKnownHoldType(
  * This checks if hold coming from API is blocking (@see getBlockingMessages);
  * For example, if we detect BLOCKED_ATOMIC_TRANSFER, we should block the path forward and direct the user
  * to our support.
- *
  * @param {string} hold Specific hold we want to check
  * @param {Object} blockingMessages List of all holds we consider blocking
  * @returns {boolean} Is {hold} blocking or not

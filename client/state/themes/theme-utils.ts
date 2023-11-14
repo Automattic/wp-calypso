@@ -4,7 +4,6 @@ import { ProductListItem } from 'calypso/state/products-list/selectors/get-produ
 
 /**
  * Get the preferred product slug from the products list.
- *
  * @param products list of products
  * @returns string
  */
