@@ -134,6 +134,41 @@ $button-padding: 8px 32px;
 	}
 }
 
+.stats-tier-upgrade-slider {
+	margin: 2px;
+	padding: 10px;
+	background: pink;
+
+	.jp-components-pricing-slider__thumb {
+		border-radius: 24px;
+		border-color: #008710;
+		background-color: #008710;
+		color: white;
+	}
+}
+.stats-tier-upgrade-slider__info-message {
+	color: green;
+	margin: 12px 0px;
+	text-align: center;
+}
+.stats-tier-upgrade-slider__plan-callouts {
+	display: flex;
+	justify-content: space-between;
+
+	h2 {
+		font-weight: 500;
+	}
+	p {
+		font-size: 2em;
+		font-weight: 500;
+		margin: 0;
+	}
+	.right-aligned {
+		text-align: right;
+	}
+}
+
+
 .stats-purchase-page__loader {
 	display: flex;
 	justify-content: center;
