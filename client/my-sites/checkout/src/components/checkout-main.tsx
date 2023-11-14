@@ -219,6 +219,7 @@ export default function CheckoutMain( {
 	const {
 		applyCoupon,
 		replaceProductInCart,
+		reloadFromServer: reloadCart,
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
@@ -447,6 +448,7 @@ export default function CheckoutMain( {
 			includeGSuiteDetails,
 			reduxDispatch,
 			responseCart,
+			reloadCart,
 			siteId: updatedSiteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
@@ -462,6 +464,7 @@ export default function CheckoutMain( {
 			includeGSuiteDetails,
 			reduxDispatch,
 			responseCart,
+			reloadCart,
 			updatedSiteId,
 			stripe,
 			stripeConfiguration,

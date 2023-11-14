@@ -73,7 +73,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
+	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const selectedSite = useSelector( getSelectedSite );
 
 	const contactDetailsType = getContactDetailsType( props.cart );
@@ -88,6 +88,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			includeGSuiteDetails,
 			reduxDispatch,
 			responseCart,
+			reloadCart,
 			siteSlug: selectedSite?.slug ?? '',
 			siteId: selectedSite?.ID,
 			stripe,
@@ -106,6 +107,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			reduxDispatch,
 			selectedSite,
 			responseCart,
+			reloadCart,
 		]
 	);
 

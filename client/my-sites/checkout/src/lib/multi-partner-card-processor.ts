@@ -79,6 +79,7 @@ async function stripeCardProcessor(
 		includeDomainDetails,
 		includeGSuiteDetails,
 		responseCart,
+		reloadCart,
 		siteId,
 		contactDetails,
 		reduxDispatch,
@@ -180,6 +181,9 @@ async function stripeCardProcessor(
 			} );
 
 			handle3DSInFlightError( error, paymentIntentId );
+
+			// Refresh the cart in case things have changed during the transaction.
+			reloadCart();
 
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.

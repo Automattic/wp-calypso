@@ -26,6 +26,7 @@ export default async function payPalProcessor(
 		includeDomainDetails,
 		includeGSuiteDetails,
 		responseCart,
+		reloadCart,
 		siteId,
 		siteSlug,
 		contactDetails,
@@ -72,7 +73,12 @@ export default async function payPalProcessor(
 			}
 			return makeRedirectResponse( response.redirect_url );
 		} )
-		.catch( ( error ) => makeErrorResponse( error.message ) );
+		.catch( ( error ) => {
+			// Refresh the cart in case things have changed during the transaction.
+			reloadCart();
+
+			return makeErrorResponse( error.message );
+		} );
 }
 
 /**

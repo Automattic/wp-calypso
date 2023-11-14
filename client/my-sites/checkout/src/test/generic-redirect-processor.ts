@@ -1,5 +1,6 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
+import { PaymentProcessorOptions } from '../types/payment-processors';
 import {
 	mockTransactionsEndpoint,
 	mockTransactionsRedirectResponse,
@@ -18,9 +19,11 @@ describe( 'genericRedirectProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
-	const options = {
+	const reloadCart = jest.fn();
+	const options: PaymentProcessorOptions = {
 		...processorOptions,
 		responseCart: cart,
+		reloadCart,
 	};
 
 	const basicExpectedStripeRequest = {
@@ -58,6 +61,10 @@ describe( 'genericRedirectProcessor', () => {
 		},
 	};
 
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
 		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
@@ -75,6 +82,28 @@ describe( 'genericRedirectProcessor', () => {
 			} )
 		).resolves.toStrictEqual( expected );
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
+	} );
+
+	it( 'reloads the cart if the transaction fails', async () => {
+		mockTransactionsEndpoint( () => [
+			200,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		const submitData = {
+			name: 'test name',
+			email: 'test@example.com',
+		};
+		await genericRedirectProcessor( 'bancontact', submitData, {
+			...options,
+			contactDetails: {
+				countryCode,
+				postalCode,
+			},
+		} );
+		expect( reloadCart ).toHaveBeenCalled();
 	} );
 
 	it( 'returns a generic error response if the transaction fails with a 200 response', async () => {

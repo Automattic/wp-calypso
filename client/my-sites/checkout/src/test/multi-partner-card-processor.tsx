@@ -184,15 +184,22 @@ describe( 'multiPartnerCardProcessor', () => {
 		createPaymentMethod: createMockStripeToken,
 	} as Stripe;
 
+	const reloadCart = jest.fn();
+
 	const options: PaymentProcessorOptions = {
 		...processorOptions,
 		stripe,
 		stripeConfiguration,
 		responseCart: cart,
+		reloadCart,
 	};
 
 	beforeEach( () => {
 		mockLogStashEndpoint();
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	it( 'throws an error if there is no paymentPartner', async () => {
@@ -415,6 +422,31 @@ describe( 'multiPartnerCardProcessor', () => {
 					coupon: '',
 				},
 			} );
+		} );
+
+		it( 'reloads the cart if the transaction fails', async () => {
+			mockTransactionsEndpoint( () => [
+				400,
+				{
+					error: 'test_error',
+					message: 'test error',
+				},
+			] );
+			const submitData = {
+				paymentPartner: 'stripe',
+				stripe,
+				stripeConfiguration,
+				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
+			};
+			await multiPartnerCardProcessor( submitData, {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+			} );
+			expect( reloadCart ).toHaveBeenCalled();
 		} );
 
 		it( 'returns an explicit error response if the transaction fails with a non-200 error', async () => {

@@ -48,6 +48,7 @@ export default async function existingCardProcessor(
 		contactDetails,
 		reduxDispatch,
 		responseCart,
+		reloadCart,
 	} = dataForProcessor;
 	if ( ! stripe ) {
 		throw new Error( 'Stripe is required to submit an existing card payment' );
@@ -146,6 +147,9 @@ export default async function existingCardProcessor(
 			);
 
 			handle3DSInFlightError( error, paymentIntentId );
+
+			// Refresh the cart in case things have changed during the transaction.
+			reloadCart();
 
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.

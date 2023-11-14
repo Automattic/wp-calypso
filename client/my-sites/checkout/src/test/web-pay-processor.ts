@@ -1,5 +1,6 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import webPayProcessor from '../lib/web-pay-processor';
+import { PaymentProcessorOptions } from '../types/payment-processors';
 import {
 	mockTransactionsEndpoint,
 	mockTransactionsSuccessResponse,
@@ -20,9 +21,11 @@ describe( 'webPayProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
-	const options = {
+	const reloadCart = jest.fn();
+	const options: PaymentProcessorOptions = {
 		...processorOptions,
 		responseCart: cart,
+		reloadCart,
 	};
 
 	const stripe = {};
@@ -61,6 +64,10 @@ describe( 'webPayProcessor', () => {
 
 	beforeEach( () => {
 		mockLogStashEndpoint();
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	it( 'throws an error if there is no stripe object', async () => {
@@ -122,6 +129,30 @@ describe( 'webPayProcessor', () => {
 				},
 			} )
 		).resolves.toStrictEqual( expected );
+	} );
+
+	it( 'reloads the cart if the transaction fails', async () => {
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		const submitData = {
+			stripe,
+			stripeConfiguration,
+			paymentMethodToken: 'web-pay-token',
+			name: 'test name',
+		};
+		await webPayProcessor( 'apple-pay', submitData, {
+			...options,
+			contactDetails: {
+				countryCode,
+				postalCode,
+			},
+		} );
+		expect( reloadCart ).toHaveBeenCalled();
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
