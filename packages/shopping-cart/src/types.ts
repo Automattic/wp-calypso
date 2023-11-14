@@ -549,8 +549,10 @@ export interface ResponseCartCostOverride {
 	new_price: number;
 	old_price: number;
 	override_code: string;
+	does_override_original_cost: boolean;
 	reason: string;
 }
+
 export interface IntroductoryOfferTerms {
 	enabled: boolean;
 	interval_unit: string;
