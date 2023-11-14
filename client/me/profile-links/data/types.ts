@@ -6,7 +6,9 @@ export type ProfileLink = {
 	value: string;
 };
 
-export type AddProfileLinksPayload = Pick< ProfileLink, 'title' | 'value' >[];
+export type AddProfileLinkPayload = Pick< ProfileLink, 'title' | 'value' >;
+
+export type AddProfileLinksPayload = AddProfileLinkPayload[];
 
 export type ProfileLinkResponse = ProfileLink[];
 
