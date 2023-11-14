@@ -164,6 +164,7 @@ export class RenderDomainsStep extends Component {
 			wpcomSubdomainSelected: false,
 			isRemovingDomain: null,
 			isGoingToNextStep: false,
+			domainsInCart: [],
 		};
 	}
 
@@ -220,10 +221,30 @@ export class RenderDomainsStep extends Component {
 			return;
 		}
 
+		if (
+			! this.state.domainsInCart ||
+			! this.state.domainsInCart.some( ( domain ) => domain.meta === suggestion.domain_name )
+		) {
+			this.setState( {
+				domainsInCart: [
+					...( this.state.domainsInCart || [] ),
+					{
+						meta: suggestion.domain_name,
+						item_subtotal_display: '...',
+						temporary: true,
+					},
+				],
+			} );
+		}
+
 		const signupDomainOrigin = suggestion?.is_free
 			? SIGNUP_DOMAIN_ORIGIN.FREE
 			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
-		this.setState( { isCartPendingUpdateDomain: suggestion } );
+
+		if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			this.setState( { isCartPendingUpdateDomain: suggestion } );
+		}
+
 		this.props.recordAddDomainButtonClick(
 			suggestion.domain_name,
 			this.getAnalyticsSection(),
@@ -626,6 +647,12 @@ export class RenderDomainsStep extends Component {
 	};
 
 	removeDomain( { domain_name, product_slug } ) {
+		if ( this.state.domainsInCart?.length > 0 ) {
+			this.setState( {
+				domainsInCart: this.state.domainsInCart.filter( ( domain ) => domain.meta !== domain_name ),
+			} );
+		}
+
 		const productToRemove = this.props.cart.products.find(
 			( product ) => product.meta === domain_name && product.product_slug === product_slug
 		);
@@ -728,9 +755,19 @@ export class RenderDomainsStep extends Component {
 
 	getSideContent = () => {
 		const { translate, flowName } = this.props;
-		const domainsInCart = shouldUseMultipleDomainsInCart( flowName )
-			? getDomainRegistrations( this.props.cart )
-			: [];
+		const serverDomains = getDomainRegistrations( this.props.cart );
+
+		// Initilize local state if we have server data
+		if ( ! this.state.domainsInCart || this.state.domainsInCart?.length === 0 ) {
+			this.state.domainsInCart = serverDomains;
+		}
+
+		let domainsInCart = this.state.domainsInCart;
+
+		domainsInCart = domainsInCart.map( ( cartDomain ) => {
+			return serverDomains.find( ( domain ) => domain.meta === cartDomain.meta ) ?? cartDomain;
+		} );
+
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
@@ -896,10 +933,12 @@ export class RenderDomainsStep extends Component {
 						</div>
 						<div key="rowtotalprice" className="domains__domain-cart-total-price">
 							<strong>
-								{ formatCurrency(
-									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-									domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
-								) }
+								{ domainsInCart.some( ( domain ) => domain.temporary )
+									? '...'
+									: formatCurrency(
+											domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
+											domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
+									  ) }
 							</strong>
 						</div>
 					</div>
@@ -1064,6 +1103,7 @@ export class RenderDomainsStep extends Component {
 						}
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
 						hasPendingRequests={ isLoadingExperiment }
+						temporaryCart={ this.state.domainsInCart }
 					/>
 				) }
 			</ProvideExperimentData>

@@ -1390,7 +1390,9 @@ class RegisterDomainStep extends Component {
 
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
-			this.setState( { pendingCheckSuggestion: suggestion } );
+			// First add the domain
+			this.setState( { pendingCheckSuggestion: null } );
+			this.props.onAddDomain( suggestion, position );
 
 			this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
@@ -1412,8 +1414,6 @@ class RegisterDomainStep extends Component {
 							selectedSuggestion: suggestion,
 							selectedSuggestionPosition: position,
 						} );
-					} else {
-						this.props.onAddDomain( suggestion, position );
 					}
 				} );
 		} else {
@@ -1502,6 +1502,7 @@ class RegisterDomainStep extends Component {
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
+				temporaryCart={ this.props.temporaryCart }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&

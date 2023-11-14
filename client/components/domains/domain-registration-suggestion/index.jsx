@@ -139,9 +139,14 @@ class DomainRegistrationSuggestion extends Component {
 			premiumDomain,
 			isCartPendingUpdateDomain,
 			flowName,
+			temporaryCart,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
-		const isAdded = suggestionSelected || hasDomainInCart( cart, domain );
+
+		const isAdded =
+			suggestionSelected ||
+			hasDomainInCart( cart, domain ) ||
+			( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) );
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
 
@@ -196,7 +201,7 @@ class DomainRegistrationSuggestion extends Component {
 		}
 
 		if ( shouldUseMultipleDomainsInCart( flowName ) && getDomainRegistrations( cart ).length > 0 ) {
-			buttonStyles = { ...buttonStyles, primary: false };
+			buttonStyles = { ...buttonStyles, primary: false, disabled: false };
 		}
 
 		return {
