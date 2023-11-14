@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
-import PlanTypeSelector from './components/plan-type-selector';
+import PlanTypeSelector, { type PlanTypeSelectorProps } from './components/plan-type-selector';
 import PlansGridContextProvider from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
@@ -59,6 +59,7 @@ export interface PlansGridProps {
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	showRefundPeriod?: boolean;
+	planTypeSelectorProps: PlanTypeSelectorProps;
 }
 
 const WrappedComparisonGrid = ( {

@@ -903,6 +903,7 @@ const PlansFeaturesMain = ( {
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
+												planTypeSelectorProps={ planTypeSelectorProps }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }
