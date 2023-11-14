@@ -15,6 +15,7 @@ import {
 	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -52,9 +53,20 @@ const CostOverridesListStyle = styled.div`
 	font-weight: 400;
 
 	& .cost-overrides-list-item {
-		display: flex;
+		display: grid;
 		justify-content: space-between;
+		grid-template-columns: auto auto;
 		padding: 2px 0px;
+	}
+
+	& .cost-overrides-list-item__actions {
+		grid-column: 1 / span 2;
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	& .cost-overrides-list-item__actions-remove {
+		color: #787c82;
 	}
 
 	& .cost-overrides-list-item__reason {
@@ -68,6 +80,7 @@ const CostOverridesListStyle = styled.div`
 
 interface CostOverrideForDisplay {
 	humanReadableReason: string;
+	overrideCode: string;
 	discountAmount: number;
 }
 
@@ -95,6 +108,7 @@ function filterAndGroupCostOverridesForDisplay(
 			const newDiscountAmount = costOverride.old_price - costOverride.new_price;
 			grouped[ costOverride.override_code ] = {
 				humanReadableReason: costOverride.human_readable_reason,
+				overrideCode: costOverride.override_code,
 				discountAmount: discountAmount + newDiscountAmount,
 			};
 		} );
@@ -106,13 +120,23 @@ function filterAndGroupCostOverridesForDisplay(
 function CostOverridesList( {
 	costOverridesList,
 	currency,
+	removeCoupon,
 }: {
 	costOverridesList: Array< CostOverrideForDisplay >;
 	currency: string;
+	removeCoupon: RemoveCouponFromCart;
 } ) {
+	const translate = useTranslate();
+	// Let's put the coupon code last because it will have its own "Remove" button.
+	const nonCouponOverrides = costOverridesList.filter(
+		( override ) => override.overrideCode !== 'coupon-discount'
+	);
+	const couponOverrides = costOverridesList.filter(
+		( override ) => override.overrideCode === 'coupon-discount'
+	);
 	return (
 		<>
-			{ costOverridesList.map( ( costOverride ) => {
+			{ nonCouponOverrides.map( ( costOverride ) => {
 				return (
 					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 						<span className="cost-overrides-list-item__reason">
@@ -120,6 +144,27 @@ function CostOverridesList( {
 						</span>
 						<span className="cost-overrides-list-item__discount">
 							{ formatCurrency( -costOverride.discountAmount, currency ) }
+						</span>
+					</div>
+				);
+			} ) }
+			{ couponOverrides.map( ( costOverride ) => {
+				return (
+					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+						<span className="cost-overrides-list-item__reason">
+							{ costOverride.humanReadableReason }
+						</span>
+						<span className="cost-overrides-list-item__discount">
+							{ formatCurrency( -costOverride.discountAmount, currency ) }
+						</span>
+						<span className="cost-overrides-list-item__actions">
+							<button
+								className="cost-overrides-list-item__actions-remove"
+								onClick={ removeCoupon }
+								aria-label={ translate( 'Remove coupon' ) }
+							>
+								{ translate( 'Remove' ) }
+							</button>
 						</span>
 					</div>
 				);
@@ -226,6 +271,7 @@ export function WPOrderReviewLineItems( {
 					<CostOverridesList
 						costOverridesList={ costOverridesList }
 						currency={ responseCart.currency }
+						removeCoupon={ removeCoupon }
 					/>
 				</CostOverridesListStyle>
 			) }
