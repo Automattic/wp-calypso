@@ -1,4 +1,4 @@
-import page from 'page';
+import page, { type Callback } from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible, siteMetrics } from './controller';
@@ -17,7 +17,7 @@ export default function () {
 	);
 
 	// Legacy redirect for Site Logs.
-	const redirectSiteLogsToMonitoring: PageJS.Callback = ( context ) => {
+	const redirectSiteLogsToMonitoring: Callback = ( context ) => {
 		if ( context.params?.siteId ) {
 			context.page.replace( `/site-monitoring/${ context.params.siteId }` );
 		} else {
