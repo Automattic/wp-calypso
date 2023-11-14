@@ -11,6 +11,7 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
+import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
@@ -106,6 +107,7 @@ const PersonalPurchase = ( {
 					}
 				) }
 			</div>
+			<TierUpgradeSlider />
 
 			<PricingSlider
 				className={ `${ COMPONENT_CLASS_NAME }__slider` }
