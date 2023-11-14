@@ -67,7 +67,6 @@ const SenseiSetup: Step = ( { navigation } ) => {
 	const [ siteTitle, setSiteTitle ] = useState< string >( initialSiteTitle );
 	const [ checked, setChecked ] = useState< string >( 'green' );
 	const [ hasSubmitted, setHasSubmitted ] = useState< boolean >( false );
-	const [ hasSiteTitleError, setHasSiteTitleError ] = useState< boolean >( false );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setChecked?.( event.target.value );
@@ -87,10 +86,12 @@ const SenseiSetup: Step = ( { navigation } ) => {
 		}
 	};
 
+	const isValidSiteTitle = () => siteTitle && siteTitle.length > 2;
+
 	const handleSubmit = useCallback( () => {
 		setHasSubmitted( true );
 
-		if ( hasSiteTitleError ) {
+		if ( ! isValidSiteTitle() ) {
 			focusOnSiteTitleInput();
 			return;
 		}
@@ -110,10 +111,6 @@ const SenseiSetup: Step = ( { navigation } ) => {
 		focusOnSiteTitleInput();
 	}, [] );
 
-	useEffect( () => {
-		setHasSiteTitleError( ! siteTitle || siteTitle.length < 3 );
-	}, [ siteTitle ] );
-
 	return (
 		<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>
 			<div className="sensei-start-row">
@@ -131,7 +128,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 						value={ siteTitle }
 						ref={ inputRef }
 					/>
-					{ hasSubmitted && hasSiteTitleError && (
+					{ hasSubmitted && ! isValidSiteTitle() && (
 						<FormInputValidation
 							isError={ true }
 							text={ __( `Oops. Looks like your course site doesn't have a name yet.` ) }
