@@ -85,6 +85,12 @@ function filterAndGroupCostOverridesForDisplay(
 		}
 
 		costOverrides.forEach( ( costOverride ) => {
+			if ( costOverride.does_override_original_cost ) {
+				// We won't display original cost overrides since they are
+				// included in the original cost that's being displayed. They
+				// are not discounts.
+				return;
+			}
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
 			const newDiscountAmount = costOverride.old_price - costOverride.new_price;
 			grouped[ costOverride.override_code ] = {
