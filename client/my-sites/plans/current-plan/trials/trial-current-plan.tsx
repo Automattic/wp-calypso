@@ -81,7 +81,7 @@ const TrialCurrentPlan = () => {
 			return <EcommerceTrialIncluded displayAll={ displayAllIncluded } />;
 		}
 
-		return <BusinessTrialIncluded displayAll={ displayAllIncluded } />;
+		return <BusinessTrialIncluded displayAll={ displayAllIncluded } tracksContext="current_plan" />;
 	};
 
 	return (
