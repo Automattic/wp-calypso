@@ -1,9 +1,7 @@
 /** @jest-environment jsdom */
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen, render } from '@testing-library/react';
-import PlanTypeSelector, {
-	CustomerTypeToggle,
-} from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import PlanTypeSelector, { CustomerTypeToggle } from '../plan-type-selector';
 
 describe( '<PlanTypeSelector />', () => {
 	const myProps = {

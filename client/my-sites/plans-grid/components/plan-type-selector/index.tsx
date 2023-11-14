@@ -15,7 +15,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
-import type { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+import type { UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
 import './style.scss';
 
 export type PlanTypeSelectorProps = {
