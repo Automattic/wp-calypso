@@ -130,7 +130,7 @@ class Security2faKey extends Component {
 						{ ! isBrowserSupported && (
 							<p>
 								{ this.props.translate(
-									"Your browser doesn't support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browsers like Chrome, Safari, or Firefox."
+									"Your browser doesn't support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browser like Chrome, Safari, or Firefox."
 								) }
 							</p>
 						) }
