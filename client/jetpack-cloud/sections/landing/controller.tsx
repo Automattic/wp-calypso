@@ -19,7 +19,7 @@ const landForSiteId = ( siteId: number | null, context: Context, next: () => voi
 	// if we don't have one, redirect to the site selection page
 	if ( ! Number.isInteger( siteId ) ) {
 		debug( '[landForSiteId]: site ID not specified; redirecting to site selection' );
-		return '/landing';
+		return page.redirect( '/landing' );
 	}
 
 	const state = context.store.getState();
