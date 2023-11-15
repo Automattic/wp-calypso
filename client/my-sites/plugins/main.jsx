@@ -22,6 +22,7 @@ import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import JetpackPersistentNotices from 'calypso/jetpack-cloud/sections/partner-portal/persistent-notices';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -505,6 +506,7 @@ export class PluginsMain extends Component {
 					} ) }
 				>
 					<div className="plugins__content-wrapper">
+						<JetpackPersistentNotices />
 						{ isJetpackCloud && (
 							<div className="plugins__page-title-container">
 								<div className="plugins__header-left-content">

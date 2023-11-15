@@ -43,6 +43,7 @@ export default function () {
 		controller.requireSelectedPartnerKeyContext,
 		controller.licensesContext,
 		controller.allSitesContext,
+		controller.verifyUnpaidInvoices,
 		makeLayout,
 		clientRender
 	);

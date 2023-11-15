@@ -37,6 +37,7 @@ import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
+import { warningPartnerPortalPersistentNotice } from './persistent-notices/actions';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 import type PageJS from 'page';
 
@@ -304,6 +305,32 @@ export function requireValidPaymentMethod( context: PageJS.Context, next: () => 
 		);
 		return;
 	}
+
+	next();
+}
+
+export function verifyUnpaidInvoices( context: PageJS.Context, next: () => void ) {
+	const state = context.store.getState();
+	const partner = getCurrentPartner( state );
+	const partner2 = context.store.selector( getCurrentPartner );
+	// eslint-disable-next-line no-console
+	console.log( 'partner22' );
+	// eslint-disable-next-line no-console
+	console.log( partner );
+	// eslint-disable-next-line no-console
+	console.log( partner2 );
+
+	const dispatch = context.store.dispatch;
+	dispatch(
+		warningPartnerPortalPersistentNotice(
+			'unpaid-invoice-notice',
+			"The payment for your [month] invoice didn't go through. Please take a moment to complete payment.",
+			{
+				linkText: 'View Invoice',
+				linkUrl: '/partner-portal/invoices',
+			}
+		)
+	);
 
 	next();
 }

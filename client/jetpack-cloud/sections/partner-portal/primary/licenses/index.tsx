@@ -9,6 +9,7 @@ import SiteAddLicenseNotification from 'calypso/jetpack-cloud/sections/agency-da
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
+import JetpackPersistentNotices from 'calypso/jetpack-cloud/sections/partner-portal/persistent-notices';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
 import {
 	LicenseFilter,
@@ -103,7 +104,7 @@ export default function Licenses( {
 				<LayoutTop>
 					{ isAgencyUser && <Banners /> }
 					<SiteAddLicenseNotification />
-
+					<JetpackPersistentNotices />
 					<LayoutHeader>
 						<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 

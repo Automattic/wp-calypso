@@ -22,6 +22,7 @@ const TEST_API_PARTNER: APIPartner = {
 			oauth2_token: 'secret-token-1234',
 			disabled_on: null,
 			has_licenses: true,
+			latest_invoice: null,
 		},
 	],
 	tos: 'my tos',

@@ -15,6 +15,7 @@ export default function formatApiPartner( partner: APIPartner ): Partner {
 			oAuth2Token: key.oauth2_token,
 			disabledOn: key.disabled_on,
 			hasLicenses: key.has_licenses,
+			latestInvoice: key.latest_invoice,
 		} ) ),
 	};
 }

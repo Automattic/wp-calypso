@@ -57,6 +57,7 @@ export interface APIPartnerKey {
 	oauth2_token: string;
 	disabled_on: string | null;
 	has_licenses: boolean;
+	latest_invoice: APIInvoice | null;
 }
 
 export interface APIPartnerAddress {
