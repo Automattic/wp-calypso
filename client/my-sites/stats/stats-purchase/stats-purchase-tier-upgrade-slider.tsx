@@ -50,19 +50,17 @@ function TierUpgradeSlider() {
 	// Get the plan details.
 	const plans = getPlanTiers();
 
-	// Adjust available plans based on current tier.
-	const availablePlans = plans;
-
 	// Slider state.
 	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( 0 );
 	const sliderMin = 0;
 	const sliderMax = plans.length - 1;
 
 	const handleSliderChange = ( value: number ) => {
-		// console.log( 'slider did change. value: ', value );
-		// console.log( 'plan info: ', plans[value] );
 		setCurrentPlanIndex( value );
 	};
+
+	// Create an array of indices for the marks
+	const marks = plans.map( ( _, index ) => index );
 
 	// Render content.
 	return (
@@ -83,6 +81,7 @@ function TierUpgradeSlider() {
 				minValue={ sliderMin }
 				maxValue={ sliderMax }
 				onChange={ handleSliderChange }
+				marks={ marks } // Passing the new marks array
 			/>
 			<p className="stats-tier-upgrade-slider__info-message">Price per month, billed yearly</p>
 		</div>
