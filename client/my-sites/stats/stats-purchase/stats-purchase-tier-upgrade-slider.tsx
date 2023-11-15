@@ -1,4 +1,5 @@
 import { PricingSlider } from '@automattic/components';
+import classNames from 'classnames';
 import React, { useState } from 'react';
 
 function getPlanTiers() {
@@ -45,7 +46,13 @@ function getPlanTiers() {
 	return planTiers;
 }
 
-function TierUpgradeSlider() {
+type TierUpgradeSliderProps = {
+	className?: string;
+};
+
+function TierUpgradeSlider( { className }: TierUpgradeSliderProps ) {
+	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className ? className : '' );
+
 	// Get the plan details.
 	const plans = getPlanTiers();
 
@@ -60,7 +67,7 @@ function TierUpgradeSlider() {
 
 	// Render content.
 	return (
-		<div className="stats-tier-upgrade-slider">
+		<div className={ componentClassNames }>
 			<div className="stats-tier-upgrade-slider__plan-callouts">
 				<div className="stats-tier-upgrade-slider__plan-callout">
 					<h2>Monthly site views limit</h2>
