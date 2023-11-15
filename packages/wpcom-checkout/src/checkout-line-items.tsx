@@ -118,6 +118,7 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	align-content: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
+	overflow-wrap: anywhere;
 	gap: 2px 10px;
 `;
 
