@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-router",
-	"version": "1.0.0",
+	"version": "0.7.0",
 	"description": "Calypso router based on page.js.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -28,8 +28,7 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/calypso-router"
 	},
-	"author": "Automattic Inc.",
-	"license": "GPL-2.0-or-later",
+	"license": "MIT",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-router#readme"
 }
