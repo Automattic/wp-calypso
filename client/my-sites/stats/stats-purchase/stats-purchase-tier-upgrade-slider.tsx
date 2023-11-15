@@ -59,9 +59,6 @@ function TierUpgradeSlider() {
 		setCurrentPlanIndex( value );
 	};
 
-	// Create an array of indices for the marks
-	const marks = plans.map( ( _, index ) => index );
-
 	// Render content.
 	return (
 		<div className="stats-tier-upgrade-slider">
@@ -81,7 +78,7 @@ function TierUpgradeSlider() {
 				minValue={ sliderMin }
 				maxValue={ sliderMax }
 				onChange={ handleSliderChange }
-				marks={ marks } // Passing the new marks array
+				marks
 			/>
 			<p className="stats-tier-upgrade-slider__info-message">Price per month, billed yearly</p>
 		</div>
