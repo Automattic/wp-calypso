@@ -1,52 +1,9 @@
 import { PricingSlider } from '@automattic/components';
 import classNames from 'classnames';
 import React, { useState } from 'react';
+import useAvailableUpgradeTiers from './stats-purchase-tier-upgrade-slider-utils';
 
 import './stats-purchase-tier-upgrade-slider.scss';
-
-function getPlanTiers() {
-	// Pulled from the API/Redux.
-	const planTiers = [
-		{
-			id: '10k',
-			price: '$9',
-			views: '10k',
-			description: '$9/month for 10k views',
-		},
-		{
-			id: '100k',
-			price: '$19',
-			views: '100k',
-			description: '$19/month for 100k views',
-		},
-		{
-			id: '250k',
-			price: '$29',
-			views: '250k',
-			description: '$29/month for 250k views',
-		},
-		{
-			id: '500k',
-			price: '$49',
-			views: '500k',
-			description: '$49/month for 500k views',
-		},
-		{
-			id: '1M',
-			price: '$69',
-			views: '1M',
-			description: '$69/month for 1M views',
-		},
-		{
-			id: '1M++',
-			price: '$69++',
-			views: '1M++',
-			description: '$25/month per million views if views exceed 1M',
-		},
-	];
-
-	return planTiers;
-}
 
 type TierUpgradeSliderProps = {
 	className?: string;
@@ -56,7 +13,7 @@ function TierUpgradeSlider( { className }: TierUpgradeSliderProps ) {
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className ? className : '' );
 
 	// Get the plan details.
-	const plans = getPlanTiers();
+	const plans = useAvailableUpgradeTiers();
 
 	// Slider state.
 	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( 0 );
