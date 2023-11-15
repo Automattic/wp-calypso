@@ -10,18 +10,17 @@ import type {
 	JetpackLegacyPlanSlug,
 	JetpackPurchasableItemSlug,
 } from '@automattic/calypso-products';
+import type { Context } from 'page';
 
-export function getComparePlansFromContext( {
-	query,
-}: PageJS.Context ): JetpackPurchasableItemSlug[] {
-	const value = query[ COMPARE_PLANS_QUERY_PARAM ] ?? '';
+export function getComparePlansFromContext( context: Context ): JetpackPurchasableItemSlug[] {
+	const value = context.query[ COMPARE_PLANS_QUERY_PARAM ] ?? '';
 	const plans = value.split( ',' );
 
 	return plans.filter( ( p: string ) => isJetpackPurchasableItem( p, { includeLegacy: true } ) );
 }
 
 export function getPlanRecommendationFromContext(
-	context: PageJS.Context
+	context: Context
 ): PlanRecommendation | undefined {
 	const plans = getComparePlansFromContext( context );
 

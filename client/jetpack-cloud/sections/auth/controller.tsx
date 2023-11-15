@@ -2,13 +2,14 @@ import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import store from 'store';
 import Connect from './connect';
+import type { Callback, Context } from 'page';
 
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
 
 const DEFAULT_NEXT_LOCATION = '/';
 
-export const connect: PageJS.Callback = ( context, next ) => {
+export const connect: Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
 		const redirectUri = new URL( '/connect/oauth/token', window.location.origin );
 
@@ -29,12 +30,12 @@ export const connect: PageJS.Callback = ( context, next ) => {
 	next();
 };
 
-// The type of `PageJS.Context.hash` is `string`, but here it is being used as
+// The type of `Context.hash` is `string`, but here it is being used as
 // an object. Assuming the types are wrong, here we override them to fix TS
 // errors until the types can be corrected.
-type OverriddenPageContext = PageJS.Context & { hash?: Record< string, string > };
+type OverriddenPageContext = Context & { hash?: Record< string, string > };
 
-export const tokenRedirect: PageJS.Callback = ( ctx: unknown, next ) => {
+export const tokenRedirect: Callback = ( ctx, next ) => {
 	const context = ctx as OverriddenPageContext;
 	// We didn't get an auth token; take a step back
 	// and ask for authorization from the user again

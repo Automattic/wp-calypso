@@ -14,6 +14,7 @@ import { StoragePricing } from './storage-pricing';
 import { StoragePricingHeader } from './storage-pricing-header';
 import JetpackUpsellPage from './upsell';
 import type { Duration, QueryArgs } from './types';
+import type { Callback } from 'page';
 
 function stringToDuration( duration?: string ): Duration | undefined {
 	if ( duration === undefined ) {
@@ -50,7 +51,7 @@ function getHighlightedProduct( productSlug?: string ): [ string, string ] | nul
 }
 
 export const productSelect =
-	( rootUrl: string ): PageJS.Callback =>
+	( rootUrl: string ): Callback =>
 	( context, next ) => {
 		// If the URL contains a duration, use it to determine the default duration. Ignore selected site's duration.
 		const state = context.store.getState();
@@ -88,31 +89,31 @@ export const productSelect =
 		next();
 	};
 
-export function offerJetpackComplete( context: PageJS.Context, next: () => void ): void {
+export const offerJetpackComplete: Callback = ( context, next ) => {
 	const { site } = context.params;
 	const urlQueryArgs: QueryArgs = context.query;
 	context.primary = (
 		<JetpackCompletePage urlQueryArgs={ urlQueryArgs } siteSlug={ site || context.query.site } />
 	);
 	next();
-}
+};
 
-export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ): void {
+export const jetpackFreeWelcome: Callback = ( context, next ) => {
 	context.primary = <JetpackFreeWelcomePage />;
 	next();
-}
+};
 
-export function jetpackBoostWelcome( context: PageJS.Context, next: () => void ): void {
+export const jetpackBoostWelcome: Callback = ( context, next ) => {
 	context.primary = <JetpackBoostWelcomePage />;
 	next();
-}
+};
 
-export function jetpackSocialWelcome( context: PageJS.Context, next: () => void ): void {
+export const jetpackSocialWelcome: Callback = ( context, next ) => {
 	context.primary = <JetpackSocialWelcomePage />;
 	next();
-}
+};
 
-export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void ) => {
+export const jetpackStoragePricing: Callback = ( context, next ) => {
 	const { site, duration } = getParamsFromContext( context );
 	const urlQueryArgs: QueryArgs = context.query;
 	const { lang } = context.params;
@@ -132,8 +133,8 @@ export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void
 };
 
 export const jetpackProductUpsell =
-	( rootUrl: string ): PageJS.Callback =>
-	( context: PageJS.Context, next: () => void ) => {
+	( rootUrl: string ): Callback =>
+	( context, next ) => {
 		const { site, product } = context.params;
 		const urlQueryArgs = context.query;
 
