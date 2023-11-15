@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 export type JetpackManagePersistentNoticeId = string;
 
 export type JetpackManagePersistentNoticeNoticeStatus =
@@ -13,7 +11,7 @@ export type JetpackManagePersistentNoticeNoticeStatus =
 export type JetpackManageNoticeCreationActionType = 'JETPACK_MANAGE_PERSISTENT_NOTICE_CREATE';
 export type JetpackManageNoticeRemovalActionType = 'JETPACK_MANAGE_PERSISTENT_NOTICE_REMOVE';
 
-export type JetpackManagePersistentNoticeText = string | ReactNode;
+export type JetpackManagePersistentNoticeText = string;
 
 // Notice options that are always the same
 export interface BaseJetpackManagePersistentNoticeOptions {
