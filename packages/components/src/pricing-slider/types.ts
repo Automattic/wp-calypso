@@ -62,7 +62,8 @@ export type PricingSliderProps = {
 	renderThumb?: RenderThumbFunction;
 
 	/**
-	 * The marks on the slider, represented as an array of numbers.
+	 * The marks on the slider, represented as an array of numbers or true.
+	 * Passing true will enable marks for every step on the slider.
 	 */
-	marks?: number[];
+	marks?: boolean | number[];
 };
