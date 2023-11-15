@@ -13,6 +13,8 @@ import {
 	useRef,
 	useMemo,
 } from 'react';
+/* eslint-disable no-restricted-imports */
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { getDefaultPaymentMethodStep } from '../components/default-steps';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatus } from '../lib/form-status';
@@ -574,8 +576,8 @@ export const SubmitButtonWrapper = styled.div`
 `;
 
 // Set right padding so that text doesn't overlap with inline help floating button.
-export const SubmitFooterWrapper = styled.div`
-	padding-right: 42px;
+export const SubmitFooterWrapper = styled.div< { isJetpackCheckout: boolean } >`
+	padding-right: ${ ( props ) => ( props.isJetpackCheckout ? '42px' : '0' ) };
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding-right: 0;
@@ -656,7 +658,9 @@ export function CheckoutFormSubmit( {
 					onLoadError={ onSubmitButtonLoadError }
 				/>
 			) }
-			<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
+			<SubmitFooterWrapper isJetpackCheckout={ isJetpackCheckout() }>
+				{ submitButtonFooter || null }
+			</SubmitFooterWrapper>
 		</SubmitButtonWrapper>
 	);
 }
