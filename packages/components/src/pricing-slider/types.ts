@@ -9,6 +9,12 @@ export type RenderThumbFunction = (
 	state: { index: number; value: number | ReadonlyArray< number >; valueNow: number }
 ) => JSX.Element | null;
 
+// Define the type for the mark object
+export interface Mark {
+	value: number;
+	label: string;
+}
+
 export type PricingSliderProps = {
 	/**
 	 * The wrapper class name of this PricingSlider component.
@@ -37,19 +43,16 @@ export type PricingSliderProps = {
 
 	/**
 	 * Callback called on every value change.
-	 * The function will be called with two arguments, the first being the new value(s) the second being thumb index.
 	 */
 	onChange?: ( value: number ) => void;
 
 	/**
-	 * Callback called before starting to move a thumb. The callback will only be called if the action will result in a change.
-	 * The function will be called with two arguments, the first being the initial value(s) the second being thumb index.
+	 * Callback called before starting to move a thumb.
 	 */
 	onBeforeChange?: ( value: number ) => void;
 
 	/**
-	 * Callback called only after moving a thumb has ended. The callback will only be called if the action resulted in a change.
-	 * The function will be called with two arguments, the first being the result value(s) the second being thumb index.
+	 * Callback called only after moving a thumb has ended.
 	 */
 	onAfterChange?: ( value: number ) => void;
 
@@ -57,4 +60,9 @@ export type PricingSliderProps = {
 	 * Node to render on the slider.
 	 */
 	renderThumb?: RenderThumbFunction;
+
+	/**
+	 * The marks on the slider, represented as an array of numbers.
+	 */
+	marks?: number[];
 };
