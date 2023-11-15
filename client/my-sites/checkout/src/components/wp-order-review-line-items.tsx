@@ -121,10 +121,12 @@ function CostOverridesList( {
 	costOverridesList,
 	currency,
 	removeCoupon,
+	couponCode,
 }: {
 	costOverridesList: Array< CostOverrideForDisplay >;
 	currency: string;
 	removeCoupon: RemoveCouponFromCart;
+	couponCode: ResponseCart[ 'coupon' ];
 } ) {
 	const translate = useTranslate();
 	// Let's put the coupon code last because it will have its own "Remove" button.
@@ -152,7 +154,9 @@ function CostOverridesList( {
 				return (
 					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 						<span className="cost-overrides-list-item__reason">
-							{ costOverride.humanReadableReason }
+							{ couponCode.length > 0
+								? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
+								: costOverride.humanReadableReason }
 						</span>
 						<span className="cost-overrides-list-item__discount">
 							{ formatCurrency( -costOverride.discountAmount, currency ) }
@@ -272,6 +276,7 @@ export function WPOrderReviewLineItems( {
 						costOverridesList={ costOverridesList }
 						currency={ responseCart.currency }
 						removeCoupon={ removeCoupon }
+						couponCode={ responseCart.coupon }
 					/>
 				</CostOverridesListStyle>
 			) }
