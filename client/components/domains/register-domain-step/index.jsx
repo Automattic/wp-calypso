@@ -1391,7 +1391,6 @@ class RegisterDomainStep extends Component {
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			// First add the domain
-			this.setState( { pendingCheckSuggestion: null } );
 			this.props.onAddDomain( suggestion, position );
 
 			this.preCheckDomainAvailability( domain )
