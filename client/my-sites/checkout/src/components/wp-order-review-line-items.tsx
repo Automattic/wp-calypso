@@ -1,5 +1,5 @@
 import { isAkismetProduct, isJetpackPurchasableItem } from '@automattic/calypso-products';
-import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
@@ -117,6 +117,12 @@ function filterAndGroupCostOverridesForDisplay(
 	return Object.values( costOverridesGrouped );
 }
 
+const DeleteButton = styled( Button )< { theme?: Theme } >`
+	width: auto;
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+`;
+
 function CostOverridesList( {
 	costOverridesList,
 	currency,
@@ -136,6 +142,8 @@ function CostOverridesList( {
 	const couponOverrides = costOverridesList.filter(
 		( override ) => override.overrideCode === 'coupon-discount'
 	);
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
 	return (
 		<>
 			{ nonCouponOverrides.map( ( costOverride ) => {
@@ -162,13 +170,15 @@ function CostOverridesList( {
 							{ formatCurrency( -costOverride.discountAmount, currency ) }
 						</span>
 						<span className="cost-overrides-list-item__actions">
-							<button
+							<DeleteButton
+								buttonType="text-button"
+								disabled={ isDisabled }
 								className="cost-overrides-list-item__actions-remove"
 								onClick={ removeCoupon }
 								aria-label={ translate( 'Remove coupon' ) }
 							>
 								{ translate( 'Remove' ) }
-							</button>
+							</DeleteButton>
 						</span>
 					</div>
 				);
