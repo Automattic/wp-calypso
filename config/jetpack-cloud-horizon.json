@@ -31,6 +31,7 @@
 		"checkout/google-pay": true,
 		"checkout/vat-form": true,
 		"checkout/checkout-version": false,
+		"checkout/tos-foldable-update": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
