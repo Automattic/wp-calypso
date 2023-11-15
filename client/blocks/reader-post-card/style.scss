@@ -161,6 +161,24 @@
 			}
 		}
 
+		.reader-post-card__no-excerpt.reader-post-card__post-content {
+			flex-direction: column;
+			gap: 0;
+			.reader-featured-image {
+				width: 100% !important;
+				height: 400px !important;
+
+				@include breakpoint-deprecated( "<660px" ) {
+					width: 100% !important;
+					height: 300px !important;
+				}
+
+				@include breakpoint-deprecated( "<480px" ) {
+					height: 200px !important;
+				}
+			}
+		}
+
 		.reader-post-card__post {
 			display: inherit;
 			margin: 0;
