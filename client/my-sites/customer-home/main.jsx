@@ -27,6 +27,8 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
+import { trackScrollPage } from 'calypso/reader/controller-helper';
+import Stream from 'calypso/reader/stream';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
@@ -155,6 +157,10 @@ const Home = ( {
 				title={ translate( 'My Home' ) }
 				subtitle={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 			>
+				<Stream
+					streamKey="discover:recommended--dailyprompt"
+					trackScrollPage={ trackScrollPage.bind( null ) }
+				/>
 				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 					{ translate( 'Visit site' ) }
 				</Button>
