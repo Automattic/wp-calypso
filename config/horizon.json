@@ -150,7 +150,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
-		"videomaker-trial": false,
+		"videomaker-trial": true,
 		"videopress-tv": true,
 		"videopress-onboarding-user-intent": true,
 		"woop": false,

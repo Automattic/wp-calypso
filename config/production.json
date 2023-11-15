@@ -178,7 +178,7 @@
 		"upsell/concierge-session": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
-		"videomaker-trial": false,
+		"videomaker-trial": true,
 		"videopress-tv": false,
 		"videopress-onboarding-user-intent": true,
 		"woop": false,
