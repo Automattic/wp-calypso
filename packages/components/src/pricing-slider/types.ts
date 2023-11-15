@@ -9,12 +9,6 @@ export type RenderThumbFunction = (
 	state: { index: number; value: number | ReadonlyArray< number >; valueNow: number }
 ) => JSX.Element | null;
 
-// Define the type for the mark object
-export interface Mark {
-	value: number;
-	label: string;
-}
-
 export type PricingSliderProps = {
 	/**
 	 * The wrapper class name of this PricingSlider component.
