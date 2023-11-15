@@ -1,6 +1,5 @@
 import { PricingSlider } from '@automattic/components';
 import React, { useState } from 'react';
-import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 
 function getPlanTiers() {
 	// Pulled from the API/Redux.
@@ -73,7 +72,7 @@ function TierUpgradeSlider() {
 				</div>
 			</div>
 			<PricingSlider
-				className={ `${ COMPONENT_CLASS_NAME }__slider` }
+				className="stats-tier-upgrade-slider__slider"
 				value={ currentPlanIndex }
 				minValue={ sliderMin }
 				maxValue={ sliderMax }
