@@ -10,6 +10,7 @@ const FeaturedAsset = ( {
 	onVideoThumbnailClick,
 	isVideoExpanded,
 	isCompactPost,
+	hasExcerpt,
 } ) => {
 	if ( ! canonicalMedia ) {
 		return null;
@@ -34,6 +35,7 @@ const FeaturedAsset = ( {
 			postUrl={ postUrl }
 			canonicalMedia={ canonicalMedia }
 			isCompactPost={ isCompactPost }
+			hasExcerpt={ hasExcerpt }
 		/>
 	);
 };
