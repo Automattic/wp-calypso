@@ -22,6 +22,7 @@ const ReaderFeaturedImage = ( {
 	imageWidth,
 	imageHeight,
 	isCompactPost,
+	hasExcerpt,
 } ) => {
 	const featuredImageUrl = imageUrl || canonicalMedia?.src;
 	if ( featuredImageUrl === undefined ) {
@@ -38,7 +39,7 @@ const ReaderFeaturedImage = ( {
 	const safeCssUrl = cssSafeUrl( resizedUrl );
 	const newHeight =
 		imageHeight ||
-		( isCompactPost
+		( isCompactPost && hasExcerpt
 			? READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT
 			: READER_FEATURED_MAX_IMAGE_HEIGHT );
 	let featuredImageStyle = { background: 'none' };

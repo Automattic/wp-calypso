@@ -25,6 +25,7 @@ const CompactPost = ( {
 
 	const isSmallScreen = useBreakpoint( '<660px' );
 	const [ hasExcerpt, setHasExcerpt ] = useState( false );
+	const imagePostWithoutExcerpt = post.canonical_media && ! hasExcerpt;
 
 	return (
 		<div className="reader-post-card__post">
@@ -45,7 +46,7 @@ const CompactPost = ( {
 							</AutoDirection>
 							{ postByline }
 						</div>
-						{ ( ! post.canonical_media || isSmallScreen ) && (
+						{ ( imagePostWithoutExcerpt || ! post.canonical_media || isSmallScreen ) && (
 							<ReaderPostEllipsisMenu
 								site={ site }
 								teams={ teams }
@@ -59,7 +60,7 @@ const CompactPost = ( {
 				</div>
 				{ post.canonical_media && (
 					<div className="reader-post-card__post-media">
-						{ ! isSmallScreen && (
+						{ ! isSmallScreen && hasExcerpt && (
 							<ReaderPostEllipsisMenu
 								site={ site }
 								teams={ teams }
@@ -75,6 +76,7 @@ const CompactPost = ( {
 							onVideoThumbnailClick={ onVideoThumbnailClick }
 							isVideoExpanded={ isExpanded }
 							isCompactPost={ true }
+							hasExcerpt={ hasExcerpt }
 						/>
 					</div>
 				) }
