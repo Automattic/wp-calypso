@@ -13,6 +13,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import WooCommerceAiBanner from 'calypso/components/woocommerce-ai-banner';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -115,6 +116,8 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 
 	return (
 		<div className="themes-list" ref={ themesListRef }>
+			<WooCommerceAiBanner />
+
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock
 					key={ 'theme-block' + index }
