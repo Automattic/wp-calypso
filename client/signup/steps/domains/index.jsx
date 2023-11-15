@@ -645,6 +645,7 @@ export class RenderDomainsStep extends Component {
 	}
 
 	removeDomainClickHandler = ( domain ) => () => {
+		this.setState( { isRemovingDomain: domain.meta } );
 		this.removeDomain( {
 			domain_name: domain.meta,
 			product_slug: domain.product_slug,

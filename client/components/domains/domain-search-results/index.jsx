@@ -289,6 +289,7 @@ class DomainSearchResults extends Component {
 					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 					products={ this.props.useProvidedProductsList ? this.props.products : undefined }
 					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+					temporaryCart={ this.props.temporaryCart }
 				/>
 			);
 
