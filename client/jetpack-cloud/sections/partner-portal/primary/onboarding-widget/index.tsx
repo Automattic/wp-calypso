@@ -22,16 +22,13 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 	const sites = useSelector( getSites );
 
 	const onIssueNewLicenseClick = () => {
-		if ( partnerCanIssueLicense ) {
-			window.location.href = '/partner-portal/issue-license';
-			dispatch(
-				recordTracksEvent(
-					isLicensesPage
-						? 'calypso_partner_portal_empty_state_issue_license_click'
-						: 'calypso_jetpack_agency_dashboard_empty_state_issue_license_click'
-				)
-			);
-		}
+		dispatch(
+			recordTracksEvent(
+				isLicensesPage
+					? 'calypso_partner_portal_empty_state_issue_license_click'
+					: 'calypso_jetpack_agency_dashboard_empty_state_issue_license_click'
+			)
+		);
 	};
 
 	const onHowToAddNewSiteClick = () => {
@@ -88,6 +85,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			extraContent: (
 				<Button
 					disabled={ ! partnerCanIssueLicense }
+					href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
 					onClick={ onIssueNewLicenseClick }
 					primary
 					style={ { marginLeft: 'auto' } }

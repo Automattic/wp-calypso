@@ -83,10 +83,7 @@ export default function Licenses( {
 	};
 
 	const onIssueNewLicenseClick = () => {
-		if ( partnerCanIssueLicense ) {
-			window.location.href = '/partner-portal/issue-license';
-			dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_issue_license_click' ) );
-		}
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_issue_license_click' ) );
 	};
 
 	const showEmptyStateContent = hasFetched && allLicensesCount === 0;
@@ -119,6 +116,7 @@ export default function Licenses( {
 
 						<Button
 							disabled={ ! partnerCanIssueLicense }
+							href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
 							onClick={ onIssueNewLicenseClick }
 							primary
 							style={ { marginLeft: 'auto' } }

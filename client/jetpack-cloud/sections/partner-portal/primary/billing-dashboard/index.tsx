@@ -19,10 +19,7 @@ export default function BillingDashboard() {
 	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const onIssueNewLicenseClick = () => {
-		if ( partnerCanIssueLicense ) {
-			window.location.href = '/partner-portal/issue-license';
-			dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_click_billing_page' ) );
-		}
+		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_click_billing_page' ) );
 	};
 
 	return (
@@ -33,7 +30,12 @@ export default function BillingDashboard() {
 
 					<SelectPartnerKeyDropdown />
 
-					<Button disabled={ ! partnerCanIssueLicense } primary onClick={ onIssueNewLicenseClick }>
+					<Button
+						disabled={ ! partnerCanIssueLicense }
+						href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
+						primary
+						onClick={ onIssueNewLicenseClick }
+					>
 						{ translate( 'Issue New License' ) }
 					</Button>
 				</LayoutHeader>

@@ -26,12 +26,7 @@ export default function SiteTopHeaderButtons() {
 	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const onIssueNewLicenseClick = () => {
-		if ( partnerCanIssueLicense ) {
-			window.location.href = '/partner-portal/issue-license';
-			dispatch(
-				recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click' )
-			);
-		}
+		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click' ) );
 	};
 
 	return (
@@ -41,6 +36,7 @@ export default function SiteTopHeaderButtons() {
 			} ) }
 		>
 			<Button
+				href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
 				className="sites-overview__issue-license-button"
 				disabled={ ! partnerCanIssueLicense }
 				onClick={ onIssueNewLicenseClick }

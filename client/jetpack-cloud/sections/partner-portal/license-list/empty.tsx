@@ -30,10 +30,7 @@ export default function LicenseListEmpty( { filter }: Props ) {
 	const licenseFilterStatusTitle = licenseFilterStatusTitleMap[ filter ] as string;
 
 	const onIssueNewLicense = () => {
-		if ( partnerCanIssueLicense ) {
-			window.location.href = '/partner-portal/issue-license';
-			dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_click_billing_page' ) );
-		}
+		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_click_billing_page' ) );
 	};
 
 	return (
@@ -64,7 +61,11 @@ export default function LicenseListEmpty( { filter }: Props ) {
 				<p>{ translate( 'Every license you own is currently attached to a site.' ) }</p>
 			) }
 
-			<Button disabled={ ! partnerCanIssueLicense } onClick={ onIssueNewLicense }>
+			<Button
+				disabled={ ! partnerCanIssueLicense }
+				href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
+				onClick={ onIssueNewLicense }
+			>
 				{ translate( 'Issue New License' ) }
 			</Button>
 		</div>
