@@ -1,9 +1,8 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Tooltip } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 import './style.scss';
 
