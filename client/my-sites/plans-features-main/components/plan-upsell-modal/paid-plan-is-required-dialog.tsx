@@ -1,7 +1,7 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { LoadingPlaceHolder } from '../loading-placeholder';
 import {
 	ButtonContainer,
 	DialogContainer,
@@ -62,7 +62,7 @@ export default function PaidPlanIsRequiredDialog( {
 				</RowWithBorder>
 				<Row>
 					<DomainName>
-						{ generatedWPComSubdomain.isLoading && <LoadingPlaceHolder /> }
+						{ generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
 						{ generatedWPComSubdomain.result && (
 							<div>{ generatedWPComSubdomain.result.domain_name }</div>
 						) }
