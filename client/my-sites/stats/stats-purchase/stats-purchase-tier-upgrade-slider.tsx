@@ -2,6 +2,8 @@ import { PricingSlider } from '@automattic/components';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 
+import './stats-purchase-tier-upgrade-slider.scss';
+
 function getPlanTiers() {
 	// Pulled from the API/Redux.
 	const planTiers = [

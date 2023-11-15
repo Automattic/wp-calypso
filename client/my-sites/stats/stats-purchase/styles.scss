@@ -134,56 +134,6 @@ $button-padding: 8px 32px;
 	}
 }
 
-.stats-tier-upgrade-slider {
-	margin: 2px;
-	padding: 10px;
-
-	.jp-components-pricing-slider__thumb {
-		border-radius: 4px;
-		border-color: #008710;
-		background-color: #008710;
-		color: #fff;
-	}
-
-	.jp-components-pricing-slider__track {
-		height: 4px;
-	}
-
-	.jp-components-pricing-slider__control .mark {
-		position: absolute;
-		height: 10px;
-		width: 10px;
-		background-color: #d3d3d3;
-		border-radius: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		z-index: 10;
-	}
-}
-.stats-tier-upgrade-slider__info-message {
-	color: #008710;
-	margin: 12px 0;
-	text-align: center;
-}
-.stats-tier-upgrade-slider__plan-callouts {
-	display: flex;
-	justify-content: space-between;
-
-	h2 {
-		font-weight: 500;
-	}
-	p {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 2em;
-		font-weight: 500;
-		margin: 0;
-	}
-	.right-aligned {
-		text-align: right;
-	}
-}
-
-
 .stats-purchase-page__loader {
 	display: flex;
 	justify-content: center;
