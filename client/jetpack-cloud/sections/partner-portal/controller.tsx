@@ -28,6 +28,7 @@ import {
 import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import NewPurchasesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/purchases';
 import { addQueryArgs } from 'calypso/lib/route';
+import { fetchPartner } from 'calypso/state/partner-portal/partner/actions';
 import {
 	getCurrentPartner,
 	hasActivePartnerKey,
@@ -309,18 +310,19 @@ export function requireValidPaymentMethod( context: PageJS.Context, next: () => 
 	next();
 }
 
-export function verifyUnpaidInvoices( context: PageJS.Context, next: () => void ) {
+export async function verifyUnpaidInvoices( context: PageJS.Context, next: () => void ) {
 	const state = context.store.getState();
 	const partner = getCurrentPartner( state );
-	const partner2 = context.store.selector( getCurrentPartner );
+	const dispatch = context.store.dispatch;
+	if ( ! partner ) {
+		await dispatch( fetchPartner() );
+	}
+
 	// eslint-disable-next-line no-console
-	console.log( 'partner22' );
+	console.log( 'Checking for partner:' );
 	// eslint-disable-next-line no-console
 	console.log( partner );
-	// eslint-disable-next-line no-console
-	console.log( partner2 );
 
-	const dispatch = context.store.dispatch;
 	dispatch(
 		warningPartnerPortalPersistentNotice(
 			'unpaid-invoice-notice',
