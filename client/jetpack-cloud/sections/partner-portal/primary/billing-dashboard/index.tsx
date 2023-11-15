@@ -4,8 +4,9 @@ import CardHeading from 'calypso/components/card-heading';
 import BillingDetails from 'calypso/jetpack-cloud/sections/partner-portal/billing-details';
 import BillingSummary from 'calypso/jetpack-cloud/sections/partner-portal/billing-summary';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import Layout from '../../layout';
 import LayoutBody from '../../layout/body';
 import LayoutHeader from '../../layout/header';
@@ -14,9 +15,14 @@ import LayoutTop from '../../layout/top';
 export default function BillingDashboard() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const onIssueNewLicenseClick = () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_click_billing_page' ) );
+		if ( partnerCanIssueLicense ) {
+			window.location.href = '/partner-portal/issue-license';
+			dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_click_billing_page' ) );
+		}
 	};
 
 	return (
@@ -27,7 +33,7 @@ export default function BillingDashboard() {
 
 					<SelectPartnerKeyDropdown />
 
-					<Button primary href="/partner-portal/issue-license" onClick={ onIssueNewLicenseClick }>
+					<Button disabled={ ! partnerCanIssueLicense } primary onClick={ onIssueNewLicenseClick }>
 						{ translate( 'Issue New License' ) }
 					</Button>
 				</LayoutHeader>
