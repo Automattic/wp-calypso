@@ -45,7 +45,6 @@ function TierUpgradeSlider( { className }: TierUpgradeSliderProps ) {
 
 	const localizedStrings = getLocalizedStrings();
 
-	// Render content.
 	return (
 		<div className={ componentClassNames }>
 			<div className="stats-tier-upgrade-slider__plan-callouts">
