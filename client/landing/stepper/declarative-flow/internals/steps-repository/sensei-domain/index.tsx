@@ -41,7 +41,7 @@ const SenseiDomain: Step = ( { navigation } ) => {
 
 	return (
 		<SenseiStepContainer
-			stepName="senseiDomain"
+			stepName="sensei-domain"
 			recordTracksEvent={ recordTracksEvent }
 			formattedHeader={
 				<FormattedHeader

@@ -31,11 +31,11 @@ const sensei: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'intro', component: Intro },
-			{ slug: 'senseiSetup', component: SenseiSetup },
-			{ slug: 'senseiDomain', component: SenseiDomain },
-			{ slug: 'senseiPlan', component: SenseiPlan },
-			{ slug: 'senseiPurpose', component: SenseiPurpose },
-			{ slug: 'senseiLaunch', component: SenseiLaunch },
+			{ slug: 'sensei-setup', component: SenseiSetup },
+			{ slug: 'sensei-domain', component: SenseiDomain },
+			{ slug: 'sensei-plan', component: SenseiPlan },
+			{ slug: 'sensei-purpose', component: SenseiPurpose },
+			{ slug: 'sensei-launch', component: SenseiLaunch },
 			{ slug: 'processing', component: ProcessingStep },
 		];
 	},
@@ -57,18 +57,18 @@ const sensei: Flow = {
 
 			switch ( _currentStep ) {
 				case 'intro':
-					return navigate( 'senseiSetup' );
-				case 'senseiSetup':
+					return navigate( 'sensei-setup' );
+				case 'sensei-setup':
 					if ( isLoggedIn ) {
-						return navigate( 'senseiDomain' );
+						return navigate( 'sensei-domain' );
 					}
 
-					return redirect( getStartUrl( 'senseiDomain', locale ) );
-				case 'senseiDomain':
-					return navigate( 'senseiPlan' );
-				case 'senseiPurpose':
-					return navigate( 'senseiLaunch' );
-				case 'senseiLaunch':
+					return redirect( getStartUrl( 'sensei-domain', locale ) );
+				case 'sensei-domain':
+					return navigate( 'sensei-plan' );
+				case 'sensei-purpose':
+					return navigate( 'sensei-launch' );
+				case 'sensei-launch':
 				default:
 					return window.location.assign( `/home/${ siteSlug }` );
 			}
@@ -84,13 +84,13 @@ const sensei: Flow = {
 	useAssertConditions() {
 		const currentPath = window.location.pathname;
 		const isLoggedIn = useSelector( isUserLoggedIn );
-		const isPlanStep = currentPath.endsWith( `setup/${ this.name }/senseiPlan` );
+		const isPlanStep = currentPath.endsWith( `setup/${ this.name }/sensei-plan` );
 		const locale = useLocale();
 
 		let result = { state: AssertConditionState.SUCCESS };
 
 		if ( isPlanStep && ! isLoggedIn ) {
-			redirect( getStartUrl( 'senseiPlan', locale ) );
+			redirect( getStartUrl( 'sensei-plan', locale ) );
 
 			result = { state: AssertConditionState.FAILURE };
 		}
