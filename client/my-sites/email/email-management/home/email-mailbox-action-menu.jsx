@@ -61,7 +61,6 @@ const getTitanClickHandler = ( app ) => {
 
 /**
  * Returns the available menu items for Titan Emails
- *
  * @param {Object} titanMenuParams The argument for this function.
  * @param {import('calypso/lib/domains/types').ResponseDomain} titanMenuParams.domain The domain object.
  * @param {Object} titanMenuParams.mailbox The mailbox object.
@@ -113,7 +112,6 @@ const getTitanMenuItems = ( {
 
 /**
  * Get the list of applicable menu items for a G Suite or Google Workspace mailbox.
- *
  * @param {Object} gSuiteMenuParams Parameter for this function.
  * @param {Object} gSuiteMenuParams.account The account the current mailbox is linked to.
  * @param {Object} gSuiteMenuParams.mailbox The mailbox object.

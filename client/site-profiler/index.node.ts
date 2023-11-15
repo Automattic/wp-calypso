@@ -9,7 +9,6 @@ import { serverRouter } from 'calypso/server/isomorphic-routing';
  *
  * The `context.lang` value is then used in the server renderer to properly
  * attach the translation files to the page.
- *
  * @see https://github.com/Automattic/wp-calypso/blob/trunk/client/server/render/index.js#L171.
  */
 export default ( router: ReturnType< typeof serverRouter > ) => {

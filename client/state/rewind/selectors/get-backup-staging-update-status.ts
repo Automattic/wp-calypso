@@ -4,7 +4,6 @@ import 'calypso/state/rewind/init';
 
 /**
  * Returns the update backup staging flag request's status.
- *
  * @param state The application state.
  * @param siteId The site ID
  * @returns The the status of the request.

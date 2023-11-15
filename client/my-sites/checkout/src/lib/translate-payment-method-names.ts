@@ -3,7 +3,6 @@ import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
- *
  * @param paymentMethod WPCOM payment method class name
  * @returns Payment method slug accepted by the checkout component
  */

@@ -277,7 +277,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 								title: translate( 'Paid newsletter' ),
 								type: TYPE_TIER,
 							} }
-							annualProduct={ { subscribe_as_site_subscriber: true, price: 5 * 12 } }
+							annualProduct={ {
+								price: 5 * 12,
+								subscribe_as_site_subscriber: true,
+								title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
+							} }
 							siteId={ site.ID }
 						/>
 					) }

@@ -41,7 +41,6 @@ const SiteSummary = styled.div`
 
 const CouponLinkWrapper = styled.div`
 	font-size: 14px;
-	margin-bottom: 2em;
 `;
 
 const CouponField = styled( Coupon )``;
@@ -229,7 +228,7 @@ function CouponFieldArea( {
 
 	return (
 		<CouponLinkWrapper>
-			{ translate( 'Have a coupon? ' ) }
+			{ translate( 'Have a coupon? ' ) }{ ' ' }
 			<CouponEnableButton
 				className="wp-checkout-order-review__show-coupon-field-button"
 				onClick={ () => setCouponFieldVisible( true ) }

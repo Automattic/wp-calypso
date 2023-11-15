@@ -7,7 +7,6 @@ import './style.scss';
 /**
  * Surrounds a text string in a <mark>
  * Just a small helper function
- *
  * @example
  * mark( 'be kind' ) =>
  *   <mark key="be kind" className="marked-lines__mark">be kind</mark>
@@ -23,7 +22,6 @@ const mark = ( text ) => (
 /**
  * Translates marked-file context input
  * into React component output
- *
  * @example
  * const marks = [ [ 2, 4 ], [ 5, 9 ] ]
  * const content = '->^^-_____<--'
