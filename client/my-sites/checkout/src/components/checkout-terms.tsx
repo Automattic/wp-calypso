@@ -82,8 +82,8 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 						<FoldableCard
 							compact
 							className="checkout__terms-foldable-card"
-							header="Read more about your order's terms of service"
-							screenReaderText="Read more about your order's terms of service"
+							header="Read more"
+							screenReaderText="Read more"
 						>
 							{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
 							{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
