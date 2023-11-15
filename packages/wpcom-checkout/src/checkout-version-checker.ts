@@ -21,35 +21,14 @@ export function hasCheckoutVersion( version: string ) {
 }
 
 /**
- * Use hasFeatureFlagEnabled to check if a feature flag is enabled.
- * @param flag - the environment config flag to check for
- * @returns Boolean
- */
-
-export function hasFeatureFlagEnabled( flag: string ) {
-	const featureFlag = config.isEnabled( flag );
-	if ( featureFlag ) {
-		return true;
-	}
-	return false;
-}
-
-/**
- * Use hasQueryStringParameter to check if a query string parameter exists and has a specific value.
+ * Use getQueryParam to check if a query string parameter exists and return its value
  * @param param - the query string parameter to check
- * @param value - the value to check for
- * @returns - Boolean
- * @example - hasQueryStringParameter( 'checkoutVersion', 'v2' )
+ * @returns - string | null
  */
 
-export function hasQueryStringParameter( param: string, value: string ) {
+export function getQueryParam( param: string ) {
 	if ( typeof window === 'undefined' ) {
 		return false;
 	}
-	const urlParams = new URLSearchParams( window.location.search );
-	const paramValue = urlParams.get( param );
-	if ( paramValue === value ) {
-		return true;
-	}
-	return false;
+	return new URLSearchParams( window.location.search ).get( param );
 }
