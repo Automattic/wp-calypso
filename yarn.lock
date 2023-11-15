@@ -1175,20 +1175,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/newspack-blocks@npm:^1.74.2":
-  version: 1.74.2
-  resolution: "@automattic/newspack-blocks@npm:1.74.2"
+"@automattic/newspack-blocks@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@automattic/newspack-blocks@npm:2.0.0"
   dependencies:
-    "@stripe/stripe-js": ^1.54.2
+    "@stripe/stripe-js": ^2.1.7
     classnames: ^2.3.2
     lodash: ^4.17.21
     newspack-components: ^2.1.0
     react: ^17.0.2
     redux: ^4.2.1
     redux-saga: ^1.2.3
-    regenerator-runtime: ^0.13.11
-    swiper: 9.3.2
-  checksum: 2198aaddb6289162f3b9ddc9b9c79ee6e6172ca570ee1fe08a8ea75dcbea17b3f1d5fd2fe89d043e3b59bde2a7f0d27b0691e39a5738d3d9225866eb42b82531
+    regenerator-runtime: ^0.14.0
+    swiper: 10.3.1
+  checksum: 66fe4772bfb44b6a8486435f9205e9bbd6b1ec68ae196f7cb2adec0a376cfdf7ca6c674b749e5864c9ed5e74e1de7bb4158173c0735332b7f2d0f3bdaff81c5c
   languageName: node
   linkType: hard
 
@@ -1891,7 +1891,7 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/newspack-blocks": ^1.74.2
+    "@automattic/newspack-blocks": 2.0.0
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
@@ -6977,10 +6977,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^1.53.0, @stripe/stripe-js@npm:^1.54.2":
+"@stripe/stripe-js@npm:^1.53.0":
   version: 1.54.2
   resolution: "@stripe/stripe-js@npm:1.54.2"
   checksum: cf6ea20039fde28a0edc5562f08120ea820b1f8b8f2cf8b769aa92c0a4799a85e614f4112d8d790238960d0a3e1a194c76f6d2d941aa91acc8fbbc8920e63f02
+  languageName: node
+  linkType: hard
+
+"@stripe/stripe-js@npm:^2.1.7":
+  version: 2.1.11
+  resolution: "@stripe/stripe-js@npm:2.1.11"
+  checksum: 781fab0b6a7dbb00809c2a1bcf443db7d2996084e8ada3e0c04a2c02404bf6012d805f7fa35cf57dac66fc0abb9731f29263e4c984dc0cbb23425c124c8cf498
   languageName: node
   linkType: hard
 
@@ -26749,7 +26756,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.11, regenerator-runtime@npm:^0.13.9":
+"regenerator-runtime@npm:^0.13.9":
   version: 0.13.11
   resolution: "regenerator-runtime@npm:0.13.11"
   checksum: 12b069dc774001fbb0014f6a28f11c09ebfe3c0d984d88c9bced77fdb6fedbacbca434d24da9ae9371bfbf23f754869307fb51a4c98a8b8b18e5ef748677ca24
@@ -29740,19 +29747,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:9.3.2":
-  version: 9.3.2
-  resolution: "swiper@npm:9.3.2"
-  dependencies:
-    ssr-window: ^4.0.2
-  checksum: 8ed77b641d7620f92100a6fde39df7948be7932e56e31852946216ff7eef721bfc803c9a4e38bbdfa0674fbc46f5dfdd02ea1da4f0711d0fb7b69b2937bf001a
-  languageName: node
-  linkType: hard
-
-"swiper@npm:^10.1.0":
-  version: 10.1.0
-  resolution: "swiper@npm:10.1.0"
-  checksum: 88bdb25c960f5fce81d7e09909338ca5ac3eb6f2f4b65924565d1f8fe47365f7d5eb7458694befe27f52a651db88dcddc14c4d85609d41e18aad1676a656599e
+"swiper@npm:10.3.1, swiper@npm:^10.1.0":
+  version: 10.3.1
+  resolution: "swiper@npm:10.3.1"
+  checksum: 1e9ad5480cbf451d99fab280553d5105eb314f381d98610771f0808cac03962d87967a190696686d62bce8e4ebcbf34962c369f9d502b34fef1582ced17f6f98
   languageName: node
   linkType: hard
 
