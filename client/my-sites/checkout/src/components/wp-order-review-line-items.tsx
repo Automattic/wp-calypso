@@ -49,7 +49,7 @@ const CostOverridesListStyle = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 400;
 
 	& .cost-overrides-list-item {
