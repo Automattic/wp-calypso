@@ -117,6 +117,7 @@ class RegisterDomainStep extends Component {
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
+		onMappingError: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
 		deemphasiseTlds: PropTypes.array,
@@ -155,6 +156,7 @@ class RegisterDomainStep extends Component {
 		isDomainOnly: false,
 		onAddDomain: noop,
 		onAddMapping: noop,
+		onMappingError: noop,
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
 		vendor: getSuggestionsVendor(),
@@ -1372,7 +1374,7 @@ class RegisterDomainStep extends Component {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
-	onAddDomain = ( suggestion, position ) => {
+	onAddDomain = async ( suggestion, position ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 
@@ -1391,7 +1393,7 @@ class RegisterDomainStep extends Component {
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			// First add the domain
-			this.props.onAddDomain( suggestion, position );
+			await this.props.onAddDomain( suggestion, position );
 
 			this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
@@ -1407,6 +1409,7 @@ class RegisterDomainStep extends Component {
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
 						} );
+						this.props.onMappingError( domain, status );
 					} else if ( trademarkClaimsNoticeInfo ) {
 						this.setState( {
 							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
