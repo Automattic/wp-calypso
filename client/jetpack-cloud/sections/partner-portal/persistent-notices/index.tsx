@@ -1,19 +1,54 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
-import { removeJetpackManagePersistentNotice } from './actions';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
+import { Partner, PartnerPortalStore } from 'calypso/state/partner-portal/types';
+import {
+	removeJetpackManagePersistentNotice,
+	warningPartnerPortalPersistentNotice,
+} from './actions';
 import { getJetpackManagePersistentNotices } from './selectors';
 import {
 	JetpackManagePersistentNoticeActionOptions,
 	JetpackManagePersistentNoticeRemovalActionCreator,
+	JetpackManagePersistentNoticeActionCreator,
+	JetpackManagePersistentNoticeId,
 } from './types';
 
 export interface JetpackPersistentNoticesProps {
 	storeJetpackManagePersistentNotices: JetpackManagePersistentNoticeActionOptions[];
 	removeJetpackManagePersistentNotice: JetpackManagePersistentNoticeRemovalActionCreator;
+	warningPartnerPortalPersistentNotice: JetpackManagePersistentNoticeActionCreator;
+	partner: Partner;
 }
 
 export class JetpackPersistentNotices extends Component< JetpackPersistentNoticesProps > {
+	componentWillMount() {
+		if ( this.props.partner ) {
+			this.props.warningPartnerPortalPersistentNotice(
+				'unpaid-invoice-notice',
+				"The payment for your [month] invoice didn't go through. Please take a moment to complete payment.",
+				{
+					linkText: 'View Invoice',
+					linkUrl: '/partner-portal/invoices',
+				}
+			);
+		}
+	}
+
+	componentDidMount() {
+		if ( this.props.partner ) {
+			this.props.warningPartnerPortalPersistentNotice(
+				'unpaid-invoice-notice',
+				"The payment for your [month] invoice didn't go through. Please take a moment to complete payment.",
+				{
+					linkText: 'View Invoice',
+					linkUrl: '/partner-portal/invoices',
+				}
+			);
+		}
+	}
+
 	render() {
 		const noticesList = this.props.storeJetpackManagePersistentNotices.map( function ( notice ) {
 			return (
@@ -39,8 +74,19 @@ export class JetpackPersistentNotices extends Component< JetpackPersistentNotice
 }
 
 export default connect(
-	( state ) => ( {
+	( state: PartnerPortalStore ) => ( {
 		storeJetpackManagePersistentNotices: getJetpackManagePersistentNotices( state ),
+		// Refreshes the component when the partner changes
+		// To avoid showing the notice when the partner is not loaded yet
+		partner: getCurrentPartner( state ),
 	} ),
-	{ removeJetpackManagePersistentNotice }
+	( dispatch ) => ( {
+		removeJetpackManagePersistentNotice: ( id: JetpackManagePersistentNoticeId ) =>
+			dispatch( removeJetpackManagePersistentNotice( id ) ),
+		warningPartnerPortalPersistentNotice: (
+			id: string,
+			message: string,
+			link: { linkText: string; linkUrl: string }
+		) => dispatch( warningPartnerPortalPersistentNotice( id, message, link ) ),
+	} )
 )( JetpackPersistentNotices );
