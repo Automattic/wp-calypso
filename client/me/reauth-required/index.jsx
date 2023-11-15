@@ -2,7 +2,6 @@ import { Card, Dialog, FormInputValidation } from '@automattic/components';
 import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
@@ -11,9 +10,11 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
+import { useSendSMSCodeMutation } from 'calypso/lib/two-step-authorization/data/use-send-sms-code-mutation';
+import { useTwoStepAuthQuery } from 'calypso/lib/two-step-authorization/data/use-two-step-auth-query';
+import { useValidateCodeMutation } from 'calypso/lib/two-step-authorization/data/use-validate-code-mutation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import SecurityKeyForm from './security-key-form';
 import TwoFactorActions from './two-factor-actions';
 
@@ -37,25 +38,9 @@ class ReauthRequired extends Component {
 		};
 	}
 
-	componentDidMount() {
-		this.props.twoStepAuthorization.on( 'change', this.update );
-	}
-
-	componentWillUnmount() {
-		clearTimeout( this.codeRequestTimer );
-		this.props.twoStepAuthorization.off( 'change', this.update );
-	}
-
-	update = () => {
-		this.forceUpdate();
-	};
-
 	getClickHandler = ( action, callback ) => () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-
-		if ( callback ) {
-			callback();
-		}
+		callback?.();
 	};
 
 	getCheckboxHandler = ( checkboxName ) => ( event ) => {
@@ -69,14 +54,16 @@ class ReauthRequired extends Component {
 		this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 
 	renderCodeMessage() {
-		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			return this.props.translate(
+		const { twoStepData, translate } = this.props;
+
+		if ( twoStepData.isTwoStepSMSEnabled ) {
+			return translate(
 				'Press the button below to request an SMS verification code. ' +
 					'Once you receive our text message at your phone number ending with ' +
 					'{{strong}}%(smsLastFour)s{{/strong}} , enter the code below.',
 				{
 					args: {
-						smsLastFour: this.props.twoStepAuthorization.getSMSLastFour(),
+						smsLastFour: twoStepData.SMSLastFour,
 					},
 					components: {
 						strong: <strong />,
@@ -95,53 +82,38 @@ class ReauthRequired extends Component {
 		);
 	}
 
-	submitForm = ( event ) => {
+	submitForm = async ( event ) => {
 		event.preventDefault();
-		this.setState( { validatingCode: true } );
 
-		this.props.twoStepAuthorization.validateCode(
-			{
-				code: this.state.code,
-				remember2fa: this.state.remember2fa,
-			},
-			( error, data ) => {
-				this.setState( { validatingCode: false } );
-				if ( error ) {
-					debug( 'There was an error validating that code: ' + JSON.stringify( error ) );
-				} else {
-					debug( 'The code validated!' + JSON.stringify( data ) );
-				}
-			}
-		);
+		try {
+			await this.props.validateCode( this.state.code, this.state.remember2fa );
+			debug( 'The code validated!' );
+		} catch ( error ) {
+			debug( 'There was an error validating that code: ' + JSON.stringify( error ) );
+		}
 	};
 
-	sendSMSCode() {
+	async sendSMSCode() {
 		this.setState( { smsRequestsAllowed: false } );
 		this.codeRequestTimer = setTimeout( () => {
 			this.setState( { smsRequestsAllowed: true } );
 		}, 60000 );
 
-		this.props.twoStepAuthorization.sendSMSCode( ( error, data ) => {
-			if ( ! error && data.sent ) {
-				debug( 'SMS code successfully sent' );
-			} else {
-				debug( 'There was a failure sending the SMS code.' );
-			}
-		} );
+		try {
+			await this.props.sendSMSCode();
+			debug( 'SMS code successfully sent' );
+		} catch ( error ) {
+			console.log( error );
+			debug( 'There was a failure sending the SMS code.' );
+		}
 	}
 
 	preValidateAuthCode() {
 		return this.state.code.length && this.state.code.length > 5;
 	}
 
-	loginUserWithSecurityKey = () => {
-		return this.props.twoStepAuthorization.loginUserWithSecurityKey( {
-			user_id: this.props.currentUserId,
-		} );
-	};
-
 	renderFailedValidationMsg() {
-		if ( ! this.props.twoStepAuthorization.codeValidationFailed() ) {
+		if ( ! this.props.codeValidationFailed ) {
 			return null;
 		}
 
@@ -154,7 +126,7 @@ class ReauthRequired extends Component {
 	}
 
 	renderSMSResendThrottled() {
-		if ( ! this.props.twoStepAuthorization.isSMSResendThrottled() ) {
+		if ( ! this.props.smsResendThrottled ) {
 			return null;
 		}
 
@@ -171,7 +143,7 @@ class ReauthRequired extends Component {
 	}
 
 	renderVerificationForm() {
-		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
+		const method = this.props.twoStepData.isTwoStepSMSEnabled ? 'sms' : 'app';
 		return (
 			<Card compact>
 				<p>{ this.renderCodeMessage() }</p>
@@ -194,7 +166,7 @@ class ReauthRequired extends Component {
 						<FormVerificationCodeInput
 							autoFocus
 							id="code"
-							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
+							isError={ this.props.codeValidationFailed }
 							name="code"
 							method={ method }
 							onFocus={ this.getFocusHandler( 'Reauth Required Verification Code Field' ) }
@@ -222,7 +194,7 @@ class ReauthRequired extends Component {
 
 					<FormButton
 						className="reauth-required__button"
-						disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
+						disabled={ this.props.isValidatingCode || ! this.preValidateAuthCode() }
 						onClick={ this.getClickHandler( 'Submit Validation Code on Reauth Required' ) }
 					>
 						{ this.props.translate( 'Verify' ) }
@@ -233,30 +205,27 @@ class ReauthRequired extends Component {
 	}
 
 	renderDialog() {
-		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
-		const isSecurityKeySupported =
-			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
+		const { twoStepData } = this.props;
+
+		const method = twoStepData.isTwoStepSMSEnabled ? 'sms' : 'authenticator';
+		const isSecurityKeySupported = twoStepData.isSecurityKeyEnabled && supported();
 		const { twoFactorAuthType } = this.state;
 		// This enables the SMS button on the security key form regardless if we can send SMS or not.
 		// Otherwise, there's no way to go back to the verification form if smsRequestsAllowed is false.
 		const shouldEnableSmsButton =
 			this.state.smsRequestsAllowed || ( method === 'sms' && twoFactorAuthType === 'webauthn' );
 
-		const hasSmsRecoveryNumber =
-			!! this.props?.twoStepAuthorization?.data?.two_step_sms_last_four?.length;
+		const hasSmsRecoveryNumber = !! twoStepData.SMSLengthFour?.length;
 
 		return (
 			<Dialog
 				autoFocus={ false }
 				className="reauth-required__dialog"
 				isFullScreen={ false }
-				isVisible={ this.props?.twoStepAuthorization.isReauthRequired() }
+				isVisible={ this.props.twoStepData.isReauthRequired }
 			>
 				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn' ? (
-					<SecurityKeyForm
-						loginUserWithSecurityKey={ this.loginUserWithSecurityKey }
-						onComplete={ this.refreshNonceOnFailure }
-					/>
+					<SecurityKeyForm />
 				) : (
 					this.renderVerificationForm()
 				) }
@@ -278,19 +247,12 @@ class ReauthRequired extends Component {
 		return (
 			<>
 				{ this.renderDialog() }
-				{ this.props.twoStepAuthorization.initialized &&
-					! this.props.twoStepAuthorization.isReauthRequired() &&
+				{ this.props.twoStepInitialized &&
+					! this.props.twoStepData.isReauthRequired &&
 					this.props.children?.() }
 			</>
 		);
 	}
-
-	refreshNonceOnFailure = ( error ) => {
-		const errors = [].slice.call( error?.data?.errors ?? [] );
-		if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
-			this.props.twoStepAuthorization.fetch();
-		}
-	};
 
 	handleAuthSwitch = ( authType ) => {
 		this.setState( { twoFactorAuthType: authType } );
@@ -310,18 +272,35 @@ class ReauthRequired extends Component {
 	};
 }
 
-ReauthRequired.propTypes = {
-	currentUserId: PropTypes.number.isRequired,
-};
-
 /* eslint-enable jsx-a11y/no-autofocus, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 
-export default connect(
-	( state ) => ( {
-		currentUserId: getCurrentUserId( state ),
-	} ),
-	{
-		redirectToLogout,
-		recordGoogleEvent,
-	}
-)( localize( ReauthRequired ) );
+const EnhancedReauthRequired = ( props ) => {
+	const defaultTwoStepsData = {
+		isReauthRequired: false,
+	};
+	const { data: twoStepData, isInitialLoading } = useTwoStepAuthQuery();
+	const {
+		validateCode,
+		isError: codeValidationFailed,
+		isLoading: isValidatingCode,
+	} = useValidateCodeMutation();
+	const { mutateAsync: sendSMSCode, smsResendThrottled } = useSendSMSCodeMutation();
+
+	return (
+		<ReauthRequired
+			{ ...props }
+			twoStepInitialized={ ! isInitialLoading && twoStepData }
+			twoStepData={ twoStepData ?? defaultTwoStepsData }
+			validateCode={ validateCode }
+			isValidatingCode={ isValidatingCode }
+			codeValidationFailed={ codeValidationFailed }
+			sendSMSCode={ sendSMSCode }
+			smsResendThrottled={ smsResendThrottled }
+		/>
+	);
+};
+
+export default connect( null, {
+	redirectToLogout,
+	recordGoogleEvent,
+} )( localize( EnhancedReauthRequired ) );

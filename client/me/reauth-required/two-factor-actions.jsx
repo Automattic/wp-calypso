@@ -88,7 +88,7 @@ class TwoFactorActions extends Component {
 					<Button
 						data-e2e-link="2fa-sms-link"
 						value="sms"
-						disabled={ ! this.props.isSmsAllowed }
+						// disabled={ ! this.props.isSmsAllowed }
 						onClick={ this.recordButtonClicked }
 					>
 						{ translate( 'Send code via\u00A0text\u00A0message' ) }
