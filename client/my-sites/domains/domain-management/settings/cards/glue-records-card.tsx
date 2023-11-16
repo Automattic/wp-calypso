@@ -25,9 +25,10 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const { data, isLoading, isError } = useDomainGlueRecordsQuery( domain.name );
+	const { data, isLoading: isLoadingData, isError } = useDomainGlueRecordsQuery( domain.name );
 
 	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
+	const [ isSaving, setIsSaving ] = useState( false );
 	const [ isEditing, setIsEditing ] = useState( false );
 	const [ record, setRecord ] = useState( '' );
 	const [ ipAddress, setIpAddress ] = useState( '' );
@@ -36,6 +37,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		setIsEditing( false );
 		setRecord( '' );
 		setIpAddress( '' );
+		setIsSaving( false );
 	};
 
 	// Display success notices when the glue record is updated
@@ -81,7 +83,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	};
 
 	useEffect( () => {
-		if ( isLoading || ! data ) {
+		if ( isLoadingData || ! data ) {
 			return;
 		}
 
@@ -89,7 +91,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		if ( data?.length === 0 ) {
 			handleAddGlueRecord();
 		}
-	}, [ isLoading, data ] );
+	}, [ isLoadingData, data ] );
 
 	const handleIpAddressChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const ipAddress = event.target.value;
@@ -112,6 +114,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	};
 
 	const handleSubmit = () => {
+		setIsSaving( true );
 		updateGlueRecord( {
 			record: record,
 			address: ipAddress,
@@ -160,11 +163,10 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 				<div className="glue-record-input-wrapper">
 					<FormTextInputWithAffixes
 						placeholder={ translate( 'Ex: ns1' ) }
-						disabled={ isLoading }
+						disabled={ isLoadingData || isSaving }
 						name="record"
 						onChange={ handleRecordChange }
 						value={ record }
-						// className={ classNames( { 'is-error': ! isValidUrl } ) }
 						maxLength={ 1000 }
 						suffix={ <FormLabel>.{ domain.domain }</FormLabel> }
 					/>
@@ -172,7 +174,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 				<FormLabel>{ translate( 'IP Address' ) }</FormLabel>
 				<div className="ip-address">
 					<FormTextInputWithAffixes
-						disabled={ isLoading }
+						disabled={ isLoadingData || isSaving }
 						name="ip-address"
 						noWrap
 						onChange={ handleIpAddressChange }
@@ -188,10 +190,19 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					/>
 				</div>
 				<div className="glue-records__action-buttons">
-					<FormButton onClick={ handleSubmit } disabled={ isLoading }>
+					<FormButton
+						busy={ isSaving }
+						onClick={ handleSubmit }
+						disabled={ isLoadingData || isSaving }
+					>
 						{ translate( 'Save' ) }
 					</FormButton>
-					<FormButton onClick={ () => clearState() } type="button" isPrimary={ false }>
+					<FormButton
+						disabled={ isSaving }
+						onClick={ () => clearState() }
+						type="button"
+						isPrimary={ false }
+					>
 						{ translate( 'Cancel' ) }
 					</FormButton>
 				</div>
