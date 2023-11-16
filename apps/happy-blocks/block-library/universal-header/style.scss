@@ -1,11 +1,11 @@
-@import '~@automattic/calypso-color-schemes';
+@import "~@automattic/calypso-color-schemes";
 
 $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
 $breakpoint-desktop: 1440px; //Desktop size.
-$recoleta-font-family: 'Recoleta', sans-serif;
-$system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI', 'Roboto',
-	'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+$recoleta-font-family: "Recoleta", sans-serif;
+$system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI", "Roboto",
+	"Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 
 .lpc-mobile-menu-mask {
 	position: fixed !important;
@@ -15,9 +15,9 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	height: 100vh !important;
 	background-image: none !important;
 	z-index: 2147483646;
-	background-color: rgba( 0, 0, 0, 0.5 );
+	background-color: rgba(0, 0, 0, 0.5);
 	animation-duration: 233ms;
-	animation-timing-function: cubic-bezier( 0, 0, 0.21, 1 );
+	animation-timing-function: cubic-bezier(0, 0, 0.21, 1);
 	animation-fill-mode: forwards;
 	display: none;
 	animation-name: i-amphtml-sidebar-mask-fade-in;
@@ -32,13 +32,13 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 
 .x-menu,
 .x-link {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.x-root [role='menuitem']:focus {
+.x-root [role="menuitem"]:focus {
 	outline: 1px dotted Highlight;
 	outline: 5px auto -webkit-focus-ring-color;
 }
@@ -51,7 +51,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	background: none;
 	color: inherit;
 	font: inherit;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 	text-decoration: none;
 	cursor: pointer;
 	transition: 0.15s ease-out;
@@ -80,7 +80,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 
 .x-hidden {
 	border: 0;
-	clip: rect( 0 0 0 0 );
+	clip: rect(0 0 0 0);
 	height: 1px;
 	margin: -1px;
 	overflow: hidden;
@@ -122,11 +122,11 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	left: 11px;
 	height: 2px;
 	width: 14px;
-	transform: rotate( 45deg );
+	transform: rotate(45deg);
 }
 
 .x-icon--close span + span {
-	transform: rotate( -45deg );
+	transform: rotate(-45deg);
 }
 
 .x-icon--menu {
@@ -192,7 +192,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	position: relative;
 	border-radius: 4px;
 	background: #fff;
-	box-shadow: 0 9px 48px rgba( 16, 21, 23, 0.25 );
+	box-shadow: 0 9px 48px rgba(16, 21, 23, 0.25);
 }
 
 .x-dropdown-top-fill {
@@ -200,7 +200,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 }
 
 .x-dropdown-top-fill::before {
-	content: '';
+	content: "";
 	position: absolute;
 	top: 0;
 	left: 90px;
@@ -208,7 +208,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	background: inherit;
 	width: 36px;
 	height: 36px;
-	transform: rotate( 45deg );
+	transform: rotate(45deg);
 }
 
 .x-dropdown-bottom-fill {
@@ -226,7 +226,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	pointer-events: none;
 }
 
-.x-dropdown-content[aria-hidden='false'] {
+.x-dropdown-content[aria-hidden="false"] {
 	z-index: 1;
 	pointer-events: auto;
 }
@@ -270,7 +270,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	justify-content: space-between;
 	height: 57px;
 	padding: 0 24px;
-	color: rgb( var( --lp-color-primary, 255, 255, 255 ) );
+	color: rgb(var(--lp-color-primary, 255, 255, 255));
 }
 
 .x-nav-list {
@@ -287,7 +287,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 .x-nav-list--right {
 	position: initial;
 	.x-nav-link--primary {
-		border: 1px solid var( --studio-gray-5 );
+		border: 1px solid var(--studio-gray-5);
 		background-color: transparent;
 		padding: 9px 12px 10px;
 		border-radius: 4px;
@@ -320,7 +320,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 }
 
 .x-nav-link-chevron::before {
-	content: '▾';
+	content: "▾";
 }
 
 .x-nav-link--logo {
@@ -358,7 +358,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 		padding-left: 18px;
 	}
 
-	.x-root .x-nav-link--primary[role='menuitem']:focus {
+	.x-root .x-nav-link--primary[role="menuitem"]:focus {
 		outline: none;
 	}
 
@@ -403,7 +403,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background: rgba( 16, 21, 23, 0.85 );
+	background: rgba(16, 21, 23, 0.85);
 	opacity: 0;
 }
 
@@ -425,9 +425,9 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	background: #fff;
 	font-size: 0.875rem;
 	line-height: 19px;
-	transform: scale( 0 );
+	transform: scale(0);
 	transform-origin: 100% 0;
-	transform-origin: calc( 100% - 19px ) 15px;
+	transform-origin: calc(100% - 19px) 15px;
 	pointer-events: none;
 }
 
@@ -443,9 +443,9 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 }
 
 .x-menu--open .x-menu-content {
-	transform: scale( 1 );
+	transform: scale(1);
 	transition-duration: 0.35s;
-	transition-timing-function: cubic-bezier( 0.1, 0.6, 0.2, 1 );
+	transition-timing-function: cubic-bezier(0.1, 0.6, 0.2, 1);
 	pointer-events: auto;
 }
 
@@ -511,12 +511,12 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 }
 
 .x-menu-link-chevron::before {
-	content: '›';
+	content: "›";
 }
 
 .x-menu-link:hover .x-menu-link-chevron,
 .x-menu-link:active .x-menu-link-chevron {
-	transform: translate3d( 0.15em, 0, 0 );
+	transform: translate3d(0.15em, 0, 0);
 }
 
 .js-dynamic-type-on .x-menu-grid-item {

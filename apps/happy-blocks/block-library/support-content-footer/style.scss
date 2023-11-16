@@ -1,11 +1,11 @@
-@import '~@automattic/calypso-color-schemes';
+@import "~@automattic/calypso-color-schemes";
 
 $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
 $breakpoint-desktop: 1440px; //Desktop size.
 $search-icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"%3E%3Cpath d="M9.16667 15.8333C12.8486 15.8333 15.8333 12.8486 15.8333 9.16667C15.8333 5.48477 12.8486 2.5 9.16667 2.5C5.48477 2.5 2.5 5.48477 2.5 9.16667C2.5 12.8486 5.48477 15.8333 9.16667 15.8333Z" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M17.5 17.5L13.875 13.875" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3C/svg%3E';
-$system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI', 'Roboto',
-	'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+$system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI", "Roboto",
+	"Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 
 .happy-blocks-support-content-footer {
 	max-width: none !important;
@@ -27,11 +27,11 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 	> * {
 		margin-left: auto !important;
 		margin-right: auto !important;
-		max-width: var( --wp--style--global--wide-size );
+		max-width: var(--wp--style--global--wide-size);
 	}
 
 	.support-content-cta {
-		border-bottom: 1px solid var( --studio-gray-0 );
+		border-bottom: 1px solid var(--studio-gray-0);
 		display: flex;
 		margin-bottom: 2rem;
 		font-size: 1.25rem;
@@ -46,7 +46,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 			}
 
 			p {
-				color: var( --studio-gray-60 );
+				color: var(--studio-gray-60);
 				margin-top: 4px;
 				margin-bottom: 16px;
 			}
@@ -81,13 +81,13 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 			min-width: 0;
 			overflow-wrap: break-word;
 			word-break: break-word;
-			border-bottom: 1px solid var( --studio-gray-0 );
+			border-bottom: 1px solid var(--studio-gray-0);
 			padding: 0 16px 32px 0;
 			font-size: 1.25rem;
 		}
 
 		p {
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 			margin-top: 16px;
 			margin-bottom: 28px;
 		}
@@ -99,7 +99,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 
 	.support-content-resource__title {
 		margin-top: 0;
-		font-family: var( --wp--preset--font-family--system-font );
+		font-family: var(--wp--preset--font-family--system-font);
 	}
 
 	@media ( min-width: $breakpoint-mobile ) {
@@ -133,7 +133,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 		}
 
 		.support-content-subscribe-disclaimer {
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 			font-size: 0.75rem;
 			line-height: 20px;
 
@@ -164,10 +164,10 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 			}
 
 			button.support-content-subscribe-submit {
-				background-color: var( --color-primary );
+				background-color: var(--color-primary);
 				border-radius: 4px !important;
 				border: none;
-				color: var( --color-primary-0 );
+				color: var(--color-primary-0);
 				cursor: pointer;
 				font-size: 0.875rem;
 				line-height: 20px;
