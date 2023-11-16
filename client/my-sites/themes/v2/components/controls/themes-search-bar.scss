@@ -1,0 +1,49 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.theme__search-input {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+
+	.keyed-suggestions {
+		top: 42px;
+	}
+
+	.select-dropdown__header {
+		font-weight: 400;
+	}
+
+	.select-dropdown__options {
+		position: absolute;
+		width: 100%;
+
+		@include break-mobile {
+			position: inherit;
+		}
+	}
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+
+	.search-themes-card {
+		width: 100%;
+
+		.search {
+			height: 43px;
+			border-radius: 2px;
+		}
+	}
+
+	.theme__search-input {
+		width: 100%;
+		padding: 0 0 10px 0;
+		@include break-mobile {
+			padding: 0 10px 0 0;
+		}
+	}
+}
+

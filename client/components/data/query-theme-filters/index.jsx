@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { Component, useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { requestThemeFilters } from 'calypso/state/themes/actions';
 
 export class QueryThemeFilters extends Component {
@@ -18,3 +18,13 @@ export class QueryThemeFilters extends Component {
 }
 
 export default connect( null, { requestThemeFilters } )( QueryThemeFilters );
+
+export function useQueryThemeFilters() {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( requestThemeFilters() );
+	}, [ dispatch ] );
+
+	return null;
+}

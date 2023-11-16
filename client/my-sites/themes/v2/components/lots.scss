@@ -1,0 +1,35 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.theme-showcase.lots {
+	.themes__controls {
+		padding-top: 16px;
+	}
+
+	.themes-toolbar-group {
+		padding: 72px 0 24px;
+	}
+
+	.theme__search {
+		@include break-mobile {
+			width: 100%;
+		}
+
+		@include break-small {
+			width: 75%;
+		}
+
+		@include break-medium {
+			width: 70%;
+		}
+
+		@include break-large {
+			width: 60%;
+		}
+
+		@include break-xlarge {
+			width: 50%;
+		}
+	}
+}

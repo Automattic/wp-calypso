@@ -14,6 +14,7 @@ import {
 	hideNavigationIfLoggedInWithNoSites,
 	addNavigationIfLoggedIn,
 } from 'calypso/my-sites/controller';
+import { displayLoTS } from 'calypso/my-sites/themes/v2/controller';
 import { fetchThemeData, redirectToThemeDetails } from './controller';
 import { renderThemes, upload } from './controller-logged-in';
 import { fetchAndValidateVerticalsAndFilters } from './validate-filters';
@@ -66,12 +67,14 @@ export default function ( router ) {
 		clientRender
 	);
 
+	const featureFlag = true;
+
 	router(
 		routesWithoutSites,
 		redirectWithoutLocaleParamIfLoggedIn,
 		fetchAndValidateVerticalsAndFilters,
 		selectSiteIfLoggedInWithSites,
-		renderThemes,
+		featureFlag ? displayLoTS : renderThemes,
 		hideNavigationIfLoggedInWithNoSites,
 		addNavigationIfLoggedIn,
 		makeLayout,

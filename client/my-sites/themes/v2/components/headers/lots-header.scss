@@ -1,0 +1,40 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.themes__header-logged-out {
+	padding: 24px 16px;
+	border: none;
+	margin: 0;
+	position: relative;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding: 64px 32px 0 !important;
+	}
+
+	&::before {
+		background-color: #e5f4ff;
+		content: "";
+		left: 0;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		width: 100%;
+		z-index: -1;
+	}
+
+	h1 {
+		color: var(--studio-blue-50);
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 2.75rem;
+		line-height: 1.15;
+		margin-bottom: 16px;
+	}
+
+	.page-sub-header {
+		font-size: $font-body-large;
+		line-height: 26px;
+		margin-bottom: 8px;
+		max-width: 680px;
+	}
+}

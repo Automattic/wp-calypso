@@ -1,6 +1,7 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import { displayLoTS } from 'calypso/my-sites/themes/v2/controller';
 import {
 	fetchThemeData,
 	fetchThemeFilters,
@@ -28,6 +29,8 @@ export default function ( router ) {
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
 	];
 
+	const featureFlag = true;
+
 	router(
 		showcaseRoutes,
 		ssrSetupLocale,
@@ -37,7 +40,7 @@ export default function ( router ) {
 		fetchThemeData,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,
-		renderThemes,
+		featureFlag ? displayLoTS : renderThemes,
 		makeLayout
 	);
 	router( [ '/themes/upload', '/themes/upload/*' ], makeLayout );
