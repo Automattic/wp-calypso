@@ -241,13 +241,15 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					} ) }
 			</form>
 
-			<Button
-				borderless
-				className="add-forward-button  link-button"
-				onClick={ () => handleAddGlueRecord() }
-			>
-				{ translate( '+ Add Glue Record' ) }
-			</Button>
+			{ data && data.length < 3 && (
+				<Button
+					borderless
+					className="add-forward-button  link-button"
+					onClick={ () => handleAddGlueRecord() }
+				>
+					{ translate( '+ Add Glue Record' ) }
+				</Button>
+			) }
 		</>
 	);
 }
