@@ -83,13 +83,19 @@ module.exports = {
 						},
 					},
 					{
-						loader: require.resolve( 'babel-loader' ),
+						loader: 'swc-loader',
 						options: {
-							configFile: path.resolve( '../../babel.config.js' ),
-							babelrc: false,
-							cacheDirectory: path.resolve( cachePath, 'babel-client' ),
-							cacheIdentifier,
-							cacheCompression: false,
+							module: {
+								type: 'es6',
+							},
+							minify: process.env.NODE_ENV !== 'development',
+							isModule: true,
+
+							// //configFile: path.resolve( '../../babel.config.js' ),
+							// babelrc: false,
+							// cacheDirectory: path.resolve( cachePath, 'babel-client' ),
+							// cacheIdentifier,
+							// cacheCompression: false,
 						},
 					},
 				],
