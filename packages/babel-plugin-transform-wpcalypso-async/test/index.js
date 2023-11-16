@@ -33,10 +33,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 				const code = transform( 'export default () => <AsyncLoad require="foo" />;' );
 
 				expect( code ).toBe(
-					'var _ref = function (callback) {\n  import( /*webpackChunkName: "async-load-foo"*/"foo").then(function load(mod) {\n' +
-						'    callback(mod);\n' +
-						'  });\n' +
-						'};\n' +
+					'var _ref = () => import( /*webpackChunkName: "async-load-foo"*/"foo");\n' +
 						'export default (() => <AsyncLoad require={_ref} />);'
 				);
 			} );
@@ -49,7 +46,10 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 				} );
 
 				expect( code ).toBe(
-					'var _ref = function (callback) {};\nexport default (() => <AsyncLoad require={_ref} />);'
+					'var _ref = () => {\n' +
+						'  throw new Error("ignoring load of: async-load-foo");\n' +
+						'};\n' +
+						'export default (() => <AsyncLoad require={_ref} />);'
 				);
 			} );
 		} );
@@ -62,33 +62,25 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			expect( code ).toBe( 'requireAsync("foo");' );
 		} );
 
-		test( 'should remove node if invalid call', () => {
+		test( 'should not transform if there is no string argument', () => {
 			const code = transform( 'asyncRequire();' );
 
-			expect( code ).toBe( '' );
+			expect( code ).toBe( 'asyncRequire();' );
 		} );
 
 		describe( 'async', () => {
-			test( 'should just issue the import if no callback is specified', () => {
+			test( 'should transform asyncRequire to an import with nice name', () => {
 				const code = transform( 'asyncRequire( "foo/bar" );' );
 
 				expect( code ).toBe( 'import( /*webpackChunkName: "async-load-foo-bar"*/"foo/bar");' );
 			} );
-
-			test( 'should invoke callback with require after ensure', () => {
-				const code = transform( 'asyncRequire( "foo/bar", cb );' );
-
-				expect( code ).toBe(
-					'import( /*webpackChunkName: "async-load-foo-bar"*/"foo/bar").then(function load(mod) {\n  cb(mod);\n});'
-				);
-			} );
 		} );
 
 		describe( 'ignore', () => {
-			test( 'should simply ignore the asyncRequire call', () => {
+			test( 'should transform asyncRequire into error-throwing function', () => {
 				const code = transform( 'asyncRequire( "foo" );', { ignore: true } );
 
-				expect( code ).toBe( '' );
+				expect( code ).toBe( 'Promise.reject(new Error("ignoring load of: async-load-foo"));' );
 			} );
 		} );
 	} );
@@ -103,7 +95,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			},
 		} );
 
-		const code = '<AsyncLoad require="foo" />;';
+		const code = 'export default () => <AsyncLoad require="foo" />;';
 
 		// Use both the AsyncLoad and patchedImport transform
 		const transformResult = babel.transformSync( code, {
@@ -114,13 +106,8 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 
 		// Check that the transformed code has been further transformed with patchedImport
 		expect( transformResult.code ).toBe(
-			[
-				'<AsyncLoad require={function (callback) {',
-				'  patchedImport( /*webpackChunkName: "async-load-foo"*/"foo").then(function load(mod) {',
-				'    callback(mod);',
-				'  });',
-				'}} />;',
-			].join( '\n' )
+			'var _ref = () => patchedImport( /*webpackChunkName: "async-load-foo"*/"foo");\n' +
+				'export default (() => <AsyncLoad require={_ref} />);'
 		);
 	} );
 } );

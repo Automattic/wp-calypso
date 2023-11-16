@@ -23,17 +23,17 @@ See [Babel options documentation](http://babeljs.io/docs/usage/options/) for mor
 `asyncRequire` will transform to one of:
 
 - dynamic `import()` if the `ignore` plugin option is not `true`
-- nothing (code will be removed and no module will be imported) if the `ignore` plugin option is `true`
+- a rejected `Promise` that throws an error that the import is ignored, if the `ignore` plugin option is `true`
 
-`asyncRequire` expects one required argument, with an optional callback:
+`asyncRequire` expects one required argument, the name of the imported module.
 
 ```js
-asyncRequire( 'calypso/components/search', ( Search ) => {
+asyncRequire( 'calypso/components/search' ).then( ( { default: Search } ) => {
 	console.log( Search );
 } );
 ```
 
-`<AsyncLoad />` will transform its `require` string prop to a function invoking `asyncRequire` when called.
+`<AsyncLoad />` will transform its `require` string prop to a function invoking a dynamic `import`, or throwing an error when the `ignore` option is enabled.
 
 ```js
 // Before:
@@ -43,13 +43,11 @@ asyncRequire( 'calypso/components/search', ( Search ) => {
 
 ```js
 // After:
-const ref = function ( callback ) {
-	asyncRequire( 'calypso/components/search', callback );
-};
+const ref = () => import( 'calypso/components/search' );
 
 <AsyncLoad require={ ref } />;
 ```
 
 ## Options
 
-- `ignore` - if set to `true`, the `asyncRequire` call will be completely removed, and `AsyncLoad` will show the placeholder forever and won't do any import. Useful for server side rendering where the render is one-pass and doesn't wait for any imports to finish.
+- `ignore` - if set to `true`, the `asyncRequire` call will be returning a rejected `Promise`, and `AsyncLoad` will show the placeholder forever and won't do any import. Useful for server side rendering where the render is one-pass and doesn't wait for any imports to finish.
