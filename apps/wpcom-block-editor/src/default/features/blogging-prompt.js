@@ -3,9 +3,9 @@ import { dispatch } from '@wordpress/data';
 import { getQueryArgs } from '@wordpress/url';
 import { isEditorReady } from '../../utils';
 
-const { answer_prompt, new_prompt } = getQueryArgs( window.location.href );
+const { answer_prompt } = getQueryArgs( window.location.href );
 
-if ( answer_prompt || new_prompt ) {
+if ( answer_prompt ) {
 	( async () => {
 		await isEditorReady();
 
