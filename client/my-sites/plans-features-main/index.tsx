@@ -15,7 +15,7 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-import { Button, Spinner } from '@automattic/components';
+import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
@@ -47,6 +47,7 @@ import {
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
+import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import useIsFreePlanCustomDomainUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
@@ -63,9 +64,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import useStorageAddOns from '../add-ons/hooks/use-storage-add-ons';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
-import { LoadingPlaceHolder } from './components/loading-placeholder';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
@@ -408,7 +407,7 @@ const PlansFeaturesMain = ( {
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
-		useFreeHostingTrialAssignment();
+		useFreeHostingTrialAssignment( intent );
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const gridPlans = useGridPlans( {
@@ -548,7 +547,7 @@ const PlansFeaturesMain = ( {
 			};
 		}
 
-		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) && intent !== 'plans-p2' ) {
+		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) && intentFromProps !== 'plans-p2' ) {
 			actionOverrides = {
 				loggedInFreePlan: {
 					status:
@@ -735,9 +734,10 @@ const PlansFeaturesMain = ( {
 						{ translate( `Unlock a powerful bundle of features. Or {{loader}}{{/loader}}`, {
 							components: {
 								loader: (
-									<LoadingPlaceHolder
+									<LoadingPlaceholder
 										display="inline-block"
 										width="155px"
+										minHeight="0px"
 										height="15px"
 										borderRadius="2px"
 									/>

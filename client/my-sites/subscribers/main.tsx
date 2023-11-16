@@ -122,6 +122,7 @@ const SubscribersPage = ( {
 				<SubscribersHeader selectedSiteId={ selectedSite?.ID } />
 
 				<SubscriberListContainer
+					siteId={ siteId }
 					onClickView={ onClickView }
 					onClickUnsubscribe={ onClickUnsubscribe }
 				/>

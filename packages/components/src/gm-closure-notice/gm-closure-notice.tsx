@@ -73,7 +73,7 @@ export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Pr
 
 	return (
 		<Panel className="a8c-components__gm-closure-notice">
-			<PanelBody initialOpen={ false } title={ heading }>
+			<PanelBody initialOpen={ period === 'during' } title={ heading }>
 				<PanelRow>{ MAIN_MESSAGES[ period ] }</PanelRow>
 			</PanelBody>
 		</Panel>

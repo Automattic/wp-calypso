@@ -4,7 +4,6 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Returns an array of products that matches the specified billing product slug.
- *
  * @param state the state object
  * @param billingProductSlug the product slug to match
  * @returns ProductsListItem[]|undefined an array of products that matches the specified billing product slug or undefined if the products list is not loaded yet

@@ -66,7 +66,6 @@ export function getNumberOfMailboxesText( domain: ResponseDomain ) {
 
 /**
  * Retrieves the email purchase associated to the specified domain.
- *
  * @param state - global Redux state
  * @param domain - domain object
  * @returns the corresponding email purchase, or null if not found
@@ -79,7 +78,6 @@ export function getEmailPurchaseByDomain( state: AppState, domain: ResponseDomai
 
 /**
  * Retrieves the identifier of the email subscription for the specified domain.
- *
  * @param domain - domain object
  * @returns the corresponding subscription id, or null if not found
  */
@@ -97,7 +95,6 @@ function getEmailSubscriptionIdByDomain( domain: ResponseDomain ) {
 
 /**
  * Determines whether an email subscription exists for the specified domain.
- *
  * @param domain - domain object
  * @returns true if an email subscription exists, false otherwise
  */
@@ -234,7 +231,6 @@ export function recordEmailAppLaunchEvent( {
  * Events tracked:
  * `calypso_inbox_upsell`, when upsell triggered by a CTA click from My Mailboxes.
  * `calypso_email_upsell`, when upsell triggered by a CTA click from Upgrades > Emails.
- *
  * @param source - source generating the event.
  * @param context context, where this event was logged.
  */

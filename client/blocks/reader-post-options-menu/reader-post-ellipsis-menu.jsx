@@ -310,8 +310,8 @@ class ReaderPostEllipsisMenu extends Component {
 						siteUrl={ post.feed_URL || post.site_URL }
 						followSource={ READER_POST_OPTIONS_MENU }
 						iconSize={ 20 }
-						followLabel={ translate( 'Follow blog' ) }
-						followingLabel={ translate( 'Unfollow blog' ) }
+						followLabel={ translate( 'Subscribe' ) }
+						followingLabel={ translate( 'Unsubscribe' ) }
 						onFollowToggle={ this.openSuggestedFollowsModal }
 					/>
 				) }

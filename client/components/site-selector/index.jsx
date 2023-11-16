@@ -427,6 +427,7 @@ export class SiteSelector extends Component {
 
 		return (
 			<div
+				ref={ this.props.forwardRef }
 				className={ selectorClass }
 				onMouseMove={ this.onMouseMove }
 				onMouseLeave={ this.onMouseLeave }

@@ -47,7 +47,6 @@ const ThreatItem: React.FC< Props > = ( {
 	 * Render a CTA button. Currently, this button is rendered three
 	 * times: in the details section, and in the `summary` and `extendSummary`
 	 * sections of the header.
-	 *
 	 * @param {string} className A class for the button
 	 */
 	const renderFixThreatButton = React.useCallback(

@@ -11,7 +11,6 @@ export function getSignupProgress( state: any ): ProgressState {
 
 /**
  * Returns true if a plans step exists and is skipped in the current signup progress
- *
  * @param   {Object}  state The current client state
  * @returns  {boolean} denoting whether the plans step existed AND it was skipped
  */

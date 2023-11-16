@@ -17,7 +17,6 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		padding: 2rem 0;
 		color: #101517;
 		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 		transition: background 0.1s;
@@ -26,6 +25,7 @@
 		text-align: left;
 		display: flex;
 		justify-content: space-between;
+		padding: 2rem 0;
 		flex: 1;
 		min-width: 0;
 	}
@@ -133,7 +133,7 @@
 	@media ( max-width: 900px ) {
 		.header {
 			position: relative;
-			padding: 1.5rem 0;
+			padding: 0;
 			height: auto;
 			background-color: var(--studio-white);
 		}
@@ -155,7 +155,14 @@
 	}
 
 	.header__content-wrapper {
+		position: relative;
 		width: 100%;
+	}
+
+	@media ( max-width: 900px ) {
+		.header__content-wrapper {
+			padding: 1.5rem 0;
+		}
 	}
 
 	.header__content-background-wrapper {

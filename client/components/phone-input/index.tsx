@@ -306,7 +306,6 @@ function calculateInputAndCountryCode(
 
 /**
  * Decides whether to guess the country from the input value
- *
  * @param {string} value - The phone number
  * @param {string} countryCode - The country code
  * @param {boolean} freezeSelection - True if we should never guess
@@ -328,7 +327,6 @@ function shouldGuessCountry(
 
 /**
  * Returns the selected country from dropdown or guesses the country from input
- *
  * @param {string} value - Input number
  * @param {string} fallbackCountryCode - Fallback country code in case we can't find a match
  * @param {boolean} freezeSelection - True if we should never guess the country
@@ -347,7 +345,6 @@ function guessCountryFromValueOrGetSelected(
 
 /**
  * Format the phone number for display
- *
  * @param {string} value - The phone number value to format
  * @param {string} countryCode - The country code to use for the format
  * @returns {string} The formatted number

@@ -207,7 +207,6 @@ export async function showDSP(
 
 /**
  * Add tracking when launching the DSP widget, in both tracks event and MC stats.
- *
  * @param {string} entryPoint - A slug describing the entry point.
  */
 export function recordDSPEntryPoint( entryPoint: string ) {
@@ -224,7 +223,6 @@ export function recordDSPEntryPoint( entryPoint: string ) {
 
 /**
  * Gets the recordTrack function to be used in the DSP widget
- *
  * @param {Dispatch} dispatch - Redux disptach function
  */
 export function getRecordDSPEventHandler( dispatch: Dispatch ) {
@@ -301,7 +299,6 @@ export enum PromoteWidgetStatus {
 
 /**
  * Hook to verify if we should enable the promote widget.
- *
  * @returns bool
  */
 export const usePromoteWidget = (): PromoteWidgetStatus => {

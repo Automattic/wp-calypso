@@ -15,7 +15,6 @@ const finalErrorStatuses = [ 400, 401, 403, 409 ];
 
 /**
  * Checks whether a mailbox name/domain i.e. email address is available for creation.
- *
  * @param domainName The domain name of the mailbox
  * @param mailboxName The mailbox name
  * @param queryOptions Optional options to pass to the underlying query engine

@@ -24,8 +24,8 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, useEffect, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
-import Divider from 'calypso/blocks/login/divider';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -1239,13 +1239,7 @@ class SignupForm extends Component {
 
 					{ ! isGravatar && (
 						<>
-							{ showSeparator && (
-								<div className="signup-form__separator">
-									<div className="signup-form__separator-text">
-										{ this.props.translate( 'or' ) }
-									</div>
-								</div>
-							) }
+							{ showSeparator && <FormDivider /> }
 
 							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 								<SocialSignupForm
@@ -1281,15 +1275,11 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ showSeparator && (
-					<div className="signup-form__separator">
-						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-					</div>
-				) }
+				{ showSeparator && <FormDivider /> }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<Fragment>
-						{ this.props.isWoo && <Divider>{ this.props.translate( 'or' ) }</Divider> }
+						{ this.props.isWoo && <FormDivider /> }
 						<SocialSignupForm
 							handleResponse={ this.props.handleSocialResponse }
 							socialService={ this.props.socialService }

@@ -118,7 +118,6 @@ export const productHasActivityLog = ( productSlug: string ): boolean => {
 
 /**
  * Checks if the product IS Jetpack VideoPress, or if it contains Jetpack VideoPress as a feature.
- *
  * @param productSlug The product slug
  * @returns whether or not the product has VideoPress.
  */

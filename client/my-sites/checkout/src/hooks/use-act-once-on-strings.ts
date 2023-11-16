@@ -12,7 +12,6 @@ const debug = debugFactory( 'calypso:composite-checkout:use-act-once-on-strings'
  * passed before.
  *
  * This can be used, for example, to record or display error messages.
- *
  * @param {string[]} messages - strings
  * @param {(messages: string[]) => void} handleMessages - the callback
  */

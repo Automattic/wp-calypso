@@ -1,5 +1,5 @@
 import { domainProductSlugs, getPlan } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, LoadingPlaceholder } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useEffect } from '@wordpress/element';
@@ -11,7 +11,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getPlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { LoadingPlaceHolder } from '../loading-placeholder';
 import { DialogContainer, Heading, StyledButton } from './components';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 import type { TranslateResult } from 'i18n-calypso';
@@ -61,12 +60,6 @@ const CrossIcon = styled( Gridicon )`
 	color: #e53e3e;
 `;
 
-const LoadingPlaceHolderText = styled( LoadingPlaceHolder )`
-	width: 80px;
-	display: inline-block;
-	border-radius: 0;
-`;
-
 function LazyDisplayText( {
 	displayText = '',
 	isLoading,
@@ -74,7 +67,11 @@ function LazyDisplayText( {
 	displayText?: TranslateResult;
 	isLoading: boolean;
 } ) {
-	return isLoading || ! displayText ? <LoadingPlaceHolderText /> : <>{ displayText }</>;
+	return isLoading || ! displayText ? (
+		<LoadingPlaceholder width="80px" minHeight="0px" height="8px" />
+	) : (
+		<>{ displayText }</>
+	);
 }
 
 /**

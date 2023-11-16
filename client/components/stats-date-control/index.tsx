@@ -22,20 +22,6 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 
 	const shortcutList = [
 		{
-			id: 'today',
-			label: translate( 'Today' ),
-			offset: 0,
-			range: 0,
-			period: 'day',
-		},
-		{
-			id: 'yesterday',
-			label: translate( 'Yesterday' ),
-			offset: 1,
-			range: 0,
-			period: 'day',
-		},
-		{
 			id: 'last-7-days',
 			label: translate( 'Last 7 Days' ),
 			offset: 0,
@@ -48,6 +34,13 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 			offset: 0,
 			range: 29,
 			period: 'day',
+		},
+		{
+			id: 'last-3-months',
+			label: translate( 'Last 90 Days' ),
+			offset: 0,
+			range: 89,
+			period: 'week',
 		},
 		{
 			id: 'last-year',

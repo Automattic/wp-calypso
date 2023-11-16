@@ -1,4 +1,4 @@
-import { WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { forwardRef, WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useOdieAssistantContext } from './context';
@@ -10,31 +10,48 @@ import './style.scss';
 export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
 
+const ForwardedChatMessage = forwardRef( ChatMessage );
+
 const OdieAssistant = () => {
 	const { chat, botNameSlug } = useOdieAssistantContext();
 	const chatboxMessagesRef = useRef< HTMLDivElement | null >( null );
-	const { ref: bottomRef, entry: bottomElement, inView } = useInView( { threshold: 0 } );
+	const { ref: bottomRef, entry: lastMessageElement, inView } = useInView( { threshold: 0 } );
 	const [ stickToBottom, setStickToBottom ] = useState( true );
 
 	const scrollToBottom = useCallback(
-		( smooth = false, force = false ) => {
+		( force = false ) => {
 			if ( force || stickToBottom ) {
 				requestAnimationFrame( () => {
-					if ( bottomElement?.target ) {
-						bottomElement.target.scrollIntoView( {
-							behavior: smooth ? 'smooth' : 'auto',
+					if ( lastMessageElement?.target ) {
+						lastMessageElement.target.scrollIntoView( {
+							behavior: 'auto',
 							block: 'end',
+							inline: 'end',
 						} );
 					}
 				} );
 			}
 		},
-		[ bottomElement?.target, stickToBottom ]
+		[ lastMessageElement?.target, stickToBottom ]
 	);
 
+	const scrollToInitialBlockOfLastMessage = useCallback( () => {
+		if ( chatboxMessagesRef.current ) {
+			requestAnimationFrame( () => {
+				if ( lastMessageElement?.target ) {
+					lastMessageElement?.target.scrollIntoView( {
+						behavior: 'smooth',
+						block: 'start',
+						inline: 'nearest',
+					} );
+				}
+			} );
+		}
+	}, [ lastMessageElement?.target ] );
+
 	useEffect( () => {
-		scrollToBottom( false, true );
-	}, [ scrollToBottom, chat.messages.length ] );
+		scrollToInitialBlockOfLastMessage();
+	}, [ chat.messages.length, scrollToInitialBlockOfLastMessage ] );
 
 	return (
 		<div className="chatbox">
@@ -62,15 +79,20 @@ const OdieAssistant = () => {
 				>
 					{ chat.messages.map( ( message, index ) => {
 						return (
-							<ChatMessage message={ message } key={ index } scrollToBottom={ scrollToBottom } />
+							<ForwardedChatMessage
+								message={ message }
+								key={ index }
+								scrollToBottom={ scrollToBottom }
+								ref={ chat.messages.length - 1 === index ? bottomRef : undefined }
+							/>
 						);
 					} ) }
-					<div className="odie-chatbox-bottom-edge" ref={ bottomRef }></div>
 				</div>
 				<OdieSendMessageButton
-					scrollToBottom={ () => scrollToBottom( true, true ) }
+					scrollToBottom={ scrollToBottom }
+					scrollToRecent={ scrollToInitialBlockOfLastMessage }
 					enableStickToBottom={ () => setStickToBottom( true ) }
-					enableJumpToRecent={ ! inView && ! stickToBottom }
+					enableJumpToRecent={ ! inView }
 				/>
 			</div>
 		</div>

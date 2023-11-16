@@ -14,6 +14,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import { useIsWapuuEnabled } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
@@ -29,6 +30,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 	const navigate = useNavigate();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const section = useSelector( getSectionName );
+	const isWapuuEnabled = useIsWapuuEnabled();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -76,7 +78,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 							botNameSlug="wpcom-support-chat"
 							botSetting="supportDocs"
 							botName="Wapuu"
+							enabled={ isWapuuEnabled }
 							initialUserMessage={ searchTerm }
+							extraContactOptions={ <HelpCenterContactPage hideHeaders /> }
 						>
 							<HelpCenterOdie />
 						</OdieAssistantProvider>

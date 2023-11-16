@@ -20,6 +20,7 @@ import {
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 	FormStatus,
+	usePaymentMethod,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
@@ -60,6 +61,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -76,7 +78,7 @@ import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice'
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
-import PaymentMethodStepContent from './payment-method-step';
+import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
@@ -322,6 +324,8 @@ export default function WPCheckout( {
 		} );
 
 	const { transactionStatus } = useTransactionStatus();
+	const paymentMethod = usePaymentMethod();
+	const shouldCollapseLastStep = useShouldCollapseLastStep();
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
 		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
@@ -609,27 +613,29 @@ export default function WPCheckout( {
 					<PaymentMethodStep
 						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
 						activeStepFooter={
-							<>
-								<PaymentMethodStepContent />
-								{ hasMarketplaceProduct && (
-									<AcceptTermsOfServiceCheckbox
-										isAccepted={ is3PDAccountConsentAccepted }
-										onChange={ setIs3PDAccountConsentAccepted }
-										isSubmitted={ isSubmitted }
-										message={ translate(
-											'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
-										) }
-									/>
-								) }
-								{ has100YearPlan && (
-									<AcceptTermsOfServiceCheckbox
-										isAccepted={ is100YearPlanTermsAccepted }
-										onChange={ setIs100YearPlanTermsAccepted }
-										isSubmitted={ isSubmitted }
-										message={ translate( 'I have read and agree to all of the above.' ) }
-									/>
-								) }
-							</>
+							! shouldCollapseLastStep && (
+								<>
+									<BeforeSubmitCheckoutHeader />
+									{ hasMarketplaceProduct && (
+										<AcceptTermsOfServiceCheckbox
+											isAccepted={ is3PDAccountConsentAccepted }
+											onChange={ setIs3PDAccountConsentAccepted }
+											isSubmitted={ isSubmitted }
+											message={ translate(
+												'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+											) }
+										/>
+									) }
+									{ has100YearPlan && (
+										<AcceptTermsOfServiceCheckbox
+											isAccepted={ is100YearPlanTermsAccepted }
+											onChange={ setIs100YearPlanTermsAccepted }
+											isSubmitted={ isSubmitted }
+											message={ translate( 'I have read and agree to all of the above.' ) }
+										/>
+									) }
+								</>
+							)
 						}
 						editButtonText={ String( translate( 'Edit' ) ) }
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
@@ -639,7 +645,22 @@ export default function WPCheckout( {
 						) }
 						validatingButtonText={ validatingButtonText }
 						validatingButtonAriaLabel={ validatingButtonText }
-						isCompleteCallback={ () => false }
+						isCompleteCallback={ () => {
+							// We want to consider this step complete only if there is a
+							// payment method selected and it does not have required fields.
+							// This will not prevent the form from being submitted because
+							// the submit button will be active as long as the last step is
+							// shown, but it will prevent the payment method step from
+							// automatically collapsing when checkout loads.
+							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
+						} }
+					/>
+					<CheckoutTermsAndCheckboxes
+						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
+						setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }
+						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
+						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
+						isSubmitted={ isSubmitted }
 					/>
 					<CheckoutFormSubmit
 						validateForm={ validateForm }
@@ -775,6 +796,66 @@ const CheckoutSummaryBody = styled.div`
 		}
 	}
 `;
+
+const CheckoutTermsAndCheckboxesWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	padding: 32px 20px 0 24px;
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		padding: 32px 20px 0 40px;
+	}
+`;
+
+function CheckoutTermsAndCheckboxes( {
+	is3PDAccountConsentAccepted,
+	setIs3PDAccountConsentAccepted,
+	is100YearPlanTermsAccepted,
+	setIs100YearPlanTermsAccepted,
+	isSubmitted,
+}: {
+	is3PDAccountConsentAccepted: boolean;
+	setIs3PDAccountConsentAccepted: ( isAccepted: boolean ) => void;
+	is100YearPlanTermsAccepted: boolean;
+	setIs100YearPlanTermsAccepted: ( isAccepted: boolean ) => void;
+	isSubmitted: boolean;
+} ) {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const has100YearPlan = cartHas100YearPlan( responseCart );
+	const hasMarketplaceProduct = useSelector( ( state ) => {
+		return responseCart.products.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
+	} );
+
+	const translate = useTranslate();
+	const shouldCollapseLastStep = useShouldCollapseLastStep();
+
+	if ( ! shouldCollapseLastStep ) {
+		return null;
+	}
+	return (
+		<CheckoutTermsAndCheckboxesWrapper>
+			<BeforeSubmitCheckoutHeader />
+			{ hasMarketplaceProduct && (
+				<AcceptTermsOfServiceCheckbox
+					isAccepted={ is3PDAccountConsentAccepted }
+					onChange={ setIs3PDAccountConsentAccepted }
+					isSubmitted={ isSubmitted }
+					message={ translate(
+						'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+					) }
+				/>
+			) }
+			{ has100YearPlan && (
+				<AcceptTermsOfServiceCheckbox
+					isAccepted={ is100YearPlanTermsAccepted }
+					onChange={ setIs100YearPlanTermsAccepted }
+					isSubmitted={ isSubmitted }
+					message={ translate( 'I have read and agree to all of the above.' ) }
+				/>
+			) }
+		</CheckoutTermsAndCheckboxesWrapper>
+	);
+}
 
 function SubmitButtonHeader() {
 	const translate = useTranslate();

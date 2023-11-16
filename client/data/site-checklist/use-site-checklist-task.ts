@@ -5,7 +5,6 @@ import useSiteChecklist from './use-site-checklist';
 
 /**
  * Request a update for the specified task
- *
  * @param siteId The site ID
  * @param taskId The task ID you want to update
  */

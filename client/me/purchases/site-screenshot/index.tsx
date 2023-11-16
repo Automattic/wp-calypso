@@ -12,7 +12,6 @@ interface SiteScreenshotProps extends ComponentProps< typeof SiteThumbnail > {
 
 /**
  * Create a site screenshot using mShots.
- *
  * @returns SiteThumbnail
  */
 export const SiteScreenshot = ( { site, alt, ...props }: SiteScreenshotProps ) => {

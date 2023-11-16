@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -47,7 +46,6 @@ const CustomALink = ( {
 			>
 				{ children }
 			</a>
-			<Gridicon icon="external" size={ 18 } />
 		</span>
 	);
 };

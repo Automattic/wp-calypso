@@ -268,6 +268,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						isLargeCurrency={ isLargeCurrency }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						siteId={ siteId }
+						visibleGridPlans={ renderedGridPlans }
 					/>
 					{ isWooExpressPlus && (
 						<div className="plan-features-2023-grid__header-tagline">
@@ -510,14 +511,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const {
-			translate,
-			intervalType,
-			isInSignup,
-			flowName,
-			onStorageAddOnClick,
-			showUpgradeableStorage,
-		} = this.props;
+		const { translate, intervalType, onStorageAddOnClick, showUpgradeableStorage } = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -526,15 +520,9 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 
 			const shouldRenderStorageTitle =
 				storageOptions.length > 0 &&
-				( storageOptions.length === 1 ||
-					intervalType !== 'yearly' ||
-					! showUpgradeableStorage ||
-					( isInSignup && ! ( flowName === 'onboarding' ) ) );
-
+				( storageOptions.length === 1 || intervalType !== 'yearly' || ! showUpgradeableStorage );
 			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
-				flowName: flowName ?? '',
 				intervalType,
-				isInSignup,
 				showUpgradeableStorage,
 				storageOptions,
 			} );

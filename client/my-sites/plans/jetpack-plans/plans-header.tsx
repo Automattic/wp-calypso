@@ -15,9 +15,10 @@ import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
+import type { Context } from 'page';
 
 type HeaderProps = {
-	context: PageJS.Context;
+	context: Context;
 	shouldShowPlanRecommendation?: boolean;
 };
 
@@ -100,7 +101,7 @@ const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) =
 	);
 };
 
-export default function setJetpackHeader( context: PageJS.Context ): void {
+export default function setJetpackHeader( context: Context ) {
 	const planRecommendation = getPlanRecommendationFromContext( context );
 	const shouldShowPlanRecommendation = !! planRecommendation;
 

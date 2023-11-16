@@ -4,7 +4,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { useOdieAssistantContext } from '../context';
 import { setOdieStorage } from '../data';
-import type { Chat, Message, OdieAllowedBots } from '../types';
+import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
 const buildSendChatMessage = (
@@ -48,7 +48,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 	unknown,
 	{ message: Message }
 > => {
-	const { chat, setChat, botNameSlug } = useOdieAssistantContext();
+	const { chat, setChat, botNameSlug, setIsLoading } = useOdieAssistantContext();
 
 	return useMutation( {
 		mutationFn: ( { message }: { message: Message } ) => {
@@ -57,6 +57,12 @@ export const useOdieSendMessage = (): UseMutationResult<
 		onSuccess: ( data ) => {
 			setChat( { messages: chat.messages, chat_id: parseInt( data.chat_id ) } );
 			setOdieStorage( 'chat_id', data.chat_id );
+		},
+		onMutate: () => {
+			setIsLoading( true );
+		},
+		onSettled: () => {
+			setIsLoading( false );
 		},
 	} );
 };
@@ -104,6 +110,35 @@ export const useOdieGetChat = (
 		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
+		select: ( data ) => {
+			const negativeFeedbackThreshold = 3;
+			const modifiedMessages: Message[] = [];
+
+			data.messages.forEach( ( message ) => {
+				modifiedMessages.push( message );
+
+				// Check if the message has negative feedback
+				if (
+					message.rating_value &&
+					message.rating_value < negativeFeedbackThreshold &&
+					! message.context?.flags?.forward_to_human_support
+				) {
+					// Add a new 'dislike-feedback' message right after the current message
+					const dislikeFeedbackMessage = {
+						content: '...',
+						role: 'bot' as MessageRole,
+						type: 'dislike-feedback' as MessageType,
+						simulateTyping: false,
+					};
+					modifiedMessages.push( dislikeFeedbackMessage );
+				}
+			} );
+
+			return {
+				...data,
+				messages: modifiedMessages,
+			};
+		},
 	} );
 };
 

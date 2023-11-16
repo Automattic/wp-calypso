@@ -1,10 +1,12 @@
+@import "@automattic/typography/styles/variables";
+
 $large-tooltip-box-shadow-color: rgba(0, 0, 0, 0.05);
 
 .tooltip.popover {
 	outline: none;
 
 	// always display the popover on top even inside a modal with a high z index
-	z-index: z-index("root", ".tooltip.popover");
+	z-index: 100000;
 
 	.popover__arrow {
 		border-width: 6px;

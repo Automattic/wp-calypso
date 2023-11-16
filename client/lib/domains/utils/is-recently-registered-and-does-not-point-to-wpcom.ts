@@ -3,7 +3,6 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 /**
  * Checks if the domain was registered recently and does not point to WPCOM.
- *
  * @param domain
  * @returns boolean
  */

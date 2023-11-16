@@ -63,7 +63,6 @@ const addChildrenToList = (
 
 /**
  * Retrieve the list of selected items
- *
  * @param state The application state.
  * @param siteId The site ID we're retrieving for.
  * @returns A list of selected items.

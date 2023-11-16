@@ -255,8 +255,8 @@ describe( 'Design Picker design utils', () => {
 
 			getAvailableDesigns( { randomize: true } ).featured;
 
-			expect( shuffle ).toBeCalledTimes( 1 );
-			expect( shuffle ).toBeCalledWith( designs );
+			expect( shuffle ).toHaveBeenCalledTimes( 1 );
+			expect( shuffle ).toHaveBeenCalledWith( designs );
 		} );
 	} );
 } );

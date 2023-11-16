@@ -12,7 +12,7 @@ import './style.scss';
 interface ThemeCollectionProps {
 	collectionSlug: string;
 	title: string;
-	description: ReactElement | null;
+	description: string | null;
 	onSeeAll: () => void;
 	collectionIndex: number;
 }
@@ -23,7 +23,7 @@ export default function ThemeCollection( {
 	description,
 	children,
 	onSeeAll,
-	collectionIndex,
+	collectionIndex = 0,
 }: PropsWithChildren< ThemeCollectionProps > ): ReactElement {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const swiperInstance = useRef< SwiperType | null >( null );

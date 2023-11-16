@@ -222,7 +222,6 @@ export const getPagedBlazeSearchData = (
 
 /**
  * Update the path by adding the advertising section URL prefix
- *
  * @param {string} path partial URL
  * @returns pathname concatenated with the advertising configured path prefix
  */

@@ -182,11 +182,11 @@ function getWithThemeDestination( {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
-	if ( MARKETPLACE_THEME === themeType ) {
-		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }`;
-	}
+	const style = styleVariation ? `&styleVariation=${ styleVariation }` : '';
 
-	const style = styleVariation ? `&style=${ styleVariation }` : '';
+	if ( [ MARKETPLACE_THEME, PREMIUM_THEME, WOOCOMMERCE_THEME ].includes( themeType ) ) {
+		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }${ style }`;
+	}
 
 	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
