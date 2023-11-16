@@ -26,6 +26,7 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
+import GlueRecordsCard from 'calypso/my-sites/domains/domain-management/settings/cards/glue-records-card';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
@@ -631,6 +632,27 @@ const Settings = ( {
 		);
 	};
 
+	const renderDomainGlueRecordsSection = () => {
+		if (
+			! domain ||
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+
+		return (
+			<Accordion
+				className="domain-forwarding-card__accordion"
+				title={ translate( 'Glue Records' ) }
+				subtitle={ translate( 'Edit your private name servers (glue records)' ) }
+			>
+				<GlueRecordsCard domain={ domain } />
+			</Accordion>
+		);
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		if ( ! domain ) {
@@ -657,6 +679,7 @@ const Settings = ( {
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
+				{ renderDomainGlueRecordsSection() }
 			</>
 		);
 	};
