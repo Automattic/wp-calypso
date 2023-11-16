@@ -16,6 +16,9 @@
 				text-overflow: ellipsis;
 				white-space: nowrap;
 				overflow: hidden;
+				@media ( max-width: $break-small ) {
+					max-width: 80vw;
+				}
 			}
 		}
 
@@ -46,6 +49,9 @@
 		line-height: 1.25;
 		color: var(--studio-gray-50);
 		margin-top: 16px;
+		strong {
+			white-space: nowrap;
+		}
 
 		a,
 		button {

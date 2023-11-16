@@ -20,11 +20,15 @@ const MigrateSubscribersModal = () => {
 	const targetSiteId = useSelector( getSelectedSiteId );
 
 	const [ sourceSiteId, setSourceSiteId ] = useState();
+	const targetSiteName = targetSite?.name || targetSite?.URL || '';
 
-	const modalTitle = translate( 'Migrate subscribers to {{strong}}%(targetSiteName)s{{/strong}}', {
-		args: { targetSiteName: targetSite?.name || targetSite?.URL || '' },
-		components: { strong: <strong /> },
-	} );
+	const modalTitle = translate(
+		'Migrate subscribers to "{{strong}}%(targetSiteName)s{{/strong}}"',
+		{
+			args: { targetSiteName: targetSiteName },
+			components: { strong: <strong /> },
+		}
+	);
 
 	if ( ! showMigrateSubscribersModal ) {
 		return null;
@@ -38,6 +42,15 @@ const MigrateSubscribersModal = () => {
 		>
 			<div className="migrate-subscribers-modal__content">
 				<div className="migrate-subscribers-modal__form--container">
+					<p className="migrate-subscribers-modal__form--disclaimer">
+						{ translate(
+							'This will migrate all of the subscribers from the site you select below to the current site, "{{strong}}%(targetSiteName)s{{/strong}}".',
+							{
+								args: { targetSiteName },
+								components: { strong: <strong /> },
+							}
+						) }
+					</p>
 					<label className="migrate-subscribers-modal__label">
 						{ translate( 'Migrate from' ) }
 					</label>
